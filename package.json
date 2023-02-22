@@ -2,6 +2,14 @@
   "name": "unisat-extension",
   "version": "1.0.1",
   "private": true,
+  "homepage": "https://github.com/unisat-wallet/extension#readme",
+  "bugs": {
+    "url": "https://github.com/unisat-wallet/extension/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/unisat-wallet/extension.git"
+  },
   "scripts": {
     "clean": "mkdir -p dist && rm -rf dist/* && cp -r build/_raw/* dist",
     "build:chrome:dev": "webpack --progress --env browser=chrome config=dev version=1",
