@@ -1,0 +1,139 @@
+.address-bar {
+  display: flex;
+  justify-content: center;
+  flex-direction: column;
+  align-items: center;
+  padding: 0px;
+  gap: 0.625rem;
+
+  width: 14.62rem;
+  height: 5.43rem;
+
+  .container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    padding: 0.625rem 1.25rem;
+    gap: 0.625rem;
+
+    // width: 14.62rem;
+    // height: 3.06rem;
+
+    // background: #2A2626;
+    border-radius: 0.3rem;
+
+    color: #aaaaaa;
+    &:hover {
+      color: #ffffff;
+    }
+
+    cursor: pointer;
+
+    .container2 {
+      display: flex;
+      flex-direction: row;
+      align-items: center;
+      padding: 0px;
+      gap: 5px;
+
+      width: 12.125rem;
+      height: 1.812rem;
+      .frame {
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+        padding: 0px;
+        gap: 5px;
+
+        width: 12.12rem;
+        height: 1.81rem;
+
+        &:hover {
+          background: #2a2626;
+          border-radius: 0.3rem;
+        }
+        .address {
+          width: 10.81rem;
+          height: 1.81rem;
+
+          font-family: 'Inter';
+          font-style: normal;
+          font-weight: 400;
+          // font-size: 1.5rem;
+          font-size: 1.125rem;
+          line-height: 1.8rem;
+          /* identical to box height */
+
+          display: flex;
+          align-items: center;
+          text-align: center;
+          flex-direction: column;
+        }
+      }
+
+      .copy-icon {
+        font-size: 0.88rem;
+      }
+    }
+  }
+
+  .container-copied {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    padding: 0px;
+    gap: 0.625rem;
+
+    // width: 14.625rem;
+    // height: 3.062rem;
+
+    .container2 {
+      display: flex;
+      flex-direction: row;
+      justify-content: center;
+      align-items: center;
+      padding: 0.625rem 1.25rem;
+      gap: 0.625rem;
+
+      // width: 14.62rem;
+      // height: 3.06rem;
+
+      background: #4bb21a;
+      border-radius: 0.3rem;
+
+      .check-icon {
+        font-size: 1.2rem;
+      }
+
+      span {
+        font-weight: 600;
+      }
+    }
+  }
+
+  .imported {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding: 0.625rem 0.937rem;
+    gap: 0.625rem;
+
+    background: #383535;
+    border-radius: 0.3rem;
+    .container3 {
+      font-family: 'Inter';
+      font-style: normal;
+      font-weight: 500;
+      font-size: 0.75rem;
+      line-height: 0.93rem;
+      /* identical to box height */
+
+      display: flex;
+      align-items: center;
+      text-transform: uppercase;
+
+      color: #ffffff;
+    }
+  }
+}

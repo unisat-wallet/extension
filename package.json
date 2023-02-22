@@ -1,0 +1,259 @@
+{
+  "name": "unisat-extension",
+  "version": "1.0.1",
+  "private": true,
+  "scripts": {
+    "clean": "mkdir -p dist && rm -rf dist/* && cp -r build/_raw/* dist",
+    "build:chrome:dev": "webpack --progress --env browser=chrome config=dev version=1",
+    "build:chrome": "gulp build --env=pro --browser=chrome",
+    "build:firefox": "gulp build --env=pro --browser=firefox",
+    "build:brave": "gulp build --env=pro --browser=brave",
+    "build:edge": "gulp build --env=pro --browser=edge",
+    "translate": "node build/pull_translation",
+    "lint": "eslint src --fix --ext .js,.ts,.tsx,.json  && npm run format",
+    "lint:fix": "eslint --fix src/**/*.{js,jsx,ts,tsx,json}",
+    "_prettier": "prettier --write .",
+    "fix:modules": "node scripts/fix-modules.js",
+    "format": "prettier --write \"src/**/*.{js,jsx,json,md,ts,tsx}\" --plugin-search-dir=./node_modules/ --plugin=./node_modules/@trivago/prettier-plugin-sort-imports/ ",
+    "prepare": "npm run fix:modules"
+  },
+  "dependencies": {
+    "@ant-design/icons": "^4.7.0",
+    "@babel/core": "^7.16.0",
+    "@fortawesome/fontawesome-svg-core": "^6.1.1",
+    "@fortawesome/free-regular-svg-icons": "^6.1.1",
+    "@fortawesome/free-solid-svg-icons": "^6.1.1",
+    "@fortawesome/react-fontawesome": "^0.1.18",
+    "@metamask/obs-store": "^7.0.0",
+    "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
+    "@reduxjs/toolkit": "^1.9.2",
+    "@sentry/browser": "^6.19.7",
+    "@sentry/react": "^6.19.7",
+    "@sentry/tracing": "^6.19.7",
+    "@svgr/webpack": "^5.5.0",
+    "@testing-library/jest-dom": "^5.16.4",
+    "@testing-library/react": "^13.2.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/bignumber.js": "^5.0.0",
+    "@types/chrome": "^0.0.188",
+    "@types/jest": "^27.5.1",
+    "@types/node": "^17.0.35",
+    "@types/react": "^18.0.9",
+    "@types/react-cache": "^2.0.1",
+    "@types/react-dom": "^18.0.4",
+    "@unisat/bitcoin-hd-keyring": "0.1.6",
+    "@unisat/bitcoinjs-wallet": "^0.1.0",
+    "antd": "^4.20.4",
+    "antd-dayjs-webpack-plugin": "1.0.6",
+    "assert": "^2.0.0",
+    "axios": "^0.27.2",
+    "axios-rate-limit": "^1.3.0",
+    "babel-jest": "^27.4.2",
+    "babel-loader": "^8.2.3",
+    "babel-plugin-named-asset-import": "^0.3.8",
+    "babel-preset-react-app": "^10.0.1",
+    "bfj": "^7.0.2",
+    "bitcoinjs-lib": "^6.1.0",
+    "browser-passworder": "^2.0.3",
+    "browserify": "^17.0.0",
+    "browserslist": "^4.18.1",
+    "buffer": "^6.0.3",
+    "camelcase": "^6.2.1",
+    "case-sensitive-paths-webpack-plugin": "^2.4.0",
+    "compare-versions": "^4.1.3",
+    "cross-env": "^7.0.3",
+    "crypto-browserify": "^3.12.0",
+    "css-loader": "^6.7.1",
+    "css-minimizer-webpack-plugin": "^3.2.0",
+    "debounce": "^1.2.1",
+    "dotenv": "^10.0.0",
+    "dotenv-expand": "^5.1.0",
+    "eslint-webpack-plugin": "^3.1.1",
+    "eth-rpc-errors": "^4.0.3",
+    "extensionizer": "^1.0.1",
+    "file-loader": "^6.2.0",
+    "fs-extra": "^10.0.0",
+    "html-webpack-plugin": "^5.5.0",
+    "i18next": "^21.8.1",
+    "identity-obj-proxy": "^3.0.0",
+    "jest": "^27.4.3",
+    "jest-resolve": "^27.4.2",
+    "jest-watch-typeahead": "^1.0.0",
+    "koa-compose": "^4.1.0",
+    "lodash-es": "^4.17.21",
+    "loglevel": "^1.8.0",
+    "mini-css-extract-plugin": "^2.4.5",
+    "postcss": "^8.4.4",
+    "postcss-flexbugs-fixes": "^5.0.2",
+    "postcss-loader": "^6.2.1",
+    "postcss-normalize": "^10.0.1",
+    "postcss-preset-env": "^7.0.1",
+    "process": "0.11.10",
+    "prompts": "^2.4.2",
+    "qrcode.react": "^3.0.2",
+    "rc-virtual-list": "^3.4.8",
+    "react": "^18.1.0",
+    "react-activation": "^0.10.2",
+    "react-app-polyfill": "^3.0.0",
+    "react-cache": "^2.0.0-alpha.1",
+    "react-dev-utils": "^12.0.1",
+    "react-dom": "^18.1.0",
+    "react-hooks-global-state": "^2.0.0-rc.0",
+    "react-i18next": "^11.16.9",
+    "react-modal": "^3.15.1",
+    "react-redux": "^8.0.1",
+    "react-refresh": "^0.11.0",
+    "react-router-dom": "^6.3.0",
+    "redux": "^4.2.0",
+    "redux-devtools": "^3.7.0",
+    "redux-localstorage-simple": "^2.5.1",
+    "reflect-metadata": "^0.1.13",
+    "resolve": "^1.20.0",
+    "resolve-url-loader": "^4.0.0",
+    "semver": "^7.3.5",
+    "source-map-loader": "^3.0.0",
+    "stream-browserify": "^3.0.0",
+    "style-loader": "^3.3.1",
+    "style-resources-loader": "1.5.0",
+    "tailwindcss": "^3.0.2",
+    "terser-webpack-plugin": "^5.2.5",
+    "ts-import-plugin": "1.6.7",
+    "ts-loader": "9.1.1",
+    "ts-toolbelt": "^9.6.0",
+    "tsconfig-paths-webpack-plugin": "^3.5.2",
+    "typescript": "^4.7.2",
+    "typescript-transform-paths": "^3.3.1",
+    "url": "^0.11.0",
+    "web-vitals": "^2.1.4",
+    "webpack": "^5.64.4",
+    "webpack-dev-server": "^4.6.0",
+    "webpack-manifest-plugin": "^4.0.2",
+    "workbox-webpack-plugin": "^6.4.1"
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "jest": {
+    "roots": [
+      "<rootDir>/src"
+    ],
+    "collectCoverageFrom": [
+      "src/**/*.{js,jsx,ts,tsx}",
+      "!src/**/*.d.ts"
+    ],
+    "setupFiles": [
+      "react-app-polyfill/jsdom"
+    ],
+    "setupFilesAfterEnv": [
+      "<rootDir>/src/setupTests.ts"
+    ],
+    "testMatch": [
+      "<rootDir>/src/**/__tests__/**/*.{js,jsx,ts,tsx}",
+      "<rootDir>/src/**/*.{spec,test}.{js,jsx,ts,tsx}"
+    ],
+    "testEnvironment": "jsdom",
+    "transform": {
+      "^.+\\.(js|jsx|mjs|cjs|ts|tsx)$": "<rootDir>/config/jest/babelTransform.js",
+      "^.+\\.css$": "<rootDir>/config/jest/cssTransform.js",
+      "^(?!.*\\.(js|jsx|mjs|cjs|ts|tsx|css|json)$)": "<rootDir>/config/jest/fileTransform.js"
+    },
+    "transformIgnorePatterns": [
+      "[/\\\\]node_modules[/\\\\].+\\.(js|jsx|mjs|cjs|ts|tsx)$",
+      "^.+\\.module\\.(css|sass|scss)$"
+    ],
+    "modulePaths": [],
+    "moduleNameMapper": {
+      "^react-native$": "react-native-web",
+      "^.+\\.module\\.(css|sass|scss)$": "identity-obj-proxy"
+    },
+    "moduleFileExtensions": [
+      "web.js",
+      "js",
+      "web.ts",
+      "ts",
+      "web.tsx",
+      "tsx",
+      "json",
+      "web.jsx",
+      "jsx",
+      "node"
+    ],
+    "watchPlugins": [
+      "jest-watch-typeahead/filename",
+      "jest-watch-typeahead/testname"
+    ],
+    "resetMocks": true
+  },
+  "babel": {
+    "presets": [
+      "react-app"
+    ],
+    "plugins": [
+      [
+        "import",
+        {
+          "libraryName": "antd",
+          "style": true
+        }
+      ]
+    ]
+  },
+  "devDependencies": {
+    "@notionhq/client": "^1.0.4",
+    "@trivago/prettier-plugin-sort-imports": "^4.0.0",
+    "@types/less": "^3.0.3",
+    "@types/lodash": "^4.14.182",
+    "@types/node-sass": "^4.11.2",
+    "@types/sass-loader": "^8.0.3",
+    "@types/stylus": "^0.48.38",
+    "@typescript-eslint/eslint-plugin": "^5.26.0",
+    "@typescript-eslint/parser": "^5.26.0",
+    "autoprefixer": "^10.4.7",
+    "babel-plugin-import": "^1.13.5",
+    "eslint": "^8.16.0",
+    "eslint-config-prettier": "^8.5.0",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-prettier": "^4.0.0",
+    "eslint-plugin-react": "^7.30.0",
+    "eslint-plugin-react-hooks": "^4.5.0",
+    "eslint-plugin-simple-import-sort": "^10.0.0",
+    "eslint-plugin-unused-imports": "^2.0.0",
+    "gulp": "^4.0.2",
+    "gulp-clean": "^0.4.0",
+    "gulp-jsoncombine": "^1.0.4",
+    "gulp-uglify": "^3.0.2",
+    "gulp-zip": "^5.1.0",
+    "less": "^4.1.2",
+    "less-loader": "^11.0.0",
+    "minimist": "^1.2.6",
+    "node-sass": "^7.0.1",
+    "postcss": "^8.4.13",
+    "prettier": "^2.6.2",
+    "sass-loader": "^12.6.0",
+    "stylus": "^0.57.0",
+    "stylus-loader": "^6.2.0",
+    "tailwindcss": "^3.0.24",
+    "typed-css-modules-loader": "^0.0.18",
+    "wasm-module-webpack-plugin": "^3.0.0",
+    "webpack-cli": "^4.9.2",
+    "webpack-stream": "^7.0.0"
+  },
+  "lint-staged": {
+    "*.{js,jsx,ts,tsx}": [
+      "prettier --write",
+      "eslint --ignore-path=.prettierignore"
+    ],
+    "*.json": [
+      "prettier --write"
+    ]
+  }
+}
