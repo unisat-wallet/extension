@@ -298,31 +298,14 @@ export class WalletController extends BaseController {
 
   importPrivateKey = async (data: string, alianName?: string) => {
     const error = new Error(i18n.t('The private key is invalid'));
-    let privateKeyStr = '';
-    try {
-      const keyPair = ECPair.fromWIF(data, bitcoin.networks.bitcoin);
-      if (keyPair.privateKey) {
-        privateKeyStr = keyPair.privateKey.toString('hex');
-      }
-    } catch (e) {
-      // throw error;
-    }
-    if (!privateKeyStr) {
-      try {
-        const keyPair = ECPair.fromWIF(data, bitcoin.networks.testnet);
-        if (keyPair.privateKey) {
-          privateKeyStr = keyPair.privateKey.toString('hex');
-        }
-      } catch (e) {
-        // throw error;
-      }
-    }
 
-    if (!privateKeyStr) {
+    let keyring: Keyring;
+    try {
+      keyring = await keyringService.importPrivateKey(data);
+    } catch (e) {
+      console.log(e);
       throw error;
     }
-
-    const keyring = await keyringService.importPrivateKey(privateKeyStr);
     const accounts = await keyring.getAccounts();
     if (alianName) this.updateAlianName(accounts[0], alianName);
     return this._setCurrentAccountFromKeyring(keyring, 0, alianName);
