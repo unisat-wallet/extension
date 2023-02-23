@@ -24,7 +24,7 @@ export default function InscriptionPreview({
         onClick={(e) => {
           if (onClick) onClick(data);
         }}
-        className={`relative overflow-hidden bg-primary bg-opacity-50 shadow rounded-3xl shadow-soft-black h-50 ${className}`}>
+        className={`relative overflow-hidden bg-primary bg-opacity-50 shadow rounded-2xl shadow-soft-black ${className}`}>
         {detail.content_type === 'todo' ? (
           <div
             className="w-full h-full bg-cover"
@@ -45,7 +45,7 @@ export default function InscriptionPreview({
         onClick={(e) => {
           onClick?.(data);
         }}
-        className={`relative overflow-hidden bg-primary bg-opacity-50 shadow rounded-3xl shadow-soft-black h-50 ${className}`}>
+        className={`relative overflow-hidden bg-primary bg-opacity-50 shadow rounded-2xl shadow-soft-black ${className}`}>
         <Iframe preview={getPreviewUrl(data.id)} className="w-full h-full" />
 
         {isMempool === false && (

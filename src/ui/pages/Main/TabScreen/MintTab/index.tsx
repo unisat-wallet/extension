@@ -38,11 +38,11 @@ function MintItem({ info }: { info: InscriptionMintedItem }) {
       <Button
         size="middle"
         type="primary"
-        className="w-50 items-center p-0 mt-5"
+        className="w-40 items-center p-0 mt-5"
         onClick={(e) => {
-          // todo
+          window.open(`https://unisat.io/mint/${info.title}`);
         }}>
-        <div className="flex items-center justify-center font-semibold text-base">{'MINT (Comming Soon)'}</div>
+        <div className="flex items-center justify-center font-semibold text-base">{'MINT'}</div>
       </Button>
     </div>
   );

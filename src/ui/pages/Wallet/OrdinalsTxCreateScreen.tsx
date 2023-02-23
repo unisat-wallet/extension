@@ -111,7 +111,7 @@ export default function OrdinalsTxCreateScreen() {
             }}
           />
 
-          <span className="text-lg text-error">{error}</span>
+          <span className="text-lg text-error h-5">{error}</span>
           <Button
             disabled={disabled}
             size="large"

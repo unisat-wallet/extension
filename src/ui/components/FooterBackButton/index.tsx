@@ -26,3 +26,25 @@ export const FooterBackButton: React.FC<{ onClick?: MouseEventHandler<HTMLElemen
     </Footer>
   );
 };
+
+export const FooterButton: React.FC<{ title?: string; onClick?: MouseEventHandler<HTMLElement> }> = ({
+  onClick,
+  title
+}) => {
+  const { t } = useTranslation();
+  return (
+    <Footer className="footer-bar">
+      <div
+        className="duration-80 footer-back-button"
+        onClick={(e) => {
+          if (onClick) {
+            onClick(e);
+          } else {
+            window.history.go(-1);
+          }
+        }}>
+        <span className="text-lg font-semibold leading-4_5">{title}</span>
+      </div>
+    </Footer>
+  );
+};
