@@ -1,5 +1,5 @@
 import { createPersistStore } from '@/background/utils';
-import { INITIAL_OPENAPI_URL } from '@/shared/constant';
+import { OPENAPI_URL_MAINNET, OPENAPI_URL_TESTNET } from '@/shared/constant';
 import { AppSummary, BitcoinBalance, Inscription, InscriptionSummary, TxHistoryItem, UTXO } from '@/shared/types';
 
 interface OpenApiStore {
@@ -14,7 +14,6 @@ enum API_STATUS {
   SUCCESS = '1'
 }
 
-const prefix = '/api/v1';
 export class OpenApiService {
   store!: OpenApiStore;
   setHost = async (host: string) => {
@@ -30,9 +29,13 @@ export class OpenApiService {
     this.store = await createPersistStore({
       name: 'openapi',
       template: {
-        host: INITIAL_OPENAPI_URL
+        host: OPENAPI_URL_MAINNET
       }
     });
+
+    if ([OPENAPI_URL_MAINNET, OPENAPI_URL_TESTNET].includes(this.store.host) === false) {
+      this.store.host = OPENAPI_URL_MAINNET;
+    }
 
     const getConfig = async () => {
       try {
@@ -47,7 +50,7 @@ export class OpenApiService {
   };
 
   httpGet = async (route: string, params: any) => {
-    let url = INITIAL_OPENAPI_URL + route;
+    let url = this.getHost() + route;
     let c = 0;
     for (const id in params) {
       if (c == 0) {
@@ -67,7 +70,7 @@ export class OpenApiService {
   };
 
   httpPost = async (route: string, params: any) => {
-    const url = INITIAL_OPENAPI_URL + route;
+    const url = this.getHost() + route;
     const headers = new Headers();
     headers.append('X-Client', 'UniSat Wallet');
     headers.append('X-Version', process.env.release!);
@@ -84,7 +87,7 @@ export class OpenApiService {
   };
 
   async getWalletConfig(): Promise<any> {
-    const data = await this.httpGet(prefix + '/wallet/config', {});
+    const data = await this.httpGet('/wallet/config', {});
     if (data.status == API_STATUS.FAILED) {
       throw new Error(data.message);
     }
@@ -92,7 +95,7 @@ export class OpenApiService {
   }
 
   async getAddressBalance(address: string): Promise<BitcoinBalance> {
-    const data = await this.httpGet(prefix + '/address/balance', {
+    const data = await this.httpGet('/address/balance', {
       address
     });
     if (data.status == API_STATUS.FAILED) {
@@ -102,7 +105,7 @@ export class OpenApiService {
   }
 
   async getAddressUtxo(address: string): Promise<UTXO[]> {
-    const data = await this.httpGet(prefix + '/address/utxo', {
+    const data = await this.httpGet('/address/utxo', {
       address
     });
     if (data.status == API_STATUS.FAILED) {
@@ -112,7 +115,7 @@ export class OpenApiService {
   }
 
   async getAddressInscriptions(address: string): Promise<Inscription[]> {
-    const data = await this.httpGet(prefix + '/address/inscriptions', {
+    const data = await this.httpGet('/address/inscriptions', {
       address
     });
     if (data.status == API_STATUS.FAILED) {
@@ -122,7 +125,7 @@ export class OpenApiService {
   }
 
   async getAddressRecentHistory(address: string): Promise<TxHistoryItem[]> {
-    const data = await this.httpGet(prefix + '/address/recent-history', {
+    const data = await this.httpGet('/address/recent-history', {
       address
     });
     if (data.status == API_STATUS.FAILED) {
@@ -132,7 +135,7 @@ export class OpenApiService {
   }
 
   async getInscriptionSummary(): Promise<InscriptionSummary> {
-    const data = await this.httpGet(prefix + '/inscription-summary', {});
+    const data = await this.httpGet('/inscription-summary', {});
     if (data.status == API_STATUS.FAILED) {
       throw new Error(data.message);
     }
@@ -140,7 +143,7 @@ export class OpenApiService {
   }
 
   async getAppSummary(): Promise<AppSummary> {
-    const data = await this.httpGet(prefix + '/app-summary', {});
+    const data = await this.httpGet('/app-summary', {});
     if (data.status == API_STATUS.FAILED) {
       throw new Error(data.message);
     }
@@ -148,7 +151,7 @@ export class OpenApiService {
   }
 
   async pushTx(rawtx: string): Promise<string> {
-    const data = await this.httpPost(prefix + '/tx/broadcast', {
+    const data = await this.httpPost('/tx/broadcast', {
       rawtx
     });
     if (data.status == API_STATUS.FAILED) {

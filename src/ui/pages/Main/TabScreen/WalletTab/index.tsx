@@ -2,10 +2,12 @@ import { Statistic } from 'antd';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
+import { NetworkType } from '@/shared/types';
 import AccountSelect from '@/ui/components/AccountSelect';
 import { AddressBar } from '@/ui/components/AddressBar';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { useAccountBalance, useAccountInscriptions } from '@/ui/state/accounts/hooks';
+import { useNetworkType } from '@/ui/state/settings/hooks';
 import { transactionsActions } from '@/ui/state/transactions/reducer';
 import { faArrowRightArrowLeft, faQrcode, faClock } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -19,12 +21,18 @@ export default function WalletTab() {
 
   const accountBalance = useAccountBalance();
   const accountInscriptions = useAccountInscriptions();
+  const networkType = useNetworkType();
+  const isTestNetwork = networkType === NetworkType.TESTNET;
 
   const dispatch = useDispatch();
   return (
     <div className="flex flex-col items-stretch gap-5 mt-5 mx-5 justify-evenly">
       <AccountSelect />
-      <div className="flex flex-col items-center mt-10 font-semibold text-11" style={{ height: '2.75rem' }}>
+      {isTestNetwork && (
+        <div className="text-red-500 mx-10 text-center ">Bitcoin Testnet is used for testing. Funds have no value!</div>
+      )}
+
+      <div className="flex flex-col items-center mt-5 font-semibold text-11" style={{ height: '2.75rem' }}>
         <div className="flex items-center">
           <Statistic className="text-white" value={accountBalance?.amount} valueStyle={{ fontSize: '2.75rem' }} />{' '}
           <span className="mx-5">BTC</span>

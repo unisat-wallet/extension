@@ -2,12 +2,12 @@ import { useCallback } from 'react';
 
 import { Account } from '@/background/service/preference';
 import { publicKeyToAddress } from '@/background/utils/tx-utils';
-import { KEYRING_CLASS, NET_WORK } from '@/shared/constant';
+import { KEYRING_CLASS } from '@/shared/constant';
 import { useWallet } from '@/ui/utils';
 
 import { AppState } from '..';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { useAddressType } from '../settings/hooks';
+import { useAddressType, useNetworkType } from '../settings/hooks';
 import { accountActions } from './reducer';
 
 export function useAccountsState(): AppState['accounts'] {
@@ -54,8 +54,9 @@ export function useHistory() {
 
 export function useAccountAddress() {
   const addressType = useAddressType();
+  const networkType = useNetworkType();
   const currentAccount = useCurrentAccount();
-  return publicKeyToAddress(currentAccount.address, addressType, NET_WORK);
+  return publicKeyToAddress(currentAccount.address, addressType, networkType);
 }
 
 export function useSetCurrentAccountCallback() {

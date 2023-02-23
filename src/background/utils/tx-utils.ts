@@ -3,8 +3,7 @@ import * as bitcoin from 'bitcoinjs-lib';
 import ECPairFactory from 'ecpair';
 import * as ecc from 'tiny-secp256k1';
 
-import { NET_WORK } from '@/shared/constant';
-import { AddressType, UTXO } from '@/shared/types';
+import { AddressType, NetworkType, UTXO } from '@/shared/types';
 
 bitcoin.initEccLib(ecc);
 const ECPair = ECPairFactory(ecc);
@@ -18,7 +17,16 @@ function satoshisToBTC(amount: number) {
   return amount / 100000000;
 }
 
-export function publicKeyToAddress(publicKey: string, type: AddressType, network: bitcoin.Network = NET_WORK) {
+export function toPsbtNetwork(networkType: NetworkType) {
+  if (networkType === NetworkType.MAINNET) {
+    return bitcoin.networks.bitcoin;
+  } else {
+    return bitcoin.networks.testnet;
+  }
+}
+
+export function publicKeyToAddress(publicKey: string, type: AddressType, networkType: NetworkType) {
+  const network = toPsbtNetwork(networkType);
   if (!publicKey) return '';
   const pubkey = Buffer.from(publicKey, 'hex');
   if (type === AddressType.P2PKH) {
@@ -69,10 +77,10 @@ export function utxoToInput(utxo: UTXO, publicKey: Buffer) {
   }
 }
 
-export function isValidAddress(address) {
+export function isValidAddress(address, network: bitcoin.Network) {
   let error;
   try {
-    bitcoin.address.toOutputScript(address, NET_WORK);
+    bitcoin.address.toOutputScript(address, network);
   } catch (e) {
     error = e;
   }
@@ -104,11 +112,13 @@ export class SingleAccountTransaction {
   private changeOutputIndex = -1;
   private addressType: AddressType;
   private wallet: any;
-  constructor(account: any, wallet: any, addressType: AddressType) {
+  private networkType: NetworkType;
+  constructor(account: any, wallet: any, addressType: AddressType, networkType: NetworkType) {
     // todo
     this.account = account;
     this.wallet = wallet;
     this.addressType = addressType;
+    this.networkType = networkType;
   }
 
   addInput(utxo: UTXO) {
@@ -128,7 +138,8 @@ export class SingleAccountTransaction {
   }
 
   addOutput(address: string, value: number) {
-    if (!isValidAddress(address)) throw new Error('Invalid address');
+    const network = toPsbtNetwork(this.networkType);
+    if (!isValidAddress(address, network)) throw new Error('Invalid address');
     this.outputs.push({
       address,
       value
@@ -137,7 +148,7 @@ export class SingleAccountTransaction {
 
   addChangeOutput(value: number) {
     this.outputs.push({
-      address: publicKeyToAddress(this.account.address, this.addressType),
+      address: publicKeyToAddress(this.account.address, this.addressType, this.networkType),
       value
     });
     this.changeOutputIndex = this.outputs.length - 1;
@@ -149,7 +160,7 @@ export class SingleAccountTransaction {
   }
 
   async createSignedPsbt() {
-    const network = NET_WORK;
+    const network = toPsbtNetwork(this.networkType);
     const psbt = new bitcoin.Psbt({ network });
 
     this.inputs.forEach((v) => {

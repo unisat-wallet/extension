@@ -19,6 +19,7 @@ import ChangeLanguageScreen from './Settings/ChangeLanguageScreen';
 import ChangePasswordScreen from './Settings/ChangePasswordScreen';
 import ExportMnemonicsScreen from './Settings/ExportMnemonicsScreen';
 import ExportPrivateKeyScreen from './Settings/ExportPrivateKeyScreen';
+import NetworkTypeScreen from './Settings/NetworkTypeScreen';
 import RemoveAccount from './Settings/RemoveAccountScreen';
 import HistoryScreen from './Wallet/HistoryScreen';
 import OrdinalsDetailScreen from './Wallet/OrdinalsDetailScreen';
@@ -120,6 +121,10 @@ const routes = {
   AddressTypeScreen: {
     path: '/settings/address-type',
     element: <AddressTypeScreen />
+  },
+  NetworkTypeScreen: {
+    path: '/settings/network-type',
+    element: <NetworkTypeScreen />
   },
   ChangeLanguageScreen: {
     path: '/settings/language',

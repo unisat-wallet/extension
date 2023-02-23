@@ -65,6 +65,14 @@ export default function AccountUpdater() {
     const isUnlocked = await wallet.isUnlocked();
     dispatch(globalActions.update({ isUnlocked }));
 
+    wallet.getNetworkType().then((data) => {
+      dispatch(
+        settingsActions.updateSettings({
+          networkType: data
+        })
+      );
+    });
+
     wallet.getInscriptionSummary().then((data) => {
       dispatch(accountActions.setInscriptionSummary(data));
     });

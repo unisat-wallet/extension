@@ -1,4 +1,4 @@
-import { AddressType } from '@/shared/types';
+import { AddressType, NetworkType } from '@/shared/types';
 import { createSlice } from '@reduxjs/toolkit';
 
 import { updateVersion } from '../global/actions';
@@ -6,11 +6,13 @@ import { updateVersion } from '../global/actions';
 export interface SettingsState {
   locale: string;
   addressType: AddressType;
+  networkType: NetworkType;
 }
 
 export const initialState: SettingsState = {
   locale: 'English',
-  addressType: AddressType.P2TR
+  addressType: AddressType.P2TR,
+  networkType: NetworkType.MAINNET
 };
 
 const slice = createSlice({
@@ -26,6 +28,7 @@ const slice = createSlice({
         payload: {
           locale?: string;
           addressType?: AddressType;
+          networkType?: NetworkType;
         };
       }
     ) {
@@ -37,6 +40,9 @@ const slice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(updateVersion, (state) => {
       // todo
+      if (!state.networkType) {
+        state.networkType = NetworkType.MAINNET;
+      }
     });
   }
 });

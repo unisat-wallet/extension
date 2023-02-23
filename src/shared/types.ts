@@ -6,6 +6,11 @@ export enum AddressType {
   P2TR
 }
 
+export enum NetworkType {
+  MAINNET,
+  TESTNET
+}
+
 export interface Chain {
   name: string;
   logo: string;

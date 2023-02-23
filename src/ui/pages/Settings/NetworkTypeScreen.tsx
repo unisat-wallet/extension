@@ -2,22 +2,15 @@ import { Button, Layout } from 'antd';
 import { Content, Header } from 'antd/lib/layout/layout';
 import { useTranslation } from 'react-i18next';
 
-import { publicKeyToAddress } from '@/background/utils/tx-utils';
-import { ADDRESS_TYPES } from '@/shared/constant';
+import { NETWORK_TYPES } from '@/shared/constant';
 import CHeader from '@/ui/components/CHeader';
 import { FooterBackButton } from '@/ui/components/FooterBackButton';
-import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useAddressType, useChangeAddressTypeCallback, useNetworkType } from '@/ui/state/settings/hooks';
-import { shortAddress } from '@/ui/utils';
+import { useChangeNetworkTypeCallback, useNetworkType } from '@/ui/state/settings/hooks';
 
-export default function AddressTypeScreen() {
+export default function NetworkTypeScreen() {
   const { t } = useTranslation();
-  const type = useAddressType();
   const networkType = useNetworkType();
-  const changeAddressType = useChangeAddressTypeCallback();
-  const currentAccount = useCurrentAccount();
-  const isInTab = useExtensionIsInTab();
+  const changeNetworkType = useChangeNetworkTypeCallback();
   return (
     <Layout className="h-full">
       <Header className="border-white border-opacity-10">
@@ -25,27 +18,24 @@ export default function AddressTypeScreen() {
       </Header>
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-strech mt-5 gap-3_75 justify-evenly mx-5">
-          <div className="flex flex-col px-2 text-2xl font-semibold h-13 text-center">{t('Address Type')}</div>
-          {ADDRESS_TYPES.map((item, index) => {
-            const displayAddress = publicKeyToAddress(currentAccount.address, item.value, networkType);
+          <div className="flex flex-col px-2 text-2xl font-semibold h-13 text-center">{t('Network')}</div>
+          {NETWORK_TYPES.map((item, index) => {
             return (
               <Button
                 key={index}
                 size="large"
                 type="default"
                 className="box default"
-                onClick={() => {
-                  changeAddressType(item.value);
+                onClick={async () => {
+                  await changeNetworkType(item.value);
+                  window.location.reload();
                 }}>
                 <div className="flex items-center justify-between text-lg font-semibold">
                   <div className="flex flex-start">
                     <div className="w-32 text-left">{t(item.label)}</div>
-                    <div className="font-normal opacity-60">
-                      {isInTab ? displayAddress : shortAddress(displayAddress, 10)}
-                    </div>
                   </div>
 
-                  {item.value == type ? (
+                  {item.value == networkType ? (
                     <span className="w-4 h-4">
                       <img src="./images/check.svg" alt="" />
                     </span>

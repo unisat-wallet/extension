@@ -5,6 +5,7 @@ import { useTranslation } from 'react-i18next';
 import CHeader from '@/ui/components/CHeader';
 import { FooterBackButton } from '@/ui/components/FooterBackButton';
 import { useNavigate } from '@/ui/pages/MainRoute';
+import { useBlockstreamUrl } from '@/ui/state/settings/hooks';
 import { useBitcoinTx } from '@/ui/state/transactions/hooks';
 import { shortAddress } from '@/ui/utils';
 
@@ -12,6 +13,7 @@ export default () => {
   const { t } = useTranslation();
   const bitcoinTx = useBitcoinTx();
   const navigate = useNavigate();
+  const blockstreamUrl = useBlockstreamUrl();
   return (
     <Layout className="h-full">
       <Header className=" border-white border-opacity-10">
@@ -38,7 +40,7 @@ export default () => {
               <img src="./images/eye.svg" alt="" />
               <a
                 className="font-semibold text-white cursor-pointer hover:text-white"
-                href={`https://blockstream.info/tx/${bitcoinTx.txid}`}
+                href={`${blockstreamUrl}/tx/${bitcoinTx.txid}`}
                 target="_blank"
                 rel="noreferrer">
                 &nbsp;{t('View on Block Explorer')}

@@ -7,13 +7,13 @@ import { useTranslation } from 'react-i18next';
 
 import { Account } from '@/background/service/preference';
 import { publicKeyToAddress } from '@/background/utils/tx-utils';
-import { KEYRING_CLASS, NET_WORK } from '@/shared/constant';
+import { KEYRING_CLASS } from '@/shared/constant';
 import CHeader from '@/ui/components/CHeader';
 import { FooterBackButton } from '@/ui/components/FooterBackButton';
 import { useAccounts, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
-import { useAddressType } from '@/ui/state/settings/hooks';
+import { useAddressType, useNetworkType } from '@/ui/state/settings/hooks';
 import { shortAddress, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
@@ -35,6 +35,7 @@ function MyItem({ account }: MyItemProps, ref) {
   const wallet = useWallet();
   const dispatch = useAppDispatch();
   const addressType = useAddressType();
+  const networkType = useNetworkType();
   if (!account) {
     return (
       <Button
@@ -65,7 +66,7 @@ function MyItem({ account }: MyItemProps, ref) {
         <div className="flex flex-col flex-grow text-left">
           <span>{account?.alianName} </span>
           <span className="font-normal opacity-60">
-            ({shortAddress(publicKeyToAddress(account?.address, addressType, NET_WORK))})
+            ({shortAddress(publicKeyToAddress(account?.address, addressType, networkType))})
           </span>
         </div>
         {account?.type == KEYRING_CLASS.PRIVATE_KEY ? (

@@ -1,7 +1,5 @@
 /* constants pool */
-import * as bitcoin from 'bitcoinjs-lib';
-
-import { AddressType, Chain } from '../types';
+import { AddressType, Chain, NetworkType } from '../types';
 
 export enum CHAINS_ENUM {
   BTC = 'BTC'
@@ -90,6 +88,11 @@ export const ADDRESS_TYPES = [
   { value: AddressType.P2TR, label: 'P2TR' }
 ];
 
+export const NETWORK_TYPES = [
+  { value: NetworkType.MAINNET, label: 'MAINNET' },
+  { value: NetworkType.TESTNET, label: 'TESTNET' }
+];
+
 export const MINIMUM_GAS_LIMIT = 21000;
 
 export enum WATCH_ADDRESS_CONNECT_TYPE {
@@ -113,7 +116,8 @@ export const INTERNAL_REQUEST_SESSION = {
   icon: './images/icon-128.png'
 };
 
-export const INITIAL_OPENAPI_URL = 'https://unisat.io';
+export const OPENAPI_URL_MAINNET = 'https://unisat.io/api/v1';
+export const OPENAPI_URL_TESTNET = 'https://unisat.io/testnet/api/v1';
 
 export const EVENTS = {
   broadcastToUI: 'broadcastToUI',
@@ -145,5 +149,3 @@ export const COIN_DUST = 0.00001;
 export const TO_LOCALE_STRING_CONFIG = {
   minimumFractionDigits: 8
 };
-
-export const NET_WORK = bitcoin.networks.bitcoin;

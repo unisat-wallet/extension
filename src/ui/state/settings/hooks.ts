@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { AddressType } from '@/shared/types';
+import { AddressType, NetworkType } from '@/shared/types';
 import { useWallet } from '@/ui/utils';
 import i18n, { addResourceBundle } from '@/ui/utils/i18n';
 
@@ -54,4 +54,34 @@ export function useChangeAddressTypeCallback() {
     },
     [dispatch]
   );
+}
+
+export function useNetworkType() {
+  const accountsState = useSettingsState();
+  return accountsState.networkType;
+}
+
+export function useChangeNetworkTypeCallback() {
+  const dispatch = useAppDispatch();
+  const wallet = useWallet();
+  return useCallback(
+    async (type: NetworkType) => {
+      await wallet.setNetworkType(type);
+      dispatch(
+        settingsActions.updateSettings({
+          networkType: type
+        })
+      );
+    },
+    [dispatch]
+  );
+}
+
+export function useBlockstreamUrl() {
+  const networkType = useNetworkType();
+  if (networkType === NetworkType.MAINNET) {
+    return 'https://blockstream.info';
+  } else {
+    return 'https://blockstream.info/testnet';
+  }
 }

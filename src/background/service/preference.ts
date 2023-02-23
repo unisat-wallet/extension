@@ -4,7 +4,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { createPersistStore } from '@/background/utils';
 import { EVENTS } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
-import { BitcoinBalance, TxHistoryItem } from '@/shared/types';
+import { BitcoinBalance, NetworkType, TxHistoryItem } from '@/shared/types';
 
 import browser from '../webapi/browser';
 import { i18n, keyringService, sessionService } from './index';
@@ -38,6 +38,7 @@ export interface PreferenceStore {
   currentVersion: string;
   firstOpen: boolean;
   currency: string;
+  networkType: NetworkType;
 }
 
 const SUPPORT_LOCALES = ['en'];
@@ -63,7 +64,8 @@ class PreferenceService {
         initAlianNames: false,
         currentVersion: '0',
         firstOpen: false,
-        currency: 'USD'
+        currency: 'USD',
+        networkType: NetworkType.MAINNET
       }
     });
     if (!this.store.locale || this.store.locale !== defaultLang) {
@@ -92,6 +94,10 @@ class PreferenceService {
 
     if (!this.store.walletSavedList) {
       this.store.walletSavedList = [];
+    }
+
+    if (!this.store.networkType) {
+      this.store.networkType = NetworkType.MAINNET;
     }
   };
 
@@ -229,6 +235,14 @@ class PreferenceService {
 
   updateIsFirstOpen = () => {
     this.store.firstOpen = false;
+  };
+
+  getNetworkType = () => {
+    return this.store.networkType;
+  };
+
+  setNetworkType = (networkType: NetworkType) => {
+    this.store.networkType = networkType;
   };
 }
 

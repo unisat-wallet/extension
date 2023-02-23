@@ -1,13 +1,13 @@
 import { Layout } from 'antd';
 import { Content, Header } from 'antd/lib/layout/layout';
 import moment from 'moment';
-import VirtualList from 'rc-virtual-list';
 import { forwardRef, useEffect } from 'react';
-import { TFunction, useTranslation } from 'react-i18next';
+import { useTranslation } from 'react-i18next';
 
 import CHeader from '@/ui/components/CHeader';
 import { FooterBackButton } from '@/ui/components/FooterBackButton';
 import { useAccountAddress, useFetchHistoryCallback, useHistory } from '@/ui/state/accounts/hooks';
+import { useBlockstreamUrl } from '@/ui/state/settings/hooks';
 import { shortAddress } from '@/ui/utils';
 import { ClockCircleFilled } from '@ant-design/icons';
 
@@ -26,23 +26,23 @@ interface GroupItem {
 interface MyItemProps {
   group: GroupItem;
   index: number;
-  t: TFunction<'translation', undefined>;
 }
 
-const MyItem: React.ForwardRefRenderFunction<any, MyItemProps> = ({ group, index, t }, ref) => {
+const MyItem: React.ForwardRefRenderFunction<any, MyItemProps> = ({ group, index }, ref) => {
   const address = useAccountAddress();
+  const blockstreamUrl = useBlockstreamUrl();
   if (group.index == -1) {
     return (
       <div className="flex flex-col items-center gap-2_5 mb-2_5">
-        <span className="text-2xl font-semibold text-white">{t('Latest Transactions')}</span>
+        <span className="text-2xl font-semibold text-white">{'Latest Transactions'}</span>
         <div className="flex items-center text-lg text-white duration-80 opacity-60 hover:opacity-100">
           <img src="./images/eye.svg" alt="" />
           <a
             className="text-white cursor-pointer hover:text-white"
-            href={`https://blockstream.info/address/${address}`}
+            href={`${blockstreamUrl}/address/${address}`}
             target="_blank"
             rel="noreferrer">
-            &nbsp;{t('View on Block Explorer')}
+            &nbsp;{'View on Block Explorer'}
           </a>
         </div>
       </div>
@@ -132,32 +132,21 @@ export default function HistoryScreen() {
       <Header className="border-white border-opacity-10">
         <CHeader />
       </Header>
-      <Content style={{ backgroundColor: '#1C1919' }}>
+      <Content style={{ backgroundColor: '#1C1919', overflowY: 'auto' }}>
         <div className="flex flex-col items-strech h-full gap-5 justify-evenly mt-5 mx-5">
-          <div className="grid flex-grow gap-2_5">
-            {historyGroups.length == 0 ? (
+          <div className={'flex-1  min-h-[200px] w-full p-2 '} style={{}}>
+            {historyGroups.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full gap-5 font-semibold text-soft-white">
                 <ClockCircleFilled className="text-2xl font-semibold text-soft-white" />
                 {t('This account has no transactions')}
               </div>
-            ) : null}
-
-            <VirtualList
-              data={historyGroups}
-              data-id="list"
-              // height={virtualListHeight}
-              itemHeight={20}
-              itemKey={(group) => group.date}
-              // disabled={animating}
-              style={{
-                boxSizing: 'border-box'
-              }}
-
-              // onSkipRender={onAppear}
-              // onItemRemove={onAppear}
-            >
-              {(item, index) => <ForwardMyItem group={item} index={index} t={t} />}
-            </VirtualList>
+            ) : (
+              <>
+                {historyGroups.map((data, index) => (
+                  <MyItem key={index} group={data} index={index} />
+                ))}
+              </>
+            )}
           </div>
         </div>
       </Content>

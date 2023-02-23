@@ -14,7 +14,8 @@ import {
   InscriptionSummary,
   AppSummary,
   AddressType,
-  UTXO
+  UTXO,
+  NetworkType
 } from '@/shared/types';
 
 export type WalletController = {
@@ -116,6 +117,8 @@ export type WalletController = {
   getInscriptionSummary(): Promise<InscriptionSummary>;
   getAppSummary(): Promise<AppSummary>;
   getAddressUtxo(address: string): Promise<UTXO[]>;
+  getNetworkType(): Promise<NetworkType>;
+  setNetworkType(type: NetworkType): Promise<void>;
 };
 
 const WalletContext = createContext<{

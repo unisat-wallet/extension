@@ -19,15 +19,23 @@ import i18n from '@/background/service/i18n';
 import { DisplayedKeryring, Keyring, KEYRING_CLASS, ToSignInput } from '@/background/service/keyring';
 import { CacheState } from '@/background/service/pageStateCache';
 import { openIndexPage } from '@/background/webapi/tab';
-import { BRAND_ALIAN_TYPE_TEXT, COIN_NAME, CHAINS_ENUM, COIN_SYMBOL, KEYRING_TYPE, NET_WORK } from '@/shared/constant';
-import { AddressType, BitcoinBalance, UTXO } from '@/shared/types';
+import {
+  BRAND_ALIAN_TYPE_TEXT,
+  COIN_NAME,
+  CHAINS_ENUM,
+  COIN_SYMBOL,
+  KEYRING_TYPE,
+  OPENAPI_URL_MAINNET,
+  OPENAPI_URL_TESTNET
+} from '@/shared/constant';
+import { AddressType, BitcoinBalance, NetworkType, UTXO } from '@/shared/types';
 import { Wallet } from '@unisat/bitcoinjs-wallet';
 
 import { ContactBookItem } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';
 import { ConnectedSite } from '../service/permission';
 import { Account } from '../service/preference';
-import { publicKeyToAddress, SingleAccountTransaction } from '../utils/tx-utils';
+import { SingleAccountTransaction, toPsbtNetwork } from '../utils/tx-utils';
 import BaseController from './base';
 
 const stashKeyrings: Record<string, Keyring> = {};
@@ -284,7 +292,8 @@ export class WalletController extends BaseController {
     const keyring = await keyringService.getKeyringForAccount(address, type);
     if (!keyring) return null;
     const privateKey = await keyring.exportAccount(address);
-    return ECPair.fromPrivateKey(Buffer.from(privateKey, 'hex'), { network: NET_WORK }).toWIF();
+    const network = await this.getNetwork();
+    return ECPair.fromPrivateKey(Buffer.from(privateKey, 'hex'), { network }).toWIF();
   };
 
   getMnemonics = async (password: string) => {
@@ -647,7 +656,9 @@ export class WalletController extends BaseController {
     amount = btcToSatoshis(amount);
     const account = await preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
-    const tx = new SingleAccountTransaction(account, this, addressType);
+
+    const networkType = await this.getNetworkType();
+    const tx = new SingleAccountTransaction(account, this, addressType, networkType);
 
     const safeUTXOs: UTXO[] = [];
     utxos.forEach((utxo) => {
@@ -672,6 +683,25 @@ export class WalletController extends BaseController {
     return data;
   };
 
+  getNetworkType = async () => {
+    const networkType = await preferenceService.getNetworkType();
+    return networkType;
+  };
+
+  setNetworkType = async (networkType: NetworkType) => {
+    await preferenceService.setNetworkType(networkType);
+    if (networkType === NetworkType.MAINNET) {
+      this.openapi.setHost(OPENAPI_URL_MAINNET);
+    } else {
+      this.openapi.setHost(OPENAPI_URL_TESTNET);
+    }
+  };
+
+  getNetwork = async () => {
+    const networkType = await this.getNetworkType();
+    return toPsbtNetwork(networkType);
+  };
+
   sendInscription = async ({
     to,
     inscriptionId,
@@ -686,10 +716,11 @@ export class WalletController extends BaseController {
     const account = await preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
-    const tx = new SingleAccountTransaction(account, this, addressType);
+    const networkType = await this.getNetworkType();
+
+    const tx = new SingleAccountTransaction(account, this, addressType, networkType);
 
     const NFT_DUST = 500;
-    const changeAddress = publicKeyToAddress(account.address, AddressType.P2WPKH, NET_WORK);
     const toAddress = to;
     const safeUTXOs: UTXO[] = [];
 

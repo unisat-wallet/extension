@@ -5,10 +5,10 @@ import { forwardRef, useEffect, useRef, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 
-import { ADDRESS_TYPES, KEYRING_TYPE, LANGS } from '@/shared/constant';
+import { ADDRESS_TYPES, KEYRING_TYPE, LANGS, NETWORK_TYPES } from '@/shared/constant';
 import { useExtensionIsInTab, useOpenExtensionInTab } from '@/ui/features/browser/tabs';
 import { useAccountAddress, useChangeAccountNameCallback, useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useAddressType, useSettingsState } from '@/ui/state/settings/hooks';
+import { useAddressType, useNetworkType, useSettingsState } from '@/ui/state/settings/hooks';
 import { shortAddress } from '@/ui/utils';
 import { RightOutlined } from '@ant-design/icons';
 
@@ -30,6 +30,14 @@ const SettingList: Setting[] = [
     desc: '',
     action: 'addressType',
     route: '/settings/address-type',
+    right: true
+  },
+  {
+    label: t('Network'),
+    value: t('MAINNET'),
+    desc: '',
+    action: 'networkType',
+    route: '/settings/network-type',
     right: true
   },
   // {
@@ -181,6 +189,8 @@ export default function SettingsTab() {
   };
 
   const addressType = useAddressType();
+  const networkType = useNetworkType();
+  const address = useAccountAddress();
 
   const isInTab = useExtensionIsInTab();
   const toRenderSettings = SettingList.filter((v) => {
@@ -188,7 +198,11 @@ export default function SettingsTab() {
       v.value = t(LANGS.find((v) => v.value == settings.locale)?.label || '');
     }
     if (v.action == 'addressType') {
-      v.value = ADDRESS_TYPES[addressType].label;
+      v.value = `${ADDRESS_TYPES[addressType].label}`;
+    }
+
+    if (v.action == 'networkType') {
+      v.value = NETWORK_TYPES[networkType].label;
     }
 
     if (v.action == 'expand-view') {
@@ -206,7 +220,6 @@ export default function SettingsTab() {
     }
   });
 
-  const address = useAccountAddress();
   return (
     <div className="flex flex-col items-strech h-full">
       <div className="mt-5">
