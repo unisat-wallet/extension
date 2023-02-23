@@ -163,13 +163,15 @@ export class SingleAccountTransaction {
     const network = toPsbtNetwork(this.networkType);
     const psbt = new bitcoin.Psbt({ network });
 
-    this.inputs.forEach((v) => {
+    this.inputs.forEach((v, index) => {
       psbt.addInput(v);
+      psbt.setInputSequence(index, 0xfffffffd); // support RBF
     });
 
     this.outputs.forEach((v) => {
       psbt.addOutput(v);
     });
+
     await this.wallet.signTransaction(
       this.account.type,
       this.account.address,
@@ -182,7 +184,6 @@ export class SingleAccountTransaction {
         };
       })
     );
-
     psbt.validateSignaturesOfAllInputs(validator);
     psbt.finalizeAllInputs();
 
