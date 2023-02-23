@@ -4,7 +4,6 @@ import { Content, Header } from 'antd/lib/layout/layout';
 import { useTranslation } from 'react-i18next';
 
 import CHeader from '@/ui/components/CHeader';
-import { FooterBackButton } from '@/ui/components/FooterBackButton';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { useOrdinalsTx, usePushOrdinalsTxCallback } from '@/ui/state/transactions/hooks';
 import { shortAddress } from '@/ui/utils';
@@ -20,7 +19,11 @@ export default function OrdinalsTxConfirmScreen() {
   return (
     <Layout className="h-full">
       <Header className=" border-white border-opacity-10">
-        <CHeader />
+        <CHeader
+          onBack={() => {
+            window.history.go(-1);
+          }}
+        />
       </Header>
       <Content style={{ backgroundColor: '#1C1919' }} className="overflow-auto">
         {ordinalsTx.sending ? (
@@ -66,11 +69,6 @@ export default function OrdinalsTxConfirmScreen() {
           </div>
         )}
       </Content>
-      <FooterBackButton
-        onClick={(e) => {
-          window.history.go(-1);
-        }}
-      />
     </Layout>
   );
 }

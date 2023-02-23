@@ -9,7 +9,6 @@ import { Account } from '@/background/service/preference';
 import { publicKeyToAddress } from '@/background/utils/tx-utils';
 import { KEYRING_CLASS } from '@/shared/constant';
 import CHeader from '@/ui/components/CHeader';
-import { FooterBackButton } from '@/ui/components/FooterBackButton';
 import { useAccounts, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
@@ -113,7 +112,11 @@ export default function SwitchAccountScreen() {
   return (
     <Layout className="h-full">
       <Header className=" border-white border-opacity-10">
-        <CHeader />
+        <CHeader
+          onBack={() => {
+            window.history.go(-1);
+          }}
+        />
       </Header>
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-stech mx-5 mt-5 gap-3_75 justify-evenly">
@@ -135,7 +138,6 @@ export default function SwitchAccountScreen() {
           </VirtualList>
         </div>
       </Content>
-      <FooterBackButton />
     </Layout>
   );
 }

@@ -6,7 +6,6 @@ import { useTranslation } from 'react-i18next';
 
 import { KEYRING_CLASS } from '@/shared/constant';
 import CHeader from '@/ui/components/CHeader';
-import { FooterBackButton } from '@/ui/components/FooterBackButton';
 import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { shortAddress, useWallet } from '@/ui/utils';
 import { faCircleExclamation, faTrashCan } from '@fortawesome/free-solid-svg-icons';
@@ -86,7 +85,11 @@ export default function RemoveAccountScreen() {
   return (
     <Layout className="h-full">
       <Header className="border-white border-opacity-10">
-        <CHeader />
+        <CHeader
+          onBack={() => {
+            window.history.go(-1);
+          }}
+        />
       </Header>
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-center mx-auto mt-36 gap-2_5 w-110">
@@ -129,7 +132,6 @@ export default function RemoveAccountScreen() {
         </div>
       </Content>
 
-      <FooterBackButton />
       <AlertPanel
         visible={isOpen}
         onCancel={() => {

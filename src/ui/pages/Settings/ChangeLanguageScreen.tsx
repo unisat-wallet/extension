@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 
 import { LANGS } from '@/shared/constant';
 import CHeader from '@/ui/components/CHeader';
-import { FooterBackButton } from '@/ui/components/FooterBackButton';
 import { useChangeLocaleCallback, useLocale } from '@/ui/state/settings/hooks';
 
 export default function ChangeLanguageScreen() {
@@ -15,7 +14,11 @@ export default function ChangeLanguageScreen() {
   return (
     <Layout className="h-full">
       <Header className="border-white border-opacity-10">
-        <CHeader />
+        <CHeader
+          onBack={() => {
+            window.history.go(-1);
+          }}
+        />
       </Header>
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-center mx-auto mt-5 gap-3_75 justify-evenly w-95">
@@ -45,7 +48,6 @@ export default function ChangeLanguageScreen() {
           })}
         </div>
       </Content>
-      <FooterBackButton />
     </Layout>
   );
 }

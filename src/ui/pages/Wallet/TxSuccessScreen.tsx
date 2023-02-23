@@ -3,7 +3,6 @@ import { Content, Header } from 'antd/lib/layout/layout';
 import { useTranslation } from 'react-i18next';
 
 import CHeader from '@/ui/components/CHeader';
-import { FooterBackButton } from '@/ui/components/FooterBackButton';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useBlockstreamUrl } from '@/ui/state/settings/hooks';
 import { useBitcoinTx } from '@/ui/state/transactions/hooks';
@@ -17,7 +16,11 @@ export default () => {
   return (
     <Layout className="h-full">
       <Header className=" border-white border-opacity-10">
-        <CHeader />
+        <CHeader
+          onBack={() => {
+            navigate('MainScreen');
+          }}
+        />
       </Header>
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-strech mx-5 mt-36 gap-2_5">
@@ -49,11 +52,6 @@ export default () => {
           )}
         </div>
       </Content>
-      <FooterBackButton
-        onClick={(e) => {
-          navigate('MainScreen');
-        }}
-      />
     </Layout>
   );
 };

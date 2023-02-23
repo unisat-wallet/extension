@@ -5,7 +5,6 @@ import { useLocation } from 'react-router-dom';
 
 import { Inscription } from '@/shared/types';
 import CHeader from '@/ui/components/CHeader';
-import { FooterBackButton } from '@/ui/components/FooterBackButton';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { transactionsActions } from '@/ui/state/transactions/reducer';
@@ -30,7 +29,11 @@ export default function OrdinalsDetailScreen() {
   return (
     <Layout className="h-full">
       <Header className="border-white border-opacity-10">
-        <CHeader />
+        <CHeader
+          onBack={() => {
+            window.history.go(-1);
+          }}
+        />
       </Header>
       <Content style={{ backgroundColor: '#1C1919', overflowY: 'auto', overflowX: 'hidden' }}>
         <div className="flex flex-col items-strech mx-5 mt-5 gap-3_75 justify-evenly">
@@ -78,11 +81,6 @@ export default function OrdinalsDetailScreen() {
             })}
         </div>
       </Content>
-      <FooterBackButton
-        onClick={(e) => {
-          window.history.go(-1);
-        }}
-      />
     </Layout>
   );
 }

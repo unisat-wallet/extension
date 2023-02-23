@@ -4,7 +4,6 @@ import { useTranslation } from 'react-i18next';
 
 import { NETWORK_TYPES } from '@/shared/constant';
 import CHeader from '@/ui/components/CHeader';
-import { FooterBackButton } from '@/ui/components/FooterBackButton';
 import { useChangeNetworkTypeCallback, useNetworkType } from '@/ui/state/settings/hooks';
 
 export default function NetworkTypeScreen() {
@@ -14,7 +13,11 @@ export default function NetworkTypeScreen() {
   return (
     <Layout className="h-full">
       <Header className="border-white border-opacity-10">
-        <CHeader />
+        <CHeader
+          onBack={() => {
+            window.history.go(-1);
+          }}
+        />
       </Header>
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-strech mt-5 gap-3_75 justify-evenly mx-5">
@@ -48,7 +51,6 @@ export default function NetworkTypeScreen() {
           })}
         </div>
       </Content>
-      <FooterBackButton />
     </Layout>
   );
 }

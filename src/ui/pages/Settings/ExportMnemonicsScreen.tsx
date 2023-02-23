@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import CHeader from '@/ui/components/CHeader';
-import { FooterBackButton } from '@/ui/components/FooterBackButton';
 import { copyToClipboard, useWallet } from '@/ui/utils';
 
 type Status = '' | 'error' | 'warning' | undefined;
@@ -55,7 +54,11 @@ export default function ExportMnemonicsScreen() {
   return (
     <Layout className="h-full">
       <Header className="border-white  border-opacity-10">
-        <CHeader />
+        <CHeader
+          onBack={() => {
+            window.history.go(-1);
+          }}
+        />
       </Header>
 
       <Content style={{ backgroundColor: '#1C1919' }}>
@@ -100,7 +103,6 @@ export default function ExportMnemonicsScreen() {
           )}
         </div>
       </Content>
-      <FooterBackButton />
     </Layout>
   );
 }

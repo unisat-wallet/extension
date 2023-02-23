@@ -5,7 +5,6 @@ import { forwardRef, useEffect } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import CHeader from '@/ui/components/CHeader';
-import { FooterBackButton } from '@/ui/components/FooterBackButton';
 import { useAccountAddress, useFetchHistoryCallback, useHistory } from '@/ui/state/accounts/hooks';
 import { useBlockstreamUrl } from '@/ui/state/settings/hooks';
 import { shortAddress } from '@/ui/utils';
@@ -130,7 +129,11 @@ export default function HistoryScreen() {
   return (
     <Layout className="h-full">
       <Header className="border-white border-opacity-10">
-        <CHeader />
+        <CHeader
+          onBack={() => {
+            window.history.go(-1);
+          }}
+        />
       </Header>
       <Content style={{ backgroundColor: '#1C1919', overflowY: 'auto' }}>
         <div className="flex flex-col items-strech h-full gap-5 justify-evenly mt-5 mx-5">
@@ -150,7 +153,6 @@ export default function HistoryScreen() {
           </div>
         </div>
       </Content>
-      <FooterBackButton />
     </Layout>
   );
 }

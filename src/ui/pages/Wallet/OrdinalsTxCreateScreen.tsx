@@ -7,7 +7,6 @@ import { useLocation } from 'react-router-dom';
 
 import { Inscription } from '@/shared/types';
 import CHeader from '@/ui/components/CHeader';
-import { FooterBackButton } from '@/ui/components/FooterBackButton';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { useCreateOrdinalsTxCallback, useFetchUtxosCallback, useOrdinalsTx } from '@/ui/state/transactions/hooks';
 import { isValidAddress } from '@/ui/utils';
@@ -80,7 +79,11 @@ export default function OrdinalsTxCreateScreen() {
   return (
     <Layout className="h-full">
       <Header className=" border-white border-opacity-10">
-        <CHeader />
+        <CHeader
+          onBack={() => {
+            window.history.go(-1);
+          }}
+        />
       </Header>
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-strech mx-5 mt-5 gap-3_75 justify-evenly">
@@ -121,11 +124,6 @@ export default function OrdinalsTxCreateScreen() {
           </Button>
         </div>
       </Content>
-      <FooterBackButton
-        onClick={(e) => {
-          window.history.go(-1);
-        }}
-      />
     </Layout>
   );
 }

@@ -7,7 +7,6 @@ import { useTranslation } from 'react-i18next';
 import { KEYRING_CLASS } from '@/shared/constant';
 import { AddressBar } from '@/ui/components/AddressBar';
 import CHeader from '@/ui/components/CHeader';
-import { FooterBackButton } from '@/ui/components/FooterBackButton';
 import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
 
 import './index.less';
@@ -28,7 +27,11 @@ export default function ReceiveScreen() {
   return (
     <Layout className="h-full">
       <Header className="border-white border-opacity-10">
-        <CHeader />
+        <CHeader
+          onBack={() => {
+            window.history.go(-1);
+          }}
+        />
       </Header>
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-center gap-10 mx-auto mt-5 justify-evenly w-110">
@@ -56,7 +59,6 @@ export default function ReceiveScreen() {
           </div>
         </div>
       </Content>
-      <FooterBackButton />
     </Layout>
   );
 }

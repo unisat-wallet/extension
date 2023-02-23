@@ -4,7 +4,6 @@ import { Content, Header } from 'antd/lib/layout/layout';
 import { useTranslation } from 'react-i18next';
 
 import CHeader from '@/ui/components/CHeader';
-import { FooterBackButton } from '@/ui/components/FooterBackButton';
 import { useBitcoinTx, usePushBitcoinTxCallback } from '@/ui/state/transactions/hooks';
 import { shortAddress } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -20,7 +19,11 @@ export default function TxConfirmScreen() {
   return (
     <Layout className="h-full">
       <Header className=" border-white border-opacity-10">
-        <CHeader />
+        <CHeader
+          onBack={() => {
+            window.history.go(-1);
+          }}
+        />
       </Header>
       <Content style={{ backgroundColor: '#1C1919' }}>
         {bitcoinTx.sending ? (
@@ -70,11 +73,6 @@ export default function TxConfirmScreen() {
           </div>
         )}
       </Content>
-      <FooterBackButton
-        onClick={(e) => {
-          window.history.go(-1);
-        }}
-      />
     </Layout>
   );
 }

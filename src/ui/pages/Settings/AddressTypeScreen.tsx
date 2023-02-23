@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 import { publicKeyToAddress } from '@/background/utils/tx-utils';
 import { ADDRESS_TYPES } from '@/shared/constant';
 import CHeader from '@/ui/components/CHeader';
-import { FooterBackButton } from '@/ui/components/FooterBackButton';
 import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useAddressType, useChangeAddressTypeCallback, useNetworkType } from '@/ui/state/settings/hooks';
@@ -21,7 +20,11 @@ export default function AddressTypeScreen() {
   return (
     <Layout className="h-full">
       <Header className="border-white border-opacity-10">
-        <CHeader />
+        <CHeader
+          onBack={() => {
+            window.history.go(-1);
+          }}
+        />
       </Header>
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-strech mt-5 gap-3_75 justify-evenly mx-5">
@@ -58,7 +61,6 @@ export default function AddressTypeScreen() {
           })}
         </div>
       </Content>
-      <FooterBackButton />
     </Layout>
   );
 }

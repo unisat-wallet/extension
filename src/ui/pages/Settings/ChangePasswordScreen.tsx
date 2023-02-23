@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import CHeader from '@/ui/components/CHeader';
-import { FooterBackButton } from '@/ui/components/FooterBackButton';
 import { useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
@@ -73,7 +72,11 @@ export default function ChangePasswordScreen() {
   return (
     <Layout className="h-full">
       <Header className="border-white  border-opacity-10">
-        <CHeader />
+        <CHeader
+          onBack={() => {
+            window.history.go(-1);
+          }}
+        />
       </Header>
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-strech mx-5 mt-5 gap-3_75 justify-evenly">
@@ -123,7 +126,6 @@ export default function ChangePasswordScreen() {
           </Button>
         </div>
       </Content>
-      <FooterBackButton />
     </Layout>
   );
 }

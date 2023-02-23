@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 
 import { KEYRING_TYPE } from '@/shared/constant';
 import CHeader from '@/ui/components/CHeader';
-import { FooterBackButton } from '@/ui/components/FooterBackButton';
 import { useAccounts, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { copyToClipboard, useWallet } from '@/ui/utils';
 
@@ -60,7 +59,11 @@ export default function ExportPrivateKeyScreen() {
   return (
     <Layout className="h-full">
       <Header className="border-white  border-opacity-10">
-        <CHeader />
+        <CHeader
+          onBack={() => {
+            window.history.go(-1);
+          }}
+        />
       </Header>
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-strech mx-5 mt-5 justify-evenly">
@@ -115,7 +118,6 @@ export default function ExportPrivateKeyScreen() {
           )}
         </div>
       </Content>
-      <FooterBackButton />
     </Layout>
   );
 }

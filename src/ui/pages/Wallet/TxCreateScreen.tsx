@@ -5,7 +5,6 @@ import { useTranslation } from 'react-i18next';
 
 import { COIN_DUST } from '@/shared/constant';
 import CHeader from '@/ui/components/CHeader';
-import { FooterBackButton } from '@/ui/components/FooterBackButton';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useAccountBalance } from '@/ui/state/accounts/hooks';
 import {
@@ -114,7 +113,11 @@ export default function TxCreateScreen() {
   return (
     <Layout className="h-full">
       <Header className=" border-white border-opacity-10">
-        <CHeader />
+        <CHeader
+          onBack={() => {
+            window.history.go(-1);
+          }}
+        />
       </Header>
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-strech  mt-5 gap-3_75 justify-evenly mx-5">
@@ -199,11 +202,6 @@ export default function TxCreateScreen() {
           </Button>
         </div>
       </Content>
-      <FooterBackButton
-        onClick={(e) => {
-          window.history.go(-1);
-        }}
-      />
     </Layout>
   );
 }
