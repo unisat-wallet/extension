@@ -7,7 +7,7 @@ import eventBus from '@/shared/eventBus';
 import { BitcoinBalance, NetworkType, TxHistoryItem } from '@/shared/types';
 
 import browser from '../webapi/browser';
-import { i18n, keyringService, sessionService } from './index';
+import { i18n, keyringService } from './index';
 
 const version = process.env.release || '0';
 
@@ -124,7 +124,6 @@ class PreferenceService {
   setCurrentAccount = (account?: Account | null) => {
     this.store.currentAccount = account;
     if (account) {
-      sessionService.broadcastEvent('accountsChanged', [account.address]);
       eventBus.emit(EVENTS.broadcastToUI, {
         method: 'accountsChanged',
         params: account

@@ -1,33 +1,16 @@
 import { useEffect } from 'react';
 
-import { useAppDispatch } from '@/ui/state/hooks';
-import { getUiType, useApproval, useWallet } from '@/ui/utils';
+import { getUiType, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
 
 export default function BoostScreen() {
   const navigate = useNavigate();
   const wallet = useWallet();
-  // eslint-disable-next-line prefer-const
-  let [getApproval, , rejectApproval] = useApproval();
-  const dispatch = useAppDispatch();
   const loadView = async () => {
     const UIType = getUiType();
     const isInNotification = UIType.isNotification;
     const isInTab = UIType.isTab;
-    let approval = await getApproval();
-
-    if (isInNotification && !approval) {
-      window.close();
-      return;
-    }
-
-    if (!isInNotification) {
-      // chrome.window.windowFocusChange won't fire when
-      // click popup in the meanwhile notification is present
-      await rejectApproval();
-      approval = undefined;
-    }
 
     const isBooted = await wallet.isBooted();
     const hasVault = await wallet.hasVault();
@@ -56,9 +39,6 @@ export default function BoostScreen() {
 
     if (!currentAccount) {
       navigate('WelcomeScreen');
-      return;
-    } else if (approval) {
-      // todo
       return;
     } else {
       navigate('MainScreen');

@@ -33,19 +33,6 @@ export type WalletController = {
   setPopupOpen(isOpen: boolean): void;
   isReady(): Promise<boolean>;
 
-  getApproval: () =>
-    | {
-        state: number;
-        params?: any;
-        origin?: string | undefined;
-        approvalComponent: string;
-        requestDefer?: Promise<any> | undefined;
-        approvalType: string;
-      }
-    | undefined;
-  resolveApproval: (data?: any, forceReject?: boolean) => void;
-  rejectApproval: (err?: string | undefined, stay?: boolean, isInternal?: boolean) => Promise<void>;
-
   getAddressBalance(address: string): Promise<BitcoinBalance>;
   getAddressCacheBalance(address: string): Promise<BitcoinBalance>;
 

@@ -1,51 +1,5 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { useNavigate } from '../pages/MainRoute';
-import { useWallet } from './WalletContext';
-import { getUiType } from './index';
-
-export const useApproval = () => {
-  const wallet = useWallet();
-  const navigate = useNavigate();
-
-  const getApproval = wallet.getApproval;
-
-  const resolveApproval = async (data?: any, stay = false, forceReject = false) => {
-    const approval = await getApproval();
-
-    if (approval) {
-      wallet.resolveApproval(data, forceReject);
-    }
-    if (stay) {
-      return;
-    }
-    setTimeout(() => {
-      navigate('MainScreen');
-    });
-  };
-
-  const rejectApproval = async (err?, stay = false, isInternal = false) => {
-    const approval = await getApproval();
-    if (approval) {
-      await wallet.rejectApproval(err, stay, isInternal);
-    }
-    if (!stay) {
-      navigate('BoostScreen');
-    }
-  };
-
-  useEffect(() => {
-    if (!getUiType().isNotification) {
-      return;
-    }
-    window.addEventListener('beforeunload', rejectApproval);
-
-    return () => window.removeEventListener('beforeunload', rejectApproval);
-  }, []);
-
-  return [getApproval, resolveApproval, rejectApproval] as const;
-};
-
 export const useSelectOption = <T>({
   options,
   defaultValue = [],

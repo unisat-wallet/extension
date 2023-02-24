@@ -3,7 +3,7 @@ import eventBus from '@/shared/eventBus';
 import { Message } from '@/shared/utils';
 
 import { walletController } from './controller';
-import { contactBookService, keyringService, openapiService, permissionService, preferenceService } from './service';
+import { contactBookService, keyringService, openapiService, preferenceService } from './service';
 import { storage } from './webapi';
 import browser from './webapi/browser';
 
@@ -15,7 +15,6 @@ async function restoreAppState() {
   keyringService.store.subscribe((value) => storage.set('keyringState', value));
   await openapiService.init();
 
-  await permissionService.init();
   await preferenceService.init();
   await contactBookService.init();
 }
