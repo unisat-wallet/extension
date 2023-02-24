@@ -1,7 +1,7 @@
 import { useCallback, useMemo } from 'react';
 
 import { Inscription } from '@/shared/types';
-import { satoshisToBTC, useWallet } from '@/ui/utils';
+import { satoshisToBTC, sleep, useWallet } from '@/ui/utils';
 
 import { AppState } from '..';
 import { useAccountAddress, useCurrentAccount } from '../accounts/hooks';
@@ -53,6 +53,7 @@ export function usePushBitcoinTxCallback() {
     try {
       dispatch(transactionsActions.updateBitcoinTx({ sending: true }));
       const txid = await wallet.pushTx(bitcoinTx.rawtx);
+      await sleep(3); // Wait for transaction synchronization
       dispatch(transactionsActions.updateBitcoinTx({ txid, sending: false }));
       dispatch(accountActions.expireBalance());
       success = true;
@@ -104,6 +105,7 @@ export function usePushOrdinalsTxCallback() {
     try {
       dispatch(transactionsActions.updateOrdinalsTx({ sending: true }));
       const txid = await wallet.pushTx(ordinalsTx.rawtx);
+      await sleep(3); // Wait for transaction synchronization
       dispatch(transactionsActions.updateOrdinalsTx({ txid, sending: false }));
       dispatch(accountActions.expireBalance());
       success = true;
