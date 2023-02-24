@@ -75,7 +75,7 @@ export default function WalletTab() {
         </div>
       </div>
       <div
-        className={`flex-1 bg-opacity-50 bg-soft-black min-h-[200px] w-full p-2 ${
+        className={`flex-1 min-h-[200px] w-full p-2 ${
           accountInscriptions.list.length === 0
             ? 'flex justify-center items-center'
             : 'flex gap-5 flex-wrap content-start '
@@ -89,7 +89,8 @@ export default function WalletTab() {
               <InscriptionPreview
                 key={index}
                 data={data}
-                className="cursor-pointer w-52 h-52"
+                className="cursor-pointer"
+                size="medium"
                 onClick={(inscription) => {
                   navigate('OrdinalsDetailScreen', { inscription, withSend: true });
                 }}

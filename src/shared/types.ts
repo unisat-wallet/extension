@@ -37,6 +37,7 @@ export interface TxHistoryItem {
 export interface Inscription {
   id: string;
   num: number;
+  number: number;
   detail?: {
     address: string;
     content: string;
@@ -51,7 +52,7 @@ export interface Inscription {
     output_value: string;
     preview: string;
     sat: string;
-    timestamp: number;
+    timestamp: string;
   };
 }
 

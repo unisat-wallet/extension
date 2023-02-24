@@ -40,7 +40,7 @@ export default function OrdinalsDetailScreen() {
           <div className="flex self-center px-2 text-2xl font-semibold h-13">
             {isMempool ? 'Inscription (not confirmed yet)' : `Inscription ${inscription.num}`}
           </div>
-          <InscriptionPreview className="!w-95 !h-95 self-center" data={inscription} />
+          <InscriptionPreview className="self-center" data={inscription} size="large" />
           {withSend && (
             <div
               className="cursor-pointer duration-80 unit box content default gap-2_5 hover:bg-primary-active w-36 self-center"

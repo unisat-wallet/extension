@@ -91,7 +91,7 @@ export default function OrdinalsTxCreateScreen() {
 
           <div className="flex justify-between w-full mt-5 text-soft-white">
             <span className="flex items-center justify-center ">{t('Ordinals')}</span>
-            {inscription && <InscriptionPreview data={inscription} className=" w-37_5 h-37_5" />}
+            {inscription && <InscriptionPreview data={inscription} size="small" />}
           </div>
 
           <div className="flex justify-between w-full mt-5 text-soft-white">

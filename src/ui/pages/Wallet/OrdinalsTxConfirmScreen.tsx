@@ -35,7 +35,7 @@ export default function OrdinalsTxConfirmScreen() {
           <div className="flex flex-col items-strech mx-5 mt-5 gap-3_75 justify-evenly ">
             <div className="flex self-center px-2 text-2xl font-semibold h-13">{t('Confirm transfer')}</div>
             <div className="w-full text-left text-soft-white">{t('Ordinals')}</div>
-            <InscriptionPreview className="!w-95 !h-95 self-center" data={ordinalsTx.inscription} />
+            <InscriptionPreview className="self-center" data={ordinalsTx.inscription} size="large" />
             <div className="w-full text-left text-soft-white">{t('Recipient')}</div>
             <div className="justify-between w-full box nobor text-soft-white">
               <span>{shortAddress(ordinalsTx.fromAddress)}</span>

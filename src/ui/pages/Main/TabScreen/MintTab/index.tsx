@@ -1,4 +1,3 @@
-import { Button } from 'antd';
 import { useTranslation } from 'react-i18next';
 
 import { InscriptionMintedItem } from '@/shared/types';
@@ -30,20 +29,12 @@ function MintItem({ info }: { info: InscriptionMintedItem }) {
             onClick={(inscription) => {
               navigate('OrdinalsDetailScreen', { inscription });
             }}
-            className="w-24 h-24 cursor-pointer"
+            className="cursor-pointer"
+            size="small"
             data={v}
           />
         ))}
       </div>
-      <Button
-        size="middle"
-        type="primary"
-        className="w-40 items-center p-0 mt-5"
-        onClick={(e) => {
-          window.open(`https://unisat.io/mint/${info.title}`);
-        }}>
-        <div className="flex items-center justify-center font-semibold text-base">{'MINT'}</div>
-      </Button>
     </div>
   );
 }
