@@ -30,7 +30,7 @@ function TabButton({ tabName, icon }: { tabName: TabOption; icon: string }) {
         setHover('');
       }}>
       <img
-        src={`./images/${icon}-solid${tab == tabName ? '-active' : hover == tabName ? '-hover' : ''}.svg`}
+        src={`./images/${icon}-solid${tab == tabName ? '-active' : hover == tabName ? '-active' : ''}.svg`}
         alt=""
         className="h-6 drop-shadow-footer"
       />
