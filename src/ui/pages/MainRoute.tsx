@@ -1,13 +1,13 @@
 import { Layout } from 'antd';
 import { Content } from 'antd/lib/layout/layout';
-import { useCallback, useEffect } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import { useNavigate as useNavigateOrigin } from 'react-router-dom';
 
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { accountActions } from '../state/accounts/reducer';
-import { useIsReady } from '../state/global/hooks';
+import { useIsReady, useIsUnlocked } from '../state/global/hooks';
 import { globalActions } from '../state/global/reducer';
 import { useAppDispatch } from '../state/hooks';
 import { settingsActions } from '../state/settings/reducer';
@@ -179,19 +179,28 @@ const Main = () => {
   const dispatch = useAppDispatch();
 
   const isReady = useIsReady();
+  const isUnlocked = useIsUnlocked();
 
+  const selfRef = useRef({
+    settingsLoaded: false,
+    summaryLoaded: false,
+    accountLoaded: false
+  });
+  const self = selfRef.current;
   const init = useCallback(async () => {
-    console.log('init', isReady);
-    if (!isReady) {
-      const isUnlocked = await wallet.isUnlocked();
-      dispatch(globalActions.update({ isUnlocked }));
-
+    if (!self.accountLoaded) {
       const currentAccount = await wallet.getCurrentAccount();
       dispatch(accountActions.setCurrent(currentAccount));
 
       const accounts = await wallet.getAccounts();
       dispatch(accountActions.setAccounts(accounts));
 
+      if (accounts.length > 0) {
+        self.accountLoaded = true;
+      }
+    }
+
+    if (!self.settingsLoaded) {
       const networkType = await wallet.getNetworkType();
       dispatch(
         settingsActions.updateSettings({
@@ -208,9 +217,10 @@ const Main = () => {
 
       const _locale = await wallet.getLocale();
       dispatch(settingsActions.updateSettings({ locale: _locale }));
+      self.settingsLoaded = true;
+    }
 
-      dispatch(globalActions.update({ isReady: true }));
-
+    if (!self.summaryLoaded) {
       wallet.getInscriptionSummary().then((data) => {
         dispatch(accountActions.setInscriptionSummary(data));
       });
@@ -218,12 +228,21 @@ const Main = () => {
       wallet.getAppSummary().then((data) => {
         dispatch(accountActions.setAppSummary(data));
       });
+      self.summaryLoaded = true;
     }
-  }, [wallet, dispatch, isReady]);
+
+    dispatch(globalActions.update({ isReady: true }));
+  }, [wallet, dispatch, isReady, isUnlocked]);
+
+  useEffect(() => {
+    wallet.isUnlocked().then((isUnlocked) => {
+      dispatch(globalActions.update({ isUnlocked }));
+    });
+  }, []);
 
   useEffect(() => {
     init();
-  }, []);
+  }, [init]);
 
   if (!isReady) {
     return (
