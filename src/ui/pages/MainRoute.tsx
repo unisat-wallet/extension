@@ -1,7 +1,17 @@
-import { useCallback } from 'react';
+import { Layout } from 'antd';
+import { Content } from 'antd/lib/layout/layout';
+import { useCallback, useEffect } from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import { useNavigate as useNavigateOrigin } from 'react-router-dom';
 
+import { LoadingOutlined } from '@ant-design/icons';
+
+import { accountActions } from '../state/accounts/reducer';
+import { useIsReady } from '../state/global/hooks';
+import { globalActions } from '../state/global/reducer';
+import { useAppDispatch } from '../state/hooks';
+import { settingsActions } from '../state/settings/reducer';
+import { useWallet } from '../utils';
 import AddAccountScreen from './Account/AddAccountScreen';
 import CreateAccountScreen from './Account/CreateAccountScreen';
 import CreateMnemonicsScreen from './Account/CreateMnemonicsScreen';
@@ -165,6 +175,67 @@ export function useNavigate() {
 }
 
 const Main = () => {
+  const wallet = useWallet();
+  const dispatch = useAppDispatch();
+
+  const isReady = useIsReady();
+
+  const init = useCallback(async () => {
+    console.log('init', isReady);
+    if (!isReady) {
+      const isUnlocked = await wallet.isUnlocked();
+      dispatch(globalActions.update({ isUnlocked }));
+
+      const currentAccount = await wallet.getCurrentAccount();
+      dispatch(accountActions.setCurrent(currentAccount));
+
+      const accounts = await wallet.getAccounts();
+      dispatch(accountActions.setAccounts(accounts));
+
+      const networkType = await wallet.getNetworkType();
+      dispatch(
+        settingsActions.updateSettings({
+          networkType
+        })
+      );
+
+      const addressType = await wallet.getAddressType();
+      dispatch(
+        settingsActions.updateSettings({
+          addressType
+        })
+      );
+
+      const _locale = await wallet.getLocale();
+      dispatch(settingsActions.updateSettings({ locale: _locale }));
+
+      dispatch(globalActions.update({ isReady: true }));
+
+      wallet.getInscriptionSummary().then((data) => {
+        dispatch(accountActions.setInscriptionSummary(data));
+      });
+
+      wallet.getAppSummary().then((data) => {
+        dispatch(accountActions.setAppSummary(data));
+      });
+    }
+  }, [wallet, dispatch, isReady]);
+
+  useEffect(() => {
+    init();
+  }, []);
+
+  if (!isReady) {
+    return (
+      <Layout className="h-full" style={{ backgroundColor: 'blue', flex: 1 }}>
+        <Content style={{ backgroundColor: '#1C1919', overflowY: 'auto' }}>
+          <div className="flex flex-col items-strech mx-5 text-6xl mt-60 gap-3_75 text-primary">
+            <LoadingOutlined />
+          </div>
+        </Content>
+      </Layout>
+    );
+  }
   return (
     <HashRouter>
       <Routes>

@@ -1,5 +1,3 @@
-import { load, save } from 'redux-localstorage-simple';
-
 import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query/react';
 
@@ -9,8 +7,6 @@ import global from './global/reducer';
 import settings from './settings/reducer';
 import transactions from './transactions/reducer';
 
-const PERSISTED_KEYS: string[] = ['accounts', 'settings'];
-
 const store = configureStore({
   reducer: {
     accounts,
@@ -18,9 +14,7 @@ const store = configureStore({
     settings,
     global
   },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({ thunk: true }).concat(save({ states: PERSISTED_KEYS, debounce: 1000 })),
-  preloadedState: load({ states: PERSISTED_KEYS, disableWarnings: true })
+  middleware: (getDefaultMiddleware) => getDefaultMiddleware({ thunk: true })
 });
 
 store.dispatch(updateVersion());

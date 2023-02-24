@@ -34,6 +34,11 @@ export function useIsUnlocked() {
   return globalState.isUnlocked;
 }
 
+export function useIsReady() {
+  const globalState = useGlobalState();
+  return globalState.isReady;
+}
+
 export function useUnlockCallback() {
   const dispatch = useAppDispatch();
   const wallet = useWallet();

@@ -7,11 +7,15 @@ export type TabOption = 'home' | 'mint' | 'app' | 'settings';
 export interface GlobalState {
   tab: TabOption;
   isUnlocked: boolean;
+  isReady: boolean;
+  isBooted: boolean;
 }
 
 export const initialState: GlobalState = {
   tab: 'home',
-  isUnlocked: false
+  isUnlocked: false,
+  isReady: false,
+  isBooted: false
 };
 
 const slice = createSlice({
@@ -27,6 +31,8 @@ const slice = createSlice({
         payload: {
           tab?: TabOption;
           isUnlocked?: boolean;
+          isReady?: boolean;
+          isBooted?: boolean;
         };
       }
     ) {

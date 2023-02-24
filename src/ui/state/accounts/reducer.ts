@@ -30,17 +30,19 @@ export interface AccountsState {
   inscriptionSummary: InscriptionSummary;
 }
 
+const initialAccount = {
+  type: '',
+  address: '',
+  brandName: '',
+  alianName: '',
+  displayBrandName: '',
+  index: 0,
+  balance: 0
+};
+
 export const initialState: AccountsState = {
   accounts: [],
-  current: {
-    type: '',
-    address: '',
-    brandName: '',
-    alianName: '',
-    displayBrandName: '',
-    index: 0,
-    balance: 0
-  },
+  current: initialAccount,
   loading: false,
   balanceMap: {},
   historyMap: {},
@@ -62,7 +64,7 @@ const slice = createSlice({
     },
     setCurrent(state, action: { payload: Account }) {
       const { payload } = action;
-      state.current = payload;
+      state.current = payload || initialAccount;
     },
     setAccounts(state, action: { payload: Account[] }) {
       const { payload } = action;

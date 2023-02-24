@@ -5,9 +5,7 @@ import eventBus from '@/shared/eventBus';
 import { useWallet } from '@/ui/utils';
 
 import { useIsUnlocked } from '../global/hooks';
-import { globalActions } from '../global/reducer';
 import { useAppDispatch } from '../hooks';
-import { settingsActions } from '../settings/reducer';
 import { useAccountBalance, useCurrentAccount, useFetchBalanceCallback, useFetchInscriptionsCallback } from './hooks';
 import { accountActions } from './reducer';
 
@@ -39,7 +37,7 @@ export default function AccountUpdater() {
 
   useEffect(() => {
     onCurrentChange();
-  }, [currentAccount.address, isUnlocked]);
+  }, [currentAccount && currentAccount.address, isUnlocked]);
 
   const fetchInscription = useFetchInscriptionsCallback();
 
@@ -61,30 +59,6 @@ export default function AccountUpdater() {
     fetchInscription();
   }, [fetchBalance, wallet, isUnlocked, self]);
 
-  const init = useCallback(async () => {
-    const isUnlocked = await wallet.isUnlocked();
-    dispatch(globalActions.update({ isUnlocked }));
-
-    wallet.getNetworkType().then((data) => {
-      dispatch(
-        settingsActions.updateSettings({
-          networkType: data
-        })
-      );
-    });
-
-    wallet.getInscriptionSummary().then((data) => {
-      dispatch(accountActions.setInscriptionSummary(data));
-    });
-
-    wallet.getAppSummary().then((data) => {
-      dispatch(accountActions.setAppSummary(data));
-    });
-
-    const _locale = await wallet.getLocale();
-    dispatch(settingsActions.updateSettings({ locale: _locale }));
-  }, [dispatch, wallet]);
-
   useEffect(() => {
     const accountChangeHandler = (account: Account) => {
       if (account && account.address) {
@@ -96,10 +70,6 @@ export default function AccountUpdater() {
       eventBus.removeEventListener('accountsChanged', accountChangeHandler);
     };
   }, [dispatch]);
-
-  useEffect(() => {
-    init();
-  }, []);
 
   return null;
 }

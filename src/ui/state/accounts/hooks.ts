@@ -127,6 +127,7 @@ export function useFetchBalanceCallback() {
   const currentAccount = useCurrentAccount();
   const balance = useAccountBalance();
   return useCallback(async () => {
+    if (!currentAccount.address) return;
     const preBalanceAmount = balance.amount;
     const _accountBalance = await wallet.getAddressBalance(currentAccount.address);
     dispatch(
@@ -146,6 +147,7 @@ export function useFetchInscriptionsCallback() {
   const wallet = useWallet();
   const currentAccount = useCurrentAccount();
   return useCallback(async () => {
+    if (!currentAccount.address) return;
     const inscriptions = await wallet.getAddressInscriptions(currentAccount.address);
     dispatch(
       accountActions.setInscriptions({
