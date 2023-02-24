@@ -1,14 +1,14 @@
 import { Layout } from 'antd';
 import { Content, Header } from 'antd/lib/layout/layout';
 import moment from 'moment';
-import { forwardRef, useEffect } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import CHeader from '@/ui/components/CHeader';
 import { useAccountAddress, useFetchHistoryCallback, useHistory } from '@/ui/state/accounts/hooks';
 import { useBlockstreamUrl } from '@/ui/state/settings/hooks';
 import { shortAddress } from '@/ui/utils';
-import { ClockCircleFilled } from '@ant-design/icons';
+import { ClockCircleFilled, LoadingOutlined } from '@ant-design/icons';
 
 interface HistoryItem {
   address: string;
@@ -91,8 +91,15 @@ export default function HistoryScreen() {
   const accountHistory = useHistory();
   const fetchHistory = useFetchHistoryCallback();
 
+  const [loading, setLoading] = useState(false);
+
   useEffect(() => {
-    fetchHistory();
+    if (accountHistory.list.length == 0) {
+      setLoading(true);
+    }
+    fetchHistory().finally(() => {
+      setLoading(false);
+    });
   }, []);
 
   const _historyGroups: GroupItem[] = [];
@@ -136,22 +143,28 @@ export default function HistoryScreen() {
         />
       </Header>
       <Content style={{ backgroundColor: '#1C1919', overflowY: 'auto' }}>
-        <div className="flex flex-col items-strech h-full gap-5 justify-evenly mt-5 mx-5">
-          <div className={'flex-1  min-h-[200px] w-full p-2 '} style={{}}>
-            {historyGroups.length === 0 ? (
-              <div className="flex flex-col items-center justify-center h-full gap-5 font-semibold text-soft-white">
-                <ClockCircleFilled className="text-2xl font-semibold text-soft-white" />
-                {t('This account has no transactions')}
-              </div>
-            ) : (
-              <>
-                {historyGroups.map((data, index) => (
-                  <MyItem key={index} group={data} index={index} />
-                ))}
-              </>
-            )}
+        {loading ? (
+          <div className="flex flex-col items-strech mx-5 text-6xl mt-60 gap-3_75 text-primary">
+            <LoadingOutlined />
           </div>
-        </div>
+        ) : (
+          <div className="flex flex-col items-strech h-full gap-5 justify-evenly mt-5 mx-5">
+            <div className={'flex-1  min-h-[200px] w-full p-2 '} style={{}}>
+              {historyGroups.length === 0 ? (
+                <div className="flex flex-col items-center justify-center h-full gap-5 font-semibold text-soft-white">
+                  <ClockCircleFilled className="text-2xl font-semibold text-soft-white" />
+                  {t('This account has no transactions')}
+                </div>
+              ) : (
+                <>
+                  {historyGroups.map((data, index) => (
+                    <MyItem key={index} group={data} index={index} />
+                  ))}
+                </>
+              )}
+            </div>
+          </div>
+        )}
       </Content>
     </Layout>
   );
