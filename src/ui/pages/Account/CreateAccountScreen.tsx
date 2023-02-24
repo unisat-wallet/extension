@@ -64,6 +64,7 @@ export default function CreateAccountScreen() {
               setAlianName(e.target.value);
             }}
             onKeyUp={(e) => handleOnKeyUp(e)}
+            autoFocus={true}
           />
           <Button
             size="large"

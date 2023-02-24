@@ -76,6 +76,7 @@ export default function ExportMnemonicsScreen() {
                     setPassword(e.target.value);
                   }}
                   onKeyUp={(e) => handleOnKeyUp(e)}
+                  autoFocus={true}
                 />
               </div>
               {error ? <div className="text-lg text-error">{error}</div> : <></>}

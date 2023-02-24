@@ -109,6 +109,7 @@ export default function ImportMnemonicsScreen() {
                     setActive(999);
                   }}
                   onKeyUp={(e) => handleOnKeyUp(e)}
+                  autoFocus={index == 0}
                 />
               </div>
             );

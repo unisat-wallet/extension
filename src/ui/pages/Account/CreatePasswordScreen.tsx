@@ -89,6 +89,7 @@ export default function CreatePasswordScreen() {
           onBlur={(e) => {
             setPassword(e.target.value);
           }}
+          autoFocus={true}
         />
         <Input.Password
           status={status2}

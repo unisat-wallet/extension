@@ -109,6 +109,7 @@ export default function OrdinalsTxCreateScreen() {
             onChange={async (e) => {
               setInputAddress(e.target.value);
             }}
+            autoFocus={true}
           />
 
           <span className="text-lg text-error h-5">{error}</span>

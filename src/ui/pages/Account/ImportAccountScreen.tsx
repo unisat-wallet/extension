@@ -65,7 +65,7 @@ export default function ImportAccountScreen() {
             </div>
           </div>
           <Input
-            className="font-semibold text-white mt-1_25 h-15_5"
+            className="font-semibold text-white mt-1_25 h-15_5 box default focus:active"
             status={inputStatus}
             placeholder={t('Private Key')}
             onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -76,6 +76,7 @@ export default function ImportAccountScreen() {
             onChange={(e) => {
               setPrivateKey(e.target.value);
             }}
+            autoFocus={true}
           />
           {inputError ? <div className="text-lg text-error">{inputError}</div> : <></>}
           <Button

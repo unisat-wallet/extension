@@ -80,6 +80,7 @@ export default function ExportPrivateKeyScreen() {
                     setPassword(e.target.value);
                   }}
                   onKeyUp={(e) => handleOnKeyUp(e)}
+                  autoFocus={true}
                 />
               </div>
               {error ? <div className="text-lg text-error">{error}</div> : <></>}

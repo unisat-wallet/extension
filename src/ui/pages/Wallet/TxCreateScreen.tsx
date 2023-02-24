@@ -134,6 +134,7 @@ export default function TxCreateScreen() {
               const val = e.target.value;
               setInputAddress(val);
             }}
+            autoFocus={true}
           />
           <div className="flex justify-between w-full mt-5 box text-soft-white">
             <span>{t('Balance')}</span>

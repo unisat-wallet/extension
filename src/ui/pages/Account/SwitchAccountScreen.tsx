@@ -35,6 +35,7 @@ function MyItem({ account }: MyItemProps, ref) {
   const dispatch = useAppDispatch();
   const addressType = useAddressType();
   const networkType = useNetworkType();
+
   if (!account) {
     return (
       <Button
@@ -87,11 +88,6 @@ function MyItem({ account }: MyItemProps, ref) {
 
 export default function SwitchAccountScreen() {
   const { t } = useTranslation();
-  const html = document.getElementsByTagName('html')[0];
-  let virtualListHeight = 500;
-  if (html && getComputedStyle(html).fontSize) {
-    virtualListHeight = (virtualListHeight * parseFloat(getComputedStyle(html).fontSize)) / 16;
-  }
 
   const accounts = useAccounts();
   const items = useMemo(() => {
@@ -106,7 +102,6 @@ export default function SwitchAccountScreen() {
     });
     return _items;
   }, []);
-
   const ForwardMyItem = forwardRef(MyItem);
 
   return (
@@ -119,12 +114,11 @@ export default function SwitchAccountScreen() {
         />
       </Header>
       <Content style={{ backgroundColor: '#1C1919' }}>
-        <div className="flex flex-col items-stech mx-5 mt-5 gap-3_75 justify-evenly">
+        <div className="flex flex-col items-stech mx-5 my-5 gap-3_75 justify-evenly">
           <div className="flex self-center px-2 text-2xl font-semibold h-13">{t('Switch Account')}</div>
           <VirtualList
             data={items}
             data-id="list"
-            height={virtualListHeight}
             itemHeight={20}
             itemKey={(item) => item.key}
             // disabled={animating}

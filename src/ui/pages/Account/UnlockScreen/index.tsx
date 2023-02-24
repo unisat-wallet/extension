@@ -58,6 +58,7 @@ export default function UnlockScreen() {
               placeholder="Password"
               onChange={(e) => setPassword(e.target.value)}
               onKeyUp={(e) => handleOnKeyUp(e)}
+              autoFocus={true}
             />
           </div>
           <div>

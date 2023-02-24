@@ -91,6 +91,7 @@ export default function ChangePasswordScreen() {
             onPressEnter={(e) => {
               handleOnBlur(e, 'passwordC');
             }}
+            autoFocus={true}
           />
           <Input.Password
             status={status1}
