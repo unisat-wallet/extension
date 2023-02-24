@@ -50,8 +50,9 @@ export class WalletController extends BaseController {
   openapi: OpenApiService = openapiService;
 
   /* wallet */
-  boot = (password) => keyringService.boot(password);
+  boot = (password: string) => keyringService.boot(password);
   isBooted = () => keyringService.isBooted();
+
   hasVault = () => keyringService.hasVault();
   verifyPassword = (password: string) => keyringService.verifyPassword(password);
   changePassword = (password: string, newPassword: string) => keyringService.changePassword(password, newPassword);
@@ -536,22 +537,40 @@ export class WalletController extends BaseController {
     console.error('report not implemented');
   };
 
-  sendBTC = async ({
-    to,
-    amount,
-    addressType,
-    utxos
-  }: {
-    to: string;
-    amount: number;
-    addressType: AddressType;
-    utxos: UTXO[];
-  }) => {
+  getAddressType = () => {
+    return preferenceService.getAddressType();
+  };
+
+  setAddressType = (addressType: AddressType) => {
+    preferenceService.setAddressType(addressType);
+  };
+
+  getNetworkType = async () => {
+    const networkType = preferenceService.getNetworkType();
+    return networkType;
+  };
+
+  setNetworkType = async (networkType: NetworkType) => {
+    preferenceService.setNetworkType(networkType);
+    if (networkType === NetworkType.MAINNET) {
+      this.openapi.setHost(OPENAPI_URL_MAINNET);
+    } else {
+      this.openapi.setHost(OPENAPI_URL_TESTNET);
+    }
+  };
+
+  getNetwork = async () => {
+    const networkType = await this.getNetworkType();
+    return toPsbtNetwork(networkType);
+  };
+
+  sendBTC = async ({ to, amount, utxos }: { to: string; amount: number; utxos: UTXO[] }) => {
     amount = btcToSatoshis(amount);
-    const account = await preferenceService.getCurrentAccount();
+    const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
-    const networkType = await this.getNetworkType();
+    const addressType = preferenceService.getAddressType();
+    const networkType = preferenceService.getNetworkType();
     const tx = new SingleAccountTransaction(account, this, addressType, networkType);
 
     const safeUTXOs: UTXO[] = [];
@@ -577,40 +596,12 @@ export class WalletController extends BaseController {
     return data;
   };
 
-  getNetworkType = async () => {
-    const networkType = await preferenceService.getNetworkType();
-    return networkType;
-  };
-
-  setNetworkType = async (networkType: NetworkType) => {
-    await preferenceService.setNetworkType(networkType);
-    if (networkType === NetworkType.MAINNET) {
-      this.openapi.setHost(OPENAPI_URL_MAINNET);
-    } else {
-      this.openapi.setHost(OPENAPI_URL_TESTNET);
-    }
-  };
-
-  getNetwork = async () => {
-    const networkType = await this.getNetworkType();
-    return toPsbtNetwork(networkType);
-  };
-
-  sendInscription = async ({
-    to,
-    inscriptionId,
-    addressType,
-    utxos
-  }: {
-    to: string;
-    inscriptionId: string;
-    addressType: AddressType;
-    utxos: UTXO[];
-  }) => {
+  sendInscription = async ({ to, inscriptionId, utxos }: { to: string; inscriptionId: string; utxos: UTXO[] }) => {
     const account = await preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
-    const networkType = await this.getNetworkType();
+    const addressType = preferenceService.getAddressType();
+    const networkType = preferenceService.getNetworkType();
 
     const tx = new SingleAccountTransaction(account, this, addressType, networkType);
 

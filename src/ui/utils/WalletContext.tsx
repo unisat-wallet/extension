@@ -12,23 +12,27 @@ import {
   Inscription,
   InscriptionSummary,
   AppSummary,
-  AddressType,
   UTXO,
-  NetworkType
+  NetworkType,
+  AddressType
 } from '@/shared/types';
 
-export type WalletController = {
+export interface WalletController {
   openapi?: {
     [key: string]: (...params: any) => Promise<any>;
   };
 
   boot(password: string): Promise<void>;
   isBooted(): Promise<boolean>;
+
   hasVault(): Promise<boolean>;
+
   verifyPassword(password: string): Promise<void>;
   changePassword: (password: string, newPassword: string) => Promise<void>;
+
   unlock(password: string): Promise<void>;
   isUnlocked(): Promise<boolean>;
+
   lockWallet(): Promise<void>;
   setPopupOpen(isOpen: boolean): void;
   isReady(): Promise<boolean>;
@@ -83,13 +87,11 @@ export type WalletController = {
   sendBTC(data: {
     to: string;
     amount: number;
-    addressType: AddressType;
     utxos: UTXO[];
   }): Promise<{ fee: number; rawtx: string; toAmount: number }>;
   sendInscription(data: {
     to: string;
     inscriptionId: string;
-    addressType: AddressType;
     utxos: UTXO[];
   }): Promise<{ fee: number; rawtx: string; toAmount: number }>;
   pushTx(rawtx: string): Promise<string>;
@@ -97,9 +99,13 @@ export type WalletController = {
   getInscriptionSummary(): Promise<InscriptionSummary>;
   getAppSummary(): Promise<AppSummary>;
   getAddressUtxo(address: string): Promise<UTXO[]>;
+
+  getAddressType(): Promise<AddressType>;
+  setAddressType(type: AddressType): Promise<void>;
+
   getNetworkType(): Promise<NetworkType>;
   setNetworkType(type: NetworkType): Promise<void>;
-};
+}
 
 const WalletContext = createContext<{
   wallet: WalletController;

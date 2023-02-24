@@ -4,7 +4,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { createPersistStore } from '@/background/utils';
 import { EVENTS } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
-import { BitcoinBalance, NetworkType, TxHistoryItem } from '@/shared/types';
+import { AddressType, BitcoinBalance, NetworkType, TxHistoryItem } from '@/shared/types';
 
 import browser from '../webapi/browser';
 import { i18n, keyringService } from './index';
@@ -38,6 +38,7 @@ export interface PreferenceStore {
   currentVersion: string;
   firstOpen: boolean;
   currency: string;
+  addressType: AddressType;
   networkType: NetworkType;
 }
 
@@ -65,6 +66,7 @@ class PreferenceService {
         currentVersion: '0',
         firstOpen: false,
         currency: 'USD',
+        addressType: AddressType.P2WPKH,
         networkType: NetworkType.MAINNET
       }
     });
@@ -94,6 +96,10 @@ class PreferenceService {
 
     if (!this.store.walletSavedList) {
       this.store.walletSavedList = [];
+    }
+
+    if (!this.store.addressType) {
+      this.store.addressType = AddressType.P2WPKH;
     }
 
     if (!this.store.networkType) {
@@ -131,6 +137,7 @@ class PreferenceService {
     }
   };
 
+  // popupOpen
   setPopupOpen = (isOpen: boolean) => {
     this.popupOpen = isOpen;
   };
@@ -139,6 +146,7 @@ class PreferenceService {
     return this.popupOpen;
   };
 
+  // addressBalance
   updateAddressBalance = (address: string, data: BitcoinBalance) => {
     const balanceMap = this.store.balanceMap || {};
     this.store.balanceMap = {
@@ -161,6 +169,7 @@ class PreferenceService {
     return balanceMap[address] || null;
   };
 
+  // addressHistory
   updateAddressHistory = (address: string, data: TxHistoryItem[]) => {
     const historyMap = this.store.historyMap || {};
     this.store.historyMap = {
@@ -183,6 +192,7 @@ class PreferenceService {
     return historyMap[address] || [];
   };
 
+  // externalLinkAck
   getExternalLinkAck = (): boolean => {
     return this.store.externalLinkAck;
   };
@@ -191,6 +201,7 @@ class PreferenceService {
     this.store.externalLinkAck = ack;
   };
 
+  // locale
   getLocale = () => {
     return this.store.locale;
   };
@@ -200,6 +211,7 @@ class PreferenceService {
     i18n.changeLanguage(locale);
   };
 
+  // currency
   getCurrency = () => {
     return this.store.currency;
   };
@@ -208,6 +220,7 @@ class PreferenceService {
     this.store.currency = currency;
   };
 
+  // walletSavedList
   getWalletSavedList = () => {
     return this.store.walletSavedList || [];
   };
@@ -216,6 +229,7 @@ class PreferenceService {
     this.store.walletSavedList = list;
   };
 
+  // alianNames
   getInitAlianNameStatus = () => {
     return this.store.initAlianNames;
   };
@@ -224,6 +238,7 @@ class PreferenceService {
     this.store.initAlianNames = true;
   };
 
+  // isFirstOpen
   getIsFirstOpen = () => {
     if (!this.store.currentVersion || compareVersions(version, this.store.currentVersion)) {
       this.store.currentVersion = version;
@@ -236,6 +251,16 @@ class PreferenceService {
     this.store.firstOpen = false;
   };
 
+  // address type
+  getAddressType = () => {
+    return this.store.addressType;
+  };
+
+  setAddressType = (addressType: AddressType) => {
+    this.store.addressType = addressType;
+  };
+
+  // network type
   getNetworkType = () => {
     return this.store.networkType;
   };

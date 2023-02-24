@@ -7,7 +7,6 @@ import { AppState } from '..';
 import { useAccountAddress, useCurrentAccount } from '../accounts/hooks';
 import { accountActions } from '../accounts/reducer';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { useAddressType } from '../settings/hooks';
 import { transactionsActions } from './reducer';
 
 export function useTransactionsState(): AppState['transactions'] {
@@ -24,11 +23,10 @@ export function useCreateBitcoinTxCallback() {
   const bitcoinTx = useBitcoinTx();
   const wallet = useWallet();
   const fromAddress = useAccountAddress();
-  const addressType = useAddressType();
   const utxos = useUtxos();
   return useCallback(
     async (toAddress: string, toAmount: number) => {
-      const result = await wallet.sendBTC({ to: toAddress, amount: toAmount, addressType, utxos });
+      const result = await wallet.sendBTC({ to: toAddress, amount: toAmount, utxos });
       const changeAmount = fromAddress === toAddress ? 0 : toAmount + result.fee;
       dispatch(
         transactionsActions.updateBitcoinTx({
@@ -42,7 +40,7 @@ export function useCreateBitcoinTxCallback() {
       );
       return result.toAmount;
     },
-    [dispatch, bitcoinTx, wallet, fromAddress, addressType, utxos]
+    [dispatch, bitcoinTx, wallet, fromAddress, utxos]
   );
 }
 
@@ -77,11 +75,10 @@ export function useCreateOrdinalsTxCallback() {
   const ordinalsTx = useOrdinalsTx();
   const wallet = useWallet();
   const fromAddress = useAccountAddress();
-  const addressType = useAddressType();
   const utxos = useUtxos();
   return useCallback(
     async (toAddress: string, inscription: Inscription) => {
-      const result = await wallet.sendInscription({ to: toAddress, inscriptionId: inscription.id, addressType, utxos });
+      const result = await wallet.sendInscription({ to: toAddress, inscriptionId: inscription.id, utxos });
       const changeAmount = fromAddress === toAddress ? 0 : result.fee;
       dispatch(
         transactionsActions.updateOrdinalsTx({
@@ -94,7 +91,7 @@ export function useCreateOrdinalsTxCallback() {
         })
       );
     },
-    [dispatch, ordinalsTx, wallet, fromAddress, addressType, utxos]
+    [dispatch, ordinalsTx, wallet, fromAddress, utxos]
   );
 }
 
