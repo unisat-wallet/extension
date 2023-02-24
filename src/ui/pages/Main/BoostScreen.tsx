@@ -47,12 +47,6 @@ export default function BoostScreen() {
       return;
     }
 
-    if ((await wallet.hasPageStateCache()) && !isInNotification && !isInTab) {
-      const cache = await wallet.getPageStateCache()!;
-      navigate(cache.path as any);
-      return;
-    }
-
     if ((await wallet.getPreMnemonics()) && !isInNotification && !isInTab) {
       navigate('CreateMnemonicsScreen');
       return;

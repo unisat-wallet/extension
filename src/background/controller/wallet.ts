@@ -10,15 +10,12 @@ import {
   keyringService,
   notificationService,
   openapiService,
-  pageStateCacheService,
   permissionService,
   preferenceService,
   sessionService
 } from '@/background/service';
 import i18n from '@/background/service/i18n';
 import { DisplayedKeryring, Keyring, KEYRING_CLASS, ToSignInput } from '@/background/service/keyring';
-import { CacheState } from '@/background/service/pageStateCache';
-import { openIndexPage } from '@/background/webapi/tab';
 import {
   BRAND_ALIAN_TYPE_TEXT,
   COIN_NAME,
@@ -138,19 +135,6 @@ export class WalletController extends BaseController {
   };
   setPopupOpen = (isOpen: boolean) => {
     preferenceService.setPopupOpen(isOpen);
-  };
-  openIndexPage = openIndexPage;
-
-  hasPageStateCache = () => pageStateCacheService.has();
-  getPageStateCache = () => {
-    if (!this.isUnlocked()) return null;
-    return pageStateCacheService.get();
-  };
-  clearPageStateCache = () => {
-    pageStateCacheService.clear();
-  };
-  setPageStateCache = (cache: CacheState) => {
-    pageStateCacheService.set(cache);
   };
 
   getAddressBalance = async (address: string) => {

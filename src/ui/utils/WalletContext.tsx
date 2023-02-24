@@ -5,7 +5,6 @@ import { AccountAsset } from '@/background/controller/wallet';
 import { ContactBookItem, ContactBookStore } from '@/background/service/contactBook';
 import { DisplayedKeryring, ToSignInput } from '@/background/service/keyring';
 import DisplayKeyring from '@/background/service/keyring/display';
-import { CacheState } from '@/background/service/pageStateCache';
 import { Account } from '@/background/service/preference';
 import {
   BitcoinBalance,
@@ -46,12 +45,6 @@ export type WalletController = {
     | undefined;
   resolveApproval: (data?: any, forceReject?: boolean) => void;
   rejectApproval: (err?: string | undefined, stay?: boolean, isInternal?: boolean) => Promise<void>;
-
-  openIndexPage(): Promise<number>;
-  hasPageStateCache(): boolean;
-  getPageStateCache(): CacheState;
-  clearPageStateCache(): void;
-  setPageStateCache(cache: CacheState): void;
 
   getAddressBalance(address: string): Promise<BitcoinBalance>;
   getAddressCacheBalance(address: string): Promise<BitcoinBalance>;
