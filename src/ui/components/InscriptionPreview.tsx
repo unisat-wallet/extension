@@ -25,9 +25,18 @@ function getDateShowdate(date: Date) {
 }
 
 const sizeMap = {
-  large: 'w-95 h-95',
-  medium: 'w-48 h-48',
-  small: 'w-24 h-24'
+  large: {
+    iframe: 'w-95 h-95',
+    time: ''
+  },
+  medium: {
+    iframe: 'w-48 h-48',
+    time: ''
+  },
+  small: {
+    iframe: 'w-24 h-24',
+    time: 'h-5'
+  }
 };
 export default function InscriptionPreview({
   data,
@@ -51,12 +60,12 @@ export default function InscriptionPreview({
         }}
         className={`flex flex-col shadow  shadow-soft-black ${className}`}
         style={{ backgroundColor: '#2a2a2a' }}>
-        <Iframe preview={detail.preview} className={sizeMap[size]} />
+        <Iframe preview={detail.preview} className={sizeMap[size].iframe} />
 
-        <div className="px-2 pt-1 text-sm" style={{ color: '#f6ae2d' }}>
+        <div className="px-2 pt-1 text-sm w-24" style={{ color: '#f6ae2d' }}>
           # {data.number}
         </div>
-        <div className="px-2 pb-1 text-sm" style={{ color: '#8A8A8A' }}>
+        <div className={`px-1 pb-1 text-sm ${sizeMap[size].time}`} style={{ color: '#8A8A8A' }}>
           {time}
         </div>
       </div>
