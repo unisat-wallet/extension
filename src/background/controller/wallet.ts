@@ -603,7 +603,7 @@ export class WalletController extends BaseController {
 
     const tx = new SingleAccountTransaction(account, this, addressType, networkType);
 
-    const NFT_DUST = 500;
+    const NFT_DUST = 546;
     const toAddress = to;
     const safeUTXOs: UTXO[] = [];
 
