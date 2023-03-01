@@ -190,7 +190,7 @@ export class SingleAccountTransaction {
     return psbt;
   }
 
-  async generate(sendAllIfNotEnough: boolean) {
+  async generate(autoAdjust: boolean) {
     // Try to estimate fee
     const unspent = this.getUnspent();
     this.addChangeOutput(Math.max(unspent, 0));
@@ -209,22 +209,20 @@ export class SingleAccountTransaction {
         this.addChangeOutput(left);
       }
     } else {
-      if (sendAllIfNotEnough) {
+      if (autoAdjust) {
         this.outputs[0].value -= fee - unspent;
-      } else {
-        throw new Error('Balance not enough');
       }
     }
-
     const psbt2 = await this.createSignedPsbt();
     const tx = psbt2.extractTransaction();
 
     const rawtx = tx.toHex();
     const toAmount = this.outputs[0].value;
     return {
-      fee: satoshisToBTC(psbt2.getFee()),
+      fee: psbt2.getFee(),
       rawtx,
-      toAmount: satoshisToBTC(toAmount)
+      toSatoshis: toAmount,
+      estimateFee: fee
     };
   }
 
@@ -249,9 +247,9 @@ export class SingleAccountTransaction {
     const rawtx = tx.toHex();
     const toAmount = this.outputs[0].value;
     return {
-      fee: satoshisToBTC(psbt2.getFee()),
+      fee: psbt2.getFee(),
       rawtx,
-      toAmount: satoshisToBTC(toAmount)
+      toSatoshis: toAmount
     };
   }
 

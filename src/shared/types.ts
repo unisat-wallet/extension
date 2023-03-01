@@ -37,7 +37,7 @@ export interface TxHistoryItem {
 export interface Inscription {
   id: string;
   num: number;
-  number: number;
+  number?: number;
   detail?: {
     address: string;
     content: string;

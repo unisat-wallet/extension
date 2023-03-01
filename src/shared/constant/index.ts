@@ -144,7 +144,7 @@ export const GASPRICE_RANGE = {
 export const COIN_NAME = 'BTC';
 export const COIN_SYMBOL = 'BTC';
 
-export const COIN_DUST = 0.00001;
+export const COIN_DUST = 1000;
 
 export const TO_LOCALE_STRING_CONFIG = {
   minimumFractionDigits: 8

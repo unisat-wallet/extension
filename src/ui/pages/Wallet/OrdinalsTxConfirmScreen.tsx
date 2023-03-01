@@ -1,12 +1,13 @@
 import { Button } from 'antd';
 import { Layout } from 'antd';
 import { Content, Header } from 'antd/lib/layout/layout';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import CHeader from '@/ui/components/CHeader';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { useOrdinalsTx, usePushOrdinalsTxCallback } from '@/ui/state/transactions/hooks';
-import { shortAddress } from '@/ui/utils';
+import { satoshisToAmount, shortAddress } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
@@ -16,6 +17,8 @@ export default function OrdinalsTxConfirmScreen() {
   const navigate = useNavigate();
   const ordinalsTx = useOrdinalsTx();
   const pushOrdinalsTx = usePushOrdinalsTxCallback();
+
+  const feeAmount = useMemo(() => satoshisToAmount(ordinalsTx.fee), [ordinalsTx.fee]);
   return (
     <Layout className="h-full">
       <Header className=" border-white border-opacity-10">
@@ -47,7 +50,7 @@ export default function OrdinalsTxConfirmScreen() {
             <div className="w-full text-left text-soft-white">{t('Fee')}</div>
             <div className="justify-end w-full box nobor text-soft-white">
               <span>
-                <span className="font-semibold text-white">{ordinalsTx.fee.toFixed(8)}</span> BTC
+                <span className="font-semibold text-white">{`${feeAmount} BTC`}</span>
               </span>
             </div>
 

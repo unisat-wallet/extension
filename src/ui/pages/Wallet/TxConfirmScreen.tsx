@@ -1,11 +1,12 @@
 import { Button } from 'antd';
 import { Layout } from 'antd';
 import { Content, Header } from 'antd/lib/layout/layout';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import CHeader from '@/ui/components/CHeader';
 import { useBitcoinTx, usePushBitcoinTxCallback } from '@/ui/state/transactions/hooks';
-import { shortAddress } from '@/ui/utils';
+import { satoshisToAmount, shortAddress } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
@@ -15,7 +16,9 @@ export default function TxConfirmScreen() {
   const navigate = useNavigate();
   const bitcoinTx = useBitcoinTx();
   const pushBitcoinTx = usePushBitcoinTxCallback();
+  const toAmount = useMemo(() => satoshisToAmount(bitcoinTx.toSatoshis), [bitcoinTx.toSatoshis]);
 
+  const feeAmount = useMemo(() => satoshisToAmount(bitcoinTx.fee), [bitcoinTx.fee]);
   return (
     <Layout className="h-full">
       <Header className=" border-white border-opacity-10">
@@ -45,13 +48,13 @@ export default function TxConfirmScreen() {
             <div className="w-full text-left text-soft-white">{t('Amount')}</div>
             <div className="justify-end w-full box nobor text-soft-white">
               <span>
-                <span className="font-semibold text-white">{bitcoinTx.toAmount.toFixed(8)}</span> BTC
+                <span className="font-semibold text-white">{toAmount}</span> BTC
               </span>
             </div>
             <div className="w-full text-left text-soft-white">{t('Fee')}</div>
             <div className="justify-end w-full box nobor text-soft-white">
               <span>
-                <span className="font-semibold text-white">{bitcoinTx.fee.toFixed(8)}</span> BTC
+                <span className="font-semibold text-white">{feeAmount}</span> BTC
               </span>
             </div>
 

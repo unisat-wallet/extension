@@ -1,3 +1,5 @@
+import BigNumber from 'bignumber.js';
+
 export * from './hooks';
 export * from './WalletContext';
 const UI_TYPE = {
@@ -145,4 +147,14 @@ export function formatDate(date: Date, fmt = 'yyyy-MM-dd hh:mm:ss') {
     if (new RegExp(`(${k})`).test(fmt))
       fmt = fmt.replace(RegExp.$1, RegExp.$1.length === 1 ? o[k] : `00${o[k]}`.substr(`${o[k]}`.length));
   return fmt;
+}
+
+export function satoshisToAmount(val: number) {
+  const num = new BigNumber(val);
+  return num.dividedBy(100000000).toFixed(8);
+}
+
+export function amountToSaothis(val: any) {
+  const num = new BigNumber(val);
+  return num.multipliedBy(100000000).toNumber();
 }

@@ -31,14 +31,6 @@ const ECPair = ECPairFactory(ecc);
 
 export const toXOnly = (pubKey: Buffer) => (pubKey.length === 32 ? pubKey : pubKey.slice(1, 33));
 
-function btcToSatoshis(amount: number) {
-  return Math.ceil(amount * 100000000);
-}
-
-function satoshisToBTC(amount: number) {
-  return amount / 100000000;
-}
-
 export type AccountAsset = {
   name: string;
   symbol: string;
@@ -564,8 +556,17 @@ export class WalletController extends BaseController {
     return toPsbtNetwork(networkType);
   };
 
-  sendBTC = async ({ to, amount, utxos }: { to: string; amount: number; utxos: UTXO[] }) => {
-    amount = btcToSatoshis(amount);
+  sendBTC = async ({
+    to,
+    amount,
+    utxos,
+    autoAdjust
+  }: {
+    to: string;
+    amount: number;
+    utxos: UTXO[];
+    autoAdjust: boolean;
+  }) => {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
@@ -577,22 +578,19 @@ export class WalletController extends BaseController {
     utxos.forEach((utxo) => {
       const nftCount = utxo.inscriptions.length;
       if (nftCount > 0) {
-        // 需要切开处理
+        // todo
       } else {
         safeUTXOs.push(utxo);
       }
     });
 
-    // 只支持发送没有NFT的部分
     safeUTXOs.forEach((utxo) => {
       tx.addInput(utxo);
     });
 
-    const safeAmount = safeUTXOs.reduce((pre, cur) => pre + cur.satoshis, 0);
+    tx.addOutput(to, amount);
 
-    tx.addOutput(to, Math.min(amount, safeAmount));
-
-    const data = await tx.generate(true);
+    const data = await tx.generate(autoAdjust);
     return data;
   };
 

@@ -25,20 +25,22 @@ export function useCreateBitcoinTxCallback() {
   const fromAddress = useAccountAddress();
   const utxos = useUtxos();
   return useCallback(
-    async (toAddress: string, toAmount: number) => {
-      const result = await wallet.sendBTC({ to: toAddress, amount: toAmount, utxos });
-      const changeAmount = fromAddress === toAddress ? 0 : toAmount + result.fee;
+    async (toAddress: string, toAmount: number, autoAdjust = false) => {
+      const result = await wallet.sendBTC({ to: toAddress, amount: toAmount, utxos, autoAdjust });
+      const changeSatoshis = fromAddress === toAddress ? 0 : toAmount + result.fee;
       dispatch(
         transactionsActions.updateBitcoinTx({
           rawtx: result.rawtx,
           fee: result.fee,
+          estimateFee: result.estimateFee,
           toAddress,
           fromAddress,
-          toAmount: result.toAmount,
-          changeAmount
+          toSatoshis: result.toSatoshis,
+          changeSatoshis,
+          autoAdjust
         })
       );
-      return result.toAmount;
+      return result;
     },
     [dispatch, bitcoinTx, wallet, fromAddress, utxos]
   );
@@ -80,15 +82,16 @@ export function useCreateOrdinalsTxCallback() {
   return useCallback(
     async (toAddress: string, inscription: Inscription) => {
       const result = await wallet.sendInscription({ to: toAddress, inscriptionId: inscription.id, utxos });
-      const changeAmount = fromAddress === toAddress ? 0 : result.fee;
+      const changeSatoshis = fromAddress === toAddress ? 0 : result.fee;
       dispatch(
         transactionsActions.updateOrdinalsTx({
           rawtx: result.rawtx,
           fee: result.fee,
+          estimateFee: result.fee,
           fromAddress,
           toAddress,
           inscription,
-          changeAmount
+          changeSatoshis
         })
       );
     },

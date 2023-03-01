@@ -3,17 +3,15 @@ import { Content, Header } from 'antd/lib/layout/layout';
 import { useTranslation } from 'react-i18next';
 
 import CHeader from '@/ui/components/CHeader';
-import { useNavigate } from '@/ui/pages/MainRoute';
 
 export default function TxFailScreen() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   return (
     <Layout className="h-full">
       <Header className=" border-white border-opacity-10">
         <CHeader
           onBack={() => {
-            navigate('TxConfirmScreen');
+            window.history.go(-1);
           }}
         />
       </Header>

@@ -88,12 +88,13 @@ export interface WalletController {
     to: string;
     amount: number;
     utxos: UTXO[];
-  }): Promise<{ fee: number; rawtx: string; toAmount: number }>;
+    autoAdjust: boolean;
+  }): Promise<{ fee: number; rawtx: string; toSatoshis: number; estimateFee: number }>;
   sendInscription(data: {
     to: string;
     inscriptionId: string;
     utxos: UTXO[];
-  }): Promise<{ fee: number; rawtx: string; toAmount: number }>;
+  }): Promise<{ fee: number; rawtx: string; toSatoshis: number }>;
   pushTx(rawtx: string): Promise<string>;
 
   getInscriptionSummary(): Promise<InscriptionSummary>;

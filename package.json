@@ -61,6 +61,7 @@
     "babel-plugin-named-asset-import": "^0.3.8",
     "babel-preset-react-app": "^10.0.1",
     "bfj": "^7.0.2",
+    "bignumber.js": "^9.1.1",
     "bitcoinjs-lib": "^6.1.0",
     "browser-passworder": "^2.0.3",
     "browserify": "^17.0.0",

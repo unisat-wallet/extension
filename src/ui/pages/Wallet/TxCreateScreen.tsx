@@ -1,6 +1,7 @@
 import { Button, Input, Layout } from 'antd';
 import { Content, Header } from 'antd/lib/layout/layout';
-import { useEffect, useState } from 'react';
+import BigNumber from 'bignumber.js';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { COIN_DUST } from '@/shared/constant';
@@ -13,9 +14,7 @@ import {
   useFetchUtxosCallback,
   useSafeBalance
 } from '@/ui/state/transactions/hooks';
-import { isValidAddress } from '@/ui/utils';
-
-type InputState = '' | 'error' | 'warning' | undefined;
+import { amountToSaothis, isValidAddress, satoshisToAmount } from '@/ui/utils';
 
 export default function TxCreateScreen() {
   const { t } = useTranslation();
@@ -23,13 +22,15 @@ export default function TxCreateScreen() {
   const safeBalance = useSafeBalance();
   const navigate = useNavigate();
   const bitcoinTx = useBitcoinTx();
-  const [statueAdd, setStatueAdd] = useState<InputState>('');
-  const [statueAmt, setStatueAmt] = useState<InputState>('');
-  const [inputAmount, setInputAmount] = useState(bitcoinTx.toAmount > 0 ? bitcoinTx.toAmount.toString() : '');
+  const [inputAmount, setInputAmount] = useState(
+    bitcoinTx.toSatoshis > 0 ? satoshisToAmount(bitcoinTx.toSatoshis) : ''
+  );
   const [disabled, setDisabled] = useState(true);
 
   const [inputAddress, setInputAddress] = useState(bitcoinTx.toAddress);
   const [error, setError] = useState('');
+
+  const [autoAdjust, setAutoAdjust] = useState(false);
 
   const fetchUtxos = useFetchUtxosCallback();
   useEffect(() => {
@@ -37,79 +38,64 @@ export default function TxCreateScreen() {
   }, []);
 
   const createBitcoinTx = useCreateBitcoinTxCallback();
-  const verify = () => {
-    setStatueAdd('');
-    setStatueAmt('');
-    if (!isValidAddress(inputAddress)) {
-      setStatueAdd('error');
-      setError('Invalid Address');
-      return;
-    }
-    const toAmount = bitcoinTx.toAmount;
-    if (!toAmount || toAmount < COIN_DUST || toAmount > safeBalance) {
-      setStatueAmt('error');
-      setError('Invalid Amount');
-      return;
-    }
-    // to verify
-    navigate('TxConfirmScreen');
-  };
 
+  const safeSatoshis = useMemo(() => {
+    return amountToSaothis(safeBalance);
+  }, [safeBalance]);
+
+  const toSatoshis = useMemo(() => {
+    if (!inputAmount) return 0;
+    return amountToSaothis(inputAmount);
+  }, [inputAmount]);
+
+  const feeAmount = useMemo(() => {
+    return satoshisToAmount(bitcoinTx.fee);
+  }, [bitcoinTx.fee]);
+
+  const dustAmount = useMemo(() => satoshisToAmount(COIN_DUST), [COIN_DUST]);
   useEffect(() => {
     setError('');
-    const toAmount = parseFloat(inputAmount);
+    setDisabled(true);
+
     const toAddress = inputAddress;
     if (!isValidAddress(toAddress)) {
       return;
     }
-    if (!toAmount) {
+    if (!toSatoshis) {
       return;
     }
-    if (toAmount < COIN_DUST || toAmount > safeBalance) {
+    if (toSatoshis < COIN_DUST) {
+      setError(`Amount must be at least ${dustAmount} BTC`);
       return;
     }
 
-    if (toAddress == bitcoinTx.toAddress && toAmount == bitcoinTx.toAmount) {
+    if (toSatoshis > safeSatoshis) {
+      setError('Amount exceeds your available balance');
+      return;
+    }
+
+    if (toAddress == bitcoinTx.toAddress && toSatoshis == bitcoinTx.toSatoshis && autoAdjust == bitcoinTx.autoAdjust) {
       //Prevent repeated triggering caused by setAmount
+      setDisabled(false);
       return;
     }
-    const run = async () => {
-      createBitcoinTx(toAddress, toAmount)
-        .then((data) => {
-          setInputAmount(data.toString());
-        })
-        .catch((e) => {
-          console.log(e);
-          setError(e.message);
-        });
-    };
+    createBitcoinTx(toAddress, toSatoshis, autoAdjust)
+      .then((data) => {
+        if (data.fee < data.estimateFee) {
+          setError(`Network fee must be at leat ${data.estimateFee}`);
+          return;
+        }
+        setDisabled(false);
+      })
+      .catch((e) => {
+        setError(e.message);
+      });
+  }, [inputAddress, inputAmount, autoAdjust]);
 
-    run();
-  }, [inputAddress, inputAmount]);
-
-  const handleValueChanged = (value: string) => {
-    let newValue = parseFloat(value);
-    if (!newValue) {
-      newValue = 0;
-    }
-    if (newValue < COIN_DUST) {
-      newValue = COIN_DUST;
-    }
-
-    if (safeBalance && newValue > Number(safeBalance)) {
-      newValue = Number(safeBalance);
-    }
-
-    setInputAmount(newValue.toFixed(8));
-  };
-
-  useEffect(() => {
-    setDisabled(true);
-    if (bitcoinTx.toAddress && bitcoinTx.toAmount) {
-      setDisabled(false);
-    }
-  }, [bitcoinTx]);
-
+  const showSafeBalance = useMemo(
+    () => new BigNumber(accountBalance.amount).eq(new BigNumber(safeBalance)) == false,
+    [accountBalance.amount, safeBalance]
+  );
   return (
     <Layout className="h-full">
       <Header className=" border-white border-opacity-10">
@@ -128,7 +114,6 @@ export default function TxCreateScreen() {
           <Input
             className="mt-5 font-semibold text-white h-15_5 box default hover"
             placeholder={t('Recipients BTC address')}
-            status={statueAdd}
             defaultValue={inputAddress}
             onChange={async (e) => {
               const val = e.target.value;
@@ -138,55 +123,53 @@ export default function TxCreateScreen() {
           />
           <div className="flex justify-between w-full mt-5 box text-soft-white">
             <span>{t('Balance')}</span>
-            <span>
-              <span
-                className="font-semibold text-white cursor-pointer"
-                onClick={(e) => {
-                  handleValueChanged(accountBalance.amount);
+            {showSafeBalance ? (
+              <div>
+                <span className="font-semibold text-white">{`${accountBalance.amount} BTC`}</span>
+              </div>
+            ) : (
+              <div
+                className="flex cursor-pointer"
+                onClick={() => {
+                  setAutoAdjust(true);
+                  setInputAmount(accountBalance.amount);
                 }}>
-                {accountBalance.amount}
-              </span>{' '}
-              BTC
-            </span>
+                <div className={`font-semibold mx-5 ${autoAdjust ? 'text-yellow-300' : ''}`}>MAX</div>
+                <span className="font-semibold text-white">{`${accountBalance.amount} BTC`}</span>
+              </div>
+            )}
           </div>
-          {accountBalance.amount != safeBalance.toString() && (
+          {showSafeBalance && (
             <div className="flex justify-between w-full mt-5 box text-soft-white">
               <span>Available (safe to send)</span>
-              <span>
-                <span
-                  className="font-semibold text-white cursor-pointer"
-                  onClick={(e) => {
-                    handleValueChanged(safeBalance.toString());
-                  }}>
-                  {safeBalance}
-                </span>{' '}
-                BTC
-              </span>
+              <div
+                className="flex cursor-pointer"
+                onClick={() => {
+                  setAutoAdjust(true);
+                  setInputAmount(safeBalance.toString());
+                }}>
+                <div className={`font-semibold mx-5 ${autoAdjust ? 'text-yellow-300' : ''}`}>MAX</div>
+                <span className="font-semibold text-white ">{`${safeBalance} BTC`}</span>
+              </div>
             </div>
           )}
           <Input
-            className="font-semibold text-white h-15_5 box default hover"
-            placeholder={t('Amount') + ` ( >${COIN_DUST} )`}
-            status={statueAmt}
-            defaultValue={bitcoinTx.toAmount || ''}
-            onBlur={() => {
-              handleValueChanged(inputAmount);
-            }}
-            onKeyDown={(e) => {
-              if (e.code == 'Enter') {
-                handleValueChanged(inputAmount);
-              }
-            }}
+            className="font-semibold  text-white h-15_5 box default hover"
+            placeholder={t('Amount')}
+            defaultValue={inputAmount}
             value={inputAmount}
             onChange={async (e) => {
+              if (autoAdjust == true) {
+                setAutoAdjust(false);
+              }
               setInputAmount(e.target.value);
             }}
           />
 
           <div className="flex justify-between w-full mt-5 text-soft-white">
-            <span>{t('Fee')}</span>
+            <span>{t('Network Fee')}</span>
             <span>
-              <span className="font-semibold text-white">{bitcoinTx.fee.toFixed(8)}</span> BTC
+              <span className="font-semibold text-white">{feeAmount}</span> BTC
             </span>
           </div>
           <span className="text-lg text-error h-5">{error}</span>
@@ -197,7 +180,7 @@ export default function TxCreateScreen() {
             type="primary"
             className="box"
             onClick={(e) => {
-              verify();
+              navigate('TxConfirmScreen');
             }}>
             <div className="flex items-center justify-center text-lg font-semibold">{t('Next')}</div>
           </Button>

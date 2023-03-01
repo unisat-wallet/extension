@@ -6,12 +6,14 @@ import { updateVersion } from '../global/actions';
 export interface BitcoinTx {
   fromAddress: string;
   toAddress: string;
-  toAmount: number;
+  toSatoshis: number;
   rawtx: string;
   txid: string;
   fee: number;
-  changeAmount: number;
+  estimateFee: number;
+  changeSatoshis: number;
   sending: boolean;
+  autoAdjust: boolean;
 }
 
 export interface OrdinalsTx {
@@ -21,7 +23,8 @@ export interface OrdinalsTx {
   rawtx: string;
   txid: string;
   fee: number;
-  changeAmount: number;
+  estimateFee: number;
+  changeSatoshis: number;
   sending: boolean;
 }
 
@@ -35,12 +38,14 @@ export const initialState: TransactionsState = {
   bitcoinTx: {
     fromAddress: '',
     toAddress: '',
-    toAmount: 0,
+    toSatoshis: 0,
     rawtx: '',
     txid: '',
     fee: 0,
-    changeAmount: 0,
-    sending: false
+    estimateFee: 0,
+    changeSatoshis: 0,
+    sending: false,
+    autoAdjust: false
   },
   ordinalsTx: {
     fromAddress: '',
@@ -52,7 +57,8 @@ export const initialState: TransactionsState = {
     rawtx: '',
     txid: '',
     fee: 0,
-    changeAmount: 0,
+    estimateFee: 0,
+    changeSatoshis: 0,
     sending: false
   },
   utxos: []
@@ -68,12 +74,14 @@ const slice = createSlice({
         payload: {
           fromAddress?: string;
           toAddress?: string;
-          toAmount?: number;
-          changeAmount?: number;
+          toSatoshis?: number;
+          changeSatoshis?: number;
           rawtx?: string;
           txid?: string;
           fee?: number;
+          estimateFee?: number;
           sending?: boolean;
+          autoAdjust?: boolean;
         };
       }
     ) {
@@ -87,10 +95,11 @@ const slice = createSlice({
           fromAddress?: string;
           toAddress?: string;
           inscription?: Inscription;
-          changeAmount?: number;
+          changeSatoshis?: number;
           rawtx?: string;
           txid?: string;
           fee?: number;
+          estimateFee?: number;
           sending?: boolean;
         };
       }
