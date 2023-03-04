@@ -380,6 +380,12 @@ export class WalletController extends BaseController {
     return keyringService.signTransaction(keyring, psbt, inputs);
   };
 
+  signText = async (text: string) => {
+    const account = preferenceService.getCurrentAccount();
+    if (!account) throw new Error('no current account');
+    return keyringService.signMessage(account?.address, text);
+  };
+
   requestKeyring = (type: string, methodName: string, keyringId: number | null, ...params) => {
     let keyring;
     if (keyringId !== null && keyringId !== undefined) {

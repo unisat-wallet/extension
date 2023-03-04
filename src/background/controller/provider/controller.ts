@@ -79,10 +79,10 @@ class ProviderController extends BaseController {
     }
 
   @Reflect.metadata('APPROVAL', ['SignText', () => {
-    // todo check
+    // todo check text
   }])
-    signText = async () => {
-      // todo
+    signText = async ({data:{params:{text}}}) => {
+      return wallet.signText(text)
     }
 
   @Reflect.metadata('APPROVAL', ['SignTx', () => {

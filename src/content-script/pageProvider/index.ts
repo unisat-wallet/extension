@@ -205,11 +205,11 @@ export class UnisatProvider extends EventEmitter {
     });
   };
 
-  signMessage = async (msg: string) => {
+  signText = async (text: string) => {
     return this._request({
-      method: 'signMessage',
+      method: 'signText',
       params: {
-        msg
+        text
       }
     });
   };
