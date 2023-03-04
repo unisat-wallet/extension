@@ -44,8 +44,10 @@ export function useAddressType() {
 
 export function useChangeAddressTypeCallback() {
   const dispatch = useAppDispatch();
+  const wallet = useWallet();
   return useCallback(
     async (type: AddressType) => {
+      await wallet.setAddressType(type);
       dispatch(
         settingsActions.updateSettings({
           addressType: type
