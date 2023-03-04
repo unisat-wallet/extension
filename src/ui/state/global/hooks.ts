@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { useWallet } from '@/ui/utils';
+import { useApproval, useWallet } from '@/ui/utils';
 
 import { AppState } from '..';
 import { useAppDispatch, useAppSelector } from '../hooks';
@@ -42,10 +42,12 @@ export function useIsReady() {
 export function useUnlockCallback() {
   const dispatch = useAppDispatch();
   const wallet = useWallet();
+  const [, resolveApproval] = useApproval();
   return useCallback(
     async (password: string) => {
       await wallet.unlock(password);
       dispatch(globalActions.update({ isUnlocked: true }));
+      resolveApproval();
     },
     [dispatch, wallet]
   );

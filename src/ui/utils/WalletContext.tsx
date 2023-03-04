@@ -25,6 +25,10 @@ export interface WalletController {
   boot(password: string): Promise<void>;
   isBooted(): Promise<boolean>;
 
+  getApproval(): Promise<any>;
+  resolveApproval(data?: any, data2?: any): Promise<void>;
+  rejectApproval(data?: any, data2?: any, data3?: any): Promise<void>;
+
   hasVault(): Promise<boolean>;
 
   verifyPassword(password: string): Promise<void>;

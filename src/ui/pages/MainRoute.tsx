@@ -21,6 +21,7 @@ import ImportMnemonicsScreen from './Account/ImportMnemonicsScreen';
 import SwitchAccountScreen from './Account/SwitchAccountScreen';
 import SwitchAddressScreen from './Account/SwitchAddressScreen';
 import UnlockScreen from './Account/UnlockScreen';
+import ApprovalScreen from './Approval/ApprovalScreen';
 import BoostScreen from './Main/BoostScreen';
 import MainScreen from './Main/TabScreen';
 import WelcomeScreen from './Main/WelcomeScreen';
@@ -159,6 +160,10 @@ const routes = {
   HistoryScreen: {
     path: '/wallet/history',
     element: <HistoryScreen />
+  },
+  ApprovalScreen: {
+    path: '/approval',
+    element: <ApprovalScreen />
   }
 };
 

@@ -3,7 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { useUnlockCallback } from '@/ui/state/global/hooks';
-import { useWallet } from '@/ui/utils';
+import { getUiType, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../../MainRoute';
 
@@ -13,19 +13,22 @@ export default function UnlockScreen() {
   const navigate = useNavigate();
   const [password, setPassword] = useState('');
   const [disabled, setDisabled] = useState(true);
-
+  const UIType = getUiType();
+  const isInNotification = UIType.isNotification;
   const unlock = useUnlockCallback();
   const btnClick = async () => {
     // run(password);
     try {
       await unlock(password);
-      const hasVault = await wallet.hasVault();
-      if (!hasVault) {
-        navigate('WelcomeScreen');
-        return;
-      } else {
-        navigate('MainScreen');
-        return;
+      if (!isInNotification) {
+        const hasVault = await wallet.hasVault();
+        if (!hasVault) {
+          navigate('WelcomeScreen');
+          return;
+        } else {
+          navigate('MainScreen');
+          return;
+        }
       }
     } catch (e) {
       message.error(t('PASSWORD ERROR'));
