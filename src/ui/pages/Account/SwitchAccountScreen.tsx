@@ -17,16 +17,17 @@ import { shortAddress, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
 
-interface ItemData {
+export interface ItemData {
   key: string;
   account?: Account;
 }
 
 interface MyItemProps {
   account?: Account;
+  autoNav?: boolean;
 }
 
-function MyItem({ account }: MyItemProps, ref) {
+export function MyItem({ account, autoNav }: MyItemProps, ref) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const currentAccount = useCurrentAccount();
@@ -60,7 +61,7 @@ function MyItem({ account }: MyItemProps, ref) {
           await wallet.changeAccount(account);
           dispatch(accountActions.setCurrent(account));
         }
-        navigate('MainScreen');
+        if (autoNav) navigate('MainScreen');
       }}>
       <div className="flex items-center justify-between text-lg font-semibold">
         <div className="flex flex-col flex-grow text-left">
@@ -128,7 +129,7 @@ export default function SwitchAccountScreen() {
             // onSkipRender={onAppear}
             // onItemRemove={onAppear}
           >
-            {(item, index) => <ForwardMyItem account={item.account} />}
+            {(item, index) => <ForwardMyItem account={item.account} autoNav={true} />}
           </VirtualList>
         </div>
       </Content>
