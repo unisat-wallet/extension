@@ -6,6 +6,7 @@ import BaseController from '../base';
 import wallet from '../wallet';
 import { publicKeyToAddress } from '@/background/utils/tx-utils';
 import { NetworkType } from '@/shared/types';
+import { Psbt } from 'bitcoinjs-lib';
 
 
 
@@ -117,8 +118,8 @@ class ProviderController extends BaseController {
     }
 
   @Reflect.metadata('SAFE',true)
-    pushTx = async () => {
-      // todo
+    pushTx = async ({data:{params:{rawtx}}}) => {
+      return await wallet.pushTx(rawtx)
     }
 
   @Reflect.metadata('APPROVAL', ['SignPsbt', () => {
@@ -129,8 +130,11 @@ class ProviderController extends BaseController {
     }
 
   @Reflect.metadata('SAFE', true)
-    pushPsbt = async () => {
-      // todo
+    pushPsbt = async ({ data: { params: { psbtHex } } }) => {
+      const psbt = new Psbt(psbtHex);
+      const tx = psbt.extractTransaction();
+      const rawtx = tx.toHex()
+      return await wallet.pushTx(rawtx)
     }
 }
 
