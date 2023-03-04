@@ -4,9 +4,10 @@ import { CHAINS, NETWORK_TYPES } from '@/shared/constant';
 
 import BaseController from '../base';
 import wallet from '../wallet';
-import { publicKeyToAddress } from '@/background/utils/tx-utils';
+import { publicKeyToAddress, toPsbtNetwork, validator } from '@/background/utils/tx-utils';
 import { NetworkType } from '@/shared/types';
-import { Psbt } from 'bitcoinjs-lib';
+import { address as PsbtAddress, Psbt } from 'bitcoinjs-lib';
+import { ToSignInput } from '@/background/service/keyring';
 
 
 
@@ -122,16 +123,40 @@ class ProviderController extends BaseController {
       return await wallet.pushTx(rawtx)
     }
 
-  @Reflect.metadata('APPROVAL', ['SignPsbt', () => {
-    // todo check
+  @Reflect.metadata('APPROVAL', ['SignPsbt', (req) => {
+    const { data: { params: { psbtHex } } } = req;
+    // todo
   }])
-    signPsbt = async () => {
-      // todo
+    signPsbt = async ({ data: { params: { psbtHex } } }) => {
+      const account = await this.getCurrentAccount();
+      if (!account) throw null;
+      const addressType = wallet.getAddressType()
+      const networkType = wallet.getNetworkType()
+      const accountAddress = publicKeyToAddress(account.address,addressType,networkType)
+      const psbt = Psbt.fromHex(psbtHex);
+      const toSignInputs:ToSignInput[] = [];
+      psbt.data.inputs.forEach(((v,index) => {
+        const script = v.witnessUtxo?.script || v.nonWitnessUtxo;
+        if (script) {
+          const address = PsbtAddress.fromOutputScript(script,toPsbtNetwork(networkType));
+          if (address === accountAddress) {
+            toSignInputs.push({
+              index,
+              publicKey:account.address,
+              type:addressType
+            })
+          }
+        }
+      }))
+      await wallet.signTransaction(account.type, account.address, psbt, toSignInputs);
+      psbt.validateSignaturesOfAllInputs(validator);
+      psbt.finalizeAllInputs();
+      return psbt.extractTransaction().toHex();
     }
 
   @Reflect.metadata('SAFE', true)
     pushPsbt = async ({ data: { params: { psbtHex } } }) => {
-      const psbt = new Psbt(psbtHex);
+      const psbt = Psbt.fromHex(psbtHex);
       const tx = psbt.extractTransaction();
       const rawtx = tx.toHex()
       return await wallet.pushTx(rawtx)
