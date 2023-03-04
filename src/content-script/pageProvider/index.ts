@@ -199,21 +199,6 @@ export class UnisatProvider extends EventEmitter {
     });
   };
 
-  sendBitcoin = async ({ receivers }) => {
-    return this._request({
-      method: 'sendBitcoin',
-      params: {
-        receivers
-      }
-    });
-  };
-
-  sendInscription = async () => {
-    return this._request({
-      method: 'sendInscription'
-    });
-  };
-
   signText = async (text: string) => {
     return this._request({
       method: 'signText',
@@ -223,14 +208,14 @@ export class UnisatProvider extends EventEmitter {
     });
   };
 
-  signTx = async (rawtx: string) => {
-    return this._request({
-      method: 'signTx',
-      params: {
-        rawtx
-      }
-    });
-  };
+  // signTx = async (rawtx: string) => {
+  //   return this._request({
+  //     method: 'signTx',
+  //     params: {
+  //       rawtx
+  //     }
+  //   });
+  // };
 
   /**
    * push transaction

@@ -89,19 +89,20 @@ class ProviderController extends BaseController {
       return balance;
     };
 
-  @Reflect.metadata('APPROVAL', ['SendBitcoin', () => {
-    // todo check
-  }])
-    sendBitcoin = async () => {
-      // todo
-    }
+  // @Reflect.metadata('APPROVAL', ['SendBitcoin', () => {
+  //   // todo check
 
-  @Reflect.metadata('APPROVAL', ['SendInscription', () => {
-    // todo check
-  }])
-    sendInscription = async () => {
-      // todo
-    }
+  // }])
+  //   sendBitcoin = async () => {
+  //     // todo
+  //   }
+
+  // @Reflect.metadata('APPROVAL', ['SendInscription', () => {
+  //   // todo check
+  // }])
+  //   sendInscription = async () => {
+  //     // todo
+  //   }
 
   @Reflect.metadata('APPROVAL', ['SignText', () => {
     // todo check text
@@ -110,13 +111,12 @@ class ProviderController extends BaseController {
       return wallet.signText(text)
     }
 
-  @Reflect.metadata('APPROVAL', ['SignTx', () => {
-    // ttodo check
-  }])
-    signTx = async () => {
-      const account = await this.getCurrentAccount();
-      console.log(account,'go')
-    }
+  // @Reflect.metadata('APPROVAL', ['SignTx', () => {
+  //   // todo check
+  // }])
+  //   signTx = async () => {
+  //     // todo
+  //   }
 
   @Reflect.metadata('SAFE',true)
     pushTx = async ({data:{params:{rawtx}}}) => {
