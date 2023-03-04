@@ -197,7 +197,8 @@ export class WalletController extends BaseController {
     const keyring = await keyringService.getKeyringForAccount(address, type);
     if (!keyring) return null;
     const privateKey = await keyring.exportAccount(address);
-    const network = await this.getNetwork();
+    const networkType = await this.getNetworkType();
+    const network = toPsbtNetwork(networkType);
     return ECPair.fromPrivateKey(Buffer.from(privateKey, 'hex'), { network }).toWIF();
   };
 
@@ -566,18 +567,13 @@ export class WalletController extends BaseController {
     return networkType;
   };
 
-  setNetworkType = async (networkType: NetworkType) => {
+  setNetworkType = (networkType: NetworkType) => {
     preferenceService.setNetworkType(networkType);
     if (networkType === NetworkType.MAINNET) {
       this.openapi.setHost(OPENAPI_URL_MAINNET);
     } else {
       this.openapi.setHost(OPENAPI_URL_TESTNET);
     }
-  };
-
-  getNetwork = async () => {
-    const networkType = await this.getNetworkType();
-    return toPsbtNetwork(networkType);
   };
 
   sendBTC = async ({

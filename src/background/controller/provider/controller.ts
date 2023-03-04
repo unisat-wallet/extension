@@ -1,10 +1,11 @@
 
 import { permissionService, sessionService } from '@/background/service';
-import { CHAINS } from '@/shared/constant';
+import { CHAINS, NETWORK_TYPES } from '@/shared/constant';
 
 import BaseController from '../base';
 import wallet from '../wallet';
 import { publicKeyToAddress } from '@/background/utils/tx-utils';
+import { NetworkType } from '@/shared/types';
 
 
 
@@ -35,9 +36,31 @@ class ProviderController extends BaseController {
 
   @Reflect.metadata('SAFE', true)
     getNetwork = async () => {
-      const network = wallet.getNetworkType()
-      return network;
+      const networkType = wallet.getNetworkType()
+      return NETWORK_TYPES[networkType].name
     };
+
+  @Reflect.metadata('APPROVAL', ['SwitchNetwork', (req) => {
+    const network = req.data.params.network;
+    if ( NETWORK_TYPES[NetworkType.MAINNET].validNames.includes(network)) {
+      req.data.params.networkType = NetworkType.MAINNET
+    } else if ( NETWORK_TYPES[NetworkType.TESTNET].validNames.includes(network)) {
+      req.data.params.networkType = NetworkType.TESTNET
+    } else {
+      throw new Error(`the network is invalid, supported networks: ${NETWORK_TYPES.map(v=>v.name).join(',')}`)
+    }
+
+    if (req.data.params.networkType === wallet.getNetworkType()) {
+      // skip approval
+      return true;
+    }
+  }])
+    switchNetwork = async (req) => {
+      const { data: { params: { networkType } } } = req;
+      wallet.setNetworkType(networkType)
+      return NETWORK_TYPES[networkType].name
+    }
+
 
   @Reflect.metadata('SAFE', true)
     getAddress = async () => {

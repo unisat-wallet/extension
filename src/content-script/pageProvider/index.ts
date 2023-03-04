@@ -166,6 +166,15 @@ export class UnisatProvider extends EventEmitter {
     });
   };
 
+  switchNetwork = async (network: string) => {
+    return this._request({
+      method: 'switchNetwork',
+      params: {
+        network
+      }
+    });
+  };
+
   getAddress = async () => {
     return this._request({
       method: 'getAddress'

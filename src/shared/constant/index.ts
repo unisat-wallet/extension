@@ -89,8 +89,8 @@ export const ADDRESS_TYPES = [
 ];
 
 export const NETWORK_TYPES = [
-  { value: NetworkType.MAINNET, label: 'MAINNET' },
-  { value: NetworkType.TESTNET, label: 'TESTNET' }
+  { value: NetworkType.MAINNET, label: 'LIVENET', name: 'livenet', validNames: [0, 'livenet', 'mainnet'] },
+  { value: NetworkType.TESTNET, label: 'TESTNET', name: 'testnet', validNames: ['testnet'] }
 ];
 
 export const MINIMUM_GAS_LIMIT = 21000;
