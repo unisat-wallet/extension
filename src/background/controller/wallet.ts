@@ -5,11 +5,20 @@ import ECPairFactory from 'ecpair';
 import { cloneDeep, groupBy } from 'lodash';
 import * as ecc from 'tiny-secp256k1';
 
-import { contactBookService, keyringService, openapiService, preferenceService } from '@/background/service';
+import {
+  contactBookService,
+  keyringService,
+  notificationService,
+  openapiService,
+  permissionService,
+  preferenceService,
+  sessionService
+} from '@/background/service';
 import i18n from '@/background/service/i18n';
 import { DisplayedKeryring, Keyring, KEYRING_CLASS, ToSignInput } from '@/background/service/keyring';
 import {
   BRAND_ALIAN_TYPE_TEXT,
+  CHAINS_ENUM,
   COIN_NAME,
   COIN_SYMBOL,
   KEYRING_TYPE,
@@ -21,6 +30,7 @@ import { Wallet } from '@unisat/bitcoinjs-wallet';
 
 import { ContactBookItem } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';
+import { ConnectedSite } from '../service/permission';
 import { Account } from '../service/preference';
 import { SingleAccountTransaction, toPsbtNetwork } from '../utils/tx-utils';
 import BaseController from './base';
@@ -44,6 +54,10 @@ export class WalletController extends BaseController {
   /* wallet */
   boot = (password: string) => keyringService.boot(password);
   isBooted = () => keyringService.isBooted();
+
+  getApproval = notificationService.getApproval;
+  resolveApproval = notificationService.resolveApproval;
+  rejectApproval = notificationService.rejectApproval;
 
   hasVault = () => keyringService.hasVault();
   verifyPassword = (password: string) => keyringService.verifyPassword(password);
@@ -99,6 +113,7 @@ export class WalletController extends BaseController {
     const alianNameInited = preferenceService.getInitAlianNameStatus();
     const alianNames = contactBookService.listAlias();
     await keyringService.submitPassword(password);
+    sessionService.broadcastEvent('unlock');
     if (!alianNameInited && alianNames.length === 0) {
       this.initAlianNames();
     }
@@ -109,7 +124,10 @@ export class WalletController extends BaseController {
 
   lockWallet = async () => {
     await keyringService.setLocked();
+    sessionService.broadcastEvent('accountsChanged', []);
+    sessionService.broadcastEvent('lock');
   };
+
   setPopupOpen = (isOpen: boolean) => {
     preferenceService.setPopupOpen(isOpen);
   };
@@ -537,7 +555,7 @@ export class WalletController extends BaseController {
     preferenceService.setAddressType(addressType);
   };
 
-  getNetworkType = async () => {
+  getNetworkType = () => {
     const networkType = preferenceService.getNetworkType();
     return networkType;
   };
@@ -700,6 +718,73 @@ export class WalletController extends BaseController {
   getAddressUtxo = async (address: string) => {
     const data = await openapiService.getAddressUtxo(address);
     return data;
+  };
+
+  getConnectedSite = permissionService.getConnectedSite;
+  getSite = permissionService.getSite;
+  getConnectedSites = permissionService.getConnectedSites;
+  setRecentConnectedSites = (sites: ConnectedSite[]) => {
+    permissionService.setRecentConnectedSites(sites);
+  };
+  getRecentConnectedSites = () => {
+    return permissionService.getRecentConnectedSites();
+  };
+  getCurrentSite = (tabId: number): ConnectedSite | null => {
+    const { origin, name, icon } = sessionService.getSession(tabId) || {};
+    if (!origin) {
+      return null;
+    }
+    const site = permissionService.getSite(origin);
+    if (site) {
+      return site;
+    }
+    return {
+      origin,
+      name,
+      icon,
+      chain: CHAINS_ENUM.BTC,
+      isConnected: false,
+      isSigned: false,
+      isTop: false
+    };
+  };
+  getCurrentConnectedSite = (tabId: number) => {
+    const { origin } = sessionService.getSession(tabId) || {};
+    return permissionService.getWithoutUpdate(origin);
+  };
+  setSite = (data: ConnectedSite) => {
+    permissionService.setSite(data);
+    if (data.isConnected) {
+      sessionService.broadcastEvent(
+        'chainChanged',
+        {
+          chain: CHAINS_ENUM.BTC,
+          networkVersion: 1
+        },
+        data.origin
+      );
+    }
+  };
+  updateConnectSite = (origin: string, data: ConnectedSite) => {
+    permissionService.updateConnectSite(origin, data);
+    sessionService.broadcastEvent(
+      'chainChanged',
+      {
+        chain: CHAINS_ENUM.BTC,
+        networkVersion: 1
+      },
+      data.origin
+    );
+  };
+  removeAllRecentConnectedSites = () => {
+    const sites = permissionService.getRecentConnectedSites().filter((item) => !item.isTop);
+    sites.forEach((item) => {
+      this.removeConnectedSite(item.origin);
+    });
+  };
+  removeConnectedSite = (origin: string) => {
+    sessionService.broadcastEvent('accountsChanged', [], origin);
+    permissionService.removeConnectedSite(origin);
   };
 }
 

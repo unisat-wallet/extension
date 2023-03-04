@@ -2,13 +2,14 @@ import { EVENTS } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 import { Message } from '@/shared/utils';
 
-import { walletController } from './controller';
-import { contactBookService, keyringService, openapiService, preferenceService } from './service';
+import { providerController, walletController } from './controller';
+import { contactBookService, keyringService, openapiService, preferenceService, sessionService } from './service';
 import { storage } from './webapi';
 import browser from './webapi/browser';
 
 const { PortMessage } = Message;
 
+let appStoreLoaded = false;
 async function restoreAppState() {
   const keyringState = await storage.get('keyringState');
   keyringService.loadStore(keyringState);
@@ -17,6 +18,8 @@ async function restoreAppState() {
 
   await preferenceService.init();
   await contactBookService.init();
+
+  appStoreLoaded = true;
 }
 
 restoreAppState();
@@ -68,4 +71,25 @@ browser.runtime.onConnect.addListener((port) => {
 
     return;
   }
+
+  const pm = new PortMessage(port);
+  pm.listen(async (data) => {
+    if (!appStoreLoaded) {
+      // todo
+    }
+    const sessionId = port.sender?.tab?.id;
+    const session = sessionService.getOrCreateSession(sessionId);
+
+    const req = { data, session };
+    // for background push to respective page
+    req.session.pushMessage = (event, data) => {
+      pm.send('message', { event, data });
+    };
+
+    return providerController(req);
+  });
+
+  port.onDisconnect.addListener(() => {
+    // todo
+  });
 });
