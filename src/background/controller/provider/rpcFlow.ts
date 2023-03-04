@@ -58,7 +58,11 @@ const flowContext = flow
         ctx.request.requestedApproval = true;
         await notificationService.requestApproval(
           {
-            params: { origin, name, icon },
+            params: {
+              method: 'connect',
+              data: {},
+              session: { origin, name, icon }
+            },
             approvalComponent: 'Connect'
           },
           { height: 800 }

@@ -1,17 +1,28 @@
 import { Button, Layout } from 'antd';
-import { Content, Footer, Header } from 'antd/lib/layout/layout';
-import { useEffect, useState } from 'react';
+import { Content, Footer } from 'antd/lib/layout/layout';
+import VirtualList from 'rc-virtual-list';
+import { forwardRef, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useNavigate } from 'react-router-dom';
 
-import CHeader from '@/ui/components/CHeader';
+import WebsiteBar from '@/ui/components/WebsiteBar';
+import { useAccounts } from '@/ui/state/accounts/hooks';
 import { useChangeNetworkTypeCallback, useNetworkType } from '@/ui/state/settings/hooks';
 import { useApproval, useWallet } from '@/ui/utils';
 
-interface ConnectProps {
-  params: any;
+import { MyItem } from '../../Account/SwitchAccountScreen';
+
+interface Props {
+  params: {
+    session: {
+      origin: string;
+      icon: string;
+      name: string;
+    };
+  };
 }
-export default function Connect({ params: { icon, origin } }: ConnectProps) {
+
+export default function Connect({ params: { session } }: Props) {
   const { t } = useTranslation();
   const networkType = useNetworkType();
   const changeNetworkType = useChangeNetworkTypeCallback();
@@ -39,16 +50,39 @@ export default function Connect({ params: { icon, origin } }: ConnectProps) {
     resolveApproval();
   };
 
+  const accounts = useAccounts();
+  const items = accounts.map((v) => ({
+    key: v.address,
+    account: v
+  }));
+  const ForwardMyItem = forwardRef(MyItem);
+
   return (
     <Layout className="h-full">
-      <Header className="border-white border-opacity-10">
-        <CHeader />
-      </Header>
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-strech mt-5 gap-3_75 justify-evenly mx-5">
-          <div className="flex flex-col px-2 text-2xl font-semibold h-13 text-center">Connect Wallet</div>
-          <div className="site-info__text">
-            <p className="text-15 font-medium">{origin}</p>
+          <WebsiteBar session={session} />
+          <div className="flex self-center px-2 text-2xl font-semibold">Connect with Unist Wallet</div>
+          <div className="flex self-center px-2 text-center">Select the account to use on this site</div>
+          <div className="flex flex-col px-10  text-soft-white   text-center mt-5">
+            Only connect with sites you trust.
+          </div>
+
+          <div className="flex flex-col items-stech mx-5 my-5 gap-3_75 justify-evenly">
+            <VirtualList
+              data={items}
+              data-id="list"
+              itemHeight={20}
+              itemKey={(item) => item.key}
+              // disabled={animating}
+              style={{
+                boxSizing: 'border-box'
+              }}
+              // onSkipRender={onAppear}
+              // onItemRemove={onAppear}
+            >
+              {(item, index) => <ForwardMyItem account={item.account} />}
+            </VirtualList>
           </div>
         </div>
       </Content>
