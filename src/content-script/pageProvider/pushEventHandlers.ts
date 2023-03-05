@@ -44,7 +44,7 @@ class PushEventHandlers {
     this._emit('close', disconnectError);
   };
 
-  accountsChanged = (accounts) => {
+  accountsChanged = (accounts: string[]) => {
     if (accounts?.[0] === this.provider._selectedAddress) {
       return;
     }
@@ -54,7 +54,7 @@ class PushEventHandlers {
     this._emit('accountsChanged', accounts);
   };
 
-  chainChanged = ({ network }) => {
+  networkChanged = ({ network }) => {
     this.connect({});
 
     if (network !== this.provider._network) {

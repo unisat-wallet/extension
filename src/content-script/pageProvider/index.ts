@@ -89,7 +89,7 @@ export class UnisatProvider extends EventEmitter {
         this._state.isUnlocked = true;
       }
       this.emit('connect', {});
-      this._pushEventHandlers.chainChanged({
+      this._pushEventHandlers.networkChanged({
         network
       });
 
@@ -165,16 +165,9 @@ export class UnisatProvider extends EventEmitter {
   };
 
   // public methods
-
-  isConnected = () => {
+  requestAccounts = async () => {
     return this._request({
-      method: 'isConnected'
-    });
-  };
-
-  connect = async () => {
-    return this._request({
-      method: 'connect'
+      method: 'requestAccounts'
     });
   };
 
@@ -217,9 +210,9 @@ export class UnisatProvider extends EventEmitter {
     });
   };
 
-  signText = async (text: string) => {
+  signMessage = async (text: string) => {
     return this._request({
-      method: 'signText',
+      method: 'signMessage',
       params: {
         text
       }

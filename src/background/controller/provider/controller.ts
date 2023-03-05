@@ -1,6 +1,6 @@
 
 import { permissionService, sessionService } from '@/background/service';
-import { CHAINS, NETWORK_TYPES } from '@/shared/constant';
+import { NETWORK_TYPES } from '@/shared/constant';
 
 import BaseController from '../base';
 import wallet from '../wallet';
@@ -8,32 +8,34 @@ import { publicKeyToAddress, toPsbtNetwork, validator } from '@/background/utils
 import { NetworkType } from '@/shared/types';
 import { address as PsbtAddress, Psbt } from 'bitcoinjs-lib';
 import { ToSignInput } from '@/background/service/keyring';
+import { amountToSaothis } from '@/ui/utils';
+import { ethErrors } from 'eth-rpc-errors';
 
 
 
 class ProviderController extends BaseController {
 
-  connect = async ({ session: { origin } }) => {
-    console.log('hasPermiss',origin,permissionService.hasPermission(origin))
+  requestAccounts = async ({ session: { origin } }) => {
     if (!permissionService.hasPermission(origin)) {
-      // throw ethErrors.provider.unauthorized();
+      throw ethErrors.provider.unauthorized();
     }
 
     const _account = await this.getCurrentAccount();
-    const account = _account ? [_account.address.toLowerCase()] : [];
+    const address = wallet.getAddress()
+    const account = _account ? [address] : [];
     sessionService.broadcastEvent('accountsChanged', account);
     const connectSite = permissionService.getConnectedSite(origin);
     if (connectSite) {
-      const chain = CHAINS[connectSite.chain];
+      const network = wallet.getNetworkName()
       sessionService.broadcastEvent(
-        'chainChanged',
+        'networkChanged',
         {
-          networkVersion: chain.network
+          network
         },
         origin
       );
     }
-    return _account
+    return account
   };
 
   @Reflect.metadata('SAFE', true)
@@ -86,7 +88,11 @@ class ProviderController extends BaseController {
       const account = await this.getCurrentAccount();
       if (!account) return null;
       const balance = await wallet.getAddressBalance(account.address)
-      return balance;
+      return {
+        confirmed: amountToSaothis(balance.confirm_amount),
+        unconfirmed:amountToSaothis(balance.confirm_amount),
+        total:amountToSaothis(balance.amount)
+      };
     };
 
   // @Reflect.metadata('APPROVAL', ['SendBitcoin', () => {
@@ -107,8 +113,8 @@ class ProviderController extends BaseController {
   @Reflect.metadata('APPROVAL', ['SignText', () => {
     // todo check text
   }])
-    signText = async ({data:{params:{text}}}) => {
-      return wallet.signText(text)
+    signMessage = async ({data:{params:{text}}}) => {
+      return wallet.signMessage(text)
     }
 
   // @Reflect.metadata('APPROVAL', ['SignTx', () => {

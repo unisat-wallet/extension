@@ -6,8 +6,9 @@ import { EVENTS } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 import { AddressType, BitcoinBalance, NetworkType, TxHistoryItem } from '@/shared/types';
 
+import { publicKeyToAddress } from '../utils/tx-utils';
 import browser from '../webapi/browser';
-import { i18n, keyringService } from './index';
+import { i18n, keyringService, sessionService } from './index';
 
 const version = process.env.release || '0';
 
@@ -130,6 +131,8 @@ class PreferenceService {
   setCurrentAccount = (account?: Account | null) => {
     this.store.currentAccount = account;
     if (account) {
+      const address = publicKeyToAddress(account.address, this.store.addressType, this.store.networkType);
+      sessionService.broadcastEvent('accountsChanged', [address]);
       eventBus.emit(EVENTS.broadcastToUI, {
         method: 'accountsChanged',
         params: account

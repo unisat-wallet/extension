@@ -22,6 +22,7 @@ import {
   COIN_NAME,
   COIN_SYMBOL,
   KEYRING_TYPE,
+  NETWORK_TYPES,
   OPENAPI_URL_MAINNET,
   OPENAPI_URL_TESTNET
 } from '@/shared/constant';
@@ -32,7 +33,7 @@ import { ContactBookItem } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';
 import { ConnectedSite } from '../service/permission';
 import { Account } from '../service/preference';
-import { SingleAccountTransaction, toPsbtNetwork } from '../utils/tx-utils';
+import { publicKeyToAddress, SingleAccountTransaction, toPsbtNetwork } from '../utils/tx-utils';
 import BaseController from './base';
 
 const stashKeyrings: Record<string, Keyring> = {};
@@ -383,7 +384,7 @@ export class WalletController extends BaseController {
     return keyringService.signTransaction(keyring, psbt, inputs);
   };
 
-  signText = async (text: string) => {
+  signMessage = async (text: string) => {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
     return keyringService.signMessage(account?.address, text);
@@ -562,6 +563,18 @@ export class WalletController extends BaseController {
 
   setAddressType = (addressType: AddressType) => {
     preferenceService.setAddressType(addressType);
+
+    // emit accountsChanged event
+    const account = preferenceService.getCurrentAccount();
+    preferenceService.setCurrentAccount(account);
+  };
+
+  getAddress = () => {
+    const account = preferenceService.getCurrentAccount();
+    if (!account) throw new Error('no current account');
+    const addressType = this.getAddressType();
+    const networkType = this.getNetworkType();
+    return publicKeyToAddress(account.address, addressType, networkType);
   };
 
   getNetworkType = () => {
@@ -576,6 +589,15 @@ export class WalletController extends BaseController {
     } else {
       this.openapi.setHost(OPENAPI_URL_TESTNET);
     }
+    const network = this.getNetworkName();
+    sessionService.broadcastEvent('networkChanged', {
+      network
+    });
+  };
+
+  getNetworkName = () => {
+    const networkType = preferenceService.getNetworkType();
+    return NETWORK_TYPES[networkType].name;
   };
 
   sendBTC = async ({
@@ -759,11 +781,11 @@ export class WalletController extends BaseController {
   setSite = (data: ConnectedSite) => {
     permissionService.setSite(data);
     if (data.isConnected) {
+      const network = this.getNetworkName();
       sessionService.broadcastEvent(
-        'chainChanged',
+        'networkChanged',
         {
-          chain: CHAINS_ENUM.BTC,
-          networkVersion: 1
+          network
         },
         data.origin
       );
@@ -771,11 +793,11 @@ export class WalletController extends BaseController {
   };
   updateConnectSite = (origin: string, data: ConnectedSite) => {
     permissionService.updateConnectSite(origin, data);
+    const network = this.getNetworkName();
     sessionService.broadcastEvent(
-      'chainChanged',
+      'networkChanged',
       {
-        chain: CHAINS_ENUM.BTC,
-        networkVersion: 1
+        network
       },
       data.origin
     );
