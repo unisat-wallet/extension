@@ -44,12 +44,53 @@ const fixWindowError3 = () => {
   fileData = fileData.replace('__UNSAFE_SIGN_NONSEGWIT: false', '__UNSAFE_SIGN_NONSEGWIT: true');
   fs.writeFileSync(file, fileData);
 };
+
+const fixBufferError = () => {
+  const file = './node_modules/bitcore-lib/lib/crypto/signature.js';
+  let fileData = fs.readFileSync(file).toString();
+  fileData = fileData.replace(
+    `var Signature = function Signature(r, s) {
+  if (!(this instanceof Signature)) {
+    return new Signature(r, s);
+  }
+  if (r instanceof BN) {
+    this.set({
+      r: r,
+      s: s
+    });
+  } else if (r) {
+    var obj = r;
+    this.set(obj);
+  }
+};`,
+    `var Signature = function Signature(r, s) {
+  if (!(this instanceof Signature)) {
+    return new Signature(r, s);
+  }
+  if (r instanceof BN) {
+    this.set({
+      r: r,
+      s: s
+    });
+  } else if (r) {
+    var obj = r;
+    this.set(obj);
+  }
+
+  this.r = BN.fromString(this.r.toString(16), 16)
+  this.s = BN.fromString(this.s.toString(16),16)
+};`
+  );
+  fs.writeFileSync(file, fileData);
+};
+
 const run = async () => {
   let success = true;
   try {
     fixWindowError();
     fixWindowError2();
     fixWindowError3();
+    fixBufferError();
   } catch (e) {
     console.error('error:', e.message);
     success = false;

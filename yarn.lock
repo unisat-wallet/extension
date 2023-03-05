@@ -2644,21 +2644,22 @@
     "@typescript-eslint/types" "5.53.0"
     eslint-visitor-keys "^3.3.0"
 
-"@unisat/bitcoin-hd-keyring@0.1.8":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@unisat/bitcoin-hd-keyring/-/bitcoin-hd-keyring-0.1.8.tgz#5cc437825e2ffbbdf8ca5beafbbd78050ceacdde"
-  integrity sha512-rwGICagbuh8E9Q61ObKN0R+7X4Tv7h4H8srtWHgTo1RAFY67AQMZwacyjnhhQcsiBsKPq7oVurHALNIoJJfV3A==
+"@unisat/bitcoin-hd-keyring@0.1.9":
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/@unisat/bitcoin-hd-keyring/-/bitcoin-hd-keyring-0.1.9.tgz#7cc386406401ffd6294c76af38b1f9510c8e6d97"
+  integrity sha512-+oDKmzrfWncNrAMSMIa66w7nelsUj6j1lYC3iqHiEbe+rHxeZYlXd3pD4V20sMVbLa3xWPdaotdJGWhwRwox6A==
   dependencies:
-    "@unisat/bitcoin-simple-keyring" "^0.1.7"
-    bitcore-lib "^8.25.46"
-    bitcore-mnemonic "^8.25.46"
+    "@unisat/bitcoin-simple-keyring" "^0.1.8"
+    bitcore-lib "^10.0.0"
+    bitcore-mnemonic "^10.0.0"
 
-"@unisat/bitcoin-simple-keyring@^0.1.7":
-  version "0.1.7"
-  resolved "https://registry.yarnpkg.com/@unisat/bitcoin-simple-keyring/-/bitcoin-simple-keyring-0.1.7.tgz#f0c7d04ab5547c7801ae7ff67fcd6fd6122c63ca"
-  integrity sha512-jLe759LDKHyA+cDU9U0/CkD8ZGKioAv2h98TlfKuq5GTXTfHsBOS8/x4bGr+sdhrKIdVuO06B/5X+VoygD+ZDw==
+"@unisat/bitcoin-simple-keyring@^0.1.8":
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/@unisat/bitcoin-simple-keyring/-/bitcoin-simple-keyring-0.1.8.tgz#bd46576458af0578f0ba1a9ebd14a409c60b35dc"
+  integrity sha512-OmfGhz2h/eZ2h+Gv8+74WCtjv56N5FEl7AzsUMopTrwRUz58DtmpJt0BEal8eDvT9HkIQyTsw8ZADW9yI0+nEg==
   dependencies:
     bitcoinjs-lib "^6.1.0"
+    bitcore-lib "^10.0.0"
     bs58check "^2.1.2"
     ecpair "^2.1.0"
     tiny-secp256k1 "^2.2.1"
@@ -3761,10 +3762,10 @@ bitcoinjs-lib@^6.1.0:
     varuint-bitcoin "^1.1.2"
     wif "^2.0.1"
 
-bitcore-lib@^8.25.46, bitcore-lib@^8.25.47:
-  version "8.25.47"
-  resolved "https://registry.yarnpkg.com/bitcore-lib/-/bitcore-lib-8.25.47.tgz#a2382fdfbf55922aff2f77c8f2d754239bc2854a"
-  integrity sha512-qDZr42HuP4P02I8kMGZUx/vvwuDsz8X3rQxXLfM0BtKzlQBcbSM7ycDkDN99Xc5jzpd4fxNQyyFXOmc6owUsrQ==
+bitcore-lib@^10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/bitcore-lib/-/bitcore-lib-10.0.0.tgz#d6071123191ff55998975abd0c84f972357c384c"
+  integrity sha512-++W17e9UFiDuoXD5d8w5f2i92ooC7TnLZTUzSTji9tJdwTIOeaz0/1ZScAYyVx/69fNLCTmhSrGhOj2Pv31iaw==
   dependencies:
     bech32 "=2.0.0"
     bip-schnorr "=0.6.4"
@@ -3775,12 +3776,12 @@ bitcore-lib@^8.25.46, bitcore-lib@^8.25.47:
     inherits "=2.0.1"
     lodash "^4.17.20"
 
-bitcore-mnemonic@^8.25.46:
-  version "8.25.47"
-  resolved "https://registry.yarnpkg.com/bitcore-mnemonic/-/bitcore-mnemonic-8.25.47.tgz#d15b12bb7a76930aa78f3fce2393715064aa66d4"
-  integrity sha512-wTa0imZZpFTqwlpyokvU8CNl+YdaIvQIrWKp/0AEL9gPX2vuzBnE+U8Ok6D5lHCnbG6dvmoesmtyf6R3aYI86A==
+bitcore-mnemonic@^10.0.0:
+  version "10.0.0"
+  resolved "https://registry.yarnpkg.com/bitcore-mnemonic/-/bitcore-mnemonic-10.0.0.tgz#f47a94bbac9d05749173f9e0d6832f94fcb0ae82"
+  integrity sha512-0hdm4M1EDu+1BLpNL9keoDiT9u6FB9jfPS4nN4llzRPB33vO4XiSxmOAyDL2keguY0jVtHLQgPhCQJ+5QjUKow==
   dependencies:
-    bitcore-lib "^8.25.47"
+    bitcore-lib "^10.0.0"
     unorm "^1.4.1"
 
 bluebird@^3.5.5:

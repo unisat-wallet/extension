@@ -37,7 +37,9 @@ export default function SignText({ params: { data, session } }: Props) {
             Only sign this message if you fully understand the content and trust the requesting site.
           </div>
           <div className="flex flex-col px-2  h-13 text-center mt-5">You are signing:</div>
-          <div className=" flex-wrap break-words whitespace-pre-wrap bg-slate-300 bg-opacity-5 p-5 max-h-96 overflow-auto">
+          <div
+            className=" flex-wrap break-words whitespace-pre-wrap bg-slate-300 bg-opacity-5 p-5 max-h-96 overflow-auto"
+            style={{ userSelect: 'text' }}>
             {data.text}
           </div>
         </div>
