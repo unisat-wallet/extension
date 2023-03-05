@@ -206,9 +206,11 @@ export class WalletController extends BaseController {
     await this.verifyPassword(password);
     const keyring = this._getKeyringByType(KEYRING_CLASS.MNEMONIC);
     const serialized = await keyring.serialize();
-    const seedWords = serialized.mnemonic;
-
-    return seedWords;
+    return {
+      mnemonic: serialized.mnemonic,
+      hdPath: serialized.hdPath,
+      passphrase: serialized.passphrase
+    };
   };
 
   importPrivateKey = async (data: string, alianName?: string) => {
@@ -246,8 +248,8 @@ export class WalletController extends BaseController {
   getPreMnemonics = () => keyringService.getPreMnemonics();
   generatePreMnemonic = () => keyringService.generatePreMnemonic();
   removePreMnemonics = () => keyringService.removePreMnemonics();
-  createKeyringWithMnemonics = async (mnemonic: string) => {
-    const keyring = await keyringService.createKeyringWithMnemonics(mnemonic);
+  createKeyringWithMnemonics = async (mnemonic: string, hdPath: string, passphrase: string) => {
+    const keyring = await keyringService.createKeyringWithMnemonics(mnemonic, hdPath, passphrase);
     keyringService.removePreMnemonics();
     return this._setCurrentAccountFromKeyring(keyring, 0);
   };

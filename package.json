@@ -49,7 +49,7 @@
     "@types/react": "^18.0.9",
     "@types/react-cache": "^2.0.1",
     "@types/react-dom": "^18.0.4",
-    "@unisat/bitcoin-hd-keyring": "0.1.7",
+    "@unisat/bitcoin-hd-keyring": "0.1.8",
     "@unisat/bitcoinjs-wallet": "^0.1.0",
     "antd": "^4.20.4",
     "antd-dayjs-webpack-plugin": "1.0.6",

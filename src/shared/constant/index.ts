@@ -1,3 +1,5 @@
+/* eslint-disable quotes */
+
 /* constants pool */
 import { AddressType, Chain, NetworkType } from '../types';
 
@@ -83,9 +85,9 @@ export const LANGS = [
 ];
 
 export const ADDRESS_TYPES = [
-  { value: AddressType.P2PKH, label: 'P2PKH' },
-  { value: AddressType.P2WPKH, label: 'P2WPKH' },
-  { value: AddressType.P2TR, label: 'P2TR' }
+  { value: AddressType.P2PKH, label: 'P2PKH', name: 'Legacy Bitcoin address', hdPath: "m/44'/0'/0'/0" },
+  { value: AddressType.P2WPKH, label: 'P2WPKH', name: 'SegWit Bitcoin address', hdPath: "m/84'/0'/0'/0" },
+  { value: AddressType.P2TR, label: 'P2TR', name: 'Taproot Bitcoin address', hdPath: "m/86'/0'/0'/0" }
 ];
 
 export const NETWORK_TYPES = [

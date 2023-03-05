@@ -29,6 +29,7 @@ export default function AddressTypeScreen() {
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-strech mt-5 gap-3_75 justify-evenly mx-5">
           <div className="flex flex-col px-2 text-2xl font-semibold h-13 text-center">{t('Address Type')}</div>
+          <div className="text-warn box self-center">{'This will not switch your derivation path'}</div>
           {ADDRESS_TYPES.map((item, index) => {
             const displayAddress = publicKeyToAddress(currentAccount.address, item.value, networkType);
             return (

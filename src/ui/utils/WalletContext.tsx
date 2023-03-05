@@ -60,12 +60,20 @@ export interface WalletController {
 
   clearKeyrings(): Promise<void>;
   getPrivateKey(password: string, account: { address: string; type: string }): Promise<string>;
-  getMnemonics(password: string): Promise<string>;
+  getMnemonics(password: string): Promise<{
+    hdPath: string;
+    mnemonic: string;
+    passphrase: string;
+  }>;
   importPrivateKey(data: string, alianName?: string): Promise<Account[]>;
   getPreMnemonics(): Promise<any>;
   generatePreMnemonic(): Promise<string>;
   removePreMnemonics(): void;
-  createKeyringWithMnemonics(mnemonic: string): Promise<{ address: string; type: string }[]>;
+  createKeyringWithMnemonics(
+    mnemonic: string,
+    hdPath: string,
+    passphrase: string
+  ): Promise<{ address: string; type: string }[]>;
   removeAddress(address: string, type: string): Promise<void>;
   resetCurrentAccount(): Promise<void>;
   generateKeyringWithMnemonic(mnemonic: string): number;

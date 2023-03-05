@@ -13,6 +13,7 @@ import { useAppDispatch } from '../state/hooks';
 import { settingsActions } from '../state/settings/reducer';
 import { useWallet } from '../utils';
 import AddAccountScreen from './Account/AddAccountScreen';
+import AdvanceOptionsScreen from './Account/AdvanceOptionsScreen';
 import CreateAccountScreen from './Account/CreateAccountScreen';
 import CreateMnemonicsScreen from './Account/CreateMnemonicsScreen';
 import CreatePasswordScreen from './Account/CreatePasswordScreen';
@@ -164,6 +165,10 @@ const routes = {
   ApprovalScreen: {
     path: '/approval',
     element: <ApprovalScreen />
+  },
+  AdvanceOptionsScreen: {
+    path: '/adavance-options',
+    element: <AdvanceOptionsScreen />
   }
 };
 
