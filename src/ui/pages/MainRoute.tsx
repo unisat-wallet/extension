@@ -23,6 +23,7 @@ import SwitchAccountScreen from './Account/SwitchAccountScreen';
 import SwitchAddressScreen from './Account/SwitchAddressScreen';
 import UnlockScreen from './Account/UnlockScreen';
 import ApprovalScreen from './Approval/ApprovalScreen';
+import ConnectedSitesScreen from './Approval/ConnectedSitesScreen';
 import BoostScreen from './Main/BoostScreen';
 import MainScreen from './Main/TabScreen';
 import WelcomeScreen from './Main/WelcomeScreen';
@@ -169,6 +170,10 @@ const routes = {
   AdvanceOptionsScreen: {
     path: '/adavance-options',
     element: <AdvanceOptionsScreen />
+  },
+  ConnectedSitesScreen: {
+    path: '/connected-sites',
+    element: <ConnectedSitesScreen />
   }
 };
 

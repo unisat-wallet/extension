@@ -5,6 +5,7 @@ import { AccountAsset } from '@/background/controller/wallet';
 import { ContactBookItem, ContactBookStore } from '@/background/service/contactBook';
 import { DisplayedKeryring, ToSignInput } from '@/background/service/keyring';
 import DisplayKeyring from '@/background/service/keyring/display';
+import { ConnectedSite } from '@/background/service/permission';
 import { Account } from '@/background/service/preference';
 import {
   BitcoinBalance,
@@ -118,6 +119,10 @@ export interface WalletController {
 
   getNetworkType(): Promise<NetworkType>;
   setNetworkType(type: NetworkType): Promise<void>;
+
+  getConnectedSites(): Promise<ConnectedSite[]>;
+  removeConnectedSite(origin: string): Promise<void>;
+  getCurrentConnectedSite(id: string): Promise<ConnectedSite>;
 }
 
 const WalletContext = createContext<{

@@ -3,10 +3,11 @@ import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
 import './index.module.less';
 
-const CHeader = ({ onBack }: { onBack?: () => void }) => {
+const CHeader = ({ onBack, LeftComponent }: { onBack?: () => void; LeftComponent?: React.ReactNode }) => {
   return (
     <div className="flex items-center justify-between h-full">
       <div className="flex-1 ">
+        {LeftComponent}
         {onBack && (
           <div
             className="duration-80  w-20 cursor-pointer"

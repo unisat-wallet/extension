@@ -1,14 +1,11 @@
 import { Button, Layout } from 'antd';
 import { Content, Footer } from 'antd/lib/layout/layout';
 import VirtualList from 'rc-virtual-list';
-import { forwardRef, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
-import { useNavigate } from 'react-router-dom';
+import { forwardRef } from 'react';
 
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useAccounts } from '@/ui/state/accounts/hooks';
-import { useChangeNetworkTypeCallback, useNetworkType } from '@/ui/state/settings/hooks';
-import { useApproval, useWallet } from '@/ui/utils';
+import { useApproval } from '@/ui/utils';
 
 import { MyItem } from '../../Account/SwitchAccountScreen';
 
@@ -23,24 +20,7 @@ interface Props {
 }
 
 export default function Connect({ params: { session } }: Props) {
-  const { t } = useTranslation();
-  const networkType = useNetworkType();
-  const changeNetworkType = useChangeNetworkTypeCallback();
-
-  const wallet = useWallet();
   const [getApproval, resolveApproval, rejectApproval] = useApproval();
-
-  const [approval, setApproval] = useState<any>(null);
-
-  const navigate = useNavigate();
-
-  const init = async () => {
-    // todo
-  };
-
-  useEffect(() => {
-    init();
-  }, []);
 
   const handleCancel = () => {
     rejectApproval('User rejected the request.');

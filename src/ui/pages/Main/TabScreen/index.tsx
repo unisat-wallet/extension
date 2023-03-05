@@ -1,11 +1,14 @@
 import { Layout } from 'antd';
 import { Content, Footer, Header } from 'antd/lib/layout/layout';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import CHeader from '@/ui/components/CHeader';
+import { getCurrentTab } from '@/ui/features/browser/tabs';
 import { useSetTabCallback, useTab } from '@/ui/state/global/hooks';
 import { TabOption } from '@/ui/state/global/reducer';
+import { useWallet } from '@/ui/utils';
 
+import { useNavigate } from '../../MainRoute';
 import AppTab from './AppTab';
 import MintTab from './MintTab';
 import SettingsTab from './SettingsTab';
@@ -40,10 +43,44 @@ function TabButton({ tabName, icon }: { tabName: TabOption; icon: string }) {
 
 export default function MainScreen() {
   const tab = useTab();
+  const wallet = useWallet();
+  const navigate = useNavigate();
+  const [connected, setConnected] = useState(false);
+  useEffect(() => {
+    const run = async () => {
+      const res = await getCurrentTab();
+      if (!res) return;
+      const site = await wallet.getCurrentConnectedSite(res.id);
+      if (site) {
+        setConnected(site.isConnected);
+      }
+    };
+    run();
+  }, []);
+
   return (
     <Layout className="h-full" style={{ backgroundColor: 'blue', flex: 1 }}>
       <Header className="border-white border-opacity-10">
-        <CHeader />
+        <CHeader
+          LeftComponent={
+            <div
+              className="duration-80  cursor-pointer"
+              onClick={() => {
+                navigate('ConnectedSitesScreen');
+              }}>
+              {connected ? (
+                <div className="flex items-center">
+                  <div className="text-green-300 font-semibold mr-3 text-11">·</div>
+                  <span className="pt-1 text-sm">Connected</span>
+                </div>
+              ) : (
+                <div className="flex items-center ">
+                  <span className="pt-2 text-sm">{'Not connected'}</span>
+                </div>
+              )}
+            </div>
+          }
+        />
       </Header>
       <Content style={{ backgroundColor: '#1C1919', overflowY: 'auto' }}>
         {tab == 'home' ? (
