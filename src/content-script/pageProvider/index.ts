@@ -1,6 +1,7 @@
 // this script is injected into webpage's context
 import { ethErrors, serializeError } from 'eth-rpc-errors';
 import { EventEmitter } from 'events';
+import loglevel from 'loglevel';
 
 import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
 
@@ -32,7 +33,7 @@ interface StateProvider {
   initialized: boolean;
   isPermanentlyDisconnected: boolean;
 }
-
+const EXTENSION_CONTEXT_INVALIDATED_CHROMIUM_ERROR = 'Extension context invalidated.';
 export class UnisatProvider extends EventEmitter {
   _selectedAddress: string | null = null;
   _network: string | null = null;
@@ -101,6 +102,27 @@ export class UnisatProvider extends EventEmitter {
       this._state.initialized = true;
       this.emit('_initialized');
     }
+
+    /**
+     * Sending a message to the extension to receive will keep the service worker alive.
+     *
+     * If the extension is unloaded or reloaded during a session and the user attempts to send a
+     * message to the extension, an "Extension context invalidated." error will be thrown from
+     * chromium browsers. When this happens, prompt the user to reload the extension. Note: Handling
+     * this error is not supported in Firefox here.
+     */
+    setInterval(() => {
+      this._bcm
+        .request({
+          method: 'keepAlive',
+          params: {}
+        })
+        .catch((e) => {
+          e.message === EXTENSION_CONTEXT_INVALIDATED_CHROMIUM_ERROR
+            ? loglevel.error(`Please refresh the page. Unisat: ${e}`)
+            : loglevel.error(`Unisat: ${e}`);
+        });
+    }, 1000);
   };
 
   private _requestPromiseCheckVisibility = () => {

@@ -26,7 +26,12 @@ const getProviderState = async (req) => {
   };
 };
 
+const keepAlive = () => {
+  return 'ACK_KEEP_ALIVE_MESSAGE';
+};
+
 export default {
   tabCheckin,
-  getProviderState
+  getProviderState,
+  keepAlive
 };

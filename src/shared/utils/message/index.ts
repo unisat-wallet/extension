@@ -8,7 +8,7 @@ abstract class Message extends EventEmitter {
   // avaiable id list
   // max concurrent request limit
   private _requestIdPool = [...Array(500).keys()];
-  protected _EVENT_PRE = 'ETH_WALLET_';
+  protected _EVENT_PRE = 'UNISAT_WALLET_';
   protected listenCallback: any;
 
   private _waitingMap = new Map<

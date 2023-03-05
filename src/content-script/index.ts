@@ -1,7 +1,5 @@
 import extension from 'extensionizer';
-import log from 'loglevel';
 
-import browser from '@/background/webapi/browser';
 import { Message } from '@/shared/utils';
 
 /**
@@ -105,57 +103,6 @@ function blockedDomainCheck() {
 }
 
 /**
- * SERVICE WORKER LOGIC
- */
-
-const EXTENSION_CONTEXT_INVALIDATED_CHROMIUM_ERROR = 'Extension context invalidated.';
-
-const WORKER_KEEP_ALIVE_INTERVAL = 1000;
-const WORKER_KEEP_ALIVE_MESSAGE = 'WORKER_KEEP_ALIVE_MESSAGE';
-const TIME_45_MIN_IN_MS = 45 * 60 * 1000;
-let keepAliveInterval;
-let keepAliveTimer;
-
-/**
- * Sending a message to the extension to receive will keep the service worker alive.
- *
- * If the extension is unloaded or reloaded during a session and the user attempts to send a
- * message to the extension, an "Extension context invalidated." error will be thrown from
- * chromium browsers. When this happens, prompt the user to reload the extension. Note: Handling
- * this error is not supported in Firefox here.
- */
-const sendMessageWorkerKeepAlive = () => {
-  browser.runtime.sendMessage({ name: WORKER_KEEP_ALIVE_MESSAGE }).catch((e) => {
-    e.message === EXTENSION_CONTEXT_INVALIDATED_CHROMIUM_ERROR
-      ? log.error(`Please refresh the page. Unisat: ${e}`)
-      : log.error(`Unisat: ${e}`);
-  });
-};
-
-/**
- * Running this method will ensure the service worker is kept alive for 45 minutes.
- * The first message is sent immediately and subsequent messages are sent at an
- * interval of WORKER_KEEP_ALIVE_INTERVAL.
- */
-const runWorkerKeepAliveInterval = () => {
-  clearTimeout(keepAliveTimer);
-
-  keepAliveTimer = setTimeout(() => {
-    clearInterval(keepAliveInterval);
-  }, TIME_45_MIN_IN_MS);
-
-  clearInterval(keepAliveInterval);
-
-  sendMessageWorkerKeepAlive();
-
-  keepAliveInterval = setInterval(() => {
-    if (browser.runtime.id) {
-      sendMessageWorkerKeepAlive();
-    }
-  }, WORKER_KEEP_ALIVE_INTERVAL);
-};
-
-/**
  * Determines if the provider should be injected
  *
  * @returns {boolean} {@code true} Whether the provider should be injected
@@ -166,5 +113,4 @@ function shouldInjectProvider() {
 
 if (shouldInjectProvider()) {
   injectScript();
-  // runWorkerKeepAliveInterval();
 }
