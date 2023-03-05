@@ -89,7 +89,7 @@ const run = async () => {
   try {
     fixWindowError();
     fixWindowError2();
-    fixWindowError3();
+    // fixWindowError3();
     fixBufferError();
   } catch (e) {
     console.error('error:', e.message);

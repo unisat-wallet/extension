@@ -5,7 +5,6 @@ import encryptor from 'browser-passworder';
 import { EventEmitter } from 'events';
 import log from 'loglevel';
 
-import { AddressType } from '@/shared/types';
 import { ObservableStore } from '@metamask/obs-store';
 import { HdKeyring } from '@unisat/bitcoin-hd-keyring';
 import { SimpleKeyring } from '@unisat/bitcoin-simple-keyring';
@@ -44,7 +43,6 @@ export interface DisplayedKeryring {
 export interface ToSignInput {
   index: number;
   publicKey: string;
-  type: AddressType;
 }
 export interface Keyring {
   type: string;

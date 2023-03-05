@@ -138,8 +138,9 @@ class ProviderController extends BaseController {
       if (!account) throw null;
       const addressType = wallet.getAddressType()
       const networkType = wallet.getNetworkType()
+      const psbtNetwork = toPsbtNetwork(networkType)
       const accountAddress = publicKeyToAddress(account.address,addressType,networkType)
-      const psbt = Psbt.fromHex(psbtHex);
+      const psbt = Psbt.fromHex(psbtHex,{network:psbtNetwork});
       const toSignInputs:ToSignInput[] = [];
       psbt.data.inputs.forEach(((v,index) => {
         const script = v.witnessUtxo?.script || v.nonWitnessUtxo;
@@ -149,7 +150,6 @@ class ProviderController extends BaseController {
             toSignInputs.push({
               index,
               publicKey:account.address,
-              type:addressType
             })
           }
         }
@@ -157,7 +157,7 @@ class ProviderController extends BaseController {
       await wallet.signTransaction(account.type, account.address, psbt, toSignInputs);
       psbt.validateSignaturesOfAllInputs(validator);
       psbt.finalizeAllInputs();
-      return psbt.extractTransaction().toHex();
+      return psbt.toHex();
     }
 
   @Reflect.metadata('SAFE', true)

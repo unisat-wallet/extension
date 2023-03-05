@@ -4,8 +4,10 @@ import BigNumber from 'bignumber.js';
 import * as bitcoin from 'bitcoinjs-lib';
 import { useEffect, useMemo, useState } from 'react';
 
+import { toPsbtNetwork } from '@/background/utils/tx-utils';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useAccountAddress, useAccountBalance } from '@/ui/state/accounts/hooks';
+import { useNetworkType } from '@/ui/state/settings/hooks';
 import { copyToClipboard, satoshisToAmount, shortAddress, useApproval } from '@/ui/utils';
 
 interface Props {
@@ -60,35 +62,43 @@ export default function SendBitcoin({
     changedInscriptions: InscriptioinInfo[];
     rawtx: string;
     psbtHex: string;
+    fee: number;
+    feeRate: number;
   }>({
     inputInfos: [],
     outputInfos: [],
     changedBalance: 0,
     changedInscriptions: [],
     rawtx: '',
-    psbtHex: ''
+    psbtHex: '',
+    fee: 0,
+    feeRate: 1
   });
 
   const [tabState, setTabState] = useState(TabState.DETAILS);
 
   const accountAddress = useAccountAddress();
 
+  const networkType = useNetworkType();
+  const psbtNetwork = toPsbtNetwork(networkType);
+
   const init = async () => {
     const inputInfos: InputInfo[] = [];
     const outputInfos: OutputInfo[] = [];
-    const psbt = bitcoin.Psbt.fromHex(psbtHex);
+    const psbt = bitcoin.Psbt.fromHex(psbtHex, { network: psbtNetwork });
 
     let changedBalance = 0;
 
+    let fee = 0;
     psbt.txInputs.forEach((v, index) => {
       let address = '';
       let value = 0;
       const { witnessUtxo, nonWitnessUtxo } = psbt.data.inputs[index];
       if (witnessUtxo) {
-        address = bitcoin.address.fromOutputScript(witnessUtxo.script);
+        address = bitcoin.address.fromOutputScript(witnessUtxo.script, psbtNetwork);
         value = witnessUtxo.value;
       } else if (nonWitnessUtxo) {
-        address = bitcoin.address.fromOutputScript(nonWitnessUtxo);
+        address = bitcoin.address.fromOutputScript(nonWitnessUtxo, psbtNetwork);
       } else {
         // todo
       }
@@ -99,10 +109,11 @@ export default function SendBitcoin({
         address,
         value
       });
-
       if (address == accountAddress) {
         changedBalance -= value;
       }
+
+      fee += value;
     });
 
     psbt.txOutputs.forEach((v) => {
@@ -110,10 +121,10 @@ export default function SendBitcoin({
         address: v.address || '',
         value: v.value
       });
-
       if (v.address == accountAddress) {
         changedBalance += v.value;
       }
+      fee -= v.value;
     });
 
     setTxInfo({
@@ -122,7 +133,9 @@ export default function SendBitcoin({
       changedBalance,
       changedInscriptions: [],
       psbtHex: psbtHex,
-      rawtx: ''
+      rawtx: '',
+      fee,
+      feeRate: 1
     });
   };
 
@@ -149,6 +162,7 @@ export default function SendBitcoin({
       .toFixed(8);
   }, [accountBalance.amount, txInfo.changedBalance]);
 
+  const networkFee = useMemo(() => satoshisToAmount(txInfo.fee), [txInfo.fee]);
   return (
     <Layout className="h-full">
       <Content style={{ backgroundColor: '#1C1919' }}>
@@ -162,7 +176,7 @@ export default function SendBitcoin({
               return (
                 <div
                   key={v}
-                  className={'mx-5' + (index == tabState ? ' border-b border-white' : ' ')}
+                  className={'mx-5 cursor-pointer' + (index == tabState ? ' border-b border-white' : ' ')}
                   onClick={() => {
                     setTabState(index);
                   }}>
@@ -178,14 +192,7 @@ export default function SendBitcoin({
               <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 mt-5">
                 <div className={'py-5 flex justify-between'}>
                   <span>
-                    {txInfo.changedBalance !== 0 ? (
-                      txInfo.changedBalance > 0 ? (
-                        <span className=" text-green-300">+</span>
-                      ) : (
-                        <span className="text-red-300">-</span>
-                      )
-                    ) : null}
-                    <span className="text-white">{' ' + changedBalance}</span> BTC
+                    <span className="text-white">{txInfo.changedBalance > 0 ? '+' : ' ' + changedBalance}</span> BTC
                   </span>
                 </div>
               </div>
@@ -231,6 +238,13 @@ export default function SendBitcoin({
                     </div>
                   );
                 })}
+              </div>
+
+              <div className=" text-left font-semibold text-white mt-5">{'NETWORK FEE:'}</div>
+              <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 mt-5">
+                <div className={'py-5 flex justify-between'}>
+                  <span className="text-white">{networkFee}</span> BTC
+                </div>
               </div>
             </div>
           )}
