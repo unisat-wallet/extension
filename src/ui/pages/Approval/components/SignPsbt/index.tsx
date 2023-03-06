@@ -127,18 +127,48 @@ function SendInscriptionDetails({ txInfo }: { txInfo: TxInfo }) {
   );
 }
 
-function SendBitcoinDetails({ txInfo }: { txInfo: TxInfo }) {
+function SendBitcoinDetails({
+  txInfo,
+  toAddress,
+  satoshis
+}: {
+  txInfo: TxInfo;
+  toAddress?: string;
+  satoshis?: number;
+}) {
   const bitcoinTx = useBitcoinTx();
   const networkFee = useMemo(() => satoshisToAmount(txInfo.fee), [txInfo.fee]);
   const toAmount = useMemo(() => {
-    let toAmount = 0;
-    txInfo.outputInfos.forEach((v) => {
-      if (bitcoinTx.toAddress === v.address) {
-        toAmount += v.value;
-      }
-    });
-    return satoshisToAmount(toAmount);
+    if (txInfo.psbtHex) {
+      let toAmount = 0;
+      txInfo.outputInfos.forEach((v) => {
+        if (bitcoinTx.toAddress === v.address) {
+          toAmount += v.value;
+        }
+      });
+      return satoshisToAmount(toAmount);
+    } else {
+      return satoshisToAmount(satoshis || 0);
+    }
   }, [bitcoinTx.toSatoshis, txInfo]);
+
+  const balance = useAccountBalance();
+
+  if (!txInfo.psbtHex) {
+    return (
+      <div className="flex flex-col items-strech mx-5 mt-5 gap-3_75 justify-evenly">
+        <div className="text-left font-semibold text-white mt-5">{'Transfer Amount'}</div>
+        <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
+          <div className={'py-5 flex justify-between'}>
+            <span className="text-white">{toAmount}</span> BTC
+          </div>
+        </div>
+
+        <span className="text-lg text-error h-5">{`Insufficient Balance (${balance.amount})`}</span>
+      </div>
+    );
+  }
+
   return (
     <div className="flex flex-col items-strech mx-5 mt-5 gap-3_75 justify-evenly">
       <div className="text-left font-semibold text-white mt-5">{'Transfer Amount'}</div>
@@ -224,6 +254,20 @@ export default function SignPsbt({
     //   }
     // }
 
+    if (!psbtHex) {
+      setTxInfo({
+        inputInfos: [],
+        outputInfos: [],
+        changedBalance: 0,
+        changedInscriptions: [],
+        psbtHex: '',
+        rawtx: '',
+        fee: 0,
+        feeRate: 0
+      });
+      return;
+    }
+
     const inputInfos: InputInfo[] = [];
     const outputInfos: OutputInfo[] = [];
     const psbt = bitcoin.Psbt.fromHex(psbtHex, { network: psbtNetwork });
@@ -280,7 +324,7 @@ export default function SignPsbt({
       outputInfos,
       changedBalance,
       changedInscriptions: [],
-      psbtHex: psbtHex,
+      psbtHex,
       rawtx: '',
       fee,
       feeRate
@@ -321,12 +365,13 @@ export default function SignPsbt({
     if (type === TxType.SEND_INSCRIPTION) {
       return <SendInscriptionDetails txInfo={txInfo} />;
     } else if (type === TxType.SEND_BITCOIN) {
-      return <SendBitcoinDetails txInfo={txInfo} />;
+      return <SendBitcoinDetails txInfo={txInfo} toAddress={toAddress} satoshis={satoshis} />;
     } else {
       return <SignTxDetails txInfo={txInfo} />;
     }
   }, [txInfo]);
 
+  const isValid = txInfo.psbtHex !== '';
   return (
     <Layout className="h-full">
       <Content style={{ backgroundColor: '#1C1919', overflowY: 'auto' }}>
@@ -351,7 +396,7 @@ export default function SignPsbt({
           </div>
 
           {tabState === TabState.DETAILS && detailsComponent}
-          {tabState === TabState.DATA && (
+          {tabState === TabState.DATA && isValid && (
             <div className="flex flex-col justify-between items-strech box mx-5 mt-5">
               <div className="text-left font-semibold text-white">{'INPUTS:'}</div>
               <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 mt-5">
@@ -398,7 +443,7 @@ export default function SignPsbt({
             </div>
           )}
 
-          {tabState === TabState.HEX && txInfo.rawtx && (
+          {tabState === TabState.HEX && isValid && txInfo.rawtx && (
             <div className="flex flex-col items-strech mt-5 gap-3_75 justify-evenly mx-5">
               <div className=" text-left font-semibold text-white">{`HEX DATA: ${txInfo.rawtx.length / 2} BYTES`}</div>
 
@@ -418,7 +463,7 @@ export default function SignPsbt({
             </div>
           )}
 
-          {tabState === TabState.HEX && txInfo.psbtHex && (
+          {tabState === TabState.HEX && isValid && txInfo.psbtHex && (
             <div className="flex flex-col items-strech mt-5 gap-3_75 justify-evenly mx-5">
               <div className=" text-left font-semibold text-white">{`PSBT HEX DATA: ${
                 txInfo.psbtHex.length / 2
@@ -447,7 +492,7 @@ export default function SignPsbt({
           <Button size="large" type="default" className="box" onClick={handleCancel}>
             <div className="flex flex-col items-center text-lg font-semibold">Reject</div>
           </Button>
-          <Button size="large" type="primary" className="box" onClick={handleConfirm}>
+          <Button size="large" type="primary" className="box" onClick={handleConfirm} disabled={isValid == false}>
             <div className="flex  flex-col items-center text-lg font-semibold">Confirm</div>
           </Button>
         </div>
