@@ -51,7 +51,7 @@
     "@types/react-dom": "^18.0.4",
     "@unisat/bitcoin-hd-keyring": "0.1.9",
     "@unisat/bitcoinjs-wallet": "^0.1.0",
-    "@unisat/ord-utils": "0.1.2",
+    "@unisat/ord-utils": "0.1.3",
     "antd": "^4.20.4",
     "antd-dayjs-webpack-plugin": "1.0.6",
     "assert": "^2.0.0",
