@@ -40,7 +40,7 @@ class ProviderController extends BaseController {
   @Reflect.metadata('SAFE', true)
     getAccounts = async ({ session: { origin } }) => {
       if (!permissionService.hasPermission(origin)) {
-        [];
+        return [];
       }
 
       const _account = await wallet.getCurrentAccount();

@@ -459,12 +459,12 @@ const config = (env) => {
       //   chunks: ['ui'],
       //   filename: 'popup.html',
       // }),
-      // new HtmlWebpackPlugin({
-      //   inject: true,
-      //   template: paths.notificationHtml,
-      //   chunks: ['ui'],
-      //   filename: 'notification.html',
-      // }),
+      new HtmlWebpackPlugin({
+        inject: true,
+        template: paths.notificationHtml,
+        chunks: ['ui'],
+        filename: 'notification.html'
+      }),
       new HtmlWebpackPlugin({
         inject: true,
         template: paths.indexHtml,

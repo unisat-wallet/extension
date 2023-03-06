@@ -9,6 +9,7 @@ function getBrowserPaths(browser) {
     root: appRoot,
     src: rootResolve('src'),
     indexHtml: rootResolve('build/_raw/index.html'),
+    notificationHtml: rootResolve('build/_raw/notification.html'),
     backgroundHtml: rootResolve('src/background/background.html'),
     dist: rootResolve('dist/' + browser),
     rootResolve,
