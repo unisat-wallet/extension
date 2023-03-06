@@ -92,3 +92,9 @@ export interface UTXO {
     offset: number;
   }[];
 }
+
+export enum TxType {
+  SIGN_TX,
+  SEND_BITCOIN,
+  SEND_INSCRIPTION
+}

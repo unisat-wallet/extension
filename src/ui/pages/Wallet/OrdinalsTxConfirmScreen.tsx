@@ -2,12 +2,12 @@ import { Layout } from 'antd';
 import { Content, Header } from 'antd/lib/layout/layout';
 import { useTranslation } from 'react-i18next';
 
+import { TxType } from '@/shared/types';
 import CHeader from '@/ui/components/CHeader';
 import { useOrdinalsTx, usePushOrdinalsTxCallback } from '@/ui/state/transactions/hooks';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { SignPsbt } from '../Approval/components';
-import { TxType } from '../Approval/components/SignPsbt';
 import { useNavigate } from '../MainRoute';
 
 export default function OrdinalsTxConfirmScreen() {
@@ -32,8 +32,7 @@ export default function OrdinalsTxConfirmScreen() {
           </div>
         ) : (
           <SignPsbt
-            type={TxType.SEND_INSCRIPTION}
-            params={{ data: { psbtHex: ordinalsTx.psbtHex } }}
+            params={{ data: { psbtHex: ordinalsTx.psbtHex, type: TxType.SEND_INSCRIPTION } }}
             handleCancel={() => {
               navigate('MainScreen');
             }}

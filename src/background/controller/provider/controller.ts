@@ -106,11 +106,14 @@ class ProviderController extends BaseController {
     };
 
   @Reflect.metadata('APPROVAL', ['SignPsbt', (req) => {
-    const { data: { params: { toAddress, toAmount } } } = req;
+    const { data: { params: { toAddress, satoshis } } } = req;
 
   }])
-    sendBitcoin = async () => {
-      // todo
+    sendBitcoin = async ({approvalRes:{psbtHex}}) => {
+      const psbt = Psbt.fromHex(psbtHex);
+      const tx = psbt.extractTransaction();
+      const rawtx = tx.toHex()
+      return await wallet.pushTx(rawtx)
     }
 
   // @Reflect.metadata('APPROVAL', ['SendInscription', () => {

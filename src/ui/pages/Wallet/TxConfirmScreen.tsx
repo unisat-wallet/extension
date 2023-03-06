@@ -2,12 +2,12 @@ import { Layout } from 'antd';
 import { Content, Header } from 'antd/lib/layout/layout';
 import { useTranslation } from 'react-i18next';
 
+import { TxType } from '@/shared/types';
 import CHeader from '@/ui/components/CHeader';
 import { useBitcoinTx, usePushBitcoinTxCallback } from '@/ui/state/transactions/hooks';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { SignPsbt } from '../Approval/components';
-import { TxType } from '../Approval/components/SignPsbt';
 import { useNavigate } from '../MainRoute';
 
 export default function TxConfirmScreen() {
@@ -32,8 +32,7 @@ export default function TxConfirmScreen() {
           </div>
         ) : (
           <SignPsbt
-            type={TxType.SEND_BITCOIN}
-            params={{ data: { psbtHex: bitcoinTx.psbtHex } }}
+            params={{ data: { psbtHex: bitcoinTx.psbtHex, type: TxType.SEND_BITCOIN } }}
             handleCancel={() => {
               navigate('MainScreen');
             }}

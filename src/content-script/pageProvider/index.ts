@@ -2,6 +2,7 @@
 import { ethErrors, serializeError } from 'eth-rpc-errors';
 import { EventEmitter } from 'events';
 
+import { TxType } from '@/shared/types';
 import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
 
 import PushEventHandlers from './pushEventHandlers';
@@ -215,6 +216,28 @@ export class UnisatProvider extends EventEmitter {
       method: 'signMessage',
       params: {
         text
+      }
+    });
+  };
+
+  sendBitcoin = async (toAddress: string, satoshis: number) => {
+    return this._request({
+      method: 'sendBitcoin',
+      params: {
+        toAddress,
+        satoshis,
+        type: TxType.SEND_BITCOIN
+      }
+    });
+  };
+
+  sendInscription = async (toAddress: string, inscriptionId: string) => {
+    return this._request({
+      method: 'sendInscription',
+      params: {
+        toAddress,
+        inscriptionId,
+        type: TxType.SEND_BITCOIN
       }
     });
   };

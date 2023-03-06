@@ -5,23 +5,27 @@ import * as bitcoin from 'bitcoinjs-lib';
 import { useEffect, useMemo, useState } from 'react';
 
 import { toPsbtNetwork } from '@/background/utils/tx-utils';
+import { TxType } from '@/shared/types';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useAccountAddress, useAccountBalance } from '@/ui/state/accounts/hooks';
 import { useNetworkType } from '@/ui/state/settings/hooks';
-import { useBitcoinTx, useOrdinalsTx } from '@/ui/state/transactions/hooks';
+import {
+  useBitcoinTx,
+  useCreateBitcoinTxCallback,
+  useCreateOrdinalsTxCallback,
+  useOrdinalsTx
+} from '@/ui/state/transactions/hooks';
 import { copyToClipboard, satoshisToAmount, shortAddress, useApproval } from '@/ui/utils';
-
-export enum TxType {
-  SIGN_TX,
-  SEND_BITCOIN,
-  SEND_INSCRIPTION
-}
 
 interface Props {
   params: {
     data: {
       psbtHex: string;
+      type: TxType;
+      toAddress?: string;
+      satoshis?: number;
+      inscriptionId?: string;
     };
     session?: {
       origin: string;
@@ -29,7 +33,6 @@ interface Props {
       name: string;
     };
   };
-  type?: TxType;
   handleCancel?: () => void;
   handleConfirm?: () => void;
 }
@@ -157,7 +160,7 @@ function SendBitcoinDetails({ txInfo }: { txInfo: TxInfo }) {
           <span className="text-white">{bitcoinTx.toAddress}</span>
         </div>
       </div>
-      <div className="text-left font-semibold text-white mt-5">{'NETWORK FE'}</div>
+      <div className="text-left font-semibold text-white mt-5">{'NETWORK FEE'}</div>
       <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
         <div className={'py-5 flex justify-between'}>
           <span className="text-white">{`${networkFee} `}</span> BTC
@@ -180,10 +183,10 @@ interface TxInfo {
 
 export default function SignPsbt({
   params: {
-    data: { psbtHex },
+    data: { psbtHex, type, toAddress, satoshis, inscriptionId },
     session
   },
-  type,
+
   handleCancel,
   handleConfirm
 }: Props) {
@@ -207,7 +210,20 @@ export default function SignPsbt({
   const networkType = useNetworkType();
   const psbtNetwork = toPsbtNetwork(networkType);
 
+  const createBitcoinTx = useCreateBitcoinTxCallback();
+  const createOrdinalsTx = useCreateOrdinalsTxCallback();
   const init = async () => {
+    if (type === TxType.SEND_BITCOIN) {
+      if (!psbtHex && toAddress && satoshis) {
+        psbtHex = await createBitcoinTx(toAddress, satoshis);
+      }
+    }
+    // else if (type === TxType.SEND_INSCRIPTION) {
+    //   if (!psbtHex && toAddress && inscriptionId) {
+    //     psbtHex = await createOrdinalsTx(toAddress, inscriptionId);
+    //   }
+    // }
+
     const inputInfos: InputInfo[] = [];
     const outputInfos: OutputInfo[] = [];
     const psbt = bitcoin.Psbt.fromHex(psbtHex, { network: psbtNetwork });
@@ -283,7 +299,9 @@ export default function SignPsbt({
 
   if (!handleConfirm) {
     handleConfirm = () => {
-      resolveApproval();
+      resolveApproval({
+        psbtHex: txInfo.psbtHex
+      });
     };
   }
 

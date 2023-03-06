@@ -25,9 +25,14 @@ export function useCreateBitcoinTxCallback() {
   const wallet = useWallet();
   const fromAddress = useAccountAddress();
   const utxos = useUtxos();
+  const fetchUtxos = useFetchUtxosCallback();
   return useCallback(
     async (toAddress: string, toAmount: number, autoAdjust = false) => {
-      const psbtHex = await wallet.sendBTC({ to: toAddress, amount: toAmount, utxos, autoAdjust });
+      let _utxos = utxos;
+      if (_utxos.length === 0) {
+        _utxos = await fetchUtxos();
+      }
+      const psbtHex = await wallet.sendBTC({ to: toAddress, amount: toAmount, utxos: _utxos, autoAdjust });
       const psbt = Psbt.fromHex(psbtHex);
       const rawtx = psbt.extractTransaction().toHex();
       dispatch(
@@ -40,7 +45,7 @@ export function useCreateBitcoinTxCallback() {
       );
       return psbtHex;
     },
-    [dispatch, bitcoinTx, wallet, fromAddress, utxos]
+    [dispatch, bitcoinTx, wallet, fromAddress, utxos, fetchUtxos]
   );
 }
 
@@ -77,9 +82,14 @@ export function useCreateOrdinalsTxCallback() {
   const wallet = useWallet();
   const fromAddress = useAccountAddress();
   const utxos = useUtxos();
+  const fetchUtxos = useFetchUtxosCallback();
   return useCallback(
     async (toAddress: string, inscription: Inscription) => {
-      const psbtHex = await wallet.sendInscription({ to: toAddress, inscriptionId: inscription.id, utxos });
+      let _utxos = utxos;
+      if (_utxos.length === 0) {
+        _utxos = await fetchUtxos();
+      }
+      const psbtHex = await wallet.sendInscription({ to: toAddress, inscriptionId: inscription.id, utxos: _utxos });
       const psbt = Psbt.fromHex(psbtHex);
       const rawtx = psbt.extractTransaction().toHex();
       dispatch(
@@ -131,6 +141,7 @@ export function useFetchUtxosCallback() {
   return useCallback(async () => {
     const data = await wallet.getAddressUtxo(account.address);
     dispatch(transactionsActions.setUtxos(data));
+    return data;
   }, [wallet, account]);
 }
 
