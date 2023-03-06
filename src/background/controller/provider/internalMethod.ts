@@ -1,7 +1,6 @@
 import { keyringService } from '@/background/service';
 
 import wallet from '../wallet';
-import providerController from './controller';
 
 const tabCheckin = ({
   data: {
@@ -22,7 +21,7 @@ const getProviderState = async (req) => {
   return {
     network: wallet.getNetworkName(),
     isUnlocked,
-    accounts: isUnlocked ? [await providerController.getAddress()] : []
+    accounts: isUnlocked ? [wallet.getAddress()] : []
   };
 };
 

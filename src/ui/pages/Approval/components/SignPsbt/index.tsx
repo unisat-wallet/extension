@@ -5,20 +5,33 @@ import * as bitcoin from 'bitcoinjs-lib';
 import { useEffect, useMemo, useState } from 'react';
 
 import { toPsbtNetwork } from '@/background/utils/tx-utils';
+import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useAccountAddress, useAccountBalance } from '@/ui/state/accounts/hooks';
 import { useNetworkType } from '@/ui/state/settings/hooks';
+import { useBitcoinTx, useOrdinalsTx } from '@/ui/state/transactions/hooks';
 import { copyToClipboard, satoshisToAmount, shortAddress, useApproval } from '@/ui/utils';
 
+export enum TxType {
+  SIGN_TX,
+  SEND_BITCOIN,
+  SEND_INSCRIPTION
+}
+
 interface Props {
-  data: {
-    psbtHex: string;
+  params: {
+    data: {
+      psbtHex: string;
+    };
+    session?: {
+      origin: string;
+      icon: string;
+      name: string;
+    };
   };
-  session: {
-    origin: string;
-    icon: string;
-    name: string;
-  };
+  type?: TxType;
+  handleCancel?: () => void;
+  handleConfirm?: () => void;
 }
 interface InputInfo {
   txid: string;
@@ -45,26 +58,138 @@ interface InscriptioinInfo {
   isSent: boolean;
 }
 
-export default function SendBitcoin({
+function SignTxDetails({ txInfo }: { txInfo: TxInfo }) {
+  const changedBalance = useMemo(() => satoshisToAmount(txInfo.changedBalance), [txInfo.changedBalance]);
+  const accountBalance = useAccountBalance();
+  const beforeBalance = accountBalance.amount;
+  const afterBalance = useMemo(() => {
+    return new BigNumber(accountBalance.amount)
+      .multipliedBy(100000000)
+      .plus(new BigNumber(txInfo.changedBalance))
+      .dividedBy(100000000)
+      .toFixed(8);
+  }, [accountBalance.amount, txInfo.changedBalance]);
+  return (
+    <div className="flex flex-col justify-between items-strech box mx-5 mt-5">
+      <div className="text-left font-semibold text-white">{`BALANCE: ${beforeBalance} -> ${afterBalance}`}</div>
+      <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 mt-5">
+        <div className={'py-5 flex justify-between'}>
+          <span>
+            <span className="text-white">{txInfo.changedBalance > 0 ? '+' : ' ' + changedBalance}</span> BTC
+          </span>
+        </div>
+      </div>
+
+      {txInfo.changedInscriptions.length > 0 && (
+        <div>
+          <div className="text-left font-semibold text-white mt-5">{'INSCRIPTIONS:'}</div>
+          <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 mt-5">
+            <div className={'py-5 flex justify-between'}>
+              <div className="text-white">100</div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+function SendInscriptionDetails({ txInfo }: { txInfo: TxInfo }) {
+  const ordinalsTx = useOrdinalsTx();
+  const networkFee = useMemo(() => satoshisToAmount(txInfo.fee), [txInfo.fee]);
+  return (
+    <div className="flex flex-col items-strech mx-5 mt-5 gap-3_75 justify-evenly ">
+      <div className="text-left font-semibold text-white mt-5">{'INSCRIPTION'}</div>
+      <InscriptionPreview className="self-center" data={ordinalsTx.inscription} size="medium" />
+
+      <div className="text-left font-semibold text-white mt-5">{'FROM'}</div>
+      <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
+        <div className={'py-5 flex justify-between'}>
+          <span className="text-white">{ordinalsTx.fromAddress}</span>
+        </div>
+      </div>
+      <div className="text-left font-semibold text-white mt-5">{'TO'}</div>
+      <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
+        <div className={'py-5 flex justify-between'}>
+          <span className="text-white">{ordinalsTx.toAddress}</span>
+        </div>
+      </div>
+      <div className="text-left font-semibold text-white mt-5">{'NETWORK FE'}</div>
+      <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
+        <div className={'py-5 flex justify-between'}>
+          <span className="text-white">{`${networkFee} `}</span> BTC
+        </div>
+      </div>
+    </div>
+  );
+}
+
+function SendBitcoinDetails({ txInfo }: { txInfo: TxInfo }) {
+  const bitcoinTx = useBitcoinTx();
+  const networkFee = useMemo(() => satoshisToAmount(txInfo.fee), [txInfo.fee]);
+  const toAmount = useMemo(() => {
+    let toAmount = 0;
+    txInfo.outputInfos.forEach((v) => {
+      if (bitcoinTx.toAddress === v.address) {
+        toAmount += v.value;
+      }
+    });
+    return satoshisToAmount(toAmount);
+  }, [bitcoinTx.toSatoshis, txInfo]);
+  return (
+    <div className="flex flex-col items-strech mx-5 mt-5 gap-3_75 justify-evenly">
+      <div className="text-left font-semibold text-white mt-5">{'Transfer Amount'}</div>
+      <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
+        <div className={'py-5 flex justify-between'}>
+          <span className="text-white">{toAmount}</span> BTC
+        </div>
+      </div>
+
+      <div className="text-left font-semibold text-white mt-5">{'FROM'}</div>
+      <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
+        <div className={'py-5 flex justify-between'}>
+          <span className="text-white">{bitcoinTx.fromAddress}</span>
+        </div>
+      </div>
+      <div className="text-left font-semibold text-white mt-5">{'TO'}</div>
+      <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
+        <div className={'py-5 flex justify-between'}>
+          <span className="text-white">{bitcoinTx.toAddress}</span>
+        </div>
+      </div>
+      <div className="text-left font-semibold text-white mt-5">{'NETWORK FE'}</div>
+      <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
+        <div className={'py-5 flex justify-between'}>
+          <span className="text-white">{`${networkFee} `}</span> BTC
+        </div>
+      </div>
+    </div>
+  );
+}
+
+interface TxInfo {
+  inputInfos: InputInfo[];
+  outputInfos: OutputInfo[];
+  changedBalance: number;
+  changedInscriptions: InscriptioinInfo[];
+  rawtx: string;
+  psbtHex: string;
+  fee: number;
+  feeRate: number;
+}
+
+export default function SignPsbt({
   params: {
     data: { psbtHex },
     session
-  }
-}: {
-  params: Props;
-}) {
+  },
+  type,
+  handleCancel,
+  handleConfirm
+}: Props) {
   const [getApproval, resolveApproval, rejectApproval] = useApproval();
 
-  const [txInfo, setTxInfo] = useState<{
-    inputInfos: InputInfo[];
-    outputInfos: OutputInfo[];
-    changedBalance: number;
-    changedInscriptions: InscriptioinInfo[];
-    rawtx: string;
-    psbtHex: string;
-    fee: number;
-    feeRate: number;
-  }>({
+  const [txInfo, setTxInfo] = useState<TxInfo>({
     inputInfos: [],
     outputInfos: [],
     changedBalance: 0,
@@ -127,6 +252,13 @@ export default function SendBitcoin({
       fee -= v.value;
     });
 
+    let feeRate = 1;
+    try {
+      feeRate = psbt.getFeeRate();
+    } catch (e) {
+      // todo
+    }
+
     setTxInfo({
       inputInfos,
       outputInfos,
@@ -135,7 +267,7 @@ export default function SendBitcoin({
       psbtHex: psbtHex,
       rawtx: '',
       fee,
-      feeRate: 1
+      feeRate
     });
   };
 
@@ -143,33 +275,47 @@ export default function SendBitcoin({
     init();
   }, []);
 
-  const handleCancel = () => {
-    rejectApproval();
-  };
+  if (!handleCancel) {
+    handleCancel = () => {
+      rejectApproval();
+    };
+  }
 
-  const handleConfirm = () => {
-    resolveApproval();
-  };
-
-  const changedBalance = useMemo(() => satoshisToAmount(txInfo.changedBalance), [txInfo.changedBalance]);
-  const accountBalance = useAccountBalance();
-  const beforeBalance = accountBalance.amount;
-  const afterBalance = useMemo(() => {
-    return new BigNumber(accountBalance.amount)
-      .multipliedBy(100000000)
-      .plus(new BigNumber(txInfo.changedBalance))
-      .dividedBy(100000000)
-      .toFixed(8);
-  }, [accountBalance.amount, txInfo.changedBalance]);
+  if (!handleConfirm) {
+    handleConfirm = () => {
+      resolveApproval();
+    };
+  }
 
   const networkFee = useMemo(() => satoshisToAmount(txInfo.fee), [txInfo.fee]);
+
+  const title = useMemo(() => {
+    if (type === TxType.SEND_INSCRIPTION) {
+      return 'Confirm Transaction';
+    } else if (type === TxType.SEND_BITCOIN) {
+      return 'Confirm Transaction';
+    } else {
+      return 'Sign Transaction';
+    }
+  }, []);
+
+  const detailsComponent = useMemo(() => {
+    if (type === TxType.SEND_INSCRIPTION) {
+      return <SendInscriptionDetails txInfo={txInfo} />;
+    } else if (type === TxType.SEND_BITCOIN) {
+      return <SendBitcoinDetails txInfo={txInfo} />;
+    } else {
+      return <SignTxDetails txInfo={txInfo} />;
+    }
+  }, [txInfo]);
+
   return (
     <Layout className="h-full">
-      <Content style={{ backgroundColor: '#1C1919' }}>
+      <Content style={{ backgroundColor: '#1C1919', overflowY: 'auto' }}>
         <div className="flex flex-col items-strech mt-5 gap-3_75 justify-evenly mx-5">
-          <WebsiteBar session={session} />
+          {session && <WebsiteBar session={session} />}
 
-          <div className="flex self-center px-2 text-2xl font-semibold h-13">Sign Transaction</div>
+          <div className="flex self-center px-2 text-2xl font-semibold h-13">{title}</div>
 
           <div className="flex">
             {TAB_STATES.map((v, index) => {
@@ -186,29 +332,7 @@ export default function SendBitcoin({
             })}
           </div>
 
-          {tabState === TabState.DETAILS && (
-            <div className="flex flex-col justify-between items-strech box mx-5 mt-5">
-              <div className="text-left font-semibold text-white">{`BALANCE: ${beforeBalance} -> ${afterBalance}`}</div>
-              <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 mt-5">
-                <div className={'py-5 flex justify-between'}>
-                  <span>
-                    <span className="text-white">{txInfo.changedBalance > 0 ? '+' : ' ' + changedBalance}</span> BTC
-                  </span>
-                </div>
-              </div>
-
-              {txInfo.changedInscriptions.length > 0 && (
-                <div>
-                  <div className="text-left font-semibold text-white mt-5">{'INSCRIPTIONS:'}</div>
-                  <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 mt-5">
-                    <div className={'py-5 flex justify-between'}>
-                      <div className="text-white">100</div>
-                    </div>
-                  </div>
-                </div>
-              )}
-            </div>
-          )}
+          {tabState === TabState.DETAILS && detailsComponent}
           {tabState === TabState.DATA && (
             <div className="flex flex-col justify-between items-strech box mx-5 mt-5">
               <div className="text-left font-semibold text-white">{'INPUTS:'}</div>
@@ -244,6 +368,13 @@ export default function SendBitcoin({
               <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 mt-5">
                 <div className={'py-5 flex justify-between'}>
                   <span className="text-white">{networkFee}</span> BTC
+                </div>
+              </div>
+
+              <div className=" text-left font-semibold text-white mt-5">{'NETWORK FEE RATE:'}</div>
+              <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 mt-5">
+                <div className={'py-5 flex justify-between'}>
+                  <span className="text-white">{txInfo.feeRate}</span> sat/vB
                 </div>
               </div>
             </div>
@@ -296,7 +427,7 @@ export default function SendBitcoin({
       <Footer className="footer-bar flex-col">
         <div className="grid grid-cols-2 gap-x-2.5 mx-5">
           <Button size="large" type="default" className="box" onClick={handleCancel}>
-            <div className="flex flex-col items-center text-lg font-semibold">Cancel</div>
+            <div className="flex flex-col items-center text-lg font-semibold">Reject</div>
           </Button>
           <Button size="large" type="primary" className="box" onClick={handleConfirm}>
             <div className="flex  flex-col items-center text-lg font-semibold">Confirm</div>

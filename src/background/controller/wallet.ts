@@ -1,5 +1,6 @@
 /* eslint-disable indent */
 import * as bitcoin from 'bitcoinjs-lib';
+import { address as PsbtAddress } from 'bitcoinjs-lib';
 import Mnemonic from 'bitcore-mnemonic';
 import ECPairFactory from 'ecpair';
 import { cloneDeep, groupBy } from 'lodash';
@@ -28,12 +29,13 @@ import {
 } from '@/shared/constant';
 import { AddressType, BitcoinBalance, NetworkType, UTXO } from '@/shared/types';
 import { Wallet } from '@unisat/bitcoinjs-wallet';
+import { createSendBTC, createSendOrd } from '@unisat/ord-utils';
 
 import { ContactBookItem } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';
 import { ConnectedSite } from '../service/permission';
 import { Account } from '../service/preference';
-import { publicKeyToAddress, SingleAccountTransaction, toPsbtNetwork } from '../utils/tx-utils';
+import { publicKeyToAddress, toPsbtNetwork } from '../utils/tx-utils';
 import BaseController from './base';
 
 const stashKeyrings: Record<string, Keyring> = {};
@@ -384,6 +386,35 @@ export class WalletController extends BaseController {
     return keyringService.signTransaction(keyring, psbt, inputs);
   };
 
+  signPsbt = async (psbt: bitcoin.Psbt, inputs?: ToSignInput[]) => {
+    const account = preferenceService.getCurrentAccount();
+    if (!account) throw new Error('no current account');
+
+    const addressType = this.getAddressType();
+    const networkType = this.getNetworkType();
+    const psbtNetwork = toPsbtNetwork(networkType);
+    const accountAddress = publicKeyToAddress(account.address, addressType, networkType);
+
+    const keyring = await keyringService.getKeyringForAccount(account.address, account.type);
+    if (!inputs) {
+      const toSignInputs: ToSignInput[] = [];
+      psbt.data.inputs.forEach((v, index) => {
+        const script = v.witnessUtxo?.script || v.nonWitnessUtxo;
+        if (script) {
+          const address = PsbtAddress.fromOutputScript(script, psbtNetwork);
+          if (address === accountAddress) {
+            toSignInputs.push({
+              index,
+              publicKey: account.address
+            });
+          }
+        }
+      });
+      inputs = toSignInputs;
+    }
+    return keyringService.signTransaction(keyring, psbt, inputs);
+  };
+
   signMessage = async (text: string) => {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
@@ -600,102 +631,63 @@ export class WalletController extends BaseController {
     return NETWORK_TYPES[networkType].name;
   };
 
-  sendBTC = async ({
-    to,
-    amount,
-    utxos,
-    autoAdjust
-  }: {
-    to: string;
-    amount: number;
-    utxos: UTXO[];
-    autoAdjust: boolean;
-  }) => {
+  sendBTC = async ({ to, amount, utxos }: { to: string; amount: number; utxos: UTXO[] }) => {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
-    const addressType = preferenceService.getAddressType();
-    const networkType = preferenceService.getNetworkType();
-    const tx = new SingleAccountTransaction(account, this, addressType, networkType);
+    const networkType = this.getNetworkType();
+    const psbtNetwork = toPsbtNetwork(networkType);
+    const address = this.getAddress();
 
-    const safeUTXOs: UTXO[] = [];
-    utxos.forEach((utxo) => {
-      const nftCount = utxo.inscriptions.length;
-      if (nftCount > 0) {
-        // todo
-      } else {
-        safeUTXOs.push(utxo);
-      }
+    const psbt = await createSendBTC({
+      utxos: utxos.map((v) => {
+        return {
+          txId: v.txId,
+          outputIndex: v.outputIndex,
+          satoshis: v.satoshis,
+          scriptPk: v.scriptPk,
+          isTaproot: v.isTaproot,
+          address,
+          ords: v.inscriptions
+        };
+      }),
+      toAddress: to,
+      toAmount: amount,
+      wallet: this,
+      network: psbtNetwork,
+      changeAddress: address
     });
 
-    safeUTXOs.forEach((utxo) => {
-      tx.addInput(utxo);
-    });
-
-    tx.addOutput(to, amount);
-
-    const data = await tx.generate(autoAdjust);
-    return data;
+    return psbt.toHex();
   };
 
   sendInscription = async ({ to, inscriptionId, utxos }: { to: string; inscriptionId: string; utxos: UTXO[] }) => {
     const account = await preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
-    const addressType = preferenceService.getAddressType();
     const networkType = preferenceService.getNetworkType();
+    const psbtNetwork = toPsbtNetwork(networkType);
+    const address = this.getAddress();
 
-    const tx = new SingleAccountTransaction(account, this, addressType, networkType);
-
-    const NFT_DUST = 546;
-    const toAddress = to;
-    const safeUTXOs: UTXO[] = [];
-
-    let leftAmount = 0;
-    utxos.forEach((utxo) => {
-      const nftCount = utxo.inscriptions.length;
-      if (nftCount > 0) {
-        const nft = utxo.inscriptions.find((v) => v.id === inscriptionId);
-        if (!nft) {
-          // not found
-          return;
-        }
-
-        if (nftCount > 1) {
-          // not supoort
-          // console.log("found but not support");
-          throw new Error('found but not support');
-          // return;
-        }
-
-        leftAmount = utxo.satoshis;
-        if (nft.offset > NFT_DUST) {
-          tx.addChangeOutput(nft.offset);
-          leftAmount -= nft.offset;
-        }
-
-        tx.addOutput(toAddress, NFT_DUST);
-        leftAmount -= NFT_DUST;
-
-        tx.addInput(utxo);
-      } else {
-        safeUTXOs.push(utxo);
-      }
+    const psbt = await createSendOrd({
+      utxos: utxos.map((v) => {
+        return {
+          txId: v.txId,
+          outputIndex: v.outputIndex,
+          satoshis: v.satoshis,
+          scriptPk: v.scriptPk,
+          isTaproot: v.isTaproot,
+          address,
+          ords: v.inscriptions
+        };
+      }),
+      toAddress: to,
+      toOrdId: inscriptionId,
+      wallet: this,
+      network: psbtNetwork,
+      changeAddress: address
     });
-
-    safeUTXOs.forEach((utxo) => {
-      leftAmount += utxo.satoshis;
-      tx.addInput(utxo);
-    });
-
-    if (leftAmount <= 0) {
-      throw new Error('not enough balance');
-    }
-
-    tx.addChangeOutput(leftAmount);
-
-    const data = await tx.generateForInscriptionTx();
-    return data;
+    return psbt.toHex();
   };
 
   pushTx = async (rawtx: string) => {

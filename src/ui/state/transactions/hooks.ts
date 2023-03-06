@@ -1,3 +1,4 @@
+import { Psbt } from 'bitcoinjs-lib';
 import { useCallback, useMemo } from 'react';
 
 import { Inscription } from '@/shared/types';
@@ -26,21 +27,18 @@ export function useCreateBitcoinTxCallback() {
   const utxos = useUtxos();
   return useCallback(
     async (toAddress: string, toAmount: number, autoAdjust = false) => {
-      const result = await wallet.sendBTC({ to: toAddress, amount: toAmount, utxos, autoAdjust });
-      const changeSatoshis = fromAddress === toAddress ? 0 : toAmount + result.fee;
+      const psbtHex = await wallet.sendBTC({ to: toAddress, amount: toAmount, utxos, autoAdjust });
+      const psbt = Psbt.fromHex(psbtHex);
+      const rawtx = psbt.extractTransaction().toHex();
       dispatch(
         transactionsActions.updateBitcoinTx({
-          rawtx: result.rawtx,
-          fee: result.fee,
-          estimateFee: result.estimateFee,
-          toAddress,
+          rawtx,
+          psbtHex,
           fromAddress,
-          toSatoshis: result.toSatoshis,
-          changeSatoshis,
-          autoAdjust
+          toAddress
         })
       );
-      return result;
+      return psbtHex;
     },
     [dispatch, bitcoinTx, wallet, fromAddress, utxos]
   );
@@ -81,19 +79,19 @@ export function useCreateOrdinalsTxCallback() {
   const utxos = useUtxos();
   return useCallback(
     async (toAddress: string, inscription: Inscription) => {
-      const result = await wallet.sendInscription({ to: toAddress, inscriptionId: inscription.id, utxos });
-      const changeSatoshis = fromAddress === toAddress ? 0 : result.fee;
+      const psbtHex = await wallet.sendInscription({ to: toAddress, inscriptionId: inscription.id, utxos });
+      const psbt = Psbt.fromHex(psbtHex);
+      const rawtx = psbt.extractTransaction().toHex();
       dispatch(
         transactionsActions.updateOrdinalsTx({
-          rawtx: result.rawtx,
-          fee: result.fee,
-          estimateFee: result.fee,
+          rawtx,
+          psbtHex,
           fromAddress,
           toAddress,
-          inscription,
-          changeSatoshis
+          inscription
         })
       );
+      return psbtHex;
     },
     [dispatch, ordinalsTx, wallet, fromAddress, utxos]
   );

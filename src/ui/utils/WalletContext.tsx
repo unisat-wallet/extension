@@ -97,17 +97,8 @@ export interface WalletController {
 
   signTransaction(psbt: bitcoin.Psbt, inputs: ToSignInput[]): Promise<bitcoin.Psbt>;
 
-  sendBTC(data: {
-    to: string;
-    amount: number;
-    utxos: UTXO[];
-    autoAdjust: boolean;
-  }): Promise<{ fee: number; rawtx: string; toSatoshis: number; estimateFee: number }>;
-  sendInscription(data: {
-    to: string;
-    inscriptionId: string;
-    utxos: UTXO[];
-  }): Promise<{ fee: number; rawtx: string; toSatoshis: number }>;
+  sendBTC(data: { to: string; amount: number; utxos: UTXO[]; autoAdjust: boolean }): Promise<string>;
+  sendInscription(data: { to: string; inscriptionId: string; utxos: UTXO[] }): Promise<string>;
   pushTx(rawtx: string): Promise<string>;
 
   getInscriptionSummary(): Promise<InscriptionSummary>;

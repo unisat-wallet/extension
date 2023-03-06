@@ -186,9 +186,9 @@ export class UnisatProvider extends EventEmitter {
     });
   };
 
-  getAddress = async () => {
+  getAccounts = async () => {
     return this._request({
-      method: 'getAddress'
+      method: 'getAccounts'
     });
   };
 

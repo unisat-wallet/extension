@@ -12,7 +12,7 @@ const isSignApproval = (type: string) => {
   const SIGN_APPROVALS = ['SignText', 'SignPsbt', 'SignTx'];
   return SIGN_APPROVALS.includes(type);
 };
-
+const windowHeight = 600;
 const flow = new PromiseFlow();
 const flowContext = flow
   .use(async (ctx, next) => {
@@ -65,7 +65,7 @@ const flowContext = flow
             },
             approvalComponent: 'Connect'
           },
-          { height: 800 }
+          { height: windowHeight }
         );
         permissionService.addConnectedSite(origin, name, icon, CHAINS_ENUM.BTC);
       }
@@ -84,7 +84,7 @@ const flowContext = flow
     } = ctx;
     const [approvalType, condition, options = {}] =
       Reflect.getMetadata('APPROVAL', providerController, mapMethod) || [];
-    const windowHeight = 800;
+
     if (approvalType && (!condition || !condition(ctx.request))) {
       ctx.request.requestedApproval = true;
       ctx.approvalRes = await notificationService.requestApproval(

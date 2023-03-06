@@ -54,6 +54,7 @@ export default function OrdinalsTxCreateScreen() {
         setDisabled(false);
       })
       .catch((e) => {
+        console.log(e);
         setError(e.message);
       });
   }, [inputAddress]);
@@ -69,10 +70,10 @@ export default function OrdinalsTxCreateScreen() {
       </Header>
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-strech mx-5 mt-5 gap-3_75 justify-evenly">
-          <div className="flex self-center px-2 text-2xl font-semibold h-13">{t('Send')} Ordinals</div>
+          <div className="flex self-center px-2 text-2xl font-semibold h-13">{t('Send')} Inscription</div>
 
           <div className="flex justify-between w-full mt-5 text-soft-white">
-            <span className="flex items-center justify-center ">{t('Ordinals')}</span>
+            <span className="flex items-center justify-center ">{t('Inscription')}</span>
             {inscription && <InscriptionPreview data={inscription} size="small" />}
           </div>
 

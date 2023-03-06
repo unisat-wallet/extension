@@ -4,10 +4,9 @@ import { NETWORK_TYPES } from '@/shared/constant';
 
 import BaseController from '../base';
 import wallet from '../wallet';
-import { publicKeyToAddress, toPsbtNetwork, validator } from '@/background/utils/tx-utils';
+import { toPsbtNetwork, validator } from '@/background/utils/tx-utils';
 import { NetworkType } from '@/shared/types';
-import { address as PsbtAddress, Psbt } from 'bitcoinjs-lib';
-import { ToSignInput } from '@/background/service/keyring';
+import { Psbt } from 'bitcoinjs-lib';
 import { amountToSaothis } from '@/ui/utils';
 import { ethErrors } from 'eth-rpc-errors';
 
@@ -20,7 +19,7 @@ class ProviderController extends BaseController {
       throw ethErrors.provider.unauthorized();
     }
 
-    const _account = await this.getCurrentAccount();
+    const _account = await wallet.getCurrentAccount();
     const address = wallet.getAddress()
     const account = _account ? [address] : [];
     sessionService.broadcastEvent('accountsChanged', account);
@@ -37,6 +36,17 @@ class ProviderController extends BaseController {
     }
     return account
   };
+
+  @Reflect.metadata('SAFE', true)
+    getAccounts = async ({ session: { origin } }) => {
+      if (!permissionService.hasPermission(origin)) {
+        [];
+      }
+
+      const _account = await wallet.getCurrentAccount();
+      const account = _account ? [wallet.getAddress()] : [];
+      return account
+    };
 
   @Reflect.metadata('SAFE', true)
     getNetwork = async () => {
@@ -66,15 +76,15 @@ class ProviderController extends BaseController {
     }
 
 
-  @Reflect.metadata('SAFE', true)
-    getAddress = async () => {
-      const account = await wallet.getCurrentAccount();
-      if(!account) return ''
-      const addressType = wallet.getAddressType();
-      const networkType = wallet.getNetworkType()
-      const address = publicKeyToAddress(account.address,addressType,networkType)
-      return address;
-    };
+  // @Reflect.metadata('SAFE', true)
+  //   getAddress = async () => {
+  //     const account = await wallet.getCurrentAccount();
+  //     if(!account) return ''
+  //     const addressType = wallet.getAddressType();
+  //     const networkType = wallet.getNetworkType()
+  //     const address = publicKeyToAddress(account.address,addressType,networkType)
+  //     return address;
+  //   };
 
   @Reflect.metadata('SAFE', true)
     getPublicKey = async () => {
@@ -85,7 +95,7 @@ class ProviderController extends BaseController {
 
   @Reflect.metadata('SAFE', true)
     getBalance = async () => {
-      const account = await this.getCurrentAccount();
+      const account = await wallet.getCurrentAccount();
       if (!account) return null;
       const balance = await wallet.getAddressBalance(account.address)
       return {
@@ -95,13 +105,13 @@ class ProviderController extends BaseController {
       };
     };
 
-  // @Reflect.metadata('APPROVAL', ['SendBitcoin', () => {
-  //   // todo check
+  @Reflect.metadata('APPROVAL', ['SignPsbt', (req) => {
+    const { data: { params: { toAddress, toAmount } } } = req;
 
-  // }])
-  //   sendBitcoin = async () => {
-  //     // todo
-  //   }
+  }])
+    sendBitcoin = async () => {
+      // todo
+    }
 
   // @Reflect.metadata('APPROVAL', ['SendInscription', () => {
   //   // todo check
@@ -134,27 +144,12 @@ class ProviderController extends BaseController {
     // todo
   }])
     signPsbt = async ({ data: { params: { psbtHex } } }) => {
-      const account = await this.getCurrentAccount();
+      const account = await wallet.getCurrentAccount();
       if (!account) throw null;
-      const addressType = wallet.getAddressType()
       const networkType = wallet.getNetworkType()
       const psbtNetwork = toPsbtNetwork(networkType)
-      const accountAddress = publicKeyToAddress(account.address,addressType,networkType)
       const psbt = Psbt.fromHex(psbtHex,{network:psbtNetwork});
-      const toSignInputs:ToSignInput[] = [];
-      psbt.data.inputs.forEach(((v,index) => {
-        const script = v.witnessUtxo?.script || v.nonWitnessUtxo;
-        if (script) {
-          const address = PsbtAddress.fromOutputScript(script,toPsbtNetwork(networkType));
-          if (address === accountAddress) {
-            toSignInputs.push({
-              index,
-              publicKey:account.address,
-            })
-          }
-        }
-      }))
-      await wallet.signTransaction(account.type, account.address, psbt, toSignInputs);
+      await wallet.signPsbt( psbt);
       psbt.validateSignaturesOfAllInputs(validator);
       psbt.finalizeAllInputs();
       return psbt.toHex();

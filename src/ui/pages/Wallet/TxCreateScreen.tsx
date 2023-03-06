@@ -81,10 +81,10 @@ export default function TxCreateScreen() {
     }
     createBitcoinTx(toAddress, toSatoshis, autoAdjust)
       .then((data) => {
-        if (data.fee < data.estimateFee) {
-          setError(`Network fee must be at leat ${data.estimateFee}`);
-          return;
-        }
+        // if (data.fee < data.estimateFee) {
+        //   setError(`Network fee must be at leat ${data.estimateFee}`);
+        //   return;
+        // }
         setDisabled(false);
       })
       .catch((e) => {
@@ -166,12 +166,6 @@ export default function TxCreateScreen() {
             }}
           />
 
-          <div className="flex justify-between w-full mt-5 text-soft-white">
-            <span>{t('Network Fee')}</span>
-            <span>
-              <span className="font-semibold text-white">{feeAmount}</span> BTC
-            </span>
-          </div>
           <span className="text-lg text-error h-5">{error}</span>
 
           <Button

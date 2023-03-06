@@ -2676,6 +2676,16 @@
     tiny-secp256k1 "^2.2.1"
     uuid "^9.0.0"
 
+"@unisat/ord-utils@0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@unisat/ord-utils/-/ord-utils-0.1.2.tgz#2f281b692c7b257449ab15afeb414d524e484cae"
+  integrity sha512-kHKBIiT5Y7aqlL8kABOeWB/3B35f/dJu0NQsKP7qa/Bryq+hVZ2p8A3DXFBM3wqoj2CKwsByWSCMxSITpnKXww==
+  dependencies:
+    bitcoinjs-lib "^6.1.0"
+    bs58check "^2.1.2"
+    ecpair "^2.1.0"
+    tiny-secp256k1 "^2.2.1"
+
 "@webassemblyjs/ast@1.11.1":
   version "1.11.1"
   resolved "https://registry.yarnpkg.com/@webassemblyjs/ast/-/ast-1.11.1.tgz#2bfd767eae1a6996f432ff7e8d7fc75679c0b6a7"
