@@ -1,6 +1,7 @@
 import { EVENTS } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 import { Message } from '@/shared/utils';
+import { openExtensionInTab } from '@/ui/features/browser/tabs';
 
 import { providerController, walletController } from './controller';
 import {
@@ -100,4 +101,20 @@ browser.runtime.onConnect.addListener((port) => {
   port.onDisconnect.addListener(() => {
     // todo
   });
+});
+
+const addAppInstalledEvent = () => {
+  if (appStoreLoaded) {
+    openExtensionInTab();
+    return;
+  }
+  setTimeout(() => {
+    addAppInstalledEvent();
+  }, 1000);
+};
+
+browser.runtime.onInstalled.addListener((details) => {
+  if (details.reason === 'install') {
+    addAppInstalledEvent();
+  }
 });
