@@ -1,7 +1,7 @@
 import { Button, Input } from 'antd';
 import { Layout } from 'antd';
 import { Content, Header } from 'antd/lib/layout/layout';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
@@ -9,7 +9,7 @@ import { Inscription } from '@/shared/types';
 import CHeader from '@/ui/components/CHeader';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { useCreateOrdinalsTxCallback, useFetchUtxosCallback, useOrdinalsTx } from '@/ui/state/transactions/hooks';
-import { isValidAddress, satoshisToAmount } from '@/ui/utils';
+import { isValidAddress } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
 
@@ -32,8 +32,6 @@ export default function OrdinalsTxCreateScreen() {
   useEffect(() => {
     fetchUtxos();
   }, []);
-
-  const feeAmount = useMemo(() => satoshisToAmount(ordinalsTx.fee), [ordinalsTx.fee]);
 
   useEffect(() => {
     setDisabled(true);
@@ -75,13 +73,6 @@ export default function OrdinalsTxCreateScreen() {
           <div className="flex justify-between w-full mt-5 text-soft-white">
             <span className="flex items-center justify-center ">{t('Inscription')}</span>
             {inscription && <InscriptionPreview data={inscription} size="small" />}
-          </div>
-
-          <div className="flex justify-between w-full mt-5 text-soft-white">
-            <span>{t('Fee')}</span>
-            <span>
-              <span className="font-semibold text-white">{`${feeAmount} BTC`}</span>
-            </span>
           </div>
 
           <Input
