@@ -87,7 +87,7 @@ export class OpenApiService {
   };
 
   async getWalletConfig(): Promise<any> {
-    const data = await this.httpGet('/wallet/config', {});
+    const data = await this.httpGet('/v1/wallet/config', {});
     if (data.status == API_STATUS.FAILED) {
       throw new Error(data.message);
     }
@@ -95,7 +95,7 @@ export class OpenApiService {
   }
 
   async getAddressBalance(address: string): Promise<BitcoinBalance> {
-    const data = await this.httpGet('/address/balance', {
+    const data = await this.httpGet('/v2/address/balance', {
       address
     });
     if (data.status == API_STATUS.FAILED) {
@@ -105,7 +105,7 @@ export class OpenApiService {
   }
 
   async getAddressUtxo(address: string): Promise<UTXO[]> {
-    const data = await this.httpGet('/address/utxo', {
+    const data = await this.httpGet('/v2/address/utxo', {
       address
     });
     if (data.status == API_STATUS.FAILED) {
@@ -115,7 +115,7 @@ export class OpenApiService {
   }
 
   async getAddressInscriptions(address: string): Promise<Inscription[]> {
-    const data = await this.httpGet('/address/inscriptions', {
+    const data = await this.httpGet('/v2/address/inscriptions', {
       address
     });
     if (data.status == API_STATUS.FAILED) {
@@ -125,7 +125,7 @@ export class OpenApiService {
   }
 
   async getAddressRecentHistory(address: string): Promise<TxHistoryItem[]> {
-    const data = await this.httpGet('/address/recent-history', {
+    const data = await this.httpGet('/v1/address/recent-history', {
       address
     });
     if (data.status == API_STATUS.FAILED) {
@@ -135,7 +135,7 @@ export class OpenApiService {
   }
 
   async getInscriptionSummary(): Promise<InscriptionSummary> {
-    const data = await this.httpGet('/inscription-summary', {});
+    const data = await this.httpGet('/v1/inscription-summary', {});
     if (data.status == API_STATUS.FAILED) {
       throw new Error(data.message);
     }
@@ -143,7 +143,7 @@ export class OpenApiService {
   }
 
   async getAppSummary(): Promise<AppSummary> {
-    const data = await this.httpGet('/app-summary', {});
+    const data = await this.httpGet('/v1/app-summary', {});
     if (data.status == API_STATUS.FAILED) {
       throw new Error(data.message);
     }
@@ -151,7 +151,7 @@ export class OpenApiService {
   }
 
   async pushTx(rawtx: string): Promise<string> {
-    const data = await this.httpPost('/tx/broadcast', {
+    const data = await this.httpPost('/v1/tx/broadcast', {
       rawtx
     });
     if (data.status == API_STATUS.FAILED) {

@@ -118,8 +118,8 @@ export const INTERNAL_REQUEST_SESSION = {
   icon: './images/icon-128.png'
 };
 
-export const OPENAPI_URL_MAINNET = 'https://unisat.io/api/v1';
-export const OPENAPI_URL_TESTNET = 'https://unisat.io/testnet/api/v1';
+export const OPENAPI_URL_MAINNET = 'https://unisat.io/api';
+export const OPENAPI_URL_TESTNET = 'https://unisat.io/testnet/api';
 
 export const EVENTS = {
   broadcastToUI: 'broadcastToUI',
