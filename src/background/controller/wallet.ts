@@ -644,7 +644,17 @@ export class WalletController extends BaseController {
     return NETWORK_TYPES[networkType].name;
   };
 
-  sendBTC = async ({ to, amount, utxos }: { to: string; amount: number; utxos: UTXO[] }) => {
+  sendBTC = async ({
+    to,
+    amount,
+    utxos,
+    autoAdjust
+  }: {
+    to: string;
+    amount: number;
+    utxos: UTXO[];
+    autoAdjust: boolean;
+  }) => {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
@@ -667,7 +677,9 @@ export class WalletController extends BaseController {
       toAmount: amount,
       wallet: this,
       network: psbtNetwork,
-      changeAddress: account.address
+      changeAddress: account.address,
+      force: autoAdjust,
+      pubkey: account.pubkey
     });
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -699,7 +711,8 @@ export class WalletController extends BaseController {
       toOrdId: inscriptionId,
       wallet: this,
       network: psbtNetwork,
-      changeAddress: account.address
+      changeAddress: account.address,
+      pubkey: account.pubkey
     });
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment

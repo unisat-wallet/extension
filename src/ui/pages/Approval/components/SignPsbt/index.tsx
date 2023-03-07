@@ -154,7 +154,7 @@ function SendBitcoinDetails({
   }, [bitcoinTx.toSatoshis, txInfo]);
 
   const balance = useAccountBalance();
-
+  const feeEnough = txInfo.fee > 0;
   if (!txInfo.psbtHex) {
     return (
       <div className="flex flex-col items-strech mx-5 mt-5 gap-3_75 justify-evenly">
@@ -194,7 +194,7 @@ function SendBitcoinDetails({
       <div className="text-left font-semibold text-white mt-5">{'NETWORK FEE'}</div>
       <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
         <div className={'py-5 flex justify-between'}>
-          <span className="text-white">{`${networkFee} `}</span> BTC
+          <span className={feeEnough ? 'text-white' : 'text-red-500'}>{`${networkFee} `}</span> BTC
         </div>
       </div>
     </div>
@@ -380,7 +380,21 @@ export default function SignPsbt({
     }
   }, [txInfo]);
 
-  const isValid = txInfo.psbtHex !== '';
+  const isValidData = useMemo(() => {
+    if (txInfo.psbtHex === '') {
+      return false;
+    }
+    return true;
+  }, [txInfo.psbtHex]);
+
+  const isValid = useMemo(() => {
+    if (txInfo.psbtHex === '') {
+      return false;
+    }
+    if (txInfo.fee == 0) {
+      return false;
+    }
+  }, [txInfo.psbtHex, txInfo.fee]);
 
   if (loading) {
     return (
@@ -418,7 +432,7 @@ export default function SignPsbt({
           </div>
 
           {tabState === TabState.DETAILS && detailsComponent}
-          {tabState === TabState.DATA && isValid && (
+          {tabState === TabState.DATA && isValidData && (
             <div className="flex flex-col justify-between items-strech box mx-5 mt-5">
               <div className="text-left font-semibold text-white">{'INPUTS:'}</div>
               <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 mt-5">
@@ -465,7 +479,7 @@ export default function SignPsbt({
             </div>
           )}
 
-          {tabState === TabState.HEX && isValid && txInfo.rawtx && (
+          {tabState === TabState.HEX && isValidData && txInfo.rawtx && (
             <div className="flex flex-col items-strech mt-5 gap-3_75 justify-evenly mx-5">
               <div className=" text-left font-semibold text-white">{`HEX DATA: ${txInfo.rawtx.length / 2} BYTES`}</div>
 
@@ -485,7 +499,7 @@ export default function SignPsbt({
             </div>
           )}
 
-          {tabState === TabState.HEX && isValid && txInfo.psbtHex && (
+          {tabState === TabState.HEX && isValidData && txInfo.psbtHex && (
             <div className="flex flex-col items-strech mt-5 gap-3_75 justify-evenly mx-5">
               <div className=" text-left font-semibold text-white">{`PSBT HEX DATA: ${
                 txInfo.psbtHex.length / 2

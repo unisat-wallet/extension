@@ -1,4 +1,5 @@
 import { Statistic } from 'antd';
+import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
@@ -25,6 +26,13 @@ export default function WalletTab() {
   const isTestNetwork = networkType === NetworkType.TESTNET;
 
   const dispatch = useDispatch();
+  const balanceValue = useMemo(() => {
+    if (accountBalance.amount === '0') {
+      return '--';
+    } else {
+      return accountBalance.amount;
+    }
+  }, [accountBalance.amount]);
   return (
     <div className="flex flex-col items-stretch gap-5 mt-5 mx-5 justify-evenly">
       <AccountSelect />
@@ -34,7 +42,7 @@ export default function WalletTab() {
 
       <div className="flex flex-col items-center mt-5 font-semibold text-11" style={{ height: '2.75rem' }}>
         <div className="flex items-center">
-          <Statistic className="text-white" value={accountBalance?.amount} valueStyle={{ fontSize: '2.75rem' }} />{' '}
+          <Statistic className="text-white" value={balanceValue} valueStyle={{ fontSize: '2.75rem' }} />{' '}
           <span className="mx-5">BTC</span>
         </div>
       </div>
