@@ -3,7 +3,7 @@ import * as bitcoin from 'bitcoinjs-lib';
 import ECPairFactory from 'ecpair';
 import * as ecc from 'tiny-secp256k1';
 
-import { AddressType, NetworkType, UTXO } from '@/shared/types';
+import { AddressType, NetworkType } from '@/shared/types';
 
 bitcoin.initEccLib(ecc);
 const ECPair = ECPairFactory(ecc);
@@ -45,31 +45,6 @@ export function publicKeyToAddress(publicKey: string, type: AddressType, network
     return address || '';
   } else {
     return '';
-  }
-}
-
-export function utxoToInput(utxo: UTXO, publicKey: Buffer) {
-  if (utxo.isTaproot) {
-    const input = {
-      hash: utxo.txId,
-      index: utxo.outputIndex,
-      witnessUtxo: {
-        value: utxo.satoshis,
-        script: Buffer.from(utxo.scriptPk, 'hex')
-      },
-      tapInternalKey: toXOnly(publicKey)
-    };
-    return input;
-  } else {
-    const input = {
-      hash: utxo.txId,
-      index: utxo.outputIndex,
-      witnessUtxo: {
-        value: utxo.satoshis,
-        script: Buffer.from(utxo.scriptPk, 'hex')
-      }
-    };
-    return input;
   }
 }
 

@@ -1,13 +1,11 @@
 import { useCallback } from 'react';
 
 import { Account } from '@/background/service/preference';
-import { publicKeyToAddress } from '@/background/utils/tx-utils';
-import { ADDRESS_TYPES, KEYRING_CLASS } from '@/shared/constant';
+import { KEYRING_CLASS } from '@/shared/constant';
 import { useWallet } from '@/ui/utils';
 
 import { AppState } from '..';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { useAddressType, useNetworkType } from '../settings/hooks';
 import { accountActions } from './reducer';
 
 export function useAccountsState(): AppState['accounts'] {
@@ -53,16 +51,8 @@ export function useHistory() {
 }
 
 export function useAccountAddress() {
-  const addressType = useAddressType();
-  const networkType = useNetworkType();
   const currentAccount = useCurrentAccount();
-  return publicKeyToAddress(currentAccount.address, addressType, networkType);
-}
-
-export function useAllTypeAddresses() {
-  const networkType = useNetworkType();
-  const currentAccount = useCurrentAccount();
-  return ADDRESS_TYPES.map((v) => publicKeyToAddress(currentAccount.address, v.value, networkType));
+  return currentAccount.address;
 }
 
 export function useSetCurrentAccountCallback() {
@@ -105,7 +95,7 @@ export function useChangeAccountNameCallback() {
   const currentAccount = useCurrentAccount();
   return useCallback(
     async (name: string) => {
-      await wallet.updateAlianName(currentAccount.address, name);
+      await wallet.updateAlianName(currentAccount.pubkey, name);
       dispatch(accountActions.setCurrentAccountName(name));
     },
     [dispatch, wallet, currentAccount]

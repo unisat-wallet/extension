@@ -4,7 +4,6 @@ import React, { createContext, ReactNode, useContext } from 'react';
 import { AccountAsset } from '@/background/controller/wallet';
 import { ContactBookItem, ContactBookStore } from '@/background/service/contactBook';
 import { DisplayedKeryring, ToSignInput } from '@/background/service/keyring';
-import DisplayKeyring from '@/background/service/keyring/display';
 import { ConnectedSite } from '@/background/service/permission';
 import { Account } from '@/background/service/preference';
 import {
@@ -86,8 +85,7 @@ export interface WalletController {
   getAllAlianName: () => (ContactBookItem | undefined)[];
   getContactsByMap: () => ContactBookStore;
   getAllVisibleAccountsArray(): Promise<Account>;
-  getAllClassAccounts(): Promise<DisplayedKeryring & { keyring: DisplayKeyring }[]>;
-  updateAlianName: (address: string, name: string) => Promise<void>;
+  updateAlianName: (pubkey: string, name: string) => Promise<void>;
 
   changeAccount(account: Account): Promise<void>;
   getCurrentAccount(): Promise<Account>;

@@ -20,8 +20,7 @@ class ProviderController extends BaseController {
     }
 
     const _account = await wallet.getCurrentAccount();
-    const address = wallet.getAddress()
-    const account = _account ? [address] : [];
+    const account = _account ? [_account.address] : [];
     sessionService.broadcastEvent('accountsChanged', account);
     const connectSite = permissionService.getConnectedSite(origin);
     if (connectSite) {
@@ -44,7 +43,7 @@ class ProviderController extends BaseController {
       }
 
       const _account = await wallet.getCurrentAccount();
-      const account = _account ? [wallet.getAddress()] : [];
+      const account = _account ? [_account.address] : [];
       return account
     };
 
@@ -90,7 +89,7 @@ class ProviderController extends BaseController {
     getPublicKey = async () => {
       const account = await wallet.getCurrentAccount();
       if(!account) return ''
-      return account.address;
+      return account.pubkey;
     };
 
   @Reflect.metadata('SAFE', true)

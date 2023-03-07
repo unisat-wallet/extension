@@ -85,7 +85,7 @@ export interface UTXO {
   outputIndex: number;
   satoshis: number;
   scriptPk: string;
-  isTaproot: boolean;
+  addressType: AddressType;
   inscriptions: {
     id: string;
     num: number;

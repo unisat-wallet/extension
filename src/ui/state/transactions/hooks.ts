@@ -61,6 +61,12 @@ export function usePushBitcoinTxCallback() {
       await sleep(3); // Wait for transaction synchronization
       dispatch(transactionsActions.updateBitcoinTx({ txid, sending: false }));
       dispatch(accountActions.expireBalance());
+      setTimeout(() => {
+        dispatch(accountActions.expireBalance());
+      }, 2000);
+      setTimeout(() => {
+        dispatch(accountActions.expireBalance());
+      }, 5000);
       success = true;
     } catch (e) {
       console.log(e);
@@ -118,7 +124,15 @@ export function usePushOrdinalsTxCallback() {
       const txid = await wallet.pushTx(ordinalsTx.rawtx);
       await sleep(3); // Wait for transaction synchronization
       dispatch(transactionsActions.updateOrdinalsTx({ txid, sending: false }));
+
       dispatch(accountActions.expireBalance());
+      setTimeout(() => {
+        dispatch(accountActions.expireBalance());
+      }, 2000);
+      setTimeout(() => {
+        dispatch(accountActions.expireBalance());
+      }, 5000);
+
       success = true;
     } catch (e) {
       console.log(e);

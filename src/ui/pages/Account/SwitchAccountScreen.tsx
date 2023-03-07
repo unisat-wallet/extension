@@ -6,13 +6,11 @@ import { forwardRef, useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { Account } from '@/background/service/preference';
-import { publicKeyToAddress } from '@/background/utils/tx-utils';
 import { KEYRING_CLASS } from '@/shared/constant';
 import CHeader from '@/ui/components/CHeader';
 import { useAccounts, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
-import { useAddressType, useNetworkType } from '@/ui/state/settings/hooks';
 import { shortAddress, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
@@ -31,12 +29,9 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
   const { t } = useTranslation();
   const navigate = useNavigate();
   const currentAccount = useCurrentAccount();
-  const selected = currentAccount.address == account?.address;
+  const selected = currentAccount.pubkey == account?.pubkey;
   const wallet = useWallet();
   const dispatch = useAppDispatch();
-  const addressType = useAddressType();
-  const networkType = useNetworkType();
-
   if (!account) {
     return (
       <Button
@@ -57,7 +52,7 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
       type="default"
       className="p-5 box default mb-3_75 btn-88"
       onClick={async (e) => {
-        if (currentAccount.address !== account.address) {
+        if (currentAccount.pubkey !== account.pubkey) {
           await wallet.changeAccount(account);
           dispatch(accountActions.setCurrent(account));
         }
@@ -66,9 +61,7 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
       <div className="flex items-center justify-between text-lg font-semibold">
         <div className="flex flex-col flex-grow text-left">
           <span>{account?.alianName} </span>
-          <span className="font-normal opacity-60">
-            ({shortAddress(publicKeyToAddress(account?.address, addressType, networkType))})
-          </span>
+          <span className="font-normal opacity-60">({shortAddress(account.address)})</span>
         </div>
         {account?.type == KEYRING_CLASS.PRIVATE_KEY ? (
           <span className="text-xs rounded bg-primary-active p-1.5">IMPORTED</span>

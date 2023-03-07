@@ -14,6 +14,7 @@ const version = process.env.release || '0';
 
 export interface Account {
   type: string;
+  pubkey: string;
   address: string;
   brandName: string;
   alianName?: string;
@@ -99,12 +100,19 @@ class PreferenceService {
       this.store.walletSavedList = [];
     }
 
-    if (!this.store.addressType) {
+    if (this.store.addressType === undefined || this.store.addressType === null) {
       this.store.addressType = AddressType.P2WPKH;
     }
 
     if (!this.store.networkType) {
       this.store.networkType = NetworkType.MAINNET;
+    }
+
+    if (this.store.currentAccount) {
+      if (!this.store.currentAccount.pubkey) {
+        // old version.
+        this.store.currentAccount = undefined; // will restored to new version
+      }
     }
   };
 
@@ -120,8 +128,15 @@ class PreferenceService {
    * to the first address in address list
    */
   resetCurrentAccount = async () => {
-    const [account] = await keyringService.getAllVisibleAccountsArray();
-    this.setCurrentAccount(account);
+    const [keyringAccount] = await keyringService.getAllVisibleAccountsArray();
+    const pubkey = keyringAccount.address;
+    const address = publicKeyToAddress(pubkey, this.store.addressType, this.store.networkType);
+    this.setCurrentAccount({
+      type: keyringAccount.type,
+      pubkey,
+      address,
+      brandName: keyringAccount.brandName
+    });
   };
 
   getCurrentAccount = () => {
@@ -131,8 +146,8 @@ class PreferenceService {
   setCurrentAccount = (account?: Account | null) => {
     this.store.currentAccount = account;
     if (account) {
-      const address = publicKeyToAddress(account.address, this.store.addressType, this.store.networkType);
-      sessionService.broadcastEvent('accountsChanged', [address]);
+      account.address = publicKeyToAddress(account.pubkey, this.store.addressType, this.store.networkType);
+      sessionService.broadcastEvent('accountsChanged', [account.address]);
       eventBus.emit(EVENTS.broadcastToUI, {
         method: 'accountsChanged',
         params: account

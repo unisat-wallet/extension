@@ -8,7 +8,7 @@ import { toPsbtNetwork } from '@/background/utils/tx-utils';
 import { TxType } from '@/shared/types';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import WebsiteBar from '@/ui/components/WebsiteBar';
-import { useAccountAddress, useAccountBalance, useAllTypeAddresses } from '@/ui/state/accounts/hooks';
+import { useAccountAddress, useAccountBalance } from '@/ui/state/accounts/hooks';
 import { useNetworkType } from '@/ui/state/settings/hooks';
 import {
   useBitcoinTx,
@@ -245,8 +245,6 @@ export default function SignPsbt({
   const createOrdinalsTx = useCreateOrdinalsTxCallback();
 
   const [loading, setLoading] = useState(true);
-
-  const addrs = useAllTypeAddresses();
 
   const init = async () => {
     if (type === TxType.SEND_BITCOIN) {

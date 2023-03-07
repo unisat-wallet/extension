@@ -31,7 +31,7 @@ export default function AddressTypeScreen() {
           <div className="flex flex-col px-2 text-2xl font-semibold h-13 text-center">{t('Address Type')}</div>
           <div className="text-warn box self-center">{'This will not switch your derivation path'}</div>
           {ADDRESS_TYPES.map((item, index) => {
-            const displayAddress = publicKeyToAddress(currentAccount.address, item.value, networkType);
+            const displayAddress = publicKeyToAddress(currentAccount.pubkey, item.value, networkType);
             return (
               <Button
                 key={index}
@@ -40,6 +40,7 @@ export default function AddressTypeScreen() {
                 className="box default"
                 onClick={() => {
                   changeAddressType(item.value);
+                  window.history.go(-1);
                 }}>
                 <div className="flex items-center justify-between text-lg font-semibold">
                   <div className="flex flex-start">

@@ -18,7 +18,6 @@ import {
 import i18n from '@/background/service/i18n';
 import { DisplayedKeryring, Keyring, KEYRING_CLASS, ToSignInput } from '@/background/service/keyring';
 import {
-  ADDRESS_TYPES,
   BRAND_ALIAN_TYPE_TEXT,
   CHAINS_ENUM,
   COIN_NAME,
@@ -68,8 +67,8 @@ export class WalletController extends BaseController {
   changePassword = (password: string, newPassword: string) => keyringService.changePassword(password, newPassword);
 
   initAlianNames = async () => {
-    await preferenceService.changeInitAlianNameStatus();
-    const contacts = await this.listContact();
+    preferenceService.changeInitAlianNameStatus();
+    const contacts = this.listContact();
     const keyrings = await keyringService.getAllTypedAccounts();
     const catergoryGroupAccount = keyrings.map((item) => ({
       type: item.type,
@@ -196,12 +195,12 @@ export class WalletController extends BaseController {
 
   clearKeyrings = () => keyringService.clearKeyrings();
 
-  getPrivateKey = async (password: string, { address, type }: { address: string; type: string }) => {
+  getPrivateKey = async (password: string, { pubkey, type }: { pubkey: string; type: string }) => {
     await this.verifyPassword(password);
-    const keyring = await keyringService.getKeyringForAccount(address, type);
+    const keyring = await keyringService.getKeyringForAccount(pubkey, type);
     if (!keyring) return null;
-    const privateKey = await keyring.exportAccount(address);
-    const networkType = await this.getNetworkType();
+    const privateKey = await keyring.exportAccount(pubkey);
+    const networkType = this.getNetworkType();
     const network = toPsbtNetwork(networkType);
     return ECPair.fromPrivateKey(Buffer.from(privateKey, 'hex'), { network }).toWIF();
   };
@@ -227,8 +226,8 @@ export class WalletController extends BaseController {
       console.log(e);
       throw error;
     }
-    const accounts = await keyring.getAccounts();
-    if (alianName) this.updateAlianName(accounts[0], alianName);
+    const pubkeys = await keyring.getAccounts();
+    if (alianName) this.updateAlianName(pubkeys[0], alianName);
     return this._setCurrentAccountFromKeyring(keyring, 0, alianName);
   };
 
@@ -258,14 +257,16 @@ export class WalletController extends BaseController {
     return this._setCurrentAccountFromKeyring(keyring, 0);
   };
 
-  removeAddress = async (address: string, type: string, brand?: string) => {
-    await keyringService.removeAccount(address, type, brand);
-    if (!(await keyringService.hasAddress(address))) {
-      contactBookService.removeAlias(address);
+  removeAddress = async (pubkey: string, type: string, brand?: string) => {
+    await keyringService.removeAccount(pubkey, type, brand);
+    if (!(await keyringService.hasAddress(pubkey))) {
+      contactBookService.removeAlias(pubkey);
     }
-    preferenceService.removeAddressBalance(address);
+
     const current = preferenceService.getCurrentAccount();
-    if (current?.address === address && current.type === type && current.brandName === brand) {
+    preferenceService.removeAddressBalance(current?.address || '');
+
+    if (current?.pubkey === pubkey && current.type === type && current.brandName === brand) {
       this.resetCurrentAccount();
     }
   };
@@ -356,26 +357,22 @@ export class WalletController extends BaseController {
   };
 
   getAllVisibleAccountsArray = async (): Promise<Account[]> => {
-    const _accounts = await keyringService.getAllVisibleAccountsArray();
+    const keyringAccounts = await keyringService.getAllVisibleAccountsArray();
     const accounts: Account[] = [];
-    _accounts.forEach((v) => {
+    const networkType = preferenceService.getNetworkType();
+    const addressType = preferenceService.getAddressType();
+    keyringAccounts.forEach((v) => {
+      const pubkey = v.address;
+      const address = publicKeyToAddress(pubkey, addressType, networkType);
       accounts.push({
         type: v.type,
-        address: v.address,
+        pubkey,
+        address,
         brandName: v.brandName,
-        alianName: this.getAlianName(v.address)
+        alianName: this.getAlianName(pubkey)
       });
     });
     return accounts;
-  };
-
-  getAllClassAccounts = async () => {
-    const typedAccounts = await keyringService.getAllTypedAccounts();
-
-    return typedAccounts.map((account) => ({
-      ...account,
-      keyring: account.keyring
-    }));
   };
 
   changeAccount = (account: Account) => {
@@ -391,23 +388,19 @@ export class WalletController extends BaseController {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
-    // const addressType = this.getAddressType();
     const networkType = this.getNetworkType();
     const psbtNetwork = toPsbtNetwork(networkType);
-    // const accountAddress = publicKeyToAddress(account.address, addressType, networkType);
-
-    const toSignAddrs = ADDRESS_TYPES.map((v) => publicKeyToAddress(account.address, v.value, networkType));
-    const keyring = await keyringService.getKeyringForAccount(account.address, account.type);
+    const keyring = await keyringService.getKeyringForAccount(account.pubkey, account.type);
     if (!inputs) {
       const toSignInputs: ToSignInput[] = [];
       psbt.data.inputs.forEach((v, index) => {
         const script = v.witnessUtxo?.script || v.nonWitnessUtxo;
         if (script) {
           const address = PsbtAddress.fromOutputScript(script, psbtNetwork);
-          if (toSignAddrs.includes(address)) {
+          if (account.address === address) {
             toSignInputs.push({
               index,
-              publicKey: account.address
+              publicKey: account.pubkey
             });
           }
         }
@@ -420,7 +413,7 @@ export class WalletController extends BaseController {
   signMessage = async (text: string) => {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
-    return keyringService.signMessage(account?.address, text);
+    return keyringService.signMessage(account.pubkey, text);
   };
 
   requestKeyring = (type: string, methodName: string, keyringId: number | null, ...params) => {
@@ -517,17 +510,21 @@ export class WalletController extends BaseController {
   };
 
   private _setCurrentAccountFromKeyring = async (keyring: Keyring, index = 0, alianName?: string) => {
-    const accounts = await keyring.getAccounts();
-    const account = accounts[index < 0 ? index + accounts.length : index];
+    const pubkeys = await keyring.getAccounts();
+    const pubkey = pubkeys[index < 0 ? index + pubkeys.length : index];
 
-    if (!account) {
+    if (!pubkey) {
       throw new Error('the current account is empty');
     }
 
-    alianName = alianName || this.getAlianName(account) || (await this.getNewAccountAlianName(keyring.type));
+    alianName = alianName || this.getAlianName(pubkey) || (await this.getNewAccountAlianName(keyring.type));
 
+    const addressType = preferenceService.getAddressType();
+    const networkType = preferenceService.getNetworkType();
+    const address = publicKeyToAddress(pubkey, addressType, networkType);
     const _account: Account = {
-      address: account,
+      pubkey,
+      address,
       type: keyring.type,
       brandName: keyring.type,
       alianName,
@@ -546,15 +543,15 @@ export class WalletController extends BaseController {
     return preferenceService.updateWalletSavedList(list);
   };
 
-  getAlianName = (address: string) => {
-    const contactName = contactBookService.getContactByAddress(address)?.name;
+  getAlianName = (pubkey: string) => {
+    const contactName = contactBookService.getContactByAddress(pubkey)?.name;
     return contactName;
   };
 
-  updateAlianName = (address: string, name: string) => {
+  updateAlianName = (pubkey: string, name: string) => {
     contactBookService.updateAlias({
       name,
-      address
+      address: pubkey
     });
   };
 
@@ -599,6 +596,11 @@ export class WalletController extends BaseController {
 
     // emit accountsChanged event
     const account = preferenceService.getCurrentAccount();
+    if (account) {
+      const addressType = preferenceService.getAddressType();
+      const networkType = preferenceService.getNetworkType();
+      account.address = publicKeyToAddress(account.pubkey, addressType, networkType);
+    }
     preferenceService.setCurrentAccount(account);
   };
 
@@ -607,7 +609,7 @@ export class WalletController extends BaseController {
     if (!account) throw new Error('no current account');
     const addressType = this.getAddressType();
     const networkType = this.getNetworkType();
-    return publicKeyToAddress(account.address, addressType, networkType);
+    return publicKeyToAddress(account.pubkey, addressType, networkType);
   };
 
   getNetworkType = () => {
@@ -626,6 +628,15 @@ export class WalletController extends BaseController {
     sessionService.broadcastEvent('networkChanged', {
       network
     });
+
+    // emit accountsChanged event
+    const account = preferenceService.getCurrentAccount();
+    if (account) {
+      const addressType = preferenceService.getAddressType();
+      const networkType = preferenceService.getNetworkType();
+      account.address = publicKeyToAddress(account.pubkey, addressType, networkType);
+    }
+    preferenceService.setCurrentAccount(account);
   };
 
   getNetworkName = () => {
@@ -639,7 +650,6 @@ export class WalletController extends BaseController {
 
     const networkType = this.getNetworkType();
     const psbtNetwork = toPsbtNetwork(networkType);
-    const address = this.getAddress();
 
     const psbt = await createSendBTC({
       utxos: utxos.map((v) => {
@@ -648,8 +658,8 @@ export class WalletController extends BaseController {
           outputIndex: v.outputIndex,
           satoshis: v.satoshis,
           scriptPk: v.scriptPk,
-          isTaproot: v.isTaproot,
-          address,
+          addressType: v.addressType,
+          address: account.address,
           ords: v.inscriptions
         };
       }),
@@ -657,9 +667,12 @@ export class WalletController extends BaseController {
       toAmount: amount,
       wallet: this,
       network: psbtNetwork,
-      changeAddress: address
+      changeAddress: account.address
     });
 
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    psbt.__CACHE.__UNSAFE_SIGN_NONSEGWIT = false;
     return psbt.toHex();
   };
 
@@ -669,7 +682,6 @@ export class WalletController extends BaseController {
 
     const networkType = preferenceService.getNetworkType();
     const psbtNetwork = toPsbtNetwork(networkType);
-    const address = this.getAddress();
 
     const psbt = await createSendOrd({
       utxos: utxos.map((v) => {
@@ -678,8 +690,8 @@ export class WalletController extends BaseController {
           outputIndex: v.outputIndex,
           satoshis: v.satoshis,
           scriptPk: v.scriptPk,
-          isTaproot: v.isTaproot,
-          address,
+          addressType: v.addressType,
+          address: account.address,
           ords: v.inscriptions
         };
       }),
@@ -687,8 +699,12 @@ export class WalletController extends BaseController {
       toOrdId: inscriptionId,
       wallet: this,
       network: psbtNetwork,
-      changeAddress: address
+      changeAddress: account.address
     });
+
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    psbt.__CACHE.__UNSAFE_SIGN_NONSEGWIT = false;
     return psbt.toHex();
   };
 
@@ -698,11 +714,22 @@ export class WalletController extends BaseController {
   };
 
   getAccounts = async () => {
-    const accounts: Account[] = await keyringService.getAllVisibleAccountsArray();
-    for (let i = 0; i < accounts.length; i++) {
-      const account = accounts[i];
-      account.alianName =
-        this.getAlianName(account.address) || (await this.getNewAccountAlianName(account.type, i + 1));
+    const keyringAccounts = await keyringService.getAllVisibleAccountsArray();
+    const accounts: Account[] = [];
+    const addressType = preferenceService.getAddressType();
+    const networkType = preferenceService.getNetworkType();
+    for (let i = 0; i < keyringAccounts.length; i++) {
+      const keyringAccount = keyringAccounts[i];
+      const pubkey = keyringAccount.address;
+      const alianName = this.getAlianName(pubkey) || (await this.getNewAccountAlianName(keyringAccount.type, i + 1));
+      const address = publicKeyToAddress(pubkey, addressType, networkType);
+      accounts.push({
+        type: keyringAccount.type,
+        pubkey,
+        address,
+        brandName: keyringAccount.brandName,
+        alianName
+      });
     }
 
     return accounts;
@@ -712,7 +739,7 @@ export class WalletController extends BaseController {
     let account = preferenceService.getCurrentAccount();
     if (account) {
       const accounts = await this.getAccounts();
-      const matchAcct = accounts.find((acct) => account!.address === acct.address);
+      const matchAcct = accounts.find((acct) => account!.pubkey === acct.pubkey);
       if (!matchAcct) account = undefined;
     }
 
