@@ -18,6 +18,7 @@ import {
 import i18n from '@/background/service/i18n';
 import { DisplayedKeryring, Keyring, KEYRING_CLASS, ToSignInput } from '@/background/service/keyring';
 import {
+  ADDRESS_TYPES,
   BRAND_ALIAN_TYPE_TEXT,
   CHAINS_ENUM,
   COIN_NAME,
@@ -390,11 +391,12 @@ export class WalletController extends BaseController {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
-    const addressType = this.getAddressType();
+    // const addressType = this.getAddressType();
     const networkType = this.getNetworkType();
     const psbtNetwork = toPsbtNetwork(networkType);
-    const accountAddress = publicKeyToAddress(account.address, addressType, networkType);
+    // const accountAddress = publicKeyToAddress(account.address, addressType, networkType);
 
+    const toSignAddrs = ADDRESS_TYPES.map((v) => publicKeyToAddress(account.address, v.value, networkType));
     const keyring = await keyringService.getKeyringForAccount(account.address, account.type);
     if (!inputs) {
       const toSignInputs: ToSignInput[] = [];
@@ -402,7 +404,7 @@ export class WalletController extends BaseController {
         const script = v.witnessUtxo?.script || v.nonWitnessUtxo;
         if (script) {
           const address = PsbtAddress.fromOutputScript(script, psbtNetwork);
-          if (address === accountAddress) {
+          if (toSignAddrs.includes(address)) {
             toSignInputs.push({
               index,
               publicKey: account.address

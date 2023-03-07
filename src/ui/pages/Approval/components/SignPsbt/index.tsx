@@ -8,7 +8,7 @@ import { toPsbtNetwork } from '@/background/utils/tx-utils';
 import { TxType } from '@/shared/types';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import WebsiteBar from '@/ui/components/WebsiteBar';
-import { useAccountAddress, useAccountBalance } from '@/ui/state/accounts/hooks';
+import { useAccountAddress, useAccountBalance, useAllTypeAddresses } from '@/ui/state/accounts/hooks';
 import { useNetworkType } from '@/ui/state/settings/hooks';
 import {
   useBitcoinTx,
@@ -17,6 +17,7 @@ import {
   useOrdinalsTx
 } from '@/ui/state/transactions/hooks';
 import { copyToClipboard, satoshisToAmount, shortAddress, useApproval } from '@/ui/utils';
+import { LoadingOutlined } from '@ant-design/icons';
 
 interface Props {
   params: {
@@ -117,7 +118,7 @@ function SendInscriptionDetails({ txInfo }: { txInfo: TxInfo }) {
           <span className="text-white">{ordinalsTx.toAddress}</span>
         </div>
       </div>
-      <div className="text-left font-semibold text-white mt-5">{'NETWORK FE'}</div>
+      <div className="text-left font-semibold text-white mt-5">{'NETWORK FEE'}</div>
       <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
         <div className={'py-5 flex justify-between'}>
           <span className="text-white">{`${networkFee} `}</span> BTC
@@ -242,10 +243,19 @@ export default function SignPsbt({
 
   const createBitcoinTx = useCreateBitcoinTxCallback();
   const createOrdinalsTx = useCreateOrdinalsTxCallback();
+
+  const [loading, setLoading] = useState(true);
+
+  const addrs = useAllTypeAddresses();
+
   const init = async () => {
     if (type === TxType.SEND_BITCOIN) {
       if (!psbtHex && toAddress && satoshis) {
-        psbtHex = await createBitcoinTx(toAddress, satoshis);
+        try {
+          psbtHex = await createBitcoinTx(toAddress, satoshis);
+        } catch (e) {
+          console.log(e);
+        }
       }
     }
     // else if (type === TxType.SEND_INSCRIPTION) {
@@ -254,6 +264,7 @@ export default function SignPsbt({
     //   }
     // }
 
+    setLoading(false);
     if (!psbtHex) {
       setTxInfo({
         inputInfos: [],
@@ -372,6 +383,19 @@ export default function SignPsbt({
   }, [txInfo]);
 
   const isValid = txInfo.psbtHex !== '';
+
+  if (loading) {
+    return (
+      <Layout className="h-full">
+        <Content style={{ backgroundColor: '#1C1919', overflowY: 'auto' }}>
+          <div className="flex flex-col items-strech mx-5 text-6xl mt-60 gap-3_75 text-primary">
+            <LoadingOutlined />
+            <span className="text-2xl text-white self-center">{'Loading'}</span>
+          </div>
+        </Content>
+      </Layout>
+    );
+  }
   return (
     <Layout className="h-full">
       <Content style={{ backgroundColor: '#1C1919', overflowY: 'auto' }}>

@@ -2,7 +2,7 @@ import { useCallback } from 'react';
 
 import { Account } from '@/background/service/preference';
 import { publicKeyToAddress } from '@/background/utils/tx-utils';
-import { KEYRING_CLASS } from '@/shared/constant';
+import { ADDRESS_TYPES, KEYRING_CLASS } from '@/shared/constant';
 import { useWallet } from '@/ui/utils';
 
 import { AppState } from '..';
@@ -57,6 +57,12 @@ export function useAccountAddress() {
   const networkType = useNetworkType();
   const currentAccount = useCurrentAccount();
   return publicKeyToAddress(currentAccount.address, addressType, networkType);
+}
+
+export function useAllTypeAddresses() {
+  const networkType = useNetworkType();
+  const currentAccount = useCurrentAccount();
+  return ADDRESS_TYPES.map((v) => publicKeyToAddress(currentAccount.address, v.value, networkType));
 }
 
 export function useSetCurrentAccountCallback() {
