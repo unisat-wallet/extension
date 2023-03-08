@@ -145,13 +145,13 @@ class ProviderController extends BaseController {
     const { data: { params: { psbtHex } } } = req;
     // todo
   }])
-    signPsbt = async ({ data: { params: { psbtHex, toSignInputs } } }) => {
+    signPsbt = async ({ data: { params: { psbtHex } } }) => {
       const account = await wallet.getCurrentAccount();
       if (!account) throw null;
       const networkType = wallet.getNetworkType()
       const psbtNetwork = toPsbtNetwork(networkType)
       const psbt = Psbt.fromHex(psbtHex,{network:psbtNetwork});
-      await wallet.signPsbt( psbt,toSignInputs);
+      await wallet.signPsbt( psbt);
       psbt.validateSignaturesOfAllInputs(validator);
       psbt.finalizeAllInputs();
       return psbt.toHex();

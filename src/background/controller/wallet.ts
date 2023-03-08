@@ -16,7 +16,7 @@ import {
   sessionService
 } from '@/background/service';
 import i18n from '@/background/service/i18n';
-import { DisplayedKeryring, Keyring, KEYRING_CLASS, ToSignInput } from '@/background/service/keyring';
+import { DisplayedKeryring, Keyring, KEYRING_CLASS } from '@/background/service/keyring';
 import {
   BRAND_ALIAN_TYPE_TEXT,
   CHAINS_ENUM,
@@ -27,7 +27,7 @@ import {
   OPENAPI_URL_MAINNET,
   OPENAPI_URL_TESTNET
 } from '@/shared/constant';
-import { AddressType, BitcoinBalance, NetworkType, UTXO } from '@/shared/types';
+import { AddressType, BitcoinBalance, NetworkType, ToSignInput, UTXO } from '@/shared/types';
 import { Wallet } from '@unisat/bitcoinjs-wallet';
 import { createSendBTC, createSendOrd } from '@unisat/ord-utils';
 
@@ -384,30 +384,41 @@ export class WalletController extends BaseController {
     return keyringService.signTransaction(keyring, psbt, inputs);
   };
 
-  signPsbt = async (psbt: bitcoin.Psbt, inputs?: ToSignInput[]) => {
+  signPsbt = async (psbt: bitcoin.Psbt) => {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
     const networkType = this.getNetworkType();
     const psbtNetwork = toPsbtNetwork(networkType);
     const keyring = await keyringService.getKeyringForAccount(account.pubkey, account.type);
-    if (!inputs) {
-      const toSignInputs: ToSignInput[] = [];
-      psbt.data.inputs.forEach((v, index) => {
-        const script = v.witnessUtxo?.script || v.nonWitnessUtxo;
-        if (script) {
-          const address = PsbtAddress.fromOutputScript(script, psbtNetwork);
-          if (account.address === address) {
-            toSignInputs.push({
-              index,
-              publicKey: account.pubkey
-            });
-          }
+
+    const toSignInputs: ToSignInput[] = [];
+
+    psbt.data.inputs.forEach((v, index) => {
+      let script: any = null;
+      let value = 0;
+      if (v.witnessUtxo) {
+        script = v.witnessUtxo.script;
+        value = v.witnessUtxo.value;
+      } else if (v.nonWitnessUtxo) {
+        const tx = bitcoin.Transaction.fromBuffer(v.nonWitnessUtxo);
+        const output = tx.outs[index];
+        script = output.script;
+        value = output.value;
+      }
+      if (script) {
+        const address = PsbtAddress.fromOutputScript(script, psbtNetwork);
+        if (account.address === address) {
+          toSignInputs.push({
+            index,
+            publicKey: account.pubkey,
+            sighashTypes: v.sighashType ? [v.sighashType] : undefined
+          });
         }
-      });
-      inputs = toSignInputs;
-    }
-    return keyringService.signTransaction(keyring, psbt, inputs);
+      }
+    });
+
+    return keyringService.signTransaction(keyring, psbt, toSignInputs);
   };
 
   signMessage = async (text: string) => {

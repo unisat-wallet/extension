@@ -302,14 +302,16 @@ export default function SignPsbt({
           address = bitcoin.address.fromOutputScript(witnessUtxo.script, psbtNetwork);
           value = witnessUtxo.value;
         } else if (nonWitnessUtxo) {
-          address = bitcoin.address.fromOutputScript(nonWitnessUtxo, psbtNetwork);
+          const tx = bitcoin.Transaction.fromBuffer(nonWitnessUtxo);
+          const output = tx.outs[index];
+          address = bitcoin.address.fromOutputScript(output.script, psbtNetwork);
+          value = output.value;
         } else {
           // todo
         }
       } catch (e) {
         // unknown
       }
-
       inputInfos.push({
         txid: v.hash.toString('hex'),
         vout: v.index,
