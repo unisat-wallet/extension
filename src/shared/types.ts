@@ -98,3 +98,9 @@ export enum TxType {
   SEND_BITCOIN,
   SEND_INSCRIPTION
 }
+
+export interface ToSignInput {
+  index: number;
+  publicKey: string;
+  sighashTypes?: number[];
+}

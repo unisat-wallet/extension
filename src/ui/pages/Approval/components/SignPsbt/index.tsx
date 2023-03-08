@@ -5,7 +5,7 @@ import * as bitcoin from 'bitcoinjs-lib';
 import { useEffect, useMemo, useState } from 'react';
 
 import { toPsbtNetwork } from '@/background/utils/tx-utils';
-import { TxType } from '@/shared/types';
+import { ToSignInput, TxType } from '@/shared/types';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useAccountAddress, useAccountBalance } from '@/ui/state/accounts/hooks';
@@ -27,6 +27,7 @@ interface Props {
       toAddress?: string;
       satoshis?: number;
       inscriptionId?: string;
+      toSignInputs?: ToSignInput[];
     };
     session?: {
       origin: string;
@@ -208,13 +209,14 @@ interface TxInfo {
   changedInscriptions: InscriptioinInfo[];
   rawtx: string;
   psbtHex: string;
+  toSignInputs: ToSignInput[];
   fee: number;
   feeRate: number;
 }
 
 export default function SignPsbt({
   params: {
-    data: { psbtHex, type, toAddress, satoshis, inscriptionId },
+    data: { psbtHex, toSignInputs, type, toAddress, satoshis, inscriptionId },
     session
   },
 
@@ -230,6 +232,7 @@ export default function SignPsbt({
     changedInscriptions: [],
     rawtx: '',
     psbtHex: '',
+    toSignInputs: [],
     fee: 0,
     feeRate: 1
   });
@@ -256,6 +259,10 @@ export default function SignPsbt({
         }
       }
     }
+
+    if (!toSignInputs) {
+      toSignInputs = [];
+    }
     // else if (type === TxType.SEND_INSCRIPTION) {
     //   if (!psbtHex && toAddress && inscriptionId) {
     //     psbtHex = await createOrdinalsTx(toAddress, inscriptionId);
@@ -272,7 +279,8 @@ export default function SignPsbt({
         psbtHex: '',
         rawtx: '',
         fee: 0,
-        feeRate: 0
+        feeRate: 0,
+        toSignInputs: []
       });
       return;
     }
@@ -285,16 +293,21 @@ export default function SignPsbt({
 
     let fee = 0;
     psbt.txInputs.forEach((v, index) => {
-      let address = '';
+      let address = 'UNKNOWN SCRIPT';
       let value = 0;
-      const { witnessUtxo, nonWitnessUtxo } = psbt.data.inputs[index];
-      if (witnessUtxo) {
-        address = bitcoin.address.fromOutputScript(witnessUtxo.script, psbtNetwork);
-        value = witnessUtxo.value;
-      } else if (nonWitnessUtxo) {
-        address = bitcoin.address.fromOutputScript(nonWitnessUtxo, psbtNetwork);
-      } else {
-        // todo
+
+      try {
+        const { witnessUtxo, nonWitnessUtxo } = psbt.data.inputs[index];
+        if (witnessUtxo) {
+          address = bitcoin.address.fromOutputScript(witnessUtxo.script, psbtNetwork);
+          value = witnessUtxo.value;
+        } else if (nonWitnessUtxo) {
+          address = bitcoin.address.fromOutputScript(nonWitnessUtxo, psbtNetwork);
+        } else {
+          // todo
+        }
+      } catch (e) {
+        // unknown
       }
 
       inputInfos.push({
@@ -336,7 +349,8 @@ export default function SignPsbt({
       psbtHex,
       rawtx: '',
       fee,
-      feeRate
+      feeRate,
+      toSignInputs
     });
   };
 
