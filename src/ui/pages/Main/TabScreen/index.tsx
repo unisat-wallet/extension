@@ -71,11 +71,11 @@ export default function MainScreen() {
               {connected ? (
                 <div className="flex items-center">
                   <div className="text-green-300 font-semibold mr-3 text-11">·</div>
-                  <span className="pt-1 text-sm">Connected</span>
+                  <span className="pt-1 text-sm">Dapp Connected</span>
                 </div>
               ) : (
                 <div className="flex items-center ">
-                  <span className="pt-2 text-sm">{'Not connected'}</span>
+                  <span className="pt-2 text-sm">{''}</span>
                 </div>
               )}
             </div>
