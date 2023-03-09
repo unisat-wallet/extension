@@ -35,7 +35,7 @@ import { ContactBookItem } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';
 import { ConnectedSite } from '../service/permission';
 import { Account } from '../service/preference';
-import { publicKeyToAddress, toPsbtNetwork } from '../utils/tx-utils';
+import { publicKeyToAddress, toPsbtNetwork, validator } from '../utils/tx-utils';
 import BaseController from './base';
 
 const stashKeyrings: Record<string, Keyring> = {};
@@ -406,7 +406,8 @@ export class WalletController extends BaseController {
         script = output.script;
         value = output.value;
       }
-      if (script) {
+      const isSigned = v.finalScriptSig || v.finalScriptWitness;
+      if (script && !isSigned) {
         const address = PsbtAddress.fromOutputScript(script, psbtNetwork);
         if (account.address === address) {
           toSignInputs.push({
@@ -418,7 +419,12 @@ export class WalletController extends BaseController {
       }
     });
 
-    return keyringService.signTransaction(keyring, psbt, toSignInputs);
+    psbt = await keyringService.signTransaction(keyring, psbt, toSignInputs);
+    toSignInputs.forEach((v) => {
+      psbt.validateSignaturesOfInput(v.index, validator);
+      psbt.finalizeInput(v.index);
+    });
+    return psbt;
   };
 
   signMessage = async (text: string) => {

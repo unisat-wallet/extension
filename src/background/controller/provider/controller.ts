@@ -4,7 +4,7 @@ import { NETWORK_TYPES } from '@/shared/constant';
 
 import BaseController from '../base';
 import wallet from '../wallet';
-import { toPsbtNetwork, validator } from '@/background/utils/tx-utils';
+import { toPsbtNetwork } from '@/background/utils/tx-utils';
 import { NetworkType } from '@/shared/types';
 import { Psbt } from 'bitcoinjs-lib';
 import { amountToSaothis } from '@/ui/utils';
@@ -152,8 +152,6 @@ class ProviderController extends BaseController {
       const psbtNetwork = toPsbtNetwork(networkType)
       const psbt = Psbt.fromHex(psbtHex,{network:psbtNetwork});
       await wallet.signPsbt( psbt);
-      psbt.validateSignaturesOfAllInputs(validator);
-      psbt.finalizeAllInputs();
       return psbt.toHex();
     }
 
