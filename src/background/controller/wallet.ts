@@ -402,7 +402,7 @@ export class WalletController extends BaseController {
         value = v.witnessUtxo.value;
       } else if (v.nonWitnessUtxo) {
         const tx = bitcoin.Transaction.fromBuffer(v.nonWitnessUtxo);
-        const output = tx.outs[index];
+        const output = tx.outs[psbt.txInputs[index].index];
         script = output.script;
         value = output.value;
       }

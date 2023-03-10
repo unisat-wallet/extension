@@ -303,7 +303,7 @@ export default function SignPsbt({
           value = witnessUtxo.value;
         } else if (nonWitnessUtxo) {
           const tx = bitcoin.Transaction.fromBuffer(nonWitnessUtxo);
-          const output = tx.outs[index];
+          const output = tx.outs[psbt.txInputs[index].index];
           address = bitcoin.address.fromOutputScript(output.script, psbtNetwork);
           value = output.value;
         } else {
