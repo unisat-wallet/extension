@@ -87,7 +87,7 @@
   "This__is__an__imported__account": { "message": "This is an imported account" },
   "Password_must_contain_at_least_5_characters": { "message": "Password must contain at least 5 characters" },
   "appDescription": {
-    "message": "UniSat Wallet - the first open-source browser extension wallet for Bitcoin NFTs!"
+    "message": "Inscribe and store your inscriptions in the world's first Open Source Chrome wallet for Ordinals! "
   },
   "If__you__ever__change__browsers__or__move__computers": {
     "message": "If you ever change browsers or move computers"

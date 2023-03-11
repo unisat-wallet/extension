@@ -25,7 +25,7 @@ export default function WelcomeScreen() {
           <div className="text-4xl font-semibold tracking-widest select-none">UNISAT</div>
         </div>
         <div className="font-normal opacity-60 mb-10 mx-15 text-center">
-          The first open-source browser extension wallet for Bitcoin NFTs
+          Inscribe and store your inscriptions in the world's first Open Source Chrome wallet for Ordinals!
         </div>
 
         <div className="grid gap-5">
