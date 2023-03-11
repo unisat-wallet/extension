@@ -12,28 +12,30 @@ import { globalActions } from '../state/global/reducer';
 import { useAppDispatch } from '../state/hooks';
 import { settingsActions } from '../state/settings/reducer';
 import { useWallet } from '../utils';
-import AddAccountScreen from './Account/AddAccountScreen';
-import AdvanceOptionsScreen from './Account/AdvanceOptionsScreen';
+import AddKeyringScreen from './Account/AddKeyringScreen';
 import CreateAccountScreen from './Account/CreateAccountScreen';
-import CreateMnemonicsScreen from './Account/CreateMnemonicsScreen';
+import CreateHDWalletScreen from './Account/CreateHDWalletScreen';
 import CreatePasswordScreen from './Account/CreatePasswordScreen';
-import ImportAccountScreen from './Account/ImportAccountScreen';
-import ImportMnemonicsScreen from './Account/ImportMnemonicsScreen';
+import CreateSimpleWalletScreen from './Account/CreateSimpleWalletScreen';
 import SwitchAccountScreen from './Account/SwitchAccountScreen';
 import SwitchAddressScreen from './Account/SwitchAddressScreen';
+import SwitchKeyringScreen from './Account/SwitchKeyringScreen';
 import UnlockScreen from './Account/UnlockScreen';
 import ApprovalScreen from './Approval/ApprovalScreen';
 import ConnectedSitesScreen from './Approval/ConnectedSitesScreen';
 import BoostScreen from './Main/BoostScreen';
 import MainScreen from './Main/TabScreen';
 import WelcomeScreen from './Main/WelcomeScreen';
-import AddressTypeScreen from './Settings/AddressTypeScreen';
 import ChangeLanguageScreen from './Settings/ChangeLanguageScreen';
 import ChangePasswordScreen from './Settings/ChangePasswordScreen';
+import EditWalletNameScreen from './Settings/EditWalletNameScreen';
 import ExportMnemonicsScreen from './Settings/ExportMnemonicsScreen';
 import ExportPrivateKeyScreen from './Settings/ExportPrivateKeyScreen';
+import ManageWalletScreen from './Settings/ManageWalletScreen';
 import NetworkTypeScreen from './Settings/NetworkTypeScreen';
 import RemoveAccount from './Settings/RemoveAccountScreen';
+import RemoveWalletScreen from './Settings/RemoveWalletScreen';
+import UpgradeNoticeScreen from './Settings/UpgradeNoticeScreen';
 import HistoryScreen from './Wallet/HistoryScreen';
 import OrdinalsDetailScreen from './Wallet/OrdinalsDetailScreen';
 import OrdinalsTxConfirmScreen from './Wallet/OrdinalsTxConfirmScreen';
@@ -58,13 +60,9 @@ const routes = {
     path: '/main',
     element: <MainScreen />
   },
-  CreateMnemonicsScreen: {
-    path: '/account/create-mnemonics',
-    element: <CreateMnemonicsScreen />
-  },
-  ImportMnemonicsScreen: {
-    path: '/account/import-mnemonics',
-    element: <ImportMnemonicsScreen />
+  CreateHDWalletScreen: {
+    path: '/account/create-hd-wallet',
+    element: <CreateHDWalletScreen />
   },
   CreateAccountScreen: {
     path: '/account/create',
@@ -85,14 +83,6 @@ const routes = {
   SwitchAddressScreen: {
     path: '/account/switch-address',
     element: <SwitchAddressScreen />
-  },
-  AddAccountScreen: {
-    path: '/account/add',
-    element: <AddAccountScreen />
-  },
-  ImportAccountScreen: {
-    path: '/account/import',
-    element: <ImportAccountScreen />
   },
   ReceiveScreen: {
     path: '/wallet/receive',
@@ -130,11 +120,6 @@ const routes = {
     path: '/wallet/ordinals-tx/confirm',
     element: <OrdinalsTxConfirmScreen />
   },
-
-  AddressTypeScreen: {
-    path: '/settings/address-type',
-    element: <AddressTypeScreen />
-  },
   NetworkTypeScreen: {
     path: '/settings/network-type',
     element: <NetworkTypeScreen />
@@ -167,13 +152,37 @@ const routes = {
     path: '/approval',
     element: <ApprovalScreen />
   },
-  AdvanceOptionsScreen: {
-    path: '/adavance-options',
-    element: <AdvanceOptionsScreen />
-  },
   ConnectedSitesScreen: {
     path: '/connected-sites',
     element: <ConnectedSitesScreen />
+  },
+  SwitchKeyringScreen: {
+    path: '/account/switch-keyring',
+    element: <SwitchKeyringScreen />
+  },
+  AddKeyringScreen: {
+    path: '/account/add-keyring',
+    element: <AddKeyringScreen />
+  },
+  ManageWalletScreen: {
+    path: '/settings/manage-wallet',
+    element: <ManageWalletScreen />
+  },
+  EditWalletNameScreen: {
+    path: '/settings/edit-wallet-name',
+    element: <EditWalletNameScreen />
+  },
+  RemoveWalletScreen: {
+    path: '/settings/remove-wallet',
+    element: <RemoveWalletScreen />
+  },
+  CreateSimpleWalletScreen: {
+    path: '/account/create-simple-wallet',
+    element: <CreateSimpleWalletScreen />
+  },
+  UpgradeNoticeScreen: {
+    path: '/settings/upgrade-notice',
+    element: <UpgradeNoticeScreen />
   }
 };
 

@@ -1,5 +1,5 @@
 import { Layout } from 'antd';
-import { Content, Header } from 'antd/lib/layout/layout';
+import { Content } from 'antd/lib/layout/layout';
 import moment from 'moment';
 import { forwardRef, useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -135,20 +135,19 @@ export default function HistoryScreen() {
 
   return (
     <Layout className="h-full">
-      <Header className="border-white border-opacity-10">
-        <CHeader
-          onBack={() => {
-            window.history.go(-1);
-          }}
-        />
-      </Header>
+      <CHeader
+        onBack={() => {
+          window.history.go(-1);
+        }}
+        title="History"
+      />
       <Content style={{ backgroundColor: '#1C1919', overflowY: 'auto' }}>
         {loading ? (
           <div className="flex flex-col items-strech mx-5 text-6xl mt-60 gap-3_75 text-primary">
             <LoadingOutlined />
           </div>
         ) : (
-          <div className="flex flex-col items-strech h-full gap-5 justify-evenly mt-5 mx-5">
+          <div className="flex flex-col items-strech h-full gap-5 justify-evenly mx-5">
             <div className={'flex-1  min-h-[200px] w-full p-2 '} style={{}}>
               {historyGroups.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full gap-5 font-semibold text-soft-white">

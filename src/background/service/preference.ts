@@ -4,7 +4,7 @@ import cloneDeep from 'lodash/cloneDeep';
 import { createPersistStore } from '@/background/utils';
 import { EVENTS } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
-import { AddressType, BitcoinBalance, NetworkType, TxHistoryItem } from '@/shared/types';
+import { Account, AddressType, BitcoinBalance, NetworkType, TxHistoryItem } from '@/shared/types';
 
 import { publicKeyToAddress } from '../utils/tx-utils';
 import browser from '../webapi/browser';
@@ -12,18 +12,8 @@ import { i18n, keyringService, sessionService } from './index';
 
 const version = process.env.release || '0';
 
-export interface Account {
-  type: string;
-  pubkey: string;
-  address: string;
-  brandName: string;
-  alianName?: string;
-  displayBrandName?: string;
-  index?: number;
-  balance?: number;
-}
-
 export interface PreferenceStore {
+  currentKeyringIndex: number;
   currentAccount: Account | undefined | null;
   externalLinkAck: boolean;
   balanceMap: {
@@ -42,6 +32,9 @@ export interface PreferenceStore {
   currency: string;
   addressType: AddressType;
   networkType: NetworkType;
+  keyringAlianNames: {
+    [key: string]: string;
+  };
 }
 
 const SUPPORT_LOCALES = ['en'];
@@ -56,6 +49,7 @@ class PreferenceService {
     this.store = await createPersistStore<PreferenceStore>({
       name: 'preference',
       template: {
+        currentKeyringIndex: 0,
         currentAccount: undefined,
         externalLinkAck: false,
         balanceMap: {},
@@ -69,7 +63,8 @@ class PreferenceService {
         firstOpen: false,
         currency: 'USD',
         addressType: AddressType.P2WPKH,
-        networkType: NetworkType.MAINNET
+        networkType: NetworkType.MAINNET,
+        keyringAlianNames: {}
       }
     });
     if (!this.store.locale || this.store.locale !== defaultLang) {
@@ -114,6 +109,10 @@ class PreferenceService {
         this.store.currentAccount = undefined; // will restored to new version
       }
     }
+
+    if (!this.store.keyringAlianNames) {
+      this.store.keyringAlianNames = {};
+    }
   };
 
   getAcceptLanguages = async () => {
@@ -129,7 +128,7 @@ class PreferenceService {
    */
   resetCurrentAccount = async () => {
     const [keyringAccount] = await keyringService.getAllVisibleAccountsArray();
-    const pubkey = keyringAccount.address;
+    const pubkey = keyringAccount.pubkey;
     const address = publicKeyToAddress(pubkey, this.store.addressType, this.store.networkType);
     this.setCurrentAccount({
       type: keyringAccount.type,
@@ -146,7 +145,6 @@ class PreferenceService {
   setCurrentAccount = (account?: Account | null) => {
     this.store.currentAccount = account;
     if (account) {
-      account.address = publicKeyToAddress(account.pubkey, this.store.addressType, this.store.networkType);
       sessionService.broadcastEvent('accountsChanged', [account.address]);
       eventBus.emit(EVENTS.broadcastToUI, {
         method: 'accountsChanged',
@@ -285,6 +283,28 @@ class PreferenceService {
 
   setNetworkType = (networkType: NetworkType) => {
     this.store.networkType = networkType;
+  };
+
+  // currentKeyringIndex
+  getCurrentKeyringIndex = () => {
+    return this.store.currentKeyringIndex;
+  };
+
+  setCurrentKeyringIndex = (keyringIndex: number) => {
+    this.store.currentKeyringIndex = keyringIndex;
+  };
+
+  // keyringAlianNames
+  setKeyringAlianName = (keyringKey: string, name: string) => {
+    this.store.keyringAlianNames[keyringKey] = name;
+  };
+
+  getKeyringAlianName = (keyringKey: string, defaultName?: string) => {
+    const name = this.store.keyringAlianNames[keyringKey];
+    if (!name && defaultName) {
+      this.store.keyringAlianNames[keyringKey] = defaultName;
+    }
+    return this.store.keyringAlianNames[keyringKey];
   };
 }
 

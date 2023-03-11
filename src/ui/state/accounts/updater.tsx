@@ -1,11 +1,12 @@
 import { useCallback, useEffect, useRef } from 'react';
 
-import { Account } from '@/background/service/preference';
 import eventBus from '@/shared/eventBus';
+import { Account } from '@/shared/types';
 import { useWallet } from '@/ui/utils';
 
 import { useIsUnlocked } from '../global/hooks';
 import { useAppDispatch } from '../hooks';
+import { keyringsActions } from '../keyrings/reducer';
 import { useAccountBalance, useCurrentAccount, useFetchBalanceCallback, useFetchInscriptionsCallback } from './hooks';
 import { accountActions } from './reducer';
 
@@ -27,10 +28,19 @@ export default function AccountUpdater() {
       self.preAddress = currentAccount.address;
 
       // setLoading(true);
+
+      const keyrings = await wallet.getKeyrings();
+      dispatch(keyringsActions.setKeyrings(keyrings));
+
+      const currentKeyring = await wallet.getCurrentKeyring();
+      dispatch(keyringsActions.setCurrent(currentKeyring));
+
       const _accounts = await wallet.getAccounts();
       dispatch(accountActions.setAccounts(_accounts));
+
       dispatch(accountActions.expireBalance());
       dispatch(accountActions.expireInscriptions());
+
       // setLoading(false);
     }
   }, [dispatch, currentAccount, wallet, isUnlocked]);

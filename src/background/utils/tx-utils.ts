@@ -8,8 +8,6 @@ import { AddressType, NetworkType } from '@/shared/types';
 bitcoin.initEccLib(ecc);
 const ECPair = ECPairFactory(ecc);
 
-export const toXOnly = (pubKey: Buffer) => (pubKey.length === 32 ? pubKey : pubKey.slice(1, 33));
-
 export const validator = (pubkey: Buffer, msghash: Buffer, signature: Buffer): boolean =>
   ECPair.fromPublicKey(pubkey).verify(msghash, signature);
 

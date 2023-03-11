@@ -1,5 +1,5 @@
 import { Layout, message } from 'antd';
-import { Content, Header } from 'antd/lib/layout/layout';
+import { Content } from 'antd/lib/layout/layout';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
@@ -28,13 +28,11 @@ export default function OrdinalsDetailScreen() {
   const isMempool = inscription.num === -1;
   return (
     <Layout className="h-full">
-      <Header className="border-white border-opacity-10">
-        <CHeader
-          onBack={() => {
-            window.history.go(-1);
-          }}
-        />
-      </Header>
+      <CHeader
+        onBack={() => {
+          window.history.go(-1);
+        }}
+      />
       <Content style={{ backgroundColor: '#1C1919', overflowY: 'auto', overflowX: 'hidden' }}>
         <div className="flex flex-col items-strech mx-5 mt-5 gap-3_75 justify-evenly">
           <div className="flex self-center px-2 text-2xl font-semibold h-13">

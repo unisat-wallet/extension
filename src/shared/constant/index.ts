@@ -39,6 +39,25 @@ export const BRAND_ALIAN_TYPE_TEXT = {
   [KEYRING_TYPE.WatchAddressKeyring]: 'Watch'
 };
 
+export const KEYRING_TYPES: {
+  [key: string]: {
+    name: string;
+    tag: string;
+    alianName: string;
+  };
+} = {
+  'HD Key Tree': {
+    name: 'HD Key Tree',
+    tag: 'HD',
+    alianName: 'HD Wallet'
+  },
+  'Simple Key Pair': {
+    name: 'Simple Key Pair',
+    tag: 'IMPORT',
+    alianName: 'Simple Wallet'
+  }
+};
+
 export const IS_CHROME = /Chrome\//i.test(navigator.userAgent);
 
 export const IS_FIREFOX = /Firefox\//i.test(navigator.userAgent);

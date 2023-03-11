@@ -3,11 +3,13 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
+import { KEYRING_TYPE, ADDRESS_TYPES } from '@/shared/constant';
 import { NetworkType } from '@/shared/types';
 import AccountSelect from '@/ui/components/AccountSelect';
 import { AddressBar } from '@/ui/components/AddressBar';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { useAccountBalance, useAccountInscriptions } from '@/ui/state/accounts/hooks';
+import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { useNetworkType } from '@/ui/state/settings/hooks';
 import { transactionsActions } from '@/ui/state/transactions/reducer';
 import { faArrowRightArrowLeft, faQrcode, faClock } from '@fortawesome/free-solid-svg-icons';
@@ -25,6 +27,7 @@ export default function WalletTab() {
   const networkType = useNetworkType();
   const isTestNetwork = networkType === NetworkType.TESTNET;
 
+  const currentKeyring = useCurrentKeyring();
   const dispatch = useDispatch();
   const balanceValue = useMemo(() => {
     if (accountBalance.amount === '0') {
@@ -34,8 +37,17 @@ export default function WalletTab() {
     }
   }, [accountBalance.amount]);
   return (
-    <div className="flex flex-col items-stretch gap-5 mt-5 mx-5 justify-evenly">
-      <AccountSelect />
+    <div className="flex flex-col items-stretch gap-5 mx-5 justify-evenly">
+      {currentKeyring.type === KEYRING_TYPE.HdKeyring && <AccountSelect />}
+
+      {currentKeyring.inconsistent && (
+        <div className="text-red-500 mx-10 text-center ">
+          {` The current wallet derivation path is ${currentKeyring.hdPath} and addressType is ${
+            ADDRESS_TYPES[currentKeyring.addressType].name
+          }, which does not meet the standard. Please
+        migrate assets to a new wallet.`}
+        </div>
+      )}
       {isTestNetwork && (
         <div className="text-red-500 mx-10 text-center ">Bitcoin Testnet is used for testing. Funds have no value!</div>
       )}

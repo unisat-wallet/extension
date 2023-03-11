@@ -1,5 +1,5 @@
 import { Button, Layout } from 'antd';
-import { Content, Header } from 'antd/lib/layout/layout';
+import { Content } from 'antd/lib/layout/layout';
 import { useEffect, useState } from 'react';
 
 import { ConnectedSite } from '@/background/service/permission';
@@ -27,16 +27,14 @@ export default function ConnectedSitesScreen() {
   };
   return (
     <Layout className="h-full">
-      <Header className="border-white border-opacity-10">
-        <CHeader
-          onBack={() => {
-            window.history.go(-1);
-          }}
-        />
-      </Header>
+      <CHeader
+        onBack={() => {
+          window.history.go(-1);
+        }}
+        title="Connected Sites"
+      />
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-strech gap-3_75 justify-evenly mx-5 mt-5">
-          <div className="flex flex-col px-2 text-2xl font-semibold h-13">{'Connected Sites'}</div>
           {sites.length > 0 ? (
             sites.map((item, index) => {
               return (

@@ -22,10 +22,13 @@ async function restoreAppState() {
   const keyringState = await storage.get('keyringState');
   keyringService.loadStore(keyringState);
   keyringService.store.subscribe((value) => storage.set('keyringState', value));
+
+  await preferenceService.init();
+
   await openapiService.init();
 
   await permissionService.init();
-  await preferenceService.init();
+
   await contactBookService.init();
 
   appStoreLoaded = true;

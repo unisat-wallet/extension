@@ -3,9 +3,8 @@ import React, { createContext, ReactNode, useContext } from 'react';
 
 import { AccountAsset } from '@/background/controller/wallet';
 import { ContactBookItem, ContactBookStore } from '@/background/service/contactBook';
-import { DisplayedKeryring, ToSignInput } from '@/background/service/keyring';
+import { ToSignInput } from '@/background/service/keyring';
 import { ConnectedSite } from '@/background/service/permission';
-import { Account } from '@/background/service/preference';
 import {
   BitcoinBalance,
   TxHistoryItem,
@@ -14,7 +13,9 @@ import {
   AppSummary,
   UTXO,
   NetworkType,
-  AddressType
+  AddressType,
+  WalletKeyring,
+  Account
 } from '@/shared/types';
 
 export interface WalletController {
@@ -65,33 +66,40 @@ export interface WalletController {
     mnemonic: string;
     passphrase: string;
   }>;
-  importPrivateKey(data: string, alianName?: string): Promise<Account[]>;
+  createKeyringWithPrivateKey(data: string, addressType: AddressType, alianName?: string): Promise<Account[]>;
   getPreMnemonics(): Promise<any>;
   generatePreMnemonic(): Promise<string>;
   removePreMnemonics(): void;
   createKeyringWithMnemonics(
     mnemonic: string,
     hdPath: string,
-    passphrase: string
+    passphrase: string,
+    addressType: AddressType
   ): Promise<{ address: string; type: string }[]>;
+
+  createTmpKeyringWithPrivateKey(privateKey: string, addressType: AddressType): Promise<WalletKeyring>;
+
+  createTmpKeyringWithMnemonics(
+    mnemonic: string,
+    hdPath: string,
+    passphrase: string,
+    addressType: AddressType
+  ): Promise<WalletKeyring>;
+  removeKeyring(keyring: WalletKeyring): Promise<WalletKeyring>;
   removeAddress(address: string, type: string): Promise<void>;
   resetCurrentAccount(): Promise<void>;
-  generateKeyringWithMnemonic(mnemonic: string): number;
-  checkHasMnemonic(): boolean;
-  deriveNewAccountFromMnemonic(alianName?: string): Promise<string[]>;
+  deriveNewAccountFromMnemonic(keyring: WalletKeyring, alianName?: string): Promise<string[]>;
   getAccountsCount(): Promise<number>;
-  getTypedAccounts(type: string): Promise<DisplayedKeryring[]>;
-  getAllVisibleAccounts(): Promise<DisplayedKeryring[]>;
   getAllAlianName: () => (ContactBookItem | undefined)[];
   getContactsByMap: () => ContactBookStore;
-  getAllVisibleAccountsArray(): Promise<Account>;
   updateAlianName: (pubkey: string, name: string) => Promise<void>;
 
   changeAccount(account: Account): Promise<void>;
   getCurrentAccount(): Promise<Account>;
   getAccounts(): Promise<Account[]>;
-  getNewAccountAlianName: (type: string) => Promise<string>;
-  getNextAccountAlianName: (type: string) => Promise<string>;
+  getNextAlianName: (keyring: WalletKeyring) => Promise<string>;
+
+  getCurrentKeyringAccounts(): Promise<Account[]>;
 
   signTransaction(psbt: bitcoin.Psbt, inputs: ToSignInput[]): Promise<bitcoin.Psbt>;
 
@@ -112,6 +120,12 @@ export interface WalletController {
   getConnectedSites(): Promise<ConnectedSite[]>;
   removeConnectedSite(origin: string): Promise<void>;
   getCurrentConnectedSite(id: string): Promise<ConnectedSite>;
+
+  getCurrentKeyring(): Promise<WalletKeyring>;
+  getKeyrings(): Promise<WalletKeyring[]>;
+  changeKeyring(keyring: WalletKeyring): Promise<void>;
+
+  setKeyringAlianName(keyring: WalletKeyring, name: string): Promise<WalletKeyring>;
 }
 
 const WalletContext = createContext<{

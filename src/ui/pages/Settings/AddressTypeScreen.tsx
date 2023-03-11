@@ -1,5 +1,5 @@
 import { Button, Layout } from 'antd';
-import { Content, Header } from 'antd/lib/layout/layout';
+import { Content } from 'antd/lib/layout/layout';
 import { useTranslation } from 'react-i18next';
 
 import { publicKeyToAddress } from '@/background/utils/tx-utils';
@@ -19,13 +19,12 @@ export default function AddressTypeScreen() {
   const isInTab = useExtensionIsInTab();
   return (
     <Layout className="h-full">
-      <Header className="border-white border-opacity-10">
-        <CHeader
-          onBack={() => {
-            window.history.go(-1);
-          }}
-        />
-      </Header>
+      <CHeader
+        onBack={() => {
+          window.history.go(-1);
+        }}
+        title="Address Type"
+      />
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-strech mt-5 gap-3_75 justify-evenly mx-5">
           <div className="flex flex-col px-2 text-2xl font-semibold h-13 text-center">{t('Address Type')}</div>

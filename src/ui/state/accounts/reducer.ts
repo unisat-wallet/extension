@@ -37,7 +37,8 @@ const initialAccount = {
   alianName: '',
   displayBrandName: '',
   index: 0,
-  balance: 0
+  balance: 0,
+  pubkey: ''
 };
 
 export const initialState: AccountsState = {

@@ -1,8 +1,7 @@
 import { Layout } from 'antd';
-import { Content, Header } from 'antd/lib/layout/layout';
+import { Content } from 'antd/lib/layout/layout';
 import QRCode from 'qrcode.react';
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { KEYRING_CLASS } from '@/shared/constant';
 import { AddressBar } from '@/ui/components/AddressBar';
@@ -12,7 +11,6 @@ import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks'
 import './index.less';
 
 export default function ReceiveScreen() {
-  const { t } = useTranslation();
   const [size, setSize] = useState(210);
 
   const currentAccount = useCurrentAccount();
@@ -26,16 +24,14 @@ export default function ReceiveScreen() {
 
   return (
     <Layout className="h-full">
-      <Header className="border-white border-opacity-10">
-        <CHeader
-          onBack={() => {
-            window.history.go(-1);
-          }}
-        />
-      </Header>
+      <CHeader
+        onBack={() => {
+          window.history.go(-1);
+        }}
+        title="Address"
+      />
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-center gap-10 mx-auto mt-5 justify-evenly w-110">
-          <div className="flex items-center px-2 text-2xl font-semibold h-13 w340">{t('Deposit')} BTC</div>
           <div className="flex items-center justify-center bg-white rounded h-60 w-60">
             <QRCode value={address || ''} renderAs="svg" size={size}></QRCode>
           </div>
