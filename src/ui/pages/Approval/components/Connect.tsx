@@ -42,7 +42,7 @@ export default function Connect({ params: { session } }: Props) {
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-strech mt-5 gap-3_75 justify-evenly mx-5">
           <WebsiteBar session={session} />
-          <div className="flex self-center px-2 text-2xl font-semibold">Connect with Unist Wallet</div>
+          <div className="flex self-center px-2 text-2xl font-semibold">Connect with Unisat Wallet</div>
           <div className="flex self-center px-2 text-center">Select the account to use on this site</div>
           <div className="flex flex-col px-10  text-soft-white   text-center mt-5">
             Only connect with sites you trust.
