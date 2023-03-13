@@ -104,9 +104,42 @@ export const LANGS = [
 ];
 
 export const ADDRESS_TYPES = [
-  { value: AddressType.P2PKH, label: 'P2PKH', name: 'Legacy Bitcoin address', hdPath: "m/44'/0'/0'/0" },
-  { value: AddressType.P2WPKH, label: 'P2WPKH', name: 'SegWit Bitcoin address', hdPath: "m/84'/0'/0'/0" },
-  { value: AddressType.P2TR, label: 'P2TR', name: 'Taproot Bitcoin address', hdPath: "m/86'/0'/0'/0" }
+  {
+    value: AddressType.P2PKH,
+    label: 'P2PKH',
+    name: 'Legacy Bitcoin address',
+    hdPath: "m/44'/0'/0'/0",
+    displayIndex: 3
+  },
+  {
+    value: AddressType.P2WPKH,
+    label: 'P2WPKH',
+    name: 'SegWit Bitcoin address',
+    hdPath: "m/84'/0'/0'/0",
+    displayIndex: 0
+  },
+  { value: AddressType.P2TR, label: 'P2TR', name: 'Taproot Bitcoin address', hdPath: "m/86'/0'/0'/0", displayIndex: 1 },
+  {
+    value: AddressType.P2SH_P2WPKH,
+    label: 'P2SH_P2WPKH',
+    name: 'Compatible SegWit Bitcoin address',
+    hdPath: "m/84'/0'/0'/0",
+    displayIndex: -1
+  },
+  {
+    value: AddressType.M44_P2WPKH,
+    label: 'M44_P2WPKH',
+    name: 'SegWit Bitcoin address',
+    hdPath: "m/44'/0'/0'/0",
+    displayIndex: 4
+  },
+  {
+    value: AddressType.M44_P2TR,
+    label: 'M44_P2PKH',
+    name: 'Taproot Bitcoin address',
+    hdPath: "m/44'/0'/0'/0",
+    displayIndex: 5
+  }
 ];
 
 export const NETWORK_TYPES = [
