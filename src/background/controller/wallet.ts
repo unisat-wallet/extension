@@ -37,6 +37,8 @@ import { ConnectedSite } from '../service/permission';
 import { publicKeyToAddress, toPsbtNetwork, validator } from '../utils/tx-utils';
 import BaseController from './base';
 
+const toXOnly = (pubKey: Buffer) => (pubKey.length === 32 ? pubKey : pubKey.slice(1, 33));
+
 const stashKeyrings: Record<string, Keyring> = {};
 
 const ECPair = ECPairFactory(ecc);
