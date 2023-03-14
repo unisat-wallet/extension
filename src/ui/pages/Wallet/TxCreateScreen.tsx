@@ -136,7 +136,7 @@ export default function TxCreateScreen() {
                 wallet.queryDomainInfo(val).then((ret: DomainInfo) => {
                   setParseAddress(ret.owner_address)
                 }).catch((err) => {
-                  setParseError(err);
+                  setParseError(val);
                 })
               }
             }}
@@ -144,7 +144,9 @@ export default function TxCreateScreen() {
           />
 
           <div className="word-breakall">{parseAddress}</div>
-          <span className="text-lg text-error h-5">{error}</span>
+          {parseError ? (
+            <span className="text-lg text-warn h-5">{`${parseError}` + ' is not occupied, click '}<a href="https://btcdomains.io" target={'_blank'} rel="noreferrer">btcdomains</a> to register.</span>
+          ) : null}
 
           <div className="flex justify-between w-full mt-5 box text-soft-white">
             <span>{t('Balance')}</span>

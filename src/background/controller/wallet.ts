@@ -791,7 +791,7 @@ export class WalletController extends BaseController {
   };
 
   queryDomainInfo = async (domain: string) => {
-    const data = await domainService.queryDomain(domain);
+    const data = domainService.queryDomain(domain);
     return data
   }
 

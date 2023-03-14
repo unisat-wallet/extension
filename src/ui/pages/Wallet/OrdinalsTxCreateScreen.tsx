@@ -44,7 +44,6 @@ export default function OrdinalsTxCreateScreen() {
   useEffect(() => {
     setDisabled(true);
     setError('');
-    
     let toAddress = '';
     if (inputAddress.toLowerCase().endsWith(DOMAIN_LEVEL_ONE)) {
       toAddress = parseAddress;
@@ -102,7 +101,7 @@ export default function OrdinalsTxCreateScreen() {
                 wallet.queryDomainInfo(val).then((ret: DomainInfo) => {
                   setParseAddress(ret.owner_address)
                 }).catch((err) => {
-                  setError(err);
+                  setParseError(val);
                 })
               }
             }}
@@ -110,6 +109,11 @@ export default function OrdinalsTxCreateScreen() {
           />
 
           <div className="word-breakall">{parseAddress}</div>
+
+          <div className="word-breakall">{parseAddress}</div>
+          {parseError ? (
+            <span className="text-lg text-warn h-5">{`${parseError}` + ' is not occupied, click '}<a href="https://btcdomains.io" target={'_blank'} rel="noreferrer">btcdomains</a> to register.</span>
+          ) : null}
 
           <span className="text-lg text-error h-5">{error}</span>
           <Button
