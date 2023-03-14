@@ -29,8 +29,8 @@ export default function AddKeyringScreen() {
             }}>
             <div className="flex items-center justify-between font-semibold text-4_5">
               <div className="flex flex-col text-left gap-2_5">
-                <span>{t('Create a new HD wallet ')}</span>
-                <span className="font-normal opacity-60">{t('Generate random mnemonics')}</span>
+                <span>{t('Create Wallet ')}</span>
+                <span className="font-normal opacity-60">{t('Create a new wallet with mnemonics (12-words)')}</span>
               </div>
               <div className="flex-grow"> </div>
               {/* <RightOutlined style={{transform: 'scale(1.2)', opacity: '80%'}}/> */}
@@ -46,10 +46,8 @@ export default function AddKeyringScreen() {
             }}>
             <div className="flex items-center justify-between font-semibold text-4_5">
               <div className="flex flex-col text-left gap-2_5">
-                <span>{t('Restore from mnemonics (12 words)')}</span>
-                <span className="font-normal opacity-60">
-                  {t('Restore from UniSat Wallet, Sparrow Wallet, Xverse Wallet...')}
-                </span>
+                <span>{t('Restore Wallet')}</span>
+                <span className="font-normal opacity-60">{t('Restore from mnemonics (12-words)')}</span>
               </div>
               <div className="flex-grow"> </div>
               {/* <RightOutlined style={{transform: 'scale(1.2)', opacity: '80%'}}/> */}
@@ -66,7 +64,6 @@ export default function AddKeyringScreen() {
             <div className="flex items-center justify-between font-semibold text-4_5">
               <div className="flex flex-col text-left gap-2_5">
                 <span>{t('Restore from single private key')}</span>
-                <span className="font-normal opacity-60">{t('Import private key (WIF)')}</span>
               </div>
               <div className="flex-grow"> </div>
               {/* <RightOutlined style={{transform: 'scale(1.2)', opacity: '80%'}}/> */}

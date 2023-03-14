@@ -344,7 +344,10 @@ function Step2({
           self.recommended = i;
         }
       }
-      updateContextData({ addressType: hdPathOptions[self.recommended].addressType });
+      updateContextData({
+        addressType: hdPathOptions[self.recommended].addressType,
+        hdPath: hdPathOptions[self.recommended].hdPath
+      });
       setAddressBalances(self.addressBalances);
     }
     setPreviewAddresses(addresses);

@@ -40,9 +40,7 @@ export default function WalletTab() {
     <div className="flex flex-col items-stretch gap-5 mx-5 justify-evenly">
       {currentKeyring.type === KEYRING_TYPE.HdKeyring && <AccountSelect />}
 
-      {isTestNetwork && (
-        <div className="text-red-500 mx-10 text-center ">Bitcoin Testnet is used for testing. Funds have no value!</div>
-      )}
+      {isTestNetwork && <div className="text-red-500 mx-10 text-center ">Bitcoin Testnet is used for testing. </div>}
 
       <div className="flex flex-col items-center mt-5 font-semibold text-11" style={{ height: '2.75rem' }}>
         <div className="flex items-center">

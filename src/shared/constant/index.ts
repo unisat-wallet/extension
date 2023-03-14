@@ -188,7 +188,14 @@ export const RESTORE_WALLETS: { value: RestoreWalletType; name: string; addressT
   {
     value: RestoreWalletType.OTHERS,
     name: 'Other Wallet',
-    addressTypes: [AddressType.P2PKH, AddressType.P2WPKH, AddressType.P2SH_P2WPKH, AddressType.P2TR]
+    addressTypes: [
+      AddressType.P2PKH,
+      AddressType.P2WPKH,
+      AddressType.P2SH_P2WPKH,
+      AddressType.P2TR,
+      AddressType.M44_P2WPKH,
+      AddressType.M44_P2TR
+    ]
   }
 ];
 
