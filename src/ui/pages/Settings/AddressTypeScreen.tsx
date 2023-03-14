@@ -9,6 +9,7 @@ import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { amountToSaothis, shortAddress, useWallet } from '@/ui/utils';
+import { LoadingOutlined } from '@ant-design/icons';
 
 export default function AddressTypeScreen() {
   const { t } = useTranslation();
@@ -20,7 +21,7 @@ export default function AddressTypeScreen() {
 
   const [addresses, setAddresses] = useState<string[]>([]);
   const [addressBalances, setAddressBalances] = useState<{ [key: string]: { amount: string; satoshis: number } }>({});
-
+  const [loading, setLoading] = useState(true);
   const selfRef = useRef<{
     addressBalances: { [key: string]: { amount: string; satoshis: number } };
   }>({
@@ -41,6 +42,7 @@ export default function AddressTypeScreen() {
       };
     }
     setAddressBalances(self.addressBalances);
+    setLoading(false);
   };
 
   useEffect(() => {
@@ -78,51 +80,57 @@ export default function AddressTypeScreen() {
         title="Address Type"
       />
       <Content style={{ backgroundColor: '#1C1919' }}>
-        <div className="flex flex-col items-strech  gap-3_75 justify-evenly mx-5">
-          {addressTypes.map((item, index) => {
-            const address = addresses[item.value];
-            const balance = addressBalances[address] || {
-              amount: '--',
-              satoshis: 0
-            };
-            const hasVault = balance.satoshis > 0;
-            return (
-              <Button
-                key={index}
-                size="large"
-                type="default"
-                className="box default !h-32"
-                onClick={async () => {
-                  await wallet.changeAddressType(item.value);
-                  window.location.reload();
-                }}>
-                <div className="flex items-center justify-between text-lg font-semibold">
-                  <div className="flex flex-col w-full text-left">
-                    <div className="w-32 text-left">{`${item.name} (${item.hdPath})`}</div>
-                    <div className={'font-normal ' + (balance.satoshis > 0 ? ' text-yellow-300' : 'opacity-60 ')}>
-                      {isInTab ? address : shortAddress(address, 10)}
+        {loading ? (
+          <div className="flex flex-col items-strech mx-5 text-6xl mt-60 gap-3_75 text-primary">
+            <LoadingOutlined />
+          </div>
+        ) : (
+          <div className="flex flex-col items-strech  gap-3_75 justify-evenly mx-5">
+            {addressTypes.map((item, index) => {
+              const address = addresses[item.value];
+              const balance = addressBalances[address] || {
+                amount: '--',
+                satoshis: 0
+              };
+              const hasVault = balance.satoshis > 0;
+              return (
+                <Button
+                  key={index}
+                  size="large"
+                  type="default"
+                  className="box default !h-32"
+                  onClick={async () => {
+                    await wallet.changeAddressType(item.value);
+                    window.location.reload();
+                  }}>
+                  <div className="flex items-center justify-between text-lg font-semibold">
+                    <div className="flex flex-col w-full text-left">
+                      <div className="w-32 text-left">{`${item.name} (${item.hdPath})`}</div>
+                      <div className={'font-normal ' + (balance.satoshis > 0 ? ' text-yellow-300' : 'opacity-60 ')}>
+                        {isInTab ? address : shortAddress(address, 10)}
+                      </div>
+                      {hasVault && <div className="border-b-2  opacity-60 w-full"></div>}
+                      {hasVault && (
+                        <div
+                          className={
+                            'flex justify-start  ' + (balance.satoshis > 0 ? ' text-yellow-300' : 'opacity-60 ')
+                          }>{`${balance.amount} BTC`}</div>
+                      )}
                     </div>
-                    {hasVault && <div className="border-b-2  opacity-60 w-full"></div>}
-                    {hasVault && (
-                      <div
-                        className={
-                          'flex justify-start  ' + (balance.satoshis > 0 ? ' text-yellow-300' : 'opacity-60 ')
-                        }>{`${balance.amount} BTC`}</div>
+
+                    {item.value == currentKeyring.addressType ? (
+                      <span className="w-4 h-4">
+                        <img src="./images/check.svg" alt="" />
+                      </span>
+                    ) : (
+                      <></>
                     )}
                   </div>
-
-                  {item.value == currentKeyring.addressType ? (
-                    <span className="w-4 h-4">
-                      <img src="./images/check.svg" alt="" />
-                    </span>
-                  ) : (
-                    <></>
-                  )}
-                </div>
-              </Button>
-            );
-          })}
-        </div>
+                </Button>
+              );
+            })}
+          </div>
+        )}
       </Content>
     </Layout>
   );
