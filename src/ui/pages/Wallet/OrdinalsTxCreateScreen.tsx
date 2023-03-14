@@ -1,5 +1,4 @@
-import { Button, Input } from 'antd';
-import { Layout } from 'antd';
+import { Button, Input, Layout } from 'antd';
 import { Content, Header } from 'antd/lib/layout/layout';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -12,6 +11,12 @@ import { useCreateOrdinalsTxCallback, useFetchUtxosCallback, useOrdinalsTx } fro
 import { isValidAddress } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
+
+import wallet from '@/background/controller/wallet';
+import { DomainInfo } from '@/background/service/domainService';
+import { DOMAIN_LEVEL_ONE } from '@/shared/constant';
+
+import '@/ui/styles/domain.less';
 
 export default function OrdinalsTxCreateScreen() {
   const { t } = useTranslation();
@@ -29,6 +34,9 @@ export default function OrdinalsTxCreateScreen() {
 
   const fetchUtxos = useFetchUtxosCallback();
 
+  const [parseAddress, setParseAddress] = useState('');
+  const [parseError, setParseError] = useState('');
+
   useEffect(() => {
     fetchUtxos();
   }, []);
@@ -36,7 +44,14 @@ export default function OrdinalsTxCreateScreen() {
   useEffect(() => {
     setDisabled(true);
     setError('');
-    const toAddress = inputAddress;
+    
+    let toAddress = '';
+    if (inputAddress.toLowerCase().endsWith(DOMAIN_LEVEL_ONE)) {
+      toAddress = parseAddress;
+    } else {
+      toAddress = inputAddress
+    }
+
     if (!isValidAddress(toAddress)) {
       return;
     }
@@ -80,10 +95,21 @@ export default function OrdinalsTxCreateScreen() {
             placeholder={t('Recipients BTC address')}
             defaultValue={inputAddress}
             onChange={async (e) => {
-              setInputAddress(e.target.value);
+              const val = e.target.value;
+              setInputAddress(val);
+
+              if (val.toLowerCase().endsWith(DOMAIN_LEVEL_ONE)) {
+                wallet.queryDomainInfo(val).then((ret: DomainInfo) => {
+                  setParseAddress(ret.owner_address)
+                }).catch((err) => {
+                  setError(err);
+                })
+              }
             }}
             autoFocus={true}
           />
+
+          <div className="word-breakall">{parseAddress}</div>
 
           <span className="text-lg text-error h-5">{error}</span>
           <Button

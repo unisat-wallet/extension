@@ -66,7 +66,7 @@ export default function TxCreateScreen() {
 
     let toAddress = '';
     if (inputAddress.toLowerCase().endsWith(DOMAIN_LEVEL_ONE)) {
-      toAddress = parseAddress === '' ? '' : parseAddress;
+      toAddress = parseAddress;
     } else {
       toAddress = inputAddress
     }
