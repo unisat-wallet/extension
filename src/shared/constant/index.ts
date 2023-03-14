@@ -1,7 +1,7 @@
 /* eslint-disable quotes */
 
 /* constants pool */
-import { AddressType, Chain, NetworkType } from '../types';
+import { AddressType, Chain, NetworkType, RestoreWalletType } from '../types';
 
 export enum CHAINS_ENUM {
   BTC = 'BTC'
@@ -20,7 +20,8 @@ export const KEYRING_TYPE = {
   HdKeyring: 'HD Key Tree',
   SimpleKeyring: 'Simple Key Pair',
   WatchAddressKeyring: 'Watch Address',
-  WalletConnectKeyring: 'WalletConnect'
+  WalletConnectKeyring: 'WalletConnect',
+  Empty: 'Empty'
 };
 
 export const KEYRING_CLASS = {
@@ -54,7 +55,7 @@ export const KEYRING_TYPES: {
   'Simple Key Pair': {
     name: 'Simple Key Pair',
     tag: 'IMPORT',
-    alianName: 'Simple Wallet'
+    alianName: 'Single Wallet'
   }
 };
 
@@ -103,42 +104,91 @@ export const LANGS = [
   }
 ];
 
-export const ADDRESS_TYPES = [
+export const ADDRESS_TYPES: {
+  value: AddressType;
+  label: string;
+  name: string;
+  hdPath: string;
+  displayIndex: number;
+  isUnisatLegacy?: boolean;
+}[] = [
   {
     value: AddressType.P2PKH,
     label: 'P2PKH',
-    name: 'Legacy Bitcoin address',
+    name: 'Legacy (P2PKH)',
     hdPath: "m/44'/0'/0'/0",
-    displayIndex: 3
+    displayIndex: 3,
+    isUnisatLegacy: false
   },
   {
     value: AddressType.P2WPKH,
     label: 'P2WPKH',
-    name: 'SegWit Bitcoin address',
+    name: 'Native Segwit (P2WPKH)',
     hdPath: "m/84'/0'/0'/0",
-    displayIndex: 0
+    displayIndex: 0,
+    isUnisatLegacy: false
   },
-  { value: AddressType.P2TR, label: 'P2TR', name: 'Taproot Bitcoin address', hdPath: "m/86'/0'/0'/0", displayIndex: 1 },
+  {
+    value: AddressType.P2TR,
+    label: 'P2TR',
+    name: 'Taproot (P2TR)',
+    hdPath: "m/86'/0'/0'/0",
+    displayIndex: 2,
+    isUnisatLegacy: false
+  },
   {
     value: AddressType.P2SH_P2WPKH,
-    label: 'P2SH_P2WPKH',
-    name: 'Compatible SegWit Bitcoin address',
-    hdPath: "m/84'/0'/0'/0",
-    displayIndex: -1
+    label: 'P2SH-P2WPKH',
+    name: 'Nested Segwit (P2SH-P2WPKH)',
+    hdPath: "m/49'/0'/0'/0",
+    displayIndex: 1,
+    isUnisatLegacy: false
   },
   {
     value: AddressType.M44_P2WPKH,
-    label: 'M44_P2WPKH',
-    name: 'SegWit Bitcoin address',
+    label: 'P2WPKH',
+    name: 'Native SegWit (P2WPKH)',
     hdPath: "m/44'/0'/0'/0",
-    displayIndex: 4
+    displayIndex: 4,
+    isUnisatLegacy: true
   },
   {
     value: AddressType.M44_P2TR,
-    label: 'M44_P2PKH',
-    name: 'Taproot Bitcoin address',
+    label: 'P2TR',
+    name: 'Taproot (P2TR)',
     hdPath: "m/44'/0'/0'/0",
-    displayIndex: 5
+    displayIndex: 5,
+    isUnisatLegacy: true
+  }
+];
+
+export const RESTORE_WALLETS: { value: RestoreWalletType; name: string; addressTypes: AddressType[] }[] = [
+  {
+    value: RestoreWalletType.UNISAT,
+    name: 'UniSat Wallet',
+    addressTypes: [
+      AddressType.P2WPKH,
+      AddressType.P2SH_P2WPKH,
+      AddressType.P2TR,
+      AddressType.P2PKH,
+      AddressType.M44_P2WPKH,
+      AddressType.M44_P2TR
+    ]
+  },
+  {
+    value: RestoreWalletType.SPARROW,
+    name: 'Sparrow Wallet',
+    addressTypes: [AddressType.P2PKH, AddressType.P2WPKH, AddressType.P2SH_P2WPKH, AddressType.P2TR]
+  },
+  {
+    value: RestoreWalletType.XVERSE,
+    name: 'Xverse Wallet',
+    addressTypes: [AddressType.P2SH_P2WPKH]
+  },
+  {
+    value: RestoreWalletType.OTHERS,
+    name: 'Other Wallet',
+    addressTypes: [AddressType.P2PKH, AddressType.P2WPKH, AddressType.P2SH_P2WPKH, AddressType.P2TR]
   }
 ];
 

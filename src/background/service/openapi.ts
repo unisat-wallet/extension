@@ -104,6 +104,16 @@ export class OpenApiService {
     return data.result;
   }
 
+  async getMultiAddressBalance(addresses: string): Promise<BitcoinBalance> {
+    const data = await this.httpGet('/v2/address/multi-balance', {
+      addresses
+    });
+    if (data.status == API_STATUS.FAILED) {
+      throw new Error(data.message);
+    }
+    return data.result;
+  }
+
   async getAddressUtxo(address: string): Promise<UTXO[]> {
     const data = await this.httpGet('/v2/address/utxo', {
       address

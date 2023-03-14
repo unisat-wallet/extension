@@ -88,6 +88,7 @@ export default function TxCreateScreen() {
         setDisabled(false);
       })
       .catch((e) => {
+        console.log(e);
         setError(e.message);
       });
   }, [inputAddress, inputAmount, autoAdjust]);

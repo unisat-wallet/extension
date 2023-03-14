@@ -44,6 +44,7 @@ export interface WalletController {
 
   getAddressBalance(address: string): Promise<BitcoinBalance>;
   getAddressCacheBalance(address: string): Promise<BitcoinBalance>;
+  getMultiAddressBalance(addresses: string): Promise<BitcoinBalance[]>;
 
   getAddressInscriptions(address: string): Promise<Inscription[]>;
 
@@ -124,8 +125,10 @@ export interface WalletController {
   getCurrentKeyring(): Promise<WalletKeyring>;
   getKeyrings(): Promise<WalletKeyring[]>;
   changeKeyring(keyring: WalletKeyring): Promise<void>;
+  getAllAddresses(keyring: WalletKeyring, index: number): Promise<string[]>;
 
   setKeyringAlianName(keyring: WalletKeyring, name: string): Promise<WalletKeyring>;
+  changeAddressType(addressType: AddressType): Promise<void>;
 }
 
 const WalletContext = createContext<{

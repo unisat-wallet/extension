@@ -1,5 +1,4 @@
-import { Account } from '@/background/service/preference';
-import { AppSummary, Inscription, InscriptionSummary, TxHistoryItem } from '@/shared/types';
+import { Account, AppSummary, Inscription, InscriptionSummary, TxHistoryItem } from '@/shared/types';
 import { createSlice } from '@reduxjs/toolkit';
 
 import { updateVersion } from '../global/actions';

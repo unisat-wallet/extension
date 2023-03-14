@@ -29,16 +29,27 @@ export function publicKeyToAddress(publicKey: string, type: AddressType, network
       network
     });
     return address || '';
-  } else if (type === AddressType.P2WPKH) {
+  } else if (type === AddressType.P2WPKH || type === AddressType.M44_P2WPKH) {
     const { address } = bitcoin.payments.p2wpkh({
       pubkey,
       network
     });
     return address || '';
-  } else if (type === AddressType.P2TR) {
+  } else if (type === AddressType.P2TR || type === AddressType.M44_P2TR) {
     const { address } = bitcoin.payments.p2tr({
       internalPubkey: pubkey.slice(1, 33),
       network
+    });
+    return address || '';
+  } else if (type === AddressType.P2SH_P2WPKH) {
+    const data = bitcoin.payments.p2wpkh({
+      pubkey,
+      network
+    });
+    const { address } = bitcoin.payments.p2sh({
+      pubkey,
+      network,
+      redeem: data
     });
     return address || '';
   } else {

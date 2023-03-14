@@ -3,7 +3,7 @@ import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useDispatch } from 'react-redux';
 
-import { KEYRING_TYPE, ADDRESS_TYPES } from '@/shared/constant';
+import { KEYRING_TYPE } from '@/shared/constant';
 import { NetworkType } from '@/shared/types';
 import AccountSelect from '@/ui/components/AccountSelect';
 import { AddressBar } from '@/ui/components/AddressBar';
@@ -40,14 +40,6 @@ export default function WalletTab() {
     <div className="flex flex-col items-stretch gap-5 mx-5 justify-evenly">
       {currentKeyring.type === KEYRING_TYPE.HdKeyring && <AccountSelect />}
 
-      {currentKeyring.inconsistent && (
-        <div className="text-red-500 mx-10 text-center ">
-          {` The current wallet derivation path is ${currentKeyring.hdPath} and addressType is ${
-            ADDRESS_TYPES[currentKeyring.addressType].name
-          }, which does not meet the standard. Please
-        migrate assets to a new wallet.`}
-        </div>
-      )}
       {isTestNetwork && (
         <div className="text-red-500 mx-10 text-center ">Bitcoin Testnet is used for testing. Funds have no value!</div>
       )}

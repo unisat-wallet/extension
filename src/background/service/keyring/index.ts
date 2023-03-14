@@ -5,6 +5,7 @@ import encryptor from 'browser-passworder';
 import { EventEmitter } from 'events';
 import log from 'loglevel';
 
+import { ADDRESS_TYPES, KEYRING_TYPE } from '@/shared/constant';
 import { AddressType } from '@/shared/types';
 import { ObservableStore } from '@metamask/obs-store';
 import { HdKeyring } from '@unisat/bitcoin-hd-keyring';
@@ -42,6 +43,7 @@ export interface DisplayedKeryring {
   }[];
   keyring: DisplayKeyring;
   addressType: AddressType;
+  index: number;
 }
 export interface ToSignInput {
   index: number;
@@ -69,6 +71,46 @@ export interface Keyring {
 
   getAccountsWithBrand?(): { address: string; index: number }[];
   activeAccounts?(indexes: number[]): string[];
+
+  changeHdPath?(hdPath: string): void;
+  getAccountByHdPath?(hdPath: string, index: number): string;
+}
+
+class EmptyKeyring implements Keyring {
+  type = KEYRING_TYPE.Empty;
+  constructor() {
+    // todo
+  }
+  async addAccounts(n: number): Promise<string[]> {
+    return [];
+  }
+
+  async getAccounts(): Promise<string[]> {
+    return [];
+  }
+  signTransaction(psbt: bitcoin.Psbt, inputs: ToSignInput[]): Promise<bitcoin.Psbt> {
+    throw new Error('Method not implemented.');
+  }
+  signMessage(address: string, message: string): Promise<string> {
+    throw new Error('Method not implemented.');
+  }
+  verifyMessage(address: string, message: string, sig: string): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+  exportAccount(address: string): Promise<string> {
+    throw new Error('Method not implemented.');
+  }
+  removeAccount(address: string): void {
+    throw new Error('Method not implemented.');
+  }
+
+  async serialize() {
+    return '';
+  }
+
+  async deserialize(opts: any) {
+    return;
+  }
 }
 
 class KeyringService extends EventEmitter {
@@ -226,17 +268,24 @@ class KeyringService extends EventEmitter {
   addKeyring = async (keyring: Keyring, addressType: AddressType) => {
     const accounts = await keyring.getAccounts();
 
-    const displayedKeyrings = await this.getAllDisplayedKeyrings();
-    const checkPubKey = accounts[0];
-    const found = displayedKeyrings.find(
-      (v) => v.addressType === addressType && v.accounts.find((w) => w.pubkey === checkPubKey)
-    );
-    if (found) {
-      throw new Error('A wallet with same options exists.');
-    }
-    // await this.checkForDuplicate(keyring.type, accounts, addressType);
+    await this.checkForDuplicate(keyring.type, accounts);
     this.keyrings.push(keyring);
     this.addressTypes.push(addressType);
+    await this.persistAllKeyrings();
+    await this._updateMemStoreKeyrings();
+    await this.fullUpdate();
+    return keyring;
+  };
+
+  changeAddressType = async (keyringIndex: number, addressType: AddressType) => {
+    const keyring: Keyring = this.keyrings[keyringIndex];
+    if (keyring.type === KEYRING_TYPE.HdKeyring) {
+      const hdPath = ADDRESS_TYPES[addressType].hdPath;
+      if ((keyring as any).hdPath !== hdPath && keyring.changeHdPath) {
+        keyring.changeHdPath(hdPath);
+      }
+    }
+    this.addressTypes[keyringIndex] = addressType;
     await this.persistAllKeyrings();
     await this._updateMemStoreKeyrings();
     await this.fullUpdate();
@@ -349,30 +398,6 @@ class KeyringService extends EventEmitter {
   };
 
   /**
-   * Remove Empty Keyrings
-   *
-   * Loops through the keyrings and removes the ones with empty accounts
-   * (usually after removing the last / only account) from a keyring
-   */
-  removeEmptyKeyrings = async () => {
-    const validKeyrings: Keyring[] = [];
-
-    // Since getAccounts returns a Promise
-    // We need to wait to hear back form each keyring
-    // in order to decide which ones are now valid (accounts.length > 0)
-
-    await Promise.all(
-      this.keyrings.map(async (keyring) => {
-        const accounts = await keyring.getAccounts();
-        if (accounts.length > 0) {
-          validKeyrings.push(keyring);
-        }
-      })
-    );
-    this.keyrings = validKeyrings;
-  };
-
-  /**
    * Checks for duplicate keypairs, using the the first account in the given
    * array. Rejects if a duplicate is found.
    *
@@ -382,7 +407,7 @@ class KeyringService extends EventEmitter {
    * @param {Array<string>} newAccountArray - Array of new accounts.
    * @returns {Promise<Array<string>>} The account, if no duplicate is found.
    */
-  checkForDuplicate = async (type: string, newAccountArray: string[], addressType: AddressType): Promise<string[]> => {
+  checkForDuplicate = async (type: string, newAccountArray: string[]): Promise<string[]> => {
     const keyrings = this.getKeyringsByType(type);
     const _accounts = await Promise.all(keyrings.map((keyring) => keyring.getAccounts()));
 
@@ -392,7 +417,7 @@ class KeyringService extends EventEmitter {
       return accounts.find((key) => key === account);
     });
 
-    return isIncluded ? Promise.reject(new Error(i18n.t('duplicateAccount'))) : Promise.resolve(newAccountArray);
+    return isIncluded ? Promise.reject(new Error(i18n.t('Wallet existed.'))) : Promise.resolve(newAccountArray);
   };
 
   /**
@@ -451,17 +476,14 @@ class KeyringService extends EventEmitter {
     }
     keyring.removeAccount(address);
     this.emit('removedAccount', address);
-    const accounts = await keyring.getAccounts();
-    if (accounts.length == 0) {
-      this.removeEmptyKeyrings();
-    }
     await this.persistAllKeyrings();
     await this._updateMemStoreKeyrings();
     await this.fullUpdate();
   };
 
   removeKeyring = async (keyringIndex: number): Promise<any> => {
-    this.keyrings.splice(keyringIndex, 1);
+    delete this.keyrings[keyringIndex];
+    this.keyrings[keyringIndex] = new EmptyKeyring();
     await this.persistAllKeyrings();
     await this._updateMemStoreKeyrings();
     await this.fullUpdate();
@@ -688,7 +710,7 @@ class KeyringService extends EventEmitter {
    * @param {Keyring} keyring
    * @returns {Promise<Object>} A keyring display object, with type and accounts properties.
    */
-  displayForKeyring = async (keyring: Keyring, addressType: AddressType): Promise<DisplayedKeryring> => {
+  displayForKeyring = async (keyring: Keyring, addressType: AddressType, index: number): Promise<DisplayedKeryring> => {
     const accounts = await keyring.getAccounts();
     const all_accounts: { pubkey: string; brandName: string }[] = [];
     for (let i = 0; i < accounts.length; i++) {
@@ -702,13 +724,14 @@ class KeyringService extends EventEmitter {
       type: keyring.type,
       accounts: all_accounts,
       keyring: new DisplayKeyring(keyring),
-      addressType
+      addressType,
+      index
     };
   };
 
   getAllDisplayedKeyrings = (): Promise<DisplayedKeryring[]> => {
     return Promise.all(
-      this.keyrings.map((keyring, index) => this.displayForKeyring(keyring, this.addressTypes[index]))
+      this.keyrings.map((keyring, index) => this.displayForKeyring(keyring, this.addressTypes[index], index))
     );
   };
 
@@ -771,7 +794,7 @@ class KeyringService extends EventEmitter {
    */
   _updateMemStoreKeyrings = async (): Promise<void> => {
     const keyrings = await Promise.all(
-      this.keyrings.map((keyring, index) => this.displayForKeyring(keyring, this.addressTypes[index]))
+      this.keyrings.map((keyring, index) => this.displayForKeyring(keyring, this.addressTypes[index], index))
     );
     return this.memStore.updateState({ keyrings });
   };

@@ -72,10 +72,7 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
       }}>
       <div className="flex items-center justify-between text-lg font-semibold">
         <div className="flex flex-col flex-grow text-left">
-          <span>
-            {`${keyring.alianName}`}{' '}
-            {keyring.inconsistent && <span className="text-xs rounded bg-red-500 p-1.5">{'Inconsistent!'}</span>}
-          </span>
+          <span>{`${keyring.alianName}`} </span>
           <span className="font-normal opacity-60">{`${displayAddress}`}</span>
         </div>
         <div className="flex text-rgiht items-end justify-end mr-2">

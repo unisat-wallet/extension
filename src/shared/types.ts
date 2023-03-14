@@ -14,6 +14,13 @@ export enum NetworkType {
   TESTNET
 }
 
+export enum RestoreWalletType {
+  UNISAT,
+  SPARROW,
+  XVERSE,
+  OTHERS
+}
+
 export interface Chain {
   name: string;
   logo: string;
@@ -115,7 +122,6 @@ export type WalletKeyring = {
   accounts: Account[];
   alianName: string;
   hdPath: string;
-  inconsistent: boolean;
 };
 
 export interface Account {

@@ -4,7 +4,7 @@ import VirtualList from 'rc-virtual-list';
 import { forwardRef, useEffect, useState } from 'react';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 
-import { NETWORK_TYPES } from '@/shared/constant';
+import { ADDRESS_TYPES, NETWORK_TYPES } from '@/shared/constant';
 import { useExtensionIsInTab, useOpenExtensionInTab } from '@/ui/features/browser/tabs';
 import { getCurrentTab } from '@/ui/features/browser/tabs';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
@@ -31,6 +31,16 @@ const SettingList: Setting[] = [
     route: '/settings/manage-wallet',
     right: true
   },
+
+  {
+    label: 'Address Type',
+    value: 'Taproot',
+    desc: '',
+    action: 'addressType',
+    route: '/settings/address-type',
+    right: true
+  },
+
   {
     label: 'Connected Sites',
     value: '',
@@ -39,7 +49,6 @@ const SettingList: Setting[] = [
     route: '/connected-sites',
     right: true
   },
-
   {
     label: t('Network'),
     value: t('MAINNET'),
@@ -61,7 +70,7 @@ const SettingList: Setting[] = [
   {
     label: '',
     value: '',
-    desc: t('Expand View'),
+    desc: t('Expand View '),
     action: 'expand-view',
     route: '/settings/export-privatekey',
     right: false
@@ -158,6 +167,10 @@ export default function SettingsTab() {
 
     if (v.action == 'networkType') {
       v.value = NETWORK_TYPES[networkType].label;
+    }
+
+    if (v.action == 'addressType') {
+      v.value = ADDRESS_TYPES[currentKeyring.addressType].name;
     }
 
     if (v.action == 'expand-view') {

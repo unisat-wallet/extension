@@ -3,16 +3,48 @@ import { Tabs } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { Content } from 'antd/lib/layout/layout';
 import Mnemonic from 'bitcore-mnemonic';
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { ADDRESS_TYPES } from '@/shared/constant';
-import { AddressType } from '@/shared/types';
+import { ADDRESS_TYPES, RESTORE_WALLETS } from '@/shared/constant';
+import { AddressType, RestoreWalletType } from '@/shared/types';
 import CHeader from '@/ui/components/CHeader';
 import { useCreateAccountCallback } from '@/ui/state/global/hooks';
-import { copyToClipboard, shortAddress, useWallet } from '@/ui/utils';
+import { amountToSaothis, copyToClipboard, shortAddress, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
+
+function Step0({
+  contextData,
+  updateContextData
+}: {
+  contextData: ContextData;
+  updateContextData: (params: UpdateContextDataParams) => void;
+}) {
+  return (
+    <div className="flex flex-col items-strech gap-3_75 justify-evenly mx-5">
+      <div className="flex flex-col px-2 text-2xl font-semibold">{'Choose a wallet you want to restore from'}</div>
+      {RESTORE_WALLETS.map((item, index) => {
+        return (
+          <Button
+            key={index}
+            size="large"
+            type="default"
+            className="p-5 box default"
+            onClick={() => {
+              updateContextData({ tabType: TabType.STEP2, restoreWalletType: item.value });
+            }}>
+            <div className="flex items-center justify-between text-lg font-semibold">
+              <div className="flex flex-col flex-grow text-left">
+                <div className=" w-60 text-left">{`${item.name}`}</div>
+              </div>
+            </div>
+          </Button>
+        );
+      })}
+    </div>
+  );
+}
 
 function Step1_Create({
   contextData,
@@ -167,7 +199,7 @@ function Step1_Import({
 
   const onNext = () => {
     const mnemonics = keys.join(' ');
-    updateContextData({ mnemonics, tabType: TabType.STEP2 });
+    updateContextData({ mnemonics, tabType: TabType.STEP3 });
   };
   const handleOnKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!disabled && 'Enter' == e.key) {
@@ -247,23 +279,43 @@ function Step2({
 }) {
   const wallet = useWallet();
 
-  const hdPathOptions = ADDRESS_TYPES.map((v) => {
-    return {
-      label: v.name,
-      hdPath: v.hdPath,
-      addressType: v.value
-    };
-  });
-  //.concat([
-  //   {
-  //     label: 'CUSTOM',
-  //     hdPath: '',
-  //     addressType: AddressType.P2PKH
-  //   }
-  // ]);
+  const hdPathOptions = useMemo(() => {
+    const restoreWallet = RESTORE_WALLETS[contextData.restoreWalletType];
+    return ADDRESS_TYPES.filter((v) => {
+      if (v.displayIndex < 0) {
+        return false;
+      }
+      if (!restoreWallet.addressTypes.includes(v.value)) {
+        return false;
+      }
+
+      if (!contextData.isRestore && v.isUnisatLegacy) {
+        return false;
+      }
+      return true;
+    })
+      .sort((a, b) => a.displayIndex - b.displayIndex)
+      .map((v) => {
+        return {
+          label: v.name,
+          hdPath: v.hdPath,
+          addressType: v.value,
+          isUnisatLegacy: v.isUnisatLegacy
+        };
+      });
+  }, [contextData]);
 
   const [previewAddresses, setPreviewAddresses] = useState<string[]>(hdPathOptions.map((v) => ''));
 
+  const [addressBalances, setAddressBalances] = useState<{ [key: string]: { amount: string; satoshis: number } }>({});
+
+  const selfRef = useRef({
+    maxSatoshis: 0,
+    recommended: 0,
+    count: 0,
+    addressBalances: {}
+  });
+  const self = selfRef.current;
   const run = async () => {
     const addresses: string[] = [];
     for (let i = 0; i < hdPathOptions.length; i++) {
@@ -275,7 +327,25 @@ function Step2({
         options.addressType
       );
       const address = keyring.accounts[0].address;
-      addresses.push(shortAddress(address, 15));
+      addresses.push(address);
+    }
+    if (contextData.isRestore) {
+      const balances = await wallet.getMultiAddressBalance(addresses.join(','));
+      for (let i = 0; i < addresses.length; i++) {
+        const address = addresses[i];
+        const balance = balances[i];
+        const satoshis = amountToSaothis(balance.amount);
+        self.addressBalances[address] = {
+          amount: balance.amount,
+          satoshis
+        };
+        if (satoshis > self.maxSatoshis) {
+          self.maxSatoshis = satoshis;
+          self.recommended = i;
+        }
+      }
+      updateContextData({ addressType: hdPathOptions[self.recommended].addressType });
+      setAddressBalances(self.addressBalances);
     }
     setPreviewAddresses(addresses);
   };
@@ -298,14 +368,23 @@ function Step2({
   };
   return (
     <div className="flex flex-col items-strech gap-3_75 justify-evenly mx-5">
-      <div className="flex flex-col px-2 text-2xl font-semibold">{'Derivation Path'}</div>
+      <div className="flex flex-col px-2 text-2xl font-semibold">{'Address Type'}</div>
       {hdPathOptions.map((item, index) => {
+        const address = previewAddresses[index];
+        const balance = addressBalances[address] || {
+          amount: '--',
+          satoshis: 0
+        };
+        const hasVault = contextData.isRestore && balance.satoshis > 0;
+        if (item.isUnisatLegacy && !hasVault) {
+          return null;
+        }
         return (
           <Button
             key={index}
             size="large"
             type="default"
-            className="p-5 box default !h-28"
+            className="p-5 box default !h-32"
             onClick={() => {
               if (item.hdPath) {
                 updateContextData({ hdPath: item.hdPath, addressType: item.addressType });
@@ -313,9 +392,16 @@ function Step2({
             }}>
             <div className="flex items-center justify-between text-lg font-semibold">
               <div className="flex flex-col flex-grow text-left">
-                <div className=" w-60 text-left">{item.label}</div>
-                <div className="font-normal opacity-60">{item.hdPath}</div>
-                <div className="font-normal opacity-60">{previewAddresses[index]}</div>
+                <div className=" w-60 text-left">{`${item.label} (${item.hdPath})`}</div>
+                <div className={'font-normal ' + (hasVault ? 'text-yellow-300' : 'opacity-60')}>
+                  {shortAddress(address)}
+                </div>
+                {hasVault && <div className={' border-b-2 opacity-60'}></div>}
+                {hasVault && (
+                  <div className={'font-normal ' + (hasVault ? 'text-yellow-300' : 'opacity-60')}>
+                    {balance ? `${balance.amount} BTC` : ''}{' '}
+                  </div>
+                )}
               </div>
 
               {index == pathIndex ? (
@@ -329,17 +415,6 @@ function Step2({
           </Button>
         );
       })}
-      {pathIndex == 3 && (
-        <Input
-          className="font-semibold text-white h-15_5 box default hover"
-          placeholder={'Custom Derivation Path'}
-          defaultValue={contextData.hdPath}
-          onChange={async (e) => {
-            updateContextData({ hdPath: e.target.value, addressType: AddressType.P2PKH });
-          }}
-          autoFocus={true}
-        />
-      )}
 
       <div className="flex flex-col px-2 text-2xl font-semibold mt-5">{'Phrase (Optional)'}</div>
 
@@ -374,6 +449,8 @@ interface ContextData {
   addressType: AddressType;
   step1Completed: boolean;
   tabType: TabType;
+  restoreWalletType: RestoreWalletType;
+  isRestore: boolean;
 }
 
 interface UpdateContextDataParams {
@@ -383,6 +460,7 @@ interface UpdateContextDataParams {
   addressType?: AddressType;
   step1Completed?: boolean;
   tabType?: TabType;
+  restoreWalletType?: RestoreWalletType;
 }
 
 export default function CreateHDWalletScreen() {
@@ -398,9 +476,11 @@ export default function CreateHDWalletScreen() {
     mnemonics: '',
     hdPath: '',
     passphrase: '',
-    addressType: AddressType.P2PKH,
+    addressType: AddressType.P2WPKH,
     step1Completed: false,
-    tabType: TabType.STEP1
+    tabType: TabType.STEP1,
+    restoreWalletType: RestoreWalletType.UNISAT,
+    isRestore: isImport
   });
 
   const updateContextData = useCallback(
@@ -410,22 +490,40 @@ export default function CreateHDWalletScreen() {
     [contextData, setContextData]
   );
 
-  const items = [
-    {
-      key: TabType.STEP1,
-      label: 'Step 1',
-      children: isImport ? (
-        <Step1_Import contextData={contextData} updateContextData={updateContextData} />
-      ) : (
-        <Step1_Create contextData={contextData} updateContextData={updateContextData} />
-      )
-    },
-    {
-      key: TabType.STEP2,
-      label: 'Step 2',
-      children: <Step2 contextData={contextData} updateContextData={updateContextData} />
+  const items = useMemo(() => {
+    if (contextData.isRestore) {
+      return [
+        {
+          key: TabType.STEP1,
+          label: 'Step 1',
+          children: <Step0 contextData={contextData} updateContextData={updateContextData} />
+        },
+        {
+          key: TabType.STEP2,
+          label: 'Step 2',
+          children: <Step1_Import contextData={contextData} updateContextData={updateContextData} />
+        },
+        {
+          key: TabType.STEP3,
+          label: 'Step 3',
+          children: <Step2 contextData={contextData} updateContextData={updateContextData} />
+        }
+      ];
+    } else {
+      return [
+        {
+          key: TabType.STEP1,
+          label: 'Step 1',
+          children: <Step1_Create contextData={contextData} updateContextData={updateContextData} />
+        },
+        {
+          key: TabType.STEP2,
+          label: 'Step 2',
+          children: <Step2 contextData={contextData} updateContextData={updateContextData} />
+        }
+      ];
     }
-  ];
+  }, [contextData, updateContextData]);
 
   return (
     <Layout className="h-full">
@@ -437,7 +535,7 @@ export default function CreateHDWalletScreen() {
             window.history.go(-1);
           }
         }}
-        title="Create HD Wallet"
+        title={contextData.isRestore ? 'Restore from mnemonics' : 'Create a new HD Wallet'}
       />
       <Content style={{ backgroundColor: '#1C1919' }}>
         <Tabs

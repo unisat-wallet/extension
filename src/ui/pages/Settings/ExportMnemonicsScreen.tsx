@@ -29,7 +29,6 @@ export default function ExportMnemonicsScreen() {
       const { mnemonic, hdPath, passphrase } = await wallet.getMnemonics(password);
       setMnemonic(mnemonic);
       setPassphrase(passphrase);
-      console.log(hdPath);
     } catch (e) {
       setStatus('error');
       setError((e as any).message);

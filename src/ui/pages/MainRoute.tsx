@@ -26,6 +26,7 @@ import ConnectedSitesScreen from './Approval/ConnectedSitesScreen';
 import BoostScreen from './Main/BoostScreen';
 import MainScreen from './Main/TabScreen';
 import WelcomeScreen from './Main/WelcomeScreen';
+import AddressTypeScreen from './Settings/AddressTypeScreen';
 import ChangeLanguageScreen from './Settings/ChangeLanguageScreen';
 import ChangePasswordScreen from './Settings/ChangePasswordScreen';
 import EditWalletNameScreen from './Settings/EditWalletNameScreen';
@@ -183,6 +184,10 @@ const routes = {
   UpgradeNoticeScreen: {
     path: '/settings/upgrade-notice',
     element: <UpgradeNoticeScreen />
+  },
+  AddressTypeScreen: {
+    path: '/settings/address-type',
+    element: <AddressTypeScreen />
   }
 };
 

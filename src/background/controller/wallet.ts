@@ -119,6 +119,11 @@ export class WalletController extends BaseController {
     preferenceService.updateAddressBalance(address, data);
     return data;
   };
+
+  getMultiAddressBalance = async (addresses: string) => {
+    return openapiService.getMultiAddressBalance(addresses);
+  };
+
   getAddressCacheBalance = (address: string | undefined): BitcoinBalance => {
     const defaultBalance: BitcoinBalance = {
       confirm_amount: '0',
@@ -209,7 +214,11 @@ export class WalletController extends BaseController {
     const pubkeys = await originKeyring.getAccounts();
     if (alianName) this.updateAlianName(pubkeys[0], alianName);
 
-    const displayedKeyring = await keyringService.displayForKeyring(originKeyring, addressType);
+    const displayedKeyring = await keyringService.displayForKeyring(
+      originKeyring,
+      addressType,
+      keyringService.keyrings.length - 1
+    );
     const keyring = this.displayedKeyringToWalletKeyring(displayedKeyring, keyringService.keyrings.length - 1);
     this.changeKeyring(keyring);
   };
@@ -226,7 +235,11 @@ export class WalletController extends BaseController {
     const originKeyring = await keyringService.createKeyringWithMnemonics(mnemonic, hdPath, passphrase, addressType);
     keyringService.removePreMnemonics();
 
-    const displayedKeyring = await keyringService.displayForKeyring(originKeyring, addressType);
+    const displayedKeyring = await keyringService.displayForKeyring(
+      originKeyring,
+      addressType,
+      keyringService.keyrings.length - 1
+    );
     const keyring = this.displayedKeyringToWalletKeyring(displayedKeyring, keyringService.keyrings.length - 1);
     this.changeKeyring(keyring);
   };
@@ -243,13 +256,13 @@ export class WalletController extends BaseController {
       hdPath,
       passphrase
     });
-    const displayedKeyring = await keyringService.displayForKeyring(originKeyring, addressType);
+    const displayedKeyring = await keyringService.displayForKeyring(originKeyring, addressType, -1);
     return this.displayedKeyringToWalletKeyring(displayedKeyring, -1, false);
   };
 
   createTmpKeyringWithPrivateKey = async (privateKey: string, addressType: AddressType) => {
     const originKeyring = keyringService.createTmpKeyring(KEYRING_TYPE.SimpleKeyring, [privateKey]);
-    const displayedKeyring = await keyringService.displayForKeyring(originKeyring, addressType);
+    const displayedKeyring = await keyringService.displayForKeyring(originKeyring, addressType, -1);
     return this.displayedKeyringToWalletKeyring(displayedKeyring, -1, false);
   };
 
@@ -302,22 +315,45 @@ export class WalletController extends BaseController {
     return accounts.filter((x) => x).length;
   };
 
-  // private
-  getTypedAccounts = async (type: string) => {
-    return Promise.all(
-      keyringService.keyrings
-        .filter((keyring) => !type || keyring.type === type)
-        .map((keyring, index) => keyringService.displayForKeyring(keyring, keyringService.addressTypes[index]))
-    );
-  };
-
   changeAccount = (account: Account) => {
     preferenceService.setCurrentAccount(account);
   };
 
-  changeKeyring = (keyring: WalletKeyring) => {
+  changeKeyring = (keyring: WalletKeyring, accountIndex = 0) => {
     preferenceService.setCurrentKeyringIndex(keyring.index);
-    preferenceService.setCurrentAccount(keyring.accounts[0]);
+    preferenceService.setCurrentAccount(keyring.accounts[accountIndex]);
+  };
+
+  getAllAddresses = (keyring: WalletKeyring, index: number) => {
+    const networkType = this.getNetworkType();
+    const addresses: string[] = [];
+    const _keyring = keyringService.keyrings[keyring.index];
+    if (keyring.type === KEYRING_TYPE.HdKeyring) {
+      const pathPubkey: { [path: string]: string } = {};
+      ADDRESS_TYPES.filter((v) => v.displayIndex >= 0).forEach((v) => {
+        let pubkey = pathPubkey[v.hdPath];
+        if (!pubkey && _keyring.getAccountByHdPath) {
+          pubkey = _keyring.getAccountByHdPath(v.hdPath, index);
+        }
+        const address = publicKeyToAddress(pubkey, v.value, networkType);
+        addresses.push(address);
+      });
+    } else {
+      ADDRESS_TYPES.filter((v) => v.displayIndex >= 0 && v.isUnisatLegacy === false).forEach((v) => {
+        const pubkey = keyring.accounts[index].pubkey;
+        const address = publicKeyToAddress(pubkey, v.value, networkType);
+        addresses.push(address);
+      });
+    }
+    return addresses;
+  };
+
+  changeAddressType = async (addressType: AddressType) => {
+    const currentAccount = await this.getCurrentAccount();
+    const currentKeyringIndex = preferenceService.getCurrentKeyringIndex();
+    await keyringService.changeAddressType(currentKeyringIndex, addressType);
+    const keyring = await this.getCurrentKeyring();
+    this.changeKeyring(keyring, currentAccount?.index);
   };
 
   signTransaction = async (type: string, from: string, psbt: bitcoin.Psbt, inputs: ToSignInput[]) => {
@@ -644,7 +680,7 @@ export class WalletController extends BaseController {
   displayedKeyringToWalletKeyring = (displayedKeyring: DisplayedKeryring, index: number, initName = true) => {
     const networkType = preferenceService.getNetworkType();
     const addressType = displayedKeyring.addressType;
-    const key = addressType + displayedKeyring.accounts[0].pubkey;
+    const key = 'keyring_' + index;
     const type = displayedKeyring.type;
     const accounts: Account[] = [];
     for (let j = 0; j < displayedKeyring.accounts.length; j++) {
@@ -655,16 +691,15 @@ export class WalletController extends BaseController {
         type,
         pubkey,
         address,
-        alianName
+        alianName,
+        index: j
       });
     }
     const hdPath = type === KEYRING_TYPE.HdKeyring ? displayedKeyring.keyring.hdPath : '';
-    const inconsistent = hdPath === '' ? false : ADDRESS_TYPES[addressType].hdPath !== hdPath;
     const alianName = preferenceService.getKeyringAlianName(
       key,
       initName ? `${KEYRING_TYPES[type].alianName} #${index + 1}` : ''
     );
-    console.log(key, alianName);
     const keyring: WalletKeyring = {
       index,
       key,
@@ -672,8 +707,7 @@ export class WalletController extends BaseController {
       addressType,
       accounts,
       alianName,
-      hdPath,
-      inconsistent
+      hdPath
     };
     return keyring;
   };
@@ -683,8 +717,10 @@ export class WalletController extends BaseController {
     const keyrings: WalletKeyring[] = [];
     for (let index = 0; index < displayedKeyrings.length; index++) {
       const displayedKeyring = displayedKeyrings[index];
-      const keyring = this.displayedKeyringToWalletKeyring(displayedKeyring, index);
-      keyrings.push(keyring);
+      if (displayedKeyring.type !== KEYRING_TYPE.Empty) {
+        const keyring = this.displayedKeyringToWalletKeyring(displayedKeyring, index);
+        keyrings.push(keyring);
+      }
     }
 
     return keyrings;
@@ -711,8 +747,13 @@ export class WalletController extends BaseController {
     }
 
     if (!displayedKeyrings[currentKeyringIndex]) {
-      currentKeyringIndex = 0;
-      preferenceService.setCurrentKeyringIndex(currentKeyringIndex);
+      for (let i = 0; i < displayedKeyrings.length; i++) {
+        if (displayedKeyrings[i].type !== KEYRING_TYPE.Empty) {
+          currentKeyringIndex = i;
+          preferenceService.setCurrentKeyringIndex(currentKeyringIndex);
+          break;
+        }
+      }
     }
 
     const displayedKeyring = displayedKeyrings[currentKeyringIndex];
