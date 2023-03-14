@@ -18,6 +18,8 @@ import {
 } from '@/ui/state/transactions/hooks';
 import { amountToSaothis, isValidAddress, satoshisToAmount } from '@/ui/utils';
 
+import '@/ui/styles/domain.less';
+
 export default function TxCreateScreen() {
   const { t } = useTranslation();
   const accountBalance = useAccountBalance();
@@ -141,7 +143,7 @@ export default function TxCreateScreen() {
             autoFocus={true}
           />
 
-          <div>{parseAddress}</div>
+          <div className="word-breakall">{parseAddress}</div>
           <span className="text-lg text-error h-5">{error}</span>
 
           <div className="flex justify-between w-full mt-5 box text-soft-white">
