@@ -68,16 +68,12 @@ class NotificationService extends Events {
 
   // currently it only support one approval at the same time
   requestApproval = async (data, winProps?): Promise<any> => {
-    // if the request comes into while user approving
-    if (this.approval) {
-      throw ethErrors.provider.userRejectedRequest('please request after current approval resolve');
-    }
-
     // if (preferenceService.getPopupOpen()) {
     //   this.approval = null;
     //   throw ethErrors.provider.userRejectedRequest('please request after user close current popup');
     // }
 
+    // We will just override the existing open approval with the new one coming in
     return new Promise((resolve, reject) => {
       this.approval = {
         data,
