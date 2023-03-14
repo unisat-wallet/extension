@@ -59,6 +59,7 @@ class NotificationService extends Events {
   };
 
   rejectApproval = async (err?: string, stay = false, isInternal = false) => {
+    if (!this.approval) return;
     if (isInternal) {
       this.approval?.reject(ethErrors.rpc.internal(err));
     } else {
