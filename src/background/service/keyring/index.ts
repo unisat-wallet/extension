@@ -618,6 +618,12 @@ class KeyringService extends EventEmitter {
    */
   _restoreKeyring = async (serialized: any): Promise<Keyring> => {
     const { type, data, addressType } = serialized;
+    if (type === KEYRING_TYPE.Empty) {
+      const keyring = new EmptyKeyring();
+      this.keyrings.push(keyring);
+      this.addressTypes.push(addressType === undefined ? preference.getAddressType() : addressType);
+      return keyring;
+    }
     const Keyring = this.getKeyringClassForType(type);
     const keyring = new Keyring();
     await keyring.deserialize(data);
