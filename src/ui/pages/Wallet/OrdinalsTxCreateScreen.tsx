@@ -95,6 +95,10 @@ export default function OrdinalsTxCreateScreen() {
                 setParseError('');
               }
 
+              if (parseAddress) {
+                setParseAddress('')
+              }
+
               const val = e.target.value;
               setInputAddress(val);
 
@@ -104,8 +108,6 @@ export default function OrdinalsTxCreateScreen() {
                 }).catch((err) => {
                   setParseError(val);
                 })
-              } else {
-                setParseAddress('')
               }
             }}
             autoFocus={true}

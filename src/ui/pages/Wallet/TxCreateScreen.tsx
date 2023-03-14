@@ -135,6 +135,10 @@ export default function TxCreateScreen() {
                 setParseError('');
               }
 
+              if (parseAddress) {
+                setParseAddress('')
+              }
+
               const val = e.target.value;
               setInputAddress(val);
 
@@ -144,8 +148,6 @@ export default function TxCreateScreen() {
                 }).catch((err) => {
                   setParseError(val);
                 })
-              } else {
-                setParseAddress('')
               }
             }}
             autoFocus={true}
