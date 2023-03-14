@@ -294,12 +294,13 @@ if (!window.unisat) {
   window.unisat = new Proxy(provider, {
     deleteProperty: () => true
   });
-
-  Object.defineProperty(window, 'unisat', {
-    value: new Proxy(provider, {
-      deleteProperty: () => true
-    }),
-    writable: false
-  });
 }
+
+Object.defineProperty(window, 'unisat', {
+  value: new Proxy(provider, {
+    deleteProperty: () => true
+  }),
+  writable: false
+});
+
 window.dispatchEvent(new Event('unisat#initialized'));
