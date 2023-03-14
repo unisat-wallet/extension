@@ -6,7 +6,7 @@ import { useTranslation } from 'react-i18next';
 
 import wallet from '@/background/controller/wallet';
 import { DomainInfo } from '@/background/service/domainService';
-import { COIN_DUST, DOMAIN_LEVEL_ONE } from '@/shared/constant';
+import { BTCDOMAINS_LINK, COIN_DUST, DOMAIN_LEVEL_ONE } from '@/shared/constant';
 import CHeader from '@/ui/components/CHeader';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useAccountBalance } from '@/ui/state/accounts/hooks';
@@ -131,6 +131,10 @@ export default function TxCreateScreen() {
             placeholder={t('Recipients BTC address')}
             defaultValue={inputAddress}
             onChange={async (e) => {
+              if (parseError) {
+                setParseError('');
+              }
+
               const val = e.target.value;
               setInputAddress(val);
 
@@ -140,14 +144,19 @@ export default function TxCreateScreen() {
                 }).catch((err) => {
                   setParseError(val);
                 })
+              } else {
+                setParseAddress('')
               }
             }}
             autoFocus={true}
           />
 
-          <div className="word-breakall">{parseAddress}</div>
+          {parseAddress ? (
+            <div className="word-breakall">{parseAddress}</div>
+          ) : null}
+
           {parseError ? (
-            <span className="text-lg text-warn h-5">{`${parseError}` + ' is not occupied, click '}<a href="https://btcdomains.io" target={'_blank'} rel="noreferrer">btcdomains</a> to register.</span>
+            <span className="text-lg text-warn h-5">{`${parseError}` + ' is not occupied, click '}<a href={BTCDOMAINS_LINK} target={'_blank'} rel="noreferrer">btcdomains</a> to register.</span>
           ) : null}
 
           <div className="flex justify-between w-full mt-5 box text-soft-white">

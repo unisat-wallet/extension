@@ -1,5 +1,4 @@
-import { Button, Input } from 'antd';
-import { Layout } from 'antd';
+import { Button, Input, Layout } from 'antd';
 import { Content } from 'antd/lib/layout/layout';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -15,7 +14,7 @@ import { useNavigate } from '../MainRoute';
 
 import wallet from '@/background/controller/wallet';
 import { DomainInfo } from '@/background/service/domainService';
-import { DOMAIN_LEVEL_ONE } from '@/shared/constant';
+import { BTCDOMAINS_LINK, DOMAIN_LEVEL_ONE } from '@/shared/constant';
 
 import '@/ui/styles/domain.less';
 
@@ -92,6 +91,10 @@ export default function OrdinalsTxCreateScreen() {
             placeholder={t('Recipients BTC address')}
             defaultValue={inputAddress}
             onChange={async (e) => {
+              if (parseError) {
+                setParseError('');
+              }
+
               const val = e.target.value;
               setInputAddress(val);
 
@@ -101,16 +104,19 @@ export default function OrdinalsTxCreateScreen() {
                 }).catch((err) => {
                   setParseError(val);
                 })
+              } else {
+                setParseAddress('')
               }
             }}
             autoFocus={true}
           />
 
-          <div className="word-breakall">{parseAddress}</div>
+          {parseAddress ? (
+            <div className="word-breakall">{parseAddress}</div>
+          ) : null}
 
-          <div className="word-breakall">{parseAddress}</div>
           {parseError ? (
-            <span className="text-lg text-warn h-5">{`${parseError}` + ' is not occupied, click '}<a href="https://btcdomains.io" target={'_blank'} rel="noreferrer">btcdomains</a> to register.</span>
+            <span className="text-lg text-warn h-5">{`${parseError}` + ' is not occupied, click '}<a href={BTCDOMAINS_LINK} target={'_blank'} rel="noreferrer">btcdomains</a> to register.</span>
           ) : null}
 
           <span className="text-lg text-error h-5">{error}</span>
