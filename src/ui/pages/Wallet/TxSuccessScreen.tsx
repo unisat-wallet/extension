@@ -1,5 +1,5 @@
 import { Layout } from 'antd';
-import { Content, Header } from 'antd/lib/layout/layout';
+import { Content } from 'antd/lib/layout/layout';
 import { useMemo } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -18,9 +18,8 @@ export default () => {
   const toAmount = useMemo(() => satoshisToAmount(bitcoinTx.toSatoshis), [bitcoinTx.toSatoshis]);
   return (
     <Layout className="h-full">
-      <Header className=" border-white border-opacity-10">
-        <CHeader />
-      </Header>
+      <CHeader />
+
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-strech mx-5 mt-36 gap-2_5">
           <span className="w-24 h-24 self-center">

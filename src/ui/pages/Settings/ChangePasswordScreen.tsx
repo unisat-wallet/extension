@@ -1,5 +1,5 @@
 import { Button, Input, Layout, message } from 'antd';
-import { Content, Header } from 'antd/lib/layout/layout';
+import { Content } from 'antd/lib/layout/layout';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
@@ -71,16 +71,14 @@ export default function ChangePasswordScreen() {
   };
   return (
     <Layout className="h-full">
-      <Header className="border-white  border-opacity-10">
-        <CHeader
-          onBack={() => {
-            window.history.go(-1);
-          }}
-        />
-      </Header>
+      <CHeader
+        onBack={() => {
+          window.history.go(-1);
+        }}
+        title="Change Password"
+      />
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-strech mx-5 mt-5 gap-3_75 justify-evenly">
-          <div className="flex self-center px-2 text-2xl font-semibold h-13">{t('Change Password')}</div>
           <Input.Password
             status={statusC}
             className="font-semibold text-white mt-1_25 box focus:active"

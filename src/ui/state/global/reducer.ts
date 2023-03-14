@@ -1,5 +1,3 @@
-import { ADDRESS_TYPES } from '@/shared/constant';
-import { AddressType } from '@/shared/types';
 import { createSlice } from '@reduxjs/toolkit';
 
 import { updateVersion } from '../global/actions';
@@ -11,25 +9,13 @@ export interface GlobalState {
   isUnlocked: boolean;
   isReady: boolean;
   isBooted: boolean;
-  advanceState: AdvanceOptionsState;
-}
-
-interface AdvanceOptionsState {
-  hdName: string;
-  hdPath: string;
-  passphrase: string;
 }
 
 export const initialState: GlobalState = {
   tab: 'home',
   isUnlocked: false,
   isReady: false,
-  isBooted: false,
-  advanceState: {
-    hdName: ADDRESS_TYPES[AddressType.P2PKH].name,
-    hdPath: ADDRESS_TYPES[AddressType.P2PKH].hdPath,
-    passphrase: ''
-  }
+  isBooted: false
 };
 
 const slice = createSlice({
@@ -52,21 +38,6 @@ const slice = createSlice({
     ) {
       const { payload } = action;
       state = Object.assign({}, state, payload);
-      return state;
-    },
-
-    updateAdvanceState(
-      state,
-      action: {
-        payload: {
-          hdPath?: string;
-          hdName?: string;
-          passphrase?: string;
-        };
-      }
-    ) {
-      const { payload } = action;
-      state.advanceState = Object.assign({}, state.advanceState, payload);
       return state;
     }
   },

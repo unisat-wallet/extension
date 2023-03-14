@@ -44,7 +44,7 @@ export default function BoostScreen() {
     }
 
     if ((await wallet.getPreMnemonics()) && !isInNotification && !isInTab) {
-      navigate('CreateMnemonicsScreen');
+      navigate('CreateHDWalletScreen', { isImport: false });
       return;
     }
 

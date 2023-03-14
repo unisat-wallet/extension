@@ -1,5 +1,5 @@
 import { Button, Layout } from 'antd';
-import { Content, Header } from 'antd/lib/layout/layout';
+import { Content } from 'antd/lib/layout/layout';
 import { useTranslation } from 'react-i18next';
 
 import { LANGS } from '@/shared/constant';
@@ -13,16 +13,14 @@ export default function ChangeLanguageScreen() {
 
   return (
     <Layout className="h-full">
-      <Header className="border-white border-opacity-10">
-        <CHeader
-          onBack={() => {
-            window.history.go(-1);
-          }}
-        />
-      </Header>
+      <CHeader
+        onBack={() => {
+          window.history.go(-1);
+        }}
+        title="Language"
+      />
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-center mx-auto mt-5 gap-3_75 justify-evenly w-95">
-          <div className="flex items-center px-2 text-2xl font-semibold h-13">{t('Language')}</div>
           {LANGS.map((item, index) => {
             return (
               <Button

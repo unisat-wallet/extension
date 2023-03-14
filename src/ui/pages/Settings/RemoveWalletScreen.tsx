@@ -7,6 +7,10 @@ import { useTranslation } from 'react-i18next';
 import { KEYRING_CLASS } from '@/shared/constant';
 import CHeader from '@/ui/components/CHeader';
 import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { accountActions } from '@/ui/state/accounts/reducer';
+import { useAppDispatch } from '@/ui/state/hooks';
+import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
+import { keyringsActions } from '@/ui/state/keyrings/reducer';
 import { shortAddress, useWallet } from '@/ui/utils';
 import { faCircleExclamation, faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
@@ -18,6 +22,8 @@ function AlertPanel({ visible, onCancel }) {
   const wallet = useWallet();
   const navigate = useNavigate();
   const currentAccount = useCurrentAccount();
+  const currentKeyring = useCurrentKeyring();
+  const dispatch = useAppDispatch();
 
   if (!visible) return null;
   return (
@@ -41,10 +47,6 @@ function AlertPanel({ visible, onCancel }) {
           </div>
 
           <span className="mt-6 text-2xl">{t('Are you Sure')}?</span>
-          <span className="text-lg text-center">
-            {t('You will not be able to recover this account with your Secret Recovery Phrase')}.
-          </span>
-          <span className="text-lg text-center text-error">{t('This action is not reversible')}.</span>
           <div className="grid w-full grid-cols-2 gap-2_5">
             <div
               className="cursor-pointer box unit bg-soft-black hover:border-white hover:border-opacity-40 hover:bg-primary-active"
@@ -59,9 +61,16 @@ function AlertPanel({ visible, onCancel }) {
             <div
               className="cursor-pointer box unit ant-btn-dangerous hover:border-white hover:border-opacity-40"
               onClick={async () => {
-                await wallet.removeAddress(currentAccount?.address || '', currentAccount?.type || '');
-                const _currentAccount = await wallet.getCurrentAccount();
-                navigate('MainScreen');
+                const nextKeyring = await wallet.removeKeyring(currentKeyring);
+                if (nextKeyring) {
+                  const keyrings = await wallet.getKeyrings();
+                  dispatch(keyringsActions.setKeyrings(keyrings));
+                  dispatch(keyringsActions.setCurrent(keyrings[0]));
+                  dispatch(accountActions.setCurrent(nextKeyring.accounts[0]));
+                  navigate('MainScreen');
+                } else {
+                  navigate('WelcomeScreen');
+                }
               }}>
               &nbsp;{t('YesRemove')}
             </div>
@@ -72,23 +81,19 @@ function AlertPanel({ visible, onCancel }) {
   );
 }
 
-export function navToRemoveAccountScreen(navigate) {
-  navigate('remove-account');
-}
-
-export default function RemoveAccountScreen() {
+export default function RemoveWalletScreen() {
   const { t } = useTranslation();
   const currentAccount = useCurrentAccount();
   const address = useAccountAddress();
   const [isOpen, setIsOpen] = useState(false);
-
+  const currentKeyring = useCurrentKeyring();
   return (
     <Layout className="h-full">
       <CHeader
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Remove Account"
+        title={currentKeyring.alianName}
       />
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-center mx-auto mt-36 gap-2_5 w-110">
@@ -114,7 +119,7 @@ export default function RemoveAccountScreen() {
             )}
           </span>
           <span className="text-lg text-center">
-            {t('You will not be able to recover this account with your Secret Recovery Phrase')}.
+            {'Please pay attention to whether you have backed up the mnemonic/private key to prevent asset loss'}.
           </span>
           <span className="text-lg text-center text-error">{t('This action is not reversible')}.</span>
           <Button
@@ -125,7 +130,7 @@ export default function RemoveAccountScreen() {
             onClick={() => {
               setIsOpen(true);
             }}>
-            <div className="font-semibold text-center text-4_5">{t('Remove Account')}</div>
+            <div className="font-semibold text-center text-4_5">{t('Remove Wallet')}</div>
           </Button>
         </div>
       </Content>

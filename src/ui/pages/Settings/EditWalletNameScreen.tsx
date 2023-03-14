@@ -1,32 +1,27 @@
-import { Button, Input, message } from 'antd';
+import { Button, Input } from 'antd';
 import { Layout } from 'antd';
 import { Content } from 'antd/lib/layout/layout';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import CHeader from '@/ui/components/CHeader';
-import { useSetCurrentAccountCallback } from '@/ui/state/accounts/hooks';
+import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
+import { keyringsActions } from '@/ui/state/keyrings/reducer';
 import { useWallet } from '@/ui/utils';
 
-import { useNavigate } from '../MainRoute';
-
-export default function CreateAccountScreen() {
+export default function EditWalletNameScreen() {
   const { t } = useTranslation();
-  const navigate = useNavigate();
   const wallet = useWallet();
-  const setCurrentAccount = useSetCurrentAccountCallback();
   const currentKeyring = useCurrentKeyring();
   const [alianName, setAlianName] = useState('');
-  const [defaultName, setDefaultName] = useState('');
+  const dispatch = useAppDispatch();
   const handleOnClick = async () => {
-    await wallet.deriveNewAccountFromMnemonic(currentKeyring, alianName || defaultName);
-    message.success({
-      content: t('Successfully created')
-    });
-    const currentAccount = await wallet.getCurrentAccount();
-    setCurrentAccount(currentAccount);
-    navigate('MainScreen');
+    const keyring = await wallet.setKeyringAlianName(currentKeyring, alianName || currentKeyring.alianName);
+    const keyrings = await wallet.getKeyrings();
+    dispatch(keyringsActions.setCurrent(keyring));
+    dispatch(keyringsActions.setKeyrings(keyrings));
+    window.history.go(-1);
   };
 
   const handleOnKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -35,27 +30,19 @@ export default function CreateAccountScreen() {
     }
   };
 
-  const init = async () => {
-    const accountName = await wallet.getNextAlianName(currentKeyring);
-    setDefaultName(accountName);
-  };
-  useEffect(() => {
-    init();
-  }, []);
-
   return (
     <Layout className="h-full">
       <CHeader
         onBack={() => {
           window.history.go(-1);
         }}
-        title="New account"
+        title={currentKeyring.alianName}
       />
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-strech mx-5 mt-5 gap-3_75 justify-evenly">
           <Input
             className="font-semibold text-white mt-1_25 h-15_5 box default focus:active"
-            placeholder={defaultName}
+            placeholder={currentKeyring.alianName}
             onChange={(e) => {
               setAlianName(e.target.value);
             }}
@@ -69,7 +56,7 @@ export default function CreateAccountScreen() {
             onClick={(e) => {
               handleOnClick();
             }}>
-            <div className="flex items-center justify-center text-lg font-semibold">{t('Create a Account')}</div>
+            <div className="flex items-center justify-center text-lg font-semibold">{t('Change Wallet Name')}</div>
           </Button>
         </div>
       </Content>

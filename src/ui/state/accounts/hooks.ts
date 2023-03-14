@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
 
-import { Account } from '@/background/service/preference';
-import { KEYRING_CLASS } from '@/shared/constant';
+import { Account, AddressType } from '@/shared/types';
 import { useWallet } from '@/ui/utils';
 
 import { AppState } from '..';
 import { useAppDispatch, useAppSelector } from '../hooks';
+import { useCurrentKeyring } from '../keyrings/hooks';
 import { accountActions } from './reducer';
 
 export function useAccountsState(): AppState['accounts'] {
@@ -68,13 +68,14 @@ export function useSetCurrentAccountCallback() {
 export function useImportAccountCallback() {
   const wallet = useWallet();
   const dispatch = useAppDispatch();
+  const currentKeyring = useCurrentKeyring();
   return useCallback(
-    async (privateKey: string) => {
+    async (privateKey: string, addressType: AddressType) => {
       let success = false;
       let error;
       try {
-        const alianName = await wallet.getNextAccountAlianName(KEYRING_CLASS.PRIVATE_KEY);
-        await wallet.importPrivateKey(privateKey, alianName);
+        const alianName = await wallet.getNextAlianName(currentKeyring);
+        await wallet.createKeyringWithPrivateKey(privateKey, addressType, alianName);
         const currentAccount = await wallet.getCurrentAccount();
         dispatch(accountActions.setCurrent(currentAccount));
 
@@ -85,7 +86,7 @@ export function useImportAccountCallback() {
       }
       return { success, error };
     },
-    [dispatch, wallet]
+    [dispatch, wallet, currentKeyring]
   );
 }
 

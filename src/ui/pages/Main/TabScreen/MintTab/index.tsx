@@ -8,7 +8,7 @@ import { useInscriptionSummary } from '@/ui/state/accounts/hooks';
 function MintItem({ info }: { info: InscriptionMintedItem }) {
   const navigate = useNavigate();
   return (
-    <div className="px-8 flex flex-col w-full mt-5">
+    <div className="px-8 flex flex-col w-full">
       <div className=" font-semibold ">{info.title}</div>
       <div className="flex justify-between">
         <div className="font-normal opacity-60">{info.desc}</div>

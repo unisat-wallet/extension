@@ -1,5 +1,5 @@
 import { Button, Input, Layout } from 'antd';
-import { Content, Header } from 'antd/lib/layout/layout';
+import { Content } from 'antd/lib/layout/layout';
 import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
@@ -101,6 +101,7 @@ export default function TxCreateScreen() {
         setDisabled(false);
       })
       .catch((e) => {
+        console.log(e);
         setError(e.message);
       });
   }, [inputAddress, inputAmount, autoAdjust]);
@@ -111,18 +112,19 @@ export default function TxCreateScreen() {
   );
   return (
     <Layout className="h-full">
-      <Header className=" border-white border-opacity-10">
-        <CHeader
-          onBack={() => {
-            window.history.go(-1);
-          }}
-        />
-      </Header>
+      <CHeader
+        onBack={() => {
+          window.history.go(-1);
+        }}
+        title="Send BTC"
+      />
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-strech  mt-5 gap-3_75 justify-evenly mx-5">
-          <div className="flex self-center px-2 text-2xl font-semibold h-13">{t('Send')} BTC</div>
           <div className="self-center w-15 h-15">
             <img className="w-full" src={'./images/btc.svg'} alt="" />
+          </div>
+          <div className="flex justify-between w-full mt-5 box text-soft-white">
+            <span>{t('Receiver')}</span>
           </div>
           <Input
             className="mt-5 font-semibold text-white h-15_5 box default hover"

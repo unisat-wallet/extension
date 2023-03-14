@@ -4,6 +4,7 @@ import { setupListeners } from '@reduxjs/toolkit/query/react';
 import accounts from './accounts/reducer';
 import { updateVersion } from './global/actions';
 import global from './global/reducer';
+import keyrings from './keyrings/reducer';
 import settings from './settings/reducer';
 import transactions from './transactions/reducer';
 
@@ -12,7 +13,8 @@ const store = configureStore({
     accounts,
     transactions,
     settings,
-    global
+    global,
+    keyrings
   },
   middleware: (getDefaultMiddleware) => getDefaultMiddleware({ thunk: true })
 });

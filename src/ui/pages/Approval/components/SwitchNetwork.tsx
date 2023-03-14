@@ -1,5 +1,5 @@
 import { Button, Layout } from 'antd';
-import { Content, Footer, Header } from 'antd/lib/layout/layout';
+import { Content, Footer } from 'antd/lib/layout/layout';
 
 import { NETWORK_TYPES } from '@/shared/constant';
 import { NetworkType } from '@/shared/types';
@@ -37,9 +37,7 @@ export default function SwitchNetwork({ params: { data, session } }: Props) {
 
   return (
     <Layout className="h-full">
-      <Header className="border-white border-opacity-10">
-        <CHeader />
-      </Header>
+      <CHeader />
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-strech mt-5 gap-3_75 justify-evenly mx-5">
           <div className="flex justify-center mt-5">

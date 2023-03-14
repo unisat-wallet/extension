@@ -1,5 +1,5 @@
 import { Layout } from 'antd';
-import { Content, Header } from 'antd/lib/layout/layout';
+import { Content } from 'antd/lib/layout/layout';
 import { useTranslation } from 'react-i18next';
 
 import { TxType } from '@/shared/types';
@@ -17,13 +17,12 @@ export default function OrdinalsTxConfirmScreen() {
   const pushOrdinalsTx = usePushOrdinalsTxCallback();
   return (
     <Layout className="h-full">
-      <Header className=" border-white border-opacity-10">
-        <CHeader
-          onBack={() => {
-            window.history.go(-1);
-          }}
-        />
-      </Header>
+      <CHeader
+        onBack={() => {
+          window.history.go(-1);
+        }}
+        title="Sending"
+      />
       <Content style={{ backgroundColor: '#1C1919' }} className="overflow-auto">
         {ordinalsTx.sending ? (
           <div className="flex flex-col items-strech mx-5 text-6xl mt-60 gap-3_75 text-primary">
