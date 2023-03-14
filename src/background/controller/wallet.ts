@@ -370,7 +370,7 @@ export class WalletController extends BaseController {
     const keyring = await keyringService.getKeyringForAccount(account.pubkey, account.type);
 
     const toSignInputs: ToSignInput[] = [];
-
+    const addressType = preferenceService.getAddressType();
     psbt.data.inputs.forEach((v, index) => {
       let script: any = null;
       let value = 0;
@@ -392,6 +392,9 @@ export class WalletController extends BaseController {
             publicKey: account.pubkey,
             sighashTypes: v.sighashType ? [v.sighashType] : undefined
           });
+          if (addressType === AddressType.P2TR && !v.tapInternalKey) {
+            v.tapInternalKey = toXOnly(Buffer.from(account.pubkey, 'hex'));
+          }
         }
       }
     });
