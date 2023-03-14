@@ -723,7 +723,7 @@ export class WalletController extends BaseController {
     for (let index = 0; index < displayedKeyrings.length; index++) {
       const displayedKeyring = displayedKeyrings[index];
       if (displayedKeyring.type !== KEYRING_TYPE.Empty) {
-        const keyring = this.displayedKeyringToWalletKeyring(displayedKeyring, index);
+        const keyring = this.displayedKeyringToWalletKeyring(displayedKeyring, displayedKeyring.index);
         keyrings.push(keyring);
       }
     }
