@@ -1,7 +1,7 @@
 let tryCount = 0;
 const checkLoaded = (callback) => {
   tryCount++;
-  if (tryCount > 100) {
+  if (tryCount > 600) {
     // some error happen?
     return;
   }
