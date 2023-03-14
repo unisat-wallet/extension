@@ -1,11 +1,11 @@
 import { Button, Input, Layout, message } from 'antd';
-import { Content, Header } from 'antd/lib/layout/layout';
+import { Content } from 'antd/lib/layout/layout';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { ADDRESS_TYPES } from '@/shared/constant';
 import CHeader from '@/ui/components/CHeader';
-import { useAdvanceState, useUpdateAdvanceStateCallback } from '@/ui/state/global/hooks';
+import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { copyToClipboard, useWallet } from '@/ui/utils';
 
 type Status = '' | 'error' | 'warning' | undefined;
@@ -20,17 +20,15 @@ export default function ExportMnemonicsScreen() {
   const [status, setStatus] = useState<Status>('');
   const [error, setError] = useState('');
   const wallet = useWallet();
-  const updateAdvanceState = useUpdateAdvanceStateCallback();
+
+  const [passphrase, setPassphrase] = useState('');
+
+  const currenyKering = useCurrentKeyring();
   const btnClick = async () => {
     try {
       const { mnemonic, hdPath, passphrase } = await wallet.getMnemonics(password);
       setMnemonic(mnemonic);
-      const typeInfo = ADDRESS_TYPES.find((v) => v.hdPath === hdPath);
-      updateAdvanceState({
-        hdPath: hdPath,
-        passphrase: passphrase,
-        hdName: typeInfo ? typeInfo.name : 'CUSTOM'
-      });
+      setPassphrase(passphrase);
     } catch (e) {
       setStatus('error');
       setError((e as any).message);
@@ -60,22 +58,20 @@ export default function ExportMnemonicsScreen() {
       });
     });
   }
-  const advanceState = useAdvanceState();
-
   const words = mnemonic.split(' ');
+
+  const pathName = ADDRESS_TYPES.find((v) => v.hdPath === currenyKering.hdPath)?.name;
   return (
     <Layout className="h-full">
-      <Header className="border-white  border-opacity-10">
-        <CHeader
-          onBack={() => {
-            window.history.go(-1);
-          }}
-        />
-      </Header>
+      <CHeader
+        onBack={() => {
+          window.history.go(-1);
+        }}
+        title="Secret Recovery Phrase"
+      />
 
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-strech mx-5 mt-5 text-center justify-evenly">
-          <div className="flex self-center px-2 text-2xl font-semibold h-13">{t('Secret Recovery Phrase')}</div>
           {mnemonic == '' ? (
             <div className="flex flex-col items-strech mx-5 text-center gap-3_75 justify-evenly">
               <div className=" text-warn box">{t('Type your password')}</div>
@@ -134,11 +130,11 @@ export default function ExportMnemonicsScreen() {
                   <div
                     className=" cursor-pointer"
                     onClick={() => {
-                      copy(advanceState.hdPath);
+                      copy(currenyKering.hdPath);
                     }}>
-                    {`Derivation Path: ${advanceState.hdPath} (${advanceState.hdName})`}{' '}
+                    {`Derivation Path: ${currenyKering.hdPath} (${pathName})`}{' '}
                   </div>
-                  {advanceState.passphrase && <div>{`Passphrase: ${advanceState.passphrase}`}</div>}
+                  {passphrase && <div>{`Passphrase: ${passphrase}`}</div>}
                 </div>
               </div>
             </div>

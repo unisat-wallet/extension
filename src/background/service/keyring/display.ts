@@ -3,10 +3,12 @@ import KeyringService, { Keyring } from './index';
 class DisplayKeyring {
   accounts: string[] = [];
   type = '';
+  hdPath = '';
 
   constructor(keyring: Keyring) {
     this.accounts = keyring.accounts || [];
     this.type = keyring.type;
+    this.hdPath = (keyring as any).hdPath;
   }
 
   unlock = async (): Promise<void> => {

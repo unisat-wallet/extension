@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
-import { ADDRESS_TYPES } from '@/shared/constant';
 import { useApproval, useWallet } from '@/ui/utils';
+import { AddressType } from '@unisat/ord-utils/lib/OrdTransaction';
 
 import { AppState } from '..';
 import { useAppDispatch, useAppSelector } from '../hooks';
@@ -60,29 +60,10 @@ export function useCreateAccountCallback() {
   const wallet = useWallet();
   const changeAddressType = useChangeAddressTypeCallback();
   return useCallback(
-    async (mnemonics: string, hdPath: string, passphrase: string) => {
-      await wallet.createKeyringWithMnemonics(mnemonics, hdPath, passphrase);
-      const typeInfo = ADDRESS_TYPES.find((v) => v.hdPath === hdPath);
-      if (typeInfo) {
-        await changeAddressType(typeInfo.value);
-      }
+    async (mnemonics: string, hdPath: string, passphrase: string, addressType: AddressType) => {
+      await wallet.createKeyringWithMnemonics(mnemonics, hdPath, passphrase, addressType);
       dispatch(globalActions.update({ isUnlocked: true }));
     },
     [dispatch, wallet, changeAddressType]
-  );
-}
-
-export function useAdvanceState() {
-  const globalState = useGlobalState();
-  return globalState.advanceState;
-}
-
-export function useUpdateAdvanceStateCallback() {
-  const dispatch = useAppDispatch();
-  return useCallback(
-    async (params: { hdPath?: string; hdName?: string; passphrase?: string }) => {
-      dispatch(globalActions.updateAdvanceState(params));
-    },
-    [dispatch]
   );
 }

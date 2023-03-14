@@ -3,6 +3,7 @@ import { EthereumProviderError } from 'eth-rpc-errors/dist/classes';
 import Events from 'events';
 
 import { winMgr } from '@/background/webapi';
+import { IS_CHROME, IS_LINUX } from '@/shared/constant';
 
 interface Approval {
   data: {
@@ -36,9 +37,11 @@ class NotificationService extends Events {
 
     winMgr.event.on('windowFocusChange', (winId: number) => {
       if (this.notifiWindowId && winId !== this.notifiWindowId) {
-        // if (process.env.NODE_ENV === 'production') {
-        //   this.rejectApproval();
-        // }
+        if (IS_CHROME && winId === chrome.windows.WINDOW_ID_NONE && IS_LINUX) {
+          // Wired issue: When notification popuped, will focus to -1 first then focus on notification
+          return;
+        }
+        this.rejectApproval();
       }
     });
   }
@@ -56,6 +59,7 @@ class NotificationService extends Events {
   };
 
   rejectApproval = async (err?: string, stay = false, isInternal = false) => {
+    if (!this.approval) return;
     if (isInternal) {
       this.approval?.reject(ethErrors.rpc.internal(err));
     } else {

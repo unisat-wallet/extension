@@ -3,12 +3,22 @@ import { CHAINS_ENUM } from './constant';
 export enum AddressType {
   P2PKH,
   P2WPKH,
-  P2TR
+  P2TR,
+  P2SH_P2WPKH,
+  M44_P2WPKH,
+  M44_P2TR
 }
 
 export enum NetworkType {
   MAINNET,
   TESTNET
+}
+
+export enum RestoreWalletType {
+  UNISAT,
+  SPARROW,
+  XVERSE,
+  OTHERS
 }
 
 export interface Chain {
@@ -103,4 +113,24 @@ export interface ToSignInput {
   index: number;
   publicKey: string;
   sighashTypes?: number[];
+}
+export type WalletKeyring = {
+  key: string;
+  index: number;
+  type: string;
+  addressType: AddressType;
+  accounts: Account[];
+  alianName: string;
+  hdPath: string;
+};
+
+export interface Account {
+  type: string;
+  pubkey: string;
+  address: string;
+  brandName?: string;
+  alianName?: string;
+  displayBrandName?: string;
+  index?: number;
+  balance?: number;
 }

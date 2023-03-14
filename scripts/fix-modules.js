@@ -39,9 +39,12 @@ const fixWindowError2 = () => {
 };
 
 const fixWindowError3 = () => {
-  const file = './node_modules/bitcoinjs-lib/src/psbt.js';
+  const file = './node_modules/bitcoinjs-lib/src/payments/p2tr.js';
   let fileData = fs.readFileSync(file).toString();
-  fileData = fileData.replace('__UNSAFE_SIGN_NONSEGWIT: false', '__UNSAFE_SIGN_NONSEGWIT: true');
+  fileData = fileData.replace(
+    'signature: types_1.typeforce.maybe(types_1.typeforce.BufferN(64))',
+    'signature: types_1.typeforce.maybe(types_1.typeforce.Buffer)'
+  );
   fs.writeFileSync(file, fileData);
 };
 
@@ -89,7 +92,7 @@ const run = async () => {
   try {
     fixWindowError();
     fixWindowError2();
-    // fixWindowError3();
+    fixWindowError3();
     fixBufferError();
   } catch (e) {
     console.error('error:', e.message);

@@ -1,27 +1,28 @@
 import { Button, Layout } from 'antd';
-import { Content, Header } from 'antd/lib/layout/layout';
+import { Content } from 'antd/lib/layout/layout';
 import { useTranslation } from 'react-i18next';
 
 import { NETWORK_TYPES } from '@/shared/constant';
 import CHeader from '@/ui/components/CHeader';
 import { useChangeNetworkTypeCallback, useNetworkType } from '@/ui/state/settings/hooks';
 
+import { useNavigate } from '../MainRoute';
+
 export default function NetworkTypeScreen() {
   const { t } = useTranslation();
   const networkType = useNetworkType();
+  const navigate = useNavigate();
   const changeNetworkType = useChangeNetworkTypeCallback();
   return (
     <Layout className="h-full">
-      <Header className="border-white border-opacity-10">
-        <CHeader
-          onBack={() => {
-            window.history.go(-1);
-          }}
-        />
-      </Header>
+      <CHeader
+        onBack={() => {
+          window.history.go(-1);
+        }}
+        title="Switch Network"
+      />
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-strech mt-5 gap-3_75 justify-evenly mx-5">
-          <div className="flex flex-col px-2 text-2xl font-semibold h-13 text-center">{t('Network')}</div>
           {NETWORK_TYPES.map((item, index) => {
             return (
               <Button

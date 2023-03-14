@@ -290,6 +290,12 @@ declare global {
 
 const provider = new UnisatProvider();
 
+if (!window.unisat) {
+  window.unisat = new Proxy(provider, {
+    deleteProperty: () => true
+  });
+}
+
 Object.defineProperty(window, 'unisat', {
   value: new Proxy(provider, {
     deleteProperty: () => true
@@ -297,9 +303,4 @@ Object.defineProperty(window, 'unisat', {
   writable: false
 });
 
-if (!window.unisat) {
-  window.unisat = new Proxy(provider, {
-    deleteProperty: () => true
-  });
-}
 window.dispatchEvent(new Event('unisat#initialized'));

@@ -1,11 +1,12 @@
 import { Button, Input, Layout, message } from 'antd';
-import { Content, Header } from 'antd/lib/layout/layout';
+import { Content } from 'antd/lib/layout/layout';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { KEYRING_TYPE } from '@/shared/constant';
 import CHeader from '@/ui/components/CHeader';
 import { useAccounts, useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { copyToClipboard, useWallet } from '@/ui/utils';
 
 type Status = '' | 'error' | 'warning' | undefined;
@@ -22,6 +23,7 @@ export default function ExportPrivateKeyScreen() {
   const wallet = useWallet();
   const currentAccount = useCurrentAccount();
   const accountsList = useAccounts();
+  const currentKeyring = useCurrentKeyring();
   const btnClick = async () => {
     try {
       const account = await wallet.getCurrentAccount();
@@ -56,18 +58,18 @@ export default function ExportPrivateKeyScreen() {
       });
     });
   }
+
+  const accountIndex = currentKeyring.accounts.findIndex((v) => v.pubkey === currentAccount.pubkey);
   return (
     <Layout className="h-full">
-      <Header className="border-white  border-opacity-10">
-        <CHeader
-          onBack={() => {
-            window.history.go(-1);
-          }}
-        />
-      </Header>
+      <CHeader
+        onBack={() => {
+          window.history.go(-1);
+        }}
+        title="Export Private Key"
+      />
       <Content style={{ backgroundColor: '#1C1919' }}>
         <div className="flex flex-col items-strech mx-5 mt-5 justify-evenly">
-          <div className="flex self-center px-2 text-2xl font-semibold h-13">{t('Export Private Key')}</div>
           {privateKey == '' ? (
             <div className="flex flex-col items-strech text-center gap-3_75 justify-evenly">
               <div className="text-warn box">{t('Type your password')}</div>
@@ -96,7 +98,7 @@ export default function ExportPrivateKeyScreen() {
                 {t('you will need this Private Key to access this account')}.{t('Save it somewhere safe and secret')}.
               </div>
               <div
-                className="grid w-full grid-cols-6 p-5 select-text box default hover text-4_5 leading-6_5"
+                className="grid w-full grid-cols-6 p-5 select-text box default hover text-4_5 leading-6_5 cursor-pointer"
                 onClick={(e) => {
                   copy(privateKey);
                 }}>
@@ -109,10 +111,7 @@ export default function ExportPrivateKeyScreen() {
               </div>
               {currentAccount?.type == KEYRING_TYPE.HdKeyring ? (
                 <div className="text-soft-white -mt-2_5">
-                  Derivation Path::m/44'/0'/0'/0/
-                  {accountsList
-                    .filter((v) => v.type == KEYRING_TYPE.HdKeyring)
-                    .findIndex((v) => v.address == currentAccount?.address)}
+                  {`Derivation Path: ${currentKeyring.hdPath}/${accountIndex}`}
                 </div>
               ) : null}
             </div>

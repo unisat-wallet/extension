@@ -1,9 +1,8 @@
 /* eslint-disable indent */
 import * as bitcoin from 'bitcoinjs-lib';
 import { address as PsbtAddress } from 'bitcoinjs-lib';
-import Mnemonic from 'bitcore-mnemonic';
 import ECPairFactory from 'ecpair';
-import { cloneDeep, groupBy } from 'lodash';
+import { cloneDeep } from 'lodash';
 import * as ecc from 'tiny-secp256k1';
 
 import domainService, { BTC_DOMAIN_API_MAINNET, BTC_DOMAIN_API_TESTNET, DomainService } from '@/background/service/domainService';
@@ -18,33 +17,33 @@ import {
   sessionService
 } from '@/background/service';
 import i18n from '@/background/service/i18n';
-import { DisplayedKeryring, Keyring, KEYRING_CLASS } from '@/background/service/keyring';
+import { DisplayedKeryring, Keyring } from '@/background/service/keyring';
 import {
+  ADDRESS_TYPES,
   BRAND_ALIAN_TYPE_TEXT,
   CHAINS_ENUM,
   COIN_NAME,
   COIN_SYMBOL,
   KEYRING_TYPE,
+  KEYRING_TYPES,
   NETWORK_TYPES,
   OPENAPI_URL_MAINNET,
   OPENAPI_URL_TESTNET
 } from '@/shared/constant';
-import { AddressType, BitcoinBalance, NetworkType, ToSignInput, UTXO } from '@/shared/types';
-import { Wallet } from '@unisat/bitcoinjs-wallet';
+import { AddressType, BitcoinBalance, NetworkType, ToSignInput, UTXO, WalletKeyring, Account } from '@/shared/types';
 import { createSendBTC, createSendOrd } from '@unisat/ord-utils';
 
 import { ContactBookItem } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';
 import { ConnectedSite } from '../service/permission';
-import { Account } from '../service/preference';
 import { publicKeyToAddress, toPsbtNetwork, validator } from '../utils/tx-utils';
 import BaseController from './base';
+
+const toXOnly = (pubKey: Buffer) => (pubKey.length === 32 ? pubKey : pubKey.slice(1, 33));
 
 const stashKeyrings: Record<string, Keyring> = {};
 
 const ECPair = ECPairFactory(ecc);
-
-export const toXOnly = (pubKey: Buffer) => (pubKey.length === 32 ? pubKey : pubKey.slice(1, 33));
 
 export type AccountAsset = {
   name: string;
@@ -72,35 +71,17 @@ export class WalletController extends BaseController {
   initAlianNames = async () => {
     preferenceService.changeInitAlianNameStatus();
     const contacts = this.listContact();
-    const keyrings = await keyringService.getAllTypedAccounts();
-    const catergoryGroupAccount = keyrings.map((item) => ({
-      type: item.type,
-      accounts: item.accounts
-    }));
-    if (keyrings.length > 0) {
-      const catergories = groupBy(
-        catergoryGroupAccount.filter((group) => group.type !== 'WalletConnect'),
-        'type'
-      );
-      const result = Object.keys(catergories)
-        .map((key) =>
-          catergories[key].map((item) =>
-            item.accounts.map((acc) => ({
-              address: acc.address,
-              type: key
-            }))
-          )
-        )
-        .map((item) => item.flat(1));
-      result.forEach((group) =>
-        group.forEach((acc, index) => {
-          this.updateAlianName(acc?.address, `${BRAND_ALIAN_TYPE_TEXT[acc?.type]} ${index + 1}`);
-        })
-      );
-    }
+    const keyrings = await keyringService.getAllDisplayedKeyrings();
+
+    keyrings.forEach((v) => {
+      v.accounts.forEach((w, index) => {
+        this.updateAlianName(w.pubkey, `${BRAND_ALIAN_TYPE_TEXT[v.type]} ${index + 1}`);
+      });
+    });
+
     if (contacts.length !== 0 && keyrings.length !== 0) {
       const allAccounts = keyrings.map((item) => item.accounts).flat();
-      const sameAddressList = contacts.filter((item) => allAccounts.find((contact) => contact.address == item.address));
+      const sameAddressList = contacts.filter((item) => allAccounts.find((contact) => contact.pubkey == item.address));
       if (sameAddressList.length > 0) {
         sameAddressList.forEach((item) => this.updateAlianName(item.address, item.name));
       }
@@ -143,6 +124,11 @@ export class WalletController extends BaseController {
     preferenceService.updateAddressBalance(address, data);
     return data;
   };
+
+  getMultiAddressBalance = async (addresses: string) => {
+    return openapiService.getMultiAddressBalance(addresses);
+  };
+
   getAddressCacheBalance = (address: string | undefined): BitcoinBalance => {
     const defaultBalance: BitcoinBalance = {
       confirm_amount: '0',
@@ -210,8 +196,9 @@ export class WalletController extends BaseController {
 
   getMnemonics = async (password: string) => {
     await this.verifyPassword(password);
-    const keyring = this._getKeyringByType(KEYRING_CLASS.MNEMONIC);
-    const serialized = await keyring.serialize();
+    const keyring = await this.getCurrentKeyring();
+    const originKeyring = keyringService.keyrings[keyring.index];
+    const serialized = await originKeyring.serialize();
     return {
       mnemonic: serialized.mnemonic,
       hdPath: serialized.hdPath,
@@ -219,50 +206,74 @@ export class WalletController extends BaseController {
     };
   };
 
-  importPrivateKey = async (data: string, alianName?: string) => {
+  createKeyringWithPrivateKey = async (data: string, addressType: AddressType, alianName?: string) => {
     const error = new Error(i18n.t('The private key is invalid'));
 
-    let keyring: Keyring;
+    let originKeyring: Keyring;
     try {
-      keyring = await keyringService.importPrivateKey(data);
+      originKeyring = await keyringService.importPrivateKey(data, addressType);
     } catch (e) {
       console.log(e);
-      throw error;
+      throw e;
     }
-    const pubkeys = await keyring.getAccounts();
+    const pubkeys = await originKeyring.getAccounts();
     if (alianName) this.updateAlianName(pubkeys[0], alianName);
-    return this._setCurrentAccountFromKeyring(keyring, 0, alianName);
-  };
 
-  // json format is from "https://github.com/SilentCicero/ethereumjs-accounts"
-  // or "https://github.com/ethereum/wiki/wiki/Web3-Secret-Storage-Definition"
-  // for example: https://www.myetherwallet.com/create-wallet
-  importJson = async (content: string, password: string) => {
-    try {
-      JSON.parse(content);
-    } catch {
-      throw new Error(i18n.t('the input file is invalid'));
-    }
-
-    const wallet = await Wallet.fromV3(content, password);
-
-    const privateKey = wallet.getPrivateKeyString();
-    const keyring = await keyringService.importPrivateKey(privateKey);
-    return this._setCurrentAccountFromKeyring(keyring);
+    const displayedKeyring = await keyringService.displayForKeyring(
+      originKeyring,
+      addressType,
+      keyringService.keyrings.length - 1
+    );
+    const keyring = this.displayedKeyringToWalletKeyring(displayedKeyring, keyringService.keyrings.length - 1);
+    this.changeKeyring(keyring);
   };
 
   getPreMnemonics = () => keyringService.getPreMnemonics();
   generatePreMnemonic = () => keyringService.generatePreMnemonic();
   removePreMnemonics = () => keyringService.removePreMnemonics();
-  createKeyringWithMnemonics = async (mnemonic: string, hdPath: string, passphrase: string) => {
-    const keyring = await keyringService.createKeyringWithMnemonics(mnemonic, hdPath, passphrase);
+  createKeyringWithMnemonics = async (
+    mnemonic: string,
+    hdPath: string,
+    passphrase: string,
+    addressType: AddressType
+  ) => {
+    const originKeyring = await keyringService.createKeyringWithMnemonics(mnemonic, hdPath, passphrase, addressType);
     keyringService.removePreMnemonics();
-    return this._setCurrentAccountFromKeyring(keyring, 0);
+
+    const displayedKeyring = await keyringService.displayForKeyring(
+      originKeyring,
+      addressType,
+      keyringService.keyrings.length - 1
+    );
+    const keyring = this.displayedKeyringToWalletKeyring(displayedKeyring, keyringService.keyrings.length - 1);
+    this.changeKeyring(keyring);
+  };
+
+  createTmpKeyringWithMnemonics = async (
+    mnemonic: string,
+    hdPath: string,
+    passphrase: string,
+    addressType: AddressType
+  ) => {
+    const originKeyring = keyringService.createTmpKeyring('HD Key Tree', {
+      mnemonic,
+      activeIndexes: [0],
+      hdPath,
+      passphrase
+    });
+    const displayedKeyring = await keyringService.displayForKeyring(originKeyring, addressType, -1);
+    return this.displayedKeyringToWalletKeyring(displayedKeyring, -1, false);
+  };
+
+  createTmpKeyringWithPrivateKey = async (privateKey: string, addressType: AddressType) => {
+    const originKeyring = keyringService.createTmpKeyring(KEYRING_TYPE.SimpleKeyring, [privateKey]);
+    const displayedKeyring = await keyringService.displayForKeyring(originKeyring, addressType, -1);
+    return this.displayedKeyringToWalletKeyring(displayedKeyring, -1, false);
   };
 
   removeAddress = async (pubkey: string, type: string, brand?: string) => {
     await keyringService.removeAccount(pubkey, type, brand);
-    if (!(await keyringService.hasAddress(pubkey))) {
+    if (!(await keyringService.hasPubkey(pubkey))) {
       contactBookService.removeAlias(pubkey);
     }
 
@@ -274,6 +285,14 @@ export class WalletController extends BaseController {
     }
   };
 
+  removeKeyring = async (keyring: WalletKeyring) => {
+    await keyringService.removeKeyring(keyring.index);
+    const keyrings = await this.getKeyrings();
+    const nextKeyring = keyrings[keyrings.length - 1];
+    if (nextKeyring) this.changeKeyring(nextKeyring);
+    return nextKeyring;
+  };
+
   resetCurrentAccount = async () => {
     const [account] = await this.getAccounts();
     if (account) {
@@ -283,58 +302,17 @@ export class WalletController extends BaseController {
     }
   };
 
-  generateKeyringWithMnemonic = (mnemonic: string) => {
-    if (!Mnemonic.isValid(mnemonic)) {
-      throw new Error(i18n.t('The mnemonic phrase is invalid'));
-    }
-
-    const Keyring = keyringService.getKeyringClassForType(KEYRING_CLASS.MNEMONIC);
-
-    const keyring = new Keyring({ mnemonic });
-
-    const stashId = Object.values(stashKeyrings).length;
-    stashKeyrings[stashId] = keyring;
-
-    return stashId;
-  };
-
-  addKyeringToStash = (keyring: Keyring) => {
-    const stashId = Object.values(stashKeyrings).length;
-    stashKeyrings[stashId] = keyring;
-
-    return stashId;
-  };
-
-  addKeyring = async (keyringId: string) => {
-    const keyring = stashKeyrings[keyringId];
-    if (keyring) {
-      await keyringService.addKeyring(keyring);
-      this._setCurrentAccountFromKeyring(keyring);
-    } else {
-      throw new Error('failed to addKeyring, keyring is undefined');
-    }
-  };
-
   getKeyringByType = (type: string) => {
     return keyringService.getKeyringByType(type);
   };
 
-  checkHasMnemonic = () => {
-    try {
-      const keyring = this._getKeyringByType(KEYRING_CLASS.MNEMONIC) as any;
-      return !!keyring.mnemonic;
-    } catch (e) {
-      return false;
-    }
-  };
-
-  deriveNewAccountFromMnemonic = async (alianName?: string) => {
-    const keyring = this._getKeyringByType(KEYRING_CLASS.MNEMONIC);
-
-    const result = await keyringService.addNewAccount(keyring);
+  deriveNewAccountFromMnemonic = async (keyring: WalletKeyring, alianName?: string) => {
+    const _keyring = keyringService.keyrings[keyring.index];
+    const result = await keyringService.addNewAccount(_keyring);
     if (alianName) this.updateAlianName(result[0], alianName);
-    this._setCurrentAccountFromKeyring(keyring, -1, alianName);
-    return result;
+
+    keyring = await this.getCurrentKeyring();
+    this.changeAccount(keyring.accounts[keyring.accounts.length - 1]);
   };
 
   getAccountsCount = async () => {
@@ -342,44 +320,45 @@ export class WalletController extends BaseController {
     return accounts.filter((x) => x).length;
   };
 
-  getTypedAccounts = async (type: string) => {
-    return Promise.all(
-      keyringService.keyrings
-        .filter((keyring) => !type || keyring.type === type)
-        .map((keyring) => keyringService.displayForKeyring(keyring))
-    );
-  };
-
-  getAllVisibleAccounts = async (): Promise<DisplayedKeryring[]> => {
-    const typedAccounts = await keyringService.getAllTypedVisibleAccounts();
-
-    return typedAccounts.map((account) => ({
-      ...account,
-      keyring: account.keyring
-    }));
-  };
-
-  getAllVisibleAccountsArray = async (): Promise<Account[]> => {
-    const keyringAccounts = await keyringService.getAllVisibleAccountsArray();
-    const accounts: Account[] = [];
-    const networkType = preferenceService.getNetworkType();
-    const addressType = preferenceService.getAddressType();
-    keyringAccounts.forEach((v) => {
-      const pubkey = v.address;
-      const address = publicKeyToAddress(pubkey, addressType, networkType);
-      accounts.push({
-        type: v.type,
-        pubkey,
-        address,
-        brandName: v.brandName,
-        alianName: this.getAlianName(pubkey)
-      });
-    });
-    return accounts;
-  };
-
   changeAccount = (account: Account) => {
     preferenceService.setCurrentAccount(account);
+  };
+
+  changeKeyring = (keyring: WalletKeyring, accountIndex = 0) => {
+    preferenceService.setCurrentKeyringIndex(keyring.index);
+    preferenceService.setCurrentAccount(keyring.accounts[accountIndex]);
+  };
+
+  getAllAddresses = (keyring: WalletKeyring, index: number) => {
+    const networkType = this.getNetworkType();
+    const addresses: string[] = [];
+    const _keyring = keyringService.keyrings[keyring.index];
+    if (keyring.type === KEYRING_TYPE.HdKeyring) {
+      const pathPubkey: { [path: string]: string } = {};
+      ADDRESS_TYPES.filter((v) => v.displayIndex >= 0).forEach((v) => {
+        let pubkey = pathPubkey[v.hdPath];
+        if (!pubkey && _keyring.getAccountByHdPath) {
+          pubkey = _keyring.getAccountByHdPath(v.hdPath, index);
+        }
+        const address = publicKeyToAddress(pubkey, v.value, networkType);
+        addresses.push(address);
+      });
+    } else {
+      ADDRESS_TYPES.filter((v) => v.displayIndex >= 0 && v.isUnisatLegacy === false).forEach((v) => {
+        const pubkey = keyring.accounts[index].pubkey;
+        const address = publicKeyToAddress(pubkey, v.value, networkType);
+        addresses.push(address);
+      });
+    }
+    return addresses;
+  };
+
+  changeAddressType = async (addressType: AddressType) => {
+    const currentAccount = await this.getCurrentAccount();
+    const currentKeyringIndex = preferenceService.getCurrentKeyringIndex();
+    await keyringService.changeAddressType(currentKeyringIndex, addressType);
+    const keyring = await this.getCurrentKeyring();
+    this.changeKeyring(keyring, currentAccount?.index);
   };
 
   signTransaction = async (type: string, from: string, psbt: bitcoin.Psbt, inputs: ToSignInput[]) => {
@@ -500,62 +479,13 @@ export class WalletController extends BaseController {
     return contactBookService.getContactByAddress(address);
   };
 
-  getNewAccountAlianName = async (type: string, index = 0) => {
-    const sameTypeAccounts = await this.getTypedAccounts(type);
-    let accountLength = 0;
-    if (type == KEYRING_TYPE.HdKeyring) {
-      if (sameTypeAccounts.length > 0) {
-        accountLength = sameTypeAccounts[0]?.accounts?.length;
-      }
-    } else if (type == KEYRING_TYPE.SimpleKeyring) {
-      accountLength = sameTypeAccounts.length;
-    }
-    if (index == 0) {
-      index = accountLength;
-    }
+  private _generateAlianName = (type: string, index: number) => {
     const alianName = `${BRAND_ALIAN_TYPE_TEXT[type]} ${index}`;
     return alianName;
   };
 
-  getNextAccountAlianName = async (type: string) => {
-    const sameTypeAccounts = await this.getTypedAccounts(type);
-    let accountLength = 0;
-    if (type == KEYRING_TYPE.HdKeyring) {
-      if (sameTypeAccounts.length > 0) {
-        accountLength = sameTypeAccounts[0]?.accounts?.length;
-      }
-    } else if (type == KEYRING_TYPE.SimpleKeyring) {
-      accountLength = sameTypeAccounts.length;
-    }
-
-    const alianName = `${BRAND_ALIAN_TYPE_TEXT[type]} ${accountLength + 1}`;
-    return alianName;
-  };
-
-  private _setCurrentAccountFromKeyring = async (keyring: Keyring, index = 0, alianName?: string) => {
-    const pubkeys = await keyring.getAccounts();
-    const pubkey = pubkeys[index < 0 ? index + pubkeys.length : index];
-
-    if (!pubkey) {
-      throw new Error('the current account is empty');
-    }
-
-    alianName = alianName || this.getAlianName(pubkey) || (await this.getNewAccountAlianName(keyring.type));
-
-    const addressType = preferenceService.getAddressType();
-    const networkType = preferenceService.getNetworkType();
-    const address = publicKeyToAddress(pubkey, addressType, networkType);
-    const _account: Account = {
-      pubkey,
-      address,
-      type: keyring.type,
-      brandName: keyring.type,
-      alianName,
-      index
-    };
-    preferenceService.setCurrentAccount(_account);
-
-    return [_account];
+  getNextAlianName = (keyring: WalletKeyring) => {
+    return this._generateAlianName(keyring.type, keyring.accounts.length + 1);
   };
 
   getHighlightWalletList = () => {
@@ -752,25 +682,92 @@ export class WalletController extends BaseController {
   };
 
   getAccounts = async () => {
-    const keyringAccounts = await keyringService.getAllVisibleAccountsArray();
-    const accounts: Account[] = [];
-    const addressType = preferenceService.getAddressType();
+    const keyrings = await this.getKeyrings();
+    const accounts: Account[] = keyrings.reduce<Account[]>((pre, cur) => pre.concat(cur.accounts), []);
+    return accounts;
+  };
+
+  displayedKeyringToWalletKeyring = (displayedKeyring: DisplayedKeryring, index: number, initName = true) => {
     const networkType = preferenceService.getNetworkType();
-    for (let i = 0; i < keyringAccounts.length; i++) {
-      const keyringAccount = keyringAccounts[i];
-      const pubkey = keyringAccount.address;
-      const alianName = this.getAlianName(pubkey) || (await this.getNewAccountAlianName(keyringAccount.type, i + 1));
+    const addressType = displayedKeyring.addressType;
+    const key = 'keyring_' + index;
+    const type = displayedKeyring.type;
+    const accounts: Account[] = [];
+    for (let j = 0; j < displayedKeyring.accounts.length; j++) {
+      const { pubkey } = displayedKeyring.accounts[j];
       const address = publicKeyToAddress(pubkey, addressType, networkType);
+      const alianName = this.getAlianName(pubkey) || this._generateAlianName(type, j + 1);
       accounts.push({
-        type: keyringAccount.type,
+        type,
         pubkey,
         address,
-        brandName: keyringAccount.brandName,
-        alianName
+        alianName,
+        index: j
       });
     }
+    const hdPath = type === KEYRING_TYPE.HdKeyring ? displayedKeyring.keyring.hdPath : '';
+    const alianName = preferenceService.getKeyringAlianName(
+      key,
+      initName ? `${KEYRING_TYPES[type].alianName} #${index + 1}` : ''
+    );
+    const keyring: WalletKeyring = {
+      index,
+      key,
+      type,
+      addressType,
+      accounts,
+      alianName,
+      hdPath
+    };
+    return keyring;
+  };
 
-    return accounts;
+  getKeyrings = async (): Promise<WalletKeyring[]> => {
+    const displayedKeyrings = await keyringService.getAllDisplayedKeyrings();
+    const keyrings: WalletKeyring[] = [];
+    for (let index = 0; index < displayedKeyrings.length; index++) {
+      const displayedKeyring = displayedKeyrings[index];
+      if (displayedKeyring.type !== KEYRING_TYPE.Empty) {
+        const keyring = this.displayedKeyringToWalletKeyring(displayedKeyring, displayedKeyring.index);
+        keyrings.push(keyring);
+      }
+    }
+
+    return keyrings;
+  };
+
+  getCurrentKeyring = async () => {
+    let currentKeyringIndex = preferenceService.getCurrentKeyringIndex();
+    const displayedKeyrings = await keyringService.getAllDisplayedKeyrings();
+    if (currentKeyringIndex === undefined) {
+      const currentAccount = preferenceService.getCurrentAccount();
+      for (let i = 0; i < displayedKeyrings.length; i++) {
+        if (displayedKeyrings[i].type !== currentAccount?.type) {
+          continue;
+        }
+        const found = displayedKeyrings[i].accounts.find((v) => v.pubkey === currentAccount?.pubkey);
+        if (found) {
+          currentKeyringIndex = i;
+          break;
+        }
+      }
+      if (currentKeyringIndex === undefined) {
+        currentKeyringIndex = 0;
+      }
+    }
+
+    if (!displayedKeyrings[currentKeyringIndex]) {
+      for (let i = 0; i < displayedKeyrings.length; i++) {
+        if (displayedKeyrings[i].type !== KEYRING_TYPE.Empty) {
+          currentKeyringIndex = i;
+          preferenceService.setCurrentKeyringIndex(currentKeyringIndex);
+          break;
+        }
+      }
+    }
+
+    const displayedKeyring = displayedKeyrings[currentKeyringIndex];
+    return this.displayedKeyringToWalletKeyring(displayedKeyring, currentKeyringIndex);
   };
 
   getCurrentAccount = async () => {
@@ -875,6 +872,12 @@ export class WalletController extends BaseController {
   removeConnectedSite = (origin: string) => {
     sessionService.broadcastEvent('accountsChanged', [], origin);
     permissionService.removeConnectedSite(origin);
+  };
+
+  setKeyringAlianName = (keyring: WalletKeyring, name: string) => {
+    preferenceService.setKeyringAlianName(keyring.key, name);
+    keyring.alianName = name;
+    return keyring;
   };
 }
 

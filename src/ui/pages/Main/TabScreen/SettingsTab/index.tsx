@@ -1,15 +1,15 @@
-import { Button, Input } from 'antd';
+import { Button } from 'antd';
 import { t } from 'i18next';
 import VirtualList from 'rc-virtual-list';
-import { forwardRef, useEffect, useRef, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { forwardRef, useEffect, useState } from 'react';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 
-import { ADDRESS_TYPES, KEYRING_TYPE, LANGS, NETWORK_TYPES } from '@/shared/constant';
+import { ADDRESS_TYPES, NETWORK_TYPES } from '@/shared/constant';
 import { useExtensionIsInTab, useOpenExtensionInTab } from '@/ui/features/browser/tabs';
-import { useAccountAddress, useChangeAccountNameCallback, useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useAddressType, useNetworkType, useSettingsState } from '@/ui/state/settings/hooks';
-import { shortAddress } from '@/ui/utils';
+import { getCurrentTab } from '@/ui/features/browser/tabs';
+import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
+import { useNetworkType } from '@/ui/state/settings/hooks';
+import { useWallet } from '@/ui/utils';
 import { RightOutlined } from '@ant-design/icons';
 
 interface Setting {
@@ -20,16 +20,33 @@ interface Setting {
   action: string;
   route: string;
   right: boolean;
-  keyringType?: string;
 }
 
 const SettingList: Setting[] = [
   {
-    label: t('Address Type'),
-    value: t('Taproot'),
+    label: 'Manage Wallet',
+    value: '',
+    desc: '',
+    action: 'manage-wallet',
+    route: '/settings/manage-wallet',
+    right: true
+  },
+
+  {
+    label: 'Address Type',
+    value: 'Taproot',
     desc: '',
     action: 'addressType',
     route: '/settings/address-type',
+    right: true
+  },
+
+  {
+    label: 'Connected Sites',
+    value: '',
+    desc: '',
+    action: 'connected-sites',
+    route: '/connected-sites',
     right: true
   },
   {
@@ -40,22 +57,7 @@ const SettingList: Setting[] = [
     route: '/settings/network-type',
     right: true
   },
-  // {
-  //   label: t('Language'),
-  //   value: t('English'),
-  //   desc: '',
-  //   action: 'language',
-  //   route: '/settings/language',
-  //   right: true
-  // },
-  // {
-  //   label: t('Currency'),
-  //   value: 'US Dollar',
-  //   desc: '',
-  //   action: 'currency',
-  //   route: 'currency',
-  //   right: true
-  // },
+
   {
     label: t('Change Password'),
     value: t('Change your lockscreen password'),
@@ -64,39 +66,14 @@ const SettingList: Setting[] = [
     route: '/settings/password',
     right: true
   },
+
   {
     label: '',
     value: '',
-    desc: t('Expand View'),
+    desc: t('Expand View '),
     action: 'expand-view',
     route: '/settings/export-privatekey',
     right: false
-  },
-  {
-    label: '',
-    value: '',
-    desc: t('Show Secret Recovery Phrase'),
-    action: 'export-mnemonics',
-    route: '/settings/export-mnemonics',
-    right: false
-  },
-  {
-    label: '',
-    value: '',
-    desc: t('Export Private Key'),
-    action: 'export-privatekey',
-    route: '/settings/export-privatekey',
-    right: false
-  },
-  {
-    label: '',
-    value: '',
-    danger: true,
-    desc: t('Remove Account'),
-    action: 'remove-account',
-    route: '/settings/remove-account',
-    right: false,
-    keyringType: KEYRING_TYPE.SimpleKeyring
   }
 ];
 
@@ -156,53 +133,44 @@ type ListRef = {
 };
 
 export default function SettingsTab() {
-  const { t } = useTranslation();
   const navigate = useNavigate();
-  const [editable, setEditable] = useState(false);
 
-  const currentAccount = useCurrentAccount();
-
-  const settings = useSettingsState();
-
-  const addressInput = useRef<any>(null);
-
-  const handleChangeAlianName = () => {
-    setEditable(true);
-  };
-
-  useEffect(() => {
-    if (editable) {
-      addressInput.current!.focus({ cursor: 'end' });
-    }
-  }, [editable]);
-
-  const [name, setName] = useState(currentAccount.alianName);
-  const changeAccountName = useChangeAccountNameCallback();
-  const handleOnBlur = async (e) => {
-    let alianName = currentAccount?.alianName ?? '';
-    if (currentAccount && e.target.value) {
-      alianName = e.target.value;
-    }
-    changeAccountName(alianName);
-    setName(alianName);
-    setEditable(false);
-  };
-
-  const addressType = useAddressType();
   const networkType = useNetworkType();
-  const address = useAccountAddress();
 
   const isInTab = useExtensionIsInTab();
+
+  const [connected, setConnected] = useState(false);
+
+  const currentKeyring = useCurrentKeyring();
+
+  const wallet = useWallet();
+  useEffect(() => {
+    const run = async () => {
+      const res = await getCurrentTab();
+      if (!res) return;
+      const site = await wallet.getCurrentConnectedSite(res.id);
+      if (site) {
+        setConnected(site.isConnected);
+      }
+    };
+    run();
+  }, []);
+
   const toRenderSettings = SettingList.filter((v) => {
-    if (v.action == 'language') {
-      v.value = t(LANGS.find((v) => v.value == settings.locale)?.label || '');
+    if (v.action == 'manage-wallet') {
+      v.value = currentKeyring.alianName;
     }
-    if (v.action == 'addressType') {
-      v.value = `${ADDRESS_TYPES[addressType].label}`;
+
+    if (v.action == 'connected-sites') {
+      v.value = connected ? 'Connected' : 'Not connected';
     }
 
     if (v.action == 'networkType') {
       v.value = NETWORK_TYPES[networkType].label;
+    }
+
+    if (v.action == 'addressType') {
+      v.value = ADDRESS_TYPES[currentKeyring.addressType].name;
     }
 
     if (v.action == 'expand-view') {
@@ -211,60 +179,11 @@ export default function SettingsTab() {
       }
     }
 
-    if (v.keyringType) {
-      if (currentAccount?.type == v.keyringType) {
-        return true;
-      }
-    } else {
-      return true;
-    }
+    return true;
   });
 
   return (
     <div className="flex flex-col items-strech h-full">
-      <div className="mt-5">
-        <div
-          className={` duration-80 grid items-center justify-center grid-cols-6 p-5 mt-5 h-15_5 box text-white border-0 border-white rounded mx-5 hover  ${
-            editable ? 'bg-primary-active border-opacity-60' : 'bg-soft-black border-opacity-20'
-          }`}>
-          {editable ? (
-            <Input
-              ref={addressInput}
-              className="col-span-5 font-semibold rounded-none p0 hover hover:cursor-text disabled:color-soft-white"
-              bordered={false}
-              status="error"
-              placeholder=""
-              defaultValue={name}
-              onBlur={(e) => handleOnBlur(e)}
-              onPressEnter={(e) => handleOnBlur(e)}
-            />
-          ) : (
-            <span
-              className="col-span-5 font-semibold p0 hover hover:cursor-text opacity-60"
-              onClick={(e) => {
-                handleChangeAlianName();
-              }}>
-              {name}
-            </span>
-          )}
-          <div
-            className={`flex items-center justify-end cursor-pointer hover:opacity-100 ${
-              editable ? 'opacity-100' : 'opacity-60'
-            }`}>
-            <img
-              className="w-4_5 h-4_5"
-              src="./images/Name.svg"
-              onClick={(e) => {
-                setName('');
-                handleChangeAlianName();
-              }}
-              title={t('Clear the inputted')}
-            />
-          </div>
-        </div>
-
-        <div className="w-full text-center text-soft-white mt-2_5">{shortAddress(address)}</div>
-      </div>
       <div className="mt-3_75">
         <VirtualList
           data={toRenderSettings}

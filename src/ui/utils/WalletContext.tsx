@@ -3,14 +3,22 @@ import { createContext, ReactNode, useContext } from 'react';
 
 import { AccountAsset } from '@/background/controller/wallet';
 import { ContactBookItem, ContactBookStore } from '@/background/service/contactBook';
-import { DomainInfo } from '@/background/service/domainService';
-import { DisplayedKeryring, ToSignInput } from '@/background/service/keyring';
+import { ToSignInput } from '@/background/service/keyring';
 import { ConnectedSite } from '@/background/service/permission';
-import { Account } from '@/background/service/preference';
 import {
-  AddressType, AppSummary, BitcoinBalance, Inscription,
-  InscriptionSummary, NetworkType, TxHistoryItem, UTXO
+  BitcoinBalance,
+  TxHistoryItem,
+  Inscription,
+  InscriptionSummary,
+  AppSummary,
+  UTXO,
+  NetworkType,
+  AddressType,
+  WalletKeyring,
+  Account
 } from '@/shared/types';
+
+import { DomainInfo } from '@/background/service/domainService';
 
 export interface WalletController {
   openapi?: {
@@ -38,6 +46,7 @@ export interface WalletController {
 
   getAddressBalance(address: string): Promise<BitcoinBalance>;
   getAddressCacheBalance(address: string): Promise<BitcoinBalance>;
+  getMultiAddressBalance(addresses: string): Promise<BitcoinBalance[]>;
 
   getAddressInscriptions(address: string): Promise<Inscription[]>;
 
@@ -60,33 +69,40 @@ export interface WalletController {
     mnemonic: string;
     passphrase: string;
   }>;
-  importPrivateKey(data: string, alianName?: string): Promise<Account[]>;
+  createKeyringWithPrivateKey(data: string, addressType: AddressType, alianName?: string): Promise<Account[]>;
   getPreMnemonics(): Promise<any>;
   generatePreMnemonic(): Promise<string>;
   removePreMnemonics(): void;
   createKeyringWithMnemonics(
     mnemonic: string,
     hdPath: string,
-    passphrase: string
+    passphrase: string,
+    addressType: AddressType
   ): Promise<{ address: string; type: string }[]>;
+
+  createTmpKeyringWithPrivateKey(privateKey: string, addressType: AddressType): Promise<WalletKeyring>;
+
+  createTmpKeyringWithMnemonics(
+    mnemonic: string,
+    hdPath: string,
+    passphrase: string,
+    addressType: AddressType
+  ): Promise<WalletKeyring>;
+  removeKeyring(keyring: WalletKeyring): Promise<WalletKeyring>;
   removeAddress(address: string, type: string): Promise<void>;
   resetCurrentAccount(): Promise<void>;
-  generateKeyringWithMnemonic(mnemonic: string): number;
-  checkHasMnemonic(): boolean;
-  deriveNewAccountFromMnemonic(alianName?: string): Promise<string[]>;
+  deriveNewAccountFromMnemonic(keyring: WalletKeyring, alianName?: string): Promise<string[]>;
   getAccountsCount(): Promise<number>;
-  getTypedAccounts(type: string): Promise<DisplayedKeryring[]>;
-  getAllVisibleAccounts(): Promise<DisplayedKeryring[]>;
   getAllAlianName: () => (ContactBookItem | undefined)[];
   getContactsByMap: () => ContactBookStore;
-  getAllVisibleAccountsArray(): Promise<Account>;
   updateAlianName: (pubkey: string, name: string) => Promise<void>;
 
   changeAccount(account: Account): Promise<void>;
   getCurrentAccount(): Promise<Account>;
   getAccounts(): Promise<Account[]>;
-  getNewAccountAlianName: (type: string) => Promise<string>;
-  getNextAccountAlianName: (type: string) => Promise<string>;
+  getNextAlianName: (keyring: WalletKeyring) => Promise<string>;
+
+  getCurrentKeyringAccounts(): Promise<Account[]>;
 
   signTransaction(psbt: bitcoin.Psbt, inputs: ToSignInput[]): Promise<bitcoin.Psbt>;
 
@@ -109,6 +125,14 @@ export interface WalletController {
   getConnectedSites(): Promise<ConnectedSite[]>;
   removeConnectedSite(origin: string): Promise<void>;
   getCurrentConnectedSite(id: string): Promise<ConnectedSite>;
+
+  getCurrentKeyring(): Promise<WalletKeyring>;
+  getKeyrings(): Promise<WalletKeyring[]>;
+  changeKeyring(keyring: WalletKeyring): Promise<void>;
+  getAllAddresses(keyring: WalletKeyring, index: number): Promise<string[]>;
+
+  setKeyringAlianName(keyring: WalletKeyring, name: string): Promise<WalletKeyring>;
+  changeAddressType(addressType: AddressType): Promise<void>;
 }
 
 const WalletContext = createContext<{
