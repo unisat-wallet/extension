@@ -6,6 +6,8 @@ import ECPairFactory from 'ecpair';
 import { cloneDeep, groupBy } from 'lodash';
 import * as ecc from 'tiny-secp256k1';
 
+import domainService, { BTC_DOMAIN_API_MAINNET, DomainService } from '@/background/service/domainService';
+
 import {
   contactBookService,
   keyringService,
@@ -53,6 +55,7 @@ export type AccountAsset = {
 
 export class WalletController extends BaseController {
   openapi: OpenApiService = openapiService;
+  domainapi: DomainService = domainService;
 
   /* wallet */
   boot = (password: string) => keyringService.boot(password);
@@ -641,8 +644,10 @@ export class WalletController extends BaseController {
     preferenceService.setNetworkType(networkType);
     if (networkType === NetworkType.MAINNET) {
       this.openapi.setHost(OPENAPI_URL_MAINNET);
+      this.domainapi.setHost(BTC_DOMAIN_API_MAINNET);
     } else {
       this.openapi.setHost(OPENAPI_URL_TESTNET);
+      this.domainapi.setHost(BTC_DOMAIN_API_MAINNET);
     }
     const network = this.getNetworkName();
     sessionService.broadcastEvent('networkChanged', {
@@ -784,6 +789,11 @@ export class WalletController extends BaseController {
 
     return cloneDeep(account) as Account;
   };
+
+  queryDomainInfo = async (domain: string) => {
+    const data = await domainService.queryDomain(domain);
+    return data
+  }
 
   getInscriptionSummary = async () => {
     const data = await openapiService.getInscriptionSummary();

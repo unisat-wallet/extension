@@ -148,6 +148,8 @@ export const COIN_SYMBOL = 'BTC';
 
 export const COIN_DUST = 1000;
 
+export const DOMAIN_LEVEL_ONE = '.btc';
+
 export const TO_LOCALE_STRING_CONFIG = {
   minimumFractionDigits: 8
 };

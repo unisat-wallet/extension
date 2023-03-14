@@ -4,7 +4,9 @@ import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { COIN_DUST } from '@/shared/constant';
+import wallet from '@/background/controller/wallet';
+import { DomainInfo } from '@/background/service/domainService';
+import { COIN_DUST, DOMAIN_LEVEL_ONE } from '@/shared/constant';
 import CHeader from '@/ui/components/CHeader';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useAccountBalance } from '@/ui/state/accounts/hooks';
@@ -32,6 +34,9 @@ export default function TxCreateScreen() {
 
   const [autoAdjust, setAutoAdjust] = useState(false);
 
+  const [parseAddress, setParseAddress] = useState('');
+  const [parseError, setParseError] = useState('');
+
   const fetchUtxos = useFetchUtxosCallback();
   useEffect(() => {
     fetchUtxos();
@@ -57,7 +62,13 @@ export default function TxCreateScreen() {
     setError('');
     setDisabled(true);
 
-    const toAddress = inputAddress;
+    let toAddress = '';
+    if (inputAddress.toLowerCase().endsWith(DOMAIN_LEVEL_ONE)) {
+      toAddress = parseAddress === '' ? '' : parseAddress;
+    } else {
+      toAddress = inputAddress
+    }
+
     if (!isValidAddress(toAddress)) {
       return;
     }
@@ -118,9 +129,21 @@ export default function TxCreateScreen() {
             onChange={async (e) => {
               const val = e.target.value;
               setInputAddress(val);
+
+              if (val.toLowerCase().endsWith(DOMAIN_LEVEL_ONE)) {
+                wallet.queryDomainInfo(val).then((ret: DomainInfo) => {
+                  setParseAddress(ret.owner_address)
+                }).catch((err) => {
+                  setParseError(err);
+                })
+              }
             }}
             autoFocus={true}
           />
+
+          <div>{parseAddress}</div>
+          <span className="text-lg text-error h-5">{error}</span>
+
           <div className="flex justify-between w-full mt-5 box text-soft-white">
             <span>{t('Balance')}</span>
             {showSafeBalance ? (
