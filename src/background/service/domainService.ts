@@ -22,7 +22,7 @@ export interface DomainInfo {
 }
 
 export const BTC_DOMAIN_API_MAINNET = 'https://btcdomains.io';
-export const BTC_DOMAIN_API_TESTNET = '';
+export const BTC_DOMAIN_API_TESTNET = 'http://137.184.180.14:80';
 
 enum API_STATUS {
   FAILED = '',

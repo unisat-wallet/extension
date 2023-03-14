@@ -6,7 +6,7 @@ import ECPairFactory from 'ecpair';
 import { cloneDeep, groupBy } from 'lodash';
 import * as ecc from 'tiny-secp256k1';
 
-import domainService, { BTC_DOMAIN_API_MAINNET, DomainService } from '@/background/service/domainService';
+import domainService, { BTC_DOMAIN_API_MAINNET, BTC_DOMAIN_API_TESTNET, DomainService } from '@/background/service/domainService';
 
 import {
   contactBookService,
@@ -647,7 +647,7 @@ export class WalletController extends BaseController {
       this.domainapi.setHost(BTC_DOMAIN_API_MAINNET);
     } else {
       this.openapi.setHost(OPENAPI_URL_TESTNET);
-      this.domainapi.setHost(BTC_DOMAIN_API_MAINNET);
+      this.domainapi.setHost(BTC_DOMAIN_API_TESTNET);
     }
     const network = this.getNetworkName();
     sessionService.broadcastEvent('networkChanged', {
