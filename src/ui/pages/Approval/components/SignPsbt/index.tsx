@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { toPsbtNetwork } from '@/background/utils/tx-utils';
 import { ToSignInput, TxType } from '@/shared/types';
+import { AddressText } from '@/ui/components/AddressText';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useAccountAddress, useAccountBalance } from '@/ui/state/accounts/hooks';
@@ -16,7 +17,7 @@ import {
   useCreateOrdinalsTxCallback,
   useOrdinalsTx
 } from '@/ui/state/transactions/hooks';
-import { copyToClipboard, satoshisToAmount, shortAddress, useApproval } from '@/ui/utils';
+import { copyToClipboard, satoshisToAmount, useApproval } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 interface Props {
@@ -110,13 +111,13 @@ function SendInscriptionDetails({ txInfo }: { txInfo: TxInfo }) {
       <div className="text-left font-semibold text-white mt-5">{'FROM'}</div>
       <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
         <div className={'py-5 flex justify-between'}>
-          <span className="text-white">{ordinalsTx.fromAddress}</span>
+          <AddressText address={ordinalsTx.fromAddress} />
         </div>
       </div>
       <div className="text-left font-semibold text-white mt-5">{'TO'}</div>
       <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
         <div className={'py-5 flex justify-between'}>
-          <span className="text-white">{ordinalsTx.toAddress}</span>
+          <AddressText address={ordinalsTx.toAddress} />
         </div>
       </div>
       <div className="text-left font-semibold text-white mt-5">{'NETWORK FEE'}</div>
@@ -183,13 +184,13 @@ function SendBitcoinDetails({
       <div className="text-left font-semibold text-white mt-5">{'FROM'}</div>
       <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
         <div className={'py-5 flex justify-between'}>
-          <span className="text-white">{bitcoinTx.fromAddress}</span>
+          <AddressText address={bitcoinTx.fromAddress} />
         </div>
       </div>
       <div className="text-left font-semibold text-white mt-5">{'TO'}</div>
       <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
         <div className={'py-5 flex justify-between'}>
-          <span className="text-white">{bitcoinTx.toAddress}</span>
+          <AddressText address={bitcoinTx.toAddress} />
         </div>
       </div>
       <div className="text-left font-semibold text-white mt-5">{'NETWORK FEE'}</div>
@@ -457,8 +458,7 @@ export default function SignPsbt({
                     <div
                       key={'input_' + index}
                       className={'py-5 flex justify-between' + (index === 0 ? ' ' : ' border-black border-t')}>
-                      <div>{shortAddress(v.address)}</div>
-
+                      <AddressText address={v.address} />
                       <div className="text-white">{v.value}</div>
                     </div>
                   );
@@ -472,7 +472,7 @@ export default function SignPsbt({
                     <div
                       key={'output_' + index}
                       className={'py-5 flex justify-between' + (index === 0 ? ' ' : ' border-black border-t')}>
-                      <div>{shortAddress(v.address)}</div>
+                      <AddressText address={v.address} />
                       <div className="text-white">{v.value}</div>
                     </div>
                   );
