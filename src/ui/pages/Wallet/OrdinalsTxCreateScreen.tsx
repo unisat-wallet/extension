@@ -72,6 +72,49 @@ export default function OrdinalsTxCreateScreen() {
       });
   }, [inputAddress]);
 
+  const handleInputAddress = (input: string) => {
+    if (parseError) {
+      setParseError('');
+    }
+    if (parseAddress) {
+      setParseAddress('');
+    }
+    if (formatError) {
+      setFormatError('');
+    }
+
+    setInputAddress(input);
+
+    if (input.toLowerCase().endsWith(DOMAIN_LEVEL_ONE)) {
+      const reg = /^[0-9a-zA-Z.]*$/
+      if (reg.test(input)) {
+        wallet.queryDomainInfo(input).then((ret: DomainInfo) => {
+          setParseAddress(ret.receive_address);
+          setParseError('');
+          setFormatError('');
+        }).catch((err: Error) => {
+          setParseAddress('')
+          const errMsg = err.message + ' for ' + input;
+          if (err.cause == API_STATUS.NOTFOUND) {
+            setParseError(errMsg);
+            setFormatError('');
+          } else {
+            setParseError('');
+            setFormatError(errMsg);
+          }
+        })
+      } else {
+        setParseAddress('');
+        setParseError('');
+        setFormatError('domain name format is not correct.');
+      }
+    } else {
+      setParseAddress('');
+      setParseError('');
+      setFormatError('domain name must matching ' + DOMAIN_LEVEL_ONE + ' suffix.');
+    }
+  };
+
   return (
     <Layout className="h-full">
       <CHeader
@@ -92,47 +135,7 @@ export default function OrdinalsTxCreateScreen() {
             placeholder={t('Recipients BTC address')}
             defaultValue={inputAddress}
             onChange={async (e) => {
-              if (parseError) {
-                setParseError('');
-              }
-              if (parseAddress) {
-                setParseAddress('');
-              }
-              if (formatError) {
-                setFormatError('');
-              }
-
-              const val = e.target.value;
-              setInputAddress(val);
-
-              if (val.toLowerCase().endsWith(DOMAIN_LEVEL_ONE)) {
-                const reg = /^[0-9a-zA-Z.]*$/
-                if (reg.test(val)) {
-                  wallet.queryDomainInfo(val).then((ret: DomainInfo) => {
-                    setParseAddress(ret.receive_address);
-                    setParseError('');
-                    setFormatError('');
-                  }).catch((err: Error) => {
-                    setParseAddress('')
-                    const errMsg = err.message + ' for ' + val;
-                    if (err.cause == API_STATUS.NOTFOUND) {
-                      setParseError(errMsg);
-                      setFormatError('');
-                    } else {
-                      setParseError('');
-                      setFormatError(errMsg);
-                    }
-                  })
-                } else {
-                  setParseAddress('');
-                  setParseError('');
-                  setFormatError('domain name format is not correct.');
-                }
-              } else {
-                setParseAddress('');
-                setParseError('');
-                setFormatError('domain name must matching ' + DOMAIN_LEVEL_ONE + ' suffix.');
-              }
+              handleInputAddress(e.target.value);
             }}
             autoFocus={true}
           />
@@ -144,7 +147,7 @@ export default function OrdinalsTxCreateScreen() {
           {parseError ? (
             <span className="text-lg text-warn h-5">{`${parseError}` + ' is not occupied, click '}<a href={BTCDOMAINS_LINK} target={'_blank'} rel="noreferrer">btcdomains</a> to register.</span>
           ) : null}
-          
+
           <span className="text-lg text-error h-5">{formatError}</span>
 
           <span className="text-lg text-error h-5">{error}</span>

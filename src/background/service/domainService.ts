@@ -9,7 +9,7 @@ export interface DomainInfo {
   receive_address: string;
 }
 
-export const BTC_DOMAIN_API_MAINNET = 'http://137.184.180.14';//https://btcdomains.io
+export const BTC_DOMAIN_API_MAINNET = 'https://btcdomains.io';
 export const BTC_DOMAIN_API_TESTNET = 'http://137.184.180.14';
 
 export enum API_STATUS {
