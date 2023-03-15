@@ -50,8 +50,7 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
     );
   }
 
-  const index = keyring.accounts.findIndex((v) => v.address === account.address);
-  const path = keyring.hdPath + '/' + index;
+  const path = keyring.hdPath + '/' + account.index;
 
   return (
     <Button
