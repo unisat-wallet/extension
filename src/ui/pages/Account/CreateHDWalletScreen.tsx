@@ -2,8 +2,9 @@ import { Button, Checkbox, Input, Layout, message } from 'antd';
 import { Tabs } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { Content } from 'antd/lib/layout/layout';
+import bitcore from 'bitcore-lib';
 import Mnemonic from 'bitcore-mnemonic';
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { ADDRESS_TYPES, RESTORE_WALLETS } from '@/shared/constant';
@@ -11,6 +12,7 @@ import { AddressType, RestoreWalletType } from '@/shared/types';
 import CHeader from '@/ui/components/CHeader';
 import { useCreateAccountCallback } from '@/ui/state/global/hooks';
 import { amountToSaothis, copyToClipboard, shortAddress, useWallet } from '@/ui/utils';
+import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
 
@@ -292,6 +294,11 @@ function Step2({
       if (!contextData.isRestore && v.isUnisatLegacy) {
         return false;
       }
+
+      if (contextData.customHdPath && v.isUnisatLegacy) {
+        return false;
+      }
+
       return true;
     })
       .sort((a, b) => a.displayIndex - b.displayIndex)
@@ -309,69 +316,121 @@ function Step2({
 
   const [addressBalances, setAddressBalances] = useState<{ [key: string]: { amount: string; satoshis: number } }>({});
 
-  const selfRef = useRef({
-    maxSatoshis: 0,
-    recommended: 0,
-    count: 0,
-    addressBalances: {}
-  });
-  const self = selfRef.current;
-  const run = async () => {
-    const addresses: string[] = [];
-    for (let i = 0; i < hdPathOptions.length; i++) {
-      const options = hdPathOptions[i];
-      const keyring = await wallet.createTmpKeyringWithMnemonics(
-        contextData.mnemonics,
-        options.hdPath,
-        contextData.passphrase,
-        options.addressType
-      );
-      const address = keyring.accounts[0].address;
-      addresses.push(address);
-    }
-    if (contextData.isRestore) {
-      const balances = await wallet.getMultiAddressBalance(addresses.join(','));
-      for (let i = 0; i < addresses.length; i++) {
-        const address = addresses[i];
-        const balance = balances[i];
-        const satoshis = amountToSaothis(balance.amount);
-        self.addressBalances[address] = {
-          amount: balance.amount,
-          satoshis
-        };
-        if (satoshis > self.maxSatoshis) {
-          self.maxSatoshis = satoshis;
-          self.recommended = i;
-        }
-      }
-      updateContextData({
-        addressType: hdPathOptions[self.recommended].addressType,
-        hdPath: hdPathOptions[self.recommended].hdPath
-      });
-      setAddressBalances(self.addressBalances);
-    }
-    setPreviewAddresses(addresses);
-  };
-  useEffect(() => {
-    run();
-  }, [contextData.mnemonics, contextData.passphrase]);
-
-  const pathIndex = hdPathOptions.findIndex((v) => v.addressType === contextData.addressType);
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
   const createAccount = useCreateAccountCallback();
   const navigate = useNavigate();
 
+  const [pathText, setPathText] = useState(contextData.customHdPath);
+
+  useEffect(() => {
+    const option = hdPathOptions[contextData.addressTypeIndex];
+    updateContextData({ addressType: option.addressType });
+  }, [contextData.addressTypeIndex]);
+
+  const generateAddress = async () => {
+    const addresses: string[] = [];
+    for (let i = 0; i < hdPathOptions.length; i++) {
+      const options = hdPathOptions[i];
+      try {
+        const keyring = await wallet.createTmpKeyringWithMnemonics(
+          contextData.mnemonics,
+          contextData.customHdPath || options.hdPath,
+          contextData.passphrase,
+          options.addressType
+        );
+        const address = keyring.accounts[0].address;
+        addresses.push(address);
+      } catch (e) {
+        console.log(e);
+        setError((e as any).message);
+        return;
+      }
+    }
+    setPreviewAddresses(addresses);
+  };
+
+  useEffect(() => {
+    generateAddress();
+  }, [contextData.passphrase, contextData.customHdPath]);
+
+  const fetchAddressesBalance = async () => {
+    const addresses = previewAddresses;
+    if (!addresses[0]) return;
+
+    setLoading(true);
+    const balances = await wallet.getMultiAddressBalance(addresses.join(','));
+    setLoading(false);
+
+    const addressBalances: { [key: string]: { amount: string; satoshis: number } } = {};
+    let maxSatoshis = 0;
+    let recommended = 0;
+    for (let i = 0; i < addresses.length; i++) {
+      const address = addresses[i];
+      const balance = balances[i];
+      const satoshis = amountToSaothis(balance.amount);
+      addressBalances[address] = {
+        amount: balance.amount,
+        satoshis
+      };
+      if (satoshis > maxSatoshis) {
+        maxSatoshis = satoshis;
+        recommended = i;
+      }
+    }
+    if (maxSatoshis > 0) {
+      updateContextData({
+        addressTypeIndex: recommended
+      });
+    }
+
+    setAddressBalances(addressBalances);
+  };
+
+  useEffect(() => {
+    fetchAddressesBalance();
+  }, [previewAddresses]);
+
+  const submitCustomHdPath = () => {
+    if (contextData.customHdPath === pathText) return;
+    const isValid = bitcore.HDPrivateKey.isValidPath(pathText);
+    if (!isValid) {
+      setError('Invalid derivation path.');
+      return;
+    }
+    updateContextData({
+      customHdPath: pathText
+    });
+  };
+
+  const resetCustomHdPath = () => {
+    updateContextData({
+      customHdPath: ''
+    });
+    setError('');
+    setPathText('');
+  };
+
   const onNext = async () => {
     try {
-      await createAccount(contextData.mnemonics, contextData.hdPath, contextData.passphrase, contextData.addressType);
+      const option = hdPathOptions[contextData.addressTypeIndex];
+      const hdPath = contextData.customHdPath || option.hdPath;
+
+      // const addressTypeInfo = ADDRESS_TYPES[contextData.addressType];
+      // console.log(`hdPath: ${finalHdPath}, passphrase:${contextData.passphrase}, addressType:${addressTypeInfo.name}`);
+
+      await createAccount(contextData.mnemonics, hdPath, contextData.passphrase, contextData.addressType);
       navigate('MainScreen');
     } catch (e) {
       message.error((e as any).message);
     }
   };
+
   return (
     <div className="flex flex-col items-strech gap-3_75 justify-evenly mx-5 mb-5">
       <div className="flex flex-col px-2 text-2xl font-semibold">{'Address Type'}</div>
+
       {hdPathOptions.map((item, index) => {
         const address = previewAddresses[index];
         const balance = addressBalances[address] || {
@@ -382,6 +441,8 @@ function Step2({
         if (item.isUnisatLegacy && !hasVault) {
           return null;
         }
+
+        const hdPath = (contextData.customHdPath || item.hdPath) + '/0';
         return (
           <Button
             key={index}
@@ -389,13 +450,14 @@ function Step2({
             type="default"
             className={'p-5 box default ' + (hasVault ? '!h-32' : '!h-20')}
             onClick={() => {
-              if (item.hdPath) {
-                updateContextData({ hdPath: item.hdPath, addressType: item.addressType });
-              }
+              updateContextData({
+                addressTypeIndex: index,
+                addressType: item.addressType
+              });
             }}>
             <div className="flex items-center justify-between text-lg font-semibold">
               <div className="flex flex-col flex-grow text-left">
-                <div className=" w-60 text-left">{`${item.label} (${item.hdPath}/0)`}</div>
+                <div className=" w-60 text-left">{`${item.label} (${hdPath})`}</div>
                 <div className={'font-normal ' + (hasVault ? 'text-yellow-300' : 'opacity-60')}>
                   {shortAddress(address)}
                 </div>
@@ -407,7 +469,7 @@ function Step2({
                 )}
               </div>
 
-              {index == pathIndex ? (
+              {index == contextData.addressTypeIndex ? (
                 <span className="w-4 h-4">
                   <img src="./images/check.svg" alt="" />
                 </span>
@@ -419,6 +481,35 @@ function Step2({
         );
       })}
 
+      <div className="flex flex-col px-2 text-2xl font-semibold mt-5">{'Custom HdPath (Optional)'}</div>
+
+      <div className="font-semibold text-white h-15_5 box default hover flex ">
+        <Input
+          className="h-15_5 box default "
+          placeholder={'Custom HD Wallet Derivation Path'}
+          defaultValue={pathText}
+          value={pathText}
+          onChange={async (e) => {
+            setError('');
+            setPathText(e.target.value);
+          }}
+          onBlur={(e) => {
+            submitCustomHdPath();
+          }}
+          onPressEnter={(e) => {
+            submitCustomHdPath();
+          }}
+        />
+        {contextData.customHdPath && (
+          <CloseOutlined
+            className="self-center px-5"
+            onClick={() => {
+              resetCustomHdPath();
+            }}
+          />
+        )}
+      </div>
+      {error ? <div className="text-lg text-error">{error}</div> : <></>}
       <div className="flex flex-col px-2 text-2xl font-semibold mt-5">{'Phrase (Optional)'}</div>
 
       <Input
@@ -435,6 +526,14 @@ function Step2({
       <Button size="large" type="primary" className="box w380 content self-center" onClick={onNext}>
         {'Continue'}
       </Button>
+
+      {loading && (
+        <div className="absolute bg-opacity-40 bg-black w-full h-full">
+          <div className="flex flex-col items-strech mx-5 text-6xl mt-60 gap-3_75 text-primary">
+            <LoadingOutlined />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
@@ -454,6 +553,9 @@ interface ContextData {
   tabType: TabType;
   restoreWalletType: RestoreWalletType;
   isRestore: boolean;
+  isCustom: boolean;
+  customHdPath: string;
+  addressTypeIndex: number;
 }
 
 interface UpdateContextDataParams {
@@ -464,6 +566,9 @@ interface UpdateContextDataParams {
   step1Completed?: boolean;
   tabType?: TabType;
   restoreWalletType?: RestoreWalletType;
+  isCustom?: boolean;
+  customHdPath?: string;
+  addressTypeIndex?: number;
 }
 
 export default function CreateHDWalletScreen() {
@@ -483,7 +588,10 @@ export default function CreateHDWalletScreen() {
     step1Completed: false,
     tabType: TabType.STEP1,
     restoreWalletType: RestoreWalletType.UNISAT,
-    isRestore: isImport
+    isRestore: isImport,
+    isCustom: false,
+    customHdPath: '',
+    addressTypeIndex: 0
   });
 
   const updateContextData = useCallback(
