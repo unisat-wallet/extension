@@ -356,6 +356,10 @@ function Step2({
   }, [contextData.passphrase, contextData.customHdPath]);
 
   const fetchAddressesBalance = async () => {
+    if (!contextData.isRestore) {
+      return;
+    }
+
     const addresses = previewAddresses;
     if (!addresses[0]) return;
 
