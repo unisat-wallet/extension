@@ -5,26 +5,16 @@ interface DomainApiStore {
 }
 
 export interface DomainInfo {
-  cost_fee: string;
-  create_time: string;
-  dom_name: string;
-  dom_state: number;
-  dom_type: string;
-  expire_time: string;
-  fee_rate: number;
-  img_url: string;
-  inscribe_id: string;
-  out_wallet: string;
-  owner_address: string;
-  tx_hash: string;
-  update_time: string;
-  wallet_id: string;
+  domain: string;
+  receive_address: string;
 }
 
-export const BTC_DOMAIN_API_MAINNET = 'https://btcdomains.io';
-export const BTC_DOMAIN_API_TESTNET = 'http://137.184.180.14:80';
+export const BTC_DOMAIN_API_MAINNET = 'http://137.184.180.14';//https://btcdomains.io
+export const BTC_DOMAIN_API_TESTNET = 'http://137.184.180.14';
 
-enum API_STATUS {
+export enum API_STATUS {
+  ILLEGAL = '316',
+  NOTFOUND = '317',
   FAILED = '',
   SUCCESS = '0'
 }
@@ -73,13 +63,14 @@ export class DomainService {
   };
 
   async queryDomain(domain: string): Promise<DomainInfo> {
-    const data = await this.httpPost('/api/queryDomain', {
+    const data = await this.httpPost('/api/resolveDomain', {
       'domain': domain
     });
 
     if (data.code != API_STATUS.SUCCESS) {
-      throw new Error(data.message);
+      throw new Error(data.message, { cause: data.code });
     }
+
     return data.data;
   }
 }

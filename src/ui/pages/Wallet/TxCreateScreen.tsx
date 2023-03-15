@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import wallet from '@/background/controller/wallet';
-import { DomainInfo } from '@/background/service/domainService';
+import { DomainInfo, API_STATUS } from '@/background/service/domainService';
 import { BTCDOMAINS_LINK, COIN_DUST, DOMAIN_LEVEL_ONE } from '@/shared/constant';
 import CHeader from '@/ui/components/CHeader';
 import { useNavigate } from '@/ui/pages/MainRoute';
@@ -38,6 +38,7 @@ export default function TxCreateScreen() {
 
   const [parseAddress, setParseAddress] = useState('');
   const [parseError, setParseError] = useState('');
+  const [formatError, setFormatError] = useState('');
 
   const fetchUtxos = useFetchUtxosCallback();
   useEffect(() => {
@@ -134,20 +135,39 @@ export default function TxCreateScreen() {
               if (parseError) {
                 setParseError('');
               }
-
               if (parseAddress) {
-                setParseAddress('')
+                setParseAddress('');
+              }
+              if (formatError) {
+                setFormatError('');
               }
 
               const val = e.target.value;
               setInputAddress(val);
 
               if (val.toLowerCase().endsWith(DOMAIN_LEVEL_ONE)) {
-                wallet.queryDomainInfo(val).then((ret: DomainInfo) => {
-                  setParseAddress(ret.owner_address)
-                }).catch((err) => {
-                  setParseError(val);
-                })
+                const reg = /^[0-9a-zA-Z.]*$/
+                if (reg.test(val)) {
+                  wallet.queryDomainInfo(val).then((ret: DomainInfo) => {
+                    setParseAddress(ret.receive_address);
+                    setParseError('');
+                    setFormatError('');
+                  }).catch((err: Error) => {
+                    setParseAddress('')
+                    const errMsg = err.message + ' for ' + val;
+                    if (err.cause == API_STATUS.NOTFOUND) {
+                      setParseError(errMsg);
+                      setFormatError('');
+                    } else {
+                      setParseError('');
+                      setFormatError(errMsg);
+                    }
+                  })
+                } else {
+                  setParseAddress('');
+                  setParseError('');
+                  setFormatError('domain name format is not correct.');
+                }
               }
             }}
             autoFocus={true}
@@ -158,8 +178,10 @@ export default function TxCreateScreen() {
           ) : null}
 
           {parseError ? (
-            <span className="text-lg text-warn h-5">{`${parseError}` + ' is not occupied, click '}<a href={BTCDOMAINS_LINK} target={'_blank'} rel="noreferrer">btcdomains</a> to register.</span>
+            <span className="text-lg text-warn h-5">{`${parseError}` + ', click '}<a href={BTCDOMAINS_LINK} target={'_blank'} rel="noreferrer">btcdomains</a> to register.</span>
           ) : null}
+
+          <span className="text-lg text-error h-5">{formatError}</span>
 
           <div className="flex justify-between w-full mt-5 box text-soft-white">
             <span>{t('Balance')}</span>

@@ -13,7 +13,7 @@ import { isValidAddress } from '@/ui/utils';
 import { useNavigate } from '../MainRoute';
 
 import wallet from '@/background/controller/wallet';
-import { DomainInfo } from '@/background/service/domainService';
+import { DomainInfo, API_STATUS } from '@/background/service/domainService';
 import { BTCDOMAINS_LINK, DOMAIN_LEVEL_ONE } from '@/shared/constant';
 
 import '@/ui/styles/domain.less';
@@ -36,6 +36,7 @@ export default function OrdinalsTxCreateScreen() {
 
   const [parseAddress, setParseAddress] = useState('');
   const [parseError, setParseError] = useState('');
+  const [formatError, setFormatError] = useState('');
 
   useEffect(() => {
     fetchUtxos();
@@ -94,20 +95,39 @@ export default function OrdinalsTxCreateScreen() {
               if (parseError) {
                 setParseError('');
               }
-
               if (parseAddress) {
-                setParseAddress('')
+                setParseAddress('');
+              }
+              if (formatError) {
+                setFormatError('');
               }
 
               const val = e.target.value;
               setInputAddress(val);
 
               if (val.toLowerCase().endsWith(DOMAIN_LEVEL_ONE)) {
-                wallet.queryDomainInfo(val).then((ret: DomainInfo) => {
-                  setParseAddress(ret.owner_address)
-                }).catch((err) => {
-                  setParseError(val);
-                })
+                const reg = /^[0-9a-zA-Z.]*$/
+                if (reg.test(val)) {
+                  wallet.queryDomainInfo(val).then((ret: DomainInfo) => {
+                    setParseAddress(ret.receive_address);
+                    setParseError('');
+                    setFormatError('');
+                  }).catch((err: Error) => {
+                    setParseAddress('')
+                    const errMsg = err.message + ' for ' + val;
+                    if (err.cause == API_STATUS.NOTFOUND) {
+                      setParseError(errMsg);
+                      setFormatError('');
+                    } else {
+                      setParseError('');
+                      setFormatError(errMsg);
+                    }
+                  })
+                } else {
+                  setParseAddress('');
+                  setParseError('');
+                  setFormatError('domain name format is not correct.');
+                }
               }
             }}
             autoFocus={true}
