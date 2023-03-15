@@ -92,6 +92,14 @@ export default function OrdinalsTxCreateScreen() {
           setParseAddress(ret.receive_address);
           setParseError('');
           setFormatError('');
+          createOrdinalsTx(ret.receive_address, inscription)
+            .then(() => {
+              setDisabled(false);
+            })
+            .catch((e) => {
+              console.log(e);
+              setError(e.message);
+            });
         }).catch((err: Error) => {
           setParseAddress('')
           const errMsg = err.message + ' for ' + input;
