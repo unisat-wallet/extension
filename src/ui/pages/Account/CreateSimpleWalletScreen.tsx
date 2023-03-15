@@ -183,7 +183,7 @@ function Step2({
             key={index}
             size="large"
             type="default"
-            className="p-5 box default !h-32"
+            className={'p-5 box default ' + (hasVault ? '!h-32' : '!h-20')}
             onClick={() => {
               if (item.hdPath) {
                 updateContextData({ addressType: item.addressType });

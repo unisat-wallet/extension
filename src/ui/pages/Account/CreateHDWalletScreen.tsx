@@ -370,7 +370,7 @@ function Step2({
     }
   };
   return (
-    <div className="flex flex-col items-strech gap-3_75 justify-evenly mx-5">
+    <div className="flex flex-col items-strech gap-3_75 justify-evenly mx-5 mb-5">
       <div className="flex flex-col px-2 text-2xl font-semibold">{'Address Type'}</div>
       {hdPathOptions.map((item, index) => {
         const address = previewAddresses[index];
@@ -387,7 +387,7 @@ function Step2({
             key={index}
             size="large"
             type="default"
-            className="p-5 box default !h-32"
+            className={'p-5 box default ' + (hasVault ? '!h-32' : '!h-20')}
             onClick={() => {
               if (item.hdPath) {
                 updateContextData({ hdPath: item.hdPath, addressType: item.addressType });
@@ -540,7 +540,7 @@ export default function CreateHDWalletScreen() {
         }}
         title={contextData.isRestore ? 'Restore from mnemonics' : 'Create a new HD Wallet'}
       />
-      <Content style={{ backgroundColor: '#1C1919' }}>
+      <Content style={{ backgroundColor: '#1C1919', overflowY: 'auto' }}>
         <Tabs
           defaultActiveKey={TabType.STEP1}
           items={items}
