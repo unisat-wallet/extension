@@ -57,7 +57,7 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
     <Button
       size="large"
       type="default"
-      className="p-5 box default mb-3_75 btn-88"
+      className="p-5 box default mb-3_75 !h-24"
       onClick={async (e) => {
         if (currentAccount.pubkey !== account.pubkey) {
           await wallet.changeAccount(account);
@@ -68,8 +68,8 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
       <div className="flex items-center justify-between text-lg font-semibold">
         <div className="flex flex-col flex-grow text-left">
           <span>{account?.alianName} </span>
-          <span className="font-normal opacity-60 text-sm">{shortAddress(account.address, 15)}</span>
-          <span className="font-normal opacity-60 text-sm">{path}</span>
+          <span className="font-normal opacity-60">{`${shortAddress(account.address)}`}</span>
+          <span className="font-normal opacity-60">{path}</span>
         </div>
         {account?.type == KEYRING_CLASS.PRIVATE_KEY ? (
           <span className="text-xs rounded bg-primary-active p-1.5">IMPORTED</span>

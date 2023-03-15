@@ -457,7 +457,7 @@ export default function SignPsbt({
                     <div
                       key={'input_' + index}
                       className={'py-5 flex justify-between' + (index === 0 ? ' ' : ' border-black border-t')}>
-                      <div>{shortAddress(v.address, 10)}</div>
+                      <div>{shortAddress(v.address)}</div>
 
                       <div className="text-white">{v.value}</div>
                     </div>
@@ -472,7 +472,7 @@ export default function SignPsbt({
                     <div
                       key={'output_' + index}
                       className={'py-5 flex justify-between' + (index === 0 ? ' ' : ' border-black border-t')}>
-                      <div>{shortAddress(v.address, 10)}</div>
+                      <div>{shortAddress(v.address)}</div>
                       <div className="text-white">{v.value}</div>
                     </div>
                   );

@@ -50,7 +50,7 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
 
   const displayAddress = useMemo(() => {
     const address = keyring.accounts[0].address;
-    return shortAddress(address, 15);
+    return shortAddress(address);
     // if (keyring.addressType == AddressType.P2TR) {
     //   return address;
     // } else {

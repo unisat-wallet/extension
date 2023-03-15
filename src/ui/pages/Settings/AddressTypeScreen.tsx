@@ -98,7 +98,7 @@ export default function AddressTypeScreen() {
                   key={index}
                   size="large"
                   type="default"
-                  className="box default !h-32"
+                  className={'box default ' + (hasVault ? '!h-32' : '!h-20')}
                   onClick={async () => {
                     await wallet.changeAddressType(item.value);
                     window.location.reload();
@@ -107,7 +107,7 @@ export default function AddressTypeScreen() {
                     <div className="flex flex-col w-full text-left">
                       <div className="w-32 text-left">{`${item.name} (${item.hdPath}/${account.index})`}</div>
                       <div className={'font-normal ' + (balance.satoshis > 0 ? ' text-yellow-300' : 'opacity-60 ')}>
-                        {isInTab ? address : shortAddress(address, 10)}
+                        {isInTab ? address : shortAddress(address)}
                       </div>
                       {hasVault && <div className="border-b-2  opacity-60 w-full"></div>}
                       {hasVault && (
