@@ -74,17 +74,6 @@ class ProviderController extends BaseController {
       return NETWORK_TYPES[networkType].name
     }
 
-
-  // @Reflect.metadata('SAFE', true)
-  //   getAddress = async () => {
-  //     const account = await wallet.getCurrentAccount();
-  //     if(!account) return ''
-  //     const addressType = wallet.getAddressType();
-  //     const networkType = wallet.getNetworkType()
-  //     const address = publicKeyToAddress(account.address,addressType,networkType)
-  //     return address;
-  //   };
-
   @Reflect.metadata('SAFE', true)
     getPublicKey = async () => {
       const account = await wallet.getCurrentAccount();

@@ -267,13 +267,9 @@ class PreferenceService {
     this.store.firstOpen = false;
   };
 
-  // address type
+  // deprecate
   getAddressType = () => {
     return this.store.addressType;
-  };
-
-  setAddressType = (addressType: AddressType) => {
-    this.store.addressType = addressType;
   };
 
   // network type

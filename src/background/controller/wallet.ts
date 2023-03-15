@@ -364,15 +364,16 @@ export class WalletController extends BaseController {
   };
 
   signPsbt = async (psbt: bitcoin.Psbt) => {
-    const account = preferenceService.getCurrentAccount();
+    const account = await this.getCurrentAccount();
     if (!account) throw new Error('no current account');
+
+    const keyring = await this.getCurrentKeyring();
+    const _keyring = keyringService.keyrings[keyring.index];
 
     const networkType = this.getNetworkType();
     const psbtNetwork = toPsbtNetwork(networkType);
-    const keyring = await keyringService.getKeyringForAccount(account.pubkey, account.type);
 
     const toSignInputs: ToSignInput[] = [];
-    const addressType = preferenceService.getAddressType();
     psbt.data.inputs.forEach((v, index) => {
       let script: any = null;
       let value = 0;
@@ -394,14 +395,14 @@ export class WalletController extends BaseController {
             publicKey: account.pubkey,
             sighashTypes: v.sighashType ? [v.sighashType] : undefined
           });
-          if (addressType === AddressType.P2TR && !v.tapInternalKey) {
+          if (keyring.addressType === AddressType.P2TR && !v.tapInternalKey) {
             v.tapInternalKey = toXOnly(Buffer.from(account.pubkey, 'hex'));
           }
         }
       }
     });
 
-    psbt = await keyringService.signTransaction(keyring, psbt, toSignInputs);
+    psbt = await keyringService.signTransaction(_keyring, psbt, toSignInputs);
     toSignInputs.forEach((v) => {
       psbt.validateSignaturesOfInput(v.index, validator);
       psbt.finalizeInput(v.index);
@@ -537,37 +538,12 @@ export class WalletController extends BaseController {
     console.error('report not implemented');
   };
 
-  getAddressType = () => {
-    return preferenceService.getAddressType();
-  };
-
-  setAddressType = (addressType: AddressType) => {
-    preferenceService.setAddressType(addressType);
-
-    // emit accountsChanged event
-    const account = preferenceService.getCurrentAccount();
-    if (account) {
-      const addressType = preferenceService.getAddressType();
-      const networkType = preferenceService.getNetworkType();
-      account.address = publicKeyToAddress(account.pubkey, addressType, networkType);
-    }
-    preferenceService.setCurrentAccount(account);
-  };
-
-  getAddress = () => {
-    const account = preferenceService.getCurrentAccount();
-    if (!account) throw new Error('no current account');
-    const addressType = this.getAddressType();
-    const networkType = this.getNetworkType();
-    return publicKeyToAddress(account.pubkey, addressType, networkType);
-  };
-
   getNetworkType = () => {
     const networkType = preferenceService.getNetworkType();
     return networkType;
   };
 
-  setNetworkType = (networkType: NetworkType) => {
+  setNetworkType = async (networkType: NetworkType) => {
     preferenceService.setNetworkType(networkType);
     if (networkType === NetworkType.MAINNET) {
       this.openapi.setHost(OPENAPI_URL_MAINNET);
@@ -579,14 +555,9 @@ export class WalletController extends BaseController {
       network
     });
 
-    // emit accountsChanged event
-    const account = preferenceService.getCurrentAccount();
-    if (account) {
-      const addressType = preferenceService.getAddressType();
-      const networkType = preferenceService.getNetworkType();
-      account.address = publicKeyToAddress(account.pubkey, addressType, networkType);
-    }
-    preferenceService.setCurrentAccount(account);
+    const currentAccount = await this.getCurrentAccount();
+    const keyring = await this.getCurrentKeyring();
+    this.changeKeyring(keyring, currentAccount?.index);
   };
 
   getNetworkName = () => {

@@ -5,7 +5,6 @@ import { AddressType } from '@unisat/ord-utils/lib/OrdTransaction';
 
 import { AppState } from '..';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { useChangeAddressTypeCallback } from '../settings/hooks';
 import { globalActions, TabOption } from './reducer';
 
 export function useGlobalState(): AppState['global'] {
@@ -58,12 +57,11 @@ export function useUnlockCallback() {
 export function useCreateAccountCallback() {
   const dispatch = useAppDispatch();
   const wallet = useWallet();
-  const changeAddressType = useChangeAddressTypeCallback();
   return useCallback(
     async (mnemonics: string, hdPath: string, passphrase: string, addressType: AddressType) => {
       await wallet.createKeyringWithMnemonics(mnemonics, hdPath, passphrase, addressType);
       dispatch(globalActions.update({ isUnlocked: true }));
     },
-    [dispatch, wallet, changeAddressType]
+    [dispatch, wallet]
   );
 }

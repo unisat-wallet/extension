@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { AddressType, NetworkType } from '@/shared/types';
+import { NetworkType } from '@/shared/types';
 import { useWallet } from '@/ui/utils';
 import i18n, { addResourceBundle } from '@/ui/utils/i18n';
 
@@ -40,22 +40,6 @@ export function useChangeLocaleCallback() {
 export function useAddressType() {
   const accountsState = useSettingsState();
   return accountsState.addressType;
-}
-
-export function useChangeAddressTypeCallback() {
-  const dispatch = useAppDispatch();
-  const wallet = useWallet();
-  return useCallback(
-    async (type: AddressType) => {
-      await wallet.setAddressType(type);
-      dispatch(
-        settingsActions.updateSettings({
-          addressType: type
-        })
-      );
-    },
-    [dispatch]
-  );
 }
 
 export function useNetworkType() {

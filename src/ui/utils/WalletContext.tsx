@@ -112,9 +112,6 @@ export interface WalletController {
   getAppSummary(): Promise<AppSummary>;
   getAddressUtxo(address: string): Promise<UTXO[]>;
 
-  getAddressType(): Promise<AddressType>;
-  setAddressType(type: AddressType): Promise<void>;
-
   getNetworkType(): Promise<NetworkType>;
   setNetworkType(type: NetworkType): Promise<void>;
 

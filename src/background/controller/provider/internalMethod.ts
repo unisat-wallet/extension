@@ -17,11 +17,17 @@ const getProviderState = async (req) => {
   } = req;
 
   const isUnlocked = keyringService.memStore.getState().isUnlocked;
-
+  const accounts: string[] = [];
+  if (isUnlocked) {
+    const currentAccount = await wallet.getCurrentAccount();
+    if (currentAccount) {
+      accounts.push(currentAccount.address);
+    }
+  }
   return {
     network: wallet.getNetworkName(),
     isUnlocked,
-    accounts: isUnlocked ? [wallet.getAddress()] : []
+    accounts
   };
 };
 

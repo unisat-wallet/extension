@@ -237,13 +237,6 @@ const Main = () => {
         })
       );
 
-      const addressType = await wallet.getAddressType();
-      dispatch(
-        settingsActions.updateSettings({
-          addressType
-        })
-      );
-
       const _locale = await wallet.getLocale();
       dispatch(settingsActions.updateSettings({ locale: _locale }));
       self.settingsLoaded = true;
