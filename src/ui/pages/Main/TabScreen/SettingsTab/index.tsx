@@ -7,6 +7,7 @@ import { NavigateFunction, useNavigate } from 'react-router-dom';
 import { ADDRESS_TYPES, NETWORK_TYPES } from '@/shared/constant';
 import { useExtensionIsInTab, useOpenExtensionInTab } from '@/ui/features/browser/tabs';
 import { getCurrentTab } from '@/ui/features/browser/tabs';
+import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { useNetworkType } from '@/ui/state/settings/hooks';
 import { useWallet } from '@/ui/utils';
@@ -142,7 +143,7 @@ export default function SettingsTab() {
   const [connected, setConnected] = useState(false);
 
   const currentKeyring = useCurrentKeyring();
-
+  const currentAccount = useCurrentAccount();
   const wallet = useWallet();
   useEffect(() => {
     const run = async () => {
@@ -170,7 +171,8 @@ export default function SettingsTab() {
     }
 
     if (v.action == 'addressType') {
-      v.value = ADDRESS_TYPES[currentKeyring.addressType].name;
+      const item = ADDRESS_TYPES[currentKeyring.addressType];
+      v.value = `${item.name} (${item.hdPath}/${currentAccount.index})`;
     }
 
     if (v.action == 'expand-view') {
