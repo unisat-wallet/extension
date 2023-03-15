@@ -13,7 +13,7 @@ import { isValidAddress } from '@/ui/utils';
 import { useNavigate } from '../MainRoute';
 
 import wallet from '@/background/controller/wallet';
-import { DomainInfo, API_STATUS } from '@/background/service/domainService';
+import { API_STATUS, DomainInfo } from '@/background/service/domainService';
 import { BTCDOMAINS_LINK, DOMAIN_LEVEL_ONE } from '@/shared/constant';
 
 import '@/ui/styles/domain.less';
@@ -128,6 +128,10 @@ export default function OrdinalsTxCreateScreen() {
                   setParseError('');
                   setFormatError('domain name format is not correct.');
                 }
+              } else {
+                setParseAddress('');
+                setParseError('');
+                setFormatError('domain name must matching ' + DOMAIN_LEVEL_ONE + ' suffix.');
               }
             }}
             autoFocus={true}
@@ -140,6 +144,8 @@ export default function OrdinalsTxCreateScreen() {
           {parseError ? (
             <span className="text-lg text-warn h-5">{`${parseError}` + ' is not occupied, click '}<a href={BTCDOMAINS_LINK} target={'_blank'} rel="noreferrer">btcdomains</a> to register.</span>
           ) : null}
+          
+          <span className="text-lg text-error h-5">{formatError}</span>
 
           <span className="text-lg text-error h-5">{error}</span>
           <Button

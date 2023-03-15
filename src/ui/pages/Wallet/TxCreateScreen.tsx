@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import wallet from '@/background/controller/wallet';
-import { DomainInfo, API_STATUS } from '@/background/service/domainService';
+import { API_STATUS, DomainInfo } from '@/background/service/domainService';
 import { BTCDOMAINS_LINK, COIN_DUST, DOMAIN_LEVEL_ONE } from '@/shared/constant';
 import CHeader from '@/ui/components/CHeader';
 import { useNavigate } from '@/ui/pages/MainRoute';
@@ -168,6 +168,10 @@ export default function TxCreateScreen() {
                   setParseError('');
                   setFormatError('domain name format is not correct.');
                 }
+              } else {
+                setParseAddress('');
+                setParseError('');
+                setFormatError('domain name must matching ' + DOMAIN_LEVEL_ONE + ' suffix.');
               }
             }}
             autoFocus={true}
