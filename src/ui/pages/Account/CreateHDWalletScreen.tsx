@@ -395,7 +395,7 @@ function Step2({
             }}>
             <div className="flex items-center justify-between text-lg font-semibold">
               <div className="flex flex-col flex-grow text-left">
-                <div className=" w-60 text-left">{`${item.label} (${item.hdPath})`}</div>
+                <div className=" w-60 text-left">{`${item.label} (${item.hdPath}/0)`}</div>
                 <div className={'font-normal ' + (hasVault ? 'text-yellow-300' : 'opacity-60')}>
                   {shortAddress(address)}
                 </div>

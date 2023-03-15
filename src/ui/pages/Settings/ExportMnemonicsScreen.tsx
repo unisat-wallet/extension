@@ -132,7 +132,7 @@ export default function ExportMnemonicsScreen() {
                     onClick={() => {
                       copy(currenyKering.hdPath);
                     }}>
-                    {`Derivation Path: ${currenyKering.hdPath} (${pathName})`}{' '}
+                    {`Derivation Path: ${currenyKering.hdPath}/0 (${pathName})`}{' '}
                   </div>
                   {passphrase && <div>{`Passphrase: ${passphrase}`}</div>}
                 </div>

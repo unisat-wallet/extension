@@ -105,7 +105,7 @@ export default function AddressTypeScreen() {
                   }}>
                   <div className="flex items-center justify-between text-lg font-semibold">
                     <div className="flex flex-col w-full text-left">
-                      <div className="w-32 text-left">{`${item.name} (${item.hdPath})`}</div>
+                      <div className="w-32 text-left">{`${item.name} (${item.hdPath}/${account.index})`}</div>
                       <div className={'font-normal ' + (balance.satoshis > 0 ? ' text-yellow-300' : 'opacity-60 ')}>
                         {isInTab ? address : shortAddress(address, 10)}
                       </div>
