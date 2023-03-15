@@ -1,6 +1,15 @@
 
 # UniSat Wallet Release Notes
 
+## v1.1.6
+**Major changes**
+- Support custom hdPath
+
+**Minor changes**
+- Unify and extend the abbreviation length of address
+- Complete the display of hdPath	
+
+
 ## v1.1.5
 **Major changes**
 - Wallet account structure changes, support multiple HD wallets, each wallet supports multiple accounts
