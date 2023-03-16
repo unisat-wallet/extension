@@ -1,6 +1,16 @@
 
 # UniSat Wallet Release Notes
 
+## v1.1.7
+**Major changes**
+- Support .sats, .btc as recipient address
+- Support customizing network fee rate
+- Fix the signature error of P2TR
+
+**Minor changes**
+- Support to view the detail of address in signing page
+
+
 ## v1.1.6
 **Major changes**
 - Support custom hdPath
