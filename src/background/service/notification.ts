@@ -41,7 +41,7 @@ class NotificationService extends Events {
           // Wired issue: When notification popuped, will focus to -1 first then focus on notification
           return;
         }
-        this.rejectApproval();
+        // this.rejectApproval();
       }
     });
   }
@@ -106,8 +106,8 @@ class NotificationService extends Events {
   };
 
   openNotification = (winProps) => {
-    if (this.isLocked) return;
-    this.lock();
+    // if (this.isLocked) return;
+    // this.lock();
     if (this.notifiWindowId) {
       winMgr.remove(this.notifiWindowId);
       this.notifiWindowId = 0;
