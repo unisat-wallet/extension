@@ -1,44 +1,39 @@
 import { Input } from 'antd';
-import { useEffect, useRef, useState } from 'react';
+import bitcore from 'bitcore-lib';
+import { useEffect, useState } from 'react';
 
 import { API_STATUS } from '@/background/service/domainService';
-import { BTCDOMAINS_LINK, BTC_DOMAIN_LEVEL_ONE } from '@/shared/constant';
+import { BTC_DOMAIN_LEVEL_ONE, SATS_DOMAIN } from '@/shared/constant';
 import { useWallet } from '@/ui/utils';
 
+import { AddressText } from '../AddressText';
+
 export const AddressInputBar = ({
-  defaultAddress,
+  defaultInfo,
   onChange
 }: {
-  defaultAddress: string;
-  onChange: (val: string) => void;
+  defaultInfo: { address: string; domain: string };
+  onChange: (params: { address: string; domain: string }) => void;
 }) => {
-  const [parseAddress, setParseAddress] = useState('');
+  const [validAddress, setValidAddress] = useState(defaultInfo.address);
+  const [parseAddress, setParseAddress] = useState(defaultInfo.address);
   const [parseError, setParseError] = useState('');
   const [formatError, setFormatError] = useState('');
 
-  const [inputVal, setInputVal] = useState(defaultAddress);
+  const [inputVal, setInputVal] = useState(defaultInfo.domain || defaultInfo.address);
 
   const wallet = useWallet();
 
   useEffect(() => {
-    let toAddress = '';
-    if (inputVal.toLowerCase().endsWith(BTC_DOMAIN_LEVEL_ONE)) {
-      toAddress = parseAddress;
-    } else {
-      toAddress = inputVal;
-    }
-    onChange(toAddress);
-  }, []);
+    onChange({
+      address: validAddress,
+      domain: parseAddress ? inputVal : ''
+    });
+  }, [validAddress]);
 
-  const selfRef = useRef({
-    lastCheckAddress: ''
-  });
-  const self = selfRef.current;
-  const handleInputAddress = () => {
-    if (self.lastCheckAddress === inputVal) {
-      return;
-    }
-    self.lastCheckAddress = inputVal;
+  const handleInputAddress = (e) => {
+    const inputAddress = e.target.value;
+    setInputVal(inputAddress);
 
     if (parseError) {
       setParseError('');
@@ -50,38 +45,58 @@ export const AddressInputBar = ({
       setFormatError('');
     }
 
-    if (inputVal.toLowerCase().endsWith(BTC_DOMAIN_LEVEL_ONE)) {
+    if (validAddress) {
+      setValidAddress('');
+    }
+
+    if (inputAddress.toLowerCase().endsWith(SATS_DOMAIN)) {
+      wallet
+        .queryDomainInfo(inputAddress)
+        .then((address: string) => {
+          if (address) {
+            setParseAddress(address);
+            setValidAddress(address);
+          } else {
+            setParseError(`${inputAddress} does not exist`);
+          }
+        })
+        .catch((err: Error) => {
+          const errMsg = err.message + ' for ' + inputAddress;
+          if (err.cause == API_STATUS.NOTFOUND) {
+            setParseError(errMsg);
+          } else {
+            setFormatError(errMsg);
+          }
+        });
+    } else if (inputAddress.toLowerCase().endsWith(BTC_DOMAIN_LEVEL_ONE)) {
       const reg = /^[0-9a-zA-Z.]*$/;
-      if (reg.test(inputVal)) {
+      if (reg.test(inputAddress)) {
         wallet
-          .queryDomainInfo(inputVal)
+          .queryDomainInfo(inputAddress)
           .then((address: string) => {
             setParseAddress(address);
-            setParseError('');
-            setFormatError('');
+            setValidAddress(address);
           })
           .catch((err: Error) => {
-            setParseAddress('');
-            const errMsg = err.message + ' for ' + inputVal;
+            const errMsg = err.message + ' for ' + inputAddress;
             if (err.cause == API_STATUS.NOTFOUND) {
-              setParseError(errMsg);
-              setFormatError('');
+              setParseError(`${inputAddress} does not exist`);
+              // setParseError(errMsg);
             } else {
-              setParseError('');
               setFormatError(errMsg);
             }
           });
       } else {
-        setParseAddress('');
-        setParseError('');
-        setFormatError('domain name format is not correct.');
+        setFormatError('Domain name format is not correct');
       }
+    } else {
+      const isValid = bitcore.Address.isValid(inputAddress);
+      if (!isValid) {
+        setFormatError('Recipient address is invalid');
+        return;
+      }
+      setValidAddress(inputAddress);
     }
-    // else {
-    //   setParseAddress('');
-    //   setParseError('');
-    //   setFormatError('domain name must matching ' + DOMAIN_LEVEL_ONE + ' suffix.');
-    // }
   };
 
   return (
@@ -89,31 +104,23 @@ export const AddressInputBar = ({
       <Input
         className="mt-5 font-semibold text-white h-15_5 box default hover"
         // eslint-disable-next-line quotes
-        placeholder={"Recipient's BTC address"}
+        placeholder={'Address, name.sats, or name.btc '}
         defaultValue={inputVal}
         onChange={async (e) => {
-          setInputVal(e.target.value);
-        }}
-        onBlur={() => {
-          handleInputAddress();
-        }}
-        onPressEnter={() => {
-          handleInputAddress();
+          handleInputAddress(e);
         }}
         autoFocus={true}
       />
 
-      {parseAddress ? <div className="word-breakall">{parseAddress}</div> : null}
+      {parseAddress && (
+        <div
+          className="flex py-1 px-5 bg-stone-800"
+          style={{ borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }}>
+          <AddressText address={parseAddress} />
+        </div>
+      )}
 
-      {parseError ? (
-        <span className="text-lg text-warn h-5">
-          {`${parseError}` + ', click '}
-          <a href={BTCDOMAINS_LINK} target={'_blank'} rel="noreferrer">
-            btcdomains
-          </a>{' '}
-          to register.
-        </span>
-      ) : null}
+      {parseError ? <span className="text-lg text-error h-5">{`${parseError}`}</span> : null}
 
       <span className="text-lg text-error h-5">{formatError}</span>
     </div>

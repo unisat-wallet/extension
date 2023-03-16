@@ -263,3 +263,5 @@ export const BTCDOMAINS_LINK = 'https://btcdomains.io';
 export const TO_LOCALE_STRING_CONFIG = {
   minimumFractionDigits: 8
 };
+
+export const SATS_DOMAIN = '.sats';

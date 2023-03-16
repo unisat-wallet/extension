@@ -29,7 +29,10 @@ export default function TxCreateScreen() {
     bitcoinTx.toSatoshis > 0 ? satoshisToAmount(bitcoinTx.toSatoshis) : ''
   );
   const [disabled, setDisabled] = useState(true);
-  const [toAddress, setToAddress] = useState(bitcoinTx.toAddress);
+  const [toInfo, setToInfo] = useState({
+    address: bitcoinTx.toAddress,
+    domain: bitcoinTx.toDomain
+  });
 
   const [error, setError] = useState('');
 
@@ -58,7 +61,7 @@ export default function TxCreateScreen() {
     setError('');
     setDisabled(true);
 
-    if (!isValidAddress(toAddress)) {
+    if (!isValidAddress(toInfo.address)) {
       return;
     }
     if (!toSatoshis) {
@@ -80,7 +83,7 @@ export default function TxCreateScreen() {
     }
 
     if (
-      toAddress == bitcoinTx.toAddress &&
+      toInfo.address == bitcoinTx.toAddress &&
       toSatoshis == bitcoinTx.toSatoshis &&
       autoAdjust == bitcoinTx.autoAdjust &&
       feeRate == bitcoinTx.feeRate
@@ -90,7 +93,7 @@ export default function TxCreateScreen() {
       return;
     }
 
-    createBitcoinTx(toAddress, toSatoshis, feeRate, autoAdjust)
+    createBitcoinTx(toInfo, toSatoshis, feeRate, autoAdjust)
       .then((data) => {
         // if (data.fee < data.estimateFee) {
         //   setError(`Network fee must be at leat ${data.estimateFee}`);
@@ -102,7 +105,7 @@ export default function TxCreateScreen() {
         console.log(e);
         setError(e.message);
       });
-  }, [toAddress, inputAmount, autoAdjust, feeRate]);
+  }, [toInfo, inputAmount, autoAdjust, feeRate]);
 
   const showSafeBalance = useMemo(
     () => new BigNumber(accountBalance.amount).eq(new BigNumber(safeBalance)) == false,
@@ -127,9 +130,9 @@ export default function TxCreateScreen() {
           </div>
 
           <AddressInputBar
-            defaultAddress={bitcoinTx.toAddress}
+            defaultInfo={toInfo}
             onChange={(val) => {
-              setToAddress(val);
+              setToInfo(val);
             }}
           />
 

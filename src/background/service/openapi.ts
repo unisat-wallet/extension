@@ -187,7 +187,7 @@ export class OpenApiService {
   }
 
   async getDomainInfo(domain: string) {
-    const data = await this.httpGet('/v1/address/domain-info', { domain });
+    const data = await this.httpGet('/v1/address/search', { domain });
     if (data.status == API_STATUS.FAILED) {
       throw new Error(data.message);
     }

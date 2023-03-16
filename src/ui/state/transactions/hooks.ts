@@ -27,7 +27,12 @@ export function useCreateBitcoinTxCallback() {
   const utxos = useUtxos();
   const fetchUtxos = useFetchUtxosCallback();
   return useCallback(
-    async (toAddress: string, toAmount: number, feeRate?: number, autoAdjust = false) => {
+    async (
+      addressInfo: { address: string; domain: string },
+      toAmount: number,
+      feeRate?: number,
+      autoAdjust = false
+    ) => {
       let _utxos = utxos;
       if (_utxos.length === 0) {
         _utxos = await fetchUtxos();
@@ -36,7 +41,13 @@ export function useCreateBitcoinTxCallback() {
         const summary = await wallet.getFeeSummary();
         feeRate = summary.list[1].feeRate;
       }
-      const psbtHex = await wallet.sendBTC({ to: toAddress, amount: toAmount, utxos: _utxos, autoAdjust, feeRate });
+      const psbtHex = await wallet.sendBTC({
+        to: addressInfo.address,
+        amount: toAmount,
+        utxos: _utxos,
+        autoAdjust,
+        feeRate
+      });
       const psbt = Psbt.fromHex(psbtHex);
       const rawtx = psbt.extractTransaction().toHex();
       dispatch(
@@ -44,7 +55,8 @@ export function useCreateBitcoinTxCallback() {
           rawtx,
           psbtHex,
           fromAddress,
-          toAddress,
+          toAddress: addressInfo.address,
+          toDomain: addressInfo.domain,
           feeRate
         })
       );
@@ -95,13 +107,13 @@ export function useCreateOrdinalsTxCallback() {
   const utxos = useUtxos();
   const fetchUtxos = useFetchUtxosCallback();
   return useCallback(
-    async (toAddress: string, inscription: Inscription, feeRate: number) => {
+    async (toInfo: { address: string; domain: string }, inscription: Inscription, feeRate: number) => {
       let _utxos = utxos;
       if (_utxos.length === 0) {
         _utxos = await fetchUtxos();
       }
       const psbtHex = await wallet.sendInscription({
-        to: toAddress,
+        to: toInfo.address,
         inscriptionId: inscription.id,
         utxos: _utxos,
         feeRate
@@ -113,7 +125,8 @@ export function useCreateOrdinalsTxCallback() {
           rawtx,
           psbtHex,
           fromAddress,
-          toAddress,
+          toAddress: toInfo.address,
+          toDomain: toInfo.domain,
           inscription,
           feeRate
         })

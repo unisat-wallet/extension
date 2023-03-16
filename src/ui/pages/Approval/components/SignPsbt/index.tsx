@@ -118,7 +118,7 @@ function SendInscriptionDetails({ txInfo }: { txInfo: TxInfo }) {
       <div className="text-left font-semibold text-white mt-5">{'TO'}</div>
       <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
         <div className={'py-5 flex justify-between'}>
-          <AddressText address={ordinalsTx.toAddress} />
+          <AddressText address={ordinalsTx.toAddress} domain={ordinalsTx.toDomain} />
         </div>
       </div>
       <div className="text-left font-semibold text-white mt-5">{'NETWORK FEE'}</div>
@@ -191,7 +191,7 @@ function SendBitcoinDetails({
       <div className="text-left font-semibold text-white mt-5">{'TO'}</div>
       <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
         <div className={'py-5 flex justify-between'}>
-          <AddressText address={bitcoinTx.toAddress} />
+          <AddressText address={bitcoinTx.toAddress} domain={bitcoinTx.toDomain} />
         </div>
       </div>
       <div className="text-left font-semibold text-white mt-5">{'NETWORK FEE'}</div>
@@ -255,7 +255,7 @@ export default function SignPsbt({
     if (type === TxType.SEND_BITCOIN) {
       if (!psbtHex && toAddress && satoshis) {
         try {
-          psbtHex = await createBitcoinTx(toAddress, satoshis, feeRate);
+          psbtHex = await createBitcoinTx({ address: toAddress, domain: '' }, satoshis, feeRate);
         } catch (e) {
           console.log(e);
         }

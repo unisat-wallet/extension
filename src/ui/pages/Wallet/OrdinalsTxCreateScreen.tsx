@@ -25,7 +25,11 @@ export default function OrdinalsTxCreateScreen() {
     inscription: Inscription;
   };
   const ordinalsTx = useOrdinalsTx();
-  const [toAddress, setToAddress] = useState(ordinalsTx.toAddress);
+  const [toInfo, setToInfo] = useState({
+    address: ordinalsTx.toAddress,
+    domain: ordinalsTx.toDomain
+  });
+
   const [error, setError] = useState('');
   const createOrdinalsTx = useCreateOrdinalsTxCallback();
 
@@ -41,7 +45,7 @@ export default function OrdinalsTxCreateScreen() {
     setDisabled(true);
     setError('');
 
-    if (!isValidAddress(toAddress)) {
+    if (!isValidAddress(toInfo.address)) {
       return;
     }
 
@@ -50,13 +54,13 @@ export default function OrdinalsTxCreateScreen() {
       return;
     }
 
-    if (toAddress == ordinalsTx.toAddress && feeRate == ordinalsTx.feeRate) {
+    if (toInfo.address == ordinalsTx.toAddress && feeRate == ordinalsTx.feeRate) {
       //Prevent repeated triggering caused by setAmount
       setDisabled(false);
       return;
     }
 
-    createOrdinalsTx(toAddress, inscription, feeRate)
+    createOrdinalsTx(toInfo, inscription, feeRate)
       .then(() => {
         setDisabled(false);
       })
@@ -64,7 +68,7 @@ export default function OrdinalsTxCreateScreen() {
         console.log(e);
         setError(e.message);
       });
-  }, [toAddress, feeRate]);
+  }, [toInfo, feeRate]);
 
   return (
     <Layout className="h-full">
@@ -82,9 +86,9 @@ export default function OrdinalsTxCreateScreen() {
           </div>
 
           <AddressInputBar
-            defaultAddress={ordinalsTx.toAddress}
+            defaultInfo={toInfo}
             onChange={(val) => {
-              setToAddress(val);
+              setToInfo(val);
             }}
           />
 
