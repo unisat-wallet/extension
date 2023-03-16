@@ -1,6 +1,14 @@
 import { createPersistStore } from '@/background/utils';
 import { OPENAPI_URL_MAINNET, OPENAPI_URL_TESTNET } from '@/shared/constant';
-import { AppSummary, BitcoinBalance, Inscription, InscriptionSummary, TxHistoryItem, UTXO } from '@/shared/types';
+import {
+  AppSummary,
+  BitcoinBalance,
+  FeeSummary,
+  Inscription,
+  InscriptionSummary,
+  TxHistoryItem,
+  UTXO
+} from '@/shared/types';
 
 interface OpenApiStore {
   host: string;
@@ -164,6 +172,14 @@ export class OpenApiService {
     const data = await this.httpPost('/v1/tx/broadcast', {
       rawtx
     });
+    if (data.status == API_STATUS.FAILED) {
+      throw new Error(data.message);
+    }
+    return data.result;
+  }
+
+  async getFeeSummary(): Promise<FeeSummary> {
+    const data = await this.httpGet('/v1/fee-summary', {});
     if (data.status == API_STATUS.FAILED) {
       throw new Error(data.message);
     }

@@ -27,6 +27,7 @@ interface Props {
       type: TxType;
       toAddress?: string;
       satoshis?: number;
+      feeRate?: number;
       inscriptionId?: string;
       toSignInputs?: ToSignInput[];
     };
@@ -217,7 +218,7 @@ interface TxInfo {
 
 export default function SignPsbt({
   params: {
-    data: { psbtHex, toSignInputs, type, toAddress, satoshis, inscriptionId },
+    data: { psbtHex, toSignInputs, type, toAddress, satoshis, feeRate, inscriptionId },
     session
   },
 
@@ -254,7 +255,7 @@ export default function SignPsbt({
     if (type === TxType.SEND_BITCOIN) {
       if (!psbtHex && toAddress && satoshis) {
         try {
-          psbtHex = await createBitcoinTx(toAddress, satoshis);
+          psbtHex = await createBitcoinTx(toAddress, satoshis, feeRate);
         } catch (e) {
           console.log(e);
         }
@@ -337,9 +338,9 @@ export default function SignPsbt({
       fee -= v.value;
     });
 
-    let feeRate = 1;
+    let finalFeeRate = feeRate || 1;
     try {
-      feeRate = psbt.getFeeRate();
+      finalFeeRate = psbt.getFeeRate();
     } catch (e) {
       // todo
     }
@@ -352,7 +353,7 @@ export default function SignPsbt({
       psbtHex,
       rawtx: '',
       fee,
-      feeRate,
+      feeRate: finalFeeRate,
       toSignInputs
     });
   };

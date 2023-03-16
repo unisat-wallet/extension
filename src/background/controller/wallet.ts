@@ -569,12 +569,14 @@ export class WalletController extends BaseController {
     to,
     amount,
     utxos,
-    autoAdjust
+    autoAdjust,
+    feeRate
   }: {
     to: string;
     amount: number;
     utxos: UTXO[];
     autoAdjust: boolean;
+    feeRate: number;
   }) => {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
@@ -600,7 +602,8 @@ export class WalletController extends BaseController {
       network: psbtNetwork,
       changeAddress: account.address,
       force: autoAdjust,
-      pubkey: account.pubkey
+      pubkey: account.pubkey,
+      feeRate
     });
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -609,7 +612,17 @@ export class WalletController extends BaseController {
     return psbt.toHex();
   };
 
-  sendInscription = async ({ to, inscriptionId, utxos }: { to: string; inscriptionId: string; utxos: UTXO[] }) => {
+  sendInscription = async ({
+    to,
+    inscriptionId,
+    utxos,
+    feeRate
+  }: {
+    to: string;
+    inscriptionId: string;
+    utxos: UTXO[];
+    feeRate: number;
+  }) => {
     const account = await preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
@@ -633,7 +646,8 @@ export class WalletController extends BaseController {
       wallet: this,
       network: psbtNetwork,
       changeAddress: account.address,
-      pubkey: account.pubkey
+      pubkey: account.pubkey,
+      feeRate
     });
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -839,6 +853,11 @@ export class WalletController extends BaseController {
     preferenceService.setKeyringAlianName(keyring.key, name);
     keyring.alianName = name;
     return keyring;
+  };
+
+  getFeeSummary = async () => {
+    const result = await openapiService.getFeeSummary();
+    return result;
   };
 }
 

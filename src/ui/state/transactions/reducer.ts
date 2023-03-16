@@ -15,6 +15,7 @@ export interface BitcoinTx {
   sending: boolean;
   autoAdjust: boolean;
   psbtHex: string;
+  feeRate: number;
 }
 
 export interface OrdinalsTx {
@@ -28,6 +29,7 @@ export interface OrdinalsTx {
   changeSatoshis: number;
   sending: boolean;
   psbtHex: string;
+  feeRate: number;
 }
 
 export interface TransactionsState {
@@ -48,7 +50,8 @@ export const initialState: TransactionsState = {
     changeSatoshis: 0,
     sending: false,
     autoAdjust: false,
-    psbtHex: ''
+    psbtHex: '',
+    feeRate: 5
   },
   ordinalsTx: {
     fromAddress: '',
@@ -63,7 +66,8 @@ export const initialState: TransactionsState = {
     estimateFee: 0,
     changeSatoshis: 0,
     sending: false,
-    psbtHex: ''
+    psbtHex: '',
+    feeRate: 5
   },
   utxos: []
 };
@@ -87,6 +91,7 @@ const slice = createSlice({
           sending?: boolean;
           autoAdjust?: boolean;
           psbtHex?: string;
+          feeRate?: number;
         };
       }
     ) {
@@ -107,6 +112,7 @@ const slice = createSlice({
           estimateFee?: number;
           sending?: boolean;
           psbtHex?: string;
+          feeRate?: number;
         };
       }
     ) {

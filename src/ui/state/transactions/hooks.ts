@@ -27,12 +27,16 @@ export function useCreateBitcoinTxCallback() {
   const utxos = useUtxos();
   const fetchUtxos = useFetchUtxosCallback();
   return useCallback(
-    async (toAddress: string, toAmount: number, autoAdjust = false) => {
+    async (toAddress: string, toAmount: number, feeRate?: number, autoAdjust = false) => {
       let _utxos = utxos;
       if (_utxos.length === 0) {
         _utxos = await fetchUtxos();
       }
-      const psbtHex = await wallet.sendBTC({ to: toAddress, amount: toAmount, utxos: _utxos, autoAdjust });
+      if (!feeRate) {
+        const summary = await wallet.getFeeSummary();
+        feeRate = summary.list[1].feeRate;
+      }
+      const psbtHex = await wallet.sendBTC({ to: toAddress, amount: toAmount, utxos: _utxos, autoAdjust, feeRate });
       const psbt = Psbt.fromHex(psbtHex);
       const rawtx = psbt.extractTransaction().toHex();
       dispatch(
@@ -40,7 +44,8 @@ export function useCreateBitcoinTxCallback() {
           rawtx,
           psbtHex,
           fromAddress,
-          toAddress
+          toAddress,
+          feeRate
         })
       );
       return psbtHex;
@@ -90,12 +95,17 @@ export function useCreateOrdinalsTxCallback() {
   const utxos = useUtxos();
   const fetchUtxos = useFetchUtxosCallback();
   return useCallback(
-    async (toAddress: string, inscription: Inscription) => {
+    async (toAddress: string, inscription: Inscription, feeRate: number) => {
       let _utxos = utxos;
       if (_utxos.length === 0) {
         _utxos = await fetchUtxos();
       }
-      const psbtHex = await wallet.sendInscription({ to: toAddress, inscriptionId: inscription.id, utxos: _utxos });
+      const psbtHex = await wallet.sendInscription({
+        to: toAddress,
+        inscriptionId: inscription.id,
+        utxos: _utxos,
+        feeRate
+      });
       const psbt = Psbt.fromHex(psbtHex);
       const rawtx = psbt.extractTransaction().toHex();
       dispatch(
@@ -104,7 +114,8 @@ export function useCreateOrdinalsTxCallback() {
           psbtHex,
           fromAddress,
           toAddress,
-          inscription
+          inscription,
+          feeRate
         })
       );
       return psbtHex;

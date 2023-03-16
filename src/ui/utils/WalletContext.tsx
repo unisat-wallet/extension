@@ -15,7 +15,8 @@ import {
   NetworkType,
   AddressType,
   WalletKeyring,
-  Account
+  Account,
+  FeeSummary
 } from '@/shared/types';
 
 export interface WalletController {
@@ -104,8 +105,8 @@ export interface WalletController {
 
   signTransaction(psbt: bitcoin.Psbt, inputs: ToSignInput[]): Promise<bitcoin.Psbt>;
 
-  sendBTC(data: { to: string; amount: number; utxos: UTXO[]; autoAdjust: boolean }): Promise<string>;
-  sendInscription(data: { to: string; inscriptionId: string; utxos: UTXO[] }): Promise<string>;
+  sendBTC(data: { to: string; amount: number; utxos: UTXO[]; autoAdjust: boolean; feeRate: number }): Promise<string>;
+  sendInscription(data: { to: string; inscriptionId: string; utxos: UTXO[]; feeRate: number }): Promise<string>;
   pushTx(rawtx: string): Promise<string>;
 
   getInscriptionSummary(): Promise<InscriptionSummary>;
@@ -126,6 +127,8 @@ export interface WalletController {
 
   setKeyringAlianName(keyring: WalletKeyring, name: string): Promise<WalletKeyring>;
   changeAddressType(addressType: AddressType): Promise<void>;
+
+  getFeeSummary(): Promise<FeeSummary>;
 }
 
 const WalletContext = createContext<{

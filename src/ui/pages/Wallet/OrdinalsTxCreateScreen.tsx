@@ -7,6 +7,7 @@ import { useLocation } from 'react-router-dom';
 
 import { Inscription } from '@/shared/types';
 import CHeader from '@/ui/components/CHeader';
+import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { useCreateOrdinalsTxCallback, useFetchUtxosCallback, useOrdinalsTx } from '@/ui/state/transactions/hooks';
 import { isValidAddress } from '@/ui/utils';
@@ -33,6 +34,8 @@ export default function OrdinalsTxCreateScreen() {
     fetchUtxos();
   }, []);
 
+  const [feeRate, setFeeRate] = useState(5);
+
   useEffect(() => {
     setDisabled(true);
     setError('');
@@ -41,13 +44,18 @@ export default function OrdinalsTxCreateScreen() {
       return;
     }
 
-    if (toAddress == ordinalsTx.toAddress) {
+    if (feeRate <= 0) {
+      setError('Invalid fee rate');
+      return;
+    }
+
+    if (toAddress == ordinalsTx.toAddress && feeRate == ordinalsTx.feeRate) {
       //Prevent repeated triggering caused by setAmount
       setDisabled(false);
       return;
     }
 
-    createOrdinalsTx(toAddress, inscription)
+    createOrdinalsTx(toAddress, inscription, feeRate)
       .then(() => {
         setDisabled(false);
       })
@@ -55,7 +63,7 @@ export default function OrdinalsTxCreateScreen() {
         console.log(e);
         setError(e.message);
       });
-  }, [inputAddress]);
+  }, [inputAddress, feeRate]);
 
   return (
     <Layout className="h-full">
@@ -82,6 +90,15 @@ export default function OrdinalsTxCreateScreen() {
             autoFocus={true}
           />
 
+          <div className="flex justify-between w-full box text-soft-white">
+            <span>{t('Fee')}</span>
+          </div>
+
+          <FeeRateBar
+            onChange={(val) => {
+              setFeeRate(val);
+            }}
+          />
           <span className="text-lg text-error h-5">{error}</span>
           <Button
             disabled={disabled}

@@ -90,6 +90,14 @@ export interface AppSummary {
   }[];
 }
 
+export interface FeeSummary {
+  list: {
+    title: string;
+    desc: string;
+    feeRate: number;
+  }[];
+}
+
 export interface UTXO {
   txId: string;
   outputIndex: number;
