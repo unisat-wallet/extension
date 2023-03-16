@@ -114,8 +114,9 @@ export const AddressInputBar = ({
 
       {parseAddress && (
         <div
-          className="flex py-1 px-5 bg-stone-800"
+          className="flex py-1 px-5 bg-stone-800 items-center"
           style={{ borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }}>
+          <div className="px-2">{'->'}</div>
           <AddressText address={parseAddress} />
         </div>
       )}
