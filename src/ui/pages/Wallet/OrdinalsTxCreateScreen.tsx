@@ -1,15 +1,16 @@
-import { Button, Input } from 'antd';
-import { Layout } from 'antd';
+import { Button, Layout } from 'antd';
 import { Content } from 'antd/lib/layout/layout';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
 import { Inscription } from '@/shared/types';
+import { AddressInputBar } from '@/ui/components/AddressInputBar';
 import CHeader from '@/ui/components/CHeader';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { useCreateOrdinalsTxCallback, useFetchUtxosCallback, useOrdinalsTx } from '@/ui/state/transactions/hooks';
+import '@/ui/styles/domain.less';
 import { isValidAddress } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
@@ -24,7 +25,7 @@ export default function OrdinalsTxCreateScreen() {
     inscription: Inscription;
   };
   const ordinalsTx = useOrdinalsTx();
-  const [inputAddress, setInputAddress] = useState(ordinalsTx.toAddress);
+  const [toAddress, setToAddress] = useState(ordinalsTx.toAddress);
   const [error, setError] = useState('');
   const createOrdinalsTx = useCreateOrdinalsTxCallback();
 
@@ -39,7 +40,7 @@ export default function OrdinalsTxCreateScreen() {
   useEffect(() => {
     setDisabled(true);
     setError('');
-    const toAddress = inputAddress;
+
     if (!isValidAddress(toAddress)) {
       return;
     }
@@ -63,7 +64,7 @@ export default function OrdinalsTxCreateScreen() {
         console.log(e);
         setError(e.message);
       });
-  }, [inputAddress, feeRate]);
+  }, [toAddress, feeRate]);
 
   return (
     <Layout className="h-full">
@@ -80,14 +81,11 @@ export default function OrdinalsTxCreateScreen() {
             {inscription && <InscriptionPreview data={inscription} size="small" />}
           </div>
 
-          <Input
-            className="!mt-5 font-semibold text-white h-15_5 box default hover"
-            placeholder={t('Recipients BTC address')}
-            defaultValue={inputAddress}
-            onChange={async (e) => {
-              setInputAddress(e.target.value);
+          <AddressInputBar
+            defaultAddress={ordinalsTx.toAddress}
+            onChange={(val) => {
+              setToAddress(val);
             }}
-            autoFocus={true}
           />
 
           <div className="flex justify-between w-full box text-soft-white">

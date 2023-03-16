@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { COIN_DUST } from '@/shared/constant';
+import { AddressInputBar } from '@/ui/components/AddressInputBar';
 import CHeader from '@/ui/components/CHeader';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { useNavigate } from '@/ui/pages/MainRoute';
@@ -15,6 +16,7 @@ import {
   useFetchUtxosCallback,
   useSafeBalance
 } from '@/ui/state/transactions/hooks';
+import '@/ui/styles/domain.less';
 import { amountToSaothis, isValidAddress, satoshisToAmount } from '@/ui/utils';
 
 export default function TxCreateScreen() {
@@ -27,8 +29,8 @@ export default function TxCreateScreen() {
     bitcoinTx.toSatoshis > 0 ? satoshisToAmount(bitcoinTx.toSatoshis) : ''
   );
   const [disabled, setDisabled] = useState(true);
+  const [toAddress, setToAddress] = useState(bitcoinTx.toAddress);
 
-  const [inputAddress, setInputAddress] = useState(bitcoinTx.toAddress);
   const [error, setError] = useState('');
 
   const [autoAdjust, setAutoAdjust] = useState(false);
@@ -56,7 +58,6 @@ export default function TxCreateScreen() {
     setError('');
     setDisabled(true);
 
-    const toAddress = inputAddress;
     if (!isValidAddress(toAddress)) {
       return;
     }
@@ -101,7 +102,7 @@ export default function TxCreateScreen() {
         console.log(e);
         setError(e.message);
       });
-  }, [inputAddress, inputAmount, autoAdjust, feeRate]);
+  }, [toAddress, inputAmount, autoAdjust, feeRate]);
 
   const showSafeBalance = useMemo(
     () => new BigNumber(accountBalance.amount).eq(new BigNumber(safeBalance)) == false,
@@ -124,16 +125,12 @@ export default function TxCreateScreen() {
           <div className="flex justify-between w-full mt-5 box text-soft-white">
             <span>{t('Recipient')}</span>
           </div>
-          <Input
-            className="mt-5 font-semibold text-white h-15_5 box default hover"
-            // eslint-disable-next-line quotes
-            placeholder={"Recipient's BTC address"}
-            defaultValue={inputAddress}
-            onChange={async (e) => {
-              const val = e.target.value;
-              setInputAddress(val);
+
+          <AddressInputBar
+            defaultAddress={bitcoinTx.toAddress}
+            onChange={(val) => {
+              setToAddress(val);
             }}
-            autoFocus={true}
           />
 
           <div className="flex justify-between w-full mt-5 box text-soft-white">

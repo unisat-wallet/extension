@@ -257,6 +257,9 @@ export const COIN_SYMBOL = 'BTC';
 
 export const COIN_DUST = 1000;
 
+export const BTC_DOMAIN_LEVEL_ONE = '.btc';
+export const BTCDOMAINS_LINK = 'https://btcdomains.io';
+
 export const TO_LOCALE_STRING_CONFIG = {
   minimumFractionDigits: 8
 };

@@ -1,5 +1,5 @@
 import * as bitcoin from 'bitcoinjs-lib';
-import React, { createContext, ReactNode, useContext } from 'react';
+import { createContext, ReactNode, useContext } from 'react';
 
 import { AccountAsset } from '@/background/controller/wallet';
 import { ContactBookItem, ContactBookStore } from '@/background/service/contactBook';
@@ -108,6 +108,8 @@ export interface WalletController {
   sendBTC(data: { to: string; amount: number; utxos: UTXO[]; autoAdjust: boolean; feeRate: number }): Promise<string>;
   sendInscription(data: { to: string; inscriptionId: string; utxos: UTXO[]; feeRate: number }): Promise<string>;
   pushTx(rawtx: string): Promise<string>;
+
+  queryDomainInfo(domain: string): Promise<string>;
 
   getInscriptionSummary(): Promise<InscriptionSummary>;
   getAppSummary(): Promise<AppSummary>;

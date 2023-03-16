@@ -185,6 +185,14 @@ export class OpenApiService {
     }
     return data.result;
   }
+
+  async getDomainInfo(domain: string) {
+    const data = await this.httpGet('/v1/address/domain-info', { domain });
+    if (data.status == API_STATUS.FAILED) {
+      throw new Error(data.message);
+    }
+    return data.result;
+  }
 }
 
 export default new OpenApiService();

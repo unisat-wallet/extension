@@ -14,11 +14,17 @@ import {
   preferenceService,
   sessionService
 } from '@/background/service';
+import domainService, {
+  BTC_DOMAIN_API_MAINNET,
+  BTC_DOMAIN_API_TESTNET,
+  DomainService
+} from '@/background/service/domainService';
 import i18n from '@/background/service/i18n';
 import { DisplayedKeryring, Keyring } from '@/background/service/keyring';
 import {
   ADDRESS_TYPES,
   BRAND_ALIAN_TYPE_TEXT,
+  BTC_DOMAIN_LEVEL_ONE,
   CHAINS_ENUM,
   COIN_NAME,
   COIN_SYMBOL,
@@ -52,6 +58,7 @@ export type AccountAsset = {
 
 export class WalletController extends BaseController {
   openapi: OpenApiService = openapiService;
+  domainapi: DomainService = domainService;
 
   /* wallet */
   boot = (password: string) => keyringService.boot(password);
@@ -547,8 +554,10 @@ export class WalletController extends BaseController {
     preferenceService.setNetworkType(networkType);
     if (networkType === NetworkType.MAINNET) {
       this.openapi.setHost(OPENAPI_URL_MAINNET);
+      this.domainapi.setHost(BTC_DOMAIN_API_MAINNET);
     } else {
       this.openapi.setHost(OPENAPI_URL_TESTNET);
+      this.domainapi.setHost(BTC_DOMAIN_API_TESTNET);
     }
     const network = this.getNetworkName();
     sessionService.broadcastEvent('networkChanged', {
@@ -765,6 +774,17 @@ export class WalletController extends BaseController {
     }
 
     return cloneDeep(account) as Account;
+  };
+
+  queryDomainInfo = async (domain: string) => {
+    const text = domain.toLowerCase();
+    if (text.endsWith(BTC_DOMAIN_LEVEL_ONE)) {
+      const data = await domainService.queryDomain(domain);
+      return data.receive_address;
+    } else {
+      const data = await openapiService.getDomainInfo(domain);
+      return data;
+    }
   };
 
   getInscriptionSummary = async () => {
