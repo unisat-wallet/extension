@@ -50,7 +50,7 @@ export class UnisatProvider extends EventEmitter {
   };
 
   private _pushEventHandlers: PushEventHandlers;
-  private _requestPromise = new ReadyPromise(2);
+  private _requestPromise = new ReadyPromise(0);
 
   private _bcm = new BroadcastChannelMessage(channelName);
 
@@ -78,7 +78,8 @@ export class UnisatProvider extends EventEmitter {
         params: { icon, name, origin }
       });
 
-      this._requestPromise.check(2);
+      // Do not force to tabCheckin
+      // this._requestPromise.check(2);
     });
 
     try {
@@ -110,16 +111,14 @@ export class UnisatProvider extends EventEmitter {
    * Sending a message to the extension to receive will keep the service worker alive.
    */
   private keepAlive = () => {
-    this._bcm
-      .request({
-        method: 'keepAlive',
-        params: {}
-      })
-      .then((v) => {
-        setTimeout(() => {
-          this.keepAlive();
-        }, 1000);
-      });
+    this._request({
+      method: 'keepAlive',
+      params: {}
+    }).then((v) => {
+      setTimeout(() => {
+        this.keepAlive();
+      }, 1000);
+    });
   };
 
   private _requestPromiseCheckVisibility = () => {
