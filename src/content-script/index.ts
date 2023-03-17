@@ -1,6 +1,9 @@
 import extension from 'extensionizer';
+import { nanoid } from 'nanoid';
 
 import { Message } from '@/shared/utils';
+
+const channelName = nanoid();
 
 /**
  * Injects a script tag into the current document
@@ -12,11 +15,11 @@ function injectScript() {
     const container = document.head || document.documentElement;
     const scriptTag = document.createElement('script');
     scriptTag.setAttribute('async', 'false');
+    scriptTag.setAttribute('channel', channelName);
     scriptTag.src = extension.runtime.getURL('pageProvider.js');
     container.insertBefore(scriptTag, container.children[0]);
     container.removeChild(scriptTag);
 
-    const channelName = 'UNISAT';
     const { BroadcastChannelMessage, PortMessage } = Message;
 
     const pm = new PortMessage().connect();

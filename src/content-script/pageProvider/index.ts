@@ -9,8 +9,6 @@ import PushEventHandlers from './pushEventHandlers';
 import ReadyPromise from './readyPromise';
 import { $, domReadyCall } from './utils';
 
-const channelName = 'UNISAT';
-
 const log = (event, ...args) => {
   if (process.env.NODE_ENV !== 'production') {
     console.log(
@@ -20,6 +18,8 @@ const log = (event, ...args) => {
     );
   }
 };
+const script = document.currentScript;
+const channelName = script?.getAttribute('channel') || 'UNISAT';
 
 export interface Interceptor {
   onRequest?: (data: any) => any;
