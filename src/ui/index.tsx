@@ -1,6 +1,5 @@
 import en from 'antd/es/locale/en_US';
 import message from 'antd/lib/message';
-import { lazy } from 'react';
 import ReactDOM from 'react-dom/client';
 import { Provider } from 'react-redux';
 
@@ -12,15 +11,15 @@ import AccountUpdater from '@/ui/state/accounts/updater';
 import '@/ui/styles/antd.less';
 import '@/ui/styles/rc-virtual-list.less';
 import '@/ui/styles/tailwind.less';
-import i18n, { addResourceBundle } from '@/ui/utils/i18n';
 
 import { AppDimensions } from './components/Responsive';
+import AsyncMainRoute from './pages/MainRoute';
 import store from './state';
 import { WalletProvider } from './utils';
 
 // import 'default-passive-events'
 
-const AsyncMainRoute = lazy(() => import('./pages/MainRoute'));
+// const AsyncMainRoute = lazy(() => import('./pages/MainRoute'));
 
 message.config({
   maxCount: 1
@@ -122,21 +121,32 @@ function Updaters() {
   );
 }
 
-wallet.getLocale().then((locale) => {
-  addResourceBundle(locale).then(() => {
-    i18n.changeLanguage(locale);
-    // ReactDOM.render(<Views wallet={wallet} />, document.getElementById('root'));
-    const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+// wallet.getLocale().then((locale) => {
+//   addResourceBundle(locale).then(() => {
+//     i18n.changeLanguage(locale);
+//     // ReactDOM.render(<Views wallet={wallet} />, document.getElementById('root'));
+//     const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+//     root.render(
+//       <Provider store={store}>
+//         <WalletProvider {...antdConfig} wallet={wallet as any}>
+//           <AppDimensions>
+//             <Updaters />
+//             <AsyncMainRoute />
+//           </AppDimensions>
+//         </WalletProvider>
+//       </Provider>
+//     );
+//   });
+// });
 
-    root.render(
-      <Provider store={store}>
-        <WalletProvider {...antdConfig} wallet={wallet as any}>
-          <AppDimensions>
-            <Updaters />
-            <AsyncMainRoute />
-          </AppDimensions>
-        </WalletProvider>
-      </Provider>
-    );
-  });
-});
+const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+root.render(
+  <Provider store={store}>
+    <WalletProvider {...antdConfig} wallet={wallet as any}>
+      <AppDimensions>
+        <Updaters />
+        <AsyncMainRoute />
+      </AppDimensions>
+    </WalletProvider>
+  </Provider>
+);
