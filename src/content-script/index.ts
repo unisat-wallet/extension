@@ -105,13 +105,22 @@ function blockedDomainCheck() {
   return false;
 }
 
+function iframeCheck() {
+  const isInIframe = self != top;
+  if (isInIframe) {
+    return true;
+  } else {
+    return false;
+  }
+}
+
 /**
  * Determines if the provider should be injected
  *
  * @returns {boolean} {@code true} Whether the provider should be injected
  */
 function shouldInjectProvider() {
-  return doctypeCheck() && suffixCheck() && documentElementCheck() && !blockedDomainCheck();
+  return doctypeCheck() && suffixCheck() && documentElementCheck() && !blockedDomainCheck() && !iframeCheck();
 }
 
 if (shouldInjectProvider()) {
