@@ -28,7 +28,7 @@
     "service_worker": "background.js"
   },
   "homepage_url": "https://unisat.io",
-  "permissions": ["storage", "unlimitedStorage", "activeTab", "notifications"],
+  "permissions": ["storage", "unlimitedStorage"],
   "short_name": "__MSG_appName__",
 
   "content_scripts": [
