@@ -1,5 +1,8 @@
 
 # UniSat Wallet Release Notes
+## v1.1.10
+**Major changes**
+- Support customization of outputValue
 
 ## v1.1.9
 **Minor changes**
