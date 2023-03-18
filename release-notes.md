@@ -1,6 +1,16 @@
 
 # UniSat Wallet Release Notes
 
+## v1.1.9
+**Minor changes**
+- Disable in iframes
+- Keep unlocked for longer
+- Fix duplicate pop-up windows
+
+## v1.1.8
+**Major changes**
+- Remove the "activeTab" and "notifications" permissions
+
 ## v1.1.7
 **Major changes**
 - Support .sats, .btc as recipient address
