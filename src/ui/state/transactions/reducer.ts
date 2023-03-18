@@ -32,6 +32,7 @@ export interface OrdinalsTx {
   psbtHex: string;
   feeRate: number;
   toDomain: string;
+  outputValue: number;
 }
 
 export interface TransactionsState {
@@ -71,7 +72,8 @@ export const initialState: TransactionsState = {
     sending: false,
     psbtHex: '',
     feeRate: 5,
-    toDomain: ''
+    toDomain: '',
+    outputValue: 10000
   },
   utxos: []
 };
@@ -119,6 +121,7 @@ const slice = createSlice({
           psbtHex?: string;
           feeRate?: number;
           toDomain?: string;
+          outputValue?: number;
         };
       }
     ) {

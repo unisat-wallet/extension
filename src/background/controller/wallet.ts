@@ -625,12 +625,14 @@ export class WalletController extends BaseController {
     to,
     inscriptionId,
     utxos,
-    feeRate
+    feeRate,
+    outputValue
   }: {
     to: string;
     inscriptionId: string;
     utxos: UTXO[];
     feeRate: number;
+    outputValue: number;
   }) => {
     const account = await preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
@@ -656,9 +658,9 @@ export class WalletController extends BaseController {
       network: psbtNetwork,
       changeAddress: account.address,
       pubkey: account.pubkey,
-      feeRate
+      feeRate,
+      outputValue
     });
-
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     psbt.__CACHE.__UNSAFE_SIGN_NONSEGWIT = false;

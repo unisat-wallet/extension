@@ -16,7 +16,7 @@ export const AddressInputBar = ({
   onChange: (params: { address: string; domain: string }) => void;
 }) => {
   const [validAddress, setValidAddress] = useState(defaultInfo.address);
-  const [parseAddress, setParseAddress] = useState(defaultInfo.address);
+  const [parseAddress, setParseAddress] = useState(defaultInfo.domain ? defaultInfo.address : '');
   const [parseError, setParseError] = useState('');
   const [formatError, setFormatError] = useState('');
 

@@ -107,7 +107,12 @@ export function useCreateOrdinalsTxCallback() {
   const utxos = useUtxos();
   const fetchUtxos = useFetchUtxosCallback();
   return useCallback(
-    async (toInfo: { address: string; domain: string }, inscription: Inscription, feeRate: number) => {
+    async (
+      toInfo: { address: string; domain: string },
+      inscription: Inscription,
+      feeRate: number,
+      outputValue: number
+    ) => {
       let _utxos = utxos;
       if (_utxos.length === 0) {
         _utxos = await fetchUtxos();
@@ -116,7 +121,8 @@ export function useCreateOrdinalsTxCallback() {
         to: toInfo.address,
         inscriptionId: inscription.id,
         utxos: _utxos,
-        feeRate
+        feeRate,
+        outputValue
       });
       const psbt = Psbt.fromHex(psbtHex);
       const rawtx = psbt.extractTransaction().toHex();
@@ -128,7 +134,8 @@ export function useCreateOrdinalsTxCallback() {
           toAddress: toInfo.address,
           toDomain: toInfo.domain,
           inscription,
-          feeRate
+          feeRate,
+          outputValue
         })
       );
       return psbtHex;
