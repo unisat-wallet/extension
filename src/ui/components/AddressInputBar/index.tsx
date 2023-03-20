@@ -2,8 +2,7 @@ import { Input } from 'antd';
 import bitcore from 'bitcore-lib';
 import { useEffect, useState } from 'react';
 
-import { API_STATUS } from '@/background/service/domainService';
-import { BTC_DOMAIN_LEVEL_ONE, SATS_DOMAIN } from '@/shared/constant';
+import { SATS_DOMAIN } from '@/shared/constant';
 import { useWallet } from '@/ui/utils';
 
 import { AddressText } from '../AddressText';
@@ -62,33 +61,8 @@ export const AddressInputBar = ({
         })
         .catch((err: Error) => {
           const errMsg = err.message + ' for ' + inputAddress;
-          if (err.cause == API_STATUS.NOTFOUND) {
-            setParseError(errMsg);
-          } else {
-            setFormatError(errMsg);
-          }
+          setFormatError(errMsg);
         });
-    } else if (inputAddress.toLowerCase().endsWith(BTC_DOMAIN_LEVEL_ONE)) {
-      const reg = /^[0-9a-zA-Z.]*$/;
-      if (reg.test(inputAddress)) {
-        wallet
-          .queryDomainInfo(inputAddress)
-          .then((address: string) => {
-            setParseAddress(address);
-            setValidAddress(address);
-          })
-          .catch((err: Error) => {
-            const errMsg = err.message + ' for ' + inputAddress;
-            if (err.cause == API_STATUS.NOTFOUND) {
-              setParseError(`${inputAddress} does not exist`);
-              // setParseError(errMsg);
-            } else {
-              setFormatError(errMsg);
-            }
-          });
-      } else {
-        setFormatError('Domain name format is not correct');
-      }
     } else {
       const isValid = bitcore.Address.isValid(inputAddress);
       if (!isValid) {
