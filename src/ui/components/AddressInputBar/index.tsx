@@ -78,7 +78,7 @@ export const AddressInputBar = ({
       <Input
         className="mt-5 font-semibold text-white h-15_5 box default hover"
         // eslint-disable-next-line quotes
-        placeholder={'Address, name.sats, or name.btc '}
+        placeholder={'Address, name.sats '}
         defaultValue={inputVal}
         onChange={async (e) => {
           handleInputAddress(e);
