@@ -53,6 +53,8 @@ export default function InscriptionPreview({
     const detail = data.detail;
     const date = new Date(detail.timestamp);
     const time = getDateShowdate(date);
+    const isUnconfirmed = date.getTime() < 100;
+    const numberStr = isUnconfirmed ? 'unconfirmed' : `# ${data.number}`;
     return (
       <div
         onClick={(e) => {
@@ -63,11 +65,13 @@ export default function InscriptionPreview({
         <Iframe preview={detail.preview} className={sizeMap[size].iframe} />
 
         <div className="px-2 pt-1 text-sm w-24" style={{ color: '#f6ae2d' }}>
-          # {data.number}
+          {numberStr}
         </div>
-        <div className={`px-1 pb-1 text-sm ${sizeMap[size].time}`} style={{ color: '#8A8A8A' }}>
-          {time}
-        </div>
+        {isUnconfirmed == false && (
+          <div className={`px-1 pb-1 text-sm ${sizeMap[size].time}`} style={{ color: '#8A8A8A' }}>
+            {time}
+          </div>
+        )}
       </div>
     );
   } else {

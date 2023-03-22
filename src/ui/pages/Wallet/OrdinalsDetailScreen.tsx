@@ -25,7 +25,11 @@ export default function OrdinalsDetailScreen() {
   const dispatch = useAppDispatch();
 
   const detail = inscription.detail;
-  const isMempool = inscription.num === -1;
+  if (!detail) {
+    return <div></div>;
+  }
+  const date = new Date(detail.timestamp);
+  const isUnconfirmed = date.getTime() < 100;
   return (
     <Layout className="h-full">
       <CHeader
@@ -34,9 +38,9 @@ export default function OrdinalsDetailScreen() {
         }}
       />
       <Content style={{ backgroundColor: '#1C1919', overflowY: 'auto', overflowX: 'hidden' }}>
-        <div className="flex flex-col items-strech mx-5 mt-5 gap-3_75 justify-evenly">
+        <div className="flex flex-col items-strech mx-5 my-5 gap-3_75 justify-evenly">
           <div className="flex self-center px-2 text-2xl font-semibold h-13">
-            {isMempool ? 'Inscription (not confirmed yet)' : `Inscription ${inscription.num}`}
+            {isUnconfirmed ? 'Inscription (not confirmed yet)' : `Inscription ${inscription.num}`}
           </div>
           <InscriptionPreview className="self-center" data={inscription} size="large" />
           {withSend && (
