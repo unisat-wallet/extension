@@ -191,7 +191,7 @@ export default function TxCreateScreen() {
             }}
           />
 
-          <span className="text-lg text-error h-5">{error}</span>
+          {error && <span className="text-lg text-error">{error}</span>}
           <Button
             disabled={disabled}
             size="large"

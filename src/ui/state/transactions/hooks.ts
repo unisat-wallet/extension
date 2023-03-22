@@ -31,7 +31,7 @@ export function useCreateBitcoinTxCallback() {
       addressInfo: { address: string; domain: string },
       toAmount: number,
       feeRate?: number,
-      autoAdjust = false
+      receiverToPayFee = false
     ) => {
       let _utxos = utxos;
       if (_utxos.length === 0) {
@@ -45,7 +45,7 @@ export function useCreateBitcoinTxCallback() {
         to: addressInfo.address,
         amount: toAmount,
         utxos: _utxos,
-        autoAdjust,
+        receiverToPayFee,
         feeRate
       });
       const psbt = Psbt.fromHex(psbtHex);

@@ -569,13 +569,13 @@ export class WalletController extends BaseController {
     to,
     amount,
     utxos,
-    autoAdjust,
+    receiverToPayFee,
     feeRate
   }: {
     to: string;
     amount: number;
     utxos: UTXO[];
-    autoAdjust: boolean;
+    receiverToPayFee: boolean;
     feeRate: number;
   }) => {
     const account = preferenceService.getCurrentAccount();
@@ -601,7 +601,7 @@ export class WalletController extends BaseController {
       wallet: this,
       network: psbtNetwork,
       changeAddress: account.address,
-      force: autoAdjust,
+      receiverToPayFee,
       pubkey: account.pubkey,
       feeRate
     });
