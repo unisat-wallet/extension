@@ -1,5 +1,18 @@
 
 # UniSat Wallet Release Notes
+## v1.1.12
+**Major changes**
+- Fix some error of creating transactions
+
+**Minor changes**
+- Can choose P2TR address type when restoring from Xverse Wallet
+- Hide Inscription Number when unconfirmed
+- Remove .btc text
+
+## v1.1.11
+**Major changes**
+- Remove .btc domain
+
 ## v1.1.10
 **Major changes**
 - Support customization of outputValue
