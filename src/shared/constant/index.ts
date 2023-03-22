@@ -183,7 +183,7 @@ export const RESTORE_WALLETS: { value: RestoreWalletType; name: string; addressT
   {
     value: RestoreWalletType.XVERSE,
     name: 'Xverse Wallet',
-    addressTypes: [AddressType.P2SH_P2WPKH]
+    addressTypes: [AddressType.P2SH_P2WPKH, AddressType.P2TR]
   },
   {
     value: RestoreWalletType.OTHERS,
