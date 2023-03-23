@@ -262,3 +262,7 @@ export const TO_LOCALE_STRING_CONFIG = {
 };
 
 export const SATS_DOMAIN = '.sats';
+
+export const GITHUB_URL = 'https://github.com/unisat-wallet/extension';
+export const DISCORD_URL = 'https://discord.com/invite/EMskB2sMz8';
+export const TWITTER_URL = 'https://twitter.com/unisat_wallet';

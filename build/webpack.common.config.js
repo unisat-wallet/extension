@@ -486,7 +486,7 @@ const config = (env) => {
       //   '#PAGEPROVIDER#': 'pageProvider',
       // }),
       new webpack.DefinePlugin({
-        'process.env.version': JSON.stringify(`version: ${version}`),
+        'process.env.version': JSON.stringify(`Version: ${version}`),
         'process.env.release': JSON.stringify(version)
       }),
       new MiniCssExtractPlugin({

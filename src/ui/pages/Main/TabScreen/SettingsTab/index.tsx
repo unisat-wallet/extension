@@ -4,7 +4,7 @@ import VirtualList from 'rc-virtual-list';
 import { forwardRef, useEffect, useState } from 'react';
 import { NavigateFunction, useNavigate } from 'react-router-dom';
 
-import { ADDRESS_TYPES, NETWORK_TYPES } from '@/shared/constant';
+import { ADDRESS_TYPES, DISCORD_URL, GITHUB_URL, NETWORK_TYPES, TWITTER_URL } from '@/shared/constant';
 import { useExtensionIsInTab, useOpenExtensionInTab } from '@/ui/features/browser/tabs';
 import { getCurrentTab } from '@/ui/features/browser/tabs';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
@@ -198,6 +198,37 @@ export default function SettingsTab() {
           }}>
           {(item, index) => <MyItem key={index} navigate={navigate} item={item} />}
         </VirtualList>
+        <div className="flex justify-center my-5">
+          <img
+            className="mx-4 cursor-pointer"
+            src="./images/discord.svg"
+            width={20}
+            height={20}
+            onClick={() => {
+              window.open(DISCORD_URL);
+            }}
+          />
+          <img
+            className="mx-4 cursor-pointer"
+            src="./images/twitter.svg"
+            width={20}
+            height={20}
+            onClick={() => {
+              window.open(TWITTER_URL);
+            }}
+          />
+          <img
+            className="mx-4 cursor-pointer"
+            src="./images/github.svg"
+            width={20}
+            height={20}
+            onClick={() => {
+              window.open(GITHUB_URL);
+            }}
+          />
+        </div>
+
+        <div className="text-center mb-5 font-normal opacity-60">{`${process.env.version}`} </div>
       </div>
     </div>
   );
