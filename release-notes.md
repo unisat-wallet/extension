@@ -1,5 +1,15 @@
 
 # UniSat Wallet Release Notes
+
+## v1.1.14
+**Major changes**
+- Change logo
+- Add activeTab permission
+
+## v1.1.13
+**Major changes**
+- Fix issue in v1.1.12
+
 ## v1.1.12
 **Major changes**
 - Fix some error of creating transactions
