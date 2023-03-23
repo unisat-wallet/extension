@@ -50,9 +50,9 @@ export default function MainScreen() {
   const currentKeyring = useCurrentKeyring();
   useEffect(() => {
     const run = async () => {
-      const res = await getCurrentTab();
-      if (!res) return;
-      const site = await wallet.getCurrentConnectedSite(res.id);
+      const activeTab = await getCurrentTab();
+      if (!activeTab) return;
+      const site = await wallet.getCurrentConnectedSite(activeTab.id);
       if (site) {
         setConnected(site.isConnected);
       }
@@ -64,13 +64,13 @@ export default function MainScreen() {
     <Layout className="h-full" style={{ backgroundColor: 'blue', flex: 1 }}>
       <CHeader
         LeftComponent={
-          <div
-            className="duration-80  cursor-pointer"
-            onClick={() => {
-              navigate('ConnectedSitesScreen');
-            }}>
+          <div className="duration-80  cursor-pointer">
             {connected ? (
-              <div className="flex items-center">
+              <div
+                className="flex items-center"
+                onClick={() => {
+                  navigate('ConnectedSitesScreen');
+                }}>
                 <div className="text-green-300 font-semibold mr-3 text-11">·</div>
                 <span className="pt-1 text-sm">Dapp Connected</span>
               </div>
