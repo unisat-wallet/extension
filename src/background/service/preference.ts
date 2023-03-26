@@ -6,9 +6,8 @@ import { EVENTS } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 import { Account, AddressType, BitcoinBalance, NetworkType, TxHistoryItem } from '@/shared/types';
 
-import { publicKeyToAddress } from '../utils/tx-utils';
 import browser from '../webapi/browser';
-import { i18n, keyringService, sessionService } from './index';
+import { i18n, sessionService } from './index';
 
 const version = process.env.release || '0';
 
@@ -35,6 +34,11 @@ export interface PreferenceStore {
   keyringAlianNames: {
     [key: string]: string;
   };
+  accountAlianNames: {
+    [key: string]: string;
+  };
+  editingKeyringIndex: number;
+  editingAccount: Account | undefined | null;
 }
 
 const SUPPORT_LOCALES = ['en'];
@@ -51,6 +55,8 @@ class PreferenceService {
       template: {
         currentKeyringIndex: 0,
         currentAccount: undefined,
+        editingKeyringIndex: 0,
+        editingAccount: undefined,
         externalLinkAck: false,
         balanceMap: {},
         historyMap: {},
@@ -64,7 +70,8 @@ class PreferenceService {
         currency: 'USD',
         addressType: AddressType.P2WPKH,
         networkType: NetworkType.MAINNET,
-        keyringAlianNames: {}
+        keyringAlianNames: {},
+        accountAlianNames: {}
       }
     });
     if (!this.store.locale || this.store.locale !== defaultLang) {
@@ -113,29 +120,16 @@ class PreferenceService {
     if (!this.store.keyringAlianNames) {
       this.store.keyringAlianNames = {};
     }
+
+    if (!this.store.accountAlianNames) {
+      this.store.accountAlianNames = {};
+    }
   };
 
   getAcceptLanguages = async () => {
     let langs = await browser.i18n.getAcceptLanguages();
     if (!langs) langs = [];
     return langs.map((lang) => lang.replace(/-/g, '_')).filter((lang) => SUPPORT_LOCALES.includes(lang));
-  };
-
-  /**
-   * If current account be hidden or deleted
-   * call this function to reset current account
-   * to the first address in address list
-   */
-  resetCurrentAccount = async () => {
-    const [keyringAccount] = await keyringService.getAllVisibleAccountsArray();
-    const pubkey = keyringAccount.pubkey;
-    const address = publicKeyToAddress(pubkey, this.store.addressType, this.store.networkType);
-    this.setCurrentAccount({
-      type: keyringAccount.type,
-      pubkey,
-      address,
-      brandName: keyringAccount.brandName
-    });
   };
 
   getCurrentAccount = () => {
@@ -301,6 +295,37 @@ class PreferenceService {
       this.store.keyringAlianNames[keyringKey] = defaultName;
     }
     return this.store.keyringAlianNames[keyringKey];
+  };
+
+  // accountAlianNames
+  setAccountAlianName = (accountKey: string, name: string) => {
+    this.store.accountAlianNames[accountKey] = name;
+  };
+
+  getAccountAlianName = (accountKey: string, defaultName?: string) => {
+    const name = this.store.accountAlianNames[accountKey];
+    if (!name && defaultName) {
+      this.store.accountAlianNames[accountKey] = defaultName;
+    }
+    return this.store.accountAlianNames[accountKey];
+  };
+
+  // editingKeyringIndex
+  getEditingKeyringIndex = () => {
+    return this.store.editingKeyringIndex;
+  };
+
+  setEditingKeyringIndex = (keyringIndex: number) => {
+    this.store.editingKeyringIndex = keyringIndex;
+  };
+
+  // editingAccount
+  getEditingAccount = () => {
+    return cloneDeep(this.store.editingAccount);
+  };
+
+  setEditingAccount = (account?: Account | null) => {
+    this.store.editingAccount = account;
   };
 }
 

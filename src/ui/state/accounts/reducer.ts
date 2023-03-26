@@ -37,7 +37,8 @@ const initialAccount = {
   displayBrandName: '',
   index: 0,
   balance: 0,
-  pubkey: ''
+  pubkey: '',
+  key: ''
 };
 
 export const initialState: AccountsState = {
@@ -150,6 +151,22 @@ const slice = createSlice({
     },
     reset(state) {
       return initialState;
+    },
+    updateAccountName(
+      state,
+      action: {
+        payload: Account;
+      }
+    ) {
+      const account = action.payload;
+      if (state.current.key === account.key) {
+        state.current.alianName = account.alianName;
+      }
+      state.accounts.forEach((v) => {
+        if (v.key === account.key) {
+          v.alianName = account.alianName;
+        }
+      });
     }
   },
   extraReducers: (builder) => {

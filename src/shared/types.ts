@@ -141,4 +141,5 @@ export interface Account {
   displayBrandName?: string;
   index?: number;
   balance?: number;
+  key: string;
 }

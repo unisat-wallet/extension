@@ -29,12 +29,12 @@ import WelcomeScreen from './Main/WelcomeScreen';
 import AddressTypeScreen from './Settings/AddressTypeScreen';
 import ChangeLanguageScreen from './Settings/ChangeLanguageScreen';
 import ChangePasswordScreen from './Settings/ChangePasswordScreen';
+import EditAccountNameScreen from './Settings/EditAccountNameScreen';
 import EditWalletNameScreen from './Settings/EditWalletNameScreen';
 import ExportMnemonicsScreen from './Settings/ExportMnemonicsScreen';
 import ExportPrivateKeyScreen from './Settings/ExportPrivateKeyScreen';
 import ManageWalletScreen from './Settings/ManageWalletScreen';
 import NetworkTypeScreen from './Settings/NetworkTypeScreen';
-import RemoveAccount from './Settings/RemoveAccountScreen';
 import RemoveWalletScreen from './Settings/RemoveWalletScreen';
 import UpgradeNoticeScreen from './Settings/UpgradeNoticeScreen';
 import HistoryScreen from './Wallet/HistoryScreen';
@@ -141,10 +141,6 @@ const routes = {
     path: '/settings/export-privatekey',
     element: <ExportPrivateKeyScreen />
   },
-  RemoveAccount: {
-    path: '/settings/remove-account',
-    element: <RemoveAccount />
-  },
   HistoryScreen: {
     path: '/wallet/history',
     element: <HistoryScreen />
@@ -188,6 +184,10 @@ const routes = {
   AddressTypeScreen: {
     path: '/settings/address-type',
     element: <AddressTypeScreen />
+  },
+  EditAccountNameScreen: {
+    path: '/settings/edit-account-name',
+    element: <EditAccountNameScreen />
   }
 };
 
@@ -217,43 +217,49 @@ const Main = () => {
   });
   const self = selfRef.current;
   const init = useCallback(async () => {
-    if (!self.accountLoaded) {
-      const currentAccount = await wallet.getCurrentAccount();
-      dispatch(accountActions.setCurrent(currentAccount));
+    try {
+      if (!self.accountLoaded) {
+        const currentAccount = await wallet.getCurrentAccount();
+        if (currentAccount) {
+          dispatch(accountActions.setCurrent(currentAccount));
 
-      const accounts = await wallet.getAccounts();
-      dispatch(accountActions.setAccounts(accounts));
+          const accounts = await wallet.getAccounts();
+          dispatch(accountActions.setAccounts(accounts));
 
-      if (accounts.length > 0) {
-        self.accountLoaded = true;
+          if (accounts.length > 0) {
+            self.accountLoaded = true;
+          }
+        }
       }
+
+      if (!self.settingsLoaded) {
+        const networkType = await wallet.getNetworkType();
+        dispatch(
+          settingsActions.updateSettings({
+            networkType
+          })
+        );
+
+        const _locale = await wallet.getLocale();
+        dispatch(settingsActions.updateSettings({ locale: _locale }));
+        self.settingsLoaded = true;
+      }
+
+      if (!self.summaryLoaded) {
+        wallet.getInscriptionSummary().then((data) => {
+          dispatch(accountActions.setInscriptionSummary(data));
+        });
+
+        wallet.getAppSummary().then((data) => {
+          dispatch(accountActions.setAppSummary(data));
+        });
+        self.summaryLoaded = true;
+      }
+
+      dispatch(globalActions.update({ isReady: true }));
+    } catch (e) {
+      console.log('init error', e);
     }
-
-    if (!self.settingsLoaded) {
-      const networkType = await wallet.getNetworkType();
-      dispatch(
-        settingsActions.updateSettings({
-          networkType
-        })
-      );
-
-      const _locale = await wallet.getLocale();
-      dispatch(settingsActions.updateSettings({ locale: _locale }));
-      self.settingsLoaded = true;
-    }
-
-    if (!self.summaryLoaded) {
-      wallet.getInscriptionSummary().then((data) => {
-        dispatch(accountActions.setInscriptionSummary(data));
-      });
-
-      wallet.getAppSummary().then((data) => {
-        dispatch(accountActions.setAppSummary(data));
-      });
-      self.summaryLoaded = true;
-    }
-
-    dispatch(globalActions.update({ isReady: true }));
   }, [wallet, dispatch, isReady, isUnlocked]);
 
   useEffect(() => {

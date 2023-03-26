@@ -2,17 +2,21 @@ import { Button, Input, Layout, message } from 'antd';
 import { Content } from 'antd/lib/layout/layout';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useLocation } from 'react-router-dom';
 
-import { KEYRING_TYPE } from '@/shared/constant';
+import { Account } from '@/shared/types';
 import CHeader from '@/ui/components/CHeader';
-import { useAccounts, useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { copyToClipboard, useWallet } from '@/ui/utils';
 
 type Status = '' | 'error' | 'warning' | undefined;
 
 export default function ExportPrivateKeyScreen() {
   const { t } = useTranslation();
+
+  const { state } = useLocation();
+  const { account } = state as {
+    account: Account;
+  };
 
   const [password, setPassword] = useState('');
   const [disabled, setDisabled] = useState(true);
@@ -21,12 +25,8 @@ export default function ExportPrivateKeyScreen() {
   const [status, setStatus] = useState<Status>('');
   const [error, setError] = useState('');
   const wallet = useWallet();
-  const currentAccount = useCurrentAccount();
-  const accountsList = useAccounts();
-  const currentKeyring = useCurrentKeyring();
   const btnClick = async () => {
     try {
-      const account = await wallet.getCurrentAccount();
       const _res = await wallet.getPrivateKey(password, account);
       setPrivateKey(_res);
     } catch (e) {
@@ -59,7 +59,6 @@ export default function ExportPrivateKeyScreen() {
     });
   }
 
-  const accountIndex = currentKeyring.accounts.findIndex((v) => v.pubkey === currentAccount.pubkey);
   return (
     <Layout className="h-full">
       <CHeader
@@ -109,11 +108,6 @@ export default function ExportPrivateKeyScreen() {
                   {privateKey}
                 </div>
               </div>
-              {currentAccount?.type == KEYRING_TYPE.HdKeyring ? (
-                <div className="text-soft-white -mt-2_5">
-                  {`Derivation Path: ${currentKeyring.hdPath}/${accountIndex}`}
-                </div>
-              ) : null}
             </div>
           )}
         </div>

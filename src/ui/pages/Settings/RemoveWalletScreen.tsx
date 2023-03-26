@@ -21,7 +21,6 @@ function AlertPanel({ visible, onCancel }) {
   const { t } = useTranslation();
   const wallet = useWallet();
   const navigate = useNavigate();
-  const currentAccount = useCurrentAccount();
   const currentKeyring = useCurrentKeyring();
   const dispatch = useAppDispatch();
 

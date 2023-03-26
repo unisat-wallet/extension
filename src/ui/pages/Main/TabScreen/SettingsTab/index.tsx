@@ -24,14 +24,14 @@ interface Setting {
 }
 
 const SettingList: Setting[] = [
-  {
-    label: 'Manage Wallet',
-    value: '',
-    desc: '',
-    action: 'manage-wallet',
-    route: '/settings/manage-wallet',
-    right: true
-  },
+  // {
+  //   label: 'Manage Wallet',
+  //   value: '',
+  //   desc: '',
+  //   action: 'manage-wallet',
+  //   route: '/settings/manage-wallet',
+  //   right: true
+  // },
 
   {
     label: 'Address Type',

@@ -30,6 +30,24 @@ const openIndexPage = (route = ''): Promise<number | undefined> => {
   return createTab(url);
 };
 
+const queryCurrentActiveTab = async function () {
+  return new Promise((resolve) => {
+    chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+      if (!tabs) return resolve({});
+      const [activeTab] = tabs;
+      const { id, title, url } = activeTab;
+      const { origin, protocol } = url ? new URL(url) : { origin: null, protocol: null };
+
+      if (!origin || origin === 'null') {
+        resolve({});
+        return;
+      }
+
+      resolve({ id, title, origin, protocol, url });
+    });
+  });
+};
+
 export default tabEvent;
 
-export { createTab, openIndexPage };
+export { createTab, openIndexPage, queryCurrentActiveTab };

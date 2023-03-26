@@ -88,8 +88,6 @@ export interface WalletController {
     addressType: AddressType
   ): Promise<WalletKeyring>;
   removeKeyring(keyring: WalletKeyring): Promise<WalletKeyring>;
-  removeAddress(address: string, type: string): Promise<void>;
-  resetCurrentAccount(): Promise<void>;
   deriveNewAccountFromMnemonic(keyring: WalletKeyring, alianName?: string): Promise<string[]>;
   getAccountsCount(): Promise<number>;
   getAllAlianName: () => (ContactBookItem | undefined)[];
@@ -142,7 +140,14 @@ export interface WalletController {
   setKeyringAlianName(keyring: WalletKeyring, name: string): Promise<WalletKeyring>;
   changeAddressType(addressType: AddressType): Promise<void>;
 
+  setAccountAlianName(account: Account, name: string): Promise<Account>;
   getFeeSummary(): Promise<FeeSummary>;
+
+  setEditingKeyring(keyringIndex: number): Promise<void>;
+  getEditingKeyring(): Promise<WalletKeyring>;
+
+  setEditingAccount(account: Account): Promise<void>;
+  getEditingAccount(): Promise<Account>;
 }
 
 const WalletContext = createContext<{

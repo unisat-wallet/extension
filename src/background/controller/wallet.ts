@@ -2,7 +2,6 @@
 import * as bitcoin from 'bitcoinjs-lib';
 import { address as PsbtAddress } from 'bitcoinjs-lib';
 import ECPairFactory from 'ecpair';
-import { cloneDeep } from 'lodash';
 import * as ecc from 'tiny-secp256k1';
 
 import {
@@ -194,6 +193,7 @@ export class WalletController extends BaseController {
   getMnemonics = async (password: string) => {
     await this.verifyPassword(password);
     const keyring = await this.getCurrentKeyring();
+    if (!keyring) throw new Error('no current keyring');
     const originKeyring = keyringService.keyrings[keyring.index];
     const serialized = await originKeyring.serialize();
     return {
@@ -268,35 +268,12 @@ export class WalletController extends BaseController {
     return this.displayedKeyringToWalletKeyring(displayedKeyring, -1, false);
   };
 
-  removeAddress = async (pubkey: string, type: string, brand?: string) => {
-    await keyringService.removeAccount(pubkey, type, brand);
-    if (!(await keyringService.hasPubkey(pubkey))) {
-      contactBookService.removeAlias(pubkey);
-    }
-
-    const current = preferenceService.getCurrentAccount();
-    preferenceService.removeAddressBalance(current?.address || '');
-
-    if (current?.pubkey === pubkey && current.type === type && current.brandName === brand) {
-      this.resetCurrentAccount();
-    }
-  };
-
   removeKeyring = async (keyring: WalletKeyring) => {
     await keyringService.removeKeyring(keyring.index);
     const keyrings = await this.getKeyrings();
     const nextKeyring = keyrings[keyrings.length - 1];
     if (nextKeyring) this.changeKeyring(nextKeyring);
     return nextKeyring;
-  };
-
-  resetCurrentAccount = async () => {
-    const [account] = await this.getAccounts();
-    if (account) {
-      preferenceService.setCurrentAccount(account);
-    } else {
-      preferenceService.setCurrentAccount(null);
-    }
   };
 
   getKeyringByType = (type: string) => {
@@ -308,7 +285,9 @@ export class WalletController extends BaseController {
     const result = await keyringService.addNewAccount(_keyring);
     if (alianName) this.updateAlianName(result[0], alianName);
 
-    keyring = await this.getCurrentKeyring();
+    const currentKeyring = await this.getCurrentKeyring();
+    if (!currentKeyring) throw new Error('no current keyring');
+    keyring = currentKeyring;
     this.changeAccount(keyring.accounts[keyring.accounts.length - 1]);
   };
 
@@ -355,6 +334,7 @@ export class WalletController extends BaseController {
     const currentKeyringIndex = preferenceService.getCurrentKeyringIndex();
     await keyringService.changeAddressType(currentKeyringIndex, addressType);
     const keyring = await this.getCurrentKeyring();
+    if (!keyring) throw new Error('no current keyring');
     this.changeKeyring(keyring, currentAccount?.index);
   };
 
@@ -368,6 +348,7 @@ export class WalletController extends BaseController {
     if (!account) throw new Error('no current account');
 
     const keyring = await this.getCurrentKeyring();
+    if (!keyring) throw new Error('no current keyring');
     const _keyring = keyringService.keyrings[keyring.index];
 
     const networkType = this.getNetworkType();
@@ -557,6 +538,7 @@ export class WalletController extends BaseController {
 
     const currentAccount = await this.getCurrentAccount();
     const keyring = await this.getCurrentKeyring();
+    if (!keyring) throw new Error('no current keyring');
     this.changeKeyring(keyring, currentAccount?.index);
   };
 
@@ -678,13 +660,16 @@ export class WalletController extends BaseController {
     for (let j = 0; j < displayedKeyring.accounts.length; j++) {
       const { pubkey } = displayedKeyring.accounts[j];
       const address = publicKeyToAddress(pubkey, addressType, networkType);
-      const alianName = this.getAlianName(pubkey) || this._generateAlianName(type, j + 1);
+      const accountKey = key + '#' + j;
+      const defaultName = this.getAlianName(pubkey) || this._generateAlianName(type, j + 1);
+      const alianName = preferenceService.getAccountAlianName(accountKey, defaultName);
       accounts.push({
         type,
         pubkey,
         address,
         alianName,
-        index: j
+        index: j,
+        key: accountKey
       });
     }
     const hdPath = type === KEYRING_TYPE.HdKeyring ? displayedKeyring.keyring.hdPath : '';
@@ -747,26 +732,45 @@ export class WalletController extends BaseController {
         }
       }
     }
-
     const displayedKeyring = displayedKeyrings[currentKeyringIndex];
+    if (!displayedKeyring) return null;
     return this.displayedKeyringToWalletKeyring(displayedKeyring, currentKeyringIndex);
   };
 
   getCurrentAccount = async () => {
-    let account = preferenceService.getCurrentAccount();
-    if (account) {
-      const accounts = await this.getAccounts();
-      const matchAcct = accounts.find((acct) => account!.pubkey === acct.pubkey);
-      if (!matchAcct) account = undefined;
+    const currentKeyring = await this.getCurrentKeyring();
+    if (!currentKeyring) return null;
+    const account = preferenceService.getCurrentAccount();
+    let currentAccount: Account | undefined = undefined;
+    currentKeyring.accounts.forEach((v) => {
+      if (v.pubkey === account?.pubkey) {
+        currentAccount = v;
+      }
+    });
+    if (!currentAccount) {
+      currentAccount = currentKeyring.accounts[0];
     }
+    return currentAccount;
+  };
 
-    if (!account) {
-      [account] = await this.getAccounts();
-      if (!account) return null;
-      preferenceService.setCurrentAccount(account);
-    }
+  getEditingKeyring = async () => {
+    const editingKeyringIndex = preferenceService.getEditingKeyringIndex();
+    const displayedKeyrings = await keyringService.getAllDisplayedKeyrings();
+    const displayedKeyring = displayedKeyrings[editingKeyringIndex];
+    return this.displayedKeyringToWalletKeyring(displayedKeyring, editingKeyringIndex);
+  };
 
-    return cloneDeep(account) as Account;
+  setEditingKeyring = async (index: number) => {
+    preferenceService.setEditingKeyringIndex(index);
+  };
+
+  getEditingAccount = async () => {
+    const account = preferenceService.getEditingAccount();
+    return account;
+  };
+
+  setEditingAccount = async (account: Account) => {
+    preferenceService.setEditingAccount(account);
   };
 
   queryDomainInfo = async (domain: string) => {
@@ -860,6 +864,12 @@ export class WalletController extends BaseController {
     preferenceService.setKeyringAlianName(keyring.key, name);
     keyring.alianName = name;
     return keyring;
+  };
+
+  setAccountAlianName = (account: Account, name: string) => {
+    preferenceService.setAccountAlianName(account.key, name);
+    account.alianName = name;
+    return account;
   };
 
   getFeeSummary = async () => {

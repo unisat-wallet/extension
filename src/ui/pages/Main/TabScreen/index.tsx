@@ -88,7 +88,7 @@ export default function MainScreen() {
               navigate('SwitchKeyringScreen');
             }}>
             <div className="flex items-end justify-end ">
-              <div className="text-xs rounded bg-primary-active p-1 px-3">{`${currentKeyring.alianName}`}</div>
+              <div className=" text-sm rounded bg-primary-active p-1 px-3">{`${currentKeyring.alianName}`}</div>
             </div>
           </div>
         }
