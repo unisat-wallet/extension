@@ -50,7 +50,7 @@ export const AddressInputBar = ({
 
     if (inputAddress.toLowerCase().endsWith(SATS_DOMAIN)) {
       wallet
-        .queryDomainInfo(inputAddress)
+        .queryDomainInfo(encodeURIComponent(inputAddress))
         .then((address: string) => {
           if (address) {
             setParseAddress(address);
