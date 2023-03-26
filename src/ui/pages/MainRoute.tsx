@@ -265,6 +265,10 @@ const Main = () => {
   useEffect(() => {
     wallet.isUnlocked().then((isUnlocked) => {
       dispatch(globalActions.update({ isUnlocked }));
+      if (!isUnlocked && location.href.includes(routes.UnlockScreen.path) === false) {
+        const basePath = location.href.split('#')[0];
+        location.href = `${basePath}#${routes.UnlockScreen.path}`;
+      }
     });
   }, []);
 
