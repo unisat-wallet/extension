@@ -6,19 +6,19 @@
   "default_locale": "en",
   "description": "__MSG_appDescription__",
   "icons": {
-    "16": "/images/logo@16x.png",
-    "32": "/images/logo@32x.png",
-    "48": "/images/logo@48x.png",
-    "128": "/images/logo@128x.png"
+    "16": "/images/logo/logo@16x.png",
+    "32": "/images/logo/logo@32x.png",
+    "48": "/images/logo/logo@48x.png",
+    "128": "/images/logo/logo@128x.png"
   },
 
   "action": {
     "default_popup": "index.html",
     "default_icon": {
-      "16": "/images/logo@16x.png",
-      "32": "/images/logo@32x.png",
-      "48": "/images/logo@48x.png",
-      "128": "/images/logo@128x.png"
+      "16": "/images/logo/logo@16x.png",
+      "32": "/images/logo/logo@32x.png",
+      "48": "/images/logo/logo@48x.png",
+      "128": "/images/logo/logo@128x.png"
     },
     "default_title": "__MSG_appName__"
   },

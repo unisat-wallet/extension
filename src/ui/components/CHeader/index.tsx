@@ -39,7 +39,7 @@ const CHeader = ({
           </div>
         ) : (
           <div className="flex flex-1 items-center justify-center">
-            <img src="./images/wallet-logo.png" className="w-10 h-10 select-none" alt="" />
+            <img src="./images/logo/wallet-logo.png" className="w-10 h-10 select-none" alt="" />
             <div className="text-2xl font-semibold tracking-widest select-none">UNISAT</div>
           </div>
         )}

@@ -21,7 +21,7 @@ export default function WelcomeScreen() {
       }>
       <div className="flex flex-col items-center">
         <div className="flex items-center justify-center mb-10 gap-x-4 w-70">
-          <img src="./images/wallet-logo.png" className="w-16 h-16 select-none" alt="" />
+          <img src="./images/logo/wallet-logo.png" className="w-16 h-16 select-none" alt="" />
           <div className="text-4xl font-semibold tracking-widest select-none">UNISAT</div>
         </div>
         <div className="font-normal opacity-60 mb-10 mx-15 text-center">
