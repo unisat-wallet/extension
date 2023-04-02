@@ -1,12 +1,8 @@
-import { Button, Input, Layout } from 'antd';
-import { Content } from 'antd/lib/layout/layout';
 import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { COIN_DUST } from '@/shared/constant';
-import { AddressInputBar } from '@/ui/components/AddressInputBar';
-import CHeader from '@/ui/components/CHeader';
+import { Layout, Content, Button, Header, Icon, Text, Input, Column, Row } from '@/ui/components';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useAccountBalance } from '@/ui/state/accounts/hooks';
@@ -16,11 +12,10 @@ import {
   useFetchUtxosCallback,
   useSafeBalance
 } from '@/ui/state/transactions/hooks';
-import '@/ui/styles/domain.less';
+import { colors } from '@/ui/theme/colors';
 import { amountToSaothis, isValidAddress, satoshisToAmount } from '@/ui/utils';
 
 export default function TxCreateScreen() {
-  const { t } = useTranslation();
   const accountBalance = useAccountBalance();
   const safeBalance = useSafeBalance();
   const navigate = useNavigate();
@@ -113,64 +108,66 @@ export default function TxCreateScreen() {
   );
 
   return (
-    <Layout className="h-full">
-      <CHeader
+    <Layout>
+      <Header
         onBack={() => {
           window.history.go(-1);
         }}
         title="Send BTC"
       />
-      <Content style={{ backgroundColor: '#1C1919', overflowY: 'auto' }}>
-        <div className="flex flex-col items-strech  my-5 gap-3_75 justify-evenly mx-5">
-          <div className="self-center w-15 h-15">
-            <img className="w-full" src={'./images/btc.svg'} alt="" />
-          </div>
-          <div className="flex justify-between w-full mt-5 box text-soft-white">
-            <span>{t('Recipient')}</span>
-          </div>
+      <Content>
+        <Row justifyCenter>
+          <Icon icon="btc" size={50} />
+        </Row>
 
-          <AddressInputBar
-            defaultInfo={toInfo}
-            onChange={(val) => {
+        <Column mt="lg">
+          <Text text="Recipient" preset="regular" color="textDim" />
+          <Input
+            preset="address"
+            addressInputData={toInfo}
+            onAddressInputChange={(val) => {
               setToInfo(val);
             }}
           />
+        </Column>
 
-          <div className="flex justify-between w-full mt-5 box text-soft-white">
-            <span>{t('Balance')}</span>
+        <Column mt="lg">
+          <Row justifyBetween>
+            <Text text="Balance" color="textDim" />
             {showSafeBalance ? (
-              <div>
-                <span className="font-semibold text-white">{`${accountBalance.amount} BTC`}</span>
-              </div>
+              <Text text={`${accountBalance.amount} BTC`} preset="bold" size="sm" />
             ) : (
-              <div
-                className="flex cursor-pointer"
+              <Row
                 onClick={() => {
                   setAutoAdjust(true);
                   setInputAmount(accountBalance.amount);
                 }}>
-                <div className={`font-semibold mx-5 ${autoAdjust ? 'text-yellow-300' : ''}`}>MAX</div>
-                <span className="font-semibold text-white">{`${accountBalance.amount} BTC`}</span>
-              </div>
+                <Text
+                  text="MAX"
+                  preset="sub"
+                  style={{ color: autoAdjust ? colors.yellow_light : colors.white_muted }}
+                />
+                <Text text={`${accountBalance.amount} BTC`} preset="bold" size="sm" />
+              </Row>
             )}
-          </div>
+          </Row>
           {showSafeBalance && (
-            <div className="flex justify-between w-full mt-1 box text-soft-white">
-              <span>Available (safe to send)</span>
-              <div
-                className="flex cursor-pointer"
+            <Row justifyBetween>
+              <Text text="Available (safe to send)" color="textDim" />
+
+              <Row
                 onClick={() => {
                   setAutoAdjust(true);
                   setInputAmount(safeBalance.toString());
                 }}>
-                <div className={`font-semibold mx-5 ${autoAdjust ? 'text-yellow-300' : ''}`}>MAX</div>
-                <span className="font-semibold text-white ">{`${safeBalance} BTC`}</span>
-              </div>
-            </div>
+                <Text text={'MAX'} color={autoAdjust ? 'yellow' : 'textDim'} size="sm" />
+                <Text text={`${safeBalance} BTC`} preset="bold" size="sm" />
+              </Row>
+            </Row>
           )}
           <Input
-            className="font-semibold  text-white h-15_5 box default hover"
-            placeholder={t('Amount')}
+            preset="amount"
+            placeholder={'Amount'}
             defaultValue={inputAmount}
             value={inputAmount}
             onChange={async (e) => {
@@ -180,29 +177,27 @@ export default function TxCreateScreen() {
               setInputAmount(e.target.value);
             }}
           />
+        </Column>
 
-          <div className="flex justify-between w-full box text-soft-white">
-            <span>{t('Fee')}</span>
-          </div>
+        <Column mt="lg">
+          <Text text="Fee" color="textDim" />
 
           <FeeRateBar
             onChange={(val) => {
               setFeeRate(val);
             }}
           />
+        </Column>
 
-          {error && <span className="text-lg text-error">{error}</span>}
-          <Button
-            disabled={disabled}
-            size="large"
-            type="primary"
-            className="box"
-            onClick={(e) => {
-              navigate('TxConfirmScreen');
-            }}>
-            <div className="flex items-center justify-center text-lg font-semibold">{t('Next')}</div>
-          </Button>
-        </div>
+        {error && <Text text={error} color="error" />}
+
+        <Button
+          disabled={disabled}
+          preset="primary"
+          text="Next"
+          onClick={(e) => {
+            navigate('TxConfirmScreen');
+          }}></Button>
       </Content>
     </Layout>
   );

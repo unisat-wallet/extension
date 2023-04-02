@@ -224,7 +224,7 @@ export const INTERNAL_REQUEST_ORIGIN = 'https://unisat.io';
 export const INTERNAL_REQUEST_SESSION = {
   name: 'UniSat Wallet',
   origin: INTERNAL_REQUEST_ORIGIN,
-  icon: './images/icon-128.png'
+  icon: './images/logo/logo@128x.png'
 };
 
 export const OPENAPI_URL_MAINNET = 'https://unisat.io/api';

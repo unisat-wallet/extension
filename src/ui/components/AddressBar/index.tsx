@@ -1,24 +1,25 @@
-import { message } from 'antd';
-import { MouseEventHandler } from 'react';
-
 import { useAccountAddress } from '@/ui/state/accounts/hooks';
 import { copyToClipboard, shortAddress } from '@/ui/utils';
 
-// import './index.less';
-export const AddressBar: React.FC<{ onClick?: MouseEventHandler<HTMLElement> }> = ({ onClick }) => {
+import { useTools } from '../ActionComponent';
+import { Icon } from '../Icon';
+import { Row } from '../Row';
+import { Text } from '../Text';
+
+export function AddressBar() {
+  const tools = useTools();
   const address = useAccountAddress();
   return (
-    <>
-      <div
-        className="flex items-center justify-center gap-2 px-4 py-2 duration-80 rounded cursor-pointer flex-nowrap opacity-80 hover:opacity-100"
-        onClick={(e) => {
-          copyToClipboard(address).then(() => {
-            message.success('Copied');
-          });
-        }}>
-        <img src="./images/copy-solid.svg" alt="" className="h-4_5 hover:opacity-100" />
-        <span className="text-lg text-white">{shortAddress(address)}</span>
-      </div>
-    </>
+    <Row
+      selfItemsCenter
+      itemsCenter
+      onClick={(e) => {
+        copyToClipboard(address).then(() => {
+          tools.toastSuccess('Copied');
+        });
+      }}>
+      <Icon icon="copy" color="textDim" />
+      <Text text={shortAddress(address)} color="textDim" />
+    </Row>
   );
-};
+}

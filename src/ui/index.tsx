@@ -8,10 +8,9 @@ import { EVENTS } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 import { Message } from '@/shared/utils';
 import AccountUpdater from '@/ui/state/accounts/updater';
-import '@/ui/styles/antd.less';
-import '@/ui/styles/rc-virtual-list.less';
-import '@/ui/styles/tailwind.less';
+import '@/ui/styles/global.less';
 
+import { ActionComponentProvider } from './components/ActionComponent';
 import { AppDimensions } from './components/Responsive';
 import AsyncMainRoute from './pages/MainRoute';
 import store from './state';
@@ -143,10 +142,12 @@ const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement)
 root.render(
   <Provider store={store}>
     <WalletProvider {...antdConfig} wallet={wallet as any}>
-      <AppDimensions>
-        <Updaters />
-        <AsyncMainRoute />
-      </AppDimensions>
+      <ActionComponentProvider>
+        <AppDimensions>
+          <Updaters />
+          <AsyncMainRoute />
+        </AppDimensions>
+      </ActionComponentProvider>
     </WalletProvider>
   </Provider>
 );

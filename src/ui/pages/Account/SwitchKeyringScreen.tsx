@@ -1,18 +1,16 @@
-import { Button, message } from 'antd';
-import { Layout } from 'antd';
-import { Content } from 'antd/lib/layout/layout';
 import VirtualList from 'rc-virtual-list';
 import { forwardRef, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { KEYRING_TYPE } from '@/shared/constant';
 import { WalletKeyring } from '@/shared/types';
-import CHeader from '@/ui/components/CHeader';
+import { Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
+import { useTools } from '@/ui/components/ActionComponent';
 import { RemoveWalletPopover } from '@/ui/components/RemoveWalletPopover';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring, useKeyrings } from '@/ui/state/keyrings/hooks';
 import { keyringsActions } from '@/ui/state/keyrings/reducer';
+import { colors } from '@/ui/theme/colors';
 import { shortAddress, useWallet } from '@/ui/utils';
 import {
   CheckCircleFilled,
@@ -27,16 +25,15 @@ import { useNavigate } from '../MainRoute';
 
 export interface ItemData {
   key: string;
-  keyring?: WalletKeyring;
+  keyring: WalletKeyring;
 }
 
 interface MyItemProps {
-  keyring?: WalletKeyring;
+  keyring: WalletKeyring;
   autoNav?: boolean;
 }
 
 export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const currentKeyring = useCurrentKeyring();
   const selected = currentKeyring.index === keyring?.index;
@@ -45,124 +42,125 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
   const keyrings = useKeyrings();
 
   const dispatch = useAppDispatch();
-  if (!keyring) {
-    return (
-      <Button
-        size="large"
-        type="primary"
-        className="box mb-5"
-        onClick={(e) => {
-          // todo
-          navigate('AddKeyringScreen');
-        }}>
-        <div className="flex items-center justify-center text-lg font-semibold">{t('Add New Wallet')}</div>
-      </Button>
-    );
-  }
+
+  const tools = useTools();
 
   const displayAddress = useMemo(() => {
     const address = keyring.accounts[0].address;
     return shortAddress(address);
-    // if (keyring.addressType == AddressType.P2TR) {
-    //   return address;
-    // } else {
-    //   return address;
-    // }
   }, []);
 
   const [optionsVisible, setOptionsVisible] = useState(false);
   const [removeVisible, setRemoveVisible] = useState(false);
+
   return (
-    <div className={'!px-3 !py-0 box default mb-3_75 !h-24'}>
-      <div className="flex items-center justify-between text-lg font-semibold h-full">
-        <div className=" w-8 flex  py-6  justify-center  h-full">{selected && <CheckCircleFilled />}</div>
-
-        <div
-          className="flex py-5 ml-2 flex-col flex-grow text-left h-full cursor-pointer"
-          onClick={async (e) => {
-            if (currentKeyring.key !== keyring.key) {
-              await wallet.changeKeyring(keyring);
-              dispatch(keyringsActions.setCurrent(keyring));
-              dispatch(accountActions.setCurrent(keyring.accounts[0]));
-            }
-            if (autoNav) navigate('MainScreen');
-          }}>
-          <span>{`${keyring.alianName}`} </span>
-          <span className="font-normal opacity-60">{`${displayAddress}`}</span>
-        </div>
-
-        <div className="flex h-full relative">
-          {optionsVisible && (
-            <div
-              className="z-10 fixed"
-              style={{
-                left: 0,
-                right: 0,
-                top: 0,
-                bottom: 0
-              }}
-              onTouchStart={(e) => {
-                setOptionsVisible(false);
-              }}
-              onMouseDown={(e) => {
-                setOptionsVisible(false);
-              }}></div>
+    <Card justifyBetween mt="md">
+      <Row
+        full
+        onClick={async (e) => {
+          if (currentKeyring.key !== keyring.key) {
+            await wallet.changeKeyring(keyring);
+            dispatch(keyringsActions.setCurrent(keyring));
+            dispatch(accountActions.setCurrent(keyring.accounts[0]));
+          }
+          if (autoNav) navigate('MainScreen');
+        }}>
+        <Column style={{ width: 20 }} selfItemsCenter>
+          {selected && (
+            <Icon>
+              <CheckCircleFilled />
+            </Icon>
           )}
+        </Column>
 
+        <Column justifyCenter>
+          <Text text={`${keyring.alianName}`} />
+          <Text text={`${displayAddress}`} preset="sub" />
+        </Column>
+      </Row>
+
+      <Column relative>
+        {optionsVisible && (
           <div
-            className="flex py-6 px-2 cursor-pointer"
-            onClick={async (e) => {
-              setOptionsVisible(!optionsVisible);
-            }}>
-            <SettingOutlined style={{ fontSize: 20 }} />
-          </div>
+            style={{
+              position: 'fixed',
+              zIndex: 10,
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0
+            }}
+            onTouchStart={(e) => {
+              setOptionsVisible(false);
+            }}
+            onMouseDown={(e) => {
+              setOptionsVisible(false);
+            }}></div>
+        )}
 
-          {optionsVisible && (
-            <div className=" bg-hard-black right-0 shadow-md text-left p-2 z-10 mt-10 absolute  !w-64">
-              <div
-                className="flex px-4 py-2 items-center cursor-pointer"
+        <Icon
+          onClick={async (e) => {
+            setOptionsVisible(!optionsVisible);
+          }}>
+          <SettingOutlined />
+        </Icon>
+
+        {optionsVisible && (
+          <Column
+            style={{
+              backgroundColor: colors.black,
+              width: 180,
+              position: 'absolute',
+              right: 0,
+              padding: 5,
+              zIndex: 10
+            }}>
+            <Column>
+              <Row
                 onClick={() => {
                   navigate('EditWalletNameScreen', { keyring });
                 }}>
                 <EditOutlined />
-                <span className="ml-2">Edit Name</span>
-              </div>
+                <Text text="Edit Name" size="sm" />
+              </Row>
+
               {keyring.type === KEYRING_TYPE.HdKeyring ? (
-                <div
-                  className="flex px-4 py-2 items-center cursor-pointer"
+                <Row
                   onClick={() => {
                     navigate('ExportMnemonicsScreen', { keyring });
                   }}>
                   <KeyOutlined />
-                  <span className="ml-2">Show Secret Recovery Phrase</span>
-                </div>
+                  <Text text="Show Secret Recovery Phrase" size="sm" />
+                </Row>
               ) : (
-                <div
-                  className="flex px-4 py-2 items-center cursor-pointer"
+                <Row
                   onClick={() => {
                     navigate('ExportPrivateKeyScreen', { account: keyring.accounts[0] });
                   }}>
                   <KeyOutlined />
-                  <span className="ml-2">Export WIF</span>
-                </div>
+                  <Text text="Export WIF" size="sm" />
+                </Row>
               )}
-              <div
-                className="flex px-4 py-2 items-center cursor-pointer text-red-500"
+              <Row
                 onClick={() => {
                   if (keyrings.length == 1) {
-                    message.error('Removing the last wallet is not allowed');
+                    tools.toastError('Removing the last wallet is not allowed');
                     return;
                   }
                   setRemoveVisible(true);
                   setOptionsVisible(false);
                 }}>
-                <DeleteOutlined />
-                <span className="ml-2">Remove Wallet</span>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
+                <Icon color="danger">
+                  <DeleteOutlined />
+                </Icon>
+
+                <Text text="Remove Wallet" size="sm" color="danger" />
+              </Row>
+            </Column>
+          </Column>
+        )}
+      </Column>
+
       {removeVisible && (
         <RemoveWalletPopover
           keyring={keyring}
@@ -171,7 +169,7 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
           }}
         />
       )}
-    </div>
+    </Card>
   );
 }
 
@@ -194,41 +192,36 @@ export default function SwitchKeyringScreen() {
   }, [keyrings]);
   const ForwardMyItem = forwardRef(MyItem);
   return (
-    <Layout className="h-full">
-      <CHeader
+    <Layout>
+      <Header
         onBack={() => {
           window.history.go(-1);
         }}
         title="Switch Wallet"
         RightComponent={
-          <div
-            className="duration-80  cursor-pointer"
+          <Icon
             onClick={() => {
               navigate('AddKeyringScreen');
             }}>
-            <div className="flex items-end justify-end">
-              <PlusCircleOutlined style={{ fontSize: '24px' }} />
-            </div>
-          </div>
+            <PlusCircleOutlined />
+          </Icon>
         }
       />
-      <Content style={{ backgroundColor: '#1C1919' }}>
-        <div className="flex flex-col items-stech mx-5 gap-3_75 justify-evenly">
-          <VirtualList
-            data={items}
-            data-id="list"
-            itemHeight={30}
-            itemKey={(item) => item.key}
-            // disabled={animating}
-            style={{
-              boxSizing: 'border-box'
-            }}
-            // onSkipRender={onAppear}
-            // onItemRemove={onAppear}
-          >
-            {(item, index) => <ForwardMyItem keyring={item.keyring} autoNav={true} />}
-          </VirtualList>
-        </div>
+      <Content>
+        <VirtualList
+          data={items}
+          data-id="list"
+          itemHeight={30}
+          itemKey={(item) => item.key}
+          // disabled={animating}
+          style={{
+            boxSizing: 'border-box'
+          }}
+          // onSkipRender={onAppear}
+          // onItemRemove={onAppear}
+        >
+          {(item, index) => <ForwardMyItem keyring={item.keyring} autoNav={true} />}
+        </VirtualList>
       </Content>
     </Layout>
   );

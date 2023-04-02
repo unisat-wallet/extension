@@ -1,19 +1,13 @@
-import { Button, Input } from 'antd';
-import { Layout } from 'antd';
-import { Content } from 'antd/lib/layout/layout';
-import { useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { WalletKeyring } from '@/shared/types';
-import CHeader from '@/ui/components/CHeader';
+import { Button, Column, Content, Header, Input, Layout } from '@/ui/components';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { keyringsActions } from '@/ui/state/keyrings/reducer';
 import { useWallet } from '@/ui/utils';
 
 export default function EditWalletNameScreen() {
-  const { t } = useTranslation();
-
   const { state } = useLocation();
   const { keyring } = state as {
     keyring: WalletKeyring;
@@ -34,18 +28,24 @@ export default function EditWalletNameScreen() {
     }
   };
 
+  const isValidName = useMemo(() => {
+    if (alianName.length == 0) {
+      return false;
+    }
+    return true;
+  }, [alianName]);
+
   return (
-    <Layout className="h-full">
-      <CHeader
+    <Layout>
+      <Header
         onBack={() => {
           window.history.go(-1);
         }}
         title={keyring.alianName}
       />
-      <Content style={{ backgroundColor: '#1C1919' }}>
-        <div className="flex flex-col items-strech mx-5 mt-5 gap-3_75 justify-evenly">
+      <Content>
+        <Column gap="lg">
           <Input
-            className="font-semibold text-white mt-1_25 h-15_5 box default focus:active"
             placeholder={keyring.alianName}
             onChange={(e) => {
               setAlianName(e.target.value);
@@ -54,15 +54,14 @@ export default function EditWalletNameScreen() {
             autoFocus={true}
           />
           <Button
-            size="large"
-            type="primary"
-            className="box"
+            disabled={!isValidName}
+            text="Change Wallet Name"
+            preset="primary"
             onClick={(e) => {
               handleOnClick();
-            }}>
-            <div className="flex items-center justify-center text-lg font-semibold">{t('Change Wallet Name')}</div>
-          </Button>
-        </div>
+            }}
+          />
+        </Column>
       </Content>
     </Layout>
   );

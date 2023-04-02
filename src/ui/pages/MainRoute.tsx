@@ -1,11 +1,10 @@
-import { Layout } from 'antd';
-import { Content } from 'antd/lib/layout/layout';
 import { useCallback, useEffect, useRef } from 'react';
 import { HashRouter, Route, Routes } from 'react-router-dom';
 import { useNavigate as useNavigateOrigin } from 'react-router-dom';
 
 import { LoadingOutlined } from '@ant-design/icons';
 
+import { Content, Icon, Layout } from '../components';
 import { accountActions } from '../state/accounts/reducer';
 import { useIsReady, useIsUnlocked } from '../state/global/hooks';
 import { globalActions } from '../state/global/reducer';
@@ -18,25 +17,28 @@ import CreateHDWalletScreen from './Account/CreateHDWalletScreen';
 import CreatePasswordScreen from './Account/CreatePasswordScreen';
 import CreateSimpleWalletScreen from './Account/CreateSimpleWalletScreen';
 import SwitchAccountScreen from './Account/SwitchAccountScreen';
-import SwitchAddressScreen from './Account/SwitchAddressScreen';
 import SwitchKeyringScreen from './Account/SwitchKeyringScreen';
 import UnlockScreen from './Account/UnlockScreen';
 import ApprovalScreen from './Approval/ApprovalScreen';
 import ConnectedSitesScreen from './Approval/ConnectedSitesScreen';
+import BRC20SendScreen from './BRC20/BRC20SendScreen';
+import InscribeConfirmScreen from './Inscribe/InscribeConfirmScreen';
+import InscribeTransferScreen from './Inscribe/InscribeTransferScreen';
+import AppTabScrren from './Main/AppTabScreen';
 import BoostScreen from './Main/BoostScreen';
-import MainScreen from './Main/TabScreen';
+import DiscoverTabScreen from './Main/DiscoverTabScreen';
+import SettingsTabScreen from './Main/SettingsTabScreen';
+import WalletTabScreen from './Main/WalletTabScreen';
 import WelcomeScreen from './Main/WelcomeScreen';
 import AddressTypeScreen from './Settings/AddressTypeScreen';
-import ChangeLanguageScreen from './Settings/ChangeLanguageScreen';
 import ChangePasswordScreen from './Settings/ChangePasswordScreen';
 import EditAccountNameScreen from './Settings/EditAccountNameScreen';
 import EditWalletNameScreen from './Settings/EditWalletNameScreen';
 import ExportMnemonicsScreen from './Settings/ExportMnemonicsScreen';
 import ExportPrivateKeyScreen from './Settings/ExportPrivateKeyScreen';
-import ManageWalletScreen from './Settings/ManageWalletScreen';
 import NetworkTypeScreen from './Settings/NetworkTypeScreen';
-import RemoveWalletScreen from './Settings/RemoveWalletScreen';
 import UpgradeNoticeScreen from './Settings/UpgradeNoticeScreen';
+import TestScreen from './Test/TestScreen';
 import HistoryScreen from './Wallet/HistoryScreen';
 import OrdinalsDetailScreen from './Wallet/OrdinalsDetailScreen';
 import OrdinalsTxConfirmScreen from './Wallet/OrdinalsTxConfirmScreen';
@@ -59,7 +61,19 @@ const routes = {
   },
   MainScreen: {
     path: '/main',
-    element: <MainScreen />
+    element: <WalletTabScreen />
+  },
+  DiscoverTabScreen: {
+    path: '/discover',
+    element: <DiscoverTabScreen />
+  },
+  AppTabScrren: {
+    path: '/app',
+    element: <AppTabScrren />
+  },
+  SettingsTabScreen: {
+    path: '/settings',
+    element: <SettingsTabScreen />
   },
   CreateHDWalletScreen: {
     path: '/account/create-hd-wallet',
@@ -80,10 +94,6 @@ const routes = {
   SwitchAccountScreen: {
     path: '/account/switch-account',
     element: <SwitchAccountScreen />
-  },
-  SwitchAddressScreen: {
-    path: '/account/switch-address',
-    element: <SwitchAddressScreen />
   },
   ReceiveScreen: {
     path: '/wallet/receive',
@@ -125,10 +135,6 @@ const routes = {
     path: '/settings/network-type',
     element: <NetworkTypeScreen />
   },
-  ChangeLanguageScreen: {
-    path: '/settings/language',
-    element: <ChangeLanguageScreen />
-  },
   ChangePasswordScreen: {
     path: '/settings/password',
     element: <ChangePasswordScreen />
@@ -161,17 +167,9 @@ const routes = {
     path: '/account/add-keyring',
     element: <AddKeyringScreen />
   },
-  ManageWalletScreen: {
-    path: '/settings/manage-wallet',
-    element: <ManageWalletScreen />
-  },
   EditWalletNameScreen: {
     path: '/settings/edit-wallet-name',
     element: <EditWalletNameScreen />
-  },
-  RemoveWalletScreen: {
-    path: '/settings/remove-wallet',
-    element: <RemoveWalletScreen />
   },
   CreateSimpleWalletScreen: {
     path: '/account/create-simple-wallet',
@@ -188,6 +186,22 @@ const routes = {
   EditAccountNameScreen: {
     path: '/settings/edit-account-name',
     element: <EditAccountNameScreen />
+  },
+  InscribeTransferScreen: {
+    path: '/inscribe/transfer',
+    element: <InscribeTransferScreen />
+  },
+  InscribeConfirmScreen: {
+    path: '/inscribe/confirm',
+    element: <InscribeConfirmScreen />
+  },
+  BRC20SendScreen: {
+    path: '/brc20/send',
+    element: <BRC20SendScreen />
+  },
+  TestScreen: {
+    path: '/test',
+    element: <TestScreen />
   }
 };
 
@@ -263,11 +277,15 @@ const Main = () => {
   }, [wallet, dispatch, isReady, isUnlocked]);
 
   useEffect(() => {
-    wallet.isUnlocked().then((isUnlocked) => {
-      dispatch(globalActions.update({ isUnlocked }));
-      if (!isUnlocked && location.href.includes(routes.UnlockScreen.path) === false) {
-        const basePath = location.href.split('#')[0];
-        location.href = `${basePath}#${routes.UnlockScreen.path}`;
+    wallet.hasVault().then((val) => {
+      if (val) {
+        wallet.isUnlocked().then((isUnlocked) => {
+          dispatch(globalActions.update({ isUnlocked }));
+          if (!isUnlocked && location.href.includes(routes.UnlockScreen.path) === false) {
+            const basePath = location.href.split('#')[0];
+            location.href = `${basePath}#${routes.UnlockScreen.path}`;
+          }
+        });
       }
     });
   }, []);
@@ -278,11 +296,11 @@ const Main = () => {
 
   if (!isReady) {
     return (
-      <Layout className="h-full" style={{ backgroundColor: 'blue', flex: 1 }}>
-        <Content style={{ backgroundColor: '#1C1919', overflowY: 'auto' }}>
-          <div className="flex flex-col items-strech mx-5 text-6xl mt-60 gap-3_75 text-primary">
+      <Layout>
+        <Content>
+          <Icon>
             <LoadingOutlined />
-          </div>
+          </Icon>
         </Content>
       </Layout>
     );

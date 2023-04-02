@@ -1,4 +1,3 @@
-import { Input } from 'antd';
 import bitcore from 'bitcore-lib';
 import { useEffect, useState } from 'react';
 
@@ -6,6 +5,10 @@ import { SATS_DOMAIN } from '@/shared/constant';
 import { useWallet } from '@/ui/utils';
 
 import { AddressText } from '../AddressText';
+import { Column } from '../Column';
+import { Input } from '../Input';
+import { Row } from '../Row';
+import { Text } from '../Text';
 
 export const AddressInputBar = ({
   defaultInfo,
@@ -74,30 +77,26 @@ export const AddressInputBar = ({
   };
 
   return (
-    <div>
+    <Column>
       <Input
-        className="mt-5 font-semibold text-white h-15_5 box default hover"
-        // eslint-disable-next-line quotes
         placeholder={'Address, name.sats '}
         defaultValue={inputVal}
         onChange={async (e) => {
           handleInputAddress(e);
         }}
         autoFocus={true}
+        style={{ alignSelf: 'auto' }}
       />
 
       {parseAddress && (
-        <div
-          className="flex py-1 px-5 bg-stone-800 items-center"
-          style={{ borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }}>
-          <div className="px-2">{'->'}</div>
+        <Row style={{ borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.1)', backgroundColor: 'black' }}>
+          <Text text={'->'} />
           <AddressText address={parseAddress} />
-        </div>
+        </Row>
       )}
 
-      {parseError ? <span className="text-lg text-error h-5">{`${parseError}`}</span> : null}
-
-      <span className="text-lg text-error h-5">{formatError}</span>
-    </div>
+      {parseError && <Text text={parseError} color="danger" />}
+      {formatError && <Text text={formatError} color="danger" />}
+    </Column>
   );
 };

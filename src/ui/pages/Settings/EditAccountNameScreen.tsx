@@ -1,12 +1,9 @@
-import { Button, Input } from 'antd';
-import { Layout } from 'antd';
-import { Content } from 'antd/lib/layout/layout';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
 import { Account } from '@/shared/types';
-import CHeader from '@/ui/components/CHeader';
+import { Button, Content, Header, Input, Layout } from '@/ui/components';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { keyringsActions } from '@/ui/state/keyrings/reducer';
@@ -35,35 +32,38 @@ export default function EditAccountNameScreen() {
       handleOnClick();
     }
   };
+
+  const validName = useMemo(() => {
+    if (alianName.length == 0) {
+      return false;
+    }
+    return true;
+  }, [alianName]);
   return (
-    <Layout className="h-full">
-      <CHeader
+    <Layout>
+      <Header
         onBack={() => {
           window.history.go(-1);
         }}
         title={account.alianName}
       />
-      <Content style={{ backgroundColor: '#1C1919' }}>
-        <div className="flex flex-col items-strech mx-5 mt-5 gap-3_75 justify-evenly">
-          <Input
-            className="font-semibold text-white mt-1_25 h-15_5 box default focus:active"
-            placeholder={account.alianName}
-            onChange={(e) => {
-              setAlianName(e.target.value);
-            }}
-            onKeyUp={(e) => handleOnKeyUp(e)}
-            autoFocus={true}
-          />
-          <Button
-            size="large"
-            type="primary"
-            className="box"
-            onClick={(e) => {
-              handleOnClick();
-            }}>
-            <div className="flex items-center justify-center text-lg font-semibold">{t('Change Account Name')}</div>
-          </Button>
-        </div>
+      <Content>
+        <Input
+          placeholder={account.alianName}
+          onChange={(e) => {
+            setAlianName(e.target.value);
+          }}
+          onKeyUp={(e) => handleOnKeyUp(e)}
+          autoFocus={true}
+        />
+        <Button
+          disabled={!validName}
+          text="Change Account Name"
+          preset="primary"
+          onClick={(e) => {
+            handleOnClick();
+          }}
+        />
       </Content>
     </Layout>
   );

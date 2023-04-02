@@ -1,0 +1,38 @@
+@font-face {
+  font-family: ProtoMono-Bold;
+  src: url('./fonts/ProtoMono-Bold.otf');
+}
+
+@font-face {
+  font-family: ProtoMono-Regular;
+  src: url('./fonts/ProtoMono-Regular.otf');
+}
+
+@font-face {
+  font-family: ProtoMono-Light;
+  src: url('./fonts/ProtoMono-Light.otf');
+}
+
+@font-face {
+  font-family: Inter-Light;
+  font-style: normal;
+  font-weight: 300;
+  font-display: swap;
+  src: url('./fonts/Inter-Light.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: Inter-Regular;
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url('./fonts/Inter-Regular.woff2') format('woff2');
+}
+
+@font-face {
+  font-family: Inter-Bold;
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url('./fonts/Inter-SemiBold.woff2') format('woff2');
+}

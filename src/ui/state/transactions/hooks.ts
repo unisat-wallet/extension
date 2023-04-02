@@ -2,6 +2,7 @@ import { Psbt } from 'bitcoinjs-lib';
 import { useCallback, useMemo } from 'react';
 
 import { Inscription } from '@/shared/types';
+import { useTools } from '@/ui/components/ActionComponent';
 import { satoshisToBTC, sleep, useWallet } from '@/ui/utils';
 
 import { AppState } from '..';
@@ -70,13 +71,15 @@ export function usePushBitcoinTxCallback() {
   const dispatch = useAppDispatch();
   const bitcoinTx = useBitcoinTx();
   const wallet = useWallet();
+  const tools = useTools();
   return useCallback(async () => {
     let success = false;
     try {
-      dispatch(transactionsActions.updateBitcoinTx({ sending: true }));
+      tools.showLoading(true);
       const txid = await wallet.pushTx(bitcoinTx.rawtx);
       await sleep(3); // Wait for transaction synchronization
-      dispatch(transactionsActions.updateBitcoinTx({ txid, sending: false }));
+      tools.showLoading(false);
+      dispatch(transactionsActions.updateBitcoinTx({ txid }));
       dispatch(accountActions.expireBalance());
       setTimeout(() => {
         dispatch(accountActions.expireBalance());
@@ -87,7 +90,7 @@ export function usePushBitcoinTxCallback() {
       success = true;
     } catch (e) {
       console.log(e);
-      dispatch(transactionsActions.updateBitcoinTx({ sending: false }));
+      tools.showLoading(false);
     }
 
     return success;
@@ -148,13 +151,15 @@ export function usePushOrdinalsTxCallback() {
   const dispatch = useAppDispatch();
   const ordinalsTx = useOrdinalsTx();
   const wallet = useWallet();
+  const tools = useTools();
   return useCallback(async () => {
     let success = false;
     try {
-      dispatch(transactionsActions.updateOrdinalsTx({ sending: true }));
+      tools.showLoading(true);
       const txid = await wallet.pushTx(ordinalsTx.rawtx);
       await sleep(3); // Wait for transaction synchronization
-      dispatch(transactionsActions.updateOrdinalsTx({ txid, sending: false }));
+      tools.showLoading(false);
+      dispatch(transactionsActions.updateOrdinalsTx({ txid }));
 
       dispatch(accountActions.expireBalance());
       setTimeout(() => {
@@ -167,7 +172,7 @@ export function usePushOrdinalsTxCallback() {
       success = true;
     } catch (e) {
       console.log(e);
-      dispatch(transactionsActions.updateOrdinalsTx({ sending: false }));
+      tools.showLoading(false);
     }
 
     return success;

@@ -1,7 +1,5 @@
-import { Button, Checkbox, Input, Layout, message } from 'antd';
-import { Tabs } from 'antd';
+import { Checkbox } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { Content } from 'antd/lib/layout/layout';
 import bitcore from 'bitcore-lib';
 import Mnemonic from 'bitcore-mnemonic';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -9,8 +7,12 @@ import { useLocation } from 'react-router-dom';
 
 import { ADDRESS_TYPES, RESTORE_WALLETS } from '@/shared/constant';
 import { AddressType, RestoreWalletType } from '@/shared/types';
-import CHeader from '@/ui/components/CHeader';
+import { Button, Card, Column, Content, Grid, Header, Input, Layout, Row, Text } from '@/ui/components';
+import { useTools } from '@/ui/components/ActionComponent';
+import { Icon } from '@/ui/components/Icon';
+import { TabBar } from '@/ui/components/TabBar';
 import { useCreateAccountCallback } from '@/ui/state/global/hooks';
+import { fontSizes } from '@/ui/theme/font';
 import { amountToSaothis, copyToClipboard, shortAddress, useWallet } from '@/ui/utils';
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 
@@ -24,27 +26,21 @@ function Step0({
   updateContextData: (params: UpdateContextDataParams) => void;
 }) {
   return (
-    <div className="flex flex-col items-strech gap-3_75 justify-evenly mx-5">
-      <div className="flex flex-col px-2 text-2xl font-semibold">{'Choose a wallet you want to restore from'}</div>
+    <Column gap="lg">
+      <Text text="Choose a wallet you want to restore from" preset="title-bold" textCenter mt="xl" />
       {RESTORE_WALLETS.map((item, index) => {
         return (
           <Button
             key={index}
-            size="large"
-            type="default"
-            className="p-5 box default"
+            preset="default"
             onClick={() => {
               updateContextData({ tabType: TabType.STEP2, restoreWalletType: item.value });
             }}>
-            <div className="flex items-center justify-between text-lg font-semibold">
-              <div className="flex flex-col flex-grow text-left">
-                <div className=" w-60 text-left">{`${item.name}`}</div>
-              </div>
-            </div>
+            <Text text={item.name} />
           </Button>
         );
       })}
-    </div>
+    </Column>
   );
 }
 
@@ -58,6 +54,8 @@ function Step1_Create({
   const [checked, setChecked] = useState(false);
 
   const wallet = useWallet();
+  const tools = useTools();
+
   const init = async () => {
     const _mnemonics = (await wallet.getPreMnemonics()) || (await wallet.generatePreMnemonic());
     updateContextData({
@@ -77,10 +75,7 @@ function Step1_Create({
 
   function copy(str: string) {
     copyToClipboard(str).then(() => {
-      message.success({
-        duration: 3,
-        content: 'copied'
-      });
+      tools.toastSuccess('Copied');
     });
   }
 
@@ -92,50 +87,46 @@ function Step1_Create({
 
   const words = contextData.mnemonics.split(' ');
   return (
-    <div className="flex justify-center">
-      <div className="flex flex-col justify-center gap-5 text-center mx-5">
-        <div className="text-2xl font-semibold text-white box w380">{'Secret Recovery Phrase'}</div>
-        <div className="text-lg text-warn box w-auto">
-          {'This phrase is the ONLY way to recover your wallet. Do NOT share it with anyone!'}
-        </div>
+    <Column gap="xl">
+      <Text text="Secret Recovery Phrase" preset="title-bold" textCenter />
+      <Text
+        text="This phrase is the ONLY way to recover your wallet. Do NOT share it with anyone!"
+        color="warning"
+        textCenter
+      />
 
-        <div
-          className="flex items-center justify-center gap-2 px-4 duration-80 rounded cursor-pointer flex-nowrap opacity-80 hover:opacity-100"
-          onClick={(e) => {
-            copy(contextData.mnemonics);
-          }}>
-          <img src="./images/copy-solid.svg" alt="" className="h-4_5 hover:opacity-100" />
-          <span className="text-lg text-white">Copy to clipboard</span>
-        </div>
-        <div className="grid grid-cols-2 gap-2 text-white mx-10">
+      <Row
+        justifyCenter
+        onClick={(e) => {
+          copy(contextData.mnemonics);
+        }}>
+        <Icon icon="copy" color="textDim" />
+        <Text text="Copy to clipboard" color="textDim" />
+      </Row>
+
+      <Row justifyCenter>
+        <Grid columns={2}>
           {words.map((v, index) => {
             return (
-              <div key={index} className="flex items-center w-full ">
-                <div className="w-3">{`${index + 1}. `}</div>
-                <div
-                  className="flex items-center w-full p-3 ml-5 font-semibold text-left border-0 border-white rounded bg-soft-black border-opacity-20 box  "
-                  style={{ userSelect: 'text' }}>
-                  {v}
-                </div>
-              </div>
+              <Row key={index}>
+                <Text text={`${index + 1}. `} style={{ width: 40 }} />
+                <Card preset="style2" style={{ width: 200 }}>
+                  <Text text={v} style={{ userSelect: 'text' }} />
+                </Card>
+              </Row>
             );
           })}
-        </div>
+        </Grid>
+      </Row>
 
-        <div>
-          <div className="flex items-center justify-center align-middle">
-            <Checkbox onChange={onChange} checked={checked} className="font-semibold">
-              <span className="font-semibold text-white">{'I saved My Secret Recovery Phrase'}</span>
-            </Checkbox>
-          </div>
-        </div>
-        <div>
-          <Button disabled={!checked} size="large" type="primary" className="box w380 content" onClick={btnClick}>
-            {'Continue'}
-          </Button>
-        </div>
-      </div>
-    </div>
+      <Row justifyCenter>
+        <Checkbox onChange={onChange} checked={checked} style={{ fontSize: fontSizes.sm }}>
+          <Text text="I saved My Secret Recovery Phrase" />
+        </Checkbox>
+      </Row>
+
+      <Button disabled={!checked} text="Continue" preset="primary" onClick={btnClick} />
+    </Column>
   );
 }
 
@@ -210,24 +201,17 @@ function Step1_Import({
   };
 
   return (
-    <div className="flex justify-center box">
-      <div className="flex flex-col item-strech justify-center gap-5 text-center mx-5">
-        <div className="text-2xl font-semibold text-white">{'Secret Recovery Phrase'}</div>
-        <div className="text-lg text-soft-white">
-          {'Import an existing wallet with your 12 word secret recovery phrase'}
-        </div>
-        <div className="grid grid-cols-2 gap-2 text-soft-white mx-10">
-          {keys.map((_, index) => {
-            return (
-              <div
-                key={index}
-                className={`flex items-center w-full p-3 font-semibold text-left border-0 border-white rounded bg-soft-black border-opacity-20 box hover:text-white hover:bg-primary-active
-                                   ${active == index ? ' active' : ''}`}>
-                {index + 1}.&nbsp;
+    <Column gap="lg">
+      <Text text="Secret Recovery Phrase" preset="title-bold" textCenter />
+      <Text text="Import an existing wallet with your 12 word secret recovery phrase" preset="sub" textCenter />
+      <Grid columns={2}>
+        {keys.map((_, index) => {
+          return (
+            <Row key={index}>
+              <Card>
+                <Text text={`${index + 1}. `} style={{ width: 25 }} />
                 <Input
-                  // className={`font-semibold p0 ${active == index || hover == index ? styles.antInputActive : styles.antInput}`}
-                  className="font-semibold p0 nobg"
-                  bordered={false}
+                  containerStyle={{ width: 80, minHeight: 25, height: 25, padding: 0 }}
                   value={_}
                   onPaste={(e) => {
                     handleEventPaste(e, index);
@@ -250,25 +234,21 @@ function Step1_Import({
                   onKeyUp={(e) => handleOnKeyUp(e)}
                   autoFocus={index == 0}
                 />
-              </div>
-            );
-          })}
-        </div>
+              </Card>
+            </Row>
+          );
+        })}
+      </Grid>
 
-        <div>
-          <Button
-            disabled={disabled}
-            size="large"
-            type="primary"
-            className="box w380 content"
-            onClick={() => {
-              onNext();
-            }}>
-            Continue
-          </Button>
-        </div>
-      </div>
-    </div>
+      <Button
+        disabled={disabled}
+        text="Continue"
+        preset="primary"
+        onClick={() => {
+          onNext();
+        }}
+      />
+    </Column>
   );
 }
 
@@ -280,6 +260,7 @@ function Step2({
   updateContextData: (params: UpdateContextDataParams) => void;
 }) {
   const wallet = useWallet();
+  const tools = useTools();
 
   const hdPathOptions = useMemo(() => {
     const restoreWallet = RESTORE_WALLETS[contextData.restoreWalletType];
@@ -427,14 +408,13 @@ function Step2({
       await createAccount(contextData.mnemonics, hdPath, contextData.passphrase, contextData.addressType);
       navigate('MainScreen');
     } catch (e) {
-      message.error((e as any).message);
+      tools.toastError((e as any).message);
     }
   };
 
   return (
-    <div className="flex flex-col items-strech gap-3_75 justify-evenly mx-5 mb-5">
-      <div className="flex flex-col px-2 text-2xl font-semibold">{'Address Type'}</div>
-
+    <Column>
+      <Text text="Address Type" preset="bold" />
       {hdPathOptions.map((item, index) => {
         const address = previewAddresses[index];
         const balance = addressBalances[address] || {
@@ -448,50 +428,37 @@ function Step2({
 
         const hdPath = (contextData.customHdPath || item.hdPath) + '/0';
         return (
-          <Button
+          <Card
             key={index}
-            size="large"
-            type="default"
-            className={'p-5 box default ' + (hasVault ? '!h-32' : '!h-20')}
             onClick={() => {
               updateContextData({
                 addressTypeIndex: index,
                 addressType: item.addressType
               });
             }}>
-            <div className="flex items-center justify-between text-lg font-semibold">
-              <div className="flex flex-col flex-grow text-left">
-                <div className=" w-60 text-left">{`${item.label} (${hdPath})`}</div>
-                <div className={'font-normal ' + (hasVault ? 'text-yellow-300' : 'opacity-60')}>
-                  {shortAddress(address)}
-                </div>
-                {hasVault && <div className={' border-b-2 opacity-60'}></div>}
+            <Row full justifyBetween>
+              <Column justifyCenter>
+                <Text text={`${item.label} (${hdPath})`} size="sm" />
+                <Text text={shortAddress(address)} color={hasVault ? 'yellow' : 'white'} size="xs" />
                 {hasVault && (
-                  <div className={'font-normal ' + (hasVault ? 'text-yellow-300' : 'opacity-60')}>
-                    {balance ? `${balance.amount} BTC` : ''}{' '}
-                  </div>
+                  <Text
+                    text={balance ? `${balance.amount} BTC` : ''}
+                    preset="regular-bold"
+                    color={hasVault ? 'yellow' : 'white'}
+                  />
                 )}
-              </div>
-
-              {index == contextData.addressTypeIndex ? (
-                <span className="w-4 h-4">
-                  <img src="./images/check.svg" alt="" />
-                </span>
-              ) : (
-                <></>
-              )}
-            </div>
-          </Button>
+              </Column>
+              <Column justifyCenter>{index == contextData.addressTypeIndex && <Icon icon="check" />}</Column>
+            </Row>
+          </Card>
         );
       })}
 
-      <div className="flex flex-col px-2 text-2xl font-semibold mt-5">{'Custom HdPath (Optional)'}</div>
+      <Text text="Custom HdPath (Optional)" preset="bold" mt="lg" />
 
-      <div className="font-semibold text-white h-15_5 box default hover flex ">
+      <Column>
         <Input
-          className="h-15_5 box default "
           placeholder={'Custom HD Wallet Derivation Path'}
-          defaultValue={pathText}
           value={pathText}
           onChange={async (e) => {
             setError('');
@@ -500,24 +467,21 @@ function Step2({
           onBlur={(e) => {
             submitCustomHdPath();
           }}
-          onPressEnter={(e) => {
-            submitCustomHdPath();
-          }}
         />
         {contextData.customHdPath && (
-          <CloseOutlined
-            className="self-center px-5"
+          <Icon
             onClick={() => {
               resetCustomHdPath();
-            }}
-          />
+            }}>
+            <CloseOutlined />
+          </Icon>
         )}
-      </div>
-      {error ? <div className="text-lg text-error">{error}</div> : <></>}
-      <div className="flex flex-col px-2 text-2xl font-semibold mt-5">{'Phrase (Optional)'}</div>
+      </Column>
+      {error && <Text text={error} color="error" />}
+
+      <Text text="Phrase (Optional)" preset="bold" mt="lg" />
 
       <Input
-        className="font-semibold text-white h-15_5 box default hover"
         placeholder={'Passphrase'}
         defaultValue={contextData.passphrase}
         onChange={async (e) => {
@@ -527,18 +491,14 @@ function Step2({
         }}
       />
 
-      <Button size="large" type="primary" className="box w380 content self-center" onClick={onNext}>
-        {'Continue'}
-      </Button>
+      <Button text="Continue" preset="primary" onClick={onNext} />
 
       {loading && (
-        <div className="absolute bg-opacity-40 bg-black w-full h-full">
-          <div className="flex flex-col items-strech mx-5 text-6xl mt-60 gap-3_75 text-primary">
-            <LoadingOutlined />
-          </div>
-        </div>
+        <Icon>
+          <LoadingOutlined />
+        </Icon>
       )}
-    </div>
+    </Column>
   );
 }
 
@@ -640,9 +600,22 @@ export default function CreateHDWalletScreen() {
     }
   }, [contextData, updateContextData]);
 
+  const currentChildren = useMemo(() => {
+    const item = items.find((v) => v.key === contextData.tabType);
+    return item?.children;
+  }, [items, contextData.tabType]);
+
+  const activeTabIndex = useMemo(() => {
+    const index = items.findIndex((v) => v.key === contextData.tabType);
+    if (index === -1) {
+      return 0;
+    } else {
+      return index;
+    }
+  }, [items, contextData.tabType]);
   return (
-    <Layout className="h-full">
-      <CHeader
+    <Layout>
+      <Header
         onBack={() => {
           if (fromUnlock) {
             navigate('WelcomeScreen');
@@ -652,15 +625,16 @@ export default function CreateHDWalletScreen() {
         }}
         title={contextData.isRestore ? 'Restore from mnemonics' : 'Create a new HD Wallet'}
       />
-      <Content style={{ backgroundColor: '#1C1919', overflowY: 'auto' }}>
-        <Tabs
-          defaultActiveKey={TabType.STEP1}
-          items={items}
+      <Content>
+        <TabBar
+          defaultActiveKey={contextData.tabType}
           activeKey={contextData.tabType}
-          centered={true}
+          items={items.map((v) => ({
+            key: v.key,
+            label: v.label
+          }))}
           onTabClick={(key) => {
             const toTabType = key as TabType;
-
             if (toTabType === TabType.STEP2) {
               if (!contextData.step1Completed) {
                 setTimeout(() => {
@@ -671,10 +645,9 @@ export default function CreateHDWalletScreen() {
             }
             updateContextData({ tabType: toTabType });
           }}
-          // renderTabBar={() => {
-          //   return tabBar;
-          // }}
         />
+
+        {currentChildren}
       </Content>
     </Layout>
   );

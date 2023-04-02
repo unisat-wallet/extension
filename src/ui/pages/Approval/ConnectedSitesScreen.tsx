@@ -1,11 +1,10 @@
-import { Button, Layout } from 'antd';
-import { Content } from 'antd/lib/layout/layout';
 import { useEffect, useState } from 'react';
 
 import { ConnectedSite } from '@/background/service/permission';
-import CHeader from '@/ui/components/CHeader';
+import { Icon, Layout, Header, Content, Column, Card, Row, Text, Image } from '@/ui/components';
+import { Empty } from '@/ui/components/Empty';
+import { fontSizes } from '@/ui/theme/font';
 import { useWallet } from '@/ui/utils';
-import { CloseOutlined } from '@ant-design/icons';
 
 export default function ConnectedSitesScreen() {
   const wallet = useWallet();
@@ -26,39 +25,40 @@ export default function ConnectedSitesScreen() {
     getSites();
   };
   return (
-    <Layout className="h-full">
-      <CHeader
+    <Layout>
+      <Header
         onBack={() => {
           window.history.go(-1);
         }}
         title="Connected Sites"
       />
-      <Content style={{ backgroundColor: '#1C1919' }}>
-        <div className="flex flex-col items-strech gap-3_75 justify-evenly mx-5 mt-5">
+      <Content>
+        <Column>
           {sites.length > 0 ? (
             sites.map((item, index) => {
               return (
-                <Button key={item.origin} size="large" type="default" className="p-5 box default btn-88">
-                  <div className="flex items-center justify-between text-lg font-semibold">
-                    <div className="flex flex-grow text-left">
-                      <img src={item.icon} className="w-8 mr-3" />
-                      <div className="font-normal opacity-60">{item.origin}</div>
-                    </div>
-
-                    <span
-                      onClick={() => {
-                        handleRemove(item.origin);
-                      }}>
-                      <CloseOutlined />
-                    </span>
-                  </div>
-                </Button>
+                <Card key={item.origin}>
+                  <Row full justifyBetween itemsCenter>
+                    <Row itemsCenter>
+                      <Image src={item.icon} size={fontSizes.logo} />
+                      <Text text={item.origin} preset="sub" />
+                    </Row>
+                    <Column justifyCenter>
+                      <Icon
+                        icon="close"
+                        onClick={() => {
+                          handleRemove(item.origin);
+                        }}
+                      />
+                    </Column>
+                  </Row>
+                </Card>
               );
             })
           ) : (
-            <div className="self-center">NO DATA</div>
+            <Empty />
           )}
-        </div>
+        </Column>
       </Content>
     </Layout>
   );

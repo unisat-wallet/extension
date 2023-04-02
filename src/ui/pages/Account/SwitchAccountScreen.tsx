@@ -1,17 +1,14 @@
-import { Button, message } from 'antd';
-import { Layout } from 'antd';
-import { Content } from 'antd/lib/layout/layout';
 import VirtualList from 'rc-virtual-list';
 import { forwardRef, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
-import { KEYRING_CLASS } from '@/shared/constant';
 import { Account } from '@/shared/types';
-import CHeader from '@/ui/components/CHeader';
+import { Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
+import { useTools } from '@/ui/components/ActionComponent';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
+import { colors } from '@/ui/theme/colors';
 import { copyToClipboard, shortAddress, useWallet } from '@/ui/utils';
 import {
   CheckCircleFilled,
@@ -35,7 +32,6 @@ interface MyItemProps {
 }
 
 export function MyItem({ account, autoNav }: MyItemProps, ref) {
-  const { t } = useTranslation();
   const navigate = useNavigate();
   const currentAccount = useCurrentAccount();
   const selected = currentAccount.pubkey == account?.pubkey;
@@ -43,28 +39,24 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
   const dispatch = useAppDispatch();
   const keyring = useCurrentKeyring();
   if (!account) {
-    return (
-      <Button
-        size="large"
-        type="primary"
-        className="box"
-        onClick={(e) => {
-          // todo
-          navigate('CreateAccountScreen');
-        }}>
-        <div className="flex items-center justify-center text-lg font-semibold">{t('Add New Account')}</div>
-      </Button>
-    );
+    return <div />;
   }
   const [optionsVisible, setOptionsVisible] = useState(false);
   const path = keyring.hdPath + '/' + account.index;
 
+  const tools = useTools();
+
   return (
-    <div className="!px-3 !py-0 box default mb-3_75 !h-24">
-      <div className="flex items-center justify-between text-lg font-semibold h-full">
-        <div className=" w-8 flex  py-6  justify-center  h-full">{selected && <CheckCircleFilled />}</div>
-        <div
-          className="flex py-5 ml-2 flex-col flex-grow text-left h-full cursor-pointer"
+    <Card justifyBetween mt="md">
+      <Row>
+        <Column style={{ width: 20 }} selfItemsCenter>
+          {selected && (
+            <Icon>
+              <CheckCircleFilled />
+            </Icon>
+          )}
+        </Column>
+        <Column
           onClick={async (e) => {
             if (currentAccount.pubkey !== account.pubkey) {
               await wallet.changeAccount(account);
@@ -72,74 +64,73 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
             }
             if (autoNav) navigate('MainScreen');
           }}>
-          <span>{account?.alianName} </span>
-          <span className="font-normal opacity-60">{`${shortAddress(account.address)} (${path})`}</span>
-        </div>
-        {account?.type == KEYRING_CLASS.PRIVATE_KEY ? (
-          <span className="text-xs rounded bg-primary-active p-1.5">IMPORTED</span>
-        ) : (
-          <></>
+          <Text text={account.alianName} />
+          <Text text={`${shortAddress(account.address)} (${path})`} preset="sub" />
+        </Column>
+      </Row>
+      <Column relative>
+        {optionsVisible && (
+          <div
+            style={{
+              position: 'fixed',
+              zIndex: 10,
+              left: 0,
+              right: 0,
+              top: 0,
+              bottom: 0
+            }}
+            onTouchStart={(e) => {
+              setOptionsVisible(false);
+            }}
+            onMouseDown={(e) => {
+              setOptionsVisible(false);
+            }}></div>
         )}
 
-        <div className="flex h-full relative">
-          {optionsVisible && (
-            <div
-              className="z-10 fixed"
-              style={{
-                left: 0,
-                right: 0,
-                top: 0,
-                bottom: 0
-              }}
-              onTouchStart={(e) => {
-                setOptionsVisible(false);
-              }}
-              onMouseDown={(e) => {
-                setOptionsVisible(false);
-              }}></div>
-          )}
+        <Icon
+          onClick={async (e) => {
+            setOptionsVisible(!optionsVisible);
+          }}>
+          <EllipsisOutlined />
+        </Icon>
 
-          <div
-            className="flex py-6 px-2 cursor-pointer"
-            onClick={async (e) => {
-              setOptionsVisible(!optionsVisible);
+        {optionsVisible && (
+          <Column
+            style={{
+              backgroundColor: colors.black,
+              width: 140,
+              position: 'absolute',
+              right: 0,
+              padding: 5,
+              zIndex: 10
             }}>
-            <EllipsisOutlined style={{ fontSize: 20 }} />
-          </div>
-
-          {optionsVisible && (
-            <div className=" bg-hard-black right-0 shadow-md text-left p-2 z-10 mt-10 absolute  !w-52">
-              <div
-                className="flex px-4 py-2 items-center cursor-pointer"
-                onClick={() => {
-                  navigate('EditAccountNameScreen', { account });
-                }}>
-                <EditOutlined />
-                <span className="ml-2">Edit Name</span>
-              </div>
-              <div
-                className="flex px-4 py-2 items-center cursor-pointer"
-                onClick={() => {
-                  copyToClipboard(account.address);
-                  message.success('copied');
-                  setOptionsVisible(false);
-                }}>
-                <CopyOutlined />
-                <span className="ml-2">Copy address</span>
-              </div>
-              <div
-                className="flex px-4 py-2 items-center cursor-pointer"
-                onClick={() => {
-                  navigate('ExportPrivateKeyScreen', { account });
-                }}>
-                <KeyOutlined />
-                <span className="ml-2">Export WIF</span>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
+            <Row
+              onClick={() => {
+                navigate('EditAccountNameScreen', { account });
+              }}>
+              <EditOutlined />
+              <Text text="Edit Name" size="sm" />
+            </Row>
+            <Row
+              onClick={() => {
+                copyToClipboard(account.address);
+                tools.toastSuccess('copied');
+                setOptionsVisible(false);
+              }}>
+              <CopyOutlined />
+              <Text text="Copy address" size="sm" />
+            </Row>
+            <Row
+              onClick={() => {
+                navigate('ExportPrivateKeyScreen', { account });
+              }}>
+              <KeyOutlined />
+              <Text text="Export WIF" size="sm" />
+            </Row>
+          </Column>
+        )}
+      </Column>
+    </Card>
   );
 }
 
@@ -158,41 +149,25 @@ export default function SwitchAccountScreen() {
   const ForwardMyItem = forwardRef(MyItem);
 
   return (
-    <Layout className="h-full">
-      <CHeader
+    <Layout>
+      <Header
         onBack={() => {
           window.history.go(-1);
         }}
         title="Switch Account"
         RightComponent={
-          <div
-            className="duration-80  cursor-pointer"
+          <Icon
             onClick={() => {
               navigate('CreateAccountScreen');
             }}>
-            <div className="flex items-end justify-end">
-              <PlusCircleOutlined style={{ fontSize: '24px' }} />
-            </div>
-          </div>
+            <PlusCircleOutlined />
+          </Icon>
         }
       />
-      <Content style={{ backgroundColor: '#1C1919' }}>
-        <div className="flex flex-col items-stech mx-5 mb-5 gap-3_75 justify-evenly">
-          <VirtualList
-            data={items}
-            data-id="list"
-            itemHeight={20}
-            itemKey={(item) => item.key}
-            // disabled={animating}
-            style={{
-              boxSizing: 'border-box'
-            }}
-            // onSkipRender={onAppear}
-            // onItemRemove={onAppear}
-          >
-            {(item, index) => <ForwardMyItem account={item.account} autoNav={true} />}
-          </VirtualList>
-        </div>
+      <Content>
+        <VirtualList data={items} data-id="list" itemHeight={20} itemKey={(item) => item.key}>
+          {(item, index) => <ForwardMyItem account={item.account} autoNav={true} />}
+        </VirtualList>
       </Content>
     </Layout>
   );

@@ -1,7 +1,12 @@
-import { Input } from 'antd';
-import { useEffect, useState } from 'react';
+import { CSSProperties, useEffect, useState } from 'react';
 
+import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
+
+import { Column } from '../Column';
+import { Input } from '../Input';
+import { Row } from '../Row';
+import { Text } from '../Text';
 
 enum FeeRateType {
   SLOW,
@@ -34,30 +39,56 @@ export function FeeRateBar({ onChange }: { onChange: (val: number) => void }) {
   }, [feeOptions, feeOptionIndex, feeRateInputVal]);
 
   return (
-    <div>
-      <div className="flex items-center !h-24 mt-2 justify-center">
-        {feeOptions.map((v, index) => (
-          <div
-            key={v.title}
-            onClick={() => {
-              setFeeOptionIndex(index);
-            }}
-            className={
-              'text-center !h-24 w-40 px-2 py-2 rounded-md mx-2 flex flex-col justify-center cursor-pointer' +
-              (index === feeOptionIndex ? ' bg-yellow-300 text-black' : '')
-            }
-            style={{ borderWidth: 1, borderColor: 'rgba(255,255,255,0.3)' }}>
-            <div>{v.title}</div>
-            {v.feeRate && <div className="text-sm mt-1">{v.feeRate} sat/vB</div>}
-            {v.desc && (
-              <div className={'text-xs mt-1' + (index === feeOptionIndex ? '' : ' text-soft-white')}>{v.desc}</div>
-            )}
-          </div>
-        ))}
-      </div>
+    <Column>
+      <Row>
+        {feeOptions.map((v, index) => {
+          const selected = index === feeOptionIndex;
+          return (
+            <div
+              key={v.title}
+              onClick={() => {
+                setFeeOptionIndex(index);
+              }}
+              style={Object.assign(
+                {},
+                {
+                  borderWidth: 1,
+                  borderColor: 'rgba(255,255,255,0.3)',
+                  height: 75,
+                  width: 75,
+                  textAlign: 'center',
+                  padding: 4,
+                  borderRadius: 5,
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center'
+                } as CSSProperties,
+                selected ? { backgroundColor: colors.primary } : {}
+              )}>
+              <Text text={v.title} textCenter style={{ color: selected ? colors.black : colors.white }} />
+              {v.feeRate && (
+                <Text
+                  text={`${v.feeRate} sat/vB`}
+                  size="xxs"
+                  textCenter
+                  style={{ color: selected ? colors.black : colors.white }}
+                />
+              )}
+              {v.desc && (
+                <Text
+                  text={`${v.desc}`}
+                  size="xxs"
+                  textCenter
+                  style={{ color: selected ? colors.black : colors.white_muted }}
+                />
+              )}
+            </div>
+          );
+        })}
+      </Row>
       {feeOptionIndex === FeeRateType.CUSTOM && (
         <Input
-          className="font-semibold  text-white h-15_5 box default hover !mt-5"
+          preset="amount"
           placeholder={'sat/vB'}
           defaultValue={feeRateInputVal}
           value={feeRateInputVal}
@@ -69,13 +100,9 @@ export function FeeRateBar({ onChange }: { onChange: (val: number) => void }) {
             const val = parseInt(feeRateInputVal) + '';
             setFeeRateInputVal(val);
           }}
-          onPressEnter={(e) => {
-            const val = parseInt(feeRateInputVal) + '';
-            setFeeRateInputVal(val);
-          }}
           autoFocus={true}
         />
       )}
-    </div>
+    </Column>
   );
 }

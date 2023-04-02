@@ -1,14 +1,17 @@
-import { Button, Input, message } from 'antd';
 import React, { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
+import { Column, Content, Layout, Row } from '@/ui/components';
+import { useTools } from '@/ui/components/ActionComponent';
+import { Button } from '@/ui/components/Button';
+import { Input } from '@/ui/components/Input';
+import { Logo } from '@/ui/components/Logo';
+import { Text } from '@/ui/components/Text';
 import { useUnlockCallback } from '@/ui/state/global/hooks';
 import { getUiType, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../../MainRoute';
 
 export default function UnlockScreen() {
-  const { t } = useTranslation();
   const wallet = useWallet();
   const navigate = useNavigate();
   const [password, setPassword] = useState('');
@@ -16,6 +19,7 @@ export default function UnlockScreen() {
   const UIType = getUiType();
   const isInNotification = UIType.isNotification;
   const unlock = useUnlockCallback();
+  const tools = useTools();
   const btnClick = async () => {
     // run(password);
     try {
@@ -31,7 +35,7 @@ export default function UnlockScreen() {
         }
       }
     } catch (e) {
-      message.error(t('PASSWORD ERROR'));
+      tools.toastError('PASSWORD ERROR');
     }
   };
 
@@ -44,38 +48,31 @@ export default function UnlockScreen() {
   useEffect(() => {
     if (password) {
       setDisabled(false);
+    } else {
+      setDisabled(true);
     }
   }, [password]);
-
   return (
-    <div className="flex items-center justify-center h-full">
-      <div className="flex flex-col items-center">
-        <div className="flex items-center justify-center mb-15 gap-x-4 w-70">
-          <img src="./images/logo/wallet-logo.png" className="w-16 h-16 select-none" alt="" />
-          <div className="text-4xl font-semibold tracking-widest select-none">UNISAT</div>
-        </div>
-        <div className="grid gap-5">
-          <div className="text-2xl font-semibold text-center text-white">{t('Enter your password')}</div>
-          <div>
-            <Input.Password
+    <Layout>
+      <Content preset="middle">
+        <Column fullX>
+          <Row justifyCenter>
+            <Logo preset="large" />
+          </Row>
+
+          <Column gap="xl" mt="xxl">
+            <Text preset="title-bold" text="Enter your password" textCenter />
+            <Input
+              preset="password"
               placeholder="Password"
               onChange={(e) => setPassword(e.target.value)}
               onKeyUp={(e) => handleOnKeyUp(e)}
               autoFocus={true}
             />
-          </div>
-          <div>
-            <Button
-              disabled={disabled}
-              size="large"
-              type="primary"
-              className="font-semibold box w380 content"
-              onClick={btnClick}>
-              {t('Unlock')}
-            </Button>
-          </div>
-        </div>
-      </div>
-    </div>
+            <Button disabled={disabled} text="Unlock" preset="primary" onClick={btnClick} />
+          </Column>
+        </Column>
+      </Content>
+    </Layout>
   );
 }

@@ -1,14 +1,12 @@
-import { Layout } from 'antd';
-import { Content } from 'antd/lib/layout/layout';
 import moment from 'moment';
-import { forwardRef, useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
+import { useEffect } from 'react';
 
-import CHeader from '@/ui/components/CHeader';
+import { Layout, Content, Icon, Header, Text, Row, Column, Card } from '@/ui/components';
+import { useTools } from '@/ui/components/ActionComponent';
 import { useAccountAddress, useFetchHistoryCallback, useHistory } from '@/ui/state/accounts/hooks';
 import { useBlockstreamUrl } from '@/ui/state/settings/hooks';
 import { shortAddress } from '@/ui/utils';
-import { ClockCircleFilled, LoadingOutlined } from '@ant-design/icons';
+import { ClockCircleFilled } from '@ant-design/icons';
 
 interface HistoryItem {
   address: string;
@@ -32,73 +30,60 @@ const MyItem: React.ForwardRefRenderFunction<any, MyItemProps> = ({ group, index
   const blockstreamUrl = useBlockstreamUrl();
   if (group.index == -1) {
     return (
-      <div className="flex flex-col items-center gap-2_5 mb-2_5">
-        <span className="text-2xl font-semibold text-white">{'Latest Transactions'}</span>
-        <div className="flex items-center text-lg text-white duration-80 opacity-60 hover:opacity-100">
-          <img src="./images/eye.svg" alt="" />
-          <a
-            className="text-white cursor-pointer hover:text-white"
-            href={`${blockstreamUrl}/address/${address}`}
-            target="_blank"
-            rel="noreferrer">
-            &nbsp;{'View on Block Explorer'}
-          </a>
-        </div>
-      </div>
+      <Column>
+        <Text text="Latest Transactions" preset="title-bold" textCenter />
+        <Row
+          onClick={() => {
+            window.open(`${blockstreamUrl}/address/${address}`);
+          }}>
+          <Icon icon="eye" color="textDim" />
+          <Text preset="regular-bold" text="View on Block Explorer" color="textDim" />
+        </Row>
+      </Column>
     );
   }
 
   return (
-    <div key={index} className="mt-2_5">
-      <div className="pl-2 font-semibold text-soft-white">{group.date}</div>
+    <Column key={index} mt="lg">
+      <Text text={group.date} color="textDim" />
       {group.historyItems.map((item, index) => {
         const isReceived = item.amount > 0;
         return (
-          <div className="mt-2_5" key={`item_${index}`}>
-            <div className="justify-between box nobor " key={index}>
-              <div className="flex flex-col">
-                <span>Transfer</span>
-                <span className="text-soft-white">
-                  {isReceived ? 'From' : 'To'} {shortAddress(item.address)}
-                </span>
-              </div>
-              <span>
-                <span className={`font-semibold ${isReceived ? 'text-custom-green' : 'text-warn'}`}>
-                  {isReceived ? '+' : '-'}
-                </span>
-                <span className="font-semibold text-white">
-                  {Number(Math.abs(item.amount)).toLocaleString('en', { minimumFractionDigits: 8 })}
-                </span>{' '}
-                {item.symbol}
-              </span>
-            </div>
-          </div>
+          <Card key={`item_${index}`}>
+            <Row justifyBetween full>
+              <Column selfItemsCenter>
+                <Text text="Transfer" />
+                <Text text={`${isReceived ? 'From' : 'To'} ${shortAddress(item.address)}`} preset="sub" />
+              </Column>
+              <Row selfItemsCenter>
+                <Text text={isReceived ? '+' : '-'} color={isReceived ? 'green' : 'red'} />
+                <Text
+                  text={`${Number(Math.abs(item.amount)).toLocaleString('en', { minimumFractionDigits: 8 })} ${
+                    item.symbol
+                  }`}
+                  preset="regular-bold"
+                />
+              </Row>
+            </Row>
+          </Card>
         );
       })}
-    </div>
+    </Column>
   );
 };
 
 export default function HistoryScreen() {
-  const { t } = useTranslation();
-  const ForwardMyItem = forwardRef(MyItem);
-  // const html = document.getElementsByTagName('html')[0];
-  // let virtualListHeight = 485;
-  // if (html && getComputedStyle(html).fontSize) {
-  //   virtualListHeight = (virtualListHeight * parseFloat(getComputedStyle(html).fontSize)) / 16;
-  // }
-
   const accountHistory = useHistory();
   const fetchHistory = useFetchHistoryCallback();
 
-  const [loading, setLoading] = useState(false);
+  const tools = useTools();
 
   useEffect(() => {
     if (accountHistory.list.length == 0) {
-      setLoading(true);
+      tools.showLoading(true);
     }
     fetchHistory().finally(() => {
-      setLoading(false);
+      tools.showLoading(false);
     });
   }, []);
 
@@ -134,37 +119,34 @@ export default function HistoryScreen() {
   }
 
   return (
-    <Layout className="h-full">
-      <CHeader
+    <Layout>
+      <Header
         onBack={() => {
           window.history.go(-1);
         }}
         title="History"
       />
-      <Content style={{ backgroundColor: '#1C1919', overflowY: 'auto' }}>
-        {loading ? (
-          <div className="flex flex-col items-strech mx-5 text-6xl mt-60 gap-3_75 text-primary">
-            <LoadingOutlined />
-          </div>
-        ) : (
-          <div className="flex flex-col items-strech h-full gap-5 justify-evenly mx-5">
-            <div className={'flex-1  min-h-[200px] w-full p-2 '} style={{}}>
-              {historyGroups.length === 0 ? (
-                <div className="flex flex-col items-center justify-center h-full gap-5 font-semibold text-soft-white">
-                  <ClockCircleFilled className="text-2xl font-semibold text-soft-white" />
-                  {t('This account has no transactions')}
-                </div>
-              ) : (
-                <>
-                  {historyGroups.map((data, index) => (
-                    <MyItem key={index} group={data} index={index} />
-                  ))}
-                </>
-              )}
-            </div>
-          </div>
-        )}
-      </Content>
+
+      {historyGroups.length === 0 ? (
+        <Content preset="middle">
+          <Column gap="lg">
+            <Row justifyCenter>
+              <Icon color="textDim">
+                <ClockCircleFilled />
+              </Icon>
+            </Row>
+            <Text text="This account has no transactions" color="textDim" textCenter />
+          </Column>
+        </Content>
+      ) : (
+        <Content>
+          <Column>
+            {historyGroups.map((data, index) => (
+              <MyItem key={index} group={data} index={index} />
+            ))}
+          </Column>{' '}
+        </Content>
+      )}
     </Layout>
   );
 }

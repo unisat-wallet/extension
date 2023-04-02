@@ -1,0 +1,36 @@
+.container {
+  height: 300px;
+  width: 300px;
+  top: 60px;
+  left: calc(50% - 300px);
+  display: flex;
+}
+.card {
+  display: flex;
+  height: 198px;
+  width: 156px;
+  background-color: #17141d;
+  border-radius: 0px;
+  box-shadow: -1rem 0 3rem #000;
+  /*   margin-left: -50px; */
+  transition: 0.4s ease-out;
+  position: relative;
+  left: 0px;
+  padding: 0px;
+}
+
+.card:not(:first-child) {
+  margin-left: -160px;
+}
+
+.card:hover {
+  transform: translateY(-20px);
+  transition: 0.4s ease-out;
+  box-shadow: -1rem 0 3rem #000 !important;
+}
+
+.card:hover ~ .card {
+  position: relative;
+  left: 50px;
+  transition: 0.4s ease-out;
+}

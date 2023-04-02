@@ -1,13 +1,14 @@
-import { Button, Layout, message } from 'antd';
-import { Content, Footer } from 'antd/lib/layout/layout';
 import BigNumber from 'bignumber.js';
 import * as bitcoin from 'bitcoinjs-lib';
-import { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { toPsbtNetwork } from '@/background/utils/tx-utils';
 import { ToSignInput, TxType } from '@/shared/types';
+import { Button, Layout, Content, Footer, Icon, Text, Row, Card, Column, TextArea } from '@/ui/components';
+import { useTools } from '@/ui/components/ActionComponent';
 import { AddressText } from '@/ui/components/AddressText';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
+import { TabBar } from '@/ui/components/TabBar';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useAccountAddress, useAccountBalance } from '@/ui/state/accounts/hooks';
 import { useNetworkType } from '@/ui/state/settings/hooks';
@@ -17,10 +18,12 @@ import {
   useCreateOrdinalsTxCallback,
   useOrdinalsTx
 } from '@/ui/state/transactions/hooks';
+import { colors } from '@/ui/theme/colors';
 import { copyToClipboard, satoshisToAmount, useApproval } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 interface Props {
+  header?: React.ReactNode;
   params: {
     data: {
       psbtHex: string;
@@ -58,8 +61,6 @@ enum TabState {
   HEX
 }
 
-const TAB_STATES = ['DETAILS', 'DATA', 'HEX'];
-
 interface InscriptioinInfo {
   id: string;
   isSent: boolean;
@@ -77,27 +78,36 @@ function SignTxDetails({ txInfo }: { txInfo: TxInfo }) {
       .toFixed(8);
   }, [accountBalance.amount, txInfo.changedBalance]);
   return (
-    <div className="flex flex-col justify-between items-strech box mx-5 mt-5">
-      <div className="text-left font-semibold text-white">{`BALANCE: ${beforeBalance} -> ${afterBalance}`}</div>
-      <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 mt-5">
-        <div className={'py-5 flex justify-between'}>
-          <span>
-            <span className="text-white">{txInfo.changedBalance > 0 ? '+' : ' ' + changedBalance}</span> BTC
-          </span>
-        </div>
-      </div>
+    <Column gap="lg">
+      <Text text={`BALANCE: ${beforeBalance} -> ${afterBalance}`} />
+      <Card>
+        <Row full itemsCenter>
+          <Text text={txInfo.changedBalance > 0 ? '+' : ' ' + changedBalance} />
+          <Text text="BTC" color="textDim" />
+        </Row>
+      </Card>
 
       {txInfo.changedInscriptions.length > 0 && (
-        <div>
-          <div className="text-left font-semibold text-white mt-5">{'INSCRIPTIONS:'}</div>
-          <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 mt-5">
-            <div className={'py-5 flex justify-between'}>
-              <div className="text-white">100</div>
-            </div>
-          </div>
-        </div>
+        <Card>
+          <Row>
+            <Text text="100" />
+          </Row>
+        </Card>
       )}
-    </div>
+    </Column>
+  );
+}
+
+function Section({ title, children }: { title: string; children?: React.ReactNode }) {
+  return (
+    <Column>
+      <Text text={title} preset="bold" />
+      <Card>
+        <Row full justifyBetween itemsCenter>
+          {children}
+        </Row>
+      </Card>
+    </Column>
   );
 }
 
@@ -105,29 +115,25 @@ function SendInscriptionDetails({ txInfo }: { txInfo: TxInfo }) {
   const ordinalsTx = useOrdinalsTx();
   const networkFee = useMemo(() => satoshisToAmount(txInfo.fee), [txInfo.fee]);
   return (
-    <div className="flex flex-col items-strech mx-5 mt-5 gap-3_75 justify-evenly ">
-      <div className="text-left font-semibold text-white mt-5">{'INSCRIPTION'}</div>
-      <InscriptionPreview className="self-center" data={ordinalsTx.inscription} size="medium" />
+    <Column>
+      <Text text="INSCRIPTION" preset="bold" />
+      <Row justifyCenter>
+        <InscriptionPreview data={ordinalsTx.inscription} preset="medium" />
+      </Row>
 
-      <div className="text-left font-semibold text-white mt-5">{'FROM'}</div>
-      <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
-        <div className={'py-5 flex justify-between'}>
-          <AddressText address={ordinalsTx.fromAddress} />
-        </div>
-      </div>
-      <div className="text-left font-semibold text-white mt-5">{'TO'}</div>
-      <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
-        <div className={'py-5 flex justify-between'}>
-          <AddressText address={ordinalsTx.toAddress} domain={ordinalsTx.toDomain} />
-        </div>
-      </div>
-      <div className="text-left font-semibold text-white mt-5">{'NETWORK FEE'}</div>
-      <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
-        <div className={'py-5 flex justify-between'}>
-          <span className="text-white">{`${networkFee} `}</span> BTC
-        </div>
-      </div>
-    </div>
+      <Section title="FROM">
+        <AddressText address={ordinalsTx.fromAddress} />
+      </Section>
+
+      <Section title="TO">
+        <AddressText address={ordinalsTx.toAddress} domain={ordinalsTx.toDomain} />
+      </Section>
+
+      <Section title="NETWORK FEE">
+        <Text text={networkFee} />
+        <Text text="BTC" color="textDim" />
+      </Section>
+    </Column>
   );
 }
 
@@ -160,47 +166,40 @@ function SendBitcoinDetails({
   const feeEnough = txInfo.fee > 0;
   if (!txInfo.psbtHex) {
     return (
-      <div className="flex flex-col items-strech mx-5 mt-5 gap-3_75 justify-evenly">
-        <div className="text-left font-semibold text-white mt-5">{'Transfer Amount'}</div>
-        <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
-          <div className={'py-5 flex justify-between'}>
-            <span className="text-white">{toAmount}</span> BTC
-          </div>
-        </div>
+      <Column>
+        <Text text="Transfer Amount" preset="bold" />
+        <Card>
+          <Row full itemsCenter>
+            <Text text={toAmount} />
+            <Text text="BTC" color="textDim" />
+          </Row>
+        </Card>
 
-        <span className="text-lg text-error h-5">{`Insufficient Balance (${balance.amount})`}</span>
-      </div>
+        <Text text={`Insufficient Balance (${balance.amount})`} color="danger" />
+      </Column>
     );
   }
 
   return (
-    <div className="flex flex-col items-strech mx-5 mt-5 gap-3_75 justify-evenly">
-      <div className="text-left font-semibold text-white mt-5">{'Transfer Amount'}</div>
-      <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
-        <div className={'py-5 flex justify-between'}>
-          <span className="text-white">{toAmount}</span> BTC
-        </div>
-      </div>
+    <Column gap="lg">
+      <Section title="Transfer Amount">
+        <Text text={toAmount} />
+        <Text text="BTC" color="textDim" />
+      </Section>
 
-      <div className="text-left font-semibold text-white mt-5">{'FROM'}</div>
-      <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
-        <div className={'py-5 flex justify-between'}>
-          <AddressText address={bitcoinTx.fromAddress} />
-        </div>
-      </div>
-      <div className="text-left font-semibold text-white mt-5">{'TO'}</div>
-      <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
-        <div className={'py-5 flex justify-between'}>
-          <AddressText address={bitcoinTx.toAddress} domain={bitcoinTx.toDomain} />
-        </div>
-      </div>
-      <div className="text-left font-semibold text-white mt-5">{'NETWORK FEE'}</div>
-      <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 ">
-        <div className={'py-5 flex justify-between'}>
-          <span className={feeEnough ? 'text-white' : 'text-red-500'}>{`${networkFee} `}</span> BTC
-        </div>
-      </div>
-    </div>
+      <Section title="FROM">
+        <AddressText address={bitcoinTx.fromAddress} />
+      </Section>
+
+      <Section title="TO">
+        <AddressText address={bitcoinTx.toAddress} domain={bitcoinTx.toDomain} />
+      </Section>
+
+      <Section title="NETWORK FEE">
+        <Text text={networkFee} color={feeEnough ? 'danger' : 'white'} />
+        <Text text="BTC" color="textDim" />
+      </Section>
+    </Column>
   );
 }
 
@@ -221,7 +220,7 @@ export default function SignPsbt({
     data: { psbtHex, toSignInputs, type, toAddress, satoshis, feeRate, inscriptionId },
     session
   },
-
+  header,
   handleCancel,
   handleConfirm
 }: Props) {
@@ -250,6 +249,8 @@ export default function SignPsbt({
   const createOrdinalsTx = useCreateOrdinalsTxCallback();
 
   const [loading, setLoading] = useState(true);
+
+  const tools = useTools();
 
   const init = async () => {
     if (type === TxType.SEND_BITCOIN) {
@@ -416,139 +417,140 @@ export default function SignPsbt({
 
   if (loading) {
     return (
-      <Layout className="h-full">
-        <Content style={{ backgroundColor: '#1C1919', overflowY: 'auto' }}>
-          <div className="flex flex-col items-strech mx-5 text-6xl mt-60 gap-3_75 text-primary">
+      <Layout>
+        <Content>
+          <Icon>
             <LoadingOutlined />
-            <span className="text-2xl text-white self-center">{'Loading'}</span>
-          </div>
+          </Icon>
         </Content>
       </Layout>
     );
   }
   return (
-    <Layout className="h-full">
-      <Content style={{ backgroundColor: '#1C1919', overflowY: 'auto' }}>
-        <div className="flex flex-col items-strech mt-5 gap-3_75 justify-evenly mx-5">
+    <Layout>
+      {header}
+      <Content>
+        <Column>
           {session && <WebsiteBar session={session} />}
 
-          <div className="flex self-center px-2 text-2xl font-semibold h-13">{title}</div>
+          <Text text={title} preset="title-bold" textCenter />
 
-          <div className="flex">
-            {TAB_STATES.map((v, index) => {
-              return (
-                <div
-                  key={v}
-                  className={'mx-5 cursor-pointer' + (index == tabState ? ' border-b border-white' : ' ')}
-                  onClick={() => {
-                    setTabState(index);
-                  }}>
-                  {v}
-                </div>
-              );
-            })}
-          </div>
+          <Row mt="lg" mb="lg">
+            <TabBar
+              defaultActiveKey={TabState.DETAILS}
+              activeKey={TabState.DETAILS}
+              items={[
+                { label: 'DETAILS', key: TabState.DETAILS },
+                { label: 'DATA', key: TabState.DATA },
+                { label: 'HEX', key: TabState.HEX }
+              ]}
+              onTabClick={({ key }) => {
+                setTabState(key as any);
+              }}
+            />
+          </Row>
 
           {tabState === TabState.DETAILS && detailsComponent}
           {tabState === TabState.DATA && isValidData && (
-            <div className="flex flex-col justify-between items-strech box mx-5 mt-5">
-              <div className="text-left font-semibold text-white">{'INPUTS:'}</div>
-              <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 mt-5">
-                {txInfo.inputInfos.map((v, index) => {
-                  return (
-                    <div
-                      key={'input_' + index}
-                      className={'py-5 flex justify-between' + (index === 0 ? ' ' : ' border-black border-t')}>
-                      <AddressText address={v.address} />
-                      <div className="text-white">{v.value}</div>
-                    </div>
-                  );
-                })}
-              </div>
-              <span className="text-white self-center text-3xl mt-5">↓</span>
-              <div className=" text-left font-semibold text-white">{'OUTPUTS:'}</div>
-              <div className=" bg-soft-black  text-soft-white rounded-2xl  px-5 mt-5">
-                {txInfo.outputInfos.map((v, index) => {
-                  return (
-                    <div
-                      key={'output_' + index}
-                      className={'py-5 flex justify-between' + (index === 0 ? ' ' : ' border-black border-t')}>
-                      <AddressText address={v.address} />
-                      <div className="text-white">{v.value}</div>
-                    </div>
-                  );
-                })}
-              </div>
+            <Column gap="xl">
+              <Column>
+                <Text text="INPUTS:" preset="bold" />
+                <Card>
+                  <Column full justifyCenter>
+                    {txInfo.inputInfos.map((v, index) => {
+                      return (
+                        <Row
+                          key={'output_' + index}
+                          style={
+                            index === 0 ? {} : { borderColor: colors.white_muted, borderTopWidth: 1, paddingTop: 10 }
+                          }
+                          justifyBetween>
+                          <AddressText address={v.address} />
+                          <Text text={v.value.toString()} />
+                        </Row>
+                      );
+                    })}
+                  </Column>
+                </Card>
+              </Column>
 
-              <div className=" text-left font-semibold text-white mt-5">{'NETWORK FEE:'}</div>
-              <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 mt-5">
-                <div className={'py-5 flex justify-between'}>
-                  <span className="text-white">{networkFee}</span> BTC
-                </div>
-              </div>
+              <Column>
+                <Text text="OUTPUTS:" preset="bold" />
+                <Card>
+                  <Column full justifyCenter gap="lg">
+                    {txInfo.outputInfos.map((v, index) => {
+                      return (
+                        <Row
+                          key={'output_' + index}
+                          style={
+                            index === 0 ? {} : { borderColor: colors.white_muted, borderTopWidth: 1, paddingTop: 10 }
+                          }
+                          justifyBetween>
+                          <AddressText address={v.address} />
+                          <Text text={v.value.toString()} />
+                        </Row>
+                      );
+                    })}
+                  </Column>
+                </Card>
+              </Column>
 
-              <div className=" text-left font-semibold text-white mt-5">{'NETWORK FEE RATE:'}</div>
-              <div className=" bg-soft-black  text-soft-white rounded-2xl px-5 mt-5">
-                <div className={'py-5 flex justify-between'}>
-                  <span className="text-white">{txInfo.feeRate}</span> sat/vB
-                </div>
-              </div>
-            </div>
+              <Section title="NETWORK FEE RATE:">
+                <Text text={networkFee} />
+                <Text text="BTC" color="textDim" />
+              </Section>
+
+              <Section title="NETWORK FEE RATE:">
+                <Text text={txInfo.feeRate.toString()} />
+                <Text text="sat/vB" color="textDim" />
+              </Section>
+            </Column>
           )}
 
           {tabState === TabState.HEX && isValidData && txInfo.rawtx && (
-            <div className="flex flex-col items-strech mt-5 gap-3_75 justify-evenly mx-5">
-              <div className=" text-left font-semibold text-white">{`HEX DATA: ${txInfo.rawtx.length / 2} BYTES`}</div>
+            <Column>
+              <Text text={`HEX DATA: ${txInfo.rawtx.length / 2} BYTES`} preset="bold" />
 
-              <div className=" flex-wrap break-words whitespace-pre-wrap bg-slate-300 bg-opacity-5 p-5 max-h-96 overflow-auto">
-                {txInfo.rawtx}
-              </div>
-              <div
-                className="flex items-center justify-center gap-2 px-4 py-2 duration-80 rounded cursor-pointer flex-nowrap opacity-80 hover:opacity-100"
+              <TextArea text={txInfo.rawtx} />
+
+              <Row
+                justifyCenter
                 onClick={(e) => {
                   copyToClipboard(txInfo.rawtx).then(() => {
-                    message.success('Copied');
+                    tools.toastSuccess('Copied');
                   });
                 }}>
-                <img src="./images/copy-solid.svg" alt="" className="h-4_5 hover:opacity-100" />
-                <span className="text-lg text-white">Copy raw transaction data</span>{' '}
-              </div>
-            </div>
+                <Icon icon="copy" color="textDim" />
+                <Text text="Copy raw transaction data" color="textDim" />
+              </Row>
+            </Column>
           )}
 
           {tabState === TabState.HEX && isValidData && txInfo.psbtHex && (
-            <div className="flex flex-col items-strech mt-5 gap-3_75 justify-evenly mx-5">
-              <div className=" text-left font-semibold text-white">{`PSBT HEX DATA: ${
-                txInfo.psbtHex.length / 2
-              } BYTES`}</div>
+            <Column>
+              <Text text={`PSBT HEX DATA: ${txInfo.psbtHex.length / 2} BYTES`} preset="bold" />
 
-              <div className=" flex-wrap break-words whitespace-pre-wrap bg-slate-300 bg-opacity-5 p-5 max-h-96 overflow-auto">
-                {txInfo.psbtHex}
-              </div>
-              <div
-                className="flex items-center justify-center gap-2 px-4 py-2 duration-80 rounded cursor-pointer flex-nowrap opacity-80 hover:opacity-100"
+              <TextArea text={txInfo.psbtHex} />
+              <Row
+                justifyCenter
                 onClick={(e) => {
                   copyToClipboard(txInfo.psbtHex).then(() => {
-                    message.success('Copied');
+                    tools.toastSuccess('Copied');
                   });
                 }}>
-                <img src="./images/copy-solid.svg" alt="" className="h-4_5 hover:opacity-100" />
-                <span className="text-lg text-white">Copy psbt transaction data</span>{' '}
-              </div>
-            </div>
+                <Icon icon="copy" color="textDim" />
+                <Text text="Copy psbt transaction data" color="textDim" />
+              </Row>
+            </Column>
           )}
-        </div>
+        </Column>
       </Content>
 
-      <Footer className="footer-bar flex-col">
-        <div className="grid grid-cols-2 gap-x-2.5 mx-5">
-          <Button size="large" type="default" className="box" onClick={handleCancel}>
-            <div className="flex flex-col items-center text-lg font-semibold">Reject</div>
-          </Button>
-          <Button size="large" type="primary" className="box" onClick={handleConfirm} disabled={isValid == false}>
-            <div className="flex  flex-col items-center text-lg font-semibold">Confirm</div>
-          </Button>
-        </div>
+      <Footer>
+        <Row full>
+          <Button preset="default" text="Reject" onClick={handleCancel} full />
+          <Button preset="primary" text="Confirm" onClick={handleConfirm} disabled={isValid == false} full />
+        </Row>
       </Footer>
     </Layout>
   );

@@ -1,15 +1,14 @@
-import { memo, useMemo } from 'react';
+import { CSSProperties, memo, useMemo } from 'react';
 
-export type IframeProps = { preview: string; className?: string; ref: any };
+export type IframeProps = { preview: string; style?: CSSProperties; ref: any };
 
-const Iframe = ({ preview, className, ref }: IframeProps) => {
+const Iframe = ({ preview, style, ref }: IframeProps) => {
   return useMemo(
     () => (
       <iframe
         onClick={(e) => e.preventDefault()}
         ref={ref}
-        className={className}
-        style={{ pointerEvents: 'none' }} // prevent events in iframe
+        style={Object.assign({}, { pointerEvents: 'none' }, style)} // prevent events in iframe
         src={preview}
         sandbox="allow-scripts"
         scrolling="no"

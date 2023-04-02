@@ -1,11 +1,11 @@
-import { Button, Input, Layout, message } from 'antd';
-import { Tabs } from 'antd';
-import { Content } from 'antd/lib/layout/layout';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ADDRESS_TYPES } from '@/shared/constant';
 import { AddressType } from '@/shared/types';
-import CHeader from '@/ui/components/CHeader';
+import { Button, Card, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
+import { useTools } from '@/ui/components/ActionComponent';
+import { Icon } from '@/ui/components/Icon';
+import { TabBar } from '@/ui/components/TabBar';
 import { amountToSaothis, shortAddress, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
@@ -55,28 +55,21 @@ function Step1({
   };
 
   return (
-    <div className="flex justify-center">
-      <div className="flex flex-col justify-center gap-5 text-center mx-5">
-        <div className="text-2xl font-semibold text-white box w380">{'Private Key (WIF)'}</div>
+    <Column gap="lg">
+      <Text text="Private Key (WIF)" textCenter preset="bold" />
 
-        <Input
-          className="font-semibold text-white mt-1_25 h-15_5 box default focus:active"
-          placeholder={'Private Key (WIF)'}
-          onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) => {
-            if ('Enter' == e.key) {
-              btnClick();
-            }
-          }}
-          onChange={onChange}
-          autoFocus={true}
-        />
-        <div>
-          <Button disabled={disabled} size="large" type="primary" className="box w380 content" onClick={btnClick}>
-            {'Continue'}
-          </Button>
-        </div>
-      </div>
-    </div>
+      <Input
+        placeholder={'Private Key (WIF)'}
+        onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) => {
+          if ('Enter' == e.key) {
+            btnClick();
+          }
+        }}
+        onChange={onChange}
+        autoFocus={true}
+      />
+      <Button disabled={disabled} text="Continue" preset="primary" onClick={btnClick} />
+    </Column>
   );
 }
 
@@ -88,6 +81,7 @@ function Step2({
   updateContextData: (params: UpdateContextDataParams) => void;
 }) {
   const wallet = useWallet();
+  const tools = useTools();
 
   const hdPathOptions = useMemo(() => {
     return ADDRESS_TYPES.filter((v) => {
@@ -153,7 +147,9 @@ function Step2({
     run();
   }, [contextData.wif]);
 
-  const pathIndex = hdPathOptions.findIndex((v) => v.addressType === contextData.addressType);
+  const pathIndex = useMemo(() => {
+    return hdPathOptions.findIndex((v) => v.addressType === contextData.addressType);
+  }, [hdPathOptions, contextData.addressType]);
 
   const navigate = useNavigate();
 
@@ -162,12 +158,12 @@ function Step2({
       await wallet.createKeyringWithPrivateKey(contextData.wif, contextData.addressType);
       navigate('MainScreen');
     } catch (e) {
-      message.error((e as any).message);
+      tools.toastError((e as any).message);
     }
   };
   return (
-    <div className="flex flex-col items-strech gap-3_75 justify-evenly mx-5">
-      <div className="flex flex-col px-2 text-2xl font-semibold">{'Address Type'}</div>
+    <Column gap="lg">
+      <Text text="Address Type" preset="bold" />
       {hdPathOptions.map((item, index) => {
         const address = previewAddresses[index];
         const balance = addressBalances[address] || {
@@ -179,46 +175,31 @@ function Step2({
           return null;
         }
         return (
-          <Button
+          <Card
             key={index}
-            size="large"
-            type="default"
-            className={'p-5 box default ' + (hasVault ? '!h-32' : '!h-20')}
             onClick={() => {
-              if (item.hdPath) {
-                updateContextData({ addressType: item.addressType });
-              }
+              updateContextData({ addressType: item.addressType });
             }}>
-            <div className="flex items-center justify-between text-lg font-semibold">
-              <div className="flex flex-col flex-grow text-left">
-                <div className=" w-60 text-left">{`${item.label}`}</div>
-                <div className={'font-normal ' + (hasVault ? 'text-yellow-300' : 'opacity-60')}>
-                  {shortAddress(address)}
-                </div>
-                {hasVault && <div className={' border-b-2 opacity-60'}></div>}
+            <Row full itemsCenter justifyBetween>
+              <Column justifyCenter>
+                <Text text={`${item.label} `} />
+                <Text text={shortAddress(address)} color={hasVault ? 'yellow' : 'white'} />
                 {hasVault && (
-                  <div className={'font-normal ' + (hasVault ? 'text-yellow-300' : 'opacity-60')}>
-                    {balance ? `${balance.amount} BTC` : ''}{' '}
-                  </div>
+                  <Text
+                    text={balance ? `${balance.amount} BTC` : ''}
+                    preset="regular-bold"
+                    color={hasVault ? 'yellow' : 'white'}
+                  />
                 )}
-              </div>
-
-              {index == pathIndex ? (
-                <span className="w-4 h-4">
-                  <img src="./images/check.svg" alt="" />
-                </span>
-              ) : (
-                <></>
-              )}
-            </div>
-          </Button>
+              </Column>
+              <Column justifyCenter>{index == pathIndex && <Icon icon="check" />}</Column>
+            </Row>
+          </Card>
         );
       })}
 
-      <Button size="large" type="primary" className="box w380 content self-center" onClick={onNext}>
-        {'Continue'}
-      </Button>
-    </div>
+      <Button text="Coninue" preset="primary" onClick={onNext} />
+    </Column>
   );
 }
 enum TabType {
@@ -242,8 +223,6 @@ interface UpdateContextDataParams {
 }
 
 export default function CreateSimpleWalletScreen() {
-  const navigate = useNavigate();
-
   const [contextData, setContextData] = useState<ContextData>({
     wif: '',
     addressType: AddressType.P2WPKH,
@@ -271,23 +250,25 @@ export default function CreateSimpleWalletScreen() {
     }
   ];
 
+  const renderChildren = useMemo(() => {
+    return items.find((v) => v.key == contextData.tabType)?.children;
+  }, [contextData.tabType]);
+
   return (
-    <Layout className="h-full">
-      <CHeader
+    <Layout>
+      <Header
         onBack={() => {
           window.history.go(-1);
         }}
         title="Create Single Wallet"
       />
-      <Content style={{ backgroundColor: '#1C1919' }}>
-        <Tabs
+      <Content>
+        <TabBar
           defaultActiveKey={TabType.STEP1}
           items={items}
           activeKey={contextData.tabType}
-          centered={true}
           onTabClick={(key) => {
             const toTabType = key as TabType;
-
             if (toTabType === TabType.STEP2) {
               if (!contextData.step1Completed) {
                 setTimeout(() => {
@@ -298,10 +279,8 @@ export default function CreateSimpleWalletScreen() {
             }
             updateContextData({ tabType: toTabType });
           }}
-          // renderTabBar={() => {
-          //   return tabBar;
-          // }}
         />
+        {renderChildren}
       </Content>
     </Layout>
   );

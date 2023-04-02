@@ -1,12 +1,8 @@
-import { Button, Layout } from 'antd';
-import { Content } from 'antd/lib/layout/layout';
 import { useEffect, useMemo, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
 import { Inscription } from '@/shared/types';
-import { AddressInputBar } from '@/ui/components/AddressInputBar';
-import CHeader from '@/ui/components/CHeader';
+import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { OutputValueBar } from '@/ui/components/OutputValueBar';
@@ -16,13 +12,11 @@ import {
   useOrdinalsTx,
   useUtxos
 } from '@/ui/state/transactions/hooks';
-import '@/ui/styles/domain.less';
 import { isValidAddress } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
 
 export default function OrdinalsTxCreateScreen() {
-  const { t } = useTranslation();
   const [disabled, setDisabled] = useState(true);
   const navigate = useNavigate();
 
@@ -112,33 +106,32 @@ export default function OrdinalsTxCreateScreen() {
   }, [toInfo, feeRate, outputValue]);
 
   return (
-    <Layout className="h-full">
-      <CHeader
+    <Layout>
+      <Header
         onBack={() => {
           window.history.go(-1);
         }}
         title="Send Inscription"
       />
-      <Content style={{ backgroundColor: '#1C1919' }}>
-        <div className="flex flex-col items-strech mx-5 mt-5 gap-3_75 justify-evenly">
-          <div className="flex justify-between w-full mt-5 text-soft-white">
-            <span className="flex items-center justify-center ">{t('Inscription')}</span>
-            {inscription && <InscriptionPreview data={inscription} size="small" />}
-          </div>
+      <Content>
+        <Column>
+          <Row justifyBetween>
+            <Text text="Inscription" color="textDim" />
+            {inscription && <InscriptionPreview data={inscription} preset="small" />}
+          </Row>
 
-          <div className="flex justify-between w-full mt-5 box text-soft-white">
-            <span>{t('Recipient')}</span>
-          </div>
-          <AddressInputBar
-            defaultInfo={toInfo}
-            onChange={(val) => {
+          <Text text="Recipient" color="textDim" />
+
+          <Input
+            preset="address"
+            addressInputData={toInfo}
+            onAddressInputChange={(val) => {
               setToInfo(val);
             }}
           />
 
-          <div className="flex justify-between w-full box text-soft-white">
-            <span>{t('OutputValue')}</span>
-          </div>
+          <Text text="OutputValue" color="textDim" />
+
           <OutputValueBar
             defaultValue={defaultOutputValue}
             onChange={(val) => {
@@ -146,26 +139,24 @@ export default function OrdinalsTxCreateScreen() {
             }}
           />
 
-          <div className="flex justify-between w-full box text-soft-white">
-            <span>{t('Fee')}</span>
-          </div>
+          <Text text="Fee" color="textDim" />
+
           <FeeRateBar
             onChange={(val) => {
               setFeeRate(val);
             }}
           />
-          {error && <span className="text-lg text-error">{error}</span>}
+
+          {error && <Text text={error} color="error" />}
           <Button
             disabled={disabled}
-            size="large"
-            type="primary"
-            className="box"
+            preset="primary"
+            text="Next"
             onClick={(e) => {
               navigate('OrdinalsTxConfirmScreen');
-            }}>
-            <div className="flex items-center justify-center text-lg font-semibold">{t('Next')}</div>
-          </Button>
-        </div>
+            }}
+          />
+        </Column>
       </Content>
     </Layout>
   );
