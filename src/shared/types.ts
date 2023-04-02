@@ -35,6 +35,12 @@ export interface BitcoinBalance {
   usd_value: string;
 }
 
+export interface AddressAssets {
+  total_btc: string;
+  satoshis?: number;
+  total_inscription: number;
+}
+
 export interface TxHistoryItem {
   txid: string;
   time: number;

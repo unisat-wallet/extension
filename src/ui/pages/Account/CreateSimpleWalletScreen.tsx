@@ -2,11 +2,11 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ADDRESS_TYPES } from '@/shared/constant';
 import { AddressType } from '@/shared/types';
-import { Button, Card, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
+import { Button, Column, Content, Header, Input, Layout, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
-import { Icon } from '@/ui/components/Icon';
+import { AddressTypeCard } from '@/ui/components/AddressTypeCard';
 import { TabBar } from '@/ui/components/TabBar';
-import { amountToSaothis, shortAddress, useWallet } from '@/ui/utils';
+import { amountToSaothis, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
 
@@ -117,7 +117,9 @@ function Step2({
 
   const [previewAddresses, setPreviewAddresses] = useState<string[]>(hdPathOptions.map((v) => ''));
 
-  const [addressBalances, setAddressBalances] = useState<{ [key: string]: { amount: string; satoshis: number } }>({});
+  const [addressAssets, setAddressAssets] = useState<{
+    [key: string]: { total_btc: string; satoshis: number; total_inscription: number };
+  }>({});
 
   const selfRef = useRef({
     maxSatoshis: 0,
@@ -135,14 +137,15 @@ function Step2({
       addresses.push(address);
     }
 
-    const balances = await wallet.getMultiAddressBalance(addresses.join(','));
+    const balances = await wallet.getMultiAddressAssets(addresses.join(','));
     for (let i = 0; i < addresses.length; i++) {
       const address = addresses[i];
       const balance = balances[i];
-      const satoshis = amountToSaothis(balance.amount);
+      const satoshis = amountToSaothis(balance.total_btc);
       self.addressBalances[address] = {
-        amount: balance.amount,
-        satoshis
+        total_btc: balance.total_btc,
+        satoshis,
+        total_inscription: balance.total_inscription
       };
       if (satoshis > self.maxSatoshis) {
         self.maxSatoshis = satoshis;
@@ -150,7 +153,7 @@ function Step2({
       }
 
       updateContextData({ addressType: hdPathOptions[self.recommended].addressType });
-      setAddressBalances(self.addressBalances);
+      setAddressAssets(self.addressBalances);
     }
     setPreviewAddresses(addresses);
   };
@@ -177,35 +180,26 @@ function Step2({
       <Text text="Address Type" preset="bold" />
       {hdPathOptions.map((item, index) => {
         const address = previewAddresses[index];
-        const balance = addressBalances[address] || {
-          amount: '--',
-          satoshis: 0
+        const assets = addressAssets[address] || {
+          total_btc: '--',
+          satoshis: 0,
+          total_inscription: 0
         };
-        const hasVault = balance.satoshis > 0;
+        const hasVault = assets.satoshis > 0;
         if (item.isUnisatLegacy && !hasVault) {
           return null;
         }
         return (
-          <Card
+          <AddressTypeCard
             key={index}
+            label={`${item.label}`}
+            address={address}
+            assets={assets}
+            checked={index == pathIndex}
             onClick={() => {
               updateContextData({ addressType: item.addressType });
-            }}>
-            <Row full itemsCenter justifyBetween>
-              <Column justifyCenter>
-                <Text text={`${item.label} `} />
-                <Text text={shortAddress(address)} color={hasVault ? 'yellow' : 'white'} />
-                {hasVault && (
-                  <Text
-                    text={balance ? `${balance.amount} BTC` : ''}
-                    preset="regular-bold"
-                    color={hasVault ? 'yellow' : 'white'}
-                  />
-                )}
-              </Column>
-              <Column justifyCenter>{index == pathIndex && <Icon icon="check" />}</Column>
-            </Row>
-          </Card>
+            }}
+          />
         );
       })}
 

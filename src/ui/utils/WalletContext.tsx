@@ -16,7 +16,8 @@ import {
   AddressType,
   WalletKeyring,
   Account,
-  FeeSummary
+  FeeSummary,
+  AddressAssets
 } from '@/shared/types';
 
 export interface WalletController {
@@ -45,7 +46,7 @@ export interface WalletController {
 
   getAddressBalance(address: string): Promise<BitcoinBalance>;
   getAddressCacheBalance(address: string): Promise<BitcoinBalance>;
-  getMultiAddressBalance(addresses: string): Promise<BitcoinBalance[]>;
+  getMultiAddressAssets(addresses: string): Promise<AddressAssets[]>;
 
   getAddressInscriptions(address: string): Promise<Inscription[]>;
 

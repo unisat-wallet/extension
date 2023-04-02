@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { ADDRESS_TYPES, KEYRING_TYPE } from '@/shared/constant';
-import { Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
+import { Column, Content, Header, Layout } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
+import { AddressTypeCard } from '@/ui/components/AddressTypeCard';
 import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { amountToSaothis, shortAddress, useWallet } from '@/ui/utils';
+import { amountToSaothis, useWallet } from '@/ui/utils';
 
 export default function AddressTypeScreen() {
   const isInTab = useExtensionIsInTab();
@@ -16,12 +17,14 @@ export default function AddressTypeScreen() {
   const account = useCurrentAccount();
 
   const [addresses, setAddresses] = useState<string[]>([]);
-  const [addressBalances, setAddressBalances] = useState<{ [key: string]: { amount: string; satoshis: number } }>({});
+  const [addressAssets, setAddressAssets] = useState<{
+    [key: string]: { total_btc: string; satoshis: number; total_inscription: number };
+  }>({});
 
   const selfRef = useRef<{
-    addressBalances: { [key: string]: { amount: string; satoshis: number } };
+    addressAssets: { [key: string]: { total_btc: string; satoshis: number; total_inscription: number } };
   }>({
-    addressBalances: {}
+    addressAssets: {}
   });
   const self = selfRef.current;
 
@@ -31,17 +34,18 @@ export default function AddressTypeScreen() {
 
     const _res = await wallet.getAllAddresses(currentKeyring, account.index || 0);
     setAddresses(_res);
-    const balances = await wallet.getMultiAddressBalance(_res.join(','));
+    const balances = await wallet.getMultiAddressAssets(_res.join(','));
     for (let i = 0; i < _res.length; i++) {
       const address = _res[i];
       const balance = balances[i];
-      const satoshis = amountToSaothis(balance.amount);
-      self.addressBalances[address] = {
-        amount: balance.amount,
-        satoshis
+      const satoshis = amountToSaothis(balance.total_btc);
+      self.addressAssets[address] = {
+        total_btc: balance.total_btc,
+        satoshis,
+        total_inscription: balance.total_inscription
       };
     }
-    setAddressBalances(self.addressBalances);
+    setAddressAssets(self.addressAssets);
 
     tools.showLoading(false);
   };
@@ -57,7 +61,7 @@ export default function AddressTypeScreen() {
           return false;
         }
         const address = addresses[v.value];
-        const balance = addressBalances[address];
+        const balance = addressAssets[address];
         if (v.isUnisatLegacy) {
           if (!balance || balance.satoshis == 0) {
             return false;
@@ -70,7 +74,7 @@ export default function AddressTypeScreen() {
         (a, b) => a.displayIndex - b.displayIndex
       );
     }
-  }, [currentKeyring.type, addressBalances, addresses]);
+  }, [currentKeyring.type, addressAssets, addresses]);
 
   return (
     <Layout>
@@ -84,34 +88,23 @@ export default function AddressTypeScreen() {
         <Column>
           {addressTypes.map((item, index) => {
             const address = addresses[item.value];
-            const balance = addressBalances[address] || {
-              amount: '--',
-              satoshis: 0
+            const assets = addressAssets[address] || {
+              total_btc: '--',
+              satoshis: 0,
+              total_inscription: 0
             };
-            const hasVault = balance.satoshis > 0;
             return (
-              <Card
-                preset="style1"
+              <AddressTypeCard
                 key={index}
+                label={`${item.name} (${item.hdPath}/${account.index})`}
+                address={address}
+                assets={assets}
+                checked={item.value == currentKeyring.addressType}
                 onClick={async () => {
                   await wallet.changeAddressType(item.value);
                   window.location.reload();
-                }}>
-                <Row justifyBetween full>
-                  <Column justifyCenter>
-                    <Text text={`${item.name} (${item.hdPath}/${account.index})`} />
-                    <Text
-                      text={shortAddress(address)}
-                      preset="sub"
-                      // color={balance.satoshis > 0 ? colors.yellow : colors.white_muted}
-                    />
-
-                    {hasVault && <Text text={`${balance.amount} BTC`} color="yellow" />}
-                  </Column>
-
-                  <Column justifyCenter>{item.value == currentKeyring.addressType && <Icon icon="check" />}</Column>
-                </Row>
-              </Card>
+                }}
+              />
             );
           })}
         </Column>

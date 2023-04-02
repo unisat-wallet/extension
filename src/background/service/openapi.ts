@@ -1,6 +1,7 @@
 import { createPersistStore } from '@/background/utils';
 import { OPENAPI_URL_MAINNET, OPENAPI_URL_TESTNET } from '@/shared/constant';
 import {
+  AddressAssets,
   AppSummary,
   BitcoinBalance,
   FeeSummary,
@@ -112,8 +113,8 @@ export class OpenApiService {
     return data.result;
   }
 
-  async getMultiAddressBalance(addresses: string): Promise<BitcoinBalance> {
-    const data = await this.httpGet('/v2/address/multi-balance', {
+  async getMultiAddressAssets(addresses: string): Promise<AddressAssets[]> {
+    const data = await this.httpGet('/v2/address/multi-assets', {
       addresses
     });
     if (data.status == API_STATUS.FAILED) {

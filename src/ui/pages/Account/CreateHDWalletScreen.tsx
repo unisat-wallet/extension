@@ -9,11 +9,12 @@ import { ADDRESS_TYPES, RESTORE_WALLETS } from '@/shared/constant';
 import { AddressType, RestoreWalletType } from '@/shared/types';
 import { Button, Card, Column, Content, Grid, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
+import { AddressTypeCard } from '@/ui/components/AddressTypeCard';
 import { Icon } from '@/ui/components/Icon';
 import { TabBar } from '@/ui/components/TabBar';
 import { useCreateAccountCallback } from '@/ui/state/global/hooks';
 import { fontSizes } from '@/ui/theme/font';
-import { amountToSaothis, copyToClipboard, shortAddress, useWallet } from '@/ui/utils';
+import { amountToSaothis, copyToClipboard, useWallet } from '@/ui/utils';
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
@@ -295,7 +296,9 @@ function Step2({
 
   const [previewAddresses, setPreviewAddresses] = useState<string[]>(hdPathOptions.map((v) => ''));
 
-  const [addressBalances, setAddressBalances] = useState<{ [key: string]: { amount: string; satoshis: number } }>({});
+  const [addressAssets, setAddressAssets] = useState<{
+    [key: string]: { total_btc: string; satoshis: number; total_inscription: number };
+  }>({});
 
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -345,19 +348,20 @@ function Step2({
     if (!addresses[0]) return;
 
     setLoading(true);
-    const balances = await wallet.getMultiAddressBalance(addresses.join(','));
+    const balances = await wallet.getMultiAddressAssets(addresses.join(','));
     setLoading(false);
 
-    const addressBalances: { [key: string]: { amount: string; satoshis: number } } = {};
+    const addressAssets: { [key: string]: { total_btc: string; satoshis: number; total_inscription: number } } = {};
     let maxSatoshis = 0;
     let recommended = 0;
     for (let i = 0; i < addresses.length; i++) {
       const address = addresses[i];
       const balance = balances[i];
-      const satoshis = amountToSaothis(balance.amount);
-      addressBalances[address] = {
-        amount: balance.amount,
-        satoshis
+      const satoshis = amountToSaothis(balance.total_btc);
+      addressAssets[address] = {
+        total_btc: balance.total_btc,
+        satoshis,
+        total_inscription: balance.total_inscription
       };
       if (satoshis > maxSatoshis) {
         maxSatoshis = satoshis;
@@ -370,7 +374,7 @@ function Step2({
       });
     }
 
-    setAddressBalances(addressBalances);
+    setAddressAssets(addressAssets);
   };
 
   useEffect(() => {
@@ -417,40 +421,31 @@ function Step2({
       <Text text="Address Type" preset="bold" />
       {hdPathOptions.map((item, index) => {
         const address = previewAddresses[index];
-        const balance = addressBalances[address] || {
-          amount: '--',
-          satoshis: 0
+        const assets = addressAssets[address] || {
+          total_btc: '--',
+          satoshis: 0,
+          total_inscription: 0
         };
-        const hasVault = contextData.isRestore && balance.satoshis > 0;
+        const hasVault = contextData.isRestore && assets.satoshis > 0;
         if (item.isUnisatLegacy && !hasVault) {
           return null;
         }
 
         const hdPath = (contextData.customHdPath || item.hdPath) + '/0';
         return (
-          <Card
+          <AddressTypeCard
             key={index}
+            label={`${item.label} (${hdPath})`}
+            address={address}
+            assets={assets}
+            checked={index == contextData.addressTypeIndex}
             onClick={() => {
               updateContextData({
                 addressTypeIndex: index,
                 addressType: item.addressType
               });
-            }}>
-            <Row full justifyBetween>
-              <Column justifyCenter>
-                <Text text={`${item.label} (${hdPath})`} size="sm" />
-                <Text text={shortAddress(address)} color={hasVault ? 'yellow' : 'white'} size="xs" />
-                {hasVault && (
-                  <Text
-                    text={balance ? `${balance.amount} BTC` : ''}
-                    preset="regular-bold"
-                    color={hasVault ? 'yellow' : 'white'}
-                  />
-                )}
-              </Column>
-              <Column justifyCenter>{index == contextData.addressTypeIndex && <Icon icon="check" />}</Column>
-            </Row>
-          </Card>
+            }}
+          />
         );
       })}
 

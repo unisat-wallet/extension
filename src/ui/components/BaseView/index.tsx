@@ -17,6 +17,7 @@ export interface BaseViewProps {
   onClick?: ReactEventHandler<HTMLDivElement>;
   px?: Gap;
   py?: Gap;
+  pt?: Gap;
   pb?: Gap;
   mt?: Gap;
   mb?: Gap;
@@ -47,6 +48,7 @@ export function BaseView(props: BaseViewProps) {
     gap,
     px,
     py,
+    pt,
     pb,
     mt,
     mb,
@@ -75,6 +77,7 @@ export function BaseView(props: BaseViewProps) {
     gap ? { gap: spacingGap[gap] } : {},
     px ? { paddingLeft: spacingGap[px], paddingRight: spacingGap[px] } : {},
     py ? { paddingTop: spacingGap[py], paddingBottom: spacingGap[py] } : {},
+    pt ? { paddingTop: spacingGap[pt] } : {},
     pb ? { paddingBottom: spacingGap[pb] } : {},
     mt ? { marginTop: spacingGap[mt] } : {},
     mb ? { marginBottom: spacingGap[mb] } : {},

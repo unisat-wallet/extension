@@ -121,8 +121,8 @@ export class WalletController extends BaseController {
     return data;
   };
 
-  getMultiAddressBalance = async (addresses: string) => {
-    return openapiService.getMultiAddressBalance(addresses);
+  getMultiAddressAssets = async (addresses: string) => {
+    return openapiService.getMultiAddressAssets(addresses);
   };
 
   getAddressCacheBalance = (address: string | undefined): BitcoinBalance => {
