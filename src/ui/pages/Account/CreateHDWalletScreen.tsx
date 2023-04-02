@@ -112,7 +112,7 @@ function Step1_Create({
               <Row key={index}>
                 <Text text={`${index + 1}. `} style={{ width: 40 }} />
                 <Card preset="style2" style={{ width: 200 }}>
-                  <Text text={v} style={{ userSelect: 'text' }} />
+                  <Text text={v} selectText />
                 </Card>
               </Row>
             );

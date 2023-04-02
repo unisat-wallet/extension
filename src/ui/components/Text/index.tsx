@@ -22,7 +22,8 @@ export const $sizeStyles = {
 const $baseStyle: CSSProperties = Object.assign({}, $sizeStyles.sm, {
   fontFamily: typography.primary.regular,
   color: colors.white,
-  textAlign: 'left'
+  textAlign: 'left',
+  userSelect: 'none'
 } as CSSProperties);
 
 const $presets = {
@@ -63,19 +64,21 @@ export interface TextProps extends BaseViewProps {
   color?: ColorTypes;
   textCenter?: boolean;
   wrap?: boolean;
+  selectText?: boolean;
 }
 
 export const $textPresets = $presets;
 
 export function Text(props: TextProps) {
-  const { size, text, textCenter, wrap, style: $styleOverride, ...rest } = props;
+  const { size, text, textCenter, wrap, selectText, style: $styleOverride, ...rest } = props;
   const preset: Presets = props.preset || 'regular';
   const $textStyle = Object.assign(
     {},
     $presets[preset],
     size ? $sizeStyles[size] : {},
     textCenter ? { textAlign: 'center' } : {},
-    wrap ? { overflowWrap: 'anywhere' } : {}
+    wrap ? { overflowWrap: 'anywhere' } : {},
+    selectText ? { userSelect: 'text' } : {}
   );
   const $style = Object.assign({}, $textStyle, $styleOverride);
   return (
