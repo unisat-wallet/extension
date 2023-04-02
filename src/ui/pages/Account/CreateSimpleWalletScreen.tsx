@@ -261,9 +261,7 @@ export default function CreateSimpleWalletScreen() {
     }
   ];
 
-  const renderChildren = useMemo(() => {
-    return items.find((v) => v.key == contextData.tabType)?.children;
-  }, [contextData.tabType]);
+  const renderChildren = items.find((v) => v.key == contextData.tabType)?.children;
 
   return (
     <Layout>
