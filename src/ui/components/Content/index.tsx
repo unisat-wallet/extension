@@ -16,7 +16,7 @@ const $contentStyle = {
   flexDirection: 'column',
   justifyItems: 'center',
   gap: spacingGap.lg,
-  overflowY: 'auto',
+
   alignSelf: 'stretch'
 } as CSSProperties;
 

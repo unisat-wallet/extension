@@ -40,7 +40,7 @@ export function FeeRateBar({ onChange }: { onChange: (val: number) => void }) {
 
   return (
     <Column>
-      <Row>
+      <Row justifyCenter>
         {feeOptions.map((v, index) => {
           const selected = index === feeOptionIndex;
           return (
@@ -61,7 +61,8 @@ export function FeeRateBar({ onChange }: { onChange: (val: number) => void }) {
                   borderRadius: 5,
                   display: 'flex',
                   flexDirection: 'column',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  cursor: 'pointer'
                 } as CSSProperties,
                 selected ? { backgroundColor: colors.primary } : {}
               )}>

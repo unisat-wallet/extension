@@ -26,7 +26,7 @@ export default function OrdinalsDetailScreen() {
   const date = new Date(detail.timestamp);
   const isUnconfirmed = date.getTime() < 100;
 
-  const { toast } = useTools();
+  const tools = useTools();
   return (
     <Layout>
       <Header
@@ -75,7 +75,7 @@ export default function OrdinalsDetailScreen() {
                           window.open(detail[k]);
                         } else {
                           copyToClipboard(detail[k]).then(() => {
-                            toast('Copied');
+                            tools.toastSuccess('Copied');
                           });
                         }
                       }}

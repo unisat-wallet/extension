@@ -205,41 +205,44 @@ function Step1_Import({
     <Column gap="lg">
       <Text text="Secret Recovery Phrase" preset="title-bold" textCenter />
       <Text text="Import an existing wallet with your 12 word secret recovery phrase" preset="sub" textCenter />
-      <Grid columns={2}>
-        {keys.map((_, index) => {
-          return (
-            <Row key={index}>
-              <Card>
-                <Text text={`${index + 1}. `} style={{ width: 25 }} />
-                <Input
-                  containerStyle={{ width: 80, minHeight: 25, height: 25, padding: 0 }}
-                  value={_}
-                  onPaste={(e) => {
-                    handleEventPaste(e, index);
-                  }}
-                  onChange={(e) => {
-                    onChange(e, index);
-                  }}
-                  // onMouseOverCapture={(e) => {
-                  //   setHover(index);
-                  // }}
-                  // onMouseLeave={(e) => {
-                  //   setHover(999);
-                  // }}
-                  onFocus={(e) => {
-                    setActive(index);
-                  }}
-                  onBlur={(e) => {
-                    setActive(999);
-                  }}
-                  onKeyUp={(e) => handleOnKeyUp(e)}
-                  autoFocus={index == 0}
-                />
-              </Card>
-            </Row>
-          );
-        })}
-      </Grid>
+      <Row justifyCenter>
+        <Grid columns={2}>
+          {keys.map((_, index) => {
+            return (
+              <Row key={index}>
+                <Card gap="zero">
+                  <Text text={`${index + 1}. `} style={{ width: 25 }} textEnd />
+                  <Input
+                    containerStyle={{ width: 80, minHeight: 25, height: 25, padding: 0 }}
+                    style={{ width: 80 }}
+                    value={_}
+                    onPaste={(e) => {
+                      handleEventPaste(e, index);
+                    }}
+                    onChange={(e) => {
+                      onChange(e, index);
+                    }}
+                    // onMouseOverCapture={(e) => {
+                    //   setHover(index);
+                    // }}
+                    // onMouseLeave={(e) => {
+                    //   setHover(999);
+                    // }}
+                    onFocus={(e) => {
+                      setActive(index);
+                    }}
+                    onBlur={(e) => {
+                      setActive(999);
+                    }}
+                    onKeyUp={(e) => handleOnKeyUp(e)}
+                    autoFocus={index == 0}
+                  />
+                </Card>
+              </Row>
+            );
+          })}
+        </Grid>
+      </Row>
 
       <Button
         disabled={disabled}

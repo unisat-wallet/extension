@@ -63,6 +63,7 @@ export interface TextProps extends BaseViewProps {
   size?: Sizes;
   color?: ColorTypes;
   textCenter?: boolean;
+  textEnd?: boolean;
   wrap?: boolean;
   selectText?: boolean;
 }
@@ -70,13 +71,14 @@ export interface TextProps extends BaseViewProps {
 export const $textPresets = $presets;
 
 export function Text(props: TextProps) {
-  const { size, text, textCenter, wrap, selectText, style: $styleOverride, ...rest } = props;
+  const { size, text, textCenter, textEnd, wrap, selectText, style: $styleOverride, ...rest } = props;
   const preset: Presets = props.preset || 'regular';
   const $textStyle = Object.assign(
     {},
     $presets[preset],
     size ? $sizeStyles[size] : {},
     textCenter ? { textAlign: 'center' } : {},
+    textEnd ? { textAlign: 'end' } : {},
     wrap ? { overflowWrap: 'anywhere' } : {},
     selectText ? { userSelect: 'text' } : {}
   );

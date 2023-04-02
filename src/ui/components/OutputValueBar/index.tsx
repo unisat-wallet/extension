@@ -58,7 +58,8 @@ export function OutputValueBar({ defaultValue, onChange }: { defaultValue: numbe
                   borderRadius: 5,
                   display: 'flex',
                   flexDirection: 'column',
-                  justifyContent: 'center'
+                  justifyContent: 'center',
+                  cursor: 'pointer'
                 } as CSSProperties,
                 selected ? { backgroundColor: colors.primary } : {}
               )}>
