@@ -47,7 +47,18 @@ function Step1({
     updateContextData({ step1Completed: val });
   };
 
-  const btnClick = () => {
+  const tools = useTools();
+
+  const btnClick = async () => {
+    try {
+      const _res = await wallet.createTmpKeyringWithPrivateKey(wif, AddressType.P2TR);
+      if (_res.accounts.length == 0) {
+        throw new Error('Invalid PrivateKey');
+      }
+    } catch (e) {
+      tools.toastError((e as Error).message);
+      return;
+    }
     updateContextData({
       wif,
       tabType: TabType.STEP2
