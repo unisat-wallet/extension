@@ -1,3 +1,5 @@
+import { useMemo } from 'react';
+
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -13,10 +15,21 @@ interface HeaderProps {
   title?: string;
   LeftComponent?: React.ReactNode;
   RightComponent?: React.ReactNode;
+  children?: React.ReactNode;
 }
 
 export function Header(props: HeaderProps) {
-  const { onBack, title, LeftComponent, RightComponent } = props;
+  const { onBack, title, LeftComponent, RightComponent, children } = props;
+
+  const CenterComponent = useMemo(() => {
+    if (children) {
+      return children;
+    } else if (title) {
+      return <Text text={title} preset="regular-bold" />;
+    } else {
+      return <Logo preset="small" />;
+    }
+  }, [title]);
   return (
     <Row
       justifyBetween
@@ -43,7 +56,7 @@ export function Header(props: HeaderProps) {
         </Column>
       </Row>
 
-      <Row itemsCenter>{title ? <Text text={title} preset="regular-bold" /> : <Logo preset="small" />}</Row>
+      <Row itemsCenter>{CenterComponent}</Row>
 
       <Row full justifyEnd>
         <Column selfItemsCenter>{RightComponent}</Column>

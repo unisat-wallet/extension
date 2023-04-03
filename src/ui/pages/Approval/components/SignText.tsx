@@ -1,4 +1,4 @@
-import { Button, Card, Column, Content, Footer, Layout, Row, Text } from '@/ui/components';
+import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useApproval } from '@/ui/utils';
 
@@ -27,9 +27,10 @@ export default function SignText({ params: { data, session } }: Props) {
   return (
     <Layout>
       <Content>
-        <Column>
+        <Header>
           <WebsiteBar session={session} />
-
+        </Header>
+        <Column>
           <Text text="Signature request" preset="title-bold" textCenter mt="lg" />
           <Text
             text="Only sign this message if you fully understand the content and trust the requesting site."

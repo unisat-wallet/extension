@@ -4,7 +4,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import { toPsbtNetwork } from '@/background/utils/tx-utils';
 import { ToSignInput, TxType } from '@/shared/types';
-import { Button, Layout, Content, Footer, Icon, Text, Row, Card, Column, TextArea } from '@/ui/components';
+import { Button, Layout, Content, Footer, Icon, Text, Row, Card, Column, TextArea, Header } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressText } from '@/ui/components/AddressText';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
@@ -196,7 +196,7 @@ function SendBitcoinDetails({
       </Section>
 
       <Section title="NETWORK FEE">
-        <Text text={networkFee} color={feeEnough ? 'danger' : 'white'} />
+        <Text text={networkFee} color={feeEnough ? 'white' : 'danger'} />
         <Text text="BTC" color="textDim" />
       </Section>
     </Column>
@@ -213,6 +213,7 @@ interface TxInfo {
   toSignInputs: ToSignInput[];
   fee: number;
   feeRate: number;
+  txError: string;
 }
 
 export default function SignPsbt({
@@ -235,7 +236,8 @@ export default function SignPsbt({
     psbtHex: '',
     toSignInputs: [],
     fee: 0,
-    feeRate: 1
+    feeRate: 1,
+    txError: ''
   });
 
   const [tabState, setTabState] = useState(TabState.DETAILS);
@@ -253,12 +255,15 @@ export default function SignPsbt({
   const tools = useTools();
 
   const init = async () => {
+    let txError = '';
     if (type === TxType.SEND_BITCOIN) {
       if (!psbtHex && toAddress && satoshis) {
         try {
           psbtHex = await createBitcoinTx({ address: toAddress, domain: '' }, satoshis, feeRate);
         } catch (e) {
           console.log(e);
+          txError = (e as any).message;
+          tools.toastError(txError);
         }
       }
     }
@@ -283,7 +288,8 @@ export default function SignPsbt({
         rawtx: '',
         fee: 0,
         feeRate: 0,
-        toSignInputs: []
+        toSignInputs: [],
+        txError
       });
       return;
     }
@@ -355,7 +361,8 @@ export default function SignPsbt({
       rawtx: '',
       fee,
       feeRate: finalFeeRate,
-      toSignInputs
+      toSignInputs,
+      txError: ''
     });
   };
 
@@ -426,13 +433,21 @@ export default function SignPsbt({
       </Layout>
     );
   }
+
+  if (!header && session) {
+    header = (
+      <Header>
+        <WebsiteBar session={session} />
+      </Header>
+    );
+  }
+
+  console.log('up', detailsComponent);
   return (
     <Layout>
       {header}
       <Content>
         <Column>
-          {session && <WebsiteBar session={session} />}
-
           <Text text={title} preset="title-bold" textCenter />
 
           <Row mt="lg" mb="lg">
@@ -444,7 +459,7 @@ export default function SignPsbt({
                 { label: 'DATA', key: TabState.DATA },
                 { label: 'HEX', key: TabState.HEX }
               ]}
-              onTabClick={({ key }) => {
+              onTabClick={(key) => {
                 setTabState(key as any);
               }}
             />

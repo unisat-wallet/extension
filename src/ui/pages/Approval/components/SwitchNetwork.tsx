@@ -35,10 +35,11 @@ export default function SwitchNetwork({ params: { data, session } }: Props) {
 
   return (
     <Layout>
-      <Header />
+      <Header>
+        <WebsiteBar session={session} />
+      </Header>
       <Content>
         <Column mt="lg">
-          <WebsiteBar session={session} />
           <Text text="Allow this site to switch the network?" textCenter preset="title-bold" mt="lg" />
 
           <Row justifyBetween itemsCenter mt="lg">

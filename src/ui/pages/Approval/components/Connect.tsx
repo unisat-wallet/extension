@@ -1,7 +1,7 @@
 import VirtualList from 'rc-virtual-list';
 import { forwardRef } from 'react';
 
-import { Button, Column, Content, Footer, Layout, Row, Text } from '@/ui/components';
+import { Button, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useAccounts } from '@/ui/state/accounts/hooks';
 import { useApproval } from '@/ui/utils';
@@ -38,13 +38,14 @@ export default function Connect({ params: { session } }: Props) {
 
   return (
     <Layout>
+      <Header>
+        <WebsiteBar session={session} />
+      </Header>
       <Content>
-        <Column mt="lg">
-          <WebsiteBar session={session} />
-
+        <Column>
           <Text text="Connect with Unisat Wallet" preset="title-bold" textCenter mt="lg" />
-          <Text text="Select the account to use on this site" textCenter mt="lg" />
-          <Text text="Only connect with sites you trust." preset="sub" textCenter mt="lg" />
+          <Text text="Select the account to use on this site" textCenter mt="md" />
+          <Text text="Only connect with sites you trust." preset="sub" textCenter mt="md" />
 
           <VirtualList
             data={items}
