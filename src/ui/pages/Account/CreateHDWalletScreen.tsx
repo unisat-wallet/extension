@@ -625,6 +625,7 @@ export default function CreateHDWalletScreen() {
       />
       <Content>
         <TabBar
+          progressEnabled
           defaultActiveKey={contextData.tabType}
           activeKey={contextData.tabType}
           items={items.map((v) => ({

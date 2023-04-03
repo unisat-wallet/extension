@@ -267,6 +267,7 @@ export default function CreateSimpleWalletScreen() {
       />
       <Content>
         <TabBar
+          progressEnabled
           defaultActiveKey={TabType.STEP1}
           items={items}
           activeKey={contextData.tabType}
