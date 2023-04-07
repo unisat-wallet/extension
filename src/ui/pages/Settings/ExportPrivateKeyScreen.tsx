@@ -67,7 +67,7 @@ export default function ExportPrivateKeyScreen() {
       <Content>
         {privateKey == '' ? (
           <Column gap="lg">
-            <Text text="Type your password" preset="title" color="warning" textCenter marginY="xl" />
+            <Text text="Type your password" preset="title" color="warning" textCenter my="xl" />
             <Input
               preset="password"
               onChange={(e) => {

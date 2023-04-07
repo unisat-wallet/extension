@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useDispatch } from 'react-redux';
 
 import { KEYRING_TYPE } from '@/shared/constant';
 import { TokenBalance, NetworkType, Inscription } from '@/shared/types';
@@ -19,6 +18,7 @@ import { useAccountBalance, useCurrentAccount } from '@/ui/state/accounts/hooks'
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { useNetworkType } from '@/ui/state/settings/hooks';
 import { useWallet } from '@/ui/utils';
+import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
 
@@ -34,7 +34,6 @@ export default function WalletTabScreen() {
   const isTestNetwork = networkType === NetworkType.TESTNET;
 
   const currentKeyring = useCurrentKeyring();
-  const dispatch = useDispatch();
   const balanceValue = useMemo(() => {
     if (accountBalance.amount === '0') {
       return '--';
@@ -70,7 +69,7 @@ export default function WalletTabScreen() {
       children: <BRC20List />
     }
   ];
-  const currentAccount = useCurrentAccount();
+
   return (
     <Layout>
       <Header
@@ -164,7 +163,7 @@ function InscriptionList() {
   const currentAccount = useCurrentAccount();
 
   const [inscriptions, setInscriptions] = useState<Inscription[]>([]);
-  const [total, setTotal] = useState(0);
+  const [total, setTotal] = useState(-1);
   const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 20 });
 
   const tools = useTools();
@@ -190,7 +189,15 @@ function InscriptionList() {
     fetchData();
   }, [pagination]);
 
-  if (inscriptions.length === 0) {
+  if (total === -1) {
+    return (
+      <Column style={{ minHeight: 200 }} itemsCenter justifyCenter>
+        <LoadingOutlined />
+      </Column>
+    );
+  }
+
+  if (total === 0) {
     return (
       <Column style={{ minHeight: 200 }} itemsCenter justifyCenter>
         <Empty text="Inscription list is empty" />
@@ -231,7 +238,7 @@ function BRC20List() {
   const currentAccount = useCurrentAccount();
 
   const [tokens, setTokens] = useState<TokenBalance[]>([]);
-  const [total, setTotal] = useState(0);
+  const [total, setTotal] = useState(-1);
   const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 20 });
 
   const tools = useTools();
@@ -256,17 +263,25 @@ function BRC20List() {
     fetchData();
   }, [pagination]);
 
-  if (tokens.length === 0) {
+  if (total === -1) {
     return (
       <Column style={{ minHeight: 200 }} itemsCenter justifyCenter>
-        <Empty text="BRC20 list is empty" />
+        <LoadingOutlined />
+      </Column>
+    );
+  }
+
+  if (total === 0) {
+    return (
+      <Column style={{ minHeight: 200 }} itemsCenter justifyCenter>
+        <Empty text="Empty" />
       </Column>
     );
   }
 
   return (
     <Column>
-      <Row style={{ flexWrap: 'wrap' }} gap="lg">
+      <Row style={{ flexWrap: 'wrap' }} gap="sm">
         {tokens.map((data, index) => (
           <BRC20BalanceCard
             key={index}

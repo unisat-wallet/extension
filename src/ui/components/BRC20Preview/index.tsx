@@ -24,6 +24,9 @@ export default function BRC20Preview({
   selected,
   onClick
 }: BRC20PreviewProps) {
+  if (!balance) {
+    balance = 'deploy';
+  }
   return (
     <Column
       style={{ backgroundColor: colors.bg4, width: 100, height: 130, minWidth: 100, minHeight: 130, borderRadius: 5 }}

@@ -3,6 +3,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { AddressTokenSummary } from '@/shared/types';
 import { Button, Column, Content, Header, Layout, Row, Text } from '@/ui/components';
 import BRC20Preview from '@/ui/components/BRC20Preview';
+import { Empty } from '@/ui/components/Empty';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { colors } from '@/ui/theme/colors';
 import { useLocationState, useWallet } from '@/ui/utils';
@@ -65,7 +66,7 @@ export default function BRC20TokenScreen() {
                 preset="primary"
                 icon="pencil"
                 onClick={(e) => {
-                  window.open('https://unisat.io');
+                  window.open(`https://unisat.io/brc20/${ticker}`);
                 }}
                 full
               />
@@ -94,7 +95,11 @@ export default function BRC20TokenScreen() {
               <Text text="Transferable" preset="bold" size="lg" />
               <Text text={`${tokenSummary.tokenBalance.transferableBalance} ${ticker}`} preset="bold" size="lg" />
             </Row>
-
+            {tokenSummary.transferableList.length == 0 && (
+              <Column style={{ minHeight: 130 }} itemsCenter justifyCenter>
+                <Empty text="Empty" />
+              </Column>
+            )}
             {transferableListExpanded ? (
               <Row overflowX>
                 {/* <Text

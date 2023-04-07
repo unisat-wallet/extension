@@ -98,54 +98,57 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
   return (
     <Column gap="lg">
       <Text text="Sign Transaction" preset="title-bold" textCenter mt="lg" />
-      <Card style={{ backgroundColor: '#272626' }}>
-        <Column gap="lg" full>
-          <Column>
-            {rawTxInfo && (
-              <Column>
-                <Text text={'Send to'} textCenter color="textDim" />
-                <Row justifyCenter>
-                  <AddressText addressInfo={rawTxInfo.toAddressInfo} textCenter />
-                </Row>
-              </Column>
-            )}
-            {rawTxInfo && <Row style={{ borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }} />}
-            <Column mt="lg">
-              <Text text={'Spend Amount'} textCenter color="textDim" />
-
-              <Column justifyCenter>
-                <Text text={spendAmount} color="white" preset="bold" textCenter size="xxl" />
-                {isCurrentToPayFee && (
-                  <Row justifyCenter>
-                    <Text
-                      text={`${sendSatoshis > 0 ? sendAmount + ' + ' : ''}${feeAmount}(network fee)`}
-                      preset="sub"
-                    />
-                  </Row>
-                )}
-              </Column>
-            </Column>
-            {inscriptions.length > 0 && <Row style={{ borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }} />}
-
-            {inscriptions.length > 0 && (
-              <Column mt="lg" justifyCenter>
-                <Text
-                  text={inscriptions.length === 1 ? 'Spend Inscription' : `Spend Inscription (${inscriptions.length})`}
-                  textCenter
-                  color="textDim"
-                />
+      <Row justifyCenter>
+        <Card style={{ backgroundColor: '#272626', maxWidth: 320 }}>
+          <Column gap="lg">
+            <Column>
+              {rawTxInfo && (
                 <Column>
-                  <Row style={{ overflowX: 'auto' }} gap="lg" justifyCenter>
-                    {inscriptions.map((v, index) => (
+                  <Text text={'Send to'} textCenter color="textDim" />
+                  <Row justifyCenter>
+                    <AddressText addressInfo={rawTxInfo.toAddressInfo} textCenter />
+                  </Row>
+                </Column>
+              )}
+              {rawTxInfo && <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />}
+
+              {inscriptions.length > 0 && (
+                <Column justifyCenter>
+                  <Text
+                    text={
+                      inscriptions.length === 1 ? 'Spend Inscription' : `Spend Inscription (${inscriptions.length})`
+                    }
+                    textCenter
+                    color="textDim"
+                  />
+                  <Row overflowX gap="lg" justifyCenter style={{ width: 280 }} pb="lg">
+                    {inscriptions.map((v) => (
                       <InscriptionPreview key={v.inscriptionId} data={v} preset="small" />
                     ))}
                   </Row>
                 </Column>
+              )}
+              {inscriptions.length > 0 && <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />}
+
+              <Column>
+                <Text text={'Spend Amount'} textCenter color="textDim" />
+
+                <Column justifyCenter>
+                  <Text text={spendAmount} color="white" preset="bold" textCenter size="xxl" />
+                  {isCurrentToPayFee && (
+                    <Row justifyCenter>
+                      <Text
+                        text={`${sendSatoshis > 0 ? sendAmount + ' + ' : ''}${feeAmount}(network fee)`}
+                        preset="sub"
+                      />
+                    </Row>
+                  )}
+                </Column>
               </Column>
-            )}
+            </Column>
           </Column>
-        </Column>
-      </Card>
+        </Card>
+      </Row>
 
       {txInfo.changedInscriptions.length > 0 && (
         <Card>
@@ -365,9 +368,7 @@ export default function SignPsbt({
                       return (
                         <Row
                           key={'output_' + index}
-                          style={
-                            index === 0 ? {} : { borderColor: colors.white_muted, borderTopWidth: 1, paddingTop: 10 }
-                          }
+                          style={index === 0 ? {} : { borderColor: colors.border, borderTopWidth: 1, paddingTop: 10 }}
                           justifyBetween>
                           <AddressText address={v.address} />
                           <Text text={`${satoshisToAmount(v.value)} BTC`} />
@@ -386,11 +387,7 @@ export default function SignPsbt({
                       return (
                         <Row
                           key={'output_' + index}
-                          style={
-                            index === 0
-                              ? {}
-                              : { borderColor: 'rgba(255,255,255,0.1)', borderTopWidth: 1, paddingTop: 10 }
-                          }
+                          style={index === 0 ? {} : { borderColor: colors.border, borderTopWidth: 1, paddingTop: 10 }}
                           justifyBetween>
                           <AddressText address={v.address} />
                           <Text text={`${satoshisToAmount(v.value)} BTC`} />

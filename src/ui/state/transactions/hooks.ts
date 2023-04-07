@@ -3,7 +3,7 @@ import { useCallback, useMemo } from 'react';
 
 import { RawTxInfo, ToAddressInfo } from '@/shared/types';
 import { useTools } from '@/ui/components/ActionComponent';
-import { satoshisToBTC, sleep, useWallet } from '@/ui/utils';
+import { satoshisToAmount, satoshisToBTC, sleep, useWallet } from '@/ui/utils';
 
 import { AppState } from '..';
 import { useAccountAddress, useCurrentAccount } from '../accounts/hooks';
@@ -32,6 +32,15 @@ export function useCreateBitcoinTxCallback() {
       if (_utxos.length === 0) {
         _utxos = await fetchUtxos();
       }
+      const safeBalance = _utxos.filter((v) => v.inscriptions.length == 0).reduce((pre, cur) => pre + cur.satoshis, 0);
+      if (safeBalance < toAmount) {
+        throw new Error(
+          `Insufficient balance. Non-Inscription balance(${satoshisToAmount(
+            safeBalance
+          )} BTC) is lower than ${satoshisToAmount(toAmount)} BTC `
+        );
+      }
+
       if (!feeRate) {
         const summary = await wallet.getFeeSummary();
         feeRate = summary.list[1].feeRate;

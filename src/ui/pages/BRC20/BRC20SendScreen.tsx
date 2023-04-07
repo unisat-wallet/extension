@@ -6,11 +6,15 @@ import { RawTxInfo, TokenBalance, TokenTransfer, TxType } from '@/shared/types';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import BRC20Preview from '@/ui/components/BRC20Preview';
-import { Empty } from '@/ui/components/Empty';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { TabBar } from '@/ui/components/TabBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useCreateMultiOrdinalsTxCallback, usePushOrdinalsTxCallback } from '@/ui/state/transactions/hooks';
+import {
+  useCreateMultiOrdinalsTxCallback,
+  useFetchUtxosCallback,
+  usePushOrdinalsTxCallback
+} from '@/ui/state/transactions/hooks';
+import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { useWallet } from '@/ui/utils';
 
@@ -49,24 +53,45 @@ function Step1({
     <Content mt="lg">
       <Column full>
         <Column gap="lg" full>
-          <Row justifyBetween>
+          {/* <Row justifyBetween>
             <Text text="Transfer Amount" color="textDim" />
             <Text text={`${transferAmount} ${tokenBalance.ticker}`} />
-          </Row>
+          </Row> */}
 
           <Column>
             <TransferableList contextData={contextData} updateContextData={updateContextData} />
           </Column>
-          <Button
-            text="Inscribe TRANSFER"
-            onClick={() => {
-              navigate('InscribeTransferScreen', { tokenBalance });
-            }}
-          />
 
-          <Row justifyBetween>
-            <Text text="Available" color="textDim" />
-            <Text text={`${tokenBalance.availableBalance} ${tokenBalance.ticker}`} />
+          <Row justifyCenter mt="xxl">
+            <Column style={{ width: 250 }}>
+              <Column>
+                <Column
+                  style={{ borderWidth: 1, borderColor: colors.border, borderRadius: 10 }}
+                  px="md"
+                  py="md"
+                  onClick={() => {
+                    navigate('InscribeTransferScreen', { tokenBalance });
+                  }}>
+                  <Text text="Inscribe TRANSFER" textCenter preset="bold" />
+                  <Text
+                    text={`Available ${tokenBalance.availableBalance} ${tokenBalance.ticker}`}
+                    textCenter
+                    color="textDim"
+                    size="xs"
+                  />
+                </Column>
+                {/* <Button
+                  preset="primary"
+                  text="Inscribe TRANSFER"
+                  onClick={() => {
+                    navigate('InscribeTransferScreen', { tokenBalance });
+                  }}
+                /> */}
+                <Row>
+                  <Text text={'* To send BRC-20, you have to inscribe a TRANSFER inscription first'} preset="sub" />
+                </Row>
+              </Column>
+            </Column>
           </Row>
         </Column>
 
@@ -126,80 +151,83 @@ function TransferableList({
     fetchData();
   }, [pagination]);
   const totalAmount = items.reduce((pre, cur) => pre + parseInt(cur.amount), 0);
-  if (items.length === 0) {
-    return (
-      <Column style={{ minHeight: 200 }} itemsCenter justifyCenter>
-        <Empty text="Empty" />
-      </Column>
-    );
-  }
+
+  const selectedCount = useMemo(() => contextData.inscriptionIdSet.size, [contextData]);
+
   return (
     <Column>
-      <Row justifyBetween>
-        <Text text="TRANSFER Inscriptions" color="textDim" />
-        <Checkbox
-          onChange={(e) => {
-            const val = e.target.checked;
-            setAllSelected(val);
-            if (val) {
-              const inscriptionIdSet = new Set(items.map((v) => v.inscriptionId));
-              updateContextData({
-                inscriptionIdSet,
-                transferAmount: totalAmount
-              });
-            } else {
-              updateContextData({
-                inscriptionIdSet: new Set(),
-                transferAmount: 0
-              });
-            }
-          }}
-          checked={allSelected}
-          style={{ fontSize: fontSizes.sm }}>
-          <Text text="Select All" preset="sub" />
-        </Checkbox>
-      </Row>
+      <Column>
+        <Text text={'Transfer Amount'} color="textDim" />
+        <Text text={`${contextData.transferAmount} ${contextData.tokenBalance.ticker}`} size="xxl" textCenter my="lg" />
+      </Column>
 
-      <Row overflowX gap="lg">
-        {items.map((v, index) => (
-          <BRC20Preview
-            key={v.inscriptionId}
-            tick={v.ticker}
-            balance={v.amount}
-            inscriptionNumber={v.inscriptionNumber}
-            timestamp={v.timestamp}
-            selected={contextData.inscriptionIdSet.has(v.inscriptionId)}
-            type="TRANSFER"
-            onClick={() => {
-              if (contextData.inscriptionIdSet.has(v.inscriptionId)) {
-                const inscriptionIdSet = new Set(contextData.inscriptionIdSet);
-                inscriptionIdSet.delete(v.inscriptionId);
-                const transferAmount = contextData.transferAmount - parseInt(v.amount);
-                updateContextData({
-                  inscriptionIdSet,
-                  transferAmount
-                });
-                if (allSelected) {
-                  setAllSelected(false);
+      {items.length > 0 ? (
+        <Column>
+          <Row justifyBetween>
+            <Text text={`TRANSFER Inscriptions (${selectedCount}/${items.length})`} color="textDim" />
+            <Checkbox
+              onChange={(e) => {
+                const val = e.target.checked;
+                setAllSelected(val);
+                if (val) {
+                  const inscriptionIdSet = new Set(items.map((v) => v.inscriptionId));
+                  updateContextData({
+                    inscriptionIdSet,
+                    transferAmount: totalAmount
+                  });
+                } else {
+                  updateContextData({
+                    inscriptionIdSet: new Set(),
+                    transferAmount: 0
+                  });
                 }
-              } else {
-                const inscriptionIdSet = new Set(contextData.inscriptionIdSet);
-                inscriptionIdSet.add(v.inscriptionId);
-                const transferAmount = contextData.transferAmount + parseInt(v.amount);
-                updateContextData({
-                  inscriptionIdSet,
-                  transferAmount
-                });
-                if (allSelected == false && transferAmount === totalAmount) {
-                  setAllSelected(true);
-                }
-              }
-            }}
-          />
-        ))}
-      </Row>
+              }}
+              checked={allSelected}
+              style={{ fontSize: fontSizes.sm }}>
+              <Text text="Select All" preset="sub" />
+            </Checkbox>
+          </Row>
 
-      {/* <Row justifyCenter mt="lg">
+          <Row overflowX gap="lg">
+            {items.map((v, index) => (
+              <BRC20Preview
+                key={v.inscriptionId}
+                tick={v.ticker}
+                balance={v.amount}
+                inscriptionNumber={v.inscriptionNumber}
+                timestamp={v.timestamp}
+                selected={contextData.inscriptionIdSet.has(v.inscriptionId)}
+                type="TRANSFER"
+                onClick={() => {
+                  if (contextData.inscriptionIdSet.has(v.inscriptionId)) {
+                    const inscriptionIdSet = new Set(contextData.inscriptionIdSet);
+                    inscriptionIdSet.delete(v.inscriptionId);
+                    const transferAmount = contextData.transferAmount - parseInt(v.amount);
+                    updateContextData({
+                      inscriptionIdSet,
+                      transferAmount
+                    });
+                    if (allSelected) {
+                      setAllSelected(false);
+                    }
+                  } else {
+                    const inscriptionIdSet = new Set(contextData.inscriptionIdSet);
+                    inscriptionIdSet.add(v.inscriptionId);
+                    const transferAmount = contextData.transferAmount + parseInt(v.amount);
+                    updateContextData({
+                      inscriptionIdSet,
+                      transferAmount
+                    });
+                    if (allSelected == false && transferAmount === totalAmount) {
+                      setAllSelected(true);
+                    }
+                  }
+                }}
+              />
+            ))}
+          </Row>
+
+          {/* <Row justifyCenter mt="lg">
         <Pagination
           pagination={pagination}
           total={total}
@@ -208,6 +236,14 @@ function TransferableList({
           }}
         />
       </Row> */}
+        </Column>
+      ) : (
+        <Column>
+          <Row justifyBetween>
+            <Text text={'TRANSFER Inscriptions (0)'} color="textDim" />
+          </Row>
+        </Column>
+      )}
     </Column>
   );
 }
@@ -222,6 +258,11 @@ function Step2({
   const createOrdinalsTx = useCreateMultiOrdinalsTxCallback();
 
   const [disabled, setDisabled] = useState(true);
+
+  const fetchUtxos = useFetchUtxosCallback();
+  useEffect(() => {
+    fetchUtxos();
+  }, []);
 
   useEffect(() => {
     setDisabled(true);
