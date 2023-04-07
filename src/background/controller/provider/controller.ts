@@ -82,6 +82,15 @@ class ProviderController extends BaseController {
     };
 
   @Reflect.metadata('SAFE', true)
+    getInscriptions = async (req) => {
+      const { data: { params: { cursor,size } } } = req;
+      const account = await wallet.getCurrentAccount();
+      if(!account) return ''
+      const {list,total} = await wallet.openapi.getAddressInscriptions(account.address,cursor,size);
+      return {list,total};
+    };
+
+  @Reflect.metadata('SAFE', true)
     getBalance = async () => {
       const account = await wallet.getCurrentAccount();
       if (!account) return null;

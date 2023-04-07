@@ -10,13 +10,13 @@ import ReadyPromise from './readyPromise';
 import { $, domReadyCall } from './utils';
 
 const log = (event, ...args) => {
-  if (process.env.NODE_ENV !== 'production') {
-    console.log(
-      `%c [unisat] (${new Date().toTimeString().slice(0, 8)}) ${event}`,
-      'font-weight: 600; background-color: #7d6ef9; color: white;',
-      ...args
-    );
-  }
+  // if (process.env.NODE_ENV !== 'production') {
+  //   console.log(
+  //     `%c [unisat] (${new Date().toTimeString().slice(0, 8)}) ${event}`,
+  //     'font-weight: 600; background-color: #7d6ef9; color: white;',
+  //     ...args
+  //   );
+  // }
 };
 const script = document.currentScript;
 const channelName = script?.getAttribute('channel') || 'UNISAT';
@@ -204,9 +204,13 @@ export class UnisatProvider extends EventEmitter {
     });
   };
 
-  getInscriptions = async () => {
+  getInscriptions = async (cursor = 0, size = 20) => {
     return this._request({
-      method: 'getInscriptions'
+      method: 'getInscriptions',
+      params: {
+        cursor,
+        size
+      }
     });
   };
 
