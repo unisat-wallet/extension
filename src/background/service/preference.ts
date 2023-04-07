@@ -371,14 +371,21 @@ class PreferenceService {
   };
 
   getUICachedData = (address: string) => {
-    if (!this.store.uiCachedData[address]) {
-      this.store.uiCachedData[address] = {
-        allInscriptionList: [],
-        brc20List: [],
-        brc20Summary: {},
-        brc20TransferableList: {}
-      };
-    }
+    this.store.uiCachedData[address] = {
+      allInscriptionList: [],
+      brc20List: [],
+      brc20Summary: {},
+      brc20TransferableList: {}
+    };
+
+    // if (!this.store.uiCachedData[address]) {
+    //   this.store.uiCachedData[address] = {
+    //     allInscriptionList: [],
+    //     brc20List: [],
+    //     brc20Summary: {},
+    //     brc20TransferableList: {}
+    //   };
+    // }
     return this.store.uiCachedData[address];
   };
 

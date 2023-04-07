@@ -18,7 +18,6 @@ import { getCurrentTab } from '@/ui/features/browser/tabs';
 import { useAccountBalance, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { useNetworkType } from '@/ui/state/settings/hooks';
-import { transactionsActions } from '@/ui/state/transactions/reducer';
 import { useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
@@ -125,8 +124,6 @@ export default function WalletTabScreen() {
               preset="default"
               icon="send"
               onClick={(e) => {
-                wallet.expireUICachedData(currentAccount.address);
-                dispatch(transactionsActions.reset());
                 navigate('TxCreateScreen');
               }}
               full
