@@ -43,11 +43,14 @@ export const RemoveWalletPopover = ({ keyring, onClose }: { keyring: WalletKeyri
 
         <Card preset="style2" style={{ width: 200 }}>
           <Column>
-            <Text text={keyring.alianName} />
-            <Text text={displayAddress} preset="sub" />
+            <Text text={keyring.alianName} textCenter />
+            <Text text={displayAddress} preset="sub" textCenter />
           </Column>
         </Card>
-        <Text text="Please pay attention to whether you have backed up the mnemonic/private key to prevent asset loss" />
+        <Text
+          text="Please pay attention to whether you have backed up the mnemonic/private key to prevent asset loss"
+          textCenter
+        />
 
         <Text text="This action is not reversible." color="danger" />
         <Row full>

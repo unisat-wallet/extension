@@ -85,7 +85,7 @@ export default function ExportPrivateKeyScreen() {
             <Text
               text="If you ever change browsers or move computers, you will need this Private Key to access this account. Save it somewhere safe and secret"
               preset="sub"
-              size="md"
+              size="sm"
               textCenter
             />
 

@@ -5,6 +5,7 @@ import { AddressType } from '@/shared/types';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressTypeCard } from '@/ui/components/AddressTypeCard';
+import { FooterButtonContainer } from '@/ui/components/FooterButtonContainer';
 import { TabBar } from '@/ui/components/TabBar';
 import { amountToSaothis, useWallet } from '@/ui/utils';
 
@@ -79,7 +80,10 @@ function Step1({
         onChange={onChange}
         autoFocus={true}
       />
-      <Button disabled={disabled} text="Continue" preset="primary" onClick={btnClick} />
+      <FooterButtonContainer>
+        <Button disabled={disabled} text="Continue" preset="primary" onClick={btnClick} />
+      </FooterButtonContainer>
+
     </Column>
   );
 }
@@ -203,7 +207,9 @@ function Step2({
         );
       })}
 
-      <Button text="Coninue" preset="primary" onClick={onNext} />
+      <FooterButtonContainer>
+        <Button text="Coninue" preset="primary" onClick={onNext} />
+      </FooterButtonContainer>
     </Column>
   );
 }

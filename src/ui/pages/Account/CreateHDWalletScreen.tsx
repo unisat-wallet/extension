@@ -10,6 +10,7 @@ import { AddressType, RestoreWalletType } from '@/shared/types';
 import { Button, Card, Column, Content, Grid, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressTypeCard } from '@/ui/components/AddressTypeCard';
+import { FooterButtonContainer } from '@/ui/components/FooterButtonContainer';
 import { Icon } from '@/ui/components/Icon';
 import { TabBar } from '@/ui/components/TabBar';
 import { useCreateAccountCallback } from '@/ui/state/global/hooks';
@@ -126,7 +127,9 @@ function Step1_Create({
         </Checkbox>
       </Row>
 
-      <Button disabled={!checked} text="Continue" preset="primary" onClick={btnClick} />
+      <FooterButtonContainer>
+        <Button disabled={!checked} text="Continue" preset="primary" onClick={btnClick} />
+      </FooterButtonContainer>
     </Column>
   );
 }
@@ -242,14 +245,16 @@ function Step1_Import({
         </Grid>
       </Row>
 
-      <Button
-        disabled={disabled}
-        text="Continue"
-        preset="primary"
-        onClick={() => {
-          onNext();
-        }}
-      />
+      <FooterButtonContainer>
+        <Button
+          disabled={disabled}
+          text="Continue"
+          preset="primary"
+          onClick={() => {
+            onNext();
+          }}
+        />
+      </FooterButtonContainer>
     </Column>
   );
 }
@@ -487,7 +492,9 @@ function Step2({
         }}
       />
 
-      <Button text="Continue" preset="primary" onClick={onNext} />
+      <FooterButtonContainer>
+        <Button text="Continue" preset="primary" onClick={onNext} />
+      </FooterButtonContainer>
 
       {loading && (
         <Icon>

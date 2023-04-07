@@ -102,19 +102,20 @@ export default function ExportMnemonicsScreen() {
               <Text text="Copy to clipboard" color="textDim" />
             </Row>
 
-            <Grid columns={2}>
-              {words.map((v, index) => {
-                return (
-                  <Row key={index}>
-                    <Text text={`${index + 1}. `} style={{ width: 40 }} />
-                    <Card preset="style2" style={{ width: 200 }}>
-                      <Text text={v} selectText />
-                    </Card>
-                  </Row>
-                );
-              })}
-            </Grid>
-
+            <Row justifyCenter>
+              <Grid columns={2}>
+                {words.map((v, index) => {
+                  return (
+                    <Row key={index}>
+                      <Text text={`${index + 1}. `} style={{ width: 40 }} />
+                      <Card preset="style2" style={{ width: 200 }}>
+                        <Text text={v} selectText />
+                      </Card>
+                    </Row>
+                  );
+                })}
+              </Grid>
+            </Row>
             <Card>
               <Column>
                 <Text text="Advance Options" />
