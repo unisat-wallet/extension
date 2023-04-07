@@ -1,6 +1,28 @@
 
 # UniSat Wallet Release Notes
 
+
+## v1.1.15
+**Major changes**
+- BRC-20 related
+  - Add BRC-20 transfer and inscribing functions
+- Account related
+  - Add support for modifying account name
+  - Display both BTC balance and inscription count of different address type.
+- Domain resolution related
+  - Add domain name resolution of .unisat
+  - After a domain name is resolved successfully, the corresponding inscription number will be displayed
+  - Fixed the problem that the parsing of special symbols failed
+- Transaction related
+  - Optimize the display of SignPSBT page
+  - When the payment fails, a specific error message will be displayed
+- Unisat Api related
+  - Add getInscriptions method
+  - Add sendInscription method
+- Others
+  - Fixed text issue
+
+
 ## v1.1.14
 **Major changes**
 - Change logo
