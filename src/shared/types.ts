@@ -51,25 +51,20 @@ export interface TxHistoryItem {
 }
 
 export interface Inscription {
-  id: string;
-  num: number;
-  number?: number;
-  detail?: {
-    address: string;
-    content: string;
-    content_length: string;
-    content_type: string;
-    genesis_fee: string;
-    genesis_height: string;
-    genesis_transaction: string;
-    location: string;
-    offset: string;
-    output: string;
-    output_value: string;
-    preview: string;
-    sat: string;
-    timestamp: string;
-  };
+  inscriptionId: string;
+  inscriptionNumber: number;
+  address: string;
+  outputValue: number;
+  preview: string;
+  content: string;
+  contentType: string;
+  contentLength: number;
+  timestamp: number;
+  genesisTransaction: string;
+  location: string;
+  output: string;
+  offset: number;
+  contentBody: string;
 }
 
 export interface InscriptionMintedItem {
@@ -148,4 +143,68 @@ export interface Account {
   index?: number;
   balance?: number;
   key: string;
+}
+
+export interface InscribeOrder {
+  orderId: string;
+  payAddress: string;
+  totalFee: number;
+  minerFee: number;
+  serviceFee: number;
+  outputValue: number;
+}
+
+export interface TokenBalance {
+  availableBalance: string;
+  overallBalance: string;
+  ticker: string;
+  transferableBalance: string;
+}
+
+export enum TokenInscriptionType {
+  INSCRIBE_TRANSFER,
+  INSCRIBE_MINT
+}
+export interface TokenTransfer {
+  ticker: string;
+  amount: string;
+  inscriptionId: string;
+  inscriptionNumber: number;
+  timestamp: number;
+}
+
+export interface AddressTokenSummary {
+  tokenBalance: TokenBalance;
+  historyList: TokenTransfer[];
+  transferableList: TokenTransfer[];
+}
+
+export interface DecodedPsbt {
+  inputInfos: {
+    txid: string;
+    vout: number;
+    address: string;
+    value: number;
+    inscriptions: Inscription[];
+  }[];
+  outputInfos: {
+    address: string;
+    value: number;
+    inscriptions: Inscription[];
+  }[];
+  feeRate: number;
+  fee: number;
+}
+
+export interface ToAddressInfo {
+  address: string;
+  domain?: string;
+  inscription?: Inscription;
+}
+
+export interface RawTxInfo {
+  psbtHex: string;
+  rawtx: string;
+  toAddressInfo?: ToAddressInfo;
+  txType: TxType;
 }

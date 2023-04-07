@@ -1,13 +1,18 @@
-import { TxType } from '@/shared/types';
+import { RawTxInfo, TxType } from '@/shared/types';
 import { Header } from '@/ui/components';
-import { useBitcoinTx, usePushBitcoinTxCallback } from '@/ui/state/transactions/hooks';
+import { usePushBitcoinTxCallback } from '@/ui/state/transactions/hooks';
+import { useLocationState } from '@/ui/utils';
 
 import { SignPsbt } from '../Approval/components';
 import { useNavigate } from '../MainRoute';
 
+interface LocationState {
+  rawTxInfo: RawTxInfo;
+}
+
 export default function TxConfirmScreen() {
+  const { rawTxInfo } = useLocationState<LocationState>();
   const navigate = useNavigate();
-  const bitcoinTx = useBitcoinTx();
   const pushBitcoinTx = usePushBitcoinTxCallback();
   return (
     <SignPsbt
@@ -16,16 +21,16 @@ export default function TxConfirmScreen() {
           window.history.go(-1);
         }}
       />
-      params={{ data: { psbtHex: bitcoinTx.psbtHex, type: TxType.SEND_BITCOIN } }}
+      params={{ data: { psbtHex: rawTxInfo.psbtHex, type: TxType.SEND_BITCOIN, rawTxInfo } }}
       handleCancel={() => {
-        navigate('MainScreen');
+        window.history.go(-1);
       }}
       handleConfirm={() => {
-        pushBitcoinTx().then((success) => {
+        pushBitcoinTx(rawTxInfo.rawtx).then(({ success, txid, error }) => {
           if (success) {
-            navigate('TxSuccessScreen');
+            navigate('TxSuccessScreen', { txid });
           } else {
-            navigate('TxFailScreen');
+            navigate('TxFailScreen', { error });
           }
         });
       }}

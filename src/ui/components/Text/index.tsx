@@ -16,7 +16,8 @@ export const $sizeStyles = {
   md: { fontSize: 16, lineHeight: 'normal' } as CSSProperties,
   sm: { fontSize: 14, lineHeight: 'normal' } as CSSProperties,
   xs: { fontSize: 12, lineHeight: 'normal' } as CSSProperties,
-  xxs: { fontSize: 10, lineHeight: 'normal' } as CSSProperties
+  xxs: { fontSize: 10, lineHeight: 'normal' } as CSSProperties,
+  xxxs: { fontSize: 8, lineHeight: 'normal' } as CSSProperties
 };
 
 const $baseStyle: CSSProperties = Object.assign({}, $sizeStyles.sm, {
@@ -58,7 +59,7 @@ const $presets = {
   default: $baseStyle
 };
 export interface TextProps extends BaseViewProps {
-  text?: string;
+  text?: string | number;
   preset?: Presets;
   size?: Sizes;
   color?: ColorTypes;

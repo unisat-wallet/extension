@@ -1,4 +1,5 @@
 import BigNumber from 'bignumber.js';
+import { useLocation } from 'react-router-dom';
 
 export * from './hooks';
 export * from './WalletContext';
@@ -112,12 +113,12 @@ export function isValidAddress(address: string) {
   return true;
 }
 
-export const copyToClipboard = (textToCopy: string) => {
+export const copyToClipboard = (textToCopy: string | number) => {
   if (navigator.clipboard && window.isSecureContext) {
-    return navigator.clipboard.writeText(textToCopy);
+    return navigator.clipboard.writeText(textToCopy.toString());
   } else {
     const textArea = document.createElement('textarea');
-    textArea.value = textToCopy;
+    textArea.value = textToCopy.toString();
     textArea.style.position = 'absolute';
     textArea.style.opacity = '0';
     textArea.style.left = '-999999px';
@@ -157,4 +158,9 @@ export function satoshisToAmount(val: number) {
 export function amountToSaothis(val: any) {
   const num = new BigNumber(val);
   return num.multipliedBy(100000000).toNumber();
+}
+
+export function useLocationState<T>() {
+  const { state } = useLocation();
+  return state as T;
 }

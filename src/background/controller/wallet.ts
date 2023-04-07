@@ -28,7 +28,7 @@ import {
   OPENAPI_URL_TESTNET
 } from '@/shared/constant';
 import { AddressType, BitcoinBalance, NetworkType, ToSignInput, UTXO, WalletKeyring, Account } from '@/shared/types';
-import { createSendBTC, createSendOrd } from '@unisat/ord-utils';
+import { createSendBTC, createSendMultiOrds, createSendOrd } from '@unisat/ord-utils';
 
 import { ContactBookItem } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';
@@ -142,8 +142,8 @@ export class WalletController extends BaseController {
     return data;
   };
 
-  getAddressInscriptions = async (address: string) => {
-    const data = await openapiService.getAddressInscriptions(address);
+  getAddressInscriptions = async (address: string, cursor: number, size: number) => {
+    const data = await openapiService.getAddressInscriptions(address, cursor, size);
     return data;
   };
 
@@ -640,6 +640,49 @@ export class WalletController extends BaseController {
     return psbt.toHex();
   };
 
+  sendInscriptions = async ({
+    to,
+    inscriptionIds,
+    utxos,
+    feeRate
+  }: {
+    to: string;
+    inscriptionIds: string[];
+    utxos: UTXO[];
+    feeRate: number;
+  }) => {
+    const account = await preferenceService.getCurrentAccount();
+    if (!account) throw new Error('no current account');
+
+    const networkType = preferenceService.getNetworkType();
+    const psbtNetwork = toPsbtNetwork(networkType);
+
+    const psbt = await createSendMultiOrds({
+      utxos: utxos.map((v) => {
+        return {
+          txId: v.txId,
+          outputIndex: v.outputIndex,
+          satoshis: v.satoshis,
+          scriptPk: v.scriptPk,
+          addressType: v.addressType,
+          address: account.address,
+          ords: v.inscriptions
+        };
+      }),
+      toAddress: to,
+      toOrdIds: inscriptionIds,
+      wallet: this,
+      network: psbtNetwork,
+      changeAddress: account.address,
+      pubkey: account.pubkey,
+      feeRate
+    });
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    psbt.__CACHE.__UNSAFE_SIGN_NONSEGWIT = false;
+    return psbt.toHex();
+  };
+
   pushTx = async (rawtx: string) => {
     const txid = await this.openapi.pushTx(rawtx);
     return txid;
@@ -875,6 +918,104 @@ export class WalletController extends BaseController {
   getFeeSummary = async () => {
     const result = await openapiService.getFeeSummary();
     return result;
+  };
+
+  inscribeBRC20Transfer = (address: string, tick: string, amount: string, feeRate: number) => {
+    return openapiService.inscribeBRC20Transfer(address, tick, amount, feeRate);
+  };
+
+  decodePsbt = (psbtHex: string) => {
+    return openapiService.decodePsbt(psbtHex);
+  };
+
+  getBRC20List = async (address: string, currentPage: number, pageSize: number) => {
+    const cursor = (currentPage - 1) * pageSize;
+    const size = pageSize;
+
+    const uiCachedData = preferenceService.getUICachedData(address);
+    if (uiCachedData.brc20List[currentPage]) {
+      return uiCachedData.brc20List[currentPage];
+    }
+
+    const { total, list } = await openapiService.getAddressTokenBalances(address, cursor, size);
+    uiCachedData.brc20List[currentPage] = {
+      currentPage,
+      pageSize,
+      total,
+      list
+    };
+    return {
+      currentPage,
+      pageSize,
+      total,
+      list
+    };
+  };
+
+  getAllInscriptionList = async (address: string, currentPage: number, pageSize: number) => {
+    const cursor = (currentPage - 1) * pageSize;
+    const size = pageSize;
+
+    const uiCachedData = preferenceService.getUICachedData(address);
+    if (uiCachedData.allInscriptionList[currentPage]) {
+      return uiCachedData.allInscriptionList[currentPage];
+    }
+
+    const { total, list } = await openapiService.getAddressInscriptions(address, cursor, size);
+    uiCachedData.allInscriptionList[currentPage] = {
+      currentPage,
+      pageSize,
+      total,
+      list
+    };
+    return {
+      currentPage,
+      pageSize,
+      total,
+      list
+    };
+  };
+
+  getBRC20Summary = async (address: string, ticker: string) => {
+    const uiCachedData = preferenceService.getUICachedData(address);
+    if (uiCachedData.brc20Summary[ticker]) {
+      return uiCachedData.brc20Summary[ticker];
+    }
+
+    const tokenSummary = await openapiService.getAddressTokenSummary(address, ticker);
+    uiCachedData.brc20Summary[ticker] = tokenSummary;
+    return tokenSummary;
+  };
+
+  getBRC20TransferableList = async (address: string, ticker: string, currentPage: number, pageSize: number) => {
+    const cursor = (currentPage - 1) * pageSize;
+    const size = pageSize;
+
+    const uiCachedData = preferenceService.getUICachedData(address);
+    if (uiCachedData.brc20TransferableList[ticker] && uiCachedData.brc20TransferableList[ticker][currentPage]) {
+      return uiCachedData.brc20TransferableList[ticker][currentPage];
+    }
+    if (!uiCachedData.brc20TransferableList[ticker]) {
+      uiCachedData.brc20TransferableList[ticker] = [];
+    }
+
+    const { total, list } = await openapiService.getTokenTransferableList(address, ticker, cursor, size);
+    uiCachedData.brc20TransferableList[ticker][currentPage] = {
+      currentPage,
+      pageSize,
+      total,
+      list
+    };
+    return {
+      currentPage,
+      pageSize,
+      total,
+      list
+    };
+  };
+
+  expireUICachedData = (address: string) => {
+    return preferenceService.expireUICachedData(address);
   };
 }
 

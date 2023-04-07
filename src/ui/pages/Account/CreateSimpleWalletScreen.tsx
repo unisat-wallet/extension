@@ -2,7 +2,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ADDRESS_TYPES } from '@/shared/constant';
 import { AddressType } from '@/shared/types';
-import { Button, Column, Content, Header, Input, Layout, Text } from '@/ui/components';
+import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressTypeCard } from '@/ui/components/AddressTypeCard';
 import { TabBar } from '@/ui/components/TabBar';
@@ -266,24 +266,27 @@ export default function CreateSimpleWalletScreen() {
         title="Create Single Wallet"
       />
       <Content>
-        <TabBar
-          progressEnabled
-          defaultActiveKey={TabType.STEP1}
-          items={items}
-          activeKey={contextData.tabType}
-          onTabClick={(key) => {
-            const toTabType = key as TabType;
-            if (toTabType === TabType.STEP2) {
-              if (!contextData.step1Completed) {
-                setTimeout(() => {
-                  updateContextData({ tabType: contextData.tabType });
-                }, 200);
-                return;
+        <Row justifyCenter>
+          <TabBar
+            progressEnabled
+            defaultActiveKey={TabType.STEP1}
+            items={items}
+            activeKey={contextData.tabType}
+            onTabClick={(key) => {
+              const toTabType = key as TabType;
+              if (toTabType === TabType.STEP2) {
+                if (!contextData.step1Completed) {
+                  setTimeout(() => {
+                    updateContextData({ tabType: contextData.tabType });
+                  }, 200);
+                  return;
+                }
               }
-            }
-            updateContextData({ tabType: toTabType });
-          }}
-        />
+              updateContextData({ tabType: toTabType });
+            }}
+          />
+        </Row>
+
         {renderChildren}
       </Content>
     </Layout>

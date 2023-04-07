@@ -33,6 +33,7 @@ const MyItem: React.ForwardRefRenderFunction<any, MyItemProps> = ({ group, index
       <Column>
         <Text text="Latest Transactions" preset="title-bold" textCenter />
         <Row
+          justifyCenter
           onClick={() => {
             window.open(`${blockstreamUrl}/address/${address}`);
           }}>

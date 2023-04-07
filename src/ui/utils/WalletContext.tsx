@@ -17,11 +17,16 @@ import {
   WalletKeyring,
   Account,
   FeeSummary,
-  AddressAssets
+  AddressAssets,
+  InscribeOrder,
+  TokenBalance,
+  TokenTransfer,
+  AddressTokenSummary,
+  DecodedPsbt
 } from '@/shared/types';
 
 export interface WalletController {
-  openapi?: {
+  openapi: {
     [key: string]: (...params: any) => Promise<any>;
   };
 
@@ -48,7 +53,11 @@ export interface WalletController {
   getAddressCacheBalance(address: string): Promise<BitcoinBalance>;
   getMultiAddressAssets(addresses: string): Promise<AddressAssets[]>;
 
-  getAddressInscriptions(address: string): Promise<Inscription[]>;
+  getAddressInscriptions(
+    address: string,
+    cursor: number,
+    size: number
+  ): Promise<{ list: Inscription[]; total: number }>;
 
   getAddressHistory: (address: string) => Promise<TxHistoryItem[]>;
   getAddressCacheHistory: (address: string) => Promise<TxHistoryItem[]>;
@@ -111,6 +120,7 @@ export interface WalletController {
     receiverToPayFee: boolean;
     feeRate: number;
   }): Promise<string>;
+
   sendInscription(data: {
     to: string;
     inscriptionId: string;
@@ -118,9 +128,11 @@ export interface WalletController {
     feeRate: number;
     outputValue: number;
   }): Promise<string>;
+
+  sendInscriptions(data: { to: string; inscriptionIds: string[]; utxos: UTXO[]; feeRate: number }): Promise<string>;
   pushTx(rawtx: string): Promise<string>;
 
-  queryDomainInfo(domain: string): Promise<string>;
+  queryDomainInfo(domain: string): Promise<Inscription>;
 
   getInscriptionSummary(): Promise<InscriptionSummary>;
   getAppSummary(): Promise<AppSummary>;
@@ -149,6 +161,33 @@ export interface WalletController {
 
   setEditingAccount(account: Account): Promise<void>;
   getEditingAccount(): Promise<Account>;
+
+  inscribeBRC20Transfer(address: string, tick: string, amount: string, feeRate: number): Promise<InscribeOrder>;
+
+  decodePsbt(psbtHex: string): Promise<DecodedPsbt>;
+
+  getAllInscriptionList(
+    address: string,
+    currentPage: number,
+    pageSize: number
+  ): Promise<{ currentPage: number; pageSize: number; total: number; list: Inscription[] }>;
+
+  getBRC20List(
+    address: string,
+    currentPage: number,
+    pageSize: number
+  ): Promise<{ currentPage: number; pageSize: number; total: number; list: TokenBalance[] }>;
+
+  getBRC20TransferableList(
+    address: string,
+    ticker: string,
+    currentPage: number,
+    pageSize: number
+  ): Promise<{ currentPage: number; pageSize: number; total: number; list: TokenTransfer[] }>;
+
+  getBRC20Summary(address: string, ticker: string): Promise<AddressTokenSummary>;
+
+  expireUICachedData(address: string): Promise<void>;
 }
 
 const WalletContext = createContext<{

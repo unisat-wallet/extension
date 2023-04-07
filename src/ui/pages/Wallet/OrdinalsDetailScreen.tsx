@@ -1,32 +1,30 @@
-import { useLocation } from 'react-router-dom';
+import moment from 'moment';
 
 import { Inscription } from '@/shared/types';
 import { Button, Column, Content, Header, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
+import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useAppDispatch } from '@/ui/state/hooks';
+import { useTxIdUrl } from '@/ui/state/settings/hooks';
 import { transactionsActions } from '@/ui/state/transactions/reducer';
-import { copyToClipboard } from '@/ui/utils';
+import { copyToClipboard, useLocationState } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
 
 export default function OrdinalsDetailScreen() {
   const navigate = useNavigate();
-  const { state } = useLocation();
-  const { inscription, withSend } = state as {
-    inscription: Inscription;
-    withSend: boolean;
-  };
+  const { inscription } = useLocationState<{ inscription: Inscription }>();
+
+  const currentAccount = useCurrentAccount();
+  const withSend = currentAccount.address === inscription.address;
+
   const dispatch = useAppDispatch();
 
-  const detail = inscription.detail;
-  if (!detail) {
-    return <div></div>;
-  }
-  const date = new Date(detail.timestamp);
-  const isUnconfirmed = date.getTime() < 100;
+  const isUnconfirmed = inscription.timestamp == 0;
+  const date = moment(inscription.timestamp * 1000).format('YYYY-MM-DD hh:mm:ss');
 
-  const tools = useTools();
+  const genesisTxUrl = useTxIdUrl(inscription.genesisTransaction);
   return (
     <Layout>
       <Header
@@ -37,7 +35,7 @@ export default function OrdinalsDetailScreen() {
       <Content>
         <Column>
           <Text
-            text={isUnconfirmed ? 'Inscription (not confirmed yet)' : `Inscription ${inscription.num}`}
+            text={isUnconfirmed ? 'Inscription (not confirmed yet)' : `Inscription ${inscription.inscriptionNumber}`}
             preset="title-bold"
             textCenter
           />
@@ -57,35 +55,42 @@ export default function OrdinalsDetailScreen() {
             />
           )}
           <Column gap="lg">
-            {detail &&
-              Object.keys(detail).map((k, i) => {
-                const keyName = k.split('_').join(' ');
-                const isLink = k === 'preview' || k === 'content';
-                if (detail[k] === '') return <div />;
-                return (
-                  <Column key={k}>
-                    <Text text={keyName} preset="sub" />
-                    <Text
-                      text={detail[k]}
-                      preset={isLink ? 'link' : 'regular'}
-                      size="xs"
-                      wrap
-                      onClick={() => {
-                        if (k === 'preview' || k === 'content') {
-                          window.open(detail[k]);
-                        } else {
-                          copyToClipboard(detail[k]).then(() => {
-                            tools.toastSuccess('Copied');
-                          });
-                        }
-                      }}
-                    />
-                  </Column>
-                );
-              })}
+            <Section title="id" value={inscription.inscriptionId} />
+            <Section title="address" value={inscription.address} />
+            <Section title="output value" value={inscription.outputValue} />
+            <Section title="preview" value={inscription.preview} link={inscription.preview} />
+            <Section title="content" value={inscription.content} link={inscription.content} />
+            <Section title="content length" value={inscription.contentLength} />
+            <Section title="content type" value={inscription.contentType} />
+            <Section title="timestamp" value={isUnconfirmed ? 'unconfirmed' : date} />
+            <Section title="genesis transaction" value={inscription.genesisTransaction} link={genesisTxUrl} />
           </Column>
         </Column>
       </Content>
     </Layout>
+  );
+}
+
+function Section({ value, title, link }: { value: string | number; title: string; link?: string }) {
+  const tools = useTools();
+  return (
+    <Column>
+      <Text text={title} preset="sub" />
+      <Text
+        text={value}
+        preset={link ? 'link' : 'regular'}
+        size="xs"
+        wrap
+        onClick={() => {
+          if (link) {
+            window.open(link);
+          } else {
+            copyToClipboard(value).then(() => {
+              tools.toastSuccess('Copied');
+            });
+          }
+        }}
+      />
+    </Column>
   );
 }

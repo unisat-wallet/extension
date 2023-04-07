@@ -71,3 +71,12 @@ export function useBlockstreamUrl() {
     return 'https://blockstream.info/testnet';
   }
 }
+
+export function useTxIdUrl(txid: string) {
+  const networkType = useNetworkType();
+  if (networkType === NetworkType.MAINNET) {
+    return `https://blockstream.info/tx/${txid}`;
+  } else {
+    return `https://blockstream.info/testnet/tx/${txid}`;
+  }
+}

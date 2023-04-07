@@ -138,10 +138,8 @@ function Step1_Import({
   contextData: ContextData;
   updateContextData: (params: UpdateContextDataParams) => void;
 }) {
-  // const tmp = 'venue tattoo cloth cash learn diary add hurry success actress case lobster'
-  // const [keys, setKeys] = useState<Array<string>>(tmp.split(' '))
   const [keys, setKeys] = useState<Array<string>>(new Array(12).fill(''));
-  const [active, setActive] = useState(999);
+  const [curInputIndex, setCurInputIndex] = useState(0);
   const [hover, setHover] = useState(999);
   const [disabled, setDisabled] = useState(true);
 
@@ -211,7 +209,7 @@ function Step1_Import({
             return (
               <Row key={index}>
                 <Card gap="zero">
-                  <Text text={`${index + 1}. `} style={{ width: 25 }} textEnd />
+                  <Text text={`${index + 1}. `} style={{ width: 25 }} textEnd color="textDim" />
                   <Input
                     containerStyle={{ width: 80, minHeight: 25, height: 25, padding: 0 }}
                     style={{ width: 80 }}
@@ -229,13 +227,13 @@ function Step1_Import({
                     //   setHover(999);
                     // }}
                     onFocus={(e) => {
-                      setActive(index);
+                      setCurInputIndex(index);
                     }}
                     onBlur={(e) => {
-                      setActive(999);
+                      setCurInputIndex(999);
                     }}
                     onKeyUp={(e) => handleOnKeyUp(e)}
-                    autoFocus={index == 0}
+                    autoFocus={index == curInputIndex}
                   />
                 </Card>
               </Row>
@@ -624,27 +622,29 @@ export default function CreateHDWalletScreen() {
         title={contextData.isRestore ? 'Restore from mnemonics' : 'Create a new HD Wallet'}
       />
       <Content>
-        <TabBar
-          progressEnabled
-          defaultActiveKey={contextData.tabType}
-          activeKey={contextData.tabType}
-          items={items.map((v) => ({
-            key: v.key,
-            label: v.label
-          }))}
-          onTabClick={(key) => {
-            const toTabType = key as TabType;
-            if (toTabType === TabType.STEP2) {
-              if (!contextData.step1Completed) {
-                setTimeout(() => {
-                  updateContextData({ tabType: contextData.tabType });
-                }, 200);
-                return;
+        <Row justifyCenter>
+          <TabBar
+            progressEnabled
+            defaultActiveKey={contextData.tabType}
+            activeKey={contextData.tabType}
+            items={items.map((v) => ({
+              key: v.key,
+              label: v.label
+            }))}
+            onTabClick={(key) => {
+              const toTabType = key as TabType;
+              if (toTabType === TabType.STEP2) {
+                if (!contextData.step1Completed) {
+                  setTimeout(() => {
+                    updateContextData({ tabType: contextData.tabType });
+                  }, 200);
+                  return;
+                }
               }
-            }
-            updateContextData({ tabType: toTabType });
-          }}
-        />
+              updateContextData({ tabType: toTabType });
+            }}
+          />
+        </Row>
 
         {currentChildren}
       </Content>

@@ -1,7 +1,7 @@
 import { Psbt } from 'bitcoinjs-lib';
 import { useCallback, useMemo } from 'react';
 
-import { Inscription } from '@/shared/types';
+import { RawTxInfo, Inscription, ToAddressInfo, TxType } from '@/shared/types';
 import { useTools } from '@/ui/components/ActionComponent';
 import { satoshisToBTC, sleep, useWallet } from '@/ui/utils';
 
@@ -22,18 +22,12 @@ export function useBitcoinTx() {
 
 export function useCreateBitcoinTxCallback() {
   const dispatch = useAppDispatch();
-  const bitcoinTx = useBitcoinTx();
   const wallet = useWallet();
   const fromAddress = useAccountAddress();
   const utxos = useUtxos();
   const fetchUtxos = useFetchUtxosCallback();
   return useCallback(
-    async (
-      addressInfo: { address: string; domain: string },
-      toAmount: number,
-      feeRate?: number,
-      receiverToPayFee = false
-    ) => {
+    async (toAddressInfo: ToAddressInfo, toAmount: number, feeRate?: number, receiverToPayFee = false) => {
       let _utxos = utxos;
       if (_utxos.length === 0) {
         _utxos = await fetchUtxos();
@@ -43,7 +37,7 @@ export function useCreateBitcoinTxCallback() {
         feeRate = summary.list[1].feeRate;
       }
       const psbtHex = await wallet.sendBTC({
-        to: addressInfo.address,
+        to: toAddressInfo.address,
         amount: toAmount,
         utxos: _utxos,
         receiverToPayFee,
@@ -56,45 +50,57 @@ export function useCreateBitcoinTxCallback() {
           rawtx,
           psbtHex,
           fromAddress,
-          toAddress: addressInfo.address,
-          toDomain: addressInfo.domain,
           feeRate
         })
       );
-      return psbtHex;
+      const rawTxInfo: RawTxInfo = {
+        psbtHex,
+        rawtx,
+        toAddressInfo,
+        txType: TxType.SEND_BITCOIN
+      };
+      return rawTxInfo;
     },
-    [dispatch, bitcoinTx, wallet, fromAddress, utxos, fetchUtxos]
+    [dispatch, wallet, fromAddress, utxos, fetchUtxos]
   );
 }
 
 export function usePushBitcoinTxCallback() {
   const dispatch = useAppDispatch();
-  const bitcoinTx = useBitcoinTx();
   const wallet = useWallet();
   const tools = useTools();
-  return useCallback(async () => {
-    let success = false;
-    try {
-      tools.showLoading(true);
-      const txid = await wallet.pushTx(bitcoinTx.rawtx);
-      await sleep(3); // Wait for transaction synchronization
-      tools.showLoading(false);
-      dispatch(transactionsActions.updateBitcoinTx({ txid }));
-      dispatch(accountActions.expireBalance());
-      setTimeout(() => {
+  return useCallback(
+    async (rawtx: string) => {
+      const ret = {
+        success: false,
+        txid: '',
+        error: ''
+      };
+      try {
+        tools.showLoading(true);
+        const txid = await wallet.pushTx(rawtx);
+        await sleep(3); // Wait for transaction synchronization
+        tools.showLoading(false);
+        dispatch(transactionsActions.updateBitcoinTx({ txid }));
         dispatch(accountActions.expireBalance());
-      }, 2000);
-      setTimeout(() => {
-        dispatch(accountActions.expireBalance());
-      }, 5000);
-      success = true;
-    } catch (e) {
-      console.log(e);
-      tools.showLoading(false);
-    }
+        setTimeout(() => {
+          dispatch(accountActions.expireBalance());
+        }, 2000);
+        setTimeout(() => {
+          dispatch(accountActions.expireBalance());
+        }, 5000);
 
-    return success;
-  }, [dispatch, bitcoinTx, wallet]);
+        ret.success = true;
+        ret.txid = txid;
+      } catch (e) {
+        ret.error = (e as Error).message;
+        tools.showLoading(false);
+      }
+
+      return ret;
+    },
+    [dispatch, wallet]
+  );
 }
 
 export function useOrdinalsTx() {
@@ -104,25 +110,19 @@ export function useOrdinalsTx() {
 
 export function useCreateOrdinalsTxCallback() {
   const dispatch = useAppDispatch();
-  const ordinalsTx = useOrdinalsTx();
   const wallet = useWallet();
   const fromAddress = useAccountAddress();
   const utxos = useUtxos();
   const fetchUtxos = useFetchUtxosCallback();
   return useCallback(
-    async (
-      toInfo: { address: string; domain: string },
-      inscription: Inscription,
-      feeRate: number,
-      outputValue: number
-    ) => {
+    async (toAddressInfo: ToAddressInfo, inscription: Inscription, feeRate: number, outputValue: number) => {
       let _utxos = utxos;
       if (_utxos.length === 0) {
         _utxos = await fetchUtxos();
       }
       const psbtHex = await wallet.sendInscription({
-        to: toInfo.address,
-        inscriptionId: inscription.id,
+        to: toAddressInfo.address,
+        inscriptionId: inscription.inscriptionId,
         utxos: _utxos,
         feeRate,
         outputValue
@@ -134,49 +134,101 @@ export function useCreateOrdinalsTxCallback() {
           rawtx,
           psbtHex,
           fromAddress,
-          toAddress: toInfo.address,
-          toDomain: toInfo.domain,
           inscription,
           feeRate,
           outputValue
         })
       );
-      return psbtHex;
+      const rawTxInfo: RawTxInfo = {
+        psbtHex,
+        rawtx,
+        toAddressInfo,
+        txType: TxType.SEND_INSCRIPTION
+      };
+      return rawTxInfo;
     },
-    [dispatch, ordinalsTx, wallet, fromAddress, utxos]
+    [dispatch, wallet, fromAddress, utxos]
+  );
+}
+
+export function useCreateMultiOrdinalsTxCallback() {
+  const dispatch = useAppDispatch();
+  const wallet = useWallet();
+  const fromAddress = useAccountAddress();
+  const utxos = useUtxos();
+  const fetchUtxos = useFetchUtxosCallback();
+  return useCallback(
+    async (toAddressInfo: ToAddressInfo, inscriptionIds: string[], feeRate: number) => {
+      let _utxos = utxos;
+      if (_utxos.length === 0) {
+        _utxos = await fetchUtxos();
+      }
+      const psbtHex = await wallet.sendInscriptions({
+        to: toAddressInfo.address,
+        inscriptionIds,
+        utxos: _utxos,
+        feeRate
+      });
+      const psbt = Psbt.fromHex(psbtHex);
+      const rawtx = psbt.extractTransaction().toHex();
+      dispatch(
+        transactionsActions.updateOrdinalsTx({
+          rawtx,
+          psbtHex,
+          fromAddress,
+          feeRate
+        })
+      );
+      const rawTxInfo: RawTxInfo = {
+        psbtHex,
+        rawtx,
+        toAddressInfo,
+        txType: TxType.SIGN_TX
+      };
+      return rawTxInfo;
+    },
+    [dispatch, wallet, fromAddress, utxos]
   );
 }
 
 export function usePushOrdinalsTxCallback() {
   const dispatch = useAppDispatch();
-  const ordinalsTx = useOrdinalsTx();
   const wallet = useWallet();
   const tools = useTools();
-  return useCallback(async () => {
-    let success = false;
-    try {
-      tools.showLoading(true);
-      const txid = await wallet.pushTx(ordinalsTx.rawtx);
-      await sleep(3); // Wait for transaction synchronization
-      tools.showLoading(false);
-      dispatch(transactionsActions.updateOrdinalsTx({ txid }));
+  return useCallback(
+    async (rawtx: string) => {
+      const ret = {
+        success: false,
+        txid: '',
+        error: ''
+      };
+      try {
+        tools.showLoading(true);
+        const txid = await wallet.pushTx(rawtx);
+        await sleep(3); // Wait for transaction synchronization
+        tools.showLoading(false);
+        dispatch(transactionsActions.updateOrdinalsTx({ txid }));
 
-      dispatch(accountActions.expireBalance());
-      setTimeout(() => {
         dispatch(accountActions.expireBalance());
-      }, 2000);
-      setTimeout(() => {
-        dispatch(accountActions.expireBalance());
-      }, 5000);
+        setTimeout(() => {
+          dispatch(accountActions.expireBalance());
+        }, 2000);
+        setTimeout(() => {
+          dispatch(accountActions.expireBalance());
+        }, 5000);
 
-      success = true;
-    } catch (e) {
-      console.log(e);
-      tools.showLoading(false);
-    }
+        ret.success = true;
+        ret.txid = txid;
+      } catch (e) {
+        console.log(e);
+        ret.error = (e as Error).message;
+        tools.showLoading(false);
+      }
 
-    return success;
-  }, [dispatch, ordinalsTx, wallet]);
+      return ret;
+    },
+    [dispatch, wallet]
+  );
 }
 
 export function useUtxos() {

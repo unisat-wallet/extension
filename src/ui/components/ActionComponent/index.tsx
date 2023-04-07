@@ -2,6 +2,7 @@
 import React, { useCallback, useContext, useRef, useState } from 'react';
 
 import { Loading } from './Loading';
+import { Tip } from './Tip';
 import { Toast, ToastPresets, ToastProps } from './Toast';
 
 type ToastFunction = (content: string) => void;
@@ -12,6 +13,7 @@ interface ContextType {
   toastError: ToastFunction;
   toastWarning: ToastFunction;
   showLoading: LoadingFunction;
+  showTip: ToastFunction;
 }
 
 const initContext = {
@@ -28,6 +30,9 @@ const initContext = {
     // todo
   },
   showLoading: () => {
+    // todo
+  },
+  showTip: (content: string) => {
     // todo
   }
 };
@@ -112,6 +117,28 @@ function LoadingContainer({ handler }: { handler: ContextType }) {
   }
 }
 
+function TipContainer({ handler }: { handler: ContextType }) {
+  const [tipData, setTipData] = useState<{ visible: boolean; content: string }>({
+    visible: false,
+    content: ''
+  });
+  handler.showTip = useCallback((content: string) => {
+    setTipData({ content, visible: true });
+  }, []);
+  if (tipData.visible) {
+    return (
+      <Tip
+        text={tipData.content}
+        onClose={() => {
+          setTipData({ visible: false, content: '' });
+        }}
+      />
+    );
+  } else {
+    return <div />;
+  }
+}
+
 export function ActionComponentProvider({ children }: { children: React.ReactNode }) {
   const selfRef = useRef<ContextType>(initContext);
   const self = selfRef.current;
@@ -121,6 +148,7 @@ export function ActionComponentProvider({ children }: { children: React.ReactNod
       {children}
       <ToastContainer handler={self} />
       <LoadingContainer handler={self} />
+      <TipContainer handler={self} />
     </ActionComponentContext.Provider>
   );
 }

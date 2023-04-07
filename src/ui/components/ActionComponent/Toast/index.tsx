@@ -17,7 +17,9 @@ const $baseViewStyle = {
   padding: 4,
   borderRadius: 4,
   paddingLeft: 8,
-  paddingRight: 8
+  paddingRight: 8,
+  marginLeft: 16,
+  marginRight: 16
 } as CSSProperties;
 
 const $viewPresets = {
@@ -49,7 +51,7 @@ export function Toast(props: ToastProps) {
   return (
     <div className="action-container">
       <div className="toast" style={$viewPresets[preset]}>
-        <Text text={content} preset="regular" color="white" />
+        <Text text={content} preset="regular" color="white" textCenter />
       </div>
     </div>
   );

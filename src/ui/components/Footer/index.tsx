@@ -5,10 +5,11 @@ import { BaseView, BaseViewProps } from '../BaseView';
 export type FooterProps = BaseViewProps;
 
 const $footerBaseStyle = {
-  display: 'flex',
+  display: 'block',
   minHeight: 20,
   padding: 10,
-  paddingBottom: 20
+  paddingBottom: 20,
+  bottom: 0
 } as CSSProperties;
 
 export function Footer(props: FooterProps) {

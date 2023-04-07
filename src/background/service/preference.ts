@@ -4,7 +4,17 @@ import cloneDeep from 'lodash/cloneDeep';
 import { createPersistStore } from '@/background/utils';
 import { EVENTS } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
-import { Account, AddressType, BitcoinBalance, NetworkType, TxHistoryItem } from '@/shared/types';
+import {
+  Account,
+  AddressTokenSummary,
+  AddressType,
+  BitcoinBalance,
+  Inscription,
+  NetworkType,
+  TokenBalance,
+  TokenTransfer,
+  TxHistoryItem
+} from '@/shared/types';
 
 import browser from '../webapi/browser';
 import { i18n, sessionService } from './index';
@@ -39,6 +49,33 @@ export interface PreferenceStore {
   };
   editingKeyringIndex: number;
   editingAccount: Account | undefined | null;
+  uiCachedData: {
+    [address: string]: {
+      allInscriptionList: {
+        currentPage: number;
+        pageSize: number;
+        total: number;
+        list: Inscription[];
+      }[];
+      brc20List: {
+        currentPage: number;
+        pageSize: number;
+        total: number;
+        list: TokenBalance[];
+      }[];
+      brc20Summary: {
+        [ticker: string]: AddressTokenSummary;
+      };
+      brc20TransferableList: {
+        [ticker: string]: {
+          currentPage: number;
+          pageSize: number;
+          total: number;
+          list: TokenTransfer[];
+        }[];
+      };
+    };
+  };
 }
 
 const SUPPORT_LOCALES = ['en'];
@@ -71,7 +108,8 @@ class PreferenceService {
         addressType: AddressType.P2WPKH,
         networkType: NetworkType.MAINNET,
         keyringAlianNames: {},
-        accountAlianNames: {}
+        accountAlianNames: {},
+        uiCachedData: {}
       }
     });
     if (!this.store.locale || this.store.locale !== defaultLang) {
@@ -123,6 +161,10 @@ class PreferenceService {
 
     if (!this.store.accountAlianNames) {
       this.store.accountAlianNames = {};
+    }
+
+    if (!this.store.uiCachedData) {
+      this.store.uiCachedData = {};
     }
   };
 
@@ -326,6 +368,27 @@ class PreferenceService {
 
   setEditingAccount = (account?: Account | null) => {
     this.store.editingAccount = account;
+  };
+
+  getUICachedData = (address: string) => {
+    if (!this.store.uiCachedData[address]) {
+      this.store.uiCachedData[address] = {
+        allInscriptionList: [],
+        brc20List: [],
+        brc20Summary: {},
+        brc20TransferableList: {}
+      };
+    }
+    return this.store.uiCachedData[address];
+  };
+
+  expireUICachedData = (address: string) => {
+    this.store.uiCachedData[address] = {
+      allInscriptionList: [],
+      brc20List: [],
+      brc20Summary: {},
+      brc20TransferableList: {}
+    };
   };
 }
 

@@ -17,7 +17,9 @@ const $contentStyle = {
   justifyItems: 'center',
   gap: spacingGap.lg,
 
-  alignSelf: 'stretch'
+  alignSelf: 'stretch',
+  overflowY: 'auto',
+  overflowX: 'hidden'
 } as CSSProperties;
 
 const $viewPresets = {

@@ -23,13 +23,19 @@ export const AddressDetailPopover = ({ address, onClose }: { address: string; on
               tools.toastSuccess('Copied');
             });
           }}>
-          <Row>
-            <Text text={address} />
+          <Row itemsCenter>
+            <Text
+              text={address}
+              style={{
+                overflowWrap: 'anywhere'
+              }}
+            />
             <Icon icon="copy" />
           </Row>
         </Card>
 
         <Row
+          justifyCenter
           onClick={() => {
             window.open(`${blockstreamUrl}/address/${address}`);
           }}>

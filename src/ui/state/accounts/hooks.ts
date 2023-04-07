@@ -125,7 +125,7 @@ export function useFetchBalanceCallback() {
   const balance = useAccountBalance();
   return useCallback(async () => {
     if (!currentAccount.address) return;
-    const preBalanceAmount = balance.amount;
+    const cachedBalance = await wallet.getAddressCacheBalance(currentAccount.address);
     const _accountBalance = await wallet.getAddressBalance(currentAccount.address);
     dispatch(
       accountActions.setBalance({
@@ -133,24 +133,9 @@ export function useFetchBalanceCallback() {
         amount: _accountBalance.amount
       })
     );
-    if (preBalanceAmount !== _accountBalance.amount) {
+    if (cachedBalance.amount !== _accountBalance.amount) {
+      wallet.expireUICachedData(currentAccount.address);
       dispatch(accountActions.expireHistory());
     }
   }, [dispatch, wallet, currentAccount, balance]);
-}
-
-export function useFetchInscriptionsCallback() {
-  const dispatch = useAppDispatch();
-  const wallet = useWallet();
-  const currentAccount = useCurrentAccount();
-  return useCallback(async () => {
-    if (!currentAccount.address) return;
-    const inscriptions = await wallet.getAddressInscriptions(currentAccount.address);
-    dispatch(
-      accountActions.setInscriptions({
-        address: currentAccount.address,
-        list: inscriptions
-      })
-    );
-  }, [dispatch, wallet, currentAccount]);
 }

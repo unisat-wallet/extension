@@ -7,7 +7,7 @@ import { useWallet } from '@/ui/utils';
 import { useIsUnlocked } from '../global/hooks';
 import { useAppDispatch } from '../hooks';
 import { keyringsActions } from '../keyrings/reducer';
-import { useAccountBalance, useCurrentAccount, useFetchBalanceCallback, useFetchInscriptionsCallback } from './hooks';
+import { useAccountBalance, useCurrentAccount, useFetchBalanceCallback } from './hooks';
 import { accountActions } from './reducer';
 
 export default function AccountUpdater() {
@@ -49,8 +49,6 @@ export default function AccountUpdater() {
     onCurrentChange();
   }, [currentAccount && currentAccount.address, isUnlocked]);
 
-  const fetchInscription = useFetchInscriptionsCallback();
-
   const fetchBalance = useFetchBalanceCallback();
   useEffect(() => {
     if (self.loadingBalance) {
@@ -66,7 +64,6 @@ export default function AccountUpdater() {
     fetchBalance().finally(() => {
       self.loadingBalance = false;
     });
-    fetchInscription();
   }, [fetchBalance, wallet, isUnlocked, self]);
 
   useEffect(() => {

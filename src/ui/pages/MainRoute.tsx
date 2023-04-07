@@ -22,6 +22,7 @@ import UnlockScreen from './Account/UnlockScreen';
 import ApprovalScreen from './Approval/ApprovalScreen';
 import ConnectedSitesScreen from './Approval/ConnectedSitesScreen';
 import BRC20SendScreen from './BRC20/BRC20SendScreen';
+import BRC20TokenScreen from './BRC20/BRC20TokenScreen';
 import InscribeConfirmScreen from './Inscribe/InscribeConfirmScreen';
 import InscribeTransferScreen from './Inscribe/InscribeTransferScreen';
 import AppTabScrren from './Main/AppTabScreen';
@@ -199,6 +200,10 @@ const routes = {
     path: '/brc20/send',
     element: <BRC20SendScreen />
   },
+  BRC20TokenScreen: {
+    path: '/brc20/token',
+    element: <BRC20TokenScreen />
+  },
   TestScreen: {
     path: '/test',
     element: <TestScreen />
@@ -297,7 +302,7 @@ const Main = () => {
   if (!isReady) {
     return (
       <Layout>
-        <Content>
+        <Content justifyCenter itemsCenter>
           <Icon>
             <LoadingOutlined />
           </Icon>

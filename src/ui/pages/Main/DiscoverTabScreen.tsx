@@ -25,9 +25,9 @@ function MintItem({ info }: { info: InscriptionMintedItem }) {
       <Row>
         {info.inscriptions.map((v) => (
           <InscriptionPreview
-            key={v.id}
-            onClick={(inscription) => {
-              navigate('OrdinalsDetailScreen', { inscription });
+            key={v.inscriptionId}
+            onClick={() => {
+              navigate('OrdinalsDetailScreen', { inscription: v });
             }}
             preset="small"
             data={v}

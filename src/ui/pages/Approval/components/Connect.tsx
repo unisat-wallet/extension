@@ -1,12 +1,58 @@
 import VirtualList from 'rc-virtual-list';
 import { forwardRef } from 'react';
 
-import { Button, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
+import { Account } from '@/shared/types';
+import { Button, Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import WebsiteBar from '@/ui/components/WebsiteBar';
-import { useAccounts } from '@/ui/state/accounts/hooks';
-import { useApproval } from '@/ui/utils';
+import { useAccounts, useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { accountActions } from '@/ui/state/accounts/reducer';
+import { useAppDispatch } from '@/ui/state/hooks';
+import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
+import { shortAddress, useApproval, useWallet } from '@/ui/utils';
+import { CheckCircleFilled } from '@ant-design/icons';
 
-import { MyItem } from '../../Account/SwitchAccountScreen';
+interface MyItemProps {
+  account?: Account;
+}
+
+export function MyItem({ account }: MyItemProps, ref) {
+  const currentAccount = useCurrentAccount();
+  const selected = currentAccount.pubkey == account?.pubkey;
+  const wallet = useWallet();
+  const dispatch = useAppDispatch();
+  const keyring = useCurrentKeyring();
+  if (!account) {
+    return <div />;
+  }
+  const path = keyring.hdPath + '/' + account.index;
+
+  return (
+    <Card
+      justifyBetween
+      mt="md"
+      onClick={async (e) => {
+        if (currentAccount.pubkey !== account.pubkey) {
+          await wallet.changeAccount(account);
+          dispatch(accountActions.setCurrent(account));
+        }
+      }}>
+      <Row>
+        <Column style={{ width: 20 }} selfItemsCenter>
+          {selected && (
+            <Icon>
+              <CheckCircleFilled />
+            </Icon>
+          )}
+        </Column>
+        <Column>
+          <Text text={account.alianName} />
+          <Text text={`${shortAddress(account.address)} (${path})`} preset="sub" />
+        </Column>
+      </Row>
+      <Column relative></Column>
+    </Card>
+  );
+}
 
 interface Props {
   params: {

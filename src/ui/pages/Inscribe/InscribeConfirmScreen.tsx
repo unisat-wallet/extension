@@ -1,15 +1,46 @@
-import { Button, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
-import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { useWallet } from '@/ui/utils';
+import { useMemo } from 'react';
+
+import { InscribeOrder, RawTxInfo, TokenBalance } from '@/shared/types';
+import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
+import { useTools } from '@/ui/components/ActionComponent';
+import { usePushBitcoinTxCallback } from '@/ui/state/transactions/hooks';
+import { satoshisToAmount, useLocationState } from '@/ui/utils';
+
+import { useNavigate } from '../MainRoute';
+
+interface LocationState {
+  order: InscribeOrder;
+  tokenBalance: TokenBalance;
+  amount: number;
+  feeRate: number;
+  rawTxInfo: RawTxInfo;
+}
 
 export default function InscribeConfirmScreen() {
-  const isInTab = useExtensionIsInTab();
+  const { order, tokenBalance, amount, rawTxInfo, feeRate } = useLocationState<LocationState>();
 
-  const wallet = useWallet();
-  const currentKeyring = useCurrentKeyring();
-  const account = useCurrentAccount();
+  const tools = useTools();
+  const navigate = useNavigate();
+  const pushBitcoinTx = usePushBitcoinTxCallback();
+  const onClickConfirm = () => {
+    tools.showLoading(true);
+    pushBitcoinTx(rawTxInfo.rawtx)
+      .then(({ success, txid, error }) => {
+        if (success) {
+          navigate('BRC20SendScreen', { tokenBalance });
+        } else {
+          tools.toastError(error);
+        }
+      })
+      .finally(() => {
+        tools.showLoading(false);
+      });
+  };
+
+  const outputValue = useMemo(() => satoshisToAmount(order.outputValue), [order.outputValue]);
+  const minerFee = useMemo(() => satoshisToAmount(order.minerFee), [order.minerFee]);
+  const serviceFee = useMemo(() => satoshisToAmount(order.serviceFee), [order.serviceFee]);
+  const totalFee = useMemo(() => satoshisToAmount(order.totalFee), [order.totalFee]);
 
   return (
     <Layout>
@@ -21,35 +52,52 @@ export default function InscribeConfirmScreen() {
       <Content>
         <Column full>
           <Column gap="lg" full>
-            <Text text="Inscribe TRANSFER" preset="title-bold" textCenter marginY="lg" />
+            <Text text="Inscribe TRANSFER" preset="title-bold" textCenter mt="lg" />
 
-            <Column justifyCenter style={{ height: 200 }}>
-              <Text text="1000PEPE" preset="title-bold" size="xxl" color="orange" textCenter />
+            <Column justifyCenter style={{ height: 250 }}>
+              <Text text={`${amount} ${tokenBalance.ticker}`} preset="title-bold" size="xxl" color="gold" textCenter />
+
+              <Column mt="xxl">
+                <Text text="Preview" preset="sub-bold" />
+                <Card preset="style2">
+                  <Text
+                    text={`{"p":"brc-20","op":"transfer","tick":"${tokenBalance.ticker}","amt":"${amount}"}`}
+                    size="xs"
+                  />
+                </Card>
+              </Column>
             </Column>
 
             <Column>
               <Row justifyBetween>
                 <Text text="Inscription Output Value" color="textDim" />
-                <Text text="0.00012000 BTC" />
+                <Text text={`${outputValue} BTC`} />
               </Row>
               <Row justifyBetween>
                 <Text text="Network Fee" color="textDim" />
-                <Text text="0.00012000 BTC" />
+                <Text text={`${minerFee} BTC`} />
               </Row>
               <Row justifyBetween>
                 <Text text="Service Fee" color="textDim" />
-                <Text text="0.00012000 BTC" />
+                <Text text={`${serviceFee} BTC`} />
               </Row>
               <Row justifyBetween>
-                <Text text="Total" color="orange" />
-                <Text text="0.00012000 BTC" color="orange" />
+                <Text text="Total" color="gold" />
+                <Text text={`${totalFee} BTC`} color="gold" />
               </Row>
             </Column>
           </Column>
 
           <Row>
-            <Button text="Cancel" preset="default" full />
-            <Button text="OK" preset="primary" full />
+            <Button
+              text="Cancel"
+              preset="default"
+              full
+              onClick={() => {
+                window.history.go(-1);
+              }}
+            />
+            <Button text="Pay & Inscribe" preset="primary" full onClick={onClickConfirm} />
           </Row>
         </Column>
       </Content>

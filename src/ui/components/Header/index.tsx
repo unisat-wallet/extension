@@ -31,36 +31,38 @@ export function Header(props: HeaderProps) {
     }
   }, [title]);
   return (
-    <Row
-      justifyBetween
-      itemsCenter
-      style={{
-        height: '67.5px',
-        padding: 15
-      }}>
-      <Row full>
-        <Column selfItemsCenter>
-          {LeftComponent}
-          {onBack && (
-            <Row
-              onClick={(e) => {
-                onBack();
-              }}>
-              <Icon>
-                <FontAwesomeIcon icon={faArrowLeft} />
-              </Icon>
+    <div style={{ display: 'block' }}>
+      <Row
+        justifyBetween
+        itemsCenter
+        style={{
+          height: '67.5px',
+          padding: 15
+        }}>
+        <Row full>
+          <Column selfItemsCenter>
+            {LeftComponent}
+            {onBack && (
+              <Row
+                onClick={(e) => {
+                  onBack();
+                }}>
+                <Icon>
+                  <FontAwesomeIcon icon={faArrowLeft} />
+                </Icon>
 
-              <Text text="Back" preset="regular-bold" />
-            </Row>
-          )}
-        </Column>
+                <Text text="Back" preset="regular-bold" />
+              </Row>
+            )}
+          </Column>
+        </Row>
+
+        <Row itemsCenter>{CenterComponent}</Row>
+
+        <Row full justifyEnd>
+          <Column selfItemsCenter>{RightComponent}</Column>
+        </Row>
       </Row>
-
-      <Row itemsCenter>{CenterComponent}</Row>
-
-      <Row full justifyEnd>
-        <Column selfItemsCenter>{RightComponent}</Column>
-      </Row>
-    </Row>
+    </div>
   );
 }

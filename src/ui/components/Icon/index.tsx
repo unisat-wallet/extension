@@ -31,7 +31,11 @@ export const svgRegistry = {
   eye: '/images/icons/eye.svg',
   'eye-slash': '/images/icons/eye-slash.svg',
   copy: './images/icons/copy-solid.svg',
-  close: './images/icons/xmark.svg'
+  close: './images/icons/xmark.svg',
+
+  'circle-check': '/images/icons/circle-check.svg',
+  pencil: '/images/icons/pencil.svg',
+  'circle-info': '/images/icons/circle-info.svg'
 };
 
 const iconImgList: Array<IconTypes> = ['success', 'delete', 'btc'];

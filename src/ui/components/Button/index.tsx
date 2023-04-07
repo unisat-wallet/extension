@@ -206,7 +206,7 @@ export function Button(props: ButtonProps) {
       onMouseEnter={() => setHover(true)}
       onMouseLeave={() => setHover(false)}>
       {LeftAccessory && <div style={$leftAccessoryStyle}>{LeftAccessory}</div>}
-      {icon && <Icon icon={icon} color={'white'} style={{ marginRight: spacing.tiny }} />}
+      {icon && <Icon icon={icon} style={{ marginRight: spacing.tiny, backgroundColor: $textStyle.color }} />}
       {text && <Text style={$textStyle} text={text} preset="regular-bold" />}
       {children}
       {RightAccessory && <div style={$rightAccessoryStyle}>{RightAccessory}</div>}

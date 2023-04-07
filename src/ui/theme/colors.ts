@@ -33,7 +33,7 @@ const palette = {
   orange: '#FF7B21',
   orange_light: '#ff8f42',
 
-  gold: '#f6ae2d'
+  gold: '#eac249'
 };
 
 export const colors = Object.assign({}, palette, {
@@ -54,7 +54,8 @@ export const colors = Object.assign({}, palette, {
   primary: palette.yellow,
 
   bg2: '#2a2a2a',
-  bg3: '#434242'
+  bg3: '#434242',
+  bg4: '#383535'
 });
 
 export type ColorTypes = keyof typeof colors;

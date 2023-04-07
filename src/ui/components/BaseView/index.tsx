@@ -34,6 +34,8 @@ export interface BaseViewProps {
   relative?: boolean;
   fixed?: boolean;
   classname?: string;
+  overflowX?: boolean;
+  overflowY?: boolean;
 }
 
 export function BaseView(props: BaseViewProps) {
@@ -65,7 +67,9 @@ export function BaseView(props: BaseViewProps) {
     relative,
     onClick,
     fixed,
-    classname
+    classname,
+    overflowX,
+    overflowY
   } = props;
   const $baseViewStyle = Object.assign(
     {},
@@ -93,7 +97,9 @@ export function BaseView(props: BaseViewProps) {
     color ? { color: colors[color] } : {},
     onClick ? { cursor: 'pointer' } : {},
     relative ? { position: 'relative' } : {},
-    fixed ? { position: 'fixed' } : {}
+    fixed ? { position: 'fixed' } : {},
+    overflowX ? { overflowX: 'auto' } : {},
+    overflowY ? { overflowY: 'auto' } : {}
   );
   const $style = Object.assign({}, $styleBase, $baseViewStyle);
   const $classname = [classname].join(' ').trim();

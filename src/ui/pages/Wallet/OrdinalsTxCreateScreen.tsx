@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { Inscription } from '@/shared/types';
+import { Inscription, RawTxInfo } from '@/shared/types';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
@@ -44,7 +44,7 @@ export default function OrdinalsTxCreateScreen() {
   const hasMultiInscriptions = useMemo(() => {
     for (let i = 0; i < utxos.length; i++) {
       const utxo = utxos[i];
-      if (utxo.inscriptions.find((v) => v.id === inscription.id)) {
+      if (utxo.inscriptions.find((v) => v.id === inscription.inscriptionId)) {
         if (utxo.inscriptions.length > 1) {
           return true;
         }
@@ -54,10 +54,12 @@ export default function OrdinalsTxCreateScreen() {
   }, [utxos]);
 
   const [feeRate, setFeeRate] = useState(5);
-  const defaultOutputValue = inscription.detail ? parseInt(inscription.detail.output_value) : 10000;
+  const defaultOutputValue = inscription ? inscription.outputValue : 10000;
 
-  const minOutputValue = Math.max(parseInt(inscription.detail?.offset || '0'), 546);
+  const minOutputValue = Math.max(inscription.offset, 546);
   const [outputValue, setOutputValue] = useState(defaultOutputValue);
+
+  const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
   useEffect(() => {
     setDisabled(true);
     setError('');
@@ -96,7 +98,8 @@ export default function OrdinalsTxCreateScreen() {
     }
 
     createOrdinalsTx(toInfo, inscription, feeRate, outputValue)
-      .then(() => {
+      .then((data) => {
+        setRawTxInfo(data);
         setDisabled(false);
       })
       .catch((e) => {
@@ -125,6 +128,7 @@ export default function OrdinalsTxCreateScreen() {
           <Input
             preset="address"
             addressInputData={toInfo}
+            autoFocus={true}
             onAddressInputChange={(val) => {
               setToInfo(val);
             }}
@@ -153,7 +157,7 @@ export default function OrdinalsTxCreateScreen() {
             preset="primary"
             text="Next"
             onClick={(e) => {
-              navigate('OrdinalsTxConfirmScreen');
+              navigate('OrdinalsTxConfirmScreen', { rawTxInfo });
             }}
           />
         </Column>

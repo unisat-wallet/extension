@@ -27,7 +27,6 @@ export function TabBar(props: TabBarProps) {
   useEffect(() => {
     const curIndex = items.findIndex((v) => v.key === tabKey);
     setProgress(curIndex);
-    console.log('tabkey', tabKey);
     onTabClick(tabKey);
   }, [tabKey]);
 
@@ -41,7 +40,7 @@ export function TabBar(props: TabBarProps) {
   }, [activeKey]);
 
   return (
-    <Row justifyCenter>
+    <Row>
       {items.map((v, index) => {
         const isSelected = v.key === tabKey;
         if (progressEnabled && index > progress) {

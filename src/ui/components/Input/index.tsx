@@ -2,10 +2,13 @@ import bitcore from 'bitcore-lib';
 import React, { CSSProperties, useEffect, useState } from 'react';
 
 import { SATS_DOMAIN } from '@/shared/constant';
+import { Inscription } from '@/shared/types';
+import { colors } from '@/ui/theme/colors';
 import { spacing } from '@/ui/theme/spacing';
 import { useWallet } from '@/ui/utils';
 
-import { AddressText } from '../AddressText';
+import { AccordingInscription } from '../AccordingInscription';
+import { CopyableAddress } from '../CopyableAddress';
 import { Icon } from '../Icon';
 import { Row } from '../Row';
 import { $textPresets, Text } from '../Text';
@@ -26,7 +29,8 @@ export interface InputProps {
   style?: CSSProperties;
   containerStyle?: CSSProperties;
   addressInputData?: { address: string; domain: string };
-  onAddressInputChange?: (params: { address: string; domain: string }) => void;
+  onAddressInputChange?: (params: { address: string; domain: string; inscription?: Inscription }) => void;
+  disabled?: boolean;
 }
 
 type Presets = keyof typeof $inputPresets;
@@ -80,15 +84,11 @@ function PasswordInput(props: InputProps) {
 }
 
 function AmountInput(props: InputProps) {
-  const { placeholder, style: $inputStyleOverride, ...rest } = props;
+  const { placeholder, disabled, style: $inputStyleOverride, ...rest } = props;
+  const $style = Object.assign({}, $baseInputStyle, $inputStyleOverride, disabled ? { color: colors.textDim } : {});
   return (
     <div style={$baseContainerStyle}>
-      <input
-        placeholder={placeholder || 'Amount'}
-        type={'number'}
-        style={Object.assign({}, $baseInputStyle, $inputStyleOverride)}
-        {...rest}
-      />
+      <input placeholder={placeholder || 'Amount'} type={'number'} style={$style} disabled={disabled} {...rest} />
     </div>
   );
 }
@@ -106,12 +106,15 @@ export const AddressInput = (props: InputProps) => {
 
   const [inputVal, setInputVal] = useState(addressInputData.domain || addressInputData.address);
 
+  const [inscription, setInscription] = useState<Inscription>();
+
   const wallet = useWallet();
 
   useEffect(() => {
     onAddressInputChange({
       address: validAddress,
-      domain: parseAddress ? inputVal : ''
+      domain: parseAddress ? inputVal : '',
+      inscription
     });
   }, [validAddress]);
 
@@ -136,8 +139,10 @@ export const AddressInput = (props: InputProps) => {
     if (inputAddress.toLowerCase().endsWith(SATS_DOMAIN)) {
       wallet
         .queryDomainInfo(encodeURIComponent(inputAddress))
-        .then((address: string) => {
-          if (address) {
+        .then((inscription) => {
+          if (inscription) {
+            setInscription(inscription);
+            const address = inscription.address || '';
             setParseAddress(address);
             setValidAddress(address);
           } else {
@@ -160,7 +165,7 @@ export const AddressInput = (props: InputProps) => {
 
   return (
     <div style={{ alignSelf: 'stretch' }}>
-      <div style={$baseContainerStyle}>
+      <div style={Object.assign({}, $baseContainerStyle, { flexDirection: 'column', minHeight: '56.5px' })}>
         <input
           placeholder={'Address, name.sats '}
           type={'text'}
@@ -171,14 +176,14 @@ export const AddressInput = (props: InputProps) => {
           defaultValue={inputVal}
           {...rest}
         />
-      </div>
 
-      {parseAddress && (
-        <Row style={{ borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }}>
-          <Text text="->" />
-          <AddressText address={parseAddress} />
-        </Row>
-      )}
+        {inscription && (
+          <Row full itemsCenter mt="sm">
+            <CopyableAddress address={parseAddress} />
+            <AccordingInscription inscription={inscription} />
+          </Row>
+        )}
+      </div>
 
       {parseError && <Text text={parseError} preset="regular" color="error" />}
       <Text text={formatError} preset="regular" color="error" />
@@ -187,13 +192,15 @@ export const AddressInput = (props: InputProps) => {
 };
 
 function TextInput(props: InputProps) {
-  const { placeholder, containerStyle, style: $inputStyleOverride, ...rest } = props;
+  const { placeholder, containerStyle, style: $inputStyleOverride, disabled, autoFocus, ...rest } = props;
   return (
     <div style={Object.assign({}, $baseContainerStyle, containerStyle)}>
       <input
         placeholder={placeholder}
         type={'text'}
-        style={Object.assign({}, $baseInputStyle, $inputStyleOverride)}
+        disabled={disabled}
+        autoFocus={autoFocus}
+        style={Object.assign({}, $baseInputStyle, $inputStyleOverride, disabled ? { color: colors.textDim } : {})}
         {...rest}
       />
     </div>

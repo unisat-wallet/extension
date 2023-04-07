@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
 
 import { COIN_DUST } from '@/shared/constant';
+import { Inscription, RawTxInfo } from '@/shared/types';
 import { Layout, Content, Button, Header, Icon, Text, Input, Column, Row } from '@/ui/components';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { useNavigate } from '@/ui/pages/MainRoute';
@@ -24,9 +25,14 @@ export default function TxCreateScreen() {
     bitcoinTx.toSatoshis > 0 ? satoshisToAmount(bitcoinTx.toSatoshis) : ''
   );
   const [disabled, setDisabled] = useState(true);
-  const [toInfo, setToInfo] = useState({
+  const [toInfo, setToInfo] = useState<{
+    address: string;
+    domain: string;
+    inscription?: Inscription;
+  }>({
     address: bitcoinTx.toAddress,
-    domain: bitcoinTx.toDomain
+    domain: bitcoinTx.toDomain,
+    inscription: undefined
   });
 
   const [error, setError] = useState('');
@@ -52,6 +58,8 @@ export default function TxCreateScreen() {
   const dustAmount = useMemo(() => satoshisToAmount(COIN_DUST), [COIN_DUST]);
 
   const [feeRate, setFeeRate] = useState(5);
+
+  const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
   useEffect(() => {
     setError('');
     setDisabled(true);
@@ -94,6 +102,7 @@ export default function TxCreateScreen() {
         //   setError(`Network fee must be at leat ${data.estimateFee}`);
         //   return;
         // }
+        setRawTxInfo(data);
         setDisabled(false);
       })
       .catch((e) => {
@@ -128,6 +137,7 @@ export default function TxCreateScreen() {
             onAddressInputChange={(val) => {
               setToInfo(val);
             }}
+            autoFocus={true}
           />
         </Column>
 
@@ -196,7 +206,7 @@ export default function TxCreateScreen() {
           preset="primary"
           text="Next"
           onClick={(e) => {
-            navigate('TxConfirmScreen');
+            navigate('TxConfirmScreen', { rawTxInfo });
           }}></Button>
       </Content>
     </Layout>

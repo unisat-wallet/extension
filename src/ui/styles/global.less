@@ -1,5 +1,4 @@
 @import url('./font.css');
-
 .popover-container {
   position: fixed;
   top: 0;
@@ -28,4 +27,24 @@ iframe {
 
 div {
   border: 0px solid;
+}
+
+// For scrollbar
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 3px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+  background: rgba(255, 255, 255, 0.854);
+}
+
+::-webkit-scrollbar-track {
+  box-shadow: 1px 1px 5px rgba(0, 0, 0, 0.1) inset;
+}
+
+::-webkit-scrollbar-corner {
+  background: transparent;
 }
