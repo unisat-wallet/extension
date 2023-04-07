@@ -766,7 +766,7 @@ export class WalletController extends BaseController {
       }
     }
 
-    if (!displayedKeyrings[currentKeyringIndex]) {
+    if (!displayedKeyrings[currentKeyringIndex] || displayedKeyrings[currentKeyringIndex].type === KEYRING_TYPE.Empty) {
       for (let i = 0; i < displayedKeyrings.length; i++) {
         if (displayedKeyrings[i].type !== KEYRING_TYPE.Empty) {
           currentKeyringIndex = i;

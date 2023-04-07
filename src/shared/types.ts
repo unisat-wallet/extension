@@ -150,6 +150,7 @@ export interface InscribeOrder {
   payAddress: string;
   totalFee: number;
   minerFee: number;
+  originServiceFee: number;
   serviceFee: number;
   outputValue: number;
 }
@@ -214,4 +215,5 @@ export interface RawTxInfo {
   psbtHex: string;
   rawtx: string;
   toAddressInfo?: ToAddressInfo;
+  fee?: number;
 }

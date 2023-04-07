@@ -54,6 +54,7 @@ export function useCreateBitcoinTxCallback() {
       });
       const psbt = Psbt.fromHex(psbtHex);
       const rawtx = psbt.extractTransaction().toHex();
+      const fee = psbt.getFee();
       dispatch(
         transactionsActions.updateBitcoinTx({
           rawtx,
@@ -65,7 +66,8 @@ export function useCreateBitcoinTxCallback() {
       const rawTxInfo: RawTxInfo = {
         psbtHex,
         rawtx,
-        toAddressInfo
+        toAddressInfo,
+        fee
       };
       return rawTxInfo;
     },

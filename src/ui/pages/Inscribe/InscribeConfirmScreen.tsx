@@ -51,15 +51,18 @@ export default function InscribeConfirmScreen() {
       navigate('BRC20SendScreen', {
         tokenBalance: v.tokenBalance,
         selectedInscriptionIds: [result.inscriptionId],
-        selectedAmount: result.amount
+        selectedAmount: parseInt(result.amount)
       });
     });
   };
 
+  const fee = rawTxInfo.fee || 0;
+  const networkFee = useMemo(() => satoshisToAmount(fee), [fee]);
   const outputValue = useMemo(() => satoshisToAmount(order.outputValue), [order.outputValue]);
-  const minerFee = useMemo(() => satoshisToAmount(order.minerFee), [order.minerFee]);
+  const minerFee = useMemo(() => satoshisToAmount(order.minerFee + fee), [order.minerFee]);
+  const originServiceFee = useMemo(() => satoshisToAmount(order.originServiceFee), [order.originServiceFee]);
   const serviceFee = useMemo(() => satoshisToAmount(order.serviceFee), [order.serviceFee]);
-  const totalFee = useMemo(() => satoshisToAmount(order.totalFee), [order.totalFee]);
+  const totalFee = useMemo(() => satoshisToAmount(order.totalFee + fee), [order.totalFee]);
 
   return (
     <Layout>
@@ -89,16 +92,34 @@ export default function InscribeConfirmScreen() {
 
             <Column>
               <Row justifyBetween>
+                <Text text="Payment Network Fee" color="textDim" />
+                <Text text={`${networkFee} BTC`} />
+              </Row>
+
+              <Row justifyBetween>
                 <Text text="Inscription Output Value" color="textDim" />
                 <Text text={`${outputValue} BTC`} />
               </Row>
+
               <Row justifyBetween>
-                <Text text="Network Fee" color="textDim" />
+                <Text text="Inscription Network Fee" color="textDim" />
                 <Text text={`${minerFee} BTC`} />
               </Row>
+
               <Row justifyBetween>
                 <Text text="Service Fee" color="textDim" />
-                <Text text={`${serviceFee} BTC`} />
+                {originServiceFee != serviceFee ? (
+                  <Column>
+                    <Text
+                      text={`${originServiceFee} BTC`}
+                      style={{ textDecorationLine: 'line-through' }}
+                      color="textDim"
+                    />
+                    <Text text={`${serviceFee} BTC`} />
+                  </Column>
+                ) : (
+                  <Text text={`${serviceFee} BTC`} />
+                )}
               </Row>
               <Row justifyBetween>
                 <Text text="Total" color="gold" />

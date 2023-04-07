@@ -7,6 +7,7 @@ import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/
 import { useTools } from '@/ui/components/ActionComponent';
 import BRC20Preview from '@/ui/components/BRC20Preview';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
+import { RefreshButton } from '@/ui/components/RefreshButton';
 import { TabBar } from '@/ui/components/TabBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import {
@@ -179,30 +180,9 @@ function TransferableList({
         <Column>
           <Row justifyBetween>
             <Text text={`TRANSFER Inscriptions (${selectedCount}/${items.length})`} color="textDim" />
-            <Checkbox
-              onChange={(e) => {
-                const val = e.target.checked;
-                setAllSelected(val);
-                if (val) {
-                  const inscriptionIdSet = new Set(items.map((v) => v.inscriptionId));
-                  updateContextData({
-                    inscriptionIdSet,
-                    transferAmount: totalAmount
-                  });
-                } else {
-                  updateContextData({
-                    inscriptionIdSet: new Set(),
-                    transferAmount: 0
-                  });
-                }
-              }}
-              checked={allSelected}
-              style={{ fontSize: fontSizes.sm }}>
-              <Text text="Select All" preset="sub" />
-            </Checkbox>
           </Row>
 
-          <Row overflowX gap="lg">
+          <Row overflowX gap="lg" pb="md">
             {items.map((v, index) => (
               <BRC20Preview
                 key={v.inscriptionId}
@@ -241,6 +221,38 @@ function TransferableList({
             ))}
           </Row>
 
+          <Row justifyEnd>
+            <Row mx="md">
+              <RefreshButton
+                onClick={() => {
+                  fetchData();
+                }}
+              />
+            </Row>
+
+            <Checkbox
+              onChange={(e) => {
+                const val = e.target.checked;
+                setAllSelected(val);
+                if (val) {
+                  const inscriptionIdSet = new Set(items.map((v) => v.inscriptionId));
+                  updateContextData({
+                    inscriptionIdSet,
+                    transferAmount: totalAmount
+                  });
+                } else {
+                  updateContextData({
+                    inscriptionIdSet: new Set(),
+                    transferAmount: 0
+                  });
+                }
+              }}
+              checked={allSelected}
+              style={{ fontSize: fontSizes.sm }}>
+              <Text text="Select All" preset="sub" color="white" />
+            </Checkbox>
+          </Row>
+
           {/* <Row justifyCenter mt="lg">
         <Pagination
           pagination={pagination}
@@ -255,6 +267,11 @@ function TransferableList({
         <Column>
           <Row justifyBetween>
             <Text text={'TRANSFER Inscriptions (0)'} color="textDim" />
+            <RefreshButton
+              onClick={() => {
+                fetchData();
+              }}
+            />
           </Row>
         </Column>
       )}
@@ -448,6 +465,10 @@ export default function BRC20SendScreen() {
     <Layout>
       <Header
         onBack={() => {
+          if (contextData.tabKey === TabKey.STEP2) {
+            updateContextData({ tabKey: TabKey.STEP1 });
+            return;
+          }
           window.history.go(-1);
         }}
       />

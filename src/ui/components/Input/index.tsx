@@ -178,7 +178,7 @@ export const AddressInput = (props: InputProps) => {
           {...rest}
         />
 
-        {inscription && (
+        {validAddress && inscription && (
           <Row full itemsCenter mt="sm">
             <CopyableAddress address={parseAddress} />
             <AccordingInscription inscription={inscription} />

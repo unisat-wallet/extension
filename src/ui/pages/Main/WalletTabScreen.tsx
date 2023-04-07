@@ -76,7 +76,7 @@ export default function WalletTabScreen() {
       <Header
         LeftComponent={
           <Column>
-            {!connected && (
+            {connected && (
               <Row
                 itemsCenter
                 onClick={() => {
@@ -192,7 +192,7 @@ function InscriptionList() {
 
   if (total === -1) {
     return (
-      <Column style={{ minHeight: 200 }} itemsCenter justifyCenter>
+      <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
         <LoadingOutlined />
       </Column>
     );
@@ -200,8 +200,8 @@ function InscriptionList() {
 
   if (total === 0) {
     return (
-      <Column style={{ minHeight: 200 }} itemsCenter justifyCenter>
-        <Empty text="Inscription list is empty" />
+      <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
+        <Empty text="Empty" />
       </Column>
     );
   }
@@ -266,7 +266,7 @@ function BRC20List() {
 
   if (total === -1) {
     return (
-      <Column style={{ minHeight: 200 }} itemsCenter justifyCenter>
+      <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
         <LoadingOutlined />
       </Column>
     );
@@ -274,7 +274,7 @@ function BRC20List() {
 
   if (total === 0) {
     return (
-      <Column style={{ minHeight: 200 }} itemsCenter justifyCenter>
+      <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
         <Empty text="Empty" />
       </Column>
     );
