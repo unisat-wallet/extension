@@ -9,7 +9,7 @@ export interface BRC20PreviewProps {
   tick: string;
   balance: string;
   inscriptionNumber: number;
-  timestamp: number;
+  timestamp?: number;
   type?: string;
   selected?: boolean;
   onClick?: () => void;
@@ -32,7 +32,7 @@ export default function BRC20Preview({
         style={{
           padding: 8,
           height: 96,
-          backgroundColor: type === 'TRANSFER' ? '#489362' : '#EA850C',
+          backgroundColor: type === 'TRANSFER' ? (selected ? 'green' : '#002514') : '#000',
           borderTopLeftRadius: 5,
           borderTopRightRadius: 5
         }}>

@@ -163,6 +163,7 @@ export interface WalletController {
   getEditingAccount(): Promise<Account>;
 
   inscribeBRC20Transfer(address: string, tick: string, amount: string, feeRate: number): Promise<InscribeOrder>;
+  getInscribeResult(orderId: string): Promise<TokenTransfer>;
 
   decodePsbt(psbtHex: string): Promise<DecodedPsbt>;
 

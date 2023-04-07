@@ -214,6 +214,14 @@ export class OpenApiService {
     return data.result;
   }
 
+  async getInscribeResult(orderId: string): Promise<TokenTransfer> {
+    const data = await this.httpGet('/v3/brc20/order-result', { orderId });
+    if (data.status == API_STATUS.FAILED) {
+      throw new Error(data.message);
+    }
+    return data.result;
+  }
+
   async getAddressTokenBalances(
     address: string,
     cursor: number,

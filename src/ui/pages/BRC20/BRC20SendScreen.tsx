@@ -348,11 +348,15 @@ interface UpdateContextDataParams {
 
 export default function BRC20SendScreen() {
   const { state } = useLocation();
-  const { tokenBalance, selectedInscriptionIds, selectedAmount } = state as {
+  const props = state as {
     tokenBalance: TokenBalance;
     selectedInscriptionIds: string[];
     selectedAmount: number;
   };
+
+  const tokenBalance = props.tokenBalance;
+  const selectedInscriptionIds = props.selectedInscriptionIds || [];
+  const selectedAmount = props.selectedAmount || 0;
 
   const [contextData, setContextData] = useState<ContextData>({
     tabKey: TabKey.STEP1,

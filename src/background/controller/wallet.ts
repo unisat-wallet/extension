@@ -924,6 +924,10 @@ export class WalletController extends BaseController {
     return openapiService.inscribeBRC20Transfer(address, tick, amount, feeRate);
   };
 
+  getInscribeResult = (orderId: string) => {
+    return openapiService.getInscribeResult(orderId);
+  };
+
   decodePsbt = (psbtHex: string) => {
     return openapiService.decodePsbt(psbtHex);
   };

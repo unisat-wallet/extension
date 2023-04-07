@@ -3,8 +3,9 @@ import { useMemo } from 'react';
 import { InscribeOrder, RawTxInfo, TokenBalance } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
+import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { usePushBitcoinTxCallback } from '@/ui/state/transactions/hooks';
-import { satoshisToAmount, useLocationState } from '@/ui/utils';
+import { satoshisToAmount, useLocationState, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
 
@@ -22,19 +23,37 @@ export default function InscribeConfirmScreen() {
   const tools = useTools();
   const navigate = useNavigate();
   const pushBitcoinTx = usePushBitcoinTxCallback();
+
   const onClickConfirm = () => {
     tools.showLoading(true);
-    pushBitcoinTx(rawTxInfo.rawtx)
-      .then(({ success, txid, error }) => {
-        if (success) {
-          navigate('BRC20SendScreen', { tokenBalance });
-        } else {
-          tools.toastError(error);
-        }
-      })
-      .finally(() => {
-        tools.showLoading(false);
+    pushBitcoinTx(rawTxInfo.rawtx).then(({ success, txid, error }) => {
+      if (success) {
+        tools.showLoading(true);
+        checkResult();
+      } else {
+        tools.toastError(error);
+      }
+    });
+  };
+
+  const wallet = useWallet();
+  const currentAccount = useCurrentAccount();
+
+  const checkResult = async () => {
+    const result = await wallet.getInscribeResult(order.orderId);
+    if (!result) {
+      setTimeout(() => {
+        checkResult();
+      }, 2000);
+      return;
+    }
+    wallet.getBRC20Summary(currentAccount.address, tokenBalance.ticker).then((v) => {
+      navigate('BRC20SendScreen', {
+        tokenBalance: v.tokenBalance,
+        selectedInscriptionIds: [result.inscriptionId],
+        selectedAmount: result.amount
       });
+    });
   };
 
   const outputValue = useMemo(() => satoshisToAmount(order.outputValue), [order.outputValue]);
