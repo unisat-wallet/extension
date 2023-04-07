@@ -235,13 +235,14 @@ export class UnisatProvider extends EventEmitter {
     });
   };
 
-  sendInscription = async (toAddress: string, inscriptionId: string) => {
+  sendInscription = async (toAddress: string, inscriptionId: string, options?: { feeRate: number }) => {
     return this._request({
       method: 'sendInscription',
       params: {
         toAddress,
         inscriptionId,
-        type: TxType.SEND_BITCOIN
+        feeRate: options?.feeRate,
+        type: TxType.SEND_INSCRIPTION
       }
     });
   };
@@ -271,7 +272,8 @@ export class UnisatProvider extends EventEmitter {
     return this._request({
       method: 'signPsbt',
       params: {
-        psbtHex
+        psbtHex,
+        type: TxType.SIGN_TX
       }
     });
   };

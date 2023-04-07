@@ -206,5 +206,4 @@ export interface RawTxInfo {
   psbtHex: string;
   rawtx: string;
   toAddressInfo?: ToAddressInfo;
-  txType: TxType;
 }

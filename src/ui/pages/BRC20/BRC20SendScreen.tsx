@@ -364,8 +364,7 @@ export default function BRC20SendScreen() {
     receiver: '',
     rawTxInfo: {
       psbtHex: '',
-      rawtx: '',
-      txType: TxType.SEND_BITCOIN
+      rawtx: ''
     }
   });
 

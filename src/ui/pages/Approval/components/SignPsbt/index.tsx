@@ -1,4 +1,3 @@
-import BigNumber from 'bignumber.js';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { RawTxInfo, ToSignInput, TxType } from '@/shared/types';
@@ -10,8 +9,8 @@ import { AddressText } from '@/ui/components/AddressText';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { TabBar } from '@/ui/components/TabBar';
 import WebsiteBar from '@/ui/components/WebsiteBar';
-import { useAccountAddress, useAccountBalance, useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useBitcoinTx, useCreateBitcoinTxCallback, useCreateOrdinalsTxCallback } from '@/ui/state/transactions/hooks';
+import { useAccountAddress } from '@/ui/state/accounts/hooks';
+import { useCreateBitcoinTxCallback, useCreateMultiOrdinalsTxCallback } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { copyToClipboard, satoshisToAmount, useApproval, useWallet } from '@/ui/utils';
@@ -64,20 +63,6 @@ interface InscriptioinInfo {
 }
 
 function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?: RawTxInfo; type: TxType }) {
-  const changedBalance = useMemo(() => satoshisToAmount(txInfo.changedBalance), [txInfo.changedBalance]);
-  const accountBalance = useAccountBalance();
-  const beforeBalance = accountBalance.amount;
-  const afterBalance = useMemo(() => {
-    return new BigNumber(accountBalance.amount)
-      .multipliedBy(100000000)
-      .plus(new BigNumber(txInfo.changedBalance))
-      .dividedBy(100000000)
-      .toFixed(8);
-  }, [accountBalance.amount, txInfo.changedBalance]);
-  const costBalance = useMemo(() => {
-    return new BigNumber(afterBalance).minus(new BigNumber(beforeBalance)).toFixed(8);
-  }, [afterBalance, beforeBalance]);
-
   const inscriptions = useMemo(() => {
     return txInfo.decodedPsbt.inputInfos.reduce<Inscription[]>((pre, cur) => cur.inscriptions.concat(pre), []);
   }, [txInfo.decodedPsbt]);
@@ -124,7 +109,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
                 </Row>
               </Column>
             )}
-            <Row style={{ borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }} />
+            {rawTxInfo && <Row style={{ borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }} />}
             <Column mt="lg">
               <Text text={'Spend Amount'} textCenter color="textDim" />
 
@@ -140,7 +125,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
                 )}
               </Column>
             </Column>
-            <Row style={{ borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }} />
+            {inscriptions.length > 0 && <Row style={{ borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }} />}
 
             {inscriptions.length > 0 && (
               <Column mt="lg" justifyCenter>
@@ -186,74 +171,6 @@ function Section({ title, children }: { title: string; children?: React.ReactNod
   );
 }
 
-function SendBitcoinDetails({
-  txInfo,
-  satoshis,
-  rawTxInfo
-}: {
-  txInfo: TxInfo;
-  satoshis?: number;
-  rawTxInfo: RawTxInfo;
-}) {
-  const bitcoinTx = useBitcoinTx();
-  const networkFee = useMemo(() => satoshisToAmount(txInfo.decodedPsbt.fee), [txInfo.decodedPsbt.fee]);
-  const toAmount = useMemo(() => {
-    if (txInfo.psbtHex) {
-      let toAmount = 0;
-      txInfo.decodedPsbt.outputInfos.forEach((v) => {
-        if (bitcoinTx.toAddress === v.address) {
-          toAmount += v.value;
-        }
-      });
-      return satoshisToAmount(toAmount);
-    } else {
-      return satoshisToAmount(satoshis || 0);
-    }
-  }, [bitcoinTx.toSatoshis, txInfo]);
-
-  const balance = useAccountBalance();
-  const account = useCurrentAccount();
-
-  const feeEnough = txInfo.decodedPsbt.fee > 0;
-  if (!txInfo.psbtHex) {
-    return (
-      <Column>
-        <Text text="Transfer Amount" preset="bold" />
-        <Card>
-          <Row full itemsCenter>
-            <Text text={toAmount} />
-            <Text text="BTC" color="textDim" />
-          </Row>
-        </Card>
-
-        <Text text={`Insufficient Balance (${balance.amount})`} color="danger" />
-      </Column>
-    );
-  }
-
-  return (
-    <Column gap="lg">
-      <Section title="Transfer Amount">
-        <Text text={toAmount} />
-        <Text text="BTC" color="textDim" />
-      </Section>
-
-      <Section title="FROM">
-        <AddressText address={account.address} />
-      </Section>
-
-      <Section title="TO">
-        <AddressText addressInfo={rawTxInfo.toAddressInfo} />
-      </Section>
-
-      <Section title="NETWORK FEE">
-        <Text text={networkFee} color={feeEnough ? 'white' : 'danger'} />
-        <Text text="BTC" color="textDim" />
-      </Section>
-    </Column>
-  );
-}
-
 interface TxInfo {
   changedBalance: number;
   changedInscriptions: InscriptioinInfo[];
@@ -281,7 +198,7 @@ const initTxInfo: TxInfo = {
 
 export default function SignPsbt({
   params: {
-    data: { psbtHex, toSignInputs, type, toAddress, satoshis, feeRate, rawTxInfo },
+    data: { psbtHex, toSignInputs, type, toAddress, satoshis, inscriptionId, feeRate, rawTxInfo },
     session
   },
   header,
@@ -295,7 +212,7 @@ export default function SignPsbt({
   const [tabState, setTabState] = useState(TabState.DATA);
 
   const createBitcoinTx = useCreateBitcoinTxCallback();
-  const createOrdinalsTx = useCreateOrdinalsTxCallback();
+  const createOrdinalsTx = useCreateMultiOrdinalsTxCallback();
   const wallet = useWallet();
   const [loading, setLoading] = useState(true);
 
@@ -314,16 +231,28 @@ export default function SignPsbt({
           tools.toastError(txError);
         }
       }
+    } else if (type === TxType.SEND_INSCRIPTION) {
+      if (!psbtHex && toAddress && inscriptionId) {
+        try {
+          const rawTxInfo = await createOrdinalsTx({ address: toAddress, domain: '' }, [inscriptionId], feeRate || 5);
+          psbtHex = rawTxInfo.psbtHex;
+        } catch (e) {
+          console.log(e);
+          txError = (e as any).message;
+          tools.toastError(txError);
+        }
+      }
     }
 
-    if (!toSignInputs) {
-      toSignInputs = [];
-    }
     // else if (type === TxType.SEND_INSCRIPTION) {
     //   if (!psbtHex && toAddress && inscriptionId) {
     //     psbtHex = await createOrdinalsTx(toAddress, inscriptionId);
     //   }
     // }
+
+    if (!toSignInputs) {
+      toSignInputs = [];
+    }
 
     if (!psbtHex) {
       setLoading(false);

@@ -1,7 +1,7 @@
 import { Psbt } from 'bitcoinjs-lib';
 import { useCallback, useMemo } from 'react';
 
-import { RawTxInfo, Inscription, ToAddressInfo, TxType } from '@/shared/types';
+import { RawTxInfo, ToAddressInfo, TxType } from '@/shared/types';
 import { useTools } from '@/ui/components/ActionComponent';
 import { satoshisToBTC, sleep, useWallet } from '@/ui/utils';
 
@@ -115,14 +115,14 @@ export function useCreateOrdinalsTxCallback() {
   const utxos = useUtxos();
   const fetchUtxos = useFetchUtxosCallback();
   return useCallback(
-    async (toAddressInfo: ToAddressInfo, inscription: Inscription, feeRate: number, outputValue: number) => {
+    async (toAddressInfo: ToAddressInfo, inscriptionId: string, feeRate: number, outputValue: number) => {
       let _utxos = utxos;
       if (_utxos.length === 0) {
         _utxos = await fetchUtxos();
       }
       const psbtHex = await wallet.sendInscription({
         to: toAddressInfo.address,
-        inscriptionId: inscription.inscriptionId,
+        inscriptionId,
         utxos: _utxos,
         feeRate,
         outputValue
@@ -134,7 +134,7 @@ export function useCreateOrdinalsTxCallback() {
           rawtx,
           psbtHex,
           fromAddress,
-          inscription,
+          // inscription,
           feeRate,
           outputValue
         })
@@ -158,10 +158,14 @@ export function useCreateMultiOrdinalsTxCallback() {
   const utxos = useUtxos();
   const fetchUtxos = useFetchUtxosCallback();
   return useCallback(
-    async (toAddressInfo: ToAddressInfo, inscriptionIds: string[], feeRate: number) => {
+    async (toAddressInfo: ToAddressInfo, inscriptionIds: string[], feeRate?: number) => {
       let _utxos = utxos;
       if (_utxos.length === 0) {
         _utxos = await fetchUtxos();
+      }
+      if (!feeRate) {
+        const summary = await wallet.getFeeSummary();
+        feeRate = summary.list[1].feeRate;
       }
       const psbtHex = await wallet.sendInscriptions({
         to: toAddressInfo.address,

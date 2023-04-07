@@ -97,7 +97,7 @@ export default function OrdinalsTxCreateScreen() {
       return;
     }
 
-    createOrdinalsTx(toInfo, inscription, feeRate, outputValue)
+    createOrdinalsTx(toInfo, inscription.inscriptionId, feeRate, outputValue)
       .then((data) => {
         setRawTxInfo(data);
         setDisabled(false);
