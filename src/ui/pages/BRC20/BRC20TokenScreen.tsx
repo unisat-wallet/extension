@@ -22,7 +22,13 @@ export default function BRC20TokenScreen() {
       ticker,
       overallBalance: '',
       availableBalance: '',
-      transferableBalance: ''
+      transferableBalance: '',
+      availableBalanceSafe: '',
+      availableBalanceUnSafe: ''
+    },
+    tokenInfo: {
+      totalSupply: '',
+      totalMinted: ''
     },
     historyList: [],
     transferableList: []
@@ -49,6 +55,9 @@ export default function BRC20TokenScreen() {
   const [transferableListExpanded, setTransferableListExpanded] = useState(true);
   const [availableListExpanded, setAvailableListExpanded] = useState(true);
 
+  const outOfMint = tokenSummary.tokenInfo.totalMinted == tokenSummary.tokenInfo.totalSupply;
+
+  const shouldShowSafe = tokenSummary.tokenBalance.availableBalanceSafe !== tokenSummary.tokenBalance.availableBalance;
   return (
     <Layout>
       <Header
@@ -64,6 +73,8 @@ export default function BRC20TokenScreen() {
               <Button
                 text="MINT"
                 preset="primary"
+                style={outOfMint ? { backgroundColor: 'grey' } : {}}
+                disabled={outOfMint}
                 icon="pencil"
                 onClick={(e) => {
                   window.open(`https://unisat.io/brc20/${ticker}`);
@@ -144,7 +155,24 @@ export default function BRC20TokenScreen() {
           <Column mt="lg">
             <Row justifyBetween>
               <Text text="Available" preset="bold" size="lg" />
-              <Text text={`${tokenSummary.tokenBalance.availableBalance} ${ticker}`} preset="bold" size="lg" />
+              {shouldShowSafe ? (
+                <Column>
+                  <Row gap="zero">
+                    <Text text={`${tokenSummary.tokenBalance.availableBalanceSafe}`} preset="bold" size="lg" />
+                    <Text text={'+'} preset="bold" size="lg" />
+                    <Text
+                      text={`${tokenSummary.tokenBalance.availableBalanceUnSafe}`}
+                      preset="bold"
+                      size="lg"
+                      color="textDim"
+                    />
+                    <Text text={`${ticker}`} preset="bold" size="lg" mx="md" />
+                  </Row>
+                  <Text text={'(Wait to be confirmed)'} preset="sub" textEnd />
+                </Column>
+              ) : (
+                <Text text={`${tokenSummary.tokenBalance.availableBalance} ${ticker}`} preset="bold" size="lg" />
+              )}
             </Row>
             {availableListExpanded ? (
               <Row overflowX>

@@ -95,11 +95,16 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
 
   const feeAmount = useMemo(() => satoshisToAmount(txInfo.decodedPsbt.fee), [txInfo.decodedPsbt]);
 
+  const outputValueSaotoshis = useMemo(
+    () => inscriptions.reduce((pre, cur) => pre + cur.outputValue, 0),
+    [inscriptions]
+  );
+  const outputValueAmount = useMemo(() => satoshisToAmount(outputValueSaotoshis), [outputValueSaotoshis]);
   return (
     <Column gap="lg">
       <Text text="Sign Transaction" preset="title-bold" textCenter mt="lg" />
       <Row justifyCenter>
-        <Card style={{ backgroundColor: '#272626', maxWidth: 320 }}>
+        <Card style={{ backgroundColor: '#272626', maxWidth: 320, width: 320 }}>
           <Column gap="lg">
             <Column>
               {rawTxInfo && (
@@ -135,14 +140,10 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
 
                 <Column justifyCenter>
                   <Text text={spendAmount} color="white" preset="bold" textCenter size="xxl" />
-                  {isCurrentToPayFee && (
-                    <Row justifyCenter>
-                      <Text
-                        text={`${sendSatoshis > 0 ? sendAmount + ' + ' : ''}${feeAmount}(network fee)`}
-                        preset="sub"
-                      />
-                    </Row>
+                  {outputValueSaotoshis > 0 && (
+                    <Text text={`${outputValueAmount} (in inscriptions)`} preset="sub" textCenter />
                   )}
+                  {isCurrentToPayFee && <Text text={`${feeAmount} (network fee)`} preset="sub" textCenter />}
                 </Column>
               </Column>
             </Column>

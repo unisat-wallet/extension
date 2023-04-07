@@ -15,17 +15,16 @@ import { Pagination } from '@/ui/components/Pagination';
 import { TabBar } from '@/ui/components/TabBar';
 import { getCurrentTab } from '@/ui/features/browser/tabs';
 import { useAccountBalance, useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { useNetworkType } from '@/ui/state/settings/hooks';
+import { useWalletTabScreenState } from '@/ui/state/ui/hooks';
+import { WalletTabScreenTabKey, uiActions } from '@/ui/state/ui/reducer';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
 
-enum TabKey {
-  ALL,
-  BRC20
-}
 export default function WalletTabScreen() {
   const navigate = useNavigate();
 
@@ -44,6 +43,9 @@ export default function WalletTabScreen() {
 
   const wallet = useWallet();
   const [connected, setConnected] = useState(false);
+
+  const dispatch = useAppDispatch();
+  const { tabKey } = useWalletTabScreenState();
   useEffect(() => {
     const run = async () => {
       const activeTab = await getCurrentTab();
@@ -56,15 +58,14 @@ export default function WalletTabScreen() {
     run();
   }, []);
 
-  const [tabKey, setTabKey] = useState(TabKey.ALL);
   const tabItems = [
     {
-      key: TabKey.ALL,
+      key: WalletTabScreenTabKey.ALL,
       label: 'ALL',
       children: <InscriptionList />
     },
     {
-      key: TabKey.BRC20,
+      key: WalletTabScreenTabKey.BRC20,
       label: 'BRC-20',
       children: <BRC20List />
     }
@@ -143,7 +144,7 @@ export default function WalletTabScreen() {
             activeKey={tabKey}
             items={tabItems}
             onTabClick={(key) => {
-              setTabKey(key);
+              dispatch(uiActions.updateWalletTabScreen({ tabKey: key }));
             }}
           />
 

@@ -5,10 +5,10 @@ import { Text } from '../Text';
 export function AccordingInscription({ inscription }: { inscription: Inscription }) {
   return (
     <Text
-      text={`By inscription #${inscription.num}`}
+      text={`By inscription #${inscription.inscriptionNumber}`}
       preset="link"
       onClick={() => {
-        window.open(`https://ordinals.com/inscription/${inscription.id}`);
+        window.open(`https://ordinals.com/inscription/${inscription.inscriptionId}`);
       }}
     />
   );

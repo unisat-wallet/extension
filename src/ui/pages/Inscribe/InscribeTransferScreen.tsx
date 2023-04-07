@@ -84,12 +84,30 @@ export default function InscribeTransferScreen() {
             <Column>
               <Row justifyBetween>
                 <Text text="Available" color="textDim" />
-                <Text
-                  text={`${tokenBalance.availableBalance} ${tokenBalance.ticker}`}
+
+                <Column
                   onClick={() => {
-                    setInputAmount(tokenBalance.availableBalance);
-                  }}
-                />
+                    setInputAmount(tokenBalance.availableBalanceSafe);
+                  }}>
+                  {tokenBalance.availableBalanceUnSafe != '0' ? (
+                    <Row justifyCenter>
+                      <Text text={`${tokenBalance.availableBalanceSafe}  `} textCenter size="xs" />
+                      <Text
+                        text={` + ${tokenBalance.availableBalanceUnSafe} ${tokenBalance.ticker} `}
+                        textCenter
+                        color="textDim"
+                        size="xs"
+                      />
+                    </Row>
+                  ) : (
+                    <Text
+                      text={`Available ${tokenBalance.availableBalanceSafe} ${tokenBalance.ticker}`}
+                      textCenter
+                      color="textDim"
+                      size="xs"
+                    />
+                  )}
+                </Column>
               </Row>
 
               <Input

@@ -73,12 +73,26 @@ function Step1({
                     navigate('InscribeTransferScreen', { tokenBalance });
                   }}>
                   <Text text="Inscribe TRANSFER" textCenter preset="bold" />
-                  <Text
-                    text={`Available ${tokenBalance.availableBalance} ${tokenBalance.ticker}`}
-                    textCenter
-                    color="textDim"
-                    size="xs"
-                  />
+
+                  {tokenBalance.availableBalanceUnSafe != '0' ? (
+                    <Row justifyCenter>
+                      <Text text={'Available '} textCenter color="textDim" size="xs" />
+                      <Text text={`${tokenBalance.availableBalanceSafe}  `} textCenter size="xs" />
+                      <Text
+                        text={` + ${tokenBalance.availableBalanceUnSafe} ${tokenBalance.ticker} `}
+                        textCenter
+                        color="textDim"
+                        size="xs"
+                      />
+                    </Row>
+                  ) : (
+                    <Text
+                      text={`Available ${tokenBalance.availableBalanceSafe} ${tokenBalance.ticker}`}
+                      textCenter
+                      color="textDim"
+                      size="xs"
+                    />
+                  )}
                 </Column>
                 {/* <Button
                   preset="primary"

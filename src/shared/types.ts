@@ -159,6 +159,13 @@ export interface TokenBalance {
   overallBalance: string;
   ticker: string;
   transferableBalance: string;
+  availableBalanceSafe: string;
+  availableBalanceUnSafe: string;
+}
+
+export interface TokenInfo {
+  totalSupply: string;
+  totalMinted: string;
 }
 
 export enum TokenInscriptionType {
@@ -174,6 +181,7 @@ export interface TokenTransfer {
 }
 
 export interface AddressTokenSummary {
+  tokenInfo: TokenInfo;
   tokenBalance: TokenBalance;
   historyList: TokenTransfer[];
   transferableList: TokenTransfer[];

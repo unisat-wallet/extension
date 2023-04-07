@@ -15,10 +15,10 @@ function getDateShowdate(date: Date) {
   } else {
     const old = Date.now() - date.getTime();
     if (old < 60 * 1000) {
-      return `${Math.floor(old / 1000)} seconds ago`;
+      return `${Math.floor(old / 1000)} secs ago`;
     }
     if (old < 1000 * 60 * 60) {
-      return `${Math.floor(old / 60000)} minutes ago`;
+      return `${Math.floor(old / 60000)} mins ago`;
     }
     if (old < 1000 * 60 * 60 * 24) {
       return `${Math.floor(old / 3600000)} hours ago`;

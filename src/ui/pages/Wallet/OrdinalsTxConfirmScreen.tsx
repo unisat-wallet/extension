@@ -20,7 +20,6 @@ export default function OrdinalsTxConfirmScreen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Sending"
       />
       params={{ data: { psbtHex: rawTxInfo.psbtHex, type: TxType.SEND_INSCRIPTION, rawTxInfo } }}
       handleCancel={() => {

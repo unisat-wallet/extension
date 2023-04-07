@@ -7,7 +7,6 @@ import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useAccounts, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
-import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { shortAddress, useApproval, useWallet } from '@/ui/utils';
 import { CheckCircleFilled } from '@ant-design/icons';
 
@@ -20,11 +19,9 @@ export function MyItem({ account }: MyItemProps, ref) {
   const selected = currentAccount.pubkey == account?.pubkey;
   const wallet = useWallet();
   const dispatch = useAppDispatch();
-  const keyring = useCurrentKeyring();
   if (!account) {
     return <div />;
   }
-  const path = keyring.hdPath + '/' + account.index;
 
   return (
     <Card
@@ -46,7 +43,7 @@ export function MyItem({ account }: MyItemProps, ref) {
         </Column>
         <Column>
           <Text text={account.alianName} />
-          <Text text={`${shortAddress(account.address)} (${path})`} preset="sub" />
+          <Text text={`${shortAddress(account.address)}`} preset="sub" />
         </Column>
       </Row>
       <Column relative></Column>
