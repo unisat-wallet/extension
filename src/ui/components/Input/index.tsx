@@ -1,7 +1,7 @@
 import bitcore from 'bitcore-lib';
 import React, { CSSProperties, useEffect, useState } from 'react';
 
-import { SATS_DOMAIN } from '@/shared/constant';
+import { SATS_DOMAIN, UNISAT_DOMAIN } from '@/shared/constant';
 import { Inscription } from '@/shared/types';
 import { colors } from '@/ui/theme/colors';
 import { spacing } from '@/ui/theme/spacing';
@@ -136,7 +136,8 @@ export const AddressInput = (props: InputProps) => {
       setValidAddress('');
     }
 
-    if (inputAddress.toLowerCase().endsWith(SATS_DOMAIN)) {
+    const teststr = inputAddress.toLowerCase();
+    if (teststr.endsWith(SATS_DOMAIN) || teststr.endsWith(UNISAT_DOMAIN)) {
       wallet
         .queryDomainInfo(encodeURIComponent(inputAddress))
         .then((inscription) => {
@@ -167,7 +168,7 @@ export const AddressInput = (props: InputProps) => {
     <div style={{ alignSelf: 'stretch' }}>
       <div style={Object.assign({}, $baseContainerStyle, { flexDirection: 'column', minHeight: '56.5px' })}>
         <input
-          placeholder={'Address, name.sats '}
+          placeholder={'Address, name.sats, name.unisat '}
           type={'text'}
           style={Object.assign({}, $baseInputStyle, $inputStyleOverride)}
           onChange={async (e) => {
