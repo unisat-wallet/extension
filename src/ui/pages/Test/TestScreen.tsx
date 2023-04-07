@@ -147,8 +147,7 @@ function TestApprovalSignPsbtB() {
           rawTxInfo: {
             psbtHex,
             rawtx: '',
-            toAddressInfo: testAddressInfo,
-            txType: TxType.SEND_INSCRIPTION
+            toAddressInfo: testAddressInfo
           }
         },
         session: {

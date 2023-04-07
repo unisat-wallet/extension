@@ -1,3 +1,5 @@
+import { colors } from '@/ui/theme/colors';
+
 import { Column } from '../Column';
 import { Icon } from '../Icon';
 import { Row } from '../Row';
@@ -24,13 +26,13 @@ export default function BRC20Preview({
 }: BRC20PreviewProps) {
   return (
     <Column
-      style={{ backgroundColor: '#2a2a2a', width: 100, height: 130, minWidth: 100, minHeight: 130, borderRadius: 5 }}
+      style={{ backgroundColor: colors.bg4, width: 100, height: 130, minWidth: 100, minHeight: 130, borderRadius: 5 }}
       onClick={onClick}>
       <Column
         style={{
           padding: 8,
           height: 96,
-          backgroundColor: type === 'TRANSFER' ? 'green' : '#FA701A',
+          backgroundColor: type === 'TRANSFER' ? '#489362' : '#EA850C',
           borderTopLeftRadius: 5,
           borderTopRightRadius: 5
         }}>

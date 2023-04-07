@@ -1,7 +1,7 @@
 import { Psbt } from 'bitcoinjs-lib';
 import { useCallback, useMemo } from 'react';
 
-import { RawTxInfo, ToAddressInfo, TxType } from '@/shared/types';
+import { RawTxInfo, ToAddressInfo } from '@/shared/types';
 import { useTools } from '@/ui/components/ActionComponent';
 import { satoshisToBTC, sleep, useWallet } from '@/ui/utils';
 
@@ -56,8 +56,7 @@ export function useCreateBitcoinTxCallback() {
       const rawTxInfo: RawTxInfo = {
         psbtHex,
         rawtx,
-        toAddressInfo,
-        txType: TxType.SEND_BITCOIN
+        toAddressInfo
       };
       return rawTxInfo;
     },
@@ -142,8 +141,7 @@ export function useCreateOrdinalsTxCallback() {
       const rawTxInfo: RawTxInfo = {
         psbtHex,
         rawtx,
-        toAddressInfo,
-        txType: TxType.SEND_INSCRIPTION
+        toAddressInfo
       };
       return rawTxInfo;
     },
@@ -186,8 +184,7 @@ export function useCreateMultiOrdinalsTxCallback() {
       const rawTxInfo: RawTxInfo = {
         psbtHex,
         rawtx,
-        toAddressInfo,
-        txType: TxType.SIGN_TX
+        toAddressInfo
       };
       return rawTxInfo;
     },
