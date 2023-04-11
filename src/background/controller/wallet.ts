@@ -33,6 +33,7 @@ import { createSendBTC, createSendMultiOrds, createSendOrd } from '@unisat/ord-u
 import { ContactBookItem } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';
 import { ConnectedSite } from '../service/permission';
+import { signBip322MessageSimple } from '../utils/bip322';
 import { publicKeyToAddress, toPsbtNetwork, validator } from '../utils/tx-utils';
 import BaseController from './base';
 
@@ -395,6 +396,19 @@ export class WalletController extends BaseController {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
     return keyringService.signMessage(account.pubkey, text);
+  };
+
+  signBIP322Simple = async (text: string) => {
+    const account = preferenceService.getCurrentAccount();
+    if (!account) throw new Error('no current account');
+    const networkType = this.getNetworkType();
+    const psbtNetwork = toPsbtNetwork(networkType);
+    return signBip322MessageSimple({
+      message: text,
+      address: account.address,
+      network: psbtNetwork,
+      wallet: this
+    });
   };
 
   requestKeyring = (type: string, methodName: string, keyringId: number | null, ...params) => {

@@ -214,11 +214,12 @@ export class UnisatProvider extends EventEmitter {
     });
   };
 
-  signMessage = async (text: string) => {
+  signMessage = async (text: string, type: string) => {
     return this._request({
       method: 'signMessage',
       params: {
-        text
+        text,
+        type
       }
     });
   };
