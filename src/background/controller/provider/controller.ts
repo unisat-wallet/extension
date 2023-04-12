@@ -160,6 +160,25 @@ class ProviderController extends BaseController {
       return psbt.toHex();
     }
 
+  @Reflect.metadata('APPROVAL', ['MultiSignPsbt', (req) => {
+    const { data: { params: { psbtHexs } } } = req;
+    // todo
+  }])
+    multiSignPsbt = async ({ data: { params: { psbtHexs } } }) => {
+      const account = await wallet.getCurrentAccount();
+      if (!account) throw null;
+      const networkType = wallet.getNetworkType()
+      const psbtNetwork = toPsbtNetwork(networkType)
+      const result: string[] = [];
+      for (let i = 0; i < psbtHexs.length; i++){
+        const psbt = Psbt.fromHex(psbtHexs[i],{network:psbtNetwork});
+        await wallet.signPsbt(psbt);
+        result.push(psbt.toHex())
+      }
+      return result;
+    }
+
+
   @Reflect.metadata('SAFE', true)
     pushPsbt = async ({ data: { params: { psbtHex } } }) => {
       const psbt = Psbt.fromHex(psbtHex);

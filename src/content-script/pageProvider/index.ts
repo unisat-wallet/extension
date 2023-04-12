@@ -279,6 +279,15 @@ export class UnisatProvider extends EventEmitter {
     });
   };
 
+  signPsbts = async (psbtHexs: string[]) => {
+    return this._request({
+      method: 'multiSignPsbt',
+      params: {
+        psbtHexs
+      }
+    });
+  };
+
   pushPsbt = async (psbtHex: string) => {
     return this._request({
       method: 'pushPsbt',

@@ -1,4 +1,7 @@
+/* eslint-disable indent */
 import { useEffect, useState } from 'react';
+
+import { colors } from '@/ui/theme/colors';
 
 import { Column } from '../Column';
 import { Row } from '../Row';
@@ -16,10 +19,11 @@ interface TabBarProps {
   items: TabProps[];
   onTabClick: (string) => void;
   progressEnabled?: boolean;
+  preset?: string;
 }
 
 export function TabBar(props: TabBarProps) {
-  const { items, defaultActiveKey, activeKey, onTabClick, progressEnabled } = props;
+  const { items, defaultActiveKey, activeKey, onTabClick, progressEnabled, preset } = props;
   const [tabKey, setTabKey] = useState(defaultActiveKey);
 
   const [progress, setProgress] = useState(0);
@@ -38,6 +42,38 @@ export function TabBar(props: TabBarProps) {
       setProgress(curIndex);
     }
   }, [activeKey]);
+
+  if (preset == 'number-page') {
+    return (
+      <Row>
+        {items.map((v, index) => {
+          const isSelected = v.key === tabKey;
+          const reach = isSelected; //index <= (tabKey as number);
+          return (
+            <Column
+              key={v.key}
+              style={Object.assign(
+                { width: 20, height: 20 },
+                reach
+                  ? {
+                      backgroundColor: colors.gold
+                    }
+                  : {
+                      backgroundColor: colors.bg2
+                    }
+              )}
+              justifyCenter
+              itemsCenter
+              onClick={() => {
+                setTabKey(v.key);
+              }}>
+              <Text text={v.label} color={'white'} />
+            </Column>
+          );
+        })}
+      </Row>
+    );
+  }
 
   return (
     <Row>
