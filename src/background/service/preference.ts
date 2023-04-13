@@ -328,7 +328,7 @@ class PreferenceService {
 
   // keyringAlianNames
   setKeyringAlianName = (keyringKey: string, name: string) => {
-    this.store.keyringAlianNames[keyringKey] = name;
+    this.store.keyringAlianNames = Object.assign({}, this.store.keyringAlianNames, { [keyringKey]: name });
   };
 
   getKeyringAlianName = (keyringKey: string, defaultName?: string) => {
@@ -341,7 +341,7 @@ class PreferenceService {
 
   // accountAlianNames
   setAccountAlianName = (accountKey: string, name: string) => {
-    this.store.accountAlianNames[accountKey] = name;
+    this.store.accountAlianNames = Object.assign({}, this.store.accountAlianNames, { [accountKey]: name });
   };
 
   getAccountAlianName = (accountKey: string, defaultName?: string) => {
