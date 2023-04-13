@@ -34,7 +34,7 @@ import { ContactBookItem } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';
 import { ConnectedSite } from '../service/permission';
 import { signBip322MessageSimple } from '../utils/bip322';
-import { publicKeyToAddress, toPsbtNetwork, validator } from '../utils/tx-utils';
+import { publicKeyToAddress, toPsbtNetwork } from '../utils/tx-utils';
 import BaseController from './base';
 
 const toXOnly = (pubKey: Buffer) => (pubKey.length === 32 ? pubKey : pubKey.slice(1, 33));
@@ -344,7 +344,7 @@ export class WalletController extends BaseController {
     return keyringService.signTransaction(keyring, psbt, inputs);
   };
 
-  signPsbt = async (psbt: bitcoin.Psbt) => {
+  signPsbt = async (psbt: bitcoin.Psbt, options?: any) => {
     const account = await this.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
@@ -385,10 +385,15 @@ export class WalletController extends BaseController {
     });
 
     psbt = await keyringService.signTransaction(_keyring, psbt, toSignInputs);
-    toSignInputs.forEach((v) => {
-      psbt.validateSignaturesOfInput(v.index, validator);
-      psbt.finalizeInput(v.index);
-    });
+    if (options && options.autoFinalized == false) {
+      // do not finalize
+    } else {
+      toSignInputs.forEach((v) => {
+        // psbt.validateSignaturesOfInput(v.index, validator);
+        psbt.finalizeInput(v.index);
+      });
+    }
+
     return psbt;
   };
 

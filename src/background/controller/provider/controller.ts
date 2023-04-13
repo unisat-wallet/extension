@@ -147,32 +147,33 @@ class ProviderController extends BaseController {
     }
 
   @Reflect.metadata('APPROVAL', ['SignPsbt', (req) => {
-    const { data: { params: { psbtHex } } } = req;
+    const { data: { params: { psbtHex,options } } } = req;
     // todo
   }])
-    signPsbt = async ({ data: { params: { psbtHex } } }) => {
+    signPsbt = async ({ data: { params: { psbtHex,options } } }) => {
       const account = await wallet.getCurrentAccount();
       if (!account) throw null;
       const networkType = wallet.getNetworkType()
       const psbtNetwork = toPsbtNetwork(networkType)
       const psbt = Psbt.fromHex(psbtHex,{network:psbtNetwork});
-      await wallet.signPsbt( psbt);
+      await wallet.signPsbt( psbt,options);
       return psbt.toHex();
     }
 
   @Reflect.metadata('APPROVAL', ['MultiSignPsbt', (req) => {
-    const { data: { params: { psbtHexs } } } = req;
+    const { data: { params: { psbtHexs,options } } } = req;
     // todo
   }])
-    multiSignPsbt = async ({ data: { params: { psbtHexs } } }) => {
+    multiSignPsbt = async ({ data: { params: { psbtHexs,options } } }) => {
       const account = await wallet.getCurrentAccount();
       if (!account) throw null;
       const networkType = wallet.getNetworkType()
       const psbtNetwork = toPsbtNetwork(networkType)
       const result: string[] = [];
+      const _options: any = options || [];
       for (let i = 0; i < psbtHexs.length; i++){
         const psbt = Psbt.fromHex(psbtHexs[i],{network:psbtNetwork});
-        await wallet.signPsbt(psbt);
+        await wallet.signPsbt(psbt,_options[i]);
         result.push(psbt.toHex())
       }
       return result;
