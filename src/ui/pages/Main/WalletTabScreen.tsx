@@ -165,7 +165,7 @@ function InscriptionList() {
 
   const [inscriptions, setInscriptions] = useState<Inscription[]>([]);
   const [total, setTotal] = useState(-1);
-  const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 20 });
+  const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 100 });
 
   const tools = useTools();
 
@@ -240,7 +240,7 @@ function BRC20List() {
 
   const [tokens, setTokens] = useState<TokenBalance[]>([]);
   const [total, setTotal] = useState(-1);
-  const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 20 });
+  const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 100 });
 
   const tools = useTools();
   const fetchData = async () => {

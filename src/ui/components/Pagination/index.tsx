@@ -1,3 +1,4 @@
+/* eslint-disable indent */
 import { useMemo } from 'react';
 
 import { Row } from '../Row';
@@ -55,13 +56,38 @@ export const Pagination = (props: PaginationProps) => {
   const pageArray = useMemo(() => {
     const arr: { page: number; label: string }[] = [];
     for (let i = 0; i < totalPage; i++) {
-      arr.push({
-        page: i + 1,
-        label: `${i + 1}`
-      });
+      const page = i + 1;
+      const current = pagination.currentPage;
+      let start = Math.max(current - 2, 1);
+      let end = Math.min(current + 2, totalPage);
+      if (end - current < 2) {
+        start -= 2 - (end - current);
+      }
+      if (current - start < 2) {
+        end += 2 - (current - start);
+      }
+      if (page == 1 || page == totalPage) {
+        arr.push({
+          page,
+          label: `${page}`
+        });
+        continue;
+      }
+
+      if (page >= start && page <= end) {
+        arr.push({
+          page: page,
+          label: `${page}`
+        });
+      } else if (page == 2 || page == totalPage - 1) {
+        arr.push({
+          page: -1,
+          label: '...'
+        });
+      }
     }
     return arr;
-  }, [totalPage]);
+  }, [totalPage, pagination.currentPage]);
 
   return useMemo(() => {
     return (
@@ -71,16 +97,22 @@ export const Pagination = (props: PaginationProps) => {
           <Text
             key={v.label}
             text={v.label}
+            style={{ width: 18 }}
+            textCenter
             color={pagination.currentPage == v.page ? 'gold' : 'white'}
-            onClick={() => {
-              if (pagination.currentPage == v.page) {
-                return;
-              }
-              onChange({
-                currentPage: v.page,
-                pageSize: pagination.pageSize
-              });
-            }}
+            onClick={
+              v.page == -1
+                ? undefined
+                : () => {
+                    if (pagination.currentPage == v.page) {
+                      return;
+                    }
+                    onChange({
+                      currentPage: v.page,
+                      pageSize: pagination.pageSize
+                    });
+                  }
+            }
           />
         ))}
         {nexButton}
