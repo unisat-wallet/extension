@@ -1,6 +1,20 @@
 
 # UniSat Wallet Release Notes
 
+## v1.1.16
+**Major changes**
+- Feature
+  - Support BIP322
+  - Sign multiple PSBT in one time
+- Adjust
+  - Use mempool.space data as fee options
+  - Show 100 inscriptions per page 
+- Fix
+  - Fix display error of pagination
+  - Fix a issue that addresses holding too many UTXOs cannot construct transactions
+  - Fix a issue that changing wallet/account name sometimes does not take effect
+  - Fix a issue that N/A problem occurs because the input amount is not legal
+
 
 ## v1.1.15
 **Major changes**
