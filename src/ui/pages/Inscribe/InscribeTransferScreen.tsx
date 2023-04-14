@@ -36,6 +36,10 @@ export default function InscribeTransferScreen() {
     setDisabled(true);
 
     const amount = parseInt(inputAmount);
+    if (!amount) {
+      return;
+    }
+
     if (amount > parseInt(tokenBalance.availableBalance)) {
       setInputError('Insufficient Balance');
       return;
