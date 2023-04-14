@@ -123,17 +123,11 @@ export function useCreateOrdinalsTxCallback() {
   const wallet = useWallet();
   const fromAddress = useAccountAddress();
   const utxos = useUtxos();
-  const fetchUtxos = useFetchUtxosCallback();
   return useCallback(
     async (toAddressInfo: ToAddressInfo, inscriptionId: string, feeRate: number, outputValue: number) => {
-      let _utxos = utxos;
-      if (_utxos.length === 0) {
-        _utxos = await fetchUtxos();
-      }
       const psbtHex = await wallet.sendInscription({
         to: toAddressInfo.address,
         inscriptionId,
-        utxos: _utxos,
         feeRate,
         outputValue
       });
@@ -165,13 +159,8 @@ export function useCreateMultiOrdinalsTxCallback() {
   const wallet = useWallet();
   const fromAddress = useAccountAddress();
   const utxos = useUtxos();
-  const fetchUtxos = useFetchUtxosCallback();
   return useCallback(
     async (toAddressInfo: ToAddressInfo, inscriptionIds: string[], feeRate?: number) => {
-      let _utxos = utxos;
-      if (_utxos.length === 0) {
-        _utxos = await fetchUtxos();
-      }
       if (!feeRate) {
         const summary = await wallet.getFeeSummary();
         feeRate = summary.list[1].feeRate;
@@ -179,7 +168,6 @@ export function useCreateMultiOrdinalsTxCallback() {
       const psbtHex = await wallet.sendInscriptions({
         to: toAddressInfo.address,
         inscriptionIds,
-        utxos: _utxos,
         feeRate
       });
       const psbt = Psbt.fromHex(psbtHex);

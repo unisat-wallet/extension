@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { Inscription, RawTxInfo } from '@/shared/types';
@@ -6,12 +6,7 @@ import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { OutputValueBar } from '@/ui/components/OutputValueBar';
-import {
-  useCreateOrdinalsTxCallback,
-  useFetchUtxosCallback,
-  useOrdinalsTx,
-  useUtxos
-} from '@/ui/state/transactions/hooks';
+import { useCreateOrdinalsTxCallback, useOrdinalsTx } from '@/ui/state/transactions/hooks';
 import { isValidAddress } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
@@ -33,26 +28,6 @@ export default function OrdinalsTxCreateScreen() {
   const [error, setError] = useState('');
   const createOrdinalsTx = useCreateOrdinalsTxCallback();
 
-  const fetchUtxos = useFetchUtxosCallback();
-
-  useEffect(() => {
-    fetchUtxos();
-  }, []);
-
-  const utxos = useUtxos();
-
-  const hasMultiInscriptions = useMemo(() => {
-    for (let i = 0; i < utxos.length; i++) {
-      const utxo = utxos[i];
-      if (utxo.inscriptions.find((v) => v.id === inscription.inscriptionId)) {
-        if (utxo.inscriptions.length > 1) {
-          return true;
-        }
-      }
-    }
-    return false;
-  }, [utxos]);
-
   const [feeRate, setFeeRate] = useState(5);
   const defaultOutputValue = inscription ? inscription.outputValue : 10000;
 
@@ -63,11 +38,6 @@ export default function OrdinalsTxCreateScreen() {
   useEffect(() => {
     setDisabled(true);
     setError('');
-
-    if (hasMultiInscriptions) {
-      setError('Multiple inscriptions are mixed together. Please split them first.');
-      return;
-    }
 
     if (feeRate <= 0) {
       setError('Invalid fee rate');

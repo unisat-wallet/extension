@@ -10,11 +10,7 @@ import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { RefreshButton } from '@/ui/components/RefreshButton';
 import { TabBar } from '@/ui/components/TabBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import {
-  useCreateMultiOrdinalsTxCallback,
-  useFetchUtxosCallback,
-  usePushOrdinalsTxCallback
-} from '@/ui/state/transactions/hooks';
+import { useCreateMultiOrdinalsTxCallback, usePushOrdinalsTxCallback } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { useWallet } from '@/ui/utils';
@@ -289,11 +285,6 @@ function Step2({
   const createOrdinalsTx = useCreateMultiOrdinalsTxCallback();
 
   const [disabled, setDisabled] = useState(true);
-
-  const fetchUtxos = useFetchUtxosCallback();
-  useEffect(() => {
-    fetchUtxos();
-  }, []);
 
   useEffect(() => {
     setDisabled(true);

@@ -616,13 +616,11 @@ export class WalletController extends BaseController {
   sendInscription = async ({
     to,
     inscriptionId,
-    utxos,
     feeRate,
     outputValue
   }: {
     to: string;
     inscriptionId: string;
-    utxos: UTXO[];
     feeRate: number;
     outputValue: number;
   }) => {
@@ -631,6 +629,18 @@ export class WalletController extends BaseController {
 
     const networkType = preferenceService.getNetworkType();
     const psbtNetwork = toPsbtNetwork(networkType);
+
+    const utxo = await openapiService.getInscriptionUtxo(inscriptionId);
+    if (!utxo) {
+      throw new Error('UTXO not found.');
+    }
+
+    if (utxo.inscriptions.length > 1) {
+      throw new Error('Multiple inscriptions are mixed together. Please split them first.');
+    }
+
+    const btc_utxos = await openapiService.getAddressUtxo(account.address);
+    const utxos = [utxo].concat(btc_utxos);
 
     const psbt = await createSendOrd({
       utxos: utxos.map((v) => {
@@ -662,7 +672,6 @@ export class WalletController extends BaseController {
   sendInscriptions = async ({
     to,
     inscriptionIds,
-    utxos,
     feeRate
   }: {
     to: string;
@@ -675,6 +684,18 @@ export class WalletController extends BaseController {
 
     const networkType = preferenceService.getNetworkType();
     const psbtNetwork = toPsbtNetwork(networkType);
+
+    const inscription_utxos = await openapiService.getInscriptionUtxos(inscriptionIds);
+    if (!inscription_utxos) {
+      throw new Error('UTXO not found.');
+    }
+
+    if (inscription_utxos.find((v) => v.inscriptions.length > 1)) {
+      throw new Error('Multiple inscriptions are mixed together. Please split them first.');
+    }
+
+    const btc_utxos = await openapiService.getAddressUtxo(account.address);
+    const utxos = inscription_utxos.concat(btc_utxos);
 
     const psbt = await createSendMultiOrds({
       utxos: utxos.map((v) => {

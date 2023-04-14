@@ -121,15 +121,9 @@ export interface WalletController {
     feeRate: number;
   }): Promise<string>;
 
-  sendInscription(data: {
-    to: string;
-    inscriptionId: string;
-    utxos: UTXO[];
-    feeRate: number;
-    outputValue: number;
-  }): Promise<string>;
+  sendInscription(data: { to: string; inscriptionId: string; feeRate: number; outputValue: number }): Promise<string>;
 
-  sendInscriptions(data: { to: string; inscriptionIds: string[]; utxos: UTXO[]; feeRate: number }): Promise<string>;
+  sendInscriptions(data: { to: string; inscriptionIds: string[]; feeRate: number }): Promise<string>;
   pushTx(rawtx: string): Promise<string>;
 
   queryDomainInfo(domain: string): Promise<Inscription>;

@@ -129,8 +129,28 @@ export class OpenApiService {
   }
 
   async getAddressUtxo(address: string): Promise<UTXO[]> {
-    const data = await this.httpGet('/v2/address/utxo', {
+    const data = await this.httpGet('/v3/address/btc-utxo', {
       address
+    });
+    if (data.status == API_STATUS.FAILED) {
+      throw new Error(data.message);
+    }
+    return data.result;
+  }
+
+  async getInscriptionUtxo(inscriptionId: string): Promise<UTXO> {
+    const data = await this.httpGet('/v3/inscription/utxo', {
+      inscriptionId
+    });
+    if (data.status == API_STATUS.FAILED) {
+      throw new Error(data.message);
+    }
+    return data.result;
+  }
+
+  async getInscriptionUtxos(inscriptionIds: string[]): Promise<UTXO[]> {
+    const data = await this.httpPost('/v3/inscription/utxos', {
+      inscriptionIds
     });
     if (data.status == API_STATUS.FAILED) {
       throw new Error(data.message);
