@@ -33,6 +33,7 @@ export default function WalletTabScreen() {
   const isTestNetwork = networkType === NetworkType.TESTNET;
 
   const currentKeyring = useCurrentKeyring();
+  const currentAccount = useCurrentAccount();
   const balanceValue = useMemo(() => {
     if (accountBalance.amount === '0') {
       return '--';
@@ -129,11 +130,14 @@ export default function WalletTabScreen() {
               full
             />
             <Button
-              text="History"
+              text="Buy"
               preset="default"
-              icon="history"
+              icon="bitcoin"
               onClick={(e) => {
-                navigate('HistoryScreen');
+                wallet.createMoonpayUrl(currentAccount.address).then((url) => {
+                  window.open(url);
+                });
+                // navigate('HistoryScreen');
               }}
               full
             />

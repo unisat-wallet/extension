@@ -183,6 +183,8 @@ export interface WalletController {
   getBRC20Summary(address: string, ticker: string): Promise<AddressTokenSummary>;
 
   expireUICachedData(address: string): Promise<void>;
+
+  createMoonpayUrl(address: string): Promise<string>;
 }
 
 const WalletContext = createContext<{

@@ -1061,6 +1061,10 @@ export class WalletController extends BaseController {
   expireUICachedData = (address: string) => {
     return preferenceService.expireUICachedData(address);
   };
+
+  createMoonpayUrl = (address: string) => {
+    return openapiService.createMoonpayUrl(address)
+  }
 }
 
 export default new WalletController();

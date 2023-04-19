@@ -282,6 +282,14 @@ export class OpenApiService {
     }
     return data.result;
   }
+
+  async createMoonpayUrl(address: string): Promise<string> {
+    const data = await this.httpPost('/v3/moonpay/create', { address });
+    if (data.status == API_STATUS.FAILED) {
+      throw new Error(data.message);
+    }
+    return data.result;
+  }
 }
 
 export default new OpenApiService();
