@@ -67,7 +67,7 @@ function Step1({
                   px="md"
                   py="md"
                   onClick={() => {
-                    navigate('InscribeTransferScreen', { tokenBalance });
+                    navigate('InscribeTransferScreen', { ticker: tokenBalance.ticker });
                   }}>
                   <Text text="Inscribe TRANSFER" textCenter preset="bold" />
 

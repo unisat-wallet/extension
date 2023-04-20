@@ -81,7 +81,6 @@ export default function TxCreateScreen() {
     }
 
     if (feeRate <= 0) {
-      setError('Invalid fee rate');
       return;
     }
 

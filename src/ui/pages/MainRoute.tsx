@@ -21,10 +21,9 @@ import SwitchKeyringScreen from './Account/SwitchKeyringScreen';
 import UnlockScreen from './Account/UnlockScreen';
 import ApprovalScreen from './Approval/ApprovalScreen';
 import ConnectedSitesScreen from './Approval/ConnectedSitesScreen';
+import { InscribeTransferScreen } from './Approval/components/InscribeTransfer';
 import BRC20SendScreen from './BRC20/BRC20SendScreen';
 import BRC20TokenScreen from './BRC20/BRC20TokenScreen';
-import InscribeConfirmScreen from './Inscribe/InscribeConfirmScreen';
-import InscribeTransferScreen from './Inscribe/InscribeTransferScreen';
 import AppTabScrren from './Main/AppTabScreen';
 import BoostScreen from './Main/BoostScreen';
 import DiscoverTabScreen from './Main/DiscoverTabScreen';
@@ -191,10 +190,6 @@ const routes = {
   InscribeTransferScreen: {
     path: '/inscribe/transfer',
     element: <InscribeTransferScreen />
-  },
-  InscribeConfirmScreen: {
-    path: '/inscribe/confirm',
-    element: <InscribeConfirmScreen />
   },
   BRC20SendScreen: {
     path: '/brc20/send',

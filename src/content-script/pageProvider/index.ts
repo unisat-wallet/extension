@@ -298,6 +298,15 @@ export class UnisatProvider extends EventEmitter {
       }
     });
   };
+
+  inscribeTransfer = async (ticker: string) => {
+    return this._request({
+      method: 'inscribeTransfer',
+      params: {
+        ticker
+      }
+    });
+  };
 }
 
 declare global {

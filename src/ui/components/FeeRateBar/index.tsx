@@ -17,11 +17,11 @@ enum FeeRateType {
 
 export function FeeRateBar({ onChange }: { onChange: (val: number) => void }) {
   const wallet = useWallet();
-  const [feeOptions, setFeeOptions] = useState<{ title: string; desc?: string; feeRate?: number }[]>([]);
+  const [feeOptions, setFeeOptions] = useState<{ title: string; desc?: string; feeRate: number }[]>([]);
 
   useEffect(() => {
     wallet.getFeeSummary().then((v) => {
-      setFeeOptions([...v.list, { title: 'Custom' }]);
+      setFeeOptions([...v.list, { title: 'Custom', feeRate: 0 }]);
     });
   }, []);
 
@@ -29,14 +29,31 @@ export function FeeRateBar({ onChange }: { onChange: (val: number) => void }) {
   const [feeRateInputVal, setFeeRateInputVal] = useState('');
 
   useEffect(() => {
-    let val = 5;
+    const defaultOption = feeOptions[1];
+    const defaultVal = defaultOption ? defaultOption.feeRate : 1;
+
+    let val = defaultVal;
     if (feeOptionIndex === FeeRateType.CUSTOM) {
-      val = parseFloat(feeRateInputVal) || 5;
+      val = parseInt(feeRateInputVal) || 0;
     } else if (feeOptions.length > 0) {
-      val = feeOptions[feeOptionIndex].feeRate || 5;
+      val = feeOptions[feeOptionIndex].feeRate;
     }
     onChange(val);
   }, [feeOptions, feeOptionIndex, feeRateInputVal]);
+
+  const adjustFeeRateInput = (inputVal: string) => {
+    let val = parseInt(inputVal);
+    if (!val) {
+      setFeeRateInputVal('');
+      return;
+    }
+    const defaultOption = feeOptions[1];
+    const defaultVal = defaultOption ? defaultOption.feeRate : 1;
+    if (val <= 0) {
+      val = defaultVal;
+    }
+    setFeeRateInputVal(val.toString());
+  };
 
   return (
     <Column>
@@ -67,7 +84,7 @@ export function FeeRateBar({ onChange }: { onChange: (val: number) => void }) {
                 selected ? { backgroundColor: colors.primary } : {}
               )}>
               <Text text={v.title} textCenter style={{ color: selected ? colors.black : colors.white }} />
-              {v.feeRate && (
+              {v.title !== 'Custom' && (
                 <Text
                   text={`${v.feeRate} sat/vB`}
                   size="xxs"
@@ -75,7 +92,7 @@ export function FeeRateBar({ onChange }: { onChange: (val: number) => void }) {
                   style={{ color: selected ? colors.black : colors.white }}
                 />
               )}
-              {v.desc && (
+              {v.title !== 'Custom' && (
                 <Text
                   text={`${v.desc}`}
                   size="xxs"
@@ -91,16 +108,14 @@ export function FeeRateBar({ onChange }: { onChange: (val: number) => void }) {
         <Input
           preset="amount"
           placeholder={'sat/vB'}
-          defaultValue={feeRateInputVal}
           value={feeRateInputVal}
           onChange={async (e) => {
-            const val = e.target.value + '';
-            setFeeRateInputVal(val);
+            adjustFeeRateInput(e.target.value);
           }}
-          onBlur={() => {
-            const val = parseInt(feeRateInputVal) + '';
-            setFeeRateInputVal(val);
-          }}
+          // onBlur={() => {
+          //   const val = parseInt(feeRateInputVal) + '';
+          //   setFeeRateInputVal(val);
+          // }}
           autoFocus={true}
         />
       )}
