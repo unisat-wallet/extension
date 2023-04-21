@@ -192,8 +192,8 @@ class ProviderController extends BaseController {
     const { data: { params: { ticker } } } = req;
     // todo
   }])
-    inscribeTransfer = async () => {
-      return
+    inscribeTransfer = async ({approvalRes}) => {
+      return approvalRes
     }
 }
 

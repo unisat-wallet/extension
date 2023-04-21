@@ -21,6 +21,7 @@ interface Props {
   params: {
     data: {
       ticker: string;
+      amount: string;
     };
     session: {
       origin: string;
@@ -60,6 +61,7 @@ export default function InscribeTransfer({ params: { data, session } }: Props) {
   const [contextData, setContextData] = useState<ContextData>({
     step: Step.STEP1,
     ticker: data.ticker,
+    amount: parseInt(data.amount),
     session,
     isApproval: true
   });
@@ -130,6 +132,15 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
 
   const [disabled, setDisabled] = useState(true);
 
+  const [inputDisabled, setInputDisabled] = useState(false);
+  useEffect(() => {
+    if (contextData.amount) {
+      setInputAmount(contextData.amount.toString())
+      setInputDisabled(true)
+    }
+
+  },[])
+
   useEffect(() => {
     setInputError('');
     setDisabled(true);
@@ -157,7 +168,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
     }
 
     setDisabled(false);
-  }, [inputAmount, feeRate]);
+  }, [inputAmount, feeRate,contextData.tokenBalance]);
 
   useEffect(() => {
     fetchUtxos();
@@ -247,6 +258,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
                 onChange={async (e) => {
                   setInputAmount(e.target.value);
                 }}
+                disabled={inputDisabled}
               />
               {inputError && <Text text={inputError} color="error" />}
             </Column>
@@ -317,7 +329,12 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
     }
     wallet.getBRC20Summary(currentAccount.address, tokenBalance.ticker).then((v) => {
       if (contextData.isApproval) {
-        resolveApproval();
+        resolveApproval({
+          inscriptionId: result.inscriptionId,
+          inscriptionNumber: result.inscriptionNumber,
+          ticker:tokenBalance.ticker,
+          amount:result.amount
+        });
       } else {
         navigate('BRC20SendScreen', {
           tokenBalance: v.tokenBalance,

@@ -299,11 +299,12 @@ export class UnisatProvider extends EventEmitter {
     });
   };
 
-  inscribeTransfer = async (ticker: string) => {
+  inscribeTransfer = async (ticker: string, amount: string) => {
     return this._request({
       method: 'inscribeTransfer',
       params: {
-        ticker
+        ticker,
+        amount
       }
     });
   };
