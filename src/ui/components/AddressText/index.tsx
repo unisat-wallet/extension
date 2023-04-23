@@ -1,6 +1,7 @@
 import { useMemo, useState } from 'react';
 
 import { ToAddressInfo } from '@/shared/types';
+import { ColorTypes } from '@/ui/theme/colors';
 import { shortAddress } from '@/ui/utils';
 
 import { AccordingInscription } from '../AccordingInscription';
@@ -10,7 +11,12 @@ import { CopyableAddress } from '../CopyableAddress';
 import { Row } from '../Row';
 import { Text } from '../Text';
 
-export const AddressText = (props: { address?: string; addressInfo?: ToAddressInfo; textCenter?: boolean }) => {
+export const AddressText = (props: {
+  address?: string;
+  addressInfo?: ToAddressInfo;
+  textCenter?: boolean;
+  color?: ColorTypes;
+}) => {
   const [popoverVisible, setPopoverVisible] = useState(false);
   const address = useMemo(() => {
     if (props.address) {
@@ -43,7 +49,7 @@ export const AddressText = (props: { address?: string; addressInfo?: ToAddressIn
           onClick={() => {
             setPopoverVisible(true);
           }}>
-          <Text text={shortAddress(address)} />
+          <Text text={shortAddress(address)} color={props.color || 'white'} />
         </Column>
       )}
       {popoverVisible && (
