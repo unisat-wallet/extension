@@ -1,6 +1,10 @@
 
 # UniSat Wallet Release Notes
 
+## v1.1.18
+**Minor changes**
+- Optimize the display of PSBT
+
 ## v1.1.17
 **Major changes**
 - Feature
