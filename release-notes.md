@@ -1,6 +1,10 @@
 
 # UniSat Wallet Release Notes
 
+## v1.1.19
+**Minor changes**
+- Fix error of BRC-20 with special characters
+
 ## v1.1.18
 **Minor changes**
 - Optimize the display of PSBT
