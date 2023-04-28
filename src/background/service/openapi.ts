@@ -255,7 +255,7 @@ export class OpenApiService {
   }
 
   async getAddressTokenSummary(address: string, ticker: string): Promise<AddressTokenSummary> {
-    const data = await this.httpGet('/v3/brc20/token-summary', { address, ticker });
+    const data = await this.httpGet('/v3/brc20/token-summary', { address, ticker: encodeURIComponent(ticker) });
     if (data.status == API_STATUS.FAILED) {
       throw new Error(data.message);
     }
@@ -268,7 +268,12 @@ export class OpenApiService {
     cursor: number,
     size: number
   ): Promise<{ list: TokenTransfer[]; total: number }> {
-    const data = await this.httpGet('/v3/brc20/transferable-list', { address, ticker, cursor, size });
+    const data = await this.httpGet('/v3/brc20/transferable-list', {
+      address,
+      ticker: encodeURIComponent(ticker),
+      cursor,
+      size
+    });
     if (data.status == API_STATUS.FAILED) {
       throw new Error(data.message);
     }

@@ -1,7 +1,8 @@
+import { Tooltip } from 'antd';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { InscribeOrder, RawTxInfo, TokenBalance } from '@/shared/types';
-import { Button, Card, Column, Content, Footer, Header, Input, Layout, Row, Text } from '@/ui/components';
+import { Button, Card, Column, Content, Footer, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { Empty } from '@/ui/components/Empty';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
@@ -13,6 +14,7 @@ import {
   useFetchUtxosCallback,
   usePushBitcoinTxCallback
 } from '@/ui/state/transactions/hooks';
+import { fontSizes } from '@/ui/theme/font';
 import { satoshisToAmount, useApproval, useLocationState, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../../MainRoute';
@@ -135,11 +137,10 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
   const [inputDisabled, setInputDisabled] = useState(false);
   useEffect(() => {
     if (contextData.amount) {
-      setInputAmount(contextData.amount.toString())
-      setInputDisabled(true)
+      setInputAmount(contextData.amount.toString());
+      setInputDisabled(true);
     }
-
-  },[])
+  }, []);
 
   useEffect(() => {
     setInputError('');
@@ -158,7 +159,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
       return;
     }
 
-    if (amount > parseInt(contextData.tokenBalance.availableBalance)) {
+    if (amount > parseInt(contextData.tokenBalance.availableBalanceSafe)) {
       setInputError('Insufficient Balance');
       return;
     }
@@ -168,7 +169,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
     }
 
     setDisabled(false);
-  }, [inputAmount, feeRate,contextData.tokenBalance]);
+  }, [inputAmount, feeRate, contextData.tokenBalance]);
 
   useEffect(() => {
     fetchUtxos();
@@ -222,26 +223,45 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
                 <Text text="Available" color="textDim" />
 
                 {tokenBalance ? (
-                  <Column
-                    onClick={() => {
-                      setInputAmount(tokenBalance.availableBalanceSafe);
-                    }}>
+                  <Column>
                     {tokenBalance.availableBalanceUnSafe != '0' ? (
                       <Row justifyCenter>
-                        <Text text={`${tokenBalance.availableBalanceSafe}  `} textCenter size="xs" />
                         <Text
-                          text={` + ${tokenBalance.availableBalanceUnSafe} ${tokenBalance.ticker} `}
+                          text={`${tokenBalance.availableBalanceSafe}  `}
                           textCenter
-                          color="textDim"
                           size="xs"
+                          onClick={() => {
+                            setInputAmount(tokenBalance.availableBalanceSafe);
+                          }}
                         />
+                        <Tooltip
+                          title={`${tokenBalance.availableBalanceUnSafe} ${tokenBalance.ticker} is unconfirmed, please wait for confirmation `}
+                          overlayStyle={{
+                            fontSize: fontSizes.xs
+                          }}>
+                          <div>
+                            <Row>
+                              <Text
+                                text={` + ${tokenBalance.availableBalanceUnSafe}`}
+                                textCenter
+                                color="textDim"
+                                size="xs"
+                              />
+                              <Icon icon="circle-question" color="textDim" />
+                            </Row>
+                          </div>
+                        </Tooltip>
+
+                        <Text text={`${tokenBalance.ticker}  `} textCenter size="xs" />
                       </Row>
                     ) : (
                       <Text
-                        text={`Available ${tokenBalance.availableBalanceSafe} ${tokenBalance.ticker}`}
+                        text={`${tokenBalance.availableBalanceSafe} ${tokenBalance.ticker}`}
                         textCenter
-                        color="textDim"
                         size="xs"
+                        onClick={() => {
+                          setInputAmount(tokenBalance.availableBalanceSafe);
+                        }}
                       />
                     )}
                   </Column>
@@ -332,8 +352,8 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
         resolveApproval({
           inscriptionId: result.inscriptionId,
           inscriptionNumber: result.inscriptionNumber,
-          ticker:tokenBalance.ticker,
-          amount:result.amount
+          ticker: tokenBalance.ticker,
+          amount: result.amount
         });
       } else {
         navigate('BRC20SendScreen', {

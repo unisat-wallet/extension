@@ -35,7 +35,8 @@ export const svgRegistry = {
 
   'circle-check': '/images/icons/circle-check.svg',
   pencil: '/images/icons/pencil.svg',
-  'circle-info': '/images/icons/circle-info.svg'
+  'circle-info': '/images/icons/circle-info.svg',
+  'circle-question': '/images/icons/circle-question.svg'
 };
 
 const iconImgList: Array<IconTypes> = ['success', 'delete', 'btc'];
