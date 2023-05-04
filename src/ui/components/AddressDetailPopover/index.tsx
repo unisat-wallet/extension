@@ -1,4 +1,4 @@
-import { useBlockstreamUrl } from '@/ui/state/settings/hooks';
+import { useMempoolUrl } from '@/ui/state/settings/hooks';
 import { copyToClipboard, shortAddress } from '@/ui/utils';
 
 import { useTools } from '../ActionComponent';
@@ -11,7 +11,7 @@ import { Text } from '../Text';
 
 export const AddressDetailPopover = ({ address, onClose }: { address: string; onClose: () => void }) => {
   const tools = useTools();
-  const blockstreamUrl = useBlockstreamUrl();
+  const mempoolUrl = useMempoolUrl();
   return (
     <Popover onClose={onClose}>
       <Column>
@@ -37,7 +37,7 @@ export const AddressDetailPopover = ({ address, onClose }: { address: string; on
         <Row
           justifyCenter
           onClick={() => {
-            window.open(`${blockstreamUrl}/address/${address}`);
+            window.open(`${mempoolUrl}/address/${address}`);
           }}>
           <Icon icon="eye" color="textDim" />
           <Text preset="regular-bold" text="View on Block Explorer" color="textDim" />

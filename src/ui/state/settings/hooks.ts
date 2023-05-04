@@ -63,7 +63,7 @@ export function useChangeNetworkTypeCallback() {
   );
 }
 
-export function useBlockstreamUrl() {
+export function useMempoolUrl() {
   const networkType = useNetworkType();
   if (networkType === NetworkType.MAINNET) {
     return 'https://mempool.space';

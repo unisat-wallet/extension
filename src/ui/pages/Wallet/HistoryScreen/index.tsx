@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { Layout, Content, Icon, Header, Text, Row, Column, Card } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { useAccountAddress, useFetchHistoryCallback, useHistory } from '@/ui/state/accounts/hooks';
-import { useBlockstreamUrl } from '@/ui/state/settings/hooks';
+import { useMempoolUrl } from '@/ui/state/settings/hooks';
 import { shortAddress } from '@/ui/utils';
 import { ClockCircleFilled } from '@ant-design/icons';
 
@@ -27,7 +27,7 @@ interface MyItemProps {
 
 const MyItem: React.ForwardRefRenderFunction<any, MyItemProps> = ({ group, index }, ref) => {
   const address = useAccountAddress();
-  const blockstreamUrl = useBlockstreamUrl();
+  const mempoolUrl = useMempoolUrl();
   if (group.index == -1) {
     return (
       <Column>
@@ -35,7 +35,7 @@ const MyItem: React.ForwardRefRenderFunction<any, MyItemProps> = ({ group, index
         <Row
           justifyCenter
           onClick={() => {
-            window.open(`${blockstreamUrl}/address/${address}`);
+            window.open(`${mempoolUrl}/address/${address}`);
           }}>
           <Icon icon="eye" color="textDim" />
           <Text preset="regular-bold" text="View on Block Explorer" color="textDim" />

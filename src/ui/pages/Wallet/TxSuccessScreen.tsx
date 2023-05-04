@@ -1,6 +1,6 @@
 import { Layout, Header, Content, Icon, Text, Column, Footer, Button, Row } from '@/ui/components';
 import { useNavigate } from '@/ui/pages/MainRoute';
-import { useBlockstreamUrl } from '@/ui/state/settings/hooks';
+import { useMempoolUrl } from '@/ui/state/settings/hooks';
 import { spacing } from '@/ui/theme/spacing';
 import { useLocationState } from '@/ui/utils';
 
@@ -11,7 +11,7 @@ interface LocationState {
 export default function TxSuccessScreen() {
   const { txid } = useLocationState<LocationState>();
   const navigate = useNavigate();
-  const blockstreamUrl = useBlockstreamUrl();
+  const mempoolUrl = useMempoolUrl();
 
   return (
     <Layout>
@@ -29,7 +29,7 @@ export default function TxSuccessScreen() {
           <Row
             justifyCenter
             onClick={() => {
-              window.open(`${blockstreamUrl}/tx/${txid}`);
+              window.open(`${mempoolUrl}/tx/${txid}`);
             }}>
             <Icon icon="eye" color="textDim" />
             <Text preset="regular-bold" text="View on Block Explorer" color="textDim" />
