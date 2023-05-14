@@ -57,7 +57,7 @@ export default function CreateAccountScreen() {
             autoFocus={true}
           />
           <Button
-            text="Create a Account"
+            text="Create an Account"
             preset="primary"
             onClick={(e) => {
               handleOnClick();
