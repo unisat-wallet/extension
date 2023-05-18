@@ -2728,10 +2728,10 @@
     tiny-secp256k1 "^2.2.1"
     uuid "^9.0.0"
 
-"@unisat/ord-utils@0.2.6":
-  version "0.2.6"
-  resolved "https://registry.yarnpkg.com/@unisat/ord-utils/-/ord-utils-0.2.6.tgz#21cd682f64fcabc21213420889e13b54f0588cee"
-  integrity sha512-0M9YWE43euPEpbA4o4KCfoHYKoPXiMQSKhC7Wp2TB6DvjJbuQTdQXh5m/LC1DB6dbvE2qyXNS8muavi7GKgLRQ==
+"@unisat/ord-utils@0.2.9":
+  version "0.2.9"
+  resolved "https://registry.yarnpkg.com/@unisat/ord-utils/-/ord-utils-0.2.9.tgz#8606738bfdd88ebab4f1b763d3ec02b244a66488"
+  integrity sha512-uoa05CRHgKET0QeQy3CrwWJdhE3ZzVCKmmI2x5yL7Nikv0W7ISSbi/eyD/STRzjH2Lw83Puk1DqGv0wwUK5lCw==
   dependencies:
     bignumber.js "^9.1.1"
     bitcoinjs-lib "^6.1.0"

@@ -604,7 +604,8 @@ export class WalletController extends BaseController {
       changeAddress: account.address,
       receiverToPayFee,
       pubkey: account.pubkey,
-      feeRate
+      feeRate,
+      enableRBF: false
     });
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -661,7 +662,8 @@ export class WalletController extends BaseController {
       changeAddress: account.address,
       pubkey: account.pubkey,
       feeRate,
-      outputValue
+      outputValue,
+      enableRBF: false
     });
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
@@ -715,7 +717,8 @@ export class WalletController extends BaseController {
       network: psbtNetwork,
       changeAddress: account.address,
       pubkey: account.pubkey,
-      feeRate
+      feeRate,
+      enableRBF: false
     });
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
