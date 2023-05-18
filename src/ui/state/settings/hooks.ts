@@ -66,17 +66,17 @@ export function useChangeNetworkTypeCallback() {
 export function useBlockstreamUrl() {
   const networkType = useNetworkType();
   if (networkType === NetworkType.MAINNET) {
-    return 'https://blockstream.info';
+    return 'https://mempool.space';
   } else {
-    return 'https://blockstream.info/testnet';
+    return 'https://mempool.space/testnet';
   }
 }
 
 export function useTxIdUrl(txid: string) {
   const networkType = useNetworkType();
   if (networkType === NetworkType.MAINNET) {
-    return `https://blockstream.info/tx/${txid}`;
+    return `https://mempool.space/tx/${txid}`;
   } else {
-    return `https://blockstream.info/testnet/tx/${txid}`;
+    return `https://mempool.space/testnet/tx/${txid}`;
   }
 }

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { KEYRING_TYPE } from '@/shared/constant';
 import { TokenBalance, NetworkType, Inscription, WalletConfig } from '@/shared/types';
-import { Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
+import { Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressBar } from '@/ui/components/AddressBar';
@@ -17,9 +17,10 @@ import { getCurrentTab } from '@/ui/features/browser/tabs';
 import { useAccountBalance, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { useNetworkType } from '@/ui/state/settings/hooks';
+import { useBlockstreamUrl, useNetworkType } from '@/ui/state/settings/hooks';
 import { useWalletTabScreenState } from '@/ui/state/ui/hooks';
 import { WalletTabScreenTabKey, uiActions } from '@/ui/state/ui/reducer';
+import { fontSizes } from '@/ui/theme/font';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
@@ -78,6 +79,8 @@ export default function WalletTabScreen() {
       children: <BRC20List />
     }
   ];
+
+  const blockstreamUrl = useBlockstreamUrl();
 
   return (
     <Layout>
@@ -151,14 +154,24 @@ export default function WalletTabScreen() {
             )}
           </Row>
 
-          <TabBar
-            defaultActiveKey={tabKey}
-            activeKey={tabKey}
-            items={tabItems}
-            onTabClick={(key) => {
-              dispatch(uiActions.updateWalletTabScreen({ tabKey: key }));
-            }}
-          />
+          <Row justifyBetween>
+            <TabBar
+              defaultActiveKey={tabKey}
+              activeKey={tabKey}
+              items={tabItems}
+              onTabClick={(key) => {
+                dispatch(uiActions.updateWalletTabScreen({ tabKey: key }));
+              }}
+            />
+            <Row
+              itemsCenter
+              onClick={() => {
+                window.open(`${blockstreamUrl}/address/${currentAccount.address}`);
+              }}>
+              <Text text={'View History'} size="xs" />
+              <Icon icon="link" size={fontSizes.xs} />
+            </Row>
+          </Row>
 
           {tabItems[tabKey].children}
         </Column>
