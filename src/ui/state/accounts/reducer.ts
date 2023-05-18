@@ -10,6 +10,8 @@ export interface AccountsState {
   balanceMap: {
     [key: string]: {
       amount: string;
+      btc_amount: string;
+      inscription_amount: string;
       expired: boolean;
     };
   };
@@ -77,17 +79,23 @@ const slice = createSlice({
         payload: {
           address: string;
           amount: string;
+          btc_amount: string;
+          inscription_amount: string;
         };
       }
     ) {
       const {
-        payload: { address, amount }
+        payload: { address, amount, btc_amount, inscription_amount }
       } = action;
       state.balanceMap[address] = state.balanceMap[address] || {
         amount: '0',
+        btc_amount: '0',
+        inscription_amount: '0',
         expired: true
       };
       state.balanceMap[address].amount = amount;
+      state.balanceMap[address].btc_amount = btc_amount;
+      state.balanceMap[address].inscription_amount = inscription_amount;
       state.balanceMap[address].expired = false;
     },
     expireBalance(state) {

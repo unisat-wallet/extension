@@ -1,3 +1,4 @@
+import { Tooltip } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 
 import { KEYRING_TYPE } from '@/shared/constant';
@@ -117,7 +118,26 @@ export default function WalletTabScreen() {
 
           {walletConfig.statusMessage && <Text text={walletConfig.statusMessage} color="danger" textCenter />}
 
-          <Text text={balanceValue + '  BTC'} preset="title-bold" textCenter size="xxxl" />
+          <Tooltip
+            title={
+              <span>
+                <Row justifyBetween>
+                  <span>{'BTC Balance'}</span>
+                  <span>{` ${accountBalance.btc_amount} BTC`}</span>
+                </Row>
+                <Row justifyBetween>
+                  <span>{'Inscription Balance'}</span>
+                  <span>{` ${accountBalance.inscription_amount} BTC`}</span>
+                </Row>
+              </span>
+            }
+            overlayStyle={{
+              fontSize: fontSizes.xs
+            }}>
+            <div>
+              <Text text={balanceValue + '  BTC'} preset="title-bold" textCenter size="xxxl" />
+            </div>
+          </Tooltip>
 
           <AddressBar />
 

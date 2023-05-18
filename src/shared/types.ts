@@ -32,6 +32,12 @@ export interface BitcoinBalance {
   confirm_amount: string;
   pending_amount: string;
   amount: string;
+  confirm_btc_amount: string;
+  pending_btc_amount: string;
+  btc_amount: string;
+  confirm_inscription_amount: string;
+  pending_inscription_amount: string;
+  inscription_amount: string;
   usd_value: string;
 }
 
