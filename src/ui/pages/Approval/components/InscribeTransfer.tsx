@@ -6,6 +6,7 @@ import { Button, Card, Column, Content, Footer, Header, Icon, Input, Layout, Row
 import { useTools } from '@/ui/components/ActionComponent';
 import { Empty } from '@/ui/components/Empty';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
+import { InscribeResultPopver } from '@/ui/components/InscribeResultPopver';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useNetworkType } from '@/ui/state/settings/hooks';
@@ -339,6 +340,7 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
   const currentAccount = useCurrentAccount();
   const [getApproval, resolveApproval, rejectApproval] = useApproval();
   const navigate = useNavigate();
+  const [result, setResult] = useState<any>();
   const checkResult = async () => {
     const result = await wallet.getInscribeResult(order.orderId);
     if (!result) {
@@ -347,22 +349,8 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
       }, 2000);
       return;
     }
-    wallet.getBRC20Summary(currentAccount.address, tokenBalance.ticker).then((v) => {
-      if (contextData.isApproval) {
-        resolveApproval({
-          inscriptionId: result.inscriptionId,
-          inscriptionNumber: result.inscriptionNumber,
-          ticker: tokenBalance.ticker,
-          amount: result.amount
-        });
-      } else {
-        navigate('BRC20SendScreen', {
-          tokenBalance: v.tokenBalance,
-          selectedInscriptionIds: [result.inscriptionId],
-          selectedAmount: parseInt(result.amount)
-        });
-      }
-    });
+    tools.showLoading(false);
+    setResult(result);
   };
 
   const fee = rawTxInfo.fee || 0;
@@ -445,6 +433,30 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
             </Column>
           </Column>
         </Column>
+        {result && (
+          <InscribeResultPopver
+            inscription={result.inscription}
+            onClose={() => {
+              // todo
+              wallet.getBRC20Summary(currentAccount.address, tokenBalance.ticker).then((v) => {
+                if (contextData.isApproval) {
+                  resolveApproval({
+                    inscriptionId: result.inscriptionId,
+                    inscriptionNumber: result.inscriptionNumber,
+                    ticker: tokenBalance.ticker,
+                    amount: result.amount
+                  });
+                } else {
+                  navigate('BRC20SendScreen', {
+                    tokenBalance: v.tokenBalance,
+                    selectedInscriptionIds: [result.inscriptionId],
+                    selectedAmount: parseInt(result.amount)
+                  });
+                }
+              });
+            }}
+          />
+        )}
       </Content>
       {contextData.isApproval ? (
         <Footer>
