@@ -195,6 +195,7 @@ export interface DecodedPsbt {
     address: string;
     value: number;
     inscriptions: Inscription[];
+    sighashType: number;
   }[];
   outputInfos: {
     address: string;

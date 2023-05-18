@@ -134,10 +134,7 @@ export default function WalletTabScreen() {
               preset="default"
               icon="bitcoin"
               onClick={(e) => {
-                wallet.createMoonpayUrl(currentAccount.address).then((url) => {
-                  window.open(url);
-                });
-                // navigate('HistoryScreen');
+                navigate('MoonPayScreen');
               }}
               full
             />

@@ -21,10 +21,9 @@ import SwitchKeyringScreen from './Account/SwitchKeyringScreen';
 import UnlockScreen from './Account/UnlockScreen';
 import ApprovalScreen from './Approval/ApprovalScreen';
 import ConnectedSitesScreen from './Approval/ConnectedSitesScreen';
+import { InscribeTransferScreen } from './Approval/components/InscribeTransfer';
 import BRC20SendScreen from './BRC20/BRC20SendScreen';
 import BRC20TokenScreen from './BRC20/BRC20TokenScreen';
-import InscribeConfirmScreen from './Inscribe/InscribeConfirmScreen';
-import InscribeTransferScreen from './Inscribe/InscribeTransferScreen';
 import AppTabScrren from './Main/AppTabScreen';
 import BoostScreen from './Main/BoostScreen';
 import DiscoverTabScreen from './Main/DiscoverTabScreen';
@@ -41,6 +40,7 @@ import NetworkTypeScreen from './Settings/NetworkTypeScreen';
 import UpgradeNoticeScreen from './Settings/UpgradeNoticeScreen';
 import TestScreen from './Test/TestScreen';
 import HistoryScreen from './Wallet/HistoryScreen';
+import MoonPayScreen from './Wallet/MoonPayScreen';
 import OrdinalsDetailScreen from './Wallet/OrdinalsDetailScreen';
 import OrdinalsTxConfirmScreen from './Wallet/OrdinalsTxConfirmScreen';
 import OrdinalsTxCreateScreen from './Wallet/OrdinalsTxCreateScreen';
@@ -192,10 +192,6 @@ const routes = {
     path: '/inscribe/transfer',
     element: <InscribeTransferScreen />
   },
-  InscribeConfirmScreen: {
-    path: '/inscribe/confirm',
-    element: <InscribeConfirmScreen />
-  },
   BRC20SendScreen: {
     path: '/brc20/send',
     element: <BRC20SendScreen />
@@ -207,6 +203,10 @@ const routes = {
   TestScreen: {
     path: '/test',
     element: <TestScreen />
+  },
+  MoonPayScreen: {
+    path: '/moonpay',
+    element: <MoonPayScreen />
   }
 };
 

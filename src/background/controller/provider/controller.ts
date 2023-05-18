@@ -187,6 +187,14 @@ class ProviderController extends BaseController {
       const rawtx = tx.toHex()
       return await wallet.pushTx(rawtx)
     }
+
+  @Reflect.metadata('APPROVAL', ['InscribeTransfer', (req) => {
+    const { data: { params: { ticker } } } = req;
+    // todo
+  }])
+    inscribeTransfer = async ({approvalRes}) => {
+      return approvalRes
+    }
 }
 
 export default new ProviderController();

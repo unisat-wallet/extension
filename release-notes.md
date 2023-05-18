@@ -1,6 +1,23 @@
 
 # UniSat Wallet Release Notes
 
+## v1.1.19
+**Minor changes**
+- Fix error of BRC-20 with special characters
+
+## v1.1.18
+**Minor changes**
+- Optimize the display of PSBT
+
+## v1.1.17
+**Major changes**
+- Feature
+  - Add API unisat.inscribeTransfer(ticker:string, amount:string)
+
+**Minor changes**
+- Add sentry to trace bugs
+
+
 ## v1.1.16
 **Major changes**
 - Feature

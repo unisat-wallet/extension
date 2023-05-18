@@ -63,11 +63,19 @@ interface InscriptioinInfo {
 }
 
 function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?: RawTxInfo; type: TxType }) {
-  const inscriptions = useMemo(() => {
-    return txInfo.decodedPsbt.inputInfos.reduce<Inscription[]>((pre, cur) => cur.inscriptions.concat(pre), []);
+  const address = useAccountAddress();
+
+  const sendingInscriptions = useMemo(() => {
+    return txInfo.decodedPsbt.inputInfos
+      .reduce<Inscription[]>((pre, cur) => cur.inscriptions.concat(pre), [])
+      .filter((v) => v.address == address);
   }, [txInfo.decodedPsbt]);
 
-  const address = useAccountAddress();
+  const receivingInscriptions = useMemo(() => {
+    return txInfo.decodedPsbt.outputInfos
+      .reduce<Inscription[]>((pre, cur) => cur.inscriptions.concat(pre), [])
+      .filter((v) => v.address == address);
+  }, [txInfo.decodedPsbt]);
 
   const isCurrentToPayFee = useMemo(() => {
     if (type === TxType.SIGN_TX) {
@@ -88,18 +96,78 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
     return spend;
   }, [txInfo.decodedPsbt]);
 
-  const spendAmount = useMemo(() => satoshisToAmount(spendSatoshis), [spendSatoshis]);
+  const sendingSatoshis = useMemo(() => {
+    const inValue = txInfo.decodedPsbt.inputInfos
+      .filter((v) => v.address === address)
+      .reduce((pre, cur) => cur.value + pre, 0);
+    return inValue;
+  }, [txInfo.decodedPsbt]);
 
-  const sendSatoshis = useMemo(() => spendSatoshis - txInfo.decodedPsbt.fee, [spendSatoshis, txInfo]);
-  const sendAmount = useMemo(() => satoshisToAmount(sendSatoshis), [sendSatoshis]);
+  const receivingSatoshis = useMemo(() => {
+    const outValue = txInfo.decodedPsbt.outputInfos
+      .filter((v) => v.address === address)
+      .reduce((pre, cur) => cur.value + pre, 0);
+    return outValue;
+  }, [txInfo.decodedPsbt]);
+
+  const spendAmount = useMemo(() => satoshisToAmount(spendSatoshis), [spendSatoshis]);
+  const balanceChangedAmount = useMemo(
+    () => satoshisToAmount(receivingSatoshis - sendingSatoshis),
+    [sendingSatoshis, receivingSatoshis]
+  );
+  const sendingAmount = useMemo(() => satoshisToAmount(sendingSatoshis), [sendingSatoshis]);
+  const receivingAmount = useMemo(() => satoshisToAmount(receivingSatoshis), [receivingSatoshis]);
 
   const feeAmount = useMemo(() => satoshisToAmount(txInfo.decodedPsbt.fee), [txInfo.decodedPsbt]);
 
-  const outputValueSaotoshis = useMemo(
-    () => inscriptions.reduce((pre, cur) => pre + cur.outputValue, 0),
-    [inscriptions]
+  const sendingInscriptionSaotoshis = useMemo(
+    () => sendingInscriptions.reduce((pre, cur) => pre + cur.outputValue, 0),
+    [sendingInscriptions]
   );
-  const outputValueAmount = useMemo(() => satoshisToAmount(outputValueSaotoshis), [outputValueSaotoshis]);
+  const sendingInscriptionAmount = useMemo(
+    () => satoshisToAmount(sendingInscriptionSaotoshis),
+    [sendingInscriptionSaotoshis]
+  );
+
+  const receivingInscriptionSaotoshis = useMemo(
+    () => receivingInscriptions.reduce((pre, cur) => pre + cur.outputValue, 0),
+    [receivingInscriptions]
+  );
+  const receivingInscriptionAmount = useMemo(
+    () => satoshisToAmount(receivingInscriptionSaotoshis),
+    [receivingInscriptionSaotoshis]
+  );
+
+  if (type === TxType.SIGN_TX) {
+    return (
+      <Column gap="lg">
+        <Text text="Sign Transaction" preset="title-bold" textCenter mt="lg" />
+        <Row justifyCenter>
+          <Card style={{ backgroundColor: '#272626', maxWidth: 320, width: 320 }}>
+            <Column gap="lg">
+              <Column>
+                <Column>
+                  <Column justifyCenter>
+                    <Row itemsCenter>
+                      <Text
+                        text={(receivingSatoshis > sendingSatoshis ? '+' : '') + balanceChangedAmount}
+                        color={receivingSatoshis > sendingSatoshis ? 'white' : 'white'}
+                        preset="bold"
+                        textCenter
+                        size="xxl"
+                      />
+                      <Text text="BTC" color="textDim" />
+                    </Row>
+                  </Column>
+                </Column>
+              </Column>
+            </Column>
+          </Card>
+        </Row>
+      </Column>
+    );
+  }
+
   return (
     <Column gap="lg">
       <Text text="Sign Transaction" preset="title-bold" textCenter mt="lg" />
@@ -117,31 +185,35 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
               )}
               {rawTxInfo && <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />}
 
-              {inscriptions.length > 0 && (
+              {sendingInscriptions.length > 0 && (
                 <Column justifyCenter>
                   <Text
                     text={
-                      inscriptions.length === 1 ? 'Spend Inscription' : `Spend Inscription (${inscriptions.length})`
+                      sendingInscriptions.length === 1
+                        ? 'Spend Inscription'
+                        : `Spend Inscription (${sendingInscriptions.length})`
                     }
                     textCenter
                     color="textDim"
                   />
                   <Row overflowX gap="lg" justifyCenter style={{ width: 280 }} pb="lg">
-                    {inscriptions.map((v) => (
+                    {sendingInscriptions.map((v) => (
                       <InscriptionPreview key={v.inscriptionId} data={v} preset="small" />
                     ))}
                   </Row>
                 </Column>
               )}
-              {inscriptions.length > 0 && <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />}
+              {sendingInscriptions.length > 0 && (
+                <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
+              )}
 
               <Column>
                 <Text text={'Spend Amount'} textCenter color="textDim" />
 
                 <Column justifyCenter>
                   <Text text={spendAmount} color="white" preset="bold" textCenter size="xxl" />
-                  {outputValueSaotoshis > 0 && (
-                    <Text text={`${outputValueAmount} (in inscriptions)`} preset="sub" textCenter />
+                  {sendingInscriptionSaotoshis > 0 && (
+                    <Text text={`${sendingInscriptionAmount} (in inscriptions)`} preset="sub" textCenter />
                   )}
                   {isCurrentToPayFee && <Text text={`${feeAmount} (network fee)`} preset="sub" textCenter />}
                 </Column>
@@ -221,6 +293,8 @@ export default function SignPsbt({
   const [loading, setLoading] = useState(true);
 
   const tools = useTools();
+
+  const address = useAccountAddress();
 
   const init = async () => {
     let txError = '';
@@ -318,6 +392,22 @@ export default function SignPsbt({
     }
   }, [txInfo.decodedPsbt]);
 
+  const sendingInscriptions = useMemo(() => {
+    return txInfo.decodedPsbt.inputInfos
+      .reduce<Inscription[]>((pre, cur) => cur.inscriptions.concat(pre), [])
+      .filter((v) => v.address == address);
+  }, [txInfo.decodedPsbt]);
+
+  const canChanged = useMemo(() => {
+    let val = true;
+    txInfo.decodedPsbt.inputInfos.forEach((v) => {
+      if (v.address == address && (!v.sighashType || v.sighashType === 1)) {
+        val = false;
+      }
+    });
+    return val;
+  }, [txInfo.decodedPsbt]);
+
   if (loading) {
     return (
       <Layout>
@@ -366,13 +456,67 @@ export default function SignPsbt({
                 <Card>
                   <Column full justifyCenter>
                     {txInfo.decodedPsbt.inputInfos.map((v, index) => {
+                      const isToSign = address == v.address;
+                      const inscriptions = v.inscriptions;
                       return (
                         <Row
                           key={'output_' + index}
                           style={index === 0 ? {} : { borderColor: colors.border, borderTopWidth: 1, paddingTop: 10 }}
-                          justifyBetween>
-                          <AddressText address={v.address} />
-                          <Text text={`${satoshisToAmount(v.value)} BTC`} />
+                          itemsCenter>
+                          <Column fullX>
+                            <Row fullX justifyBetween>
+                              <Column>
+                                <Row>
+                                  <AddressText address={v.address} color={isToSign ? 'white' : 'textDim'} />
+                                  {isToSign && (
+                                    <Row style={{ borderWidth: 1, borderColor: 'gold', borderRadius: 5, padding: 2 }}>
+                                      <Text text="to sign" color="gold" size="xs" />
+                                    </Row>
+                                  )}
+                                </Row>
+
+                                {/* <Row>
+                              <Text text="via" preset="sub" />
+                              <Text
+                                text={shortAddress(v.txid, 6)}
+                                preset="link"
+                                onClick={() => {
+                                  const url = generateTxUrl(v.txid);
+                                  window.open(url);
+                                }}
+                              />
+                              <Text text={`[${v.vout}]`} preset="sub" />
+                            </Row> */}
+                              </Column>
+                              <Row>
+                                <Text text={`${satoshisToAmount(v.value)}`} color={isToSign ? 'white' : 'textDim'} />
+                                <Text text="BTC" color="textDim" />
+                              </Row>
+                            </Row>
+
+                            <Row>
+                              {inscriptions.length > 0 && (
+                                <Column justifyCenter>
+                                  <Text
+                                    text={`Inscriptions (${inscriptions.length})`}
+                                    color={isToSign ? 'white' : 'textDim'}
+                                  />
+                                  <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
+                                    {inscriptions.map((v) => (
+                                      <InscriptionPreview
+                                        key={v.inscriptionId}
+                                        data={v}
+                                        preset="small"
+                                        onClick={() => {
+                                          window.open(v.preview);
+                                        }}
+                                      />
+                                    ))}
+                                  </Row>
+                                </Column>
+                              )}
+                            </Row>
+                          </Column>
                         </Row>
                       );
                     })}
@@ -385,29 +529,63 @@ export default function SignPsbt({
                 <Card>
                   <Column full justifyCenter gap="lg">
                     {txInfo.decodedPsbt.outputInfos.map((v, index) => {
+                      const isToSign = address == v.address;
+                      const inscriptions = v.inscriptions;
                       return (
-                        <Row
+                        <Column
                           key={'output_' + index}
-                          style={index === 0 ? {} : { borderColor: colors.border, borderTopWidth: 1, paddingTop: 10 }}
-                          justifyBetween>
-                          <AddressText address={v.address} />
-                          <Text text={`${satoshisToAmount(v.value)} BTC`} />
-                        </Row>
+                          style={index === 0 ? {} : { borderColor: colors.border, borderTopWidth: 1, paddingTop: 10 }}>
+                          <Column>
+                            <Row justifyBetween>
+                              <AddressText address={v.address} color={isToSign ? 'white' : 'textDim'} />
+                              <Row>
+                                <Text text={`${satoshisToAmount(v.value)}`} color={isToSign ? 'white' : 'textDim'} />
+                                <Text text="BTC" color="textDim" />
+                              </Row>
+                            </Row>
+                          </Column>
+                          <Row>
+                            {canChanged === false && inscriptions.length > 0 && (
+                              <Column justifyCenter>
+                                <Text
+                                  text={`Inscriptions (${inscriptions.length})`}
+                                  color={isToSign ? 'white' : 'textDim'}
+                                />
+                                <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
+                                  {inscriptions.map((v) => (
+                                    <InscriptionPreview
+                                      key={v.inscriptionId}
+                                      data={v}
+                                      preset="small"
+                                      onClick={() => {
+                                        window.open(v.preview);
+                                      }}
+                                    />
+                                  ))}
+                                </Row>
+                              </Column>
+                            )}
+                          </Row>
+                        </Column>
                       );
                     })}
                   </Column>
                 </Card>
               </Column>
 
-              <Section title="NETWORK FEE:">
-                <Text text={networkFee} />
-                <Text text="BTC" color="textDim" />
-              </Section>
+              {canChanged == false && (
+                <Section title="NETWORK FEE:">
+                  <Text text={networkFee} />
+                  <Text text="BTC" color="textDim" />
+                </Section>
+              )}
 
-              <Section title="NETWORK FEE RATE:">
-                <Text text={txInfo.decodedPsbt.feeRate.toString()} />
-                <Text text="sat/vB" color="textDim" />
-              </Section>
+              {canChanged == false && (
+                <Section title="NETWORK FEE RATE:">
+                  <Text text={txInfo.decodedPsbt.feeRate.toString()} />
+                  <Text text="sat/vB" color="textDim" />
+                </Section>
+              )}
             </Column>
           )}
 
