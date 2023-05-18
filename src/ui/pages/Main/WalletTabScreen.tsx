@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { KEYRING_TYPE } from '@/shared/constant';
-import { TokenBalance, NetworkType, Inscription } from '@/shared/types';
+import { TokenBalance, NetworkType, Inscription, WalletConfig } from '@/shared/types';
 import { Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -47,6 +47,9 @@ export default function WalletTabScreen() {
 
   const dispatch = useAppDispatch();
   const { tabKey } = useWalletTabScreenState();
+
+  const [walletConfig, setWalletConfig] = useState<WalletConfig>({ moonPayEnabled: true, statusMessage: '' });
+
   useEffect(() => {
     const run = async () => {
       const activeTab = await getCurrentTab();
@@ -57,6 +60,10 @@ export default function WalletTabScreen() {
       }
     };
     run();
+
+    wallet.getWalletConfig().then((v) => {
+      if (v) setWalletConfig(v);
+    });
   }, []);
 
   const tabItems = [
@@ -105,6 +112,8 @@ export default function WalletTabScreen() {
 
           {isTestNetwork && <Text text="Bitcoin Testnet is used for testing." color="danger" textCenter />}
 
+          {walletConfig.statusMessage && <Text text={walletConfig.statusMessage} color="danger" textCenter />}
+
           <Text text={balanceValue + '  BTC'} preset="title-bold" textCenter size="xxxl" />
 
           <AddressBar />
@@ -129,15 +138,17 @@ export default function WalletTabScreen() {
               }}
               full
             />
-            <Button
-              text="Buy"
-              preset="default"
-              icon="bitcoin"
-              onClick={(e) => {
-                navigate('MoonPayScreen');
-              }}
-              full
-            />
+            {walletConfig.moonPayEnabled && (
+              <Button
+                text="Buy"
+                preset="default"
+                icon="bitcoin"
+                onClick={(e) => {
+                  navigate('MoonPayScreen');
+                }}
+                full
+              />
+            )}
           </Row>
 
           <TabBar

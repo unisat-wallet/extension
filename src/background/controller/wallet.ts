@@ -833,6 +833,9 @@ export class WalletController extends BaseController {
     if (!currentAccount) {
       currentAccount = currentKeyring.accounts[0];
     }
+    if (currentAccount) {
+      openapiService.setClientAddress(currentAccount.address);
+    }
     return currentAccount;
   };
 
@@ -1063,8 +1066,12 @@ export class WalletController extends BaseController {
   };
 
   createMoonpayUrl = (address: string) => {
-    return openapiService.createMoonpayUrl(address)
-  }
+    return openapiService.createMoonpayUrl(address);
+  };
+
+  getWalletConfig = () => {
+    return openapiService.store.config;
+  };
 }
 
 export default new WalletController();

@@ -218,3 +218,8 @@ export interface RawTxInfo {
   toAddressInfo?: ToAddressInfo;
   fee?: number;
 }
+
+export interface WalletConfig {
+  moonPayEnabled: boolean;
+  statusMessage: string;
+}
