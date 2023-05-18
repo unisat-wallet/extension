@@ -131,7 +131,13 @@ export class WalletController extends BaseController {
       confirm_amount: '0',
       pending_amount: '0',
       amount: '0',
-      usd_value: '0'
+      usd_value: '0',
+      confirm_btc_amount: '0',
+      pending_btc_amount: '0',
+      btc_amount: '0',
+      confirm_inscription_amount: '0',
+      pending_inscription_amount: '0',
+      inscription_amount: '0'
     };
     if (!address) return defaultBalance;
     return preferenceService.getAddressBalance(address) || defaultBalance;
