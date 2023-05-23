@@ -1,17 +1,17 @@
 import { EventEmitter } from 'events';
 
-import browser, { browserTabsCreate } from './browser';
+import { browserTabsCreate, browserTabsOnRemoved, browserTabsOnUpdated } from './browser';
 
 const tabEvent = new EventEmitter();
 
-browser.tabs.onUpdated.addListener((tabId, changeInfo) => {
+browserTabsOnUpdated((tabId, changeInfo) => {
   if (changeInfo.url) {
     tabEvent.emit('tabUrlChanged', tabId, changeInfo.url);
   }
 });
 
 // window close will trigger this event also
-browser.tabs.onRemoved.addListener((tabId) => {
+browserTabsOnRemoved((tabId) => {
   tabEvent.emit('tabRemove', tabId);
 });
 

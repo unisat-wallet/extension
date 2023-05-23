@@ -13,7 +13,7 @@ import {
   sessionService
 } from './service';
 import { storage } from './webapi';
-import browser from './webapi/browser';
+import { browserRuntimeOnConnect, browserRuntimeOnInstalled } from './webapi/browser';
 
 const { PortMessage } = Message;
 
@@ -37,7 +37,7 @@ async function restoreAppState() {
 restoreAppState();
 
 // for page provider
-browser.runtime.onConnect.addListener((port) => {
+browserRuntimeOnConnect((port) => {
   if (port.name === 'popup' || port.name === 'notification' || port.name === 'tab') {
     const pm = new PortMessage(port as any);
     pm.listen((data) => {
@@ -116,7 +116,7 @@ const addAppInstalledEvent = () => {
   }, 1000);
 };
 
-browser.runtime.onInstalled.addListener((details) => {
+browserRuntimeOnInstalled((details) => {
   if (details.reason === 'install') {
     addAppInstalledEvent();
   }

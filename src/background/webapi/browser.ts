@@ -128,4 +128,32 @@ export async function browserTabsUpdate(tabId: number, params: any) {
   }
 }
 
+export function browserWindowsOnFocusChanged(listener) {
+  browser.windows.onFocusChanged.addListener(listener);
+}
+
+export function browserWindowsOnRemoved(listener) {
+  browser.windows.onRemoved.addListener(listener);
+}
+
+export function browserTabsOnUpdated(listener) {
+  browser.tabs.onUpdated.addListener(listener);
+}
+
+export function browserTabsOnRemoved(listener) {
+  browser.tabs.onRemoved.addListener(listener);
+}
+
+export function browserRuntimeOnConnect(listener) {
+  browser.runtime.onConnect.addListener(listener);
+}
+
+export function browserRuntimeOnInstalled(listener) {
+  browser.runtime.onInstalled.addListener(listener);
+}
+
+export function browserRuntimeConnect(extensionId?: string, connectInfo?: any) {
+  return browser.runtime.connect(extensionId, connectInfo);
+}
+
 export default browser;

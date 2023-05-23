@@ -104,12 +104,12 @@ function task_package(cb) {
     if (options.browser == 'firefox') {
       return gulp
         .src(`dist/${options.browser}/**/*`)
-        .pipe(zip(`${brandName}-${options.browser}-v${version}.xpi`))
+        .pipe(zip(`${brandName}-${options.browser}-${options.manifest}-v${version}.xpi`))
         .pipe(gulp.dest('./dist'));
     } else {
       return gulp
         .src(`dist/${options.browser}/**/*`)
-        .pipe(zip(`${brandName}-${options.browser}-v${version}.zip`))
+        .pipe(zip(`${brandName}-${options.browser}-${options.manifest}-v${version}.zip`))
         .pipe(gulp.dest('./dist'));
     }
   }

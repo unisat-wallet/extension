@@ -2,21 +2,22 @@ import { EventEmitter } from 'events';
 
 import { IS_WINDOWS } from '@/shared/constant';
 
-import browser, {
+import {
   browserWindowsCreate,
   browserWindowsGetCurrent,
+  browserWindowsOnFocusChanged,
+  browserWindowsOnRemoved,
   browserWindowsRemove,
   browserWindowsUpdate
 } from './browser';
 
 const event = new EventEmitter();
 
-// if focus other windows, then reject the approval
-browser.windows.onFocusChanged.addListener((winId) => {
+browserWindowsOnFocusChanged((winId) => {
   event.emit('windowFocusChange', winId);
 });
 
-browser.windows.onRemoved.addListener((winId) => {
+browserWindowsOnRemoved((winId) => {
   event.emit('windowRemoved', winId);
 });
 
