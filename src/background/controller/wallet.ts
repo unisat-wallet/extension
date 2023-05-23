@@ -377,7 +377,7 @@ export class WalletController extends BaseController {
             publicKey: account.pubkey,
             sighashTypes: v.sighashType ? [v.sighashType] : undefined
           });
-          if (keyring.addressType === AddressType.P2TR && !v.tapInternalKey) {
+          if ((keyring.addressType === AddressType.P2TR || keyring.addressType === AddressType.M44_P2TR) && !v.tapInternalKey) {
             v.tapInternalKey = toXOnly(Buffer.from(account.pubkey, 'hex'));
           }
         }
