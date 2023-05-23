@@ -1,6 +1,16 @@
 
 # UniSat Wallet Release Notes
 
+## v1.1.20
+**Major changes**
+- Support purchasing BTC through MoonPay
+- Disable RBF to prevent accidental triggering
+- Display the output value of inscription by default
+- Display balance details when hovering over the balance
+- Use mempool.space to display transaction history	
+- Add a prompt to wait for BRC20 updates after inscribing a TRANSFER
+
+
 ## v1.1.19
 **Minor changes**
 - Fix error of BRC-20 with special characters

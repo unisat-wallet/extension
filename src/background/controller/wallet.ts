@@ -131,7 +131,13 @@ export class WalletController extends BaseController {
       confirm_amount: '0',
       pending_amount: '0',
       amount: '0',
-      usd_value: '0'
+      usd_value: '0',
+      confirm_btc_amount: '0',
+      pending_btc_amount: '0',
+      btc_amount: '0',
+      confirm_inscription_amount: '0',
+      pending_inscription_amount: '0',
+      inscription_amount: '0'
     };
     if (!address) return defaultBalance;
     return preferenceService.getAddressBalance(address) || defaultBalance;
@@ -604,7 +610,8 @@ export class WalletController extends BaseController {
       changeAddress: account.address,
       receiverToPayFee,
       pubkey: account.pubkey,
-      feeRate
+      feeRate,
+      enableRBF: false
     });
 
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
@@ -661,7 +668,8 @@ export class WalletController extends BaseController {
       changeAddress: account.address,
       pubkey: account.pubkey,
       feeRate,
-      outputValue
+      outputValue,
+      enableRBF: false
     });
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
@@ -715,7 +723,8 @@ export class WalletController extends BaseController {
       network: psbtNetwork,
       changeAddress: account.address,
       pubkey: account.pubkey,
-      feeRate
+      feeRate,
+      enableRBF: false
     });
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
@@ -832,6 +841,9 @@ export class WalletController extends BaseController {
     });
     if (!currentAccount) {
       currentAccount = currentKeyring.accounts[0];
+    }
+    if (currentAccount) {
+      openapiService.setClientAddress(currentAccount.address);
     }
     return currentAccount;
   };
@@ -1060,6 +1072,14 @@ export class WalletController extends BaseController {
 
   expireUICachedData = (address: string) => {
     return preferenceService.expireUICachedData(address);
+  };
+
+  createMoonpayUrl = (address: string) => {
+    return openapiService.createMoonpayUrl(address);
+  };
+
+  getWalletConfig = () => {
+    return openapiService.store.config;
   };
 }
 

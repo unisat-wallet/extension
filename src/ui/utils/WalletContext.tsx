@@ -22,7 +22,8 @@ import {
   TokenBalance,
   TokenTransfer,
   AddressTokenSummary,
-  DecodedPsbt
+  DecodedPsbt,
+  WalletConfig
 } from '@/shared/types';
 
 export interface WalletController {
@@ -183,6 +184,10 @@ export interface WalletController {
   getBRC20Summary(address: string, ticker: string): Promise<AddressTokenSummary>;
 
   expireUICachedData(address: string): Promise<void>;
+
+  createMoonpayUrl(address: string): Promise<string>;
+
+  getWalletConfig(): Promise<WalletConfig>;
 }
 
 const WalletContext = createContext<{

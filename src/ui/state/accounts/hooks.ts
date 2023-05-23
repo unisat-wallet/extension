@@ -130,7 +130,9 @@ export function useFetchBalanceCallback() {
     dispatch(
       accountActions.setBalance({
         address: currentAccount.address,
-        amount: _accountBalance.amount
+        amount: _accountBalance.amount,
+        btc_amount: _accountBalance.btc_amount,
+        inscription_amount: _accountBalance.inscription_amount
       })
     );
     if (cachedBalance.amount !== _accountBalance.amount) {

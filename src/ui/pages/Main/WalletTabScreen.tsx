@@ -1,8 +1,9 @@
+import { Tooltip } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 
 import { KEYRING_TYPE } from '@/shared/constant';
-import { TokenBalance, NetworkType, Inscription } from '@/shared/types';
-import { Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
+import { TokenBalance, NetworkType, Inscription, WalletConfig } from '@/shared/types';
+import { Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressBar } from '@/ui/components/AddressBar';
@@ -17,9 +18,10 @@ import { getCurrentTab } from '@/ui/features/browser/tabs';
 import { useAccountBalance, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { useNetworkType } from '@/ui/state/settings/hooks';
+import { useBlockstreamUrl, useNetworkType } from '@/ui/state/settings/hooks';
 import { useWalletTabScreenState } from '@/ui/state/ui/hooks';
 import { WalletTabScreenTabKey, uiActions } from '@/ui/state/ui/reducer';
+import { fontSizes } from '@/ui/theme/font';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
@@ -33,6 +35,7 @@ export default function WalletTabScreen() {
   const isTestNetwork = networkType === NetworkType.TESTNET;
 
   const currentKeyring = useCurrentKeyring();
+  const currentAccount = useCurrentAccount();
   const balanceValue = useMemo(() => {
     if (accountBalance.amount === '0') {
       return '--';
@@ -46,6 +49,9 @@ export default function WalletTabScreen() {
 
   const dispatch = useAppDispatch();
   const { tabKey } = useWalletTabScreenState();
+
+  const [walletConfig, setWalletConfig] = useState<WalletConfig>({ moonPayEnabled: true, statusMessage: '' });
+
   useEffect(() => {
     const run = async () => {
       const activeTab = await getCurrentTab();
@@ -56,6 +62,10 @@ export default function WalletTabScreen() {
       }
     };
     run();
+
+    wallet.getWalletConfig().then((v) => {
+      if (v) setWalletConfig(v);
+    });
   }, []);
 
   const tabItems = [
@@ -70,6 +80,8 @@ export default function WalletTabScreen() {
       children: <BRC20List />
     }
   ];
+
+  const blockstreamUrl = useBlockstreamUrl();
 
   return (
     <Layout>
@@ -104,7 +116,28 @@ export default function WalletTabScreen() {
 
           {isTestNetwork && <Text text="Bitcoin Testnet is used for testing." color="danger" textCenter />}
 
-          <Text text={balanceValue + '  BTC'} preset="title-bold" textCenter size="xxxl" />
+          {walletConfig.statusMessage && <Text text={walletConfig.statusMessage} color="danger" textCenter />}
+
+          <Tooltip
+            title={
+              <span>
+                <Row justifyBetween>
+                  <span>{'BTC Balance'}</span>
+                  <span>{` ${accountBalance.btc_amount} BTC`}</span>
+                </Row>
+                <Row justifyBetween>
+                  <span>{'Inscription Balance'}</span>
+                  <span>{` ${accountBalance.inscription_amount} BTC`}</span>
+                </Row>
+              </span>
+            }
+            overlayStyle={{
+              fontSize: fontSizes.xs
+            }}>
+            <div>
+              <Text text={balanceValue + '  BTC'} preset="title-bold" textCenter size="xxxl" />
+            </div>
+          </Tooltip>
 
           <AddressBar />
 
@@ -128,25 +161,37 @@ export default function WalletTabScreen() {
               }}
               full
             />
-            <Button
-              text="History"
-              preset="default"
-              icon="history"
-              onClick={(e) => {
-                navigate('HistoryScreen');
-              }}
-              full
-            />
+            {walletConfig.moonPayEnabled && (
+              <Button
+                text="Buy"
+                preset="default"
+                icon="bitcoin"
+                onClick={(e) => {
+                  navigate('MoonPayScreen');
+                }}
+                full
+              />
+            )}
           </Row>
 
-          <TabBar
-            defaultActiveKey={tabKey}
-            activeKey={tabKey}
-            items={tabItems}
-            onTabClick={(key) => {
-              dispatch(uiActions.updateWalletTabScreen({ tabKey: key }));
-            }}
-          />
+          <Row justifyBetween>
+            <TabBar
+              defaultActiveKey={tabKey}
+              activeKey={tabKey}
+              items={tabItems}
+              onTabClick={(key) => {
+                dispatch(uiActions.updateWalletTabScreen({ tabKey: key }));
+              }}
+            />
+            <Row
+              itemsCenter
+              onClick={() => {
+                window.open(`${blockstreamUrl}/address/${currentAccount.address}`);
+              }}>
+              <Text text={'View History'} size="xs" />
+              <Icon icon="link" size={fontSizes.xs} />
+            </Row>
+          </Row>
 
           {tabItems[tabKey].children}
         </Column>

@@ -40,6 +40,7 @@ import NetworkTypeScreen from './Settings/NetworkTypeScreen';
 import UpgradeNoticeScreen from './Settings/UpgradeNoticeScreen';
 import TestScreen from './Test/TestScreen';
 import HistoryScreen from './Wallet/HistoryScreen';
+import MoonPayScreen from './Wallet/MoonPayScreen';
 import OrdinalsDetailScreen from './Wallet/OrdinalsDetailScreen';
 import OrdinalsTxConfirmScreen from './Wallet/OrdinalsTxConfirmScreen';
 import OrdinalsTxCreateScreen from './Wallet/OrdinalsTxCreateScreen';
@@ -202,6 +203,10 @@ const routes = {
   TestScreen: {
     path: '/test',
     element: <TestScreen />
+  },
+  MoonPayScreen: {
+    path: '/moonpay',
+    element: <MoonPayScreen />
   }
 };
 

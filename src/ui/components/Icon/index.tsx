@@ -11,6 +11,7 @@ export const svgRegistry = {
   right: './images/icons/arrow-right.svg',
   left: './images/icons/arrow-left.svg',
   down: './images/icons/down.svg',
+  link: './images/icons/arrow-up-right.svg',
 
   discord: './images/icons/discord.svg',
   twitter: './images/icons/twitter.svg',
@@ -36,6 +37,7 @@ export const svgRegistry = {
   'circle-check': '/images/icons/circle-check.svg',
   pencil: '/images/icons/pencil.svg',
   'circle-info': '/images/icons/circle-info.svg',
+  bitcoin: './images/icons/bitcoin.svg',
   'circle-question': '/images/icons/circle-question.svg'
 };
 
