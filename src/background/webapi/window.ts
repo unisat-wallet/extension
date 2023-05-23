@@ -2,7 +2,12 @@ import { EventEmitter } from 'events';
 
 import { IS_WINDOWS } from '@/shared/constant';
 
-import browser from './browser';
+import browser, {
+  browserWindowsCreate,
+  browserWindowsGetCurrent,
+  browserWindowsRemove,
+  browserWindowsUpdate
+} from './browser';
 
 const event = new EventEmitter();
 
@@ -26,18 +31,18 @@ const create = async ({ url, ...rest }): Promise<number | undefined> => {
     top: cTop,
     left: cLeft,
     width
-  } = await browser.windows.getCurrent({
+  } = await browserWindowsGetCurrent({
     windowTypes: ['normal']
   } as any);
 
   const top = cTop! + BROWSER_HEADER;
   const left = cLeft! + width! - WINDOW_SIZE.width;
 
-  const currentWindow = await browser.windows.getCurrent();
+  const currentWindow = await browserWindowsGetCurrent();
   let win;
   if (currentWindow.state === 'fullscreen') {
     // browser.windows.create not pass state to chrome
-    win = await chrome.windows.create({
+    win = await browserWindowsCreate({
       focused: true,
       url,
       type: 'popup',
@@ -49,7 +54,7 @@ const create = async ({ url, ...rest }): Promise<number | undefined> => {
       state: 'fullscreen'
     });
   } else {
-    win = await browser.windows.create({
+    win = await browserWindowsCreate({
       focused: true,
       url,
       type: 'popup',
@@ -62,14 +67,14 @@ const create = async ({ url, ...rest }): Promise<number | undefined> => {
 
   // shim firefox
   if (win.left !== left) {
-    await browser.windows.update(win.id!, { left, top });
+    await browserWindowsUpdate(win.id!, { left, top });
   }
 
   return win.id;
 };
 
 const remove = async (winId) => {
-  return browser.windows.remove(winId);
+  return browserWindowsRemove(winId);
 };
 
 const openNotification = ({ route = '', ...rest } = {}): Promise<number | undefined> => {

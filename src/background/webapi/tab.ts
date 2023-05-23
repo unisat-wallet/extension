@@ -1,6 +1,6 @@
 import { EventEmitter } from 'events';
 
-import browser from './browser';
+import browser, { browserTabsCreate } from './browser';
 
 const tabEvent = new EventEmitter();
 
@@ -16,7 +16,7 @@ browser.tabs.onRemoved.addListener((tabId) => {
 });
 
 const createTab = async (url): Promise<number | undefined> => {
-  const tab = await browser.tabs.create({
+  const tab = await browserTabsCreate({
     active: true,
     url
   });

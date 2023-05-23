@@ -1,4 +1,4 @@
-import browser from './browser';
+import { browserStorageLocalGet, browserStorageLocalSet } from './browser';
 
 let cacheMap;
 
@@ -7,14 +7,14 @@ const get = async (prop?) => {
     return cacheMap.get(prop);
   }
 
-  const result = await browser.storage.local.get(null);
+  const result = await browserStorageLocalGet(null);
   cacheMap = new Map(Object.entries(result).map(([k, v]) => [k, v]));
 
   return prop ? result[prop] : result;
 };
 
 const set = async (prop, value): Promise<void> => {
-  await browser.storage.local.set({ [prop]: value });
+  await browserStorageLocalSet({ [prop]: value });
   cacheMap.set(prop, value);
 };
 
