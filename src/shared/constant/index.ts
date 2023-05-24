@@ -267,3 +267,7 @@ export const UNISAT_DOMAIN = '.unisat';
 export const GITHUB_URL = 'https://github.com/unisat-wallet/extension';
 export const DISCORD_URL = 'https://discord.com/invite/EMskB2sMz8';
 export const TWITTER_URL = 'https://twitter.com/unisat_wallet';
+
+export const CHANNEL = process.env.channel!;
+export const VERSION = process.env.release!;
+export const MANIFEST_VERSION = process.env.manifest!;

@@ -25,6 +25,7 @@ async function restoreAppState() {
 
   await preferenceService.init();
 
+  openapiService.setDeviceId(preferenceService.getDeviceId());
   await openapiService.init();
 
   await permissionService.init();

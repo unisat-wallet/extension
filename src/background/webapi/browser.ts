@@ -1,3 +1,5 @@
+import { MANIFEST_VERSION } from '@/shared/constant';
+
 function getBrowser() {
   if (typeof globalThis.browser === 'undefined') {
     return chrome;
@@ -9,7 +11,7 @@ function getBrowser() {
 const browser = getBrowser();
 
 export async function browserWindowsGetCurrent(params?: any) {
-  if (process.env.manifest === 'mv2') {
+  if (MANIFEST_VERSION === 'mv2') {
     return new Promise((resolve, reject) => {
       browser.windows.getCurrent(params, (val) => {
         resolve(val);
@@ -21,7 +23,7 @@ export async function browserWindowsGetCurrent(params?: any) {
 }
 
 export async function browserWindowsCreate(params?: any) {
-  if (process.env.manifest === 'mv2') {
+  if (MANIFEST_VERSION === 'mv2') {
     return new Promise((resolve, reject) => {
       browser.windows.create(params, (val) => {
         resolve(val);
@@ -33,7 +35,7 @@ export async function browserWindowsCreate(params?: any) {
 }
 
 export async function browserWindowsUpdate(windowId: number, updateInfo: any) {
-  if (process.env.manifest == 'mv2') {
+  if (MANIFEST_VERSION == 'mv2') {
     return new Promise((resolve, reject) => {
       browser.windows.update(windowId, updateInfo, (val) => {
         resolve(val);
@@ -45,7 +47,7 @@ export async function browserWindowsUpdate(windowId: number, updateInfo: any) {
 }
 
 export async function browserWindowsRemove(windowId: number) {
-  if (process.env.manifest == 'mv2') {
+  if (MANIFEST_VERSION == 'mv2') {
     return new Promise((resolve, reject) => {
       browser.windows.remove(windowId, (val) => {
         resolve(val);
@@ -57,7 +59,7 @@ export async function browserWindowsRemove(windowId: number) {
 }
 
 export async function browserStorageLocalGet(val: any) {
-  if (process.env.manifest === 'mv2') {
+  if (MANIFEST_VERSION === 'mv2') {
     return new Promise((resolve, reject) => {
       browser.storage.local.get(val, (res) => {
         resolve(res);
@@ -69,7 +71,7 @@ export async function browserStorageLocalGet(val: any) {
 }
 
 export async function browserStorageLocalSet(val: any) {
-  if (process.env.manifest === 'mv2') {
+  if (MANIFEST_VERSION === 'mv2') {
     return new Promise((resolve, reject) => {
       browser.storage.local.set(val, (res) => {
         resolve(res);
@@ -81,7 +83,7 @@ export async function browserStorageLocalSet(val: any) {
 }
 
 export async function browserTabsGetCurrent() {
-  if (process.env.manifest == 'mv2') {
+  if (MANIFEST_VERSION === 'mv2') {
     return new Promise((resolve, reject) => {
       browser.tabs.getCurrent((val) => {
         resolve(val);
@@ -93,7 +95,7 @@ export async function browserTabsGetCurrent() {
 }
 
 export async function browserTabsQuery(params: any) {
-  if (process.env.manifest == 'mv2') {
+  if (MANIFEST_VERSION === 'mv2') {
     return new Promise((resolve, reject) => {
       browser.tabs.query(params, (val) => {
         resolve(val);
@@ -105,7 +107,7 @@ export async function browserTabsQuery(params: any) {
 }
 
 export async function browserTabsCreate(params: any) {
-  if (process.env.manifest == 'mv2') {
+  if (MANIFEST_VERSION === 'mv2') {
     return new Promise((resolve, reject) => {
       browser.tabs.create(params, (val) => {
         resolve(val);
@@ -117,7 +119,7 @@ export async function browserTabsCreate(params: any) {
 }
 
 export async function browserTabsUpdate(tabId: number, params: any) {
-  if (process.env.manifest == 'mv2') {
+  if (MANIFEST_VERSION === 'mv2') {
     return new Promise((resolve, reject) => {
       browser.tabs.update(tabId, params, (val) => {
         resolve(val);

@@ -23,6 +23,7 @@ const config = (env) => {
   const version = env.version;
   const paths = getBrowserPaths(env.browser);
   const manifest = env.manifest;
+  const channel = env.channel;
   // Check if Tailwind config exists
   const useTailwind = fs.existsSync(path.join(paths.appPath, 'tailwind.config.js'));
 
@@ -489,7 +490,8 @@ const config = (env) => {
       new webpack.DefinePlugin({
         'process.env.version': JSON.stringify(`Version: ${version}`),
         'process.env.release': JSON.stringify(version),
-        'process.env.manifest': JSON.stringify(manifest)
+        'process.env.manifest': JSON.stringify(manifest),
+        'process.env.channel': JSON.stringify(channel)
       }),
       new MiniCssExtractPlugin({
         // Options similar to the same options in webpackOptions.output

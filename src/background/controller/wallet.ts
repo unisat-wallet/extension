@@ -1081,6 +1081,14 @@ export class WalletController extends BaseController {
   getWalletConfig = () => {
     return openapiService.store.config;
   };
+
+  getSkippedVersion = () => {
+    return preferenceService.getSkippedVersion();
+  };
+
+  setSkippedVersion = (version: string) => {
+    return preferenceService.setSkippedVersion(version);
+  };
 }
 
 export default new WalletController();

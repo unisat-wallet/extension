@@ -1,5 +1,5 @@
 import { createPersistStore } from '@/background/utils';
-import { OPENAPI_URL_MAINNET, OPENAPI_URL_TESTNET } from '@/shared/constant';
+import { CHANNEL, OPENAPI_URL_MAINNET, OPENAPI_URL_TESTNET, VERSION } from '@/shared/constant';
 import {
   AddressAssets,
   AppSummary,
@@ -32,6 +32,7 @@ enum API_STATUS {
 export class OpenApiService {
   store!: OpenApiStore;
   clientAddress = '';
+  deviceId = '';
   setHost = async (host: string) => {
     this.store.host = host;
     await this.init();
@@ -39,6 +40,10 @@ export class OpenApiService {
 
   getHost = () => {
     return this.store.host;
+  };
+
+  setDeviceId = async (deviceId: string) => {
+    this.deviceId = deviceId;
   };
 
   init = async () => {
@@ -83,8 +88,10 @@ export class OpenApiService {
     }
     const headers = new Headers();
     headers.append('X-Client', 'UniSat Wallet');
-    headers.append('X-Version', process.env.release!);
+    headers.append('X-Version', VERSION);
     headers.append('x-address', this.clientAddress);
+    headers.append('x-channel', CHANNEL);
+    headers.append('x-udid', this.deviceId);
     const res = await fetch(new Request(url), { method: 'GET', headers, mode: 'cors', cache: 'default' });
     const data = await res.json();
     return data;
@@ -94,8 +101,10 @@ export class OpenApiService {
     const url = this.getHost() + route;
     const headers = new Headers();
     headers.append('X-Client', 'UniSat Wallet');
-    headers.append('X-Version', process.env.release!);
+    headers.append('X-Version', VERSION);
     headers.append('x-address', this.clientAddress);
+    headers.append('x-channel', CHANNEL);
+    headers.append('x-udid', this.deviceId);
     headers.append('Content-Type', 'application/json;charset=utf-8');
     const res = await fetch(new Request(url), {
       method: 'POST',

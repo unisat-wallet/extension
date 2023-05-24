@@ -232,7 +232,8 @@ const Main = () => {
   const selfRef = useRef({
     settingsLoaded: false,
     summaryLoaded: false,
-    accountLoaded: false
+    accountLoaded: false,
+    configLoaded: false
   });
   const self = selfRef.current;
   const init = useCallback(async () => {
@@ -273,6 +274,15 @@ const Main = () => {
           dispatch(accountActions.setAppSummary(data));
         });
         self.summaryLoaded = true;
+      }
+
+      if (!self.configLoaded) {
+        wallet.getWalletConfig().then((data) => {
+          dispatch(settingsActions.updateSettings({ walletConfig: data }));
+        });
+        wallet.getSkippedVersion().then((data) => {
+          dispatch(settingsActions.updateSettings({ skippedVersion: data }));
+        });
       }
 
       dispatch(globalActions.update({ isReady: true }));

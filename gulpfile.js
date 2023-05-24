@@ -11,11 +11,12 @@ const uglify = require('gulp-uglify');
 
 //parse arguments
 var knownOptions = {
-  string: ['env', 'browser', 'manifest'],
+  string: ['env', 'browser', 'manifest', 'channel'],
   default: {
     env: 'dev',
     browser: 'chrome',
-    manifest: 'mv3'
+    manifest: 'mv3',
+    channel: 'chrome'
   }
 };
 
@@ -83,7 +84,8 @@ function task_webpack(cb) {
       version: validVersion,
       config: options.env,
       browser: options.browser,
-      manifest: options.manifest
+      manifest: options.manifest,
+      channel: options.channel
     }),
     cb
   );

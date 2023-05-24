@@ -10,7 +10,7 @@ import { useExtensionIsInTab, useOpenExtensionInTab } from '@/ui/features/browse
 import { getCurrentTab } from '@/ui/features/browser/tabs';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { useNetworkType } from '@/ui/state/settings/hooks';
+import { useNetworkType, useVersionInfo } from '@/ui/state/settings/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { spacing } from '@/ui/theme/spacing';
 import { useWallet } from '@/ui/utils';
@@ -91,6 +91,8 @@ export default function SettingsTabScreen() {
 
   const currentKeyring = useCurrentKeyring();
   const currentAccount = useCurrentAccount();
+  const versionInfo = useVersionInfo();
+
   const wallet = useWallet();
   useEffect(() => {
     const run = async () => {
@@ -209,7 +211,18 @@ export default function SettingsTabScreen() {
               }}
             />
           </Row>
-          <Text text={process.env.version} preset="sub" textCenter />
+          <Text text={`Version: ${versionInfo.currentVesion}`} preset="sub" textCenter />
+          {versionInfo.currentVesion != versionInfo.newVersion && (
+            <Text
+              text={`New Version: ${versionInfo.newVersion}`}
+              preset="link"
+              color="red"
+              textCenter
+              onClick={() => {
+                window.open(versionInfo.downloadUrl);
+              }}
+            />
+          )}
         </Column>
       </Content>
       <Footer px="zero" py="zero">

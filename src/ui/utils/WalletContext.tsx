@@ -188,6 +188,9 @@ export interface WalletController {
   createMoonpayUrl(address: string): Promise<string>;
 
   getWalletConfig(): Promise<WalletConfig>;
+
+  getSkippedVersion(): Promise<string>;
+  setSkippedVersion(version: string): Promise<void>;
 }
 
 const WalletContext = createContext<{
