@@ -16,7 +16,7 @@ var knownOptions = {
     env: 'dev',
     browser: 'chrome',
     manifest: 'mv3',
-    channel: 'chrome'
+    channel: 'store'
   }
 };
 
