@@ -114,7 +114,7 @@ class PreferenceService {
         accountAlianNames: {},
         uiCachedData: {},
         skippedVersion: '',
-        deviceId: randomstring.randomstring.generate(10)
+        deviceId: randomstring.generate(10)
       }
     });
     if (!this.store.locale || this.store.locale !== defaultLang) {
@@ -177,7 +177,7 @@ class PreferenceService {
     }
 
     if (!this.store.deviceId) {
-      this.store.deviceId = randomstring.randomstring.generate(10);
+      this.store.deviceId = randomstring.generate(10);
     }
   };
 
