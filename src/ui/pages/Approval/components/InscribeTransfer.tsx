@@ -1,12 +1,13 @@
 import { Tooltip } from 'antd';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { InscribeOrder, RawTxInfo, TokenBalance } from '@/shared/types';
+import { InscribeOrder, RawTxInfo, TokenBalance, TxType } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
+import { Loading } from '@/ui/components/ActionComponent/Loading';
 import { Empty } from '@/ui/components/Empty';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
-import { InscribeResultPopver } from '@/ui/components/InscribeResultPopver';
+import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useNetworkType } from '@/ui/state/settings/hooks';
@@ -16,9 +17,11 @@ import {
   usePushBitcoinTxCallback
 } from '@/ui/state/transactions/hooks';
 import { fontSizes } from '@/ui/theme/font';
+import { spacing } from '@/ui/theme/spacing';
 import { satoshisToAmount, useApproval, useLocationState, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../../MainRoute';
+import SignPsbt from './SignPsbt';
 
 interface Props {
   params: {
@@ -36,7 +39,9 @@ interface Props {
 
 enum Step {
   STEP1,
-  STEP2
+  STEP2,
+  STEP3,
+  STEP4
 }
 
 interface ContextData {
@@ -77,8 +82,12 @@ export default function InscribeTransfer({ params: { data, session } }: Props) {
 
   if (contextData.step === Step.STEP1) {
     return <InscribeTransferStep contextData={contextData} updateContextData={updateContextData} />;
-  } else {
+  } else if (contextData.step === Step.STEP2) {
     return <InscribeConfirmStep contextData={contextData} updateContextData={updateContextData} />;
+  } else if (contextData.step === Step.STEP3) {
+    return <InscribeSignStep contextData={contextData} updateContextData={updateContextData} />;
+  } else {
+    return <InscribeResultStep contextData={contextData} updateContextData={updateContextData} />;
   }
 }
 
@@ -103,8 +112,12 @@ export function InscribeTransferScreen() {
 
   if (contextData.step === Step.STEP1) {
     return <InscribeTransferStep contextData={contextData} updateContextData={updateContextData} />;
-  } else {
+  } else if (contextData.step === Step.STEP2) {
     return <InscribeConfirmStep contextData={contextData} updateContextData={updateContextData} />;
+  } else if (contextData.step === Step.STEP3) {
+    return <InscribeSignStep contextData={contextData} updateContextData={updateContextData} />;
+  } else {
+    return <InscribeResultStep contextData={contextData} updateContextData={updateContextData} />;
   }
 }
 
@@ -324,35 +337,6 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
     return <Empty />;
   }
 
-  const onClickConfirm = () => {
-    tools.showLoading(true);
-    pushBitcoinTx(rawTxInfo.rawtx).then(({ success, txid, error }) => {
-      if (success) {
-        tools.showLoading(true);
-        checkResult();
-      } else {
-        tools.toastError(error);
-      }
-    });
-  };
-
-  const wallet = useWallet();
-  const currentAccount = useCurrentAccount();
-  const [getApproval, resolveApproval, rejectApproval] = useApproval();
-  const navigate = useNavigate();
-  const [result, setResult] = useState<any>();
-  const checkResult = async () => {
-    const result = await wallet.getInscribeResult(order.orderId);
-    if (!result) {
-      setTimeout(() => {
-        checkResult();
-      }, 2000);
-      return;
-    }
-    tools.showLoading(false);
-    setResult(result);
-  };
-
   const fee = rawTxInfo.fee || 0;
   const networkFee = useMemo(() => satoshisToAmount(fee), [fee]);
   const outputValue = useMemo(() => satoshisToAmount(order.outputValue), [order.outputValue]);
@@ -433,30 +417,6 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
             </Column>
           </Column>
         </Column>
-        {result && (
-          <InscribeResultPopver
-            inscription={result.inscription}
-            onClose={() => {
-              // todo
-              wallet.getBRC20Summary(currentAccount.address, tokenBalance.ticker).then((v) => {
-                if (contextData.isApproval) {
-                  resolveApproval({
-                    inscriptionId: result.inscriptionId,
-                    inscriptionNumber: result.inscriptionNumber,
-                    ticker: tokenBalance.ticker,
-                    amount: result.amount
-                  });
-                } else {
-                  navigate('BRC20SendScreen', {
-                    tokenBalance: v.tokenBalance,
-                    selectedInscriptionIds: [result.inscriptionId],
-                    selectedAmount: parseInt(result.amount)
-                  });
-                }
-              });
-            }}
-          />
-        )}
       </Content>
       {contextData.isApproval ? (
         <Footer>
@@ -472,7 +432,221 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
               full
             />
             <Button
-              text="Pay & Inscribe"
+              text="Next"
+              preset="primary"
+              onClick={() => {
+                updateContextData({
+                  step: Step.STEP3
+                });
+                // onClickConfirm();
+              }}
+              full
+            />
+          </Row>
+        </Footer>
+      ) : (
+        <Footer>
+          <Row full>
+            <Button
+              text="Next"
+              preset="primary"
+              onClick={() => {
+                updateContextData({
+                  step: Step.STEP3
+                });
+                // onClickConfirm();
+              }}
+              full
+            />
+          </Row>
+        </Footer>
+      )}
+    </Layout>
+  );
+}
+
+function InscribeSignStep({
+  contextData,
+  updateContextData
+}: {
+  contextData: ContextData;
+  updateContextData: (params: UpdateContextDataParams) => void;
+}) {
+  const pushBitcoinTx = usePushBitcoinTxCallback();
+  const navigate = useNavigate();
+  return (
+    <SignPsbt
+      header={
+        contextData.isApproval ? (
+          <Header>
+            <WebsiteBar session={contextData.session} />
+          </Header>
+        ) : (
+          <Header
+            onBack={() => {
+              updateContextData({
+                step: Step.STEP2
+              });
+            }}
+          />
+        )
+      }
+      params={{
+        data: {
+          psbtHex: contextData.rawTxInfo!.psbtHex,
+          type: TxType.SEND_BITCOIN
+        }
+      }}
+      handleConfirm={() => {
+        pushBitcoinTx(contextData.rawTxInfo!.rawtx).then(({ success, txid, error }) => {
+          if (success) {
+            updateContextData({
+              step: Step.STEP4
+            });
+          } else {
+            navigate('TxFailScreen', { error });
+          }
+        });
+      }}
+    />
+  );
+}
+
+function InscribeResultStep({
+  contextData,
+  updateContextData
+}: {
+  contextData: ContextData;
+  updateContextData: (params: UpdateContextDataParams) => void;
+}) {
+  // contextData.tokenBalance = {
+  //   availableBalance: '1900',
+  //   availableBalanceSafe: '1900',
+  //   availableBalanceUnSafe: '0',
+  //   overallBalance: '2000',
+  //   ticker: 'sats',
+  //   transferableBalance: '100'
+  // };
+  // contextData.order = {
+  //   orderId: 'fd9915ced9091f74765ad5c17e7e83425b875a87',
+  //   payAddress: 'bc1p7fmwed05ux6hxn6pz63a8ce7nnzmdppfydny2e3gspdxxtc37duqex24ss',
+  //   totalFee: 6485,
+  //   minerFee: 3940,
+  //   originServiceFee: 2499,
+  //   serviceFee: 1999,
+  //   outputValue: 546
+  // };
+  if (!contextData.order || !contextData.tokenBalance) {
+    return <Empty />;
+  }
+
+  const { tokenBalance, order } = contextData;
+  const tools = useTools();
+  const wallet = useWallet();
+  const currentAccount = useCurrentAccount();
+  const [getApproval, resolveApproval, rejectApproval] = useApproval();
+  const navigate = useNavigate();
+  const [result, setResult] = useState<any>();
+  const checkResult = async () => {
+    const result = await wallet.getInscribeResult(order.orderId);
+    if (!result) {
+      setTimeout(() => {
+        checkResult();
+      }, 2000);
+      return;
+    }
+    tools.showLoading(false);
+    setResult(result);
+  };
+
+  useEffect(() => {
+    checkResult();
+  }, []);
+
+  const onClickConfirm = () => {
+    tools.showLoading(true);
+    wallet
+      .getBRC20Summary(currentAccount.address, tokenBalance.ticker)
+      .then((v) => {
+        if (contextData.isApproval) {
+          resolveApproval({
+            inscriptionId: result.inscriptionId,
+            inscriptionNumber: result.inscriptionNumber,
+            ticker: tokenBalance.ticker,
+            amount: result.amount
+          });
+        } else {
+          navigate('BRC20SendScreen', {
+            tokenBalance: v.tokenBalance,
+            selectedInscriptionIds: [result.inscriptionId],
+            selectedAmount: parseInt(result.amount)
+          });
+        }
+      })
+      .finally(() => {
+        tools.showLoading(false);
+      });
+  };
+
+  if (!result) {
+    return (
+      <Layout>
+        {contextData.isApproval ? (
+          <Header>
+            <WebsiteBar session={contextData.session} />
+          </Header>
+        ) : (
+          <Header />
+        )}
+        <Content style={{ gap: spacing.small }}>
+          <Column justifyCenter mt="xxl" gap="xl">
+            <Row justifyCenter>
+              <Icon icon="success" size={50} style={{ alignSelf: 'center' }} />
+            </Row>
+
+            <Text preset="title" text="Payment Sent" textCenter />
+            <Text preset="sub" text="Your transaction has been succesfully sent" color="textDim" textCenter />
+
+            <Column justifyCenter itemsCenter>
+              <Column mt="lg">
+                <Loading text="Inscribing..." />
+              </Column>
+            </Column>
+          </Column>
+        </Content>
+      </Layout>
+    );
+  }
+
+  return (
+    <Layout>
+      {contextData.isApproval ? (
+        <Header>
+          <WebsiteBar session={contextData.session} />
+        </Header>
+      ) : (
+        <Header />
+      )}
+      <Content style={{ gap: spacing.small }}>
+        <Column justifyCenter mt="xxl" gap="xl">
+          <Text text="Inscribe Success" preset="title-bold" textCenter />
+          <Column justifyCenter itemsCenter>
+            <InscriptionPreview data={result.inscription} preset="medium" />
+
+            <Column mt="lg">
+              <Text
+                text="The transferable and available balance of BRC20 will be refreshed in a few minutes."
+                textCenter
+              />
+            </Column>
+          </Column>
+        </Column>
+      </Content>
+      {contextData.isApproval ? (
+        <Footer>
+          <Row full>
+            <Button
+              text="Done"
               preset="primary"
               onClick={() => {
                 onClickConfirm();
@@ -485,7 +659,7 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
         <Footer>
           <Row full>
             <Button
-              text="Pay & Inscribe"
+              text="Done"
               preset="primary"
               onClick={() => {
                 onClickConfirm();
