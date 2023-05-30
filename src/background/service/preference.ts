@@ -1,6 +1,5 @@
 import compareVersions from 'compare-versions';
 import cloneDeep from 'lodash/cloneDeep';
-import randomstring from 'randomstring';
 
 import { createPersistStore } from '@/background/utils';
 import { EVENTS } from '@/shared/constant';
@@ -78,7 +77,6 @@ export interface PreferenceStore {
     };
   };
   skippedVersion: string;
-  deviceId: string;
 }
 
 const SUPPORT_LOCALES = ['en'];
@@ -113,8 +111,7 @@ class PreferenceService {
         keyringAlianNames: {},
         accountAlianNames: {},
         uiCachedData: {},
-        skippedVersion: '',
-        deviceId: randomstring.generate(10)
+        skippedVersion: ''
       }
     });
     if (!this.store.locale || this.store.locale !== defaultLang) {
@@ -174,10 +171,6 @@ class PreferenceService {
 
     if (!this.store.skippedVersion) {
       this.store.skippedVersion = '';
-    }
-
-    if (!this.store.deviceId) {
-      this.store.deviceId = randomstring.generate(10);
     }
   };
 
@@ -417,10 +410,6 @@ class PreferenceService {
 
   setSkippedVersion = (version: string) => {
     this.store.skippedVersion = version;
-  };
-
-  getDeviceId = () => {
-    return this.store.deviceId;
   };
 }
 

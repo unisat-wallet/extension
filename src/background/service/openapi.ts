@@ -1,3 +1,5 @@
+import randomstring from 'randomstring';
+
 import { createPersistStore } from '@/background/utils';
 import { CHANNEL, OPENAPI_URL_MAINNET, OPENAPI_URL_TESTNET, VERSION } from '@/shared/constant';
 import {
@@ -19,6 +21,7 @@ import {
 
 interface OpenApiStore {
   host: string;
+  deviceId: string;
   config?: WalletConfig;
 }
 
@@ -32,7 +35,6 @@ enum API_STATUS {
 export class OpenApiService {
   store!: OpenApiStore;
   clientAddress = '';
-  deviceId = '';
   setHost = async (host: string) => {
     this.store.host = host;
     await this.init();
@@ -42,15 +44,12 @@ export class OpenApiService {
     return this.store.host;
   };
 
-  setDeviceId = async (deviceId: string) => {
-    this.deviceId = deviceId;
-  };
-
   init = async () => {
     this.store = await createPersistStore({
       name: 'openapi',
       template: {
-        host: OPENAPI_URL_MAINNET
+        host: OPENAPI_URL_MAINNET,
+        deviceId: randomstring.generate(12)
       }
     });
 
@@ -58,16 +57,20 @@ export class OpenApiService {
       this.store.host = OPENAPI_URL_MAINNET;
     }
 
-    const getConfig = async () => {
-      try {
-        this.store.config = await this.getWalletConfig();
-      } catch (e) {
-        setTimeout(() => {
-          getConfig(); // reload openapi config if load failed 5s later
-        }, 5000);
-      }
-    };
-    getConfig();
+    if (!this.store.deviceId) {
+      this.store.deviceId = randomstring.generate(12);
+    }
+
+    // const getConfig = async () => {
+    //   try {
+    //     this.store.config = await this.getWalletConfig();
+    //   } catch (e) {
+    //     setTimeout(() => {
+    //       getConfig(); // reload openapi config if load failed 5s later
+    //     }, 5000);
+    //   }
+    // };
+    // getConfig();
   };
 
   setClientAddress = async (token: string) => {
@@ -91,7 +94,7 @@ export class OpenApiService {
     headers.append('X-Version', VERSION);
     headers.append('x-address', this.clientAddress);
     headers.append('x-channel', CHANNEL);
-    headers.append('x-udid', this.deviceId);
+    headers.append('x-udid', this.store.deviceId);
     const res = await fetch(new Request(url), { method: 'GET', headers, mode: 'cors', cache: 'default' });
     const data = await res.json();
     return data;
@@ -104,7 +107,7 @@ export class OpenApiService {
     headers.append('X-Version', VERSION);
     headers.append('x-address', this.clientAddress);
     headers.append('x-channel', CHANNEL);
-    headers.append('x-udid', this.deviceId);
+    headers.append('x-udid', this.store.deviceId);
     headers.append('Content-Type', 'application/json;charset=utf-8');
     const res = await fetch(new Request(url), {
       method: 'POST',
