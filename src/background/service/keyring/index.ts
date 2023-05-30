@@ -585,8 +585,14 @@ class KeyringService extends EventEmitter {
 
     await this.clearKeyrings();
     const vault = await this.encryptor.decrypt(password, encryptedVault);
-    // TODO: FIXME
-    await Promise.all(Array.from(vault).map(this._restoreKeyring.bind(this)));
+
+    const arr = Array.from(vault);
+    for (let i = 0; i < arr.length; i++) {
+      const { keyring, addressType } = await this._restoreKeyring(arr[i]);
+      this.keyrings.push(keyring);
+      this.addressTypes.push(addressType);
+    }
+
     await this._updateMemStoreKeyrings();
     return this.keyrings;
   };
@@ -602,7 +608,7 @@ class KeyringService extends EventEmitter {
    * @returns {Promise<Keyring>} The deserialized keyring.
    */
   restoreKeyring = async (serialized: any) => {
-    const keyring = await this._restoreKeyring(serialized);
+    const { keyring } = await this._restoreKeyring(serialized);
     await this._updateMemStoreKeyrings();
     return keyring;
   };
@@ -616,13 +622,11 @@ class KeyringService extends EventEmitter {
    * @param {Object} serialized - The serialized keyring.
    * @returns {Promise<Keyring>} The deserialized keyring.
    */
-  _restoreKeyring = async (serialized: any): Promise<Keyring> => {
+  _restoreKeyring = async (serialized: any): Promise<{ keyring: Keyring; addressType: AddressType }> => {
     const { type, data, addressType } = serialized;
     if (type === KEYRING_TYPE.Empty) {
       const keyring = new EmptyKeyring();
-      this.keyrings.push(keyring);
-      this.addressTypes.push(addressType === undefined ? preference.getAddressType() : addressType);
-      return keyring;
+      return { keyring, addressType: addressType === undefined ? preference.getAddressType() : addressType };
     }
     const Keyring = this.getKeyringClassForType(type);
     const keyring = new Keyring();
@@ -630,9 +634,7 @@ class KeyringService extends EventEmitter {
 
     // getAccounts also validates the accounts for some keyrings
     await keyring.getAccounts();
-    this.keyrings.push(keyring);
-    this.addressTypes.push(addressType === undefined ? preference.getAddressType() : addressType);
-    return keyring;
+    return { keyring, addressType: addressType === undefined ? preference.getAddressType() : addressType };
   };
 
   /**
