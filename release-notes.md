@@ -1,6 +1,13 @@
 
 # UniSat Wallet Release Notes
 
+## v1.1.21
+**Major changes**
+- Fix the issue that all wallet's names become wrong after deleting a wallet
+- Adjust the process of inscribing a TRANSFER
+- Add MV2 in github release
+
+
 ## v1.1.20
 **Major changes**
 - Support purchasing BTC through MoonPay
