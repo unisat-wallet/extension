@@ -61,16 +61,18 @@ export class OpenApiService {
       this.store.deviceId = randomstring.generate(12);
     }
 
-    // const getConfig = async () => {
-    //   try {
-    //     this.store.config = await this.getWalletConfig();
-    //   } catch (e) {
-    //     setTimeout(() => {
-    //       getConfig(); // reload openapi config if load failed 5s later
-    //     }, 5000);
-    //   }
-    // };
-    // getConfig();
+    const getConfig = async () => {
+      try {
+        this.store.config = await this.getWalletConfig();
+      } catch (e) {
+        this.store.config = {
+          version: '0.0.0',
+          moonPayEnabled: true,
+          statusMessage: (e as any).message
+        };
+      }
+    };
+    getConfig();
   };
 
   setClientAddress = async (token: string) => {
