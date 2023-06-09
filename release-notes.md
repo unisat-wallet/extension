@@ -1,6 +1,10 @@
 
 # UniSat Wallet Release Notes
 
+## v1.1.22
+**Major changes**
+- Extend the maintenance time of the plugin
+
 ## v1.1.21
 **Major changes**
 - Fix the issue that all wallet's names become wrong after deleting a wallet
