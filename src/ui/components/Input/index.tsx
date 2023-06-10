@@ -1,4 +1,5 @@
 import bitcore from 'bitcore-lib';
+import WAValidator from 'multicoin-address-validator'
 import React, { CSSProperties, useEffect, useState } from 'react';
 
 import { SATS_DOMAIN, UNISAT_DOMAIN } from '@/shared/constant';
@@ -155,7 +156,7 @@ export const AddressInput = (props: InputProps) => {
           setFormatError(errMsg);
         });
     } else {
-      const isValid = bitcore.Address.isValid(inputAddress);
+      const isValid = WAValidator.validate(inputAddress, 'litecoin');
       if (!isValid) {
         setFormatError('Recipient address is invalid');
         return;
@@ -168,7 +169,7 @@ export const AddressInput = (props: InputProps) => {
     <div style={{ alignSelf: 'stretch' }}>
       <div style={Object.assign({}, $baseContainerStyle, { flexDirection: 'column', minHeight: '56.5px' })}>
         <input
-          placeholder={'Address, name.sats, name.unisat '}
+          placeholder={'Address, name' + SATS_DOMAIN + ', name' + UNISAT_DOMAIN}
           type={'text'}
           style={Object.assign({}, $baseInputStyle, $inputStyleOverride)}
           onChange={async (e) => {

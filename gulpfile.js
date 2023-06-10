@@ -20,7 +20,7 @@ var knownOptions = {
 
 var supported_envs = ['dev', 'pro'];
 var supported_browsers = ['chrome', 'firefox', 'edge', 'brave'];
-var brandName = 'unisat';
+var brandName = 'litescribe';
 var version = packageConfig.version;
 var validVersion = version.split('-beta')[0];
 var options = {

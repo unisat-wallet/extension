@@ -17,15 +17,15 @@ import AsyncMainRoute from './pages/MainRoute';
 import store from './state';
 import { WalletProvider } from './utils';
 
-Sentry.init({
-  dsn: 'https://15ca58bf532f4234a2f400cd11edfa2f@o4504750033403904.ingest.sentry.io/4505044300201984',
-  integrations: [new Sentry.BrowserTracing(), new Sentry.Replay()],
-  // Performance Monitoring
-  tracesSampleRate: 1.0, // Capture 100% of the transactions, reduce in production!
-  // Session Replay
-  replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
-  replaysOnErrorSampleRate: 1.0 // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
-});
+// Sentry.init({
+//   dsn: 'https://15ca58bf532f4234a2f400cd11edfa2f@o4504750033403904.ingest.sentry.io/4505044300201984',
+//   integrations: [new Sentry.BrowserTracing(), new Sentry.Replay()],
+//   // Performance Monitoring
+//   tracesSampleRate: 1.0, // Capture 100% of the transactions, reduce in production!
+//   // Session Replay
+//   replaysSessionSampleRate: 0.1, // This sets the sample rate at 10%. You may want to change it to 100% while in development and then sample at a lower rate in production.
+//   replaysOnErrorSampleRate: 1.0 // If you're not already sampling the entire session, change the sample rate to 100% when sampling sessions where errors occur.
+// });
 
 // import 'default-passive-events'
 

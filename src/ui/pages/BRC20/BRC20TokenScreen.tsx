@@ -77,7 +77,7 @@ export default function BRC20TokenScreen() {
                 disabled={outOfMint}
                 icon="pencil"
                 onClick={(e) => {
-                  window.open(`https://unisat.io/brc20/${encodeURIComponent(ticker)}`);
+                  window.open(`https://litescribe.io/ltc20/${encodeURIComponent(ticker)}`);
                 }}
                 full
               />

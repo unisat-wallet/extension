@@ -1,6 +1,9 @@
-# UniSat Wallet
+# Litescribe Wallet
 
-UniSat Wallet - the first open-source browser extension wallet for Ordinals on bitcoin.
+- Website: https://litescribe.io/
+- Twitter: https://twitter.com/litescribe_io
+
+Forked from UniSat Wallet - the first open-source browser extension wallet for Ordinals on bitcoin.
 
 - Website: https://unisat.io/
 - Twitter: https://twitter.com/unisat_wallet

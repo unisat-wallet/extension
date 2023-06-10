@@ -37,7 +37,7 @@ export function useCreateBitcoinTxCallback() {
         throw new Error(
           `Insufficient balance. Non-Inscription balance(${satoshisToAmount(
             safeBalance
-          )} BTC) is lower than ${satoshisToAmount(toAmount)} BTC `
+          )} LTC) is lower than ${satoshisToAmount(toAmount)} LTC `
         );
       }
 

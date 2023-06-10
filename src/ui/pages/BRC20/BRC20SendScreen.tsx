@@ -99,7 +99,7 @@ function Step1({
                   }}
                 /> */}
                 <Row>
-                  <Text text={'* To send BRC-20, you have to inscribe a TRANSFER inscription first'} preset="sub" />
+                  <Text text={'* To send LTC-20, you have to inscribe a TRANSFER inscription first'} preset="sub" />
                 </Row>
               </Column>
             </Column>

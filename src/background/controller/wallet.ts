@@ -589,7 +589,10 @@ export class WalletController extends BaseController {
     if (!account) throw new Error('no current account');
 
     const networkType = this.getNetworkType();
+
     const psbtNetwork = toPsbtNetwork(networkType);
+
+    console.log(psbtNetwork)
 
     const psbt = await createSendBTC({
       utxos: utxos.map((v) => {

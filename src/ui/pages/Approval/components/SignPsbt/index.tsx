@@ -156,7 +156,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
                         textCenter
                         size="xxl"
                       />
-                      <Text text="BTC" color="textDim" />
+                      <Text text="LTC" color="textDim" />
                     </Row>
                   </Column>
                 </Column>
@@ -490,7 +490,7 @@ export default function SignPsbt({
                               </Column>
                               <Row>
                                 <Text text={`${satoshisToAmount(v.value)}`} color={isToSign ? 'white' : 'textDim'} />
-                                <Text text="BTC" color="textDim" />
+                                <Text text="LTC" color="textDim" />
                               </Row>
                             </Row>
 
@@ -540,7 +540,7 @@ export default function SignPsbt({
                               <AddressText address={v.address} color={isToSign ? 'white' : 'textDim'} />
                               <Row>
                                 <Text text={`${satoshisToAmount(v.value)}`} color={isToSign ? 'white' : 'textDim'} />
-                                <Text text="BTC" color="textDim" />
+                                <Text text="LTC" color="textDim" />
                               </Row>
                             </Row>
                           </Column>
@@ -576,7 +576,7 @@ export default function SignPsbt({
               {canChanged == false && (
                 <Section title="NETWORK FEE:">
                   <Text text={networkFee} />
-                  <Text text="BTC" color="textDim" />
+                  <Text text="LTC" color="textDim" />
                 </Section>
               )}
 

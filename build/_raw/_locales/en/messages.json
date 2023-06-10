@@ -32,17 +32,17 @@
   "Generate__a__new__address": { "message": "Generate a new address" },
   "I__already__have__a__wallet": { "message": "I already have a wallet" },
   "Create__a__password": { "message": "Create a password" },
-  "Type__your__Unisat__password": { "message": "Type your UniSat Wallet password" },
+  "Type__your__Unisat__password": { "message": "Type your Litescribe Wallet password" },
   "Invalid__amount": { "message": "Invalid amount" },
   "Payment__Sent": { "message": "Payment Sent" },
   "Sending": { "message": "Sending" },
   "Euro": { "message": "Euro" },
   "Export__Private__Key": { "message": "Export Private Key" },
-  "appName": { "message": "UniSat Wallet" },
+  "appName": { "message": "Litescribe Wallet" },
   "Payment__Faild": { "message": "Payment Faild" },
   "Change__Password": { "message": "Change Password" },
   "Private__Key": { "message": "Private Key" },
-  "Recipients__BTC__address": { "message": "Recipient’s BTC address" },
+  "Recipients__BTC__address": { "message": "Recipient’s LTC address" },
   "Secret__Recovery__Phrase": { "message": "Secret Recovery Phrase" },
   "Confirm__Password": { "message": "Confirm Password" },
   "Successfully__created": { "message": "Successfully created" },
@@ -83,7 +83,7 @@
   "Send": { "message": "Send" },
   "Canadian__Dollar": { "message": "Canadian Dollar" },
   "Successfully__imported": { "message": "Successfully imported" },
-  "This__address__can__only__receive__Btc": { "message": "This address can only receive Btc" },
+  "This__address__can__only__receive__Btc": { "message": "This address can only receive Ltc" },
   "This__is__an__imported__account": { "message": "This is an imported account" },
   "Password_must_contain_at_least_5_characters": { "message": "Password must contain at least 5 characters" },
   "appDescription": {
@@ -99,7 +99,7 @@
   "Show__Private__Key": { "message": "Show Private Key" },
   "You__will__use__this__to__unlock__your__wallet": { "message": "You will use this to unlock your wallet" },
   "Imported__accounts__will__not__be__associated__with__your__originally__created__Unisat__account__Secret__Recovery__Phrase": {
-    "message": "Imported accounts will not be associated with your originally created UniSat Wallet account Secret Recovery Phrase"
+    "message": "Imported accounts will not be associated with your originally created Litescribe Wallet account Secret Recovery Phrase"
   },
   "Login": { "message": "Login" },
   "English": { "message": "English" },
