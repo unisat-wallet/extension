@@ -1,22 +1,27 @@
 import { isNumber } from 'lodash-es';
 import { useCallback, useEffect, useState } from 'react';
 
-import browser from '@/background/webapi/browser';
+import browser, {
+  browserTabsCreate,
+  browserTabsGetCurrent,
+  browserTabsQuery,
+  browserTabsUpdate
+} from '@/background/webapi/browser';
 
 export const openExtensionInTab = async () => {
   const url = browser.runtime.getURL('index.html');
-  const tab = await browser.tabs.create({ url });
+  const tab = await browserTabsCreate({ url });
   return tab;
 };
 
 export const extensionIsInTab = async () => {
-  return Boolean(await browser.tabs.getCurrent());
+  return Boolean(await browserTabsGetCurrent());
 };
 
 export const focusExtensionTab = async () => {
-  const tab = await browser.tabs.getCurrent();
+  const tab = await browserTabsGetCurrent();
   if (tab && isNumber(tab?.id) && tab?.id !== browser.tabs.TAB_ID_NONE) {
-    browser.tabs.update(tab.id, { active: true });
+    browserTabsUpdate(tab.id, { active: true });
   }
 };
 
@@ -40,6 +45,6 @@ export const useOpenExtensionInTab = () => {
 };
 
 export const getCurrentTab = async () => {
-  const tabs = await browser.tabs.query({ active: true, currentWindow: true });
+  const tabs = await browserTabsQuery({ active: true, currentWindow: true });
   return tabs[0];
 };

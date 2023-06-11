@@ -305,11 +305,13 @@ export class WalletController extends BaseController {
 
   changeAccount = (account: Account) => {
     preferenceService.setCurrentAccount(account);
+    openapiService.setClientAddress(account.address);
   };
 
   changeKeyring = (keyring: WalletKeyring, accountIndex = 0) => {
     preferenceService.setCurrentKeyringIndex(keyring.index);
     preferenceService.setCurrentAccount(keyring.accounts[accountIndex]);
+    openapiService.setClientAddress(keyring.accounts[accountIndex].address);
   };
 
   getAllAddresses = (keyring: WalletKeyring, index: number) => {
@@ -1083,6 +1085,14 @@ export class WalletController extends BaseController {
 
   getWalletConfig = () => {
     return openapiService.store.config;
+  };
+
+  getSkippedVersion = () => {
+    return preferenceService.getSkippedVersion();
+  };
+
+  setSkippedVersion = (version: string) => {
+    return preferenceService.setSkippedVersion(version);
   };
 }
 

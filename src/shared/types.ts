@@ -226,6 +226,7 @@ export interface RawTxInfo {
 }
 
 export interface WalletConfig {
+  version: string;
   moonPayEnabled: boolean;
   statusMessage: string;
 }

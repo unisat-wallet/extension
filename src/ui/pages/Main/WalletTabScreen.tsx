@@ -2,7 +2,7 @@ import { Tooltip } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 
 import { KEYRING_TYPE } from '@/shared/constant';
-import { TokenBalance, NetworkType, Inscription, WalletConfig } from '@/shared/types';
+import { TokenBalance, NetworkType, Inscription } from '@/shared/types';
 import { Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -14,11 +14,18 @@ import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { NavTabBar } from '@/ui/components/NavTabBar';
 import { Pagination } from '@/ui/components/Pagination';
 import { TabBar } from '@/ui/components/TabBar';
+import { UpgradePopver } from '@/ui/components/UpgradePopver';
 import { getCurrentTab } from '@/ui/features/browser/tabs';
 import { useAccountBalance, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { useBlockstreamUrl, useNetworkType } from '@/ui/state/settings/hooks';
+import {
+  useBlockstreamUrl,
+  useNetworkType,
+  useSkipVersionCallback,
+  useVersionInfo,
+  useWalletConfig
+} from '@/ui/state/settings/hooks';
 import { useWalletTabScreenState } from '@/ui/state/ui/hooks';
 import { WalletTabScreenTabKey, uiActions } from '@/ui/state/ui/reducer';
 import { fontSizes } from '@/ui/theme/font';
@@ -50,7 +57,10 @@ export default function WalletTabScreen() {
   const dispatch = useAppDispatch();
   const { tabKey } = useWalletTabScreenState();
 
-  const [walletConfig, setWalletConfig] = useState<WalletConfig>({ moonPayEnabled: true, statusMessage: '' });
+  const skipVersion = useSkipVersionCallback();
+
+  const walletConfig = useWalletConfig();
+  const versionInfo = useVersionInfo();
 
   useEffect(() => {
     const run = async () => {
@@ -62,10 +72,6 @@ export default function WalletTabScreen() {
       }
     };
     run();
-
-    wallet.getWalletConfig().then((v) => {
-      if (v) setWalletConfig(v);
-    });
   }, []);
 
   const tabItems = [
@@ -195,6 +201,13 @@ export default function WalletTabScreen() {
 
           {tabItems[tabKey].children}
         </Column>
+        {!versionInfo.skipped && (
+          <UpgradePopver
+            onClose={() => {
+              skipVersion(versionInfo.newVersion);
+            }}
+          />
+        )}
       </Content>
       <Footer px="zero" py="zero">
         <NavTabBar tab="home" />

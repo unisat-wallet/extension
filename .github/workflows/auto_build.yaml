@@ -1,0 +1,64 @@
+name: Create Release
+
+on:
+  push:
+    tags:
+      - v*
+  pull_request:
+    tags:
+      - v*
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout the code
+        uses: actions/checkout@v2
+      - uses: ./.github/actions/setup
+
+      - name: Build Chrome
+        run: |
+          yarn build:chrome
+          yarn build:chrome:mv3
+
+      - name: Create Release
+        id: create_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: ${{ github.ref }}
+          release_name: Release ${{ github.ref }}
+          draft: false
+          prerelease: false
+
+      - name: Get Version Name
+        uses: actions/github-script@v3
+        id: get-version
+        with:
+          script: |
+            const str=process.env.GITHUB_REF;
+            return str.substring(str.indexOf("v"));
+          result-encoding: string
+
+      - name: Upload Asset
+        id: upload-asset1
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/unisat-chrome-mv2-${{steps.get-version.outputs.result}}.zip
+          asset_name: unisat-chrome-mv2-${{steps.get-version.outputs.result}}.zip
+          asset_content_type: application/zip
+
+      - name: Upload Asset
+        id: upload-asset2
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: dist/unisat-chrome-mv3-${{steps.get-version.outputs.result}}.zip
+          asset_name: unisat-chrome-mv3-${{steps.get-version.outputs.result}}.zip
+          asset_content_type: application/zip

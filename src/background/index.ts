@@ -13,7 +13,7 @@ import {
   sessionService
 } from './service';
 import { storage } from './webapi';
-import browser from './webapi/browser';
+import { browserRuntimeOnConnect, browserRuntimeOnInstalled } from './webapi/browser';
 
 const { PortMessage } = Message;
 
@@ -37,7 +37,7 @@ async function restoreAppState() {
 restoreAppState();
 
 // for page provider
-browser.runtime.onConnect.addListener((port) => {
+browserRuntimeOnConnect((port) => {
   if (port.name === 'popup' || port.name === 'notification' || port.name === 'tab') {
     const pm = new PortMessage(port as any);
     pm.listen((data) => {
@@ -116,8 +116,41 @@ const addAppInstalledEvent = () => {
   }, 1000);
 };
 
-browser.runtime.onInstalled.addListener((details) => {
+browserRuntimeOnInstalled((details) => {
   if (details.reason === 'install') {
     addAppInstalledEvent();
   }
 });
+
+// Keep alive
+const INTERNAL_STAYALIVE_PORT = 'CT_Internal_port_alive';
+let alivePort: any = null;
+
+setInterval(Highlander, 5000);
+
+async function Highlander() {
+  // console.log('Highlander', Date.now());
+  if (alivePort == null) {
+    alivePort = chrome.runtime.connect({ name: INTERNAL_STAYALIVE_PORT });
+
+    alivePort.onDisconnect.addListener((p) => {
+      if (chrome.runtime.lastError) {
+        // console.log('(DEBUG Highlander) Expected disconnect (on error). SW should be still running.');
+      } else {
+        // console.log('(DEBUG Highlander): port disconnected');
+      }
+
+      alivePort = null;
+    });
+  }
+
+  if (alivePort) {
+    alivePort.postMessage({ content: 'keep alive~' });
+
+    if (chrome.runtime.lastError) {
+      // console.log(`(DEBUG Highlander): postMessage error: ${chrome.runtime.lastError.message}`);
+    } else {
+      // console.log(`(DEBUG Highlander): sent through ${alivePort.name} port`);
+    }
+  }
+}

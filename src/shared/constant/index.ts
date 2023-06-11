@@ -268,3 +268,7 @@ export const UNISAT_DOMAIN = '.unilit';
 export const GITHUB_URL = 'https://github.com/ynohtna92/extension-ltc';
 export const DISCORD_URL = 'https://discord.gg/DTrByWbn';
 export const TWITTER_URL = 'https://twitter.com/litescribe_io';
+
+export const CHANNEL = process.env.channel!;
+export const VERSION = process.env.release!;
+export const MANIFEST_VERSION = process.env.manifest!;

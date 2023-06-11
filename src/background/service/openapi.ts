@@ -1,5 +1,7 @@
+import randomstring from 'randomstring';
+
 import { createPersistStore } from '@/background/utils';
-import { OPENAPI_URL_MAINNET, OPENAPI_URL_TESTNET } from '@/shared/constant';
+import { CHANNEL, OPENAPI_URL_MAINNET, OPENAPI_URL_TESTNET, VERSION } from '@/shared/constant';
 import {
   AddressAssets,
   AppSummary,
@@ -19,6 +21,7 @@ import {
 
 interface OpenApiStore {
   host: string;
+  deviceId: string;
   config?: WalletConfig;
 }
 
@@ -45,7 +48,8 @@ export class OpenApiService {
     this.store = await createPersistStore({
       name: 'openapi',
       template: {
-        host: OPENAPI_URL_MAINNET
+        host: OPENAPI_URL_MAINNET,
+        deviceId: randomstring.generate(12)
       }
     });
 
@@ -53,13 +57,19 @@ export class OpenApiService {
       this.store.host = OPENAPI_URL_MAINNET;
     }
 
+    if (!this.store.deviceId) {
+      this.store.deviceId = randomstring.generate(12);
+    }
+
     const getConfig = async () => {
       try {
         this.store.config = await this.getWalletConfig();
       } catch (e) {
-        setTimeout(() => {
-          getConfig(); // reload openapi config if load failed 5s later
-        }, 5000);
+        this.store.config = {
+          version: '0.0.0',
+          moonPayEnabled: false,
+          statusMessage: (e as any).message
+        };
       }
     };
     getConfig();
@@ -83,8 +93,10 @@ export class OpenApiService {
     }
     const headers = new Headers();
     headers.append('X-Client', 'Litescribe Wallet');
-    headers.append('X-Version', process.env.release!);
+    headers.append('X-Version', VERSION);
     headers.append('x-address', this.clientAddress);
+    headers.append('x-channel', CHANNEL);
+    headers.append('x-udid', this.store.deviceId);
     const res = await fetch(new Request(url), { method: 'GET', headers, mode: 'cors', cache: 'default' });
     const data = await res.json();
     return data;
@@ -94,8 +106,10 @@ export class OpenApiService {
     const url = this.getHost() + route;
     const headers = new Headers();
     headers.append('X-Client', 'Litescribe Wallet');
-    headers.append('X-Version', process.env.release!);
+    headers.append('X-Version', VERSION);
     headers.append('x-address', this.clientAddress);
+    headers.append('x-channel', CHANNEL);
+    headers.append('x-udid', this.store.deviceId);
     headers.append('Content-Type', 'application/json;charset=utf-8');
     const res = await fetch(new Request(url), {
       method: 'POST',

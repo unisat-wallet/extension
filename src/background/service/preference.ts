@@ -76,6 +76,7 @@ export interface PreferenceStore {
       };
     };
   };
+  skippedVersion: string;
 }
 
 const SUPPORT_LOCALES = ['en'];
@@ -109,7 +110,8 @@ class PreferenceService {
         networkType: NetworkType.MAINNET,
         keyringAlianNames: {},
         accountAlianNames: {},
-        uiCachedData: {}
+        uiCachedData: {},
+        skippedVersion: ''
       }
     });
     if (!this.store.locale || this.store.locale !== defaultLang) {
@@ -165,6 +167,10 @@ class PreferenceService {
 
     if (!this.store.uiCachedData) {
       this.store.uiCachedData = {};
+    }
+
+    if (!this.store.skippedVersion) {
+      this.store.skippedVersion = '';
     }
   };
 
@@ -396,6 +402,14 @@ class PreferenceService {
       brc20Summary: {},
       brc20TransferableList: {}
     };
+  };
+
+  getSkippedVersion = () => {
+    return this.store.skippedVersion;
+  };
+
+  setSkippedVersion = (version: string) => {
+    this.store.skippedVersion = version;
   };
 }
 

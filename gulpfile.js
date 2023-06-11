@@ -11,21 +11,25 @@ const uglify = require('gulp-uglify');
 
 //parse arguments
 var knownOptions = {
-  string: ['env', 'browser'],
+  string: ['env', 'browser', 'manifest', 'channel'],
   default: {
     env: 'dev',
-    browser: 'chrome'
+    browser: 'chrome',
+    manifest: 'mv3',
+    channel: 'store'
   }
 };
 
 var supported_envs = ['dev', 'pro'];
 var supported_browsers = ['chrome', 'firefox', 'edge', 'brave'];
+var supported_mvs = ['mv2', 'mv3'];
 var brandName = 'litescribe';
 var version = packageConfig.version;
 var validVersion = version.split('-beta')[0];
 var options = {
   env: knownOptions.default.env,
-  browser: knownOptions.default.browser
+  browser: knownOptions.default.browser,
+  manifest: knownOptions.default.manifest
 };
 options = minimist(process.argv.slice(2), knownOptions);
 if (!supported_envs.includes(options.env)) {
@@ -34,6 +38,10 @@ if (!supported_envs.includes(options.env)) {
 }
 if (!supported_browsers.includes(options.browser)) {
   console.error(`not supported browser: [${options.browser}]. It should be one of ${supported_browsers.join(', ')}.`);
+  exit(0);
+}
+if (!supported_mvs.includes(options.manifest)) {
+  console.error(`not supported browser: [${options.manifest}]. It should be one of ${supported_mvs.join(', ')}.`);
   exit(0);
 }
 
@@ -48,7 +56,7 @@ function task_prepare() {
 
 function task_merge_manifest() {
   let baseFile = '_base_v3';
-  if (options.browser == 'firefox') {
+  if (options.manifest == 'mv2') {
     baseFile = '_base_v2';
   }
   return gulp
@@ -75,7 +83,9 @@ function task_webpack(cb) {
     webpackConfigFunc({
       version: validVersion,
       config: options.env,
-      browser: options.browser
+      browser: options.browser,
+      manifest: options.manifest,
+      channel: options.channel
     }),
     cb
   );
@@ -96,12 +106,12 @@ function task_package(cb) {
     if (options.browser == 'firefox') {
       return gulp
         .src(`dist/${options.browser}/**/*`)
-        .pipe(zip(`${brandName}-${options.browser}-v${version}.xpi`))
+        .pipe(zip(`${brandName}-${options.browser}-${options.manifest}-v${version}.xpi`))
         .pipe(gulp.dest('./dist'));
     } else {
       return gulp
         .src(`dist/${options.browser}/**/*`)
-        .pipe(zip(`${brandName}-${options.browser}-v${version}.zip`))
+        .pipe(zip(`${brandName}-${options.browser}-${options.manifest}-v${version}.zip`))
         .pipe(gulp.dest('./dist'));
     }
   }
