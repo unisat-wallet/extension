@@ -7,7 +7,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { AddressTypeCard } from '@/ui/components/AddressTypeCard';
 import { FooterButtonContainer } from '@/ui/components/FooterButtonContainer';
 import { TabBar } from '@/ui/components/TabBar';
-import { amountToSaothis, useWallet } from '@/ui/utils';
+import { amountToSatoshis, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
 
@@ -83,7 +83,6 @@ function Step1({
       <FooterButtonContainer>
         <Button disabled={disabled} text="Continue" preset="primary" onClick={btnClick} />
       </FooterButtonContainer>
-
     </Column>
   );
 }
@@ -145,7 +144,7 @@ function Step2({
     for (let i = 0; i < addresses.length; i++) {
       const address = addresses[i];
       const balance = balances[i];
-      const satoshis = amountToSaothis(balance.total_btc);
+      const satoshis = amountToSatoshis(balance.total_btc);
       self.addressBalances[address] = {
         total_btc: balance.total_btc,
         satoshis,

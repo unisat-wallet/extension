@@ -15,7 +15,7 @@ import { Icon } from '@/ui/components/Icon';
 import { TabBar } from '@/ui/components/TabBar';
 import { useCreateAccountCallback } from '@/ui/state/global/hooks';
 import { fontSizes } from '@/ui/theme/font';
-import { amountToSaothis, copyToClipboard, useWallet } from '@/ui/utils';
+import { amountToSatoshis, copyToClipboard, useWallet } from '@/ui/utils';
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
@@ -363,7 +363,7 @@ function Step2({
     for (let i = 0; i < addresses.length; i++) {
       const address = addresses[i];
       const balance = balances[i];
-      const satoshis = amountToSaothis(balance.total_btc);
+      const satoshis = amountToSatoshis(balance.total_btc);
       addressAssets[address] = {
         total_btc: balance.total_btc,
         satoshis,

@@ -7,7 +7,7 @@ import { AddressTypeCard } from '@/ui/components/AddressTypeCard';
 import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { amountToSaothis, useWallet } from '@/ui/utils';
+import { amountToSatoshis, useWallet } from '@/ui/utils';
 
 export default function AddressTypeScreen() {
   const isInTab = useExtensionIsInTab();
@@ -38,7 +38,7 @@ export default function AddressTypeScreen() {
     for (let i = 0; i < _res.length; i++) {
       const address = _res[i];
       const balance = balances[i];
-      const satoshis = amountToSaothis(balance.total_btc);
+      const satoshis = amountToSatoshis(balance.total_btc);
       self.addressAssets[address] = {
         total_btc: balance.total_btc,
         satoshis,

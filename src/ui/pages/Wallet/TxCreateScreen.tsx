@@ -14,7 +14,7 @@ import {
   useSafeBalance
 } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
-import { amountToSaothis, isValidAddress, satoshisToAmount } from '@/ui/utils';
+import { amountToSatoshis, isValidAddress, satoshisToAmount } from '@/ui/utils';
 
 export default function TxCreateScreen() {
   const accountBalance = useAccountBalance();
@@ -47,12 +47,12 @@ export default function TxCreateScreen() {
   const createBitcoinTx = useCreateBitcoinTxCallback();
 
   const safeSatoshis = useMemo(() => {
-    return amountToSaothis(safeBalance);
+    return amountToSatoshis(safeBalance);
   }, [safeBalance]);
 
   const toSatoshis = useMemo(() => {
     if (!inputAmount) return 0;
-    return amountToSaothis(inputAmount);
+    return amountToSatoshis(inputAmount);
   }, [inputAmount]);
 
   const dustAmount = useMemo(() => satoshisToAmount(COIN_DUST), [COIN_DUST]);

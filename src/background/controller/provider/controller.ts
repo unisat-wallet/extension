@@ -7,7 +7,7 @@ import wallet from '../wallet';
 import { toPsbtNetwork } from '@/background/utils/tx-utils';
 import { NetworkType } from '@/shared/types';
 import { Psbt } from 'bitcoinjs-lib';
-import { amountToSaothis } from '@/ui/utils';
+import { amountToSatoshis } from '@/ui/utils';
 import { ethErrors } from 'eth-rpc-errors';
 
 
@@ -96,9 +96,9 @@ class ProviderController extends BaseController {
       if (!account) return null;
       const balance = await wallet.getAddressBalance(account.address)
       return {
-        confirmed: amountToSaothis(balance.confirm_amount),
-        unconfirmed:amountToSaothis(balance.pending_amount),
-        total:amountToSaothis(balance.amount)
+        confirmed: amountToSatoshis(balance.confirm_amount),
+        unconfirmed:amountToSatoshis(balance.pending_amount),
+        total:amountToSatoshis(balance.amount)
       };
     };
 
