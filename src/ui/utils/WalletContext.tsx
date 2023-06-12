@@ -74,7 +74,10 @@ export interface WalletController {
 
   clearKeyrings(): Promise<void>;
   getPrivateKey(password: string, account: { address: string; type: string }): Promise<string>;
-  getMnemonics(password: string): Promise<{
+  getMnemonics(
+    password: string,
+    keyring: WalletKeyring
+  ): Promise<{
     hdPath: string;
     mnemonic: string;
     passphrase: string;

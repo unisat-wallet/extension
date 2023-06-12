@@ -197,10 +197,8 @@ export class WalletController extends BaseController {
     return ECPair.fromPrivateKey(Buffer.from(privateKey, 'hex'), { network }).toWIF();
   };
 
-  getMnemonics = async (password: string) => {
+  getMnemonics = async (password: string, keyring: WalletKeyring) => {
     await this.verifyPassword(password);
-    const keyring = await this.getCurrentKeyring();
-    if (!keyring) throw new Error('no current keyring');
     const originKeyring = keyringService.keyrings[keyring.index];
     const serialized = await originKeyring.serialize();
     return {
