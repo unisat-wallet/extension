@@ -97,7 +97,7 @@ class ProviderController extends BaseController {
       const balance = await wallet.getAddressBalance(account.address)
       return {
         confirmed: amountToSaothis(balance.confirm_amount),
-        unconfirmed:amountToSaothis(balance.confirm_amount),
+        unconfirmed:amountToSaothis(balance.pending_amount),
         total:amountToSaothis(balance.amount)
       };
     };
