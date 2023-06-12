@@ -21,17 +21,6 @@ function Step1({
   const [wif, setWif] = useState('');
   const [disabled, setDisabled] = useState(true);
   const wallet = useWallet();
-  const init = async () => {
-    const _mnemonics = (await wallet.getPreMnemonics()) || (await wallet.generatePreMnemonic());
-    updateContextData({
-      wif: _mnemonics
-    });
-  };
-
-  useEffect(() => {
-    init();
-  }, []);
-
   useEffect(() => {
     setDisabled(true);
 

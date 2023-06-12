@@ -187,8 +187,8 @@ class KeyringService extends EventEmitter {
     await this.persistAllKeyrings();
     const keyring = await this.addNewKeyring('Simple Key Pair', [privateKey], addressType);
     await this.persistAllKeyrings();
-    await this.setUnlocked();
-    await this.fullUpdate();
+    this.setUnlocked();
+    this.fullUpdate();
     return keyring;
   };
 

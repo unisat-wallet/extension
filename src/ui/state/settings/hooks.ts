@@ -94,6 +94,10 @@ export function useVersionInfo() {
   const skippedVersion = accountsState.skippedVersion;
   const currentVesion = VERSION;
   let skipped = false;
+  if (!newVersion) {
+    // skip if not initialized
+    skipped = true;
+  }
   if (newVersion === currentVesion) {
     skipped = true;
   } else if (newVersion == skippedVersion) {
