@@ -194,7 +194,12 @@ export class WalletController extends BaseController {
     const privateKey = await keyring.exportAccount(pubkey);
     const networkType = this.getNetworkType();
     const network = toPsbtNetwork(networkType);
-    return ECPair.fromPrivateKey(Buffer.from(privateKey, 'hex'), { network }).toWIF();
+    const hex = privateKey;
+    const wif = ECPair.fromPrivateKey(Buffer.from(privateKey, 'hex'), { network }).toWIF();
+    return {
+      hex,
+      wif
+    };
   };
 
   getMnemonics = async (password: string, keyring: WalletKeyring) => {

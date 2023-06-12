@@ -71,8 +71,35 @@ export default function ExportMnemonicsScreen() {
       <Content>
         {mnemonic == '' ? (
           <Column>
-            <Text text="Type your password" preset="title" color="warning" textCenter mt="xl" mb="xl" />
+            <Card>
+              <Column gap="lg">
+                <Text
+                  text="If you lose your Secret Recovery Phrase, your assets will be gone!"
+                  preset="title-bold"
+                  color="red"
+                />
 
+                <Text
+                  text="If you share the Secret Recovery Phrase to others, your assets will be stolen!"
+                  preset="title-bold"
+                  color="red"
+                />
+
+                <Text
+                  text="Secret Recovery Phrase is only stored in your browser, it is your responsibilities to keep the Private Key safe!"
+                  preset="title-bold"
+                  color="red"
+                />
+              </Column>
+            </Card>
+
+            <Text
+              text=" Please make sure you have read the security tips above before typing your password"
+              preset="title"
+              color="warning"
+              textCenter
+              my="xl"
+            />
             <Input
               preset="password"
               onChange={(e) => {

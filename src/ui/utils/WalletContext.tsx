@@ -73,7 +73,7 @@ export interface WalletController {
   setCurrency(currency: string): Promise<void>;
 
   clearKeyrings(): Promise<void>;
-  getPrivateKey(password: string, account: { address: string; type: string }): Promise<string>;
+  getPrivateKey(password: string, account: { address: string; type: string }): Promise<{ hex: string; wif: string }>;
   getMnemonics(
     password: string,
     keyring: WalletKeyring
