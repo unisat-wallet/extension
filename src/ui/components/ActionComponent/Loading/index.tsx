@@ -32,10 +32,10 @@ export function Loading(props: LoadingProps) {
         <LoadingOutlined
           style={{
             fontSize: fontSizes.icon,
-            color: colors.orange
+            color: colors.blue_pastel
           }}
         />
-        {text && <Text text={text} preset="title" color="orange" />}
+        {text && <Text text={text} preset="title" color="blue_pastel" />}
       </div>
     </div>
   );

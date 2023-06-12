@@ -36,7 +36,7 @@ export function AddressTypeCard(props: AddressTypeCardProps) {
           <Row justifyBetween bg="bg3" roundedBottom px="md" py="md">
             <Row justifyCenter>
               <Icon icon="btc" size={fontSizes.iconMiddle} />
-              <Text text={`${assets.total_btc} BTC`} color="yellow" />
+              <Text text={`${assets.total_btc} BTC`} color="blues" />
             </Row>
 
             <Row>

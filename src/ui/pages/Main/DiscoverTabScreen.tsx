@@ -15,9 +15,9 @@ function MintItem({ info }: { info: InscriptionMintedItem }) {
 
         <Text
           text="More"
-          color="orange"
+          color="blue_pastel"
           onClick={() => {
-            window.open(`https://unisat.io/inscription/tag/${info.title}`);
+            window.open(`https://ordinalslite.com/`);
           }}
         />
       </Row>
