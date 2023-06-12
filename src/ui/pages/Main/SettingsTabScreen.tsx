@@ -212,7 +212,7 @@ export default function SettingsTabScreen() {
             />
           </Row>
           <Text text={`Version: ${versionInfo.currentVesion}`} preset="sub" textCenter />
-          {versionInfo.currentVesion != versionInfo.newVersion && (
+          {/* {versionInfo.currentVesion != versionInfo.newVersion && (
             <Text
               text={`New Version: ${versionInfo.newVersion}`}
               preset="link"
@@ -222,7 +222,7 @@ export default function SettingsTabScreen() {
                 window.open(versionInfo.downloadUrl);
               }}
             />
-          )}
+          )} */}
         </Column>
       </Content>
       <Footer px="zero" py="zero">
