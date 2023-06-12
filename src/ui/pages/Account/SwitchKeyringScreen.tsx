@@ -138,7 +138,7 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
                     navigate('ExportPrivateKeyScreen', { account: keyring.accounts[0] });
                   }}>
                   <KeyOutlined />
-                  <Text text="Export WIF" size="sm" />
+                  <Text text="Export Private Key" size="sm" />
                 </Row>
               )}
               <Row

@@ -1,6 +1,14 @@
 
 # UniSat Wallet Release Notes
 
+## v1.1.23
+**Major changes**
+- Support exporting Hex Private Key
+- Add risk warnings when exporting Private Key and Secret Recovery Phrase
+- Fix a issue that when exporting a non-active wallet, incorrectly exports the Secret Recovery Phrase of the active wallet
+- Fix a display issue of "Failed to fetch."
+- Fix a issue that "getBalance " API returns incorrect unconfirmed balance
+
 ## v1.1.22
 **Major changes**
 - Extend the maintenance time of the plugin

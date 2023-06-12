@@ -20,7 +20,7 @@ export default function ExportPrivateKeyScreen() {
   const [password, setPassword] = useState('');
   const [disabled, setDisabled] = useState(true);
 
-  const [privateKey, setPrivateKey] = useState('');
+  const [privateKey, setPrivateKey] = useState({ hex: '', wif: '' });
   const [status, setStatus] = useState<Status>('');
   const [error, setError] = useState('');
   const wallet = useWallet();
@@ -65,9 +65,33 @@ export default function ExportPrivateKeyScreen() {
         title="Export Private Key"
       />
       <Content>
-        {privateKey == '' ? (
+        {privateKey.wif == '' ? (
           <Column gap="lg">
-            <Text text="Type your password" preset="title" color="warning" textCenter my="xl" />
+            <Card>
+              <Column gap="lg">
+                <Text text="If you lose your Private Key, your assets will be gone!" preset="title-bold" color="red" />
+
+                <Text
+                  text="If you share the Private Key to others, your assets will be stolen!"
+                  preset="title-bold"
+                  color="red"
+                />
+
+                <Text
+                  text="Private Key is only stored in your browser, it is your responsibilities to keep the Private Key safe!"
+                  preset="title-bold"
+                  color="red"
+                />
+              </Column>
+            </Card>
+
+            <Text
+              text=" Please make sure you have read the security tips above before typing your password"
+              preset="title"
+              color="warning"
+              textCenter
+              my="xl"
+            />
             <Input
               preset="password"
               onChange={(e) => {
@@ -89,14 +113,34 @@ export default function ExportPrivateKeyScreen() {
               textCenter
             />
 
+            <Text text="WIF Private Key:" preset="sub" size="sm" textCenter mt="lg" />
+
             <Card
               onClick={(e) => {
-                copy(privateKey);
+                copy(privateKey.wif);
               }}>
               <Row>
                 <Icon icon="copy" color="textDim" />
                 <Text
-                  text={privateKey}
+                  text={privateKey.wif}
+                  color="textDim"
+                  style={{
+                    overflowWrap: 'anywhere'
+                  }}
+                />
+              </Row>
+            </Card>
+
+            <Text text="Hex Private Key:" preset="sub" size="sm" textCenter mt="lg" />
+
+            <Card
+              onClick={(e) => {
+                copy(privateKey.hex);
+              }}>
+              <Row>
+                <Icon icon="copy" color="textDim" />
+                <Text
+                  text={privateKey.hex}
                   color="textDim"
                   style={{
                     overflowWrap: 'anywhere'

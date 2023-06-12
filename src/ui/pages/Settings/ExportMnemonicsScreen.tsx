@@ -2,14 +2,17 @@ import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
 import { ADDRESS_TYPES } from '@/shared/constant';
+import { WalletKeyring } from '@/shared/types';
 import { Button, Input, Layout, Content, Icon, Header, Text, Column, Row, Card, Grid } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { copyToClipboard, useWallet } from '@/ui/utils';
+import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
 
 type Status = '' | 'error' | 'warning' | undefined;
 
 export default function ExportMnemonicsScreen() {
+  const { keyring } = useLocationState<{ keyring: WalletKeyring }>();
+
   const { t } = useTranslation();
 
   const [password, setPassword] = useState('');
@@ -23,10 +26,9 @@ export default function ExportMnemonicsScreen() {
 
   const [passphrase, setPassphrase] = useState('');
 
-  const currenyKering = useCurrentKeyring();
   const btnClick = async () => {
     try {
-      const { mnemonic, hdPath, passphrase } = await wallet.getMnemonics(password);
+      const { mnemonic, hdPath, passphrase } = await wallet.getMnemonics(password, keyring);
       setMnemonic(mnemonic);
       setPassphrase(passphrase);
     } catch (e) {
@@ -56,7 +58,7 @@ export default function ExportMnemonicsScreen() {
   }
   const words = mnemonic.split(' ');
 
-  const pathName = ADDRESS_TYPES.find((v) => v.hdPath === currenyKering.hdPath)?.name;
+  const pathName = ADDRESS_TYPES.find((v) => v.hdPath === keyring.hdPath)?.name;
   return (
     <Layout>
       <Header
@@ -69,8 +71,35 @@ export default function ExportMnemonicsScreen() {
       <Content>
         {mnemonic == '' ? (
           <Column>
-            <Text text="Type your password" preset="title" color="warning" textCenter mt="xl" mb="xl" />
+            <Card>
+              <Column gap="lg">
+                <Text
+                  text="If you lose your Secret Recovery Phrase, your assets will be gone!"
+                  preset="title-bold"
+                  color="red"
+                />
 
+                <Text
+                  text="If you share the Secret Recovery Phrase to others, your assets will be stolen!"
+                  preset="title-bold"
+                  color="red"
+                />
+
+                <Text
+                  text="Secret Recovery Phrase is only stored in your browser, it is your responsibilities to keep the Private Key safe!"
+                  preset="title-bold"
+                  color="red"
+                />
+              </Column>
+            </Card>
+
+            <Text
+              text=" Please make sure you have read the security tips above before typing your password"
+              preset="title"
+              color="warning"
+              textCenter
+              my="xl"
+            />
             <Input
               preset="password"
               onChange={(e) => {
@@ -120,10 +149,10 @@ export default function ExportMnemonicsScreen() {
               <Column>
                 <Text text="Advance Options" />
                 <Text
-                  text={`Derivation Path: ${currenyKering.hdPath}/0 (${pathName})`}
+                  text={`Derivation Path: ${keyring.hdPath}/0 (${pathName})`}
                   preset="sub"
                   onClick={() => {
-                    copy(currenyKering.hdPath);
+                    copy(keyring.hdPath);
                   }}
                 />
                 {passphrase && <Text text={`Passphrase: ${passphrase}`} preset="sub" />}

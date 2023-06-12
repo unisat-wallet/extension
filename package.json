@@ -2,13 +2,13 @@
   "name": "litescribe-extension",
   "version": "1.0.1",
   "private": true,
-  "homepage": "https://github.com/unisat-wallet/extension#readme",
+  "homepage": "https://github.com/ynohtna92/extension-ltc#readme",
   "bugs": {
-    "url": "https://github.com/unisat-wallet/extension/issues"
+    "url": "https://github.com/ynohtna92/extension-ltc/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/unisat-wallet/extension.git"
+    "url": "https://github.com/ynohtna92/extension-ltc.git"
   },
   "scripts": {
     "clean": "mkdir -p dist && rm -rf dist/* && cp -r build/_raw/* dist",

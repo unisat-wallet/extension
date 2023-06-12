@@ -17,15 +17,15 @@ export default function AccountUpdater() {
   const isUnlocked = useIsUnlocked();
   const balance = useAccountBalance();
   const selfRef = useRef({
-    preAddress: '',
+    preAccountKey: '',
     loadingBalance: false,
     loadingHistory: false
   });
   const self = selfRef.current;
 
   const onCurrentChange = useCallback(async () => {
-    if (isUnlocked && currentAccount && currentAccount.address != self.preAddress) {
-      self.preAddress = currentAccount.address;
+    if (isUnlocked && currentAccount && currentAccount.key != self.preAccountKey) {
+      self.preAccountKey = currentAccount.key;
 
       // setLoading(true);
 
@@ -47,7 +47,7 @@ export default function AccountUpdater() {
 
   useEffect(() => {
     onCurrentChange();
-  }, [currentAccount && currentAccount.address, isUnlocked]);
+  }, [currentAccount && currentAccount.key, isUnlocked]);
 
   const fetchBalance = useFetchBalanceCallback();
   useEffect(() => {

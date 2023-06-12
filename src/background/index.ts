@@ -1,4 +1,4 @@
-import { EVENTS } from '@/shared/constant';
+import { EVENTS, MANIFEST_VERSION } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 import { Message } from '@/shared/utils';
 import { openExtensionInTab } from '@/ui/features/browser/tabs';
@@ -122,35 +122,35 @@ browserRuntimeOnInstalled((details) => {
   }
 });
 
-// Keep alive
-const INTERNAL_STAYALIVE_PORT = 'CT_Internal_port_alive';
-let alivePort: any = null;
+if (MANIFEST_VERSION === 'mv3') {
+  // Keep alive for MV3
+  const INTERNAL_STAYALIVE_PORT = 'CT_Internal_port_alive';
+  let alivePort: any = null;
 
-setInterval(Highlander, 5000);
+  setInterval(() => {
+    // console.log('Highlander', Date.now());
+    if (alivePort == null) {
+      alivePort = chrome.runtime.connect({ name: INTERNAL_STAYALIVE_PORT });
 
-async function Highlander() {
-  // console.log('Highlander', Date.now());
-  if (alivePort == null) {
-    alivePort = chrome.runtime.connect({ name: INTERNAL_STAYALIVE_PORT });
+      alivePort.onDisconnect.addListener((p) => {
+        if (chrome.runtime.lastError) {
+          // console.log('(DEBUG Highlander) Expected disconnect (on error). SW should be still running.');
+        } else {
+          // console.log('(DEBUG Highlander): port disconnected');
+        }
 
-    alivePort.onDisconnect.addListener((p) => {
-      if (chrome.runtime.lastError) {
-        // console.log('(DEBUG Highlander) Expected disconnect (on error). SW should be still running.');
-      } else {
-        // console.log('(DEBUG Highlander): port disconnected');
-      }
-
-      alivePort = null;
-    });
-  }
-
-  if (alivePort) {
-    alivePort.postMessage({ content: 'keep alive~' });
-
-    if (chrome.runtime.lastError) {
-      // console.log(`(DEBUG Highlander): postMessage error: ${chrome.runtime.lastError.message}`);
-    } else {
-      // console.log(`(DEBUG Highlander): sent through ${alivePort.name} port`);
+        alivePort = null;
+      });
     }
-  }
+
+    if (alivePort) {
+      alivePort.postMessage({ content: 'keep alive~' });
+
+      if (chrome.runtime.lastError) {
+        // console.log(`(DEBUG Highlander): postMessage error: ${chrome.runtime.lastError.message}`);
+      } else {
+        // console.log(`(DEBUG Highlander): sent through ${alivePort.name} port`);
+      }
+    }
+  }, 5000);
 }

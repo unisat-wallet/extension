@@ -194,13 +194,16 @@ export class WalletController extends BaseController {
     const privateKey = await keyring.exportAccount(pubkey);
     const networkType = this.getNetworkType();
     const network = toPsbtNetwork(networkType);
-    return ECPair.fromPrivateKey(Buffer.from(privateKey, 'hex'), { network }).toWIF();
+    const hex = privateKey;
+    const wif = ECPair.fromPrivateKey(Buffer.from(privateKey, 'hex'), { network }).toWIF();
+    return {
+      hex,
+      wif
+    };
   };
 
-  getMnemonics = async (password: string) => {
+  getMnemonics = async (password: string, keyring: WalletKeyring) => {
     await this.verifyPassword(password);
-    const keyring = await this.getCurrentKeyring();
-    if (!keyring) throw new Error('no current keyring');
     const originKeyring = keyringService.keyrings[keyring.index];
     const serialized = await originKeyring.serialize();
     return {
@@ -1084,7 +1087,7 @@ export class WalletController extends BaseController {
   };
 
   getWalletConfig = () => {
-    return openapiService.store.config;
+    return openapiService.getWalletConfig();
   };
 
   getSkippedVersion = () => {
