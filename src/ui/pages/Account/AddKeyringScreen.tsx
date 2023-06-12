@@ -19,10 +19,20 @@ export default function AddKeyringScreen() {
           <Card
             justifyCenter
             onClick={(e) => {
-              navigate('CreateHDWalletScreen', { isImport: false });
+              navigate('CreateHDWalletScreen', { isImport: false, words: 12 });
             }}>
             <Column full justifyCenter>
               <Text text="Create with mnemonics (12-words)" size="sm" />
+            </Column>
+          </Card>
+
+          <Card
+            justifyCenter
+            onClick={(e) => {
+              navigate('CreateHDWalletScreen', { isImport: false, words: 24 });
+            }}>
+            <Column full justifyCenter>
+              <Text text="Create with mnemonics (24-words)" size="sm" />
             </Column>
           </Card>
 
@@ -31,10 +41,20 @@ export default function AddKeyringScreen() {
           <Card
             justifyCenter
             onClick={(e) => {
-              navigate('CreateHDWalletScreen', { isImport: true });
+              navigate('CreateHDWalletScreen', { isImport: true, words: 12 });
             }}>
             <Column full justifyCenter>
               <Text text="Restore from mnemonics (12-words)" size="sm" />
+            </Column>
+          </Card>
+
+          <Card
+            justifyCenter
+            onClick={(e) => {
+              navigate('CreateHDWalletScreen', { isImport: true, words: 24 });
+            }}>
+            <Column full justifyCenter>
+              <Text text="Restore from mnemonics (24-words)" size="sm" />
             </Column>
           </Card>
 

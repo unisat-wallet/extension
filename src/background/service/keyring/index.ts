@@ -192,15 +192,15 @@ class KeyringService extends EventEmitter {
     return keyring;
   };
 
-  private generateMnemonic = (): string => {
-    return new Mnemonic().toString();
+  private generateMnemonic = (data: any): string => {
+    return new Mnemonic(data).toString();
   };
 
-  generatePreMnemonic = async (): Promise<string> => {
+  generatePreMnemonic = async (data: any): Promise<string> => {
     if (!this.password) {
       throw new Error(i18n.t('you need to unlock wallet first'));
     }
-    const mnemonic = this.generateMnemonic();
+    const mnemonic = this.generateMnemonic(data);
     const preMnemonics = await this.encryptor.encrypt(this.password, mnemonic);
     this.memStore.updateState({ preMnemonics });
 

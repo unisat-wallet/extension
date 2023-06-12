@@ -59,7 +59,7 @@ function Step1_Create({
   const tools = useTools();
 
   const init = async () => {
-    const _mnemonics = (await wallet.getPreMnemonics()) || (await wallet.generatePreMnemonic());
+    const _mnemonics = (await wallet.generatePreMnemonic(contextData.entropy));
     updateContextData({
       mnemonics: _mnemonics
     });
@@ -141,7 +141,7 @@ function Step1_Import({
   contextData: ContextData;
   updateContextData: (params: UpdateContextDataParams) => void;
 }) {
-  const [keys, setKeys] = useState<Array<string>>(new Array(12).fill(''));
+  const [keys, setKeys] = useState<Array<string>>(new Array(contextData.words).fill(''));
   const [curInputIndex, setCurInputIndex] = useState(0);
   const [hover, setHover] = useState(999);
   const [disabled, setDisabled] = useState(true);
@@ -205,7 +205,7 @@ function Step1_Import({
   return (
     <Column gap="lg">
       <Text text="Secret Recovery Phrase" preset="title-bold" textCenter />
-      <Text text="Import an existing wallet with your 12 word secret recovery phrase" preset="sub" textCenter />
+      <Text text={`Import an existing wallet with your ${contextData.words} word secret recovery phrase`} preset="sub" textCenter />
       <Row justifyCenter>
         <Grid columns={2}>
           {keys.map((_, index) => {
@@ -513,6 +513,8 @@ enum TabType {
 
 interface ContextData {
   mnemonics: string;
+  entropy: number;
+  words: number;
   hdPath: string;
   passphrase: string;
   addressType: AddressType;
@@ -542,13 +544,16 @@ export default function CreateHDWalletScreen() {
   const navigate = useNavigate();
 
   const { state } = useLocation();
-  const { isImport, fromUnlock } = state as {
+  const { isImport, fromUnlock, words } = state as {
     isImport: boolean;
     fromUnlock: boolean;
+    words: number;
   };
 
   const [contextData, setContextData] = useState<ContextData>({
     mnemonics: '',
+    entropy: words / 3 * 32,
+    words: words,
     hdPath: '',
     passphrase: '',
     addressType: AddressType.P2WPKH,

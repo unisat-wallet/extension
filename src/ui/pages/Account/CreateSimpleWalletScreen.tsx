@@ -22,7 +22,7 @@ function Step1({
   const [disabled, setDisabled] = useState(true);
   const wallet = useWallet();
   const init = async () => {
-    const _mnemonics = (await wallet.getPreMnemonics()) || (await wallet.generatePreMnemonic());
+    const _mnemonics = (await wallet.getPreMnemonics()) || (await wallet.generatePreMnemonic(32 * 4));
     updateContextData({
       wif: _mnemonics
     });
