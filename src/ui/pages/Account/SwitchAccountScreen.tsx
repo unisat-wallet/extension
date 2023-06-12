@@ -98,7 +98,7 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
           <Column
             style={{
               backgroundColor: colors.black,
-              width: 140,
+              width: 160,
               position: 'absolute',
               right: 0,
               padding: 5,
@@ -125,7 +125,7 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
                 navigate('ExportPrivateKeyScreen', { account });
               }}>
               <KeyOutlined />
-              <Text text="Export WIF" size="sm" />
+              <Text text="Export Private Key" size="sm" />
             </Row>
           </Column>
         )}

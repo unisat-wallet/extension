@@ -68,10 +68,10 @@ function Step1({
 
   return (
     <Column gap="lg">
-      <Text text="Private Key (WIF)" textCenter preset="bold" />
+      <Text text="Private Key" textCenter preset="bold" />
 
       <Input
-        placeholder={'Private Key (WIF)'}
+        placeholder={'WIF Private Key / Hex Private Key'}
         onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) => {
           if ('Enter' == e.key) {
             btnClick();
