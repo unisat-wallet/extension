@@ -32,7 +32,7 @@ interface MemStoreState {
   preMnemonics: string;
 }
 
-export interface DisplayedKeryring {
+export interface DisplayedKeyring {
   type: string;
   accounts: {
     pubkey: string;
@@ -718,7 +718,7 @@ class KeyringService extends EventEmitter {
    * @param {Keyring} keyring
    * @returns {Promise<Object>} A keyring display object, with type and accounts properties.
    */
-  displayForKeyring = async (keyring: Keyring, addressType: AddressType, index: number): Promise<DisplayedKeryring> => {
+  displayForKeyring = async (keyring: Keyring, addressType: AddressType, index: number): Promise<DisplayedKeyring> => {
     const accounts = await keyring.getAccounts();
     const all_accounts: { pubkey: string; brandName: string }[] = [];
     for (let i = 0; i < accounts.length; i++) {
@@ -737,7 +737,7 @@ class KeyringService extends EventEmitter {
     };
   };
 
-  getAllDisplayedKeyrings = (): Promise<DisplayedKeryring[]> => {
+  getAllDisplayedKeyrings = (): Promise<DisplayedKeyring[]> => {
     return Promise.all(
       this.keyrings.map((keyring, index) => this.displayForKeyring(keyring, this.addressTypes[index], index))
     );

@@ -14,7 +14,7 @@ import {
   sessionService
 } from '@/background/service';
 import i18n from '@/background/service/i18n';
-import { DisplayedKeryring, Keyring } from '@/background/service/keyring';
+import { DisplayedKeyring, Keyring } from '@/background/service/keyring';
 import {
   ADDRESS_TYPES,
   BRAND_ALIAN_TYPE_TEXT,
@@ -748,7 +748,7 @@ export class WalletController extends BaseController {
     return accounts;
   };
 
-  displayedKeyringToWalletKeyring = (displayedKeyring: DisplayedKeryring, index: number, initName = true) => {
+  displayedKeyringToWalletKeyring = (displayedKeyring: DisplayedKeyring, index: number, initName = true) => {
     const networkType = preferenceService.getNetworkType();
     const addressType = displayedKeyring.addressType;
     const key = 'keyring_' + index;
