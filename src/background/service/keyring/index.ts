@@ -1,6 +1,6 @@
 /// fork from https://github.com/MetaMask/KeyringController/blob/master/index.js
+import * as bip39 from 'bip39';
 import * as bitcoin from 'bitcoinjs-lib';
-import Mnemonic from 'bitcore-mnemonic';
 import encryptor from 'browser-passworder';
 import { EventEmitter } from 'events';
 import log from 'loglevel';
@@ -193,7 +193,7 @@ class KeyringService extends EventEmitter {
   };
 
   private generateMnemonic = (): string => {
-    return new Mnemonic().toString();
+    return bip39.generateMnemonic(128);
   };
 
   generatePreMnemonic = async (): Promise<string> => {
@@ -240,7 +240,7 @@ class KeyringService extends EventEmitter {
    * @returns  A Promise that resolves to the state.
    */
   createKeyringWithMnemonics = async (seed: string, hdPath: string, passphrase: string, addressType: AddressType) => {
-    if (!Mnemonic.isValid(seed)) {
+    if (!bip39.validateMnemonic(seed)) {
       return Promise.reject(new Error(i18n.t('mnemonic phrase is invalid')));
     }
 

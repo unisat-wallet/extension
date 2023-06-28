@@ -51,7 +51,7 @@
     "@types/react": "^18.0.9",
     "@types/react-cache": "^2.0.1",
     "@types/react-dom": "^18.0.4",
-    "@unisat/bitcoin-hd-keyring": "0.2.0",
+    "@unisat/bitcoin-hd-keyring": "1.0.0",
     "@unisat/bitcoinjs-wallet": "^0.1.0",
     "@unisat/ord-utils": "0.2.9",
     "antd": "^4.20.4",
