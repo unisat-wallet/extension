@@ -23,7 +23,8 @@ import {
   TokenTransfer,
   AddressTokenSummary,
   DecodedPsbt,
-  WalletConfig
+  WalletConfig,
+  UTXO_Detail
 } from '@/shared/types';
 
 export interface WalletController {
@@ -128,6 +129,9 @@ export interface WalletController {
   sendInscription(data: { to: string; inscriptionId: string; feeRate: number; outputValue: number }): Promise<string>;
 
   sendInscriptions(data: { to: string; inscriptionIds: string[]; feeRate: number }): Promise<string>;
+
+  splitInscription(data: { to: string; inscriptionId: string; feeRate: number }): Promise<string>;
+
   pushTx(rawtx: string): Promise<string>;
 
   queryDomainInfo(domain: string): Promise<Inscription>;
@@ -194,6 +198,8 @@ export interface WalletController {
 
   getSkippedVersion(): Promise<string>;
   setSkippedVersion(version: string): Promise<void>;
+
+  getInscriptionUtxoDetail(inscriptionId: string): Promise<UTXO_Detail>;
 }
 
 const WalletContext = createContext<{

@@ -16,7 +16,8 @@ import {
   TokenTransfer,
   AddressTokenSummary,
   DecodedPsbt,
-  WalletConfig
+  WalletConfig,
+  UTXO_Detail
 } from '@/shared/types';
 
 interface OpenApiStore {
@@ -162,6 +163,16 @@ export class OpenApiService {
 
   async getInscriptionUtxo(inscriptionId: string): Promise<UTXO> {
     const data = await this.httpGet('/inscription/utxo', {
+      inscriptionId
+    });
+    if (data.status == API_STATUS.FAILED) {
+      throw new Error(data.message);
+    }
+    return data.result;
+  }
+
+  async getInscriptionUtxoDetail(inscriptionId: string): Promise<UTXO_Detail> {
+    const data = await this.httpGet('/inscription/utxo-detail', {
       inscriptionId
     });
     if (data.status == API_STATUS.FAILED) {

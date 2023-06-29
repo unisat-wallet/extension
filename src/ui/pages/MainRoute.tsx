@@ -45,6 +45,7 @@ import OrdinalsDetailScreen from './Wallet/OrdinalsDetailScreen';
 import OrdinalsTxConfirmScreen from './Wallet/OrdinalsTxConfirmScreen';
 import OrdinalsTxCreateScreen from './Wallet/OrdinalsTxCreateScreen';
 import ReceiveScreen from './Wallet/ReceiveScreen';
+import SplitTxCreateScreen from './Wallet/SplitTxCreateScreen';
 import TxConfirmScreen from './Wallet/TxConfirmScreen';
 import TxCreateScreen from './Wallet/TxCreateScreen';
 import TxFailScreen from './Wallet/TxFailScreen';
@@ -207,6 +208,10 @@ const routes = {
   MoonPayScreen: {
     path: '/moonpay',
     element: <MoonPayScreen />
+  },
+  SplitTxCreateScreen: {
+    path: '/wallet/split-tx/create',
+    element: <SplitTxCreateScreen />
   }
 };
 

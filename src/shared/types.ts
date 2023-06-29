@@ -118,6 +118,15 @@ export interface UTXO {
   }[];
 }
 
+export interface UTXO_Detail {
+  txId: string;
+  outputIndex: number;
+  satoshis: number;
+  scriptPk: string;
+  addressType: AddressType;
+  inscriptions: Inscription[];
+}
+
 export enum TxType {
   SIGN_TX,
   SEND_BITCOIN,

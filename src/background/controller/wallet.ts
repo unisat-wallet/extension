@@ -28,7 +28,7 @@ import {
   OPENAPI_URL_TESTNET
 } from '@/shared/constant';
 import { AddressType, BitcoinBalance, NetworkType, ToSignInput, UTXO, WalletKeyring, Account } from '@/shared/types';
-import { createSendBTC, createSendMultiOrds, createSendOrd } from '@unisat/ord-utils';
+import { createSendBTC, createSendMultiOrds, createSendOrd, createSplitOrdUtxo } from '@unisat/ord-utils';
 
 import { ContactBookItem } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';
@@ -737,6 +737,47 @@ export class WalletController extends BaseController {
     return psbt.toHex();
   };
 
+  splitInscription = async ({ to, inscriptionId, feeRate }: { to: string; inscriptionId: string; feeRate: number }) => {
+    const account = await preferenceService.getCurrentAccount();
+    if (!account) throw new Error('no current account');
+
+    const networkType = preferenceService.getNetworkType();
+    const psbtNetwork = toPsbtNetwork(networkType);
+
+    const utxo = await openapiService.getInscriptionUtxo(inscriptionId);
+    if (!utxo) {
+      throw new Error('UTXO not found.');
+    }
+
+    const btc_utxos = await openapiService.getAddressUtxo(account.address);
+    const utxos = [utxo].concat(btc_utxos);
+
+    const psbt = await createSplitOrdUtxo({
+      utxos: utxos.map((v) => {
+        return {
+          txId: v.txId,
+          outputIndex: v.outputIndex,
+          satoshis: v.satoshis,
+          scriptPk: v.scriptPk,
+          addressType: v.addressType,
+          address: account.address,
+          ords: v.inscriptions
+        };
+      }),
+      toAddress: to,
+      wallet: this,
+      network: psbtNetwork,
+      changeAddress: account.address,
+      pubkey: account.pubkey,
+      feeRate,
+      enableRBF: false
+    });
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+    //@ts-ignore
+    psbt.__CACHE.__UNSAFE_SIGN_NONSEGWIT = false;
+    return psbt.toHex();
+  };
+
   pushTx = async (rawtx: string) => {
     const txid = await this.openapi.pushTx(rawtx);
     return txid;
@@ -1093,6 +1134,14 @@ export class WalletController extends BaseController {
 
   setSkippedVersion = (version: string) => {
     return preferenceService.setSkippedVersion(version);
+  };
+
+  getInscriptionUtxoDetail = async (inscriptionId: string) => {
+    const utxo = await openapiService.getInscriptionUtxoDetail(inscriptionId);
+    if (!utxo) {
+      throw new Error('UTXO not found.');
+    }
+    return utxo;
   };
 }
 

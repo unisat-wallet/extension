@@ -1,4 +1,5 @@
 import moment from 'moment';
+import { useEffect, useState } from 'react';
 
 import { Inscription } from '@/shared/types';
 import { Button, Column, Content, Header, Layout, Row, Text } from '@/ui/components';
@@ -8,7 +9,7 @@ import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useTxIdUrl } from '@/ui/state/settings/hooks';
 import { transactionsActions } from '@/ui/state/transactions/reducer';
-import { copyToClipboard, useLocationState } from '@/ui/utils';
+import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
 
@@ -25,6 +26,18 @@ export default function OrdinalsDetailScreen() {
   const date = moment(inscription.timestamp * 1000).format('YYYY-MM-DD hh:mm:ss');
 
   const genesisTxUrl = useTxIdUrl(inscription.genesisTransaction);
+
+  const [isMultiStuck, setIsMultiStuck] = useState(false);
+  const wallet = useWallet();
+  // detect multiple inscriptions
+  useEffect(() => {
+    wallet.getInscriptionUtxoDetail(inscription.inscriptionId).then((v) => {
+      if (v.inscriptions.length > 1) {
+        setIsMultiStuck(true);
+      }
+    });
+  }, []);
+
   return (
     <Layout>
       <Header
@@ -43,17 +56,29 @@ export default function OrdinalsDetailScreen() {
             <InscriptionPreview data={inscription} preset="large" />
           </Row>
 
-          {withSend && (
-            <Button
-              text="Send"
-              icon="send"
-              preset="default"
-              onClick={(e) => {
-                dispatch(transactionsActions.reset());
-                navigate('OrdinalsTxCreateScreen', { inscription });
-              }}
-            />
-          )}
+          {isMultiStuck && <Text color="danger" textCenter text={'This inscription is stuck by other inscriptions'} />}
+          {withSend &&
+            (isMultiStuck ? (
+              <Button
+                text="Split"
+                icon="send"
+                preset="default"
+                onClick={(e) => {
+                  dispatch(transactionsActions.reset());
+                  navigate('SplitTxCreateScreen', { inscription });
+                }}
+              />
+            ) : (
+              <Button
+                text="Send"
+                icon="send"
+                preset="default"
+                onClick={(e) => {
+                  dispatch(transactionsActions.reset());
+                  navigate('OrdinalsTxCreateScreen', { inscription });
+                }}
+              />
+            ))}
           <Column gap="lg">
             <Section title="id" value={inscription.inscriptionId} />
             <Section title="address" value={inscription.address} />
