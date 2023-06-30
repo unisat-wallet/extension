@@ -1,6 +1,11 @@
 
 # UniSat Wallet Release Notes
 
+## v1.1.24
+**Major changes**
+- Support restoring wallet by 24-words
+- Support spliting UTXO that contains multiple inscriptions 
+
 ## v1.1.23
 **Major changes**
 - Support exporting Hex Private Key
