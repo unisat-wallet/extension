@@ -633,7 +633,7 @@ export default function SignPsbt({
           <Button preset="default" text="Reject" onClick={handleCancel} full />
           <Button
             preset="primary"
-            text={type == TxType.SIGN_TX ? 'Sign' : 'Sign & Send'}
+            text={type == TxType.SIGN_TX ? 'Sign' : 'Sign & Pay'}
             onClick={handleConfirm}
             disabled={isValid == false}
             full
