@@ -197,9 +197,8 @@ export function useCreateSplitTxCallback() {
   const fromAddress = useAccountAddress();
   const utxos = useUtxos();
   return useCallback(
-    async (toAddressInfo: ToAddressInfo, inscriptionId: string, feeRate: number) => {
+    async (inscriptionId: string, feeRate: number) => {
       const psbtHex = await wallet.splitInscription({
-        to: toAddressInfo.address,
         inscriptionId,
         feeRate
       });
@@ -216,8 +215,7 @@ export function useCreateSplitTxCallback() {
       );
       const rawTxInfo: RawTxInfo = {
         psbtHex,
-        rawtx,
-        toAddressInfo
+        rawtx
       };
       return rawTxInfo;
     },

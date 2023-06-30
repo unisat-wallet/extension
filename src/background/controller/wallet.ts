@@ -737,7 +737,7 @@ export class WalletController extends BaseController {
     return psbt.toHex();
   };
 
-  splitInscription = async ({ to, inscriptionId, feeRate }: { to: string; inscriptionId: string; feeRate: number }) => {
+  splitInscription = async ({ inscriptionId, feeRate }: { to: string; inscriptionId: string; feeRate: number }) => {
     const account = await preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
@@ -764,7 +764,6 @@ export class WalletController extends BaseController {
           ords: v.inscriptions
         };
       }),
-      toAddress: to,
       wallet: this,
       network: psbtNetwork,
       changeAddress: account.address,

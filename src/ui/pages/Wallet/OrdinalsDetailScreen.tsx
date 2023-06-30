@@ -56,7 +56,13 @@ export default function OrdinalsDetailScreen() {
             <InscriptionPreview data={inscription} preset="large" />
           </Row>
 
-          {isMultiStuck && <Text color="danger" textCenter text={'This inscription is stuck by other inscriptions'} />}
+          {isMultiStuck && (
+            <Text
+              color="danger"
+              textCenter
+              text={'Multiple inscriptions are mixed together. Please split them first.'}
+            />
+          )}
           {withSend &&
             (isMultiStuck ? (
               <Button

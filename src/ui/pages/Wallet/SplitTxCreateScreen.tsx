@@ -5,8 +5,7 @@ import { Inscription, RawTxInfo } from '@/shared/types';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useCreateOrdinalsTxCallback, useCreateSplitTxCallback, useOrdinalsTx } from '@/ui/state/transactions/hooks';
+import { useCreateSplitTxCallback, useOrdinalsTx } from '@/ui/state/transactions/hooks';
 import { isValidAddress, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
@@ -20,11 +19,6 @@ export default function SplitTxCreateScreen() {
     inscription: Inscription;
   };
   const ordinalsTx = useOrdinalsTx();
-
-  const [toInfo, setToInfo] = useState({
-    address: '',
-    domain: ''
-  });
 
   const [error, setError] = useState('');
   const createSplitTx = useCreateSplitTxCallback();
@@ -51,17 +45,13 @@ export default function SplitTxCreateScreen() {
       return;
     }
 
-    if (!isValidAddress(toInfo.address)) {
-      return;
-    }
-
-    if (toInfo.address == ordinalsTx.toAddress && feeRate == ordinalsTx.feeRate) {
+    if (feeRate == ordinalsTx.feeRate) {
       //Prevent repeated triggering caused by setAmount
       setDisabled(false);
       return;
     }
 
-    createSplitTx(toInfo, inscription.inscriptionId, feeRate)
+    createSplitTx(inscription.inscriptionId, feeRate)
       .then((data) => {
         setRawTxInfo(data);
         setDisabled(false);
@@ -70,7 +60,7 @@ export default function SplitTxCreateScreen() {
         console.log(e);
         setError(e.message);
       });
-  }, [toInfo, feeRate]);
+  }, [feeRate]);
 
   return (
     <Layout>
@@ -96,17 +86,6 @@ export default function SplitTxCreateScreen() {
               ))}
             </Row>
           </Row>
-
-          <Text text="Recipient" color="textDim" />
-
-          <Input
-            preset="address"
-            addressInputData={toInfo}
-            autoFocus={true}
-            onAddressInputChange={(val) => {
-              setToInfo(val);
-            }}
-          />
 
           <Text text="Fee" color="textDim" />
 
