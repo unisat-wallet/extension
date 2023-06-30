@@ -73,13 +73,14 @@ export default function SplitTxCreateScreen() {
       <Content>
         <Text
           color="red"
+          textCenter
           text={
-            'This feature is currently under experimentation. Please verify splited inscriptions when signing the transaction.'
+            'This feature is currently under experimentation. Please confirm the splited inscriptions when signing the transaction.'
           }
         />
         <Column>
+          <Text text="Inscriptions" color="textDim" />
           <Row justifyBetween>
-            <Text text="Inscriptions" color="textDim" />
             <Row overflowX gap="lg" pb="md">
               {inscriptions.map((v) => (
                 <InscriptionPreview key={v.inscriptionId} data={v} preset="small" />

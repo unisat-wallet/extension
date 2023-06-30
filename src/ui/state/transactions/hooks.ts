@@ -215,7 +215,10 @@ export function useCreateSplitTxCallback() {
       );
       const rawTxInfo: RawTxInfo = {
         psbtHex,
-        rawtx
+        rawtx,
+        toAddressInfo: {
+          address: fromAddress
+        }
       };
       return rawTxInfo;
     },
