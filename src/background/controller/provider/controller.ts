@@ -10,6 +10,20 @@ import { Psbt } from 'bitcoinjs-lib';
 import { amountToSatoshis } from '@/ui/utils';
 import { ethErrors } from 'eth-rpc-errors';
 
+function formatPsbtHex(psbtHex:string){
+  let formatData = '';
+  try{
+    if(!(/^[0-9a-fA-F]+$/.test(psbtHex))){
+      formatData = Psbt.fromBase64(psbtHex).toHex()
+    }else{
+      Psbt.fromHex(psbtHex);
+      formatData = psbtHex;
+    }
+  }catch(e){
+    throw new Error('invalid psbt')
+  }
+  return formatData;
+}
 
 
 class ProviderController extends BaseController {
@@ -148,21 +162,21 @@ class ProviderController extends BaseController {
 
   @Reflect.metadata('APPROVAL', ['SignPsbt', (req) => {
     const { data: { params: { psbtHex,options } } } = req;
-    // todo
+    req.data.params.psbtHex = formatPsbtHex(psbtHex)
   }])
     signPsbt = async ({ data: { params: { psbtHex,options } } }) => {
       const account = await wallet.getCurrentAccount();
       if (!account) throw null;
       const networkType = wallet.getNetworkType()
       const psbtNetwork = toPsbtNetwork(networkType)
-      const psbt = Psbt.fromHex(psbtHex,{network:psbtNetwork});
+      const psbt =  Psbt.fromHex(psbtHex,{network:psbtNetwork})
       await wallet.signPsbt( psbt,options);
       return psbt.toHex();
     }
 
   @Reflect.metadata('APPROVAL', ['MultiSignPsbt', (req) => {
     const { data: { params: { psbtHexs,options } } } = req;
-    // todo
+    req.data.params.psbtHexs = psbtHexs.map(psbtHex=>formatPsbtHex(psbtHex))
   }])
     multiSignPsbt = async ({ data: { params: { psbtHexs,options } } }) => {
       const account = await wallet.getCurrentAccount();
@@ -182,7 +196,8 @@ class ProviderController extends BaseController {
 
   @Reflect.metadata('SAFE', true)
     pushPsbt = async ({ data: { params: { psbtHex } } }) => {
-      const psbt = Psbt.fromHex(psbtHex);
+      const hexData = formatPsbtHex(psbtHex);
+      const psbt = Psbt.fromHex(hexData);
       const tx = psbt.extractTransaction();
       const rawtx = tx.toHex()
       return await wallet.pushTx(rawtx)
