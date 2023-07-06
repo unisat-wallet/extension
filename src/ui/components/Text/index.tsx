@@ -67,12 +67,13 @@ export interface TextProps extends BaseViewProps {
   textEnd?: boolean;
   wrap?: boolean;
   selectText?: boolean;
+  disableTranslate?: boolean;
 }
 
 export const $textPresets = $presets;
 
 export function Text(props: TextProps) {
-  const { size, text, textCenter, textEnd, wrap, selectText, style: $styleOverride, ...rest } = props;
+  const { size, text, textCenter, textEnd, wrap, selectText, disableTranslate, style: $styleOverride, ...rest } = props;
   const preset: Presets = props.preset || 'regular';
   const $textStyle = Object.assign(
     {},
@@ -86,7 +87,7 @@ export function Text(props: TextProps) {
   const $style = Object.assign({}, $textStyle, $styleOverride);
   return (
     <BaseView style={$style} {...rest}>
-      {text}
+      {disableTranslate ? <span translate="no">{text}</span> : text}
     </BaseView>
   );
 }

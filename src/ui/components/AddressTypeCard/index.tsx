@@ -25,7 +25,7 @@ export function AddressTypeCard(props: AddressTypeCardProps) {
       <Column full>
         <Row justifyBetween px="md" pt="md">
           <Column justifyCenter>
-            <Text text={label} size="xs" />
+            <Text text={label} size="xs" disableTranslate />
           </Column>
         </Row>
         <Row justifyBetween px="md" pb="md">

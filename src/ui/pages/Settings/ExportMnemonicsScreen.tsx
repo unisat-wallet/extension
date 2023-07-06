@@ -138,7 +138,7 @@ export default function ExportMnemonicsScreen() {
                     <Row key={index}>
                       <Text text={`${index + 1}. `} style={{ width: 40 }} />
                       <Card preset="style2" style={{ width: 200 }}>
-                        <Text text={v} selectText />
+                        <Text text={v} selectText disableTranslate />
                       </Card>
                     </Row>
                   );
@@ -154,8 +154,9 @@ export default function ExportMnemonicsScreen() {
                   onClick={() => {
                     copy(keyring.hdPath);
                   }}
+                  disableTranslate
                 />
-                {passphrase && <Text text={`Passphrase: ${passphrase}`} preset="sub" />}
+                {passphrase && <Text text={`Passphrase: ${passphrase}`} preset="sub" disableTranslate />}
               </Column>
             </Card>
           </Column>
