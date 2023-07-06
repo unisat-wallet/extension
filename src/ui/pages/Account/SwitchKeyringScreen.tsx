@@ -61,7 +61,8 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
           if (currentKeyring.key !== keyring.key) {
             await wallet.changeKeyring(keyring);
             dispatch(keyringsActions.setCurrent(keyring));
-            dispatch(accountActions.setCurrent(keyring.accounts[0]));
+            const _currentAccount = await wallet.getCurrentAccount();
+            dispatch(accountActions.setCurrent(_currentAccount));
           }
           if (autoNav) navigate('MainScreen');
         }}>

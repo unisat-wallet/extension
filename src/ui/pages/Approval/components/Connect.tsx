@@ -7,32 +7,24 @@ import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useAccounts, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
+import { useCurrentKeyring, useKeyrings } from '@/ui/state/keyrings/hooks';
+import { keyringsActions } from '@/ui/state/keyrings/reducer';
 import { shortAddress, useApproval, useWallet } from '@/ui/utils';
 import { CheckCircleFilled } from '@ant-design/icons';
 
 interface MyItemProps {
   account?: Account;
+  selected?: boolean;
+  onClick?: () => void;
 }
 
-export function MyItem({ account }: MyItemProps, ref) {
-  const currentAccount = useCurrentAccount();
-  const selected = currentAccount.pubkey == account?.pubkey;
-  const wallet = useWallet();
-  const dispatch = useAppDispatch();
+export function MyItem({ account, selected, onClick }: MyItemProps, ref) {
   if (!account) {
     return <div />;
   }
 
   return (
-    <Card
-      justifyBetween
-      mt="md"
-      onClick={async (e) => {
-        if (currentAccount.pubkey !== account.pubkey) {
-          await wallet.changeAccount(account);
-          dispatch(accountActions.setCurrent(account));
-        }
-      }}>
+    <Card justifyBetween mt="sm" onClick={onClick}>
       <Row>
         <Column style={{ width: 20 }} selfItemsCenter>
           {selected && (
@@ -72,12 +64,13 @@ export default function Connect({ params: { session } }: Props) {
     resolveApproval();
   };
 
-  const accounts = useAccounts();
-  const items = accounts.map((v) => ({
-    key: v.address,
-    account: v
-  }));
-  const ForwardMyItem = forwardRef(MyItem);
+  const keyrings = useKeyrings();
+  const wallet = useWallet();
+
+  const currentKeyring = useCurrentKeyring();
+  const currentAccount = useCurrentAccount();
+
+  const dispatch = useAppDispatch();
 
   return (
     <Layout>
@@ -90,20 +83,25 @@ export default function Connect({ params: { session } }: Props) {
           <Text text="Select the account to use on this site" textCenter mt="md" />
           <Text text="Only connect with sites you trust." preset="sub" textCenter mt="md" />
 
-          <VirtualList
-            data={items}
-            data-id="list"
-            itemHeight={20}
-            itemKey={(item) => item.key}
-            // disabled={animating}
-            style={{
-              boxSizing: 'border-box'
-            }}
-            // onSkipRender={onAppear}
-            // onItemRemove={onAppear}
-          >
-            {(item, index) => <ForwardMyItem account={item.account} />}
-          </VirtualList>
+          {keyrings.map((keyring) => (
+            <Column mt="lg" key={keyring.key}>
+              <Text text={keyring.alianName} preset="sub" />
+              {keyring.accounts.map((account) => (
+                <MyItem
+                  key={account.key}
+                  account={account}
+                  selected={currentKeyring.key === keyring.key && currentAccount.address === account.address}
+                  onClick={async () => {
+                    const accountIndex = account.index || 0;
+                    await wallet.changeKeyring(keyring, accountIndex);
+                    dispatch(keyringsActions.setCurrent(keyring));
+                    const _currentAccount = await wallet.getCurrentAccount();
+                    dispatch(accountActions.setCurrent(_currentAccount));
+                  }}
+                />
+              ))}
+            </Column>
+          ))}
         </Column>
       </Content>
 

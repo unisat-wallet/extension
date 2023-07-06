@@ -109,7 +109,6 @@ export interface WalletController {
   getContactsByMap: () => ContactBookStore;
   updateAlianName: (pubkey: string, name: string) => Promise<void>;
 
-  changeAccount(account: Account): Promise<void>;
   getCurrentAccount(): Promise<Account>;
   getAccounts(): Promise<Account[]>;
   getNextAlianName: (keyring: WalletKeyring) => Promise<string>;
@@ -149,7 +148,7 @@ export interface WalletController {
 
   getCurrentKeyring(): Promise<WalletKeyring>;
   getKeyrings(): Promise<WalletKeyring[]>;
-  changeKeyring(keyring: WalletKeyring): Promise<void>;
+  changeKeyring(keyring: WalletKeyring, accountIndex?: number): Promise<void>;
   getAllAddresses(keyring: WalletKeyring, index: number): Promise<string[]>;
 
   setKeyringAlianName(keyring: WalletKeyring, name: string): Promise<WalletKeyring>;

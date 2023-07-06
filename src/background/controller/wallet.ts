@@ -298,17 +298,12 @@ export class WalletController extends BaseController {
     const currentKeyring = await this.getCurrentKeyring();
     if (!currentKeyring) throw new Error('no current keyring');
     keyring = currentKeyring;
-    this.changeAccount(keyring.accounts[keyring.accounts.length - 1]);
+    this.changeKeyring(keyring, keyring.accounts.length - 1);
   };
 
   getAccountsCount = async () => {
     const accounts = await keyringService.getAccounts();
     return accounts.filter((x) => x).length;
-  };
-
-  changeAccount = (account: Account) => {
-    preferenceService.setCurrentAccount(account);
-    openapiService.setClientAddress(account.address);
   };
 
   changeKeyring = (keyring: WalletKeyring, accountIndex = 0) => {

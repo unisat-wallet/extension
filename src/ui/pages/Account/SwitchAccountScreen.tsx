@@ -59,8 +59,9 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
         <Column
           onClick={async (e) => {
             if (currentAccount.pubkey !== account.pubkey) {
-              await wallet.changeAccount(account);
-              dispatch(accountActions.setCurrent(account));
+              await wallet.changeKeyring(keyring, account.index);
+              const _currentAccount = await wallet.getCurrentAccount();
+              dispatch(accountActions.setCurrent(_currentAccount));
             }
             if (autoNav) navigate('MainScreen');
           }}>
