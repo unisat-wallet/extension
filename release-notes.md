@@ -1,6 +1,13 @@
 
 # UniSat Wallet Release Notes
 
+## v1.1.25
+**Major changes**
+- Scan more addresses when restoring wallet
+- Disable mnemonic translation
+- Fix a issue that selecting an account do not take effect
+- Fix a issue that fails to sign PSBT with M44_P2TR address
+
 ## v1.1.24
 **Major changes**
 - Support restoring wallet by 24-words
