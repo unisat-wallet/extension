@@ -20,7 +20,7 @@ module.exports = {
      * warn or 1：Indicates the validation rule, when not satisfied, give a warning
      * error or 2 ：Indicates that the validation rules are not met, and an error is reported if they are not satisfied.
      */
-    quotes: [2, 'single'],
+    quotes: [1, 'single'],
     // "no-console": process.env.NODE_ENV === 'production' ? 2 : 0, // do not disable the console
     'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0, // disable debugger
     semi: 0,

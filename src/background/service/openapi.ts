@@ -151,6 +151,18 @@ export class OpenApiService {
     return data.result;
   }
 
+  async findGroupAssets(
+    groups: { type: number; address_arr: string[] }[]
+  ): Promise<{ type: number; address_arr: string[]; satoshis_arr: number[] }[]> {
+    const data = await this.httpPost('/address/find-group-assets', {
+      groups
+    });
+    if (data.status == API_STATUS.FAILED) {
+      throw new Error(data.message);
+    }
+    return data.result;
+  }
+
   async getAddressUtxo(address: string): Promise<UTXO[]> {
     const data = await this.httpGet('/address/btc-utxo', {
       address

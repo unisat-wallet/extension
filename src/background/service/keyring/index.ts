@@ -239,17 +239,27 @@ class KeyringService extends EventEmitter {
    * @param  seed - The BIP44-compliant seed phrase.
    * @returns  A Promise that resolves to the state.
    */
-  createKeyringWithMnemonics = async (seed: string, hdPath: string, passphrase: string, addressType: AddressType) => {
+  createKeyringWithMnemonics = async (
+    seed: string,
+    hdPath: string,
+    passphrase: string,
+    addressType: AddressType,
+    accountCount: number
+  ) => {
     if (!bip39.validateMnemonic(seed)) {
       return Promise.reject(new Error(i18n.t('mnemonic phrase is invalid')));
     }
 
     await this.persistAllKeyrings();
+    const activeIndexes: number[] = [];
+    for (let i = 0; i < accountCount; i++) {
+      activeIndexes.push(i);
+    }
     const keyring = await this.addNewKeyring(
       'HD Key Tree',
       {
         mnemonic: seed,
-        activeIndexes: [0],
+        activeIndexes,
         hdPath,
         passphrase
       },

@@ -54,6 +54,9 @@ export interface WalletController {
   getAddressBalance(address: string): Promise<BitcoinBalance>;
   getAddressCacheBalance(address: string): Promise<BitcoinBalance>;
   getMultiAddressAssets(addresses: string): Promise<AddressAssets[]>;
+  findGroupAssets(
+    groups: { type: number; address_arr: string[] }[]
+  ): Promise<{ type: number; address_arr: string[]; satoshis_arr: number[] }[]>;
 
   getAddressInscriptions(
     address: string,
@@ -91,7 +94,8 @@ export interface WalletController {
     mnemonic: string,
     hdPath: string,
     passphrase: string,
-    addressType: AddressType
+    addressType: AddressType,
+    accountCount: number
   ): Promise<{ address: string; type: string }[]>;
 
   createTmpKeyringWithPrivateKey(privateKey: string, addressType: AddressType): Promise<WalletKeyring>;
@@ -100,7 +104,8 @@ export interface WalletController {
     mnemonic: string,
     hdPath: string,
     passphrase: string,
-    addressType: AddressType
+    addressType: AddressType,
+    accountCount?: number
   ): Promise<WalletKeyring>;
   removeKeyring(keyring: WalletKeyring): Promise<WalletKeyring>;
   deriveNewAccountFromMnemonic(keyring: WalletKeyring, alianName?: string): Promise<string[]>;

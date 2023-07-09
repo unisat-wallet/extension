@@ -126,6 +126,10 @@ export class WalletController extends BaseController {
     return openapiService.getMultiAddressAssets(addresses);
   };
 
+  findGroupAssets = (groups: { type: number; address_arr: string[] }[]) => {
+    return openapiService.findGroupAssets(groups);
+  };
+
   getAddressCacheBalance = (address: string | undefined): BitcoinBalance => {
     const defaultBalance: BitcoinBalance = {
       confirm_amount: '0',
@@ -242,9 +246,16 @@ export class WalletController extends BaseController {
     mnemonic: string,
     hdPath: string,
     passphrase: string,
-    addressType: AddressType
+    addressType: AddressType,
+    accountCount: number
   ) => {
-    const originKeyring = await keyringService.createKeyringWithMnemonics(mnemonic, hdPath, passphrase, addressType);
+    const originKeyring = await keyringService.createKeyringWithMnemonics(
+      mnemonic,
+      hdPath,
+      passphrase,
+      addressType,
+      accountCount
+    );
     keyringService.removePreMnemonics();
 
     const displayedKeyring = await keyringService.displayForKeyring(
@@ -260,11 +271,16 @@ export class WalletController extends BaseController {
     mnemonic: string,
     hdPath: string,
     passphrase: string,
-    addressType: AddressType
+    addressType: AddressType,
+    accountCount = 1
   ) => {
+    const activeIndexes: number[] = [];
+    for (let i = 0; i < accountCount; i++) {
+      activeIndexes.push(i);
+    }
     const originKeyring = keyringService.createTmpKeyring('HD Key Tree', {
       mnemonic,
-      activeIndexes: [0],
+      activeIndexes,
       hdPath,
       passphrase
     });

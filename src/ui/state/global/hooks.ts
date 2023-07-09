@@ -58,8 +58,8 @@ export function useCreateAccountCallback() {
   const dispatch = useAppDispatch();
   const wallet = useWallet();
   return useCallback(
-    async (mnemonics: string, hdPath: string, passphrase: string, addressType: AddressType) => {
-      await wallet.createKeyringWithMnemonics(mnemonics, hdPath, passphrase, addressType);
+    async (mnemonics: string, hdPath: string, passphrase: string, addressType: AddressType, accountCount: number) => {
+      await wallet.createKeyringWithMnemonics(mnemonics, hdPath, passphrase, addressType, accountCount);
       dispatch(globalActions.update({ isUnlocked: true }));
     },
     [dispatch, wallet]
