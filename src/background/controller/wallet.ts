@@ -377,37 +377,42 @@ export class WalletController extends BaseController {
     const networkType = this.getNetworkType();
     const psbtNetwork = toPsbtNetwork(networkType);
 
-    const toSignInputs: ToSignInput[] = [];
-    psbt.data.inputs.forEach((v, index) => {
-      let script: any = null;
-      let value = 0;
-      if (v.witnessUtxo) {
-        script = v.witnessUtxo.script;
-        value = v.witnessUtxo.value;
-      } else if (v.nonWitnessUtxo) {
-        const tx = bitcoin.Transaction.fromBuffer(v.nonWitnessUtxo);
-        const output = tx.outs[psbt.txInputs[index].index];
-        script = output.script;
-        value = output.value;
-      }
-      const isSigned = v.finalScriptSig || v.finalScriptWitness;
-      if (script && !isSigned) {
-        const address = PsbtAddress.fromOutputScript(script, psbtNetwork);
-        if (account.address === address) {
-          toSignInputs.push({
-            index,
-            publicKey: account.pubkey,
-            sighashTypes: v.sighashType ? [v.sighashType] : undefined
-          });
-          if (
-            (keyring.addressType === AddressType.P2TR || keyring.addressType === AddressType.M44_P2TR) &&
-            !v.tapInternalKey
-          ) {
-            v.tapInternalKey = toXOnly(Buffer.from(account.pubkey, 'hex'));
+    let toSignInputs: ToSignInput[];
+    if (options?.toSignInputs) {
+      toSignInputs = options.toSignInputs;
+    } else {
+      toSignInputs = []
+      psbt.data.inputs.forEach((v, index) => {
+        let script: any = null;
+        let value = 0;
+        if (v.witnessUtxo) {
+          script = v.witnessUtxo.script;
+          value = v.witnessUtxo.value;
+        } else if (v.nonWitnessUtxo) {
+          const tx = bitcoin.Transaction.fromBuffer(v.nonWitnessUtxo);
+          const output = tx.outs[psbt.txInputs[index].index];
+          script = output.script;
+          value = output.value;
+        }
+        const isSigned = v.finalScriptSig || v.finalScriptWitness;
+        if (script && !isSigned) {
+          const address = PsbtAddress.fromOutputScript(script, psbtNetwork);
+          if (account.address === address) {
+            toSignInputs.push({
+              index,
+              publicKey: account.pubkey,
+              sighashTypes: v.sighashType ? [v.sighashType] : undefined
+            });
+            if (
+              (keyring.addressType === AddressType.P2TR || keyring.addressType === AddressType.M44_P2TR) &&
+              !v.tapInternalKey
+            ) {
+              v.tapInternalKey = toXOnly(Buffer.from(account.pubkey, 'hex'));
+            }
           }
         }
-      }
-    });
+      });
+    }
 
     psbt = await keyringService.signTransaction(_keyring, psbt, toSignInputs);
     if (options && options.autoFinalized == false) {
