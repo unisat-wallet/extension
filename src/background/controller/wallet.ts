@@ -367,6 +367,22 @@ export class WalletController extends BaseController {
   };
 
   signPsbt = async (psbt: bitcoin.Psbt, options?: any) => {
+    const toSignInputs: ToSignInput[] = this._getToSignInputs(psbt, options?.toSignInputs);
+
+    psbt = await keyringService.signTransaction(_keyring, psbt, toSignInputs);
+    if (options && options.autoFinalized == false) {
+      // do not finalize
+    } else {
+      toSignInputs.forEach((v) => {
+        // psbt.validateSignaturesOfInput(v.index, validator);
+        psbt.finalizeInput(v.index);
+      });
+    }
+
+    return psbt;
+  };
+
+  private _getToSignInputs = async (psbt: bitcoin.Psbt, userToSignInputs: any[] | undefined): ToSignInput[] => {
     const account = await this.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
@@ -377,11 +393,10 @@ export class WalletController extends BaseController {
     const networkType = this.getNetworkType();
     const psbtNetwork = toPsbtNetwork(networkType);
 
-    let toSignInputs: ToSignInput[];
-    if (options?.toSignInputs) {
-      // We expect options.toSignInputs objects to be similar to ToSignInput, but we allow address
-      // to be specified in addition to publicKey for convenience.
-      toSignInputs = options.toSignInputs
+    if (userToSignInputs) {
+      // We expect userToSignInputs objects to be similar to ToSignInput interface,
+      // but we allow address to be specified in addition to publicKey for convenience.
+      return userToSignInputs
         .map(input => {
           const index = Number(input.index);
           if (isNaN(index)) throw new Error('invalid input index');
@@ -399,51 +414,39 @@ export class WalletController extends BaseController {
             sighashTypes
           };
         });
-    } else {
-      toSignInputs = [];
-      psbt.data.inputs.forEach((v, index) => {
-        let script: any = null;
-        let value = 0;
-        if (v.witnessUtxo) {
-          script = v.witnessUtxo.script;
-          value = v.witnessUtxo.value;
-        } else if (v.nonWitnessUtxo) {
-          const tx = bitcoin.Transaction.fromBuffer(v.nonWitnessUtxo);
-          const output = tx.outs[psbt.txInputs[index].index];
-          script = output.script;
-          value = output.value;
-        }
-        const isSigned = v.finalScriptSig || v.finalScriptWitness;
-        if (script && !isSigned) {
-          const address = PsbtAddress.fromOutputScript(script, psbtNetwork);
-          if (account.address === address) {
-            toSignInputs.push({
-              index,
-              publicKey: account.pubkey,
-              sighashTypes: v.sighashType ? [v.sighashType] : undefined
-            });
-            if (
-              (keyring.addressType === AddressType.P2TR || keyring.addressType === AddressType.M44_P2TR) &&
-              !v.tapInternalKey
-            ) {
-              v.tapInternalKey = toXOnly(Buffer.from(account.pubkey, 'hex'));
-            }
+    }
+
+    const toSignInputs: ToSignInput[] = [];
+    psbt.data.inputs.forEach((v, index) => {
+      let script: any = null;
+      let value = 0;
+      if (v.witnessUtxo) {
+        script = v.witnessUtxo.script;
+        value = v.witnessUtxo.value;
+      } else if (v.nonWitnessUtxo) {
+        const tx = bitcoin.Transaction.fromBuffer(v.nonWitnessUtxo);
+        const output = tx.outs[psbt.txInputs[index].index];
+        script = output.script;
+        value = output.value;
+      }
+      const isSigned = v.finalScriptSig || v.finalScriptWitness;
+      if (script && !isSigned) {
+        const address = PsbtAddress.fromOutputScript(script, psbtNetwork);
+        if (account.address === address) {
+          toSignInputs.push({
+            index,
+            publicKey: account.pubkey,
+            sighashTypes: v.sighashType ? [v.sighashType] : undefined
+          });
+          if (
+            (keyring.addressType === AddressType.P2TR || keyring.addressType === AddressType.M44_P2TR) &&
+            !v.tapInternalKey
+          ) {
+            v.tapInternalKey = toXOnly(Buffer.from(account.pubkey, 'hex'));
           }
         }
-      });
-    }
-
-    psbt = await keyringService.signTransaction(_keyring, psbt, toSignInputs);
-    if (options && options.autoFinalized == false) {
-      // do not finalize
-    } else {
-      toSignInputs.forEach((v) => {
-        // psbt.validateSignaturesOfInput(v.index, validator);
-        psbt.finalizeInput(v.index);
-      });
-    }
-
-    return psbt;
+      }
+    });
   };
 
   signMessage = async (text: string) => {
