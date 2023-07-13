@@ -379,9 +379,28 @@ export class WalletController extends BaseController {
 
     let toSignInputs: ToSignInput[];
     if (options?.toSignInputs) {
-      toSignInputs = options.toSignInputs;
+      // We expect options.toSignInputs objects to be similar to ToSignInput, but we allow address
+      // to be specified in addition to publicKey for convenience.
+      toSignInputs = options.toSignInputs
+        .map(input => {
+          const index = Number(input.index);
+          if (isNaN(index)) throw new Error('invalid input index');
+
+          if (!input.address && !input.publicKey) throw new Error('no address or public key for input specified');
+          if (input.address && input.address != account.address) throw new Error('invalid input address');
+          if (input.publicKey && input.publicKey != account.publicKey) throw new Error('invalid public key');
+
+          const sighashTypes = input.sighashTypes?.map(Number);
+          if (sighashTypes?.any(isNaN)) throw new Error('invalid sighash type');
+
+          return {
+            index,
+            publicKey: account.publicKey,
+            sighashTypes
+          };
+        });
     } else {
-      toSignInputs = []
+      toSignInputs = [];
       psbt.data.inputs.forEach((v, index) => {
         let script: any = null;
         let value = 0;
