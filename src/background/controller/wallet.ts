@@ -367,7 +367,8 @@ export class WalletController extends BaseController {
   };
 
   signPsbt = async (psbt: bitcoin.Psbt, options?: any) => {
-    const toSignInputs: ToSignInput[] = this._getToSignInputs(psbt, options?.toSignInputs);
+    const userToSignInputs = Array.isArray(options?.toSignInputs) ? options!.toSignInputs : undefined;
+    const toSignInputs: ToSignInput[] = this._getToSignInputs(psbt, userToSignInputs);
 
     psbt = await keyringService.signTransaction(_keyring, psbt, toSignInputs);
     if (options && options.autoFinalized == false) {
