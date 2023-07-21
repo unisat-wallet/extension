@@ -134,7 +134,11 @@ export interface WalletController {
 
   sendInscriptions(data: { to: string; inscriptionIds: string[]; feeRate: number }): Promise<string>;
 
-  splitInscription(data: { inscriptionId: string; feeRate: number }): Promise<string>;
+  splitInscription(data: {
+    inscriptionId: string;
+    feeRate: number;
+    outputValue: number;
+  }): Promise<{ psbtHex: string; splitedCount: number }>;
 
   pushTx(rawtx: string): Promise<string>;
 

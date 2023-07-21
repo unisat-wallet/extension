@@ -5,6 +5,7 @@ import { Inscription, RawTxInfo } from '@/shared/types';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
+import { OutputValueBar } from '@/ui/components/OutputValueBar';
 import { useCreateSplitTxCallback, useOrdinalsTx } from '@/ui/state/transactions/hooks';
 import { isValidAddress, useWallet } from '@/ui/utils';
 
@@ -24,11 +25,15 @@ export default function SplitTxCreateScreen() {
   const createSplitTx = useCreateSplitTxCallback();
 
   const [feeRate, setFeeRate] = useState(5);
+  const defaultOutputValue = inscription ? inscription.outputValue : 10000;
+  const minOutputValue = 546;
+  const [outputValue, setOutputValue] = useState(defaultOutputValue);
 
   const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
 
   const [inscriptions, setInscriptions] = useState<Inscription[]>([]);
 
+  const [splitedCount, setSplitedCount] = useState(0);
   const wallet = useWallet();
   useEffect(() => {
     wallet.getInscriptionUtxoDetail(inscription.inscriptionId).then((v) => {
@@ -39,28 +44,39 @@ export default function SplitTxCreateScreen() {
   useEffect(() => {
     setDisabled(true);
     setError('');
+    setSplitedCount(0);
 
     if (feeRate <= 0) {
       setError('Invalid fee rate');
       return;
     }
 
-    if (feeRate == ordinalsTx.feeRate) {
+    if (!outputValue) {
+      return;
+    }
+
+    if (outputValue < minOutputValue) {
+      setError(`OutputValue must be at least ${minOutputValue}`);
+      return;
+    }
+
+    if (feeRate == ordinalsTx.feeRate && outputValue == ordinalsTx.outputValue) {
       //Prevent repeated triggering caused by setAmount
       setDisabled(false);
       return;
     }
 
-    createSplitTx(inscription.inscriptionId, feeRate)
+    createSplitTx(inscription.inscriptionId, feeRate, outputValue)
       .then((data) => {
-        setRawTxInfo(data);
+        setRawTxInfo(data.rawTxInfo);
+        setSplitedCount(data.splitedCount);
         setDisabled(false);
       })
       .catch((e) => {
         console.log(e);
         setError(e.message);
       });
-  }, [feeRate]);
+  }, [feeRate, outputValue]);
 
   return (
     <Layout>
@@ -79,7 +95,7 @@ export default function SplitTxCreateScreen() {
           }
         />
         <Column>
-          <Text text="Inscriptions" color="textDim" />
+          <Text text={`Inscriptions (${inscriptions.length})`} color="textDim" />
           <Row justifyBetween>
             <Row overflowX gap="lg" pb="md">
               {inscriptions.map((v) => (
@@ -88,8 +104,16 @@ export default function SplitTxCreateScreen() {
             </Row>
           </Row>
 
-          <Text text="Fee" color="textDim" />
+          <Text text="Each OutputValue" color="textDim" />
 
+          <OutputValueBar
+            defaultValue={minOutputValue}
+            onChange={(val) => {
+              setOutputValue(val);
+            }}
+          />
+
+          <Text text="Fee" color="textDim" />
           <FeeRateBar
             onChange={(val) => {
               setFeeRate(val);
@@ -97,6 +121,11 @@ export default function SplitTxCreateScreen() {
           />
 
           {error && <Text text={error} color="error" />}
+
+          {inscriptions.length > 1 && splitedCount > 0 && (
+            <Text text={`Spliting to ${splitedCount} UTXO`} color="primary" />
+          )}
+
           <Button
             disabled={disabled}
             preset="primary"
