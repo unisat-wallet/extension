@@ -7,6 +7,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { AddressText } from '@/ui/components/AddressText';
 import { Empty } from '@/ui/components/Empty';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
+import { Popover } from '@/ui/components/Popover';
 import { TabBar } from '@/ui/components/TabBar';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useAccountAddress } from '@/ui/state/accounts/hooks';
@@ -27,8 +28,8 @@ interface Props {
       name: string;
     };
   };
-  handleCancel?: () => void;
-  handleConfirm?: () => void;
+  // handleCancel?: () => void;
+  // handleConfirm?: () => void;
 }
 interface InputInfo {
   txid: string;
@@ -154,10 +155,10 @@ export default function MultiSignPsbt({
     data: { psbtHexs },
     session
   },
-  header,
-  handleCancel,
-  handleConfirm
-}: Props) {
+  header
+}: // handleCancel,
+// handleConfirm
+Props) {
   const [getApproval, resolveApproval, rejectApproval] = useApproval();
 
   const [txInfo, setTxInfo] = useState<TxInfo>(initTxInfo);
@@ -167,6 +168,7 @@ export default function MultiSignPsbt({
   const wallet = useWallet();
   const [loading, setLoading] = useState(true);
 
+  const [alertVisible, setAlertVisible] = useState(false);
   const tools = useTools();
 
   const init = async () => {
@@ -199,31 +201,15 @@ export default function MultiSignPsbt({
     [txInfo, setTxInfo]
   );
 
-  if (!handleCancel) {
-    handleCancel = () => {
-      if (txInfo.currentIndex > 0) {
-        updateTxInfo({
-          currentIndex: txInfo.currentIndex - 1
-        });
-        return;
-      }
-      rejectApproval();
-    };
-  }
+  const handleCancel = () => {
+    rejectApproval();
+  };
 
-  if (!handleConfirm) {
-    handleConfirm = () => {
-      if (txInfo.currentIndex < txInfo.psbtHexs.length - 1) {
-        updateTxInfo({
-          currentIndex: txInfo.currentIndex + 1
-        });
-        return;
-      }
-      resolveApproval({
-        psbtHexs: txInfo.psbtHexs
-      });
-    };
-  }
+  const handleConfirm = () => {
+    resolveApproval({
+      psbtHexs: txInfo.psbtHexs
+    });
+  };
 
   const decodedPsbt = useMemo(() => txInfo.decodedPsbts[txInfo.currentIndex], [txInfo]);
   const psbtHex = useMemo(() => txInfo.psbtHexs[txInfo.currentIndex], [txInfo]);
@@ -252,6 +238,8 @@ export default function MultiSignPsbt({
       return true;
     }
   }, [decodedPsbt]);
+
+  const isAllChecked = txInfo.currentIndex === txInfo.psbtHexs.length - 1;
 
   if (loading) {
     return (
@@ -286,6 +274,7 @@ export default function MultiSignPsbt({
     });
   }
   const tabItems = arr;
+
   return (
     <Layout>
       {header}
@@ -388,26 +377,59 @@ export default function MultiSignPsbt({
             items={tabItems}
             preset="number-page"
             onTabClick={(key) => {
-              updateTxInfo(key);
+              updateTxInfo({ currentIndex: key });
             }}
           />
         </Row>
 
-        <Row full>
+        <Row full mt="md">
+          <Button preset="default" text={'Reject All'} onClick={handleCancel} full />
           <Button
-            preset="default"
-            text={txInfo.currentIndex === 0 ? 'Reject All' : 'Back'}
-            onClick={handleCancel}
-            full
-          />
-          <Button
-            preset="primary"
-            text={txInfo.currentIndex === txInfo.psbtHexs.length - 1 ? 'Sign All' : 'Next'}
-            onClick={handleConfirm}
+            preset={'primary'}
+            text={'Sign All'}
+            onClick={() => {
+              setAlertVisible(true);
+            }}
             disabled={isValid == false}
             full
           />
         </Row>
+
+        {alertVisible && (
+          <Popover
+            onClose={() => {
+              setAlertVisible(false);
+            }}>
+            <Column justifyCenter itemsCenter>
+              <Column mt="lg">
+                <Text
+                  text={`I understand all pending transactions and confirm signing for these ${txInfo.psbtHexs.length} transactions.`}
+                  textCenter
+                />
+              </Column>
+
+              <Row full mt="lg">
+                <Button
+                  preset="danger"
+                  text="No, I need to check again"
+                  full
+                  onClick={(e) => {
+                    setAlertVisible(false);
+                  }}
+                />
+
+                <Button
+                  text="Yes"
+                  full
+                  preset="primary"
+                  onClick={(e) => {
+                    handleConfirm();
+                  }}
+                />
+              </Row>
+            </Column>
+          </Popover>
+        )}
       </Footer>
     </Layout>
   );
