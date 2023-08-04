@@ -77,6 +77,14 @@ const SettingList: Setting[] = [
     action: 'expand-view',
     route: '/settings/export-privatekey',
     right: false
+  },
+  {
+    label: '',
+    value: '',
+    desc: 'Lock UniSat Wallet ',
+    action: 'lock-wallet',
+    route: '',
+    right: false
   }
 ];
 
@@ -151,6 +159,11 @@ export default function SettingsTabScreen() {
                     onClick={(e) => {
                       if (item.action == 'expand-view') {
                         openExtensionInTab();
+                        return;
+                      }
+                      if (item.action == 'lock-wallet') {
+                        wallet.lockWallet();
+                        navigate('/account/unlock');
                         return;
                       }
                       navigate(item.route);
