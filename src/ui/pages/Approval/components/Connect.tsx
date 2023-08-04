@@ -1,7 +1,7 @@
 import VirtualList from 'rc-virtual-list';
-import { forwardRef } from 'react';
+import { forwardRef, useEffect, useState } from 'react';
 
-import { Account } from '@/shared/types';
+import { Account, WebsiteState } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useAccounts, useCurrentAccount } from '@/ui/state/accounts/hooks';
@@ -9,8 +9,9 @@ import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring, useKeyrings } from '@/ui/state/keyrings/hooks';
 import { keyringsActions } from '@/ui/state/keyrings/reducer';
+import { fontSizes } from '@/ui/theme/font';
 import { shortAddress, useApproval, useWallet } from '@/ui/utils';
-import { CheckCircleFilled } from '@ant-design/icons';
+import { CheckCircleFilled, LoadingOutlined } from '@ant-design/icons';
 
 interface MyItemProps {
   account?: Account;
@@ -72,6 +73,54 @@ export default function Connect({ params: { session } }: Props) {
 
   const dispatch = useAppDispatch();
 
+  const [checkState, setCheckState] = useState(WebsiteState.CHECKING);
+  useEffect(() => {
+    wallet.checkWebsite(session.origin).then((v) => {
+      if (v.isScammer) {
+        setCheckState(WebsiteState.SCAMMER);
+      } else {
+        setCheckState(WebsiteState.SAFE);
+      }
+    });
+  }, []);
+
+  if (checkState === WebsiteState.CHECKING) {
+    return (
+      <Layout>
+        <Content itemsCenter justifyCenter>
+          <Icon size={fontSizes.xxxl} color="gold">
+            <LoadingOutlined />
+          </Icon>
+        </Content>
+      </Layout>
+    );
+  }
+
+  if (checkState === WebsiteState.SCAMMER) {
+    return (
+      <Layout style={{ backgroundColor: 'red' }}>
+        <Header>
+          <WebsiteBar session={session} />
+        </Header>
+        <Content style={{ backgroundColor: 'red' }}>
+          <Column>
+            <Text text="Phishing Detection" preset="title-bold" textCenter mt="xxl" />
+            <Text
+              text="UniSat Walelt believes this website to have malicious intent and has prevented you from interacting with it."
+              textCenter
+              mt="md"
+            />
+          </Column>
+        </Content>
+
+        <Footer>
+          <Row full>
+            <Button text="Reject" preset="primary" onClick={handleCancel} full />
+          </Row>
+        </Footer>
+      </Layout>
+    );
+  }
   return (
     <Layout>
       <Header>

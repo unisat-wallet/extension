@@ -8,6 +8,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { AddressText } from '@/ui/components/AddressText';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { TabBar } from '@/ui/components/TabBar';
+import { WarningPopver } from '@/ui/components/WarningPopver';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useAccountAddress } from '@/ui/state/accounts/hooks';
 import { useCreateBitcoinTxCallback, useCreateMultiOrdinalsTxCallback } from '@/ui/state/transactions/hooks';
@@ -255,6 +256,7 @@ interface TxInfo {
   toSignInputs: ToSignInput[];
   txError: string;
   decodedPsbt: DecodedPsbt;
+  isScammer: boolean;
 }
 
 const initTxInfo: TxInfo = {
@@ -264,11 +266,14 @@ const initTxInfo: TxInfo = {
   psbtHex: '',
   toSignInputs: [],
   txError: '',
+  isScammer: false,
   decodedPsbt: {
     inputInfos: [],
     outputInfos: [],
     fee: 0,
-    feeRate: 0
+    feeRate: 0,
+    hasScammerAddress: false,
+    warning: ''
   }
 };
 
@@ -295,6 +300,8 @@ export default function SignPsbt({
   const tools = useTools();
 
   const address = useAccountAddress();
+
+  const [isWarningVisible, setIsWarningVisible] = useState(false);
 
   const init = async () => {
     let txError = '';
@@ -338,8 +345,13 @@ export default function SignPsbt({
       return;
     }
 
+    const { isScammer } = await wallet.checkWebsite(session?.origin || '');
+
     const decodedPsbt = await wallet.decodePsbt(psbtHex);
 
+    if (decodedPsbt.warning) {
+      setIsWarningVisible(true);
+    }
     setTxInfo({
       decodedPsbt,
       changedBalance: 0,
@@ -347,7 +359,8 @@ export default function SignPsbt({
       psbtHex,
       rawtx: '',
       toSignInputs,
-      txError: ''
+      txError: '',
+      isScammer
     });
 
     setLoading(false);
@@ -425,6 +438,29 @@ export default function SignPsbt({
       <Header>
         <WebsiteBar session={session} />
       </Header>
+    );
+  }
+
+  if (txInfo.isScammer || txInfo.decodedPsbt.hasScammerAddress) {
+    return (
+      <Layout style={{ backgroundColor: 'red' }}>
+        <Content style={{ backgroundColor: 'red' }}>
+          <Column>
+            <Text text="Phishing Detection" preset="title-bold" textCenter mt="xxl" />
+            <Text
+              text="UniSat Walelt believes this transaction to have malicious intent and has prevented you from interacting with it."
+              textCenter
+              mt="md"
+            />
+          </Column>
+        </Content>
+
+        <Footer>
+          <Row full>
+            <Button text="Reject" preset="primary" onClick={handleCancel} full />
+          </Row>
+        </Footer>
+      </Layout>
     );
   }
 
@@ -640,6 +676,14 @@ export default function SignPsbt({
           />
         </Row>
       </Footer>
+      {isWarningVisible && (
+        <WarningPopver
+          text={txInfo.decodedPsbt.warning}
+          onClose={() => {
+            setIsWarningVisible(false);
+          }}
+        />
+      )}
     </Layout>
   );
 }

@@ -208,6 +208,8 @@ export interface WalletController {
   setSkippedVersion(version: string): Promise<void>;
 
   getInscriptionUtxoDetail(inscriptionId: string): Promise<UTXO_Detail>;
+
+  checkWebsite(website: string): Promise<{ isScammer: boolean }>;
 }
 
 const WalletContext = createContext<{

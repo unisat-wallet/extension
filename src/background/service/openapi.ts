@@ -340,6 +340,14 @@ export class OpenApiService {
     }
     return data.result;
   }
+
+  async checkWebsite(website: string): Promise<{ isScammer: boolean }> {
+    const data = await this.httpPost('/default/check-website', { website });
+    if (data.status == API_STATUS.FAILED) {
+      throw new Error(data.message);
+    }
+    return data.result;
+  }
 }
 
 export default new OpenApiService();

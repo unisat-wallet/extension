@@ -1169,6 +1169,10 @@ export class WalletController extends BaseController {
     }
     return utxo;
   };
+
+  checkWebsite = (website: string) => {
+    return openapiService.checkWebsite(website);
+  };
 }
 
 export default new WalletController();

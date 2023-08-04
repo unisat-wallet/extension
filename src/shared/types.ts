@@ -219,6 +219,8 @@ export interface DecodedPsbt {
   }[];
   feeRate: number;
   fee: number;
+  hasScammerAddress: boolean;
+  warning: string;
 }
 
 export interface ToAddressInfo {
@@ -238,4 +240,10 @@ export interface WalletConfig {
   version: string;
   moonPayEnabled: boolean;
   statusMessage: string;
+}
+
+export enum WebsiteState {
+  CHECKING,
+  SCAMMER,
+  SAFE
 }
