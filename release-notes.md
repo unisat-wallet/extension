@@ -1,7 +1,10 @@
 
 # UniSat Wallet Release Notes
 
-## v1.1.26
+## v1.1.27
+- Fix typo error
+
+## v1.1.26 
 In this version, we focused on security upgrades and introduced several new features and enhancements. Here are the updates:
 
 1. Manual Wallet Locking
