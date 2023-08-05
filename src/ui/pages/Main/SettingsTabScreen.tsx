@@ -81,7 +81,7 @@ const SettingList: Setting[] = [
   {
     label: '',
     value: '',
-    desc: 'Lock UniSat Wallet ',
+    desc: 'Lock Immediately',
     action: 'lock-wallet',
     route: '',
     right: false

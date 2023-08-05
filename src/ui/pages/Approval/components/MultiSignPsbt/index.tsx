@@ -7,7 +7,6 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { AddressText } from '@/ui/components/AddressText';
 import { Empty } from '@/ui/components/Empty';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
-import { Popover } from '@/ui/components/Popover';
 import { TabBar } from '@/ui/components/TabBar';
 import { WarningPopver } from '@/ui/components/WarningPopver';
 import WebsiteBar from '@/ui/components/WebsiteBar';
@@ -29,8 +28,8 @@ interface Props {
       name: string;
     };
   };
-  // handleCancel?: () => void;
-  // handleConfirm?: () => void;
+  handleCancel?: () => void;
+  handleConfirm?: () => void;
 }
 interface InputInfo {
   txid: string;
@@ -158,10 +157,10 @@ export default function MultiSignPsbt({
     data: { psbtHexs },
     session
   },
-  header
-}: // handleCancel,
-// handleConfirm
-Props) {
+  header,
+  handleCancel,
+  handleConfirm
+}: Props) {
   const [getApproval, resolveApproval, rejectApproval] = useApproval();
 
   const [txInfo, setTxInfo] = useState<TxInfo>(initTxInfo);
@@ -171,7 +170,6 @@ Props) {
   const wallet = useWallet();
   const [loading, setLoading] = useState(true);
 
-  const [alertVisible, setAlertVisible] = useState(false);
   const tools = useTools();
 
   const [warningState, setWarningState] = useState({ visible: false, text: '' });
@@ -217,15 +215,31 @@ Props) {
     [txInfo, setTxInfo]
   );
 
-  const handleCancel = () => {
-    rejectApproval();
-  };
+  if (!handleCancel) {
+    handleCancel = () => {
+      if (txInfo.currentIndex > 0) {
+        updateTxInfo({
+          currentIndex: txInfo.currentIndex - 1
+        });
+        return;
+      }
+      rejectApproval();
+    };
+  }
 
-  const handleConfirm = () => {
-    resolveApproval({
-      psbtHexs: txInfo.psbtHexs
-    });
-  };
+  if (!handleConfirm) {
+    handleConfirm = () => {
+      if (txInfo.currentIndex < txInfo.psbtHexs.length - 1) {
+        updateTxInfo({
+          currentIndex: txInfo.currentIndex + 1
+        });
+        return;
+      }
+      resolveApproval({
+        psbtHexs: txInfo.psbtHexs
+      });
+    };
+  }
 
   const decodedPsbt = useMemo(() => txInfo.decodedPsbts[txInfo.currentIndex], [txInfo]);
   const psbtHex = useMemo(() => txInfo.psbtHexs[txInfo.currentIndex], [txInfo]);
@@ -255,8 +269,6 @@ Props) {
     }
   }, [decodedPsbt]);
 
-  const isAllChecked = txInfo.currentIndex === txInfo.psbtHexs.length - 1;
-
   if (loading) {
     return (
       <Layout>
@@ -283,21 +295,18 @@ Props) {
 
   if (txInfo.isScammer || txInfo.decodedPsbts.find((v) => v.hasScammerAddress)) {
     return (
-      <Layout style={{ backgroundColor: 'red' }}>
-        <Content style={{ backgroundColor: 'red' }}>
+      <Layout>
+        <Content>
           <Column>
             <Text text="Phishing Detection" preset="title-bold" textCenter mt="xxl" />
-            <Text
-              text="UniSat Walelt believes this transaction to have malicious intent and has prevented you from interacting with it."
-              textCenter
-              mt="md"
-            />
+            <Text text="Malicious behavior and suspicious activity have been detected." mt="md" />
+            <Text text="Your access to this page has been restricted by UniSat Wallet as it might be unsafe." mt="md" />
           </Column>
         </Content>
 
         <Footer>
           <Row full>
-            <Button text="Reject" preset="primary" onClick={handleCancel} full />
+            <Button text="Reject (blocked by UniSat Wallet)" preset="danger" onClick={handleCancel} full />
           </Row>
         </Footer>
       </Layout>
@@ -313,7 +322,6 @@ Props) {
     });
   }
   const tabItems = arr;
-
   return (
     <Layout>
       {header}
@@ -421,60 +429,25 @@ Props) {
           />
         </Row>
 
-        <Row full mt="md">
-          <Button preset="default" text={'Reject All'} onClick={handleCancel} full />
+        <Row full>
           <Button
-            preset={'primary'}
-            text={'Sign All'}
-            onClick={() => {
-              setAlertVisible(true);
-            }}
+            preset="default"
+            text={txInfo.currentIndex === 0 ? 'Reject All' : 'Back'}
+            onClick={handleCancel}
+            full
+          />
+          <Button
+            preset="primary"
+            text={
+              txInfo.currentIndex === txInfo.psbtHexs.length - 1
+                ? `Sign All (${txInfo.psbtHexs.length} transactions)`
+                : 'Next'
+            }
+            onClick={handleConfirm}
             disabled={isValid == false}
             full
           />
         </Row>
-
-        {alertVisible && (
-          <Popover
-            onClose={() => {
-              setAlertVisible(false);
-            }}>
-            <Column justifyCenter itemsCenter>
-              <Column mt="lg">
-                <Text
-                  text={`I understand all pending transactions and confirm signing for these ${txInfo.psbtHexs.length} transactions.`}
-                  textCenter
-                />
-                <Text
-                  text={`If there is fraudulent transaction hidden within, I may lose my assets!`}
-                  textCenter
-                  color="red"
-                />
-              </Column>
-
-              <Row full mt="lg">
-                <Button
-                  preset="danger"
-                  text="No, I need to check again"
-                  full
-                  onClick={(e) => {
-                    setAlertVisible(false);
-                  }}
-                />
-
-                <Button
-                  text="Yes"
-                  full
-                  preset="primary"
-                  onClick={(e) => {
-                    handleConfirm();
-                  }}
-                />
-              </Row>
-            </Column>
-          </Popover>
-        )}
-
         {warningState.visible && (
           <WarningPopver
             text={warningState.text}

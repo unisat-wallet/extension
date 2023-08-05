@@ -10,14 +10,14 @@ export const WarningPopver = ({ text, onClose }: { text: string; onClose: () => 
   return (
     <Popover onClose={onClose}>
       <Column justifyCenter itemsCenter>
-        <Text text={'WARNING'} textCenter preset="title" color="orange" />
+        <Text text={'WARNING'} textCenter preset="title-bold" color="orange" />
         <Column mt="lg">
           <Text text={text} textCenter />
         </Column>
 
         <Row full mt="lg">
           <Button
-            text="I understand"
+            text="OK"
             full
             preset="primary"
             onClick={(e) => {

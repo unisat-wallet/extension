@@ -91,7 +91,7 @@ export default function SplitTxCreateScreen() {
           color="red"
           textCenter
           text={
-            'This feature is currently under experimentation. Please confirm the splited inscriptions when signing the transaction.'
+            'This feature is currently under experimentation. Please confirm the inscription splitting status of the transaction when signing the transaction.'
           }
         />
         <Column>

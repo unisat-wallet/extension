@@ -443,21 +443,18 @@ export default function SignPsbt({
 
   if (txInfo.isScammer || txInfo.decodedPsbt.hasScammerAddress) {
     return (
-      <Layout style={{ backgroundColor: 'red' }}>
-        <Content style={{ backgroundColor: 'red' }}>
+      <Layout>
+        <Content>
           <Column>
             <Text text="Phishing Detection" preset="title-bold" textCenter mt="xxl" />
-            <Text
-              text="UniSat Walelt believes this transaction to have malicious intent and has prevented you from interacting with it."
-              textCenter
-              mt="md"
-            />
+            <Text text="Malicious behavior and suspicious activity have been detected." mt="md" />
+            <Text text="Your access to this page has been restricted by UniSat Wallet as it might be unsafe." mt="md" />
           </Column>
         </Content>
 
         <Footer>
           <Row full>
-            <Button text="Reject" preset="primary" onClick={handleCancel} full />
+            <Button text="Reject (blocked by UniSat Wallet)" preset="danger" onClick={handleCancel} full />
           </Row>
         </Footer>
       </Layout>
