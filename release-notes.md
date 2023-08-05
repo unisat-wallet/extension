@@ -1,6 +1,22 @@
 
 # UniSat Wallet Release Notes
 
+## v1.1.26
+In this version, we focused on security upgrades and introduced several new features and enhancements. Here are the updates:
+
+1. Manual Wallet Locking
+  - Users now have the ability to manually lock their wallets for added security. 
+2. Protection against Phishing Websites
+  - To protect users from potential phishing attacks, the wallet will now block connections to suspicious websites during wallet access and transaction signing.
+3. Blacklist Address Blocking
+  - Transactions containing addresses on the blacklist will be blocked during the signing process to prevent potential security risks.
+4. Risk Warning on Transaction Signing Exceptions
+  - Users will receive a risk warning if any abnormal behavior is detected while signing transactions. Currently, abnormal behavior is identified by the loss of plaintext.
+5. Risk Warning during Batch Transaction Signing
+  - A risk warning will be displayed when performing batch transaction signing, ensuring users are aware of potential risks.
+6. Improved Inscription Splitting
+  - We have improved the process of inscription spliting, allowing users to choose a minimum amount of satoshis for each split inscription, providing greater flexibility. For individual inscription balances exceeding 10,000 satoshis, users can split the balance for better management.
+
 ## v1.1.25
 **Major changes**
 - Scan more addresses when restoring wallet
