@@ -9,6 +9,7 @@ import {
   keyringService,
   notificationService,
   openapiService,
+  orcapiService,
   permissionService,
   preferenceService,
   sessionService
@@ -25,7 +26,9 @@ import {
   KEYRING_TYPES,
   NETWORK_TYPES,
   OPENAPI_URL_MAINNET,
-  OPENAPI_URL_TESTNET
+  OPENAPI_URL_TESTNET,
+  ORCAPI_URL_MAINNET,
+  ORCAPI_URL_TESTNET
 } from '@/shared/constant';
 import { AddressType, BitcoinBalance, NetworkType, ToSignInput, UTXO, WalletKeyring, Account } from '@/shared/types';
 import { createSendBTC, createSendMultiOrds, createSendOrd, createSplitOrdUtxo } from '@unisat/ord-utils';
@@ -36,6 +39,7 @@ import { ConnectedSite } from '../service/permission';
 import { signBip322MessageSimple } from '../utils/bip322';
 import { publicKeyToAddress, toPsbtNetwork } from '../utils/tx-utils';
 import BaseController from './base';
+import { OrcApiService, orccashapiService } from '../service/orcapi';
 
 const toXOnly = (pubKey: Buffer) => (pubKey.length === 32 ? pubKey : pubKey.slice(1, 33));
 
@@ -52,6 +56,7 @@ export type AccountAsset = {
 
 export class WalletController extends BaseController {
   openapi: OpenApiService = openapiService;
+  orcapi: OrcApiService = orcapiService;
 
   /* wallet */
   boot = (password: string) => keyringService.boot(password);
@@ -572,8 +577,10 @@ export class WalletController extends BaseController {
     preferenceService.setNetworkType(networkType);
     if (networkType === NetworkType.MAINNET) {
       this.openapi.setHost(OPENAPI_URL_MAINNET);
+      this.orcapi.setHost(ORCAPI_URL_MAINNET)
     } else {
       this.openapi.setHost(OPENAPI_URL_TESTNET);
+      this.orcapi.setHost(ORCAPI_URL_TESTNET)
     }
     const network = this.getNetworkName();
     sessionService.broadcastEvent('networkChanged', {
@@ -1067,6 +1074,55 @@ export class WalletController extends BaseController {
     };
   };
 
+  getORC20List = async (address: string, currentPage: number, pageSize: number) => {
+    const cursor = (currentPage - 1) * pageSize;
+    const size = pageSize;
+
+    const uiCachedData = preferenceService.getUICachedData(address);
+    if (uiCachedData.brc20List[currentPage]) {
+      return uiCachedData.brc20List[currentPage];
+    }
+
+    const { total, list } = await orccashapiService.getAddressTokenBalances(address, cursor, size);
+    uiCachedData.brc20List[currentPage] = {
+      currentPage,
+      pageSize,
+      total,
+      list
+    };
+    return {
+      currentPage,
+      pageSize,
+      total,
+      list
+    };
+  };
+
+  getORCCashList = async (address: string, currentPage: number, pageSize: number) => {
+    const cursor = (currentPage - 1) * pageSize;
+    const size = pageSize;
+
+    const uiCachedData = preferenceService.getUICachedData(address);
+    if (uiCachedData.brc20List[currentPage]) {
+      return uiCachedData.brc20List[currentPage];
+    }
+
+    const { total, list } = await orcapiService.getAddressTokenBalances(address, cursor, size);
+    uiCachedData.brc20List[currentPage] = {
+      currentPage,
+      pageSize,
+      total,
+      list
+    };
+    return {
+      currentPage,
+      pageSize,
+      total,
+      list
+    };
+  };
+
+
   getAllInscriptionList = async (address: string, currentPage: number, pageSize: number) => {
     const cursor = (currentPage - 1) * pageSize;
     const size = pageSize;
@@ -1098,6 +1154,17 @@ export class WalletController extends BaseController {
     }
 
     const tokenSummary = await openapiService.getAddressTokenSummary(address, ticker);
+    uiCachedData.brc20Summary[ticker] = tokenSummary;
+    return tokenSummary;
+  };
+
+  getORC20Summary = async (address: string, ticker: string) => {
+    const uiCachedData = preferenceService.getUICachedData(address);
+    if (uiCachedData.orc20Summary[ticker]) {
+      // return uiCachedData.orc20Summary[ticker];
+    }
+
+    const tokenSummary = await orcapiService.getAddressTokenSummary(address, ticker);
     uiCachedData.brc20Summary[ticker] = tokenSummary;
     return tokenSummary;
   };

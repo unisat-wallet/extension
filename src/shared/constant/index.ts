@@ -230,6 +230,12 @@ export const INTERNAL_REQUEST_SESSION = {
 export const OPENAPI_URL_MAINNET = 'https://unisat.io/wallet-api-v4';
 export const OPENAPI_URL_TESTNET = 'https://unisat.io/testnet/wallet-api-v4';
 
+export const ORCAPI_URL_MAINNET = 'https://test-api.abmatrix.cn/ordinals-sync'
+export const ORCAPI_URL_TESTNET = 'https://test-api.abmatrix.cn/ordinals-sync'
+
+export const ORCCASHAPI_URL_MAINNET = 'https://test-api.abmatrix.cn/ordinals-sync-orc20-cash'
+export const ORCCASHAPI_URL_TESTNET = 'https://test-api.abmatrix.cn/ordinals-sync-orc20-cash'
+
 export const EVENTS = {
   broadcastToUI: 'broadcastToUI',
   broadcastToBackground: 'broadcastToBackground',

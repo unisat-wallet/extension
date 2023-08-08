@@ -185,6 +185,18 @@ export interface WalletController {
     pageSize: number
   ): Promise<{ currentPage: number; pageSize: number; total: number; list: TokenBalance[] }>;
 
+  getORC20List(
+    address: string,
+    currentPage: number,
+    pageSize: number
+  ): Promise<{ currentPage: number; pageSize: number; total: number; list: TokenBalance[] }>;
+
+  getORCCashList(
+    address: string,
+    currentPage: number,
+    pageSize: number
+  ): Promise<{ currentPage: number; pageSize: number; total: number; list: TokenBalance[] }>;
+
   getBRC20TransferableList(
     address: string,
     ticker: string,
@@ -193,6 +205,8 @@ export interface WalletController {
   ): Promise<{ currentPage: number; pageSize: number; total: number; list: TokenTransfer[] }>;
 
   getBRC20Summary(address: string, ticker: string): Promise<AddressTokenSummary>;
+  getORC20Summary(address: string, ticker: string): Promise<AddressTokenSummary>;
+  getORCCashSummary(address: string, ticker: string): Promise<AddressTokenSummary>;
 
   expireUICachedData(address: string): Promise<void>;
 

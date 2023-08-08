@@ -74,6 +74,9 @@ export interface PreferenceStore {
           list: TokenTransfer[];
         }[];
       };
+      orc20Summary: {
+        [ticker: string]: AddressTokenSummary;
+      };
     };
   };
   skippedVersion: string;
@@ -381,7 +384,8 @@ class PreferenceService {
       allInscriptionList: [],
       brc20List: [],
       brc20Summary: {},
-      brc20TransferableList: {}
+      brc20TransferableList: {},
+      orc20Summary: {},
     };
 
     // if (!this.store.uiCachedData[address]) {

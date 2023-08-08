@@ -8,6 +8,7 @@ import {
   contactBookService,
   keyringService,
   openapiService,
+  orcapiService,
   permissionService,
   preferenceService,
   sessionService
@@ -26,6 +27,8 @@ async function restoreAppState() {
   await preferenceService.init();
 
   await openapiService.init();
+
+  await orcapiService.init();
 
   await permissionService.init();
 

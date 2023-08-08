@@ -1,14 +1,14 @@
 {
-  "name": "unisat-extension",
+  "name": "infosat-extension",
   "version": "1.1.25",
   "private": true,
-  "homepage": "https://github.com/unisat-wallet/extension#readme",
+  "homepage": "https://github.com/abmatrix/infosat-extension#readme",
   "bugs": {
-    "url": "https://github.com/unisat-wallet/extension/issues"
+    "url": "https://github.com/abmatrix/infosat-extension/issues"
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/unisat-wallet/extension.git"
+    "url": "https://github.com/abmatrix/infosat-extension.git"
   },
   "scripts": {
     "clean": "mkdir -p dist && rm -rf dist/* && cp -r build/_raw/* dist",
