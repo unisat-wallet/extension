@@ -1,6 +1,9 @@
 
 # UniSat Wallet Release Notes
 
+## v1.1.28
+- Patch the vulnerability CVE-2022-32969
+
 ## v1.1.27
 - Fix typo error
 
