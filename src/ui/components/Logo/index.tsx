@@ -9,15 +9,15 @@ export function Logo(props: { preset?: 'large' | 'small' }) {
   if (preset === 'large') {
     return (
       <Row justifyCenter itemsCenter>
-        {/* <Image src="./images/logo/wallet-logo.png" size={fontSizes.xxxl} /> */}
-        <Text text="GOSAT" preset="title-bold" size="xxl" disableTranslate />
+        <Image src="./images/logo/wallet-logo.png" size={fontSizes.xxxl} />
+        <Text text="GoSat" preset="title-bold" size="xxl" disableTranslate />
       </Row>
     );
   } else {
     return (
       <Row justifyCenter itemsCenter>
-        {/* <Image src="./images/logo/wallet-logo.png" size={fontSizes.xxl} /> */}
-        <Text text="GOSAT" preset="title-bold" disableTranslate />
+        <Image src="./images/logo/wallet-logo.png" size={fontSizes.xxl} />
+        <Text text="GoSat" preset="title-bold" disableTranslate />
       </Row>
     );
   }
