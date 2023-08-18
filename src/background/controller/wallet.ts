@@ -1,3 +1,4 @@
+import { OrcApiService } from './../service/orcapi';
 /* eslint-disable indent */
 import * as bitcoin from 'bitcoinjs-lib';
 import { address as PsbtAddress } from 'bitcoinjs-lib';
@@ -10,9 +11,10 @@ import {
   notificationService,
   openapiService,
   orcapiService,
+  orccashapiService,
   permissionService,
   preferenceService,
-  sessionService
+  sessionService,
 } from '@/background/service';
 import i18n from '@/background/service/i18n';
 import { DisplayedKeyring, Keyring } from '@/background/service/keyring';
@@ -39,7 +41,6 @@ import { ConnectedSite } from '../service/permission';
 import { signBip322MessageSimple } from '../utils/bip322';
 import { publicKeyToAddress, toPsbtNetwork } from '../utils/tx-utils';
 import BaseController from './base';
-import { OrcApiService, orccashapiService } from '../service/orcapi';
 
 const toXOnly = (pubKey: Buffer) => (pubKey.length === 32 ? pubKey : pubKey.slice(1, 33));
 
@@ -57,6 +58,7 @@ export type AccountAsset = {
 export class WalletController extends BaseController {
   openapi: OpenApiService = openapiService;
   orcapi: OrcApiService = orcapiService;
+  orccashapi: OrcApiService = orccashapiService;
 
   /* wallet */
   boot = (password: string) => keyringService.boot(password);
@@ -1041,9 +1043,15 @@ export class WalletController extends BaseController {
   inscribeBRC20Transfer = (address: string, tick: string, amount: string, feeRate: number) => {
     return openapiService.inscribeBRC20Transfer(address, tick, amount, feeRate);
   };
+  inscribeORC20Send = (address: string, tick: string, tokenID: string, amount: string, feeRate: number, protocol: string) => {
+    return orcapiService.inscribeORC20Send(address, tick, tokenID, amount, feeRate, protocol);
+  };
 
   getInscribeResult = (orderId: string) => {
     return openapiService.getInscribeResult(orderId);
+  };
+  getORC20InscribeResult = (orderId: string) => {
+    return orcapiService.getInscribeResult(orderId);
   };
 
   decodePsbt = (psbtHex: string) => {
@@ -1074,17 +1082,17 @@ export class WalletController extends BaseController {
     };
   };
 
-  getORC20List = async (address: string, currentPage: number, pageSize: number) => {
+  getORC20List = async (address: string, currentPage: number, pageSize: number, protocol: string) => {
     const cursor = (currentPage - 1) * pageSize;
     const size = pageSize;
-
     const uiCachedData = preferenceService.getUICachedData(address);
-    if (uiCachedData.brc20List[currentPage]) {
-      return uiCachedData.brc20List[currentPage];
+    const cache = protocol === 'orc-20' ? uiCachedData.orc20List : uiCachedData.orcCashList
+    if (cache[currentPage]) {
+      return cache[currentPage];
     }
-
-    const { total, list } = await orccashapiService.getAddressTokenBalances(address, cursor, size);
-    uiCachedData.brc20List[currentPage] = {
+    const service = protocol === 'orc-20' ? orcapiService : orccashapiService;
+    const { total, list } = await service.getAddressTokenBalances(address, cursor, size);
+    cache[currentPage] = {
       currentPage,
       pageSize,
       total,
@@ -1097,31 +1105,6 @@ export class WalletController extends BaseController {
       list
     };
   };
-
-  getORCCashList = async (address: string, currentPage: number, pageSize: number) => {
-    const cursor = (currentPage - 1) * pageSize;
-    const size = pageSize;
-
-    const uiCachedData = preferenceService.getUICachedData(address);
-    if (uiCachedData.brc20List[currentPage]) {
-      return uiCachedData.brc20List[currentPage];
-    }
-
-    const { total, list } = await orcapiService.getAddressTokenBalances(address, cursor, size);
-    uiCachedData.brc20List[currentPage] = {
-      currentPage,
-      pageSize,
-      total,
-      list
-    };
-    return {
-      currentPage,
-      pageSize,
-      total,
-      list
-    };
-  };
-
 
   getAllInscriptionList = async (address: string, currentPage: number, pageSize: number) => {
     const cursor = (currentPage - 1) * pageSize;
@@ -1158,18 +1141,20 @@ export class WalletController extends BaseController {
     return tokenSummary;
   };
 
-  getORC20Summary = async (address: string, ticker: string) => {
+  getORC20Summary = async (address: string, inscriptionNumber: string, protocol: string) => {
     const uiCachedData = preferenceService.getUICachedData(address);
-    if (uiCachedData.orc20Summary[ticker]) {
-      // return uiCachedData.orc20Summary[ticker];
+    const cache = protocol === 'orc-20' ? uiCachedData.orc20Summary: uiCachedData.orcCashSummary
+    if (cache[inscriptionNumber]) {
+      return cache[inscriptionNumber];
     }
 
-    const tokenSummary = await orcapiService.getAddressTokenSummary(address, ticker);
-    uiCachedData.brc20Summary[ticker] = tokenSummary;
+    const service = protocol === 'orc-20' ? orcapiService : orccashapiService;
+    const tokenSummary = await service.getAddressTokenSummary(address, inscriptionNumber);
+    cache[inscriptionNumber] = tokenSummary;
     return tokenSummary;
   };
 
-  getBRC20TransferableList = async (address: string, ticker: string, currentPage: number, pageSize: number) => {
+  getBRC20TransferableList = async (address: string, ticker: string, currentPage: number, pageSize: number, protocol: string) => {
     const cursor = (currentPage - 1) * pageSize;
     const size = pageSize;
 
@@ -1180,9 +1165,37 @@ export class WalletController extends BaseController {
     if (!uiCachedData.brc20TransferableList[ticker]) {
       uiCachedData.brc20TransferableList[ticker] = [];
     }
-
-    const { total, list } = await openapiService.getTokenTransferableList(address, ticker, cursor, size);
+    const service = protocol === 'orc-20' ? orcapiService : orccashapiService;
+    const { total, list } = await service.getTokenTransferableList(address, ticker, cursor, size);
     uiCachedData.brc20TransferableList[ticker][currentPage] = {
+      currentPage,
+      pageSize,
+      total,
+      list
+    };
+    return {
+      currentPage,
+      pageSize,
+      total,
+      list
+    };
+  };
+
+  getORC20TransferableList = async (address: string, inscriptionNumber: string, currentPage: number, pageSize: number, protocol: string) => {
+    const cursor = (currentPage - 1) * pageSize;
+    const size = pageSize;
+
+    const uiCachedData = preferenceService.getUICachedData(address);
+    const cache = protocol === 'orc-20' ? uiCachedData.orc20TransferableList: uiCachedData.orcCashTransferableList
+    if (cache[inscriptionNumber] && cache[inscriptionNumber][currentPage]) {
+      return cache[inscriptionNumber][currentPage];
+    }
+    if (!cache[inscriptionNumber]) {
+      cache[inscriptionNumber] = [];
+    }
+    const service = protocol === 'orc-20' ? orcapiService : orccashapiService;
+    const { total, list } = await service.getTokenTransferableList(address, inscriptionNumber, cursor, size);
+    cache[inscriptionNumber][currentPage] = {
       currentPage,
       pageSize,
       total,

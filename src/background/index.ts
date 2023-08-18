@@ -9,6 +9,7 @@ import {
   keyringService,
   openapiService,
   orcapiService,
+  orccashapiService,
   permissionService,
   preferenceService,
   sessionService
@@ -29,6 +30,8 @@ async function restoreAppState() {
   await openapiService.init();
 
   await orcapiService.init();
+
+  await orccashapiService.init();
 
   await permissionService.init();
 

@@ -29,11 +29,11 @@ const palette = {
   blue: '#1872F6',
   blue_light: '#c6dcfd',
 
-  orange_dark: '#d9691c',
-  orange: '#FF7B21',
-  orange_light: '#ff8f42',
+  orange_dark: '#ed8f0b',
+  orange: '#Fca121',
+  orange_light: '#d49235',
 
-  gold: '#eac249'
+  gold: '#fca121'
 };
 
 export const colors = Object.assign({}, palette, {

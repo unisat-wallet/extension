@@ -83,17 +83,17 @@ export default function WalletTabScreen() {
     {
       key: WalletTabScreenTabKey.BRC20,
       label: 'BRC-20',
-      children: <BRC20List type="brc" key="brc"/>
+      children: <BRC20List type="brc" key="brc" />
     },
     {
       key: WalletTabScreenTabKey.ORCCASH,
       label: 'ORC-CASH',
-      children: <BRC20List type="orc-cash" key="orc-cash"/>
+      children: <BRC20List type="orc-cash" key="orc-cash" />
     },
     {
       key: WalletTabScreenTabKey.ORC20,
       label: 'ORC-20',
-      children: <BRC20List type="orc" key="orc-20"/>
+      children: <BRC20List type="orc-20" key="orc-20" />
     }
   ];
 
@@ -204,7 +204,6 @@ export default function WalletTabScreen() {
               onClick={() => {
                 window.open(`${blockstreamUrl}/address/${currentAccount.address}`);
               }}>
-              <Text text={'View History'} size="xs" />
               <Icon icon="link" size={fontSizes.xs} />
             </Row>
           </Row>
@@ -301,7 +300,7 @@ function InscriptionList() {
   );
 }
 
-function BRC20List({type = 'brc'}: { type: 'brc' | 'orc-20' | 'orc-cash'}) {
+function BRC20List({ type = 'brc' }: { type: 'brc' | 'orc-20' | 'orc-cash' }) {
   const navigate = useNavigate();
   const wallet = useWallet();
   const currentAccount = useCurrentAccount();
@@ -322,23 +321,15 @@ function BRC20List({type = 'brc'}: { type: 'brc' | 'orc-20' | 'orc-cash'}) {
         );
         setTokens(list);
         setTotal(total);
-      } else if (type === 'orc-20'){
+      } else {
         const { list, total } = await wallet.getORC20List(
           currentAccount.address,
           pagination.currentPage,
-          pagination.pageSize
+          pagination.pageSize,
+          type
         );
         setTokens(list);
         setTotal(total);
-      } else {
-        const { list, total } = await wallet.getORCCashList(
-          currentAccount.address,
-          pagination.currentPage,
-          pagination.pageSize
-        );
-        setTokens(list);
-        setTotal(total);
-
       }
     } catch (e) {
       tools.toastError((e as Error).message);
@@ -370,15 +361,23 @@ function BRC20List({type = 'brc'}: { type: 'brc' | 'orc-20' | 'orc-cash'}) {
   return (
     <Column>
       <Row style={{ flexWrap: 'wrap' }} gap="sm">
-        {tokens.map((data, index) =>
+        {tokens.map((data, index) => (
           <BRC20BalanceCard
             key={index}
             tokenBalance={data}
             onClick={() => {
-              navigate('BRC20TokenScreen', { tokenBalance: data, ticker: data.ticker });
+              if (type === 'brc') navigate('BRC20TokenScreen', { tokenBalance: data, ticker: data.ticker });
+              else {
+                navigate('ORC20TokenScreen', {
+                  tokenBalance: data,
+                  ticker: data.ticker,
+                  inscriptionNumber: data.inscriptionNumber,
+                  protocol: type
+                });
+              }
             }}
           />
-        )}
+        ))}
       </Row>
 
       <Row justifyCenter mt="lg">

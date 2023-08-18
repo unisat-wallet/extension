@@ -18,7 +18,7 @@ import store from './state';
 import { WalletProvider } from './utils';
 
 Sentry.init({
-  dsn: 'https://15ca58bf532f4234a2f400cd11edfa2f@o4504750033403904.ingest.sentry.io/4505044300201984',
+  dsn: 'https://8d0afb036ffc9d03e2894bddac335f57@o433781.ingest.sentry.io/4505695920652288',
   integrations: [new Sentry.BrowserTracing(), new Sentry.Replay()],
   // Performance Monitoring
   tracesSampleRate: 1.0, // Capture 100% of the transactions, reduce in production!

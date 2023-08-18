@@ -169,7 +169,9 @@ export interface WalletController {
   getEditingAccount(): Promise<Account>;
 
   inscribeBRC20Transfer(address: string, tick: string, amount: string, feeRate: number): Promise<InscribeOrder>;
+  inscribeORC20Send(address: string, tick: string, tokenID: string, amount: string, feeRate: number, protocol: string): Promise<InscribeOrder>;
   getInscribeResult(orderId: string): Promise<TokenTransfer>;
+  getORC20InscribeResult(orderId: string): Promise<{orderOrderStatus: number}>;
 
   decodePsbt(psbtHex: string): Promise<DecodedPsbt>;
 
@@ -188,13 +190,8 @@ export interface WalletController {
   getORC20List(
     address: string,
     currentPage: number,
-    pageSize: number
-  ): Promise<{ currentPage: number; pageSize: number; total: number; list: TokenBalance[] }>;
-
-  getORCCashList(
-    address: string,
-    currentPage: number,
-    pageSize: number
+    pageSize: number,
+    protocol: string 
   ): Promise<{ currentPage: number; pageSize: number; total: number; list: TokenBalance[] }>;
 
   getBRC20TransferableList(
@@ -204,9 +201,17 @@ export interface WalletController {
     pageSize: number
   ): Promise<{ currentPage: number; pageSize: number; total: number; list: TokenTransfer[] }>;
 
+  getORC20TransferableList(
+    address: string,
+    inscriptionNumber: string,
+    currentPage: number,
+    pageSize: number,
+    protocol: string
+  ): Promise<{ currentPage: number; pageSize: number; total: number; list: TokenTransfer[] }>;
+
+
   getBRC20Summary(address: string, ticker: string): Promise<AddressTokenSummary>;
-  getORC20Summary(address: string, ticker: string): Promise<AddressTokenSummary>;
-  getORCCashSummary(address: string, ticker: string): Promise<AddressTokenSummary>;
+  getORC20Summary(address: string, inscriptionNumber: string, protocol: string): Promise<AddressTokenSummary>;
 
   expireUICachedData(address: string): Promise<void>;
 

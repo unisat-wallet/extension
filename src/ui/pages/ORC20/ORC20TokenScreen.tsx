@@ -6,16 +6,18 @@ import BRC20Preview from '@/ui/components/BRC20Preview';
 import { Empty } from '@/ui/components/Empty';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { colors } from '@/ui/theme/colors';
-import { useLocationState, useWallet } from '@/ui/utils';
+import { formatNumber, useLocationState, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
 
 interface LocationState {
   ticker: string;
+  inscriptionNumber: string
+  protocol: 'orc-20' | 'orc-cash'
 }
 
 export default function ORC20TokenScreen() {
-  const { ticker } = useLocationState<LocationState>();
+  const { ticker, inscriptionNumber, protocol } = useLocationState<LocationState>();
 
   const [tokenSummary, setTokenSummary] = useState<AddressTokenSummary>({
     tokenBalance: {
@@ -38,7 +40,10 @@ export default function ORC20TokenScreen() {
 
   const account = useCurrentAccount();
   useEffect(() => {
-    wallet.getORC20Summary(account.address, ticker).then((tokenSummary) => {
+    wallet.getORC20Summary(account.address, inscriptionNumber.toString(), protocol).then((tokenSummary) => {
+      console.log({
+        tokenSummary
+      });
       setTokenSummary(tokenSummary);
     });
   }, []);
@@ -68,7 +73,7 @@ export default function ORC20TokenScreen() {
       {tokenSummary && (
         <Content>
           <Column py="xl" style={{ borderBottomWidth: 1, borderColor: colors.white_muted }}>
-            <Text text={`${balance} ${ticker}`} preset="bold" textCenter size="xxl" />
+            <Text text={`${formatNumber(balance)} ${ticker}`} preset="bold" textCenter size="xxl" />
             <Row justifyBetween mt="lg">
               <Button
                 text="MINT"
@@ -77,7 +82,7 @@ export default function ORC20TokenScreen() {
                 disabled={outOfMint}
                 icon="pencil"
                 onClick={(e) => {
-                  window.open(`https://unisat.io/brc20/${encodeURIComponent(ticker)}`);
+                  window.open(`https://infosat.io${protocol === 'orc-20' ? '/orc-20' : ''}/token/${encodeURIComponent(inscriptionNumber)}`);
                 }}
                 full
               />
@@ -91,10 +96,12 @@ export default function ORC20TokenScreen() {
                   const defaultSelected = tokenSummary.transferableList.slice(0, 1);
                   const selectedInscriptionIds = defaultSelected.map((v) => v.inscriptionId);
                   const selectedAmount = defaultSelected.reduce((pre, cur) => parseInt(cur.amount) + pre, 0);
-                  navigate('BRC20SendScreen', {
+                  navigate('ORC20SendScreen', {
                     tokenBalance: tokenSummary.tokenBalance,
+                    inscriptionNumber,
                     selectedInscriptionIds,
-                    selectedAmount
+                    selectedAmount,
+                    protocol
                   });
                 }}
                 full
@@ -104,7 +111,7 @@ export default function ORC20TokenScreen() {
           <Column>
             <Row justifyBetween>
               <Text text="Transferable" preset="bold" size="lg" />
-              <Text text={`${tokenSummary.tokenBalance.transferableBalance} ${ticker}`} preset="bold" size="lg" />
+              <Text text={`${formatNumber(tokenSummary.tokenBalance.transferableBalance)} ${ticker}`} preset="bold" size="lg" />
             </Row>
             {tokenSummary.transferableList.length == 0 && (
               <Column style={{ minHeight: 130 }} itemsCenter justifyCenter>
@@ -124,10 +131,10 @@ export default function ORC20TokenScreen() {
                   <BRC20Preview
                     key={v.inscriptionId}
                     tick={ticker}
-                    balance={v.amount}
+                    balance={formatNumber(v.amount)}
                     inscriptionNumber={v.inscriptionNumber}
                     timestamp={v.timestamp}
-                    type="TRANSFER"
+                    type={v.type}
                     // onClick={() => {
                     //   navigate('BRC20SendScreen', {
                     //     tokenBalance: tokenSummary.tokenBalance,
@@ -141,7 +148,7 @@ export default function ORC20TokenScreen() {
               tokenSummary.transferableList.length > 0 && (
                 <BRC20Preview
                   tick={ticker}
-                  balance={tokenSummary.transferableList[0].amount}
+                  balance={formatNumber(tokenSummary.transferableList[0].amount)}
                   inscriptionNumber={tokenSummary.transferableList[0].inscriptionNumber}
                   timestamp={tokenSummary.transferableList[0].timestamp}
                   onClick={() => {
@@ -154,21 +161,21 @@ export default function ORC20TokenScreen() {
 
           <Column mt="lg">
             <Row justifyBetween>
-              <Text text="Available" preset="bold" size="lg" />
+              <Text text="Credit" preset="bold" size="lg" />
               {shouldShowSafe ? (
                 <Column>
                   <Row gap="zero">
-                    <Text text={`${tokenSummary.tokenBalance.availableBalanceSafe}`} preset="bold" size="lg" />
-                    <Text text={'+'} preset="bold" size="lg" />
+                    <Text text={`${formatNumber(tokenSummary.tokenBalance.availableBalance)}`} preset="bold" size="lg" />
+                    {/* <Text text={'+'} preset="bold" size="lg" />
                     <Text
                       text={`${tokenSummary.tokenBalance.availableBalanceUnSafe}`}
                       preset="bold"
                       size="lg"
                       color="textDim"
-                    />
+                    /> */}
                     <Text text={`${ticker}`} preset="bold" size="lg" mx="md" />
                   </Row>
-                  <Text text={'(Wait to be confirmed)'} preset="sub" textEnd />
+                  {/* <Text text={'(Wait to be confirmed)'} preset="sub" textEnd /> */}
                 </Column>
               ) : (
                 <Text text={`${tokenSummary.tokenBalance.availableBalance} ${ticker}`} preset="bold" size="lg" />

@@ -51,6 +51,9 @@ import TxCreateScreen from './Wallet/TxCreateScreen';
 import TxFailScreen from './Wallet/TxFailScreen';
 import TxSuccessScreen from './Wallet/TxSuccessScreen';
 import './index.module.less';
+import ORC20TokenScreen from './ORC20/ORC20TokenScreen';
+import ORC20SendScreen from './ORC20/Orc20SendScreen';
+import { InscribeSendScreen } from './Approval/components/InscribeSend';
 
 const routes = {
   BoostScreen: {
@@ -193,6 +196,10 @@ const routes = {
     path: '/inscribe/transfer',
     element: <InscribeTransferScreen />
   },
+  InscribeSendScreen: {
+    path: '/inscribe/send',
+    element: <InscribeSendScreen />
+  },
   BRC20SendScreen: {
     path: '/brc20/send',
     element: <BRC20SendScreen />
@@ -200,6 +207,14 @@ const routes = {
   BRC20TokenScreen: {
     path: '/brc20/token',
     element: <BRC20TokenScreen />
+  },
+  ORC20SendScreen: {
+    path: '/orc20/send',
+    element: <ORC20SendScreen />
+  },
+  ORC20TokenScreen: {
+    path: '/orc20/token',
+    element: <ORC20TokenScreen />
   },
   TestScreen: {
     path: '/test',

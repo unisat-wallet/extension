@@ -177,6 +177,8 @@ export interface TokenBalance {
   transferableBalance: string;
   availableBalanceSafe: string;
   availableBalanceUnSafe: string;
+  tokenID?: string
+  inscriptionNumber?: number
 }
 
 export interface TokenInfo {
@@ -194,6 +196,7 @@ export interface TokenTransfer {
   inscriptionId: string;
   inscriptionNumber: number;
   timestamp: number;
+  type?: string;
 }
 
 export interface AddressTokenSummary {

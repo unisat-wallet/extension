@@ -74,8 +74,39 @@ export interface PreferenceStore {
           list: TokenTransfer[];
         }[];
       };
+      orc20List: {
+        currentPage: number;
+        pageSize: number;
+        total: number;
+        list: TokenBalance[];
+      }[];
       orc20Summary: {
         [ticker: string]: AddressTokenSummary;
+      };
+      orc20TransferableList: {
+        [ticker: string]: {
+          currentPage: number;
+          pageSize: number;
+          total: number;
+          list: TokenTransfer[];
+        }[];
+      };
+      orcCashList: {
+        currentPage: number;
+        pageSize: number;
+        total: number;
+        list: TokenBalance[];
+      }[];
+      orcCashSummary: {
+        [ticker: string]: AddressTokenSummary;
+      };
+      orcCashTransferableList: {
+        [ticker: string]: {
+          currentPage: number;
+          pageSize: number;
+          total: number;
+          list: TokenTransfer[];
+        }[];
       };
     };
   };
@@ -385,7 +416,12 @@ class PreferenceService {
       brc20List: [],
       brc20Summary: {},
       brc20TransferableList: {},
+      orc20List: [],
       orc20Summary: {},
+      orc20TransferableList: {},
+      orcCashList: [],
+      orcCashSummary: {},
+      orcCashTransferableList: {},
     };
 
     // if (!this.store.uiCachedData[address]) {
@@ -404,7 +440,11 @@ class PreferenceService {
       allInscriptionList: [],
       brc20List: [],
       brc20Summary: {},
-      brc20TransferableList: {}
+      brc20TransferableList: {},
+      orc20List: [],
+      orc20Summary: {},
+      orcCashList: [],
+      orcCashSummary: {},
     };
   };
 
