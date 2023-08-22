@@ -238,7 +238,7 @@ export class OpenApiService {
   }
 
   async getAppSummary(): Promise<AppSummary> {
-    const data = await this.httpGet('/default/app-summary', {});
+    const data = await this.httpGet('/default/app-summary-v2', {});
     if (data.status == API_STATUS.FAILED) {
       throw new Error(data.message);
     }

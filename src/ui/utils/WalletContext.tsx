@@ -210,6 +210,9 @@ export interface WalletController {
   getInscriptionUtxoDetail(inscriptionId: string): Promise<UTXO_Detail>;
 
   checkWebsite(website: string): Promise<{ isScammer: boolean }>;
+
+  readTab(tabName: string): Promise<void>;
+  readApp(appid: number): Promise<void>;
 }
 
 const WalletContext = createContext<{

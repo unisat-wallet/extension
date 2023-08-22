@@ -951,8 +951,39 @@ export class WalletController extends BaseController {
   };
 
   getAppSummary = async () => {
-    const data = await openapiService.getAppSummary();
-    return data;
+    const appTab = preferenceService.getAppTab();
+    try {
+      const data = await openapiService.getAppSummary();
+      const readTabTime = appTab.readTabTime;
+      data.apps.forEach((w) => {
+        const readAppTime = appTab.readAppTime[w.id];
+        if (w.time) {
+          if (Date.now() > w.time + 1000 * 60 * 60 * 24 * 7) {
+            w.new = false;
+          } else if (readAppTime && readAppTime > w.time) {
+            w.new = false;
+          } else {
+            w.new = true;
+          }
+        } else {
+          w.new = false;
+        }
+      });
+      data.readTabTime = readTabTime;
+      preferenceService.setAppSummary(data);
+      return data;
+    } catch (e) {
+      console.log('getAppSummary error:', e);
+      return appTab.summary;
+    }
+  };
+
+  readTab = async () => {
+    return preferenceService.setReadTabTime(Date.now());
+  };
+
+  readApp = async (appid: number) => {
+    return preferenceService.setReadAppTime(appid, Date.now());
   };
 
   getAddressUtxo = async (address: string) => {

@@ -44,6 +44,42 @@ export function useAppSummary() {
   return accountsState.appSummary;
 }
 
+export function useUnreadAppSummary() {
+  const accountsState = useAccountsState();
+  const summary = accountsState.appSummary;
+  return summary.apps.find((w) => w.time && summary.readTabTime && w.time > summary.readTabTime);
+}
+
+export function useReadTab() {
+  const wallet = useWallet();
+  const dispatch = useAppDispatch();
+  const appSummary = useAppSummary();
+  return useCallback(
+    async (name: 'app' | 'home' | 'settings') => {
+      await wallet.readTab(name);
+      if (name == 'app') {
+        const appSummary = await wallet.getAppSummary();
+        dispatch(accountActions.setAppSummary(appSummary));
+      }
+    },
+    [dispatch, wallet, appSummary]
+  );
+}
+
+export function useReadApp() {
+  const wallet = useWallet();
+  const dispatch = useAppDispatch();
+  const appSummary = useAppSummary();
+  return useCallback(
+    async (id: number) => {
+      await wallet.readApp(id);
+      const appSummary = await wallet.getAppSummary();
+      dispatch(accountActions.setAppSummary(appSummary));
+    },
+    [dispatch, wallet, appSummary]
+  );
+}
+
 export function useHistory() {
   const accountsState = useAccountsState();
   const address = useAccountAddress();

@@ -1,16 +1,18 @@
 import { AppInfo } from '@/shared/types';
 import { Card, Column, Content, Footer, Header, Image, Layout, Row, Text } from '@/ui/components';
 import { NavTabBar } from '@/ui/components/NavTabBar';
-import { useAppSummary } from '@/ui/state/accounts/hooks';
+import { useAppSummary, useReadApp } from '@/ui/state/accounts/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { shortDesc } from '@/ui/utils';
 
 function AppItem({ info }: { info: AppInfo }) {
+  const readApp = useReadApp();
   return (
     <Card
       preset="style1"
       onClick={() => {
         if (info.url) window.open(info.url);
+        readApp(info.id);
       }}>
       <Row full>
         <Column justifyCenter>
@@ -18,7 +20,14 @@ function AppItem({ info }: { info: AppInfo }) {
         </Column>
 
         <Column justifyCenter gap="zero">
-          <Text text={info.title} />
+          <Row itemsCenter>
+            <Text text={info.title} />
+            <Card preset="style2" style={{ backgroundColor: info.tagColor }}>
+              <Text text={info.tag} size="xxs" />
+            </Card>
+            {info.new && <Text text="new!" color="red" />}
+          </Row>
+
           <Text text={shortDesc(info.desc)} preset="sub" />
         </Column>
       </Row>
@@ -33,13 +42,8 @@ export default function AppTabScrren() {
       <Header />
       <Content>
         <Column gap="lg">
-          {appSummary.apps.map(({ tag, list }) => (
-            <Column key={tag}>
-              <Text text={tag} preset="regular-bold" />
-              {list.map((v) => (
-                <AppItem key={v.title} info={v} />
-              ))}
-            </Column>
+          {appSummary.apps.map((v) => (
+            <AppItem key={v.title} info={v} />
           ))}
         </Column>
       </Content>

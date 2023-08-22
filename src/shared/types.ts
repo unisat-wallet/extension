@@ -88,13 +88,17 @@ export interface AppInfo {
   title: string;
   desc: string;
   url: string;
+  time: number;
+  id: number;
+  tag?: string;
+  readtime?: number;
+  new?: boolean;
+  tagColor?: string;
 }
 
 export interface AppSummary {
-  apps: {
-    tag: string;
-    list: AppInfo[];
-  }[];
+  apps: AppInfo[];
+  readTabTime?: number;
 }
 
 export interface FeeSummary {

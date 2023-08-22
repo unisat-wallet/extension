@@ -8,6 +8,7 @@ import {
   Account,
   AddressTokenSummary,
   AddressType,
+  AppSummary,
   BitcoinBalance,
   Inscription,
   NetworkType,
@@ -77,6 +78,11 @@ export interface PreferenceStore {
     };
   };
   skippedVersion: string;
+  appTab: {
+    summary: AppSummary;
+    readTabTime: number;
+    readAppTime: { [key: string]: number };
+  };
 }
 
 const SUPPORT_LOCALES = ['en'];
@@ -111,7 +117,12 @@ class PreferenceService {
         keyringAlianNames: {},
         accountAlianNames: {},
         uiCachedData: {},
-        skippedVersion: ''
+        skippedVersion: '',
+        appTab: {
+          summary: { apps: [] },
+          readAppTime: {},
+          readTabTime: 1
+        }
       }
     });
     if (!this.store.locale || this.store.locale !== defaultLang) {
@@ -171,6 +182,14 @@ class PreferenceService {
 
     if (!this.store.skippedVersion) {
       this.store.skippedVersion = '';
+    }
+
+    if (!this.store.appTab) {
+      this.store.appTab = { summary: { apps: [] }, readTabTime: 1, readAppTime: {} };
+    }
+
+    if (!this.store.appTab.readAppTime) {
+      this.store.appTab.readAppTime = {};
     }
   };
 
@@ -410,6 +429,22 @@ class PreferenceService {
 
   setSkippedVersion = (version: string) => {
     this.store.skippedVersion = version;
+  };
+
+  getAppTab = () => {
+    return this.store.appTab;
+  };
+
+  setAppSummary = (appSummary: AppSummary) => {
+    this.store.appTab.summary = appSummary;
+  };
+
+  setReadTabTime = (timestamp: number) => {
+    this.store.appTab.readTabTime = timestamp;
+  };
+
+  setReadAppTime = (appid: number, timestamp: number) => {
+    this.store.appTab.readAppTime[appid] = timestamp;
   };
 }
 
