@@ -1,6 +1,10 @@
 
 # UniSat Wallet Release Notes
 
+## v1.1.29
+- Update app summary
+- Change api url
+
 ## v1.1.28
 - Patch the vulnerability CVE-2022-32969
 
