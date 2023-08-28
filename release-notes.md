@@ -1,6 +1,9 @@
 
 # UniSat Wallet Release Notes
 
+## v1.1.30
+- Added the parameter "toSignInputs" to the "signPsbt" method
+
 ## v1.1.29
 - Update app summary
 - Change api url
