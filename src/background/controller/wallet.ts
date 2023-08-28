@@ -367,6 +367,23 @@ export class WalletController extends BaseController {
   };
 
   signPsbt = async (psbt: bitcoin.Psbt, options?: any) => {
+    const userToSignInputs = Array.isArray(options?.toSignInputs) ? options!.toSignInputs : undefined;
+    const toSignInputs: ToSignInput[] = this._getToSignInputs(psbt, userToSignInputs);
+
+    psbt = await keyringService.signTransaction(_keyring, psbt, toSignInputs);
+    if (options && options.autoFinalized == false) {
+      // do not finalize
+    } else {
+      toSignInputs.forEach((v) => {
+        // psbt.validateSignaturesOfInput(v.index, validator);
+        psbt.finalizeInput(v.index);
+      });
+    }
+
+    return psbt;
+  };
+
+  private _getToSignInputs = async (psbt: bitcoin.Psbt, userToSignInputs: any[] | undefined): ToSignInput[] => {
     const account = await this.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
@@ -376,6 +393,29 @@ export class WalletController extends BaseController {
 
     const networkType = this.getNetworkType();
     const psbtNetwork = toPsbtNetwork(networkType);
+
+    if (userToSignInputs) {
+      // We expect userToSignInputs objects to be similar to ToSignInput interface,
+      // but we allow address to be specified in addition to publicKey for convenience.
+      return userToSignInputs
+        .map(input => {
+          const index = Number(input.index);
+          if (isNaN(index)) throw new Error('invalid input index');
+
+          if (!input.address && !input.publicKey) throw new Error('no address or public key for input specified');
+          if (input.address && input.address != account.address) throw new Error('invalid input address');
+          if (input.publicKey && input.publicKey != account.publicKey) throw new Error('invalid public key');
+
+          const sighashTypes = input.sighashTypes?.map(Number);
+          if (sighashTypes?.any(isNaN)) throw new Error('invalid sighash type');
+
+          return {
+            index,
+            publicKey: account.publicKey,
+            sighashTypes
+          };
+        });
+    }
 
     const toSignInputs: ToSignInput[] = [];
     psbt.data.inputs.forEach((v, index) => {
@@ -408,18 +448,6 @@ export class WalletController extends BaseController {
         }
       }
     });
-
-    psbt = await keyringService.signTransaction(_keyring, psbt, toSignInputs);
-    if (options && options.autoFinalized == false) {
-      // do not finalize
-    } else {
-      toSignInputs.forEach((v) => {
-        // psbt.validateSignaturesOfInput(v.index, validator);
-        psbt.finalizeInput(v.index);
-      });
-    }
-
-    return psbt;
   };
 
   signMessage = async (text: string) => {
