@@ -24,7 +24,8 @@ import {
   AddressTokenSummary,
   DecodedPsbt,
   WalletConfig,
-  UTXO_Detail
+  UTXO_Detail,
+  SignPsbtOptions
 } from '@/shared/types';
 
 export interface WalletController {
@@ -213,6 +214,8 @@ export interface WalletController {
 
   readTab(tabName: string): Promise<void>;
   readApp(appid: number): Promise<void>;
+
+  formatOptionsToSignInputs(psbtHex: string, options: SignPsbtOptions): Promise<ToSignInput[]>;
 }
 
 const WalletContext = createContext<{

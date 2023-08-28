@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { RawTxInfo, ToSignInput, TxType } from '@/shared/types';
+import { RawTxInfo, SignPsbtOptions, ToSignInput, TxType } from '@/shared/types';
 import { DecodedPsbt } from '@/shared/types';
 import { Inscription } from '@/shared/types';
 import { Button, Layout, Content, Footer, Icon, Text, Row, Card, Column, TextArea, Header } from '@/ui/components';
@@ -10,7 +10,7 @@ import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { TabBar } from '@/ui/components/TabBar';
 import { WarningPopver } from '@/ui/components/WarningPopver';
 import WebsiteBar from '@/ui/components/WebsiteBar';
-import { useAccountAddress } from '@/ui/state/accounts/hooks';
+import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCreateBitcoinTxCallback, useCreateMultiOrdinalsTxCallback } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
@@ -22,12 +22,12 @@ interface Props {
   params: {
     data: {
       psbtHex: string;
+      options: SignPsbtOptions;
       type: TxType;
       toAddress?: string;
       satoshis?: number;
       feeRate?: number;
       inscriptionId?: string;
-      toSignInputs?: ToSignInput[];
       rawTxInfo?: RawTxInfo;
     };
     session?: {
@@ -279,7 +279,7 @@ const initTxInfo: TxInfo = {
 
 export default function SignPsbt({
   params: {
-    data: { psbtHex, toSignInputs, type, toAddress, satoshis, inscriptionId, feeRate, rawTxInfo },
+    data: { psbtHex, options, type, toAddress, satoshis, inscriptionId, feeRate, rawTxInfo, ...rest },
     session
   },
   header,
@@ -300,6 +300,7 @@ export default function SignPsbt({
   const tools = useTools();
 
   const address = useAccountAddress();
+  const currentAccount = useCurrentAccount();
 
   const [isWarningVisible, setIsWarningVisible] = useState(false);
 
@@ -335,10 +336,6 @@ export default function SignPsbt({
     //   }
     // }
 
-    if (!toSignInputs) {
-      toSignInputs = [];
-    }
-
     if (!psbtHex) {
       setLoading(false);
       setTxInfo(Object.assign({}, initTxInfo, { txError }));
@@ -352,6 +349,22 @@ export default function SignPsbt({
     if (decodedPsbt.warning) {
       setIsWarningVisible(true);
     }
+
+    let toSignInputs: ToSignInput[] = [];
+    if (type === TxType.SEND_BITCOIN || type === TxType.SEND_INSCRIPTION) {
+      toSignInputs = decodedPsbt.inputInfos.map((v, index) => ({
+        index,
+        publicKey: currentAccount.pubkey
+      }));
+    } else {
+      try {
+        toSignInputs = await wallet.formatOptionsToSignInputs(psbtHex, options);
+      } catch (e) {
+        txError = (e as Error).message;
+        tools.toastError(txError);
+      }
+    }
+
     setTxInfo({
       decodedPsbt,
       changedBalance: 0,
@@ -359,7 +372,7 @@ export default function SignPsbt({
       psbtHex,
       rawtx: '',
       toSignInputs,
-      txError: '',
+      txError,
       isScammer
     });
 
@@ -398,12 +411,14 @@ export default function SignPsbt({
   }, [txInfo.psbtHex]);
 
   const isValid = useMemo(() => {
+    if (txInfo.toSignInputs.length == 0) {
+      return false;
+    }
     if (txInfo.decodedPsbt.inputInfos.length == 0) {
       return false;
-    } else {
-      return true;
     }
-  }, [txInfo.decodedPsbt]);
+    return true;
+  }, [txInfo.decodedPsbt, txInfo.toSignInputs]);
 
   const sendingInscriptions = useMemo(() => {
     return txInfo.decodedPsbt.inputInfos
@@ -489,7 +504,7 @@ export default function SignPsbt({
                 <Card>
                   <Column full justifyCenter>
                     {txInfo.decodedPsbt.inputInfos.map((v, index) => {
-                      const isToSign = address == v.address;
+                      const isToSign = txInfo.toSignInputs.find((v) => v.index === index) ? true : false;
                       const inscriptions = v.inscriptions;
                       return (
                         <Row
@@ -507,19 +522,6 @@ export default function SignPsbt({
                                     </Row>
                                   )}
                                 </Row>
-
-                                {/* <Row>
-                              <Text text="via" preset="sub" />
-                              <Text
-                                text={shortAddress(v.txid, 6)}
-                                preset="link"
-                                onClick={() => {
-                                  const url = generateTxUrl(v.txid);
-                                  window.open(url);
-                                }}
-                              />
-                              <Text text={`[${v.vout}]`} preset="sub" />
-                            </Row> */}
                               </Column>
                               <Row>
                                 <Text text={`${satoshisToAmount(v.value)}`} color={isToSign ? 'white' : 'textDim'} />
@@ -562,7 +564,7 @@ export default function SignPsbt({
                 <Card>
                   <Column full justifyCenter gap="lg">
                     {txInfo.decodedPsbt.outputInfos.map((v, index) => {
-                      const isToSign = address == v.address;
+                      const isMyAddress = v.address == currentAccount.address;
                       const inscriptions = v.inscriptions;
                       return (
                         <Column
@@ -570,9 +572,9 @@ export default function SignPsbt({
                           style={index === 0 ? {} : { borderColor: colors.border, borderTopWidth: 1, paddingTop: 10 }}>
                           <Column>
                             <Row justifyBetween>
-                              <AddressText address={v.address} color={isToSign ? 'white' : 'textDim'} />
+                              <AddressText address={v.address} color={isMyAddress ? 'white' : 'textDim'} />
                               <Row>
-                                <Text text={`${satoshisToAmount(v.value)}`} color={isToSign ? 'white' : 'textDim'} />
+                                <Text text={`${satoshisToAmount(v.value)}`} color={isMyAddress ? 'white' : 'textDim'} />
                                 <Text text="BTC" color="textDim" />
                               </Row>
                             </Row>
@@ -582,7 +584,7 @@ export default function SignPsbt({
                               <Column justifyCenter>
                                 <Text
                                   text={`Inscriptions (${inscriptions.length})`}
-                                  color={isToSign ? 'white' : 'textDim'}
+                                  color={isMyAddress ? 'white' : 'textDim'}
                                 />
                                 <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
                                   {inscriptions.map((v) => (
