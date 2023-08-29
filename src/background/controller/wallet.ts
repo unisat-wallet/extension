@@ -1178,8 +1178,7 @@ export class WalletController extends BaseController {
     if (!uiCachedData.brc20TransferableList[ticker]) {
       uiCachedData.brc20TransferableList[ticker] = [];
     }
-    const service = protocol === 'orc-20' ? orcapiService : orccashapiService;
-    const { total, list } = await service.getTokenTransferableList(address, ticker, cursor, size);
+    const { total, list } = await openapiService.getTokenTransferableList(address, ticker, cursor, size);
     uiCachedData.brc20TransferableList[ticker][currentPage] = {
       currentPage,
       pageSize,

@@ -62,6 +62,7 @@ export class OrcApiService {
       c++;
     }
     const headers = new Headers();
+    headers.append('Accept-Language', 'en-US');
     const res = await fetch(new Request(url), { method: 'GET', headers, mode: 'cors', cache: 'default' });
     const data = await res.json();
     return data;
@@ -71,6 +72,7 @@ export class OrcApiService {
     const url = this.getHost() + route;
     const headers = new Headers();
     headers.append('Content-Type', 'application/json;charset=utf-8');
+    headers.append('Accept-Language', 'en-US');
     const res = await fetch(new Request(url), {
       method: 'POST',
       headers,

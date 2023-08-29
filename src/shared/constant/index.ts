@@ -165,6 +165,18 @@ export const ADDRESS_TYPES: {
 export const RESTORE_WALLETS: { value: RestoreWalletType; name: string; addressTypes: AddressType[] }[] = [
   {
     value: RestoreWalletType.UNISAT,
+    name: 'GoSat Wallet',
+    addressTypes: [
+      AddressType.P2WPKH,
+      AddressType.P2SH_P2WPKH,
+      AddressType.P2TR,
+      AddressType.P2PKH,
+      AddressType.M44_P2WPKH,
+      AddressType.M44_P2TR
+    ]
+  },
+  {
+    value: RestoreWalletType.UNISAT,
     name: 'UniSat Wallet',
     addressTypes: [
       AddressType.P2WPKH,
@@ -286,12 +298,12 @@ export const MANIFEST_VERSION = process.env.manifest!;
 
 export const APP_SUMMARY = [
   {
-    tag: 'Inscription Services',
+    tag: 'Inscribing Tools',
     list: [
       {
-        desc: 'Ultra Low Inscribing Cost!',
+        desc: 'BRC-20, ORC-20, ORC-CASH & Text Inscribing Tool.',
         id: 1,
-        logo: './images/logo/wallet-logo.png',
+        logo: './images/logo/infosat-logo.png',
         title: 'InfoSat Inscribe',
         url: 'https://infosat.io/inscribe'
       }

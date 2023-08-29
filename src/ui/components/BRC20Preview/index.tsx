@@ -30,8 +30,7 @@ export default function BRC20Preview({
   return (
     <Column
       style={{ backgroundColor: colors.bg4, width: 100, height: 130, minWidth: 100, minHeight: 130, borderRadius: 5 }}
-      onClick={onClick}
-    >
+      onClick={onClick}>
       <Column
         style={{
           padding: 8,
@@ -39,13 +38,12 @@ export default function BRC20Preview({
           backgroundColor: type === 'TRANSFER' ? (selected ? colors.primary : colors.primaryOp5) : '#000',
           borderTopLeftRadius: 5,
           borderTopRightRadius: 5
-        }}
-      >
+        }}>
         <Row>
           <Text text={tick} color="white_muted" size="lg" />
         </Row>
 
-        <Text text={balance} size="xxl" textCenter />
+        <Text text={balance} size={balance.length > 5 ? 'xs' : 'xxl'} textCenter />
       </Column>
 
       <Column px="sm" pb="sm" gap="sm">

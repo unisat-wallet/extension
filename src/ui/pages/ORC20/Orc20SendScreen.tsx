@@ -77,8 +77,7 @@ function Step1({
                         protocol: contextData.protocol,
                         tokenBalance: tokenBalance
                       });
-                    }}
-                  >
+                    }}>
                     <Text text="Inscribe SEND" textCenter preset="bold" />
                     <Text
                       text={`Credit ${formatNumber(tokenBalance.availableBalance)} ${tokenBalance.ticker}`}
@@ -190,7 +189,7 @@ function TransferableList({
   return (
     <Column>
       <Column>
-        <Text text={`${contextData.isCredit ? 'Convert' : 'Send'} Amount`} color="textDim" />
+        <Text text={`${contextData.isCredit ? 'Convert Amount to Credit' : 'Send Amount'}`} color="textDim" />
         <Text text={`${contextData.transferAmount} ${contextData.tokenBalance.ticker}`} size="xxl" textCenter my="lg" />
       </Column>
 
@@ -198,7 +197,7 @@ function TransferableList({
         <Column>
           <Row justifyBetween>
             <Text
-              text={`${contextData.isCredit ? 'CONVERT' : 'SEND'} Inscriptions (${selectedCount}/${items.length})`}
+              text={`${contextData.isCredit ? 'CONVERT Cash' : 'SEND'} Inscriptions (${selectedCount}/${items.length})`}
               color="textDim"
             />
           </Row>
@@ -269,8 +268,7 @@ function TransferableList({
                 }
               }}
               checked={allSelected}
-              style={{ fontSize: fontSizes.sm }}
-            >
+              style={{ fontSize: fontSizes.sm }}>
               <Text text="Select All" preset="sub" color="white" />
             </Checkbox>
           </Row>
@@ -288,7 +286,7 @@ function TransferableList({
       ) : (
         <Column>
           <Row justifyBetween>
-            <Text text={'TRANSFER Inscriptions (0)'} color="textDim" />
+            <Text text={'SEND Inscriptions (0)'} color="textDim" />
             <RefreshButton
               onClick={() => {
                 fetchData();
@@ -345,7 +343,7 @@ function Step2({
     <Content mt="lg">
       <Column full>
         <Column>
-          <Text text="Send" color="textDim" />
+          <Text text={contextData.isCredit ? 'Convert Amount to Credit' : 'Send'} color="textDim" />
           <Input preset="text" value={`${contextData.transferAmount} ${contextData.tokenBalance.ticker}`} disabled />
         </Column>
         {/* 
@@ -370,7 +368,7 @@ function Step2({
         )} */}
 
         <Column>
-          <Text text={contextData.isCredit ? 'To Burn Wallet' : 'Receiver'} color="textDim" />
+          <Text text={contextData.isCredit ? 'Burn Wallet' : 'Receiver'} color="textDim" />
           <Input
             preset="address"
             addressInputData={{

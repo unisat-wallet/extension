@@ -38,7 +38,9 @@ export const svgRegistry = {
   pencil: '/images/icons/pencil.svg',
   'circle-info': '/images/icons/circle-info.svg',
   bitcoin: './images/icons/bitcoin.svg',
-  'circle-question': '/images/icons/circle-question.svg'
+  'circle-question': '/images/icons/circle-question.svg',
+
+  switch: './images/icons/arrow-left-right.svg'
 };
 
 const iconImgList: Array<IconTypes> = ['success', 'delete', 'btc'];
@@ -101,8 +103,7 @@ export function Icon(props: IconProps) {
           $containerStyleOverride,
           $imageStyleOverride || {},
           onClick ? { cursor: 'pointer' } : {}
-        )}
-      >
+        )}>
         {children}
       </div>
     );

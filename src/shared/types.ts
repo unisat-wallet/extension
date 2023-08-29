@@ -15,6 +15,7 @@ export enum NetworkType {
 }
 
 export enum RestoreWalletType {
+  GoSat,
   UNISAT,
   SPARROW,
   XVERSE,

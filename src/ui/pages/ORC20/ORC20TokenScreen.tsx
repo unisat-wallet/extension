@@ -113,37 +113,8 @@ export default function ORC20TokenScreen() {
 
           <Column mt="lg">
             <Row justifyBetween>
-              <Row itemsCenter>
-                <Text text="Credit" preset="bold" size="lg" />
-                <Button
-                  text="Convert"
-                  icon="send"
-                  onClick={(e) => {
-                    // todo
-                    const receiver = () => {
-                      switch (protocol) {
-                        case 'orc-20':
-                          return ORC20_ATM_ADDRESS;
-                        case 'orc-cash':
-                          return ORC_CASH_ATM_ADDRESS;
-                        default:
-                          return '';
-                      }
-                    };
-                    const defaultSelected = tokenSummary.transferableList.slice(0, 1);
-                    const selectedInscriptionIds = defaultSelected.map((v) => v.inscriptionId);
-                    const selectedAmount = defaultSelected.reduce((pre, cur) => parseInt(cur.amount) + pre, 0);
-                    navigate('ORC20SendScreen', {
-                      tokenBalance: tokenSummary.tokenBalance,
-                      inscriptionNumber,
-                      selectedInscriptionIds,
-                      selectedAmount,
-                      protocol,
-                      receiver: receiver()
-                    });
-                  }}
-                />
-              </Row>
+              <Text text="Credit" preset="bold" size="lg" />
+
               {shouldShowSafe ? (
                 <Column>
                   <Row gap="zero">
@@ -202,7 +173,38 @@ export default function ORC20TokenScreen() {
 
           <Column>
             <Row justifyBetween>
-              <Text text="Cash" preset="bold" size="lg" />
+              <Row itemsCenter>
+                <Text text="Cash" preset="bold" size="lg" />
+
+                <Button
+                  text="Convert"
+                  icon="switch"
+                  onClick={(e) => {
+                    // todo
+                    const receiver = () => {
+                      switch (protocol) {
+                        case 'orc-20':
+                          return ORC20_ATM_ADDRESS;
+                        case 'orc-cash':
+                          return ORC_CASH_ATM_ADDRESS;
+                        default:
+                          return '';
+                      }
+                    };
+                    const defaultSelected = tokenSummary.transferableList.slice(0, 1);
+                    const selectedInscriptionIds = defaultSelected.map((v) => v.inscriptionId);
+                    const selectedAmount = defaultSelected.reduce((pre, cur) => parseInt(cur.amount) + pre, 0);
+                    navigate('ORC20SendScreen', {
+                      tokenBalance: tokenSummary.tokenBalance,
+                      inscriptionNumber,
+                      selectedInscriptionIds,
+                      selectedAmount,
+                      protocol,
+                      receiver: receiver()
+                    });
+                  }}
+                />
+              </Row>
               <Text
                 text={`${formatNumber(tokenSummary.tokenBalance.transferableBalance)} ${ticker}`}
                 preset="bold"

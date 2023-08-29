@@ -60,10 +60,10 @@ export default function WalletTabScreen() {
   const dispatch = useAppDispatch();
   const { tabKey } = useWalletTabScreenState();
 
-  const skipVersion = useSkipVersionCallback();
+  // const skipVersion = useSkipVersionCallback();
 
   const walletConfig = useWalletConfig();
-  const versionInfo = useVersionInfo();
+  // const versionInfo = useVersionInfo();
 
   useEffect(() => {
     const run = async () => {
@@ -84,14 +84,14 @@ export default function WalletTabScreen() {
       children: <InscriptionList />
     },
     {
-      key: WalletTabScreenTabKey.BRC20,
-      label: 'BRC-20',
-      children: <BRC20List type="brc" key="brc" />
-    },
-    {
       key: WalletTabScreenTabKey.ORCCASH,
       label: 'ORC-CASH',
       children: <BRC20List type="orc-cash" key="orc-cash" />
+    },
+    {
+      key: WalletTabScreenTabKey.BRC20,
+      label: 'BRC-20',
+      children: <BRC20List type="brc" key="brc" />
     },
     {
       key: WalletTabScreenTabKey.ORC20,
@@ -125,8 +125,7 @@ export default function WalletTabScreen() {
                 itemsCenter
                 onClick={() => {
                   navigate('ConnectedSitesScreen');
-                }}
-              >
+                }}>
                 <Text text="·" color="green" size="xxl" />
                 <Text text="Dapp Connected" size="xxs" />
               </Row>
@@ -138,14 +137,13 @@ export default function WalletTabScreen() {
             preset="style2"
             onClick={() => {
               navigate('SwitchKeyringScreen');
-            }}
-          >
+            }}>
             <Text text={currentKeyring.alianName} size="xxs" />
           </Card>
         }
       />
       <Content>
-        <Column gap="xl">
+        <Column gap="sm">
           {currentKeyring.type === KEYRING_TYPE.HdKeyring && <AccountSelect />}
 
           {isTestNetwork && <Text text="Bitcoin Testnet is used for testing." color="danger" textCenter />}
@@ -166,8 +164,7 @@ export default function WalletTabScreen() {
               }
             }}
             placement="bottomCenter"
-            trigger={['click']}
-          >
+            trigger={['click']}>
             <Row justifyCenter px="md" py="md" rounded>
               <Text text={balanceOptions.find((item) => item?.key === balanceType)?.title ?? ''} color="textDim" />
               <Icon icon="down" color="textDim" />
@@ -177,7 +174,7 @@ export default function WalletTabScreen() {
 
           <AddressBar />
 
-          <Row justifyBetween>
+          <Row style={{ margin: '10px 0' }} justifyBetween>
             <Button
               text="Receive"
               preset="default"
@@ -223,21 +220,20 @@ export default function WalletTabScreen() {
               itemsCenter
               onClick={() => {
                 window.open(`${blockstreamUrl}/address/${currentAccount.address}`);
-              }}
-            >
+              }}>
               <Icon icon="link" size={fontSizes.xs} />
             </Row>
           </Row>
 
           {tabItems[tabKey].children}
         </Column>
-        {!versionInfo.skipped && (
+        {/* {!versionInfo.skipped && (
           <UpgradePopver
             onClose={() => {
               skipVersion(versionInfo.newVersion);
             }}
           />
-        )}
+        )} */}
       </Content>
       <Footer px="zero" py="zero">
         <NavTabBar tab="home" />

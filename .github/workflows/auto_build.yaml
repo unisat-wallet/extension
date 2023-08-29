@@ -48,8 +48,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/unisat-chrome-mv2-${{steps.get-version.outputs.result}}.zip
-          asset_name: unisat-chrome-mv2-${{steps.get-version.outputs.result}}.zip
+          asset_path: dist/gosat-chrome-mv2-${{steps.get-version.outputs.result}}.zip
+          asset_name: gosat-chrome-mv2-${{steps.get-version.outputs.result}}.zip
           asset_content_type: application/zip
 
       - name: Upload Asset
@@ -59,6 +59,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/unisat-chrome-mv3-${{steps.get-version.outputs.result}}.zip
-          asset_name: unisat-chrome-mv3-${{steps.get-version.outputs.result}}.zip
+          asset_path: dist/gosat-chrome-mv3-${{steps.get-version.outputs.result}}.zip
+          asset_name: gosat-chrome-mv3-${{steps.get-version.outputs.result}}.zip
           asset_content_type: application/zip
