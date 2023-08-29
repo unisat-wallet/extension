@@ -219,25 +219,28 @@ export const WALLETCONNECT_STATUS_MAP = {
   FAILD: 6
 };
 
-export const INTERNAL_REQUEST_ORIGIN = 'https://unisat.io';
+export const INTERNAL_REQUEST_ORIGIN = 'https://infosat.io';
 
 export const INTERNAL_REQUEST_SESSION = {
-  name: 'UniSat Wallet',
+  name: 'GoSat Wallet',
   origin: INTERNAL_REQUEST_ORIGIN,
   icon: './images/logo/logo@128x.png'
 };
 
+export const SERVICE_BASE_FEE = 1999;
+export const SERVICE_FEE_BY_OG = 999;
+
 export const OPENAPI_URL_MAINNET = 'https://unisat.io/wallet-api-v4';
 export const OPENAPI_URL_TESTNET = 'https://unisat.io/testnet/wallet-api-v4';
 
-export const ORCAPI_URL_MAINNET = 'https://test-api.infosat.io:30443/ordinals-sync'
-export const ORCAPI_URL_TESTNET = 'https://test-api.infosat.io:30443/ordinals-sync'
+export const ORCAPI_URL_MAINNET = 'https://api.infosat.io/ordinals-sync';
+export const ORCAPI_URL_TESTNET = 'https://api.infosat.io/ordinals-sync';
 
-export const ORCCASHAPI_URL_MAINNET = 'https://test-api.infosat.io:30443/ordinals-sync-orc20-cash'
-export const ORCCASHAPI_URL_TESTNET = 'https://test-api.infosat.io:30443/ordinals-sync-orc20-cash'
+export const ORCCASHAPI_URL_MAINNET = 'https://api.infosat.io/ordinals-sync-orc20-cash';
+export const ORCCASHAPI_URL_TESTNET = 'https://api.infosat.io/ordinals-sync-orc20-cash';
 
-export const ORC20_ATM_ADDRESS = 'bc1pgha2vs4m4d70aw82qzrhmg98yea4fuxtnf7lpguez3z9cjtukpssrhakhl'
-export const ORC_CASH_ATM_ADDRESS = '1BitcoinEaterAddressDontSendf59kuE'
+export const ORC20_ATM_ADDRESS = 'bc1pgha2vs4m4d70aw82qzrhmg98yea4fuxtnf7lpguez3z9cjtukpssrhakhl';
+export const ORC_CASH_ATM_ADDRESS = '1BitcoinEaterAddressDontSendf59kuE';
 
 export const EVENTS = {
   broadcastToUI: 'broadcastToUI',
@@ -274,9 +277,24 @@ export const SATS_DOMAIN = '.sats';
 export const UNISAT_DOMAIN = '.unisat';
 
 export const GITHUB_URL = 'https://github.com/unisat-wallet/extension';
-export const DISCORD_URL = 'https://discord.com/invite/EMskB2sMz8';
-export const TWITTER_URL = 'https://twitter.com/unisat_wallet';
+export const DISCORD_URL = 'https://discord.gg/tnYg4RQ7';
+export const TWITTER_URL = 'https://twitter.com/infosatio';
 
 export const CHANNEL = process.env.channel!;
 export const VERSION = process.env.release!;
 export const MANIFEST_VERSION = process.env.manifest!;
+
+export const APP_SUMMARY = [
+  {
+    tag: 'Inscription Services',
+    list: [
+      {
+        desc: 'Ultra Low Inscribing Cost!',
+        id: 1,
+        logo: './images/logo/wallet-logo.png',
+        title: 'InfoSat Inscribe',
+        url: 'https://infosat.io/inscribe'
+      }
+    ]
+  }
+];

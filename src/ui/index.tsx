@@ -95,7 +95,6 @@ const wallet: Record<string, any> = new Proxy(
               }
             }
           );
-          break;
         default:
           return function (...params: any) {
             return portMessageChannel.request({

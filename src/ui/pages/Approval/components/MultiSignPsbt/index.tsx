@@ -319,7 +319,8 @@ export default function MultiSignPsbt({
                         <Row
                           key={'output_' + index}
                           style={index === 0 ? {} : { borderColor: colors.border, borderTopWidth: 1, paddingTop: 10 }}
-                          justifyBetween>
+                          justifyBetween
+                        >
                           <AddressText address={v.address} />
                           <Text text={`${satoshisToAmount(v.value)} BTC`} />
                         </Row>
@@ -338,7 +339,8 @@ export default function MultiSignPsbt({
                         <Row
                           key={'output_' + index}
                           style={index === 0 ? {} : { borderColor: colors.border, borderTopWidth: 1, paddingTop: 10 }}
-                          justifyBetween>
+                          justifyBetween
+                        >
                           <AddressText address={v.address} />
                           <Text text={`${satoshisToAmount(v.value)} BTC`} />
                         </Row>
@@ -371,7 +373,8 @@ export default function MultiSignPsbt({
                   copyToClipboard(psbtHex).then(() => {
                     tools.toastSuccess('Copied');
                   });
-                }}>
+                }}
+              >
                 <Icon icon="copy" color="textDim" />
                 <Text text="Copy psbt transaction data" color="textDim" />
               </Row>

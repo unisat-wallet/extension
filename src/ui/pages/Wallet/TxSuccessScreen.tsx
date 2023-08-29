@@ -30,7 +30,8 @@ export default function TxSuccessScreen() {
             justifyCenter
             onClick={() => {
               window.open(`${blockstreamUrl}/tx/${txid}`);
-            }}>
+            }}
+          >
             <Icon icon="eye" color="textDim" />
             <Text preset="regular-bold" text="View on Block Explorer" color="textDim" />
           </Row>

@@ -28,7 +28,7 @@ interface Props {
       amount: string;
       tokenID: string;
       protocol: string;
-      inscriptionNumber: string
+      inscriptionNumber: string;
     };
     session: {
       origin: string;
@@ -49,7 +49,7 @@ interface ContextData {
   step: Step;
   ticker: string;
   tokenID: string;
-  inscriptionNumber: string,
+  inscriptionNumber: string;
   protocol: string;
   session?: any;
   tokenBalance?: TokenBalance;
@@ -102,7 +102,7 @@ interface LocationState {
   ticker: string;
   tokenID: string;
   protocol: string;
-  inscriptionNumber: string
+  inscriptionNumber: string;
 }
 
 export function InscribeSendScreen() {
@@ -215,7 +215,14 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
       tools.showLoading(true);
       const amount = parseInt(inputAmount);
       console.log(amount);
-      const order = await wallet.inscribeORC20Send(account.address, contextData.ticker, contextData.tokenID, amount.toString(), feeRate, contextData.protocol);
+      const order = await wallet.inscribeORC20Send(
+        account.address,
+        contextData.ticker,
+        contextData.tokenID,
+        amount.toString(),
+        feeRate,
+        contextData.protocol
+      );
       const rawTxInfo = await createBitcoinTx({ address: order.payAddress, domain: '' }, order.totalFee, feeRate);
       updateContextData({ order, amount, rawTxInfo, step: Step.STEP2 });
     } catch (e) {

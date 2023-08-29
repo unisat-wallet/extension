@@ -68,7 +68,8 @@ function Step1({
                   py="md"
                   onClick={() => {
                     navigate('InscribeTransferScreen', { ticker: tokenBalance.ticker });
-                  }}>
+                  }}
+                >
                   <Text text="Inscribe TRANSFER" textCenter preset="bold" />
 
                   {tokenBalance.availableBalanceUnSafe != '0' ? (
@@ -244,7 +245,8 @@ function TransferableList({
                 }
               }}
               checked={allSelected}
-              style={{ fontSize: fontSizes.sm }}>
+              style={{ fontSize: fontSizes.sm }}
+            >
               <Text text="Select All" preset="sub" color="white" />
             </Checkbox>
           </Row>

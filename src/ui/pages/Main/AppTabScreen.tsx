@@ -1,7 +1,8 @@
+import { APP_SUMMARY } from '@/shared/constant';
 import { AppInfo } from '@/shared/types';
 import { Card, Column, Content, Footer, Header, Image, Layout, Row, Text } from '@/ui/components';
 import { NavTabBar } from '@/ui/components/NavTabBar';
-import { useAppSummary } from '@/ui/state/accounts/hooks';
+// import { useAppSummary } from '@/ui/state/accounts/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { shortDesc } from '@/ui/utils';
 
@@ -11,7 +12,8 @@ function AppItem({ info }: { info: AppInfo }) {
       preset="style1"
       onClick={() => {
         if (info.url) window.open(info.url);
-      }}>
+      }}
+    >
       <Row full>
         <Column justifyCenter>
           <Image src={info.logo} size={fontSizes.logo} />
@@ -27,18 +29,18 @@ function AppItem({ info }: { info: AppInfo }) {
 }
 
 export default function AppTabScrren() {
-  const appSummary = useAppSummary();
+  const appSummary = APP_SUMMARY;
   return (
     <Layout>
       <Header />
       <Content>
         <Column gap="lg">
-          {appSummary.apps.map(({ tag, list }) => (
+          {appSummary.map(({ tag, list }) => (
             <Column key={tag}>
               <Text text={tag} preset="regular-bold" />
-              {list.map((v) => (
-                <AppItem key={v.title} info={v} />
-              ))}
+              {list.map((v) => {
+                return <AppItem key={v.id} info={v} />;
+              })}
             </Column>
           ))}
         </Column>

@@ -20,7 +20,8 @@ const AccountSelect = () => {
       rounded
       onClick={(e) => {
         navigate('SwitchAccountScreen');
-      }}>
+      }}
+    >
       <Icon icon="user" />
       <Text text={shortAddress(currentAccount?.alianName, 8)} />
       <Icon icon="down" />

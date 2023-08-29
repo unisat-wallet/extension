@@ -88,6 +88,7 @@ export interface AppInfo {
   title: string;
   desc: string;
   url: string;
+  id: number;
 }
 
 export interface AppSummary {
@@ -177,8 +178,8 @@ export interface TokenBalance {
   transferableBalance: string;
   availableBalanceSafe: string;
   availableBalanceUnSafe: string;
-  tokenID?: string
-  inscriptionNumber?: number
+  tokenID?: string;
+  inscriptionNumber?: number;
 }
 
 export interface TokenInfo {

@@ -421,7 +421,7 @@ class PreferenceService {
       orc20TransferableList: {},
       orcCashList: [],
       orcCashSummary: {},
-      orcCashTransferableList: {},
+      orcCashTransferableList: {}
     };
 
     // if (!this.store.uiCachedData[address]) {
@@ -444,7 +444,7 @@ class PreferenceService {
       orc20List: [],
       orc20Summary: {},
       orcCashList: [],
-      orcCashSummary: {},
+      orcCashSummary: {}
     };
   };
 

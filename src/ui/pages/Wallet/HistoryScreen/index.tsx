@@ -36,7 +36,8 @@ const MyItem: React.ForwardRefRenderFunction<any, MyItemProps> = ({ group, index
           justifyCenter
           onClick={() => {
             window.open(`${blockstreamUrl}/address/${address}`);
-          }}>
+          }}
+        >
           <Icon icon="eye" color="textDim" />
           <Text preset="regular-bold" text="View on Block Explorer" color="textDim" />
         </Row>

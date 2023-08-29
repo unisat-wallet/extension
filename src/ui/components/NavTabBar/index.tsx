@@ -8,19 +8,30 @@ import { colors } from '@/ui/theme/colors';
 import { Column } from '../Column';
 import { Grid } from '../Grid';
 import { Icon, IconTypes } from '../Icon';
+import { Text } from '../Text';
 
 export function NavTabBar({ tab }: { tab: TabOption }) {
   return (
     <Grid columns={4} style={{ width: '100%', height: '67.5px', backgroundColor: colors.bg2 }}>
-      <TabButton tabName="home" icon="wallet" isActive={tab === 'home'} />
-      <TabButton tabName="mint" icon="compass" isActive={tab === 'mint'} />
-      <TabButton tabName="app" icon="grid" isActive={tab === 'app'} />
-      <TabButton tabName="settings" icon="settings" isActive={tab === 'settings'} />
+      <TabButton tabName="home" icon="wallet" isActive={tab === 'home'} label="Wallet" />
+      <TabButton tabName="mint" icon="compass" isActive={tab === 'mint'} label="Search" />
+      <TabButton tabName="app" icon="grid" isActive={tab === 'app'} label="More" />
+      <TabButton tabName="settings" icon="settings" isActive={tab === 'settings'} label="Settings" />
     </Grid>
   );
 }
 
-function TabButton({ tabName, icon, isActive }: { tabName: TabOption; icon: IconTypes; isActive: boolean }) {
+function TabButton({
+  tabName,
+  icon,
+  isActive,
+  label
+}: {
+  tabName: TabOption;
+  icon: IconTypes;
+  isActive: boolean;
+  label: string;
+}) {
   const setTab = useSetTabCallback();
   const [hover, setHover] = useState('');
   const navigate = useNavigate();
@@ -38,8 +49,10 @@ function TabButton({ tabName, icon, isActive }: { tabName: TabOption; icon: Icon
         } else if (tabName === 'settings') {
           navigate('SettingsTabScreen');
         }
-      }}>
-      <Icon icon={icon} color={isActive ? 'white' : 'white_muted'} />
+      }}
+    >
+      <Icon icon={icon} color={isActive ? 'white' : 'white_muted'} size="24px" />
+      <Text text={label} color={isActive ? 'white' : 'white_muted'} size="sm" />
     </Column>
   );
 }

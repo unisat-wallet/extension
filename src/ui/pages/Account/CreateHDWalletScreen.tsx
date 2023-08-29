@@ -37,7 +37,8 @@ function Step0({
             preset="default"
             onClick={() => {
               updateContextData({ tabType: TabType.STEP2, restoreWalletType: item.value });
-            }}>
+            }}
+          >
             <Text text={item.name} />
           </Button>
         );
@@ -101,7 +102,8 @@ function Step1_Create({
         justifyCenter
         onClick={(e) => {
           copy(contextData.mnemonics);
-        }}>
+        }}
+      >
         <Icon icon="copy" color="textDim" />
         <Text text="Copy to clipboard" color="textDim" />
       </Row>
@@ -214,7 +216,8 @@ function Step1_Import({
             updateContextData({ wordsType });
             setKeys(new Array(wordsItems[wordsType].count).fill(''));
           }}
-          value={contextData.wordsType}>
+          value={contextData.wordsType}
+        >
           {wordsItems.map((v) => (
             <Radio key={v.key} value={v.key}>
               {v.label}
@@ -617,7 +620,8 @@ function Step2({
           <Icon
             onClick={() => {
               resetCustomHdPath();
-            }}>
+            }}
+          >
             <CloseOutlined />
           </Icon>
         )}
