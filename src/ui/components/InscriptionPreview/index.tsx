@@ -99,7 +99,14 @@ export default function InscriptionPreview({ data, onClick, preset }: Inscriptio
   const numberStr = isUnconfirmed ? 'unconfirmed' : `# ${data.inscriptionNumber}`;
 
   return (
-    <Column gap="zero" onClick={onClick} style={Object.assign({ position: 'relative' }, $containerPresets[preset])}>
+    <Column
+      gap="zero"
+      onClick={onClick}
+      style={Object.assign(
+        { position: 'relative', borderRadius: '5px', overflow: 'hidden' },
+        $containerPresets[preset]
+      )}
+    >
       <Iframe preview={data.preview} style={$iframePresets[preset]} />
       <div style={Object.assign({ position: 'absolute', zIndex: 10 }, $iframePresets[preset])}>
         <Column fullY>
@@ -129,7 +136,7 @@ export default function InscriptionPreview({ data, onClick, preset }: Inscriptio
           </Row>
         </Column>
       </div>
-      <Column px="md" py="sm" gap="zero" bg="bg4" full>
+      <Column px="md" gap="zero" bg="bg4" full>
         <Text text={numberStr} color="gold" size={$numberPresets[preset] as any} />
         {isUnconfirmed == false && <Text text={time} preset="sub" size={$timePresets[preset] as any} />}
       </Column>

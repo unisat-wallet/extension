@@ -1041,7 +1041,7 @@ export class WalletController extends BaseController {
   };
 
   inscribeBRC20Transfer = (address: string, tick: string, amount: string, feeRate: number) => {
-    return openapiService.inscribeBRC20Transfer(address, tick, amount, feeRate);
+    return orcapiService.inscribeORC20OrBRC20Send(address, tick, amount, feeRate, 'brc-20');
   };
   inscribeORC20Send = (
     address: string,
@@ -1051,11 +1051,11 @@ export class WalletController extends BaseController {
     feeRate: number,
     protocol: string
   ) => {
-    return orcapiService.inscribeORC20Send(address, tick, tokenID, amount, feeRate, protocol);
+    return orcapiService.inscribeORC20OrBRC20Send(address, tick, amount, feeRate, protocol, tokenID);
   };
 
   getInscribeResult = (orderId: string) => {
-    return openapiService.getInscribeResult(orderId);
+    return orcapiService.getInscribeResult(orderId);
   };
   getORC20InscribeResult = (orderId: string) => {
     return orcapiService.getInscribeResult(orderId);

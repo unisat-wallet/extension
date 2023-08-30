@@ -77,7 +77,8 @@ function Step1({
                         protocol: contextData.protocol,
                         tokenBalance: tokenBalance
                       });
-                    }}>
+                    }}
+                  >
                     <Text text="Inscribe SEND" textCenter preset="bold" />
                     <Text
                       text={`Credit ${formatNumber(tokenBalance.availableBalance)} ${tokenBalance.ticker}`}
@@ -268,7 +269,8 @@ function TransferableList({
                 }
               }}
               checked={allSelected}
-              style={{ fontSize: fontSizes.sm }}>
+              style={{ fontSize: fontSizes.sm }}
+            >
               <Text text="Select All" preset="sub" color="white" />
             </Checkbox>
           </Row>

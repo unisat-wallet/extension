@@ -187,15 +187,15 @@ export class OrcApiService {
     };
   }
 
-  async inscribeORC20Send(
+  async inscribeORC20OrBRC20Send(
     address: string,
     tick: string,
-    tokenID: string,
     amount: string,
     feeRate: number,
-    protocol: string
+    protocol: string,
+    tokenID?: string
   ): Promise<InscribeOrder> {
-    const contentList = this.generateMintDataForOrder(tick, tokenID, amount, protocol);
+    const contentList = this.generateMintDataForOrder(tick, amount, protocol, tokenID);
     const dataSize = await this.httpPost('/inscribe/dataSize', { data: contentList });
     const ogData = await this.httpGet('/inscribe/discount', { data: '', address: address });
 
@@ -213,7 +213,7 @@ export class OrcApiService {
 
     const totalAmount = minerFee + serviceFee + 546;
     const _totalFee = Math.floor(totalAmount / 1000) * 1000;
-    console.log(_totalFee, totalAmount, serviceFee);
+    console.log(minerFee, serviceFee, totalAmount);
 
     const order = {
       receiveAddress: address,
@@ -228,7 +228,7 @@ export class OrcApiService {
       throw new Error(result.msg);
     }
     return {
-      orderId: result.data.orderId,
+      orderId: result.data.orderID,
       payAddress: result.data.orderPayAddress,
       totalFee: _totalFee,
       minerFee,
@@ -239,21 +239,25 @@ export class OrcApiService {
   }
 
   async getInscribeResult(orderId: string): Promise<TokenTransfer> {
-    const result = await this.httpGet('/inscribe/orderList', { orderids: [orderId] });
+    const result = await this.httpGet('/inscribe/orderList', { orderIds: [orderId] });
     if (result.code !== '000') {
       throw new Error(result.msg);
     }
     return result.data[0];
   }
 
-  private generateMintDataForOrder(tick: string, tokenID: string, amount: string, protocol: string) {
+  private generateMintDataForOrder(tick: string, amount: string, protocol: string, tokenID?: string) {
     const inscription: { [key: string]: string | undefined } = {
       p: protocol,
-      op: 'send',
+      op: protocol === 'brc-20' ? 'transfer' : 'send', // brc20 transfer
       tick,
-      id: tokenID,
       amt: amount
     };
+
+    if (protocol !== 'brc-20') {
+      inscription['id'] = tokenID;
+    }
+
     return [JSON.stringify(inscription)];
   }
 }
