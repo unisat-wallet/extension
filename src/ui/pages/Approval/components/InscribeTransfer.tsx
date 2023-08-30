@@ -252,7 +252,8 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
                           title={`${tokenBalance.availableBalanceUnSafe} ${tokenBalance.ticker} is unconfirmed, please wait for confirmation `}
                           overlayStyle={{
                             fontSize: fontSizes.xs
-                          }}>
+                          }}
+                        >
                           <div>
                             <Row>
                               <Text

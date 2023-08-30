@@ -22,18 +22,20 @@ function MintItem({ info }: { info: InscriptionMintedItem }) {
         />
       </Row>
 
-      <Row>
-        {info.inscriptions.map((v) => (
-          <InscriptionPreview
-            key={v.inscriptionId}
-            onClick={() => {
-              navigate('OrdinalsDetailScreen', { inscription: v });
-            }}
-            preset="small"
-            data={v}
-          />
-        ))}
-      </Row>
+      <Content px="sm" overflowX>
+        <Row>
+          {info.inscriptions.map((v) => (
+            <InscriptionPreview
+              key={v.inscriptionId}
+              onClick={() => {
+                navigate('OrdinalsDetailScreen', { inscription: v });
+              }}
+              preset="medium"
+              data={v}
+            />
+          ))}
+        </Row>
+      </Content>
     </Column>
   );
 }
@@ -43,7 +45,7 @@ export default function DiscoverTabScreen() {
   return (
     <Layout>
       <Header />
-      <Content>
+      <Content px="lg">
         <Column>
           {inscriptionSummary.mintedList.map((v) => (
             <MintItem key={v.title} info={v} />

@@ -44,16 +44,19 @@ const $viewPresets = {
 const $containerPresets: Record<Presets, CSSProperties> = {
   large: {
     backgroundColor: colors.black,
-    width: 300
+    width: 300,
+    minWidth: 300
   },
   medium: {
     backgroundColor: colors.black,
     width: 144,
+    minWidth: 144,
     height: 180
   },
   small: {
     backgroundColor: colors.black,
-    width: 80
+    width: 80,
+    minWidth: 80
   }
 };
 
