@@ -49,7 +49,8 @@ export default function SignText({ params: { data, session } }: Props) {
                 whiteSpace: 'pre-wrap',
                 wordBreak: 'break-word',
                 flexWrap: 'wrap'
-              }}>
+              }}
+            >
               {data.text}
             </div>
           </Card>

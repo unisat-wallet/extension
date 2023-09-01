@@ -22,7 +22,8 @@ export default function NetworkTypeScreen() {
                 onClick={async () => {
                   await changeNetworkType(item.value);
                   window.location.reload();
-                }}>
+                }}
+              >
                 <Row full justifyBetween itemsCenter>
                   <Row itemsCenter>
                     <Text text={item.label} preset="regular-bold" />

@@ -62,7 +62,8 @@ export function OutputValueBar({ defaultValue, onChange }: { defaultValue: numbe
                   cursor: 'pointer'
                 } as CSSProperties,
                 selected ? { backgroundColor: colors.primary } : {}
-              )}>
+              )}
+            >
               <Text text={v.title} color={selected ? 'black' : 'white'} textCenter />
               {v.value && <Text text={`${v.value} sats`} color={selected ? 'black' : 'white'} textCenter size="xs" />}
             </div>

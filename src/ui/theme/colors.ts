@@ -43,7 +43,7 @@ export const colors = Object.assign({}, palette, {
 
   textDim: palette.white_muted,
 
-  background: '#D8E0EF',
+  background: 'rgb(67, 182, 239)',
 
   error: '#e52937',
 
@@ -51,7 +51,8 @@ export const colors = Object.assign({}, palette, {
 
   card: '#262222',
   warning: palette.orange,
-  primary: palette.yellow,
+  primary: 'rgb(67, 182, 239)',
+  primaryOp5: 'rgba(67, 182, 239, 0.5)',
 
   bg2: '#2a2a2a',
   bg3: '#434242',

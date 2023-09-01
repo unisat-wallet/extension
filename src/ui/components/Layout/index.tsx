@@ -17,7 +17,8 @@ export function Layout(props: LayoutProps) {
         height: '100vh',
         overflowY: 'auto',
         overflowX: 'hidden'
-      }}>
+      }}
+    >
       {children}
     </div>
   );

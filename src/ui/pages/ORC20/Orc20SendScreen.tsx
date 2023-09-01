@@ -59,31 +59,35 @@ function Step1({
             <TransferableList contextData={contextData} updateContextData={updateContextData} />
           </Column>
 
-          <Row justifyCenter mt="xxl">
-            <Column style={{ width: 250 }}>
-              <Column>
-                <Column
-                  style={{ borderWidth: 1, borderColor: colors.border, borderRadius: 10 }}
-                  px="md"
-                  py="md"
-                  onClick={() => {
-                    navigate('InscribeSendScreen', {
-                      ticker: tokenBalance.ticker,
-                      inscriptionNumber: contextData.inscriptionNumber,
-                      tokenID: tokenBalance.tokenID,
-                      protocol: contextData.protocol,
-                      tokenBalance: tokenBalance
-                    });
-                  }}>
-                  <Text text="Inscribe SEND" textCenter preset="bold" />
-                  <Text
-                    text={`Credit ${formatNumber(tokenBalance.availableBalance)} ${tokenBalance.ticker}`}
-                    textCenter
-                    color="textDim"
-                    size="xs"
-                  />
+          {contextData.isCredit ? (
+            <span></span>
+          ) : (
+            <Row justifyCenter mt="xxl">
+              <Column style={{ width: 250 }}>
+                <Column>
+                  <Column
+                    style={{ borderWidth: 1, borderColor: colors.border, borderRadius: 10 }}
+                    px="md"
+                    py="md"
+                    onClick={() => {
+                      navigate('InscribeSendScreen', {
+                        ticker: tokenBalance.ticker,
+                        inscriptionNumber: contextData.inscriptionNumber,
+                        tokenID: tokenBalance.tokenID,
+                        protocol: contextData.protocol,
+                        tokenBalance: tokenBalance
+                      });
+                    }}
+                  >
+                    <Text text="Inscribe SEND" textCenter preset="bold" />
+                    <Text
+                      text={`Credit ${formatNumber(tokenBalance.availableBalance)} ${tokenBalance.ticker}`}
+                      textCenter
+                      color="textDim"
+                      size="xs"
+                    />
 
-                  {/* {tokenBalance.availableBalanceUnSafe != '0' ? (
+                    {/* {tokenBalance.availableBalanceUnSafe != '0' ? (
                     <Row justifyCenter>
                       <Text text={'Available '} textCenter color="textDim" size="xs" />
                       <Text text={`${tokenBalance.availableBalanceSafe}  `} textCenter size="xs" />
@@ -102,23 +106,24 @@ function Step1({
                       size="xs"
                     />
                   )} */}
-                </Column>
-                {/* <Button
+                  </Column>
+                  {/* <Button
                   preset="primary"
                   text="Inscribe TRANSFER"
                   onClick={() => {
                     navigate('InscribeTransferScreen', { tokenBalance });
                   }}
                 /> */}
-                <Row>
-                  <Text
-                    text={`* To send ${contextData.protocol}, you can inscribe a SEND inscription with credi`}
-                    preset="sub"
-                  />
-                </Row>
+                  <Row>
+                    <Text
+                      text={`* To send ${contextData.protocol}, you can inscribe a SEND inscription with credi`}
+                      preset="sub"
+                    />
+                  </Row>
+                </Column>
               </Column>
-            </Column>
-          </Row>
+            </Row>
+          )}
         </Column>
 
         <Button text="Next" preset="primary" onClick={onClickNext} disabled={disabled} />
@@ -185,14 +190,17 @@ function TransferableList({
   return (
     <Column>
       <Column>
-        <Text text={'Transfer Amount'} color="textDim" />
+        <Text text={`${contextData.isCredit ? 'Convert Amount to Credit' : 'Send Amount'}`} color="textDim" />
         <Text text={`${contextData.transferAmount} ${contextData.tokenBalance.ticker}`} size="xxl" textCenter my="lg" />
       </Column>
 
       {items.length > 0 ? (
         <Column>
           <Row justifyBetween>
-            <Text text={`TRANSFER Inscriptions (${selectedCount}/${items.length})`} color="textDim" />
+            <Text
+              text={`${contextData.isCredit ? 'CONVERT Cash' : 'SEND'} Inscriptions (${selectedCount}/${items.length})`}
+              color="textDim"
+            />
           </Row>
 
           <Row overflowX gap="lg" pb="md">
@@ -261,7 +269,8 @@ function TransferableList({
                 }
               }}
               checked={allSelected}
-              style={{ fontSize: fontSizes.sm }}>
+              style={{ fontSize: fontSizes.sm }}
+            >
               <Text text="Select All" preset="sub" color="white" />
             </Checkbox>
           </Row>
@@ -279,7 +288,7 @@ function TransferableList({
       ) : (
         <Column>
           <Row justifyBetween>
-            <Text text={'TRANSFER Inscriptions (0)'} color="textDim" />
+            <Text text={'SEND Inscriptions (0)'} color="textDim" />
             <RefreshButton
               onClick={() => {
                 fetchData();
@@ -336,22 +345,43 @@ function Step2({
     <Content mt="lg">
       <Column full>
         <Column>
-          <Text text="Send" color="textDim" />
+          <Text text={contextData.isCredit ? 'Convert Amount to Credit' : 'Send'} color="textDim" />
           <Input preset="text" value={`${contextData.transferAmount} ${contextData.tokenBalance.ticker}`} disabled />
         </Column>
+        {/* 
+        {contextData.isCredit ? (
+          <div>{contextData.receiver}</div>
+        ) : (
+          <Column>
+            <Text text="Receiver" color="textDim" />
+            <Input
+              preset="address"
+              addressInputData={{
+                address: contextData.receiver,
+                domain: ''
+              }}
+              autoFocus={true}
+              onAddressInputChange={(val) => {
+                updateContextData({ receiver: val.address });
+              }}
+              disabled={contextData.isCredit}
+            />
+          </Column>
+        )} */}
 
         <Column>
-          <Text text="Receiver" color="textDim" />
+          <Text text={contextData.isCredit ? 'Burn Wallet' : 'Receiver'} color="textDim" />
           <Input
             preset="address"
             addressInputData={{
-              address: '',
+              address: contextData.receiver,
               domain: ''
             }}
             autoFocus={true}
             onAddressInputChange={(val) => {
               updateContextData({ receiver: val.address });
             }}
+            disabled={contextData.isCredit}
           />
         </Column>
         <Column>
@@ -416,6 +446,7 @@ interface ContextData {
   receiver: string;
   rawTxInfo: RawTxInfo;
   protocol: string;
+  isCredit?: boolean;
 }
 
 interface UpdateContextDataParams {
@@ -437,8 +468,8 @@ export default function ORC20SendScreen() {
     selectedAmount: number;
     inscriptionNumber: string;
     protocol: string;
+    receiver?: string;
   };
-
   const tokenBalance = props.tokenBalance;
   const inscriptionNumber = props.inscriptionNumber;
   const selectedInscriptionIds = props.selectedInscriptionIds || [];
@@ -454,11 +485,12 @@ export default function ORC20SendScreen() {
     transferableList: [],
     inscriptionIdSet: new Set(selectedInscriptionIds),
     feeRate: 5,
-    receiver: '',
+    receiver: props.receiver ?? '',
     rawTxInfo: {
       psbtHex: '',
       rawtx: ''
-    }
+    },
+    isCredit: !!props.receiver
   });
 
   const updateContextData = useCallback(

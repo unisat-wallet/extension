@@ -38,7 +38,8 @@ export function Header(props: HeaderProps) {
         style={{
           height: '67.5px',
           padding: 15
-        }}>
+        }}
+      >
         <Row full>
           <Column selfItemsCenter>
             {LeftComponent}
@@ -46,7 +47,8 @@ export function Header(props: HeaderProps) {
               <Row
                 onClick={(e) => {
                   onBack();
-                }}>
+                }}
+              >
                 <Icon>
                   <FontAwesomeIcon icon={faArrowLeft} />
                 </Icon>

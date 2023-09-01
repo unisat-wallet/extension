@@ -15,7 +15,7 @@ export function useAccountsState(): AppState['accounts'] {
 export function useCurrentAccount() {
   const accountsState = useAccountsState();
   // @TDDO: remove this
-  return { ...accountsState.current};
+  return { ...accountsState.current };
 }
 
 export function useAccounts() {

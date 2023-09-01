@@ -81,8 +81,9 @@ export function FeeRateBar({ onChange }: { onChange: (val: number) => void }) {
                   justifyContent: 'center',
                   cursor: 'pointer'
                 } as CSSProperties,
-                selected ? { backgroundColor: colors.primary } : {}
-              )}>
+                selected ? { backgroundColor: colors.background } : {}
+              )}
+            >
               <Text text={v.title} textCenter style={{ color: selected ? colors.black : colors.white }} />
               {v.title !== 'Custom' && (
                 <Text

@@ -168,7 +168,8 @@ export default function SettingsTabScreen() {
                       return;
                     }
                     navigate(item.route);
-                  }}>
+                  }}
+                >
                   <Row full justifyBetween>
                     <Column justifyCenter>
                       <Text text={item.label || item.desc} preset="regular-bold" />
@@ -202,14 +203,14 @@ export default function SettingsTabScreen() {
               }}
             />
 
-            <Icon
+            {/* <Icon
               icon="github"
               size={fontSizes.iconMiddle}
               color="textDim"
               onClick={() => {
                 window.open(GITHUB_URL);
               }}
-            />
+            /> */}
           </Row>
           <Text text={`Version: ${versionInfo.currentVesion}`} preset="sub" textCenter />
           {/* {versionInfo.currentVesion != versionInfo.newVersion && (

@@ -12,4 +12,5 @@ Forked from UniSat Wallet.
 - Develop: `yarn build:chrome:dev`
 
 ## Special Thanks
+
 Thanks to the UniSat Wallet team.

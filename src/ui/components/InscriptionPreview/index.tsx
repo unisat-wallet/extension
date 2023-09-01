@@ -44,16 +44,19 @@ const $viewPresets = {
 const $containerPresets: Record<Presets, CSSProperties> = {
   large: {
     backgroundColor: colors.black,
-    width: 300
+    width: 300,
+    minWidth: 300
   },
   medium: {
     backgroundColor: colors.black,
     width: 144,
+    minWidth: 144,
     height: 180
   },
   small: {
     backgroundColor: colors.black,
-    width: 80
+    width: 80,
+    minWidth: 80
   }
 };
 
@@ -99,7 +102,14 @@ export default function InscriptionPreview({ data, onClick, preset }: Inscriptio
   const numberStr = isUnconfirmed ? 'unconfirmed' : `# ${data.inscriptionNumber}`;
 
   return (
-    <Column gap="zero" onClick={onClick} style={Object.assign({ position: 'relative' }, $containerPresets[preset])}>
+    <Column
+      gap="zero"
+      onClick={onClick}
+      style={Object.assign(
+        { position: 'relative', borderRadius: '5px', overflow: 'hidden' },
+        $containerPresets[preset]
+      )}
+    >
       <Iframe preview={data.preview} style={$iframePresets[preset]} />
       <div style={Object.assign({ position: 'absolute', zIndex: 10 }, $iframePresets[preset])}>
         <Column fullY>
@@ -109,7 +119,8 @@ export default function InscriptionPreview({ data, onClick, preset }: Inscriptio
               title={`The UTXO containing this inscription has ${data.outputValue} sats`}
               overlayStyle={{
                 fontSize: fontSizes.xs
-              }}>
+              }}
+            >
               <div>
                 <Text
                   text={`${data.outputValue} sats`}
@@ -128,7 +139,7 @@ export default function InscriptionPreview({ data, onClick, preset }: Inscriptio
           </Row>
         </Column>
       </div>
-      <Column px="md" py="sm" gap="zero" bg="bg4" full>
+      <Column px="md" gap="zero" bg="bg4" full>
         <Text text={numberStr} color="gold" size={$numberPresets[preset] as any} />
         {isUnconfirmed == false && <Text text={time} preset="sub" size={$timePresets[preset] as any} />}
       </Column>

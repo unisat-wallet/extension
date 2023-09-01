@@ -5,8 +5,8 @@ import { fontSizes } from '@/ui/theme/font';
 
 export const svgRegistry = {
   history: './images/icons/clock-solid.svg',
-  send: './images/icons/arrow-left-right.svg',
-  receive: './images/icons/qrcode.svg',
+  send: './images/icons/send-arrow.svg',
+  receive: './images/icons/receive-arrow.svg',
 
   right: './images/icons/arrow-right.svg',
   left: './images/icons/arrow-left.svg',
@@ -21,10 +21,10 @@ export const svgRegistry = {
   qrcode: './images/icons/qrcode.svg',
 
   user: '/images/icons/user-solid.svg',
-  wallet: '/images/icons/wallet-solid.svg',
-  compass: './images/icons/compass-solid.svg',
-  settings: './images/icons/gear-solid.svg',
-  grid: './images/icons/grid-solid.svg',
+  wallet: '/images/icons/wallet.svg',
+  compass: './images/icons/compass.svg',
+  settings: './images/icons/setting.svg',
+  grid: './images/icons/application.svg',
 
   delete: '/images/icons/delete.svg',
   success: '/images/icons/success.svg',
@@ -38,7 +38,9 @@ export const svgRegistry = {
   pencil: '/images/icons/pencil.svg',
   'circle-info': '/images/icons/circle-info.svg',
   bitcoin: './images/icons/bitcoin.svg',
-  'circle-question': '/images/icons/circle-question.svg'
+  'circle-question': '/images/icons/circle-question.svg',
+
+  switch: './images/icons/arrow-left-right.svg'
 };
 
 const iconImgList: Array<IconTypes> = ['success', 'delete', 'btc'];
@@ -101,7 +103,8 @@ export function Icon(props: IconProps) {
           $containerStyleOverride,
           $imageStyleOverride || {},
           onClick ? { cursor: 'pointer' } : {}
-        )}>
+        )}
+      >
         {children}
       </div>
     );

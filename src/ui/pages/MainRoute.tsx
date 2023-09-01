@@ -21,6 +21,7 @@ import SwitchKeyringScreen from './Account/SwitchKeyringScreen';
 import UnlockScreen from './Account/UnlockScreen';
 import ApprovalScreen from './Approval/ApprovalScreen';
 import ConnectedSitesScreen from './Approval/ConnectedSitesScreen';
+import { InscribeSendScreen } from './Approval/components/InscribeSend';
 import { InscribeTransferScreen } from './Approval/components/InscribeTransfer';
 import BRC20SendScreen from './BRC20/BRC20SendScreen';
 import BRC20TokenScreen from './BRC20/BRC20TokenScreen';
@@ -30,6 +31,8 @@ import DiscoverTabScreen from './Main/DiscoverTabScreen';
 import SettingsTabScreen from './Main/SettingsTabScreen';
 import WalletTabScreen from './Main/WalletTabScreen';
 import WelcomeScreen from './Main/WelcomeScreen';
+import ORC20TokenScreen from './ORC20/ORC20TokenScreen';
+import ORC20SendScreen from './ORC20/Orc20SendScreen';
 import AddressTypeScreen from './Settings/AddressTypeScreen';
 import ChangePasswordScreen from './Settings/ChangePasswordScreen';
 import EditAccountNameScreen from './Settings/EditAccountNameScreen';
@@ -51,9 +54,6 @@ import TxCreateScreen from './Wallet/TxCreateScreen';
 import TxFailScreen from './Wallet/TxFailScreen';
 import TxSuccessScreen from './Wallet/TxSuccessScreen';
 import './index.module.less';
-import ORC20TokenScreen from './ORC20/ORC20TokenScreen';
-import ORC20SendScreen from './ORC20/Orc20SendScreen';
-import { InscribeSendScreen } from './Approval/components/InscribeSend';
 
 const routes = {
   BoostScreen: {
@@ -291,6 +291,8 @@ const Main = () => {
         });
 
         wallet.getAppSummary().then((data) => {
+          console.log(data);
+
           dispatch(accountActions.setAppSummary(data));
         });
         self.summaryLoaded = true;

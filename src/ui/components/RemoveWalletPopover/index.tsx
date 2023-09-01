@@ -37,7 +37,8 @@ export const RemoveWalletPopover = ({ keyring, onClose }: { keyring: WalletKeyri
             flexDirection: 'row',
             backgroundColor: '#CC3333',
             justifyContent: 'center'
-          }}>
+          }}
+        >
           <FontAwesomeIcon icon={faTrashCan} style={{ height: '1rem' }} />
         </div>
 

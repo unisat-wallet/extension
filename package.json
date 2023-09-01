@@ -1,6 +1,6 @@
 {
   "name": "infosat-extension",
-  "version": "1.1.25",
+  "version": "0.1.0",
   "private": true,
   "homepage": "https://github.com/abmatrix/infosat-extension#readme",
   "bugs": {
@@ -12,7 +12,7 @@
   },
   "scripts": {
     "clean": "mkdir -p dist && rm -rf dist/* && cp -r build/_raw/* dist",
-    "build:chrome:dev": "webpack --progress --env browser=chrome manifest=mv2 config=dev channel=github version=0.0.0",
+    "build:chrome:dev": "webpack --progress --env browser=chrome manifest=mv2 config=dev channel=github version=0.1.0",
     "build:chrome": "gulp build --env=pro --browser=chrome --manifest=mv2 --channel=github",
     "build:firefox": "gulp build --env=pro --browser=firefox --manifest=mv2 --channel=github",
     "build:brave": "gulp build --env=pro --browser=brave --manifest=mv2 --channel=github",
