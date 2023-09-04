@@ -39,8 +39,8 @@ export const svgRegistry = {
   'circle-info': '/images/icons/circle-info.svg',
   bitcoin: './images/icons/bitcoin.svg',
   'circle-question': '/images/icons/circle-question.svg',
-
-  switch: './images/icons/arrow-left-right.svg'
+  switch: './images/icons/arrow-left-right.svg',
+  connect: './images/icons/connect_global.svg'
 };
 
 const iconImgList: Array<IconTypes> = ['success', 'delete', 'btc'];

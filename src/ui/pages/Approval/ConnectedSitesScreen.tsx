@@ -13,7 +13,8 @@ export default function ConnectedSitesScreen() {
 
   const getSites = async () => {
     const sites = await wallet.getConnectedSites();
-    setSites(sites);
+
+    setSites(sites.filter((item) => item.isConnected));
   };
 
   useEffect(() => {
