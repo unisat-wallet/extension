@@ -1,5 +1,12 @@
 # GoSat Wallet Release Notes
 
+## v0.1.1
+
+**Release Notes**
+
+- Merge with Unisat-v1.1.30
+- UI Improvements
+
 ## v0.1.0
 
 **Release Notes**
