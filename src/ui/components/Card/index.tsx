@@ -39,6 +39,12 @@ const $viewPresets = {
     paddingBottom: spacingGap.sm,
     paddingLeft: spacingGap.lg,
     paddingRight: spacingGap.lg
+  }) as CSSProperties,
+  style3: Object.assign({}, $baseViewStyle, {
+    paddingTop: spacingGap.xs,
+    paddingBottom: spacingGap.xs,
+    paddingLeft: spacingGap.sm,
+    paddingRight: spacingGap.sm
   }) as CSSProperties
 };
 

@@ -93,10 +93,8 @@ export interface AppInfo {
 }
 
 export interface AppSummary {
-  apps: {
-    tag: string;
-    list: AppInfo[];
-  }[];
+  apps: AppInfo[];
+  readTabTime?: number;
 }
 
 export interface FeeSummary {
@@ -133,6 +131,26 @@ export enum TxType {
   SIGN_TX,
   SEND_BITCOIN,
   SEND_INSCRIPTION
+}
+
+interface BaseUserToSignInput {
+  index: number;
+  sighashTypes: number[] | undefined;
+}
+
+export interface AddressUserToSignInput extends BaseUserToSignInput {
+  address: string;
+}
+
+export interface PublicKeyUserToSignInput extends BaseUserToSignInput {
+  publicKey: string;
+}
+
+export type UserToSignInput = AddressUserToSignInput | PublicKeyUserToSignInput;
+
+export interface SignPsbtOptions {
+  autoFinalized: boolean;
+  toSignInputs?: UserToSignInput[];
 }
 
 export interface ToSignInput {
@@ -224,6 +242,8 @@ export interface DecodedPsbt {
   }[];
   feeRate: number;
   fee: number;
+  hasScammerAddress: boolean;
+  warning: string;
 }
 
 export interface ToAddressInfo {
@@ -243,4 +263,10 @@ export interface WalletConfig {
   version: string;
   moonPayEnabled: boolean;
   statusMessage: string;
+}
+
+export enum WebsiteState {
+  CHECKING,
+  SCAMMER,
+  SAFE
 }

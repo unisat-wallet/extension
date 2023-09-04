@@ -39,6 +39,7 @@ export const svgRegistry = {
   'circle-info': '/images/icons/circle-info.svg',
   bitcoin: './images/icons/bitcoin.svg',
   'circle-question': '/images/icons/circle-question.svg',
+  split: '/images/icons/scissors.svg',
   switch: './images/icons/arrow-left-right.svg',
   connect: './images/icons/connect_global.svg'
 };
@@ -103,8 +104,7 @@ export function Icon(props: IconProps) {
           $containerStyleOverride,
           $imageStyleOverride || {},
           onClick ? { cursor: 'pointer' } : {}
-        )}
-      >
+        )}>
         {children}
       </div>
     );

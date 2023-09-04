@@ -2,18 +2,19 @@ import { APP_SUMMARY } from '@/shared/constant';
 import { AppInfo } from '@/shared/types';
 import { Card, Column, Content, Footer, Header, Image, Layout, Row, Text } from '@/ui/components';
 import { NavTabBar } from '@/ui/components/NavTabBar';
-// import { useAppSummary } from '@/ui/state/accounts/hooks';
-// import { fontSizes } from '@/ui/theme/font';
+import { useAppSummary, useReadApp } from '@/ui/state/accounts/hooks';
+import { fontSizes } from '@/ui/theme/font';
 import { shortDesc } from '@/ui/utils';
 
 function AppItem({ info }: { info: AppInfo }) {
+  const readApp = useReadApp();
   return (
     <Card
       preset="style1"
       onClick={() => {
         if (info.url) window.open(info.url);
-      }}
-    >
+        readApp(info.id);
+      }}>
       <Row full>
         <Column justifyCenter>
           <Image src={info.logo} size={'40px'} style={{ width: 'auto', objectFit: 'cover' }} />

@@ -1,10 +1,13 @@
 import { useState } from 'react';
 
 import { useNavigate } from '@/ui/pages/MainRoute';
+import { useReadTab, useUnreadAppSummary } from '@/ui/state/accounts/hooks';
 import { useSetTabCallback } from '@/ui/state/global/hooks';
 import { TabOption } from '@/ui/state/global/reducer';
 import { colors } from '@/ui/theme/colors';
+import { useWallet } from '@/ui/utils';
 
+import { BaseView } from '../BaseView';
 import { Column } from '../Column';
 import { Grid } from '../Grid';
 import { Icon, IconTypes } from '../Icon';
@@ -34,6 +37,8 @@ function TabButton({
   const setTab = useSetTabCallback();
   const [hover, setHover] = useState('');
   const navigate = useNavigate();
+  const unreadApp = useUnreadAppSummary();
+  const readTab = useReadTab();
   return (
     <Column
       justifyCenter
@@ -45,12 +50,26 @@ function TabButton({
           navigate('DiscoverTabScreen');
         } else if (tabName === 'app') {
           navigate('AppTabScrren');
+          readTab('app');
         } else if (tabName === 'settings') {
           navigate('SettingsTabScreen');
         }
-      }}
-    >
-      <Icon icon={icon} color={isActive ? 'white' : 'white_muted'} size="18px" />
+      }}>
+      <Icon icon={icon} color={isActive ? 'white' : 'white_muted'} />
+      {tabName === 'app' && unreadApp && (
+        <BaseView style={{ position: 'relative' }}>
+          <BaseView
+            style={{
+              position: 'absolute',
+              bottom: 20,
+              left: 5,
+              width: 5,
+              height: 5,
+              backgroundColor: 'red',
+              borderRadius: '50%'
+            }}></BaseView>
+        </BaseView>
+      )}
     </Column>
   );
 }

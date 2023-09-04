@@ -235,7 +235,7 @@ function Step1_Import({
                   <Text text={`${index + 1}. `} style={{ width: 25 }} textEnd color="textDim" />
                   <Input
                     containerStyle={{ width: 80, minHeight: 25, height: 25, padding: 0 }}
-                    style={{ width: 80 }}
+                    style={{ width: 60 }}
                     value={_}
                     onPaste={(e) => {
                       handleEventPaste(e, index);
@@ -257,6 +257,8 @@ function Step1_Import({
                     }}
                     onKeyUp={(e) => handleOnKeyUp(e)}
                     autoFocus={index == curInputIndex}
+                    preset={'password'}
+                    placeholder=""
                   />
                 </Card>
               </Row>

@@ -1,4 +1,5 @@
 import bitcore from 'bitcore-lib';
+import { isNull } from 'lodash';
 import React, { CSSProperties, useEffect, useState } from 'react';
 
 import { SATS_DOMAIN, UNISAT_DOMAIN } from '@/shared/constant';
@@ -65,12 +66,12 @@ const $baseInputStyle: CSSProperties = Object.assign({}, $textPresets.regular, {
 });
 
 function PasswordInput(props: InputProps) {
-  const { placeholder, style: $inputStyleOverride, ...rest } = props;
+  const { placeholder, containerStyle, style: $inputStyleOverride, ...rest } = props;
   const [type, setType] = useState<'password' | 'text'>('password');
   return (
-    <div style={$baseContainerStyle}>
+    <div style={Object.assign({}, $baseContainerStyle, containerStyle)}>
       <input
-        placeholder={placeholder || 'Password'}
+        placeholder={isNull(placeholder) ? 'Password' : placeholder}
         type={type}
         style={Object.assign({}, $baseInputStyle, $inputStyleOverride)}
         {...rest}

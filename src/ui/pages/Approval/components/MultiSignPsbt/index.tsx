@@ -1,6 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { DecodedPsbt } from '@/shared/types';
+import { DecodedPsbt, SignPsbtOptions, ToSignInput } from '@/shared/types';
 import { Inscription } from '@/shared/types';
 import { Button, Layout, Content, Footer, Icon, Text, Row, Card, Column, TextArea, Header } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -8,8 +8,9 @@ import { AddressText } from '@/ui/components/AddressText';
 import { Empty } from '@/ui/components/Empty';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { TabBar } from '@/ui/components/TabBar';
+import { WarningPopver } from '@/ui/components/WarningPopver';
 import WebsiteBar from '@/ui/components/WebsiteBar';
-import { useAccountAddress } from '@/ui/state/accounts/hooks';
+import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { copyToClipboard, satoshisToAmount, useApproval, useWallet } from '@/ui/utils';
@@ -20,6 +21,7 @@ interface Props {
   params: {
     data: {
       psbtHexs: string[];
+      options: SignPsbtOptions[];
     };
     session?: {
       origin: string;
@@ -139,19 +141,23 @@ interface TxInfo {
   psbtHexs: string[];
   txError: string;
   decodedPsbts: DecodedPsbt[];
+  toSignInputsArray: ToSignInput[][];
   currentIndex: number;
+  isScammer: boolean;
 }
 
 const initTxInfo: TxInfo = {
   psbtHexs: [],
   txError: '',
   decodedPsbts: [],
-  currentIndex: 0
+  toSignInputsArray: [],
+  currentIndex: 0,
+  isScammer: false
 };
 
 export default function MultiSignPsbt({
   params: {
-    data: { psbtHexs },
+    data: { psbtHexs, options },
     session
   },
   header,
@@ -169,20 +175,45 @@ export default function MultiSignPsbt({
 
   const tools = useTools();
 
-  const init = async () => {
-    const txError = '';
+  const [warningState, setWarningState] = useState({ visible: false, text: '' });
 
+  const init = async () => {
+    let txError = '';
+
+    const { isScammer } = await wallet.checkWebsite(session?.origin || '');
     const decodedPsbts: DecodedPsbt[] = [];
+
+    let warningInfo = '';
     for (let i = 0; i < psbtHexs.length; i++) {
       const psbtHex = psbtHexs[i];
       const decodedPsbt = await wallet.decodePsbt(psbtHex);
       decodedPsbts.push(decodedPsbt);
+      if (decodedPsbt.warning) {
+        warningInfo += decodedPsbt.warning + '\n';
+      }
     }
+    if (warningInfo.length > 0) {
+      setWarningState({ visible: true, text: warningInfo });
+    }
+
+    const toSignInputsArray: ToSignInput[][] = [];
+    try {
+      for (let i = 0; i < psbtHexs.length; i++) {
+        const toSignInputs = await wallet.formatOptionsToSignInputs(psbtHexs[i], options[i]);
+        toSignInputsArray.push(toSignInputs);
+      }
+    } catch (e) {
+      txError = (e as Error).message;
+      tools.toastError(txError);
+    }
+
     setTxInfo({
       decodedPsbts,
       psbtHexs,
-      txError: '',
-      currentIndex: 0
+      toSignInputsArray,
+      txError,
+      currentIndex: 0,
+      isScammer
     });
 
     setLoading(false);
@@ -227,9 +258,10 @@ export default function MultiSignPsbt({
 
   const decodedPsbt = useMemo(() => txInfo.decodedPsbts[txInfo.currentIndex], [txInfo]);
   const psbtHex = useMemo(() => txInfo.psbtHexs[txInfo.currentIndex], [txInfo]);
+  const toSignInputs = useMemo(() => txInfo.toSignInputsArray[txInfo.currentIndex], [txInfo]);
 
   const networkFee = useMemo(() => (decodedPsbt ? satoshisToAmount(decodedPsbt.fee) : 0), [decodedPsbt]);
-
+  const currentAccount = useCurrentAccount();
   const detailsComponent = useMemo(() => {
     if (decodedPsbt) {
       return <SignTxDetails decodedPsbt={decodedPsbt} />;
@@ -248,10 +280,12 @@ export default function MultiSignPsbt({
   const isValid = useMemo(() => {
     if (decodedPsbt && decodedPsbt.inputInfos.length == 0) {
       return false;
-    } else {
-      return true;
     }
-  }, [decodedPsbt]);
+    if (!toSignInputs || toSignInputs.length == 0) {
+      return false;
+    }
+    return true;
+  }, [decodedPsbt, toSignInputs]);
 
   if (loading) {
     return (
@@ -274,6 +308,26 @@ export default function MultiSignPsbt({
       <Header>
         <WebsiteBar session={session} />
       </Header>
+    );
+  }
+
+  if (txInfo.isScammer || txInfo.decodedPsbts.find((v) => v.hasScammerAddress)) {
+    return (
+      <Layout>
+        <Content>
+          <Column>
+            <Text text="Phishing Detection" preset="title-bold" textCenter mt="xxl" />
+            <Text text="Malicious behavior and suspicious activity have been detected." mt="md" />
+            <Text text="Your access to this page has been restricted by UniSat Wallet as it might be unsafe." mt="md" />
+          </Column>
+        </Content>
+
+        <Footer>
+          <Row full>
+            <Button text="Reject (blocked by UniSat Wallet)" preset="danger" onClick={handleCancel} full />
+          </Row>
+        </Footer>
+      </Layout>
     );
   }
 
@@ -315,14 +369,26 @@ export default function MultiSignPsbt({
                 <Card>
                   <Column full justifyCenter>
                     {decodedPsbt.inputInfos.map((v, index) => {
+                      const isToSign = toSignInputs && toSignInputs.find((v) => v.index === index) ? true : false;
                       return (
                         <Row
                           key={'output_' + index}
                           style={index === 0 ? {} : { borderColor: colors.border, borderTopWidth: 1, paddingTop: 10 }}
-                          justifyBetween
-                        >
-                          <AddressText address={v.address} />
-                          <Text text={`${satoshisToAmount(v.value)} BTC`} />
+                          justifyBetween>
+                          <Column>
+                            <Row>
+                              <AddressText address={v.address} color={isToSign ? 'white' : 'textDim'} />
+                              {isToSign && (
+                                <Row style={{ borderWidth: 1, borderColor: 'gold', borderRadius: 5, padding: 2 }}>
+                                  <Text text="to sign" color="gold" size="xs" />
+                                </Row>
+                              )}
+                            </Row>
+                          </Column>
+                          <Row>
+                            <Text text={`${satoshisToAmount(v.value)}`} color={isToSign ? 'white' : 'textDim'} />
+                            <Text text="BTC" color="textDim" />
+                          </Row>
                         </Row>
                       );
                     })}
@@ -335,15 +401,21 @@ export default function MultiSignPsbt({
                 <Card>
                   <Column full justifyCenter gap="lg">
                     {decodedPsbt.outputInfos.map((v, index) => {
+                      const isMyAddress = v.address == currentAccount.address;
                       return (
-                        <Row
+                        <Column
                           key={'output_' + index}
-                          style={index === 0 ? {} : { borderColor: colors.border, borderTopWidth: 1, paddingTop: 10 }}
-                          justifyBetween
-                        >
-                          <AddressText address={v.address} />
-                          <Text text={`${satoshisToAmount(v.value)} BTC`} />
-                        </Row>
+                          style={index === 0 ? {} : { borderColor: colors.border, borderTopWidth: 1, paddingTop: 10 }}>
+                          <Column>
+                            <Row justifyBetween>
+                              <AddressText address={v.address} color={isMyAddress ? 'white' : 'textDim'} />
+                              <Row>
+                                <Text text={`${satoshisToAmount(v.value)}`} color={isMyAddress ? 'white' : 'textDim'} />
+                                <Text text="BTC" color="textDim" />
+                              </Row>
+                            </Row>
+                          </Column>
+                        </Column>
                       );
                     })}
                   </Column>
@@ -373,8 +445,7 @@ export default function MultiSignPsbt({
                   copyToClipboard(psbtHex).then(() => {
                     tools.toastSuccess('Copied');
                   });
-                }}
-              >
+                }}>
                 <Icon icon="copy" color="textDim" />
                 <Text text="Copy psbt transaction data" color="textDim" />
               </Row>
@@ -391,7 +462,7 @@ export default function MultiSignPsbt({
             items={tabItems}
             preset="number-page"
             onTabClick={(key) => {
-              updateTxInfo(key);
+              updateTxInfo({ currentIndex: key });
             }}
           />
         </Row>
@@ -405,12 +476,24 @@ export default function MultiSignPsbt({
           />
           <Button
             preset="primary"
-            text={txInfo.currentIndex === txInfo.psbtHexs.length - 1 ? 'Sign All' : 'Next'}
+            text={
+              txInfo.currentIndex === txInfo.psbtHexs.length - 1
+                ? `Sign All (${txInfo.psbtHexs.length} transactions)`
+                : 'Next'
+            }
             onClick={handleConfirm}
             disabled={isValid == false}
             full
           />
         </Row>
+        {warningState.visible && (
+          <WarningPopver
+            text={warningState.text}
+            onClose={() => {
+              setWarningState({ visible: false, text: '' });
+            }}
+          />
+        )}
       </Footer>
     </Layout>
   );
