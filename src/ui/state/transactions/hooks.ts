@@ -197,10 +197,11 @@ export function useCreateSplitTxCallback() {
   const fromAddress = useAccountAddress();
   const utxos = useUtxos();
   return useCallback(
-    async (inscriptionId: string, feeRate: number) => {
-      const psbtHex = await wallet.splitInscription({
+    async (inscriptionId: string, feeRate: number, outputValue: number) => {
+      const { psbtHex, splitedCount } = await wallet.splitInscription({
         inscriptionId,
-        feeRate
+        feeRate,
+        outputValue
       });
       const psbt = Psbt.fromHex(psbtHex);
       const rawtx = psbt.extractTransaction().toHex();
@@ -210,7 +211,8 @@ export function useCreateSplitTxCallback() {
           psbtHex,
           fromAddress,
           // inscription,
-          feeRate
+          feeRate,
+          outputValue
         })
       );
       const rawTxInfo: RawTxInfo = {
@@ -220,7 +222,7 @@ export function useCreateSplitTxCallback() {
           address: fromAddress
         }
       };
-      return rawTxInfo;
+      return { rawTxInfo, splitedCount };
     },
     [dispatch, wallet, fromAddress, utxos]
   );

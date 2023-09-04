@@ -5,8 +5,8 @@ import { NETWORK_TYPES } from '@/shared/constant';
 import BaseController from '../base';
 import wallet from '../wallet';
 import { toPsbtNetwork } from '@/background/utils/tx-utils';
-import { NetworkType } from '@/shared/types';
-import { Psbt } from 'bitcoinjs-lib';
+import { AddressUserToSignInput, NetworkType, PublicKeyUserToSignInput, SignPsbtOptions, ToSignInput, UserToSignInput } from '@/shared/types';
+import { Psbt,Transaction,address as PsbtAddress  } from 'bitcoinjs-lib';
 import { amountToSatoshis } from '@/ui/utils';
 import { ethErrors } from 'eth-rpc-errors';
 
@@ -24,7 +24,6 @@ function formatPsbtHex(psbtHex:string){
   }
   return formatData;
 }
-
 
 class ProviderController extends BaseController {
 
@@ -161,22 +160,22 @@ class ProviderController extends BaseController {
     }
 
   @Reflect.metadata('APPROVAL', ['SignPsbt', (req) => {
-    const { data: { params: { psbtHex,options } } } = req;
-    req.data.params.psbtHex = formatPsbtHex(psbtHex)
+    const { data: { params: { psbtHex } } } = req;
+    req.data.params.psbtHex = formatPsbtHex(psbtHex);
   }])
     signPsbt = async ({ data: { params: { psbtHex,options } } }) => {
-      const account = await wallet.getCurrentAccount();
-      if (!account) throw null;
       const networkType = wallet.getNetworkType()
       const psbtNetwork = toPsbtNetwork(networkType)
       const psbt =  Psbt.fromHex(psbtHex,{network:psbtNetwork})
-      await wallet.signPsbt( psbt,options);
+      const autoFinalized = (options && options.autoFinalized==false)?false:true;
+      const toSignInputs = await wallet.formatOptionsToSignInputs(psbtHex,options);
+      await wallet.signPsbt( psbt,toSignInputs,autoFinalized);
       return psbt.toHex();
     }
 
   @Reflect.metadata('APPROVAL', ['MultiSignPsbt', (req) => {
     const { data: { params: { psbtHexs,options } } } = req;
-    req.data.params.psbtHexs = psbtHexs.map(psbtHex=>formatPsbtHex(psbtHex))
+    req.data.params.psbtHexs = psbtHexs.map(psbtHex=>formatPsbtHex(psbtHex));
   }])
     multiSignPsbt = async ({ data: { params: { psbtHexs,options } } }) => {
       const account = await wallet.getCurrentAccount();
@@ -184,10 +183,11 @@ class ProviderController extends BaseController {
       const networkType = wallet.getNetworkType()
       const psbtNetwork = toPsbtNetwork(networkType)
       const result: string[] = [];
-      const _options: any = options || [];
       for (let i = 0; i < psbtHexs.length; i++){
         const psbt = Psbt.fromHex(psbtHexs[i],{network:psbtNetwork});
-        await wallet.signPsbt(psbt,_options[i]);
+        const autoFinalized = (options && options[i] && options[i].autoFinalized==false)?false:true;
+        const toSignInputs = await wallet.formatOptionsToSignInputs(psbtHexs[i],options[i]);
+        await wallet.signPsbt(psbt,toSignInputs,autoFinalized);
         result.push(psbt.toHex())
       }
       return result;

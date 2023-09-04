@@ -24,7 +24,8 @@ import {
   AddressTokenSummary,
   DecodedPsbt,
   WalletConfig,
-  UTXO_Detail
+  UTXO_Detail,
+  SignPsbtOptions
 } from '@/shared/types';
 
 export interface WalletController {
@@ -134,7 +135,11 @@ export interface WalletController {
 
   sendInscriptions(data: { to: string; inscriptionIds: string[]; feeRate: number }): Promise<string>;
 
-  splitInscription(data: { inscriptionId: string; feeRate: number }): Promise<string>;
+  splitInscription(data: {
+    inscriptionId: string;
+    feeRate: number;
+    outputValue: number;
+  }): Promise<{ psbtHex: string; splitedCount: number }>;
 
   pushTx(rawtx: string): Promise<string>;
 
@@ -223,6 +228,13 @@ export interface WalletController {
   setSkippedVersion(version: string): Promise<void>;
 
   getInscriptionUtxoDetail(inscriptionId: string): Promise<UTXO_Detail>;
+
+  checkWebsite(website: string): Promise<{ isScammer: boolean }>;
+
+  readTab(tabName: string): Promise<void>;
+  readApp(appid: number): Promise<void>;
+
+  formatOptionsToSignInputs(psbtHex: string, options: SignPsbtOptions): Promise<ToSignInput[]>;
 }
 
 const WalletContext = createContext<{

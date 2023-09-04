@@ -32,8 +32,20 @@ import {
   ORCAPI_URL_MAINNET,
   ORCAPI_URL_TESTNET
 } from '@/shared/constant';
-import { AddressType, BitcoinBalance, NetworkType, ToSignInput, UTXO, WalletKeyring, Account } from '@/shared/types';
-import { createSendBTC, createSendMultiOrds, createSendOrd, createSplitOrdUtxo } from '@unisat/ord-utils';
+import {
+  AddressType,
+  BitcoinBalance,
+  NetworkType,
+  ToSignInput,
+  UTXO,
+  WalletKeyring,
+  Account,
+  SignPsbtOptions,
+  AddressUserToSignInput,
+  PublicKeyUserToSignInput,
+  UserToSignInput
+} from '@/shared/types';
+import { createSendBTC, createSendMultiOrds, createSendOrd, createSplitOrdUtxoV2 } from '@unisat/ord-utils';
 
 import { ContactBookItem } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';
@@ -373,7 +385,79 @@ export class WalletController extends BaseController {
     return keyringService.signTransaction(keyring, psbt, inputs);
   };
 
-  signPsbt = async (psbt: bitcoin.Psbt, options?: any) => {
+  formatOptionsToSignInputs = async (_psbt: string | bitcoin.Psbt, options?: SignPsbtOptions) => {
+    const account = await this.getCurrentAccount();
+    if (!account) throw null;
+
+    let toSignInputs: ToSignInput[] = [];
+    if (options && options.toSignInputs) {
+      // We expect userToSignInputs objects to be similar to ToSignInput interface,
+      // but we allow address to be specified in addition to publicKey for convenience.
+      toSignInputs = options.toSignInputs.map((input) => {
+        const index = Number(input.index);
+        if (isNaN(index)) throw new Error('invalid index in toSignInput');
+
+        if (!(input as AddressUserToSignInput).address && !(input as PublicKeyUserToSignInput).publicKey) {
+          throw new Error('no address or public key in toSignInput');
+        }
+
+        if ((input as AddressUserToSignInput).address && (input as AddressUserToSignInput).address != account.address) {
+          throw new Error('invalid address in toSignInput');
+        }
+
+        if (
+          (input as PublicKeyUserToSignInput).publicKey &&
+          (input as PublicKeyUserToSignInput).publicKey != account.pubkey
+        ) {
+          throw new Error('invalid public key in toSignInput');
+        }
+
+        const sighashTypes = input.sighashTypes?.map(Number);
+        if (sighashTypes?.some(isNaN)) throw new Error('invalid sighash type in toSignInput');
+
+        return {
+          index,
+          publicKey: account.pubkey,
+          sighashTypes
+        };
+      });
+    } else {
+      const networkType = this.getNetworkType();
+      const psbtNetwork = toPsbtNetwork(networkType);
+
+      const psbt =
+        typeof _psbt === 'string'
+          ? bitcoin.Psbt.fromHex(_psbt as string, { network: psbtNetwork })
+          : (_psbt as bitcoin.Psbt);
+      psbt.data.inputs.forEach((v, index) => {
+        let script: any = null;
+        let value = 0;
+        if (v.witnessUtxo) {
+          script = v.witnessUtxo.script;
+          value = v.witnessUtxo.value;
+        } else if (v.nonWitnessUtxo) {
+          const tx = bitcoin.Transaction.fromBuffer(v.nonWitnessUtxo);
+          const output = tx.outs[psbt.txInputs[index].index];
+          script = output.script;
+          value = output.value;
+        }
+        const isSigned = v.finalScriptSig || v.finalScriptWitness;
+        if (script && !isSigned) {
+          const address = PsbtAddress.fromOutputScript(script, psbtNetwork);
+          if (account.address === address) {
+            toSignInputs.push({
+              index,
+              publicKey: account.pubkey,
+              sighashTypes: v.sighashType ? [v.sighashType] : undefined
+            });
+          }
+        }
+      });
+    }
+    return toSignInputs;
+  };
+
+  signPsbt = async (psbt: bitcoin.Psbt, toSignInputs: ToSignInput[], autoFinalized: boolean) => {
     const account = await this.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
@@ -384,42 +468,31 @@ export class WalletController extends BaseController {
     const networkType = this.getNetworkType();
     const psbtNetwork = toPsbtNetwork(networkType);
 
-    const toSignInputs: ToSignInput[] = [];
+    if (!toSignInputs) {
+      // Compatibility with legacy code.
+      toSignInputs = await this.formatOptionsToSignInputs(psbt);
+      if (autoFinalized !== false) autoFinalized = true;
+    }
+
     psbt.data.inputs.forEach((v, index) => {
-      let script: any = null;
-      let value = 0;
-      if (v.witnessUtxo) {
-        script = v.witnessUtxo.script;
-        value = v.witnessUtxo.value;
-      } else if (v.nonWitnessUtxo) {
-        const tx = bitcoin.Transaction.fromBuffer(v.nonWitnessUtxo);
-        const output = tx.outs[psbt.txInputs[index].index];
-        script = output.script;
-        value = output.value;
-      }
-      const isSigned = v.finalScriptSig || v.finalScriptWitness;
-      if (script && !isSigned) {
-        const address = PsbtAddress.fromOutputScript(script, psbtNetwork);
-        if (account.address === address) {
-          toSignInputs.push({
-            index,
-            publicKey: account.pubkey,
-            sighashTypes: v.sighashType ? [v.sighashType] : undefined
-          });
-          if (
-            (keyring.addressType === AddressType.P2TR || keyring.addressType === AddressType.M44_P2TR) &&
-            !v.tapInternalKey
-          ) {
-            v.tapInternalKey = toXOnly(Buffer.from(account.pubkey, 'hex'));
-          }
+      const isNotSigned = !(v.finalScriptSig || v.finalScriptWitness);
+      const isP2TR = keyring.addressType === AddressType.P2TR || keyring.addressType === AddressType.M44_P2TR;
+      const lostInternalPubkey = !v.tapInternalKey;
+      // Special measures taken for compatibility with certain applications.
+      if (isNotSigned && isP2TR && lostInternalPubkey) {
+        const tapInternalKey = toXOnly(Buffer.from(account.pubkey, 'hex'));
+        const { output } = bitcoin.payments.p2tr({
+          internalPubkey: tapInternalKey,
+          network: psbtNetwork
+        });
+        if (v.witnessUtxo?.script.toString('hex') == output?.toString('hex')) {
+          v.tapInternalKey = tapInternalKey;
         }
       }
     });
 
     psbt = await keyringService.signTransaction(_keyring, psbt, toSignInputs);
-    if (options && options.autoFinalized == false) {
-      // do not finalize
-    } else {
+    if (autoFinalized) {
       toSignInputs.forEach((v) => {
         // psbt.validateSignaturesOfInput(v.index, validator);
         psbt.finalizeInput(v.index);
@@ -760,7 +833,16 @@ export class WalletController extends BaseController {
     return psbt.toHex();
   };
 
-  splitInscription = async ({ inscriptionId, feeRate }: { to: string; inscriptionId: string; feeRate: number }) => {
+  splitInscription = async ({
+    inscriptionId,
+    feeRate,
+    outputValue
+  }: {
+    to: string;
+    inscriptionId: string;
+    feeRate: number;
+    outputValue: number;
+  }) => {
     const account = await preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
@@ -775,7 +857,7 @@ export class WalletController extends BaseController {
     const btc_utxos = await openapiService.getAddressUtxo(account.address);
     const utxos = [utxo].concat(btc_utxos);
 
-    const psbt = await createSplitOrdUtxo({
+    const { psbt, splitedCount } = await createSplitOrdUtxoV2({
       utxos: utxos.map((v) => {
         return {
           txId: v.txId,
@@ -792,12 +874,16 @@ export class WalletController extends BaseController {
       changeAddress: account.address,
       pubkey: account.pubkey,
       feeRate,
-      enableRBF: false
+      enableRBF: false,
+      outputValue
     });
     // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     psbt.__CACHE.__UNSAFE_SIGN_NONSEGWIT = false;
-    return psbt.toHex();
+    return {
+      psbtHex: psbt.toHex(),
+      splitedCount
+    };
   };
 
   pushTx = async (rawtx: string) => {
@@ -947,8 +1033,39 @@ export class WalletController extends BaseController {
   };
 
   getAppSummary = async () => {
-    const data = await openapiService.getAppSummary();
-    return data;
+    const appTab = preferenceService.getAppTab();
+    try {
+      const data = await openapiService.getAppSummary();
+      const readTabTime = appTab.readTabTime;
+      data.apps.forEach((w) => {
+        const readAppTime = appTab.readAppTime[w.id];
+        if (w.time) {
+          if (Date.now() > w.time + 1000 * 60 * 60 * 24 * 7) {
+            w.new = false;
+          } else if (readAppTime && readAppTime > w.time) {
+            w.new = false;
+          } else {
+            w.new = true;
+          }
+        } else {
+          w.new = false;
+        }
+      });
+      data.readTabTime = readTabTime;
+      preferenceService.setAppSummary(data);
+      return data;
+    } catch (e) {
+      console.log('getAppSummary error:', e);
+      return appTab.summary;
+    }
+  };
+
+  readTab = async () => {
+    return preferenceService.setReadTabTime(Date.now());
+  };
+
+  readApp = async (appid: number) => {
+    return preferenceService.setReadAppTime(appid, Date.now());
   };
 
   getAddressUtxo = async (address: string) => {
@@ -1235,6 +1352,10 @@ export class WalletController extends BaseController {
       throw new Error('UTXO not found.');
     }
     return utxo;
+  };
+
+  checkWebsite = (website: string) => {
+    return openapiService.checkWebsite(website);
   };
 }
 

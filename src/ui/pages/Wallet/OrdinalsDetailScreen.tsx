@@ -13,6 +13,7 @@ import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
 
+const HIGH_BALANCE = 10000;
 export default function OrdinalsDetailScreen() {
   const navigate = useNavigate();
   const { inscription } = useLocationState<{ inscription: Inscription }>();
@@ -27,15 +28,21 @@ export default function OrdinalsDetailScreen() {
 
   const genesisTxUrl = useTxIdUrl(inscription.genesisTransaction);
 
+  const [isNeedToSplit, setIsNeedToSplit] = useState(false);
   const [isMultiStuck, setIsMultiStuck] = useState(false);
+  const [splitReason, setSplitReason] = useState('');
   const wallet = useWallet();
   // detect multiple inscriptions
   useEffect(() => {
     wallet.getInscriptionUtxoDetail(inscription.inscriptionId).then((v) => {
       if (v.inscriptions.length > 1) {
+        setIsNeedToSplit(true);
         setIsMultiStuck(true);
       }
     });
+    if (inscription.outputValue > HIGH_BALANCE) {
+      setIsNeedToSplit(true);
+    }
   }, []);
 
   return (
@@ -56,35 +63,50 @@ export default function OrdinalsDetailScreen() {
             <InscriptionPreview data={inscription} preset="large" />
           </Row>
 
-          {isMultiStuck && (
-            <Text
-              color="danger"
-              textCenter
-              text={'Multiple inscriptions are mixed together. Please split them first.'}
-            />
+          {withSend && (
+            <Row fullX>
+              {isNeedToSplit && (
+                <Button
+                  text="Split"
+                  icon="split"
+                  preset="default"
+                  full
+                  onClick={(e) => {
+                    dispatch(transactionsActions.reset());
+                    navigate('SplitTxCreateScreen', { inscription });
+                  }}
+                />
+              )}
+              {isMultiStuck == false && (
+                <Button
+                  text="Send"
+                  icon="send"
+                  preset="default"
+                  full
+                  onClick={(e) => {
+                    dispatch(transactionsActions.reset());
+                    navigate('OrdinalsTxCreateScreen', { inscription });
+                  }}
+                />
+              )}
+            </Row>
           )}
-          {withSend &&
+
+          {isNeedToSplit &&
             (isMultiStuck ? (
-              <Button
-                text="Split"
-                icon="send"
-                preset="default"
-                onClick={(e) => {
-                  dispatch(transactionsActions.reset());
-                  navigate('SplitTxCreateScreen', { inscription });
-                }}
+              <Text
+                color="danger"
+                textCenter
+                text={'Multiple inscriptions are mixed together. Please split them first.'}
               />
             ) : (
-              <Button
-                text="Send"
-                icon="send"
-                preset="default"
-                onClick={(e) => {
-                  dispatch(transactionsActions.reset());
-                  navigate('OrdinalsTxCreateScreen', { inscription });
-                }}
+              <Text
+                color="warning"
+                textCenter
+                text={`This inscription carries a high balance! (>${HIGH_BALANCE} sats)`}
               />
             ))}
+
           <Column gap="lg">
             <Section title="id" value={inscription.inscriptionId} />
             <Section title="address" value={inscription.address} />

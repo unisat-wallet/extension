@@ -238,7 +238,7 @@ export class OpenApiService {
   }
 
   async getAppSummary(): Promise<AppSummary> {
-    const data = await this.httpGet('/default/app-summary', {});
+    const data = await this.httpGet('/default/app-summary-v2', {});
     if (data.status == API_STATUS.FAILED) {
       throw new Error(data.message);
     }
@@ -335,6 +335,14 @@ export class OpenApiService {
 
   async createMoonpayUrl(address: string): Promise<string> {
     const data = await this.httpPost('/moonpay/create', { address });
+    if (data.status == API_STATUS.FAILED) {
+      throw new Error(data.message);
+    }
+    return data.result;
+  }
+
+  async checkWebsite(website: string): Promise<{ isScammer: boolean }> {
+    const data = await this.httpPost('/default/check-website', { website });
     if (data.status == API_STATUS.FAILED) {
       throw new Error(data.message);
     }
