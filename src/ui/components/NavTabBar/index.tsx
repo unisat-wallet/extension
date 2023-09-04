@@ -14,16 +14,28 @@ import { Icon, IconTypes } from '../Icon';
 
 export function NavTabBar({ tab }: { tab: TabOption }) {
   return (
-    <Grid columns={4} style={{ width: '100%', height: '67.5px', backgroundColor: colors.bg2 }}>
-      <TabButton tabName="home" icon="wallet" isActive={tab === 'home'} />
-      <TabButton tabName="mint" icon="compass" isActive={tab === 'mint'} />
-      <TabButton tabName="app" icon="grid" isActive={tab === 'app'} />
-      <TabButton tabName="settings" icon="settings" isActive={tab === 'settings'} />
+    <Grid columns={4} style={{ width: '100%', height: '50px', backgroundColor: colors.bg2 }}>
+      <TabButton tabName="home" icon="wallet" isActive={tab === 'home'} label="Wallet" />
+      <TabButton tabName="mint" icon="compass" isActive={tab === 'mint'} label="Search" />
+      <TabButton tabName="app" icon="grid" isActive={tab === 'app'} label="More" />
+      <TabButton tabName="settings" icon="settings" isActive={tab === 'settings'} label="Settings" />
     </Grid>
   );
 }
 
-function TabButton({ tabName, icon, isActive }: { tabName: TabOption; icon: IconTypes; isActive: boolean }) {
+function TabButton({
+  tabName,
+  icon,
+  isActive,
+  label
+}: {
+  tabName: TabOption;
+  icon: IconTypes;
+  isActive: boolean;
+  label: string;
+}) {
+  const setTab = useSetTabCallback();
+  const [hover, setHover] = useState('');
   const navigate = useNavigate();
   const unreadApp = useUnreadAppSummary();
   const readTab = useReadTab();

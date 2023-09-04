@@ -20,7 +20,8 @@ export default function AddKeyringScreen() {
             justifyCenter
             onClick={(e) => {
               navigate('CreateHDWalletScreen', { isImport: false });
-            }}>
+            }}
+          >
             <Column full justifyCenter>
               <Text text="Create with mnemonics (12-words)" size="sm" />
             </Column>
@@ -32,7 +33,8 @@ export default function AddKeyringScreen() {
             justifyCenter
             onClick={(e) => {
               navigate('CreateHDWalletScreen', { isImport: true });
-            }}>
+            }}
+          >
             <Column full justifyCenter>
               <Text text="Restore from mnemonics (12-words、24-words)" size="sm" />
             </Column>
@@ -42,7 +44,8 @@ export default function AddKeyringScreen() {
             justifyCenter
             onClick={(e) => {
               navigate('CreateSimpleWalletScreen');
-            }}>
+            }}
+          >
             <Column full justifyCenter>
               <Text text="Restore from single private key" size="sm" />
             </Column>

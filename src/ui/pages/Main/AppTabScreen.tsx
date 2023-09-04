@@ -1,3 +1,4 @@
+import { APP_SUMMARY } from '@/shared/constant';
 import { AppInfo } from '@/shared/types';
 import { Card, Column, Content, Footer, Header, Image, Layout, Row, Text } from '@/ui/components';
 import { NavTabBar } from '@/ui/components/NavTabBar';
@@ -16,18 +17,11 @@ function AppItem({ info }: { info: AppInfo }) {
       }}>
       <Row full>
         <Column justifyCenter>
-          <Image src={info.logo} size={fontSizes.logo} />
+          <Image src={info.logo} size={'40px'} style={{ width: 'auto', objectFit: 'cover' }} />
         </Column>
 
-        <Column justifyCenter gap="zero">
-          <Row itemsCenter>
-            <Text text={info.title} />
-            <Card preset="style2" style={{ backgroundColor: info.tagColor }}>
-              <Text text={info.tag} size="xxs" />
-            </Card>
-            {info.new && <Text text="new!" color="red" />}
-          </Row>
-
+        <Column justifyCenter gap="sm">
+          <Text text={info.title} />
           <Text text={shortDesc(info.desc)} preset="sub" />
         </Column>
       </Row>
@@ -36,14 +30,19 @@ function AppItem({ info }: { info: AppInfo }) {
 }
 
 export default function AppTabScrren() {
-  const appSummary = useAppSummary();
+  const appSummary = APP_SUMMARY;
   return (
     <Layout>
       <Header />
       <Content>
         <Column gap="lg">
-          {appSummary.apps.map((v) => (
-            <AppItem key={v.title} info={v} />
+          {appSummary.map(({ tag, list }) => (
+            <Column key={tag}>
+              <Text text={tag} preset="regular-bold" />
+              {list.map((v) => {
+                return <AppItem key={v.id} info={v} />;
+              })}
+            </Column>
           ))}
         </Column>
       </Content>

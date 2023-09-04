@@ -17,7 +17,7 @@ export default function WelcomeScreen() {
           </Row>
           <Column gap="xl" mt="xxl">
             <Text
-              text={"Inscribe and store your inscriptions in the world's first Open Source Chrome wallet for Ordinals!"}
+              text={'Ordinals Wallet Supporting BRC-20, ORC-20 & ORC-CASH Token Protocols on Bitcoin'}
               preset="sub"
               textCenter
             />

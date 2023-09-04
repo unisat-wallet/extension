@@ -79,6 +79,8 @@ const wallet: Record<string, any> = new Proxy(
   {},
   {
     get(obj, key) {
+      console.log(key);
+
       switch (key) {
         case 'openapi':
           return new Proxy(
@@ -95,7 +97,6 @@ const wallet: Record<string, any> = new Proxy(
               }
             }
           );
-          break;
         default:
           return function (...params: any) {
             return portMessageChannel.request({

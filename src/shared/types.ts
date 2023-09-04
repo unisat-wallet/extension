@@ -15,6 +15,7 @@ export enum NetworkType {
 }
 
 export enum RestoreWalletType {
+  GoSat,
   UNISAT,
   SPARROW,
   XVERSE,
@@ -88,12 +89,7 @@ export interface AppInfo {
   title: string;
   desc: string;
   url: string;
-  time: number;
   id: number;
-  tag?: string;
-  readtime?: number;
-  new?: boolean;
-  tagColor?: string;
 }
 
 export interface AppSummary {
@@ -201,8 +197,8 @@ export interface TokenBalance {
   transferableBalance: string;
   availableBalanceSafe: string;
   availableBalanceUnSafe: string;
-  tokenID?: string
-  inscriptionNumber?: number
+  tokenID?: string;
+  inscriptionNumber?: number;
 }
 
 export interface TokenInfo {

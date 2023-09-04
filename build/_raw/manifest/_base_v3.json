@@ -2,7 +2,6 @@
   "manifest_version": 3,
   "name": "__MSG_appName__",
   "version": "1.0",
-
   "default_locale": "en",
   "description": "__MSG_appDescription__",
   "icons": {
@@ -11,7 +10,6 @@
     "48": "/images/logo/logo@48x.png",
     "128": "/images/logo/logo@128x.png"
   },
-
   "action": {
     "default_popup": "index.html",
     "default_icon": {
@@ -22,28 +20,37 @@
     },
     "default_title": "__MSG_appName__"
   },
-
-  "author": "https://unisat.io",
+  "author": "https://infosat.io",
   "background": {
     "service_worker": "background.js"
   },
-  "homepage_url": "https://unisat.io",
-  "permissions": ["storage", "unlimitedStorage", "activeTab"],
+  "homepage_url": "https://infosat.io",
+  "permissions": [
+    "storage",
+    "unlimitedStorage",
+    "activeTab"
+  ],
   "short_name": "__MSG_appName__",
-
   "content_scripts": [
     {
-      "matches": ["<all_urls>"],
-      "js": ["content-script.js"],
+      "matches": [
+        "<all_urls>"
+      ],
+      "js": [
+        "content-script.js"
+      ],
       "run_at": "document_start",
       "all_frames": true
     }
   ],
-
   "web_accessible_resources": [
     {
-      "resources": ["pageProvider.js"],
-      "matches": ["<all_urls>"]
+      "resources": [
+        "pageProvider.js"
+      ],
+      "matches": [
+        "<all_urls>"
+      ]
     }
   ],
   "content_security_policy": {

@@ -510,7 +510,8 @@ export default function SignPsbt({
                         <Row
                           key={'output_' + index}
                           style={index === 0 ? {} : { borderColor: colors.border, borderTopWidth: 1, paddingTop: 10 }}
-                          itemsCenter>
+                          itemsCenter
+                        >
                           <Column fullX>
                             <Row fullX justifyBetween>
                               <Column>
@@ -569,7 +570,8 @@ export default function SignPsbt({
                       return (
                         <Column
                           key={'output_' + index}
-                          style={index === 0 ? {} : { borderColor: colors.border, borderTopWidth: 1, paddingTop: 10 }}>
+                          style={index === 0 ? {} : { borderColor: colors.border, borderTopWidth: 1, paddingTop: 10 }}
+                        >
                           <Column>
                             <Row justifyBetween>
                               <AddressText address={v.address} color={isMyAddress ? 'white' : 'textDim'} />
@@ -636,7 +638,8 @@ export default function SignPsbt({
                   copyToClipboard(txInfo.rawtx).then(() => {
                     tools.toastSuccess('Copied');
                   });
-                }}>
+                }}
+              >
                 <Icon icon="copy" color="textDim" />
                 <Text text="Copy raw transaction data" color="textDim" />
               </Row>
@@ -654,7 +657,8 @@ export default function SignPsbt({
                   copyToClipboard(txInfo.psbtHex).then(() => {
                     tools.toastSuccess('Copied');
                   });
-                }}>
+                }}
+              >
                 <Icon icon="copy" color="textDim" />
                 <Text text="Copy psbt transaction data" color="textDim" />
               </Row>

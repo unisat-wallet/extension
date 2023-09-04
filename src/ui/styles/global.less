@@ -35,10 +35,15 @@ iframe {
   background-color: #383535 !important;
 }
 
-.ant-checkbox-checked {
-  background-color: #ffde04 !important;
+.ant-checkbox-checked,
+.ant-radio-inner::after {
+  background-color: rgb(67, 182, 239) !important;
 }
 
+.ant-checkbox-checked::after,
+.ant-radio-checked .ant-radio-inner {
+  border-color: rgb(67, 182, 239) !important;
+}
 div {
   border: 0px solid;
 }
@@ -61,4 +66,30 @@ div {
 
 ::-webkit-scrollbar-corner {
   background: transparent;
+}
+
+.ant-dropdown-menu-item:hover {
+  background-color: #383535 !important;
+}
+
+.connect-globle {
+  position: relative;
+  .connect-icon {
+  }
+
+  .connect-status {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+    position: absolute;
+    bottom: 0;
+    right: 0;
+    display: inline-flex;
+    border: 2px solid #1d1a1a;
+    background-color: #959595;
+  }
+
+  .green {
+    background-color: green;
+  }
 }

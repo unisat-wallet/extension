@@ -1,4 +1,5 @@
-import { Tooltip } from 'antd';
+import { Tooltip, Dropdown } from 'antd';
+import type { MenuProps } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 
 import { KEYRING_TYPE } from '@/shared/constant';
@@ -10,6 +11,7 @@ import { AddressBar } from '@/ui/components/AddressBar';
 import BRC20BalanceCard from '@/ui/components/BRC20BalanceCard';
 import { Button } from '@/ui/components/Button';
 import { Empty } from '@/ui/components/Empty';
+import { svgRegistry } from '@/ui/components/Icon';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { NavTabBar } from '@/ui/components/NavTabBar';
 import { Pagination } from '@/ui/components/Pagination';
@@ -34,6 +36,8 @@ import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
 
+type BalanceType = 'amount' | 'btc_amount' | 'inscription_amount' | 'expired';
+
 export default function WalletTabScreen() {
   const navigate = useNavigate();
 
@@ -57,16 +61,17 @@ export default function WalletTabScreen() {
   const dispatch = useAppDispatch();
   const { tabKey } = useWalletTabScreenState();
 
-  const skipVersion = useSkipVersionCallback();
+  // const skipVersion = useSkipVersionCallback();
 
   const walletConfig = useWalletConfig();
-  const versionInfo = useVersionInfo();
+  // const versionInfo = useVersionInfo();
 
   useEffect(() => {
     const run = async () => {
       const activeTab = await getCurrentTab();
       if (!activeTab) return;
       const site = await wallet.getCurrentConnectedSite(activeTab.id);
+
       if (site) {
         setConnected(site.isConnected);
       }
@@ -81,14 +86,14 @@ export default function WalletTabScreen() {
       children: <InscriptionList />
     },
     {
-      key: WalletTabScreenTabKey.BRC20,
-      label: 'BRC-20',
-      children: <BRC20List type="brc" key="brc" />
-    },
-    {
       key: WalletTabScreenTabKey.ORCCASH,
       label: 'ORC-CASH',
       children: <BRC20List type="orc-cash" key="orc-cash" />
+    },
+    {
+      key: WalletTabScreenTabKey.BRC20,
+      label: 'BRC-20',
+      children: <BRC20List type="brc" key="brc" />
     },
     {
       key: WalletTabScreenTabKey.ORC20,
@@ -97,6 +102,19 @@ export default function WalletTabScreen() {
     }
   ];
 
+  const balanceOptions = [
+    {
+      key: 'btc_amount',
+      title: 'Balance'
+    },
+    {
+      key: 'inscription_amount',
+      title: 'Inscription Balance'
+    }
+  ];
+
+  const [balanceType, setBalanceType] = useState<BalanceType>(balanceOptions[0]?.key as BalanceType);
+
   const blockstreamUrl = useBlockstreamUrl();
 
   return (
@@ -104,16 +122,18 @@ export default function WalletTabScreen() {
       <Header
         LeftComponent={
           <Column>
-            {connected && (
-              <Row
-                itemsCenter
-                onClick={() => {
-                  navigate('ConnectedSitesScreen');
-                }}>
-                <Text text="·" color="green" size="xxl" />
-                <Text text="Dapp Connected" size="xxs" />
-              </Row>
-            )}
+            <Row
+              itemsCenter
+              onClick={() => {
+                navigate('ConnectedSitesScreen');
+              }}
+            >
+              <div className="connect-globle">
+                <img src={svgRegistry.connect} className="connect-icon" />
+                <div className={`connect-status ${connected && 'green'}`} />
+              </div>
+              {/* <Text text="Dapp Connected" size="xxs" /> */}
+            </Row>
           </Column>
         }
         RightComponent={
@@ -121,43 +141,46 @@ export default function WalletTabScreen() {
             preset="style2"
             onClick={() => {
               navigate('SwitchKeyringScreen');
-            }}>
+            }}
+          >
             <Text text={currentKeyring.alianName} size="xxs" />
           </Card>
         }
       />
       <Content>
-        <Column gap="xl">
+        <Column gap="sm">
           {currentKeyring.type === KEYRING_TYPE.HdKeyring && <AccountSelect />}
 
           {isTestNetwork && <Text text="Bitcoin Testnet is used for testing." color="danger" textCenter />}
 
           {walletConfig.statusMessage && <Text text={walletConfig.statusMessage} color="danger" textCenter />}
-
-          <Tooltip
-            title={
-              <span>
-                <Row justifyBetween>
-                  <span>{'BTC Balance'}</span>
-                  <span>{` ${accountBalance.btc_amount} BTC`}</span>
-                </Row>
-                <Row justifyBetween>
-                  <span>{'Inscription Balance'}</span>
-                  <span>{` ${accountBalance.inscription_amount} BTC`}</span>
-                </Row>
-              </span>
-            }
-            overlayStyle={{
-              fontSize: fontSizes.xs
-            }}>
-            <div>
-              <Text text={balanceValue + '  BTC'} preset="title-bold" textCenter size="xxxl" />
-            </div>
-          </Tooltip>
+          <Dropdown
+            menu={{
+              items: balanceOptions.map((item) => ({
+                ...item,
+                label: (
+                  <Row justifyCenter>
+                    <Text size="sm" text={item?.title} />
+                  </Row>
+                )
+              })),
+              onClick: (item) => {
+                setBalanceType(item.key as BalanceType);
+              }
+            }}
+            placement="bottomCenter"
+            trigger={['click']}
+          >
+            <Row justifyCenter px="md" py="md" rounded>
+              <Text text={balanceOptions.find((item) => item?.key === balanceType)?.title ?? ''} color="textDim" />
+              <Icon icon="down" color="textDim" />
+            </Row>
+          </Dropdown>
+          <Text text={accountBalance[balanceType] + '  BTC'} preset="title-bold" textCenter size="xxxl" />
 
           <AddressBar />
 
-          <Row justifyBetween>
+          <Row style={{ margin: '10px 0' }} justifyBetween>
             <Button
               text="Receive"
               preset="default"
@@ -177,17 +200,17 @@ export default function WalletTabScreen() {
               }}
               full
             />
-            {walletConfig.moonPayEnabled && (
+            {/* {walletConfig.moonPayEnabled && (
               <Button
                 text="Buy"
                 preset="default"
-                icon="bitcoin"
+                icon="wallet"
                 onClick={(e) => {
                   navigate('MoonPayScreen');
                 }}
                 full
               />
-            )}
+            )} */}
           </Row>
 
           <Row justifyBetween>
@@ -203,20 +226,21 @@ export default function WalletTabScreen() {
               itemsCenter
               onClick={() => {
                 window.open(`${blockstreamUrl}/address/${currentAccount.address}`);
-              }}>
+              }}
+            >
               <Icon icon="link" size={fontSizes.xs} />
             </Row>
           </Row>
 
           {tabItems[tabKey].children}
         </Column>
-        {!versionInfo.skipped && (
+        {/* {!versionInfo.skipped && (
           <UpgradePopver
             onClose={() => {
               skipVersion(versionInfo.newVersion);
             }}
           />
-        )}
+        )} */}
       </Content>
       <Footer px="zero" py="zero">
         <NavTabBar tab="home" />
@@ -365,6 +389,7 @@ function BRC20List({ type = 'brc' }: { type: 'brc' | 'orc-20' | 'orc-cash' }) {
           <BRC20BalanceCard
             key={index}
             tokenBalance={data}
+            type={type}
             onClick={() => {
               if (type === 'brc') navigate('BRC20TokenScreen', { tokenBalance: data, ticker: data.ticker });
               else {

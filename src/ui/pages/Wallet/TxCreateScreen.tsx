@@ -150,7 +150,8 @@ export default function TxCreateScreen() {
                 onClick={() => {
                   setAutoAdjust(true);
                   setInputAmount(accountBalance.amount);
-                }}>
+                }}
+              >
                 <Text
                   text="MAX"
                   preset="sub"
@@ -168,7 +169,8 @@ export default function TxCreateScreen() {
                 onClick={() => {
                   setAutoAdjust(true);
                   setInputAmount(safeBalance.toString());
-                }}>
+                }}
+              >
                 <Text text={'MAX'} color={autoAdjust ? 'yellow' : 'textDim'} size="sm" />
                 <Text text={`${safeBalance} BTC`} preset="bold" size="sm" />
               </Row>
@@ -206,7 +208,8 @@ export default function TxCreateScreen() {
           text="Next"
           onClick={(e) => {
             navigate('TxConfirmScreen', { rawTxInfo });
-          }}></Button>
+          }}
+        ></Button>
       </Content>
     </Layout>
   );

@@ -165,22 +165,18 @@ export function useLocationState<T>() {
   return state as T;
 }
 
-export function formatNumber (
-  num: number | string,
-  precision = 2,
-  currency = true
-): string {
-  const n = Number(num)
+export function formatNumber(num: number | string, precision = 2, currency = true): string {
+  const n = Number(num);
   if (Number.isNaN(n)) {
-    return ''
+    return '';
   }
   if (n < 0.0000000001) {
-    return '0'
+    return '0';
   }
-  const data = n.toFixed(precision)
-  const stripped = data.replace(/(\.[0-9]*[1-9])0+$|\.0*$/, '$1')
+  const data = n.toFixed(precision);
+  const stripped = data.replace(/(\.[0-9]*[1-9])0+$|\.0*$/, '$1');
   if (currency) {
-    return Number(stripped).toLocaleString('en-US')
+    return Number(stripped).toLocaleString('en-US');
   }
-  return stripped
+  return stripped;
 }

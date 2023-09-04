@@ -118,7 +118,8 @@ export default function ExportPrivateKeyScreen() {
             <Card
               onClick={(e) => {
                 copy(privateKey.wif);
-              }}>
+              }}
+            >
               <Row>
                 <Icon icon="copy" color="textDim" />
                 <Text
@@ -136,7 +137,8 @@ export default function ExportPrivateKeyScreen() {
             <Card
               onClick={(e) => {
                 copy(privateKey.hex);
-              }}>
+              }}
+            >
               <Row>
                 <Icon icon="copy" color="textDim" />
                 <Text

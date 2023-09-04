@@ -11,17 +11,14 @@ export function Layout(props: LayoutProps) {
   return (
     <div
       className="layout"
-      style={Object.assign(
-        {
-          display: 'flex',
-          flexDirection: 'column',
-          width: '100vw',
-          height: '100vh',
-          overflowY: 'auto',
-          overflowX: 'hidden'
-        },
-        $styleBase
-      )}>
+      style={{
+        display: 'flex',
+        flexDirection: 'column',
+        width: '100vw',
+        height: '100vh',
+        overflowY: 'auto',
+        overflowX: 'hidden'
+      }}>
       {children}
     </div>
   );

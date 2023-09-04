@@ -6,5 +6,8 @@
   "editor.defaultFormatter": "esbenp.prettier-vscode",
   "i18n-ally.localesPaths": [
     ""
-  ]
+  ],
+  "[xml]": {
+    "editor.defaultFormatter": "DotJoshJohnson.xml"
+  }
 }
