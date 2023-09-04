@@ -11,6 +11,7 @@ import { AddressBar } from '@/ui/components/AddressBar';
 import BRC20BalanceCard from '@/ui/components/BRC20BalanceCard';
 import { Button } from '@/ui/components/Button';
 import { Empty } from '@/ui/components/Empty';
+import { svgRegistry } from '@/ui/components/Icon';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { NavTabBar } from '@/ui/components/NavTabBar';
 import { Pagination } from '@/ui/components/Pagination';
@@ -70,6 +71,7 @@ export default function WalletTabScreen() {
       const activeTab = await getCurrentTab();
       if (!activeTab) return;
       const site = await wallet.getCurrentConnectedSite(activeTab.id);
+
       if (site) {
         setConnected(site.isConnected);
       }
@@ -120,17 +122,18 @@ export default function WalletTabScreen() {
       <Header
         LeftComponent={
           <Column>
-            {connected && (
-              <Row
-                itemsCenter
-                onClick={() => {
-                  navigate('ConnectedSitesScreen');
-                }}
-              >
-                <Text text="·" color="green" size="xxl" />
-                <Text text="Dapp Connected" size="xxs" />
-              </Row>
-            )}
+            <Row
+              itemsCenter
+              onClick={() => {
+                navigate('ConnectedSitesScreen');
+              }}
+            >
+              <div className="connect-globle">
+                <img src={svgRegistry.connect} className="connect-icon" />
+                <div className={`connect-status ${connected && 'green'}`} />
+              </div>
+              {/* <Text text="Dapp Connected" size="xxs" /> */}
+            </Row>
           </Column>
         }
         RightComponent={
