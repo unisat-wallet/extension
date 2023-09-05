@@ -1,5 +1,12 @@
 # GoSat Wallet Release Notes
 
+## v0.1.2
+
+**Release Notes**
+
+- UI Improvements
+- Remove infoset.io from the whitelist
+
 ## v0.1.1
 
 **Release Notes**
