@@ -374,7 +374,8 @@ export default function MultiSignPsbt({
                         <Row
                           key={'output_' + index}
                           style={index === 0 ? {} : { borderColor: colors.border, borderTopWidth: 1, paddingTop: 10 }}
-                          justifyBetween>
+                          justifyBetween
+                        >
                           <Column>
                             <Row>
                               <AddressText address={v.address} color={isToSign ? 'white' : 'textDim'} />
@@ -405,7 +406,8 @@ export default function MultiSignPsbt({
                       return (
                         <Column
                           key={'output_' + index}
-                          style={index === 0 ? {} : { borderColor: colors.border, borderTopWidth: 1, paddingTop: 10 }}>
+                          style={index === 0 ? {} : { borderColor: colors.border, borderTopWidth: 1, paddingTop: 10 }}
+                        >
                           <Column>
                             <Row justifyBetween>
                               <AddressText address={v.address} color={isMyAddress ? 'white' : 'textDim'} />
@@ -445,7 +447,8 @@ export default function MultiSignPsbt({
                   copyToClipboard(psbtHex).then(() => {
                     tools.toastSuccess('Copied');
                   });
-                }}>
+                }}
+              >
                 <Icon icon="copy" color="textDim" />
                 <Text text="Copy psbt transaction data" color="textDim" />
               </Row>

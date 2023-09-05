@@ -1,8 +1,6 @@
 {
   "externally_connectable": {
-    "matches": [
-      "https://infosat.io/*"
-    ],
+    "matches": [],
     "ids": [
       "*"
     ]

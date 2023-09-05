@@ -41,7 +41,13 @@ export const svgRegistry = {
   'circle-question': '/images/icons/circle-question.svg',
   split: '/images/icons/scissors.svg',
   switch: './images/icons/arrow-left-right.svg',
-  connect: './images/icons/connect_global.svg'
+  connect: './images/icons/connect_global.svg',
+  lock: './images/icons/lock.svg',
+  propose: './images/icons/propose.svg',
+  sell: './images/icons/sell.svg',
+  vote: './images/icons/vote.svg',
+  airdrop: './images/icons/airdrop.svg',
+  burn: './images/icons/burn.svg'
 };
 
 const iconImgList: Array<IconTypes> = ['success', 'delete', 'btc'];
@@ -104,7 +110,8 @@ export function Icon(props: IconProps) {
           $containerStyleOverride,
           $imageStyleOverride || {},
           onClick ? { cursor: 'pointer' } : {}
-        )}>
+        )}
+      >
         {children}
       </div>
     );

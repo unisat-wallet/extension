@@ -231,7 +231,7 @@ export const WALLETCONNECT_STATUS_MAP = {
   FAILD: 6
 };
 
-export const INTERNAL_REQUEST_ORIGIN = 'https://infosat.io';
+export const INTERNAL_REQUEST_ORIGIN = 'https://gosat.io';
 
 export const INTERNAL_REQUEST_SESSION = {
   name: 'GoSat Wallet',

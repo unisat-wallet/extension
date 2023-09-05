@@ -20,11 +20,11 @@
     },
     "default_title": "__MSG_appName__"
   },
-  "author": "https://infosat.io",
+  "author": "https://gosat.io",
   "background": {
     "service_worker": "background.js"
   },
-  "homepage_url": "https://infosat.io",
+  "homepage_url": "https://gosat.io",
   "permissions": [
     "storage",
     "unlimitedStorage",
