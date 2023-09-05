@@ -231,7 +231,6 @@ export default function WalletTabScreen() {
               <Icon icon="link" size={fontSizes.xs} />
             </Row>
           </Row>
-
           {tabItems[tabKey].children}
         </Column>
         {/* {!versionInfo.skipped && (
