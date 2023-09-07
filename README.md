@@ -1,4 +1,4 @@
-# InfoSat Wallet
+# GoSat Wallet
 
 Forked from UniSat Wallet.
 
