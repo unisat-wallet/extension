@@ -3,7 +3,7 @@
 [GoSat.io ](https://gosat.io/)
 
 The Next Generation Ordinals Wallet
-- Non-Custodial Extension Wallet
+- Open-Source Non-Custodial Extension Wallet
 - Store, Send & Receive Bitcoin & Ordinals
 - Store, Send & Receive Tokens on Bitcoin
 - Support BRC-20, ORC-20 & ORC-CASH
