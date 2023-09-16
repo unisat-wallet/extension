@@ -18,7 +18,7 @@ export interface BRC20BalanceCardProps {
 
 export default function BRC20BalanceCard(props: BRC20BalanceCardProps) {
   const {
-    tokenBalance: { ticker, overallBalance, transferableBalance, availableBalance },
+    tokenBalance: { ticker, overallBalance, transferableBalance, availableBalance, tokenID },
     type,
     onClick
   } = props;
@@ -33,17 +33,18 @@ export default function BRC20BalanceCard(props: BRC20BalanceCardProps) {
         minWidth: '100%',
         minHeight: 120
       }}
-      onClick={onClick}
-    >
+      onClick={onClick}>
       <Column full>
         <Row justifyBetween itemsCenter>
-          <Text text={ticker} color="gold" />
+          <Row itemsCenter>
+            <Text text={ticker} color="gold" />
+            {tokenID && <Text text={`ID #${tokenID}`} color="textDim" size="xxs" />}
+          </Row>
           <Tooltip
             title="Cash can be sent directly with valid inscriptions or converted to Credit by sending to Burn Wallet. Credit can to be converted to Cash by inscribing valid Send inscriptions"
             overlayStyle={{
               fontSize: fontSizes.xs
-            }}
-          >
+            }}>
             <InfoCircleOutlined
               style={{
                 fontSize: fontSizes.xs,

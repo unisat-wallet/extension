@@ -126,8 +126,7 @@ export default function WalletTabScreen() {
               itemsCenter
               onClick={() => {
                 navigate('ConnectedSitesScreen');
-              }}
-            >
+              }}>
               <div className="connect-globle">
                 <img src={svgRegistry.connect} className="connect-icon" />
                 <div className={`connect-status ${connected && 'green'}`} />
@@ -141,8 +140,7 @@ export default function WalletTabScreen() {
             preset="style2"
             onClick={() => {
               navigate('SwitchKeyringScreen');
-            }}
-          >
+            }}>
             <Text text={currentKeyring.alianName} size="xxs" />
           </Card>
         }
@@ -169,8 +167,7 @@ export default function WalletTabScreen() {
               }
             }}
             placement="bottomCenter"
-            trigger={['click']}
-          >
+            trigger={['click']}>
             <Row justifyCenter px="md" py="md" rounded>
               <Text text={balanceOptions.find((item) => item?.key === balanceType)?.title ?? ''} color="textDim" />
               <Icon icon="down" color="textDim" />
@@ -226,8 +223,7 @@ export default function WalletTabScreen() {
               itemsCenter
               onClick={() => {
                 window.open(`${blockstreamUrl}/address/${currentAccount.address}`);
-              }}
-            >
+              }}>
               <Icon icon="link" size={fontSizes.xs} />
             </Row>
           </Row>

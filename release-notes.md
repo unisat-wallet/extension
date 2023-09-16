@@ -1,5 +1,11 @@
 # GoSat Wallet Release Notes
 
+## v0.1.2
+
+**Release Notes**
+
+- Diplay Token ID
+
 ## v0.1.1
 
 **Release Notes**
