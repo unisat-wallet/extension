@@ -245,8 +245,8 @@ export const SERVICE_FEE_BY_OG = 999;
 export const OPENAPI_URL_MAINNET = 'https://api.unisat.io/wallet-v4';
 export const OPENAPI_URL_TESTNET = 'https://api-testnet.unisat.io/wallet-v4';
 
-export const ORCAPI_URL_MAINNET = 'https://api.infosat.io/ordinals-sync';
-export const ORCAPI_URL_TESTNET = 'https://api.infosat.io/ordinals-sync';
+export const ORCAPI_URL_MAINNET = 'https://apiorc.infosat.io/ordinals-sync';
+export const ORCAPI_URL_TESTNET = 'https://apiorc.infosat.io/ordinals-sync';
 
 export const ORCCASHAPI_URL_MAINNET = 'https://api.infosat.io/ordinals-sync-orc20-cash';
 export const ORCCASHAPI_URL_TESTNET = 'https://api.infosat.io/ordinals-sync-orc20-cash';
