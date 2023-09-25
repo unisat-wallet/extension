@@ -131,7 +131,7 @@ export default function SplitTxCreateScreen() {
             preset="primary"
             text="Next"
             onClick={(e) => {
-              navigate('OrdinalsTxConfirmScreen', { rawTxInfo });
+              // navigate('OrdinalsTxConfirmScreen', { rawTxInfo });
             }}
           />
         </Column>

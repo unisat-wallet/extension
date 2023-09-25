@@ -49,7 +49,7 @@ import { signBip322MessageSimple } from '../utils/bip322';
 import { publicKeyToAddress, toPsbtNetwork } from '../utils/tx-utils';
 import BaseController from './base';
 import { AtomicalService, atomicalService } from '../service/atomical';
-import { IAtomicalBalances, ISelectedUtxo } from '../service/interfaces/api';
+import { IAtomicalBalances, ISelectedUtxo, UTXO as AtomUtxos } from '../service/interfaces/api';
 
 const toXOnly = (pubKey: Buffer) => (pubKey.length === 32 ? pubKey : pubKey.slice(1, 33));
 
@@ -1255,57 +1255,40 @@ export class WalletController extends BaseController {
 
 
 
-  getARC20List = async (address: string): Promise<{
+  getAtomicals = async (address: string): Promise<{
     atomicals_confirmed: number;
     atomicals_balances: IAtomicalBalances;
     atomicals_utxos: ISelectedUtxo[];
-}> => {
+    all_utxos:AtomUtxos[];
+    nonAtomUtxos:AtomUtxos[];
+    nonAtomUtxosValue:number;
+  }> => {
     const walletInfo = await this.atomicalApi.walletInfo(address, false);
     const { data } = walletInfo;
     const { atomicals_confirmed, atomicals_balances, atomicals_utxos } = data;
-    return { atomicals_confirmed, atomicals_balances, atomicals_utxos }
+   
+    
 
-    // const handleUtxos = (atomUtxos:ISelectedUtxo[],expect_id: string) => {
-    //   const utxos:ISelectedUtxo[] = [];
-    //   if (atomUtxos.length > 0) {
-    //     for (let i = 0; i < atomUtxos.length; i += 1) {
-    //       const utxo = atomUtxos[i];
-    //       if (utxo.atomicals.length === 1) {
-    //         const atomicalId = utxo.atomicals[0];
-    //         if (atomicalId === expect_id) {
-    //           utxos.push(utxo);
-    //         }
-    //       } else {
-    //         break;
-    //       }
-    //     }
-    //   }
-    //   return utxos;
-    // };
-
-    // console.log(data);
-    // console.log({ atomicals_confirmed });
-    // setBalance(atomicals_confirmed);
-    // setBalanceMap(atomicals_balances as IAtomicalBalances);
-    // const allUtxos =  await this.atomicalApi.electrumApi.getUnspentAddress(address);
-    // if (atomicals_utxos.length > 0) {
-    //   setAtomUtxos(atomicals_utxos);
-    // }
-    // if (allUtxos.utxos.length > 0) {
-    //   setAllUxtos(allUtxos.utxos);
-    // }
-
-    // const nonAtomUtxos: UTXO[] = [];
-    // let nonAtomUtxosValue = 0;
-    // for (let i = 0; i < allUtxos.utxos.length; i++) {
-    //   const utxo = allUtxos.utxos[i];
-    //   if (atomicals_utxos.findIndex(item => item.txid === utxo.txid) < 0) {
-    //     nonAtomUtxos.push(utxo);
-    //     nonAtomUtxosValue += utxo.value;
-    //   }
-    // }
-    // setNonAtomUtxos(nonAtomUtxos.sort((a, b) => b.value - a.value));
-    // setFundingBalance(nonAtomUtxosValue);
+    const allUtxos =  await this.atomicalApi.electrumApi.getUnspentAddress(address);
+    
+    const nonAtomUtxos: AtomUtxos[] = [];
+    let nonAtomUtxosValue = 0;
+    for (let i = 0; i < allUtxos.utxos.length; i++) {
+      const utxo = allUtxos.utxos[i];
+      if (atomicals_utxos.findIndex(item => item.txid === utxo.txid) < 0) {
+        nonAtomUtxos.push(utxo);
+        nonAtomUtxosValue += utxo.value;
+      }
+    }
+    nonAtomUtxos.sort((a, b) => b.value - a.value)
+    return {
+      atomicals_utxos,
+      atomicals_confirmed, 
+      atomicals_balances,
+      all_utxos:allUtxos.utxos,
+      nonAtomUtxos,
+      nonAtomUtxosValue
+    }
   }
 
 

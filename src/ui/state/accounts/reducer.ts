@@ -2,11 +2,20 @@ import { Account, AppSummary, Inscription, InscriptionSummary, TxHistoryItem } f
 import { createSlice } from '@reduxjs/toolkit';
 
 import { updateVersion } from '../global/actions';
+import { IAtomicalBalances, ISelectedUtxo, UTXO as AtomUTXO } from '@/background/service/interfaces/api';
 
 export interface AccountsState {
   accounts: Account[];
   current: Account;
   loading: boolean;
+  atomicals:{
+    atomicals_confirmed: number;
+    atomicals_balances: IAtomicalBalances;
+    atomicals_utxos: ISelectedUtxo[];
+    all_utxos: AtomUTXO[];
+    nonAtomUtxos: AtomUTXO[];
+    nonAtomUtxosValue: number;
+  };
   balanceMap: {
     [key: string]: {
       amount: string;
@@ -47,6 +56,14 @@ export const initialState: AccountsState = {
   accounts: [],
   current: initialAccount,
   loading: false,
+  atomicals:{
+    atomicals_confirmed: 0,
+    atomicals_balances: {},
+    atomicals_utxos: [],
+    all_utxos: [],
+    nonAtomUtxos: [],
+    nonAtomUtxosValue: 0,
+  },
   balanceMap: {},
   historyMap: {},
   inscriptionsMap: {},
@@ -93,11 +110,28 @@ const slice = createSlice({
         inscription_amount: '0',
         expired: true
       };
+      console.log({amount,btc_amount,inscription_amount});
       state.balanceMap[address].amount = amount;
       state.balanceMap[address].btc_amount = btc_amount;
       state.balanceMap[address].inscription_amount = inscription_amount;
       state.balanceMap[address].expired = false;
     },
+    setAtomicals(state, action: {
+      payload: {
+        atomicals_confirmed: number;
+        atomicals_balances: IAtomicalBalances;
+        atomicals_utxos: ISelectedUtxo[];
+        all_utxos: AtomUTXO[];
+        nonAtomUtxos: AtomUTXO[];
+        nonAtomUtxosValue: number;
+      };
+    }){
+      const {
+        payload
+      } = action;
+      state.atomicals = payload;
+    },
+
     expireBalance(state) {
       const balance = state.balanceMap[state.current.address];
       if (balance) {

@@ -12,14 +12,14 @@ import { $, domReadyCall } from './utils';
 const log = (event, ...args) => {
   if (process.env.NODE_ENV !== 'production') {
     console.log(
-      `%c [unisat] (${new Date().toTimeString().slice(0, 8)}) ${event}`,
+      `%c [wizz] (${new Date().toTimeString().slice(0, 8)}) ${event}`,
       'font-weight: 600; background-color: #7d6ef9; color: white;',
       ...args
     );
   }
 };
 const script = document.currentScript;
-const channelName = script?.getAttribute('channel') || 'UNISAT';
+const channelName = script?.getAttribute('channel') || 'WIZZ';
 
 export interface Interceptor {
   onRequest?: (data: any) => any;
@@ -34,7 +34,7 @@ interface StateProvider {
   isPermanentlyDisconnected: boolean;
 }
 const EXTENSION_CONTEXT_INVALIDATED_CHROMIUM_ERROR = 'Extension context invalidated.';
-export class UnisatProvider extends EventEmitter {
+export class WizzProvider extends EventEmitter {
   _selectedAddress: string | null = null;
   _network: string | null = null;
   _isConnected = false;
@@ -312,14 +312,20 @@ export class UnisatProvider extends EventEmitter {
 
 declare global {
   interface Window {
-    unisat: UnisatProvider;
+    // unisat: WizzProvider;
+    wizz:WizzProvider;
   }
 }
 
-const provider = new UnisatProvider();
+const provider = new WizzProvider();
 
-if (!window.unisat) {
-  window.unisat = new Proxy(provider, {
+// if (!window.unisat) {
+//   window.unisat = new Proxy(provider, {
+//     deleteProperty: () => true
+//   });
+// }
+if (!window.wizz) {
+  window.wizz = new Proxy(provider, {
     deleteProperty: () => true
   });
 }
@@ -331,4 +337,12 @@ Object.defineProperty(window, 'unisat', {
   writable: false
 });
 
-window.dispatchEvent(new Event('unisat#initialized'));
+Object.defineProperty(window, 'wizz', {
+  value: new Proxy(provider, {
+    deleteProperty: () => true
+  }),
+  writable: false
+});
+
+// window.dispatchEvent(new Event('unisat#initialized'));
+window.dispatchEvent(new Event('wizz#initialized'));

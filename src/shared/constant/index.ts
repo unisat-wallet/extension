@@ -242,7 +242,7 @@ export const WALLETCONNECT_STATUS_MAP = {
 export const INTERNAL_REQUEST_ORIGIN = 'https://unisat.io';
 
 export const INTERNAL_REQUEST_SESSION = {
-  name: 'UniSat Wallet',
+  name: 'Wizz Wallet',
   origin: INTERNAL_REQUEST_ORIGIN,
   icon: './images/logo/logo@128x.png'
 };

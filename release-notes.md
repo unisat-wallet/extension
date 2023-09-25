@@ -1,5 +1,8 @@
 
-# UniSat Wallet Release Notes
+# Wizz Wallet Release Notes
+
+## v1.1.31
+- Forked from Unisat Wallet
 
 ## v1.1.30
 - Added the parameter "toSignInputs" to the "signPsbt" method

@@ -77,7 +77,7 @@ export default function BRC20TokenScreen() {
                 disabled={outOfMint}
                 icon="pencil"
                 onClick={(e) => {
-                  window.open(`https://unisat.io/brc20/${encodeURIComponent(ticker)}`);
+                  // window.open(`https://unisat.io/brc20/${encodeURIComponent(ticker)}`);
                 }}
                 full
               />
@@ -91,11 +91,11 @@ export default function BRC20TokenScreen() {
                   const defaultSelected = tokenSummary.transferableList.slice(0, 1);
                   const selectedInscriptionIds = defaultSelected.map((v) => v.inscriptionId);
                   const selectedAmount = defaultSelected.reduce((pre, cur) => parseInt(cur.amount) + pre, 0);
-                  navigate('BRC20SendScreen', {
-                    tokenBalance: tokenSummary.tokenBalance,
-                    selectedInscriptionIds,
-                    selectedAmount
-                  });
+                  // navigate('BRC20SendScreen', {
+                  //   tokenBalance: tokenSummary.tokenBalance,
+                  //   selectedInscriptionIds,
+                  //   selectedAmount
+                  // });
                 }}
                 full
               />

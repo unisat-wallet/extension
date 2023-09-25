@@ -371,7 +371,8 @@ function ARC20List() {
   const navigate = useNavigate();
   const wallet = useWallet();
   const currentAccount = useCurrentAccount();
-
+  
+ 
   // const [tokens, setTokens] = useState<TokenBalance[]>([]);
   const [total, setTotal] = useState(-1);
   const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 100 });
@@ -392,7 +393,7 @@ function ARC20List() {
         atomicals_confirmed,
         atomicals_balances,
         atomicals_utxos
-    } = await wallet.getARC20List(currentAccount.address);
+    } = await wallet.getAtomicals(currentAccount.address);
 
     setBalanceMap(atomicals_balances as IAtomicalBalances);
     setTotal(atomicals_utxos.length)

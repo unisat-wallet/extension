@@ -73,7 +73,7 @@ export default function OrdinalsDetailScreen() {
                   full
                   onClick={(e) => {
                     dispatch(transactionsActions.reset());
-                    navigate('SplitTxCreateScreen', { inscription });
+                    // navigate('SplitTxCreateScreen', { inscription });
                   }}
                 />
               )}
@@ -85,7 +85,7 @@ export default function OrdinalsDetailScreen() {
                   full
                   onClick={(e) => {
                     dispatch(transactionsActions.reset());
-                    navigate('OrdinalsTxCreateScreen', { inscription });
+                    // navigate('OrdinalsTxCreateScreen', { inscription });
                   }}
                 />
               )}

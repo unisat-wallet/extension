@@ -1,5 +1,7 @@
 import { UTXO } from './utxo';
 
+export { UTXO }
+
 export interface IUnspentResponse {
   confirmed: number;
   unconfirmed: number;

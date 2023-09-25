@@ -28,9 +28,9 @@ export default function OrdinalsTxConfirmScreen() {
       handleConfirm={() => {
         pushOrdinalsTx(rawTxInfo.rawtx).then(({ success, txid, error }) => {
           if (success) {
-            navigate('TxSuccessScreen', { txid });
+            // navigate('TxSuccessScreen', { txid });
           } else {
-            navigate('TxFailScreen', { error });
+            // navigate('TxFailScreen', { error });
           }
         });
       }}

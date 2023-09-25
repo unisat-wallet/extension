@@ -44,6 +44,11 @@ export function useAppSummary() {
   return accountsState.appSummary;
 }
 
+export function useAtomicals(){
+    const accountsState = useAccountsState();
+    return accountsState.atomicals;
+}
+
 export function useUnreadAppSummary() {
   const accountsState = useAccountsState();
   const summary = accountsState.appSummary;
@@ -175,5 +180,32 @@ export function useFetchBalanceCallback() {
       wallet.expireUICachedData(currentAccount.address);
       dispatch(accountActions.expireHistory());
     }
+  }, [dispatch, wallet, currentAccount, balance]);
+}
+
+export function useAtomicalsCallback(){
+  const dispatch = useAppDispatch();
+  const wallet = useWallet();
+  const currentAccount = useCurrentAccount();
+  const balance = useAccountBalance();
+  return useCallback(async () => {
+    if (!currentAccount.address) return;
+    const res= await wallet.getAtomicals(currentAccount.address);
+    const btc_amount=(res.nonAtomUtxosValue/(10000*10000)).toString()
+    dispatch(
+      accountActions.setBalance({
+        address: currentAccount.address,
+        amount: btc_amount,
+        btc_amount,
+        inscription_amount: ''
+      })
+    );
+    dispatch(
+      accountActions.setAtomicals(res)
+    )
+    // if (cachedBalance.amount !== _accountBalance.amount) {
+    //   wallet.expireUICachedData(currentAccount.address);
+    //   dispatch(accountActions.expireHistory());
+    // }
   }, [dispatch, wallet, currentAccount, balance]);
 }

@@ -127,7 +127,7 @@ export default function OrdinalsTxCreateScreen() {
             preset="primary"
             text="Next"
             onClick={(e) => {
-              navigate('OrdinalsTxConfirmScreen', { rawTxInfo });
+              // navigate('OrdinalsTxConfirmScreen', { rawTxInfo });
             }}
           />
         </Column>
