@@ -65,14 +65,14 @@ const routes = {
     path: '/main',
     element: <WalletTabScreen />
   },
-  DiscoverTabScreen: {
-    path: '/discover',
-    element: <DiscoverTabScreen />
-  },
-  AppTabScrren: {
-    path: '/app',
-    element: <AppTabScrren />
-  },
+  // DiscoverTabScreen: {
+  //   path: '/discover',
+  //   element: <DiscoverTabScreen />
+  // },
+  // AppTabScrren: {
+  //   path: '/app',
+  //   element: <AppTabScrren />
+  // },
   SettingsTabScreen: {
     path: '/settings',
     element: <SettingsTabScreen />
@@ -97,42 +97,42 @@ const routes = {
     path: '/account/switch-account',
     element: <SwitchAccountScreen />
   },
-  ReceiveScreen: {
-    path: '/wallet/receive',
-    element: <ReceiveScreen />
-  },
+  // ReceiveScreen: {
+  //   path: '/wallet/receive',
+  //   element: <ReceiveScreen />
+  // },
 
-  TxCreateScreen: {
-    path: '/wallet/tx/create',
-    element: <TxCreateScreen />
-  },
-  TxConfirmScreen: {
-    path: '/wallet/tx/confirm',
-    element: <TxConfirmScreen />
-  },
-  TxSuccessScreen: {
-    path: '/wallet/tx/success',
-    element: <TxSuccessScreen />
-  },
-  TxFailScreen: {
-    path: '/wallet/tx/fail',
-    element: <TxFailScreen />
-  },
+  // TxCreateScreen: {
+  //   path: '/wallet/tx/create',
+  //   element: <TxCreateScreen />
+  // },
+  // TxConfirmScreen: {
+  //   path: '/wallet/tx/confirm',
+  //   element: <TxConfirmScreen />
+  // },
+  // TxSuccessScreen: {
+  //   path: '/wallet/tx/success',
+  //   element: <TxSuccessScreen />
+  // },
+  // TxFailScreen: {
+  //   path: '/wallet/tx/fail',
+  //   element: <TxFailScreen />
+  // },
 
-  OrdinalsDetailScreen: {
-    path: '/wallet/ordinals-detail',
-    element: <OrdinalsDetailScreen />
-  },
+  // OrdinalsDetailScreen: {
+  //   path: '/wallet/ordinals-detail',
+  //   element: <OrdinalsDetailScreen />
+  // },
 
-  OrdinalsTxCreateScreen: {
-    path: '/wallet/ordinals-tx/create',
-    element: <OrdinalsTxCreateScreen />
-  },
+  // OrdinalsTxCreateScreen: {
+  //   path: '/wallet/ordinals-tx/create',
+  //   element: <OrdinalsTxCreateScreen />
+  // },
 
-  OrdinalsTxConfirmScreen: {
-    path: '/wallet/ordinals-tx/confirm',
-    element: <OrdinalsTxConfirmScreen />
-  },
+  // OrdinalsTxConfirmScreen: {
+  //   path: '/wallet/ordinals-tx/confirm',
+  //   element: <OrdinalsTxConfirmScreen />
+  // },
   NetworkTypeScreen: {
     path: '/settings/network-type',
     element: <NetworkTypeScreen />
@@ -149,10 +149,10 @@ const routes = {
     path: '/settings/export-privatekey',
     element: <ExportPrivateKeyScreen />
   },
-  HistoryScreen: {
-    path: '/wallet/history',
-    element: <HistoryScreen />
-  },
+  // HistoryScreen: {
+  //   path: '/wallet/history',
+  //   element: <HistoryScreen />
+  // },
   ApprovalScreen: {
     path: '/approval',
     element: <ApprovalScreen />
@@ -189,30 +189,30 @@ const routes = {
     path: '/settings/edit-account-name',
     element: <EditAccountNameScreen />
   },
-  InscribeTransferScreen: {
-    path: '/inscribe/transfer',
-    element: <InscribeTransferScreen />
-  },
-  BRC20SendScreen: {
-    path: '/brc20/send',
-    element: <BRC20SendScreen />
-  },
-  BRC20TokenScreen: {
-    path: '/brc20/token',
-    element: <BRC20TokenScreen />
-  },
+  // InscribeTransferScreen: {
+  //   path: '/inscribe/transfer',
+  //   element: <InscribeTransferScreen />
+  // },
+  // BRC20SendScreen: {
+  //   path: '/brc20/send',
+  //   element: <BRC20SendScreen />
+  // },
+  // BRC20TokenScreen: {
+  //   path: '/brc20/token',
+  //   element: <BRC20TokenScreen />
+  // },
   TestScreen: {
     path: '/test',
     element: <TestScreen />
   },
-  MoonPayScreen: {
-    path: '/moonpay',
-    element: <MoonPayScreen />
-  },
-  SplitTxCreateScreen: {
-    path: '/wallet/split-tx/create',
-    element: <SplitTxCreateScreen />
-  }
+  // MoonPayScreen: {
+  //   path: '/moonpay',
+  //   element: <MoonPayScreen />
+  // },
+  // SplitTxCreateScreen: {
+  //   path: '/wallet/split-tx/create',
+  //   element: <SplitTxCreateScreen />
+  // }
 };
 
 type RouteTypes = keyof typeof routes;

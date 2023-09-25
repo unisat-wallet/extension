@@ -48,6 +48,16 @@ const fixWindowError3 = () => {
   fs.writeFileSync(file, fileData);
 };
 
+const fixWindowError4 = () => {
+  const file = './node_modules/rpc-websockets/dist/lib/client/websocket.browser.js';
+  let fileData = fs.readFileSync(file).toString();
+  fileData = fileData.replace(
+    '_this.socket = new window.WebSocket(address, protocols);',
+    '_this.socket = new self.WebSocket(address, protocols);'
+  );
+  fs.writeFileSync(file, fileData);
+};
+
 const fixBufferError = () => {
   const file = './node_modules/bitcore-lib/lib/crypto/signature.js';
   let fileData = fs.readFileSync(file).toString();
@@ -93,6 +103,7 @@ const run = async () => {
     fixWindowError();
     fixWindowError2();
     fixWindowError3();
+    fixWindowError4();
     fixBufferError();
   } catch (e) {
     console.error('error:', e.message);

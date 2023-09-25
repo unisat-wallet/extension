@@ -22,7 +22,7 @@ function MintItem({ info }: { info: InscriptionMintedItem }) {
         />
       </Row>
 
-      <Row>
+      {/* <Row>
         {info.inscriptions.map((v) => (
           <InscriptionPreview
             key={v.inscriptionId}
@@ -33,7 +33,7 @@ function MintItem({ info }: { info: InscriptionMintedItem }) {
             data={v}
           />
         ))}
-      </Row>
+      </Row> */}
     </Column>
   );
 }

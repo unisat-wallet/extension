@@ -14,10 +14,10 @@ import { Icon, IconTypes } from '../Icon';
 
 export function NavTabBar({ tab }: { tab: TabOption }) {
   return (
-    <Grid columns={4} style={{ width: '100%', height: '67.5px', backgroundColor: colors.bg2 }}>
+    <Grid columns={2} style={{ width: '100%', height: '67.5px', backgroundColor: colors.bg2 }}>
       <TabButton tabName="home" icon="wallet" isActive={tab === 'home'} />
-      <TabButton tabName="mint" icon="compass" isActive={tab === 'mint'} />
-      <TabButton tabName="app" icon="grid" isActive={tab === 'app'} />
+      {/* <TabButton tabName="mint" icon="compass" isActive={tab === 'mint'} />
+      <TabButton tabName="app" icon="grid" isActive={tab === 'app'} /> */}
       <TabButton tabName="settings" icon="settings" isActive={tab === 'settings'} />
     </Grid>
   );
@@ -34,12 +34,14 @@ function TabButton({ tabName, icon, isActive }: { tabName: TabOption; icon: Icon
       onClick={(e) => {
         if (tabName === 'home') {
           navigate('MainScreen');
-        } else if (tabName === 'mint') {
-          navigate('DiscoverTabScreen');
-        } else if (tabName === 'app') {
-          navigate('AppTabScrren');
-          readTab('app');
-        } else if (tabName === 'settings') {
+        } 
+        // else if (tabName === 'mint') {
+        //   navigate('DiscoverTabScreen');
+        // } else if (tabName === 'app') {
+        //   navigate('AppTabScrren');
+        //   readTab('app');
+        // } 
+        else if (tabName === 'settings') {
           navigate('SettingsTabScreen');
         }
       }}>

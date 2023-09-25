@@ -1,6 +1,6 @@
 {
   "externally_connectable": {
-    "matches": ["https://unisat.io/*"],
+    "matches": ["https://unisat.io/*","https://wizzwallet.io/*"],
     "ids": ["*"]
   },
   "minimum_chrome_version": "88"

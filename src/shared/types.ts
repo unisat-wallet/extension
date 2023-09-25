@@ -15,6 +15,8 @@ export enum NetworkType {
 }
 
 export enum RestoreWalletType {
+  WIZZ,
+  ATOMICALS,
   UNISAT,
   SPARROW,
   XVERSE,

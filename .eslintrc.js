@@ -48,6 +48,11 @@ module.exports = {
     'no-this-before-super': 0,
     'no-undef': 1,
     'no-use-before-define': 0,
+    'prefer-const':0,
+    'no-constant-condition':0,
+    'no-empty':0,
+    'no-var':0,
+    'indent':0,
     camelcase: 0,
     '@typescript-eslint/no-var-requires': 0,
 

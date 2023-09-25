@@ -33,6 +33,8 @@ import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
+import { IAtomicalBalances } from '@/background/service/interfaces/api';
+import ARC20BalanceCard from '@/ui/components/ARC20BalanceCard';
 
 export default function WalletTabScreen() {
   const navigate = useNavigate();
@@ -75,15 +77,15 @@ export default function WalletTabScreen() {
   }, []);
 
   const tabItems = [
+    // {
+    //   key: WalletTabScreenTabKey.ALL,
+    //   label: 'ALL',
+    //   children: <InscriptionList />
+    // },
     {
-      key: WalletTabScreenTabKey.ALL,
-      label: 'ALL',
-      children: <InscriptionList />
-    },
-    {
-      key: WalletTabScreenTabKey.BRC20,
-      label: 'BRC-20',
-      children: <BRC20List />
+      key: WalletTabScreenTabKey.ARC20,
+      label: 'ARC-20',
+      children: <ARC20List />
     }
   ];
 
@@ -148,7 +150,7 @@ export default function WalletTabScreen() {
           <AddressBar />
 
           <Row justifyBetween>
-            <Button
+            {/* <Button
               text="Receive"
               preset="default"
               icon="receive"
@@ -156,9 +158,9 @@ export default function WalletTabScreen() {
                 navigate('ReceiveScreen');
               }}
               full
-            />
+            /> */}
 
-            <Button
+            {/* <Button
               text="Send"
               preset="default"
               icon="send"
@@ -177,7 +179,7 @@ export default function WalletTabScreen() {
                 }}
                 full
               />
-            )}
+            )} */}
           </Row>
 
           <Row justifyBetween>
@@ -266,7 +268,7 @@ function InscriptionList() {
 
   return (
     <Column>
-      <Row style={{ flexWrap: 'wrap' }} gap="lg">
+      {/* <Row style={{ flexWrap: 'wrap' }} gap="lg">
         {inscriptions.map((data, index) => (
           <InscriptionPreview
             key={index}
@@ -277,7 +279,7 @@ function InscriptionList() {
             }}
           />
         ))}
-      </Row>
+      </Row> */}
       <Row justifyCenter mt="lg">
         <Pagination
           pagination={pagination}
@@ -291,26 +293,112 @@ function InscriptionList() {
   );
 }
 
-function BRC20List() {
+// function BRC20List() {
+//   const navigate = useNavigate();
+//   const wallet = useWallet();
+//   const currentAccount = useCurrentAccount();
+
+//   const [tokens, setTokens] = useState<TokenBalance[]>([]);
+//   const [total, setTotal] = useState(-1);
+//   const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 100 });
+
+//   const tools = useTools();
+//   const fetchData = async () => {
+//     try {
+//       // tools.showLoading(true);
+//       const { list, total } = await wallet.getBRC20List(
+//         currentAccount.address,
+//         pagination.currentPage,
+//         pagination.pageSize
+//       );
+//       setTokens(list);
+//       setTotal(total);
+//     } catch (e) {
+//       tools.toastError((e as Error).message);
+//     } finally {
+//       // tools.showLoading(false);
+//     }
+//   };
+
+//   useEffect(() => {
+//     fetchData();
+//   }, [pagination]);
+
+//   if (total === -1) {
+//     return (
+//       <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
+//         <LoadingOutlined />
+//       </Column>
+//     );
+//   }
+
+//   if (total === 0) {
+//     return (
+//       <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
+//         <Empty text="Empty" />
+//       </Column>
+//     );
+//   }
+
+//   return (
+//     <Column>
+//       {/* <Row style={{ flexWrap: 'wrap' }} gap="sm">
+//         {tokens.map((data, index) => (
+//           <BRC20BalanceCard
+//             key={index}
+//             tokenBalance={data}
+//             onClick={() => {
+//               navigate('BRC20TokenScreen', { tokenBalance: data, ticker: data.ticker });
+//             }}
+//           />
+//         ))}
+//       </Row> */}
+
+//       <Row justifyCenter mt="lg">
+//         <Pagination
+//           pagination={pagination}
+//           total={total}
+//           onChange={(pagination) => {
+//             setPagination(pagination);
+//           }}
+//         />
+//       </Row>
+//     </Column>
+//   );
+// }
+
+function ARC20List() {
   const navigate = useNavigate();
   const wallet = useWallet();
   const currentAccount = useCurrentAccount();
 
-  const [tokens, setTokens] = useState<TokenBalance[]>([]);
+  // const [tokens, setTokens] = useState<TokenBalance[]>([]);
   const [total, setTotal] = useState(-1);
   const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 100 });
+  const [balanceMap,setBalanceMap] = useState<IAtomicalBalances|undefined>(undefined)
 
   const tools = useTools();
   const fetchData = async () => {
     try {
       // tools.showLoading(true);
-      const { list, total } = await wallet.getBRC20List(
-        currentAccount.address,
-        pagination.currentPage,
-        pagination.pageSize
-      );
-      setTokens(list);
-      setTotal(total);
+      // const { list, total } = await wallet.getBRC20List(
+      //   currentAccount.address,
+      //   pagination.currentPage,
+      //   pagination.pageSize
+      // );
+      // setTokens(list);
+      // setTotal(total);
+    const {
+        atomicals_confirmed,
+        atomicals_balances,
+        atomicals_utxos
+    } = await wallet.getARC20List(currentAccount.address);
+
+    setBalanceMap(atomicals_balances as IAtomicalBalances);
+    setTotal(atomicals_utxos.length)
+    
+    console.log(atomicals_balances);
+      
     } catch (e) {
       tools.toastError((e as Error).message);
     } finally {
@@ -330,7 +418,7 @@ function BRC20List() {
     );
   }
 
-  if (total === 0) {
+  if (balanceMap === undefined) {
     return (
       <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
         <Empty text="Empty" />
@@ -341,12 +429,13 @@ function BRC20List() {
   return (
     <Column>
       <Row style={{ flexWrap: 'wrap' }} gap="sm">
-        {tokens.map((data, index) => (
-          <BRC20BalanceCard
+        {Object.keys(balanceMap).map((data, index) => (
+          <ARC20BalanceCard
             key={index}
-            tokenBalance={data}
+            tokenBalance={balanceMap[data]}
             onClick={() => {
-              navigate('BRC20TokenScreen', { tokenBalance: data, ticker: data.ticker });
+              console.log('ARC20TokenScreen');
+              // navigate('BRC20TokenScreen', { tokenBalance: data, ticker: data.ticker });
             }}
           />
         ))}

@@ -118,7 +118,7 @@ export const ADDRESS_TYPES: {
     name: 'Legacy (P2PKH)',
     hdPath: "m/44'/0'/0'/0",
     displayIndex: 3,
-    isUnisatLegacy: false
+    isUnisatLegacy: true
   },
   {
     value: AddressType.P2WPKH,
@@ -126,7 +126,7 @@ export const ADDRESS_TYPES: {
     name: 'Native Segwit (P2WPKH)',
     hdPath: "m/84'/0'/0'/0",
     displayIndex: 0,
-    isUnisatLegacy: false
+    isUnisatLegacy: true
   },
   {
     value: AddressType.P2TR,
@@ -134,7 +134,7 @@ export const ADDRESS_TYPES: {
     name: 'Taproot (P2TR)',
     hdPath: "m/86'/0'/0'/0",
     displayIndex: 2,
-    isUnisatLegacy: false
+    isUnisatLegacy: true
   },
   {
     value: AddressType.P2SH_P2WPKH,
@@ -142,7 +142,7 @@ export const ADDRESS_TYPES: {
     name: 'Nested Segwit (P2SH-P2WPKH)',
     hdPath: "m/49'/0'/0'/0",
     displayIndex: 1,
-    isUnisatLegacy: false
+    isUnisatLegacy: true
   },
   {
     value: AddressType.M44_P2WPKH,
@@ -155,48 +155,68 @@ export const ADDRESS_TYPES: {
   {
     value: AddressType.M44_P2TR,
     label: 'P2TR',
-    name: 'Taproot (P2TR)',
+    name: 'Legacy && Taproot (M44_P2TR)',
     hdPath: "m/44'/0'/0'/0",
     displayIndex: 5,
-    isUnisatLegacy: true
+    isUnisatLegacy: false
   }
 ];
 
 export const RESTORE_WALLETS: { value: RestoreWalletType; name: string; addressTypes: AddressType[] }[] = [
   {
-    value: RestoreWalletType.UNISAT,
-    name: 'UniSat Wallet',
+    value: RestoreWalletType.WIZZ,
+    name: 'Wizz && Atomicals',
     addressTypes: [
-      AddressType.P2WPKH,
-      AddressType.P2SH_P2WPKH,
-      AddressType.P2TR,
-      AddressType.P2PKH,
-      AddressType.M44_P2WPKH,
+      // AddressType.P2WPKH,
+      // AddressType.P2SH_P2WPKH,
+      // AddressType.P2TR,
+      // AddressType.P2PKH,
+      // AddressType.M44_P2WPKH,
       AddressType.M44_P2TR
     ]
   },
-  {
-    value: RestoreWalletType.SPARROW,
-    name: 'Sparrow Wallet',
-    addressTypes: [AddressType.P2PKH, AddressType.P2WPKH, AddressType.P2SH_P2WPKH, AddressType.P2TR]
-  },
-  {
-    value: RestoreWalletType.XVERSE,
-    name: 'Xverse Wallet',
-    addressTypes: [AddressType.P2SH_P2WPKH, AddressType.P2TR]
-  },
-  {
-    value: RestoreWalletType.OTHERS,
-    name: 'Other Wallet',
-    addressTypes: [
-      AddressType.P2PKH,
-      AddressType.P2WPKH,
-      AddressType.P2SH_P2WPKH,
-      AddressType.P2TR,
-      AddressType.M44_P2WPKH,
-      AddressType.M44_P2TR
-    ]
-  }
+  // {
+  //   value: RestoreWalletType.ATOMICALS,
+  //   name: 'Wizz & Atomicals',
+  //   addressTypes: [
+  //     AddressType.M44_P2TR
+  //   ]
+  // },
+  // {
+  //   value: RestoreWalletType.UNISAT,
+  //   name: 'UniSat Wallet',
+  //   addressTypes: [
+  //     AddressType.P2WPKH,
+  //     AddressType.P2SH_P2WPKH,
+  //     AddressType.P2TR,
+  //     AddressType.P2PKH,
+  //     AddressType.M44_P2WPKH,
+  //     AddressType.M44_P2TR
+  //   ]
+  // },
+  
+  // {
+  //   value: RestoreWalletType.SPARROW,
+  //   name: 'Sparrow Wallet',
+  //   addressTypes: [AddressType.P2PKH, AddressType.P2WPKH, AddressType.P2SH_P2WPKH, AddressType.P2TR]
+  // },
+  // {
+  //   value: RestoreWalletType.XVERSE,
+  //   name: 'Xverse Wallet',
+  //   addressTypes: [AddressType.P2SH_P2WPKH, AddressType.P2TR]
+  // },
+  // {
+  //   value: RestoreWalletType.OTHERS,
+  //   name: 'Other Wallet',
+  //   addressTypes: [
+  //     AddressType.P2PKH,
+  //     AddressType.P2WPKH,
+  //     AddressType.P2SH_P2WPKH,
+  //     AddressType.P2TR,
+  //     AddressType.M44_P2WPKH,
+  //     AddressType.M44_P2TR
+  //   ]
+  // }
 ];
 
 export const NETWORK_TYPES = [
@@ -264,9 +284,10 @@ export const TO_LOCALE_STRING_CONFIG = {
 export const SATS_DOMAIN = '.sats';
 export const UNISAT_DOMAIN = '.unisat';
 
-export const GITHUB_URL = 'https://github.com/unisat-wallet/extension';
-export const DISCORD_URL = 'https://discord.com/invite/EMskB2sMz8';
-export const TWITTER_URL = 'https://twitter.com/unisat_wallet';
+export const GITHUB_URL = 'https://github.com/AstroxNetwork/extension';
+export const DISCORD_URL = 'https://discord.gg/7YxK2ytSxn';
+export const TWITTER_URL = 'https://twitter.com/wizzwallet';
+export const ELECTRUMX_WSS = 'wss://electrumx.atomicals.xyz:50012';
 
 export const CHANNEL = process.env.channel!;
 export const VERSION = process.env.release!;

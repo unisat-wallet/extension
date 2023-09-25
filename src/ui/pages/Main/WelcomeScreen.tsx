@@ -4,6 +4,7 @@ import { useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
 
+
 export default function WelcomeScreen() {
   const navigate = useNavigate();
   const wallet = useWallet();
@@ -17,7 +18,7 @@ export default function WelcomeScreen() {
           </Row>
           <Column gap="xl" mt="xxl">
             <Text
-              text={"Inscribe and store your inscriptions in the world's first Open Source Chrome wallet for Ordinals!"}
+              text={"Give Bitcoin a lil Magic\nand WAGMI"}
               preset="sub"
               textCenter
             />
