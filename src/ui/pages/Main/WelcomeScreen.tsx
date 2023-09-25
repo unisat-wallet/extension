@@ -18,7 +18,7 @@ export default function WelcomeScreen() {
           </Row>
           <Column gap="xl" mt="xxl">
             <Text
-              text={"Give Bitcoin a lil Magic\nand WAGMI"}
+              text={"Give Bitcoin A lil Magic and WAGMI"}
               preset="sub"
               textCenter
             />
