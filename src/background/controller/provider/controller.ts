@@ -49,6 +49,14 @@ class ProviderController extends BaseController {
     return account
   };
 
+  getPrice = async ()=>{
+    return await wallet.getPrice();
+  }
+
+  getFee = async ()=>{
+    return await wallet.getFee();
+  }
+
   @Reflect.metadata('SAFE', true)
     getAccounts = async ({ session: { origin } }) => {
       if (!permissionService.hasPermission(origin)) {

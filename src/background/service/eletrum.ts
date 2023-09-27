@@ -16,7 +16,7 @@ export class ElectrumApi implements ElectrumApiInterface {
   private rpc_id = 0;
 
   private constructor(public url: string) {
-    this.resetConnection();
+    this.connect();
   }
 
   public async resetConnection() {
@@ -27,6 +27,14 @@ export class ElectrumApi implements ElectrumApiInterface {
     });
     // this.ws.connect();
     // this.open();
+  }
+
+  public connect() {
+    this.ws = new WebSocket(this.url);
+    this.ws.on('open', event => {
+      this.isOpenFlag = true;
+      console.log('opened');
+    });
   }
 
   static createClient(url: string) {

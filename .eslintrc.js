@@ -53,6 +53,7 @@ module.exports = {
     'no-empty':0,
     'no-var':0,
     'indent':0,
+    'no-useless-catch':0,
     camelcase: 0,
     '@typescript-eslint/no-var-requires': 0,
 

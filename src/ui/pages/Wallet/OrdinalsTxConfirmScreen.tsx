@@ -21,7 +21,7 @@ export default function OrdinalsTxConfirmScreen() {
           window.history.go(-1);
         }}
       />
-      params={{ data: { psbtHex: rawTxInfo.psbtHex, type: TxType.SEND_INSCRIPTION, rawTxInfo } }}
+      params={{ data: { psbtHex: rawTxInfo.psbtHex, type: TxType.SEND_INSCRIPTION, rawTxInfo } } as any}
       handleCancel={() => {
         navigate('MainScreen');
       }}

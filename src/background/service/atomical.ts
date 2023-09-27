@@ -15,6 +15,16 @@ export class AtomicalService {
     }
   }
 
+  async open(){
+    console.log("open open")
+    await this.electrumApi.open();
+    console.log("open end")
+  }
+
+  async close(){
+    await this.electrumApi.close();
+  }
+
   async walletInfo(address: string, verbose: boolean): Promise<{
     success: boolean;
     data: {
@@ -34,6 +44,7 @@ export class AtomicalService {
         history: any;
     };
 }> {
+    await this.open();
     const { scripthash } = detectAddressTypeToScripthash(address);
     const res = await this.electrumApi.atomicalsByScripthash(scripthash, true);
     let history = undefined;

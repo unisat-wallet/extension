@@ -430,12 +430,12 @@ function ARC20List() {
   return (
     <Column>
       <Row style={{ flexWrap: 'wrap' }} gap="sm">
-        {Object.keys(balanceMap).map((data, index) => (
+        {Object.values(balanceMap).filter((d)=>d.type==='FT').map((data, index) => (
           <ARC20BalanceCard
             key={index}
-            tokenBalance={balanceMap[data]}
+            tokenBalance={data}
             onClick={() => {
-              console.log('ARC20TokenScreen');
+              alert('https://wizzwallet.io');
               // navigate('BRC20TokenScreen', { tokenBalance: data, ticker: data.ticker });
             }}
           />

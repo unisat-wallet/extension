@@ -59,6 +59,8 @@ export const KEYRING_TYPES: {
   }
 };
 
+export const MEMPOOL_URL='https://mempool.space';
+
 export const IS_CHROME = /Chrome\//i.test(navigator.userAgent);
 
 export const IS_FIREFOX = /Firefox\//i.test(navigator.userAgent);

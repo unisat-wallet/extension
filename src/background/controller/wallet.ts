@@ -50,6 +50,7 @@ import { publicKeyToAddress, toPsbtNetwork } from '../utils/tx-utils';
 import BaseController from './base';
 import { AtomicalService, atomicalService } from '../service/atomical';
 import { IAtomicalBalances, ISelectedUtxo, UTXO as AtomUtxos } from '../service/interfaces/api';
+import { MempoolService, mempoolService } from '../service/mempool';
 
 const toXOnly = (pubKey: Buffer) => (pubKey.length === 32 ? pubKey : pubKey.slice(1, 33));
 
@@ -71,6 +72,7 @@ export type AccountAsset = {
 export class WalletController extends BaseController {
   openapi: OpenApiService = openapiService;
   atomicalApi:AtomicalService = atomicalService;
+  mempoolService:MempoolService = mempoolService;
 
   /* wallet */
   boot = (password: string) => keyringService.boot(password);
@@ -1325,6 +1327,13 @@ export class WalletController extends BaseController {
   checkWebsite = (website: string) => {
     return openapiService.checkWebsite(website);
   };
+
+  getPrice = ()=>{
+    return mempoolService.getPrice()
+  }
+  getFee = ()=>{
+    return mempoolService.getFee()
+  }
 }
 
 export default new WalletController();
