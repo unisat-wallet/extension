@@ -8,7 +8,7 @@ abstract class Message extends EventEmitter {
   // avaiable id list
   // max concurrent request limit
   private _requestIdPool = [...Array(500).keys()];
-  protected _EVENT_PRE = 'WIZZ_WALLET_';
+  protected _EVENT_PRE = 'ATOM_WALLET_';
   protected listenCallback: any;
 
   private _waitingMap = new Map<

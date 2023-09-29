@@ -22,7 +22,7 @@ export interface BitcoinTx {
 export interface OrdinalsTx {
   fromAddress: string;
   toAddress: string;
-  inscription: Inscription;
+  inscription: Inscription | any;
   rawtx: string;
   txid: string;
   fee: number;

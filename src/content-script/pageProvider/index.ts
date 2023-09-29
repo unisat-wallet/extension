@@ -19,7 +19,7 @@ const log = (event, ...args) => {
   // }
 };
 const script = document.currentScript;
-const channelName = script?.getAttribute('channel') || 'WIZZ';
+const channelName = script?.getAttribute('channel') || 'WIZZ' || 'ATOM';
 
 export interface Interceptor {
   onRequest?: (data: any) => any;
@@ -34,7 +34,7 @@ interface StateProvider {
   isPermanentlyDisconnected: boolean;
 }
 const EXTENSION_CONTEXT_INVALIDATED_CHROMIUM_ERROR = 'Extension context invalidated.';
-export class WizzProvider extends EventEmitter {
+export class AtomProvider extends EventEmitter {
   _selectedAddress: string | null = null;
   _network: string | null = null;
   _isConnected = false;
@@ -331,12 +331,13 @@ export class WizzProvider extends EventEmitter {
 
 declare global {
   interface Window {
-    // unisat: WizzProvider;
-    wizz: WizzProvider;
+    // unisat: AtomProvider;
+    wizz: AtomProvider;
+    atom: AtomProvider;
   }
 }
 
-const provider = new WizzProvider();
+const provider = new AtomProvider();
 
 // if (!window.unisat) {
 //   window.unisat = new Proxy(provider, {
@@ -345,6 +346,11 @@ const provider = new WizzProvider();
 // }
 if (!window.wizz) {
   window.wizz = new Proxy(provider, {
+    deleteProperty: () => true
+  });
+}
+if (!window.atom) {
+  window.atom = new Proxy(provider, {
     deleteProperty: () => true
   });
 }
@@ -362,6 +368,12 @@ Object.defineProperty(window, 'wizz', {
   }),
   writable: false
 });
+Object.defineProperty(window, 'atom', {
+  value: new Proxy(provider, {
+    deleteProperty: () => true
+  }),
+  writable: false
+});
 
 // window.dispatchEvent(new Event('unisat#initialized'));
-window.dispatchEvent(new Event('wizz#initialized'));
+window.dispatchEvent(new Event('atom#initialized'));

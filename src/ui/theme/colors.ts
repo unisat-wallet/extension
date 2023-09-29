@@ -26,7 +26,7 @@ const palette = {
   red_light: '#f05266',
 
   blue_dark: '#1461d1',
-  blue: '#1872F6',
+  blue: '#3adcef',
   blue_light: '#c6dcfd',
 
   orange_dark: '#d9691c',
@@ -50,8 +50,8 @@ export const colors = Object.assign({}, palette, {
   danger: palette.red,
 
   card: '#262222',
-  warning: palette.orange_dark,
-  primary: palette.orange,
+  warning: palette.blue,
+  primary: palette.white,
 
   bg2: '#2a2a2a',
   bg3: '#434242',

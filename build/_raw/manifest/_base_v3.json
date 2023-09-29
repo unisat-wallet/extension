@@ -23,11 +23,11 @@
     "default_title": "__MSG_appName__"
   },
 
-  "author": "https://wizzwallet.io",
+  "author": "https://atomicalswallet.com",
   "background": {
     "service_worker": "background.js"
   },
-  "homepage_url": "https://wizzwallet.io",
+  "homepage_url": "https://atomicalswallet.com",
   "permissions": ["storage", "unlimitedStorage", "activeTab"],
   "short_name": "__MSG_appName__",
 

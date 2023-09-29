@@ -10,14 +10,14 @@ export function Logo(props: { preset?: 'large' | 'small' }) {
     return (
       <Row justifyCenter itemsCenter>
         <Image src="./images/logo/wallet-logo.png" size={fontSizes.xxxl} />
-        <Text text="Wizz Wallet" preset="title-bold" size="xxl" disableTranslate />
+        <Text text="ATOM Wallet" preset="title-bold" size="xxl" disableTranslate />
       </Row>
     );
   } else {
     return (
       <Row justifyCenter itemsCenter>
         <Image src="./images/logo/wallet-logo.png" size={fontSizes.xxl} />
-        <Text text="Wizz Wallet" preset="title-bold" disableTranslate />
+        <Text text="ATOM Wallet" preset="title-bold" disableTranslate />
       </Row>
     );
   }

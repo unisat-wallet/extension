@@ -167,7 +167,7 @@ export const ADDRESS_TYPES: {
 export const RESTORE_WALLETS: { value: RestoreWalletType; name: string; addressTypes: AddressType[] }[] = [
   {
     value: RestoreWalletType.WIZZ,
-    name: 'Wizz && Atomicals',
+    name: 'Atomicals',
     addressTypes: [
       // AddressType.P2WPKH,
       // AddressType.P2SH_P2WPKH,
@@ -244,7 +244,7 @@ export const WALLETCONNECT_STATUS_MAP = {
 export const INTERNAL_REQUEST_ORIGIN = 'https://unisat.io';
 
 export const INTERNAL_REQUEST_SESSION = {
-  name: 'Wizz Wallet',
+  name: 'ATOM Wallet',
   origin: INTERNAL_REQUEST_ORIGIN,
   icon: './images/logo/logo@128x.png'
 };
@@ -288,7 +288,7 @@ export const UNISAT_DOMAIN = '.unisat';
 
 export const GITHUB_URL = 'https://github.com/AstroxNetwork/extension';
 export const DISCORD_URL = 'https://discord.gg/7YxK2ytSxn';
-export const TWITTER_URL = 'https://twitter.com/wizzwallet';
+export const TWITTER_URL = 'https://twitter.com/atomicalswallet';
 export const ELECTRUMX_WSS = 'wss://electrumx.atomicals.xyz:50012'; //'ws://18.139.208.6:50001'// 'wss://electrumx.atomicals.xyz:50012';
 
 export const CHANNEL = process.env.channel!;

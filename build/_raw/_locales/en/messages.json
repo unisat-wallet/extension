@@ -32,13 +32,13 @@
   "Generate__a__new__address": { "message": "Generate a new address" },
   "I__already__have__a__wallet": { "message": "I already have a wallet" },
   "Create__a__password": { "message": "Create a password" },
-  "Type__your__Wizz__password": { "message": "Type your Wizz Wallet password" },
+  "Type__your__ATOM__password": { "message": "Type your ATOM Wallet password" },
   "Invalid__amount": { "message": "Invalid amount" },
   "Payment__Sent": { "message": "Payment Sent" },
   "Sending": { "message": "Sending" },
   "Euro": { "message": "Euro" },
   "Export__Private__Key": { "message": "Export Private Key" },
-  "appName": { "message": "Wizz Wallet" },
+  "appName": { "message": "ATOM Wallet" },
   "Payment__Faild": { "message": "Payment Faild" },
   "Change__Password": { "message": "Change Password" },
   "Private__Key": { "message": "Private Key" },
@@ -98,8 +98,8 @@
   "Spanish": { "message": "Español" },
   "Show__Private__Key": { "message": "Show Private Key" },
   "You__will__use__this__to__unlock__your__wallet": { "message": "You will use this to unlock your wallet" },
-  "Imported__accounts__will__not__be__associated__with__your__originally__created__Wizz__account__Secret__Recovery__Phrase": {
-    "message": "Imported accounts will not be associated with your originally created Wizz Wallet account Secret Recovery Phrase"
+  "Imported__accounts__will__not__be__associated__with__your__originally__created__ATOM__account__Secret__Recovery__Phrase": {
+    "message": "Imported accounts will not be associated with your originally created ATOM Wallet account Secret Recovery Phrase"
   },
   "Login": { "message": "Login" },
   "English": { "message": "English" },
