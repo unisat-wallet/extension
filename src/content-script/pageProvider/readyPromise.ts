@@ -9,17 +9,17 @@ class ReadyPromise {
     this._allCheck = [...Array(count)];
   }
 
-  check = (index) => {
+  check = index => {
     this._allCheck[index - 1] = true;
     this._proceed();
   };
 
-  uncheck = (index) => {
+  uncheck = index => {
     this._allCheck[index - 1] = false;
   };
 
   private _proceed = () => {
-    if (this._allCheck.some((_) => !_)) {
+    if (this._allCheck.some(_ => !_)) {
       return;
     }
 
@@ -29,11 +29,11 @@ class ReadyPromise {
     }
   };
 
-  call = (fn) => {
-    return new Promise((resolve) => {
+  call = fn => {
+    return new Promise(resolve => {
       this._tasks.push({
         fn,
-        resolve
+        resolve,
       });
 
       this._proceed();

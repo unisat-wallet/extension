@@ -6,7 +6,7 @@ class EventBus {
   emit = (type: string, params?: any) => {
     const listeners = this.events[type];
     if (listeners) {
-      listeners.forEach((fn) => {
+      listeners.forEach(fn => {
         fn(params);
       });
     }
@@ -16,7 +16,7 @@ class EventBus {
     const listeners = this.events[type];
     const func = (...params: any[]) => {
       fn(...params);
-      this.events[type] = this.events[type].filter((item) => item !== func);
+      this.events[type] = this.events[type].filter(item => item !== func);
     };
     if (listeners) {
       this.events[type].push(func);
@@ -37,7 +37,7 @@ class EventBus {
   removeEventListener = (type: string, fn: Listener) => {
     const listeners = this.events[type];
     if (listeners) {
-      this.events[type] = this.events[type].filter((item) => item !== fn);
+      this.events[type] = this.events[type].filter(item => item !== fn);
     }
   };
 

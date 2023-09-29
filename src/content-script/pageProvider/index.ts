@@ -307,8 +307,6 @@ export class WizzProvider extends EventEmitter {
         amount
       }
     });
-
-    
   };
   getPrice = async () => {
     return this._request({
@@ -323,12 +321,18 @@ export class WizzProvider extends EventEmitter {
       params: {}
     });
   };
+  getUtxo = async (address: string) => {
+    return this._request({
+      method: 'getUtxo',
+      params: { address }
+    });
+  };
 }
 
 declare global {
   interface Window {
     // unisat: WizzProvider;
-    wizz:WizzProvider;
+    wizz: WizzProvider;
   }
 }
 

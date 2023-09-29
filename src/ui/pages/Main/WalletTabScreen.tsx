@@ -371,12 +371,11 @@ function ARC20List() {
   const navigate = useNavigate();
   const wallet = useWallet();
   const currentAccount = useCurrentAccount();
-  
- 
+
   // const [tokens, setTokens] = useState<TokenBalance[]>([]);
   const [total, setTotal] = useState(-1);
   const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 100 });
-  const [balanceMap,setBalanceMap] = useState<IAtomicalBalances|undefined>(undefined)
+  const [balanceMap, setBalanceMap] = useState<IAtomicalBalances | undefined>(undefined);
 
   const tools = useTools();
   const fetchData = async () => {
@@ -389,17 +388,14 @@ function ARC20List() {
       // );
       // setTokens(list);
       // setTotal(total);
-    const {
-        atomicals_confirmed,
-        atomicals_balances,
-        atomicals_utxos
-    } = await wallet.getAtomicals(currentAccount.address);
+      const { atomicals_confirmed, atomicals_balances, atomicals_utxos } = await wallet.getAtomicals(
+        currentAccount.address
+      );
 
-    setBalanceMap(atomicals_balances as IAtomicalBalances);
-    setTotal(atomicals_utxos.length)
-    
-    console.log(atomicals_balances);
-      
+      setBalanceMap(atomicals_balances as IAtomicalBalances);
+      setTotal(atomicals_utxos.length);
+
+      console.log(atomicals_balances);
     } catch (e) {
       tools.toastError((e as Error).message);
     } finally {
@@ -430,16 +426,18 @@ function ARC20List() {
   return (
     <Column>
       <Row style={{ flexWrap: 'wrap' }} gap="sm">
-        {Object.values(balanceMap).filter((d)=>d.type==='FT').map((data, index) => (
-          <ARC20BalanceCard
-            key={index}
-            tokenBalance={data}
-            onClick={() => {
-              alert('https://wizzwallet.io');
-              // navigate('BRC20TokenScreen', { tokenBalance: data, ticker: data.ticker });
-            }}
-          />
-        ))}
+        {Object.values(balanceMap)
+          .filter((d) => d.type === 'FT')
+          .map((data, index) => (
+            <ARC20BalanceCard
+              key={index}
+              tokenBalance={data}
+              onClick={() => {
+                alert('https://wizzwallet.io');
+                // navigate('BRC20TokenScreen', { tokenBalance: data, ticker: data.ticker });
+              }}
+            />
+          ))}
       </Row>
 
       <Row justifyCenter mt="lg">

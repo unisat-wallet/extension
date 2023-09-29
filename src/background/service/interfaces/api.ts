@@ -1,6 +1,6 @@
 import { UTXO } from './utxo';
 
-export { UTXO }
+export { UTXO };
 
 export interface IUnspentResponse {
   confirmed: number;
@@ -13,12 +13,17 @@ export interface ElectrumApiInterface {
   close: () => Promise<void>;
   open: () => Promise<void | boolean>;
   getUrl: () => string;
-  resetConnection: () => Promise<void>;
+  resetConnection: () => Promise<void | boolean>;
   isOpen: () => boolean;
   sendTransaction: (rawtx: string) => Promise<string>;
   getUnspentAddress: (address: string) => Promise<IUnspentResponse>;
   getUnspentScripthash: (address: string) => Promise<IUnspentResponse>;
-  waitUntilUTXO: (address: string, satoshis: number, sleepTimeSec: number, exactSatoshiAmount?: boolean) => Promise<any>;
+  waitUntilUTXO: (
+    address: string,
+    satoshis: number,
+    sleepTimeSec: number,
+    exactSatoshiAmount?: boolean
+  ) => Promise<any>;
   getTx: (txid: string, verbose?: boolean) => Promise<any>;
   serverVersion: () => Promise<any>;
   broadcast: (rawtx: string) => Promise<any>;
@@ -42,7 +47,11 @@ export interface ElectrumApiInterface {
   atomicalsFindTickers: (tickerPrefix: string | null, asc?: boolean) => Promise<any>;
   atomicalsFindContainers: (containerPrefix: string | null, asc?: boolean) => Promise<any>;
   atomicalsFindRealms: (realmPrefix: string | null, asc?: boolean) => Promise<any>;
-  atomicalsFindSubRealms: (parentRealmId: string, subrealmPrefix: string | null, mostRecentFirst?: boolean) => Promise<any>;
+  atomicalsFindSubRealms: (
+    parentRealmId: string,
+    subrealmPrefix: string | null,
+    mostRecentFirst?: boolean
+  ) => Promise<any>;
 }
 
 export interface IAtomicalBalanceSummary {
@@ -87,7 +96,7 @@ export interface IAtomicalBalances {
 }
 
 enum TickerStatus {
-  'verified' = 'verified',
+  'verified' = 'verified'
 }
 
 export interface TickerCandidate {

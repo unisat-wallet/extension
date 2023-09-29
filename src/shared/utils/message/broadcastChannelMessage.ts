@@ -24,7 +24,7 @@ export default class BroadcastChannelMessage extends Message {
     return this;
   };
 
-  listen = (listenCallback) => {
+  listen = listenCallback => {
     this.listenCallback = listenCallback;
 
     this._channel.onmessage = ({ data: { type, data } }) => {
@@ -39,7 +39,7 @@ export default class BroadcastChannelMessage extends Message {
   send = (type, data) => {
     this._channel.postMessage({
       type,
-      data
+      data,
     });
   };
 

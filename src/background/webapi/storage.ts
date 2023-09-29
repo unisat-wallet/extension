@@ -21,7 +21,7 @@ const set = async (prop, value): Promise<void> => {
 const byteInUse = async (): Promise<number> => {
   return new Promise((resolve, reject) => {
     if (chrome) {
-      chrome.storage.local.getBytesInUse((value) => {
+      chrome.storage.local.getBytesInUse(value => {
         resolve(value);
       });
     } else {
@@ -33,5 +33,5 @@ const byteInUse = async (): Promise<number> => {
 export default {
   get,
   set,
-  byteInUse
+  byteInUse,
 };

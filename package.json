@@ -250,7 +250,6 @@
     "minimist": "^1.2.6",
     "node-sass": "^7.0.1",
     "postcss": "^8.4.13",
-    "prettier": "^2.6.2",
     "sass-loader": "^12.6.0",
     "stylus": "^0.57.0",
     "stylus-loader": "^6.2.0",
@@ -259,14 +258,5 @@
     "wasm-module-webpack-plugin": "^3.0.0",
     "webpack-cli": "^4.9.2",
     "webpack-stream": "^7.0.0"
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "prettier --write",
-      "eslint --ignore-path=.prettierignore"
-    ],
-    "*.json": [
-      "prettier --write"
-    ]
   }
 }

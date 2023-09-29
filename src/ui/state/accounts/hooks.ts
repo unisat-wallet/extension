@@ -44,9 +44,9 @@ export function useAppSummary() {
   return accountsState.appSummary;
 }
 
-export function useAtomicals(){
-    const accountsState = useAccountsState();
-    return accountsState.atomicals;
+export function useAtomicals() {
+  const accountsState = useAccountsState();
+  return accountsState.atomicals;
 }
 
 export function useUnreadAppSummary() {
@@ -168,6 +168,7 @@ export function useFetchBalanceCallback() {
     if (!currentAccount.address) return;
     const cachedBalance = await wallet.getAddressCacheBalance(currentAccount.address);
     const _accountBalance = await wallet.getAddressBalance(currentAccount.address);
+
     dispatch(
       accountActions.setBalance({
         address: currentAccount.address,
@@ -183,15 +184,18 @@ export function useFetchBalanceCallback() {
   }, [dispatch, wallet, currentAccount, balance]);
 }
 
-export function useAtomicalsCallback(){
+export function useAtomicalsCallback() {
   const dispatch = useAppDispatch();
   const wallet = useWallet();
   const currentAccount = useCurrentAccount();
   const balance = useAccountBalance();
   return useCallback(async () => {
     if (!currentAccount.address) return;
-    const res= await wallet.getAtomicals(currentAccount.address);
-    const btc_amount=(res.nonAtomUtxosValue/(10000*10000)).toString()
+    // const _utxo = await wallet.getUtxo(currentAccount.address);
+    // console.log({ _utxo });
+    const res = await wallet.getAtomicals(currentAccount.address);
+    // console.log({ _utxo });
+    const btc_amount = (res.nonAtomUtxosValue / (10000 * 10000)).toString();
     dispatch(
       accountActions.setBalance({
         address: currentAccount.address,
@@ -200,9 +204,7 @@ export function useAtomicalsCallback(){
         inscription_amount: ''
       })
     );
-    dispatch(
-      accountActions.setAtomicals(res)
-    )
+    dispatch(accountActions.setAtomicals(res));
     // if (cachedBalance.amount !== _accountBalance.amount) {
     //   wallet.expireUICachedData(currentAccount.address);
     //   dispatch(accountActions.expireHistory());

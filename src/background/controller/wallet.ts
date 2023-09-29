@@ -21,6 +21,7 @@ import {
   CHAINS_ENUM,
   COIN_NAME,
   COIN_SYMBOL,
+  ELECTRUMX_WSS,
   KEYRING_TYPE,
   KEYRING_TYPES,
   NETWORK_TYPES,
@@ -48,9 +49,10 @@ import { ConnectedSite } from '../service/permission';
 import { signBip322MessageSimple } from '../utils/bip322';
 import { publicKeyToAddress, toPsbtNetwork } from '../utils/tx-utils';
 import BaseController from './base';
-import { AtomicalService, atomicalService } from '../service/atomical';
+import { AtomicalService } from '../service/atomical';
 import { IAtomicalBalances, ISelectedUtxo, UTXO as AtomUtxos } from '../service/interfaces/api';
 import { MempoolService, mempoolService } from '../service/mempool';
+import { ElectrumApi } from '../service/eletrum';
 
 const toXOnly = (pubKey: Buffer) => (pubKey.length === 32 ? pubKey : pubKey.slice(1, 33));
 
@@ -65,14 +67,26 @@ export type AccountAsset = {
   value: string;
 };
 
-
-
-
-
 export class WalletController extends BaseController {
+  public atomicalApi?: AtomicalService;
+  constructor() {
+    super();
+    this.init();
+  }
+
+  init() {
+    try {
+      setTimeout(() => {
+        this.atomicalApi = new AtomicalService(ElectrumApi.createClient(ELECTRUMX_WSS));
+      }, 3000);
+    } catch (error) {
+      throw error;
+    }
+  }
+
   openapi: OpenApiService = openapiService;
-  atomicalApi:AtomicalService = atomicalService;
-  mempoolService:MempoolService = mempoolService;
+
+  mempoolService: MempoolService = mempoolService;
 
   /* wallet */
   boot = (password: string) => keyringService.boot(password);
@@ -1255,46 +1269,40 @@ export class WalletController extends BaseController {
     };
   };
 
-
-
-  getAtomicals = async (address: string): Promise<{
+  getAtomicals = async (
+    address: string
+  ): Promise<{
     atomicals_confirmed: number;
     atomicals_balances: IAtomicalBalances;
     atomicals_utxos: ISelectedUtxo[];
-    all_utxos:AtomUtxos[];
-    nonAtomUtxos:AtomUtxos[];
-    nonAtomUtxosValue:number;
+    all_utxos: AtomUtxos[];
+    nonAtomUtxos: AtomUtxos[];
+    nonAtomUtxosValue: number;
   }> => {
-    const walletInfo = await this.atomicalApi.walletInfo(address, false);
-    const { data } = walletInfo;
-    const { atomicals_confirmed, atomicals_balances, atomicals_utxos } = data;
-   
-    
+    const walletInfo = await this.atomicalApi!.walletInfo(address, false);
+    const { atomicals_confirmed, atomicals_balances, atomicals_utxos } = walletInfo.data;
 
-    const allUtxos =  await this.atomicalApi.electrumApi.getUnspentAddress(address);
-    
+    const allUtxos = await this.atomicalApi!.electrumApi.getUnspentAddress(address);
+
     const nonAtomUtxos: AtomUtxos[] = [];
     let nonAtomUtxosValue = 0;
     for (let i = 0; i < allUtxos.utxos.length; i++) {
       const utxo = allUtxos.utxos[i];
-      if (atomicals_utxos.findIndex(item => item.txid === utxo.txid) < 0) {
+      if (atomicals_utxos.findIndex((item) => item.txid === utxo.txid) < 0) {
         nonAtomUtxos.push(utxo);
         nonAtomUtxosValue += utxo.value;
       }
     }
-    nonAtomUtxos.sort((a, b) => b.value - a.value)
+    nonAtomUtxos.sort((a, b) => b.value - a.value);
     return {
       atomicals_utxos,
-      atomicals_confirmed, 
+      atomicals_confirmed,
       atomicals_balances,
-      all_utxos:allUtxos.utxos,
+      all_utxos: allUtxos.utxos,
       nonAtomUtxos,
       nonAtomUtxosValue
-    }
-  }
-
-
-
+    };
+  };
 
   expireUICachedData = (address: string) => {
     return preferenceService.expireUICachedData(address);
@@ -1328,12 +1336,16 @@ export class WalletController extends BaseController {
     return openapiService.checkWebsite(website);
   };
 
-  getPrice = ()=>{
-    return mempoolService.getPrice()
-  }
-  getFee = ()=>{
-    return mempoolService.getFee()
-  }
+  getPrice = () => {
+    return mempoolService.getPrice();
+  };
+  getFee = () => {
+    return mempoolService.getFee();
+  };
+
+  getUtxo = (address: string) => {
+    return mempoolService.getUtxo(address);
+  };
 }
 
 export default new WalletController();

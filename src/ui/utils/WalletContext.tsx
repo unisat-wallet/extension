@@ -204,10 +204,10 @@ export interface WalletController {
     atomicals_confirmed: number;
     atomicals_balances: IAtomicalBalances;
     atomicals_utxos: ISelectedUtxo[];
-    all_utxos:AtomUtxos[];
-    nonAtomUtxos:AtomUtxos[];
-    nonAtomUtxosValue:number;
-  }>
+    all_utxos: AtomUtxos[];
+    nonAtomUtxos: AtomUtxos[];
+    nonAtomUtxosValue: number;
+  }>;
 
   expireUICachedData(address: string): Promise<void>;
 
@@ -226,6 +226,10 @@ export interface WalletController {
   readApp(appid: number): Promise<void>;
 
   formatOptionsToSignInputs(psbtHex: string, options: SignPsbtOptions): Promise<ToSignInput[]>;
+
+  getPrice(): Promise<any>;
+  getFee(): Promise<any>;
+  getUtxo(address: string): Promise<any>;
 }
 
 const WalletContext = createContext<{
