@@ -8,7 +8,7 @@ export const fetchRPC = {
       mode: 'cors',
       redirect: 'follow',
       referrer: 'no-referrer',
-      body: JSON.stringify(request.payload),
+      body: request.options.method === 'POST' ? JSON.stringify(request.payload) : null,
       headers: {
         ...headers,
         ...(request.options && request.options.headers ? request.options.headers : {})

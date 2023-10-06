@@ -8,6 +8,7 @@ import { isWs } from './providers/utils';
 import { JsonRpc } from './providers/rpcMethod/builder';
 import { SocketConnection } from './providers/baseSocket';
 import { ResponseMiddleware, onResponse } from './providers/responseMiddleware';
+import { DEFAULT_HEADERS, DEFAULT_TIMEOUT } from './providers/rpcMethod/net';
 let window = self;
 const WebSocket = rpcws.Client;
 
@@ -33,7 +34,15 @@ export class ElectrumApi implements ElectrumApiInterface {
   private _promise: Promise<boolean> | undefined;
 
   _init() {
-    this.provider = isWs(this.url) ? new WSProvider(this.url) : new HttpProvider(this.url);
+    this.provider = isWs(this.url)
+      ? new WSProvider(this.url)
+      : new HttpProvider(this.url, {
+          method: 'GET',
+          timeout: DEFAULT_TIMEOUT,
+          headers: DEFAULT_HEADERS,
+          user: null,
+          password: null
+        });
     this.JsonRpc = new JsonRpc();
     this._ws_watch();
   }
@@ -49,33 +58,63 @@ export class ElectrumApi implements ElectrumApiInterface {
     }
   }
 
-  _send = async (method: string, params?: string | any[] | undefined) => {
-    let rpcMethod = method;
-    const payload = this.JsonRpc?.toPayload(rpcMethod, params);
-    try {
-      this.setResMiddleware(
-        (data: any) => {
-          if (!(data instanceof ResponseMiddleware)) {
-            return new ResponseMiddleware(data);
-          } else {
-            return data;
-          }
-        },
-        '*',
-        this.provider!
-      );
-      console.log(payload);
+  public reset() {
+    if (this.provider instanceof WSProvider) {
+      this.provider.reconnect();
+    }
+  }
 
-      const result = await this.provider!.send(payload!);
-      // return result;
-      if ((result as ResponseMiddleware).isError()) {
-        throw (result as ResponseMiddleware).getError;
-      } else {
-        return onResponse(result as ResponseMiddleware);
+  _send = async (method: string, params?: string | any[] | undefined, usePost?: boolean) => {
+    let rpcMethod = method;
+    let payload = this.JsonRpc?.toPayload(rpcMethod, params);
+    this.setResMiddleware(
+      (data: any) => {
+        if (!(data instanceof ResponseMiddleware)) {
+          return new ResponseMiddleware(data);
+        } else {
+          return data;
+        }
+      },
+      '*',
+      this.provider!
+    );
+
+    if (this.provider instanceof HttpProvider && this.provider.options.method === 'GET') {
+      try {
+        let paramstring = '';
+        if (params && params.length > 0) {
+          paramstring = `?params=${JSON.stringify(params)}`;
+        }
+        // ugly changing provder option
+        if (usePost === true) {
+          paramstring = '';
+          this.provider.options.method = 'POST';
+        } else {
+          this.provider.options.method = 'GET';
+        }
+
+        const result = await this.provider!.sendServer(`/${method}${paramstring}`, payload!, undefined);
+        if ((result as ResponseMiddleware).isError()) {
+          throw (result as ResponseMiddleware).getError;
+        } else {
+          return onResponse(result as ResponseMiddleware).response;
+        }
+      } catch (error) {
+        throw error;
       }
-      // getResultForData(result)
-    } catch (e) {
-      throw e;
+    } else {
+      try {
+        const result = await this.provider!.send(payload!);
+        // return result;
+        if ((result as ResponseMiddleware).isError()) {
+          throw (result as ResponseMiddleware).getError;
+        } else {
+          return onResponse(result as ResponseMiddleware);
+        }
+        // getResultForData(result)
+      } catch (e) {
+        throw e;
+      }
     }
   };
 
@@ -185,7 +224,7 @@ export class ElectrumApi implements ElectrumApiInterface {
 
   public async sendTransaction(signedRawtx: string): Promise<any> {
     const p = new Promise((resolve, reject) => {
-      this._send('blockchain.transaction.broadcast', [signedRawtx])
+      this._send('blockchain.transaction.broadcast', [signedRawtx], true)
         .then(function (result: any) {
           console.log('result', result);
           resolve(result);

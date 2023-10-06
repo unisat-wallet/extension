@@ -35,7 +35,7 @@ export default function ARC20BalanceCard(props: ARC20BalanceCardProps) {
       onClick={onClick}>
       <Column full>
         <Row justifyBetween itemsCenter>
-          <Text text={ticker} color="gold" />
+          <Text text={ticker} color="blue" />
           <Tooltip
             title="The transferable amount is the balance that has been inscribed into transfer inscriptions but has not yet been sent."
             overlayStyle={{

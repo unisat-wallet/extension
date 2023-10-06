@@ -21,6 +21,7 @@ import {
   CHAINS_ENUM,
   COIN_NAME,
   COIN_SYMBOL,
+  ELECTRUMX_HTTP_PROXY,
   ELECTRUMX_WSS,
   KEYRING_TYPE,
   KEYRING_TYPES,
@@ -77,10 +78,10 @@ export class WalletController extends BaseController {
   init() {
     try {
       setTimeout(() => {
-        this.atomicalApi = new AtomicalService(ElectrumApi.createClient(ELECTRUMX_WSS));
+        this.atomicalApi = new AtomicalService(ElectrumApi.createClient(ELECTRUMX_HTTP_PROXY));
       }, 3000);
     } catch (error) {
-      throw error;
+      this.atomicalApi?.reset();
     }
   }
 

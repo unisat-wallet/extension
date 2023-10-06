@@ -14,6 +14,7 @@ export interface ElectrumApiInterface {
   open: () => Promise<void | boolean>;
   getUrl: () => string;
   resetConnection: () => Promise<void | boolean>;
+  reset: () => void;
   isOpen: () => boolean;
   sendTransaction: (rawtx: string) => Promise<string>;
   getUnspentAddress: (address: string) => Promise<IUnspentResponse>;
@@ -127,29 +128,30 @@ export interface IAtomicalBalanceItemData {
   $bitwork: {
     bitworkc: string;
     birworkr?: string;
-    $max_mints: number;
-    $max_supply: number;
-    $mint_amount: number;
-    $mint_bitworkc: string;
-    $mint_height: number;
-    $request_ticker: string;
-    $request_ticker_status: {
-      status: TickerStatus;
-      note: string;
-      verified_atomical_id: string;
-    };
-    $ticker: string;
-    $ticker_candidate: TickerCandidate[];
-    atomical_id: string;
-    atomical_number: number;
-    atomical_ref: string;
-    confirmed: boolean;
-    mint_data?: any; // todo
-    mint_info?: any; // dodo
-    subtype: 'decentralized';
-    type: 'FT' | 'NFT';
-    // todo
   };
+  $max_mints: number;
+  $max_supply: number;
+  $mint_amount: number;
+  $mint_bitworkc: string;
+  $mint_height: number;
+  $request_ticker: string;
+  $request_ticker_status: {
+    status: TickerStatus;
+    note: string;
+    verified_atomical_id: string;
+  };
+  $ticker: string;
+  $ticker_candidate: TickerCandidate[];
+  atomical_id: string;
+  atomical_number: number;
+  atomical_ref: string;
+  confirmed: boolean;
+  mint_data?: any; // todo
+  mint_info?: any; // dodo
+  subtype: 'decentralized';
+  type: 'FT' | 'NFT';
+  // todo
+
   $container?: string;
   $realm?: string;
 }

@@ -36,22 +36,22 @@ class WSProvider extends BaseSocket {
     // this.on = this.emitter.on.bind(this);
   }
 
-  on(type: string, handler: Handler) {
+  public on(type: string, handler: Handler) {
     this.emitter.on(type, handler);
     return this;
   }
-  onData(handler: any) {
+  public onData(handler: any) {
     this.emitter.on('data', handler);
     return this;
   }
-  onError(event: any) {
+  public onError(event: any) {
     if (event.code === 'ECONNREFUSED') {
       this.reconnect();
       return;
     }
     super.onError(event);
   }
-  onClose(closeEvent: any) {
+  public onClose(closeEvent: any) {
     if (closeEvent.code !== 1000 || closeEvent.wasClean === false) {
       this.reconnect();
       return;
@@ -59,23 +59,23 @@ class WSProvider extends BaseSocket {
     super.onClose();
   }
 
-  createWebsocketProvider(url: string, options: any = {}) {
+  public createWebsocketProvider(url: string, options: any = {}) {
     // tslint:disable-next-line: no-string-literal
     return new self.WebSocket(url, options.protocol);
   }
 
-  reconnect() {
+  public reconnect() {
     setTimeout(() => {
       this.removeAllSocketListeners();
       this.connection = this.createWebsocketProvider(this.url, this.options);
       this.registerEventListeners();
     }, 5000);
   }
-  isConnecting() {
+  public isConnecting() {
     return this.connection.readyState === this.connection.CONNECTING;
   }
 
-  send(payload: RPCRequestPayload<object>): Promise<any> {
+  public send(payload: RPCRequestPayload<object>): Promise<any> {
     const [tReq, tRes] = this.getMiddleware(payload.method);
     const reqMiddleware = composeMiddleware(...tReq);
     const resMiddleware = composeMiddleware(...tRes);
@@ -109,7 +109,7 @@ class WSProvider extends BaseSocket {
     });
   }
 
-  async subscribe(payload: RPCRequestPayload<any[]>) {
+  public async subscribe(payload: RPCRequestPayload<any[]>) {
     const response = await this.send(payload);
     const responseValidateResult = this.validate(response);
     if (responseValidateResult instanceof Error) {
@@ -125,7 +125,7 @@ class WSProvider extends BaseSocket {
     return response.result;
   }
 
-  async unsubscribe(payload: RPCRequestPayload<any[]>) {
+  public async unsubscribe(payload: RPCRequestPayload<any[]>) {
     const subscriptionId = payload.params[0];
     if (this.hasSubscription(subscriptionId)) {
       return this.send(payload).then((response) => {
@@ -141,7 +141,7 @@ class WSProvider extends BaseSocket {
     return Promise.reject(new Error(`Provider error: Subscription with ID ${subscriptionId} does not exist.`));
   }
 
-  async clearSubscriptions(unsubscribeMethod: string) {
+  public async clearSubscriptions(unsubscribeMethod: string) {
     const unsubscribePromises: Array<Promise<any>> = [];
 
     Object.keys(this.subscriptions).forEach((key) => {
@@ -156,7 +156,7 @@ class WSProvider extends BaseSocket {
     return true;
   }
 
-  registerEventListeners() {
+  public registerEventListeners() {
     this.connection.onmessage = this.onMessage.bind(this);
     this.connection.onopen = this.onReady.bind(this);
     this.connection.onopen = this.onConnect.bind(this);
@@ -164,7 +164,7 @@ class WSProvider extends BaseSocket {
     this.connection.onerror = this.onError.bind(this);
   }
 
-  onMessage(msg: MessageEvent) {
+  public onMessage(msg: MessageEvent) {
     if (msg && msg.data) {
       let result;
       let event;

@@ -1,7 +1,5 @@
 import { detectAddressTypeToScripthash } from './utils';
 import { ElectrumApiInterface, IAtomicalBalanceSummary, IAtomicalBalances, ISelectedUtxo } from './interfaces/api';
-import { ElectrumApi } from './eletrum';
-import { ELECTRUMX_WSS } from '@/shared/constant';
 
 export class AtomicalService {
   constructor(public electrumApi: ElectrumApiInterface) {}
@@ -20,6 +18,10 @@ export class AtomicalService {
 
   async close() {
     await this.electrumApi.close();
+  }
+
+  public reset() {
+    this.electrumApi.reset();
   }
 
   async walletInfo(
