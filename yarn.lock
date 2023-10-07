@@ -2701,20 +2701,20 @@
     "@typescript-eslint/types" "5.53.0"
     eslint-visitor-keys "^3.3.0"
 
-"@unisat/bitcoin-hd-keyring@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@unisat/bitcoin-hd-keyring/-/bitcoin-hd-keyring-1.0.0.tgz#167ac4fc9fd86d844172a5cf9ba6e3f63a340a29"
-  integrity sha512-u3akPRnwN/dV90AhPazqMfVOLN3pDOJvfaibYX+l8RWSHg2aRttW7ifMENToPjuOng/fBg7u2zYc0gvdM4BOzw==
+"@unisat/bitcoin-hd-keyring@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@unisat/bitcoin-hd-keyring/-/bitcoin-hd-keyring-1.0.1.tgz#fcbcbb2a5261552d3fea8b24708fa603ec1063db"
+  integrity sha512-n9f2fX14xhDR2eWN/bQHwKw9RfIbpeydt3niCBARP1qBRphh9jlpUNK4E7S4sMIbrlg0PbpAdD+ftiz3tqJxtg==
   dependencies:
-    "@unisat/bitcoin-simple-keyring" "^0.1.8"
+    "@unisat/bitcoin-simple-keyring" "^0.1.9"
     bip39 "^3.1.0"
     bitcore-lib "^10.0.0"
     hdkey "^2.1.0"
 
-"@unisat/bitcoin-simple-keyring@^0.1.8":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@unisat/bitcoin-simple-keyring/-/bitcoin-simple-keyring-0.1.8.tgz#bd46576458af0578f0ba1a9ebd14a409c60b35dc"
-  integrity sha512-OmfGhz2h/eZ2h+Gv8+74WCtjv56N5FEl7AzsUMopTrwRUz58DtmpJt0BEal8eDvT9HkIQyTsw8ZADW9yI0+nEg==
+"@unisat/bitcoin-simple-keyring@^0.1.9":
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/@unisat/bitcoin-simple-keyring/-/bitcoin-simple-keyring-0.1.9.tgz#d553f489b3449393193b9983ecd2a4421a3af594"
+  integrity sha512-2+RpxL21Q0SWaCHBIrhfNZ8GGBI/Ovw0IkMz94BzCsgJc1eDGA5ZT8tZD0Y9HkcpGQ9Tt7AnEBdVpimlQQh8uA==
   dependencies:
     bitcoinjs-lib "^6.1.0"
     bitcore-lib "^10.0.0"

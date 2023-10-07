@@ -411,7 +411,8 @@ export class WalletController extends BaseController {
         return {
           index,
           publicKey: account.pubkey,
-          sighashTypes
+          sighashTypes,
+          disableTweakSigner: input.disableTweakSigner
         };
       });
     } else {
