@@ -1,6 +1,11 @@
 
 # UniSat Wallet Release Notes
 
+## v1.1.31
+- Support .x as recipient address
+- Fix the signature error of P2TR #86
+- Restrict the input field's content
+
 ## v1.1.30
 - Added the parameter "toSignInputs" to the "signPsbt" method
 
