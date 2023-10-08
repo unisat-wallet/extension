@@ -190,7 +190,7 @@ export const AddressInput = (props: InputProps) => {
             setInscription(inscription);
             if (inscription.utxoConfirmation < SAFE_DOMAIN_CONFIRMATION) {
               setParseError(
-                `This domain recently has been transferred or inscribed. Please wait for block confirmations (${inscription.utxoConfirmation}/3).`
+                `This domain has been transferred or inscribed recently. Please wait for block confirmations (${inscription.utxoConfirmation}/3).`
               );
               return;
             }
