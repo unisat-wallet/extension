@@ -32,7 +32,9 @@ export interface InputProps {
   containerStyle?: CSSProperties;
   addressInputData?: { address: string; domain: string };
   onAddressInputChange?: (params: { address: string; domain: string; inscription?: Inscription }) => void;
+  onAmountInputChange?: (amount: string) => void;
   disabled?: boolean;
+  disableDecimal?: boolean;
 }
 
 type Presets = keyof typeof $inputPresets;
@@ -86,11 +88,43 @@ function PasswordInput(props: InputProps) {
 }
 
 function AmountInput(props: InputProps) {
-  const { placeholder, disabled, style: $inputStyleOverride, ...rest } = props;
+  const { placeholder, onAmountInputChange, disabled, style: $inputStyleOverride, disableDecimal, ...rest } = props;
   const $style = Object.assign({}, $baseInputStyle, $inputStyleOverride, disabled ? { color: colors.textDim } : {});
+
+  if (!onAmountInputChange) {
+    return <div />;
+  }
+  const [inputValue, setInputValue] = useState('');
+  const [validAmount, setValidAmount] = useState('');
+  useEffect(() => {
+    onAmountInputChange(validAmount);
+  }, [validAmount]);
+
+  const handleInputAmount = (e) => {
+    const value = e.target.value;
+    if (disableDecimal) {
+      if (/^[1-9]\d*$/.test(value) || value === '') {
+        setValidAmount(value);
+        setInputValue(value);
+      }
+    } else {
+      if (/^\d*\.?\d*$/.test(value) || value === '') {
+        setValidAmount(value);
+        setInputValue(value);
+      }
+    }
+  };
   return (
     <div style={$baseContainerStyle}>
-      <input placeholder={placeholder || 'Amount'} type={'number'} style={$style} disabled={disabled} {...rest} />
+      <input
+        placeholder={placeholder || 'Amount'}
+        type={'text'}
+        value={inputValue}
+        onChange={handleInputAmount}
+        style={$style}
+        disabled={disabled}
+        {...rest}
+      />
     </div>
   );
 }

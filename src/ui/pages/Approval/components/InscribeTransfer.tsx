@@ -289,8 +289,8 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
                 placeholder={'Amount'}
                 value={inputAmount}
                 autoFocus={true}
-                onChange={async (e) => {
-                  setInputAmount(e.target.value);
+                onAmountInputChange={(amount) => {
+                  setInputAmount(amount);
                 }}
                 disabled={inputDisabled}
               />
@@ -494,7 +494,10 @@ function InscribeSignStep({
       params={{
         data: {
           psbtHex: contextData.rawTxInfo!.psbtHex,
-          type: TxType.SEND_BITCOIN
+          type: TxType.SEND_BITCOIN,
+          options: {
+            autoFinalized: true
+          }
         }
       }}
       handleConfirm={() => {

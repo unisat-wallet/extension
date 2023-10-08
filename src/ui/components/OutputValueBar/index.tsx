@@ -71,11 +71,12 @@ export function OutputValueBar({ defaultValue, onChange }: { defaultValue: numbe
       </Row>
       {optionIndex === FeeRateType.CUSTOM && (
         <Input
+          preset="amount"
+          disableDecimal
           placeholder={'sats'}
           defaultValue={inputVal}
           value={inputVal}
-          onChange={async (e) => {
-            const val = e.target.value + '';
+          onAmountInputChange={(val) => {
             setInputVal(val);
           }}
           onBlur={() => {

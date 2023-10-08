@@ -179,11 +179,11 @@ export default function TxCreateScreen() {
             placeholder={'Amount'}
             defaultValue={inputAmount}
             value={inputAmount}
-            onChange={async (e) => {
+            onAmountInputChange={(amount) => {
               if (autoAdjust == true) {
                 setAutoAdjust(false);
               }
-              setInputAmount(e.target.value);
+              setInputAmount(amount);
             }}
           />
         </Column>
