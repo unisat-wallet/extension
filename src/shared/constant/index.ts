@@ -261,8 +261,8 @@ export const TO_LOCALE_STRING_CONFIG = {
   minimumFractionDigits: 8
 };
 
-export const SATS_DOMAIN = '.sats';
-export const UNISAT_DOMAIN = '.unisat';
+export const SUPPORTED_DOMAINS = ['sats', 'unisat', 'x'];
+export const SAFE_DOMAIN_CONFIRMATION = 3;
 
 export const GITHUB_URL = 'https://github.com/unisat-wallet/extension';
 export const DISCORD_URL = 'https://discord.com/invite/EMskB2sMz8';

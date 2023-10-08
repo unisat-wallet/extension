@@ -71,6 +71,8 @@ export interface Inscription {
   output: string;
   offset: number;
   contentBody: string;
+  utxoHeight: number;
+  utxoConfirmation: number;
 }
 
 export interface InscriptionMintedItem {
