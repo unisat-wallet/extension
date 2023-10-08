@@ -318,13 +318,13 @@ export default function MultiSignPsbt({
           <Column>
             <Text text="Phishing Detection" preset="title-bold" textCenter mt="xxl" />
             <Text text="Malicious behavior and suspicious activity have been detected." mt="md" />
-            <Text text="Your access to this page has been restricted by Wizz Wallet as it might be unsafe." mt="md" />
+            <Text text="Your access to this page has been restricted by ATOM Wallet as it might be unsafe." mt="md" />
           </Column>
         </Content>
 
         <Footer>
           <Row full>
-            <Button text="Reject (blocked by Wizz Wallet)" preset="danger" onClick={handleCancel} full />
+            <Button text="Reject (blocked by ATOM Wallet)" preset="danger" onClick={handleCancel} full />
           </Row>
         </Footer>
       </Layout>

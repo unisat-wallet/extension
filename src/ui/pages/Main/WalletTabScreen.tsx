@@ -433,7 +433,7 @@ function ARC20List() {
               key={index}
               tokenBalance={data}
               onClick={() => {
-                alert('https://wizzwallet.io');
+                alert('https://atomicalswallet.com');
                 // navigate('BRC20TokenScreen', { tokenBalance: data, ticker: data.ticker });
               }}
             />

@@ -355,12 +355,12 @@ if (!window.atom) {
   });
 }
 
-Object.defineProperty(window, 'unisat', {
-  value: new Proxy(provider, {
-    deleteProperty: () => true
-  }),
-  writable: false
-});
+// Object.defineProperty(window, 'unisat', {
+//   value: new Proxy(provider, {
+//     deleteProperty: () => true
+//   }),
+//   writable: false
+// });
 
 Object.defineProperty(window, 'wizz', {
   value: new Proxy(provider, {

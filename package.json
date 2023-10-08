@@ -1,6 +1,6 @@
 {
-  "name": "wizz-extension",
-  "version": "1.1.30",
+  "name": "atom-extension",
+  "version": "1.1.31",
   "private": true,
   "homepage": "https://github.com/AstroxNetwork/extension#readme",
   "bugs": {
