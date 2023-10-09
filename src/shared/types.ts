@@ -72,6 +72,8 @@ export interface Inscription {
   output: string;
   offset: number;
   contentBody: string;
+  utxoHeight: number;
+  utxoConfirmation: number;
 }
 
 export interface InscriptionMintedItem {
@@ -136,6 +138,7 @@ export enum TxType {
 interface BaseUserToSignInput {
   index: number;
   sighashTypes: number[] | undefined;
+  disableTweakSigner?: boolean;
 }
 
 export interface AddressUserToSignInput extends BaseUserToSignInput {
