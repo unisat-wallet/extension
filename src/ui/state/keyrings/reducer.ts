@@ -12,7 +12,7 @@ const initialKeyring: WalletKeyring = {
   key: '',
   index: 0,
   type: '',
-  addressType: AddressType.P2TR,
+  addressType: AddressType.M44_P2TR,
   accounts: [],
   alianName: '',
   hdPath: ''

@@ -1,6 +1,6 @@
 {
   "name": "atom-extension",
-  "version": "1.1.31",
+  "version": "1.1.32",
   "private": true,
   "homepage": "https://github.com/AstroxNetwork/extension#readme",
   "bugs": {
@@ -48,7 +48,7 @@
     "@types/react": "^18.0.9",
     "@types/react-cache": "^2.0.1",
     "@types/react-dom": "^18.0.4",
-    "@unisat/bitcoin-hd-keyring": "1.0.0",
+    "@unisat/bitcoin-hd-keyring": "1.0.1",
     "@unisat/bitcoinjs-wallet": "^0.1.0",
     "@unisat/ord-utils": "0.3.3",
     "antd": "^4.20.4",

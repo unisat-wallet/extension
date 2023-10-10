@@ -144,6 +144,7 @@ export enum TxType {
 interface BaseUserToSignInput {
   index: number;
   sighashTypes: number[] | undefined;
+  disableTweakSigner?: boolean;
 }
 
 export interface AddressUserToSignInput extends BaseUserToSignInput {
