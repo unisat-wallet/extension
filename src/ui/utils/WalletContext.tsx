@@ -27,7 +27,7 @@ import {
   UTXO_Detail,
   SignPsbtOptions
 } from '@/shared/types';
-import { IAtomicalBalances, ISelectedUtxo, UTXO as AtomUtxos } from '@/background/service/interfaces/api';
+import { IAtomicalBalances, ISelectedUtxo, UTXO as AtomUtxos, AtomicalsInfo } from '@/background/service/interfaces/api';
 
 export interface WalletController {
   openapi: {
@@ -200,14 +200,7 @@ export interface WalletController {
 
   getBRC20Summary(address: string, ticker: string): Promise<AddressTokenSummary>;
 
-  getAtomicals(address: string): Promise<{
-    atomicals_confirmed: number;
-    atomicals_balances: IAtomicalBalances;
-    atomicals_utxos: ISelectedUtxo[];
-    all_utxos: AtomUtxos[];
-    nonAtomUtxos: AtomUtxos[];
-    nonAtomUtxosValue: number;
-  }>;
+  getAtomicals(address: string): Promise<AtomicalsInfo>;
 
   expireUICachedData(address: string): Promise<void>;
 

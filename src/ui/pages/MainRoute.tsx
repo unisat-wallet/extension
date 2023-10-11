@@ -53,7 +53,7 @@ import TxSuccessScreen from './Wallet/TxSuccessScreen';
 import './index.module.less';
 import ARC20SendScreen from './ARC20/ARC20SendScreen';
 import ARC20TokenScreen from './ARC20/ARC20TokenScreen';
-import ARC20TxConfirmScreen from './ARC20/ARC20TxConfrmScreen';
+import ARC20TxConfirmScreen from './ARC20/ARC20TxConfrimScreen';
 
 const routes = {
   BoostScreen: {

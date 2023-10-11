@@ -416,7 +416,7 @@ function ARC20List() {
   }, [pagination]);
 
   if (
-    atomicals?.atomicals_balances === undefined
+    atomicals?.atomicalBalances === undefined
     ) {
     return (
       <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
@@ -425,7 +425,7 @@ function ARC20List() {
     );
   }
 
-  if (atomicals.atomicals_balances === undefined) {
+  if (atomicals.atomicalBalances === undefined) {
     return (
       <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
         <Empty text="Empty" />
@@ -436,7 +436,7 @@ function ARC20List() {
   return (
     <Column>
       <Row style={{ flexWrap: 'wrap' }} gap="sm">
-        {Object.values(atomicals.atomicals_balances)
+        {Object.values(atomicals.atomicalBalances)
           .filter((d) => d.type === 'FT')
           .map((data, index) => (
             <ARC20BalanceCard

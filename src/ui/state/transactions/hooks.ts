@@ -91,7 +91,7 @@ export function useCreateARC20TxCallback() {
     nonAtomUtxos: UTXO_ATOM[],
     satsbyte: number,
     preload: boolean
-  ) => {
+  ):RawTxInfo | undefined => {
     if (transferOptions.atomicalsInfo.type !== "FT") {
       throw "Atomical is not an FT. It is expected to be an FT type";
     }
@@ -157,12 +157,10 @@ export function useCreateARC20TxCallback() {
       return undefined;
     }
 
-    if (preload) {
-      if (transferOptions.selectedUtxos.length === 0) {
-        expectedFundinng = 0;
-      } else {
-        expectedFundinng = expectedSatoshisDeposit;
-      }
+    if (transferOptions.selectedUtxos.length === 0) {
+      expectedFundinng = 0;
+    } else {
+      expectedFundinng = expectedSatoshisDeposit;
     }
     // add nonAtomUtxos least to expected deposit value
     console.log("expectedFundinng", expectedFundinng);

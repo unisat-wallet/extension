@@ -1,4 +1,6 @@
+import { Inscription, UTXO_ATOM } from '@/shared/types';
 import { UTXO } from './utxo';
+import { MempoolUtxo } from '../mempool';
 
 export { UTXO };
 
@@ -155,4 +157,21 @@ export interface IAtomicalBalanceItemData {
 
   $container?: string;
   $realm?: string;
+}
+
+
+
+
+export interface AtomicalsInfo {
+  atomicalConfirmed: number;
+  atomicalBalances: IAtomicalBalances;
+  atomicalsUtxos: ISelectedUtxo[];
+  ordinalItems: Inscription[];
+  allUtxos: UTXO_ATOM[];
+  nonAtomicalUtxos: UTXO[];
+  nonAtomUtxosValue: number;
+  ordinalSats: number;
+  atomicalUnconfirmed: number;
+  mempoolUtxo: MempoolUtxo[];
+  mempoolBalance: number;
 }

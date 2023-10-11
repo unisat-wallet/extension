@@ -112,6 +112,7 @@ export class AtomicalService {
       throw new Error('Connection Error, retrying...');
     }
   }
+  
 
   async getBalanceSummary(atomicalId: string, address: string): Promise<IAtomicalBalanceSummary> {
     const res = await this.electrumApi.atomicalsByAddress(address);

@@ -3,19 +3,13 @@ import { createSlice } from '@reduxjs/toolkit';
 
 import { updateVersion } from '../global/actions';
 import { IAtomicalBalances, ISelectedUtxo, UTXO as AtomUTXO } from '@/background/service/interfaces/api';
+import { AtomicalsInfo } from '@/background/service/interfaces/api';
 
 export interface AccountsState {
   accounts: Account[];
   current: Account;
   loading: boolean;
-  atomicals:{
-    atomicals_confirmed: number;
-    atomicals_balances: IAtomicalBalances;
-    atomicals_utxos: ISelectedUtxo[];
-    all_utxos: AtomUTXO[];
-    nonAtomUtxos: AtomUTXO[];
-    nonAtomUtxosValue: number;
-  };
+  atomicals: AtomicalsInfo;
   balanceMap: {
     [key: string]: {
       amount: string;
@@ -57,12 +51,18 @@ export const initialState: AccountsState = {
   current: initialAccount,
   loading: false,
   atomicals:{
-    atomicals_confirmed: 0,
-    atomicals_balances: {},
-    atomicals_utxos: [],
-    all_utxos: [],
-    nonAtomUtxos: [],
+    atomicalConfirmed: 0,
+    atomicalBalances: {},
+    atomicalsUtxos: [],
+    allUtxos: [],
+    nonAtomicalUtxos: [],
     nonAtomUtxosValue: 0,
+    ordinalItems: [],
+    ordinalSats: 0,
+    atomicalUnconfirmed: 0,
+    mempoolUtxo: [],
+    mempoolBalance: 0
+
   },
   balanceMap: {},
   historyMap: {},
@@ -117,14 +117,7 @@ const slice = createSlice({
       state.balanceMap[address].expired = false;
     },
     setAtomicals(state, action: {
-      payload: {
-        atomicals_confirmed: number;
-        atomicals_balances: IAtomicalBalances;
-        atomicals_utxos: ISelectedUtxo[];
-        all_utxos: AtomUTXO[];
-        nonAtomUtxos: AtomUTXO[];
-        nonAtomUtxosValue: number;
-      };
+      payload: AtomicalsInfo;
     }){
       const {
         payload

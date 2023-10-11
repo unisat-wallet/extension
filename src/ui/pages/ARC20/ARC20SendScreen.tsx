@@ -81,8 +81,8 @@ function Step1({
   const createARC20Tx = useCreateARC20TxCallback();
   const atomicals = useAtomicals();
   console.log('atomicals', atomicals);
-  const relatedAtomUtxos = atomicals.atomicals_utxos
-    ? atomicals.atomicals_utxos.filter((o) => o.atomicals[0] === contextData.tokenBalance.atomical_id)
+  const relatedAtomUtxos = atomicals.atomicalsUtxos
+    ? atomicals.atomicalsUtxos.filter((o) => o.atomicals[0] === contextData.tokenBalance.atomical_id)
     : [];
 
   useEffect(() => {
@@ -192,7 +192,8 @@ function Step1({
       selectedUtxos: utxos ?? [],
       outputs: outputs ?? [],
     };
-    const rawTxInfo = createARC20Tx(obj, toInfo, atomicals.nonAtomUtxos, 20, false);
+    const rawTxInfo = createARC20Tx(obj, toInfo, atomicals.nonAtomicalUtxos, 20, false);
+    console.log('rawTxInfo', rawTxInfo)
     navigate('ARC20ConfirmScreen', { rawTxInfo });
   };
 
