@@ -1,5 +1,16 @@
 import { MEMPOOL_URL } from '@/shared/constant';
 
+export interface MempoolUtxo {
+  txid: string;
+  vout: number;
+  status: {
+    confirmed: true;
+    block_height: number;
+    block_hash: string;
+    block_time: number;
+  };
+  value: number;
+}
 export class MempoolService {
   constructor(public host: string = MEMPOOL_URL) {}
   public getHost() {

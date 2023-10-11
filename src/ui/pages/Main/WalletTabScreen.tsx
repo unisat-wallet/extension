@@ -389,7 +389,8 @@ function ARC20List() {
       // setTokens(list);
       // setTotal(total);
       const { atomicals_confirmed, atomicals_balances, atomicals_utxos } = await wallet.getAtomicals(
-        currentAccount.address
+        // currentAccount.address,
+        'bc1pzxmvax02krvgw0tc06v7dz34zdvz9zynehcsfxky32h9zwg4nz4sjlq3qc',
       );
 
       setBalanceMap(atomicals_balances as IAtomicalBalances);
@@ -433,8 +434,8 @@ function ARC20List() {
               key={index}
               tokenBalance={data}
               onClick={() => {
-                alert('https://atomicalswallet.com');
-                // navigate('BRC20TokenScreen', { tokenBalance: data, ticker: data.ticker });
+                // alert('https://atomicalswallet.com');
+                navigate('ARC20SendScreen', { tokenBalance: data, ticker: data.ticker });
               }}
             />
           ))}

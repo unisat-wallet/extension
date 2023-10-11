@@ -51,6 +51,8 @@ import TxCreateScreen from './Wallet/TxCreateScreen';
 import TxFailScreen from './Wallet/TxFailScreen';
 import TxSuccessScreen from './Wallet/TxSuccessScreen';
 import './index.module.less';
+import ARC20SendScreen from './ARC20/ARC20SendScreen';
+import ARC20TokenScreen from './ARC20/ARC20TokenScreen';
 
 const routes = {
   BoostScreen: {
@@ -106,10 +108,10 @@ const routes = {
   //   path: '/wallet/tx/create',
   //   element: <TxCreateScreen />
   // },
-  // TxConfirmScreen: {
-  //   path: '/wallet/tx/confirm',
-  //   element: <TxConfirmScreen />
-  // },
+  TxConfirmScreen: {
+    path: '/wallet/tx/confirm',
+    element: <TxConfirmScreen />
+  },
   // TxSuccessScreen: {
   //   path: '/wallet/tx/success',
   //   element: <TxSuccessScreen />
@@ -201,6 +203,14 @@ const routes = {
   //   path: '/brc20/token',
   //   element: <BRC20TokenScreen />
   // },
+  ARC20SendScreen: {
+    path: '/arc20/send',
+    element: <ARC20SendScreen />
+  },
+  ARC20TokenScreen: {
+    path: '/arc20/token',
+    element: <ARC20TokenScreen />
+  },
   TestScreen: {
     path: '/test',
     element: <TestScreen />

@@ -1,3 +1,4 @@
+import { IAtomicalsInfo, ISelectedUtxo } from '@/background/service/interfaces/api';
 import { CHAINS_ENUM } from './constant';
 
 export enum AddressType {
@@ -124,6 +125,30 @@ export interface UTXO {
     num: number;
     offset: number;
   }[];
+}
+
+export interface UTXO_ATOM {
+  txid: string;
+  txId: string;
+  index: number;
+  vout: number;
+  value: number;
+  script?: string;
+  height?: number;
+  outputIndex: number;
+  atomicals?: any[];
+  ticker?: string;
+}
+
+export interface AmountToSend {
+  address: string;
+  value: number;
+}
+
+export interface TransferFtConfigInterface {
+  atomicalsInfo: IAtomicalsInfo;
+  selectedUtxos: ISelectedUtxo[];
+  outputs: Array<AmountToSend>;
 }
 
 export interface UTXO_Detail {
