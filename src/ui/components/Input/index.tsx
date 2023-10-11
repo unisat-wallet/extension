@@ -10,6 +10,7 @@ import { spacing } from '@/ui/theme/spacing';
 import { useWallet } from '@/ui/utils';
 
 import { AccordingInscription } from '../AccordingInscription';
+import { useTools } from '../ActionComponent';
 import { CopyableAddress } from '../CopyableAddress';
 import { Icon } from '../Icon';
 import { Row } from '../Row';
@@ -145,7 +146,7 @@ export const AddressInput = (props: InputProps) => {
   const [inscription, setInscription] = useState<Inscription>();
 
   const wallet = useWallet();
-
+  const tools = useTools();
   useEffect(() => {
     onAddressInputChange({
       address: validAddress,
@@ -154,10 +155,9 @@ export const AddressInput = (props: InputProps) => {
     });
   }, [validAddress]);
 
-  const handleInputAddress = (e) => {
-    const inputAddress = e.target.value;
-    setInputVal(inputAddress);
+  const [searching, setSearching] = useState(false);
 
+  const resetState = () => {
     if (parseError) {
       setParseError('');
     }
@@ -175,14 +175,23 @@ export const AddressInput = (props: InputProps) => {
     if (inscription) {
       setInscription(undefined);
     }
+  };
+
+  const handleInputAddress = (e) => {
+    const inputAddress = e.target.value;
+    setInputVal(inputAddress);
+
+    resetState();
 
     const teststr = inputAddress.toLowerCase();
     const satsname = getSatsName(teststr);
     if (satsname) {
       if (SUPPORTED_DOMAINS.includes(satsname.suffix)) {
+        setSearching(true);
         wallet
           .queryDomainInfo(encodeURIComponent(inputAddress))
           .then((inscription) => {
+            resetState();
             if (!inscription) {
               setParseError(`${inputAddress} does not exist`);
               return;
@@ -202,6 +211,9 @@ export const AddressInput = (props: InputProps) => {
           .catch((err: Error) => {
             const errMsg = err.message + ' for ' + inputAddress;
             setFormatError(errMsg);
+          })
+          .finally(() => {
+            setSearching(false);
           });
       } else {
         const names = SUPPORTED_DOMAINS.map((v) => `.${v}`);
@@ -243,6 +255,11 @@ export const AddressInput = (props: InputProps) => {
           {...rest}
         />
 
+        {searching && (
+          <Row full mt="sm">
+            <Text preset="sub" text={'Loading...'} />
+          </Row>
+        )}
         {inscription && (
           <Row full itemsCenter mt="sm">
             <CopyableAddress address={parseAddress} />
