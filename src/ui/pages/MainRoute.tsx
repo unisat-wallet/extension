@@ -53,6 +53,7 @@ import TxSuccessScreen from './Wallet/TxSuccessScreen';
 import './index.module.less';
 import ARC20SendScreen from './ARC20/ARC20SendScreen';
 import ARC20TokenScreen from './ARC20/ARC20TokenScreen';
+import ARC20TxConfirmScreen from './ARC20/ARC20TxConfrmScreen';
 
 const routes = {
   BoostScreen: {
@@ -112,14 +113,14 @@ const routes = {
     path: '/wallet/tx/confirm',
     element: <TxConfirmScreen />
   },
-  // TxSuccessScreen: {
-  //   path: '/wallet/tx/success',
-  //   element: <TxSuccessScreen />
-  // },
-  // TxFailScreen: {
-  //   path: '/wallet/tx/fail',
-  //   element: <TxFailScreen />
-  // },
+  TxSuccessScreen: {
+    path: '/wallet/tx/success',
+    element: <TxSuccessScreen />
+  },
+  TxFailScreen: {
+    path: '/wallet/tx/fail',
+    element: <TxFailScreen />
+  },
 
   // OrdinalsDetailScreen: {
   //   path: '/wallet/ordinals-detail',
@@ -204,13 +205,25 @@ const routes = {
   //   element: <BRC20TokenScreen />
   // },
   ARC20SendScreen: {
-    path: '/arc20/send',
+    path: '/arc20/tx/send',
     element: <ARC20SendScreen />
   },
   ARC20TokenScreen: {
     path: '/arc20/token',
     element: <ARC20TokenScreen />
   },
+  ARC20ConfirmScreen: {
+    path: '/arc20/tx/confirm',
+    element: <ARC20TxConfirmScreen />
+  },
+  // ARC20SuccessScreen: {
+  //   path: '/wallet/tx/success',
+  //   element: <TxSuccessScreen />
+  // },
+  // ARC20FailScreen: {
+  //   path: '/wallet/tx/fail',
+  //   element: <TxFailScreen />
+  // },
   TestScreen: {
     path: '/test',
     element: <TestScreen />

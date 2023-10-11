@@ -303,7 +303,7 @@ export default function SignPsbt({
   const currentAccount = useCurrentAccount();
 
   const [isWarningVisible, setIsWarningVisible] = useState(false);
-
+  console.log('txInfo', txInfo)
   const init = async () => {
     let txError = '';
     if (type === TxType.SEND_BITCOIN) {

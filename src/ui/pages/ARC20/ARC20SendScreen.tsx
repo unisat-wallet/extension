@@ -18,7 +18,7 @@ import {
 } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
-import { isValidAddress, satoshisToAmount, useWallet } from '@/ui/utils';
+import { isValidAddress, satoshisToAmount, useLocationState, useWallet } from '@/ui/utils';
 
 import { SignPsbt } from '../Approval/components';
 import { useNavigate } from '../MainRoute';
@@ -110,7 +110,7 @@ function Step1({
   } = useMemo(() => {
     const currentOutputValue = Number(inputAmount);
     if (currentOutputValue < DUST_AMOUNT) {
-      return { error: `Amount must be at least ${DUST_AMOUNT} BTC` };
+      return { error: `Amount must be at least ${DUST_AMOUNT} sats` };
     }
     const sorted = Array.from(relatedAtomUtxos).sort((a, b) => b.value - a.value);
     console.log('sorted', sorted);
@@ -193,7 +193,7 @@ function Step1({
       outputs: outputs ?? [],
     };
     const rawTxInfo = createARC20Tx(obj, toInfo, atomicals.nonAtomUtxos, 20, false);
-    navigate('TxConfirmScreen', { rawTxInfo });
+    navigate('ARC20ConfirmScreen', { rawTxInfo });
   };
 
   return (
@@ -258,6 +258,7 @@ function Step1({
   );
 }
 
+
 const ARC20SendScreen = () => {
   const { state } = useLocation();
   const props = state as {
@@ -297,7 +298,8 @@ const ARC20SendScreen = () => {
     }
     // else if (contextData.tabKey === TabKey.STEP2) {
     //   return <Step2 contextData={contextData} updateContextData={updateContextData} />;
-    // } else {
+    // } 
+    // else {
     //   return <Step3 contextData={contextData} updateContextData={updateContextData} />;
     // }
   }, [contextData]);
