@@ -295,3 +295,5 @@ export const ELECTRUMX_HTTP_PROXY = 'https://ep.atomicals.xyz/proxy';
 export const CHANNEL = process.env.channel!;
 export const VERSION = process.env.release!;
 export const MANIFEST_VERSION = process.env.manifest!;
+
+export const DUST_AMOUNT = 600;

@@ -81,12 +81,13 @@ export function useCreateBitcoinTxCallback() {
 export function useCreateARC20TxCallback() {
   const dispatch = useAppDispatch();
   const wallet = useWallet();
-  
+  const account = useCurrentAccount();
   const fromAddress = useAccountAddress();
   const utxos = useUtxos();
   const fetchUtxos = useFetchUtxosCallback();
   return useCallback((
     transferOptions: TransferFtConfigInterface,
+    toAddressInfo: ToAddressInfo,
     nonAtomUtxos: UTXO_ATOM[],
     satsbyte: number,
     preload: boolean
@@ -94,7 +95,8 @@ export function useCreateARC20TxCallback() {
     if (transferOptions.atomicalsInfo.type !== "FT") {
       throw "Atomical is not an FT. It is expected to be an FT type";
     }
-    const pubkey = wallet.getAccounts()[0].pubkey;
+    // const accounts = 
+    const pubkey = account.pubkey;
     console.log('pubkey',pubkey)
     const xpub = (toXOnly(Buffer.from(pubkey, "hex")) as Buffer).toString(
       "hex"
@@ -168,7 +170,7 @@ export function useCreateARC20TxCallback() {
       let addedValue = 0;
       const addedInputs: UTXO_ATOM[] = [];
 
-      for (let i = 0; i <= nonAtomUtxos.length; i += 1) {
+      for (let i = 0; i < nonAtomUtxos.length; i ++) {
         const utxo = nonAtomUtxos[i];
 
         if (addedValue >= expectedSatoshisDeposit) {
@@ -197,9 +199,15 @@ export function useCreateARC20TxCallback() {
           address: fromAddress,
         });
       }
-      const printedPsbt = psbt.toHex();
-      console.log("signPsbt start", printedPsbt);
-      
+      const psbtHex = psbt.toHex();
+      console.log("signPsbt start", psbtHex);
+      const rawTxInfo: RawTxInfo = {
+        psbtHex,
+        rawtx: '',
+        toAddressInfo,
+        fee: expectedFundinng
+      };
+      return rawTxInfo;
     }
   },  [dispatch, wallet, fromAddress, utxos, fetchUtxos])
 }

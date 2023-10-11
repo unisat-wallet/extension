@@ -191,3 +191,33 @@ export const calculateFTFundsRequired = (
     expectedSatoshisDeposit,
   };
 };
+
+export function flattenObject(ob: any = {}) {
+  const toReturn: { [key: string]: any } = {};
+
+  for (const i in ob) {
+    if (Object.prototype.hasOwnProperty.call(ob, i)) {
+      if (typeof ob[i] == "object" && ob[i] !== null) {
+        const flatObject = flattenObject(ob[i]);
+        for (const x in flatObject) {
+          if (Object.prototype.hasOwnProperty.call(flatObject, x)) {
+            toReturn[i + "." + x] = flatObject[x];
+          }
+        }
+      } else {
+        toReturn[i] = ob[i];
+      }
+    }
+  }
+  return toReturn;
+}
+
+export function findValueInDeepObject(obj: any, key: string): any | undefined {
+  const flattened = flattenObject(obj);
+  const found = Object.keys(flattened).find((_key) => _key.includes(key));
+  if (found) {
+    return flattened[found];
+  } else {
+    return undefined;
+  }
+}

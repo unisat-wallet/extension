@@ -16,7 +16,7 @@ import { Pagination } from '@/ui/components/Pagination';
 import { TabBar } from '@/ui/components/TabBar';
 import { UpgradePopver } from '@/ui/components/UpgradePopver';
 import { getCurrentTab } from '@/ui/features/browser/tabs';
-import { useAccountBalance, useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { useAccountBalance, useAtomicals, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import {
@@ -77,16 +77,21 @@ export default function WalletTabScreen() {
   }, []);
 
   const tabItems = [
-    // {
-    //   key: WalletTabScreenTabKey.ALL,
-    //   label: 'ALL',
-    //   children: <InscriptionList />
-    // },
     {
-      key: WalletTabScreenTabKey.ARC20,
-      label: 'ARC-20',
+      key: WalletTabScreenTabKey.ALL,
+      label: 'ALL',
       children: <ARC20List />
-    }
+    },
+    {
+      key: WalletTabScreenTabKey.FT,
+      label: 'FT',
+      children: <ARC20List />
+    },
+    {
+      key: WalletTabScreenTabKey.NFT,
+      label: 'NFT',
+      children: <ARC20List />
+    },
   ];
 
   const blockstreamUrl = useBlockstreamUrl();
@@ -150,7 +155,7 @@ export default function WalletTabScreen() {
           <AddressBar />
 
           <Row justifyBetween>
-            {/* <Button
+            <Button
               text="Receive"
               preset="default"
               icon="receive"
@@ -158,9 +163,9 @@ export default function WalletTabScreen() {
                 navigate('ReceiveScreen');
               }}
               full
-            /> */}
+            />
 
-            {/* <Button
+            <Button
               text="Send"
               preset="default"
               icon="send"
@@ -169,7 +174,7 @@ export default function WalletTabScreen() {
               }}
               full
             />
-            {walletConfig.moonPayEnabled && (
+            {/* {walletConfig.moonPayEnabled && (
               <Button
                 text="Buy"
                 preset="default"
@@ -375,40 +380,44 @@ function ARC20List() {
   // const [tokens, setTokens] = useState<TokenBalance[]>([]);
   const [total, setTotal] = useState(-1);
   const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 100 });
-  const [balanceMap, setBalanceMap] = useState<IAtomicalBalances | undefined>(undefined);
+  // const [balanceMap, setBalanceMap] = useState<IAtomicalBalances | undefined>(undefined);
+  const atomicals = useAtomicals();
 
   const tools = useTools();
-  const fetchData = async () => {
-    try {
-      // tools.showLoading(true);
-      // const { list, total } = await wallet.getBRC20List(
-      //   currentAccount.address,
-      //   pagination.currentPage,
-      //   pagination.pageSize
-      // );
-      // setTokens(list);
-      // setTotal(total);
-      const { atomicals_confirmed, atomicals_balances, atomicals_utxos } = await wallet.getAtomicals(
-        // currentAccount.address,
-        'bc1pzxmvax02krvgw0tc06v7dz34zdvz9zynehcsfxky32h9zwg4nz4sjlq3qc',
-      );
+  // const fetchData = async () => {
+  //   try {
+  //     // tools.showLoading(true);
+  //     // const { list, total } = await wallet.getBRC20List(
+  //     //   currentAccount.address,
+  //     //   pagination.currentPage,
+  //     //   pagination.pageSize
+  //     // );
+  //     // setTokens(list);
+  //     // setTotal(total);
+  //     const { atomicals_confirmed, atomicals_balances, atomicals_utxos } = await wallet.getAtomicals(
+  //       // currentAccount.address,
+  //       'bc1pzxmvax02krvgw0tc06v7dz34zdvz9zynehcsfxky32h9zwg4nz4sjlq3qc',
+  //     );
 
-      setBalanceMap(atomicals_balances as IAtomicalBalances);
-      setTotal(atomicals_utxos.length);
+  //     setBalanceMap(atomicals_balances as IAtomicalBalances);
+  //     setTotal(atomicals_utxos.length);
 
-      console.log(atomicals_balances);
-    } catch (e) {
-      tools.toastError((e as Error).message);
-    } finally {
-      // tools.showLoading(false);
-    }
-  };
+  //     console.log(atomicals_balances);
+  //   } catch (e) {
+  //     tools.toastError((e as Error).message);
+  //   } finally {
+  //     // tools.showLoading(false);
+  //   }
+  // };
+  console.log('atomicals',atomicals)
 
   useEffect(() => {
-    fetchData();
+    // fetchData();
   }, [pagination]);
 
-  if (total === -1) {
+  if (
+    atomicals?.atomicals_balances === undefined
+    ) {
     return (
       <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
         <LoadingOutlined />
@@ -416,7 +425,7 @@ function ARC20List() {
     );
   }
 
-  if (balanceMap === undefined) {
+  if (atomicals.atomicals_balances === undefined) {
     return (
       <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
         <Empty text="Empty" />
@@ -427,7 +436,7 @@ function ARC20List() {
   return (
     <Column>
       <Row style={{ flexWrap: 'wrap' }} gap="sm">
-        {Object.values(balanceMap)
+        {Object.values(atomicals.atomicals_balances)
           .filter((d) => d.type === 'FT')
           .map((data, index) => (
             <ARC20BalanceCard

@@ -22,7 +22,9 @@ import { isValidAddress, satoshisToAmount, useWallet } from '@/ui/utils';
 
 import { SignPsbt } from '../Approval/components';
 import { useNavigate } from '../MainRoute';
-import { IAtomicalBalanceItem } from '@/background/service/interfaces/api';
+import { IAtomicalBalanceItem, ISelectedUtxo } from '@/background/service/interfaces/api';
+import { DUST_AMOUNT } from '@/shared/constant';
+import { use } from 'i18next';
 
 enum TabKey {
   STEP1,
@@ -75,14 +77,13 @@ function Step1({
     domain: bitcoinTx.toDomain
   });
   const fromAddress = useAccountAddress();
-
-  const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
-  const createARC20Tx = useCreateARC20TxCallback()
+  // const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
+  const createARC20Tx = useCreateARC20TxCallback();
   const atomicals = useAtomicals();
-  console.log('atomicals',atomicals)
+  console.log('atomicals', atomicals);
   const relatedAtomUtxos = atomicals.atomicals_utxos
-  ? atomicals.atomicals_utxos.filter((o) => o.atomicals[0] === contextData.tokenBalance.atomical_id)
-  : [];
+    ? atomicals.atomicals_utxos.filter((o) => o.atomicals[0] === contextData.tokenBalance.atomical_id)
+    : [];
 
   useEffect(() => {
     setError('');
@@ -92,27 +93,106 @@ function Step1({
       return;
     }
 
-    if(!inputAmount) {
+    if (!inputAmount) {
       return;
     }
     setDisabled(false);
   }, [toInfo, inputAmount, feeRate]);
 
+  const {
+    error: outputError,
+    utxos,
+    outputs,
+    remaining_utxos,
+    remaining,
+    remaining_min,
+    totalAmount
+  } = useMemo(() => {
+    const currentOutputValue = Number(inputAmount);
+    if (currentOutputValue < DUST_AMOUNT) {
+      return { error: `Amount must be at least ${DUST_AMOUNT} BTC` };
+    }
+    const sorted = Array.from(relatedAtomUtxos).sort((a, b) => b.value - a.value);
+    console.log('sorted', sorted);
+    const outputs = [
+      {
+        value: currentOutputValue as number,
+        address: toInfo.address
+      }
+    ];
+    let _selectedValue = 0;
+    const _selectedUtxos: ISelectedUtxo[] = [];
+    let _break_i: number | undefined = undefined;
+    for (let i = 0; i < sorted.length; i++) {
+      _selectedValue += sorted[i].value;
+      _selectedUtxos.push(sorted[i]);
+      if (_selectedValue === currentOutputValue || _selectedValue >= currentOutputValue + DUST_AMOUNT) {
+        _break_i = i;
+        break;
+      }
+    }
+
+    const _remaining_utxos: ISelectedUtxo[] = [];
+    let _remaining_balances = 0;
+    if (_break_i !== undefined) {
+      for (let i = _break_i + 1; i < sorted.length; i += 1) {
+        _remaining_utxos.push(sorted[i]);
+        _remaining_balances += sorted[i].value;
+      }
+    }
+
+    let remaining_min: number | undefined;
+    const diff = _selectedValue - currentOutputValue;
+    if (diff === 0) {
+      remaining_min = 0;
+    } else if (diff >= 2 * DUST_AMOUNT) {
+      remaining_min = diff - DUST_AMOUNT;
+    } else if (diff >= DUST_AMOUNT && diff < 2 * DUST_AMOUNT) {
+      remaining_min = diff;
+    } else {
+      remaining_min = undefined;
+    }
+    let finalTokenOutputs: { value: number; address: string; ticker: string; change: boolean }[] = [];
+    const changeAmount = _selectedValue - (currentOutputValue ?? 0);
+
+    finalTokenOutputs = outputs.map((f) => {
+      return { value: f.value, address: fromAddress!, ticker: contextData.tokenBalance.ticker, change: false };
+    });
+    if (changeAmount > 0) {
+      finalTokenOutputs.push({
+        value: changeAmount,
+        address: fromAddress,
+        ticker: contextData.tokenBalance.ticker,
+        change: true
+      });
+    }
+    finalTokenOutputs = [...finalTokenOutputs];
+
+    return {
+      error: '',
+      outputs: finalTokenOutputs,
+      atomicalsId: contextData.tokenBalance.atomical_id,
+      confirmed: contextData.tokenBalance.confirmed,
+      totalAmount: currentOutputValue || 0,
+      utxos: _selectedUtxos.length > 0 ? _selectedUtxos : [],
+      remaining: _remaining_balances,
+      remaining_min,
+      remaining_utxos: _remaining_utxos
+    };
+  }, [contextData.tokenBalance, inputAmount, feeRate]);
+
+  console.log('input', outputError, utxos, remaining_utxos, remaining, remaining_min, totalAmount);
   const onClickNext = () => {
-    const selectedUtxos = [relatedAtomUtxos[0]]
     const obj: TransferFtConfigInterface = {
       atomicalsInfo: {
         confirmed: contextData?.tokenBalance.confirmed,
         type: contextData?.tokenBalance?.type,
-        utxos: relatedAtomUtxos,
+        utxos: relatedAtomUtxos
       },
-      selectedUtxos,
-      outputs: [{
-        address: toInfo.address,
-        value: Number(inputAmount),
-      }],
+      selectedUtxos: utxos ?? [],
+      outputs: outputs ?? [],
     };
-    createARC20Tx(obj, atomicals.nonAtomUtxos, 20, true);
+    const rawTxInfo = createARC20Tx(obj, toInfo, atomicals.nonAtomUtxos, 20, false);
     navigate('TxConfirmScreen', { rawTxInfo });
   };
 
@@ -122,12 +202,7 @@ function Step1({
         <Column gap="lg" full>
           <Column>
             <Text text={'BTC Balance'} color="textDim" />
-            <Text
-              text={`${accountBalance.amount} BTC`}
-              size="xxl"
-              textCenter
-              my="lg"
-            />
+            <Text text={`${accountBalance.amount} BTC`} size="xxl" textCenter my="lg" />
           </Column>
 
           {/* <Column>
@@ -161,7 +236,11 @@ function Step1({
           </Column>
           <Row justifyBetween>
             <Text text={`${contextData.tokenBalance.ticker} Balance`} color="textDim" />
-            <Text text={`${contextData.tokenBalance.confirmed} ${contextData.tokenBalance.ticker}`} preset="bold" size="sm" />
+            <Text
+              text={`${contextData.tokenBalance.confirmed} ${contextData.tokenBalance.ticker}`}
+              preset="bold"
+              size="sm"
+            />
           </Row>
           <Column>
             <Text text="Fee Rate" color="textDim" />
@@ -229,7 +308,7 @@ const ARC20SendScreen = () => {
         onBack={() => {
           window.history.go(-1);
         }}
-        title='Send ARC20'
+        title="Send ARC20"
       />
       <Row mt="lg" />
       {component}

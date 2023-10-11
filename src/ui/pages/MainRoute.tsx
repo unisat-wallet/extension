@@ -99,15 +99,15 @@ const routes = {
     path: '/account/switch-account',
     element: <SwitchAccountScreen />
   },
-  // ReceiveScreen: {
-  //   path: '/wallet/receive',
-  //   element: <ReceiveScreen />
-  // },
+  ReceiveScreen: {
+    path: '/wallet/receive',
+    element: <ReceiveScreen />
+  },
 
-  // TxCreateScreen: {
-  //   path: '/wallet/tx/create',
-  //   element: <TxCreateScreen />
-  // },
+  TxCreateScreen: {
+    path: '/wallet/tx/create',
+    element: <TxCreateScreen />
+  },
   TxConfirmScreen: {
     path: '/wallet/tx/confirm',
     element: <TxConfirmScreen />

@@ -113,6 +113,7 @@ export interface IAtomicalBalanceItem {
   atomical_number: number;
   confirmed: number;
   request_ticker: string;
+  data: any;
   request_ticker_status: {
     status: TickerStatus;
     note: string;
