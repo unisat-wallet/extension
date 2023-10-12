@@ -296,4 +296,4 @@ export const CHANNEL = process.env.channel!;
 export const VERSION = process.env.release!;
 export const MANIFEST_VERSION = process.env.manifest!;
 
-export const DUST_AMOUNT = 600;
+export const DUST_AMOUNT = 546;

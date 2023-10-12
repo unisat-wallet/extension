@@ -51,6 +51,7 @@
     "@unisat/bitcoin-hd-keyring": "1.0.1",
     "@unisat/bitcoinjs-wallet": "^0.1.0",
     "@unisat/ord-utils": "0.3.3",
+    "ahooks": "^3.7.8",
     "antd": "^4.20.4",
     "antd-dayjs-webpack-plugin": "1.0.6",
     "assert": "^2.0.0",

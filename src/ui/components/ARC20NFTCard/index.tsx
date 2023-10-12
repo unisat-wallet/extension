@@ -14,6 +14,7 @@ import { findValueInDeepObject } from '@/ui/utils';
 import { Image } from '../Image';
 import { spacingGap } from '@/ui/theme/spacing';
 import { Tag } from '../Tag';
+import Checkbox from '../Checkbox';
 // import Checkbox from '../Checkbox';
 
 export interface ARC20NFTCardProps {
@@ -52,7 +53,7 @@ export default function ARC20NFTCard(props: ARC20NFTCardProps) {
       b64String = Buffer.from(data, 'hex').toString('base64');
     }
   }
-  console.log('data=====', data.$realm);
+  console.log('data=====', data);
 
   return (
     <Card
@@ -70,9 +71,9 @@ export default function ARC20NFTCard(props: ARC20NFTCardProps) {
         <Column full gap={'xs'}>
           <Row justifyBetween itemsCenter>
             <Text text={`# ${data.atomical_number.toLocaleString()}`} color="blue" />
-            {/* {
-              checkbox && <Checkbox value={data.atomical_id} checked={selectvalues?.includes(data.atomical_id)} />
-            } */}
+            {
+              checkbox && <Checkbox value={`${data.atomical_id}`} checked={selectvalues?.includes(`${data.atomical_id}`)} />
+            }
           </Row>
           <Row style={{ borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }} />
           <Column>
@@ -97,9 +98,9 @@ export default function ARC20NFTCard(props: ARC20NFTCardProps) {
         <Column full gap={'xs'}>
           <Row justifyBetween itemsCenter>
             <Text text={`# ${data.atomical_number.toLocaleString()}`} color="blue" />
-            {/* {
-              checkbox && <Checkbox value={data.atomical_id} checked={selectvalues?.includes(data.atomical_id)} />
-            } */}
+            {
+              checkbox && <Checkbox value={`${data.atomical_id}`} checked={selectvalues?.includes(`${data.atomical_id}`)} />
+            }
           </Row>
           <Row style={{ borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }} />
           <Column>

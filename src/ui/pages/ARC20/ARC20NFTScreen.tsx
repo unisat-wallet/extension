@@ -1,20 +1,193 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { AddressTokenSummary } from '@/shared/types';
-import { Button, Column, Content, Header, Layout, Row, Text } from '@/ui/components';
+import { AddressTokenSummary, TransferFtConfigInterface } from '@/shared/types';
+import { Button, Column, Content, Grid, Header, Image, Input, Layout, Row, Text } from '@/ui/components';
 import BRC20Preview from '@/ui/components/BRC20Preview';
 import { Empty } from '@/ui/components/Empty';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { useAtomicals, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { colors } from '@/ui/theme/colors';
-import { useLocationState, useWallet } from '@/ui/utils';
+import { findValueInDeepObject, isValidAddress, useLocationState, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
+import ARC20NFTCard from '@/ui/components/ARC20NFTCard';
+import { LoadingOutlined } from '@ant-design/icons';
+import Checkbox from '@/ui/components/Checkbox';
+import { useBitcoinTx, useCreateARC20TxCallback, useCreateARCNFTTxCallback } from '@/ui/state/transactions/hooks';
+import { FeeRateBar } from '@/ui/components/FeeRateBar';
+import { update } from 'lodash';
+import { IAtomicalBalanceItem, IAtomicalBalances } from '@/background/service/interfaces/api';
+import { toUnicode } from 'punycode';
+import { use } from 'i18next';
 
 interface LocationState {
   ticker: string;
 }
 
-const ARC20NFTScreen = () => { 
+enum Step {
+  SelectNFTs,
+  Preview,
+  Confirm
+}
+
+function returnImageType(item: IAtomicalBalanceItem): { type: string; content: string } {
+  let ct, content, type;
+  const mint_data = item.data.mint_data;
+  if (mint_data.$realm) {
+    type = 'realm';
+    content = mint_data.$full_realm_name!.toLowerCase().startsWith('xn--')
+      ? toUnicode(mint_data.$full_realm_name!)
+      : mint_data.$full_realm_name;
+  } else {
+    type = 'nft';
+    ct = findValueInDeepObject(mint_data.fields!, '$ct');
+    if (ct) {
+      if (ct.endsWith('webp')) {
+        ct = 'image/webp';
+      } else if (ct.endsWith('svg')) {
+        ct = 'image/svg+xml';
+      } else if (ct.endsWith('png')) {
+        ct = 'image/png';
+      } else if (ct.endsWith('jpg') || ct.endsWith('jpeg')) {
+        ct = 'image/jpeg';
+      } else if (ct.endsWith('gif')) {
+        ct = 'image/gif';
+      }
+      const data = findValueInDeepObject(mint_data.fields!, '$d');
+      const b64String = Buffer.from(data, 'hex').toString('base64');
+      content = `data:${ct};base64,${b64String}`;
+    }
+  }
+  return { type, content };
+}
+
+function Preview(props: { selectValues: string[]; updateStep: (step: Step) => void }) {
+  const { selectValues, updateStep } = props;
+  const bitcoinTx = useBitcoinTx();
+  const atomicals = useAtomicals();
+  const [feeRate, setFeeRate] = useState(5);
+  const [toInfo, setToInfo] = useState<{
+    address: string;
+    domain: string;
+  }>({
+    address: bitcoinTx.toAddress,
+    domain: bitcoinTx.toDomain
+  });
+  const navigate = useNavigate();
+  const [error, setError] = useState('');
+  const [disabled, setDisabled] = useState(true);
+  const createARC20NFTTx = useCreateARCNFTTxCallback();
+
+  useEffect(() => {
+    setError('');
+    setDisabled(true);
+
+    if (!isValidAddress(toInfo.address)) {
+      return;
+    }
+
+    setDisabled(false);
+  }, [toInfo, feeRate]);
+  console.log('toInfo', toInfo);
+
+  const selectAtomcals = useMemo(() => {
+    if (!atomicals.atomicalBalances) return [];
+    return Object.keys(atomicals.atomicalBalances as IAtomicalBalances)
+      .map((key) => (atomicals.atomicalBalances as IAtomicalBalances)[key])
+      .filter((o) => selectValues.includes(o.atomical_id));
+  }, [atomicals]);
+
+  const utxos = atomicals.atomicalsUtxos.filter((o) => selectValues.includes(`${o.atomicals[0]}`));
+
+  console.log('utxos', utxos, selectValues);
+  console.log('utxos', atomicals.atomicalsUtxos);
+  const outputs = useMemo(() => {
+    const outputs = utxos.map((utxo) => ({
+      value: utxo.value,
+      address: toInfo.address
+    }));
+    return outputs;
+  }, [toInfo]);
+  const onClickNext = () => {
+    const obj = {
+      selectedUtxos: utxos ?? [],
+      outputs: outputs ?? []
+    };
+    const rawTxInfo = createARC20NFTTx(obj, toInfo, atomicals.nonAtomicalUtxos, feeRate, false);
+    console.log('rawTxInfo', rawTxInfo);
+    if (rawTxInfo && rawTxInfo.fee) {
+      if (rawTxInfo.fee > atomicals.nonAtomUtxosValue) {
+        setError(`Fee ${rawTxInfo.fee} sats Insufficient BTC balance`);
+        return;
+      }
+      navigate('ARC20ConfirmScreen', { rawTxInfo });
+    }
+  };
+
+  return (
+    <Layout>
+      <Header
+        onBack={() => {
+          updateStep(Step.SelectNFTs);
+        }}
+      />
+      <Content>
+        <Column full justifyBetween>
+          <Column>
+            <Column mt="lg">
+              <Text text="Recipient" preset="regular" color="textDim" />
+              <Input
+                preset="address"
+                addressInputData={toInfo}
+                onAddressInputChange={(val) => {
+                  setToInfo(val);
+                }}
+                autoFocus={true}
+              />
+            </Column>
+            <Column mt="lg">
+              <Text text="NFTs" preset="regular" color="textDim" />
+              <Text
+                text={`All Include: ${selectAtomcals.map((o) => o.confirmed).reduce((pre, cur) => pre + cur, 0)} sats`}
+                color="textDim"
+                size="xs"
+              />
+              <Grid columns={3}>
+                <Text text={'Preview'} textCenter color="text" size="sm" />
+                <Text text={'AtomicalNumber'} textCenter size="sm" />
+                <Text text={'value'} textCenter size="sm" />
+              </Grid>
+              {selectAtomcals.map((data, index) => {
+                const { type, content } = returnImageType(data);
+
+                return (
+                  <Grid columns={3} key={index} style={{ alignItems: 'center' }}>
+                    <Column itemsCenter>
+                      {type === 'realm' ? <Text text={content} /> : <Image src={content} size={24} />}
+                    </Column>
+                    <Text text={`# ${data.atomical_number}`} textCenter color="textDim" size="xs" />
+                    <Text text={data.confirmed} textCenter color="textDim" size="xs" />
+                  </Grid>
+                );
+              })}
+            </Column>
+            <Column mt="lg">
+              <Text text={'Real-time Fee Rate'} preset="regular" color="textDim" />
+              <FeeRateBar
+                onChange={(val) => {
+                  setFeeRate(val);
+                }}
+              />
+            </Column>
+          </Column>
+
+          <Button text="Next" preset="primary" onClick={onClickNext} disabled={disabled} />
+        </Column>
+      </Content>
+    </Layout>
+  );
+}
+
+const ARC20NFTScreen = () => {
   const { ticker } = useLocationState<LocationState>();
 
   const [tokenSummary, setTokenSummary] = useState<AddressTokenSummary>({
@@ -37,181 +210,77 @@ const ARC20NFTScreen = () => {
   const wallet = useWallet();
 
   const account = useCurrentAccount();
+
+  const atomicals = useAtomicals();
   useEffect(() => {
     wallet.getBRC20Summary(account.address, ticker).then((tokenSummary) => {
       setTokenSummary(tokenSummary);
     });
   }, []);
 
-  const balance = useMemo(() => {
-    if (!tokenSummary) {
-      return '--';
-    }
-    return tokenSummary?.tokenBalance.overallBalance;
-  }, [tokenSummary]);
-
   const navigate = useNavigate();
+  const [step, setStep] = useState(Step.SelectNFTs);
 
-  const [transferableListExpanded, setTransferableListExpanded] = useState(true);
-  const [availableListExpanded, setAvailableListExpanded] = useState(true);
+  const [checkedList, setCheckedList] = useState<string[]>([]);
 
-  const outOfMint = tokenSummary.tokenInfo.totalMinted == tokenSummary.tokenInfo.totalSupply;
+  const onChange = (checkedValues: any) => {
+    console.log('checked = ', checkedValues);
+    setCheckedList(checkedValues);
+  };
 
-  const shouldShowSafe = tokenSummary.tokenBalance.availableBalanceSafe !== tokenSummary.tokenBalance.availableBalance;
+  if (step === Step.Preview) {
+    return <Preview selectValues={checkedList} updateStep={setStep} />;
+  }
+
   return (
     <Layout>
       <Header
         onBack={() => {
-          window.history.go(-1);
+          navigate('MainScreen');
         }}
       />
-      {tokenSummary && (
-        <Content>
-          <Column py="xl" style={{ borderBottomWidth: 1, borderColor: colors.white_muted }}>
-            <Text text={`${balance} ${ticker}`} preset="bold" textCenter size="xxl" />
-            <Row justifyBetween mt="lg">
+      <Content>
+        {atomicals.atomicalBalances ? (
+          <Column full justifyBetween>
+            <Text text="Select NFT to send" preset="regular" color="textDim" />
+            <Row style={{ flexWrap: 'wrap' }} gap="sm" full>
+              <Checkbox.Group onChange={onChange} value={checkedList}>
+                {Object.values(atomicals.atomicalBalances)
+                  .filter((d) => d.type === 'NFT')
+                  .map((data, index) => {
+                    return (
+                      <ARC20NFTCard
+                        key={index}
+                        checkbox
+                        selectvalues={checkedList}
+                        tokenBalance={data}
+                      />
+                    );
+                  })}
+              </Checkbox.Group>
+            </Row>
+            <Column>
               <Button
-                text="MINT"
-                preset="primary"
-                style={outOfMint ? { backgroundColor: 'grey' } : {}}
-                disabled={outOfMint}
-                icon="pencil"
-                onClick={(e) => {
-                  // window.open(`https://unisat.io/brc20/${encodeURIComponent(ticker)}`);
-                }}
-                full
-              />
-
-              <Button
-                text="TRANSFER"
-                preset="primary"
+                text="Send"
+                preset="default"
                 icon="send"
+                disabled={checkedList.length === 0}
+                style={{ height: 30 }}
                 onClick={(e) => {
-                  // todo
-                  const defaultSelected = tokenSummary.transferableList.slice(0, 1);
-                  const selectedInscriptionIds = defaultSelected.map((v) => v.inscriptionId);
-                  const selectedAmount = defaultSelected.reduce((pre, cur) => parseInt(cur.amount) + pre, 0);
-                  // navigate('BRC20SendScreen', {
-                  //   tokenBalance: tokenSummary.tokenBalance,
-                  //   selectedInscriptionIds,
-                  //   selectedAmount
-                  // });
+                  setStep(Step.Preview);
                 }}
                 full
               />
-            </Row>
+            </Column>
           </Column>
-          <Column>
-            <Row justifyBetween>
-              <Text text="Transferable" preset="bold" size="lg" />
-              <Text text={`${tokenSummary.tokenBalance.transferableBalance} ${ticker}`} preset="bold" size="lg" />
-            </Row>
-            {tokenSummary.transferableList.length == 0 && (
-              <Column style={{ minHeight: 130 }} itemsCenter justifyCenter>
-                <Empty text="Empty" />
-              </Column>
-            )}
-            {transferableListExpanded ? (
-              <Row overflowX>
-                {/* <Text
-                  text="HIDE"
-                  size="xxl"
-                  onClick={() => {
-                    setTransferableListExpanded(false);
-                  }}
-                /> */}
-                {tokenSummary.transferableList.map((v) => (
-                  <BRC20Preview
-                    key={v.inscriptionId}
-                    tick={ticker}
-                    balance={v.amount}
-                    inscriptionNumber={v.inscriptionNumber}
-                    timestamp={v.timestamp}
-                    type="TRANSFER"
-                    // onClick={() => {
-                    //   navigate('BRC20SendScreen', {
-                    //     tokenBalance: tokenSummary.tokenBalance,
-                    //     selectedInscriptionIds: [v.inscriptionId]
-                    //   });
-                    // }}
-                  />
-                ))}
-              </Row>
-            ) : (
-              tokenSummary.transferableList.length > 0 && (
-                <BRC20Preview
-                  tick={ticker}
-                  balance={tokenSummary.transferableList[0].amount}
-                  inscriptionNumber={tokenSummary.transferableList[0].inscriptionNumber}
-                  timestamp={tokenSummary.transferableList[0].timestamp}
-                  onClick={() => {
-                    setTransferableListExpanded(true);
-                  }}
-                />
-              )
-            )}
+        ) : (
+          <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
+            <LoadingOutlined />
           </Column>
-
-          <Column mt="lg">
-            <Row justifyBetween>
-              <Text text="Available" preset="bold" size="lg" />
-              {shouldShowSafe ? (
-                <Column>
-                  <Row gap="zero">
-                    <Text text={`${tokenSummary.tokenBalance.availableBalanceSafe}`} preset="bold" size="lg" />
-                    <Text text={'+'} preset="bold" size="lg" />
-                    <Text
-                      text={`${tokenSummary.tokenBalance.availableBalanceUnSafe}`}
-                      preset="bold"
-                      size="lg"
-                      color="textDim"
-                    />
-                    <Text text={`${ticker}`} preset="bold" size="lg" mx="md" />
-                  </Row>
-                  <Text text={'(Wait to be confirmed)'} preset="sub" textEnd />
-                </Column>
-              ) : (
-                <Text text={`${tokenSummary.tokenBalance.availableBalance} ${ticker}`} preset="bold" size="lg" />
-              )}
-            </Row>
-            {availableListExpanded ? (
-              <Row overflowX>
-                {/* <Text
-                  text="HIDE"
-                  size="xxl"
-                  onClick={() => {
-                    setAvailableListExpanded(false);
-                  }}
-                /> */}
-                {tokenSummary.historyList.map((v) => (
-                  <BRC20Preview
-                    key={v.inscriptionId}
-                    tick={ticker}
-                    balance={v.amount}
-                    inscriptionNumber={v.inscriptionNumber}
-                    timestamp={v.timestamp}
-                    type="MINT"
-                  />
-                ))}
-              </Row>
-            ) : (
-              tokenSummary.historyList.length > 0 && (
-                <BRC20Preview
-                  tick={ticker}
-                  balance={tokenSummary.historyList[0].amount}
-                  inscriptionNumber={tokenSummary.historyList[0].inscriptionNumber}
-                  timestamp={tokenSummary.historyList[0].timestamp}
-                  onClick={() => {
-                    setAvailableListExpanded(true);
-                  }}
-                />
-              )
-            )}
-          </Column>
-        </Content>
-      )}
+        )}
+      </Content>
     </Layout>
   );
-}
+};
 
 export default ARC20NFTScreen;

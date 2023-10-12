@@ -11,6 +11,7 @@ import { accountActions } from '../accounts/reducer';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { transactionsActions } from './reducer';
 import { detectAddressTypeToScripthash, toXOnly } from '@/background/service/utils';
+import { ISelectedUtxo } from '@/background/service/interfaces/api';
 
 export function useTransactionsState(): AppState['transactions'] {
   return useAppSelector((state) => state.transactions);
@@ -83,8 +84,6 @@ export function useCreateARC20TxCallback() {
   const wallet = useWallet();
   const account = useCurrentAccount();
   const fromAddress = useAccountAddress();
-  const utxos = useUtxos();
-  const fetchUtxos = useFetchUtxosCallback();
   return useCallback((
     transferOptions: TransferFtConfigInterface,
     toAddressInfo: ToAddressInfo,
@@ -207,7 +206,125 @@ export function useCreateARC20TxCallback() {
       };
       return rawTxInfo;
     }
-  },  [dispatch, wallet, fromAddress, utxos, fetchUtxos])
+  },  [dispatch, wallet, account, fromAddress])
+}
+
+export function useCreateARCNFTTxCallback() {
+  const dispatch = useAppDispatch();
+  const wallet = useWallet();
+  const account = useCurrentAccount();
+  const fromAddress = useAccountAddress();
+  return useCallback((
+    transferOptions: {
+      selectedUtxos: ISelectedUtxo[];
+      outputs: { address: string; value: number }[];
+    },
+    toAddressInfo: ToAddressInfo,
+    nonAtomUtxos: UTXO_ATOM[],
+    satsbyte: number,
+    preload: boolean
+  ):RawTxInfo | undefined => { 
+    const pubkey = account.pubkey;
+    console.log('pubkey',pubkey)
+    const xpub = (toXOnly(Buffer.from(pubkey, "hex")) as Buffer).toString(
+      "hex"
+    );
+    console.log('xpub',xpub)
+    const psbt = new bitcoin.Psbt({ network: bitcoin.networks.bitcoin });
+
+    try {
+      detectAddressTypeToScripthash(toAddressInfo.address);
+    } catch (e) {
+      // setErrorMessage('Please ensure all addresses have been entered correctly.');
+      return;
+    }
+
+    for (const utxo of transferOptions.selectedUtxos) {
+      // Add the atomical input, the value from the input counts towards the total satoshi amount required
+      if (!preload) {
+        const { output } = detectAddressTypeToScripthash(fromAddress);
+        psbt.addInput({
+          hash: utxo.txid,
+          index: utxo.index,
+          witnessUtxo: {
+            value: utxo.value,
+            script: Buffer.from(output as string, "hex"),
+          },
+          tapInternalKey: Buffer.from(xpub, "hex"),
+        });
+      }
+    }
+
+    for (const output of transferOptions.outputs) {
+      if (!preload) {
+        psbt.addOutput({
+          value: output.value,
+          address: output.address,
+        });
+      }
+    }
+    let expectedFundinng = 0;
+    const { expectedSatoshisDeposit } = calculateFTFundsRequired(
+      transferOptions.selectedUtxos.length,
+      transferOptions.outputs.length,
+      satsbyte,
+      0
+    );
+    if (expectedSatoshisDeposit <= 546) {
+      console.log("Invalid expectedSatoshisDeposit. Developer Error.");
+      return undefined;
+    }
+
+    if (transferOptions.selectedUtxos.length === 0) {
+      expectedFundinng = 0;
+    } else {
+      expectedFundinng = expectedSatoshisDeposit;
+    }
+
+    let addedValue = 0;
+    const addedInputs: UTXO_ATOM[] = [];
+
+    for (let i = 0; i < nonAtomUtxos.length; i ++) {
+      const utxo = nonAtomUtxos[i];
+
+      if (addedValue >= expectedSatoshisDeposit) {
+        break;
+      } else {
+        addedValue += utxo.value;
+        addedInputs.push(utxo);
+        const { output } = detectAddressTypeToScripthash(fromAddress);
+        psbt.addInput({
+          hash: utxo.txid,
+          index: utxo.outputIndex,
+          witnessUtxo: {
+            value: utxo.value,
+            script: Buffer.from(output as string, "hex"),
+          },
+          tapInternalKey: Buffer.from(xpub, "hex"),
+        });
+      }
+    }
+    console.log(addedValue);
+    console.log(addedInputs);
+
+    if (addedValue - expectedSatoshisDeposit >= 546) {
+      psbt.addOutput({
+        value: addedValue - expectedSatoshisDeposit,
+        address: fromAddress,
+      });
+    }
+    const psbtHex = psbt.toHex();
+    console.log("signPsbt start", psbtHex);
+    const rawTxInfo: RawTxInfo = {
+      psbtHex,
+      rawtx: '',
+      toAddressInfo,
+      fee: expectedFundinng
+    };
+    return rawTxInfo;
+
+  },  [dispatch, wallet, account,  fromAddress])
+
 }
 
 export function usePushBitcoinTxCallback() {

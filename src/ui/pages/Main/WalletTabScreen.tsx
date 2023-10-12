@@ -440,6 +440,7 @@ function ARC20List({ tabKey }: { tabKey: WalletTabScreenTabKey }) {
   return (
     <Column>
       <Row style={{ flexWrap: 'wrap' }} gap="sm">
+        
           {(tabKey === WalletTabScreenTabKey.FT
             ? Object.values(atomicals.atomicalBalances).filter((d) => d.type === 'FT')
             : Object.values(atomicals.atomicalBalances).filter((d) => d.type === 'NFT')
@@ -462,7 +463,7 @@ function ARC20List({ tabKey }: { tabKey: WalletTabScreenTabKey }) {
                   selectvalues={[]}
                   tokenBalance={data}
                   onClick={() => {
-                    navigate('ARC20TokenScreen', { tokenBalance: data, ticker: data.ticker });
+                    navigate('ARC20NFTScreen', { tokenBalance: data, ticker: data.ticker });
                   }}
                 />
               );

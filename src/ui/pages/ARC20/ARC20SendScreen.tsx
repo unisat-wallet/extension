@@ -61,6 +61,7 @@ function Step1({
   updateContextData: (params: UpdateContextDataParams) => void;
 }) {
   const accountBalance = useAccountBalance();
+  const fromAddress = useAccountAddress();
   const navigate = useNavigate();
   const bitcoinTx = useBitcoinTx();
   const [disabled, setDisabled] = useState(true);
@@ -76,7 +77,6 @@ function Step1({
     address: bitcoinTx.toAddress,
     domain: bitcoinTx.toDomain
   });
-  const fromAddress = useAccountAddress();
   // const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
   const createARC20Tx = useCreateARC20TxCallback();
   const atomicals = useAtomicals();
@@ -102,6 +102,7 @@ function Step1({
     }
     setDisabled(false);
   }, [toInfo, inputAmount, feeRate]);
+  console.log('toInfo',toInfo)
 
   const {
     utxos,
@@ -167,7 +168,7 @@ function Step1({
     const changeAmount = _selectedValue - (currentOutputValue ?? 0);
 
     finalTokenOutputs = outputs.map((f) => {
-      return { value: f.value, address: fromAddress!, ticker: contextData.tokenBalance.ticker, change: false };
+      return { value: f.value, address: toInfo.address, ticker: contextData.tokenBalance.ticker, change: false };
     });
     if (changeAmount > 0) {
       finalTokenOutputs.push({
@@ -189,7 +190,7 @@ function Step1({
       remaining_min,
       remaining_utxos: _remaining_utxos
     };
-  }, [contextData.tokenBalance, inputAmount, feeRate]);
+  }, [contextData.tokenBalance, inputAmount, toInfo, feeRate]);
 
   console.log('input', utxos, remaining_utxos, remaining, remaining_min, totalAmount);
   const onClickNext = () => {
@@ -218,8 +219,8 @@ function Step1({
       <Column full>
         <Column gap="lg" full>
           <Column>
-            <Text text={'BTC Balance'} color="textDim" />
-            <Text text={`${accountBalance.amount} BTC`} size="xxl" textCenter my="lg" />
+            <Text text={`${contextData.tokenBalance.ticker} Balance`} color="textDim" />
+            <Text text={`${contextData.tokenBalance.confirmed} ${contextData.tokenBalance.ticker}`} size="xxl" textCenter my="lg" />
           </Column>
 
           {/* <Column>
@@ -252,15 +253,15 @@ function Step1({
             />
           </Column>
           <Row justifyBetween>
-            <Text text={`${contextData.tokenBalance.ticker} Balance`} color="textDim" />
+            <Text text={ 'BTC Balance'} color="textDim" />
             <Text
-              text={`${contextData.tokenBalance.confirmed} ${contextData.tokenBalance.ticker}`}
+              text={ `${accountBalance.amount} BTC`}
               preset="bold"
               size="sm"
             />
           </Row>
           <Column>
-            <Text text="Fee Rate" color="textDim" />
+            <Text text="Real-time Fee Rate" color="textDim" />
             <FeeRateBar
               onChange={(val) => {
                 setFeeRate(val);

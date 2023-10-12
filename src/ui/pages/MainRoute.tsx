@@ -52,7 +52,7 @@ import TxFailScreen from './Wallet/TxFailScreen';
 import TxSuccessScreen from './Wallet/TxSuccessScreen';
 import './index.module.less';
 import ARC20SendScreen from './ARC20/ARC20SendScreen';
-import ARC20TokenScreen from './ARC20/ARC20NFTScreen';
+import ARC20NFTScreen from './ARC20/ARC20NFTScreen';
 import ARC20TxConfirmScreen from './ARC20/ARC20TxConfrimScreen';
 
 const routes = {
@@ -208,9 +208,9 @@ const routes = {
     path: '/arc20/tx/send',
     element: <ARC20SendScreen />
   },
-  ARC20TokenScreen: {
-    path: '/arc20/token',
-    element: <ARC20TokenScreen />
+  ARC20NFTScreen: {
+    path: '/arc20/tx/nft',
+    element: <ARC20NFTScreen />
   },
   ARC20ConfirmScreen: {
     path: '/arc20/tx/confirm',
