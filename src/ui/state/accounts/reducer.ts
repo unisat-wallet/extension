@@ -52,7 +52,7 @@ export const initialState: AccountsState = {
   loading: false,
   atomicals:{
     atomicalConfirmed: 0,
-    atomicalBalances: {},
+    atomicalBalances: undefined,
     atomicalsUtxos: [],
     allUtxos: [],
     nonAtomicalUtxos: [],

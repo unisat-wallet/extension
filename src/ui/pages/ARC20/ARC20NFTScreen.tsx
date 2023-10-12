@@ -14,7 +14,7 @@ interface LocationState {
   ticker: string;
 }
 
-const ARC20TokenScreen = () => { 
+const ARC20NFTScreen = () => { 
   const { ticker } = useLocationState<LocationState>();
 
   const [tokenSummary, setTokenSummary] = useState<AddressTokenSummary>({
@@ -214,4 +214,4 @@ const ARC20TokenScreen = () => {
   );
 }
 
-export default ARC20TokenScreen;
+export default ARC20NFTScreen;

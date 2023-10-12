@@ -14,7 +14,7 @@ import { Logo } from './Logo';
 import { Row } from './Row';
 import { Text } from './Text';
 import { TextArea } from './TextArea';
-
+import { Tag } from './Tag';
 export {
   Button,
   Layout,
@@ -31,5 +31,6 @@ export {
   Card,
   Grid,
   Image,
-  TextArea
+  TextArea,
+  Tag,
 };

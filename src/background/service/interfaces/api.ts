@@ -164,7 +164,7 @@ export interface IAtomicalBalanceItemData {
 
 export interface AtomicalsInfo {
   atomicalConfirmed: number;
-  atomicalBalances: IAtomicalBalances;
+  atomicalBalances?: IAtomicalBalances;
   atomicalsUtxos: ISelectedUtxo[];
   ordinalItems: Inscription[];
   allUtxos: UTXO_ATOM[];

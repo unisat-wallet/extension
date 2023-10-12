@@ -35,6 +35,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { useNavigate } from '../MainRoute';
 import { IAtomicalBalances } from '@/background/service/interfaces/api';
 import ARC20BalanceCard from '@/ui/components/ARC20BalanceCard';
+import ARC20NFTCard from '@/ui/components/ARC20NFTCard';
 
 export default function WalletTabScreen() {
   const navigate = useNavigate();
@@ -77,21 +78,21 @@ export default function WalletTabScreen() {
   }, []);
 
   const tabItems = [
-    {
-      key: WalletTabScreenTabKey.ALL,
-      label: 'ALL',
-      children: <ARC20List />
-    },
+    // {
+    //   key: WalletTabScreenTabKey.ALL,
+    //   label: 'ALL',
+    //   children: <ARC20List />
+    // },
     {
       key: WalletTabScreenTabKey.FT,
       label: 'FT',
-      children: <ARC20List />
+      children: <ARC20List tabKey={tabKey} />
     },
     {
       key: WalletTabScreenTabKey.NFT,
       label: 'NFT',
-      children: <ARC20List />
-    },
+      children: <ARC20List tabKey={tabKey} />
+    }
   ];
 
   const blockstreamUrl = useBlockstreamUrl();
@@ -372,7 +373,7 @@ function InscriptionList() {
 //   );
 // }
 
-function ARC20List() {
+function ARC20List({ tabKey }: { tabKey: WalletTabScreenTabKey }) {
   const navigate = useNavigate();
   const wallet = useWallet();
   const currentAccount = useCurrentAccount();
@@ -409,15 +410,13 @@ function ARC20List() {
   //     // tools.showLoading(false);
   //   }
   // };
-  console.log('atomicals',atomicals)
+  console.log('atomicals', atomicals);
 
   useEffect(() => {
     // fetchData();
   }, [pagination]);
 
-  if (
-    atomicals?.atomicalBalances === undefined
-    ) {
+  if (atomicals?.atomicalBalances === undefined) {
     return (
       <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
         <LoadingOutlined />
@@ -425,7 +424,7 @@ function ARC20List() {
     );
   }
 
-  if (atomicals.atomicalBalances === undefined) {
+  if (Object.values(atomicals.atomicalBalances).length === 0) {
     return (
       <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
         <Empty text="Empty" />
@@ -433,21 +432,42 @@ function ARC20List() {
     );
   }
 
+  const onChange = (checkedValues: any) => {
+    console.log('checked = ', checkedValues);
+  };
+
+
   return (
     <Column>
       <Row style={{ flexWrap: 'wrap' }} gap="sm">
-        {Object.values(atomicals.atomicalBalances)
-          .filter((d) => d.type === 'FT')
-          .map((data, index) => (
-            <ARC20BalanceCard
-              key={index}
-              tokenBalance={data}
-              onClick={() => {
-                // alert('https://atomicalswallet.com');
-                navigate('ARC20SendScreen', { tokenBalance: data, ticker: data.ticker });
-              }}
-            />
-          ))}
+          {(tabKey === WalletTabScreenTabKey.FT
+            ? Object.values(atomicals.atomicalBalances).filter((d) => d.type === 'FT')
+            : Object.values(atomicals.atomicalBalances).filter((d) => d.type === 'NFT')
+          ).map((data, index) => {
+            if (data.type === 'FT') {
+              return (
+                <ARC20BalanceCard
+                  key={index}
+                  tokenBalance={data}
+                  onClick={() => {
+                    navigate('ARC20SendScreen', { tokenBalance: data, ticker: data.ticker });
+                  }}
+                />
+              );
+            } else if (data.type === 'NFT') {
+              return (
+                <ARC20NFTCard
+                  key={index}
+                  // checkbox
+                  selectvalues={[]}
+                  tokenBalance={data}
+                  onClick={() => {
+                    navigate('ARC20TokenScreen', { tokenBalance: data, ticker: data.ticker });
+                  }}
+                />
+              );
+            }
+          })}
       </Row>
 
       <Row justifyCenter mt="lg">

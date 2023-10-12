@@ -1,6 +1,6 @@
 {
   "name": "atom-extension",
-  "version": "1.1.32",
+  "version": "1.1.33",
   "private": true,
   "homepage": "https://github.com/AstroxNetwork/extension#readme",
   "bugs": {
@@ -99,6 +99,7 @@
     "postcss-preset-env": "^7.0.1",
     "process": "0.11.10",
     "prompts": "^2.4.2",
+    "punycode": "^2.3.0",
     "qrcode.react": "^3.0.2",
     "randomstring": "^1.2.3",
     "rc-virtual-list": "^3.4.8",

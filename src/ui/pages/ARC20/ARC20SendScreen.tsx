@@ -89,6 +89,10 @@ function Step1({
     setError('');
     setDisabled(true);
 
+    if (inputAmount && Number(inputAmount) < DUST_AMOUNT) { 
+      return setError(`Amount must be at least ${DUST_AMOUNT} sats`);
+    }
+
     if (!isValidAddress(toInfo.address)) {
       return;
     }
@@ -100,7 +104,6 @@ function Step1({
   }, [toInfo, inputAmount, feeRate]);
 
   const {
-    error: outputError,
     utxos,
     outputs,
     remaining_utxos,
@@ -110,7 +113,15 @@ function Step1({
   } = useMemo(() => {
     const currentOutputValue = Number(inputAmount);
     if (currentOutputValue < DUST_AMOUNT) {
-      return { error: `Amount must be at least ${DUST_AMOUNT} sats` };
+     
+      return {
+        utxos: [],
+        outputs: [],
+        remaining_utxos: [],
+        remaining: 0,
+        remaining_min: 0,
+        totalAmount: 0
+      };
     }
     const sorted = Array.from(relatedAtomUtxos).sort((a, b) => b.value - a.value);
     console.log('sorted', sorted);
@@ -169,7 +180,6 @@ function Step1({
     finalTokenOutputs = [...finalTokenOutputs];
 
     return {
-      error: '',
       outputs: finalTokenOutputs,
       atomicalsId: contextData.tokenBalance.atomical_id,
       confirmed: contextData.tokenBalance.confirmed,
@@ -181,7 +191,7 @@ function Step1({
     };
   }, [contextData.tokenBalance, inputAmount, feeRate]);
 
-  console.log('input', outputError, utxos, remaining_utxos, remaining, remaining_min, totalAmount);
+  console.log('input', utxos, remaining_utxos, remaining, remaining_min, totalAmount);
   const onClickNext = () => {
     const obj: TransferFtConfigInterface = {
       atomicalsInfo: {
@@ -192,9 +202,15 @@ function Step1({
       selectedUtxos: utxos ?? [],
       outputs: outputs ?? [],
     };
-    const rawTxInfo = createARC20Tx(obj, toInfo, atomicals.nonAtomicalUtxos, 20, false);
+    const rawTxInfo = createARC20Tx(obj, toInfo, atomicals.nonAtomicalUtxos, feeRate, false);
     console.log('rawTxInfo', rawTxInfo)
-    navigate('ARC20ConfirmScreen', { rawTxInfo });
+    if(rawTxInfo && rawTxInfo.fee) {
+      if(rawTxInfo.fee > atomicals.nonAtomUtxosValue ) {
+        setError(`Fee ${rawTxInfo.fee} sats Insufficient BTC balance`);
+        return;
+      }
+      navigate('ARC20ConfirmScreen', { rawTxInfo });
+    }
   };
 
   return (
@@ -252,7 +268,7 @@ function Step1({
             />
           </Column>
         </Column>
-
+        {error && <Text text={error} color="error" />}
         <Button text="Next" preset="primary" onClick={onClickNext} disabled={disabled} />
       </Column>
     </Content>
@@ -282,7 +298,8 @@ const ARC20SendScreen = () => {
     receiver: '',
     rawTxInfo: {
       psbtHex: '',
-      rawtx: ''
+      rawtx: '',
+      fee: 0,
     }
   });
 
