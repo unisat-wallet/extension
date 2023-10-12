@@ -27,7 +27,12 @@ import {
   UTXO_Detail,
   SignPsbtOptions
 } from '@/shared/types';
-import { IAtomicalBalances, ISelectedUtxo, UTXO as AtomUtxos, AtomicalsInfo } from '@/background/service/interfaces/api';
+import {
+  IAtomicalBalances,
+  ISelectedUtxo,
+  UTXO as AtomUtxos,
+  AtomicalsInfo
+} from '@/background/service/interfaces/api';
 
 export interface WalletController {
   openapi: {
@@ -220,6 +225,7 @@ export interface WalletController {
 
   formatOptionsToSignInputs(psbtHex: string, options: SignPsbtOptions): Promise<ToSignInput[]>;
   signPsbt(psbt: bitcoin.Psbt, toSignInputs: ToSignInput[], autoFinalized: boolean): Promise<bitcoin.Psbt>;
+  signPsbtReturnHex(psbtHex: string, options?: SignPsbtOptions): Promise<string>;
   getPrice(): Promise<any>;
   getFee(): Promise<any>;
   getUtxo(address: string): Promise<any>;

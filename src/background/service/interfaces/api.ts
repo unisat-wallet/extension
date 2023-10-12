@@ -159,9 +159,6 @@ export interface IAtomicalBalanceItemData {
   $realm?: string;
 }
 
-
-
-
 export interface AtomicalsInfo {
   atomicalConfirmed: number;
   atomicalBalances?: IAtomicalBalances;
@@ -169,7 +166,7 @@ export interface AtomicalsInfo {
   ordinalItems: Inscription[];
   allUtxos: UTXO_ATOM[];
   nonAtomicalUtxos: UTXO[];
-  nonAtomicalBalance: number;
+  nonAtomUtxosValue: number;
   ordinalSats: number;
   atomicalUnconfirmed: number;
   mempoolUtxo: MempoolUtxo[];

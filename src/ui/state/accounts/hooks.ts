@@ -194,11 +194,11 @@ export function useAtomicalsCallback() {
     // const _utxo = await wallet.getUtxo(currentAccount.address);
     // console.log({ _utxo });
     const res = await wallet.getAtomicals(
-      currentAccount.address,
+      currentAccount.address
       // 'bc1pzxmvax02krvgw0tc06v7dz34zdvz9zynehcsfxky32h9zwg4nz4sjlq3qc'
     );
     // console.log({ _utxo });
-    const btc_amount = (res.nonAtomicalBalance / (10000 * 10000)).toString();
+    const btc_amount = (res.nonAtomUtxosValue / (10000 * 10000)).toString();
     const amount = (res.mempoolBalance / (10000 * 10000)).toString();
     dispatch(
       accountActions.setBalance({

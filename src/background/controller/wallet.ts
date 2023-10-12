@@ -1,6 +1,7 @@
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 /* eslint-disable indent */
 import * as bitcoin from 'bitcoinjs-lib';
-import { address as PsbtAddress } from 'bitcoinjs-lib';
+import { Psbt, address as PsbtAddress } from 'bitcoinjs-lib';
 import ECPairFactory from 'ecpair';
 import * as ecc from 'tiny-secp256k1';
 
@@ -53,10 +54,16 @@ import { signBip322MessageSimple } from '../utils/bip322';
 import { publicKeyToAddress, toPsbtNetwork } from '../utils/tx-utils';
 import BaseController from './base';
 import { AtomicalService } from '../service/atomical';
-import { IAtomicalBalances, ISelectedUtxo, UTXO as AtomUtxos, ElectrumApiInterface } from '../service/interfaces/api';
+import {
+  IAtomicalBalances,
+  ISelectedUtxo,
+  UTXO as AtomUtxos,
+  ElectrumApiInterface,
+  AtomicalsInfo
+} from '../service/interfaces/api';
 import { MempoolService, MempoolUtxo, mempoolService } from '../service/mempool';
 import { ElectrumApi } from '../service/eletrum';
-import { AtomicalsInfo } from '../service/interfaces/utxo';
+// import { AtomicalsInfo } from '../service/interfaces/utxo';
 
 const toXOnly = (pubKey: Buffer) => (pubKey.length === 32 ? pubKey : pubKey.slice(1, 33));
 
@@ -478,7 +485,7 @@ export class WalletController extends BaseController {
   };
 
   signPsbt = async (psbt: bitcoin.Psbt, toSignInputs: ToSignInput[], autoFinalized: boolean) => {
-    console.log('signPsbt', psbt, toSignInputs, autoFinalized)
+    console.log('signPsbt', psbt, toSignInputs, autoFinalized);
     const account = await this.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
@@ -519,8 +526,17 @@ export class WalletController extends BaseController {
         psbt.finalizeInput(v.index);
       });
     }
-
     return psbt;
+  };
+
+  signPsbtReturnHex = async (psbtHex: string, options?: SignPsbtOptions) => {
+    const networkType = this.getNetworkType();
+    const psbtNetwork = toPsbtNetwork(networkType);
+    const psbt = bitcoin.Psbt.fromHex(psbtHex, { network: psbtNetwork });
+    const autoFinalized = options && options.autoFinalized == false ? false : true;
+    const toSignInputs = await this.formatOptionsToSignInputs(psbtHex, options);
+    const psbtObject = await this.signPsbt(psbt, toSignInputs, autoFinalized);
+    return psbtObject.toHex();
   };
 
   signMessage = async (text: string) => {
@@ -1279,10 +1295,10 @@ export class WalletController extends BaseController {
     console.log('walletInfo', walletInfo);
     const { atomicals_confirmed, atomicals_balances, atomicals_utxos, atomicals_unconfirmed } = walletInfo.data;
     const { utxos: _allUtxos } = await this.atomicalApi!.electrumApi.getUnspentAddress(address);
-    let nonAtomicalBalance =0
+    let nonAtomUtxosValue = 0;
     let ordinalSats = 0;
-    const nonAtomicalUtxos: UTXO[] = [];
-    const ordinalItems = [];
+    const nonAtomicalUtxos: AtomUtxos[] = [];
+    const ordinalItems: Inscription[] = [];
     let mempoolUtxo: MempoolUtxo[] = [];
     let mempoolBalance = 0;
     let cursor = 0;
@@ -1302,29 +1318,33 @@ export class WalletController extends BaseController {
       mempoolBalance += mempoolUtxo[i].value;
     }
     const utxos = mempoolUtxo;
-    const confirmedUtxos: UTXO[] = [];
+    const confirmedUtxos: AtomUtxos[] = [];
     for (let i = 0; i < _allUtxos.length; i++) {
       const found = utxos.findIndex(
         (item) => item.txid === _allUtxos[i].txid && item.status.confirmed && item.vout === _allUtxos[i].vout
       );
       if (found > -1) {
-        confirmedUtxos.push(_allUtxos[i]);
+        confirmedUtxos.push(_allUtxos[i] as unknown as AtomUtxos);
       }
     }
-    const _nonAtomUtxos: UTXO[] = [];
-   
+    const _nonAtomUtxos: AtomUtxos[] = [];
+
     if (ordinalItems.length === 0) {
       for (let i = 0; i < confirmedUtxos.length; i++) {
         const utxo = confirmedUtxos[i];
-        if (atomicals_utxos.findIndex((item) => item.txid === utxo.txid && item.vout === utxo.vout) < 0) {
+        if (
+          (atomicals_utxos as AtomUtxos[]).findIndex((item) => item.txid === utxo.txid && item.vout === utxo.vout) < 0
+        ) {
           nonAtomicalUtxos.push(utxo);
-          nonAtomicalBalance += utxo.value;
+          nonAtomUtxosValue += utxo.value;
         }
       }
     } else {
       for (let i = 0; i < confirmedUtxos.length; i++) {
         const utxo = confirmedUtxos[i];
-        if (atomicals_utxos.findIndex((item) => item.txid === utxo.txid && item.vout === utxo.vout) < 0) {
+        if (
+          (atomicals_utxos as AtomUtxos[]).findIndex((item) => item.txid === utxo.txid && item.vout === utxo.vout) < 0
+        ) {
           _nonAtomUtxos.push(utxo);
         }
       }
@@ -1333,14 +1353,12 @@ export class WalletController extends BaseController {
         const utxo = _nonAtomUtxos[j];
         if (
           ordinalItems.findIndex(
-            (item) => item.output.split(':')[0] === utxo.txId
-            /// TODO: should we use vout to compare ordinals?
-            // &&
-            // Number.parseInt(item.output.split(':')[1], 10) === utxo.vout,
+            (item) =>
+              item.output.split(':')[0] === utxo.txId && Number.parseInt(item.output.split(':')[1], 10) === utxo.vout
           ) < 0
         ) {
           nonAtomicalUtxos.push(utxo);
-          nonAtomicalBalance += utxo.value;
+          nonAtomUtxosValue += utxo.value;
         }
       }
     }
@@ -1348,7 +1366,7 @@ export class WalletController extends BaseController {
     const atomicalBalances = atomicals_balances || [];
     return {
       atomicalUnconfirmed: atomicals_unconfirmed || 0,
-      nonAtomicalBalance,
+      nonAtomUtxosValue,
       atomicalBalances,
       atomicalConfirmed: atomicals_confirmed || 0,
       atomicalsUtxos,
