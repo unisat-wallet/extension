@@ -115,7 +115,7 @@ function Preview(props: { selectValues: string[]; updateStep: (step: Step) => vo
     const rawTxInfo = createARC20NFTTx(obj, toInfo, atomicals.nonAtomicalUtxos, feeRate, false);
     console.log('rawTxInfo', rawTxInfo);
     if (rawTxInfo && rawTxInfo.fee) {
-      if (rawTxInfo.fee > atomicals.nonAtomUtxosValue) {
+      if (rawTxInfo.fee > atomicals.nonAtomicalBalance) {
         setError(`Fee ${rawTxInfo.fee} sats Insufficient BTC balance`);
         return;
       }
@@ -126,6 +126,7 @@ function Preview(props: { selectValues: string[]; updateStep: (step: Step) => vo
   return (
     <Layout>
       <Header
+        title='Send NFTs'
         onBack={() => {
           updateStep(Step.SelectNFTs);
         }}
@@ -180,7 +181,10 @@ function Preview(props: { selectValues: string[]; updateStep: (step: Step) => vo
             </Column>
           </Column>
 
-          <Button text="Next" preset="primary" onClick={onClickNext} disabled={disabled} />
+          <Column>
+            {error && <Text text={error} color="error" />}     
+            <Button text="Next" preset="primary" onClick={onClickNext} disabled={disabled} />
+          </Column>
         </Column>
       </Content>
     </Layout>
@@ -235,6 +239,7 @@ const ARC20NFTScreen = () => {
   return (
     <Layout>
       <Header
+        title='Send NFTs'
         onBack={() => {
           navigate('MainScreen');
         }}

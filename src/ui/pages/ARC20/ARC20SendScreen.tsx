@@ -193,7 +193,7 @@ function Step1({
   }, [contextData.tokenBalance, inputAmount, toInfo, feeRate]);
 
   console.log('input', utxos, remaining_utxos, remaining, remaining_min, totalAmount);
-  const onClickNext = () => {
+  const onClickNext = async () => {
     const obj: TransferFtConfigInterface = {
       atomicalsInfo: {
         confirmed: contextData?.tokenBalance.confirmed,
@@ -203,10 +203,10 @@ function Step1({
       selectedUtxos: utxos ?? [],
       outputs: outputs ?? [],
     };
-    const rawTxInfo = createARC20Tx(obj, toInfo, atomicals.nonAtomicalUtxos, feeRate, false);
+    const rawTxInfo = await createARC20Tx(obj, toInfo, atomicals.nonAtomicalUtxos, feeRate, false);
     console.log('rawTxInfo', rawTxInfo)
     if(rawTxInfo && rawTxInfo.fee) {
-      if(rawTxInfo.fee > atomicals.nonAtomUtxosValue ) {
+      if(rawTxInfo.fee > atomicals.nonAtomicalBalance ) {
         setError(`Fee ${rawTxInfo.fee} sats Insufficient BTC balance`);
         return;
       }

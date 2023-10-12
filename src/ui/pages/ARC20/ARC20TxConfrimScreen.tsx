@@ -1,6 +1,6 @@
 import { RawTxInfo, TxType } from '@/shared/types';
 import { Header } from '@/ui/components';
-import { usePushOrdinalsTxCallback } from '@/ui/state/transactions/hooks';
+import { usePushBitcoinTxCallback, usePushOrdinalsTxCallback } from '@/ui/state/transactions/hooks';
 import { useLocationState } from '@/ui/utils';
 
 import { SignPsbt } from '../Approval/components';
@@ -13,7 +13,7 @@ interface LocationState {
 export default function ARC20TxConfirmScreen() {
   const { rawTxInfo } = useLocationState<LocationState>();
   const navigate = useNavigate();
-  // const pushOrdinalsTx = usePushOrdinalsTxCallback();
+  const pushBitcoinTx = usePushBitcoinTxCallback();
   return (
     <SignPsbt
       header={
@@ -29,13 +29,13 @@ export default function ARC20TxConfirmScreen() {
         navigate('MainScreen');
       }}
       handleConfirm={() => {
-        // pushOrdinalsTx(rawTxInfo.rawtx).then(({ success, txid, error }) => {
-        //   if (success) {
-        //     // navigate('TxSuccessScreen', { txid });
-        //   } else {
-        //     // navigate('TxFailScreen', { error });
-        //   }
-        // });
+        pushBitcoinTx(rawTxInfo.rawtx).then(({ success, txid, error }) => {
+          if (success) {
+            navigate('TxSuccessScreen', { txid });
+          } else {
+            navigate('TxFailScreen', { error });
+          }
+        });
       }}
     />
   );

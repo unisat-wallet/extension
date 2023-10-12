@@ -169,7 +169,7 @@ export interface AtomicalsInfo {
   ordinalItems: Inscription[];
   allUtxos: UTXO_ATOM[];
   nonAtomicalUtxos: UTXO[];
-  nonAtomUtxosValue: number;
+  nonAtomicalBalance: number;
   ordinalSats: number;
   atomicalUnconfirmed: number;
   mempoolUtxo: MempoolUtxo[];

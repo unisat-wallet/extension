@@ -478,6 +478,7 @@ export class WalletController extends BaseController {
   };
 
   signPsbt = async (psbt: bitcoin.Psbt, toSignInputs: ToSignInput[], autoFinalized: boolean) => {
+    console.log('signPsbt', psbt, toSignInputs, autoFinalized)
     const account = await this.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
@@ -1273,75 +1274,81 @@ export class WalletController extends BaseController {
     };
   };
 
-  getAtomicals = async (
-    address: string
-  ): Promise<AtomicalsInfo> => {
+  getAtomicals = async (address: string): Promise<AtomicalsInfo> => {
     const walletInfo = await this.atomicalApi!.walletInfo(address, false);
-    console.log('walletInfo', walletInfo)
+    console.log('walletInfo', walletInfo);
     const { atomicals_confirmed, atomicals_balances, atomicals_utxos, atomicals_unconfirmed } = walletInfo.data;
-    const { utxos: _allUtxos} = await this.atomicalApi!.electrumApi.getUnspentAddress(
-      address
-    );
-    let nonAtomUtxosValue = 0;
+    const { utxos: _allUtxos } = await this.atomicalApi!.electrumApi.getUnspentAddress(address);
+    let nonAtomicalBalance =0
     let ordinalSats = 0;
     const nonAtomicalUtxos: UTXO[] = [];
     const ordinalItems = [];
     let mempoolUtxo: MempoolUtxo[] = [];
     let mempoolBalance = 0;
     let cursor = 0;
-      const size = 100;
-      let hasMore = true;
-      while (hasMore) {
-        const v = await this.getAddressInscriptions(address, cursor, size);
-        ordinalItems.push(...(v?.list || []));
-        cursor += size;
-        hasMore = ordinalItems.length < v.total;
+    const size = 100;
+    let hasMore = true;
+    while (hasMore) {
+      const v = await this.getAddressInscriptions(address, cursor, size);
+      ordinalItems.push(...(v?.list || []));
+      cursor += size;
+      hasMore = ordinalItems.length < v.total;
+    }
+    for (let i = 0; i < ordinalItems.length; i++) {
+      ordinalSats += ordinalItems[i].outputValue;
+    }
+    mempoolUtxo = await mempoolService.getUtxo(address!);
+    for (let i = 0; i < mempoolUtxo.length; i++) {
+      mempoolBalance += mempoolUtxo[i].value;
+    }
+    const utxos = mempoolUtxo;
+    const confirmedUtxos: UTXO[] = [];
+    for (let i = 0; i < _allUtxos.length; i++) {
+      const found = utxos.findIndex(
+        (item) => item.txid === _allUtxos[i].txid && item.status.confirmed && item.vout === _allUtxos[i].vout
+      );
+      if (found > -1) {
+        confirmedUtxos.push(_allUtxos[i]);
       }
-      for (let i = 0; i < ordinalItems.length; i++) {
-        ordinalSats += ordinalItems[i].outputValue;
-      }
-      mempoolUtxo = await mempoolService.getUtxo(address!);
-      for (let i = 0; i < mempoolUtxo.length; i++) {
-        mempoolBalance += mempoolUtxo[i].value;
-      }
-      const utxos = mempoolUtxo;
-      const confirmedUtxos: UTXO[] = [];
-      for (let i = 0; i < _allUtxos.length; i++) {
-        const found = utxos.findIndex(item => item.txid === _allUtxos[i].txid && item.status.confirmed);
-        if (found > -1) {
-          confirmedUtxos.push(_allUtxos[i]);
+    }
+    const _nonAtomUtxos: UTXO[] = [];
+   
+    if (ordinalItems.length === 0) {
+      for (let i = 0; i < confirmedUtxos.length; i++) {
+        const utxo = confirmedUtxos[i];
+        if (atomicals_utxos.findIndex((item) => item.txid === utxo.txid && item.vout === utxo.vout) < 0) {
+          nonAtomicalUtxos.push(utxo);
+          nonAtomicalBalance += utxo.value;
         }
       }
-      const _nonAtomUtxos: UTXO[] = [];
-      if (ordinalItems.length === 0) {
-        for (let i = 0; i < confirmedUtxos.length; i++) {
-          const utxo = confirmedUtxos[i];
-          if (atomicals_utxos.findIndex(item => item.txid === utxo.txid) < 0) {
-            nonAtomicalUtxos.push(utxo);
-            nonAtomUtxosValue += utxo.value;
-          }
+    } else {
+      for (let i = 0; i < confirmedUtxos.length; i++) {
+        const utxo = confirmedUtxos[i];
+        if (atomicals_utxos.findIndex((item) => item.txid === utxo.txid && item.vout === utxo.vout) < 0) {
+          _nonAtomUtxos.push(utxo);
         }
-      } else {
-        for (let i = 0; i < confirmedUtxos.length; i++) {
-          const utxo = confirmedUtxos[i];
-          if (atomicals_utxos.findIndex(item => item.txid === utxo.txid) < 0) {
-            _nonAtomUtxos.push(utxo);
-          }
-        }
+      }
 
-        for (let j = 0; j < _nonAtomUtxos.length; j++) {
-          const utxo = _nonAtomUtxos[j];
-          if (ordinalItems.findIndex(item => item.output.split(':')[0] === utxo.txId) < 0) {
-            nonAtomicalUtxos.push(utxo);
-            nonAtomUtxosValue += utxo.value;
-          }
+      for (let j = 0; j < _nonAtomUtxos.length; j++) {
+        const utxo = _nonAtomUtxos[j];
+        if (
+          ordinalItems.findIndex(
+            (item) => item.output.split(':')[0] === utxo.txId
+            /// TODO: should we use vout to compare ordinals?
+            // &&
+            // Number.parseInt(item.output.split(':')[1], 10) === utxo.vout,
+          ) < 0
+        ) {
+          nonAtomicalUtxos.push(utxo);
+          nonAtomicalBalance += utxo.value;
         }
       }
+    }
     const atomicalsUtxos = atomicals_utxos || [];
     const atomicalBalances = atomicals_balances || [];
     return {
       atomicalUnconfirmed: atomicals_unconfirmed || 0,
-      nonAtomUtxosValue,
+      nonAtomicalBalance,
       atomicalBalances,
       atomicalConfirmed: atomicals_confirmed || 0,
       atomicalsUtxos,
@@ -1350,8 +1357,8 @@ export class WalletController extends BaseController {
       mempoolBalance,
       allUtxos: _allUtxos || [],
       mempoolUtxo,
-      ordinalSats,
-    }
+      ordinalSats
+    };
   };
 
   expireUICachedData = (address: string) => {

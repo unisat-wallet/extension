@@ -219,7 +219,7 @@ export interface WalletController {
   readApp(appid: number): Promise<void>;
 
   formatOptionsToSignInputs(psbtHex: string, options: SignPsbtOptions): Promise<ToSignInput[]>;
-
+  signPsbt(psbt: bitcoin.Psbt, toSignInputs: ToSignInput[], autoFinalized: boolean): Promise<bitcoin.Psbt>;
   getPrice(): Promise<any>;
   getFee(): Promise<any>;
   getUtxo(address: string): Promise<any>;

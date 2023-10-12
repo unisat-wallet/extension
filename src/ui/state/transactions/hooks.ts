@@ -84,13 +84,13 @@ export function useCreateARC20TxCallback() {
   const wallet = useWallet();
   const account = useCurrentAccount();
   const fromAddress = useAccountAddress();
-  return useCallback((
+  return useCallback( async (
     transferOptions: TransferFtConfigInterface,
     toAddressInfo: ToAddressInfo,
     nonAtomUtxos: UTXO_ATOM[],
     satsbyte: number,
     preload: boolean
-  ):RawTxInfo | undefined => {
+  ):Promise<RawTxInfo | undefined> => {
     if (transferOptions.atomicalsInfo.type !== "FT") {
       throw "Atomical is not an FT. It is expected to be an FT type";
     }
@@ -197,10 +197,18 @@ export function useCreateARC20TxCallback() {
         });
       }
       const psbtHex = psbt.toHex();
+
+
+
+      const s = await wallet.signPsbt(psbt,  [], true);
+      const signPsbt = Psbt.fromHex(s.toHex());
+      const tx = signPsbt.extractTransaction();
       console.log("signPsbt start", psbtHex);
+
+
       const rawTxInfo: RawTxInfo = {
         psbtHex,
-        rawtx: '',
+        rawtx: tx.toHex(),
         toAddressInfo,
         fee: expectedFundinng
       };
