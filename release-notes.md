@@ -1,6 +1,10 @@
 
 # UniSat Wallet Release Notes
 
+## v1.1.32
+- Support .btc as recipient address
+- Support recovery from OrdinalsWallet 
+
 ## v1.1.31
 - Support .x as recipient address
 - Fix the signature error of P2TR #86
