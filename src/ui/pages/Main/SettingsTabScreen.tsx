@@ -1,11 +1,13 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ADDRESS_TYPES, DISCORD_URL, GITHUB_URL, NETWORK_TYPES, TWITTER_URL } from '@/shared/constant';
 import { Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
+import { useTools } from '@/ui/components/ActionComponent';
 import { Button } from '@/ui/components/Button';
 import { Icon } from '@/ui/components/Icon';
 import { NavTabBar } from '@/ui/components/NavTabBar';
+import { WarningPopver } from '@/ui/components/WarningPopver';
 import { useExtensionIsInTab, useOpenExtensionInTab } from '@/ui/features/browser/tabs';
 import { getCurrentTab } from '@/ui/features/browser/tabs';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
@@ -100,7 +102,6 @@ export default function SettingsTabScreen() {
   const currentKeyring = useCurrentKeyring();
   const currentAccount = useCurrentAccount();
   const versionInfo = useVersionInfo();
-
   const wallet = useWallet();
   useEffect(() => {
     const run = async () => {
@@ -113,6 +114,11 @@ export default function SettingsTabScreen() {
     };
     run();
   }, []);
+
+  const isCustomHdPath = useMemo(() => {
+    const item = ADDRESS_TYPES[currentKeyring.addressType];
+    return item.hdPath !== currentKeyring.hdPath;
+  }, [currentKeyring]);
 
   const toRenderSettings = SettingList.filter((v) => {
     if (v.action == 'manage-wallet') {
@@ -129,7 +135,8 @@ export default function SettingsTabScreen() {
 
     if (v.action == 'addressType') {
       const item = ADDRESS_TYPES[currentKeyring.addressType];
-      v.value = `${item.name} (${item.hdPath}/${currentAccount.index})`;
+      const hdPath = currentKeyring.hdPath || item.hdPath;
+      v.value = `${item.name} (${hdPath}/${currentAccount.index})`;
     }
 
     if (v.action == 'expand-view') {
@@ -141,6 +148,7 @@ export default function SettingsTabScreen() {
     return true;
   });
 
+  const tools = useTools();
   const openExtensionInTab = useOpenExtensionInTab();
 
   return (
@@ -176,8 +184,14 @@ export default function SettingsTabScreen() {
                   key={item.action}
                   mt="lg"
                   onClick={(e) => {
-                    if (item.action == 'expand-view') {
-                      openExtensionInTab();
+                    if (item.action == 'addressType') {
+                      if (isCustomHdPath) {
+                        tools.showTip(
+                          'The wallet currently uses a custom HD path and does not support switching address types.'
+                        );
+                        return;
+                      }
+                      navigate('/settings/address-type');
                       return;
                     }
                     navigate(item.route);

@@ -18,6 +18,7 @@ export enum RestoreWalletType {
   UNISAT,
   SPARROW,
   XVERSE,
+  OW,
   OTHERS
 }
 

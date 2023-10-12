@@ -162,6 +162,8 @@ export const ADDRESS_TYPES: {
   }
 ];
 
+export const OW_HD_PATH = "m/86'/0'/0'";
+
 export const RESTORE_WALLETS: { value: RestoreWalletType; name: string; addressTypes: AddressType[] }[] = [
   {
     value: RestoreWalletType.UNISAT,
@@ -184,6 +186,11 @@ export const RESTORE_WALLETS: { value: RestoreWalletType; name: string; addressT
     value: RestoreWalletType.XVERSE,
     name: 'Xverse Wallet',
     addressTypes: [AddressType.P2SH_P2WPKH, AddressType.P2TR]
+  },
+  {
+    value: RestoreWalletType.OW,
+    name: 'Ordinals Wallet',
+    addressTypes: [AddressType.P2TR]
   },
   {
     value: RestoreWalletType.OTHERS,
