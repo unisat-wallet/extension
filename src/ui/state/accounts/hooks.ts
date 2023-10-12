@@ -198,11 +198,12 @@ export function useAtomicalsCallback() {
       // 'bc1pzxmvax02krvgw0tc06v7dz34zdvz9zynehcsfxky32h9zwg4nz4sjlq3qc'
     );
     // console.log({ _utxo });
-    const btc_amount = (res.nonAtomUtxosValue / (10000 * 10000)).toString();
+    const btc_amount = (res.nonAtomicalBalance / (10000 * 10000)).toString();
+    const amount = (res.mempoolBalance / (10000 * 10000)).toString();
     dispatch(
       accountActions.setBalance({
         address: currentAccount.address,
-        amount: btc_amount,
+        amount: amount,
         btc_amount,
         inscription_amount: ''
       })

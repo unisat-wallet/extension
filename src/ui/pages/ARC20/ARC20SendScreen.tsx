@@ -255,7 +255,7 @@ function Step1({
           <Row justifyBetween>
             <Text text={ 'BTC Balance'} color="textDim" />
             <Text
-              text={ `${accountBalance.amount} BTC`}
+              text={ `${accountBalance.btc_amount} BTC`}
               preset="bold"
               size="sm"
             />

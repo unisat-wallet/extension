@@ -6,7 +6,7 @@ import { Inscription, RawTxInfo } from '@/shared/types';
 import { Layout, Content, Button, Header, Icon, Text, Input, Column, Row } from '@/ui/components';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { useNavigate } from '@/ui/pages/MainRoute';
-import { useAccountBalance } from '@/ui/state/accounts/hooks';
+import { useAccountBalance, useAtomicals } from '@/ui/state/accounts/hooks';
 import {
   useBitcoinTx,
   useCreateBitcoinTxCallback,
@@ -58,6 +58,7 @@ export default function TxCreateScreen() {
   const dustAmount = useMemo(() => satoshisToAmount(COIN_DUST), [COIN_DUST]);
 
   const [feeRate, setFeeRate] = useState(5);
+  const atomicals  = useAtomicals()
 
   const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
   useEffect(() => {
@@ -141,7 +142,7 @@ export default function TxCreateScreen() {
         </Column>
 
         <Column mt="lg">
-          {/* <Row justifyBetween>
+          <Row justifyBetween>
             <Text text="Balance" color="textDim" />
             {showSafeBalance ? (
               <Text text={`${accountBalance.amount} BTC`} preset="bold" size="sm" />
@@ -159,7 +160,7 @@ export default function TxCreateScreen() {
                 <Text text={`${accountBalance.amount} BTC`} preset="bold" size="sm" />
               </Row>
             )}
-          </Row> */}
+          </Row>
           {showSafeBalance && (
             <Row justifyBetween>
               <Text text="Available (safe to send)" color="textDim" />
@@ -167,10 +168,10 @@ export default function TxCreateScreen() {
               <Row
                 onClick={() => {
                   setAutoAdjust(true);
-                  setInputAmount(accountBalance.amount.toString());
+                  setInputAmount(accountBalance.btc_amount.toString());
                 }}>
                 <Text text={'MAX'} color={autoAdjust ? 'yellow' : 'textDim'} size="sm" />
-                <Text text={`${accountBalance.amount} BTC`} preset="bold" size="sm" />
+                <Text text={`${accountBalance.btc_amount} BTC`} preset="bold" size="sm" />
               </Row>
             </Row>
           )}
