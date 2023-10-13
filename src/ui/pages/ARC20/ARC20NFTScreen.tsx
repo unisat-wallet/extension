@@ -107,15 +107,15 @@ function Preview(props: { selectValues: string[]; updateStep: (step: Step) => vo
     }));
     return outputs;
   }, [toInfo]);
-  const onClickNext = () => {
+  const onClickNext =async () => {
     const obj = {
       selectedUtxos: utxos ?? [],
       outputs: outputs ?? []
     };
-    const rawTxInfo = createARC20NFTTx(obj, toInfo, atomicals.nonAtomicalUtxos, feeRate, false);
+    const rawTxInfo = await createARC20NFTTx(obj, toInfo, atomicals.nonAtomicalUtxos, feeRate, false);
     console.log('rawTxInfo', rawTxInfo);
     if (rawTxInfo && rawTxInfo.fee) {
-      if (rawTxInfo.fee > atomicals.nonAtomicalBalance) {
+      if (rawTxInfo.fee > atomicals.nonAtomUtxosValue) {
         setError(`Fee ${rawTxInfo.fee} sats Insufficient BTC balance`);
         return;
       }

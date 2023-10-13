@@ -217,7 +217,7 @@ export function useCreateARCNFTTxCallback() {
   const account = useCurrentAccount();
   const fromAddress = useAccountAddress();
   return useCallback(
-    (
+    async (
       transferOptions: {
         selectedUtxos: ISelectedUtxo[];
         outputs: { address: string; value: number }[];
@@ -226,7 +226,7 @@ export function useCreateARCNFTTxCallback() {
       nonAtomUtxos: UTXO_ATOM[],
       satsbyte: number,
       preload: boolean
-    ): RawTxInfo | undefined => {
+    ): Promise<RawTxInfo | undefined> => {
       const pubkey = account.pubkey;
       console.log('pubkey', pubkey);
       const xpub = (toXOnly(Buffer.from(pubkey, 'hex')) as Buffer).toString('hex');
@@ -315,10 +315,15 @@ export function useCreateARCNFTTxCallback() {
         });
       }
       const psbtHex = psbt.toHex();
+
+      const s = await wallet.signPsbtReturnHex(psbtHex, { autoFinalized: true });
+      const signPsbt = Psbt.fromHex(s);
+      const tx = signPsbt.extractTransaction();
+
       console.log('signPsbt start', psbtHex);
       const rawTxInfo: RawTxInfo = {
         psbtHex,
-        rawtx: '',
+        rawtx: tx.toHex(),
         toAddressInfo,
         fee: expectedFundinng
       };
@@ -352,7 +357,7 @@ export function usePushBitcoinTxCallback() {
         setTimeout(() => {
           dispatch(accountActions.expireBalance());
         }, 5000);
-
+        // dispatch(accountActions.f());
         ret.success = true;
         ret.txid = txid;
       } catch (e) {

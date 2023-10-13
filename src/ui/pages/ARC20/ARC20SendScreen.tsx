@@ -206,7 +206,7 @@ function Step1({
     const rawTxInfo = await createARC20Tx(obj, toInfo, atomicals.nonAtomicalUtxos, feeRate, false);
     console.log('rawTxInfo', rawTxInfo)
     if(rawTxInfo && rawTxInfo.fee) {
-      if(rawTxInfo.fee > atomicals.nonAtomicalBalance ) {
+      if(rawTxInfo.fee > atomicals.nonAtomUtxosValue ) {
         setError(`Fee ${rawTxInfo.fee} sats Insufficient BTC balance`);
         return;
       }
@@ -253,7 +253,7 @@ function Step1({
             />
           </Column>
           <Row justifyBetween>
-            <Text text={ 'BTC Balance'} color="textDim" />
+            <Text text={'Available (safe to send)'} color="textDim" />
             <Text
               text={ `${accountBalance.btc_amount} BTC`}
               preset="bold"
