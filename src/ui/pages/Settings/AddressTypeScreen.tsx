@@ -93,10 +93,14 @@ export default function AddressTypeScreen() {
               satoshis: 0,
               total_inscription: 0
             };
+            let name = `${item.name} (${item.hdPath}/${account.index})`;
+            if (currentKeyring.type === KEYRING_TYPE.SimpleKeyring) {
+              name = `${item.name}`;
+            }
             return (
               <AddressTypeCard
                 key={index}
-                label={`${item.name} (${item.hdPath}/${account.index})`}
+                label={name}
                 address={address}
                 assets={assets}
                 checked={item.value == currentKeyring.addressType}

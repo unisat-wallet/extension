@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ADDRESS_TYPES, DISCORD_URL, GITHUB_URL, NETWORK_TYPES, TWITTER_URL } from '@/shared/constant';
+import { ADDRESS_TYPES, DISCORD_URL, GITHUB_URL, KEYRING_TYPE, NETWORK_TYPES, TWITTER_URL } from '@/shared/constant';
 import { Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { Button } from '@/ui/components/Button';
@@ -117,7 +117,7 @@ export default function SettingsTabScreen() {
 
   const isCustomHdPath = useMemo(() => {
     const item = ADDRESS_TYPES[currentKeyring.addressType];
-    return item.hdPath !== currentKeyring.hdPath;
+    return currentKeyring.hdPath !== '' && item.hdPath !== currentKeyring.hdPath;
   }, [currentKeyring]);
 
   const toRenderSettings = SettingList.filter((v) => {
@@ -136,7 +136,11 @@ export default function SettingsTabScreen() {
     if (v.action == 'addressType') {
       const item = ADDRESS_TYPES[currentKeyring.addressType];
       const hdPath = currentKeyring.hdPath || item.hdPath;
-      v.value = `${item.name} (${hdPath}/${currentAccount.index})`;
+      if (currentKeyring.type === KEYRING_TYPE.SimpleKeyring) {
+        v.value = `${item.name}`;
+      } else {
+        v.value = `${item.name} (${hdPath}/${currentAccount.index})`;
+      }
     }
 
     if (v.action == 'expand-view') {
