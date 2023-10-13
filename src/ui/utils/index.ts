@@ -1,4 +1,6 @@
+import { IAtomicalBalanceItem } from '@/background/service/interfaces/api';
 import BigNumber from 'bignumber.js';
+import { toUnicode } from 'punycode';
 import { useLocation } from 'react-router-dom';
 
 export * from './hooks';
@@ -220,4 +222,37 @@ export function findValueInDeepObject(obj: any, key: string): any | undefined {
   } else {
     return undefined;
   }
+}
+
+
+export function returnImageType(item: IAtomicalBalanceItem): { type: string; content: string; tag: string } {
+  let ct, content, type, tag;
+  if (item.realm) {
+    type = 'realm';
+    tag  = 'Realm';
+    content = item.full_realm_name!.toLowerCase().startsWith('xn--')
+      ? toUnicode(item.full_realm_name!)
+      : item.full_realm_name;
+  } else {
+    type = 'nft';
+    ct = findValueInDeepObject(item.data.mint_data.fields!, '$ct');
+    if (ct) {
+      if (ct.endsWith('webp')) {
+        ct = 'image/webp';
+      } else if (ct.endsWith('svg')) {
+        ct = 'image/svg+xml';
+      } else if (ct.endsWith('png')) {
+        ct = 'image/png';
+      } else if (ct.endsWith('jpg') || ct.endsWith('jpeg')) {
+        ct = 'image/jpeg';
+      } else if (ct.endsWith('gif')) {
+        ct = 'image/gif';
+      }
+      const data = findValueInDeepObject(item.data.mint_data.fields!, '$d');
+      const b64String = Buffer.from(data, 'hex').toString('base64');
+      content = `data:${ct};base64,${b64String}`;
+      tag = ct;
+    }
+  }
+  return { type, content, tag };
 }

@@ -7,6 +7,7 @@ import { AppState } from '..';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { useCurrentKeyring } from '../keyrings/hooks';
 import { accountActions } from './reducer';
+import { useTools } from '@/ui/components/ActionComponent';
 
 export function useAccountsState(): AppState['accounts'] {
   return useAppSelector((state) => state.accounts);
@@ -189,6 +190,7 @@ export function useAtomicalsCallback() {
   const wallet = useWallet();
   const currentAccount = useCurrentAccount();
   const balance = useAccountBalance();
+
   return useCallback(async () => {
     if (!currentAccount.address) return;
     // const _utxo = await wallet.getUtxo(currentAccount.address);

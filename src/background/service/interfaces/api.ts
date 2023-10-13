@@ -116,6 +116,8 @@ export interface IAtomicalBalanceItem {
   confirmed: number;
   request_ticker: string;
   data: any;
+  realm?:string;
+  full_realm_name?:string;
   request_ticker_status: {
     status: TickerStatus;
     note: string;

@@ -4,9 +4,9 @@ import { AddressTokenSummary, TransferFtConfigInterface } from '@/shared/types';
 import { Button, Column, Content, Grid, Header, Image, Input, Layout, Row, Text } from '@/ui/components';
 import BRC20Preview from '@/ui/components/BRC20Preview';
 import { Empty } from '@/ui/components/Empty';
-import { useAtomicals, useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { useAccountBalance, useAtomicals, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { colors } from '@/ui/theme/colors';
-import { findValueInDeepObject, isValidAddress, useLocationState, useWallet } from '@/ui/utils';
+import { findValueInDeepObject, isValidAddress, returnImageType, useLocationState, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
 import ARC20NFTCard from '@/ui/components/ARC20NFTCard';
@@ -29,41 +29,11 @@ enum Step {
   Confirm
 }
 
-function returnImageType(item: IAtomicalBalanceItem): { type: string; content: string } {
-  let ct, content, type;
-  const mint_data = item.data.mint_data;
-  if (mint_data.$realm) {
-    type = 'realm';
-    content = mint_data.$full_realm_name!.toLowerCase().startsWith('xn--')
-      ? toUnicode(mint_data.$full_realm_name!)
-      : mint_data.$full_realm_name;
-  } else {
-    type = 'nft';
-    ct = findValueInDeepObject(mint_data.fields!, '$ct');
-    if (ct) {
-      if (ct.endsWith('webp')) {
-        ct = 'image/webp';
-      } else if (ct.endsWith('svg')) {
-        ct = 'image/svg+xml';
-      } else if (ct.endsWith('png')) {
-        ct = 'image/png';
-      } else if (ct.endsWith('jpg') || ct.endsWith('jpeg')) {
-        ct = 'image/jpeg';
-      } else if (ct.endsWith('gif')) {
-        ct = 'image/gif';
-      }
-      const data = findValueInDeepObject(mint_data.fields!, '$d');
-      const b64String = Buffer.from(data, 'hex').toString('base64');
-      content = `data:${ct};base64,${b64String}`;
-    }
-  }
-  return { type, content };
-}
-
 function Preview(props: { selectValues: string[]; updateStep: (step: Step) => void }) {
   const { selectValues, updateStep } = props;
   const bitcoinTx = useBitcoinTx();
   const atomicals = useAtomicals();
+  const accountBalance = useAccountBalance();
   const [feeRate, setFeeRate] = useState(5);
   const [toInfo, setToInfo] = useState<{
     address: string;
@@ -107,7 +77,7 @@ function Preview(props: { selectValues: string[]; updateStep: (step: Step) => vo
     }));
     return outputs;
   }, [toInfo]);
-  const onClickNext =async () => {
+  const onClickNext = async () => {
     const obj = {
       selectedUtxos: utxos ?? [],
       outputs: outputs ?? []
@@ -126,7 +96,7 @@ function Preview(props: { selectValues: string[]; updateStep: (step: Step) => vo
   return (
     <Layout>
       <Header
-        title='Send NFTs'
+        title="Send NFTs"
         onBack={() => {
           updateStep(Step.SelectNFTs);
         }}
@@ -159,7 +129,6 @@ function Preview(props: { selectValues: string[]; updateStep: (step: Step) => vo
               </Grid>
               {selectAtomcals.map((data, index) => {
                 const { type, content } = returnImageType(data);
-
                 return (
                   <Grid columns={3} key={index} style={{ alignItems: 'center' }}>
                     <Column itemsCenter>
@@ -172,6 +141,16 @@ function Preview(props: { selectValues: string[]; updateStep: (step: Step) => vo
               })}
             </Column>
             <Column mt="lg">
+              <Row justifyBetween>
+              <Text text={'Available (safe for fee)'} color="textDim" />
+              <Text
+                text={ `${accountBalance.btc_amount} BTC`}
+                preset="bold"
+                size="sm"
+              />
+            </Row>
+            </Column>
+            <Column mt="lg">
               <Text text={'Real-time Fee Rate'} preset="regular" color="textDim" />
               <FeeRateBar
                 onChange={(val) => {
@@ -182,7 +161,7 @@ function Preview(props: { selectValues: string[]; updateStep: (step: Step) => vo
           </Column>
 
           <Column>
-            {error && <Text text={error} color="error" />}     
+            {error && <Text text={error} color="error" />}
             <Button text="Next" preset="primary" onClick={onClickNext} disabled={disabled} />
           </Column>
         </Column>
@@ -239,7 +218,7 @@ const ARC20NFTScreen = () => {
   return (
     <Layout>
       <Header
-        title='Send NFTs'
+        title="Send NFTs"
         onBack={() => {
           navigate('MainScreen');
         }}
@@ -247,23 +226,18 @@ const ARC20NFTScreen = () => {
       <Content>
         {atomicals.atomicalBalances ? (
           <Column full justifyBetween>
-            <Text text="Select NFT to send" preset="regular" color="textDim" />
-            <Row style={{ flexWrap: 'wrap' }} gap="sm" full>
-              <Checkbox.Group onChange={onChange} value={checkedList}>
-                {Object.values(atomicals.atomicalBalances)
-                  .filter((d) => d.type === 'NFT')
-                  .map((data, index) => {
-                    return (
-                      <ARC20NFTCard
-                        key={index}
-                        checkbox
-                        selectvalues={checkedList}
-                        tokenBalance={data}
-                      />
-                    );
-                  })}
-              </Checkbox.Group>
-            </Row>
+            <Column>
+              <Text text="Select NFT to send" preset="regular" color="textDim" />
+              <Row style={{ flexWrap: 'wrap', maxHeight: 'calc(100vh - 170px)', overflow: 'auto' }} gap="sm" full>
+                <Checkbox.Group onChange={onChange} value={checkedList}>
+                  {Object.values(atomicals.atomicalBalances)
+                    .filter((d) => d.type === 'NFT')
+                    .map((data, index) => {
+                      return <ARC20NFTCard key={index} checkbox selectvalues={checkedList} tokenBalance={data} />;
+                    })}
+                </Checkbox.Group>
+              </Row>
+            </Column>
             <Column>
               <Button
                 text="Send"
