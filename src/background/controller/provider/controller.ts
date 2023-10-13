@@ -61,6 +61,16 @@ class ProviderController extends BaseController {
   getFee = async () => {
     return await wallet.getFee();
   };
+
+  @Reflect.metadata('SAFE', true)
+  calculateFee = async ({
+    data: {
+      params: { psbtHex, feeRate, options }
+    }
+  }) => {
+    return await wallet.calculateFee(psbtHex, feeRate, options);
+  };
+
   getUtxo = async (req) => {
     const {
       data: {

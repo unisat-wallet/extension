@@ -485,7 +485,6 @@ export class WalletController extends BaseController {
   };
 
   signPsbt = async (psbt: bitcoin.Psbt, toSignInputs: ToSignInput[], autoFinalized: boolean) => {
-    console.log('signPsbt', psbt, toSignInputs, autoFinalized);
     const account = await this.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
@@ -537,6 +536,23 @@ export class WalletController extends BaseController {
     const toSignInputs = await this.formatOptionsToSignInputs(psbtHex, options);
     const psbtObject = await this.signPsbt(psbt, toSignInputs, autoFinalized);
     return psbtObject.toHex();
+  };
+
+  calculateFee = async (psbtHex: string, feeRate: number, options?: SignPsbtOptions): Promise<number> => {
+    const networkType = this.getNetworkType();
+    const psbtNetwork = toPsbtNetwork(networkType);
+    const psbt = bitcoin.Psbt.fromHex(psbtHex, { network: psbtNetwork });
+    const autoFinalized = options && options.autoFinalized == false ? false : true;
+    const toSignInputs = await this.formatOptionsToSignInputs(psbtHex, options);
+    const psbtObject = await this.signPsbt(psbt, toSignInputs, autoFinalized);
+    let txSize = psbtObject.extractTransaction(true).toBuffer().length;
+    psbt.data.inputs.forEach((v) => {
+      if (v.finalScriptWitness) {
+        txSize -= v.finalScriptWitness.length * 0.75;
+      }
+    });
+    const fee = Math.ceil(txSize * feeRate);
+    return fee;
   };
 
   signMessage = async (text: string) => {

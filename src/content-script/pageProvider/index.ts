@@ -2,7 +2,7 @@
 import { ethErrors, serializeError } from 'eth-rpc-errors';
 import { EventEmitter } from 'events';
 
-import { TxType } from '@/shared/types';
+import { SignPsbtOptions, TxType } from '@/shared/types';
 import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
 
 import PushEventHandlers from './pushEventHandlers';
@@ -325,6 +325,17 @@ export class AtomProvider extends EventEmitter {
     return this._request({
       method: 'getUtxo',
       params: { address }
+    });
+  };
+
+  calculateFee = async (psbtHex: string, feeRate: number, options?: SignPsbtOptions) => {
+    return this._request({
+      method: 'calculateFee',
+      params: {
+        psbtHex,
+        feeRate,
+        options
+      }
     });
   };
 }

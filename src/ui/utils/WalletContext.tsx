@@ -226,6 +226,7 @@ export interface WalletController {
   formatOptionsToSignInputs(psbtHex: string, options: SignPsbtOptions): Promise<ToSignInput[]>;
   signPsbt(psbt: bitcoin.Psbt, toSignInputs: ToSignInput[], autoFinalized: boolean): Promise<bitcoin.Psbt>;
   signPsbtReturnHex(psbtHex: string, options?: SignPsbtOptions): Promise<string>;
+  calculateFee(psbtHex: string, feeRate: number, options?: SignPsbtOptions): Promise<number>;
   getPrice(): Promise<any>;
   getFee(): Promise<any>;
   getUtxo(address: string): Promise<any>;
