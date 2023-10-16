@@ -30,6 +30,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@babel/core": "^7.16.0",
+    "@exodus/bitcoin-wallet-standard-chains": "^0.0.0",
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-regular-svg-icons": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
@@ -54,6 +55,7 @@
     "@unisat/bitcoin-hd-keyring": "1.0.1",
     "@unisat/bitcoinjs-wallet": "^0.1.0",
     "@unisat/ord-utils": "0.3.3",
+    "@wallet-standard/wallet": "^1.0.1",
     "antd": "^4.20.4",
     "antd-dayjs-webpack-plugin": "1.0.6",
     "assert": "^2.0.0",
@@ -231,6 +233,7 @@
     "@types/stylus": "^0.48.38",
     "@typescript-eslint/eslint-plugin": "^5.26.0",
     "@typescript-eslint/parser": "^5.26.0",
+    "@wallet-standard/base": "^1.0.1",
     "autoprefixer": "^10.4.7",
     "babel-plugin-import": "^1.13.5",
     "eslint": "^8.16.0",

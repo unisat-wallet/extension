@@ -1301,6 +1301,13 @@
     minimatch "^3.1.2"
     strip-json-comments "^3.1.1"
 
+"@exodus/bitcoin-wallet-standard-chains@^0.0.0":
+  version "0.0.0"
+  resolved "https://registry.yarnpkg.com/@exodus/bitcoin-wallet-standard-chains/-/bitcoin-wallet-standard-chains-0.0.0.tgz#f9ee21bfd086a6ea46f68d8a8ea413f9661ce9cf"
+  integrity sha512-D9ddBdkZZCyX4lMLirqdRchrkDhRzlqhAwmKE1IC/N2mndY0Sz2PayJrhpxvS+vlVbU54ZlBGfSwOhPUQekP/w==
+  dependencies:
+    "@wallet-standard/base" "^1.0.1"
+
 "@fortawesome/fontawesome-common-types@6.3.0":
   version "6.3.0"
   resolved "https://registry.yarnpkg.com/@fortawesome/fontawesome-common-types/-/fontawesome-common-types-6.3.0.tgz#51f734e64511dbc3674cd347044d02f4dd26e86b"
@@ -2744,6 +2751,18 @@
     bs58check "^2.1.2"
     ecpair "^2.1.0"
     tiny-secp256k1 "^2.2.1"
+
+"@wallet-standard/base@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@wallet-standard/base/-/base-1.0.1.tgz#860dd94d47c9e3c5c43b79d91c6afdbd7a36264e"
+  integrity sha512-1To3ekMfzhYxe0Yhkpri+Fedq0SYcfrOfJi3vbLjMwF2qiKPjTGLwZkf2C9ftdQmxES+hmxhBzTwF4KgcOwf8w==
+
+"@wallet-standard/wallet@^1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@wallet-standard/wallet/-/wallet-1.0.1.tgz#95438941a2a1ee12a794444357b59d53e19b374c"
+  integrity sha512-qkhJeuQU2afQTZ02yMZE5SFc91Fo3hyFjFkpQglHudENNyiSG0oUKcIjky8X32xVSaumgTZSQUAzpXnCTWHzKQ==
+  dependencies:
+    "@wallet-standard/base" "^1.0.1"
 
 "@webassemblyjs/ast@1.11.1":
   version "1.11.1"
