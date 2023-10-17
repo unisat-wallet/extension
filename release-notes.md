@@ -2,6 +2,9 @@
 # UniSat Wallet Release Notes
 
 ## v1.1.32
+- Fix changing address type of simple keyring
+
+## v1.1.32
 - Support .btc as recipient address
 - Support recovery from OrdinalsWallet 
 
