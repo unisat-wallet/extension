@@ -6,6 +6,7 @@ import { SAFE_DOMAIN_CONFIRMATION, SUPPORTED_DOMAINS } from '@/shared/constant';
 import { getSatsName } from '@/shared/lib/satsname-utils';
 import { Inscription } from '@/shared/types';
 import { colors } from '@/ui/theme/colors';
+import { fontSizes } from '@/ui/theme/font';
 import { spacing } from '@/ui/theme/spacing';
 import { useWallet } from '@/ui/utils';
 
@@ -144,7 +145,7 @@ export const AddressInput = (props: InputProps) => {
   const [inputVal, setInputVal] = useState(addressInputData.domain || addressInputData.address);
 
   const [inscription, setInscription] = useState<Inscription>();
-
+  const [parseName, setParseName] = useState('');
   const wallet = useWallet();
   const tools = useTools();
   useEffect(() => {
@@ -175,6 +176,7 @@ export const AddressInput = (props: InputProps) => {
     if (inscription) {
       setInscription(undefined);
     }
+    setParseName('');
   };
 
   const handleInputAddress = (e) => {
@@ -207,6 +209,7 @@ export const AddressInput = (props: InputProps) => {
             const address = inscription.address || '';
             setParseAddress(address);
             setValidAddress(address);
+            setParseName(satsname.suffix);
           })
           .catch((err: Error) => {
             const errMsg = err.message + ' for ' + inputAddress;
@@ -268,6 +271,20 @@ export const AddressInput = (props: InputProps) => {
         )}
       </div>
 
+      {parseName ? (
+        <Row mt="sm" gap="zero" itemsCenter>
+          <Text preset="sub" size="sm" text={'Name recognized and resolved. ('} />
+          <Text
+            preset="link"
+            color="yellow"
+            text={'More details'}
+            onClick={() => {
+              window.open(`https://docs.unisat.io/unisat-wallet/name-recognized-and-resolved`);
+            }}
+          />
+          <Text preset="sub" size="sm" text={')'} />
+        </Row>
+      ) : null}
       {parseError && <Text text={parseError} preset="regular" color="error" />}
       <Text text={formatError} preset="regular" color="error" />
     </div>
