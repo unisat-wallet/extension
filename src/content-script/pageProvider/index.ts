@@ -4,10 +4,12 @@ import { EventEmitter } from 'events';
 
 import { TxType } from '@/shared/types';
 import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
+import { registerWallet } from '@wallet-standard/wallet';
 
 import PushEventHandlers from './pushEventHandlers';
 import ReadyPromise from './readyPromise';
 import { $, domReadyCall } from './utils';
+import { UnisatWallet } from './wallet-standard';
 
 const log = (event, ...args) => {
   if (process.env.NODE_ENV !== 'production') {
@@ -332,3 +334,8 @@ Object.defineProperty(window, 'unisat', {
 });
 
 window.dispatchEvent(new Event('unisat#initialized'));
+
+/** Wallet Standard **/
+const wallet = new UnisatWallet(provider)
+
+registerWallet(wallet)
