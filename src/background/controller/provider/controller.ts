@@ -10,19 +10,17 @@ import { Psbt,Transaction,address as PsbtAddress  } from 'bitcoinjs-lib';
 import { amountToSatoshis } from '@/ui/utils';
 import { ethErrors } from 'eth-rpc-errors';
 
-function formatPsbtHex(psbtHex:string){
-  let formatData = '';
-  try{
-    if(!(/^[0-9a-fA-F]+$/.test(psbtHex))){
-      formatData = Psbt.fromBase64(psbtHex).toHex()
-    }else{
-      Psbt.fromHex(psbtHex);
-      formatData = psbtHex;
+function formatPsbtHex(psbtHex: string) {
+  try {
+    if (!(/^[0-9a-fA-F]+$/.test(psbtHex))) {
+      const psbt = Psbt.fromBase64(psbtHex);
+      return psbt.toHex();
     }
-  }catch(e){
-    throw new Error('invalid psbt')
+
+    return psbtHex;
+  } catch (e) {
+    throw new Error('Invalid PSBT');
   }
-  return formatData;
 }
 
 class ProviderController extends BaseController {
