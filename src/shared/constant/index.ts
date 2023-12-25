@@ -278,3 +278,7 @@ export const TWITTER_URL = 'https://twitter.com/unisat_wallet';
 export const CHANNEL = process.env.channel!;
 export const VERSION = process.env.release!;
 export const MANIFEST_VERSION = process.env.manifest!;
+
+export enum AddressFlagType  {
+  Is_Enable_Atomicals = 0b1
+}

@@ -28,6 +28,7 @@ import {
 } from '@/shared/types';
 import { AddressType, UnspentOutput } from '@unisat/wallet-sdk';
 import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
+import { AddressFlagType } from '@/shared/constant';
 
 export interface WalletController {
   openapi: {
@@ -278,6 +279,10 @@ export interface WalletController {
 
   getShowSafeNotice(): Promise<boolean>;
   setShowSafeNotice(show: boolean): Promise<void>;
+
+  // address flag
+  addAddressFlag(account: Account, flag: AddressFlagType):Promise<Account>
+  removeAddressFlag(account: Account, flag: AddressFlagType):Promise<Account>
 }
 
 const WalletContext = createContext<{

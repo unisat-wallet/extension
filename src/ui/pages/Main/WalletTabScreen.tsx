@@ -1,7 +1,7 @@
 import { Tooltip } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 
-import { KEYRING_TYPE } from '@/shared/constant';
+import { AddressFlagType, KEYRING_TYPE } from '@/shared/constant';
 import { Arc20Balance, Inscription, NetworkType, TokenBalance } from '@/shared/types';
 import { Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
@@ -9,6 +9,8 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { AddressBar } from '@/ui/components/AddressBar';
 import Arc20BalanceCard from '@/ui/components/Arc20BalanceCard';
 import BRC20BalanceCard from '@/ui/components/BRC20BalanceCard';
+import ToEnableAtomicals from '@/ui/components/ToEnableAtomicals';
+
 import { Button } from '@/ui/components/Button';
 import { Empty } from '@/ui/components/Empty';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
@@ -35,6 +37,7 @@ import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
+import { checkAddressFlag } from '@/shared/utils';
 
 export default function WalletTabScreen() {
   const navigate = useNavigate();
@@ -90,7 +93,8 @@ export default function WalletTabScreen() {
     {
       key: AssetTabKey.ATOMICALS,
       label: 'Atomicals',
-      children: <AtomicalsTab />
+      children: checkAddressFlag(currentAccount.flag, AddressFlagType.Is_Enable_Atomicals) ? <AtomicalsTab /> :
+        <ToEnableAtomicals />
     }
   ];
 

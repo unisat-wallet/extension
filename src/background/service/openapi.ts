@@ -39,6 +39,8 @@ enum API_STATUS {
 export class OpenApiService {
   store!: OpenApiStore;
   clientAddress = '';
+  private addressFlag = 0;
+
   setHost = async (host: string) => {
     this.store.host = host;
     await this.init();
@@ -84,8 +86,9 @@ export class OpenApiService {
     getConfig();
   };
 
-  setClientAddress = async (token: string) => {
+  setClientAddress = async (token: string, flag: number) => {
     this.clientAddress = token;
+    this.addressFlag = flag;
   };
 
   getRespData = async (res: any) => {
@@ -121,6 +124,7 @@ export class OpenApiService {
     headers.append('X-Client', 'UniSat Wallet');
     headers.append('X-Version', VERSION);
     headers.append('x-address', this.clientAddress);
+    headers.append('x-flag', this.addressFlag+'');
     headers.append('x-channel', CHANNEL);
     headers.append('x-udid', this.store.deviceId);
     let res: Response;
@@ -139,6 +143,7 @@ export class OpenApiService {
     headers.append('X-Client', 'UniSat Wallet');
     headers.append('X-Version', VERSION);
     headers.append('x-address', this.clientAddress);
+    headers.append('x-flag', this.addressFlag+'');
     headers.append('x-channel', CHANNEL);
     headers.append('x-udid', this.store.deviceId);
     headers.append('Content-Type', 'application/json;charset=utf-8');

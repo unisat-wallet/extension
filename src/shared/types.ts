@@ -216,6 +216,7 @@ export interface Account {
   index?: number;
   balance?: number;
   key: string;
+  flag:number;
 }
 
 export interface InscribeOrder {

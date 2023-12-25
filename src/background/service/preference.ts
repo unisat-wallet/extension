@@ -2,7 +2,7 @@ import compareVersions from 'compare-versions';
 import cloneDeep from 'lodash/cloneDeep';
 
 import { createPersistStore } from '@/background/utils';
-import { EVENTS } from '@/shared/constant';
+import { AddressFlagType, EVENTS } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 import {
   Account,
@@ -84,6 +84,7 @@ export interface PreferenceStore {
     readAppTime: { [key: string]: number };
   };
   showSafeNotice: boolean;
+  addressFlags: { [key: string]: number };
 }
 
 const SUPPORT_LOCALES = ['en'];
@@ -124,7 +125,8 @@ class PreferenceService {
           readAppTime: {},
           readTabTime: 1
         },
-        showSafeNotice: true
+        showSafeNotice: true,
+        addressFlags: {}
       }
     });
     if (!this.store.locale || this.store.locale !== defaultLang) {
@@ -196,6 +198,9 @@ class PreferenceService {
 
     if (typeof this.store.showSafeNotice !== 'boolean') {
       this.store.showSafeNotice = true;
+    }
+    if (!this.store.addressFlags) {
+      this.store.addressFlags = {};
     }
   };
 
@@ -383,6 +388,38 @@ class PreferenceService {
     return this.store.accountAlianNames[accountKey];
   };
 
+  // get address flag
+  getAddressFlag = (address:string)=>{
+    return this.store.addressFlags[address] || 0;
+  }
+  setAddressFlag = (address:string,flag:number)=>{
+    this.store.addressFlags = Object.assign(
+      {},
+      this.store.addressFlags,
+      { [address]: flag});
+  }
+
+  // Add address flag
+  addAddressFlag = (address: string, flag: AddressFlagType) => {
+    const finalFlag = (this.store.addressFlags[address] || 0) | flag;
+    this.store.addressFlags = Object.assign(
+      {},
+      this.store.addressFlags,
+      { [address]: finalFlag});
+    return finalFlag;
+  };
+
+  // Remove address flag
+  removeAddressFlag = (address: string, flag: AddressFlagType) => {
+    const finalFlag =  (this.store.addressFlags[address] || 0) & ~flag;
+    this.store.addressFlags = Object.assign(
+      {},
+      this.store.addressFlags,
+      { [address]: finalFlag});
+    return finalFlag;
+  };
+
+
   // editingKeyringIndex
   getEditingKeyringIndex = () => {
     return this.store.editingKeyringIndex;
@@ -459,6 +496,8 @@ class PreferenceService {
   setShowSafeNotice = (showSafeNotice: boolean) => {
     this.store.showSafeNotice = showSafeNotice;
   };
+
+
 }
 
 export default new PreferenceService();

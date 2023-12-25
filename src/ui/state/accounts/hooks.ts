@@ -145,6 +145,21 @@ export function useChangeAccountNameCallback() {
   );
 }
 
+export function useChangeAddressFlagCallback() {
+  const dispatch = useAppDispatch();
+  const wallet = useWallet();
+  const currentAccount = useCurrentAccount();
+  return useCallback(
+    async (isAdd: boolean, flag: number) => {
+      const account = isAdd
+        ? await wallet.addAddressFlag(currentAccount, flag)
+        : await wallet.removeAddressFlag(currentAccount, flag);
+      dispatch(accountActions.setCurrentAddressFlag(account.flag));
+    },
+    [dispatch, wallet, currentAccount]
+  );
+}
+
 export function useFetchHistoryCallback() {
   const dispatch = useAppDispatch();
   const wallet = useWallet();

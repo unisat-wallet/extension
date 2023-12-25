@@ -11,6 +11,7 @@ import i18n from '@/background/service/i18n';
 import { DisplayedKeyring, Keyring } from '@/background/service/keyring';
 import {
   ADDRESS_TYPES,
+  AddressFlagType,
   BRAND_ALIAN_TYPE_TEXT,
   CHAINS_ENUM,
   COIN_NAME,
@@ -33,9 +34,9 @@ import {
   UTXO,
   WalletKeyring
 } from '@/shared/types';
-import { UnspentOutput, txHelpers } from '@unisat/wallet-sdk';
+import { txHelpers, UnspentOutput } from '@unisat/wallet-sdk';
 import { publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
-import { ECPair, bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
+import { bitcoin, ECPair } from '@unisat/wallet-sdk/lib/bitcoin-core';
 import { signMessageOfBIP322Simple } from '@unisat/wallet-sdk/lib/message';
 import { toPsbtNetwork } from '@unisat/wallet-sdk/lib/network';
 import { toXOnly } from '@unisat/wallet-sdk/lib/utils';
@@ -53,6 +54,7 @@ export type AccountAsset = {
   amount: string;
   value: string;
 };
+
 export class WalletController extends BaseController {
   openapi: OpenApiService = openapiService;
 
@@ -151,9 +153,10 @@ export class WalletController extends BaseController {
   };
 
   getAddressHistory = async (address: string) => {
-    const data = await openapiService.getAddressRecentHistory(address);
-    preferenceService.updateAddressHistory(address, data);
-    return data;
+    // const data = await openapiService.getAddressRecentHistory(address);
+    // preferenceService.updateAddressHistory(address, data);
+    // return data;
+    //   todo
   };
 
   getAddressInscriptions = async (address: string, cursor: number, size: number) => {
@@ -332,7 +335,9 @@ export class WalletController extends BaseController {
   changeKeyring = (keyring: WalletKeyring, accountIndex = 0) => {
     preferenceService.setCurrentKeyringIndex(keyring.index);
     preferenceService.setCurrentAccount(keyring.accounts[accountIndex]);
-    openapiService.setClientAddress(keyring.accounts[accountIndex].address);
+    const flag = preferenceService.getAddressFlag(keyring.accounts[accountIndex].address);
+    openapiService.setClientAddress(
+      keyring.accounts[accountIndex].address, flag);
   };
 
   getAllAddresses = (keyring: WalletKeyring, index: number) => {
@@ -930,13 +935,15 @@ export class WalletController extends BaseController {
       const accountKey = key + '#' + j;
       const defaultName = this.getAlianName(pubkey) || this._generateAlianName(type, j + 1);
       const alianName = preferenceService.getAccountAlianName(accountKey, defaultName);
+      const flag = preferenceService.getAddressFlag(address);
       accounts.push({
         type,
         pubkey,
         address,
         alianName,
         index: j,
-        key: accountKey
+        key: accountKey,
+        flag
       });
     }
     const hdPath = type === KEYRING_TYPE.HdKeyring ? displayedKeyring.keyring.hdPath : '';
@@ -1022,7 +1029,8 @@ export class WalletController extends BaseController {
       currentAccount = currentKeyring.accounts[0];
     }
     if (currentAccount) {
-      openapiService.setClientAddress(currentAccount.address);
+      currentAccount.flag = preferenceService.getAddressFlag(currentAccount.address);
+      openapiService.setClientAddress(currentAccount.address, currentAccount.flag);
     }
     return currentAccount;
   };
@@ -1177,9 +1185,18 @@ export class WalletController extends BaseController {
     return account;
   };
 
+  addAddressFlag = (account: Account, flag: AddressFlagType) => {
+    console.log('### addAddressFlag', account.address, flag);
+    account.flag = preferenceService.addAddressFlag(account.address, flag);
+    return account;
+  };
+  removeAddressFlag = (account: Account, flag: AddressFlagType) => {
+    account.flag = preferenceService.removeAddressFlag(account.address, flag);
+    return account;
+  };
+
   getFeeSummary = async () => {
-    const result = await openapiService.getFeeSummary();
-    return result;
+    return openapiService.getFeeSummary();
   };
 
   inscribeBRC20Transfer = (address: string, tick: string, amount: string, feeRate: number) => {

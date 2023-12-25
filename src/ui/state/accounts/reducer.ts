@@ -41,7 +41,8 @@ const initialAccount = {
   index: 0,
   balance: 0,
   pubkey: '',
-  key: ''
+  key: '',
+  flag: 0
 };
 
 export const initialState: AccountsState = {
@@ -157,6 +158,14 @@ const slice = createSlice({
       const account = state.accounts.find((v) => v.address === state.current.address);
       if (account) {
         account.alianName = payload;
+      }
+    },
+    setCurrentAddressFlag(state, action: { payload: number }) {
+      const { payload } = action;
+      state.current.flag = payload;
+      const account = state.accounts.find((v) => v.address === state.current.address);
+      if (account) {
+        account.flag = payload;
       }
     },
     setInscriptionSummary(state, action: { payload: InscriptionSummary }) {

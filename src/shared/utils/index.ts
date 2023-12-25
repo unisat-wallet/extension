@@ -1,7 +1,7 @@
 import { keyBy } from 'lodash';
 
 import browser from '@/background/webapi/browser';
-import { CHAINS } from '@/shared/constant';
+import { AddressFlagType, CHAINS } from '@/shared/constant';
 
 import BroadcastChannelMessage from './message/broadcastChannelMessage';
 import PortMessage from './message/portMessage';
@@ -29,4 +29,10 @@ export const getChain = (chainId?: string) => {
     return null;
   }
   return chainsDict[chainId];
+};
+
+
+// Check if address flag is enabled
+export const checkAddressFlag = (currentFlag: number, flag: AddressFlagType): boolean => {
+  return Boolean(currentFlag & flag);
 };
