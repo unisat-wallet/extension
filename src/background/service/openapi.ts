@@ -57,7 +57,7 @@ export class OpenApiService {
       }
     });
 
-    if ([OPENAPI_URL_MAINNET, OPENAPI_URL_TESTNET].includes(this.store.host) === false) {
+    if (![OPENAPI_URL_MAINNET, OPENAPI_URL_TESTNET].includes(this.store.host)) {
       const networkType = preferenceService.getNetworkType();
       if (networkType === NetworkType.MAINNET) {
         this.store.host = OPENAPI_URL_MAINNET;
@@ -88,6 +88,23 @@ export class OpenApiService {
     this.clientAddress = token;
   };
 
+  getRespData = async (res: any) => {
+    let jsonRes: { code: number; msg: string; data: any };
+
+    if (!res) throw new Error('Network error, no response');
+    if (res.status !== 200) throw new Error('Network error with status: ' + res.status);
+    try {
+      jsonRes = await res.json();
+    } catch (e) {
+      throw new Error('Network error, json parse error');
+    }
+    if (!jsonRes) throw new Error('Network error,no response data');
+    if (jsonRes.code === API_STATUS.FAILED) {
+      throw new Error(jsonRes.msg);
+    }
+    return jsonRes.data;
+  };
+
   httpGet = async (route: string, params: any) => {
     let url = this.getHost() + route;
     let c = 0;
@@ -106,13 +123,14 @@ export class OpenApiService {
     headers.append('x-address', this.clientAddress);
     headers.append('x-channel', CHANNEL);
     headers.append('x-udid', this.store.deviceId);
-    const res = await fetch(new Request(url), { method: 'GET', headers, mode: 'cors', cache: 'default' });
-    const jsonRes = await res.json();
-    if (jsonRes.code == API_STATUS.FAILED) {
-      throw new Error(jsonRes.msg);
+    let res: Response;
+    try {
+      res = await fetch(new Request(url), { method: 'GET', headers, mode: 'cors', cache: 'default' });
+    } catch (e: any) {
+      throw new Error('Network error: ' + e && e.message);
     }
 
-    return jsonRes.data;
+    return this.getRespData(res);
   };
 
   httpPost = async (route: string, params: any) => {
@@ -124,20 +142,20 @@ export class OpenApiService {
     headers.append('x-channel', CHANNEL);
     headers.append('x-udid', this.store.deviceId);
     headers.append('Content-Type', 'application/json;charset=utf-8');
-    const res = await fetch(new Request(url), {
-      method: 'POST',
-      headers,
-      mode: 'cors',
-      cache: 'default',
-      body: JSON.stringify(params)
-    });
-    const jsonRes = await res.json();
-
-    if (jsonRes.code == API_STATUS.FAILED) {
-      throw new Error(jsonRes.msg);
+    let res: Response;
+    try {
+      res = await fetch(new Request(url), {
+        method: 'POST',
+        headers,
+        mode: 'cors',
+        cache: 'default',
+        body: JSON.stringify(params)
+      });
+    } catch (e: any) {
+      throw new Error('Network error: ' + e && e.message);
     }
 
-    return jsonRes.data;
+    return this.getRespData(res);
   };
 
   async getWalletConfig(): Promise<WalletConfig> {
