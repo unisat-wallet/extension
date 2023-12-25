@@ -2834,10 +2834,10 @@
   resolved "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.2.0.tgz#756641adb587851b5ccb3e095daf27ae581c8406"
   integrity sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==
 
-"@unisat/wallet-sdk@1.0.0":
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/@unisat/wallet-sdk/-/wallet-sdk-1.0.0.tgz#298053a5af8784d037dcd4342678487930234091"
-  integrity sha512-h6tAvOp2Jo3Mf27iBI2G43yZtlYeCwfWATZsN86Pq5W5ma00WXnd6+B3hM+iOmCr0Uaecj3ARIgRqRTvi/TrFQ==
+"@unisat/wallet-sdk@1.0.1":
+  version "1.0.1"
+  resolved "https://registry.yarnpkg.com/@unisat/wallet-sdk/-/wallet-sdk-1.0.1.tgz#51891b222ddbe65099402e05feaa916cd4e2f64e"
+  integrity sha512-C26oPs5PPmBKBWHMg3jzoh4QOYwz/ajOgvO5FsoPHSesvn3api5NKDyMF1kYNz5pWdSbcQshT3YmEto6dYa9Lg==
   dependencies:
     "@bitcoinerlab/secp256k1" "^1.0.5"
     bignumber.js "^9.1.2"
