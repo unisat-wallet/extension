@@ -1,9 +1,9 @@
-import { Psbt } from 'bitcoinjs-lib';
 import { useCallback, useMemo } from 'react';
 
 import { RawTxInfo, ToAddressInfo } from '@/shared/types';
 import { useTools } from '@/ui/components/ActionComponent';
 import { satoshisToAmount, satoshisToBTC, sleep, useWallet } from '@/ui/utils';
+import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 
 import { AppState } from '..';
 import { useAccountAddress, useCurrentAccount } from '../accounts/hooks';
@@ -20,14 +20,24 @@ export function useBitcoinTx() {
   return transactionsState.bitcoinTx;
 }
 
-export function useCreateBitcoinTxCallback() {
+export function usePrepareSendBTCCallback() {
   const dispatch = useAppDispatch();
   const wallet = useWallet();
   const fromAddress = useAccountAddress();
   const utxos = useUtxos();
   const fetchUtxos = useFetchUtxosCallback();
   return useCallback(
-    async (toAddressInfo: ToAddressInfo, toAmount: number, feeRate?: number, receiverToPayFee = false) => {
+    async ({
+      toAddressInfo,
+      toAmount,
+      feeRate,
+      enableRBF
+    }: {
+      toAddressInfo: ToAddressInfo;
+      toAmount: number;
+      feeRate?: number;
+      enableRBF: boolean;
+    }) => {
       let _utxos = utxos;
       if (_utxos.length === 0) {
         _utxos = await fetchUtxos();
@@ -45,14 +55,26 @@ export function useCreateBitcoinTxCallback() {
         const summary = await wallet.getFeeSummary();
         feeRate = summary.list[1].feeRate;
       }
-      const psbtHex = await wallet.sendBTC({
-        to: toAddressInfo.address,
-        amount: toAmount,
-        utxos: _utxos,
-        receiverToPayFee,
-        feeRate
-      });
-      const psbt = Psbt.fromHex(psbtHex);
+      let psbtHex = '';
+
+      if (safeBalance === toAmount) {
+        psbtHex = await wallet.sendAllBTC({
+          to: toAddressInfo.address,
+          btcUtxos: _utxos,
+          enableRBF,
+          feeRate
+        });
+      } else {
+        psbtHex = await wallet.sendBTC({
+          to: toAddressInfo.address,
+          amount: toAmount,
+          btcUtxos: _utxos,
+          enableRBF,
+          feeRate
+        });
+      }
+
+      const psbt = bitcoin.Psbt.fromHex(psbtHex);
       const rawtx = psbt.extractTransaction().toHex();
       const fee = psbt.getFee();
       dispatch(
@@ -118,20 +140,40 @@ export function useOrdinalsTx() {
   return transactionsState.ordinalsTx;
 }
 
-export function useCreateOrdinalsTxCallback() {
+export function usePrepareSendOrdinalsInscriptionCallback() {
   const dispatch = useAppDispatch();
   const wallet = useWallet();
   const fromAddress = useAccountAddress();
   const utxos = useUtxos();
+  const fetchUtxos = useFetchUtxosCallback();
   return useCallback(
-    async (toAddressInfo: ToAddressInfo, inscriptionId: string, feeRate: number, outputValue: number) => {
-      const psbtHex = await wallet.sendInscription({
+    async ({
+      toAddressInfo,
+      inscriptionId,
+      feeRate,
+      outputValue,
+      enableRBF
+    }: {
+      toAddressInfo: ToAddressInfo;
+      inscriptionId: string;
+      feeRate: number;
+      outputValue: number;
+      enableRBF: boolean;
+    }) => {
+      let btcUtxos = utxos;
+      if (btcUtxos.length === 0) {
+        btcUtxos = await fetchUtxos();
+      }
+
+      const psbtHex = await wallet.sendOrdinalsInscription({
         to: toAddressInfo.address,
         inscriptionId,
         feeRate,
-        outputValue
+        outputValue,
+        enableRBF,
+        btcUtxos
       });
-      const psbt = Psbt.fromHex(psbtHex);
+      const psbt = bitcoin.Psbt.fromHex(psbtHex);
       const rawtx = psbt.extractTransaction().toHex();
       dispatch(
         transactionsActions.updateOrdinalsTx({
@@ -154,23 +196,41 @@ export function useCreateOrdinalsTxCallback() {
   );
 }
 
-export function useCreateMultiOrdinalsTxCallback() {
+export function usePrepareSendOrdinalsInscriptionsCallback() {
   const dispatch = useAppDispatch();
   const wallet = useWallet();
   const fromAddress = useAccountAddress();
+  const fetchUtxos = useFetchUtxosCallback();
   const utxos = useUtxos();
   return useCallback(
-    async (toAddressInfo: ToAddressInfo, inscriptionIds: string[], feeRate?: number) => {
+    async ({
+      toAddressInfo,
+      inscriptionIds,
+      feeRate,
+      enableRBF
+    }: {
+      toAddressInfo: ToAddressInfo;
+      inscriptionIds: string[];
+      feeRate?: number;
+      enableRBF: boolean;
+    }) => {
       if (!feeRate) {
         const summary = await wallet.getFeeSummary();
         feeRate = summary.list[1].feeRate;
       }
-      const psbtHex = await wallet.sendInscriptions({
+
+      let btcUtxos = utxos;
+      if (btcUtxos.length === 0) {
+        btcUtxos = await fetchUtxos();
+      }
+      const psbtHex = await wallet.sendOrdinalsInscriptions({
         to: toAddressInfo.address,
         inscriptionIds,
-        feeRate
+        feeRate,
+        enableRBF,
+        btcUtxos
       });
-      const psbt = Psbt.fromHex(psbtHex);
+      const psbt = bitcoin.Psbt.fromHex(psbtHex);
       const rawtx = psbt.extractTransaction().toHex();
       dispatch(
         transactionsActions.updateOrdinalsTx({
@@ -196,14 +256,32 @@ export function useCreateSplitTxCallback() {
   const wallet = useWallet();
   const fromAddress = useAccountAddress();
   const utxos = useUtxos();
+  const fetchUtxos = useFetchUtxosCallback();
   return useCallback(
-    async (inscriptionId: string, feeRate: number, outputValue: number) => {
-      const { psbtHex, splitedCount } = await wallet.splitInscription({
+    async ({
+      inscriptionId,
+      feeRate,
+      outputValue,
+      enableRBF
+    }: {
+      inscriptionId: string;
+      feeRate: number;
+      outputValue: number;
+      enableRBF: boolean;
+    }) => {
+      let btcUtxos = utxos;
+      if (btcUtxos.length === 0) {
+        btcUtxos = await fetchUtxos();
+      }
+
+      const { psbtHex, splitedCount } = await wallet.splitOrdinalsInscription({
         inscriptionId,
         feeRate,
-        outputValue
+        outputValue,
+        enableRBF,
+        btcUtxos
       });
-      const psbt = Psbt.fromHex(psbtHex);
+      const psbt = bitcoin.Psbt.fromHex(psbtHex);
       const rawtx = psbt.extractTransaction().toHex();
       dispatch(
         transactionsActions.updateOrdinalsTx({
@@ -278,10 +356,29 @@ export function useFetchUtxosCallback() {
   const wallet = useWallet();
   const account = useCurrentAccount();
   return useCallback(async () => {
-    const data = await wallet.getAddressUtxo(account.address);
+    const data = await wallet.getBTCUtxos();
     dispatch(transactionsActions.setUtxos(data));
     return data;
   }, [wallet, account]);
+}
+
+export function useAssetUtxosAtomicalsFT() {
+  const transactionsState = useTransactionsState();
+  return transactionsState.assetUtxos_atomicals_ft;
+}
+
+export function useFetchAssetUtxosAtomicalsFTCallback() {
+  const dispatch = useAppDispatch();
+  const wallet = useWallet();
+  const account = useCurrentAccount();
+  return useCallback(
+    async (ticker: string) => {
+      const data = await wallet.getAssetUtxosAtomicalsFT(ticker);
+      dispatch(transactionsActions.setAssetUtxosAtomicalsFT(data));
+      return data;
+    },
+    [wallet, account]
+  );
 }
 
 export function useSafeBalance() {
@@ -290,4 +387,163 @@ export function useSafeBalance() {
     const satoshis = utxos.filter((v) => v.inscriptions.length === 0).reduce((pre, cur) => pre + cur.satoshis, 0);
     return satoshisToBTC(satoshis);
   }, [utxos]);
+}
+
+export function usePrepareSendAtomicalsNFTCallback() {
+  const dispatch = useAppDispatch();
+  const wallet = useWallet();
+  const fromAddress = useAccountAddress();
+  const utxos = useUtxos();
+  const fetchUtxos = useFetchUtxosCallback();
+  return useCallback(
+    async ({
+      toAddressInfo,
+      atomicalId,
+      feeRate,
+      enableRBF
+    }: {
+      toAddressInfo: ToAddressInfo;
+      atomicalId: string;
+      feeRate: number;
+      enableRBF: boolean;
+    }) => {
+      let btcUtxos = utxos;
+      if (btcUtxos.length === 0) {
+        btcUtxos = await fetchUtxos();
+      }
+
+      const psbtHex = await wallet.sendAtomicalsNFT({
+        to: toAddressInfo.address,
+        atomicalId,
+        feeRate,
+        enableRBF,
+        btcUtxos
+      });
+      const psbt = bitcoin.Psbt.fromHex(psbtHex);
+      const rawtx = psbt.extractTransaction().toHex();
+      dispatch(
+        transactionsActions.updateAtomicalsTx({
+          rawtx,
+          psbtHex,
+          fromAddress,
+          // inscription,
+          feeRate
+        })
+      );
+      const rawTxInfo: RawTxInfo = {
+        psbtHex,
+        rawtx,
+        toAddressInfo
+      };
+      return rawTxInfo;
+    },
+    [dispatch, wallet, fromAddress, utxos]
+  );
+}
+
+export function usePushAtomicalsTxCallback() {
+  const dispatch = useAppDispatch();
+  const wallet = useWallet();
+  const tools = useTools();
+  return useCallback(
+    async (rawtx: string) => {
+      const ret = {
+        success: false,
+        txid: '',
+        error: ''
+      };
+      try {
+        tools.showLoading(true);
+        const txid = await wallet.pushTx(rawtx);
+        await sleep(3); // Wait for transaction synchronization
+        tools.showLoading(false);
+        dispatch(transactionsActions.updateAtomicalsTx({ txid }));
+
+        dispatch(accountActions.expireBalance());
+        setTimeout(() => {
+          dispatch(accountActions.expireBalance());
+        }, 2000);
+        setTimeout(() => {
+          dispatch(accountActions.expireBalance());
+        }, 5000);
+
+        ret.success = true;
+        ret.txid = txid;
+      } catch (e) {
+        console.log(e);
+        ret.error = (e as Error).message;
+        tools.showLoading(false);
+      }
+
+      return ret;
+    },
+    [dispatch, wallet]
+  );
+}
+
+export function usePrepareSendArc20Callback() {
+  const dispatch = useAppDispatch();
+  const wallet = useWallet();
+  const fromAddress = useAccountAddress();
+  const utxos = useUtxos();
+  const fetchUtxos = useFetchUtxosCallback();
+  const fetchAssetUtxosAtomicalsFT = useFetchAssetUtxosAtomicalsFTCallback();
+  const assetUtxosAtomicalsFT = useAssetUtxosAtomicalsFT();
+  return useCallback(
+    async ({
+      toAddressInfo,
+      ticker,
+      amount,
+      feeRate,
+      enableRBF
+    }: {
+      toAddressInfo: ToAddressInfo;
+      ticker: string;
+      amount: number;
+      feeRate: number;
+      enableRBF: boolean;
+    }) => {
+      let btcUtxos = utxos;
+      if (btcUtxos.length === 0) {
+        btcUtxos = await fetchUtxos();
+      }
+
+      let assetUtxos = assetUtxosAtomicalsFT;
+      if (assetUtxosAtomicalsFT.length === 0) {
+        assetUtxos = await fetchAssetUtxosAtomicalsFT(ticker);
+      }
+
+      const psbtHex = await wallet.sendAtomicalsFT({
+        to: toAddressInfo.address,
+        ticker,
+        amount,
+        feeRate,
+        enableRBF,
+        btcUtxos,
+        assetUtxos
+      });
+      const psbt = bitcoin.Psbt.fromHex(psbtHex);
+      const rawtx = psbt.extractTransaction().toHex();
+      dispatch(
+        transactionsActions.updateAtomicalsTx({
+          rawtx,
+          psbtHex,
+          fromAddress,
+          feeRate
+        })
+      );
+      const rawTxInfo: RawTxInfo = {
+        psbtHex,
+        rawtx,
+        toAddressInfo
+      };
+      return rawTxInfo;
+    },
+    [dispatch, wallet, fromAddress, utxos, assetUtxosAtomicalsFT]
+  );
+}
+
+export function useAtomicalsTx() {
+  const transactionsState = useTransactionsState();
+  return transactionsState.atomicalsTx;
 }

@@ -3,22 +3,25 @@ import randomstring from 'randomstring';
 import { createPersistStore } from '@/background/utils';
 import { CHANNEL, OPENAPI_URL_MAINNET, OPENAPI_URL_TESTNET, VERSION } from '@/shared/constant';
 import {
-  AddressAssets,
+  AddressSummary,
+  AddressTokenSummary,
   AppSummary,
-  TokenBalance,
+  Arc20Balance,
   BitcoinBalance,
+  DecodedPsbt,
   FeeSummary,
   InscribeOrder,
   Inscription,
   InscriptionSummary,
-  TxHistoryItem,
-  UTXO,
+  NetworkType,
+  TokenBalance,
   TokenTransfer,
-  AddressTokenSummary,
-  DecodedPsbt,
-  WalletConfig,
-  UTXO_Detail
+  UTXO,
+  UTXO_Detail,
+  WalletConfig
 } from '@/shared/types';
+
+import { preferenceService } from '.';
 
 interface OpenApiStore {
   host: string;
@@ -29,8 +32,8 @@ interface OpenApiStore {
 const maxRPS = 100;
 
 enum API_STATUS {
-  FAILED = '0',
-  SUCCESS = '1'
+  FAILED = -1,
+  SUCCESS = 0
 }
 
 export class OpenApiService {
@@ -55,7 +58,12 @@ export class OpenApiService {
     });
 
     if ([OPENAPI_URL_MAINNET, OPENAPI_URL_TESTNET].includes(this.store.host) === false) {
-      this.store.host = OPENAPI_URL_MAINNET;
+      const networkType = preferenceService.getNetworkType();
+      if (networkType === NetworkType.MAINNET) {
+        this.store.host = OPENAPI_URL_MAINNET;
+      } else {
+        this.store.host = OPENAPI_URL_TESTNET;
+      }
     }
 
     if (!this.store.deviceId) {
@@ -99,8 +107,12 @@ export class OpenApiService {
     headers.append('x-channel', CHANNEL);
     headers.append('x-udid', this.store.deviceId);
     const res = await fetch(new Request(url), { method: 'GET', headers, mode: 'cors', cache: 'default' });
-    const data = await res.json();
-    return data;
+    const jsonRes = await res.json();
+    if (jsonRes.code == API_STATUS.FAILED) {
+      throw new Error(jsonRes.msg);
+    }
+
+    return jsonRes.data;
   };
 
   httpPost = async (route: string, params: any) => {
@@ -119,88 +131,67 @@ export class OpenApiService {
       cache: 'default',
       body: JSON.stringify(params)
     });
-    const data = await res.json();
-    return data;
+    const jsonRes = await res.json();
+
+    if (jsonRes.code == API_STATUS.FAILED) {
+      throw new Error(jsonRes.msg);
+    }
+
+    return jsonRes.data;
   };
 
   async getWalletConfig(): Promise<WalletConfig> {
-    const data = await this.httpGet('/default/config', {});
-    if (data.status == API_STATUS.FAILED) {
-      throw new Error(data.message);
-    }
-    return data.result;
+    return this.httpGet('/default/config', {});
+  }
+
+  async getAddressSummary(address: string): Promise<AddressSummary> {
+    return this.httpGet('/address/summary', {
+      address
+    });
   }
 
   async getAddressBalance(address: string): Promise<BitcoinBalance> {
-    const data = await this.httpGet('/address/balance', {
+    return this.httpGet('/address/balance', {
       address
     });
-    if (data.status == API_STATUS.FAILED) {
-      throw new Error(data.message);
-    }
-    return data.result;
   }
 
-  async getMultiAddressAssets(addresses: string): Promise<AddressAssets[]> {
-    const data = await this.httpGet('/address/multi-assets', {
+  async getMultiAddressAssets(addresses: string): Promise<AddressSummary[]> {
+    return this.httpGet('/address/multi-assets', {
       addresses
     });
-    if (data.status == API_STATUS.FAILED) {
-      throw new Error(data.message);
-    }
-    return data.result;
   }
 
   async findGroupAssets(
     groups: { type: number; address_arr: string[] }[]
   ): Promise<{ type: number; address_arr: string[]; satoshis_arr: number[] }[]> {
-    const data = await this.httpPost('/address/find-group-assets', {
+    return this.httpPost('/address/find-group-assets', {
       groups
     });
-    if (data.status == API_STATUS.FAILED) {
-      throw new Error(data.message);
-    }
-    return data.result;
   }
 
-  async getAddressUtxo(address: string): Promise<UTXO[]> {
-    const data = await this.httpGet('/address/btc-utxo', {
+  async getBTCUtxos(address: string): Promise<UTXO[]> {
+    return this.httpGet('/address/btc-utxo', {
       address
     });
-    if (data.status == API_STATUS.FAILED) {
-      throw new Error(data.message);
-    }
-    return data.result;
   }
 
   async getInscriptionUtxo(inscriptionId: string): Promise<UTXO> {
-    const data = await this.httpGet('/inscription/utxo', {
+    return this.httpGet('/inscription/utxo', {
       inscriptionId
     });
-    if (data.status == API_STATUS.FAILED) {
-      throw new Error(data.message);
-    }
-    return data.result;
   }
 
   async getInscriptionUtxoDetail(inscriptionId: string): Promise<UTXO_Detail> {
-    const data = await this.httpGet('/inscription/utxo-detail', {
+    return this.httpGet('/inscription/utxo-detail', {
       inscriptionId
     });
-    if (data.status == API_STATUS.FAILED) {
-      throw new Error(data.message);
-    }
-    return data.result;
   }
 
   async getInscriptionUtxos(inscriptionIds: string[]): Promise<UTXO[]> {
-    const data = await this.httpPost('/inscription/utxos', {
+    return this.httpPost('/inscription/utxos', {
       inscriptionIds
     });
-    if (data.status == API_STATUS.FAILED) {
-      throw new Error(data.message);
-    }
-    return data.result;
   }
 
   async getAddressInscriptions(
@@ -208,103 +199,49 @@ export class OpenApiService {
     cursor: number,
     size: number
   ): Promise<{ list: Inscription[]; total: number }> {
-    const data = await this.httpGet('/address/inscriptions', {
+    return this.httpGet('/address/inscriptions', {
       address,
       cursor,
       size
     });
-    if (data.status == API_STATUS.FAILED) {
-      throw new Error(data.message);
-    }
-    return data.result;
-  }
-
-  async getAddressRecentHistory(address: string): Promise<TxHistoryItem[]> {
-    const data = await this.httpGet('/address/recent-history', {
-      address
-    });
-    if (data.status == API_STATUS.FAILED) {
-      throw new Error(data.message);
-    }
-    return data.result;
   }
 
   async getInscriptionSummary(): Promise<InscriptionSummary> {
-    const data = await this.httpGet('/default/inscription-summary', {});
-    if (data.status == API_STATUS.FAILED) {
-      throw new Error(data.message);
-    }
-    return data.result;
+    return this.httpGet('/default/inscription-summary', {});
   }
 
   async getAppSummary(): Promise<AppSummary> {
-    const data = await this.httpGet('/default/app-summary-v2', {});
-    if (data.status == API_STATUS.FAILED) {
-      throw new Error(data.message);
-    }
-    return data.result;
+    return this.httpGet('/default/app-summary-v2', {});
   }
 
   async pushTx(rawtx: string): Promise<string> {
-    const data = await this.httpPost('/tx/broadcast', {
+    return this.httpPost('/tx/broadcast', {
       rawtx
     });
-    if (data.status == API_STATUS.FAILED) {
-      throw new Error(data.message);
-    }
-    return data.result;
   }
 
   async getFeeSummary(): Promise<FeeSummary> {
-    const data = await this.httpGet('/default/fee-summary', {});
-    if (data.status == API_STATUS.FAILED) {
-      throw new Error(data.message);
-    }
-    return data.result;
+    return this.httpGet('/default/fee-summary', {});
   }
 
   async getDomainInfo(domain: string): Promise<Inscription> {
-    const data = await this.httpGet('/address/search', { domain });
-    if (data.status == API_STATUS.FAILED) {
-      throw new Error(data.message);
-    }
-    return data.result;
+    return this.httpGet('/address/search', { domain });
   }
 
   async inscribeBRC20Transfer(address: string, tick: string, amount: string, feeRate: number): Promise<InscribeOrder> {
-    const data = await this.httpPost('/brc20/inscribe-transfer', { address, tick, amount, feeRate });
-    if (data.status == API_STATUS.FAILED) {
-      throw new Error(data.message);
-    }
-    return data.result;
+    return this.httpPost('/brc20/inscribe-transfer', { address, tick, amount, feeRate });
   }
 
   async getInscribeResult(orderId: string): Promise<TokenTransfer> {
-    const data = await this.httpGet('/brc20/order-result', { orderId });
-    if (data.status == API_STATUS.FAILED) {
-      throw new Error(data.message);
-    }
-    return data.result;
+    return this.httpGet('/brc20/order-result', { orderId });
   }
 
-  async getAddressTokenBalances(
-    address: string,
-    cursor: number,
-    size: number
-  ): Promise<{ list: TokenBalance[]; total: number }> {
-    const data = await this.httpGet('/brc20/tokens', { address, cursor, size });
-    if (data.status == API_STATUS.FAILED) {
-      throw new Error(data.message);
-    }
-    return data.result;
+  async getBRC20List(address: string, cursor: number, size: number): Promise<{ list: TokenBalance[]; total: number }> {
+    return this.httpGet('/brc20/list', { address, cursor, size });
   }
 
   async getAddressTokenSummary(address: string, ticker: string): Promise<AddressTokenSummary> {
-    const data = await this.httpGet('/brc20/token-summary', { address, ticker: encodeURIComponent(ticker) });
-    if (data.status == API_STATUS.FAILED) {
-      throw new Error(data.message);
-    }
-    return data.result;
+    return this.httpGet('/brc20/token-summary', { address, ticker: encodeURIComponent(ticker) });
   }
 
   async getTokenTransferableList(
@@ -313,40 +250,69 @@ export class OpenApiService {
     cursor: number,
     size: number
   ): Promise<{ list: TokenTransfer[]; total: number }> {
-    const data = await this.httpGet('/brc20/transferable-list', {
+    return this.httpGet('/brc20/transferable-list', {
       address,
       ticker: encodeURIComponent(ticker),
       cursor,
       size
     });
-    if (data.status == API_STATUS.FAILED) {
-      throw new Error(data.message);
-    }
-    return data.result;
   }
 
   async decodePsbt(psbtHex: string): Promise<DecodedPsbt> {
-    const data = await this.httpPost('/tx/decode', { psbtHex });
-    if (data.status == API_STATUS.FAILED) {
-      throw new Error(data.message);
-    }
-    return data.result;
+    return this.httpPost('/tx/decode', { psbtHex });
   }
 
   async createMoonpayUrl(address: string): Promise<string> {
-    const data = await this.httpPost('/moonpay/create', { address });
-    if (data.status == API_STATUS.FAILED) {
-      throw new Error(data.message);
-    }
-    return data.result;
+    return this.httpPost('/moonpay/create', { address });
   }
 
-  async checkWebsite(website: string): Promise<{ isScammer: boolean }> {
-    const data = await this.httpPost('/default/check-website', { website });
-    if (data.status == API_STATUS.FAILED) {
-      throw new Error(data.message);
-    }
-    return data.result;
+  async checkWebsite(website: string): Promise<{ isScammer: boolean; warning: string }> {
+    return this.httpPost('/default/check-website', { website });
+  }
+
+  async getOrdinalsInscriptions(
+    address: string,
+    cursor: number,
+    size: number
+  ): Promise<{ list: Inscription[]; total: number }> {
+    return this.httpGet('/ordinals/inscriptions', {
+      address,
+      cursor,
+      size
+    });
+  }
+
+  async getAtomicalsNFT(
+    address: string,
+    cursor: number,
+    size: number
+  ): Promise<{ list: Inscription[]; total: number }> {
+    return this.httpGet('/atomicals/nft', {
+      address,
+      cursor,
+      size
+    });
+  }
+
+  async getAtomicalsUtxo(atomicalId: string): Promise<UTXO> {
+    return this.httpGet('/atomicals/utxo', {
+      atomicalId
+    });
+  }
+
+  async getArc20BalanceList(
+    address: string,
+    cursor: number,
+    size: number
+  ): Promise<{ list: Arc20Balance[]; total: number }> {
+    return this.httpGet('/arc20/balance-list', { address, cursor, size });
+  }
+
+  async getArc20Utxos(address: string, ticker: string): Promise<UTXO[]> {
+    return this.httpGet('/arc20/utxos', {
+      address,
+      ticker
+    });
   }
 }
 

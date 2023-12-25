@@ -1,10 +1,17 @@
 import { NETWORK_TYPES } from '@/shared/constant';
-import { Content, Header, Layout, Icon, Column, Row, Card, Text } from '@/ui/components';
+import { Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
+import { useTools } from '@/ui/components/ActionComponent';
+import { useReloadAccounts } from '@/ui/state/accounts/hooks';
 import { useChangeNetworkTypeCallback, useNetworkType } from '@/ui/state/settings/hooks';
+
+import { useNavigate } from '../MainRoute';
 
 export default function NetworkTypeScreen() {
   const networkType = useNetworkType();
   const changeNetworkType = useChangeNetworkTypeCallback();
+  const reloadAccounts = useReloadAccounts();
+  const tools = useTools();
+  const navigate = useNavigate();
   return (
     <Layout>
       <Header
@@ -20,8 +27,13 @@ export default function NetworkTypeScreen() {
               <Card
                 key={index}
                 onClick={async () => {
+                  if (item.value == networkType) {
+                    return;
+                  }
                   await changeNetworkType(item.value);
-                  window.location.reload();
+                  reloadAccounts();
+                  navigate('MainScreen');
+                  tools.toastSuccess('Network type changed');
                 }}>
                 <Row full justifyBetween itemsCenter>
                   <Row itemsCenter>

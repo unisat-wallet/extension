@@ -1,11 +1,7 @@
-import { useState } from 'react';
-
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useReadTab, useUnreadAppSummary } from '@/ui/state/accounts/hooks';
-import { useSetTabCallback } from '@/ui/state/global/hooks';
 import { TabOption } from '@/ui/state/global/reducer';
 import { colors } from '@/ui/theme/colors';
-import { useWallet } from '@/ui/utils';
 
 import { BaseView } from '../BaseView';
 import { Column } from '../Column';
@@ -44,8 +40,8 @@ function TabButton({ tabName, icon, isActive }: { tabName: TabOption; icon: Icon
         }
       }}>
       <Icon icon={icon} color={isActive ? 'white' : 'white_muted'} />
-      {tabName === 'app' && unreadApp && (
-        <BaseView style={{ position: 'relative' }}>
+      <BaseView style={{ position: 'relative' }}>
+        {tabName === 'app' && unreadApp && (
           <BaseView
             style={{
               position: 'absolute',
@@ -56,8 +52,8 @@ function TabButton({ tabName, icon, isActive }: { tabName: TabOption; icon: Icon
               backgroundColor: 'red',
               borderRadius: '50%'
             }}></BaseView>
-        </BaseView>
-      )}
+        )}
+      </BaseView>
     </Column>
   );
 }

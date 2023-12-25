@@ -1,4 +1,4 @@
-import { Account, AppSummary, Inscription, InscriptionSummary, TxHistoryItem } from '@/shared/types';
+import { Account, AddressSummary, AppSummary, Inscription, InscriptionSummary, TxHistoryItem } from '@/shared/types';
 import { createSlice } from '@reduxjs/toolkit';
 
 import { updateVersion } from '../global/actions';
@@ -29,6 +29,7 @@ export interface AccountsState {
   };
   appSummary: AppSummary;
   inscriptionSummary: InscriptionSummary;
+  addressSummary: AddressSummary;
 }
 
 const initialAccount = {
@@ -55,6 +56,15 @@ export const initialState: AccountsState = {
   },
   inscriptionSummary: {
     mintedList: []
+  },
+  addressSummary: {
+    totalSatoshis: 0,
+    btcSatoshis: 0,
+    assetSatoshis: 0,
+    inscriptionCount: 0,
+    atomicalsCount: 0,
+    brc20Count: 0,
+    arc20Count: 0
   }
 };
 
@@ -97,6 +107,9 @@ const slice = createSlice({
       state.balanceMap[address].btc_amount = btc_amount;
       state.balanceMap[address].inscription_amount = inscription_amount;
       state.balanceMap[address].expired = false;
+    },
+    setAddressSummary(state, action: { payload: any }) {
+      state.addressSummary = action.payload;
     },
     expireBalance(state) {
       const balance = state.balanceMap[state.current.address];
@@ -180,6 +193,17 @@ const slice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(updateVersion, (state) => {
       // todo
+      if (!state.addressSummary) {
+        state.addressSummary = {
+          totalSatoshis: 0,
+          btcSatoshis: 0,
+          assetSatoshis: 0,
+          inscriptionCount: 0,
+          atomicalsCount: 0,
+          brc20Count: 0,
+          arc20Count: 0
+        };
+      }
     });
   }
 });

@@ -6,24 +6,32 @@ import { Popover } from '../Popover';
 import { Row } from '../Row';
 import { Text } from '../Text';
 
-export const WarningPopver = ({ text, onClose }: { text: string; onClose: () => void }) => {
+export const UpgradePopover = ({ onClose }: { onClose: () => void }) => {
+  const versionInfo = useVersionInfo();
   return (
     <Popover onClose={onClose}>
       <Column justifyCenter itemsCenter>
-        <Text text={'WARNING'} textCenter preset="title-bold" color="orange" />
         <Column mt="lg">
-          <Text text={text} textCenter />
+          <Text text={`A new version (v${versionInfo.newVersion}) is available`} textCenter />
         </Column>
 
         <Row full mt="lg">
           <Button
-            text="OK"
+            text="Skip"
             full
-            preset="primary"
             onClick={(e) => {
               if (onClose) {
                 onClose();
               }
+            }}
+          />
+
+          <Button
+            text="Go to download"
+            full
+            preset="primary"
+            onClick={(e) => {
+              window.open(versionInfo.downloadUrl);
             }}
           />
         </Row>

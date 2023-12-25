@@ -4,9 +4,11 @@ import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { NavTabBar } from '@/ui/components/NavTabBar';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useInscriptionSummary } from '@/ui/state/accounts/hooks';
+import { useUnisatWebsite } from '@/ui/state/settings/hooks';
 
 function MintItem({ info }: { info: InscriptionMintedItem }) {
   const navigate = useNavigate();
+  const unisatWebsite = useUnisatWebsite();
   return (
     <Column mt="lg" gap="sm">
       <Text text={info.title} preset="regular-bold" />
@@ -17,7 +19,7 @@ function MintItem({ info }: { info: InscriptionMintedItem }) {
           text="More"
           color="orange"
           onClick={() => {
-            window.open(`https://unisat.io/inscription/tag/${info.title}`);
+            window.open(`${unisatWebsite}/inscription/tag/${info.title}`);
           }}
         />
       </Row>
@@ -27,7 +29,7 @@ function MintItem({ info }: { info: InscriptionMintedItem }) {
           <InscriptionPreview
             key={v.inscriptionId}
             onClick={() => {
-              navigate('OrdinalsDetailScreen', { inscription: v });
+              navigate('OrdinalsInscriptionScreen', { inscription: v });
             }}
             preset="small"
             data={v}

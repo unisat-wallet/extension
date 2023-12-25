@@ -1,4 +1,3 @@
-import * as bitcoin from 'bitcoinjs-lib';
 import { createContext, ReactNode, useContext } from 'react';
 
 import { AccountAsset } from '@/background/controller/wallet';
@@ -6,27 +5,29 @@ import { ContactBookItem, ContactBookStore } from '@/background/service/contactB
 import { ToSignInput } from '@/background/service/keyring';
 import { ConnectedSite } from '@/background/service/permission';
 import {
+  Account,
+  AddressSummary,
+  AddressTokenSummary,
+  AppSummary,
+  Arc20Balance,
   BitcoinBalance,
-  TxHistoryItem,
+  DecodedPsbt,
+  FeeSummary,
+  InscribeOrder,
   Inscription,
   InscriptionSummary,
-  AppSummary,
-  UTXO,
   NetworkType,
-  AddressType,
-  WalletKeyring,
-  Account,
-  FeeSummary,
-  AddressAssets,
-  InscribeOrder,
+  SignPsbtOptions,
   TokenBalance,
   TokenTransfer,
-  AddressTokenSummary,
-  DecodedPsbt,
-  WalletConfig,
+  TxHistoryItem,
+  UTXO,
   UTXO_Detail,
-  SignPsbtOptions
+  WalletConfig,
+  WalletKeyring
 } from '@/shared/types';
+import { AddressType, UnspentOutput } from '@unisat/wallet-sdk';
+import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 
 export interface WalletController {
   openapi: {
@@ -54,7 +55,7 @@ export interface WalletController {
 
   getAddressBalance(address: string): Promise<BitcoinBalance>;
   getAddressCacheBalance(address: string): Promise<BitcoinBalance>;
-  getMultiAddressAssets(addresses: string): Promise<AddressAssets[]>;
+  getMultiAddressAssets(addresses: string): Promise<AddressSummary[]>;
   findGroupAssets(
     groups: { type: number; address_arr: string[] }[]
   ): Promise<{ type: number; address_arr: string[]; satoshis_arr: number[] }[]>;
@@ -69,7 +70,6 @@ export interface WalletController {
   getAddressCacheHistory: (address: string) => Promise<TxHistoryItem[]>;
 
   listChainAssets: (address: string) => Promise<AccountAsset[]>;
-  getTransactionHistory: (address: string) => Promise<TxHistoryItem[]>;
 
   getLocale(): Promise<string>;
   setLocale(locale: string): Promise<void>;
@@ -126,19 +126,36 @@ export interface WalletController {
   sendBTC(data: {
     to: string;
     amount: number;
-    utxos: UTXO[];
-    receiverToPayFee: boolean;
+    btcUtxos: UnspentOutput[];
     feeRate: number;
+    enableRBF: boolean;
   }): Promise<string>;
 
-  sendInscription(data: { to: string; inscriptionId: string; feeRate: number; outputValue: number }): Promise<string>;
+  sendAllBTC(data: { to: string; btcUtxos: UnspentOutput[]; feeRate: number; enableRBF: boolean }): Promise<string>;
 
-  sendInscriptions(data: { to: string; inscriptionIds: string[]; feeRate: number }): Promise<string>;
-
-  splitInscription(data: {
+  sendOrdinalsInscription(data: {
+    to: string;
     inscriptionId: string;
     feeRate: number;
     outputValue: number;
+    enableRBF: boolean;
+    btcUtxos: UnspentOutput[];
+  }): Promise<string>;
+
+  sendOrdinalsInscriptions(data: {
+    to: string;
+    inscriptionIds: string[];
+    feeRate: number;
+    enableRBF: boolean;
+    btcUtxos: UnspentOutput[];
+  }): Promise<string>;
+
+  splitOrdinalsInscription(data: {
+    inscriptionId: string;
+    feeRate: number;
+    outputValue: number;
+    enableRBF: boolean;
+    btcUtxos: UnspentOutput[];
   }): Promise<{ psbtHex: string; splitedCount: number }>;
 
   pushTx(rawtx: string): Promise<string>;
@@ -147,7 +164,10 @@ export interface WalletController {
 
   getInscriptionSummary(): Promise<InscriptionSummary>;
   getAppSummary(): Promise<AppSummary>;
-  getAddressUtxo(address: string): Promise<UTXO[]>;
+  getBTCUtxos(): Promise<UnspentOutput[]>;
+  getAssetUtxosAtomicalsFT(ticker: string): Promise<UnspentOutput[]>;
+  getAssetUtxosAtomicalsNFT(atomicalId: string): Promise<UnspentOutput[]>;
+  getAssetUtxosInscriptions(inscriptionId: string): Promise<UnspentOutput[]>;
 
   getNetworkType(): Promise<NetworkType>;
   setNetworkType(type: NetworkType): Promise<void>;
@@ -197,6 +217,18 @@ export interface WalletController {
     pageSize: number
   ): Promise<{ currentPage: number; pageSize: number; total: number; list: TokenTransfer[] }>;
 
+  getOrdinalsInscriptions(
+    address: string,
+    currentPage: number,
+    pageSize: number
+  ): Promise<{ currentPage: number; pageSize: number; total: number; list: Inscription[] }>;
+
+  getAtomicalsNFTs(
+    address: string,
+    currentPage: number,
+    pageSize: number
+  ): Promise<{ currentPage: number; pageSize: number; total: number; list: Inscription[] }>;
+
   getBRC20Summary(address: string, ticker: string): Promise<AddressTokenSummary>;
 
   expireUICachedData(address: string): Promise<void>;
@@ -209,13 +241,43 @@ export interface WalletController {
   setSkippedVersion(version: string): Promise<void>;
 
   getInscriptionUtxoDetail(inscriptionId: string): Promise<UTXO_Detail>;
+  getUtxoByInscriptionId(inscriptionId: string): Promise<UTXO>;
 
-  checkWebsite(website: string): Promise<{ isScammer: boolean }>;
+  checkWebsite(website: string): Promise<{ isScammer: boolean; warning: string }>;
 
   readTab(tabName: string): Promise<void>;
   readApp(appid: number): Promise<void>;
 
   formatOptionsToSignInputs(psbtHex: string, options: SignPsbtOptions): Promise<ToSignInput[]>;
+
+  getArc20BalanceList(
+    address: string,
+    currentPage: number,
+    pageSize: number
+  ): Promise<{ currentPage: number; pageSize: number; total: number; list: Arc20Balance[] }>;
+
+  sendAtomicalsNFT(data: {
+    to: string;
+    atomicalId: string;
+    feeRate: number;
+    enableRBF: boolean;
+    btcUtxos: UnspentOutput[];
+  }): Promise<string>;
+
+  sendAtomicalsFT(data: {
+    to: string;
+    ticker: string;
+    amount: number;
+    feeRate: number;
+    enableRBF: boolean;
+    btcUtxos: UnspentOutput[];
+    assetUtxos: UnspentOutput[];
+  }): Promise<string>;
+
+  getAddressSummary(address: string): Promise<AddressSummary>;
+
+  getShowSafeNotice(): Promise<boolean>;
+  setShowSafeNotice(show: boolean): Promise<void>;
 }
 
 const WalletContext = createContext<{
@@ -234,4 +296,4 @@ const useWallet = () => {
   return wallet;
 };
 
-export { WalletProvider, useWallet };
+export { useWallet, WalletProvider };

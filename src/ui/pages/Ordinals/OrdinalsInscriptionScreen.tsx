@@ -14,7 +14,7 @@ import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
 import { useNavigate } from '../MainRoute';
 
 const HIGH_BALANCE = 10000;
-export default function OrdinalsDetailScreen() {
+export default function OrdinalsInscriptionScreen() {
   const navigate = useNavigate();
   const { inscription } = useLocationState<{ inscription: Inscription }>();
 
@@ -34,7 +34,7 @@ export default function OrdinalsDetailScreen() {
   const wallet = useWallet();
   // detect multiple inscriptions
   useEffect(() => {
-    wallet.getInscriptionUtxoDetail(inscription.inscriptionId).then((v) => {
+    wallet.getUtxoByInscriptionId(inscription.inscriptionId).then((v) => {
       if (v.inscriptions.length > 1) {
         setIsNeedToSplit(true);
         setIsMultiStuck(true);
@@ -73,7 +73,7 @@ export default function OrdinalsDetailScreen() {
                   full
                   onClick={(e) => {
                     dispatch(transactionsActions.reset());
-                    navigate('SplitTxCreateScreen', { inscription });
+                    navigate('SplitOrdinalsInscriptionScreen', { inscription });
                   }}
                 />
               )}
@@ -85,7 +85,7 @@ export default function OrdinalsDetailScreen() {
                   full
                   onClick={(e) => {
                     dispatch(transactionsActions.reset());
-                    navigate('OrdinalsTxCreateScreen', { inscription });
+                    navigate('SendOrdinalsInscriptionScreen', { inscription });
                   }}
                 />
               )}

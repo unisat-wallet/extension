@@ -2,21 +2,23 @@ import { Tooltip } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 
 import { KEYRING_TYPE } from '@/shared/constant';
-import { TokenBalance, NetworkType, Inscription } from '@/shared/types';
+import { Arc20Balance, Inscription, NetworkType, TokenBalance } from '@/shared/types';
 import { Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressBar } from '@/ui/components/AddressBar';
+import Arc20BalanceCard from '@/ui/components/Arc20BalanceCard';
 import BRC20BalanceCard from '@/ui/components/BRC20BalanceCard';
 import { Button } from '@/ui/components/Button';
 import { Empty } from '@/ui/components/Empty';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { NavTabBar } from '@/ui/components/NavTabBar';
+import { NoticePopover } from '@/ui/components/NoticePopover';
 import { Pagination } from '@/ui/components/Pagination';
 import { TabBar } from '@/ui/components/TabBar';
-import { UpgradePopver } from '@/ui/components/UpgradePopver';
+import { UpgradePopover } from '@/ui/components/UpgradePopover';
 import { getCurrentTab } from '@/ui/features/browser/tabs';
-import { useAccountBalance, useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { useAccountBalance, useAddressSummary, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import {
@@ -26,8 +28,8 @@ import {
   useVersionInfo,
   useWalletConfig
 } from '@/ui/state/settings/hooks';
-import { useWalletTabScreenState } from '@/ui/state/ui/hooks';
-import { WalletTabScreenTabKey, uiActions } from '@/ui/state/ui/reducer';
+import { useAssetTabKey, useAtomicalsAssetTabKey, useOrdinalsAssetTabKey } from '@/ui/state/ui/hooks';
+import { AssetTabKey, AtomicalsAssetTabKey, OrdinalsAssetTabKey, uiActions } from '@/ui/state/ui/reducer';
 import { fontSizes } from '@/ui/theme/font';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -55,15 +57,20 @@ export default function WalletTabScreen() {
   const [connected, setConnected] = useState(false);
 
   const dispatch = useAppDispatch();
-  const { tabKey } = useWalletTabScreenState();
+  const assetTabKey = useAssetTabKey();
 
   const skipVersion = useSkipVersionCallback();
 
   const walletConfig = useWalletConfig();
   const versionInfo = useVersionInfo();
 
+  const [showSafeNotice, setShowSafeNotice] = useState(false);
+
   useEffect(() => {
     const run = async () => {
+      const show = await wallet.getShowSafeNotice();
+      setShowSafeNotice(show);
+
       const activeTab = await getCurrentTab();
       if (!activeTab) return;
       const site = await wallet.getCurrentConnectedSite(activeTab.id);
@@ -76,14 +83,14 @@ export default function WalletTabScreen() {
 
   const tabItems = [
     {
-      key: WalletTabScreenTabKey.ALL,
-      label: 'ALL',
-      children: <InscriptionList />
+      key: AssetTabKey.ORDINALS,
+      label: 'Ordinals',
+      children: <OrdinalsTab />
     },
     {
-      key: WalletTabScreenTabKey.BRC20,
-      label: 'BRC-20',
-      children: <BRC20List />
+      key: AssetTabKey.ATOMICALS,
+      label: 'Atomicals',
+      children: <AtomicalsTab />
     }
   ];
 
@@ -182,11 +189,12 @@ export default function WalletTabScreen() {
 
           <Row justifyBetween>
             <TabBar
-              defaultActiveKey={tabKey}
-              activeKey={tabKey}
+              defaultActiveKey={assetTabKey}
+              activeKey={assetTabKey}
+              preset="style1"
               items={tabItems}
               onTabClick={(key) => {
-                dispatch(uiActions.updateWalletTabScreen({ tabKey: key }));
+                dispatch(uiActions.updateAssetTabScreen({ assetTabKey: key }));
               }}
             />
             <Row
@@ -199,10 +207,18 @@ export default function WalletTabScreen() {
             </Row>
           </Row>
 
-          {tabItems[tabKey].children}
+          {tabItems[assetTabKey].children}
         </Column>
+        {showSafeNotice && (
+          <NoticePopover
+            onClose={() => {
+              wallet.setShowSafeNotice(false);
+              setShowSafeNotice(false);
+            }}
+          />
+        )}
         {!versionInfo.skipped && (
-          <UpgradePopver
+          <UpgradePopover
             onClose={() => {
               skipVersion(versionInfo.newVersion);
             }}
@@ -213,6 +229,79 @@ export default function WalletTabScreen() {
         <NavTabBar tab="home" />
       </Footer>
     </Layout>
+  );
+}
+
+function OrdinalsTab() {
+  const addressSummary = useAddressSummary();
+  const tabItems = [
+    {
+      key: OrdinalsAssetTabKey.ALL,
+      label: `ALL (${addressSummary.inscriptionCount})`,
+      children: <InscriptionList />
+    },
+    {
+      key: OrdinalsAssetTabKey.BRC20,
+      label: `BRC-20 (${addressSummary.brc20Count})`,
+      children: <BRC20List />
+    }
+  ];
+
+  const tabKey = useOrdinalsAssetTabKey();
+  const dispatch = useAppDispatch();
+  return (
+    <Column>
+      <Row justifyBetween>
+        <TabBar
+          defaultActiveKey={tabKey}
+          activeKey={tabKey}
+          items={tabItems}
+          preset="style2"
+          onTabClick={(key) => {
+            dispatch(uiActions.updateAssetTabScreen({ ordinalsAssetTabKey: key }));
+          }}
+        />
+      </Row>
+
+      {tabItems[tabKey].children}
+    </Column>
+  );
+}
+
+function AtomicalsTab() {
+  const addressSummary = useAddressSummary();
+  const tabItems = [
+    {
+      key: AtomicalsAssetTabKey.ALL,
+      label: `ALL (${addressSummary.atomicalsCount})`,
+      children: <AtomicalList />,
+      hidden: true
+    },
+    {
+      key: AtomicalsAssetTabKey.ARC20,
+      label: `ARC-20 (${addressSummary.arc20Count})`,
+      children: <Arc20List />
+    }
+  ];
+
+  const tabKey = useAtomicalsAssetTabKey();
+  const dispatch = useAppDispatch();
+  return (
+    <Column>
+      <Row justifyBetween>
+        <TabBar
+          defaultActiveKey={tabKey}
+          activeKey={tabKey}
+          items={tabItems}
+          preset="style2"
+          onTabClick={(key) => {
+            dispatch(uiActions.updateAssetTabScreen({ atomicalsAssetTabKey: key }));
+          }}
+        />
+      </Row>
+
+      {tabItems[tabKey].children}
+    </Column>
   );
 }
 
@@ -230,7 +319,7 @@ function InscriptionList() {
   const fetchData = async () => {
     try {
       // tools.showLoading(true);
-      const { list, total } = await wallet.getAllInscriptionList(
+      const { list, total } = await wallet.getOrdinalsInscriptions(
         currentAccount.address,
         pagination.currentPage,
         pagination.pageSize
@@ -273,7 +362,7 @@ function InscriptionList() {
             data={data}
             preset="medium"
             onClick={() => {
-              navigate('OrdinalsDetailScreen', { inscription: data, withSend: true });
+              navigate('OrdinalsInscriptionScreen', { inscription: data, withSend: true });
             }}
           />
         ))}
@@ -347,6 +436,155 @@ function BRC20List() {
             tokenBalance={data}
             onClick={() => {
               navigate('BRC20TokenScreen', { tokenBalance: data, ticker: data.ticker });
+            }}
+          />
+        ))}
+      </Row>
+
+      <Row justifyCenter mt="lg">
+        <Pagination
+          pagination={pagination}
+          total={total}
+          onChange={(pagination) => {
+            setPagination(pagination);
+          }}
+        />
+      </Row>
+    </Column>
+  );
+}
+
+function AtomicalList() {
+  const navigate = useNavigate();
+  const wallet = useWallet();
+  const currentAccount = useCurrentAccount();
+
+  const [inscriptions, setInscriptions] = useState<Inscription[]>([]);
+  const [total, setTotal] = useState(-1);
+  const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 100 });
+
+  const tools = useTools();
+
+  const fetchData = async () => {
+    try {
+      // tools.showLoading(true);
+      const { list, total } = await wallet.getAtomicalsNFTs(
+        currentAccount.address,
+        pagination.currentPage,
+        pagination.pageSize
+      );
+      setInscriptions(list);
+      setTotal(total);
+    } catch (e) {
+      tools.toastError((e as Error).message);
+    } finally {
+      // tools.showLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [pagination]);
+
+  if (total === -1) {
+    return (
+      <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
+        <LoadingOutlined />
+      </Column>
+    );
+  }
+
+  if (total === 0) {
+    return (
+      <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
+        <Empty text="Empty" />
+      </Column>
+    );
+  }
+
+  return (
+    <Column>
+      <Row style={{ flexWrap: 'wrap' }} gap="lg">
+        {inscriptions.map((data, index) => (
+          <InscriptionPreview
+            key={index}
+            data={data}
+            preset="medium"
+            onClick={() => {
+              navigate('AtomicalsInscriptionScreen', { inscription: data, withSend: true });
+            }}
+          />
+        ))}
+      </Row>
+      <Row justifyCenter mt="lg">
+        <Pagination
+          pagination={pagination}
+          total={total}
+          onChange={(pagination) => {
+            setPagination(pagination);
+          }}
+        />
+      </Row>
+    </Column>
+  );
+}
+
+function Arc20List() {
+  const navigate = useNavigate();
+  const wallet = useWallet();
+  const currentAccount = useCurrentAccount();
+
+  const [arc20Balances, setArc20Balances] = useState<Arc20Balance[]>([]);
+  const [total, setTotal] = useState(-1);
+  const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 100 });
+
+  const tools = useTools();
+  const fetchData = async () => {
+    try {
+      // tools.showLoading(true);
+      const { list, total } = await wallet.getArc20BalanceList(
+        currentAccount.address,
+        pagination.currentPage,
+        pagination.pageSize
+      );
+      setArc20Balances(list);
+      setTotal(total);
+    } catch (e) {
+      tools.toastError((e as Error).message);
+    } finally {
+      // tools.showLoading(false);
+    }
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [pagination]);
+
+  if (total === -1) {
+    return (
+      <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
+        <LoadingOutlined />
+      </Column>
+    );
+  }
+
+  if (total === 0) {
+    return (
+      <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
+        <Empty text="Empty" />
+      </Column>
+    );
+  }
+
+  return (
+    <Column>
+      <Row style={{ flexWrap: 'wrap' }} gap="sm">
+        {arc20Balances.map((data, index) => (
+          <Arc20BalanceCard
+            key={index}
+            arc20Balance={data}
+            onClick={() => {
+              navigate('SendArc20Screen', { arc20Balance: data });
             }}
           />
         ))}

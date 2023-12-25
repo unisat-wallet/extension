@@ -1,11 +1,11 @@
 import { useCallback } from 'react';
 
 import { useApproval, useWallet } from '@/ui/utils';
-import { AddressType } from '@unisat/ord-utils/lib/OrdTransaction';
+import { AddressType } from '@unisat/wallet-sdk';
 
 import { AppState } from '..';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { globalActions, TabOption } from './reducer';
+import { TabOption, globalActions } from './reducer';
 
 export function useGlobalState(): AppState['global'] {
   return useAppSelector((state) => state.global);

@@ -46,6 +46,9 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
   const tools = useTools();
 
   const displayAddress = useMemo(() => {
+    if (!keyring.accounts[0]) {
+      return 'Invalid';
+    }
     const address = keyring.accounts[0].address;
     return shortAddress(address);
   }, []);
@@ -58,6 +61,10 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
       <Row
         full
         onClick={async (e) => {
+          if (!keyring.accounts[0]) {
+            tools.toastError('Invalid wallet, please remove it and add new one');
+            return;
+          }
           if (currentKeyring.key !== keyring.key) {
             await wallet.changeKeyring(keyring);
             dispatch(keyringsActions.setCurrent(keyring));

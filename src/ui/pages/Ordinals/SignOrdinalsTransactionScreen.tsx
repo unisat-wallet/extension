@@ -10,7 +10,7 @@ interface LocationState {
   rawTxInfo: RawTxInfo;
 }
 
-export default function OrdinalsTxConfirmScreen() {
+export default function SignOrdinalsTransactionScreen() {
   const { rawTxInfo } = useLocationState<LocationState>();
   const navigate = useNavigate();
   const pushOrdinalsTx = usePushOrdinalsTxCallback();
@@ -21,7 +21,14 @@ export default function OrdinalsTxConfirmScreen() {
           window.history.go(-1);
         }}
       />
-      params={{ data: { psbtHex: rawTxInfo.psbtHex, type: TxType.SEND_INSCRIPTION, rawTxInfo } }}
+      params={{
+        data: {
+          psbtHex: rawTxInfo.psbtHex,
+          type: TxType.SEND_ORDINALS_INSCRIPTION,
+          rawTxInfo,
+          options: { autoFinalized: false }
+        }
+      }}
       handleCancel={() => {
         navigate('MainScreen');
       }}

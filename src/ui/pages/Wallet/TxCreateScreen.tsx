@@ -3,14 +3,15 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { COIN_DUST } from '@/shared/constant';
 import { Inscription, RawTxInfo } from '@/shared/types';
-import { Layout, Content, Button, Header, Icon, Text, Input, Column, Row } from '@/ui/components';
+import { Button, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
+import { RBFBar } from '@/ui/components/RBFBar';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useAccountBalance } from '@/ui/state/accounts/hooks';
 import {
   useBitcoinTx,
-  useCreateBitcoinTxCallback,
   useFetchUtxosCallback,
+  usePrepareSendBTCCallback,
   useSafeBalance
 } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
@@ -44,7 +45,7 @@ export default function TxCreateScreen() {
     fetchUtxos();
   }, []);
 
-  const createBitcoinTx = useCreateBitcoinTxCallback();
+  const prepareSendBTC = usePrepareSendBTCCallback();
 
   const safeSatoshis = useMemo(() => {
     return amountToSatoshis(safeBalance);
@@ -60,6 +61,8 @@ export default function TxCreateScreen() {
   const [feeRate, setFeeRate] = useState(5);
 
   const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
+
+  const [enableRBF, setEnableRBF] = useState(false);
   useEffect(() => {
     setError('');
     setDisabled(true);
@@ -84,18 +87,13 @@ export default function TxCreateScreen() {
       return;
     }
 
-    if (
-      toInfo.address == bitcoinTx.toAddress &&
-      toSatoshis == bitcoinTx.toSatoshis &&
-      autoAdjust == bitcoinTx.autoAdjust &&
-      feeRate == bitcoinTx.feeRate
-    ) {
+    if (toInfo.address == bitcoinTx.toAddress && toSatoshis == bitcoinTx.toSatoshis && feeRate == bitcoinTx.feeRate) {
       //Prevent repeated triggering caused by setAmount
       setDisabled(false);
       return;
     }
 
-    createBitcoinTx(toInfo, toSatoshis, feeRate, autoAdjust)
+    prepareSendBTC({ toAddressInfo: toInfo, toAmount: toSatoshis, feeRate, enableRBF })
       .then((data) => {
         // if (data.fee < data.estimateFee) {
         //   setError(`Network fee must be at leat ${data.estimateFee}`);
@@ -108,7 +106,7 @@ export default function TxCreateScreen() {
         console.log(e);
         setError(e.message);
       });
-  }, [toInfo, inputAmount, autoAdjust, feeRate]);
+  }, [toInfo, inputAmount, feeRate, enableRBF]);
 
   const showSafeBalance = useMemo(
     () => new BigNumber(accountBalance.amount).eq(new BigNumber(safeBalance)) == false,
@@ -194,6 +192,14 @@ export default function TxCreateScreen() {
           <FeeRateBar
             onChange={(val) => {
               setFeeRate(val);
+            }}
+          />
+        </Column>
+
+        <Column mt="lg">
+          <RBFBar
+            onChange={(val) => {
+              setEnableRBF(val);
             }}
           />
         </Column>

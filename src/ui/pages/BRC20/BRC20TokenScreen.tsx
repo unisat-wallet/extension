@@ -1,12 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { AddressTokenSummary } from '@/shared/types';
-import { Button, Column, Content, Header, Layout, Row, Text } from '@/ui/components';
+import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import BRC20Preview from '@/ui/components/BRC20Preview';
 import { Empty } from '@/ui/components/Empty';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { useUnisatWebsite } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { useLocationState, useWallet } from '@/ui/utils';
+import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
 
@@ -37,9 +39,12 @@ export default function BRC20TokenScreen() {
   const wallet = useWallet();
 
   const account = useCurrentAccount();
+
+  const [loading, setLoading] = useState(true);
   useEffect(() => {
     wallet.getBRC20Summary(account.address, ticker).then((tokenSummary) => {
       setTokenSummary(tokenSummary);
+      setLoading(false);
     });
   }, []);
 
@@ -53,11 +58,12 @@ export default function BRC20TokenScreen() {
   const navigate = useNavigate();
 
   const [transferableListExpanded, setTransferableListExpanded] = useState(true);
-  const [availableListExpanded, setAvailableListExpanded] = useState(true);
 
   const outOfMint = tokenSummary.tokenInfo.totalMinted == tokenSummary.tokenInfo.totalSupply;
 
   const shouldShowSafe = tokenSummary.tokenBalance.availableBalanceSafe !== tokenSummary.tokenBalance.availableBalance;
+  const unisatWebsite = useUnisatWebsite();
+  console.log(ticker);
   return (
     <Layout>
       <Header
@@ -77,7 +83,7 @@ export default function BRC20TokenScreen() {
                 disabled={outOfMint}
                 icon="pencil"
                 onClick={(e) => {
-                  window.open(`https://unisat.io/brc20/${encodeURIComponent(ticker)}`);
+                  window.open(`${unisatWebsite}/brc20/${encodeURIComponent(ticker)}`);
                 }}
                 full
               />
@@ -108,7 +114,13 @@ export default function BRC20TokenScreen() {
             </Row>
             {tokenSummary.transferableList.length == 0 && (
               <Column style={{ minHeight: 130 }} itemsCenter justifyCenter>
-                <Empty text="Empty" />
+                {loading ? (
+                  <Icon>
+                    <LoadingOutlined />
+                  </Icon>
+                ) : (
+                  <Empty text="Empty" />
+                )}
               </Column>
             )}
             {transferableListExpanded ? (
@@ -174,39 +186,29 @@ export default function BRC20TokenScreen() {
                 <Text text={`${tokenSummary.tokenBalance.availableBalance} ${ticker}`} preset="bold" size="lg" />
               )}
             </Row>
-            {availableListExpanded ? (
-              <Row overflowX>
-                {/* <Text
-                  text="HIDE"
-                  size="xxl"
-                  onClick={() => {
-                    setAvailableListExpanded(false);
-                  }}
-                /> */}
-                {tokenSummary.historyList.map((v) => (
-                  <BRC20Preview
-                    key={v.inscriptionId}
-                    tick={ticker}
-                    balance={v.amount}
-                    inscriptionNumber={v.inscriptionNumber}
-                    timestamp={v.timestamp}
-                    type="MINT"
-                  />
-                ))}
-              </Row>
-            ) : (
-              tokenSummary.historyList.length > 0 && (
-                <BRC20Preview
-                  tick={ticker}
-                  balance={tokenSummary.historyList[0].amount}
-                  inscriptionNumber={tokenSummary.historyList[0].inscriptionNumber}
-                  timestamp={tokenSummary.historyList[0].timestamp}
-                  onClick={() => {
-                    setAvailableListExpanded(true);
-                  }}
-                />
-              )
+            {tokenSummary.historyList.length == 0 && (
+              <Column style={{ minHeight: 130 }} itemsCenter justifyCenter>
+                {loading ? (
+                  <Icon>
+                    <LoadingOutlined />
+                  </Icon>
+                ) : (
+                  <Empty text="Empty" />
+                )}
+              </Column>
             )}
+            <Row overflowX>
+              {tokenSummary.historyList.map((v) => (
+                <BRC20Preview
+                  key={v.inscriptionId}
+                  tick={ticker}
+                  balance={v.amount}
+                  inscriptionNumber={v.inscriptionNumber}
+                  timestamp={v.timestamp}
+                  type="MINT"
+                />
+              ))}
+            </Row>
           </Column>
         </Content>
       )}

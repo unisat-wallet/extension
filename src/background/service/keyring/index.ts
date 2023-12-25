@@ -1,6 +1,5 @@
 /// fork from https://github.com/MetaMask/KeyringController/blob/master/index.js
 import * as bip39 from 'bip39';
-import * as bitcoin from 'bitcoinjs-lib';
 import encryptor from 'browser-passworder';
 import { EventEmitter } from 'events';
 import log from 'loglevel';
@@ -8,12 +7,14 @@ import log from 'loglevel';
 import { ADDRESS_TYPES, KEYRING_TYPE } from '@/shared/constant';
 import { AddressType } from '@/shared/types';
 import { ObservableStore } from '@metamask/obs-store';
-import { HdKeyring } from '@unisat/bitcoin-hd-keyring';
-import { SimpleKeyring } from '@unisat/bitcoin-simple-keyring';
+import { keyring } from '@unisat/wallet-sdk';
+import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 
 import i18n from '../i18n';
 import preference from '../preference';
 import DisplayKeyring from './display';
+
+const { SimpleKeyring, HdKeyring } = keyring;
 
 export const KEYRING_SDK_TYPES = {
   SimpleKeyring,
@@ -246,6 +247,9 @@ class KeyringService extends EventEmitter {
     addressType: AddressType,
     accountCount: number
   ) => {
+    if (accountCount < 1) {
+      throw new Error(i18n.t('account count must be greater than 0'));
+    }
     if (!bip39.validateMnemonic(seed)) {
       return Promise.reject(new Error(i18n.t('mnemonic phrase is invalid')));
     }

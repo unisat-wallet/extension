@@ -4,7 +4,7 @@ import { NetworkType, TokenBalance, TxType } from '@/shared/types';
 import { Card, Column, Content, Input, Layout, Text } from '@/ui/components';
 import { AddressDetailPopover } from '@/ui/components/AddressDetailPopover';
 import { AddressText } from '@/ui/components/AddressText';
-import { AddressTypeCard, AddressTypeCard2 } from '@/ui/components/AddressTypeCard';
+import { AddressTypeCard2 } from '@/ui/components/AddressTypeCard';
 import BRC20BalanceCard from '@/ui/components/BRC20BalanceCard';
 import { RemoveWalletPopover } from '@/ui/components/RemoveWalletPopover';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
@@ -147,7 +147,7 @@ function TestApprovalSignPsbtB() {
       params={{
         data: {
           psbtHex,
-          type: TxType.SEND_INSCRIPTION,
+          type: TxType.SEND_ORDINALS_INSCRIPTION,
           rawTxInfo: {
             psbtHex,
             rawtx: '',

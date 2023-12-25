@@ -82,6 +82,15 @@ export function useTxIdUrl(txid: string) {
   }
 }
 
+export function useUnisatWebsite() {
+  const networkType = useNetworkType();
+  if (networkType === NetworkType.MAINNET) {
+    return 'https://unisat.io';
+  } else {
+    return 'https://testnet.unisat.io';
+  }
+}
+
 export function useWalletConfig() {
   const accountsState = useSettingsState();
   return accountsState.walletConfig;

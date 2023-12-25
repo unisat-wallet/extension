@@ -2,16 +2,17 @@ import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { Inscription, RawTxInfo } from '@/shared/types';
-import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
+import { Button, Column, Content, Header, Layout, Row, Text } from '@/ui/components';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { OutputValueBar } from '@/ui/components/OutputValueBar';
+import { RBFBar } from '@/ui/components/RBFBar';
 import { useCreateSplitTxCallback, useOrdinalsTx } from '@/ui/state/transactions/hooks';
-import { isValidAddress, useWallet } from '@/ui/utils';
+import { useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
 
-export default function SplitTxCreateScreen() {
+export default function SplitOrdinalsInscriptionScreen() {
   const [disabled, setDisabled] = useState(true);
   const navigate = useNavigate();
 
@@ -25,6 +26,7 @@ export default function SplitTxCreateScreen() {
   const createSplitTx = useCreateSplitTxCallback();
 
   const [feeRate, setFeeRate] = useState(5);
+  const [enableRBF, setEnableRBF] = useState(false);
   const defaultOutputValue = inscription ? inscription.outputValue : 10000;
   const minOutputValue = 546;
   const [outputValue, setOutputValue] = useState(defaultOutputValue);
@@ -66,7 +68,7 @@ export default function SplitTxCreateScreen() {
       return;
     }
 
-    createSplitTx(inscription.inscriptionId, feeRate, outputValue)
+    createSplitTx({ inscriptionId: inscription.inscriptionId, feeRate, outputValue, enableRBF })
       .then((data) => {
         setRawTxInfo(data.rawTxInfo);
         setSplitedCount(data.splitedCount);
@@ -76,7 +78,7 @@ export default function SplitTxCreateScreen() {
         console.log(e);
         setError(e.message);
       });
-  }, [feeRate, outputValue]);
+  }, [feeRate, outputValue, enableRBF]);
 
   return (
     <Layout>
@@ -112,13 +114,22 @@ export default function SplitTxCreateScreen() {
               setOutputValue(val);
             }}
           />
+          <Column mt="lg">
+            <Text text="Fee" color="textDim" />
+            <FeeRateBar
+              onChange={(val) => {
+                setFeeRate(val);
+              }}
+            />
+          </Column>
 
-          <Text text="Fee" color="textDim" />
-          <FeeRateBar
-            onChange={(val) => {
-              setFeeRate(val);
-            }}
-          />
+          <Column mt="lg">
+            <RBFBar
+              onChange={(val) => {
+                setEnableRBF(val);
+              }}
+            />
+          </Column>
 
           {error && <Text text={error} color="error" />}
 
@@ -131,7 +142,7 @@ export default function SplitTxCreateScreen() {
             preset="primary"
             text="Next"
             onClick={(e) => {
-              navigate('OrdinalsTxConfirmScreen', { rawTxInfo });
+              navigate('SignOrdinalsTransactionScreen', { rawTxInfo });
             }}
           />
         </Column>

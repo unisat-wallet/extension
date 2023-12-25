@@ -76,6 +76,29 @@ export interface Inscription {
   utxoConfirmation: number;
 }
 
+export interface Atomical {
+  atomicalId: string;
+  atomicalNumber: number;
+  type: 'FT' | 'NFT';
+  ticker?: string;
+
+  // mint info
+  address: string;
+  outputValue: number;
+  preview: string;
+  content: string;
+  contentType: string;
+  contentLength: number;
+  timestamp: number;
+  genesisTransaction: string;
+  location: string;
+  output: string;
+  offset: number;
+  contentBody: string;
+  utxoHeight: number;
+  utxoConfirmation: number;
+}
+
 export interface InscriptionMintedItem {
   title: string;
   desc: string;
@@ -113,15 +136,21 @@ export interface FeeSummary {
 }
 
 export interface UTXO {
-  txId: string;
-  outputIndex: number;
+  txid: string;
+  vout: number;
   satoshis: number;
   scriptPk: string;
   addressType: AddressType;
   inscriptions: {
-    id: string;
-    num: number;
+    inscriptionId: string;
+    inscriptionNumber?: number;
     offset: number;
+  }[];
+  atomicals: {
+    atomicalId: string;
+    atomicalNumber: number;
+    type: 'NFT' | 'FT';
+    ticker?: string;
   }[];
 }
 
@@ -137,7 +166,8 @@ export interface UTXO_Detail {
 export enum TxType {
   SIGN_TX,
   SEND_BITCOIN,
-  SEND_INSCRIPTION
+  SEND_ORDINALS_INSCRIPTION,
+  SEND_ATOMICALS_INSCRIPTION
 }
 
 interface BaseUserToSignInput {
@@ -207,6 +237,13 @@ export interface TokenBalance {
   availableBalanceUnSafe: string;
 }
 
+export interface Arc20Balance {
+  ticker: string;
+  balance: number;
+  confirmedBalance: number;
+  unconfirmedBalance: number;
+}
+
 export interface TokenInfo {
   totalSupply: string;
   totalMinted: string;
@@ -238,17 +275,21 @@ export interface DecodedPsbt {
     address: string;
     value: number;
     inscriptions: Inscription[];
+    atomicals: Atomical[];
     sighashType: number;
   }[];
   outputInfos: {
     address: string;
     value: number;
     inscriptions: Inscription[];
+    atomicals: Atomical[];
   }[];
   feeRate: number;
   fee: number;
-  hasScammerAddress: boolean;
-  warning: string;
+  features: {
+    rbf: boolean;
+  };
+  risks: { level: 'high' | 'low'; desc: string }[];
 }
 
 export interface ToAddressInfo {
@@ -274,4 +315,14 @@ export enum WebsiteState {
   CHECKING,
   SCAMMER,
   SAFE
+}
+
+export interface AddressSummary {
+  totalSatoshis: number;
+  btcSatoshis: number;
+  assetSatoshis: number;
+  inscriptionCount: number;
+  atomicalsCount: number;
+  brc20Count: number;
+  arc20Count: number;
 }

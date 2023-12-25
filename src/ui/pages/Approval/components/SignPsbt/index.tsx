@@ -1,20 +1,23 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { RawTxInfo, SignPsbtOptions, ToSignInput, TxType } from '@/shared/types';
-import { DecodedPsbt } from '@/shared/types';
-import { Inscription } from '@/shared/types';
-import { Button, Layout, Content, Footer, Icon, Text, Row, Card, Column, TextArea, Header } from '@/ui/components';
+import { DecodedPsbt, Inscription, RawTxInfo, SignPsbtOptions, ToSignInput, TxType } from '@/shared/types';
+import { Button, Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressText } from '@/ui/components/AddressText';
+import Arc20PreviewCard from '@/ui/components/Arc20PreviewCard';
+import AtomicalsNFTPreview from '@/ui/components/AtomicalsNFTPreview';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
-import { TabBar } from '@/ui/components/TabBar';
-import { WarningPopver } from '@/ui/components/WarningPopver';
+import { WarningPopover } from '@/ui/components/WarningPopover';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useCreateBitcoinTxCallback, useCreateMultiOrdinalsTxCallback } from '@/ui/state/transactions/hooks';
+import {
+  usePrepareSendAtomicalsNFTCallback,
+  usePrepareSendBTCCallback,
+  usePrepareSendOrdinalsInscriptionsCallback
+} from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
-import { copyToClipboard, satoshisToAmount, useApproval, useWallet } from '@/ui/utils';
+import { copyToClipboard, satoshisToAmount, shortAddress, useApproval, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 interface Props {
@@ -116,9 +119,6 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
     () => satoshisToAmount(receivingSatoshis - sendingSatoshis),
     [sendingSatoshis, receivingSatoshis]
   );
-  const sendingAmount = useMemo(() => satoshisToAmount(sendingSatoshis), [sendingSatoshis]);
-  const receivingAmount = useMemo(() => satoshisToAmount(receivingSatoshis), [receivingSatoshis]);
-
   const feeAmount = useMemo(() => satoshisToAmount(txInfo.decodedPsbt.fee), [txInfo.decodedPsbt]);
 
   const sendingInscriptionSaotoshis = useMemo(
@@ -130,15 +130,13 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
     [sendingInscriptionSaotoshis]
   );
 
-  const receivingInscriptionSaotoshis = useMemo(
-    () => receivingInscriptions.reduce((pre, cur) => pre + cur.outputValue, 0),
-    [receivingInscriptions]
+  const ordinalsInscriptionCount = txInfo.decodedPsbt.inputInfos.reduce(
+    (pre, cur) => cur.inscriptions?.length + pre,
+    0
   );
-  const receivingInscriptionAmount = useMemo(
-    () => satoshisToAmount(receivingInscriptionSaotoshis),
-    [receivingInscriptionSaotoshis]
-  );
-
+  const atomicalsNFTCount = txInfo.decodedPsbt.inputInfos.reduce((pre, cur) => cur.atomicals?.length + pre, 0);
+  const arc20Count = txInfo.decodedPsbt.inputInfos.reduce((pre, cur) => cur.atomicals?.length + pre, 0);
+  const brc20Count = 0;
   if (type === TxType.SIGN_TX) {
     return (
       <Column gap="lg">
@@ -164,6 +162,44 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
               </Column>
             </Column>
           </Card>
+        </Row>
+
+        <Text text="Involved Assets:" preset="bold" />
+        <Row justifyCenter>
+          {ordinalsInscriptionCount > 0 ? (
+            <Card style={{ backgroundColor: '#C67700', width: 75, height: 75 }}>
+              <Column justifyCenter>
+                <Text text={'Inscriptions'} textCenter size="xs" />
+              </Column>
+            </Card>
+          ) : null}
+
+          {brc20Count > 0 ? (
+            <Card style={{ backgroundColor: '#9E4A25', width: 75, height: 75 }}>
+              <Column justifyCenter>
+                <Row itemsCenter>
+                  <Text text={'BRC20'} />
+                </Row>
+              </Column>
+            </Card>
+          ) : null}
+
+          {atomicalsNFTCount > 0 ? (
+            <Card style={{ backgroundColor: '#24B8CD', width: 75, height: 75 }}>
+              <Column justifyCenter>
+                <Text text={'Atomicals'} textCenter size="xs" />
+                <Text text={'NFT'} textCenter size="xs" />
+              </Column>
+            </Card>
+          ) : null}
+
+          {arc20Count > 0 ? (
+            <Card style={{ backgroundColor: '#1B409D', width: 75, height: 75 }}>
+              <Column justifyCenter>
+                <Text text={'ARC20'} textCenter size="xs" />
+              </Column>
+            </Card>
+          ) : null}
         </Row>
       </Column>
     );
@@ -272,8 +308,10 @@ const initTxInfo: TxInfo = {
     outputInfos: [],
     fee: 0,
     feeRate: 0,
-    hasScammerAddress: false,
-    warning: ''
+    risks: [],
+    features: {
+      rbf: false
+    }
   }
 };
 
@@ -292,8 +330,10 @@ export default function SignPsbt({
 
   const [tabState, setTabState] = useState(TabState.DATA);
 
-  const createBitcoinTx = useCreateBitcoinTxCallback();
-  const createOrdinalsTx = useCreateMultiOrdinalsTxCallback();
+  const prepareSendBTC = usePrepareSendBTCCallback();
+  const prepareSendOrdinalsInscriptions = usePrepareSendOrdinalsInscriptionsCallback();
+  const prepareSendAtomicalsInscription = usePrepareSendAtomicalsNFTCallback;
+
   const wallet = useWallet();
   const [loading, setLoading] = useState(true);
 
@@ -309,7 +349,12 @@ export default function SignPsbt({
     if (type === TxType.SEND_BITCOIN) {
       if (!psbtHex && toAddress && satoshis) {
         try {
-          const rawTxInfo = await createBitcoinTx({ address: toAddress, domain: '' }, satoshis, feeRate);
+          const rawTxInfo = await prepareSendBTC({
+            toAddressInfo: { address: toAddress, domain: '' },
+            toAmount: satoshis,
+            feeRate,
+            enableRBF: false
+          });
           psbtHex = rawTxInfo.psbtHex;
         } catch (e) {
           console.log(e);
@@ -317,10 +362,15 @@ export default function SignPsbt({
           tools.toastError(txError);
         }
       }
-    } else if (type === TxType.SEND_INSCRIPTION) {
+    } else if (type === TxType.SEND_ORDINALS_INSCRIPTION) {
       if (!psbtHex && toAddress && inscriptionId) {
         try {
-          const rawTxInfo = await createOrdinalsTx({ address: toAddress, domain: '' }, [inscriptionId], feeRate || 5);
+          const rawTxInfo = await prepareSendOrdinalsInscriptions({
+            toAddressInfo: { address: toAddress, domain: '' },
+            inscriptionIds: [inscriptionId],
+            feeRate: feeRate || 5,
+            enableRBF: false
+          });
           psbtHex = rawTxInfo.psbtHex;
         } catch (e) {
           console.log(e);
@@ -328,13 +378,9 @@ export default function SignPsbt({
           tools.toastError(txError);
         }
       }
+    } else if (type === TxType.SEND_ATOMICALS_INSCRIPTION) {
+      // not support
     }
-
-    // else if (type === TxType.SEND_INSCRIPTION) {
-    //   if (!psbtHex && toAddress && inscriptionId) {
-    //     psbtHex = await createOrdinalsTx(toAddress, inscriptionId);
-    //   }
-    // }
 
     if (!psbtHex) {
       setLoading(false);
@@ -346,12 +392,12 @@ export default function SignPsbt({
 
     const decodedPsbt = await wallet.decodePsbt(psbtHex);
 
-    if (decodedPsbt.warning) {
+    if (decodedPsbt.risks.length > 0) {
       setIsWarningVisible(true);
     }
 
     let toSignInputs: ToSignInput[] = [];
-    if (type === TxType.SEND_BITCOIN || type === TxType.SEND_INSCRIPTION) {
+    if (type === TxType.SEND_BITCOIN || type === TxType.SEND_ORDINALS_INSCRIPTION) {
       toSignInputs = decodedPsbt.inputInfos.map((v, index) => ({
         index,
         publicKey: currentAccount.pubkey
@@ -456,7 +502,7 @@ export default function SignPsbt({
     );
   }
 
-  if (txInfo.isScammer || txInfo.decodedPsbt.hasScammerAddress) {
+  if (txInfo.isScammer) {
     return (
       <Layout>
         <Content>
@@ -480,32 +526,61 @@ export default function SignPsbt({
     <Layout>
       {header}
       <Content>
-        <Column>
+        <Column gap="xl">
           {detailsComponent}
-          <Row mt="lg" mb="lg">
-            <TabBar
-              defaultActiveKey={TabState.DATA}
-              activeKey={TabState.DATA}
-              items={[
-                // { label: 'DETAILS', key: TabState.DETAILS },
-                { label: 'DATA', key: TabState.DATA },
-                { label: 'HEX', key: TabState.HEX }
-              ]}
-              onTabClick={(key) => {
-                setTabState(key as any);
-              }}
-            />
-          </Row>
+          {canChanged == false && (
+            <Section title="Network Fee:">
+              <Text text={networkFee} />
+              <Text text="BTC" color="textDim" />
+            </Section>
+          )}
 
-          {tabState === TabState.DATA && isValidData && (
+          {canChanged == false && (
+            <Section title="Network Fee Rate:">
+              <Text text={txInfo.decodedPsbt.feeRate.toString()} />
+              <Text text="sat/vB" color="textDim" />
+            </Section>
+          )}
+
+          <Section title="Features:">
+            <Row>
+              {txInfo.decodedPsbt.features.rbf ? (
+                <Text text="RBF" color="white" style={{ backgroundColor: 'green', padding: 5, borderRadius: 5 }} />
+              ) : (
+                <Text
+                  text="RBF"
+                  color="white"
+                  style={{ backgroundColor: 'red', padding: 5, borderRadius: 5, textDecoration: 'line-through' }}
+                />
+              )}
+            </Row>
+          </Section>
+
+          <Section title="PSBT Data:">
+            <Text text={shortAddress(txInfo.psbtHex, 10)} />
+            <Row
+              itemsCenter
+              onClick={(e) => {
+                copyToClipboard(txInfo.psbtHex).then(() => {
+                  tools.toastSuccess('Copied');
+                });
+              }}>
+              <Text text={`${txInfo.psbtHex.length / 2} bytes`} color="textDim" />
+              <Icon icon="copy" color="textDim" />
+            </Row>
+          </Section>
+
+          {isValidData && (
             <Column gap="xl">
               <Column>
-                <Text text="INPUTS:" preset="bold" />
+                <Text text={`Inputs: (${txInfo.decodedPsbt.inputInfos.length})`} preset="bold" />
                 <Card>
                   <Column full justifyCenter>
                     {txInfo.decodedPsbt.inputInfos.map((v, index) => {
                       const isToSign = txInfo.toSignInputs.find((v) => v.index === index) ? true : false;
                       const inscriptions = v.inscriptions;
+                      const atomicals_nft = v.atomicals.filter((v) => v.type === 'NFT');
+                      const atomicals_ft = v.atomicals.filter((v) => v.type === 'FT');
                       return (
                         <Row
                           key={'output_' + index}
@@ -537,15 +612,50 @@ export default function SignPsbt({
                                     color={isToSign ? 'white' : 'textDim'}
                                   />
                                   <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
-                                    {inscriptions.map((v) => (
+                                    {inscriptions.map((w) => (
                                       <InscriptionPreview
-                                        key={v.inscriptionId}
-                                        data={v}
+                                        key={w.inscriptionId}
+                                        data={w}
                                         preset="small"
                                         onClick={() => {
-                                          window.open(v.preview);
+                                          window.open(w.preview);
                                         }}
                                       />
+                                    ))}
+                                  </Row>
+                                </Column>
+                              )}
+                            </Row>
+                            <Row>
+                              {atomicals_nft.length > 0 && (
+                                <Column justifyCenter>
+                                  <Text
+                                    text={`Atomicals NFT (${inscriptions.length})`}
+                                    color={isToSign ? 'white' : 'textDim'}
+                                  />
+                                  <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
+                                    {atomicals_nft.map((w) => (
+                                      <AtomicalsNFTPreview
+                                        key={w.atomicalId}
+                                        data={w as any}
+                                        preset="small"
+                                        onClick={() => {
+                                          window.open(w.preview);
+                                        }}
+                                      />
+                                    ))}
+                                  </Row>
+                                </Column>
+                              )}
+                            </Row>
+
+                            <Row>
+                              {atomicals_ft.length > 0 && (
+                                <Column justifyCenter>
+                                  <Text text={`ARC20`} color={isToSign ? 'white' : 'textDim'} />
+                                  <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
+                                    {atomicals_ft.map((w) => (
+                                      <Arc20PreviewCard key={w.ticker} ticker={w.ticker || ''} amt={v.value} />
                                     ))}
                                   </Row>
                                 </Column>
@@ -560,12 +670,15 @@ export default function SignPsbt({
               </Column>
 
               <Column>
-                <Text text="OUTPUTS:" preset="bold" />
+                <Text text={`Outputs: (${txInfo.decodedPsbt.outputInfos.length})`} preset="bold" />
                 <Card>
                   <Column full justifyCenter gap="lg">
                     {txInfo.decodedPsbt.outputInfos.map((v, index) => {
                       const isMyAddress = v.address == currentAccount.address;
                       const inscriptions = v.inscriptions;
+                      const atomicals_nft = v.atomicals.filter((v) => v.type === 'NFT');
+                      const atomicals_ft = v.atomicals.filter((v) => v.type === 'FT');
+                      console.log(atomicals_ft);
                       return (
                         <Column
                           key={'output_' + index}
@@ -601,63 +714,47 @@ export default function SignPsbt({
                               </Column>
                             )}
                           </Row>
+                          <Row>
+                            {atomicals_nft.length > 0 && (
+                              <Column justifyCenter>
+                                <Text
+                                  text={`Atomicals NFT (${inscriptions.length})`}
+                                  color={isMyAddress ? 'white' : 'textDim'}
+                                />
+                                <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
+                                  {atomicals_nft.map((v) => (
+                                    <AtomicalsNFTPreview
+                                      key={v.atomicalId}
+                                      data={v as any}
+                                      preset="small"
+                                      onClick={() => {
+                                        window.open(v.preview);
+                                      }}
+                                    />
+                                  ))}
+                                </Row>
+                              </Column>
+                            )}
+                          </Row>
+
+                          <Row>
+                            {atomicals_ft.length > 0 && (
+                              <Column justifyCenter>
+                                <Text text={`ARC20`} color={isMyAddress ? 'white' : 'textDim'} />
+                                <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
+                                  {atomicals_ft.map((w) => (
+                                    <Arc20PreviewCard key={w.ticker} ticker={w.ticker || ''} amt={v.value} />
+                                  ))}
+                                </Row>
+                              </Column>
+                            )}
+                          </Row>
                         </Column>
                       );
                     })}
                   </Column>
                 </Card>
               </Column>
-
-              {canChanged == false && (
-                <Section title="NETWORK FEE:">
-                  <Text text={networkFee} />
-                  <Text text="BTC" color="textDim" />
-                </Section>
-              )}
-
-              {canChanged == false && (
-                <Section title="NETWORK FEE RATE:">
-                  <Text text={txInfo.decodedPsbt.feeRate.toString()} />
-                  <Text text="sat/vB" color="textDim" />
-                </Section>
-              )}
-            </Column>
-          )}
-
-          {tabState === TabState.HEX && isValidData && txInfo.rawtx && (
-            <Column>
-              <Text text={`HEX DATA: ${txInfo.rawtx.length / 2} BYTES`} preset="bold" />
-
-              <TextArea text={txInfo.rawtx} />
-
-              <Row
-                justifyCenter
-                onClick={(e) => {
-                  copyToClipboard(txInfo.rawtx).then(() => {
-                    tools.toastSuccess('Copied');
-                  });
-                }}>
-                <Icon icon="copy" color="textDim" />
-                <Text text="Copy raw transaction data" color="textDim" />
-              </Row>
-            </Column>
-          )}
-
-          {tabState === TabState.HEX && isValidData && txInfo.psbtHex && (
-            <Column>
-              <Text text={`PSBT HEX DATA: ${txInfo.psbtHex.length / 2} BYTES`} preset="bold" />
-
-              <TextArea text={txInfo.psbtHex} />
-              <Row
-                justifyCenter
-                onClick={(e) => {
-                  copyToClipboard(txInfo.psbtHex).then(() => {
-                    tools.toastSuccess('Copied');
-                  });
-                }}>
-                <Icon icon="copy" color="textDim" />
-                <Text text="Copy psbt transaction data" color="textDim" />
-              </Row>
             </Column>
           )}
         </Column>
@@ -676,8 +773,8 @@ export default function SignPsbt({
         </Row>
       </Footer>
       {isWarningVisible && (
-        <WarningPopver
-          text={txInfo.decodedPsbt.warning}
+        <WarningPopover
+          risks={txInfo.decodedPsbt.risks}
           onClose={() => {
             setIsWarningVisible(false);
           }}

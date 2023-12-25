@@ -234,8 +234,8 @@ export const INTERNAL_REQUEST_SESSION = {
   icon: './images/logo/logo@128x.png'
 };
 
-export const OPENAPI_URL_MAINNET = 'https://api.unisat.io/wallet-v4';
-export const OPENAPI_URL_TESTNET = 'https://api-testnet.unisat.io/wallet-v4';
+export const OPENAPI_URL_MAINNET = 'https://wallet-api.unisat.io/v5';
+export const OPENAPI_URL_TESTNET = 'https://wallet-api-testnet.unisat.io/v5';
 
 export const EVENTS = {
   broadcastToUI: 'broadcastToUI',

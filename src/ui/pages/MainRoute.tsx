@@ -1,6 +1,5 @@
 import { useCallback, useEffect, useRef } from 'react';
-import { HashRouter, Route, Routes } from 'react-router-dom';
-import { useNavigate as useNavigateOrigin } from 'react-router-dom';
+import { HashRouter, Route, Routes, useNavigate as useNavigateOrigin } from 'react-router-dom';
 
 import { LoadingOutlined } from '@ant-design/icons';
 
@@ -22,6 +21,9 @@ import UnlockScreen from './Account/UnlockScreen';
 import ApprovalScreen from './Approval/ApprovalScreen';
 import ConnectedSitesScreen from './Approval/ConnectedSitesScreen';
 import { InscribeTransferScreen } from './Approval/components/InscribeTransfer';
+import AtomicalsNFTScreen from './Atomicals/AtomicalsNFTScreen';
+import SendArc20Screen from './Atomicals/SendArc20Screen';
+import SendAtomicalsInscriptionScreen from './Atomicals/SendAtomicalsNFTScreen';
 import BRC20SendScreen from './BRC20/BRC20SendScreen';
 import BRC20TokenScreen from './BRC20/BRC20TokenScreen';
 import AppTabScrren from './Main/AppTabScreen';
@@ -30,6 +32,10 @@ import DiscoverTabScreen from './Main/DiscoverTabScreen';
 import SettingsTabScreen from './Main/SettingsTabScreen';
 import WalletTabScreen from './Main/WalletTabScreen';
 import WelcomeScreen from './Main/WelcomeScreen';
+import OrdinalsInscriptionScreen from './Ordinals/OrdinalsInscriptionScreen';
+import SendOrdinalsInscriptionScreen from './Ordinals/SendOrdinalsInscriptionScreen';
+import SignOrdinalsTransactionScreen from './Ordinals/SignOrdinalsTransactionScreen';
+import SplitOrdinalsInscriptionScreen from './Ordinals/SplitOrdinalsInscriptionScreen';
 import AddressTypeScreen from './Settings/AddressTypeScreen';
 import ChangePasswordScreen from './Settings/ChangePasswordScreen';
 import EditAccountNameScreen from './Settings/EditAccountNameScreen';
@@ -41,11 +47,7 @@ import UpgradeNoticeScreen from './Settings/UpgradeNoticeScreen';
 import TestScreen from './Test/TestScreen';
 import HistoryScreen from './Wallet/HistoryScreen';
 import MoonPayScreen from './Wallet/MoonPayScreen';
-import OrdinalsDetailScreen from './Wallet/OrdinalsDetailScreen';
-import OrdinalsTxConfirmScreen from './Wallet/OrdinalsTxConfirmScreen';
-import OrdinalsTxCreateScreen from './Wallet/OrdinalsTxCreateScreen';
 import ReceiveScreen from './Wallet/ReceiveScreen';
-import SplitTxCreateScreen from './Wallet/SplitTxCreateScreen';
 import TxConfirmScreen from './Wallet/TxConfirmScreen';
 import TxCreateScreen from './Wallet/TxCreateScreen';
 import TxFailScreen from './Wallet/TxFailScreen';
@@ -119,20 +121,36 @@ const routes = {
     element: <TxFailScreen />
   },
 
-  OrdinalsDetailScreen: {
-    path: '/wallet/ordinals-detail',
-    element: <OrdinalsDetailScreen />
+  OrdinalsInscriptionScreen: {
+    path: '/ordinals/inscription-detail',
+    element: <OrdinalsInscriptionScreen />
   },
 
-  OrdinalsTxCreateScreen: {
+  SendOrdinalsInscriptionScreen: {
     path: '/wallet/ordinals-tx/create',
-    element: <OrdinalsTxCreateScreen />
+    element: <SendOrdinalsInscriptionScreen />
   },
 
-  OrdinalsTxConfirmScreen: {
+  SignOrdinalsTransactionScreen: {
     path: '/wallet/ordinals-tx/confirm',
-    element: <OrdinalsTxConfirmScreen />
+    element: <SignOrdinalsTransactionScreen />
   },
+
+  AtomicalsInscriptionScreen: {
+    path: '/atomicals/inscription-detail',
+    element: <AtomicalsNFTScreen />
+  },
+
+  SendAtomicalsInscriptionScreen: {
+    path: '/atomicals/send-inscription',
+    element: <SendAtomicalsInscriptionScreen />
+  },
+
+  SendArc20Screen: {
+    path: '/atomicals/send-arc20',
+    element: <SendArc20Screen />
+  },
+
   NetworkTypeScreen: {
     path: '/settings/network-type',
     element: <NetworkTypeScreen />
@@ -209,9 +227,9 @@ const routes = {
     path: '/moonpay',
     element: <MoonPayScreen />
   },
-  SplitTxCreateScreen: {
+  SplitOrdinalsInscriptionScreen: {
     path: '/wallet/split-tx/create',
-    element: <SplitTxCreateScreen />
+    element: <SplitOrdinalsInscriptionScreen />
   }
 };
 

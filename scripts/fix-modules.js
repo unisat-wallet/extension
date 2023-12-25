@@ -31,13 +31,6 @@ const fixWindowError = () => {
   fs.writeFileSync(file, fileData);
 };
 
-const fixWindowError2 = () => {
-  const file = './node_modules/tiny-secp256k1/lib/rand.browser.js';
-  let fileData = fs.readFileSync(file).toString();
-  fileData = fileData.replace('window.crypto', 'crypto');
-  fs.writeFileSync(file, fileData);
-};
-
 const fixWindowError3 = () => {
   const file = './node_modules/bitcoinjs-lib/src/payments/p2tr.js';
   let fileData = fs.readFileSync(file).toString();
@@ -91,7 +84,6 @@ const run = async () => {
   let success = true;
   try {
     fixWindowError();
-    fixWindowError2();
     fixWindowError3();
     fixBufferError();
   } catch (e) {

@@ -10,7 +10,7 @@ import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { RefreshButton } from '@/ui/components/RefreshButton';
 import { TabBar } from '@/ui/components/TabBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useCreateMultiOrdinalsTxCallback, usePushOrdinalsTxCallback } from '@/ui/state/transactions/hooks';
+import { usePrepareSendOrdinalsInscriptionsCallback, usePushOrdinalsTxCallback } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { useWallet } from '@/ui/utils';
@@ -282,7 +282,7 @@ function Step2({
   contextData: ContextData;
   updateContextData: (params: UpdateContextDataParams) => void;
 }) {
-  const createOrdinalsTx = useCreateMultiOrdinalsTxCallback();
+  const prepareSendOrdinalsInscriptions = usePrepareSendOrdinalsInscriptionsCallback();
 
   const [disabled, setDisabled] = useState(true);
 
@@ -300,12 +300,13 @@ function Step2({
     try {
       tools.showLoading(true);
       const inscriptionIds = Array.from(contextData.inscriptionIdSet);
-      const rawTxInfo = await createOrdinalsTx(
-        { address: contextData.receiver, domain: '' },
+      const rawTxInfo = await prepareSendOrdinalsInscriptions({
+        toAddressInfo: { address: contextData.receiver, domain: '' },
         inscriptionIds,
-        contextData.feeRate
-      );
-      navigate('OrdinalsTxConfirmScreen', { rawTxInfo });
+        feeRate: contextData.feeRate,
+        enableRBF: false
+      });
+      navigate('SignOrdinalsTransactionScreen', { rawTxInfo });
       // updateContextData({ tabKey: TabKey.STEP3, rawTxInfo: txInfo });
     } catch (e) {
       const error = e as Error;
@@ -366,7 +367,8 @@ function Step3({
       params={{
         data: {
           psbtHex: contextData.rawTxInfo.psbtHex,
-          type: TxType.SIGN_TX
+          type: TxType.SIGN_TX,
+          options: { autoFinalized: false }
         }
       }}
       handleConfirm={() => {

@@ -1,23 +1,23 @@
 import { useEffect, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { Inscription, RawTxInfo } from '@/shared/types';
+import { Atomical, RawTxInfo } from '@/shared/types';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
+import AtomicalsNFTPreview from '@/ui/components/AtomicalsNFTPreview';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
-import InscriptionPreview from '@/ui/components/InscriptionPreview';
-import { OutputValueBar } from '@/ui/components/OutputValueBar';
-import { useCreateOrdinalsTxCallback, useOrdinalsTx } from '@/ui/state/transactions/hooks';
+import { RBFBar } from '@/ui/components/RBFBar';
+import { useOrdinalsTx, usePrepareSendAtomicalsNFTCallback } from '@/ui/state/transactions/hooks';
 import { isValidAddress } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
 
-export default function OrdinalsTxCreateScreen() {
+export default function SendAtomicalsInscriptionScreen() {
   const [disabled, setDisabled] = useState(true);
   const navigate = useNavigate();
 
   const { state } = useLocation();
-  const { inscription } = state as {
-    inscription: Inscription;
+  const { atomical } = state as {
+    atomical: Atomical;
   };
   const ordinalsTx = useOrdinalsTx();
   const [toInfo, setToInfo] = useState({
@@ -26,12 +26,13 @@ export default function OrdinalsTxCreateScreen() {
   });
 
   const [error, setError] = useState('');
-  const createOrdinalsTx = useCreateOrdinalsTxCallback();
+  const prepareSendAtomicalsNFT = usePrepareSendAtomicalsNFTCallback();
 
   const [feeRate, setFeeRate] = useState(5);
-  const defaultOutputValue = inscription ? inscription.outputValue : 10000;
+  const [enableRBF, setEnableRBF] = useState(false);
+  const defaultOutputValue = atomical ? atomical.outputValue : 10000;
 
-  const minOutputValue = Math.max(inscription.offset, 546);
+  const minOutputValue = Math.max(atomical.offset, 546);
   const [outputValue, setOutputValue] = useState(defaultOutputValue);
 
   const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
@@ -67,7 +68,12 @@ export default function OrdinalsTxCreateScreen() {
       return;
     }
 
-    createOrdinalsTx(toInfo, inscription.inscriptionId, feeRate, outputValue)
+    prepareSendAtomicalsNFT({
+      toAddressInfo: toInfo,
+      atomicalId: atomical.atomicalId,
+      feeRate,
+      enableRBF
+    })
       .then((data) => {
         setRawTxInfo(data);
         setDisabled(false);
@@ -76,7 +82,7 @@ export default function OrdinalsTxCreateScreen() {
         console.log(e);
         setError(e.message);
       });
-  }, [toInfo, feeRate, outputValue]);
+  }, [toInfo, feeRate, outputValue, enableRBF]);
 
   return (
     <Layout>
@@ -84,13 +90,13 @@ export default function OrdinalsTxCreateScreen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Send Inscription"
+        title="Send Atomicals Inscription"
       />
       <Content>
         <Column>
           <Row justifyBetween>
             <Text text="Inscription" color="textDim" />
-            {inscription && <InscriptionPreview data={inscription} preset="small" />}
+            {atomical && <AtomicalsNFTPreview data={atomical} preset="small" />}
           </Row>
 
           <Text text="Recipient" color="textDim" />
@@ -104,22 +110,23 @@ export default function OrdinalsTxCreateScreen() {
             }}
           />
 
-          <Text text="OutputValue" color="textDim" />
+          <Column mt="lg">
+            <Text text="Fee" color="textDim" />
 
-          <OutputValueBar
-            defaultValue={defaultOutputValue}
-            onChange={(val) => {
-              setOutputValue(val);
-            }}
-          />
+            <FeeRateBar
+              onChange={(val) => {
+                setFeeRate(val);
+              }}
+            />
+          </Column>
 
-          <Text text="Fee" color="textDim" />
-
-          <FeeRateBar
-            onChange={(val) => {
-              setFeeRate(val);
-            }}
-          />
+          <Column mt="lg">
+            <RBFBar
+              onChange={(val) => {
+                setEnableRBF(val);
+              }}
+            />
+          </Column>
 
           {error && <Text text={error} color="error" />}
           <Button
@@ -127,7 +134,8 @@ export default function OrdinalsTxCreateScreen() {
             preset="primary"
             text="Next"
             onClick={(e) => {
-              navigate('OrdinalsTxConfirmScreen', { rawTxInfo });
+              // todo
+              // navigate('SignOrdinalsTransactionScreen', { rawTxInfo });
             }}
           />
         </Column>

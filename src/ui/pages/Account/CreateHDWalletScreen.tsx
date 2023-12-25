@@ -1,4 +1,4 @@
-import { Checkbox, Dropdown, Radio } from 'antd';
+import { Checkbox, Radio } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import * as bip39 from 'bip39';
 import bitcore from 'bitcore-lib';
@@ -9,14 +9,14 @@ import { ADDRESS_TYPES, OW_HD_PATH, RESTORE_WALLETS } from '@/shared/constant';
 import { AddressType, RestoreWalletType } from '@/shared/types';
 import { Button, Card, Column, Content, Grid, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
-import { AddressTypeCard, AddressTypeCard2 } from '@/ui/components/AddressTypeCard';
+import { AddressTypeCard2 } from '@/ui/components/AddressTypeCard';
 import { FooterButtonContainer } from '@/ui/components/FooterButtonContainer';
 import { Icon } from '@/ui/components/Icon';
 import { TabBar } from '@/ui/components/TabBar';
 import { useCreateAccountCallback } from '@/ui/state/global/hooks';
 import { fontSizes } from '@/ui/theme/font';
-import { amountToSatoshis, copyToClipboard, useWallet } from '@/ui/utils';
-import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
+import { copyToClipboard, satoshisToAmount, useWallet } from '@/ui/utils';
+import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
 
@@ -378,8 +378,9 @@ function Step2({
 
   useEffect(() => {
     if (scannedGroups.length > 0) {
-      const option = allHdPathOptions[contextData.addressTypeIndex];
-      updateContextData({ addressType: option.addressType });
+      const itemIndex = scannedGroups.findIndex((v) => v.address_arr.length > 0);
+      const item = scannedGroups[itemIndex];
+      updateContextData({ addressType: item.type, addressTypeIndex: itemIndex });
     } else {
       const option = hdPathOptions[contextData.addressTypeIndex];
       updateContextData({ addressType: option.addressType });
@@ -436,11 +437,11 @@ function Step2({
     for (let i = 0; i < addresses.length; i++) {
       const address = addresses[i];
       const balance = balances[i];
-      const satoshis = amountToSatoshis(balance.total_btc);
+      const satoshis = balance.totalSatoshis;
       addressAssets[address] = {
-        total_btc: balance.total_btc,
+        total_btc: satoshisToAmount(balance.totalSatoshis),
         satoshis,
-        total_inscription: balance.total_inscription
+        total_inscription: balance.inscriptionCount
       };
       if (satoshis > maxSatoshis) {
         maxSatoshis = satoshis;
@@ -493,6 +494,7 @@ function Step2({
         const option = allHdPathOptions[contextData.addressTypeIndex];
         const hdPath = contextData.customHdPath || option.hdPath;
         const selected = scannedGroups[contextData.addressTypeIndex];
+
         await createAccount(
           contextData.mnemonics,
           hdPath,

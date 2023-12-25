@@ -6,6 +6,7 @@ import { useWallet } from '@/ui/utils';
 import { AppState } from '..';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { useCurrentKeyring } from '../keyrings/hooks';
+import { keyringsActions } from '../keyrings/reducer';
 import { accountActions } from './reducer';
 
 export function useAccountsState(): AppState['accounts'] {
@@ -26,6 +27,11 @@ export function useAccountBalance() {
   const accountsState = useAccountsState();
   const currentAccount = useCurrentAccount();
   return accountsState.balanceMap[currentAccount.address] || { amount: '0', expired: true };
+}
+
+export function useAddressSummary() {
+  const accountsState = useAccountsState();
+  return accountsState.addressSummary;
 }
 
 export function useAccountInscriptions() {
@@ -175,5 +181,29 @@ export function useFetchBalanceCallback() {
       wallet.expireUICachedData(currentAccount.address);
       dispatch(accountActions.expireHistory());
     }
+
+    const summary = await wallet.getAddressSummary(currentAccount.address);
+    dispatch(accountActions.setAddressSummary(summary));
   }, [dispatch, wallet, currentAccount, balance]);
+}
+
+export function useReloadAccounts() {
+  const dispatch = useAppDispatch();
+  const wallet = useWallet();
+  return useCallback(async () => {
+    const keyrings = await wallet.getKeyrings();
+    dispatch(keyringsActions.setKeyrings(keyrings));
+
+    const currentKeyring = await wallet.getCurrentKeyring();
+    dispatch(keyringsActions.setCurrent(currentKeyring));
+
+    const _accounts = await wallet.getAccounts();
+    dispatch(accountActions.setAccounts(_accounts));
+
+    const account = await wallet.getCurrentAccount();
+    dispatch(accountActions.setCurrent(account));
+
+    dispatch(accountActions.expireBalance());
+    dispatch(accountActions.expireInscriptions());
+  }, [dispatch, wallet]);
 }

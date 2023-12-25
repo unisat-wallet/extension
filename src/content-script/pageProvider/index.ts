@@ -243,7 +243,7 @@ export class UnisatProvider extends EventEmitter {
         toAddress,
         inscriptionId,
         feeRate: options?.feeRate,
-        type: TxType.SEND_INSCRIPTION
+        type: TxType.SEND_ORDINALS_INSCRIPTION
       }
     });
   };

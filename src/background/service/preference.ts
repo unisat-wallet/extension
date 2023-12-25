@@ -83,6 +83,7 @@ export interface PreferenceStore {
     readTabTime: number;
     readAppTime: { [key: string]: number };
   };
+  showSafeNotice: boolean;
 }
 
 const SUPPORT_LOCALES = ['en'];
@@ -122,7 +123,8 @@ class PreferenceService {
           summary: { apps: [] },
           readAppTime: {},
           readTabTime: 1
-        }
+        },
+        showSafeNotice: true
       }
     });
     if (!this.store.locale || this.store.locale !== defaultLang) {
@@ -190,6 +192,10 @@ class PreferenceService {
 
     if (!this.store.appTab.readAppTime) {
       this.store.appTab.readAppTime = {};
+    }
+
+    if (typeof this.store.showSafeNotice !== 'boolean') {
+      this.store.showSafeNotice = true;
     }
   };
 
@@ -445,6 +451,13 @@ class PreferenceService {
 
   setReadAppTime = (appid: number, timestamp: number) => {
     this.store.appTab.readAppTime[appid] = timestamp;
+  };
+
+  getShowSafeNotice = () => {
+    return this.store.showSafeNotice;
+  };
+  setShowSafeNotice = (showSafeNotice: boolean) => {
+    this.store.showSafeNotice = showSafeNotice;
   };
 }
 

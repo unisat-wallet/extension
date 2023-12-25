@@ -17,7 +17,7 @@ export interface BRC20BalanceCardProps {
 
 export default function BRC20BalanceCard(props: BRC20BalanceCardProps) {
   const {
-    tokenBalance: { ticker, overallBalance, transferableBalance, availableBalance },
+    tokenBalance: { ticker, overallBalance, transferableBalance, availableBalance, availableBalanceUnSafe },
     onClick
   } = props;
   return (
@@ -26,11 +26,9 @@ export default function BRC20BalanceCard(props: BRC20BalanceCardProps) {
         backgroundColor: '#141414',
         borderColor: 'rgba(255,255,255,0.1)',
         borderWidth: 1,
-        width: 150,
-        height: 120,
-        minWidth: 150,
         minHeight: 120
       }}
+      fullX
       onClick={onClick}>
       <Column full>
         <Row justifyBetween itemsCenter>
@@ -58,6 +56,12 @@ export default function BRC20BalanceCard(props: BRC20BalanceCardProps) {
           <Text text="Available:" color="textDim" size="xs" />
           <Text text={availableBalance} size="xs" />
         </Row>
+        {availableBalanceUnSafe && (
+          <Row justifyBetween>
+            <Text text="Available (pending): " color="textDim" size="xs" />
+            <Text text={availableBalanceUnSafe} size="xs" color="textDim" />
+          </Row>
+        )}
         <Row style={{ borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }} />
         <Row justifyBetween itemsCenter>
           <Text text="Balance:" color="textDim" size="xs" />

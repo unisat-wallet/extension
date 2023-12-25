@@ -7,7 +7,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { AddressTypeCard } from '@/ui/components/AddressTypeCard';
 import { FooterButtonContainer } from '@/ui/components/FooterButtonContainer';
 import { TabBar } from '@/ui/components/TabBar';
-import { amountToSatoshis, useWallet } from '@/ui/utils';
+import { satoshisToAmount, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
 
@@ -133,11 +133,11 @@ function Step2({
     for (let i = 0; i < addresses.length; i++) {
       const address = addresses[i];
       const balance = balances[i];
-      const satoshis = amountToSatoshis(balance.total_btc);
+      const satoshis = balance.totalSatoshis;
       self.addressBalances[address] = {
-        total_btc: balance.total_btc,
+        total_btc: satoshisToAmount(balance.totalSatoshis),
         satoshis,
-        total_inscription: balance.total_inscription
+        total_inscription: balance.inscriptionCount
       };
       if (satoshis > self.maxSatoshis) {
         self.maxSatoshis = satoshis;

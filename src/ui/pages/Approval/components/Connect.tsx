@@ -1,10 +1,9 @@
-import VirtualList from 'rc-virtual-list';
-import { forwardRef, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Account, WebsiteState } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import WebsiteBar from '@/ui/components/WebsiteBar';
-import { useAccounts, useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring, useKeyrings } from '@/ui/state/keyrings/hooks';
@@ -74,12 +73,16 @@ export default function Connect({ params: { session } }: Props) {
   const dispatch = useAppDispatch();
 
   const [checkState, setCheckState] = useState(WebsiteState.CHECKING);
+  const [warning, setWarning] = useState('');
   useEffect(() => {
     wallet.checkWebsite(session.origin).then((v) => {
       if (v.isScammer) {
         setCheckState(WebsiteState.SCAMMER);
       } else {
         setCheckState(WebsiteState.SAFE);
+      }
+      if (v.warning) {
+        setWarning(v.warning);
       }
     });
   }, []);
@@ -113,6 +116,35 @@ export default function Connect({ params: { session } }: Props) {
         <Footer>
           <Row full>
             <Button text="Reject (blocked by UniSat Wallet)" preset="danger" onClick={handleCancel} full />
+          </Row>
+        </Footer>
+      </Layout>
+    );
+  }
+
+  if (warning) {
+    return (
+      <Layout>
+        <Header>
+          <WebsiteBar session={session} />
+        </Header>
+        <Content>
+          <Column>
+            <Text text="Warning" preset="title-bold" textCenter mt="xxl" />
+            <Text text={warning} mt="md" />
+          </Column>
+        </Content>
+
+        <Footer>
+          <Row full>
+            <Button
+              text="I am aware of the risks"
+              preset="danger"
+              onClick={() => {
+                setWarning('');
+              }}
+              full
+            />
           </Row>
         </Footer>
       </Layout>

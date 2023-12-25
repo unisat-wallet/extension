@@ -1,14 +1,13 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { DecodedPsbt, SignPsbtOptions, ToSignInput } from '@/shared/types';
-import { Inscription } from '@/shared/types';
-import { Button, Layout, Content, Footer, Icon, Text, Row, Card, Column, TextArea, Header } from '@/ui/components';
+import { DecodedPsbt, Inscription, SignPsbtOptions, ToSignInput } from '@/shared/types';
+import { Button, Card, Column, Content, Footer, Header, Icon, Layout, Row, Text, TextArea } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressText } from '@/ui/components/AddressText';
 import { Empty } from '@/ui/components/Empty';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { TabBar } from '@/ui/components/TabBar';
-import { WarningPopver } from '@/ui/components/WarningPopver';
+import { WarningPopover } from '@/ui/components/WarningPopover';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { colors } from '@/ui/theme/colors';
@@ -175,7 +174,7 @@ export default function MultiSignPsbt({
 
   const tools = useTools();
 
-  const [warningState, setWarningState] = useState({ visible: false, text: '' });
+  const [isWarningVisible, setIsWarningVisible] = useState(false);
 
   const init = async () => {
     let txError = '';
@@ -183,17 +182,13 @@ export default function MultiSignPsbt({
     const { isScammer } = await wallet.checkWebsite(session?.origin || '');
     const decodedPsbts: DecodedPsbt[] = [];
 
-    let warningInfo = '';
     for (let i = 0; i < psbtHexs.length; i++) {
       const psbtHex = psbtHexs[i];
       const decodedPsbt = await wallet.decodePsbt(psbtHex);
       decodedPsbts.push(decodedPsbt);
-      if (decodedPsbt.warning) {
-        warningInfo += decodedPsbt.warning + '\n';
+      if (decodedPsbt.risks.length > 0) {
+        setIsWarningVisible(true);
       }
-    }
-    if (warningInfo.length > 0) {
-      setWarningState({ visible: true, text: warningInfo });
     }
 
     const toSignInputsArray: ToSignInput[][] = [];
@@ -311,7 +306,7 @@ export default function MultiSignPsbt({
     );
   }
 
-  if (txInfo.isScammer || txInfo.decodedPsbts.find((v) => v.hasScammerAddress)) {
+  if (txInfo.isScammer) {
     return (
       <Layout>
         <Content>
@@ -486,11 +481,11 @@ export default function MultiSignPsbt({
             full
           />
         </Row>
-        {warningState.visible && (
-          <WarningPopver
-            text={warningState.text}
+        {isWarningVisible && (
+          <WarningPopover
+            risks={decodedPsbt.risks}
             onClose={() => {
-              setWarningState({ visible: false, text: '' });
+              setIsWarningVisible(false);
             }}
           />
         )}

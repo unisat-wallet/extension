@@ -6,8 +6,7 @@ import { useWallet } from '@/ui/utils';
 
 import { useIsUnlocked } from '../global/hooks';
 import { useAppDispatch } from '../hooks';
-import { keyringsActions } from '../keyrings/reducer';
-import { useAccountBalance, useCurrentAccount, useFetchBalanceCallback } from './hooks';
+import { useAccountBalance, useCurrentAccount, useFetchBalanceCallback, useReloadAccounts } from './hooks';
 import { accountActions } from './reducer';
 
 export default function AccountUpdater() {
@@ -23,23 +22,14 @@ export default function AccountUpdater() {
   });
   const self = selfRef.current;
 
+  const reloadAccounts = useReloadAccounts();
   const onCurrentChange = useCallback(async () => {
     if (isUnlocked && currentAccount && currentAccount.key != self.preAccountKey) {
       self.preAccountKey = currentAccount.key;
 
       // setLoading(true);
 
-      const keyrings = await wallet.getKeyrings();
-      dispatch(keyringsActions.setKeyrings(keyrings));
-
-      const currentKeyring = await wallet.getCurrentKeyring();
-      dispatch(keyringsActions.setCurrent(currentKeyring));
-
-      const _accounts = await wallet.getAccounts();
-      dispatch(accountActions.setAccounts(_accounts));
-
-      dispatch(accountActions.expireBalance());
-      dispatch(accountActions.expireInscriptions());
+      reloadAccounts();
 
       // setLoading(false);
     }

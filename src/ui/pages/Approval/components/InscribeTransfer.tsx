@@ -12,8 +12,8 @@ import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useNetworkType } from '@/ui/state/settings/hooks';
 import {
-  useCreateBitcoinTxCallback,
   useFetchUtxosCallback,
+  usePrepareSendBTCCallback,
   usePushBitcoinTxCallback
 } from '@/ui/state/transactions/hooks';
 import { fontSizes } from '@/ui/theme/font';
@@ -140,7 +140,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
   const [inputAmount, setInputAmount] = useState('');
 
   const tools = useTools();
-  const createBitcoinTx = useCreateBitcoinTxCallback();
+  const prepareSendBTC = usePrepareSendBTCCallback();
 
   const fetchUtxos = useFetchUtxosCallback();
 
@@ -202,7 +202,12 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
       tools.showLoading(true);
       const amount = parseInt(inputAmount);
       const order = await wallet.inscribeBRC20Transfer(account.address, contextData.ticker, amount.toString(), feeRate);
-      const rawTxInfo = await createBitcoinTx({ address: order.payAddress, domain: '' }, order.totalFee, feeRate);
+      const rawTxInfo = await prepareSendBTC({
+        toAddressInfo: { address: order.payAddress, domain: '' },
+        toAmount: order.totalFee,
+        feeRate: feeRate,
+        enableRBF: true
+      });
       updateContextData({ order, amount, rawTxInfo, step: Step.STEP2 });
     } catch (e) {
       console.log(e);
@@ -328,9 +333,6 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
 }
 
 function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
-  const tools = useTools();
-  const pushBitcoinTx = usePushBitcoinTxCallback();
-
   const { order, tokenBalance, amount, rawTxInfo, session } = contextData;
 
   if (!order || !tokenBalance || !rawTxInfo) {
@@ -522,23 +524,6 @@ function InscribeResultStep({
   contextData: ContextData;
   updateContextData: (params: UpdateContextDataParams) => void;
 }) {
-  // contextData.tokenBalance = {
-  //   availableBalance: '1900',
-  //   availableBalanceSafe: '1900',
-  //   availableBalanceUnSafe: '0',
-  //   overallBalance: '2000',
-  //   ticker: 'sats',
-  //   transferableBalance: '100'
-  // };
-  // contextData.order = {
-  //   orderId: 'fd9915ced9091f74765ad5c17e7e83425b875a87',
-  //   payAddress: 'bc1p7fmwed05ux6hxn6pz63a8ce7nnzmdppfydny2e3gspdxxtc37duqex24ss',
-  //   totalFee: 6485,
-  //   minerFee: 3940,
-  //   originServiceFee: 2499,
-  //   serviceFee: 1999,
-  //   outputValue: 546
-  // };
   if (!contextData.order || !contextData.tokenBalance) {
     return <Empty />;
   }
