@@ -15,8 +15,7 @@ export const EnableAtomicalsPopover = ({ onClose, onConfirm }: { onClose: () => 
         <Icon icon={'warning'} color={'icon_yellow'} size={57} />
         <Column gap="zero">
           <div style={{ fontSize: fontSizes.sm,color:'#ddd' }}>
-            Once enabled, the address will be unable to use unconfirmed UTXOs. If you are unsure why your balance is
-            unavailable, you can check whether the relevant balance is in an unconfirmed state on mempool.space.
+            In the current version, only <span style={{color:'#EBB94C'}}>the confirmed</span> balance can be used once atomicals enabled.
           </div>
         </Column>
 
