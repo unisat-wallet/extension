@@ -163,8 +163,8 @@ export default function TxCreateScreen() {
             )}
           </Row>
           <Row justifyBetween>
-            <Text text="BTC Balance(confirmed)" color="textDim" />
-            <Text text={`${accountBalance.confirm_btc_amount} BTC`} size="sm" preset="bold" color="textDim" />
+            <Text text="Unconfirmed BTC" color="textDim" />
+            <Text text={`${accountBalance.pending_btc_amount} BTC`} size="sm" preset="bold" color="textDim" />
           </Row>
           {showSafeBalance && (
             <Row justifyBetween>

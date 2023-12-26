@@ -1,4 +1,4 @@
-import { Tooltip } from 'antd';
+import { Tabs, Tooltip } from 'antd';
 import { CSSProperties, useEffect, useMemo, useState } from 'react';
 
 import { AddressFlagType, KEYRING_TYPE } from '@/shared/constant';
@@ -41,7 +41,7 @@ import { checkAddressFlag } from '@/shared/utils';
 
 const $noBreakStyle: CSSProperties = {
   whiteSpace: 'nowrap',
-  wordBreak: 'keep-all',
+  wordBreak: 'keep-all'
 };
 
 export default function WalletTabScreen() {
@@ -141,22 +141,24 @@ export default function WalletTabScreen() {
           {walletConfig.statusMessage && <Text text={walletConfig.statusMessage} color="danger" textCenter />}
 
           <Tooltip
+            placement={'bottom'}
             title={
               <>
                 <Row justifyBetween>
-                  <span style={$noBreakStyle}>{'BTC Balance(confirmed)'}</span>
+                  <span style={$noBreakStyle}>{'Confirmed BTC'}</span>
                   <span style={$noBreakStyle}>{` ${accountBalance.confirm_btc_amount} BTC`}</span>
                 </Row>
                 <Row justifyBetween>
-                  <span style={$noBreakStyle}>{'BTC Balance(unconfirmed)'}</span>
+                  <span style={$noBreakStyle}>{'Unconfirmed BTC'}</span>
                   <span style={$noBreakStyle}>{` ${accountBalance.pending_btc_amount} BTC`}</span>
                 </Row>
                 <Row justifyBetween>
-                  <span style={$noBreakStyle}>{'Inscription Balance'}</span>
+                  <span style={$noBreakStyle}>{'BTC in Inscriptions'}</span>
                   <span style={$noBreakStyle}>{` ${accountBalance.inscription_amount} BTC`}</span>
                 </Row>
               </>
             }
+
             overlayStyle={{
               fontSize: fontSizes.xs
             }}>
@@ -168,12 +170,13 @@ export default function WalletTabScreen() {
           <Row itemsCenter justifyCenter>
             <AddressBar />
             <Row
+              style={{ marginLeft: 8 }}
               itemsCenter
               onClick={() => {
                 window.open(`${blockstreamUrl}/address/${currentAccount.address}`);
               }}>
-              <Text text={'View History'} size="xs" color={'textDim'}/>
-              <Icon icon="link" size={fontSizes.xs} color={'textDim'}/>
+              <Text text={'View History'} size="xs" />
+              <Icon icon="link" size={fontSizes.xs} />
             </Row>
           </Row>
 
@@ -211,19 +214,17 @@ export default function WalletTabScreen() {
             )}
           </Row>
 
-          <Row justifyBetween mt={"xxl"}>
-            <TabBar
-              defaultActiveKey={assetTabKey}
-              activeKey={assetTabKey}
-              preset="style1"
-              items={tabItems}
-              onTabClick={(key) => {
-                dispatch(uiActions.updateAssetTabScreen({ assetTabKey: key }));
-              }}
-            />
-          </Row>
+          <Tabs
+            size={'small'}
+            defaultActiveKey={assetTabKey as unknown as string}
+            activeKey={assetTabKey as unknown as string}
+            items={tabItems as unknown as any[]}
+            onTabClick={(key) => {
+              dispatch(uiActions.updateAssetTabScreen({ assetTabKey: key as unknown as AssetTabKey }));
+            }}
+          />
 
-          {tabItems[assetTabKey].children}
+          {/*{tabItems[assetTabKey].children}*/}
         </Column>
         {showSafeNotice && (
           <NoticePopover

@@ -57,7 +57,9 @@ export const colors = Object.assign({}, palette, {
   bg3: '#434242',
   bg4: '#383535',
 
-  border: 'rgba(255,255,255,0.1)'
+  border: 'rgba(255,255,255,0.1)',
+
+  icon_yellow:'#FFBA33'
 });
 
 export type ColorTypes = keyof typeof colors;

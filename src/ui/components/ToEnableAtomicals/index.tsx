@@ -1,4 +1,4 @@
-import { Button, Column, Row, Text } from '@/ui/components';
+import { Button, Column, Icon, Row, Text } from '@/ui/components';
 import { useChangeAddressFlagCallback, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { AddressFlagType } from '@/shared/constant';
 import { checkAddressFlag } from '@/shared/utils';
@@ -17,10 +17,13 @@ export default function ToEnableAtomicals() {
   //   await changeAddressFlag(false, AddressFlagType.Is_Enable_Atomicals);
   // };
   return <>
-    <Button onClick={()=>{
-      setIsShowAlert(true);
-    }}>
-      Enable Atomicals
+    <Button
+      style={{ paddingTop: 12,paddingBottom:12 }}
+      onClick={() => {
+        setIsShowAlert(true);
+      }}>
+      <Icon icon={'atomicals'} />
+      <Text text={'Enable Atomicals'} mx={'md'} />
     </Button>
     {
       isShowAlert && <EnableAtomicalsPopover
