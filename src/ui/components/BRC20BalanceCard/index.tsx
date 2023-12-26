@@ -63,7 +63,7 @@ export default function BRC20BalanceCard(props: BRC20BalanceCardProps) {
           <Text text="Available:" color="textDim" size="xs" />
           <Text text={availableBalanceSafe} size="xs" />
         </Row>
-        {availableBalanceUnSafe && (
+        {availableBalanceUnSafe && parseInt(availableBalanceUnSafe) > 0 && (
           <Row justifyBetween>
             <Text text="Available (pending): " color="textDim" size="xs" />
             <Text text={availableBalanceUnSafe} size="xs" color="textDim" />
