@@ -156,7 +156,18 @@ export default function WalletTabScreen() {
             </div>
           </Tooltip>
 
-          <AddressBar />
+          <Row itemsCenter justifyCenter>
+            <AddressBar />
+            <Row
+              itemsCenter
+              onClick={() => {
+                window.open(`${blockstreamUrl}/address/${currentAccount.address}`);
+              }}>
+              <Text text={'View History'} size="xs" color={'textDim'}/>
+              <Icon icon="link" size={fontSizes.xs} color={'textDim'}/>
+            </Row>
+          </Row>
+
 
           <Row justifyBetween>
             <Button
@@ -191,7 +202,7 @@ export default function WalletTabScreen() {
             )}
           </Row>
 
-          <Row justifyBetween>
+          <Row justifyBetween mt={"xxl"}>
             <TabBar
               defaultActiveKey={assetTabKey}
               activeKey={assetTabKey}
@@ -201,14 +212,6 @@ export default function WalletTabScreen() {
                 dispatch(uiActions.updateAssetTabScreen({ assetTabKey: key }));
               }}
             />
-            <Row
-              itemsCenter
-              onClick={() => {
-                window.open(`${blockstreamUrl}/address/${currentAccount.address}`);
-              }}>
-              <Text text={'View History'} size="xs" />
-              <Icon icon="link" size={fontSizes.xs} />
-            </Row>
           </Row>
 
           {tabItems[assetTabKey].children}
@@ -285,6 +288,13 @@ function AtomicalsTab() {
       key: AtomicalsAssetTabKey.ARC20,
       label: `ARC-20 (${addressSummary.arc20Count})`,
       children: <Arc20List />
+    },
+    {
+      key: AtomicalsAssetTabKey.OTHERS,
+      label: `Others`,
+      children: <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
+        <Empty text="Not supported yet" />
+      </Column>
     }
   ];
 

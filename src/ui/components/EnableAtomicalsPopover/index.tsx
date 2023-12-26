@@ -20,7 +20,7 @@ export const EnableAtomicalsPopover = ({ onClose, onConfirm }: { onClose: () => 
           </div>
         </Column>
 
-        <Row full>
+        <Row full mt={'xl'}>
           <Button
             text="Cancel"
             full

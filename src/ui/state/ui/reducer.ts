@@ -20,7 +20,8 @@ export enum OrdinalsAssetTabKey {
 
 export enum AtomicalsAssetTabKey {
   ALL,
-  ARC20
+  ARC20,
+  OTHERS
 }
 
 export const initialState: UIState = {
