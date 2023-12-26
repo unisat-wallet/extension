@@ -131,7 +131,7 @@ export default function WalletTabScreen() {
         <Column gap="xl">
           {currentKeyring.type === KEYRING_TYPE.HdKeyring && <AccountSelect />}
 
-          {isTestNetwork && <Text text="Bitcoin Testnet is used for testing." color="danger" textCenter />}
+          {isTestNetwork && <Text text="Bitcoin Testnet activated." color="danger" textCenter />}
 
           {walletConfig.statusMessage && <Text text={walletConfig.statusMessage} color="danger" textCenter />}
 
