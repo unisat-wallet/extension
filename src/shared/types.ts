@@ -216,7 +216,7 @@ export interface Account {
   index?: number;
   balance?: number;
   key: string;
-  flag:number;
+  flag: number;
 }
 
 export interface InscribeOrder {
@@ -285,6 +285,7 @@ export interface DecodedPsbt {
     inscriptions: Inscription[];
     atomicals: Atomical[];
   }[];
+  inscriptions: { [key: string]: Inscription };
   feeRate: number;
   fee: number;
   features: {

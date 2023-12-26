@@ -389,36 +389,26 @@ class PreferenceService {
   };
 
   // get address flag
-  getAddressFlag = (address:string)=>{
+  getAddressFlag = (address: string) => {
     return this.store.addressFlags[address] || 0;
-  }
-  setAddressFlag = (address:string,flag:number)=>{
-    this.store.addressFlags = Object.assign(
-      {},
-      this.store.addressFlags,
-      { [address]: flag});
-  }
+  };
+  setAddressFlag = (address: string, flag: number) => {
+    this.store.addressFlags = Object.assign({}, this.store.addressFlags, { [address]: flag });
+  };
 
   // Add address flag
   addAddressFlag = (address: string, flag: AddressFlagType) => {
     const finalFlag = (this.store.addressFlags[address] || 0) | flag;
-    this.store.addressFlags = Object.assign(
-      {},
-      this.store.addressFlags,
-      { [address]: finalFlag});
+    this.store.addressFlags = Object.assign({}, this.store.addressFlags, { [address]: finalFlag });
     return finalFlag;
   };
 
   // Remove address flag
   removeAddressFlag = (address: string, flag: AddressFlagType) => {
-    const finalFlag =  (this.store.addressFlags[address] || 0) & ~flag;
-    this.store.addressFlags = Object.assign(
-      {},
-      this.store.addressFlags,
-      { [address]: finalFlag});
+    const finalFlag = (this.store.addressFlags[address] || 0) & ~flag;
+    this.store.addressFlags = Object.assign({}, this.store.addressFlags, { [address]: finalFlag });
     return finalFlag;
   };
-
 
   // editingKeyringIndex
   getEditingKeyringIndex = () => {
@@ -496,8 +486,6 @@ class PreferenceService {
   setShowSafeNotice = (showSafeNotice: boolean) => {
     this.store.showSafeNotice = showSafeNotice;
   };
-
-
 }
 
 export default new PreferenceService();

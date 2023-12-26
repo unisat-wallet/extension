@@ -17,7 +17,14 @@ export interface BRC20BalanceCardProps {
 
 export default function BRC20BalanceCard(props: BRC20BalanceCardProps) {
   const {
-    tokenBalance: { ticker, overallBalance, transferableBalance, availableBalance, availableBalanceUnSafe },
+    tokenBalance: {
+      ticker,
+      overallBalance,
+      transferableBalance,
+      availableBalance,
+      availableBalanceSafe,
+      availableBalanceUnSafe
+    },
     onClick
   } = props;
   return (
@@ -54,7 +61,7 @@ export default function BRC20BalanceCard(props: BRC20BalanceCardProps) {
 
         <Row justifyBetween>
           <Text text="Available:" color="textDim" size="xs" />
-          <Text text={availableBalance} size="xs" />
+          <Text text={availableBalanceSafe} size="xs" />
         </Row>
         {availableBalanceUnSafe && (
           <Row justifyBetween>

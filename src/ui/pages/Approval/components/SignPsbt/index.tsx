@@ -159,19 +159,38 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
       }
     });
   });
+  const inscriptionArray = Object.values(txInfo.decodedPsbt.inscriptions);
   const arc20Array = Object.keys(arc20Map).map((v) => ({ ticker: v, amt: arc20Map[v] }));
 
   const involvedAssets = useMemo(() => {
+    const involved = ordinalsInscriptionCount > 0 || atomicalsNFTCount > 0 || arc20Count > 0 || brc20Count > 0;
+    if (!involved) return;
     return (
       <Column>
         <Text text="Involved Assets:" preset="bold" />
         <Row justifyCenter>
           {ordinalsInscriptionCount > 0 ? (
-            <Card style={{ backgroundColor: '#C67700', width: 75, height: 75 }}>
-              <Column justifyCenter>
-                <Text text={'Inscriptions'} textCenter size="xs" />
-              </Column>
-            </Card>
+            <Tooltip
+              title={
+                <span>
+                  {inscriptionArray.map((v, index) => (
+                    <Row justifyBetween key={v.inscriptionId}>
+                      <span># {v.inscriptionNumber}</span>
+                    </Row>
+                  ))}
+                </span>
+              }
+              overlayStyle={{
+                fontSize: fontSizes.xs
+              }}>
+              <div>
+                <Card style={{ backgroundColor: '#C67700', width: 75, height: 75 }}>
+                  <Column justifyCenter>
+                    <Text text={'Inscriptions'} textCenter size="xs" />
+                  </Column>
+                </Card>
+              </div>
+            </Tooltip>
           ) : null}
 
           {brc20Count > 0 ? (
@@ -353,7 +372,8 @@ const initTxInfo: TxInfo = {
     risks: [],
     features: {
       rbf: false
-    }
+    },
+    inscriptions: {}
   }
 };
 
@@ -598,20 +618,6 @@ export default function SignPsbt({
             </Row>
           </Section>
 
-          <Section title="PSBT Data:">
-            <Text text={shortAddress(txInfo.psbtHex, 10)} />
-            <Row
-              itemsCenter
-              onClick={(e) => {
-                copyToClipboard(txInfo.psbtHex).then(() => {
-                  tools.toastSuccess('Copied');
-                });
-              }}>
-              <Text text={`${txInfo.psbtHex.length / 2} bytes`} color="textDim" />
-              <Icon icon="copy" color="textDim" />
-            </Row>
-          </Section>
-
           {isValidData && (
             <Column gap="xl">
               <Column>
@@ -646,8 +652,8 @@ export default function SignPsbt({
                               </Row>
                             </Row>
 
-                            <Row>
-                              {inscriptions.length > 0 && (
+                            {inscriptions.length > 0 && (
+                              <Row>
                                 <Column justifyCenter>
                                   <Text
                                     text={`Inscriptions (${inscriptions.length})`}
@@ -657,7 +663,7 @@ export default function SignPsbt({
                                     {inscriptions.map((w) => (
                                       <InscriptionPreview
                                         key={w.inscriptionId}
-                                        data={w}
+                                        data={txInfo.decodedPsbt.inscriptions[w.inscriptionId]}
                                         preset="small"
                                         onClick={() => {
                                           window.open(w.preview);
@@ -666,10 +672,11 @@ export default function SignPsbt({
                                     ))}
                                   </Row>
                                 </Column>
-                              )}
-                            </Row>
-                            <Row>
-                              {atomicals_nft.length > 0 && (
+                              </Row>
+                            )}
+
+                            {atomicals_nft.length > 0 && (
+                              <Row>
                                 <Column justifyCenter>
                                   <Text
                                     text={`Atomicals NFT (${inscriptions.length})`}
@@ -688,11 +695,12 @@ export default function SignPsbt({
                                     ))}
                                   </Row>
                                 </Column>
-                              )}
-                            </Row>
+                              </Row>
+                            )}
 
-                            <Row>
-                              {atomicals_ft.length > 0 && (
+                            {atomicals_ft.length > 0 && (
+                              <Row>
+                                (
                                 <Column justifyCenter>
                                   <Text text={`ARC20`} color={isToSign ? 'white' : 'textDim'} />
                                   <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
@@ -701,8 +709,9 @@ export default function SignPsbt({
                                     ))}
                                   </Row>
                                 </Column>
-                              )}
-                            </Row>
+                                )
+                              </Row>
+                            )}
                           </Column>
                         </Row>
                       );
@@ -720,7 +729,6 @@ export default function SignPsbt({
                       const inscriptions = v.inscriptions;
                       const atomicals_nft = v.atomicals.filter((v) => v.type === 'NFT');
                       const atomicals_ft = v.atomicals.filter((v) => v.type === 'FT');
-                      console.log(atomicals_ft);
                       return (
                         <Column
                           key={'output_' + index}
@@ -734,30 +742,32 @@ export default function SignPsbt({
                               </Row>
                             </Row>
                           </Column>
-                          <Row>
-                            {canChanged === false && inscriptions.length > 0 && (
+
+                          {canChanged === false && inscriptions.length > 0 && (
+                            <Row>
                               <Column justifyCenter>
                                 <Text
                                   text={`Inscriptions (${inscriptions.length})`}
                                   color={isMyAddress ? 'white' : 'textDim'}
                                 />
                                 <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
-                                  {inscriptions.map((v) => (
+                                  {inscriptions.map((w) => (
                                     <InscriptionPreview
-                                      key={v.inscriptionId}
-                                      data={v}
+                                      key={w.inscriptionId}
+                                      data={txInfo.decodedPsbt.inscriptions[w.inscriptionId]}
                                       preset="small"
                                       onClick={() => {
-                                        window.open(v.preview);
+                                        window.open(w.preview);
                                       }}
                                     />
                                   ))}
                                 </Row>
-                              </Column>
-                            )}
-                          </Row>
-                          <Row>
-                            {atomicals_nft.length > 0 && (
+                              </Column>{' '}
+                            </Row>
+                          )}
+
+                          {atomicals_nft.length > 0 && (
+                            <Row>
                               <Column justifyCenter>
                                 <Text
                                   text={`Atomicals NFT (${inscriptions.length})`}
@@ -775,12 +785,12 @@ export default function SignPsbt({
                                     />
                                   ))}
                                 </Row>
-                              </Column>
-                            )}
-                          </Row>
+                              </Column>{' '}
+                            </Row>
+                          )}
 
-                          <Row>
-                            {atomicals_ft.length > 0 && (
+                          {atomicals_ft.length > 0 && (
+                            <Row>
                               <Column justifyCenter>
                                 <Text text={`ARC20`} color={isMyAddress ? 'white' : 'textDim'} />
                                 <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
@@ -789,8 +799,8 @@ export default function SignPsbt({
                                   ))}
                                 </Row>
                               </Column>
-                            )}
-                          </Row>
+                            </Row>
+                          )}
                         </Column>
                       );
                     })}
@@ -799,6 +809,20 @@ export default function SignPsbt({
               </Column>
             </Column>
           )}
+
+          <Section title="PSBT Data:">
+            <Text text={shortAddress(txInfo.psbtHex, 10)} />
+            <Row
+              itemsCenter
+              onClick={(e) => {
+                copyToClipboard(txInfo.psbtHex).then(() => {
+                  tools.toastSuccess('Copied');
+                });
+              }}>
+              <Text text={`${txInfo.psbtHex.length / 2} bytes`} color="textDim" />
+              <Icon icon="copy" color="textDim" />
+            </Row>
+          </Section>
         </Column>
       </Content>
 

@@ -1459,6 +1459,25 @@ export class WalletController extends BaseController {
       btcUtxos = await this.getBTCUtxos();
     }
 
+    const _assetUtxos: UnspentOutput[] = [];
+    let total = 0;
+    let change = 0;
+    for (let i = 0; i < assetUtxos.length; i++) {
+      const v = assetUtxos[i];
+      total += v.satoshis;
+      _assetUtxos.push(v);
+      if (total >= amount) {
+        change = total - amount;
+        if (change == 0 || change > 546) {
+          break;
+        }
+      }
+    }
+    if (change != 0 && change < 546) {
+      throw new Error('Can not construct change greater than 546.');
+    }
+    assetUtxos = _assetUtxos;
+
     const { psbt, toSignInputs } = await txHelpers.sendAtomicalsFT({
       assetUtxos,
       btcUtxos,

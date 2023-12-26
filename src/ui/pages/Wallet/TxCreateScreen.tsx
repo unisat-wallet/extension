@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { COIN_DUST } from '@/shared/constant';
 import { Inscription, RawTxInfo } from '@/shared/types';
 import { Button, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
+import { useTools } from '@/ui/components/ActionComponent';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import { useNavigate } from '@/ui/pages/MainRoute';
@@ -41,8 +42,11 @@ export default function TxCreateScreen() {
   const [autoAdjust, setAutoAdjust] = useState(false);
   const fetchUtxos = useFetchUtxosCallback();
 
+  const tools = useTools();
   useEffect(() => {
-    fetchUtxos();
+    fetchUtxos().finally(() => {
+      tools.showLoading(false);
+    });
   }, []);
 
   const prepareSendBTC = usePrepareSendBTCCallback();
@@ -121,7 +125,7 @@ export default function TxCreateScreen() {
         }}
         title="Send BTC"
       />
-      <Content style={{padding:'0px 16px 24px'}}>
+      <Content style={{ padding: '0px 16px 24px' }}>
         <Row justifyCenter>
           <Icon icon="btc" size={50} />
         </Row>

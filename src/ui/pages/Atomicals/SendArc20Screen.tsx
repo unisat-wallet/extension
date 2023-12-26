@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 import { Arc20Balance, Inscription, RawTxInfo } from '@/shared/types';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
+import { useTools } from '@/ui/components/ActionComponent';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import { useNavigate } from '@/ui/pages/MainRoute';
@@ -42,9 +43,13 @@ export default function SendArc20Screen() {
   const fetchUtxos = useFetchUtxosCallback();
   const fetchAssetUtxosAtomicalsFT = useFetchAssetUtxosAtomicalsFTCallback();
 
+  const tools = useTools();
   useEffect(() => {
     fetchUtxos();
-    fetchAssetUtxosAtomicalsFT(arc20Balance.ticker);
+    tools.showLoading(true);
+    fetchAssetUtxosAtomicalsFT(arc20Balance.ticker).finally(() => {
+      tools.showLoading(false);
+    });
   }, []);
 
   const prepareSendArc20 = usePrepareSendArc20Callback();
