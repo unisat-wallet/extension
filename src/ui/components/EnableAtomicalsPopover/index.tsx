@@ -15,7 +15,7 @@ export const EnableAtomicalsPopover = ({ onClose, onConfirm }: { onClose: () => 
         <Icon icon={'warning'} color={'icon_yellow'} size={57} />
         <Column gap="zero">
           <div style={{ fontSize: fontSizes.sm,color:'#ddd' }}>
-            In the current version, only <span style={{color:'#EBB94C'}}>the confirmed</span> balance can be used once atomicals enabled.
+            In the current version, only <span style={{color:'#EBB94C'}}>the confirmed balance</span> can be used once atomicals enabled.
           </div>
         </Column>
 
