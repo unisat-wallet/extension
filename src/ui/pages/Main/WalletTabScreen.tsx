@@ -1,5 +1,5 @@
 import { Tooltip } from 'antd';
-import { useEffect, useMemo, useState } from 'react';
+import { CSSProperties, useEffect, useMemo, useState } from 'react';
 
 import { AddressFlagType, KEYRING_TYPE } from '@/shared/constant';
 import { Arc20Balance, Inscription, NetworkType, TokenBalance } from '@/shared/types';
@@ -38,6 +38,11 @@ import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
 import { checkAddressFlag } from '@/shared/utils';
+
+const $noBreakStyle: CSSProperties = {
+  whiteSpace: 'nowrap',
+  wordBreak: 'keep-all',
+};
 
 export default function WalletTabScreen() {
   const navigate = useNavigate();
@@ -137,16 +142,20 @@ export default function WalletTabScreen() {
 
           <Tooltip
             title={
-              <span>
+              <>
                 <Row justifyBetween>
-                  <span>{'BTC Balance'}</span>
-                  <span>{` ${accountBalance.btc_amount} BTC`}</span>
+                  <span style={$noBreakStyle}>{'BTC Balance(confirmed)'}</span>
+                  <span style={$noBreakStyle}>{` ${accountBalance.confirm_btc_amount} BTC`}</span>
                 </Row>
                 <Row justifyBetween>
-                  <span>{'Inscription Balance'}</span>
-                  <span>{` ${accountBalance.inscription_amount} BTC`}</span>
+                  <span style={$noBreakStyle}>{'BTC Balance(unconfirmed)'}</span>
+                  <span style={$noBreakStyle}>{` ${accountBalance.pending_btc_amount} BTC`}</span>
                 </Row>
-              </span>
+                <Row justifyBetween>
+                  <span style={$noBreakStyle}>{'Inscription Balance'}</span>
+                  <span style={$noBreakStyle}>{` ${accountBalance.inscription_amount} BTC`}</span>
+                </Row>
+              </>
             }
             overlayStyle={{
               fontSize: fontSizes.xs

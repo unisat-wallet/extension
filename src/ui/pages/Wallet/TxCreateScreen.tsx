@@ -109,7 +109,7 @@ export default function TxCreateScreen() {
   }, [toInfo, inputAmount, feeRate, enableRBF]);
 
   const showSafeBalance = useMemo(
-    () => new BigNumber(accountBalance.amount).eq(new BigNumber(safeBalance)) == false,
+    () => !new BigNumber(accountBalance.amount).eq(new BigNumber(safeBalance)),
     [accountBalance.amount, safeBalance]
   );
 
@@ -121,7 +121,7 @@ export default function TxCreateScreen() {
         }}
         title="Send BTC"
       />
-      <Content>
+      <Content style={{padding:'0px 16px 24px'}}>
         <Row justifyCenter>
           <Icon icon="btc" size={50} />
         </Row>
@@ -157,6 +157,10 @@ export default function TxCreateScreen() {
                 <Text text={`${accountBalance.amount} BTC`} preset="bold" size="sm" />
               </Row>
             )}
+          </Row>
+          <Row justifyBetween>
+            <Text text="BTC Balance(confirmed)" color="textDim" />
+            <Text text={`${accountBalance.confirm_btc_amount} BTC`} size="sm" preset="bold" color="textDim" />
           </Row>
           {showSafeBalance && (
             <Row justifyBetween>

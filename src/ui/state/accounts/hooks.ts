@@ -26,7 +26,8 @@ export function useAccounts() {
 export function useAccountBalance() {
   const accountsState = useAccountsState();
   const currentAccount = useCurrentAccount();
-  return accountsState.balanceMap[currentAccount.address] || { amount: '0', expired: true };
+  return accountsState.balanceMap[currentAccount.address]
+    || { amount: '0', expired: true, confirm_btc_amount: '0', pending_btc_amount: '0', inscription_amount: '0' };
 }
 
 export function useAddressSummary() {
@@ -189,7 +190,9 @@ export function useFetchBalanceCallback() {
         address: currentAccount.address,
         amount: _accountBalance.amount,
         btc_amount: _accountBalance.btc_amount,
-        inscription_amount: _accountBalance.inscription_amount
+        inscription_amount: _accountBalance.inscription_amount,
+        confirm_btc_amount: _accountBalance.confirm_btc_amount,
+        pending_btc_amount: _accountBalance.pending_btc_amount
       })
     );
     if (cachedBalance.amount !== _accountBalance.amount) {
