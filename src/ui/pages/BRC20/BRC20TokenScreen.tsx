@@ -63,7 +63,6 @@ export default function BRC20TokenScreen() {
 
   const shouldShowSafe = tokenSummary.tokenBalance.availableBalanceSafe !== tokenSummary.tokenBalance.availableBalance;
   const unisatWebsite = useUnisatWebsite();
-  console.log(ticker);
   return (
     <Layout>
       <Header

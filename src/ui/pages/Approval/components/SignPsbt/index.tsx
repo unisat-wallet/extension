@@ -544,6 +544,14 @@ export default function SignPsbt({
     return val;
   }, [txInfo.decodedPsbt]);
 
+  const hasHighRisk = useMemo(() => {
+    if (txInfo && txInfo.decodedPsbt) {
+      return txInfo.decodedPsbt.risks.find((v) => v.level === 'high') ? true : false;
+    } else {
+      return false;
+    }
+  }, [txInfo]);
+
   if (loading) {
     return (
       <Layout>
@@ -700,7 +708,6 @@ export default function SignPsbt({
 
                             {atomicals_ft.length > 0 && (
                               <Row>
-                                (
                                 <Column justifyCenter>
                                   <Text text={`ARC20`} color={isToSign ? 'white' : 'textDim'} />
                                   <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
@@ -709,7 +716,6 @@ export default function SignPsbt({
                                     ))}
                                   </Row>
                                 </Column>
-                                )
                               </Row>
                             )}
                           </Column>
@@ -829,13 +835,15 @@ export default function SignPsbt({
       <Footer>
         <Row full>
           <Button preset="default" text="Reject" onClick={handleCancel} full />
-          <Button
-            preset="primary"
-            text={type == TxType.SIGN_TX ? 'Sign' : 'Sign & Pay'}
-            onClick={handleConfirm}
-            disabled={isValid == false}
-            full
-          />
+          {hasHighRisk == false && (
+            <Button
+              preset="primary"
+              text={type == TxType.SIGN_TX ? 'Sign' : 'Sign & Pay'}
+              onClick={handleConfirm}
+              disabled={isValid == false}
+              full
+            />
+          )}
         </Row>
       </Footer>
       {isWarningVisible && (
