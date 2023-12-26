@@ -197,7 +197,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
             <Tooltip
               title={
                 <span>
-                  {arc20Array.map((v) => (
+                  {arc20Array.map((v, index) => (
                     <Row justifyBetween key={v.ticker}>
                       <span>{v.ticker}</span>
                       <span>{v.amt}</span>

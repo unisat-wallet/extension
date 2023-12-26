@@ -11,9 +11,6 @@ import { Row } from '../Row';
 import { Text } from '../Text';
 
 export const NoticePopover = ({ onClose }: { onClose: () => void }) => {
-  const wallet = useWallet();
-  const navigate = useNavigate();
-  const dispatch = useAppDispatch();
 
   return (
     <Popover onClose={onClose}>
