@@ -34,9 +34,9 @@ import {
   UTXO,
   WalletKeyring
 } from '@/shared/types';
-import { txHelpers, UnspentOutput } from '@unisat/wallet-sdk';
+import { UnspentOutput, txHelpers } from '@unisat/wallet-sdk';
 import { publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
-import { bitcoin, ECPair } from '@unisat/wallet-sdk/lib/bitcoin-core';
+import { ECPair, bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 import { signMessageOfBIP322Simple } from '@unisat/wallet-sdk/lib/message';
 import { toPsbtNetwork } from '@unisat/wallet-sdk/lib/network';
 import { toXOnly } from '@unisat/wallet-sdk/lib/utils';
@@ -47,7 +47,6 @@ import { ConnectedSite } from '../service/permission';
 import BaseController from './base';
 
 const stashKeyrings: Record<string, Keyring> = {};
-
 export type AccountAsset = {
   name: string;
   symbol: string;
@@ -336,8 +335,7 @@ export class WalletController extends BaseController {
     preferenceService.setCurrentKeyringIndex(keyring.index);
     preferenceService.setCurrentAccount(keyring.accounts[accountIndex]);
     const flag = preferenceService.getAddressFlag(keyring.accounts[accountIndex].address);
-    openapiService.setClientAddress(
-      keyring.accounts[accountIndex].address, flag);
+    openapiService.setClientAddress(keyring.accounts[accountIndex].address, flag);
   };
 
   getAllAddresses = (keyring: WalletKeyring, index: number) => {
@@ -661,7 +659,11 @@ export class WalletController extends BaseController {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
-    const utxos = await openapiService.getBTCUtxos(account.address);
+    let utxos = await openapiService.getBTCUtxos(account.address);
+
+    if (openapiService.addressFlag == 1) {
+      utxos = utxos.filter((v) => (v as any).height !== 4194303);
+    }
 
     const btcUtxos = utxos.map((v) => {
       return {
@@ -681,7 +683,8 @@ export class WalletController extends BaseController {
   getAssetUtxosAtomicalsFT = async (ticker: string) => {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
-    const arc20_utxos = await openapiService.getArc20Utxos(account.address, ticker);
+    let arc20_utxos = await openapiService.getArc20Utxos(account.address, ticker);
+    arc20_utxos = arc20_utxos.filter((v) => (v as any).spent == false);
 
     const assetUtxos = arc20_utxos.map((v) => {
       return Object.assign(v, { pubkey: account.pubkey });
@@ -710,6 +713,7 @@ export class WalletController extends BaseController {
     if (!btcUtxos) {
       btcUtxos = await this.getBTCUtxos();
     }
+
     const { psbt, toSignInputs } = await txHelpers.sendBTC({
       btcUtxos: btcUtxos,
       tos: [{ address: to, satoshis: amount }],
@@ -1186,8 +1190,8 @@ export class WalletController extends BaseController {
   };
 
   addAddressFlag = (account: Account, flag: AddressFlagType) => {
-    console.log('### addAddressFlag', account.address, flag);
     account.flag = preferenceService.addAddressFlag(account.address, flag);
+    openapiService.setClientAddress(account.address, account.flag);
     return account;
   };
   removeAddressFlag = (account: Account, flag: AddressFlagType) => {

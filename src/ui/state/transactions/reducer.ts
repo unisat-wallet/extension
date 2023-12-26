@@ -50,6 +50,7 @@ export interface AtomicalsTx {
   feeRate: number;
   toDomain: string;
   outputValue: number;
+  sendArc20Amount?: number;
 }
 
 export interface TransactionsState {
@@ -187,6 +188,7 @@ const slice = createSlice({
           feeRate?: number;
           toDomain?: string;
           outputValue?: number;
+          sendArc20Amount?: number;
         };
       }
     ) {

@@ -6,7 +6,12 @@ import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import { useNavigate } from '@/ui/pages/MainRoute';
-import { useAtomicalsTx, useFetchUtxosCallback, usePrepareSendArc20Callback } from '@/ui/state/transactions/hooks';
+import {
+  useAtomicalsTx,
+  useFetchAssetUtxosAtomicalsFTCallback,
+  useFetchUtxosCallback,
+  usePrepareSendArc20Callback
+} from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { isValidAddress } from '@/ui/utils';
 
@@ -35,9 +40,11 @@ export default function SendArc20Screen() {
   const [error, setError] = useState('');
 
   const fetchUtxos = useFetchUtxosCallback();
+  const fetchAssetUtxosAtomicalsFT = useFetchAssetUtxosAtomicalsFTCallback();
 
   useEffect(() => {
     fetchUtxos();
+    fetchAssetUtxosAtomicalsFT(arc20Balance.ticker);
   }, []);
 
   const prepareSendArc20 = usePrepareSendArc20Callback();
@@ -61,7 +68,11 @@ export default function SendArc20Screen() {
       return;
     }
 
-    if (toInfo.address == atomicalsTx.toAddress && feeRate == atomicalsTx.feeRate) {
+    if (
+      toInfo.address == atomicalsTx.toAddress &&
+      feeRate == atomicalsTx.feeRate &&
+      parseInt(inputAmount) == atomicalsTx.sendArc20Amount
+    ) {
       //Prevent repeated triggering caused by setAmount
       setDisabled(false);
       return;

@@ -513,6 +513,12 @@ export function usePrepareSendArc20Callback() {
         assetUtxos = await fetchAssetUtxosAtomicalsFT(ticker);
       }
 
+      const availableAmount = assetUtxos.reduce((pre, cur) => pre + cur.satoshis, 0);
+      if (availableAmount < amount) {
+        throw new Error(
+          `Insufficient balance. Available balance (${availableAmount} ${ticker}) is lower than sending amount(${amount} ${ticker})`
+        );
+      }
       const psbtHex = await wallet.sendAtomicalsFT({
         to: toAddressInfo.address,
         ticker,
@@ -529,7 +535,8 @@ export function usePrepareSendArc20Callback() {
           rawtx,
           psbtHex,
           fromAddress,
-          feeRate
+          feeRate,
+          sendArc20Amount: amount
         })
       );
       const rawTxInfo: RawTxInfo = {

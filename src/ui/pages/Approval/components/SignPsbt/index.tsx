@@ -1,6 +1,7 @@
+import { Tooltip } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { DecodedPsbt, Inscription, RawTxInfo, SignPsbtOptions, ToSignInput, TxType } from '@/shared/types';
+import { Atomical, DecodedPsbt, Inscription, RawTxInfo, SignPsbtOptions, ToSignInput, TxType } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressText } from '@/ui/components/AddressText';
@@ -134,36 +135,35 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
     (pre, cur) => cur.inscriptions?.length + pre,
     0
   );
-  const atomicalsNFTCount = txInfo.decodedPsbt.inputInfos.reduce((pre, cur) => cur.atomicals?.length + pre, 0);
-  const arc20Count = txInfo.decodedPsbt.inputInfos.reduce((pre, cur) => cur.atomicals?.length + pre, 0);
+  const atomicalsNFTCount = txInfo.decodedPsbt.inputInfos.reduce(
+    (pre, cur) => cur.atomicals.filter((v) => v.type === 'NFT').length + pre,
+    0
+  );
+  const arc20Count = txInfo.decodedPsbt.inputInfos.reduce(
+    (pre, cur) => cur.atomicals.filter((v) => v.type === 'FT').length + pre,
+    0
+  );
   const brc20Count = 0;
-  if (type === TxType.SIGN_TX) {
-    return (
-      <Column gap="lg">
-        <Text text="Sign Transaction" preset="title-bold" textCenter mt="lg" />
-        <Row justifyCenter>
-          <Card style={{ backgroundColor: '#272626', maxWidth: 320, width: 320 }}>
-            <Column gap="lg">
-              <Column>
-                <Column>
-                  <Column justifyCenter>
-                    <Row itemsCenter>
-                      <Text
-                        text={(receivingSatoshis > sendingSatoshis ? '+' : '') + balanceChangedAmount}
-                        color={receivingSatoshis > sendingSatoshis ? 'white' : 'white'}
-                        preset="bold"
-                        textCenter
-                        size="xxl"
-                      />
-                      <Text text="BTC" color="textDim" />
-                    </Row>
-                  </Column>
-                </Column>
-              </Column>
-            </Column>
-          </Card>
-        </Row>
 
+  const atomicals_nft: Atomical[] = [];
+  const atomicals_ft: Atomical[] = [];
+  const arc20Map: { [ticker: string]: number } = {};
+  txInfo.decodedPsbt.inputInfos.forEach((v) => {
+    v.atomicals.forEach((w) => {
+      if (w.type === 'FT') {
+        atomicals_ft.push(w);
+        const ticker = w.ticker || '';
+        arc20Map[ticker] = (arc20Map[ticker] || 0) + v.value;
+      } else {
+        atomicals_nft.push(w);
+      }
+    });
+  });
+  const arc20Array = Object.keys(arc20Map).map((v) => ({ ticker: v, amt: arc20Map[v] }));
+
+  const involvedAssets = useMemo(() => {
+    return (
+      <Column>
         <Text text="Involved Assets:" preset="bold" />
         <Row justifyCenter>
           {ordinalsInscriptionCount > 0 ? (
@@ -194,13 +194,62 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
           ) : null}
 
           {arc20Count > 0 ? (
-            <Card style={{ backgroundColor: '#1B409D', width: 75, height: 75 }}>
-              <Column justifyCenter>
-                <Text text={'ARC20'} textCenter size="xs" />
-              </Column>
-            </Card>
+            <Tooltip
+              title={
+                <span>
+                  {arc20Array.map((v) => (
+                    <Row justifyBetween>
+                      <span>{v.ticker}</span>
+                      <span>{v.amt}</span>
+                    </Row>
+                  ))}
+                </span>
+              }
+              overlayStyle={{
+                fontSize: fontSizes.xs
+              }}>
+              <div>
+                <Card style={{ backgroundColor: '#1B409D', width: 75, height: 75 }}>
+                  <Column justifyCenter>
+                    <Text text={'ARC20'} textCenter size="xs" />
+                  </Column>
+                </Card>
+              </div>
+            </Tooltip>
           ) : null}
         </Row>
+      </Column>
+    );
+  }, []);
+
+  if (type === TxType.SIGN_TX) {
+    return (
+      <Column gap="lg">
+        <Text text="Sign Transaction" preset="title-bold" textCenter mt="lg" />
+        <Row justifyCenter>
+          <Card style={{ backgroundColor: '#272626', maxWidth: 320, width: 320 }}>
+            <Column gap="lg">
+              <Column>
+                <Column>
+                  <Column justifyCenter>
+                    <Row itemsCenter>
+                      <Text
+                        text={(receivingSatoshis > sendingSatoshis ? '+' : '') + balanceChangedAmount}
+                        color={receivingSatoshis > sendingSatoshis ? 'white' : 'white'}
+                        preset="bold"
+                        textCenter
+                        size="xxl"
+                      />
+                      <Text text="BTC" color="textDim" />
+                    </Row>
+                  </Column>
+                </Column>
+              </Column>
+            </Column>
+          </Card>
+        </Row>
+
+        {involvedAssets}
       </Column>
     );
   }
@@ -259,14 +308,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
           </Column>
         </Card>
       </Row>
-
-      {txInfo.changedInscriptions.length > 0 && (
-        <Card>
-          <Row>
-            <Text text="100" />
-          </Row>
-        </Card>
-      )}
+      {involvedAssets}
     </Column>
   );
 }
