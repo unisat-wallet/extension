@@ -3,11 +3,16 @@ import { useLocation } from 'react-router-dom';
 
 import { Inscription, RawTxInfo } from '@/shared/types';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
+import { useTools } from '@/ui/components/ActionComponent';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { OutputValueBar } from '@/ui/components/OutputValueBar';
 import { RBFBar } from '@/ui/components/RBFBar';
-import { useOrdinalsTx, usePrepareSendOrdinalsInscriptionCallback } from '@/ui/state/transactions/hooks';
+import {
+  useFetchUtxosCallback,
+  useOrdinalsTx,
+  usePrepareSendOrdinalsInscriptionCallback
+} from '@/ui/state/transactions/hooks';
 import { isValidAddress } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
@@ -25,6 +30,15 @@ export default function SendOrdinalsInscriptionScreen() {
     address: ordinalsTx.toAddress,
     domain: ordinalsTx.toDomain
   });
+
+  const fetchBtcUtxos = useFetchUtxosCallback();
+  const tools = useTools();
+  useEffect(() => {
+    tools.showLoading(true);
+    fetchBtcUtxos().finally(() => {
+      tools.showLoading(false);
+    });
+  }, []);
 
   const [error, setError] = useState('');
   const prepareSendOrdinalsInscription = usePrepareSendOrdinalsInscriptionCallback();

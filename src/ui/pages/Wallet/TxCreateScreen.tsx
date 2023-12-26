@@ -44,6 +44,7 @@ export default function TxCreateScreen() {
 
   const tools = useTools();
   useEffect(() => {
+    tools.showLoading(true);
     fetchUtxos().finally(() => {
       tools.showLoading(false);
     });

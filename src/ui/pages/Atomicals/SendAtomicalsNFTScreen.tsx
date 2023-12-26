@@ -3,10 +3,15 @@ import { useLocation } from 'react-router-dom';
 
 import { Atomical, RawTxInfo } from '@/shared/types';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
+import { useTools } from '@/ui/components/ActionComponent';
 import AtomicalsNFTPreview from '@/ui/components/AtomicalsNFTPreview';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { RBFBar } from '@/ui/components/RBFBar';
-import { useOrdinalsTx, usePrepareSendAtomicalsNFTCallback } from '@/ui/state/transactions/hooks';
+import {
+  useFetchUtxosCallback,
+  useOrdinalsTx,
+  usePrepareSendAtomicalsNFTCallback
+} from '@/ui/state/transactions/hooks';
 import { isValidAddress } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
@@ -24,6 +29,15 @@ export default function SendAtomicalsInscriptionScreen() {
     address: ordinalsTx.toAddress,
     domain: ordinalsTx.toDomain
   });
+
+  const fetchUtxos = useFetchUtxosCallback();
+  const tools = useTools();
+  useEffect(() => {
+    tools.showLoading(true);
+    fetchUtxos().finally(() => {
+      tools.showLoading(false);
+    });
+  }, []);
 
   const [error, setError] = useState('');
   const prepareSendAtomicalsNFT = usePrepareSendAtomicalsNFTCallback();
