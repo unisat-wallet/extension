@@ -198,7 +198,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
               title={
                 <span>
                   {arc20Array.map((v) => (
-                    <Row justifyBetween>
+                    <Row justifyBetween key={v.ticker}>
                       <span>{v.ticker}</span>
                       <span>{v.amt}</span>
                     </Row>
