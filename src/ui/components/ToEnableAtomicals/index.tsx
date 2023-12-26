@@ -13,6 +13,7 @@ export default function ToEnableAtomicals() {
   const enableAtomicals = async () => {
     await changeAddressFlag(true, AddressFlagType.Is_Enable_Atomicals);
   };
+
   // const disableAtomicals = async () => {
   //   await changeAddressFlag(false, AddressFlagType.Is_Enable_Atomicals);
   // };

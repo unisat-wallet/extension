@@ -20,16 +20,7 @@ export const EnableAtomicalsPopover = ({ onClose, onConfirm }: { onClose: () => 
           </div>
         </Column>
 
-        <Row full mt={'xl'}>
-          <Button
-            text="Cancel"
-            full
-            onClick={(e) => {
-              if (onClose) {
-                onClose();
-              }
-            }}
-          />
+        <Column full mt={'xl'}>
           <Button
             text="Enable Atomicals"
             preset="primary"
@@ -40,7 +31,17 @@ export const EnableAtomicalsPopover = ({ onClose, onConfirm }: { onClose: () => 
               }
             }}
           />
-        </Row>
+          <Button
+            text="Cancel"
+            full
+            onClick={(e) => {
+              if (onClose) {
+                onClose();
+              }
+            }}
+          />
+
+        </Column>
       </Column>
     </Popover>
   );
