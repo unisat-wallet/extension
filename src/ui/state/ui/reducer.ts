@@ -70,7 +70,7 @@ const slice = createSlice({
         state.ordinalsAssetTabKey = OrdinalsAssetTabKey.ALL;
       }
       if (!state.atomicalsAssetTabKey) {
-        state.atomicalsAssetTabKey = AtomicalsAssetTabKey.ALL;
+        state.atomicalsAssetTabKey = AtomicalsAssetTabKey.ARC20;
       }
     });
   }
