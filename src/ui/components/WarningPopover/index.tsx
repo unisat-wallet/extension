@@ -16,7 +16,7 @@ export const WarningPopover = ({
   risks,
   onClose
 }: {
-  risks: { level: 'high' | 'low'; desc: string }[];
+  risks: { level: 'high' | 'low'; color?: ColorTypes; desc: string }[];
   onClose: () => void;
 }) => {
   return (
@@ -28,7 +28,7 @@ export const WarningPopover = ({
           {risks.map((risk, index) => (
             <Column key={'risk_' + index}>
               <Row>
-                <Card preset="style2" bg={riskColor[risk.level]} style={{ width: 60, height: 60 }}>
+                <Card preset="style2" bg={risk.color || riskColor[risk.level]} style={{ width: 60, height: 60 }}>
                   <Text text={risk.level} size="lg" />
                 </Card>
                 <Text text={risk.desc} />
