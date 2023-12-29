@@ -430,7 +430,7 @@ export default function SignPsbt({
           const rawTxInfo = await prepareSendOrdinalsInscriptions({
             toAddressInfo: { address: toAddress, domain: '' },
             inscriptionIds: [inscriptionId],
-            feeRate: feeRate || 5,
+            feeRate,
             enableRBF: false
           });
           psbtHex = rawTxInfo.psbtHex;
