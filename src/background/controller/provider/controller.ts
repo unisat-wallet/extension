@@ -1,6 +1,6 @@
 
 import { permissionService, sessionService } from '@/background/service';
-import { NETWORK_TYPES } from '@/shared/constant';
+import { NETWORK_TYPES, VERSION } from '@/shared/constant';
 
 import { NetworkType } from '@/shared/types';
 import { amountToSatoshis } from '@/ui/utils';
@@ -210,6 +210,11 @@ class ProviderController extends BaseController {
     inscribeTransfer = async ({approvalRes}) => {
       return approvalRes
     }
+
+  @Reflect.metadata('SAFE', true)
+    getVersion = async () => {
+      return VERSION
+    };
 }
 
 export default new ProviderController();
