@@ -109,7 +109,7 @@ const fixWalletSdkError = () => {
   eccPromise.then((ecc) => {
     exports.bitcoin = bitcoin;
     exports.ecc = ecc;
-    exports.ECPair = ecpair.default || ecpair; // use .default if available, otherwise use the module directly
+    exports.ECPair = ecpair.default(ecc); // use .default if available, otherwise use the module directly
     bitcoin.initEccLib(ecc);
   });
   `;
