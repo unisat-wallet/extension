@@ -18,6 +18,7 @@ import {
   TokenTransfer,
   UTXO,
   UTXO_Detail,
+  VersionDetail,
   WalletConfig
 } from '@/shared/types';
 
@@ -335,6 +336,12 @@ export class OpenApiService {
     return this.httpGet('/arc20/utxos', {
       address,
       ticker
+    });
+  }
+
+  async getVersionDetail(version: string): Promise<VersionDetail> {
+    return this.httpGet('/version/detail', {
+      version
     });
   }
 }

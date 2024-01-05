@@ -1516,6 +1516,10 @@ export class WalletController extends BaseController {
   setShowSafeNotice = (show: boolean) => {
     return preferenceService.setShowSafeNotice(show);
   };
+
+  getVersionDetail = (version: string) => {
+    return openapiService.getVersionDetail(version);
+  };
 }
 
 export default new WalletController();

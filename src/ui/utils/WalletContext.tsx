@@ -4,6 +4,7 @@ import { AccountAsset } from '@/background/controller/wallet';
 import { ContactBookItem, ContactBookStore } from '@/background/service/contactBook';
 import { ToSignInput } from '@/background/service/keyring';
 import { ConnectedSite } from '@/background/service/permission';
+import { AddressFlagType } from '@/shared/constant';
 import {
   Account,
   AddressSummary,
@@ -23,12 +24,12 @@ import {
   TxHistoryItem,
   UTXO,
   UTXO_Detail,
+  VersionDetail,
   WalletConfig,
   WalletKeyring
 } from '@/shared/types';
 import { AddressType, UnspentOutput } from '@unisat/wallet-sdk';
 import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
-import { AddressFlagType } from '@/shared/constant';
 
 export interface WalletController {
   openapi: {
@@ -281,8 +282,10 @@ export interface WalletController {
   setShowSafeNotice(show: boolean): Promise<void>;
 
   // address flag
-  addAddressFlag(account: Account, flag: AddressFlagType):Promise<Account>
-  removeAddressFlag(account: Account, flag: AddressFlagType):Promise<Account>
+  addAddressFlag(account: Account, flag: AddressFlagType): Promise<Account>;
+  removeAddressFlag(account: Account, flag: AddressFlagType): Promise<Account>;
+
+  getVersionDetail(version: string): Promise<VersionDetail>;
 }
 
 const WalletContext = createContext<{
