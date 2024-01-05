@@ -7,7 +7,7 @@ UniSat Wallet - the first open-source browser extension wallet for Ordinals on b
 
 ## How to build
 
-- Install [Node.js](https://nodejs.org) version 14
+- Install [Node.js](https://nodejs.org) version 16
 - Install [Yarn](https://yarnpkg.com/en/docs/install)
 - Install dependencies: `yarn`
 - Build the project to the `./dist/` folder with `yarn build:firefox` for Firefox
