@@ -315,7 +315,9 @@ function AtomicalsTab() {
 
   return (
     <Column>
-      {addressSummary.atomicalsCount === 0 && addressSummary.arc20Count === 0 && <AtomicalsFeatureButton />}
+      {!addressSummary.loading && addressSummary.atomicalsCount === 0 && addressSummary.arc20Count === 0 && (
+        <AtomicalsFeatureButton />
+      )}
       <Row justifyBetween>
         <TabBar
           defaultActiveKey={tabKey}

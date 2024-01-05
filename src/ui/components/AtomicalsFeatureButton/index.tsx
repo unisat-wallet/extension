@@ -4,7 +4,7 @@ import { AddressFlagType } from '@/shared/constant';
 import { checkAddressFlag } from '@/shared/utils';
 import { Button, Icon, Text } from '@/ui/components';
 import { EnableAtomicalsPopover } from '@/ui/components/EnableAtomicalsPopover';
-import { useChangeAddressFlagCallback, useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { useChangeAddressFlagCallback, useCurrentAccount, useReloadAccounts } from '@/ui/state/accounts/hooks';
 
 export default function AtomicalsFeatureButton() {
   const currentAccount = useCurrentAccount();
@@ -20,6 +20,7 @@ export default function AtomicalsFeatureButton() {
     await changeAddressFlag(false, AddressFlagType.Is_Enable_Atomicals);
   };
 
+  const reloadAccounts = useReloadAccounts();
   if (isEnableAtomicals) {
     return (
       <>
@@ -50,6 +51,7 @@ export default function AtomicalsFeatureButton() {
             onClose={() => setIsShowAlert(false)}
             onConfirm={async () => {
               await enableAtomicals();
+              reloadAccounts();
               setIsShowAlert(false);
             }}
           />

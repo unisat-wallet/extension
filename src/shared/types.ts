@@ -309,7 +309,6 @@ export interface RawTxInfo {
 
 export interface WalletConfig {
   version: string;
-  minVersion: string;
   moonPayEnabled: boolean;
   statusMessage: string;
 }
@@ -328,6 +327,7 @@ export interface AddressSummary {
   atomicalsCount: number;
   brc20Count: number;
   arc20Count: number;
+  loading?: boolean;
 }
 
 export interface VersionDetail {

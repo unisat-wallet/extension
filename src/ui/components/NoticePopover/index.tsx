@@ -1,25 +1,24 @@
+import { Checkbox } from 'antd';
+import { useEffect, useState } from 'react';
+
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 
 import { Button } from '../Button';
 import { Column } from '../Column';
+import { Icon } from '../Icon';
 import { Popover } from '../Popover';
 import { Row } from '../Row';
 import { Text } from '../Text';
-import { Checkbox } from 'antd';
-import { useEffect, useState } from 'react';
-import { Icon } from '../Icon';
 
 export const NoticePopover = ({ onClose }: { onClose: () => void }) => {
-
   const [checked1, setChecked1] = useState(false);
   const [checked2, setChecked2] = useState(false);
 
-  const [enable,setEnable] = useState(false);
-  const [coolDown,setCoolDown] = useState(10);
+  const [enable, setEnable] = useState(false);
+  const [coolDown, setCoolDown] = useState(3);
 
   useEffect(() => {
-  //   10秒后开启按钮
     if (coolDown > 0) {
       setTimeout(() => {
         setCoolDown(coolDown - 1);
@@ -42,8 +41,7 @@ export const NoticePopover = ({ onClose }: { onClose: () => void }) => {
               checked={checked1}
               onChange={(e) => {
                 setChecked1(e.target.checked);
-              }}
-            >
+              }}>
               <div style={{ fontSize: fontSizes.sm }}>
                 for Ordinals assets, <span style={{ color: '#EBB94C' }}>Cursed inscriptions</span> and{' '}
                 <span style={{ color: '#EBB94C' }}>Rare sats </span>are not supported.
@@ -53,7 +51,7 @@ export const NoticePopover = ({ onClose }: { onClose: () => void }) => {
           <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
 
           <div>
-            <Checkbox checked={checked2} onChange={e => setChecked2(e.target.checked)}>
+            <Checkbox checked={checked2} onChange={(e) => setChecked2(e.target.checked)}>
               <div style={{ fontSize: fontSizes.sm }}>
                 for Atomicals assets, <span style={{ color: '#EBB94C' }}>Non-ARC20</span> are not supported yet.
               </div>
@@ -63,13 +61,12 @@ export const NoticePopover = ({ onClose }: { onClose: () => void }) => {
 
         <Row full>
           <Button
-            text={coolDown>0?`OK (${coolDown}s)`: 'OK'}
+            text={coolDown > 0 ? `OK (${coolDown}s)` : 'OK'}
             preset="primary"
             disabled={!checked1 || !checked2}
             full
             onClick={(e) => {
-              if(!enable)
-                return;
+              if (!enable) return;
               if (onClose) {
                 onClose();
               }

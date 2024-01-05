@@ -11,8 +11,8 @@ export interface AccountsState {
     [key: string]: {
       amount: string;
       btc_amount: string;
-      confirm_btc_amount:string;
-      pending_btc_amount:string;
+      confirm_btc_amount: string;
+      pending_btc_amount: string;
       inscription_amount: string;
       expired: boolean;
     };
@@ -67,7 +67,8 @@ export const initialState: AccountsState = {
     inscriptionCount: 0,
     atomicalsCount: 0,
     brc20Count: 0,
-    arc20Count: 0
+    arc20Count: 0,
+    loading: true
   }
 };
 
@@ -100,18 +101,14 @@ const slice = createSlice({
       }
     ) {
       const {
-        payload: {
-          address, amount, btc_amount, inscription_amount,
-          confirm_btc_amount,
-          pending_btc_amount
-        }
+        payload: { address, amount, btc_amount, inscription_amount, confirm_btc_amount, pending_btc_amount }
       } = action;
       state.balanceMap[address] = state.balanceMap[address] || {
         amount: '0',
         btc_amount: '0',
         inscription_amount: '0',
-        confirm_btc_amount:'0',
-        pending_btc_amount:'0',
+        confirm_btc_amount: '0',
+        pending_btc_amount: '0',
         expired: true
       };
       state.balanceMap[address].amount = amount;
