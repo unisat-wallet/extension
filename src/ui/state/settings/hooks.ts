@@ -1,3 +1,4 @@
+import compareVersions from 'compare-versions';
 import { useCallback } from 'react';
 
 import { VERSION } from '@/shared/constant';
@@ -103,22 +104,34 @@ export function useVersionInfo() {
   const skippedVersion = accountsState.skippedVersion;
   const currentVesion = VERSION;
   let skipped = false;
+  let latestVersion = '';
+  // skip if new version is empty
   if (!newVersion) {
-    // skip if not initialized
     skipped = true;
   }
-  if (newVersion === currentVesion) {
-    skipped = true;
-  } else if (newVersion == skippedVersion) {
+
+  // skip if skipped
+  if (newVersion == skippedVersion) {
     skipped = true;
   }
+
+  // skip if current version is greater or equal to new version
+  if (newVersion) {
+    if (compareVersions(currentVesion, newVersion) >= 0) {
+      skipped = true;
+    } else {
+      latestVersion = newVersion;
+    }
+  }
+
+  // skip if current version is 0.0.0
   if (currentVesion === '0.0.0') {
-    // skip in dev mode
     skipped = true;
   }
   return {
     currentVesion,
     newVersion,
+    latestVersion,
     skipped
   };
 }

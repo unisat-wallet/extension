@@ -241,9 +241,9 @@ export default function SettingsTabScreen() {
             />
           </Row>
           <Text text={`Version: ${versionInfo.currentVesion}`} preset="sub" textCenter />
-          {versionInfo.currentVesion != versionInfo.newVersion && (
+          {versionInfo.latestVersion && (
             <Text
-              text={`New Version: ${versionInfo.newVersion}`}
+              text={`Latest Version: ${versionInfo.latestVersion}`}
               preset="link"
               color="red"
               textCenter
