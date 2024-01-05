@@ -1,61 +1,115 @@
-
 # UniSat Wallet Release Notes
 
-## v1.1.32
+## v1.2.5
+
+- Minimum output amount for inscriptions can now be set to 330.
+- Added the ability to disable Atomicals (only when there are no Atomicals assets).
+- Added the API `isAtomicalsEnabled` to determine if the user has enabled the Atomicals feature.
+- Implemented version checking to prompt for upgrades when a new version is available.
+- Fixed an issue where transferring inscriptions and ARC20 without available BTC would result in an error.
+
+## v1.2.4
+
+- Fixed an issue where exporting private keys was not possible.
+
+## v1.2.3
+
+- Replaced secp256k1 to maintain the signature logic of v1.1.33.
+- Added the `getVersion` method to retrieve the wallet version.
+
+## v1.2.2
+
+- Fixed an issue where the fee rate would decrease during transfers.
+
+## v1.2.1
+
+- Fixed the issue of failed P2TR signature.
+
+## v1.2.0
+
+- Added support for Atomicals.
+- Refactored underlying code using @unisat/wallet-sdk.
+
+## v1.1.33
+
 - Fix changing address type of simple keyring
 
 ## v1.1.32
+
 - Support .btc as recipient address
-- Support recovery from OrdinalsWallet 
+- Support recovery from OrdinalsWallet
 
 ## v1.1.31
+
 - Support .x as recipient address
 - Fix the signature error of P2TR #86
 - Restrict the input field's content
 
 ## v1.1.30
+
 - Added the parameter "toSignInputs" to the "signPsbt" method
 
 ## v1.1.29
+
 - Update app summary
 - Change api url
 
 ## v1.1.28
+
 - Patch the vulnerability CVE-2022-32969
 
 ## v1.1.27
+
 - Fix typo error
 
-## v1.1.26 
+## v1.1.26
+
 In this version, we focused on security upgrades and introduced several new features and enhancements. Here are the updates:
 
 1. Manual Wallet Locking
-  - Users now have the ability to manually lock their wallets for added security. 
+
+- Users now have the ability to manually lock their wallets for added security.
+
 2. Protection against Phishing Websites
-  - To protect users from potential phishing attacks, the wallet will now block connections to suspicious websites during wallet access and transaction signing.
+
+- To protect users from potential phishing attacks, the wallet will now block connections to suspicious websites during wallet access and transaction signing.
+
 3. Blacklist Address Blocking
-  - Transactions containing addresses on the blacklist will be blocked during the signing process to prevent potential security risks.
+
+- Transactions containing addresses on the blacklist will be blocked during the signing process to prevent potential security risks.
+
 4. Risk Warning on Transaction Signing Exceptions
-  - Users will receive a risk warning if any abnormal behavior is detected while signing transactions. Currently, abnormal behavior is identified by the loss of plaintext.
+
+- Users will receive a risk warning if any abnormal behavior is detected while signing transactions. Currently, abnormal behavior is identified by the loss of plaintext.
+
 5. Risk Warning during Batch Transaction Signing
-  - A risk warning will be displayed when performing batch transaction signing, ensuring users are aware of potential risks.
+
+- A risk warning will be displayed when performing batch transaction signing, ensuring users are aware of potential risks.
+
 6. Improved Inscription Splitting
-  - We have improved the process of inscription spliting, allowing users to choose a minimum amount of satoshis for each split inscription, providing greater flexibility. For individual inscription balances exceeding 10,000 satoshis, users can split the balance for better management.
+
+- We have improved the process of inscription spliting, allowing users to choose a minimum amount of satoshis for each split inscription, providing greater flexibility. For individual inscription balances exceeding 10,000 satoshis, users can split the balance for better management.
 
 ## v1.1.25
+
 **Major changes**
+
 - Scan more addresses when restoring wallet
 - Disable mnemonic translation
 - Fix a issue that selecting an account do not take effect
 - Fix a issue that fails to sign PSBT with M44_P2TR address
 
 ## v1.1.24
+
 **Major changes**
+
 - Support restoring wallet by 24-words
-- Support spliting UTXO that contains multiple inscriptions 
+- Support spliting UTXO that contains multiple inscriptions
 
 ## v1.1.23
+
 **Major changes**
+
 - Support exporting Hex Private Key
 - Add risk warnings when exporting Private Key and Secret Recovery Phrase
 - Fix a issue that when exporting a non-active wallet, incorrectly exports the Secret Recovery Phrase of the active wallet
@@ -63,60 +117,73 @@ In this version, we focused on security upgrades and introduced several new feat
 - Fix a issue that "getBalance " API returns incorrect unconfirmed balance
 
 ## v1.1.22
+
 **Major changes**
+
 - Extend the maintenance time of the plugin
 
 ## v1.1.21
+
 **Major changes**
+
 - Fix the issue that all wallet's names become wrong after deleting a wallet
 - Adjust the process of inscribing a TRANSFER
 - Add MV2 in github release
 
-
 ## v1.1.20
+
 **Major changes**
+
 - Support purchasing BTC through MoonPay
 - Disable RBF to prevent accidental triggering
 - Display the output value of inscription by default
 - Display balance details when hovering over the balance
-- Use mempool.space to display transaction history	
+- Use mempool.space to display transaction history
 - Add a prompt to wait for BRC20 updates after inscribing a TRANSFER
 
-
 ## v1.1.19
+
 **Minor changes**
+
 - Fix error of BRC-20 with special characters
 
 ## v1.1.18
+
 **Minor changes**
+
 - Optimize the display of PSBT
 
 ## v1.1.17
+
 **Major changes**
+
 - Feature
   - Add API unisat.inscribeTransfer(ticker:string, amount:string)
 
 **Minor changes**
+
 - Add sentry to trace bugs
 
-
 ## v1.1.16
+
 **Major changes**
+
 - Feature
   - Support BIP322
   - Sign multiple PSBT in one time
 - Adjust
   - Use mempool.space data as fee options
-  - Show 100 inscriptions per page 
+  - Show 100 inscriptions per page
 - Fix
   - Fix display error of pagination
   - Fix a issue that addresses holding too many UTXOs cannot construct transactions
   - Fix a issue that changing wallet/account name sometimes does not take effect
   - Fix a issue that N/A problem occurs because the input amount is not legal
 
-
 ## v1.1.15
+
 **Major changes**
+
 - BRC-20 related
   - Add BRC-20 transfer and inscribing functions
 - Account related
@@ -135,72 +202,93 @@ In this version, we focused on security upgrades and introduced several new feat
 - Others
   - Fixed text issue
 
-
 ## v1.1.14
+
 **Major changes**
+
 - Change logo
 - Add activeTab permission
 
 ## v1.1.13
+
 **Major changes**
+
 - Fix issue in v1.1.12
 
 ## v1.1.12
+
 **Major changes**
+
 - Fix some error of creating transactions
 
 **Minor changes**
+
 - Can choose P2TR address type when restoring from Xverse Wallet
 - Hide Inscription Number when unconfirmed
 - Remove .btc text
 
 ## v1.1.11
+
 **Major changes**
+
 - Remove .btc domain
 
 ## v1.1.10
+
 **Major changes**
+
 - Support customization of outputValue
 
 ## v1.1.9
+
 **Minor changes**
+
 - Disable in iframes
 - Keep unlocked for longer
 - Fix duplicate pop-up windows
 
 ## v1.1.8
+
 **Major changes**
+
 - Remove the "activeTab" and "notifications" permissions
 
 ## v1.1.7
+
 **Major changes**
+
 - Support .sats, .btc as recipient address
 - Support customizing network fee rate
 - Fix the signature error of P2TR
 
 **Minor changes**
+
 - Support to view the detail of address in signing page
 
-
 ## v1.1.6
+
 **Major changes**
+
 - Support custom hdPath
 
 **Minor changes**
-- Unify and extend the abbreviation length of address
-- Complete the display of hdPath	
 
+- Unify and extend the abbreviation length of address
+- Complete the display of hdPath
 
 ## v1.1.5
+
 **Major changes**
+
 - Wallet account structure changes, support multiple HD wallets, each wallet supports multiple accounts
 - Support recovery from wallets such as Sparrow, Xverse, etc.
 - Support P2SH-P2WPKH address format
 
 **Minor changes**
+
 - The wallet will wait for the website to load and then inject, up to 60s
 - Automatically reject approvals when window loses focus
-  
+
 ## v1.0.3
 
 **Major changes**
