@@ -241,17 +241,17 @@ export default function SettingsTabScreen() {
             />
           </Row>
           <Text text={`Version: ${versionInfo.currentVesion}`} preset="sub" textCenter />
-          {/* {versionInfo.currentVesion != versionInfo.newVersion && (
+          {versionInfo.currentVesion != versionInfo.newVersion && (
             <Text
               text={`New Version: ${versionInfo.newVersion}`}
               preset="link"
               color="red"
               textCenter
               onClick={() => {
-                window.open(versionInfo.downloadUrl);
+                window.open('https://unisat.io/extension/update');
               }}
             />
-          )} */}
+          )}
         </Column>
       </Content>
       <Footer px="zero" py="zero">
