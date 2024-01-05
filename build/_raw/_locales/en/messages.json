@@ -24,7 +24,7 @@
     "message": "You will not be able to recover this account with your Secret Recovery Phrase"
   },
   "Fee": { "message": "Fee" },
-  "Your__transaction__has__been__succesfully__sent": { "message": "Your transaction has been succesfully sent" },
+  "Your__transaction__has__been__successfully__sent": { "message": "Your transaction has been successfully sent" },
   "Invalid__address": { "message": "Invalid address" },
   "Clear__the__inputted": { "message": "Clear the inputted" },
   "Available": { "message": "Available" },
@@ -73,7 +73,7 @@
   "Import__wallet": { "message": "Import wallet" },
   "Amount": { "message": "Amount" },
   "Next": { "message": "Next" },
-  "Your__transaction__had__not__succesfully__sent": { "message": "Your transaction had not succesfully sent" },
+  "Your__transaction__had__not__successfully__sent": { "message": "Your transaction had not successfully sent" },
   "Current__Password": { "message": "Current Password" },
   "Create__a__new__account": { "message": "Create a new account" },
   "Create__new__wallet": { "message": "Create new wallet" },

@@ -593,7 +593,7 @@ function InscribeResultStep({
             </Row>
 
             <Text preset="title" text="Payment Sent" textCenter />
-            <Text preset="sub" text="Your transaction has been succesfully sent" color="textDim" textCenter />
+            <Text preset="sub" text="Your transaction has been successfully sent" color="textDim" textCenter />
 
             <Column justifyCenter itemsCenter>
               <Column mt="lg">

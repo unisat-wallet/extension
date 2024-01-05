@@ -5,7 +5,7 @@ import { ethErrors } from 'eth-rpc-errors';
 import { EventEmitter } from 'events';
 
 abstract class Message extends EventEmitter {
-  // avaiable id list
+  // available id list
   // max concurrent request limit
   private _requestIdPool = [...Array(500).keys()];
   protected _EVENT_PRE = 'UNISAT_WALLET_';
