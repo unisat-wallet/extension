@@ -14,6 +14,7 @@ import {
   usePrepareSendOrdinalsInscriptionCallback
 } from '@/ui/state/transactions/hooks';
 import { isValidAddress } from '@/ui/utils';
+import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../MainRoute';
 
@@ -47,7 +48,6 @@ export default function SendOrdinalsInscriptionScreen() {
   const [enableRBF, setEnableRBF] = useState(false);
   const defaultOutputValue = inscription ? inscription.outputValue : 10000;
 
-  const minOutputValue = Math.max(inscription.offset, 546);
   const [outputValue, setOutputValue] = useState(defaultOutputValue);
 
   const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
@@ -59,6 +59,15 @@ export default function SendOrdinalsInscriptionScreen() {
       setError('Invalid fee rate');
       return;
     }
+
+    let dustUtxo = inscription.outputValue;
+    try {
+      dustUtxo = getAddressUtxoDust(toInfo.address);
+    } catch (e) {
+      // console.log(e);
+    }
+
+    const minOutputValue = Math.max(inscription.offset, dustUtxo);
 
     if (outputValue < minOutputValue) {
       setError(`OutputValue must be at least ${minOutputValue}`);
