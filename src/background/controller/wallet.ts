@@ -715,6 +715,10 @@ export class WalletController extends BaseController {
       btcUtxos = await this.getBTCUtxos();
     }
 
+    if (btcUtxos.length == 0) {
+      throw new Error('Insufficient balance.');
+    }
+
     const { psbt, toSignInputs } = await txHelpers.sendBTC({
       btcUtxos: btcUtxos,
       tos: [{ address: to, satoshis: amount }],
@@ -749,6 +753,11 @@ export class WalletController extends BaseController {
     if (!btcUtxos) {
       btcUtxos = await this.getBTCUtxos();
     }
+
+    if (btcUtxos.length == 0) {
+      throw new Error('Insufficient balance.');
+    }
+
     const { psbt, toSignInputs } = await txHelpers.sendAllBTC({
       btcUtxos: btcUtxos,
       toAddress: to,
@@ -796,6 +805,10 @@ export class WalletController extends BaseController {
 
     if (!btcUtxos) {
       btcUtxos = await this.getBTCUtxos();
+    }
+
+    if (btcUtxos.length == 0) {
+      throw new Error('Insufficient balance.');
     }
 
     const { psbt, toSignInputs } = await txHelpers.sendInscription({
@@ -849,6 +862,10 @@ export class WalletController extends BaseController {
 
     if (!btcUtxos) {
       btcUtxos = await this.getBTCUtxos();
+    }
+
+    if (btcUtxos.length == 0) {
+      throw new Error('Insufficient balance.');
     }
 
     const { psbt, toSignInputs } = await txHelpers.sendInscriptions({
@@ -1415,6 +1432,11 @@ export class WalletController extends BaseController {
     if (!btcUtxos) {
       btcUtxos = await this.getBTCUtxos();
     }
+
+    if (btcUtxos.length == 0) {
+      throw new Error('Insufficient balance.');
+    }
+
     const { psbt, toSignInputs } = await txHelpers.sendAtomicalsNFT({
       assetUtxo,
       btcUtxos,

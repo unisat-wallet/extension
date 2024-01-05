@@ -16,7 +16,7 @@ export function RBFBar({ onChange }: { onChange: (val: boolean) => void }) {
   return (
     <Row justifyBetween>
       <Tooltip
-        title={`A feature that allows the transaction to be replaced.`}
+        title={`A feature allows the transaction to be replaced.`}
         overlayStyle={{
           fontSize: fontSizes.xs
         }}>
