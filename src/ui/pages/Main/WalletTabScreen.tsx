@@ -3,14 +3,14 @@ import { CSSProperties, useEffect, useMemo, useState } from 'react';
 
 import { AddressFlagType, KEYRING_TYPE } from '@/shared/constant';
 import { Arc20Balance, Inscription, NetworkType, TokenBalance } from '@/shared/types';
+import { checkAddressFlag } from '@/shared/utils';
 import { Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressBar } from '@/ui/components/AddressBar';
 import Arc20BalanceCard from '@/ui/components/Arc20BalanceCard';
+import AtomicalsFeatureButton from '@/ui/components/AtomicalsFeatureButton';
 import BRC20BalanceCard from '@/ui/components/BRC20BalanceCard';
-import ToEnableAtomicals from '@/ui/components/ToEnableAtomicals';
-
 import { Button } from '@/ui/components/Button';
 import { Empty } from '@/ui/components/Empty';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
@@ -37,7 +37,6 @@ import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
-import { checkAddressFlag } from '@/shared/utils';
 
 const $noBreakStyle: CSSProperties = {
   whiteSpace: 'nowrap',
@@ -98,8 +97,11 @@ export default function WalletTabScreen() {
     {
       key: AssetTabKey.ATOMICALS,
       label: 'Atomicals',
-      children: checkAddressFlag(currentAccount.flag, AddressFlagType.Is_Enable_Atomicals) ? <AtomicalsTab /> :
-        <ToEnableAtomicals />
+      children: checkAddressFlag(currentAccount.flag, AddressFlagType.Is_Enable_Atomicals) ? (
+        <AtomicalsTab />
+      ) : (
+        <AtomicalsFeatureButton />
+      )
     }
   ];
 
@@ -158,7 +160,6 @@ export default function WalletTabScreen() {
                 </Row>
               </>
             }
-
             overlayStyle={{
               fontSize: fontSizes.xs
             }}>
@@ -179,7 +180,6 @@ export default function WalletTabScreen() {
               <Icon icon="link" size={fontSizes.xs} />
             </Row>
           </Row>
-
 
           <Row justifyBetween>
             <Button
@@ -302,16 +302,20 @@ function AtomicalsTab() {
     {
       key: AtomicalsAssetTabKey.OTHERS,
       label: `Others`,
-      children: <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
-        <Empty text="Not supported yet" />
-      </Column>
+      children: (
+        <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
+          <Empty text="Not supported yet" />
+        </Column>
+      )
     }
   ];
 
   const tabKey = useAtomicalsAssetTabKey();
   const dispatch = useAppDispatch();
+
   return (
     <Column>
+      {addressSummary.atomicalsCount === 0 && addressSummary.arc20Count === 0 && <AtomicalsFeatureButton />}
       <Row justifyBetween>
         <TabBar
           defaultActiveKey={tabKey}

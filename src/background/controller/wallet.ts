@@ -1196,6 +1196,7 @@ export class WalletController extends BaseController {
   };
   removeAddressFlag = (account: Account, flag: AddressFlagType) => {
     account.flag = preferenceService.removeAddressFlag(account.address, flag);
+    openapiService.setClientAddress(account.address, account.flag);
     return account;
   };
 
