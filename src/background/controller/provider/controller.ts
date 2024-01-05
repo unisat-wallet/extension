@@ -215,6 +215,12 @@ class ProviderController extends BaseController {
     getVersion = async () => {
       return VERSION
     };
+
+  @Reflect.metadata('SAFE', true)
+    isAtomicalsEnabled = async () => {
+      return await wallet.isAtomicalsEnabled()
+    };
+    
 }
 
 export default new ProviderController();

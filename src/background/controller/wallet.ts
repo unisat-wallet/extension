@@ -34,6 +34,7 @@ import {
   UTXO,
   WalletKeyring
 } from '@/shared/types';
+import { checkAddressFlag } from '@/shared/utils';
 import { UnspentOutput, txHelpers } from '@unisat/wallet-sdk';
 import { publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
 import { ECPair, bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
@@ -1520,6 +1521,12 @@ export class WalletController extends BaseController {
 
   getVersionDetail = (version: string) => {
     return openapiService.getVersionDetail(version);
+  };
+
+  isAtomicalsEnabled = async () => {
+    const current = await this.getCurrentAccount();
+    if (!current) return false;
+    return checkAddressFlag(current?.flag, AddressFlagType.Is_Enable_Atomicals);
   };
 }
 

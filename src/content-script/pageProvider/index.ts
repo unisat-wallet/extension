@@ -314,6 +314,12 @@ export class UnisatProvider extends EventEmitter {
       method: 'getVersion'
     });
   };
+
+  isAtomicalsEnabled = async () => {
+    return this._request({
+      method: 'isAtomicalsEnabled'
+    });
+  };
 }
 
 declare global {
