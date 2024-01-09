@@ -6,7 +6,6 @@ import { SAFE_DOMAIN_CONFIRMATION, SUPPORTED_DOMAINS } from '@/shared/constant';
 import { getSatsName } from '@/shared/lib/satsname-utils';
 import { Inscription } from '@/shared/types';
 import { colors } from '@/ui/theme/colors';
-import { fontSizes } from '@/ui/theme/font';
 import { spacing } from '@/ui/theme/spacing';
 import { useWallet } from '@/ui/utils';
 
@@ -110,7 +109,7 @@ function AmountInput(props: InputProps) {
         setInputValue(value);
       }
     } else {
-      if (/^\d*\.?\d*$/.test(value) || value === '') {
+      if (/^\d*\.?\d{0,8}$/.test(value) || value === '') {
         setValidAmount(value);
         setInputValue(value);
       }
@@ -180,7 +179,7 @@ export const AddressInput = (props: InputProps) => {
   };
 
   const handleInputAddress = (e) => {
-    const inputAddress = e.target.value;
+    const inputAddress = e.target.value.trim();
     setInputVal(inputAddress);
 
     resetState();
