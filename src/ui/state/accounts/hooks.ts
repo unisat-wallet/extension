@@ -7,6 +7,7 @@ import { AppState } from '..';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { useCurrentKeyring } from '../keyrings/hooks';
 import { keyringsActions } from '../keyrings/reducer';
+import { settingsActions } from '../settings/reducer';
 import { accountActions } from './reducer';
 
 export function useAccountsState(): AppState['accounts'] {
@@ -26,8 +27,15 @@ export function useAccounts() {
 export function useAccountBalance() {
   const accountsState = useAccountsState();
   const currentAccount = useCurrentAccount();
-  return accountsState.balanceMap[currentAccount.address]
-    || { amount: '0', expired: true, confirm_btc_amount: '0', pending_btc_amount: '0', inscription_amount: '0' };
+  return (
+    accountsState.balanceMap[currentAccount.address] || {
+      amount: '0',
+      expired: true,
+      confirm_btc_amount: '0',
+      pending_btc_amount: '0',
+      inscription_amount: '0'
+    }
+  );
 }
 
 export function useAddressSummary() {
@@ -223,5 +231,9 @@ export function useReloadAccounts() {
 
     dispatch(accountActions.expireBalance());
     dispatch(accountActions.expireInscriptions());
+
+    wallet.getWalletConfig().then((data) => {
+      dispatch(settingsActions.updateSettings({ walletConfig: data }));
+    });
   }, [dispatch, wallet]);
 }
