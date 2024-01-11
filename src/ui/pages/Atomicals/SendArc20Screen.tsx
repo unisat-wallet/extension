@@ -15,6 +15,7 @@ import {
 } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { isValidAddress } from '@/ui/utils';
+import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 export default function SendArc20Screen() {
   const { state } = useLocation();
@@ -70,6 +71,18 @@ export default function SendArc20Screen() {
     }
 
     if (feeRate <= 0) {
+      return;
+    }
+
+    let dustUtxo = 546;
+    try {
+      dustUtxo = getAddressUtxoDust(toInfo.address);
+    } catch (e) {
+      // console.log(e);
+    }
+
+    if (parseInt(inputAmount) < dustUtxo) {
+      setError(`The minimum amount is ${dustUtxo}`);
       return;
     }
 
