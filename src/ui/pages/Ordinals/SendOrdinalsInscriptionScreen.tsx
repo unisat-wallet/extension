@@ -13,7 +13,7 @@ import {
   useOrdinalsTx,
   usePrepareSendOrdinalsInscriptionCallback
 } from '@/ui/state/transactions/hooks';
-import { isValidAddress } from '@/ui/utils';
+import { isValidAddress, useWallet } from '@/ui/utils';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../MainRoute';
@@ -49,6 +49,14 @@ export default function SendOrdinalsInscriptionScreen() {
   const defaultOutputValue = inscription ? inscription.outputValue : 10000;
 
   const [outputValue, setOutputValue] = useState(defaultOutputValue);
+  const [inscriptions, setInscriptions] = useState<Inscription[]>([]);
+
+  const wallet = useWallet();
+  useEffect(() => {
+    wallet.getInscriptionUtxoDetail(inscription.inscriptionId).then((v) => {
+      setInscriptions(v.inscriptions);
+    });
+  }, []);
 
   const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
   useEffect(() => {
@@ -67,7 +75,11 @@ export default function SendOrdinalsInscriptionScreen() {
       // console.log(e);
     }
 
-    const minOutputValue = Math.max(inscription.offset, dustUtxo);
+    const maxOffset = inscriptions.reduce((pre, cur) => {
+      return Math.max(pre, cur.offset);
+    }, 0);
+
+    const minOutputValue = Math.max(maxOffset + 1, dustUtxo);
 
     if (outputValue < minOutputValue) {
       setError(`OutputValue must be at least ${minOutputValue}`);
@@ -107,7 +119,7 @@ export default function SendOrdinalsInscriptionScreen() {
         console.log(e);
         setError(e.message);
       });
-  }, [toInfo, feeRate, outputValue, enableRBF]);
+  }, [toInfo, feeRate, outputValue, enableRBF, inscriptions]);
 
   return (
     <Layout>
@@ -119,9 +131,13 @@ export default function SendOrdinalsInscriptionScreen() {
       />
       <Content>
         <Column>
+          <Text text={`Ordinals Inscriptions (${inscriptions.length})`} color="textDim" />
           <Row justifyBetween>
-            <Text text="Ordinals Inscription" color="textDim" />
-            {inscription && <InscriptionPreview data={inscription} preset="small" />}
+            <Row overflowX gap="lg" pb="md">
+              {inscriptions.map((v) => (
+                <InscriptionPreview key={v.inscriptionId} data={v} preset="small" />
+              ))}
+            </Row>
           </Row>
 
           <Text text="Recipient" color="textDim" />

@@ -797,9 +797,9 @@ export class WalletController extends BaseController {
       throw new Error('UTXO not found.');
     }
 
-    if (utxo.inscriptions.length > 1) {
-      throw new Error('Multiple inscriptions are mixed together. Please split them first.');
-    }
+    // if (utxo.inscriptions.length > 1) {
+    //   throw new Error('Multiple inscriptions are mixed together. Please split them first.');
+    // }
 
     const assetUtxo = Object.assign(utxo, { pubkey: account.pubkey });
 
@@ -819,7 +819,8 @@ export class WalletController extends BaseController {
       changeAddress: account.address,
       feeRate,
       outputValue,
-      enableRBF
+      enableRBF,
+      enableMixed: true
     });
 
     this.setPsbtSignNonSegwitEnable(psbt, true);

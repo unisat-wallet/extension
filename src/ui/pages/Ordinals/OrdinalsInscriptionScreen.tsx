@@ -77,7 +77,7 @@ export default function OrdinalsInscriptionScreen() {
                   }}
                 />
               )}
-              {isMultiStuck == false && (
+              {
                 <Button
                   text="Send"
                   icon="send"
@@ -88,7 +88,7 @@ export default function OrdinalsInscriptionScreen() {
                     navigate('SendOrdinalsInscriptionScreen', { inscription });
                   }}
                 />
-              )}
+              }
             </Row>
           )}
 
@@ -97,7 +97,7 @@ export default function OrdinalsInscriptionScreen() {
               <Text
                 color="danger"
                 textCenter
-                text={'Multiple inscriptions are mixed together. Please split them first.'}
+                text={'Multiple inscriptions are mixed together. You can split them first or send them once.'}
               />
             ) : (
               <Text
