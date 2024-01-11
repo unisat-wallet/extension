@@ -1,5 +1,13 @@
 # UniSat Wallet Release Notes
 
+## v1.2.6
+
+- Mixed inscriptions can now be sent without splitting
+- Fixed an issue with the address amount input box restrictions:
+  - Limited BTC input to a maximum of 8 decimal places.
+  - Spaces are now ignored when entering an address.
+  - Restricted ARC20 input amount.
+
 ## v1.2.5
 
 - Minimum output amount for inscriptions can now be set to 330.
