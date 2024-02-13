@@ -1,5 +1,11 @@
 # UniSat Wallet Release Notes
 
+## v1.2.7
+
+- Allowing decimal inputs when inscribing BRC20 TRANSFER.
+- Support more precise inscription outputValue, reduced to 294 for P2WPKH addresses.
+- Use deterministic ECDSA signatures in `unisat.signMessage`.
+
 ## v1.2.6
 
 - Mixed inscriptions can now be sent without splitting
