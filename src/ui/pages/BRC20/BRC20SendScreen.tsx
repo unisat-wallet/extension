@@ -1,23 +1,27 @@
 import { Checkbox } from 'antd';
+import BigNumber from 'bignumber.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { RawTxInfo, TokenBalance, TokenTransfer, TxType } from '@/shared/types';
+import { RawTxInfo, TokenBalance, TokenInfo, TokenTransfer, TxType } from '@/shared/types';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import BRC20Preview from '@/ui/components/BRC20Preview';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
+import { RBFBar } from '@/ui/components/RBFBar';
 import { RefreshButton } from '@/ui/components/RefreshButton';
 import { TabBar } from '@/ui/components/TabBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import {
   useFetchUtxosCallback,
+  usePrepareSendOrdinalsInscriptionCallback,
   usePrepareSendOrdinalsInscriptionsCallback,
   usePushOrdinalsTxCallback
 } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { useWallet } from '@/ui/utils';
+import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 import { SignPsbt } from '../Approval/components';
 import { useNavigate } from '../MainRoute';
@@ -37,7 +41,7 @@ function Step1({
 
   useEffect(() => {
     setDisabled(true);
-    if (contextData.transferAmount <= 0) {
+    if (new BigNumber(contextData.transferAmount).lte(0)) {
       return;
     }
 
@@ -165,7 +169,7 @@ function TransferableList({
   useEffect(() => {
     fetchData();
   }, [pagination]);
-  const totalAmount = items.reduce((pre, cur) => pre + parseInt(cur.amount), 0);
+  const totalAmount = items.reduce((pre, cur) => new BigNumber(cur.amount).plus(pre), new BigNumber(0)).toString();
 
   const selectedCount = useMemo(() => contextData.inscriptionIdSet.size, [contextData]);
 
@@ -196,10 +200,10 @@ function TransferableList({
                   if (contextData.inscriptionIdSet.has(v.inscriptionId)) {
                     const inscriptionIdSet = new Set(contextData.inscriptionIdSet);
                     inscriptionIdSet.delete(v.inscriptionId);
-                    const transferAmount = contextData.transferAmount - parseInt(v.amount);
+                    const transferAmount = new BigNumber(contextData.transferAmount).minus(new BigNumber(v.amount));
                     updateContextData({
                       inscriptionIdSet,
-                      transferAmount
+                      transferAmount: transferAmount.toString()
                     });
                     if (allSelected) {
                       setAllSelected(false);
@@ -207,7 +211,9 @@ function TransferableList({
                   } else {
                     const inscriptionIdSet = new Set(contextData.inscriptionIdSet);
                     inscriptionIdSet.add(v.inscriptionId);
-                    const transferAmount = contextData.transferAmount + parseInt(v.amount);
+                    const transferAmount = new BigNumber(contextData.transferAmount)
+                      .plus(new BigNumber(v.amount))
+                      .toString();
                     updateContextData({
                       inscriptionIdSet,
                       transferAmount
@@ -243,7 +249,7 @@ function TransferableList({
                 } else {
                   updateContextData({
                     inscriptionIdSet: new Set(),
-                    transferAmount: 0
+                    transferAmount: '0'
                   });
                 }
               }}
@@ -296,9 +302,11 @@ function Step2({
   }, []);
 
   const prepareSendOrdinalsInscriptions = usePrepareSendOrdinalsInscriptionsCallback();
+  const prepareSendOrdinalsInscription = usePrepareSendOrdinalsInscriptionCallback();
 
   const [disabled, setDisabled] = useState(true);
 
+  const [enableRBF, setEnableRBF] = useState(false);
   useEffect(() => {
     setDisabled(true);
     if (!contextData.receiver) {
@@ -312,13 +320,25 @@ function Step2({
     try {
       tools.showLoading(true);
       const inscriptionIds = Array.from(contextData.inscriptionIdSet);
-      const rawTxInfo = await prepareSendOrdinalsInscriptions({
-        toAddressInfo: { address: contextData.receiver, domain: '' },
-        inscriptionIds,
-        feeRate: contextData.feeRate,
-        enableRBF: false
-      });
-      navigate('SignOrdinalsTransactionScreen', { rawTxInfo });
+      if (inscriptionIds.length === 1) {
+        const rawTxInfo = await prepareSendOrdinalsInscription({
+          toAddressInfo: { address: contextData.receiver, domain: '' },
+          inscriptionId: inscriptionIds[0],
+          feeRate: contextData.feeRate,
+          outputValue: getAddressUtxoDust(contextData.receiver),
+          enableRBF
+        });
+        navigate('SignOrdinalsTransactionScreen', { rawTxInfo });
+      } else {
+        const rawTxInfo = await prepareSendOrdinalsInscriptions({
+          toAddressInfo: { address: contextData.receiver, domain: '' },
+          inscriptionIds,
+          feeRate: contextData.feeRate,
+          enableRBF
+        });
+        navigate('SignOrdinalsTransactionScreen', { rawTxInfo });
+      }
+
       // updateContextData({ tabKey: TabKey.STEP3, rawTxInfo: txInfo });
     } catch (e) {
       const error = e as Error;
@@ -355,6 +375,14 @@ function Step2({
           <FeeRateBar
             onChange={(val) => {
               updateContextData({ feeRate: val });
+            }}
+          />
+        </Column>
+
+        <Column mt="lg">
+          <RBFBar
+            onChange={(val) => {
+              setEnableRBF(val);
             }}
           />
         </Column>
@@ -405,17 +433,18 @@ enum TabKey {
 interface ContextData {
   tabKey: TabKey;
   tokenBalance: TokenBalance;
-  transferAmount: number;
+  transferAmount: string;
   transferableList: TokenTransfer[];
   inscriptionIdSet: Set<string>;
   feeRate: number;
   receiver: string;
   rawTxInfo: RawTxInfo;
+  tokenInfo: TokenInfo;
 }
 
 interface UpdateContextDataParams {
   tabKey?: TabKey;
-  transferAmount?: number;
+  transferAmount?: string;
   transferableList?: TokenTransfer[];
   inscriptionIdSet?: Set<string>;
   feeRate?: number;
@@ -428,12 +457,13 @@ export default function BRC20SendScreen() {
   const props = state as {
     tokenBalance: TokenBalance;
     selectedInscriptionIds: string[];
-    selectedAmount: number;
+    selectedAmount: string;
+    tokenInfo: TokenInfo;
   };
 
   const tokenBalance = props.tokenBalance;
   const selectedInscriptionIds = props.selectedInscriptionIds || [];
-  const selectedAmount = props.selectedAmount || 0;
+  const selectedAmount = props.selectedAmount || '0';
 
   const [contextData, setContextData] = useState<ContextData>({
     tabKey: TabKey.STEP1,
@@ -446,6 +476,11 @@ export default function BRC20SendScreen() {
     rawTxInfo: {
       psbtHex: '',
       rawtx: ''
+    },
+    tokenInfo: {
+      totalSupply: '0',
+      totalMinted: '0',
+      decimal: 18
     }
   });
 

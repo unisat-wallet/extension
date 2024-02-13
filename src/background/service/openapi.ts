@@ -252,8 +252,14 @@ export class OpenApiService {
     return this.httpGet('/address/search', { domain });
   }
 
-  async inscribeBRC20Transfer(address: string, tick: string, amount: string, feeRate: number): Promise<InscribeOrder> {
-    return this.httpPost('/brc20/inscribe-transfer', { address, tick, amount, feeRate });
+  async inscribeBRC20Transfer(
+    address: string,
+    tick: string,
+    amount: string,
+    feeRate: number,
+    outputValue: number
+  ): Promise<InscribeOrder> {
+    return this.httpPost('/brc20/inscribe-transfer', { address, tick, amount, feeRate, outputValue });
   }
 
   async getInscribeResult(orderId: string): Promise<TokenTransfer> {

@@ -1,13 +1,16 @@
 import { Tooltip } from 'antd';
+import BigNumber from 'bignumber.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { InscribeOrder, RawTxInfo, TokenBalance, TxType } from '@/shared/types';
+import { InscribeOrder, RawTxInfo, TokenBalance, TokenInfo, TxType } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { Loading } from '@/ui/components/ActionComponent/Loading';
 import { Empty } from '@/ui/components/Empty';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
+import { OutputValueBar } from '@/ui/components/OutputValueBar';
+import { RBFBar } from '@/ui/components/RBFBar';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useNetworkType } from '@/ui/state/settings/hooks';
@@ -19,6 +22,7 @@ import {
 import { fontSizes } from '@/ui/theme/font';
 import { spacing } from '@/ui/theme/spacing';
 import { satoshisToAmount, useApproval, useLocationState, useWallet } from '@/ui/utils';
+import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../../MainRoute';
 import SignPsbt from './SignPsbt';
@@ -51,8 +55,9 @@ interface ContextData {
   tokenBalance?: TokenBalance;
   order?: InscribeOrder;
   rawTxInfo?: RawTxInfo;
-  amount?: number;
+  amount?: string;
   isApproval: boolean;
+  tokenInfo?: TokenInfo;
 }
 
 interface UpdateContextDataParams {
@@ -62,14 +67,15 @@ interface UpdateContextDataParams {
   tokenBalance?: TokenBalance;
   order?: InscribeOrder;
   rawTxInfo?: RawTxInfo;
-  amount?: number;
+  amount?: string;
+  tokenInfo?: TokenInfo;
 }
 
 export default function InscribeTransfer({ params: { data, session } }: Props) {
   const [contextData, setContextData] = useState<ContextData>({
     step: Step.STEP1,
     ticker: data.ticker,
-    amount: parseInt(data.amount),
+    amount: data.amount,
     session,
     isApproval: true
   });
@@ -149,6 +155,13 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
   const [disabled, setDisabled] = useState(true);
 
   const [inputDisabled, setInputDisabled] = useState(false);
+
+  const defaultOutputValue = getAddressUtxoDust(account.address);
+
+  const [outputValue, setOutputValue] = useState<number>(defaultOutputValue);
+
+  const [enableRBF, setEnableRBF] = useState(false);
+
   useEffect(() => {
     if (contextData.amount) {
       setInputAmount(contextData.amount.toString());
@@ -159,8 +172,15 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
   useEffect(() => {
     setInputError('');
     setDisabled(true);
-
-    const amount = parseInt(inputAmount);
+    if (inputAmount.split('.').length > 1) {
+      const decimal = inputAmount.split('.')[1].length;
+      const token_decimal = contextData.tokenInfo?.decimal || 0;
+      if (decimal > token_decimal) {
+        setInputError(`This token only supports up to ${token_decimal} decimal places.`);
+        return;
+      }
+    }
+    const amount = new BigNumber(inputAmount);
     if (!amount) {
       return;
     }
@@ -169,11 +189,11 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
       return;
     }
 
-    if (amount <= 0) {
+    if (amount.lte(0)) {
       return;
     }
 
-    if (amount > parseInt(contextData.tokenBalance.availableBalanceSafe)) {
+    if (amount.gt(contextData.tokenBalance.availableBalanceSafe)) {
       setInputError('Insufficient Balance');
       return;
     }
@@ -182,15 +202,24 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
       return;
     }
 
+    if (outputValue < defaultOutputValue) {
+      setInputError(`OutputValue must be at least ${defaultOutputValue}`);
+      return;
+    }
+
+    if (!outputValue) {
+      return;
+    }
+
     setDisabled(false);
-  }, [inputAmount, feeRate, contextData.tokenBalance]);
+  }, [inputAmount, feeRate, outputValue, contextData.tokenBalance]);
 
   useEffect(() => {
     fetchUtxos();
     wallet
       .getBRC20Summary(account.address, contextData.ticker)
       .then((v) => {
-        updateContextData({ tokenBalance: v.tokenBalance });
+        updateContextData({ tokenBalance: v.tokenBalance, tokenInfo: v.tokenInfo });
       })
       .catch((e) => {
         tools.toastError(e.message);
@@ -200,13 +229,19 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
   const onClickInscribe = async () => {
     try {
       tools.showLoading(true);
-      const amount = parseInt(inputAmount);
-      const order = await wallet.inscribeBRC20Transfer(account.address, contextData.ticker, amount.toString(), feeRate);
+      const amount = inputAmount;
+      const order = await wallet.inscribeBRC20Transfer(
+        account.address,
+        contextData.ticker,
+        amount,
+        feeRate,
+        outputValue
+      );
       const rawTxInfo = await prepareSendBTC({
         toAddressInfo: { address: order.payAddress, domain: '' },
         toAmount: order.totalFee,
         feeRate: feeRate,
-        enableRBF: true
+        enableRBF
       });
       updateContextData({ order, amount, rawTxInfo, step: Step.STEP2 });
     } catch (e) {
@@ -294,6 +329,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
                 placeholder={'Amount'}
                 value={inputAmount}
                 autoFocus={true}
+                enableBrc20Decimal={true}
                 onAmountInputChange={(amount) => {
                   setInputAmount(amount);
                 }}
@@ -302,11 +338,31 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
               {inputError && <Text text={inputError} color="error" />}
             </Column>
 
+            <Column mt="lg">
+              <Text text="OutputValue" color="textDim" />
+
+              <OutputValueBar
+                defaultValue={defaultOutputValue}
+                minValue={defaultOutputValue}
+                onChange={(val) => {
+                  setOutputValue(val);
+                }}
+              />
+            </Column>
+
             <Column>
               <Text text="Fee Rate" color="textDim" />
               <FeeRateBar
                 onChange={(val) => {
                   setFeeRate(val);
+                }}
+              />
+            </Column>
+
+            <Column mt="lg">
+              <RBFBar
+                onChange={(val) => {
+                  setEnableRBF(val);
                 }}
               />
             </Column>
@@ -368,7 +424,14 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
             <Text text="Inscribe TRANSFER" preset="title-bold" textCenter mt="lg" />
 
             <Column justifyCenter style={{ height: 250 }}>
-              <Text text={`${amount} ${tokenBalance.ticker}`} preset="title-bold" size="xxl" color="gold" textCenter />
+              <Text
+                text={`${amount} ${tokenBalance.ticker}`}
+                preset="title-bold"
+                size="xxl"
+                color="gold"
+                textCenter
+                wrap
+              />
 
               <Column mt="xxl">
                 <Text text="Preview" preset="sub-bold" />
@@ -376,6 +439,7 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
                   <Text
                     text={`{"p":"brc-20","op":"transfer","tick":"${tokenBalance.ticker}","amt":"${amount}"}`}
                     size="xs"
+                    wrap
                   />
                 </Card>
               </Column>
@@ -567,7 +631,8 @@ function InscribeResultStep({
           navigate('BRC20SendScreen', {
             tokenBalance: v.tokenBalance,
             selectedInscriptionIds: [result.inscriptionId],
-            selectedAmount: parseInt(result.amount)
+            selectedAmount: result.amount,
+            tokenInfo: v.tokenInfo
           });
         }
       })

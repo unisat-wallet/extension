@@ -40,6 +40,7 @@ import { publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/ad
 import { ECPair, bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 import { signMessageOfBIP322Simple } from '@unisat/wallet-sdk/lib/message';
 import { toPsbtNetwork } from '@unisat/wallet-sdk/lib/network';
+import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 import { toXOnly } from '@unisat/wallet-sdk/lib/utils';
 
 import { ContactBookItem } from '../service/contactBook';
@@ -861,6 +862,14 @@ export class WalletController extends BaseController {
       return Object.assign(v, { pubkey: account.pubkey });
     });
 
+    const toDust = getAddressUtxoDust(to);
+
+    assetUtxos.forEach((v) => {
+      if (v.satoshis < toDust) {
+        throw new Error('Unable to send inscriptions to this address in batches, please send them one by one.');
+      }
+    });
+
     if (!btcUtxos) {
       btcUtxos = await this.getBTCUtxos();
     }
@@ -1223,8 +1232,8 @@ export class WalletController extends BaseController {
     return openapiService.getFeeSummary();
   };
 
-  inscribeBRC20Transfer = (address: string, tick: string, amount: string, feeRate: number) => {
-    return openapiService.inscribeBRC20Transfer(address, tick, amount, feeRate);
+  inscribeBRC20Transfer = (address: string, tick: string, amount: string, feeRate: number, outputValue: number) => {
+    return openapiService.inscribeBRC20Transfer(address, tick, amount, feeRate, outputValue);
   };
 
   getInscribeResult = (orderId: string) => {
@@ -1484,6 +1493,8 @@ export class WalletController extends BaseController {
       btcUtxos = await this.getBTCUtxos();
     }
 
+    const changeDust = getAddressUtxoDust(account.address);
+
     const _assetUtxos: UnspentOutput[] = [];
     let total = 0;
     let change = 0;
@@ -1493,13 +1504,13 @@ export class WalletController extends BaseController {
       _assetUtxos.push(v);
       if (total >= amount) {
         change = total - amount;
-        if (change == 0 || change > 546) {
+        if (change == 0 || change >= changeDust) {
           break;
         }
       }
     }
-    if (change != 0 && change < 546) {
-      throw new Error('Can not construct change greater than 546.');
+    if (change != 0 && change < changeDust) {
+      throw new Error('The amount for change is too low, please adjust the sending amount.');
     }
     assetUtxos = _assetUtxos;
 

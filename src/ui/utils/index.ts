@@ -1,8 +1,8 @@
 import BigNumber from 'bignumber.js';
 import { useLocation } from 'react-router-dom';
 
-export * from './hooks';
 export * from './WalletContext';
+export * from './hooks';
 const UI_TYPE = {
   Tab: 'index',
   Pop: 'popup',
@@ -164,3 +164,5 @@ export function useLocationState<T>() {
   const { state } = useLocation();
   return state as T;
 }
+
+BigNumber.config({ EXPONENTIAL_AT: [-20, 20] });

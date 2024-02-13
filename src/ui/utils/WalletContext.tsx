@@ -195,7 +195,13 @@ export interface WalletController {
   setEditingAccount(account: Account): Promise<void>;
   getEditingAccount(): Promise<Account>;
 
-  inscribeBRC20Transfer(address: string, tick: string, amount: string, feeRate: number): Promise<InscribeOrder>;
+  inscribeBRC20Transfer(
+    address: string,
+    tick: string,
+    amount: string,
+    feeRate: number,
+    outputValue: number
+  ): Promise<InscribeOrder>;
   getInscribeResult(orderId: string): Promise<TokenTransfer>;
 
   decodePsbt(psbtHex: string): Promise<DecodedPsbt>;

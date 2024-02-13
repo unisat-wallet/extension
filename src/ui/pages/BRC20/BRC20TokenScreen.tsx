@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
 
 import { AddressTokenSummary } from '@/shared/types';
@@ -30,7 +31,8 @@ export default function BRC20TokenScreen() {
     },
     tokenInfo: {
       totalSupply: '',
-      totalMinted: ''
+      totalMinted: '',
+      decimal: 18
     },
     historyList: [],
     transferableList: []
@@ -73,7 +75,7 @@ export default function BRC20TokenScreen() {
       {tokenSummary && (
         <Content>
           <Column py="xl" style={{ borderBottomWidth: 1, borderColor: colors.white_muted }}>
-            <Text text={`${balance} ${ticker}`} preset="bold" textCenter size="xxl" />
+            <Text text={`${balance} ${ticker}`} preset="bold" textCenter size="xxl" wrap />
             <Row justifyBetween mt="lg">
               <Button
                 text="MINT"
@@ -95,11 +97,14 @@ export default function BRC20TokenScreen() {
                   // todo
                   const defaultSelected = tokenSummary.transferableList.slice(0, 1);
                   const selectedInscriptionIds = defaultSelected.map((v) => v.inscriptionId);
-                  const selectedAmount = defaultSelected.reduce((pre, cur) => parseInt(cur.amount) + pre, 0);
+                  const selectedAmount = defaultSelected.reduce(
+                    (pre, cur) => new BigNumber(cur.amount).plus(pre),
+                    new BigNumber(0)
+                  );
                   navigate('BRC20SendScreen', {
                     tokenBalance: tokenSummary.tokenBalance,
                     selectedInscriptionIds,
-                    selectedAmount
+                    selectedAmount: selectedAmount.toString()
                   });
                 }}
                 full
@@ -109,7 +114,7 @@ export default function BRC20TokenScreen() {
           <Column>
             <Row justifyBetween>
               <Text text="Transferable" preset="bold" size="lg" />
-              <Text text={`${tokenSummary.tokenBalance.transferableBalance} ${ticker}`} preset="bold" size="lg" />
+              <Text text={`${tokenSummary.tokenBalance.transferableBalance} ${ticker}`} preset="bold" size="lg" wrap />
             </Row>
             {tokenSummary.transferableList.length == 0 && (
               <Column style={{ minHeight: 130 }} itemsCenter justifyCenter>
@@ -182,7 +187,7 @@ export default function BRC20TokenScreen() {
                   <Text text={'(Wait to be confirmed)'} preset="sub" textEnd />
                 </Column>
               ) : (
-                <Text text={`${tokenSummary.tokenBalance.availableBalance} ${ticker}`} preset="bold" size="lg" />
+                <Text text={`${tokenSummary.tokenBalance.availableBalance} ${ticker}`} preset="bold" size="lg" wrap />
               )}
             </Row>
             {tokenSummary.historyList.length == 0 && (

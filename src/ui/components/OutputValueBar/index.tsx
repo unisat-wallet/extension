@@ -2,6 +2,7 @@ import { CSSProperties, useEffect, useState } from 'react';
 
 import { colors } from '@/ui/theme/colors';
 
+import { useTools } from '../ActionComponent';
 import { Column } from '../Column';
 import { Input } from '../Input';
 import { Row } from '../Row';
@@ -12,7 +13,15 @@ enum FeeRateType {
   CUSTOM
 }
 
-export function OutputValueBar({ defaultValue, onChange }: { defaultValue: number; onChange: (val: number) => void }) {
+export function OutputValueBar({
+  defaultValue,
+  minValue,
+  onChange
+}: {
+  defaultValue: number;
+  minValue: number;
+  onChange: (val: number) => void;
+}) {
   const options = [
     {
       title: 'Current',
@@ -24,17 +33,35 @@ export function OutputValueBar({ defaultValue, onChange }: { defaultValue: numbe
   ];
   const [optionIndex, setOptionIndex] = useState(FeeRateType.CURRENT);
   const [inputVal, setInputVal] = useState('');
+  const [currentValue, setCurrentValue] = useState(defaultValue);
 
   useEffect(() => {
     let val: any = defaultValue;
     if (optionIndex === FeeRateType.CUSTOM) {
+      if (!inputVal) {
+        onChange(0);
+        setCurrentValue(0);
+        return;
+      }
       val = parseInt(inputVal);
     } else if (options.length > 0) {
       val = options[optionIndex].value;
     }
+    if (val + '' != inputVal) {
+      setInputVal(val);
+    }
     onChange(val);
+    setCurrentValue(val);
   }, [optionIndex, inputVal]);
 
+  useEffect(() => {
+    if (minValue && currentValue < minValue) {
+      // setOptionIndex(FeeRateType.CUSTOM);
+      // setInputVal(minValue + '');
+    }
+  }, [minValue, currentValue]);
+
+  const tools = useTools();
   return (
     <Column>
       <Row justifyCenter>
@@ -44,6 +71,10 @@ export function OutputValueBar({ defaultValue, onChange }: { defaultValue: numbe
             <div
               key={v.title}
               onClick={() => {
+                if (defaultValue < minValue && index === 0) {
+                  tools.showTip('Can not change to a lower value');
+                  return;
+                }
                 setOptionIndex(index);
               }}
               style={Object.assign(
@@ -74,7 +105,6 @@ export function OutputValueBar({ defaultValue, onChange }: { defaultValue: numbe
           preset="amount"
           disableDecimal
           placeholder={'sats'}
-          defaultValue={inputVal}
           value={inputVal}
           onAmountInputChange={(val) => {
             setInputVal(val);

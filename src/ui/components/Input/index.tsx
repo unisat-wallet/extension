@@ -36,6 +36,7 @@ export interface InputProps {
   onAmountInputChange?: (amount: string) => void;
   disabled?: boolean;
   disableDecimal?: boolean;
+  enableBrc20Decimal?: boolean;
 }
 
 type Presets = keyof typeof $inputPresets;
@@ -89,7 +90,15 @@ function PasswordInput(props: InputProps) {
 }
 
 function AmountInput(props: InputProps) {
-  const { placeholder, onAmountInputChange, disabled, style: $inputStyleOverride, disableDecimal, ...rest } = props;
+  const {
+    placeholder,
+    onAmountInputChange,
+    disabled,
+    style: $inputStyleOverride,
+    disableDecimal,
+    enableBrc20Decimal,
+    ...rest
+  } = props;
   const $style = Object.assign({}, $baseInputStyle, $inputStyleOverride, disabled ? { color: colors.textDim } : {});
 
   if (!onAmountInputChange) {
@@ -109,9 +118,16 @@ function AmountInput(props: InputProps) {
         setInputValue(value);
       }
     } else {
-      if (/^\d*\.?\d{0,8}$/.test(value) || value === '') {
-        setValidAmount(value);
-        setInputValue(value);
+      if (enableBrc20Decimal) {
+        if (/^\d*\.?\d{0,18}$/.test(value) || value === '') {
+          setValidAmount(value);
+          setInputValue(value);
+        }
+      } else {
+        if (/^\d*\.?\d{0,8}$/.test(value) || value === '') {
+          setValidAmount(value);
+          setInputValue(value);
+        }
       }
     }
   };

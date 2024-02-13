@@ -248,6 +248,7 @@ export interface Arc20Balance {
 export interface TokenInfo {
   totalSupply: string;
   totalMinted: string;
+  decimal: number;
 }
 
 export enum TokenInscriptionType {

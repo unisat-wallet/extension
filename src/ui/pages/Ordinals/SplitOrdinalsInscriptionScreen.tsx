@@ -7,8 +7,10 @@ import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { OutputValueBar } from '@/ui/components/OutputValueBar';
 import { RBFBar } from '@/ui/components/RBFBar';
+import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCreateSplitTxCallback, useOrdinalsTx } from '@/ui/state/transactions/hooks';
 import { useWallet } from '@/ui/utils';
+import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../MainRoute';
 
@@ -28,7 +30,9 @@ export default function SplitOrdinalsInscriptionScreen() {
   const [feeRate, setFeeRate] = useState(5);
   const [enableRBF, setEnableRBF] = useState(false);
   const defaultOutputValue = inscription ? inscription.outputValue : 10000;
-  const minOutputValue = 546;
+
+  const account = useCurrentAccount();
+  const minOutputValue = getAddressUtxoDust(account.address);
   const [outputValue, setOutputValue] = useState(defaultOutputValue);
 
   const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
@@ -110,6 +114,7 @@ export default function SplitOrdinalsInscriptionScreen() {
 
           <OutputValueBar
             defaultValue={minOutputValue}
+            minValue={minOutputValue}
             onChange={(val) => {
               setOutputValue(val);
             }}

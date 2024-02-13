@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { Inscription, RawTxInfo } from '@/shared/types';
@@ -59,6 +59,15 @@ export default function SendOrdinalsInscriptionScreen() {
   }, []);
 
   const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
+
+  const minOutputValue = useMemo(() => {
+    if (toInfo.address) {
+      return getAddressUtxoDust(toInfo.address);
+    } else {
+      return 0;
+    }
+  }, [toInfo.address]);
+
   useEffect(() => {
     setDisabled(true);
     setError('');
@@ -70,7 +79,9 @@ export default function SendOrdinalsInscriptionScreen() {
 
     let dustUtxo = inscription.outputValue;
     try {
-      dustUtxo = getAddressUtxoDust(toInfo.address);
+      if (toInfo.address) {
+        dustUtxo = getAddressUtxoDust(toInfo.address);
+      }
     } catch (e) {
       // console.log(e);
     }
@@ -151,16 +162,19 @@ export default function SendOrdinalsInscriptionScreen() {
             }}
           />
 
-          <Column mt="lg">
-            <Text text="OutputValue" color="textDim" />
+          {toInfo.address ? (
+            <Column mt="lg">
+              <Text text="OutputValue" color="textDim" />
 
-            <OutputValueBar
-              defaultValue={defaultOutputValue}
-              onChange={(val) => {
-                setOutputValue(val);
-              }}
-            />
-          </Column>
+              <OutputValueBar
+                defaultValue={defaultOutputValue}
+                minValue={minOutputValue}
+                onChange={(val) => {
+                  setOutputValue(val);
+                }}
+              />
+            </Column>
+          ) : null}
 
           <Column mt="lg">
             <Text text="Fee" color="textDim" />
