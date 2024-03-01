@@ -100,6 +100,12 @@ export interface WalletController {
     addressType: AddressType,
     accountCount: number
   ): Promise<{ address: string; type: string }[]>;
+  createKeyringWithKeystone(
+    urType: string,
+    urCbor: string,
+    addressType: AddressType,
+    accountCount: number
+  ): Promise<{ address: string; type: string }[]>;
 
   createTmpKeyringWithPrivateKey(privateKey: string, addressType: AddressType): Promise<WalletKeyring>;
 

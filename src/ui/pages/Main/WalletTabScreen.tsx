@@ -136,7 +136,7 @@ export default function WalletTabScreen() {
       />
       <Content>
         <Column gap="xl">
-          {currentKeyring.type === KEYRING_TYPE.HdKeyring && <AccountSelect />}
+          {(currentKeyring.type === KEYRING_TYPE.HdKeyring || currentKeyring.type === KEYRING_TYPE.KeystoneKeyring) && <AccountSelect />}
 
           {isTestNetwork && <Text text="Bitcoin Testnet activated." color="danger" textCenter />}
 
@@ -301,7 +301,7 @@ function AtomicalsTab() {
     },
     {
       key: AtomicalsAssetTabKey.OTHERS,
-      label: `Others`,
+      label: 'Others',
       children: (
         <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
           <Empty text="Not supported yet" />
