@@ -31,12 +31,14 @@ export function usePrepareSendBTCCallback() {
       toAddressInfo,
       toAmount,
       feeRate,
-      enableRBF
+      enableRBF,
+      memo
     }: {
       toAddressInfo: ToAddressInfo;
       toAmount: number;
       feeRate?: number;
       enableRBF: boolean;
+      memo?: string;
     }) => {
       let _utxos = utxos;
       if (_utxos.length === 0) {
@@ -70,7 +72,8 @@ export function usePrepareSendBTCCallback() {
           amount: toAmount,
           btcUtxos: _utxos,
           enableRBF,
-          feeRate
+          feeRate,
+          memo
         });
       }
 

@@ -699,13 +699,15 @@ export class WalletController extends BaseController {
     amount,
     feeRate,
     enableRBF,
-    btcUtxos
+    btcUtxos,
+    memo
   }: {
     to: string;
     amount: number;
     feeRate: number;
     enableRBF: boolean;
     btcUtxos?: UnspentOutput[];
+    memo?: string;
   }) => {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
@@ -726,7 +728,8 @@ export class WalletController extends BaseController {
       networkType,
       changeAddress: account.address,
       feeRate,
-      enableRBF
+      enableRBF,
+      memo
     });
 
     this.setPsbtSignNonSegwitEnable(psbt, true);

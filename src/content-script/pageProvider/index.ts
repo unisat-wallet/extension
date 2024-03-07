@@ -224,13 +224,14 @@ export class UnisatProvider extends EventEmitter {
     });
   };
 
-  sendBitcoin = async (toAddress: string, satoshis: number, options?: { feeRate: number }) => {
+  sendBitcoin = async (toAddress: string, satoshis: number, options?: { feeRate: number; memo?: string }) => {
     return this._request({
       method: 'sendBitcoin',
       params: {
         toAddress,
         satoshis,
         feeRate: options?.feeRate,
+        memo: options?.memo,
         type: TxType.SEND_BITCOIN
       }
     });

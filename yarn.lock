@@ -2698,10 +2698,10 @@
     "@typescript-eslint/types" "5.53.0"
     eslint-visitor-keys "^3.3.0"
 
-"@unisat/wallet-sdk@1.2.1":
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/@unisat/wallet-sdk/-/wallet-sdk-1.2.1.tgz#aa29f90e6794574ef110cd0b00b5223c0f82adc3"
-  integrity sha512-PsDaU/mehgpEWrnhcSTywTStcbc3E4WWx4kv3L5sUHdiAAajaIAR2kWHaZmqhNH9LL/zsAi2Riiytbbra9YHrg==
+"@unisat/wallet-sdk@1.3.0":
+  version "1.3.0"
+  resolved "https://registry.yarnpkg.com/@unisat/wallet-sdk/-/wallet-sdk-1.3.0.tgz#2088f263efdccd6faba5568ffe3eb9aea15eaa21"
+  integrity sha512-OHtFaNU8koalcgu3KDOhWc9sliXaHJZfqV4g7uC1gXzp7BH7gW1HKluPPOlYrgYCeavlX1LF2050mwpHUk9wrw==
   dependencies:
     "@bitcoinerlab/secp256k1" "^1.0.5"
     bignumber.js "^9.1.2"
