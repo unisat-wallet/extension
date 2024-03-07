@@ -511,6 +511,12 @@ export class WalletController extends BaseController {
     });
   };
 
+  signData = async (data: string, type = 'ecdsa') => {
+    const account = preferenceService.getCurrentAccount();
+    if (!account) throw new Error('no current account');
+    return keyringService.signData(account.pubkey, data, type);
+  };
+
   requestKeyring = (type: string, methodName: string, keyringId: number | null, ...params) => {
     let keyring;
     if (keyringId !== null && keyringId !== undefined) {
@@ -1564,6 +1570,14 @@ export class WalletController extends BaseController {
     const current = await this.getCurrentAccount();
     if (!current) return false;
     return checkAddressFlag(current?.flag, AddressFlagType.Is_Enable_Atomicals);
+  };
+
+  getEnableSignData = async () => {
+    return preferenceService.getEnableSignData();
+  };
+
+  setEnableSignData = async (enable: boolean) => {
+    return preferenceService.setEnableSignData(enable);
   };
 }
 

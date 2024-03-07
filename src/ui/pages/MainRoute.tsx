@@ -37,6 +37,7 @@ import SendOrdinalsInscriptionScreen from './Ordinals/SendOrdinalsInscriptionScr
 import SignOrdinalsTransactionScreen from './Ordinals/SignOrdinalsTransactionScreen';
 import SplitOrdinalsInscriptionScreen from './Ordinals/SplitOrdinalsInscriptionScreen';
 import AddressTypeScreen from './Settings/AddressTypeScreen';
+import AdvancedScreen from './Settings/AdvancedScreen';
 import ChangePasswordScreen from './Settings/ChangePasswordScreen';
 import EditAccountNameScreen from './Settings/EditAccountNameScreen';
 import EditWalletNameScreen from './Settings/EditWalletNameScreen';
@@ -166,6 +167,10 @@ const routes = {
   ExportPrivateKeyScreen: {
     path: '/settings/export-privatekey',
     element: <ExportPrivateKeyScreen />
+  },
+  AdvancedScreen: {
+    path: '/settings/advanced',
+    element: <AdvancedScreen />
   },
   HistoryScreen: {
     path: '/wallet/history',

@@ -85,6 +85,7 @@ export interface PreferenceStore {
   };
   showSafeNotice: boolean;
   addressFlags: { [key: string]: number };
+  enableSignData: boolean;
 }
 
 const SUPPORT_LOCALES = ['en'];
@@ -126,7 +127,8 @@ class PreferenceService {
           readTabTime: 1
         },
         showSafeNotice: true,
-        addressFlags: {}
+        addressFlags: {},
+        enableSignData: false
       }
     });
     if (!this.store.locale || this.store.locale !== defaultLang) {
@@ -201,6 +203,10 @@ class PreferenceService {
     }
     if (!this.store.addressFlags) {
       this.store.addressFlags = {};
+    }
+
+    if (typeof this.store.enableSignData !== 'boolean') {
+      this.store.enableSignData = false;
     }
   };
 
@@ -485,6 +491,14 @@ class PreferenceService {
   };
   setShowSafeNotice = (showSafeNotice: boolean) => {
     this.store.showSafeNotice = showSafeNotice;
+  };
+
+  getEnableSignData = () => {
+    return this.store.enableSignData;
+  };
+
+  setEnableSignData = (enableSignData: boolean) => {
+    this.store.enableSignData = enableSignData;
   };
 }
 

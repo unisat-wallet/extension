@@ -293,6 +293,9 @@ export interface WalletController {
   removeAddressFlag(account: Account, flag: AddressFlagType): Promise<Account>;
 
   getVersionDetail(version: string): Promise<VersionDetail>;
+
+  getEnableSignData(): Promise<boolean>;
+  setEnableSignData(enable: boolean): Promise<void>;
 }
 
 const WalletContext = createContext<{
