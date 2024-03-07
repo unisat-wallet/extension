@@ -331,6 +331,16 @@ export class UnisatProvider extends EventEmitter {
       method: 'isAtomicalsEnabled'
     });
   };
+
+  getBitcoinUtxos = async (cursor = 0, size = 20) => {
+    return this._request({
+      method: 'getBitcoinUtxos',
+      params: {
+        cursor,
+        size
+      }
+    });
+  };
 }
 
 declare global {

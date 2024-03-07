@@ -227,6 +227,14 @@ class ProviderController extends BaseController {
     isAtomicalsEnabled = async () => {
       return await wallet.isAtomicalsEnabled()
     };
+
+  @Reflect.metadata('SAFE', true)
+    getBitcoinUtxos = async () => {
+      const account = await wallet.getCurrentAccount();
+      if (!account) return [];
+      const utxos = await wallet.getBTCUtxos()
+      return utxos;
+    };
     
 }
 
