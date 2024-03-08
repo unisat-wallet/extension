@@ -1,5 +1,11 @@
 # UniSat Wallet Release Notes
 
+## v1.2.8
+
+- The unisat.sendBitcoin method has added a memo parameter, increasing OP_RETURN output when sending btc.
+- A new unisat.getBitcoinUtxos method has been added, through which the developers can get users UTXO without inscription assets.
+- A new unisat.signData method has been added, through which the developers can have users participate in multi-signature.
+
 ## v1.2.7
 
 - Allowing decimal inputs when inscribing BRC20 TRANSFER.
