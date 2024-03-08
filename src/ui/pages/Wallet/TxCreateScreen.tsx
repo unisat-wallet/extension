@@ -92,7 +92,12 @@ export default function TxCreateScreen() {
       return;
     }
 
-    if (toInfo.address == bitcoinTx.toAddress && toSatoshis == bitcoinTx.toSatoshis && feeRate == bitcoinTx.feeRate) {
+    if (
+      toInfo.address == bitcoinTx.toAddress &&
+      toSatoshis == bitcoinTx.toSatoshis &&
+      feeRate == bitcoinTx.feeRate &&
+      enableRBF == bitcoinTx.enableRBF
+    ) {
       //Prevent repeated triggering caused by setAmount
       setDisabled(false);
       return;

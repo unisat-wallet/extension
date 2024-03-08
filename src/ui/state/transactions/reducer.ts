@@ -18,6 +18,7 @@ export interface BitcoinTx {
   psbtHex: string;
   feeRate: number;
   toDomain: string;
+  enableRBF: boolean;
 }
 
 export interface OrdinalsTx {
@@ -34,6 +35,7 @@ export interface OrdinalsTx {
   feeRate: number;
   toDomain: string;
   outputValue: number;
+  enableRBF: boolean;
 }
 
 export interface AtomicalsTx {
@@ -51,6 +53,7 @@ export interface AtomicalsTx {
   toDomain: string;
   outputValue: number;
   sendArc20Amount?: number;
+  enableRBF: boolean;
 }
 
 export interface TransactionsState {
@@ -77,7 +80,8 @@ export const initialState: TransactionsState = {
     autoAdjust: false,
     psbtHex: '',
     feeRate: 5,
-    toDomain: ''
+    toDomain: '',
+    enableRBF: false
   },
   ordinalsTx: {
     fromAddress: '',
@@ -95,7 +99,8 @@ export const initialState: TransactionsState = {
     psbtHex: '',
     feeRate: 5,
     toDomain: '',
-    outputValue: 10000
+    outputValue: 10000,
+    enableRBF: false
   },
   atomicalsTx: {
     fromAddress: '',
@@ -113,7 +118,8 @@ export const initialState: TransactionsState = {
     psbtHex: '',
     feeRate: 5,
     toDomain: '',
-    outputValue: 10000
+    outputValue: 10000,
+    enableRBF: false
   },
   utxos: [],
   assetUtxos_atomicals_ft: [],
@@ -142,6 +148,7 @@ const slice = createSlice({
           psbtHex?: string;
           feeRate?: number;
           toDomain?: string;
+          enableRBF?: boolean;
         };
       }
     ) {
@@ -165,6 +172,7 @@ const slice = createSlice({
           feeRate?: number;
           toDomain?: string;
           outputValue?: number;
+          enableRBF?: boolean;
         };
       }
     ) {
@@ -189,6 +197,7 @@ const slice = createSlice({
           toDomain?: string;
           outputValue?: number;
           sendArc20Amount?: number;
+          enableRBF?: boolean;
         };
       }
     ) {

@@ -85,7 +85,8 @@ export function usePrepareSendBTCCallback() {
           rawtx,
           psbtHex,
           fromAddress,
-          feeRate
+          feeRate,
+          enableRBF
         })
       );
       const rawTxInfo: RawTxInfo = {
@@ -185,7 +186,8 @@ export function usePrepareSendOrdinalsInscriptionCallback() {
           fromAddress,
           // inscription,
           feeRate,
-          outputValue
+          outputValue,
+          enableRBF
         })
       );
       const rawTxInfo: RawTxInfo = {
@@ -240,7 +242,8 @@ export function usePrepareSendOrdinalsInscriptionsCallback() {
           rawtx,
           psbtHex,
           fromAddress,
-          feeRate
+          feeRate,
+          enableRBF
         })
       );
       const rawTxInfo: RawTxInfo = {
@@ -292,6 +295,7 @@ export function useCreateSplitTxCallback() {
           psbtHex,
           fromAddress,
           // inscription,
+          enableRBF,
           feeRate,
           outputValue
         })
@@ -430,7 +434,8 @@ export function usePrepareSendAtomicalsNFTCallback() {
           psbtHex,
           fromAddress,
           // inscription,
-          feeRate
+          feeRate,
+          enableRBF
         })
       );
       const rawTxInfo: RawTxInfo = {
@@ -539,7 +544,8 @@ export function usePrepareSendArc20Callback() {
           psbtHex,
           fromAddress,
           feeRate,
-          sendArc20Amount: amount
+          sendArc20Amount: amount,
+          enableRBF
         })
       );
       const rawTxInfo: RawTxInfo = {

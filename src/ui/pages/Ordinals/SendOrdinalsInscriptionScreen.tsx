@@ -108,7 +108,8 @@ export default function SendOrdinalsInscriptionScreen() {
     if (
       toInfo.address == ordinalsTx.toAddress &&
       feeRate == ordinalsTx.feeRate &&
-      outputValue == ordinalsTx.outputValue
+      outputValue == ordinalsTx.outputValue &&
+      enableRBF == ordinalsTx.enableRBF
     ) {
       //Prevent repeated triggering caused by setAmount
       setDisabled(false);
