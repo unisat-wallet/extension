@@ -12,11 +12,21 @@ export default function AdvancedScreen() {
 
   const [enableSignDataPopoverVisible, setEnableSignDataPopoverVisible] = useState(false);
 
+  const [init, setInit] = useState(false);
   useEffect(() => {
-    wallet.getEnableSignData().then((v) => {
-      setEnableSignData(v);
-    });
+    wallet
+      .getEnableSignData()
+      .then((v) => {
+        setEnableSignData(v);
+      })
+      .finally(() => {
+        setInit(true);
+      });
   }, []);
+
+  if (!init) {
+    return <Layout></Layout>;
+  }
 
   return (
     <Layout>
