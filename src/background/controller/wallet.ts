@@ -491,6 +491,11 @@ export class WalletController extends BaseController {
         }
       }
     });
+
+    if (keyring.type === KEYRING_TYPE.KeystoneKeyring) {
+      return psbt;
+    }
+
     psbt = await keyringService.signTransaction(_keyring, psbt, toSignInputs);
     if (autoFinalized) {
       toSignInputs.forEach((v) => {
@@ -1578,6 +1583,41 @@ export class WalletController extends BaseController {
     const current = await this.getCurrentAccount();
     if (!current) return false;
     return checkAddressFlag(current?.flag, AddressFlagType.Is_Enable_Atomicals);
+  };
+
+  checkKeyringMethod = async (method: string) => {
+    const account = await this.getCurrentAccount();
+    if (!account) throw new Error('no current account');
+    const keyring = await keyringService.getKeyringForAccount(account.pubkey);
+    if (!keyring) {
+      throw new Error('keyring does not exist');
+    }
+    if (!keyring[method]) {
+      throw new Error(`keyring does not have ${method} method`);
+    }
+    return { account, keyring };
+  };
+
+  genSignPsbtUr = async (psbtHex: string) => {
+    const { keyring } = await this.checkKeyringMethod('genSignPsbtUr');
+    return await keyring.genSignPsbtUr!(psbtHex);
+  };
+
+  parseSignPsbtUr = async (type: string, cbor: string) => {
+    const { keyring } = await this.checkKeyringMethod('parseSignPsbtUr');
+    return await keyring.parseSignPsbtUr!(type, cbor);
+  }
+
+  genSignMsgUr = async (text: string) => {
+    const { account, keyring } = await this.checkKeyringMethod('genSignMsgUr');
+    return await keyring.genSignMsgUr!(account.pubkey, text);
+  };
+
+  parseSignMsgUr = async (type: string, cbor: string) => {
+    const { keyring } = await this.checkKeyringMethod('parseSignMsgUr');
+    const sig = await keyring.parseSignMsgUr!(type, cbor);
+    keyringService.memStore.updateState({ keystone: sig });
+    return sig;
   };
 
   getEnableSignData = async () => {
