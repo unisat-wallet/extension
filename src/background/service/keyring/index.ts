@@ -55,6 +55,7 @@ export interface ToSignInput {
 }
 export interface Keyring {
   type: string;
+  mfp?: string;
   serialize(): Promise<any>;
   deserialize(opts: any): Promise<void>;
   addAccounts(n: number): Promise<string[]>;

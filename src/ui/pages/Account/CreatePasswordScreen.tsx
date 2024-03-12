@@ -13,7 +13,7 @@ export default function CreatePasswordScreen() {
   const navigate = useNavigate();
   const wallet = useWallet();
   const { state } = useLocation();
-  const { isNewAccount } = state as { isNewAccount: boolean };
+  const { isNewAccount, isKeystone } = state as { isNewAccount: boolean; isKeystone: boolean };
   const [password, setPassword] = useState('');
 
   const [password2, setPassword2] = useState('');
@@ -23,7 +23,9 @@ export default function CreatePasswordScreen() {
   const tools = useTools();
   const [run, loading] = useWalletRequest(wallet.boot, {
     onSuccess() {
-      if (isNewAccount) {
+      if (isKeystone) {
+        navigate('CreateKeystoneWalletScreen');
+      } else if (isNewAccount) {
         navigate('CreateHDWalletScreen', { isImport: false, fromUnlock: true });
       } else {
         navigate('CreateHDWalletScreen', { isImport: true, fromUnlock: true });
