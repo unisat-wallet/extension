@@ -3,16 +3,19 @@ import KeystoneDisplay from '@/ui/components/Keystone/Display';
 import KeystoneLogoWithText from '@/ui/components/Keystone/LogoWithText';
 import KeystoneScan from '@/ui/components/Keystone/Scan';
 import { $textPresets } from '@/ui/components/Text';
-import { usePushBitcoinTxCallback } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
-import { useApproval, useLocationState, useWallet } from '@/ui/utils';
+import { useWallet } from '@/ui/utils';
 import { useEffect, useState } from 'react';
-import { useNavigate } from '../MainRoute';
 
 interface Props {
   type: 'msg' | 'psbt';
   data: string;
-  isApproval?: boolean;
+  onSuccess?: (data: {
+    psbtHex?: string;
+    rawtx?: string;
+    signature?: string;
+  }) => void;
+  onBack: () => void;
 }
 
 function Step1(props: Props) {
@@ -24,9 +27,7 @@ function Step1(props: Props) {
 
   useEffect(() => {
     (async () => {
-      console.log(props)
       const ur = props.type === 'psbt' ? await wallet.genSignPsbtUr(props.data) : await wallet.genSignMsgUr(props.data);
-      console.log(ur)
       setUr(ur);
     })()
   }, [props])
@@ -43,20 +44,21 @@ function Step1(props: Props) {
 
 function Step2(props: Props) {
   const wallet = useWallet();
-  const navigate = useNavigate();
-  const [getApproval, resolveApproval, rejectApproval] = useApproval();
-  const pushBitcointx = usePushBitcoinTxCallback();
 
   const onSucceed = async ({ type, cbor }) => {
-    const res = props.type === 'psbt' ? await wallet.parseSignPsbtUr(type, cbor) : await wallet.parseSignMsgUr(type, cbor);
-    if (props.isApproval) {
-      resolveApproval();
-    } else {
-      const { txid, error, success } = await pushBitcointx((res as any).rawTxHex);
-      if (success) {
-        navigate('TxSuccessScreen', { txid });
+    if (props.type === 'psbt') {
+      const res = await wallet.parseSignPsbtUr(type, cbor);
+      if (props.onSuccess) {
+        props.onSuccess(res);
       } else {
-        navigate('TxFailScreen', { error });
+        throw new Error('onSuccess Not implemented');
+      }
+    } else if (props.type === 'msg') {
+      const res = await wallet.parseSignMsgUr(type, cbor);
+      if (props.onSuccess) {
+        props.onSuccess(res);
+      } else {
+        throw new Error('onSuccess Not implemented');
       }
     }
   }
@@ -68,9 +70,9 @@ function Step2(props: Props) {
   </Column>
 }
 
-export default function KeystoneSignScreen() {
-  const props = useLocationState<Props>();
+export default function KeystoneSignScreen(props: Props) {
   const [step, setStep] = useState(1);
+
   return <Layout>
     <Header
       onBack={() => {
@@ -87,7 +89,7 @@ export default function KeystoneSignScreen() {
     </Content>
     {step === 1 && <Footer>
       <Row full>
-        <Button preset='default' full text='Reject' onClick={() => window.history.go(-1)} />
+        <Button preset='default' full text='Reject' onClick={props.onBack} />
         <Button preset='primary' full text='Get Signature' onClick={() => setStep(2)} />
       </Row>
     </Footer>}
