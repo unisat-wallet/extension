@@ -10,6 +10,7 @@ interface Props {
   params: {
     data: {
       text: string;
+      type: string;
     };
     session: {
       origin: string;
@@ -36,7 +37,7 @@ export default function SignText({ params: { data, session } }: Props) {
   };
   if (isKeystoneSigning) {
     return <KeystoneSignScreen
-      type="msg"
+      type={data.type === 'bip322-simple' ? 'bip322-simple' : 'msg'}
       data={data.text}
       onSuccess={({ signature }) => {
         resolveApproval({ signature });
