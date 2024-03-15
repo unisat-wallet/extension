@@ -139,9 +139,9 @@ class ProviderController extends BaseController {
   @Reflect.metadata('APPROVAL', ['SignText', () => {
     // todo check text
   }])
-  signMessage = async ({ data: { params: { text, type } }, approvalRes: { signature } }) => {
-    if (signature) {
-      return signature
+  signMessage = async ({ data: { params: { text, type } }, approvalRes }) => {
+    if (approvalRes?.signature) {
+      return approvalRes.signature
     }
     if (type === 'bip322-simple') {
       return wallet.signBIP322Simple(text)
