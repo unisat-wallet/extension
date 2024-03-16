@@ -323,6 +323,7 @@ class KeyringService extends EventEmitter {
     this.memStore.updateState({ isUnlocked: false });
     // remove keyrings
     this.keyrings = [];
+    this.addressTypes = [];
     await this._updateMemStoreKeyrings();
     this.emit('lock');
     return this.fullUpdate();
