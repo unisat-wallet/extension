@@ -100,6 +100,12 @@ export interface WalletController {
     addressType: AddressType,
     accountCount: number
   ): Promise<{ address: string; type: string }[]>;
+  createKeyringWithKeystone(
+    urType: string,
+    urCbor: string,
+    addressType: AddressType,
+    accountCount: number
+  ): Promise<{ address: string; type: string }[]>;
 
   createTmpKeyringWithPrivateKey(privateKey: string, addressType: AddressType): Promise<WalletKeyring>;
 
@@ -124,6 +130,7 @@ export interface WalletController {
   getCurrentKeyringAccounts(): Promise<Account[]>;
 
   signTransaction(psbt: bitcoin.Psbt, inputs: ToSignInput[]): Promise<bitcoin.Psbt>;
+  signPsbtWithHex(psbtHex: string, toSignInputs: ToSignInput[], autoFinalized: boolean): Promise<string>;
 
   sendBTC(data: {
     to: string;
@@ -293,6 +300,14 @@ export interface WalletController {
   removeAddressFlag(account: Account, flag: AddressFlagType): Promise<Account>;
 
   getVersionDetail(version: string): Promise<VersionDetail>;
+
+  genSignPsbtUr(psbtHex: string): Promise<{ type: string; cbor: string }>;
+  parseSignPsbtUr(type: string, cbor: string, isFinalize?: boolean): Promise<{
+    psbtHex: string;
+    rawTx: string;
+  }>;
+  genSignMsgUr(text: string, msgType?: string): Promise<{ type: string; cbor: string; requestId: string }>;
+  parseSignMsgUr(type: string, cbor: string, msgType?: string): Promise<{ requestId: string; publicKey: string; signature: string }>;
 
   getEnableSignData(): Promise<boolean>;
   setEnableSignData(enable: boolean): Promise<void>;

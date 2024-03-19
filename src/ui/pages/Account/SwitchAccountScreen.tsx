@@ -19,6 +19,7 @@ import {
   PlusCircleOutlined
 } from '@ant-design/icons';
 
+import { KEYRING_TYPE } from '@/shared/constant';
 import { useNavigate } from '../MainRoute';
 
 export interface ItemData {
@@ -121,13 +122,13 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
               <CopyOutlined />
               <Text text="Copy address" size="sm" />
             </Row>
-            <Row
+            {account.type !== KEYRING_TYPE.KeystoneKeyring && <Row
               onClick={() => {
                 navigate('ExportPrivateKeyScreen', { account });
               }}>
               <KeyOutlined />
               <Text text="Export Private Key" size="sm" />
-            </Row>
+            </Row>}
           </Column>
         )}
       </Column>

@@ -13,6 +13,7 @@ import { useWallet } from '../utils';
 import AddKeyringScreen from './Account/AddKeyringScreen';
 import CreateAccountScreen from './Account/CreateAccountScreen';
 import CreateHDWalletScreen from './Account/CreateHDWalletScreen';
+import CreateKeystoneWalletScreen from './Account/CreateKeystoneWalletScreen';
 import CreatePasswordScreen from './Account/CreatePasswordScreen';
 import CreateSimpleWalletScreen from './Account/CreateSimpleWalletScreen';
 import SwitchAccountScreen from './Account/SwitchAccountScreen';
@@ -200,6 +201,10 @@ const routes = {
     path: '/account/create-simple-wallet',
     element: <CreateSimpleWalletScreen />
   },
+  CreateKeystoneWalletScreen: {
+    path: '/account/create-keystone-wallet',
+    element: <CreateKeystoneWalletScreen />
+  },
   UpgradeNoticeScreen: {
     path: '/settings/upgrade-notice',
     element: <UpgradeNoticeScreen />
@@ -235,7 +240,7 @@ const routes = {
   SplitOrdinalsInscriptionScreen: {
     path: '/wallet/split-tx/create',
     element: <SplitOrdinalsInscriptionScreen />
-  }
+  },
 };
 
 type RouteTypes = keyof typeof routes;

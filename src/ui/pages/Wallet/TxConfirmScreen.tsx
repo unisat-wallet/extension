@@ -25,8 +25,8 @@ export default function TxConfirmScreen() {
       handleCancel={() => {
         window.history.go(-1);
       }}
-      handleConfirm={() => {
-        pushBitcoinTx(rawTxInfo.rawtx).then(({ success, txid, error }) => {
+      handleConfirm={(res) => {
+        pushBitcoinTx((res ?? rawTxInfo).rawtx).then(({ success, txid, error }) => {
           if (success) {
             navigate('TxSuccessScreen', { txid });
           } else {

@@ -1,11 +1,16 @@
+import { KEYRING_TYPE } from '@/shared/constant';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import WebsiteBar from '@/ui/components/WebsiteBar';
+import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useApproval } from '@/ui/utils';
+import { useState } from 'react';
+import KeystoneSignScreen from '../../Wallet/KeystoneSignScreen';
 
 interface Props {
   params: {
     data: {
       text: string;
+      type: string;
     };
     session: {
       origin: string;
@@ -16,14 +21,32 @@ interface Props {
 }
 export default function SignText({ params: { data, session } }: Props) {
   const [getApproval, resolveApproval, rejectApproval] = useApproval();
+  const account = useCurrentAccount();
+  const [isKeystoneSigning, setIsKeystoneSigning] = useState(false);
 
   const handleCancel = () => {
     rejectApproval();
   };
 
   const handleConfirm = () => {
+    if (account.type === KEYRING_TYPE.KeystoneKeyring) {
+      setIsKeystoneSigning(true);
+      return
+    }
     resolveApproval();
   };
+  if (isKeystoneSigning) {
+    return <KeystoneSignScreen
+      type={data.type === 'bip322-simple' ? 'bip322-simple' : 'msg'}
+      data={data.text}
+      onSuccess={({ signature }) => {
+        resolveApproval({ signature });
+      }}
+      onBack={() => {
+        setIsKeystoneSigning(false);
+      }}
+    />;
+  }
   return (
     <Layout>
       <Content>

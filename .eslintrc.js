@@ -78,5 +78,8 @@ module.exports = {
         'react/prop-types': 'off'
       }
     }
-  ]
+  ],
+  globals: {
+    Buffer: true
+  }
 };

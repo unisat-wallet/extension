@@ -47,6 +47,18 @@ export default function AddKeyringScreen() {
               <Text text="Restore from single private key" size="sm" />
             </Column>
           </Card>
+
+          <Text text="Conncet Hardware Wallet" preset="regular-bold" mt="lg" />
+
+          <Card
+            justifyCenter
+            onClick={() => {
+              window.open('#/account/create-keystone-wallet');
+            }}>
+            <Column full justifyCenter>
+              <Text text="Keystone Wallet" size="sm" />
+            </Column>
+          </Card>
         </Column>
       </Content>
     </Layout>
