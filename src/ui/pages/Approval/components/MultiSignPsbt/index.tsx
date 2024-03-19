@@ -355,22 +355,22 @@ export default function MultiSignPsbt({
   const tabItems = arr;
 
   if (isKeystoneSigning) {
-    console.log('psbtHexs', txInfo.psbtHexs, signIndex);
     return <KeystoneSignScreen
       type="psbt"
       data={txInfo.psbtHexs[signIndex]}
       isFinalize={false}
+      signatureText={`Get Signature (${signIndex + 1}/${count})`}
+      id={signIndex}
       onSuccess={(data) => {
         txInfo.psbtHexs[signIndex] = data.psbtHex || '';
         if (signIndex === txInfo.psbtHexs.length - 1) {
           setIsKeystoneSigning(false);
           originalHandleConfirm();
         } else {
-          setSignIndex(signIndex + 1);
-          setIsKeystoneSigning(false);
+          tools.toastSuccess(`Get Signature Success (${signIndex + 1}/${count})`);
           setTimeout(() => {
-            setIsKeystoneSigning(true);
-          })
+            setSignIndex(signIndex + 1);
+          }, 1000);
         }
       }}
       onBack={() => {
