@@ -35,6 +35,7 @@ export function usePrepareSendBTCCallback() {
       feeRate,
       enableRBF,
       memo,
+      memos,
       disableAutoAdjust
     }: {
       toAddressInfo: ToAddressInfo;
@@ -42,6 +43,7 @@ export function usePrepareSendBTCCallback() {
       feeRate?: number;
       enableRBF: boolean;
       memo?: string;
+      memos?: string[];
       disableAutoAdjust?: boolean;
     }) => {
       let _utxos: UnspentOutput[] = (
@@ -81,7 +83,8 @@ export function usePrepareSendBTCCallback() {
           btcUtxos: _utxos,
           enableRBF,
           feeRate,
-          memo
+          memo,
+          memos
         });
       }
 

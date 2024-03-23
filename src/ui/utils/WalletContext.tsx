@@ -132,6 +132,7 @@ export interface WalletController {
     feeRate: number;
     enableRBF: boolean;
     memo?: string;
+    memos?: string[];
   }): Promise<string>;
 
   sendAllBTC(data: { to: string; btcUtxos: UnspentOutput[]; feeRate: number; enableRBF: boolean }): Promise<string>;

@@ -33,6 +33,7 @@ interface Props {
       satoshis?: number;
       feeRate?: number;
       memo?: string;
+      memos?: string[];
       inscriptionId?: string;
       rawTxInfo?: RawTxInfo;
     };
@@ -408,7 +409,7 @@ const initTxInfo: TxInfo = {
 
 export default function SignPsbt({
   params: {
-    data: { psbtHex, options, type, toAddress, satoshis, inscriptionId, feeRate, memo, rawTxInfo, ...rest },
+    data: { psbtHex, options, type, toAddress, satoshis, inscriptionId, feeRate, memo, memos, rawTxInfo, ...rest },
     session
   },
   header,
@@ -445,7 +446,9 @@ export default function SignPsbt({
             toAmount: satoshis,
             feeRate,
             enableRBF: false,
-            memo
+            memo,
+            memos,
+            disableAutoAdjust: true
           });
           psbtHex = rawTxInfo.psbtHex;
         } catch (e) {
