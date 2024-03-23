@@ -1,5 +1,5 @@
 import { Tabs, Tooltip } from 'antd';
-import { CSSProperties, useEffect, useMemo, useState } from 'react';
+import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 
 import { AddressFlagType, KEYRING_TYPE } from '@/shared/constant';
 import { Arc20Balance, Inscription, NetworkType, TokenBalance } from '@/shared/types';
@@ -30,6 +30,7 @@ import {
   useVersionInfo,
   useWalletConfig
 } from '@/ui/state/settings/hooks';
+import { useFetchUtxosCallback, useSafeBalance } from '@/ui/state/transactions/hooks';
 import {
   useAssetTabKey,
   useAtomicalsAssetTabKey,
@@ -38,7 +39,7 @@ import {
 } from '@/ui/state/ui/hooks';
 import { AssetTabKey, AtomicalsAssetTabKey, OrdinalsAssetTabKey, uiActions } from '@/ui/state/ui/reducer';
 import { fontSizes } from '@/ui/theme/font';
-import { useWallet } from '@/ui/utils';
+import { amountToSatoshis, satoshisToAmount, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
@@ -77,6 +78,23 @@ export default function WalletTabScreen() {
   const versionInfo = useVersionInfo();
 
   const [showSafeNotice, setShowSafeNotice] = useState(false);
+
+  const fetchUtxos = useFetchUtxosCallback();
+  const ref = useRef<{ fetchedUtxo: { [key: string]: { loading: boolean } } }>({
+    fetchedUtxo: {}
+  });
+  const [loadingFetch, setLoadingFetch] = useState(false);
+
+  const safeBalance = useSafeBalance();
+  const avaiableSatoshis = useMemo(() => {
+    return amountToSatoshis(safeBalance);
+  }, [safeBalance]);
+
+  const totalSatoshis = amountToSatoshis(accountBalance.amount);
+  const unavailableSatoshis = totalSatoshis - avaiableSatoshis;
+  const avaiableAmount = safeBalance;
+  const unavailableAmount = satoshisToAmount(unavailableSatoshis);
+  const totalAmount = satoshisToAmount(totalSatoshis);
 
   useEffect(() => {
     const run = async () => {
@@ -150,21 +168,48 @@ export default function WalletTabScreen() {
           <Tooltip
             placement={'bottom'}
             title={
-              <>
-                <Row justifyBetween>
-                  <span style={$noBreakStyle}>{'Confirmed BTC'}</span>
-                  <span style={$noBreakStyle}>{` ${accountBalance.confirm_btc_amount} BTC`}</span>
-                </Row>
-                <Row justifyBetween>
-                  <span style={$noBreakStyle}>{'Unconfirmed BTC'}</span>
-                  <span style={$noBreakStyle}>{` ${accountBalance.pending_btc_amount} BTC`}</span>
-                </Row>
-                <Row justifyBetween>
-                  <span style={$noBreakStyle}>{'BTC in Inscriptions'}</span>
-                  <span style={$noBreakStyle}>{` ${accountBalance.inscription_amount} BTC`}</span>
-                </Row>
-              </>
+              !loadingFetch ? (
+                <>
+                  <Row justifyBetween>
+                    <span style={$noBreakStyle}>{'Available '}</span>
+                    <span style={$noBreakStyle}>{` ${avaiableAmount} BTC`}</span>
+                  </Row>
+                  <Row justifyBetween>
+                    <span style={$noBreakStyle}>{'Unavailable '}</span>
+                    <span style={$noBreakStyle}>{` ${unavailableAmount} BTC`}</span>
+                  </Row>
+                  <Row justifyBetween>
+                    <span style={$noBreakStyle}>{'Total '}</span>
+                    <span style={$noBreakStyle}>{` ${totalAmount} BTC`}</span>
+                  </Row>
+                </>
+              ) : (
+                <>
+                  <Row justifyBetween>
+                    <span style={$noBreakStyle}>{'Available '}</span>
+                    <span style={$noBreakStyle}>{`loading...`}</span>
+                  </Row>
+                  <Row justifyBetween>
+                    <span style={$noBreakStyle}>{'Unavailable '}</span>
+                    <span style={$noBreakStyle}>{`loading...`}</span>
+                  </Row>
+                  <Row justifyBetween>
+                    <span style={$noBreakStyle}>{'Total '}</span>
+                    <span style={$noBreakStyle}>{` ${totalAmount} BTC`}</span>
+                  </Row>
+                </>
+              )
             }
+            onOpenChange={(v) => {
+              if (!ref.current.fetchedUtxo[currentAccount.address]) {
+                ref.current.fetchedUtxo[currentAccount.address] = { loading: true };
+                setLoadingFetch(true);
+                fetchUtxos().finally(() => {
+                  ref.current.fetchedUtxo[currentAccount.address].loading = false;
+                  setLoadingFetch(false);
+                });
+              }
+            }}
             overlayStyle={{
               fontSize: fontSizes.xs
             }}>
