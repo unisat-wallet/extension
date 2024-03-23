@@ -42,11 +42,11 @@ export function usePrepareSendBTCCallback() {
       enableRBF: boolean;
       memo?: string;
     }) => {
-      let _utxos = utxos.concat(
+      let _utxos: UnspentOutput[] = (
         spendUnavailableUtxos.map((v) => {
           return Object.assign({}, v, { inscriptions: [], atomicals: [] });
-        })
-      );
+        }) as any
+      ).concat(utxos);
       if (_utxos.length === 0) {
         _utxos = await fetchUtxos();
       }

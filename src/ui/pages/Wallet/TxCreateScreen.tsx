@@ -179,17 +179,18 @@ export default function TxCreateScreen() {
 
           <Row justifyBetween>
             <Text text="Available" color="gold" />
+            {spendUnavailableSatoshis > 0 && (
+              <Row>
+                <Text text={`${spendUnavailableAmount}`} size="sm" style={{ color: '#65D5F0' }} />
+                <Text text={`BTC`} size="sm" color="textDim" />
+                <Text text={`+`} size="sm" color="textDim" />
+              </Row>
+            )}
+
             <Row>
               <Text text={`${avaiableAmount}`} size="sm" color="gold" />
               <Text text={`BTC`} size="sm" color="textDim" />
             </Row>
-            {spendUnavailableSatoshis > 0 && (
-              <Row>
-                <Text text={`+`} size="sm" color="textDim" />
-                <Text text={`${spendUnavailableAmount}`} size="sm" color="gold" />
-                <Text text={`BTC`} size="sm" color="textDim" />
-              </Row>
-            )}
           </Row>
 
           <Row justifyBetween>
