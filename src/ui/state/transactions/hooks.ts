@@ -166,10 +166,15 @@ export function usePrepareSendOrdinalsInscriptionCallback() {
     }: {
       toAddressInfo: ToAddressInfo;
       inscriptionId: string;
-      feeRate: number;
-      outputValue: number;
+      feeRate?: number;
+      outputValue?: number;
       enableRBF: boolean;
     }) => {
+      if (!feeRate) {
+        const summary = await wallet.getFeeSummary();
+        feeRate = summary.list[1].feeRate;
+      }
+
       let btcUtxos = utxos;
       if (btcUtxos.length === 0) {
         btcUtxos = await fetchUtxos();

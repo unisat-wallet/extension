@@ -140,7 +140,7 @@ export interface WalletController {
     to: string;
     inscriptionId: string;
     feeRate: number;
-    outputValue: number;
+    outputValue?: number;
     enableRBF: boolean;
     btcUtxos: UnspentOutput[];
   }): Promise<string>;

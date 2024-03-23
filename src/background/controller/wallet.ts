@@ -813,7 +813,7 @@ export class WalletController extends BaseController {
     to: string;
     inscriptionId: string;
     feeRate: number;
-    outputValue: number;
+    outputValue?: number;
     enableRBF: boolean;
     btcUtxos?: UnspentOutput[];
   }) => {
@@ -848,7 +848,7 @@ export class WalletController extends BaseController {
       networkType,
       changeAddress: account.address,
       feeRate,
-      outputValue,
+      outputValue: outputValue || assetUtxo.satoshis,
       enableRBF,
       enableMixed: true
     });

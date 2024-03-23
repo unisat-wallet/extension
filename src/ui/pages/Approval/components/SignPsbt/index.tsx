@@ -15,7 +15,7 @@ import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks'
 import {
   usePrepareSendAtomicalsNFTCallback,
   usePrepareSendBTCCallback,
-  usePrepareSendOrdinalsInscriptionsCallback
+  usePrepareSendOrdinalsInscriptionCallback
 } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
@@ -422,7 +422,7 @@ export default function SignPsbt({
   const [tabState, setTabState] = useState(TabState.DATA);
 
   const prepareSendBTC = usePrepareSendBTCCallback();
-  const prepareSendOrdinalsInscriptions = usePrepareSendOrdinalsInscriptionsCallback();
+  const prepareSendOrdinalsInscription = usePrepareSendOrdinalsInscriptionCallback();
   const prepareSendAtomicalsInscription = usePrepareSendAtomicalsNFTCallback;
 
   const wallet = useWallet();
@@ -457,9 +457,9 @@ export default function SignPsbt({
     } else if (type === TxType.SEND_ORDINALS_INSCRIPTION) {
       if (!psbtHex && toAddress && inscriptionId) {
         try {
-          const rawTxInfo = await prepareSendOrdinalsInscriptions({
+          const rawTxInfo = await prepareSendOrdinalsInscription({
             toAddressInfo: { address: toAddress, domain: '' },
-            inscriptionIds: [inscriptionId],
+            inscriptionId: inscriptionId,
             feeRate,
             enableRBF: false
           });
