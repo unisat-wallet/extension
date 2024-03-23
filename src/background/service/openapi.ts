@@ -194,6 +194,12 @@ export class OpenApiService {
     });
   }
 
+  async getUnavailableUtxos(address: string): Promise<UTXO[]> {
+    return this.httpGet('/address/unavailable-utxo', {
+      address
+    });
+  }
+
   async getBTCUtxos(address: string): Promise<UTXO[]> {
     return this.httpGet('/address/btc-utxo', {
       address

@@ -100,6 +100,10 @@ export function shortDesc(desc?: string, len = 50) {
   return desc.slice(0, len) + '...';
 }
 
+export function shortUtxo(txid: string, vout: number) {
+  return txid.slice(0, 8) + '...:' + vout;
+}
+
 export async function sleep(timeSec: number) {
   return new Promise((resolve) => {
     setTimeout(() => {

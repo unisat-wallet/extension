@@ -61,6 +61,7 @@ export interface TransactionsState {
   ordinalsTx: OrdinalsTx;
   atomicalsTx: AtomicalsTx;
   utxos: UnspentOutput[];
+  spendUnavailableUtxos: UnspentOutput[];
   assetUtxos_atomicals_ft: UnspentOutput[];
   assetUtxos_atomicals_nft: UnspentOutput[];
   assetUtxos_inscriptions: UnspentOutput[];
@@ -87,8 +88,8 @@ export const initialState: TransactionsState = {
     fromAddress: '',
     toAddress: '',
     inscription: {
-      id: '',
-      num: 0
+      inscriptionId: '',
+      inscriptionNumber: 0
     },
     rawtx: '',
     txid: '',
@@ -106,8 +107,8 @@ export const initialState: TransactionsState = {
     fromAddress: '',
     toAddress: '',
     inscription: {
-      id: '',
-      num: 0
+      inscriptionId: '',
+      inscriptionNumber: 0
     },
     rawtx: '',
     txid: '',
@@ -122,6 +123,7 @@ export const initialState: TransactionsState = {
     enableRBF: false
   },
   utxos: [],
+  spendUnavailableUtxos: [],
   assetUtxos_atomicals_ft: [],
   assetUtxos_atomicals_nft: [],
   assetUtxos_inscriptions: []
@@ -207,6 +209,9 @@ const slice = createSlice({
     setUtxos(state, action: { payload: UnspentOutput[] }) {
       state.utxos = action.payload;
     },
+    setSpendUnavailableUtxos(state, action: { payload: UnspentOutput[] }) {
+      state.spendUnavailableUtxos = action.payload;
+    },
     setAssetUtxosAtomicalsFT(state, action: { payload: UnspentOutput[] }) {
       state.assetUtxos_atomicals_ft = action.payload;
     },
@@ -234,6 +239,10 @@ const slice = createSlice({
 
       if (!state.assetUtxos_inscriptions) {
         state.assetUtxos_inscriptions = [];
+      }
+
+      if (!state.spendUnavailableUtxos) {
+        state.spendUnavailableUtxos = [];
       }
     });
   }

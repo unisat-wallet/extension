@@ -92,6 +92,15 @@ export function useUnisatWebsite() {
   }
 }
 
+export function useOrdinalsWebsite() {
+  const networkType = useNetworkType();
+  if (networkType === NetworkType.MAINNET) {
+    return 'https://ordinals.com';
+  } else {
+    return 'https://testnet.ordinals.com';
+  }
+}
+
 export function useWalletConfig() {
   const accountsState = useSettingsState();
   return accountsState.walletConfig;

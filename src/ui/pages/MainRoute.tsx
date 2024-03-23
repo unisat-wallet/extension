@@ -53,6 +53,7 @@ import TxConfirmScreen from './Wallet/TxConfirmScreen';
 import TxCreateScreen from './Wallet/TxCreateScreen';
 import TxFailScreen from './Wallet/TxFailScreen';
 import TxSuccessScreen from './Wallet/TxSuccessScreen';
+import UnavailableUtxoScreen from './Wallet/UnavailableUtxoScreen';
 import './index.module.less';
 
 const routes = {
@@ -235,6 +236,10 @@ const routes = {
   SplitOrdinalsInscriptionScreen: {
     path: '/wallet/split-tx/create',
     element: <SplitOrdinalsInscriptionScreen />
+  },
+  UnavailableUtxoScreen: {
+    path: '/wallet/unavailable-utxo',
+    element: <UnavailableUtxoScreen />
   }
 };
 

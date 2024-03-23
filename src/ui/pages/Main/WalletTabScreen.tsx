@@ -30,7 +30,12 @@ import {
   useVersionInfo,
   useWalletConfig
 } from '@/ui/state/settings/hooks';
-import { useAssetTabKey, useAtomicalsAssetTabKey, useOrdinalsAssetTabKey } from '@/ui/state/ui/hooks';
+import {
+  useAssetTabKey,
+  useAtomicalsAssetTabKey,
+  useOrdinalsAssetTabKey,
+  useResetUiTxCreateScreen
+} from '@/ui/state/ui/hooks';
 import { AssetTabKey, AtomicalsAssetTabKey, OrdinalsAssetTabKey, uiActions } from '@/ui/state/ui/reducer';
 import { fontSizes } from '@/ui/theme/font';
 import { useWallet } from '@/ui/utils';
@@ -106,7 +111,7 @@ export default function WalletTabScreen() {
   ];
 
   const blockstreamUrl = useBlockstreamUrl();
-
+  const resetUiTxCreateScreen = useResetUiTxCreateScreen();
   return (
     <Layout>
       <Header
@@ -197,6 +202,7 @@ export default function WalletTabScreen() {
               preset="default"
               icon="send"
               onClick={(e) => {
+                resetUiTxCreateScreen();
                 navigate('TxCreateScreen');
               }}
               full

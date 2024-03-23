@@ -168,6 +168,7 @@ export interface WalletController {
   getInscriptionSummary(): Promise<InscriptionSummary>;
   getAppSummary(): Promise<AppSummary>;
   getBTCUtxos(): Promise<UnspentOutput[]>;
+  getUnavailableUtxos(): Promise<UnspentOutput[]>;
   getAssetUtxosAtomicalsFT(ticker: string): Promise<UnspentOutput[]>;
   getAssetUtxosAtomicalsNFT(atomicalId: string): Promise<UnspentOutput[]>;
   getAssetUtxosInscriptions(inscriptionId: string): Promise<UnspentOutput[]>;

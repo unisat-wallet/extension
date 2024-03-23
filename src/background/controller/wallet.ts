@@ -20,7 +20,8 @@ import {
   KEYRING_TYPES,
   NETWORK_TYPES,
   OPENAPI_URL_MAINNET,
-  OPENAPI_URL_TESTNET
+  OPENAPI_URL_TESTNET,
+  UNCONFIRMED_HEIGHT
 } from '@/shared/constant';
 import {
   Account,
@@ -670,7 +671,7 @@ export class WalletController extends BaseController {
     let utxos = await openapiService.getBTCUtxos(account.address);
 
     if (openapiService.addressFlag == 1) {
-      utxos = utxos.filter((v) => (v as any).height !== 4194303);
+      utxos = utxos.filter((v) => (v as any).height !== UNCONFIRMED_HEIGHT);
     }
 
     const btcUtxos = utxos.map((v) => {
@@ -686,6 +687,25 @@ export class WalletController extends BaseController {
       };
     });
     return btcUtxos;
+  };
+
+  getUnavailableUtxos = async () => {
+    const account = preferenceService.getCurrentAccount();
+    if (!account) throw new Error('no current account');
+    const utxos = await openapiService.getUnavailableUtxos(account.address);
+    const unavailableUtxos = utxos.map((v) => {
+      return {
+        txid: v.txid,
+        vout: v.vout,
+        satoshis: v.satoshis,
+        scriptPk: v.scriptPk,
+        addressType: v.addressType,
+        pubkey: account.pubkey,
+        inscriptions: v.inscriptions,
+        atomicals: v.atomicals
+      };
+    });
+    return unavailableUtxos;
   };
 
   getAssetUtxosAtomicalsFT = async (ticker: string) => {

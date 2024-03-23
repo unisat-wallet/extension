@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { RawTxInfo, ToAddressInfo } from '@/shared/types';
 import { useTools } from '@/ui/components/ActionComponent';
 import { satoshisToAmount, satoshisToBTC, sleep, useWallet } from '@/ui/utils';
+import { UnspentOutput } from '@unisat/wallet-sdk';
 import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 
 import { AppState } from '..';
@@ -25,6 +26,7 @@ export function usePrepareSendBTCCallback() {
   const wallet = useWallet();
   const fromAddress = useAccountAddress();
   const utxos = useUtxos();
+  const spendUnavailableUtxos = useSpendUnavailableUtxos();
   const fetchUtxos = useFetchUtxosCallback();
   return useCallback(
     async ({
@@ -40,7 +42,11 @@ export function usePrepareSendBTCCallback() {
       enableRBF: boolean;
       memo?: string;
     }) => {
-      let _utxos = utxos;
+      let _utxos = utxos.concat(
+        spendUnavailableUtxos.map((v) => {
+          return Object.assign({}, v, { inscriptions: [], atomicals: [] });
+        })
+      );
       if (_utxos.length === 0) {
         _utxos = await fetchUtxos();
       }
@@ -97,7 +103,7 @@ export function usePrepareSendBTCCallback() {
       };
       return rawTxInfo;
     },
-    [dispatch, wallet, fromAddress, utxos, fetchUtxos]
+    [dispatch, wallet, fromAddress, utxos, fetchUtxos, spendUnavailableUtxos]
   );
 }
 
@@ -367,6 +373,21 @@ export function useFetchUtxosCallback() {
     dispatch(transactionsActions.setUtxos(data));
     return data;
   }, [wallet, account]);
+}
+
+export function useSpendUnavailableUtxos() {
+  const transactionsState = useTransactionsState();
+  return transactionsState.spendUnavailableUtxos;
+}
+
+export function useSetSpendUnavailableUtxosCallback() {
+  const dispatch = useAppDispatch();
+  return useCallback(
+    (utxos: UnspentOutput[]) => {
+      dispatch(transactionsActions.setSpendUnavailableUtxos(utxos));
+    },
+    [dispatch]
+  );
 }
 
 export function useAssetUtxosAtomicalsFT() {
