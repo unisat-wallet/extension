@@ -241,7 +241,8 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
         toAddressInfo: { address: order.payAddress, domain: '' },
         toAmount: order.totalFee,
         feeRate: feeRate,
-        enableRBF
+        enableRBF,
+        disableAutoAdjust: true
       });
       updateContextData({ order, amount, rawTxInfo, step: Step.STEP2 });
     } catch (e) {

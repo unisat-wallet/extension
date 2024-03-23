@@ -34,13 +34,15 @@ export function usePrepareSendBTCCallback() {
       toAmount,
       feeRate,
       enableRBF,
-      memo
+      memo,
+      disableAutoAdjust
     }: {
       toAddressInfo: ToAddressInfo;
       toAmount: number;
       feeRate?: number;
       enableRBF: boolean;
       memo?: string;
+      disableAutoAdjust?: boolean;
     }) => {
       let _utxos: UnspentOutput[] = (
         spendUnavailableUtxos.map((v) => {
@@ -65,7 +67,7 @@ export function usePrepareSendBTCCallback() {
       }
       let psbtHex = '';
 
-      if (safeBalance === toAmount) {
+      if (safeBalance === toAmount && !disableAutoAdjust) {
         psbtHex = await wallet.sendAllBTC({
           to: toAddressInfo.address,
           btcUtxos: _utxos,
