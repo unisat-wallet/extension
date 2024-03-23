@@ -295,7 +295,7 @@ export class OpenApiService {
   }
 
   async decodePsbt(psbtHex: string): Promise<DecodedPsbt> {
-    return this.httpPost('/tx/decode', { psbtHex });
+    return this.httpPost('/tx/decode2', { psbtHex });
   }
 
   async createMoonpayUrl(address: string): Promise<string> {

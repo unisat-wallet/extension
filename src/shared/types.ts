@@ -74,6 +74,13 @@ export interface Inscription {
   contentBody: string;
   utxoHeight: number;
   utxoConfirmation: number;
+  brc20?: {
+    op: string;
+    tick: string;
+    lim: string;
+    amt: string;
+    decimal: string;
+  };
 }
 
 export interface Atomical {
@@ -270,6 +277,29 @@ export interface AddressTokenSummary {
   transferableList: TokenTransfer[];
 }
 
+export enum RiskType {
+  SIGHASH_NONE,
+  SCAMMER_ADDRESS,
+  UNCONFIRMED_UTXO,
+  INSCRIPTION_BURNING,
+  ATOMICALS_DISABLE,
+  ATOMICALS_NFT_BURNING,
+  ATOMICALS_FT_BURNING,
+  MULTIPLE_ASSETS,
+  LOW_FEE_RATE,
+  HIGH_FEE_RATE,
+  SPLITTING_INSCRIPTIONS,
+  MERGING_INSCRIPTIONS,
+  CHANGING_INSCRIPTION
+}
+
+export interface Risk {
+  type: RiskType;
+  level: 'danger' | 'warning';
+  title: string;
+  desc: string;
+}
+
 export interface DecodedPsbt {
   inputInfos: {
     txid: string;
@@ -292,7 +322,7 @@ export interface DecodedPsbt {
   features: {
     rbf: boolean;
   };
-  risks: { level: 'high' | 'low'; desc: string }[];
+  risks: Risk[];
 }
 
 export interface ToAddressInfo {

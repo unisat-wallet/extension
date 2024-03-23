@@ -13,6 +13,7 @@ export interface BRC20PreviewProps {
   type?: string;
   selected?: boolean;
   onClick?: () => void;
+  preset?: 'small' | 'medium' | 'large';
 }
 
 export default function BRC20Preview({
@@ -22,7 +23,8 @@ export default function BRC20Preview({
   timestamp,
   type,
   selected,
-  onClick
+  onClick,
+  preset
 }: BRC20PreviewProps) {
   if (!balance) {
     balance = 'deploy';
@@ -37,14 +39,26 @@ export default function BRC20Preview({
   } else {
     balanceSize = 'sm';
   }
+
+  let width = 100;
+  let height = 130;
+  let bodyHeight = 90;
+  let numberSize: any = 'md';
+  if (preset === 'small') {
+    width = 80;
+    height = 90;
+    bodyHeight = 60;
+    numberSize = 'xs';
+    balanceSize = 'sm';
+  }
   return (
     <Column
-      style={{ backgroundColor: colors.bg4, width: 100, height: 130, minWidth: 100, minHeight: 130, borderRadius: 5 }}
+      style={{ backgroundColor: colors.bg4, width, height, minWidth: width, minHeight: height, borderRadius: 5 }}
       onClick={onClick}>
       <Column
         style={{
           padding: 8,
-          height: 96,
+          height: bodyHeight,
           backgroundColor: type === 'TRANSFER' ? (selected ? 'green' : '#002514') : '#000',
           borderTopLeftRadius: 5,
           borderTopRightRadius: 5
@@ -58,7 +72,7 @@ export default function BRC20Preview({
 
       <Column px="sm" pb="sm" gap="sm">
         <Row justifyBetween>
-          <Text text={`#${inscriptionNumber}`} color="primary" />
+          <Text text={`#${inscriptionNumber}`} color="primary" size={numberSize} />
           {selected && <Icon icon="circle-check" color="green" style={{ marginRight: 5 }} />}
         </Row>
       </Column>

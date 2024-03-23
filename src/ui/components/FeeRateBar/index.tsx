@@ -15,13 +15,17 @@ enum FeeRateType {
   CUSTOM
 }
 
-export function FeeRateBar({ onChange }: { onChange: (val: number) => void }) {
+export function FeeRateBar({ readonly, onChange }: { readonly?: boolean; onChange?: (val: number) => void }) {
   const wallet = useWallet();
   const [feeOptions, setFeeOptions] = useState<{ title: string; desc?: string; feeRate: number }[]>([]);
 
   useEffect(() => {
     wallet.getFeeSummary().then((v) => {
-      setFeeOptions([...v.list, { title: 'Custom', feeRate: 0 }]);
+      if (readonly) {
+        setFeeOptions(v.list);
+      } else {
+        setFeeOptions([...v.list, { title: 'Custom', feeRate: 0 }]);
+      }
     });
   }, []);
 
@@ -38,7 +42,7 @@ export function FeeRateBar({ onChange }: { onChange: (val: number) => void }) {
     } else if (feeOptions.length > 0) {
       val = feeOptions[feeOptionIndex].feeRate;
     }
-    onChange(val);
+    onChange && onChange(val);
   }, [feeOptions, feeOptionIndex, feeRateInputVal]);
 
   const adjustFeeRateInput = (inputVal: string) => {
@@ -59,11 +63,18 @@ export function FeeRateBar({ onChange }: { onChange: (val: number) => void }) {
     <Column>
       <Row justifyCenter>
         {feeOptions.map((v, index) => {
-          const selected = index === feeOptionIndex;
+          let selected = index === feeOptionIndex;
+          if (readonly) {
+            selected = false;
+          }
+
           return (
             <div
               key={v.title}
               onClick={() => {
+                if (readonly) {
+                  return;
+                }
                 setFeeOptionIndex(index);
               }}
               style={Object.assign(

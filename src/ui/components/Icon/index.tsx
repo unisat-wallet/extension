@@ -44,7 +44,8 @@ export const svgRegistry = {
   atomicals: '/images/icons/atomicals.svg',
   info: '/images/icons/info.svg',
   warning: '/images/icons/warning.svg',
-
+  alert: '/images/icons/alert.svg',
+  burn: ' /images/icons/burn.svg'
 };
 
 const iconImgList: Array<IconTypes> = ['success', 'delete', 'btc'];
