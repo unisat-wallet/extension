@@ -203,7 +203,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
                 <AssetTag type="Inscription" />
               </Row>
 
-              <Row justifyBetween overflowX>
+              <Row overflowX>
                 {inscriptionArray.map((inscription, index) => {
                   return <InscriptionPreview key={'inscription_' + index} data={inscription} preset="small" />;
                 })}
@@ -227,7 +227,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
                 <AssetTag type="ARC20" />
               </Row>
 
-              <Row justifyBetween overflowX>
+              <Row overflowX>
                 {arc20Array.map((w, index) => {
                   return <Arc20PreviewCard key={w.ticker} ticker={w.ticker || ''} amt={w.amt} />;
                 })}
@@ -251,7 +251,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
                 <AssetTag type="BRC20" />
               </Row>
 
-              <Row justifyBetween overflowX>
+              <Row overflowX>
                 {brc20Array.map((w, index) => {
                   return (
                     <BRC20Preview
