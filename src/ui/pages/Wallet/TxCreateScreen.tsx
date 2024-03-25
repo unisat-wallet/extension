@@ -195,11 +195,12 @@ export default function TxCreateScreen() {
 
           <Row justifyBetween>
             <Text
-              text="Unavailable >"
+              text="Unavailable"
+              // text="Unavailable >"
               color="textDim"
-              onClick={() => {
-                navigate('UnavailableUtxoScreen');
-              }}
+              // onClick={() => {
+              //   navigate('UnavailableUtxoScreen');
+              // }}
             />
 
             {spendUnavailableSatoshis > 0 ? (
