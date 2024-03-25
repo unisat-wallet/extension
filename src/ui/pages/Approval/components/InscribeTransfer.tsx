@@ -180,6 +180,11 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
         return;
       }
     }
+
+    if (!inputAmount) {
+      return;
+    }
+
     const amount = new BigNumber(inputAmount);
     if (!amount) {
       return;
