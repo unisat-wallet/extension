@@ -3,7 +3,8 @@ import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useApproval } from '@/ui/utils';
-import { useNavigate } from '../../MainRoute';
+import { useState } from 'react';
+import KeystoneSignScreen from '../../Wallet/KeystoneSignScreen';
 
 interface Props {
   params: {
@@ -20,7 +21,7 @@ interface Props {
 export default function SignText({ params: { data, session } }: Props) {
   const [getApproval, resolveApproval, rejectApproval] = useApproval();
   const account = useCurrentAccount();
-  const navigate = useNavigate();
+  const [isKeystoneSigning, setIsKeystoneSigning] = useState(false);
 
   const handleCancel = () => {
     rejectApproval();
@@ -28,11 +29,23 @@ export default function SignText({ params: { data, session } }: Props) {
 
   const handleConfirm = () => {
     if (account.type === KEYRING_TYPE.KeystoneKeyring) {
-      navigate('KeystoneSignScreen', { data: data.text, type: 'msg', isApproval: true });
+      setIsKeystoneSigning(true);
       return
     }
     resolveApproval();
   };
+  if (isKeystoneSigning) {
+    return <KeystoneSignScreen
+      type="msg"
+      data={data.text}
+      onSuccess={({ signature }) => {
+        resolveApproval({ signature });
+      }}
+      onBack={() => {
+        setIsKeystoneSigning(false);
+      }}
+    />;
+  }
   return (
     <Layout>
       <Content>

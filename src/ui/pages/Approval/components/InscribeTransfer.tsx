@@ -571,8 +571,8 @@ function InscribeSignStep({
           }
         }
       }}
-      handleConfirm={() => {
-        pushBitcoinTx(contextData.rawTxInfo!.rawtx).then(({ success, txid, error }) => {
+      handleConfirm={(res) => {
+        pushBitcoinTx((res ?? contextData.rawTxInfo!).rawtx).then(({ success, txid, error }) => {
           if (success) {
             updateContextData({
               step: Step.STEP4

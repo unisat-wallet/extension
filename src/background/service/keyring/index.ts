@@ -33,7 +33,6 @@ interface MemStoreState {
   keyringTypes: any[];
   keyrings: any[];
   preMnemonics: string;
-  keystone: any;
 }
 
 export interface DisplayedKeyring {
@@ -568,9 +567,6 @@ class KeyringService extends EventEmitter {
    */
   signMessage = async (address: string, data: string) => {
     const keyring = await this.getKeyringForAccount(address);
-    if (keyring.type === KEYRING_TYPE.KeystoneKeyring) {
-      return Buffer.from(this.memStore.getState().keystone.signature, 'hex').toString('base64');
-    }
     const sig = await keyring.signMessage(address, data);
     return sig;
   };

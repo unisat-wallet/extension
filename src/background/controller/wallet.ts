@@ -1678,7 +1678,7 @@ export class WalletController extends BaseController {
     psbt.finalizeAllInputs();
     return {
       psbtHex: psbt.toHex(),
-      rawTxHex: psbt.extractTransaction().toHex(),
+      rawtx: psbt.extractTransaction().toHex(),
     };
   }
 
@@ -1690,7 +1690,7 @@ export class WalletController extends BaseController {
   parseSignMsgUr = async (type: string, cbor: string) => {
     const { keyring } = await this.checkKeyringMethod('parseSignMsgUr');
     const sig = await keyring.parseSignMsgUr!(type, cbor);
-    keyringService.memStore.updateState({ keystone: sig });
+    sig.signature = Buffer.from(sig.signature, 'hex').toString('base64');
     return sig;
   };
 
