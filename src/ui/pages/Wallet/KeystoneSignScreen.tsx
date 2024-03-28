@@ -1,4 +1,5 @@
 import { Button, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
+import { useTools } from '@/ui/components/ActionComponent';
 import KeystoneDisplay from '@/ui/components/Keystone/Display';
 import KeystoneLogoWithText from '@/ui/components/Keystone/LogoWithText';
 import KeystoneScan from '@/ui/components/Keystone/Scan';
@@ -8,8 +9,9 @@ import { useWallet } from '@/ui/utils';
 import { useEffect, useState } from 'react';
 
 interface Props {
-  type: 'msg' | 'psbt';
+  type: 'msg' | 'psbt' | 'bip322-simple';
   data: string;
+  isFinalize?: boolean;
   onSuccess?: (data: {
     psbtHex?: string;
     rawtx?: string;
@@ -24,18 +26,22 @@ function Step1(props: Props) {
     type: '',
     cbor: '',
   });
+  const tools = useTools();
 
   useEffect(() => {
-    (async () => {
-      const ur = props.type === 'psbt' ? await wallet.genSignPsbtUr(props.data) : await wallet.genSignMsgUr(props.data);
+    const p = props.type === 'psbt' ? wallet.genSignPsbtUr(props.data) : wallet.genSignMsgUr(props.data, props.type);
+    p.then(ur => {
       setUr(ur);
-    })()
+    }).catch(err => {
+      console.error(err);
+      tools.toastError(err.message);
+    })
   }, [props])
 
   return <Column itemsCenter gap='xl' style={{ maxWidth: 306 }}>
     <KeystoneLogoWithText width={160} height={38} />
     <Text text="Scan the QR code displayed on your Keystone device" preset="title" textCenter />
-    {ur.type && <KeystoneDisplay type={ur.type} cbor={ur.cbor} />}
+    <KeystoneDisplay type={ur.type} cbor={ur.cbor} />
     <div style={{ ...$textPresets.sub, textAlign: 'center' }}>
       Click on the <span style={{ color: colors.primary }}>'Get Signature'</span> button after signing the transaction with your Keystone device.
     </div>
@@ -47,14 +53,14 @@ function Step2(props: Props) {
 
   const onSucceed = async ({ type, cbor }) => {
     if (props.type === 'psbt') {
-      const res = await wallet.parseSignPsbtUr(type, cbor);
+      const res = await wallet.parseSignPsbtUr(type, cbor, props.isFinalize === false ? false : true);
       if (props.onSuccess) {
         props.onSuccess(res);
       } else {
         throw new Error('onSuccess Not implemented');
       }
-    } else if (props.type === 'msg') {
-      const res = await wallet.parseSignMsgUr(type, cbor);
+    } else {
+      const res = await wallet.parseSignMsgUr(type, cbor, props.type);
       if (props.onSuccess) {
         props.onSuccess(res);
       } else {
