@@ -1,5 +1,6 @@
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
+import { KEYRING_TYPE } from '@/shared/constant';
 import { DecodedPsbt, Inscription, SignPsbtOptions, ToSignInput } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Layout, Row, Text, TextArea } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -9,6 +10,7 @@ import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { TabBar } from '@/ui/components/TabBar';
 import { WarningPopover } from '@/ui/components/WarningPopover';
 import WebsiteBar from '@/ui/components/WebsiteBar';
+import KeystoneSignScreen from '@/ui/pages/Wallet/KeystoneSignScreen';
 import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
@@ -173,8 +175,11 @@ export default function MultiSignPsbt({
   const [loading, setLoading] = useState(true);
 
   const tools = useTools();
+  const currentAccount = useCurrentAccount();
 
   const [isWarningVisible, setIsWarningVisible] = useState(false);
+  const [isKeystoneSigning, setIsKeystoneSigning] = useState(false);
+  const [signIndex, setSignIndex] = useState(0);
 
   const init = async () => {
     let txError = '';
@@ -198,6 +203,7 @@ export default function MultiSignPsbt({
         toSignInputsArray.push(toSignInputs);
       }
     } catch (e) {
+      console.error(e);
       txError = (e as Error).message;
       tools.toastError(txError);
     }
@@ -251,12 +257,24 @@ export default function MultiSignPsbt({
     };
   }
 
+  const originalHandleConfirm = handleConfirm;
+  if (currentAccount.type === KEYRING_TYPE.KeystoneKeyring) {
+    handleConfirm = () => {
+      if (txInfo.currentIndex < txInfo.psbtHexs.length - 1) {
+        updateTxInfo({
+          currentIndex: txInfo.currentIndex + 1
+        });
+        return;
+      }
+      setIsKeystoneSigning(true);
+    }
+  }
+
   const decodedPsbt = useMemo(() => txInfo.decodedPsbts[txInfo.currentIndex], [txInfo]);
   const psbtHex = useMemo(() => txInfo.psbtHexs[txInfo.currentIndex], [txInfo]);
   const toSignInputs = useMemo(() => txInfo.toSignInputsArray[txInfo.currentIndex], [txInfo]);
 
   const networkFee = useMemo(() => (decodedPsbt ? satoshisToAmount(decodedPsbt.fee) : 0), [decodedPsbt]);
-  const currentAccount = useCurrentAccount();
   const detailsComponent = useMemo(() => {
     if (decodedPsbt) {
       return <SignTxDetails decodedPsbt={decodedPsbt} />;
@@ -335,6 +353,32 @@ export default function MultiSignPsbt({
     });
   }
   const tabItems = arr;
+
+  if (isKeystoneSigning) {
+    console.log('psbtHexs', txInfo.psbtHexs, signIndex);
+    return <KeystoneSignScreen
+      type="psbt"
+      data={txInfo.psbtHexs[signIndex]}
+      isFinalize={false}
+      onSuccess={(data) => {
+        txInfo.psbtHexs[signIndex] = data.psbtHex || '';
+        if (signIndex === txInfo.psbtHexs.length - 1) {
+          setIsKeystoneSigning(false);
+          originalHandleConfirm();
+        } else {
+          setSignIndex(signIndex + 1);
+          setIsKeystoneSigning(false);
+          setTimeout(() => {
+            setIsKeystoneSigning(true);
+          })
+        }
+      }}
+      onBack={() => {
+        setIsKeystoneSigning(false);
+      }}
+    />
+  }
+
   return (
     <Layout>
       {header}
