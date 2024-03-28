@@ -1,5 +1,6 @@
 /* eslint-disable quotes */
 import { Button, Column, Content, Layout, Logo, Row, Text } from '@/ui/components';
+import { useExtensionIsInTab, useOpenConnectKeystoneInTab } from '@/ui/features/browser/tabs';
 import { useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
@@ -7,6 +8,8 @@ import { useNavigate } from '../MainRoute';
 export default function WelcomeScreen() {
   const navigate = useNavigate();
   const wallet = useWallet();
+  const isInTab = useExtensionIsInTab();
+  const openKeystoneConnectInTab = useOpenConnectKeystoneInTab();
 
   return (
     <Layout>
@@ -50,11 +53,16 @@ export default function WelcomeScreen() {
               text="Connect Keystone"
               preset="default"
               onClick={async () => {
-                const isBooted = await wallet.isBooted();
-                if (isBooted) {
-                  navigate('CreateKeystoneWalletScreen');
+                if (isInTab) {
+                  const isBooted = await wallet.isBooted();
+
+                  if (isBooted) {
+                    navigate('CreateKeystoneWalletScreen');
+                  } else {
+                    navigate('CreatePasswordScreen', { isKeystone: true });
+                  }
                 } else {
-                  navigate('CreatePasswordScreen', { isKeystone: true });
+                  openKeystoneConnectInTab();
                 }
               }}
             />

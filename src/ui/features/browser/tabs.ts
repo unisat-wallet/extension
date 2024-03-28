@@ -14,6 +14,12 @@ export const openExtensionInTab = async () => {
   return tab;
 };
 
+export const openKeystoneConnectInTab = async () => {
+  const url = browser.runtime.getURL('index.html#/account/create-keystone-wallet');
+  const tab = await browserTabsCreate({ url });
+  return tab;
+};
+
 export const extensionIsInTab = async () => {
   return Boolean(await browserTabsGetCurrent());
 };
@@ -40,6 +46,13 @@ export const useExtensionIsInTab = () => {
 export const useOpenExtensionInTab = () => {
   return useCallback(async () => {
     await openExtensionInTab();
+    window.close();
+  }, []);
+};
+
+export const useOpenConnectKeystoneInTab = () => {
+  return useCallback(async () => {
+    await openKeystoneConnectInTab();
     window.close();
   }, []);
 };
