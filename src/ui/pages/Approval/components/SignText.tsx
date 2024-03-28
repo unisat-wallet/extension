@@ -1,6 +1,9 @@
+import { KEYRING_TYPE } from '@/shared/constant';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import WebsiteBar from '@/ui/components/WebsiteBar';
+import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useApproval } from '@/ui/utils';
+import { useNavigate } from '../../MainRoute';
 
 interface Props {
   params: {
@@ -16,12 +19,18 @@ interface Props {
 }
 export default function SignText({ params: { data, session } }: Props) {
   const [getApproval, resolveApproval, rejectApproval] = useApproval();
+  const account = useCurrentAccount();
+  const navigate = useNavigate();
 
   const handleCancel = () => {
     rejectApproval();
   };
 
   const handleConfirm = () => {
+    if (account.type === KEYRING_TYPE.KeystoneKeyring) {
+      navigate('KeystoneSignScreen', { data: data.text, type: 'msg', isApproval: true });
+      return
+    }
     resolveApproval();
   };
   return (

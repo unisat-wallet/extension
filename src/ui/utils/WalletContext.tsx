@@ -300,6 +300,11 @@ export interface WalletController {
 
   getVersionDetail(version: string): Promise<VersionDetail>;
 
+  genSignPsbtUr(psbtHex: string): Promise<{ type: string; cbor: string }>;
+  parseSignPsbtUr(type: string, cbor: string): Promise<string>;
+  genSignMsgUr(text: string): Promise<{ type: string; cbor: string; requestId: string }>;
+  parseSignMsgUr(type: string, cbor: string): Promise<{ requestId: string; publicKey: string; signature: string }>;
+
   getEnableSignData(): Promise<boolean>;
   setEnableSignData(enable: boolean): Promise<void>;
 }
