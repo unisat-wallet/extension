@@ -41,7 +41,7 @@ export const BRAND_ALIAN_TYPE_TEXT = {
   [KEYRING_TYPE.HdKeyring]: 'Account',
   [KEYRING_TYPE.SimpleKeyring]: 'Private Key',
   [KEYRING_TYPE.WatchAddressKeyring]: 'Watch',
-  [KEYRING_TYPE.KeystoneKeyring]: 'Keystone',
+  [KEYRING_TYPE.KeystoneKeyring]: 'Account',
 };
 
 export const KEYRING_TYPES: {
