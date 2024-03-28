@@ -47,6 +47,16 @@ export default function AddKeyringScreen() {
               <Text text="Restore from single private key" size="sm" />
             </Column>
           </Card>
+
+          <Card
+            justifyCenter
+            onClick={() => {
+              window.open('#/account/create-keystone-wallet');
+            }}>
+            <Column full justifyCenter>
+              <Text text="Import from Keystone" size="sm" />
+            </Column>
+          </Card>
         </Column>
       </Content>
     </Layout>

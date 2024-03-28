@@ -65,3 +65,15 @@ export function useCreateAccountCallback() {
     [dispatch, wallet]
   );
 }
+
+export function useImportAccountsFromKeystoneCallback() {
+  const dispatch = useAppDispatch();
+  const wallet = useWallet();
+  return useCallback(
+    async (urType: string, urCbor: string, addressType: AddressType, accountCount: number) => {
+      await wallet.createKeyringWithKeystone(urType, urCbor, addressType, accountCount);
+      dispatch(globalActions.update({ isUnlocked: true }));
+    },
+    [dispatch, wallet]
+  )
+}

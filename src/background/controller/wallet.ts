@@ -303,6 +303,14 @@ export class WalletController extends BaseController {
     return this.displayedKeyringToWalletKeyring(displayedKeyring, -1, false);
   };
 
+  createKeyringWithKeystone = async (urType: string, urCbor: string, addressType: AddressType, accountCount = 1) => {
+    const originKeyring = await keyringService.createKeyringWithKeystone(urType, urCbor, addressType, accountCount);
+    const displayedKeyring = await keyringService.displayForKeyring(originKeyring, addressType, keyringService.keyrings.length - 1);
+    const keyring = this.displayedKeyringToWalletKeyring(displayedKeyring, keyringService.keyrings.length - 1);
+    this.changeKeyring(keyring);
+    preferenceService.setShowSafeNotice(true);
+  };
+
   removeKeyring = async (keyring: WalletKeyring) => {
     await keyringService.removeKeyring(keyring.index);
     const keyrings = await this.getKeyrings();
@@ -987,7 +995,7 @@ export class WalletController extends BaseController {
         flag
       });
     }
-    const hdPath = type === KEYRING_TYPE.HdKeyring ? displayedKeyring.keyring.hdPath : '';
+    const hdPath = (type === KEYRING_TYPE.HdKeyring || type === KEYRING_TYPE.KeystoneKeyring) ? displayedKeyring.keyring.hdPath : '';
     const alianName = preferenceService.getKeyringAlianName(
       key,
       initName ? `${KEYRING_TYPES[type].alianName} #${index + 1}` : ''

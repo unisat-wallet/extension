@@ -132,7 +132,7 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
                 <Text text="Edit Name" size="sm" />
               </Row>
 
-              {keyring.type === KEYRING_TYPE.HdKeyring ? (
+              {keyring.type === KEYRING_TYPE.HdKeyring && (
                 <Row
                   onClick={() => {
                     navigate('ExportMnemonicsScreen', { keyring });
@@ -140,7 +140,8 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
                   <KeyOutlined />
                   <Text text="Show Secret Recovery Phrase" size="sm" />
                 </Row>
-              ) : (
+              )}
+              {keyring.type !== KEYRING_TYPE.HdKeyring && keyring.type !== KEYRING_TYPE.KeystoneKeyring && (
                 <Row
                   onClick={() => {
                     navigate('ExportPrivateKeyScreen', { account: keyring.accounts[0] });
@@ -225,8 +226,8 @@ export default function SwitchKeyringScreen() {
           style={{
             boxSizing: 'border-box'
           }}
-          // onSkipRender={onAppear}
-          // onItemRemove={onAppear}
+        // onSkipRender={onAppear}
+        // onItemRemove={onAppear}
         >
           {(item, index) => <ForwardMyItem keyring={item.keyring} autoNav={true} />}
         </VirtualList>
