@@ -48,13 +48,15 @@ export default function AddKeyringScreen() {
             </Column>
           </Card>
 
+          <Text text="Conncet Hardware Wallet" preset="regular-bold" mt="lg" />
+
           <Card
             justifyCenter
             onClick={() => {
               window.open('#/account/create-keystone-wallet');
             }}>
             <Column full justifyCenter>
-              <Text text="Import from Keystone" size="sm" />
+              <Text text="Keystone Wallet" size="sm" />
             </Column>
           </Card>
         </Column>
