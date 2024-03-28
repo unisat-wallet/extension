@@ -1,6 +1,7 @@
 import { Tooltip } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 
+import { KEYRING_TYPE } from '@/shared/constant';
 import {
   Atomical,
   DecodedPsbt,
@@ -22,6 +23,7 @@ import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import RunesPreviewCard from '@/ui/components/RunesPreviewCard';
 import { SignPsbtWithRisksPopover } from '@/ui/components/SignPsbtWithRisksPopover';
 import WebsiteBar from '@/ui/components/WebsiteBar';
+import KeystoneSignScreen from '@/ui/pages/Wallet/KeystoneSignScreen';
 import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import {
   usePrepareSendAtomicalsNFTCallback,
@@ -55,7 +57,7 @@ interface Props {
     };
   };
   handleCancel?: () => void;
-  handleConfirm?: () => void;
+  handleConfirm?: (rawTxInfo?: RawTxInfo) => void;
 }
 interface InputInfo {
   txid: string;
@@ -484,6 +486,7 @@ export default function SignPsbt({
   const currentAccount = useCurrentAccount();
 
   const [isPsbtRiskPopoverVisible, setIsPsbtRiskPopoverVisible] = useState(false);
+  const [isKeystoneSigning, setIsKeystoneSigning] = useState(false);
 
   const init = async () => {
     let txError = '';
@@ -573,10 +576,17 @@ export default function SignPsbt({
   }
 
   if (!handleConfirm) {
-    handleConfirm = () => {
+    handleConfirm = (res) => {
       resolveApproval({
-        psbtHex: txInfo.psbtHex
+        psbtHex: (res ?? txInfo).psbtHex
       });
+    };
+  }
+
+  const originalHandleConfirm = handleConfirm;
+  if (currentAccount.type === KEYRING_TYPE.KeystoneKeyring) {
+    handleConfirm = () => {
+      setIsKeystoneSigning(true);
     };
   }
 
@@ -656,6 +666,21 @@ export default function SignPsbt({
           </Row>
         </Footer>
       </Layout>
+    );
+  }
+
+  if (isKeystoneSigning) {
+    return (
+      <KeystoneSignScreen
+        type="psbt"
+        data={txInfo.psbtHex}
+        onSuccess={(data) => {
+          originalHandleConfirm(data as any);
+        }}
+        onBack={() => {
+          setIsKeystoneSigning(false);
+        }}
+      />
     );
   }
 
@@ -797,7 +822,7 @@ export default function SignPsbt({
                             {atomicals_ft.length > 0 && (
                               <Row>
                                 <Column justifyCenter>
-                                  <Text text={`ARC20`} color={isToSign ? 'white' : 'textDim'} />
+                                  <Text text={'ARC20'} color={isToSign ? 'white' : 'textDim'} />
                                   <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
                                     {atomicals_ft.map((w) => (
                                       <Arc20PreviewCard key={w.ticker} ticker={w.ticker || ''} amt={v.value} />
@@ -810,7 +835,7 @@ export default function SignPsbt({
                             {runes.length > 0 && (
                               <Row>
                                 <Column justifyCenter>
-                                  <Text text={`RUNES`} color={isToSign ? 'white' : 'textDim'} />
+                                  <Text text={'RUNES'} color={isToSign ? 'white' : 'textDim'} />
                                   <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
                                     {runes.map((w) => (
                                       <RunesPreviewCard key={w.runeid} balance={w} />
@@ -900,7 +925,7 @@ export default function SignPsbt({
                           {atomicals_ft.length > 0 && (
                             <Row>
                               <Column justifyCenter>
-                                <Text text={`ARC20`} color={isMyAddress ? 'white' : 'textDim'} />
+                                <Text text={'ARC20'} color={isMyAddress ? 'white' : 'textDim'} />
                                 <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
                                   {atomicals_ft.map((w) => (
                                     <Arc20PreviewCard key={w.ticker} ticker={w.ticker || ''} amt={v.value} />
@@ -913,7 +938,7 @@ export default function SignPsbt({
                           {runes.length > 0 && (
                             <Row>
                               <Column justifyCenter>
-                                <Text text={`RUNES`} color={isMyAddress ? 'white' : 'textDim'} />
+                                <Text text={'RUNES'} color={isMyAddress ? 'white' : 'textDim'} />
                                 <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
                                   {runes.map((w) => (
                                     <RunesPreviewCard key={w.runeid} balance={w} />

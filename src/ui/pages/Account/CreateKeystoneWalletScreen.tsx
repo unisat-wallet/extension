@@ -205,4 +205,5 @@ export default function CreateKeystoneWalletScreen() {
       onBack={() => setStep(2)}
     />
   }
+  return <></>;
 }
