@@ -303,7 +303,7 @@ export interface WalletController {
   genSignPsbtUr(psbtHex: string): Promise<{ type: string; cbor: string }>;
   parseSignPsbtUr(type: string, cbor: string): Promise<{
     psbtHex: string;
-    rawTxHex: string;
+    rawTx: string;
   }>;
   genSignMsgUr(text: string): Promise<{ type: string; cbor: string; requestId: string }>;
   parseSignMsgUr(type: string, cbor: string): Promise<{ requestId: string; publicKey: string; signature: string }>;

@@ -58,7 +58,7 @@ export default function KeystoneScan({
         }}
       />}
     </div>
-    {progress > 0 && !isError && <Progress percent={progress} showInfo={false} size='small' strokeColor={colors.primary} />}
+    {progress > 0 && !isError && <Progress percent={isDone ? 100 : progress} showInfo={false} size='small' strokeColor={colors.primary} />}
     {isError && <KeystonePopover
       msg='Invalid QR code. Please ensure you have selected a valid QR code from your Keystone device.'
       onClose={onCloseError}
