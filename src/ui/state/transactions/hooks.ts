@@ -283,6 +283,7 @@ export function useCreateSplitTxCallback() {
   const fromAddress = useAccountAddress();
   const utxos = useUtxos();
   const fetchUtxos = useFetchUtxosCallback();
+  const account = useCurrentAccount();
   return useCallback(
     async ({
       inscriptionId,
@@ -308,7 +309,7 @@ export function useCreateSplitTxCallback() {
         btcUtxos
       });
       const psbt = bitcoin.Psbt.fromHex(psbtHex);
-      const rawtx = psbt.extractTransaction().toHex();
+      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction().toHex();
       dispatch(
         transactionsActions.updateOrdinalsTx({
           rawtx,
@@ -437,6 +438,7 @@ export function usePrepareSendAtomicalsNFTCallback() {
   const fromAddress = useAccountAddress();
   const utxos = useUtxos();
   const fetchUtxos = useFetchUtxosCallback();
+  const account = useCurrentAccount();
   return useCallback(
     async ({
       toAddressInfo,
@@ -462,7 +464,7 @@ export function usePrepareSendAtomicalsNFTCallback() {
         btcUtxos
       });
       const psbt = bitcoin.Psbt.fromHex(psbtHex);
-      const rawtx = psbt.extractTransaction().toHex();
+      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction().toHex();
       dispatch(
         transactionsActions.updateAtomicalsTx({
           rawtx,
@@ -532,6 +534,7 @@ export function usePrepareSendArc20Callback() {
   const fetchUtxos = useFetchUtxosCallback();
   const fetchAssetUtxosAtomicalsFT = useFetchAssetUtxosAtomicalsFTCallback();
   const assetUtxosAtomicalsFT = useAssetUtxosAtomicalsFT();
+  const account = useCurrentAccount();
   return useCallback(
     async ({
       toAddressInfo,
@@ -572,7 +575,7 @@ export function usePrepareSendArc20Callback() {
         assetUtxos
       });
       const psbt = bitcoin.Psbt.fromHex(psbtHex);
-      const rawtx = psbt.extractTransaction().toHex();
+      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction().toHex();
       dispatch(
         transactionsActions.updateAtomicalsTx({
           rawtx,
