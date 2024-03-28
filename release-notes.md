@@ -1,5 +1,14 @@
 # UniSat Wallet Release Notes
 
+## v1.2.9
+
+- Added `memos` parameter to `unisat.sendBitcoin` method, for constructing runes transactions (github #164 and #167)
+- Fixed a bug in the `unisat.sendInscription` method (github #159)
+- Fixed the problem where an order could not succeed when the wallet balance and the payment amount were exactly equal when inscribe a TRANSFER inscription
+- Improved balance display, showing both available and unavailable balances
+- Improved the asset display during transaction signing, added BRC20 display
+- Improved risk warnings during transaction signing, and now requires the input of CONFIRM to proceed when warnings appear.
+
 ## v1.2.8
 
 - The unisat.sendBitcoin method has added a memo parameter, increasing OP_RETURN output when sending btc.
