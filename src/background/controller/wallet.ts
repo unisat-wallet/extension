@@ -353,7 +353,7 @@ export class WalletController extends BaseController {
     const networkType = this.getNetworkType();
     const addresses: string[] = [];
     const _keyring = keyringService.keyrings[keyring.index];
-    if (keyring.type === KEYRING_TYPE.HdKeyring) {
+    if (keyring.type === KEYRING_TYPE.HdKeyring || keyring.type === KEYRING_TYPE.KeystoneKeyring) {
       const pathPubkey: { [path: string]: string } = {};
       ADDRESS_TYPES.filter((v) => v.displayIndex >= 0).forEach((v) => {
         let pubkey = pathPubkey[v.hdPath];
