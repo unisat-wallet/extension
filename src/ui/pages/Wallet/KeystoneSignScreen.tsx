@@ -12,6 +12,8 @@ interface Props {
   type: 'msg' | 'psbt' | 'bip322-simple';
   data: string;
   isFinalize?: boolean;
+  signatureText?: string;
+  id?: number;
   onSuccess?: (data: {
     psbtHex?: string;
     rawtx?: string;
@@ -40,7 +42,7 @@ function Step1(props: Props) {
 
   return <Column itemsCenter gap='xl' style={{ maxWidth: 306 }}>
     <KeystoneLogoWithText width={160} height={38} />
-    <Text text="Scan the QR code displayed on your Keystone device" preset="title" textCenter />
+    <Text text="Scan the QR code via your Keystone device" preset="title" textCenter />
     <KeystoneDisplay type={ur.type} cbor={ur.cbor} />
     <div style={{ ...$textPresets.sub, textAlign: 'center' }}>
       Click on the <span style={{ color: colors.primary }}>'Get Signature'</span> button after signing the transaction with your Keystone device.
@@ -79,6 +81,10 @@ function Step2(props: Props) {
 export default function KeystoneSignScreen(props: Props) {
   const [step, setStep] = useState(1);
 
+  useEffect(() => {
+    setStep(1);
+  }, [props.id]);
+
   return <Layout>
     <Header
       onBack={() => {
@@ -96,7 +102,7 @@ export default function KeystoneSignScreen(props: Props) {
     {step === 1 && <Footer>
       <Row full>
         <Button preset='default' full text='Reject' onClick={props.onBack} />
-        <Button preset='primary' full text='Get Signature' onClick={() => setStep(2)} />
+        <Button preset='primary' full text={props.signatureText ?? 'Get Signature'} onClick={() => setStep(2)} />
       </Row>
     </Footer>}
   </Layout>;

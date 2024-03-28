@@ -64,7 +64,7 @@ function Step1({ onNext }) {
           <Card>Open-source</Card>
           <Card>Exceptional Compatibility</Card>
           <Row justifyCenter>
-            <a href='https://keyst.one/'>Learn more about keystone</a>
+            <a href='https://keyst.one/' target='_blank' rel='noreferrer'>Learn more about Keystone</a>
           </Row>
         </Column>
       </Column>
