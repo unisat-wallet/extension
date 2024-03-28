@@ -139,9 +139,9 @@ class ProviderController extends BaseController {
   @Reflect.metadata('APPROVAL', ['SignText', () => {
     // todo check text
   }])
-  signMessage = async ({ data: { params: { text, type } }, approvalRes: { signature } }) => {
-    if (signature) {
-      return signature
+  signMessage = async ({ data: { params: { text, type } }, approvalRes }) => {
+    if (approvalRes?.signature) {
+      return approvalRes.signature
     }
     if (type === 'bip322-simple') {
       return wallet.signBIP322Simple(text)
@@ -173,7 +173,10 @@ class ProviderController extends BaseController {
     const { data: { params: { psbtHex } } } = req;
     req.data.params.psbtHex = formatPsbtHex(psbtHex);
   }])
-  signPsbt = async ({ data: { params: { psbtHex, options } } }) => {
+  signPsbt = async ({ data: { params: { psbtHex, options } }, approvalRes }) => {
+    if (approvalRes.psbtHex) {
+      return approvalRes.psbtHex
+    }
     const networkType = wallet.getNetworkType()
     const psbtNetwork = toPsbtNetwork(networkType)
     const psbt = bitcoin.Psbt.fromHex(psbtHex, { network: psbtNetwork })

@@ -490,7 +490,18 @@ export default function SignPsbt({
 
   const init = async () => {
     let txError = '';
-    if (type === TxType.SEND_BITCOIN) {
+    if (type === TxType.SIGN_TX) {
+      if (psbtHex && currentAccount.type === KEYRING_TYPE.KeystoneKeyring) {
+        try {
+          const toSignInputs = await wallet.formatOptionsToSignInputs(psbtHex, options);
+          psbtHex = await wallet.signPsbtWithHex(psbtHex, toSignInputs, false);
+        } catch (e) {
+          console.error(e);
+          txError = (e as any).message;
+          tools.toastError(txError);
+        }
+      }
+    } else if (type === TxType.SEND_BITCOIN) {
       if (!psbtHex && toAddress && satoshis) {
         try {
           const rawTxInfo = await prepareSendBTC({
@@ -674,6 +685,7 @@ export default function SignPsbt({
       <KeystoneSignScreen
         type="psbt"
         data={txInfo.psbtHex}
+        isFinalize={type !== TxType.SIGN_TX}
         onSuccess={(data) => {
           originalHandleConfirm(data as any);
         }}
