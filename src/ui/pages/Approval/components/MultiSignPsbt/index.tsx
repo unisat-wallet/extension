@@ -1,9 +1,11 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
+import { KEYRING_TYPE } from '@/shared/constant';
 import { DecodedPsbt, Inscription, SignPsbtOptions, TxType } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import WebsiteBar from '@/ui/components/WebsiteBar';
+import KeystoneSignScreen from '@/ui/pages/Wallet/KeystoneSignScreen';
 import { useAccountAddress } from '@/ui/state/accounts/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
@@ -165,10 +167,39 @@ export default function MultiSignPsbt({
   const [loading, setLoading] = useState(true);
 
   const [viewingPsbtIndex, setViewingPsbtIndex] = useState(-1);
+  const currentAccount = useCurrentAccount();
 
   const [signStates, setSignStates] = useState<SignState[]>(new Array(psbtHexs.length).fill(SignState.PENDING));
+  const [isKeystoneSigning, setIsKeystoneSigning] = useState(false);
+  const [signIndex, setSignIndex] = useState(0);
 
   const init = async () => {
+    let txError = '';
+
+    const { isScammer } = await wallet.checkWebsite(session?.origin || '');
+    const decodedPsbts: DecodedPsbt[] = [];
+
+    for (let i = 0; i < psbtHexs.length; i++) {
+      const psbtHex = psbtHexs[i];
+      const decodedPsbt = await wallet.decodePsbt(psbtHex);
+      decodedPsbts.push(decodedPsbt);
+      if (decodedPsbt.risks.length > 0) {
+        setIsWarningVisible(true);
+      }
+    }
+
+    const toSignInputsArray: ToSignInput[][] = [];
+    try {
+      for (let i = 0; i < psbtHexs.length; i++) {
+        const toSignInputs = await wallet.formatOptionsToSignInputs(psbtHexs[i], options[i]);
+        toSignInputsArray.push(toSignInputs);
+      }
+    } catch (e) {
+      console.error(e);
+      txError = (e as Error).message;
+      tools.toastError(txError);
+    }
+
     setTxInfo({
       psbtHexs,
       txError: ''
@@ -194,6 +225,49 @@ export default function MultiSignPsbt({
       });
     };
   }
+
+  const originalHandleConfirm = handleConfirm;
+  if (currentAccount.type === KEYRING_TYPE.KeystoneKeyring) {
+    handleConfirm = () => {
+      if (txInfo.currentIndex < txInfo.psbtHexs.length - 1) {
+        updateTxInfo({
+          currentIndex: txInfo.currentIndex + 1
+        });
+        return;
+      }
+      setIsKeystoneSigning(true);
+    };
+  }
+
+  const decodedPsbt = useMemo(() => txInfo.decodedPsbts[txInfo.currentIndex], [txInfo]);
+  const psbtHex = useMemo(() => txInfo.psbtHexs[txInfo.currentIndex], [txInfo]);
+  const toSignInputs = useMemo(() => txInfo.toSignInputsArray[txInfo.currentIndex], [txInfo]);
+
+  const networkFee = useMemo(() => (decodedPsbt ? satoshisToAmount(decodedPsbt.fee) : 0), [decodedPsbt]);
+  const detailsComponent = useMemo(() => {
+    if (decodedPsbt) {
+      return <SignTxDetails decodedPsbt={decodedPsbt} />;
+    } else {
+      return <Empty />;
+    }
+  }, [decodedPsbt]);
+
+  const isValidData = useMemo(() => {
+    if (psbtHex === '') {
+      return false;
+    }
+    return true;
+  }, [psbtHex]);
+
+  const isValid = useMemo(() => {
+    if (decodedPsbt && decodedPsbt.inputInfos.length == 0) {
+      return false;
+    }
+    if (!toSignInputs || toSignInputs.length == 0) {
+      return false;
+    }
+    return true;
+  }, [decodedPsbt, toSignInputs]);
 
   if (loading) {
     return (
@@ -246,11 +320,39 @@ export default function MultiSignPsbt({
 
   const signedCount = signStates.filter((v) => v === SignState.SUCCESS).length;
   const isAllSigned = signedCount === txInfo.psbtHexs.length;
+
+  if (isKeystoneSigning) {
+    return (
+      <KeystoneSignScreen
+        type="psbt"
+        data={txInfo.psbtHexs[signIndex]}
+        isFinalize={false}
+        signatureText={`Get Signature (${signIndex + 1}/${count})`}
+        id={signIndex}
+        onSuccess={(data) => {
+          txInfo.psbtHexs[signIndex] = data.psbtHex || '';
+          if (signIndex === txInfo.psbtHexs.length - 1) {
+            setIsKeystoneSigning(false);
+            originalHandleConfirm();
+          } else {
+            tools.toastSuccess(`Get Signature Success (${signIndex + 1}/${count})`);
+            setTimeout(() => {
+              setSignIndex(signIndex + 1);
+            }, 1000);
+          }
+        }}
+        onBack={() => {
+          setIsKeystoneSigning(false);
+        }}
+      />
+    );
+  }
+
   return (
     <Layout>
       {header}
       <Content>
-        <Text text={`Sign Multiple Transactions`} preset="title-bold" textCenter mt="lg" />
+        <Text text={'Sign Multiple Transactions'} preset="title-bold" textCenter mt="lg" />
         <Column>
           {txInfo.psbtHexs.map((v, index) => {
             const signState = signStates[index];
