@@ -46,6 +46,18 @@ export default function WelcomeScreen() {
                 }
               }}
             />
+            <Button
+              text="Connect Keystone"
+              preset="default"
+              onClick={async () => {
+                const isBooted = await wallet.isBooted();
+                if (isBooted) {
+                  navigate('CreateKeystoneWalletScreen');
+                } else {
+                  navigate('CreatePasswordScreen', { isKeystone: true });
+                }
+              }}
+            />
           </Column>
         </Column>
       </Content>
