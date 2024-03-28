@@ -16,9 +16,10 @@ export default function KeystoneScan({
   const [progress, setProgress] = useState(0);
   const { AnimatedQRScanner, setIsDone, isDone } = useAnimatedQRScanner();
 
-  const onError = useCallback((errorMessage) => {
-    console.log('error: ', errorMessage);
+  const onError = useCallback((e: any) => {
+    console.error(e);
     setIsError(true);
+    setProgress(0);
   }, []);
 
   const onProgress = useCallback((progress) => {
@@ -48,7 +49,7 @@ export default function KeystoneScan({
       {!isError && <AnimatedQRScanner
         handleScan={onSucceed}
         handleError={onError}
-        urTypes={['crypto-account', 'psbt', 'btc-signature']}
+        urTypes={['crypto-account', 'crypto-psbt', 'btc-signature']}
         onProgress={onProgress}
         options={{
           blur: false,
@@ -57,7 +58,7 @@ export default function KeystoneScan({
         }}
       />}
     </div>
-    {progress > 0 && !isError && <Progress percent={progress} showInfo={false} />}
+    {progress > 0 && !isError && <Progress percent={progress} showInfo={false} size='small' strokeColor={colors.primary} />}
     {isError && <KeystonePopover
       msg='Invalid QR code. Please ensure you have selected a valid QR code from your Keystone device.'
       onClose={onCloseError}

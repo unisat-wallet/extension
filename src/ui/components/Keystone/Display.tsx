@@ -6,7 +6,7 @@ export default function KeystoneDisplay(props: {
 }) {
   return <div className="keystone-display">
     <AnimatedQRCode type={props.type} cbor={props.cbor} options={{
-      size: 200
+      size: 250
     }} />
   </div>;
 }

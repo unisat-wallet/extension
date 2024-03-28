@@ -477,7 +477,7 @@ export class WalletController extends BaseController {
       toSignInputs = await this.formatOptionsToSignInputs(psbt);
       if (autoFinalized !== false) autoFinalized = true;
     }
-    psbt.data.inputs.forEach((v, index) => {
+    psbt.data.inputs.forEach((v) => {
       const isNotSigned = !(v.finalScriptSig || v.finalScriptWitness);
       const isP2TR = keyring.addressType === AddressType.P2TR || keyring.addressType === AddressType.M44_P2TR;
       const lostInternalPubkey = !v.tapInternalKey;
@@ -495,6 +495,28 @@ export class WalletController extends BaseController {
     });
 
     if (keyring.type === KEYRING_TYPE.KeystoneKeyring) {
+      if (!_keyring.mfp) {
+        throw new Error('no mfp in keyring');
+      }
+      toSignInputs.forEach((input) => {
+        const isP2TR = keyring.addressType === AddressType.P2TR || keyring.addressType === AddressType.M44_P2TR;
+        const bip32Derivation = {
+          masterFingerprint: Buffer.from(_keyring.mfp as string, 'hex'),
+          path: `${keyring.hdPath}/${account.index}`,
+          pubkey: Buffer.from(account.pubkey, 'hex'),
+        };
+        if (isP2TR) {
+          psbt.data.inputs[input.index].tapBip32Derivation = [
+            {
+              ...bip32Derivation,
+              pubkey: bip32Derivation.pubkey.slice(1),
+              leafHashes: [],
+            }
+          ]
+        } else {
+          psbt.data.inputs[input.index].bip32Derivation = [bip32Derivation];
+        }
+      });
       return psbt;
     }
 
@@ -1651,7 +1673,13 @@ export class WalletController extends BaseController {
 
   parseSignPsbtUr = async (type: string, cbor: string) => {
     const { keyring } = await this.checkKeyringMethod('parseSignPsbtUr');
-    return await keyring.parseSignPsbtUr!(type, cbor);
+    const psbtHex = await keyring.parseSignPsbtUr!(type, cbor);
+    const psbt = bitcoin.Psbt.fromHex(psbtHex);
+    psbt.finalizeAllInputs();
+    return {
+      psbtHex: psbt.toHex(),
+      rawTxHex: psbt.extractTransaction().toHex(),
+    };
   }
 
   genSignMsgUr = async (text: string) => {
