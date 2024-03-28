@@ -1661,9 +1661,12 @@ export class WalletController extends BaseController {
 
   parseSignMsgUr = async (type: string, cbor: string, msgType: string) => {
     if (msgType === 'bip322-simple') {
-      const res = await this.parseSignPsbtUr(type, cbor);
+      const res = await this.parseSignPsbtUr(type, cbor, false);
       const psbt = bitcoin.Psbt.fromHex(res.psbtHex);
-      return getSignatureFromPsbtOfBIP322Simple(psbt);
+      psbt.finalizeAllInputs();
+      return {
+        signature: getSignatureFromPsbtOfBIP322Simple(psbt),
+      };
     }
     const { keyring } = await this.checkKeyringMethod('parseSignMsgUr');
     const sig = await keyring.parseSignMsgUr!(type, cbor);
