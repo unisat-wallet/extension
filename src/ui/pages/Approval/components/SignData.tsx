@@ -52,6 +52,8 @@ export default function SignData({ params: { data, session } }: Props) {
   useEffect(() => {
     if (inputValue === AGREEMENT_TEXT) {
       setUnderstand(true);
+    } else {
+      setUnderstand(false);
     }
   }, [inputValue]);
 
