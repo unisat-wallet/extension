@@ -7,6 +7,7 @@ import { RawTxInfo, TokenBalance, TokenInfo, TokenTransfer, TxType } from '@/sha
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import BRC20Preview from '@/ui/components/BRC20Preview';
+import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import { RefreshButton } from '@/ui/components/RefreshButton';
@@ -83,20 +84,15 @@ function Step1({
                     <Row justifyCenter>
                       <Text text={'Available '} textCenter color="textDim" size="xs" />
                       <Text text={`${tokenBalance.availableBalanceSafe}  `} textCenter size="xs" />
-                      <Text
-                        text={` + ${tokenBalance.availableBalanceUnSafe} ${tokenBalance.ticker} `}
-                        textCenter
-                        color="textDim"
-                        size="xs"
-                      />
+                      <Text text={` + ${tokenBalance.availableBalanceUnSafe}`} textCenter color="textDim" size="xs" />
+                      <BRC20Ticker tick={tokenBalance.ticker} />
                     </Row>
                   ) : (
-                    <Text
-                      text={`Available ${tokenBalance.availableBalanceSafe} ${tokenBalance.ticker}`}
-                      textCenter
-                      color="textDim"
-                      size="xs"
-                    />
+                    <Row justifyCenter>
+                      <Text text={'Available '} textCenter color="textDim" size="xs" />
+                      <Text text={`${tokenBalance.availableBalanceSafe}  `} textCenter size="xs" />
+                      <BRC20Ticker tick={tokenBalance.ticker} preset="sm" />
+                    </Row>
                   )}
                 </Column>
                 {/* <Button
@@ -177,7 +173,10 @@ function TransferableList({
     <Column>
       <Column>
         <Text text={'Transfer Amount'} color="textDim" />
-        <Text text={`${contextData.transferAmount} ${contextData.tokenBalance.ticker}`} size="xxl" textCenter my="lg" />
+        <Row justifyCenter itemsCenter>
+          <Text text={`${contextData.transferAmount}`} size="xxl" textCenter my="lg" />
+          <BRC20Ticker tick={contextData.tokenBalance.ticker} />
+        </Row>
       </Column>
 
       {items.length > 0 ? (

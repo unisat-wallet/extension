@@ -6,6 +6,7 @@ import { InscribeOrder, RawTxInfo, TokenBalance, TokenInfo, TxType } from '@/sha
 import { Button, Card, Column, Content, Footer, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { Loading } from '@/ui/components/ActionComponent/Loading';
+import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { Empty } from '@/ui/components/Empty';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
@@ -312,17 +313,18 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
                           </div>
                         </Tooltip>
 
-                        <Text text={`${tokenBalance.ticker}  `} textCenter size="xs" />
+                        <BRC20Ticker tick={tokenBalance.ticker} preset="sm" />
                       </Row>
                     ) : (
-                      <Text
-                        text={`${tokenBalance.availableBalanceSafe} ${tokenBalance.ticker}`}
-                        textCenter
-                        size="xs"
+                      <Row
+                        itemsCenter
                         onClick={() => {
                           setInputAmount(tokenBalance.availableBalanceSafe);
-                        }}
-                      />
+                        }}>
+                        <Text text={`${tokenBalance.availableBalanceSafe}`} textCenter size="xs" />
+
+                        <BRC20Ticker tick={tokenBalance.ticker} preset="sm" />
+                      </Row>
                     )}
                   </Column>
                 ) : (
@@ -430,14 +432,10 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
             <Text text="Inscribe TRANSFER" preset="title-bold" textCenter mt="lg" />
 
             <Column justifyCenter style={{ height: 250 }}>
-              <Text
-                text={`${amount} ${tokenBalance.ticker}`}
-                preset="title-bold"
-                size="xxl"
-                color="gold"
-                textCenter
-                wrap
-              />
+              <Row itemsCenter justifyCenter>
+                <Text text={`${amount}`} preset="title-bold" size="xxl" textCenter wrap />
+                <BRC20Ticker tick={tokenBalance.ticker} preset="lg" />
+              </Row>
 
               <Column mt="xxl">
                 <Text text="Preview" preset="sub-bold" />

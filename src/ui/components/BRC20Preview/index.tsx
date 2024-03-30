@@ -1,5 +1,6 @@
 import { colors } from '@/ui/theme/colors';
 
+import { BRC20Ticker } from '../BRC20Ticker';
 import { Column } from '../Column';
 import { Icon } from '../Icon';
 import { Row } from '../Row';
@@ -43,13 +44,15 @@ export default function BRC20Preview({
   let width = 100;
   let height = 130;
   let bodyHeight = 90;
-  let numberSize: any = 'md';
+  let numberSize: any = 'sm';
+  let tickerPreset: any = 'md';
   if (preset === 'small') {
     width = 80;
     height = 90;
     bodyHeight = 60;
     numberSize = 'xs';
     balanceSize = 'sm';
+    tickerPreset = 'sm';
   }
   return (
     <Column
@@ -64,14 +67,14 @@ export default function BRC20Preview({
           borderTopRightRadius: 5
         }}>
         <Row>
-          <Text text={tick} color="white_muted" size="lg" />
+          <BRC20Ticker tick={tick} preset={tickerPreset} />
         </Row>
 
         <Text text={balance} size={balanceSize as any} textCenter wrap />
       </Column>
 
       <Column px="sm" pb="sm" gap="sm">
-        <Row justifyBetween>
+        <Row justifyBetween itemsCenter>
           <Text text={`#${inscriptionNumber}`} color="primary" size={numberSize} />
           {selected && <Icon icon="circle-check" color="green" style={{ marginRight: 5 }} />}
         </Row>

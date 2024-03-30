@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { AddressTokenSummary } from '@/shared/types';
 import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import BRC20Preview from '@/ui/components/BRC20Preview';
+import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { Empty } from '@/ui/components/Empty';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useUnisatWebsite } from '@/ui/state/settings/hooks';
@@ -65,6 +66,7 @@ export default function BRC20TokenScreen() {
 
   const shouldShowSafe = tokenSummary.tokenBalance.availableBalanceSafe !== tokenSummary.tokenBalance.availableBalance;
   const unisatWebsite = useUnisatWebsite();
+
   return (
     <Layout>
       <Header
@@ -75,7 +77,11 @@ export default function BRC20TokenScreen() {
       {tokenSummary && (
         <Content>
           <Column py="xl" style={{ borderBottomWidth: 1, borderColor: colors.white_muted }}>
-            <Text text={`${balance} ${ticker}`} preset="bold" textCenter size="xxl" wrap />
+            <Row itemsCenter fullX justifyCenter>
+              <Text text={`${balance}`} preset="bold" textCenter size="xxl" wrap />
+              <BRC20Ticker tick={ticker} preset="lg" />
+            </Row>
+
             <Row justifyBetween mt="lg">
               <Button
                 text="MINT"
@@ -114,7 +120,10 @@ export default function BRC20TokenScreen() {
           <Column>
             <Row justifyBetween>
               <Text text="Transferable" preset="bold" size="lg" />
-              <Text text={`${tokenSummary.tokenBalance.transferableBalance} ${ticker}`} preset="bold" size="lg" wrap />
+              <Row itemsCenter>
+                <Text text={`${tokenSummary.tokenBalance.transferableBalance}`} preset="bold" size="lg" wrap />
+                <BRC20Ticker tick={ticker} />
+              </Row>
             </Row>
             {tokenSummary.transferableList.length == 0 && (
               <Column style={{ minHeight: 130 }} itemsCenter justifyCenter>
@@ -182,12 +191,15 @@ export default function BRC20TokenScreen() {
                       size="lg"
                       color="textDim"
                     />
-                    <Text text={`${ticker}`} preset="bold" size="lg" mx="md" />
+                    <BRC20Ticker tick={ticker} />
                   </Row>
                   <Text text={'(Wait to be confirmed)'} preset="sub" textEnd />
                 </Column>
               ) : (
-                <Text text={`${tokenSummary.tokenBalance.availableBalance} ${ticker}`} preset="bold" size="lg" wrap />
+                <Row itemsCenter>
+                  <Text text={`${tokenSummary.tokenBalance.availableBalance}`} preset="bold" size="lg" wrap />
+                  <BRC20Ticker tick={ticker} />
+                </Row>
               )}
             </Row>
             {tokenSummary.historyList.length == 0 && (
