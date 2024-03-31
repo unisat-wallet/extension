@@ -32,9 +32,9 @@ export default function BRC20Preview({
   }
   let balanceSize = 'xxl';
   if (balance.length < 7) {
-    balanceSize = 'xxl';
+    balanceSize = 'md';
   } else if (balance.length < 14) {
-    balanceSize = 'xl';
+    balanceSize = 'md';
   } else if (balance.length < 21) {
     balanceSize = 'md';
   } else {
@@ -44,7 +44,7 @@ export default function BRC20Preview({
   let width = 100;
   let height = 130;
   let bodyHeight = 90;
-  let numberSize: any = 'md';
+  let numberSize: any = 'sm';
   let tickerPreset: any = 'md';
   if (preset === 'small') {
     width = 80;
@@ -76,23 +76,30 @@ export default function BRC20Preview({
         borderWidth: selected ? 1 : 0,
         borderColor: colors.primary
       }}
+      gap="zero"
       onClick={onClick}>
-      <Column
+      <Row
+        bg={bg}
         style={{
-          padding: 8,
-          height: bodyHeight,
           borderTopLeftRadius: 5,
           borderTopRightRadius: 5
-        }}
-        bg={bg}>
-        <Row>
+        }}>
+        <Row
+          style={{ backgroundColor: 'rgba(255,255,255,0.2)', borderBottomRightRadius: 5, borderTopLeftRadius: 5 }}
+          px="sm">
           <BRC20Ticker tick={tick} preset={tickerPreset} />
         </Row>
-
+      </Row>
+      <Column
+        style={{
+          height: bodyHeight
+        }}
+        justifyCenter
+        bg={bg}>
         <Text text={balance} size={balanceSize as any} textCenter wrap />
       </Column>
 
-      <Column px="sm" pb="sm" gap="sm">
+      <Column px="sm" pb="sm" gap="sm" py="sm">
         <Row itemsCenter justifyCenter>
           <Text text={`#${inscriptionNumber}`} color="primary" size={numberSize} />
         </Row>

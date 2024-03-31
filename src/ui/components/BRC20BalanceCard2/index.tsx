@@ -133,9 +133,9 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
                     <Card
                       key={'transfer_' + index}
                       style={{ width: 68, height: 68 }}
-                      bg={v === 'Deploy' ? 'brc20_deploy' : 'brc20_transfer'}>
+                      bg={v === 'Transfer' ? 'brc20_transfer' : v === 'Deploy' ? 'brc20_deploy' : 'brc20_other'}>
                       <Column gap="zero">
-                        <Text text={v} size={v === 'Transfer' ? 'sm' : v === 'Deploy' ? 'md' : 'xxl'} />
+                        <Text text={v} size={v === 'Transfer' ? 'sm' : v === 'Deploy' ? 'sm' : 'md'} />
                         {v === 'Transfer' ? <Text text={`(${_amounts[index]})`} size="xxs" textCenter wrap /> : null}
                       </Column>
                     </Card>

@@ -160,9 +160,9 @@ export default function BRC20TokenScreen() {
           </Column>
           <Column>
             <Row justifyBetween>
-              <Text text="Transferable" preset="bold" size="lg" />
-              <Row itemsCenter>
-                <Text text={`${tokenSummary.tokenBalance.transferableBalance}`} preset="bold" size="lg" wrap />
+              <Text text="Transferable" preset="bold" size="md" />
+              <Row itemsCenter justifyCenter>
+                <Text text={`${tokenSummary.tokenBalance.transferableBalance}`} size="md" wrap />
                 <BRC20Ticker tick={ticker} />
               </Row>
             </Row>
