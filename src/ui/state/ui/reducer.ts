@@ -26,7 +26,8 @@ export enum AssetTabKey {
 
 export enum OrdinalsAssetTabKey {
   ALL,
-  BRC20
+  BRC20,
+  BRC20_5BYTE
 }
 
 export enum AtomicalsAssetTabKey {

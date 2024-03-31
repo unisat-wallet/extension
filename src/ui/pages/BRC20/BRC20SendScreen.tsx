@@ -479,7 +479,9 @@ export default function BRC20SendScreen() {
     tokenInfo: {
       totalSupply: '0',
       totalMinted: '0',
-      decimal: 18
+      decimal: 18,
+      holder: '',
+      inscriptionId: ''
     }
   });
 

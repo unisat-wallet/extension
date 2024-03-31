@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
 
+import { brc20Utils } from '@/shared/lib/brc20-utils';
 import { AddressTokenSummary } from '@/shared/types';
 import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import BRC20Preview from '@/ui/components/BRC20Preview';
@@ -33,7 +34,9 @@ export default function BRC20TokenScreen() {
     tokenInfo: {
       totalSupply: '',
       totalMinted: '',
-      decimal: 18
+      decimal: 18,
+      holder: '',
+      inscriptionId: ''
     },
     historyList: [],
     transferableList: []
@@ -67,6 +70,33 @@ export default function BRC20TokenScreen() {
   const shouldShowSafe = tokenSummary.tokenBalance.availableBalanceSafe !== tokenSummary.tokenBalance.availableBalance;
   const unisatWebsite = useUnisatWebsite();
 
+  const hasBalance =
+    tokenSummary.tokenBalance.overallBalance !== '0' && tokenSummary.tokenBalance.overallBalance !== '';
+
+  const enableMint = useMemo(() => {
+    let enable = false;
+    if (brc20Utils.is5Byte(ticker)) {
+      if (tokenSummary.tokenInfo.holder == account.address) {
+        if (tokenSummary.tokenInfo.totalMinted != tokenSummary.tokenInfo.totalSupply) {
+          enable = true;
+        }
+      }
+    } else {
+      if (tokenSummary.tokenInfo.totalMinted != tokenSummary.tokenInfo.totalSupply) {
+        enable = true;
+      }
+    }
+    return enable;
+  }, [tokenSummary]);
+
+  const enableTransfer = useMemo(() => {
+    let enable = false;
+    if (tokenSummary.tokenBalance.overallBalance !== '0' && tokenSummary.tokenBalance.overallBalance !== '') {
+      enable = true;
+    }
+    return enable;
+  }, [tokenSummary]);
+
   return (
     <Layout>
       <Header
@@ -86,8 +116,8 @@ export default function BRC20TokenScreen() {
               <Button
                 text="MINT"
                 preset="primary"
-                style={outOfMint ? { backgroundColor: 'grey' } : {}}
-                disabled={outOfMint}
+                style={!enableMint ? { backgroundColor: 'grey' } : {}}
+                disabled={!enableMint}
                 icon="pencil"
                 onClick={(e) => {
                   window.open(`${unisatWebsite}/brc20/${encodeURIComponent(ticker)}`);
@@ -99,6 +129,8 @@ export default function BRC20TokenScreen() {
                 text="TRANSFER"
                 preset="primary"
                 icon="send"
+                style={!enableTransfer ? { backgroundColor: 'grey' } : {}}
+                disabled={!enableTransfer}
                 onClick={(e) => {
                   // todo
                   const defaultSelected = tokenSummary.transferableList.slice(0, 1);

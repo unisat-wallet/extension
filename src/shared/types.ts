@@ -256,6 +256,8 @@ export interface TokenInfo {
   totalSupply: string;
   totalMinted: string;
   decimal: number;
+  holder: string;
+  inscriptionId: string;
 }
 
 export enum TokenInscriptionType {
@@ -357,6 +359,7 @@ export interface AddressSummary {
   inscriptionCount: number;
   atomicalsCount: number;
   brc20Count: number;
+  brc20Count5Byte: number;
   arc20Count: number;
   loading?: boolean;
 }
