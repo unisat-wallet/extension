@@ -224,6 +224,12 @@ export class OpenApiService {
     });
   }
 
+  async getInscriptionInfo(inscriptionId: string): Promise<Inscription> {
+    return this.httpGet('/inscription/info', {
+      inscriptionId
+    });
+  }
+
   async getAddressInscriptions(
     address: string,
     cursor: number,

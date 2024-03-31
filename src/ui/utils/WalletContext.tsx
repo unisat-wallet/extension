@@ -259,6 +259,7 @@ export interface WalletController {
 
   getInscriptionUtxoDetail(inscriptionId: string): Promise<UTXO_Detail>;
   getUtxoByInscriptionId(inscriptionId: string): Promise<UTXO>;
+  getInscriptionInfo(inscriptionId: string): Promise<Inscription>;
 
   checkWebsite(website: string): Promise<{ isScammer: boolean; warning: string }>;
 

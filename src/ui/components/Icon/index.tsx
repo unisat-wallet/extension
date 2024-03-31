@@ -11,6 +11,7 @@ export const svgRegistry = {
   right: './images/icons/arrow-right.svg',
   left: './images/icons/arrow-left.svg',
   down: './images/icons/down.svg',
+  up: './images/icons/up.svg',
   link: './images/icons/arrow-up-right.svg',
 
   discord: './images/icons/discord.svg',

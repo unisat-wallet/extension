@@ -40,7 +40,6 @@ export function OrdinalsTab() {
           items={tabItems}
           preset="style2"
           onTabClick={(key) => {
-            console.log(key);
             dispatch(uiActions.updateAssetTabScreen({ ordinalsAssetTabKey: key }));
           }}
         />

@@ -2,8 +2,9 @@ import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
 
 import { brc20Utils } from '@/shared/lib/brc20-utils';
-import { AddressTokenSummary } from '@/shared/types';
+import { AddressTokenSummary, Inscription } from '@/shared/types';
 import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
+import { useTools } from '@/ui/components/ActionComponent';
 import BRC20Preview from '@/ui/components/BRC20Preview';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { Empty } from '@/ui/components/Empty';
@@ -47,10 +48,25 @@ export default function BRC20TokenScreen() {
   const account = useCurrentAccount();
 
   const [loading, setLoading] = useState(true);
+
+  const [deployInscription, setDeployInscription] = useState<Inscription>();
+
   useEffect(() => {
     wallet.getBRC20Summary(account.address, ticker).then((tokenSummary) => {
-      setTokenSummary(tokenSummary);
-      setLoading(false);
+      if (tokenSummary.tokenInfo.holder == account.address) {
+        wallet
+          .getInscriptionInfo(tokenSummary.tokenInfo.inscriptionId)
+          .then((data) => {
+            setDeployInscription(data);
+          })
+          .finally(() => {
+            setTokenSummary(tokenSummary);
+            setLoading(false);
+          });
+      } else {
+        setTokenSummary(tokenSummary);
+        setLoading(false);
+      }
     });
   }, []);
 
@@ -63,15 +79,7 @@ export default function BRC20TokenScreen() {
 
   const navigate = useNavigate();
 
-  const [transferableListExpanded, setTransferableListExpanded] = useState(true);
-
-  const outOfMint = tokenSummary.tokenInfo.totalMinted == tokenSummary.tokenInfo.totalSupply;
-
-  const shouldShowSafe = tokenSummary.tokenBalance.availableBalanceSafe !== tokenSummary.tokenBalance.availableBalance;
   const unisatWebsite = useUnisatWebsite();
-
-  const hasBalance =
-    tokenSummary.tokenBalance.overallBalance !== '0' && tokenSummary.tokenBalance.overallBalance !== '';
 
   const enableMint = useMemo(() => {
     let enable = false;
@@ -97,6 +105,7 @@ export default function BRC20TokenScreen() {
     return enable;
   }, [tokenSummary]);
 
+  const tools = useTools();
   return (
     <Layout>
       <Header
@@ -157,7 +166,7 @@ export default function BRC20TokenScreen() {
                 <BRC20Ticker tick={ticker} />
               </Row>
             </Row>
-            {tokenSummary.transferableList.length == 0 && (
+            {tokenSummary.transferableList.length == 0 && !deployInscription && (
               <Column style={{ minHeight: 130 }} itemsCenter justifyCenter>
                 {loading ? (
                   <Icon>
@@ -168,95 +177,52 @@ export default function BRC20TokenScreen() {
                 )}
               </Column>
             )}
-            {transferableListExpanded ? (
-              <Row overflowX>
-                {/* <Text
-                  text="HIDE"
-                  size="xxl"
-                  onClick={() => {
-                    setTransferableListExpanded(false);
-                  }}
-                /> */}
-                {tokenSummary.transferableList.map((v) => (
-                  <BRC20Preview
-                    key={v.inscriptionId}
-                    tick={ticker}
-                    balance={v.amount}
-                    inscriptionNumber={v.inscriptionNumber}
-                    timestamp={v.timestamp}
-                    type="TRANSFER"
-                    // onClick={() => {
-                    //   navigate('BRC20SendScreen', {
-                    //     tokenBalance: tokenSummary.tokenBalance,
-                    //     selectedInscriptionIds: [v.inscriptionId]
-                    //   });
-                    // }}
-                  />
-                ))}
-              </Row>
-            ) : (
-              tokenSummary.transferableList.length > 0 && (
+
+            <Row overflowX>
+              {deployInscription ? (
                 <BRC20Preview
                   tick={ticker}
-                  balance={tokenSummary.transferableList[0].amount}
-                  inscriptionNumber={tokenSummary.transferableList[0].inscriptionNumber}
-                  timestamp={tokenSummary.transferableList[0].timestamp}
-                  onClick={() => {
-                    setTransferableListExpanded(true);
+                  inscriptionNumber={deployInscription.inscriptionNumber}
+                  timestamp={deployInscription.timestamp}
+                  type="DEPLOY"
+                  onClick={async () => {
+                    try {
+                      tools.showLoading(true);
+                      navigate('OrdinalsInscriptionScreen', { inscription: deployInscription, withSend: true });
+                    } catch (e) {
+                      console.log(e);
+                    } finally {
+                      tools.showLoading(false);
+                    }
                   }}
                 />
-              )
-            )}
-          </Column>
-
-          <Column mt="lg">
-            <Row justifyBetween>
-              <Text text="Available" preset="bold" size="lg" />
-              {shouldShowSafe ? (
-                <Column>
-                  <Row gap="zero">
-                    <Text text={`${tokenSummary.tokenBalance.availableBalanceSafe}`} preset="bold" size="lg" />
-                    <Text text={'+'} preset="bold" size="lg" />
-                    <Text
-                      text={`${tokenSummary.tokenBalance.availableBalanceUnSafe}`}
-                      preset="bold"
-                      size="lg"
-                      color="textDim"
-                    />
-                    <BRC20Ticker tick={ticker} />
-                  </Row>
-                  <Text text={'(Wait to be confirmed)'} preset="sub" textEnd />
-                </Column>
-              ) : (
-                <Row itemsCenter>
-                  <Text text={`${tokenSummary.tokenBalance.availableBalance}`} preset="bold" size="lg" wrap />
-                  <BRC20Ticker tick={ticker} />
-                </Row>
-              )}
-            </Row>
-            {tokenSummary.historyList.length == 0 && (
-              <Column style={{ minHeight: 130 }} itemsCenter justifyCenter>
-                {loading ? (
-                  <Icon>
-                    <LoadingOutlined />
-                  </Icon>
-                ) : (
-                  <Empty text="Empty" />
-                )}
-              </Column>
-            )}
-            <Row overflowX>
-              {tokenSummary.historyList.map((v) => (
+              ) : null}
+              {tokenSummary.transferableList.map((v) => (
                 <BRC20Preview
                   key={v.inscriptionId}
                   tick={ticker}
                   balance={v.amount}
                   inscriptionNumber={v.inscriptionNumber}
                   timestamp={v.timestamp}
-                  type="MINT"
+                  type="TRANSFER"
+                  onClick={async () => {
+                    try {
+                      tools.showLoading(true);
+                      const data = await wallet.getInscriptionInfo(v.inscriptionId);
+                      navigate('OrdinalsInscriptionScreen', { inscription: data, withSend: true });
+                    } catch (e) {
+                      console.log(e);
+                    } finally {
+                      tools.showLoading(false);
+                    }
+                  }}
                 />
               ))}
             </Row>
+
+            {deployInscription || tokenSummary.transferableList.length > 0 ? (
+              <Text text={'You may click on the inscription to send it directly.'} preset="sub" textCenter />
+            ) : null}
           </Column>
         </Content>
       )}

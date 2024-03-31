@@ -259,6 +259,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
                       key={w.tick}
                       tick={w.tick || ''}
                       balance={w.amt}
+                      type="TRANSFER"
                       inscriptionNumber={w.inscriptionNumber}
                     />
                   );

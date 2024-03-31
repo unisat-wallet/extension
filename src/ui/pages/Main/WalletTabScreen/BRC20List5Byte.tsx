@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { TokenBalance } from '@/shared/types';
 import { Column, Row } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
-import BRC20BalanceCard from '@/ui/components/BRC20BalanceCard';
+import BRC20BalanceCard2 from '@/ui/components/BRC20BalanceCard2';
 import { Empty } from '@/ui/components/Empty';
 import { Pagination } from '@/ui/components/Pagination';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
@@ -62,7 +62,7 @@ export function BRC20List5Byte() {
     <Column>
       <Row style={{ flexWrap: 'wrap' }} gap="sm">
         {tokens.map((data, index) => (
-          <BRC20BalanceCard
+          <BRC20BalanceCard2
             key={index}
             tokenBalance={data}
             onClick={() => {

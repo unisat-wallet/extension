@@ -1411,6 +1411,14 @@ export class WalletController extends BaseController {
     return utxo;
   };
 
+  getInscriptionInfo = async (inscriptionId: string) => {
+    const utxo = await openapiService.getInscriptionInfo(inscriptionId);
+    if (!utxo) {
+      throw new Error('Inscription not found.');
+    }
+    return utxo;
+  };
+
   checkWebsite = (website: string) => {
     return openapiService.checkWebsite(website);
   };

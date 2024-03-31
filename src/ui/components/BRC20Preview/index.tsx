@@ -2,17 +2,17 @@ import { colors } from '@/ui/theme/colors';
 
 import { BRC20Ticker } from '../BRC20Ticker';
 import { Column } from '../Column';
-import { Icon } from '../Icon';
 import { Row } from '../Row';
 import { Text } from '../Text';
 
 export interface BRC20PreviewProps {
   tick: string;
-  balance: string;
+  balance?: string;
   inscriptionNumber: number;
   timestamp?: number;
   type?: string;
   selected?: boolean;
+  selectable?: boolean;
   onClick?: () => void;
   preset?: 'small' | 'medium' | 'large';
 }
@@ -28,7 +28,7 @@ export default function BRC20Preview({
   preset
 }: BRC20PreviewProps) {
   if (!balance) {
-    balance = 'deploy';
+    balance = 'Deploy';
   }
   let balanceSize = 'xxl';
   if (balance.length < 7) {
@@ -44,7 +44,7 @@ export default function BRC20Preview({
   let width = 100;
   let height = 130;
   let bodyHeight = 90;
-  let numberSize: any = 'sm';
+  let numberSize: any = 'md';
   let tickerPreset: any = 'md';
   if (preset === 'small') {
     width = 80;
@@ -54,18 +54,37 @@ export default function BRC20Preview({
     balanceSize = 'sm';
     tickerPreset = 'sm';
   }
+  let bg: any = 'black';
+  if (type === 'TRANSFER') {
+    // if (selected) {
+    //   bg = 'brc20_transfer_selected';
+    // } else {
+    bg = 'brc20_transfer';
+    // }
+  } else if (type === 'DEPLOY') {
+    bg = 'brc20_deploy';
+  }
   return (
     <Column
-      style={{ backgroundColor: colors.bg4, width, height, minWidth: width, minHeight: height, borderRadius: 5 }}
+      style={{
+        backgroundColor: colors.bg4,
+        width,
+        height,
+        minWidth: width,
+        minHeight: height,
+        borderRadius: 5,
+        borderWidth: selected ? 1 : 0,
+        borderColor: colors.primary
+      }}
       onClick={onClick}>
       <Column
         style={{
           padding: 8,
           height: bodyHeight,
-          backgroundColor: type === 'TRANSFER' ? (selected ? 'green' : '#002514') : '#000',
           borderTopLeftRadius: 5,
           borderTopRightRadius: 5
-        }}>
+        }}
+        bg={bg}>
         <Row>
           <BRC20Ticker tick={tick} preset={tickerPreset} />
         </Row>
@@ -74,9 +93,8 @@ export default function BRC20Preview({
       </Column>
 
       <Column px="sm" pb="sm" gap="sm">
-        <Row justifyBetween itemsCenter>
+        <Row itemsCenter justifyCenter>
           <Text text={`#${inscriptionNumber}`} color="primary" size={numberSize} />
-          {selected && <Icon icon="circle-check" color="green" style={{ marginRight: 5 }} />}
         </Row>
       </Column>
     </Column>
