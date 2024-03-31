@@ -1,5 +1,10 @@
 # UniSat Wallet Release Notes
 
+## v1.2.10
+
+- Support 5-byte BRC20
+- Improve the display of BRC20
+
 ## v1.2.9
 
 - Added `memos` parameter to `unisat.sendBitcoin` method, for constructing runes transactions (github #164 and #167)
