@@ -102,6 +102,12 @@ export interface WalletController {
     addressType: AddressType,
     accountCount: number
   ): Promise<{ address: string; type: string }[]>;
+  createKeyringWithKeystone(
+    urType: string,
+    urCbor: string,
+    addressType: AddressType,
+    accountCount: number
+  ): Promise<{ address: string; type: string }[]>;
 
   createTmpKeyringWithPrivateKey(privateKey: string, addressType: AddressType): Promise<WalletKeyring>;
 
@@ -304,6 +310,11 @@ export interface WalletController {
   removeAddressFlag(account: Account, flag: AddressFlagType): Promise<Account>;
 
   getVersionDetail(version: string): Promise<VersionDetail>;
+
+  genSignPsbtUr(psbtHex: string): Promise<{ type: string; cbor: string }>;
+  parseSignPsbtUr(type: string, cbor: string): Promise<string>;
+  genSignMsgUr(text: string): Promise<{ type: string; cbor: string; requestId: string }>;
+  parseSignMsgUr(type: string, cbor: string): Promise<{ requestId: string; publicKey: string; signature: string }>;
 
   getEnableSignData(): Promise<boolean>;
   setEnableSignData(enable: boolean): Promise<void>;

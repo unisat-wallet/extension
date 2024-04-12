@@ -3,6 +3,8 @@ import { Header } from '@/ui/components';
 import { usePushBitcoinTxCallback } from '@/ui/state/transactions/hooks';
 import { useLocationState } from '@/ui/utils';
 
+import { KEYRING_TYPE } from '@/shared/constant';
+import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { SignPsbt } from '../Approval/components';
 import { useNavigate } from '../MainRoute';
 
@@ -14,6 +16,7 @@ export default function TxConfirmScreen() {
   const { rawTxInfo } = useLocationState<LocationState>();
   const navigate = useNavigate();
   const pushBitcoinTx = usePushBitcoinTxCallback();
+  const account = useCurrentAccount();
   return (
     <SignPsbt
       header=<Header
@@ -26,6 +29,10 @@ export default function TxConfirmScreen() {
         window.history.go(-1);
       }}
       handleConfirm={() => {
+        if (account.type === KEYRING_TYPE.KeystoneKeyring) {
+          navigate('KeystoneSignScreen', { type: 'psbt', data: rawTxInfo.psbtHex });
+          return
+        }
         pushBitcoinTx(rawTxInfo.rawtx).then(({ success, txid, error }) => {
           if (success) {
             navigate('TxSuccessScreen', { txid });

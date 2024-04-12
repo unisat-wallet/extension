@@ -6,6 +6,7 @@ import { satoshisToAmount, satoshisToBTC, sleep, useWallet } from '@/ui/utils';
 import { UnspentOutput } from '@unisat/wallet-sdk';
 import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 
+import { KEYRING_TYPE } from '@/shared/constant';
 import { AppState } from '..';
 import { useAccountAddress, useCurrentAccount } from '../accounts/hooks';
 import { accountActions } from '../accounts/reducer';
@@ -28,6 +29,7 @@ export function usePrepareSendBTCCallback() {
   const utxos = useUtxos();
   const spendUnavailableUtxos = useSpendUnavailableUtxos();
   const fetchUtxos = useFetchUtxosCallback();
+  const account = useCurrentAccount();
   return useCallback(
     async ({
       toAddressInfo,
@@ -89,8 +91,8 @@ export function usePrepareSendBTCCallback() {
       }
 
       const psbt = bitcoin.Psbt.fromHex(psbtHex);
-      const rawtx = psbt.extractTransaction().toHex();
-      const fee = psbt.getFee();
+      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction().toHex();
+      const fee = account.type === KEYRING_TYPE.KeystoneKeyring ? 0 : psbt.getFee();
       dispatch(
         transactionsActions.updateBitcoinTx({
           rawtx,

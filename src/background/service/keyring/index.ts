@@ -14,16 +14,18 @@ import i18n from '../i18n';
 import preference from '../preference';
 import DisplayKeyring from './display';
 
-const { SimpleKeyring, HdKeyring } = keyring;
+const { SimpleKeyring, HdKeyring, KeystoneKeyring } = keyring;
 
 export const KEYRING_SDK_TYPES = {
   SimpleKeyring,
-  HdKeyring
+  HdKeyring,
+  KeystoneKeyring
 };
 
 export const KEYRING_CLASS = {
   PRIVATE_KEY: SimpleKeyring.type,
-  MNEMONIC: HdKeyring.type
+  MNEMONIC: HdKeyring.type,
+  KEYSTORE: KeystoneKeyring.type
 };
 
 interface MemStoreState {
@@ -31,6 +33,7 @@ interface MemStoreState {
   keyringTypes: any[];
   keyrings: any[];
   preMnemonics: string;
+  keystone: any;
 }
 
 export interface DisplayedKeyring {
@@ -76,6 +79,11 @@ export interface Keyring {
 
   changeHdPath?(hdPath: string): void;
   getAccountByHdPath?(hdPath: string, index: number): string;
+
+  genSignPsbtUr?(psbtHex: string): Promise<{ type: string; cbor: string }>;
+  parseSignPsbtUr?(type: string, cbor: string): Promise<string>;
+  genSignMsgUr?(publicKey: string, text: string): Promise<{ type: string; cbor: string; requestId: string }>;
+  parseSignMsgUr?(type: string, cbor: string): Promise<{ requestId: string; publicKey: string; signature: string }>;
 }
 
 class EmptyKeyring implements Keyring {
@@ -138,7 +146,8 @@ class KeyringService extends EventEmitter {
       keyringTypes: this.keyringTypes.map((krt) => krt.type),
       keyrings: [],
       preMnemonics: '',
-      addressTypes: []
+      addressTypes: [],
+      keystone: null
     });
 
     this.keyrings = [];
@@ -283,6 +292,32 @@ class KeyringService extends EventEmitter {
     return keyring;
   };
 
+  createKeyringWithKeystone = async (
+    urType: string,
+    urCbor: string,
+    addressType: AddressType,
+    accountCount: number
+  ) => {
+    if (accountCount < 1) {
+      throw new Error(i18n.t('account count must be greater than 0'));
+    }
+    await this.persistAllKeyrings();
+    const activeIndexes: number[] = [];
+    for (let i = 0; i < accountCount; i++) {
+      activeIndexes.push(i);
+    }
+    const tmpKeyring = new KeystoneKeyring();
+    await tmpKeyring.initFromUR(urType, urCbor);
+    const opts = await tmpKeyring.serialize();
+    const keyring = await this.addNewKeyring('Keystone', opts, addressType);
+    const accounts = await keyring.getAccounts();
+    if (!accounts[0]) {
+      throw new Error('KeyringController - First Account not found.');
+    }
+    this.setUnlocked();
+    return keyring;
+  };
+
   addKeyring = async (keyring: Keyring, addressType: AddressType) => {
     const accounts = await keyring.getAccounts();
 
@@ -297,7 +332,7 @@ class KeyringService extends EventEmitter {
 
   changeAddressType = async (keyringIndex: number, addressType: AddressType) => {
     const keyring: Keyring = this.keyrings[keyringIndex];
-    if (keyring.type === KEYRING_TYPE.HdKeyring) {
+    if (keyring.type === KEYRING_TYPE.HdKeyring || keyring.type === KEYRING_TYPE.KeystoneKeyring) {
       const hdPath = ADDRESS_TYPES[addressType].hdPath;
       if ((keyring as any).hdPath !== hdPath && keyring.changeHdPath) {
         keyring.changeHdPath(hdPath);
@@ -532,6 +567,9 @@ class KeyringService extends EventEmitter {
    */
   signMessage = async (address: string, data: string) => {
     const keyring = await this.getKeyringForAccount(address);
+    if (keyring.type === KEYRING_TYPE.KeystoneKeyring) {
+      return Buffer.from(this.memStore.getState().keystone.signature, 'hex').toString('base64');
+    }
     const sig = await keyring.signMessage(address, data);
     return sig;
   };
