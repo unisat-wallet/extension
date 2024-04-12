@@ -2,11 +2,13 @@
 import { Button, Column, Content, Layout, Logo, Row, Text } from '@/ui/components';
 import { useWallet } from '@/ui/utils';
 
+import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
 import { useNavigate } from '../MainRoute';
 
 export default function WelcomeScreen() {
   const navigate = useNavigate();
   const wallet = useWallet();
+  const isInTab = useExtensionIsInTab();
 
   return (
     <Layout>
@@ -51,6 +53,14 @@ export default function WelcomeScreen() {
               preset="default"
               onClick={async () => {
                 const isBooted = await wallet.isBooted();
+                if (!isInTab) {
+                  if (isBooted) {
+                    window.open('#/account/create-keystone-wallet');
+                  } else {
+                    window.open('#/account/create-password?isKeystone=true');
+                  }
+                  return
+                }
                 if (isBooted) {
                   navigate('CreateKeystoneWalletScreen');
                 } else {
