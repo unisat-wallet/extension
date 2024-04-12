@@ -1,9 +1,12 @@
 import { Card, Column, Content, Header, Layout, Text } from '@/ui/components';
 
+import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
 import { useNavigate } from '../MainRoute';
 
 export default function AddKeyringScreen() {
   const navigate = useNavigate();
+  const isInTab = useExtensionIsInTab();
+
   return (
     <Layout>
       <Header
@@ -53,7 +56,11 @@ export default function AddKeyringScreen() {
           <Card
             justifyCenter
             onClick={() => {
-              window.open('#/account/create-keystone-wallet');
+              if (isInTab) {
+                navigate('CreateKeystoneWalletScreen');
+              } else {
+                window.open('#/account/create-keystone-wallet');
+              }
             }}>
             <Column full justifyCenter>
               <Text text="Keystone Wallet" size="sm" />
