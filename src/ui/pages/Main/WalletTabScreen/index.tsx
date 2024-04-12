@@ -171,7 +171,7 @@ export default function WalletTabScreen() {
       <Content>
         <Column gap="xl">
           {currentKeyring.type === KEYRING_TYPE.HdKeyring && <AccountSelect />}
-
+          {currentKeyring.type === KEYRING_TYPE.KeystoneKeyring && <AccountSelect />}
           {isTestNetwork && <Text text="Bitcoin Testnet activated." color="danger" textCenter />}
 
           {walletConfig.statusMessage && <Text text={walletConfig.statusMessage} color="danger" textCenter />}
@@ -198,11 +198,11 @@ export default function WalletTabScreen() {
                 <>
                   <Row justifyBetween>
                     <span style={$noBreakStyle}>{'Available '}</span>
-                    <span style={$noBreakStyle}>{`loading...`}</span>
+                    <span style={$noBreakStyle}>{'loading...'}</span>
                   </Row>
                   <Row justifyBetween>
                     <span style={$noBreakStyle}>{'Unavailable '}</span>
-                    <span style={$noBreakStyle}>{`loading...`}</span>
+                    <span style={$noBreakStyle}>{'loading...'}</span>
                   </Row>
                   <Row justifyBetween>
                     <span style={$noBreakStyle}>{'Total '}</span>
