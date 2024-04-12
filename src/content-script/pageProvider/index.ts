@@ -224,6 +224,18 @@ export class UnisatProvider extends EventEmitter {
     });
   };
 
+  verifyMessageOfBIP322Simple = async (address: string, message: string, signature: string, network?: number) => {
+    return this._request({
+      method: 'verifyMessageOfBIP322Simple',
+      params: {
+        address,
+        message,
+        signature,
+        network
+      }
+    });
+  };
+
   signData = async (data: string, type: string) => {
     return this._request({
       method: 'signData',

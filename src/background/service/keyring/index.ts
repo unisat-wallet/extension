@@ -302,14 +302,12 @@ class KeyringService extends EventEmitter {
       throw new Error(i18n.t('account count must be greater than 0'));
     }
     await this.persistAllKeyrings();
-    const activeIndexes: number[] = [];
-    for (let i = 0; i < accountCount; i++) {
-      activeIndexes.push(i);
-    }
     const tmpKeyring = new KeystoneKeyring();
     await tmpKeyring.initFromUR(urType, urCbor);
+    tmpKeyring.changeHdPath(ADDRESS_TYPES[addressType].hdPath);
+    accountCount && tmpKeyring.addAccounts(accountCount);
     const opts = await tmpKeyring.serialize();
-    const keyring = await this.addNewKeyring('Keystone', opts, addressType);
+    const keyring = await this.addNewKeyring(KEYRING_TYPE.KeystoneKeyring, opts, addressType);
     const accounts = await keyring.getAccounts();
     if (!accounts[0]) {
       throw new Error('KeyringController - First Account not found.');
