@@ -26,7 +26,7 @@ module.exports = {
     semi: 0,
     'no-control-regex': 2,
     'linebreak-style': [0, 'error', 'windows'],
-    indent: ['error', 2, { SwitchCase: 1 }],
+    // indent: ['error', 2, { SwitchCase: 1 }],
     'array-bracket-spacing': [2, 'never'],
     'no-irregular-whitespace': 0,
     'no-trailing-spaces': 1,

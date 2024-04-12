@@ -40,12 +40,16 @@ import { checkAddressFlag } from '@/shared/utils';
 import { UnspentOutput, txHelpers } from '@unisat/wallet-sdk';
 import { publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
 import { ECPair, bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
-import { genPsbtOfBIP322Simple, getSignatureFromPsbtOfBIP322Simple, signMessageOfBIP322Simple } from '@unisat/wallet-sdk/lib/message';
+import { KeystoneKeyring } from '@unisat/wallet-sdk/lib/keyring';
+import {
+  genPsbtOfBIP322Simple,
+  getSignatureFromPsbtOfBIP322Simple,
+  signMessageOfBIP322Simple
+} from '@unisat/wallet-sdk/lib/message';
 import { toPsbtNetwork } from '@unisat/wallet-sdk/lib/network';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 import { toXOnly } from '@unisat/wallet-sdk/lib/utils';
 
-import { KeystoneKeyring } from '@unisat/wallet-sdk/lib/keyring';
 import { ContactBookItem } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';
 import { ConnectedSite } from '../service/permission';
@@ -135,7 +139,7 @@ export class WalletController extends BaseController {
     return openapiService.getMultiAddressAssets(addresses);
   };
 
-  findGroupAssets = (groups: { type: number; address_arr: string[] }[]) => {
+  findGroupAssets = (groups: { type: number; address_arr: string[]; pubkey_arr: string[] }[]) => {
     return openapiService.findGroupAssets(groups);
   };
 
@@ -306,24 +310,63 @@ export class WalletController extends BaseController {
     return this.displayedKeyringToWalletKeyring(displayedKeyring, -1, false);
   };
 
-  createTmpKeyringWithKeystone = async (urType: string, urCbor: string, addressType: AddressType, accountCount = 1) => {
+  createTmpKeyringWithKeystone = async (
+    urType: string,
+    urCbor: string,
+    addressType: AddressType,
+    hdPath: string,
+    accountCount: number
+  ) => {
     const tmpKeyring = new KeystoneKeyring();
     await tmpKeyring.initFromUR(urType, urCbor);
-    tmpKeyring.changeHdPath(ADDRESS_TYPES[addressType].hdPath);
-    accountCount && tmpKeyring.addAccounts(accountCount);
+    if (hdPath.length >= 13) {
+      tmpKeyring.changeChangeAddressHdPath(hdPath);
+      tmpKeyring.addAccounts(accountCount);
+    } else {
+      tmpKeyring.changeHdPath(ADDRESS_TYPES[addressType].hdPath);
+      accountCount && tmpKeyring.addAccounts(accountCount);
+    }
+
     const opts = await tmpKeyring.serialize();
     const originKeyring = keyringService.createTmpKeyring(KEYRING_TYPE.KeystoneKeyring, opts);
     const displayedKeyring = await keyringService.displayForKeyring(originKeyring, addressType, -1);
-    preferenceService.setShowSafeNotice(true);
+    preferenceService.setShowSafeNotice(false);
     return this.displayedKeyringToWalletKeyring(displayedKeyring, -1, false);
   };
 
-  createKeyringWithKeystone = async (urType: string, urCbor: string, addressType: AddressType, accountCount = 1) => {
-    const originKeyring = await keyringService.createKeyringWithKeystone(urType, urCbor, addressType, accountCount);
-    const displayedKeyring = await keyringService.displayForKeyring(originKeyring, addressType, keyringService.keyrings.length - 1);
+  createKeyringWithKeystone = async (
+    urType: string,
+    urCbor: string,
+    addressType: AddressType,
+    hdPath: string,
+    accountCount = 1,
+    filterPubkey: string[] = []
+  ) => {
+    const originKeyring = await keyringService.createKeyringWithKeystone(
+      urType,
+      urCbor,
+      addressType,
+      hdPath,
+      accountCount
+    );
+
+    if (filterPubkey !== null && filterPubkey !== undefined && filterPubkey.length > 0) {
+      const accounts = await originKeyring.getAccounts();
+      accounts.forEach((account) => {
+        if (!filterPubkey.includes(account)) {
+          originKeyring.removeAccount(account);
+        }
+      });
+    }
+    const account = await originKeyring.getAccounts();
+    const displayedKeyring = await keyringService.displayForKeyring(
+      originKeyring,
+      addressType,
+      keyringService.keyrings.length - 1
+    );
     const keyring = this.displayedKeyringToWalletKeyring(displayedKeyring, keyringService.keyrings.length - 1);
     this.changeKeyring(keyring);
-    preferenceService.setShowSafeNotice(true);
+    preferenceService.setShowSafeNotice(false);
   };
 
   removeKeyring = async (keyring: WalletKeyring) => {
@@ -516,16 +559,16 @@ export class WalletController extends BaseController {
         const bip32Derivation = {
           masterFingerprint: Buffer.from(_keyring.mfp as string, 'hex'),
           path: `${keyring.hdPath}/${account.index}`,
-          pubkey: Buffer.from(account.pubkey, 'hex'),
+          pubkey: Buffer.from(account.pubkey, 'hex')
         };
         if (isP2TR) {
           psbt.data.inputs[input.index].tapBip32Derivation = [
             {
               ...bip32Derivation,
               pubkey: bip32Derivation.pubkey.slice(1),
-              leafHashes: [],
+              leafHashes: []
             }
-          ]
+          ];
         } else {
           psbt.data.inputs[input.index].bip32Derivation = [bip32Derivation];
         }
@@ -1065,7 +1108,8 @@ export class WalletController extends BaseController {
         flag
       });
     }
-    const hdPath = (type === KEYRING_TYPE.HdKeyring || type === KEYRING_TYPE.KeystoneKeyring) ? displayedKeyring.keyring.hdPath : '';
+    const hdPath =
+      type === KEYRING_TYPE.HdKeyring || type === KEYRING_TYPE.KeystoneKeyring ? displayedKeyring.keyring.hdPath : '';
     const alianName = preferenceService.getKeyringAlianName(
       key,
       initName ? `${KEYRING_TYPES[type].alianName} #${index + 1}` : ''
@@ -1697,9 +1741,9 @@ export class WalletController extends BaseController {
     isFinalize && psbt.finalizeAllInputs();
     return {
       psbtHex: psbt.toHex(),
-      rawtx: isFinalize ? psbt.extractTransaction().toHex() : undefined,
+      rawtx: isFinalize ? psbt.extractTransaction().toHex() : undefined
     };
-  }
+  };
 
   genSignMsgUr = async (text: string, msgType?: string) => {
     if (msgType === 'bip322-simple') {
@@ -1708,7 +1752,7 @@ export class WalletController extends BaseController {
       const psbt = genPsbtOfBIP322Simple({
         message: text,
         address: account.address,
-        networkType: this.getNetworkType(),
+        networkType: this.getNetworkType()
       });
       const toSignInputs = await this.formatOptionsToSignInputs(psbt);
       await this.signPsbt(psbt, toSignInputs, false);
@@ -1724,7 +1768,7 @@ export class WalletController extends BaseController {
       const psbt = bitcoin.Psbt.fromHex(res.psbtHex);
       psbt.finalizeAllInputs();
       return {
-        signature: getSignatureFromPsbtOfBIP322Simple(psbt),
+        signature: getSignatureFromPsbtOfBIP322Simple(psbt)
       };
     }
     const { keyring } = await this.checkKeyringMethod('parseSignMsgUr');

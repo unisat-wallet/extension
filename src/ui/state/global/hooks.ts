@@ -70,10 +70,17 @@ export function useImportAccountsFromKeystoneCallback() {
   const dispatch = useAppDispatch();
   const wallet = useWallet();
   return useCallback(
-    async (urType: string, urCbor: string, addressType: AddressType, accountCount: number) => {
-      await wallet.createKeyringWithKeystone(urType, urCbor, addressType, accountCount);
+    async (
+      urType: string,
+      urCbor: string,
+      addressType: AddressType,
+      accountCount: number,
+      hdPath: string,
+      filterPubkey?: string[]
+    ) => {
+      await wallet.createKeyringWithKeystone(urType, urCbor, addressType, hdPath, accountCount, filterPubkey);
       dispatch(globalActions.update({ isUnlocked: true }));
     },
     [dispatch, wallet]
-  )
+  );
 }

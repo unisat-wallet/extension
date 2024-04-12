@@ -296,6 +296,7 @@ class KeyringService extends EventEmitter {
     urType: string,
     urCbor: string,
     addressType: AddressType,
+    hdPath: string,
     accountCount: number
   ) => {
     if (accountCount < 1) {
@@ -304,11 +305,18 @@ class KeyringService extends EventEmitter {
     await this.persistAllKeyrings();
     const tmpKeyring = new KeystoneKeyring();
     await tmpKeyring.initFromUR(urType, urCbor);
-    tmpKeyring.changeHdPath(ADDRESS_TYPES[addressType].hdPath);
-    accountCount && tmpKeyring.addAccounts(accountCount);
+    if (hdPath.length >= 13) {
+      tmpKeyring.changeChangeAddressHdPath(hdPath);
+      tmpKeyring.addAccounts(accountCount);
+    } else {
+      tmpKeyring.changeHdPath(ADDRESS_TYPES[addressType].hdPath);
+      tmpKeyring.addAccounts(accountCount);
+    }
+
     const opts = await tmpKeyring.serialize();
     const keyring = await this.addNewKeyring(KEYRING_TYPE.KeystoneKeyring, opts, addressType);
     const accounts = await keyring.getAccounts();
+
     if (!accounts[0]) {
       throw new Error('KeyringController - First Account not found.');
     }
@@ -318,7 +326,6 @@ class KeyringService extends EventEmitter {
 
   addKeyring = async (keyring: Keyring, addressType: AddressType) => {
     const accounts = await keyring.getAccounts();
-
     await this.checkForDuplicate(keyring.type, accounts);
     this.keyrings.push(keyring);
     this.addressTypes.push(addressType);

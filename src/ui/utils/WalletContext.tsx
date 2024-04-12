@@ -61,8 +61,8 @@ export interface WalletController {
   getAddressCacheBalance(address: string): Promise<BitcoinBalance>;
   getMultiAddressAssets(addresses: string): Promise<AddressSummary[]>;
   findGroupAssets(
-    groups: { type: number; address_arr: string[] }[]
-  ): Promise<{ type: number; address_arr: string[]; satoshis_arr: number[] }[]>;
+    groups: { type: number; address_arr: string[]; pubkey_arr: string[] }[]
+  ): Promise<{ type: number; address_arr: string[]; pubkey_arr: string[]; satoshis_arr: number[] }[]>;
 
   getAddressInscriptions(
     address: string,
@@ -106,11 +106,18 @@ export interface WalletController {
     urType: string,
     urCbor: string,
     addressType: AddressType,
-    accountCount: number
+    hdPath: string,
+    accountCount: number,
+    filterPubkey?: string[]
   ): Promise<{ address: string; type: string }[]>;
-
   createTmpKeyringWithPrivateKey(privateKey: string, addressType: AddressType): Promise<WalletKeyring>;
-  createTmpKeyringWithKeystone(urType: string, urCbor: string, addressType: AddressType, accountCount?: number): Promise<WalletKeyring>;
+  createTmpKeyringWithKeystone(
+    urType: string,
+    urCbor: string,
+    addressType: AddressType,
+    hdPath: string,
+    accountCount?: number
+  ): Promise<WalletKeyring>;
 
   createTmpKeyringWithMnemonics(
     mnemonic: string,
@@ -314,12 +321,20 @@ export interface WalletController {
   getVersionDetail(version: string): Promise<VersionDetail>;
 
   genSignPsbtUr(psbtHex: string): Promise<{ type: string; cbor: string }>;
-  parseSignPsbtUr(type: string, cbor: string, isFinalize?: boolean): Promise<{
+  parseSignPsbtUr(
+    type: string,
+    cbor: string,
+    isFinalize?: boolean
+  ): Promise<{
     psbtHex: string;
     rawTx: string;
   }>;
   genSignMsgUr(text: string, msgType?: string): Promise<{ type: string; cbor: string; requestId: string }>;
-  parseSignMsgUr(type: string, cbor: string, msgType?: string): Promise<{ requestId: string; publicKey: string; signature: string }>;
+  parseSignMsgUr(
+    type: string,
+    cbor: string,
+    msgType?: string
+  ): Promise<{ requestId: string; publicKey: string; signature: string }>;
 
   getEnableSignData(): Promise<boolean>;
   setEnableSignData(enable: boolean): Promise<void>;
