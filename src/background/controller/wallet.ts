@@ -44,6 +44,7 @@ import { toPsbtNetwork } from '@unisat/wallet-sdk/lib/network';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 import { toXOnly } from '@unisat/wallet-sdk/lib/utils';
 
+import { KeystoneKeyring } from '@unisat/wallet-sdk/lib/keyring';
 import { ContactBookItem } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';
 import { ConnectedSite } from '../service/permission';
@@ -299,6 +300,18 @@ export class WalletController extends BaseController {
 
   createTmpKeyringWithPrivateKey = async (privateKey: string, addressType: AddressType) => {
     const originKeyring = keyringService.createTmpKeyring(KEYRING_TYPE.SimpleKeyring, [privateKey]);
+    const displayedKeyring = await keyringService.displayForKeyring(originKeyring, addressType, -1);
+    preferenceService.setShowSafeNotice(true);
+    return this.displayedKeyringToWalletKeyring(displayedKeyring, -1, false);
+  };
+
+  createTmpKeyringWithKeystone = async (urType: string, urCbor: string, addressType: AddressType, accountCount = 1) => {
+    const tmpKeyring = new KeystoneKeyring();
+    await tmpKeyring.initFromUR(urType, urCbor);
+    tmpKeyring.changeHdPath(ADDRESS_TYPES[addressType].hdPath);
+    accountCount && tmpKeyring.addAccounts(accountCount);
+    const opts = await tmpKeyring.serialize();
+    const originKeyring = keyringService.createTmpKeyring(KEYRING_TYPE.KeystoneKeyring, opts);
     const displayedKeyring = await keyringService.displayForKeyring(originKeyring, addressType, -1);
     preferenceService.setShowSafeNotice(true);
     return this.displayedKeyringToWalletKeyring(displayedKeyring, -1, false);

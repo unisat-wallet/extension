@@ -5,6 +5,7 @@ import { NETWORK_TYPES, VERSION } from '@/shared/constant';
 import { NetworkType } from '@/shared/types';
 import { amountToSatoshis } from '@/ui/utils';
 import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
+import { verifyMessageOfBIP322Simple } from '@unisat/wallet-sdk/lib/message';
 import { toPsbtNetwork } from '@unisat/wallet-sdk/lib/network';
 import { ethErrors } from 'eth-rpc-errors';
 import BaseController from '../base';
@@ -114,6 +115,12 @@ class ProviderController extends BaseController {
       total: amountToSatoshis(balance.amount)
     };
   };
+
+  @Reflect.metadata('SAFE', true)
+  verifyMessageOfBIP322Simple = async (req) => {
+    const { data: { params } } = req;
+    return verifyMessageOfBIP322Simple(params.address, params.message, params.signature, params.network) ? 1 : 0;
+  }
 
   @Reflect.metadata('APPROVAL', ['SignPsbt', (req) => {
     const { data: { params: { toAddress, satoshis } } } = req;

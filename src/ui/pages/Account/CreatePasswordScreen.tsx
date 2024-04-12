@@ -12,7 +12,17 @@ type Status = '' | 'error' | 'warning' | undefined;
 export default function CreatePasswordScreen() {
   const navigate = useNavigate();
   const wallet = useWallet();
-  const { state } = useLocation();
+  const loc = useLocation();
+  const params = new URLSearchParams(loc.search);
+  let state = {};
+  if (loc.state) {
+    state = loc.state;
+  }
+  if (params.size > 0) {
+    params.forEach((value, key) => {
+      state[key] = value;
+    })
+  }
   const { isNewAccount, isKeystone } = state as { isNewAccount: boolean; isKeystone: boolean };
   const [password, setPassword] = useState('');
 
@@ -24,7 +34,7 @@ export default function CreatePasswordScreen() {
   const [run, loading] = useWalletRequest(wallet.boot, {
     onSuccess() {
       if (isKeystone) {
-        navigate('CreateKeystoneWalletScreen');
+        navigate('CreateKeystoneWalletScreen', { fromUnlock: true });
       } else if (isNewAccount) {
         navigate('CreateHDWalletScreen', { isImport: false, fromUnlock: true });
       } else {
