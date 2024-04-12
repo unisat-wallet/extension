@@ -305,6 +305,14 @@ export class WalletController extends BaseController {
     return this.displayedKeyringToWalletKeyring(displayedKeyring, -1, false);
   };
 
+  createKeyringWithKeystone = async (urType: string, urCbor: string, addressType: AddressType, accountCount = 1) => {
+    const originKeyring = await keyringService.createKeyringWithKeystone(urType, urCbor, addressType, accountCount);
+    const displayedKeyring = await keyringService.displayForKeyring(originKeyring, addressType, keyringService.keyrings.length - 1);
+    const keyring = this.displayedKeyringToWalletKeyring(displayedKeyring, keyringService.keyrings.length - 1);
+    this.changeKeyring(keyring);
+    preferenceService.setShowSafeNotice(true);
+  };
+
   removeKeyring = async (keyring: WalletKeyring) => {
     await keyringService.removeKeyring(keyring.index);
     const keyrings = await this.getKeyrings();
@@ -485,6 +493,11 @@ export class WalletController extends BaseController {
         }
       }
     });
+
+    if (keyring.type === KEYRING_TYPE.KeystoneKeyring) {
+      return psbt;
+    }
+
     psbt = await keyringService.signTransaction(_keyring, psbt, toSignInputs);
     if (autoFinalized) {
       toSignInputs.forEach((v) => {
@@ -1011,7 +1024,7 @@ export class WalletController extends BaseController {
         flag
       });
     }
-    const hdPath = type === KEYRING_TYPE.HdKeyring ? displayedKeyring.keyring.hdPath : '';
+    const hdPath = (type === KEYRING_TYPE.HdKeyring || type === KEYRING_TYPE.KeystoneKeyring) ? displayedKeyring.keyring.hdPath : '';
     const alianName = preferenceService.getKeyringAlianName(
       key,
       initName ? `${KEYRING_TYPES[type].alianName} #${index + 1}` : ''
@@ -1616,6 +1629,41 @@ export class WalletController extends BaseController {
     const current = await this.getCurrentAccount();
     if (!current) return false;
     return checkAddressFlag(current?.flag, AddressFlagType.Is_Enable_Atomicals);
+  };
+
+  checkKeyringMethod = async (method: string) => {
+    const account = await this.getCurrentAccount();
+    if (!account) throw new Error('no current account');
+    const keyring = await keyringService.getKeyringForAccount(account.pubkey);
+    if (!keyring) {
+      throw new Error('keyring does not exist');
+    }
+    if (!keyring[method]) {
+      throw new Error(`keyring does not have ${method} method`);
+    }
+    return { account, keyring };
+  };
+
+  genSignPsbtUr = async (psbtHex: string) => {
+    const { keyring } = await this.checkKeyringMethod('genSignPsbtUr');
+    return await keyring.genSignPsbtUr!(psbtHex);
+  };
+
+  parseSignPsbtUr = async (type: string, cbor: string) => {
+    const { keyring } = await this.checkKeyringMethod('parseSignPsbtUr');
+    return await keyring.parseSignPsbtUr!(type, cbor);
+  }
+
+  genSignMsgUr = async (text: string) => {
+    const { account, keyring } = await this.checkKeyringMethod('genSignMsgUr');
+    return await keyring.genSignMsgUr!(account.pubkey, text);
+  };
+
+  parseSignMsgUr = async (type: string, cbor: string) => {
+    const { keyring } = await this.checkKeyringMethod('parseSignMsgUr');
+    const sig = await keyring.parseSignMsgUr!(type, cbor);
+    keyringService.memStore.updateState({ keystone: sig });
+    return sig;
   };
 
   getEnableSignData = async () => {

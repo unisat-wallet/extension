@@ -13,6 +13,7 @@ import { useWallet } from '../utils';
 import AddKeyringScreen from './Account/AddKeyringScreen';
 import CreateAccountScreen from './Account/CreateAccountScreen';
 import CreateHDWalletScreen from './Account/CreateHDWalletScreen';
+import CreateKeystoneWalletScreen from './Account/CreateKeystoneWalletScreen';
 import CreatePasswordScreen from './Account/CreatePasswordScreen';
 import CreateSimpleWalletScreen from './Account/CreateSimpleWalletScreen';
 import SwitchAccountScreen from './Account/SwitchAccountScreen';
@@ -49,6 +50,7 @@ import NetworkTypeScreen from './Settings/NetworkTypeScreen';
 import UpgradeNoticeScreen from './Settings/UpgradeNoticeScreen';
 import TestScreen from './Test/TestScreen';
 import HistoryScreen from './Wallet/HistoryScreen';
+import KeystoneSignScreen from './Wallet/KeystoneSignScreen';
 import ReceiveScreen from './Wallet/ReceiveScreen';
 import TxConfirmScreen from './Wallet/TxConfirmScreen';
 import TxCreateScreen from './Wallet/TxCreateScreen';
@@ -202,6 +204,10 @@ const routes = {
     path: '/account/create-simple-wallet',
     element: <CreateSimpleWalletScreen />
   },
+  CreateKeystoneWalletScreen: {
+    path: '/account/create-keystone-wallet',
+    element: <CreateKeystoneWalletScreen />
+  },
   UpgradeNoticeScreen: {
     path: '/settings/upgrade-notice',
     element: <UpgradeNoticeScreen />
@@ -237,6 +243,11 @@ const routes = {
   UnavailableUtxoScreen: {
     path: '/wallet/unavailable-utxo',
     element: <UnavailableUtxoScreen />
+  },
+
+  KeystoneSignScreen: {
+    path: '/keystone/sign',
+    element: <KeystoneSignScreen />
   },
   SendRunesScreen: {
     path: '/runes/send-runes',
