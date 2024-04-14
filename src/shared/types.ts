@@ -159,6 +159,12 @@ export interface UTXO {
     type: 'NFT' | 'FT';
     ticker?: string;
   }[];
+
+  runes: {
+    runeid: string;
+    rune: string;
+    amount: string;
+  }[];
 }
 
 export interface UTXO_Detail {
@@ -292,7 +298,8 @@ export enum RiskType {
   HIGH_FEE_RATE,
   SPLITTING_INSCRIPTIONS,
   MERGING_INSCRIPTIONS,
-  CHANGING_INSCRIPTION
+  CHANGING_INSCRIPTION,
+  RUNES_BURNING
 }
 
 export interface Risk {
@@ -311,12 +318,14 @@ export interface DecodedPsbt {
     inscriptions: Inscription[];
     atomicals: Atomical[];
     sighashType: number;
+    runes: RuneBalance[];
   }[];
   outputInfos: {
     address: string;
     value: number;
     inscriptions: Inscription[];
     atomicals: Atomical[];
+    runes: RuneBalance[];
   }[];
   inscriptions: { [key: string]: Inscription };
   feeRate: number;
@@ -368,4 +377,50 @@ export interface VersionDetail {
   version: string;
   title: string;
   changelogs: string[];
+}
+
+export interface RuneBalance {
+  amount: string;
+  runeid: string;
+  rune: string;
+  spacedRune: string;
+  symbol: string;
+  divisibility: number;
+}
+
+export interface RuneInfo {
+  runeid: string;
+  rune: string;
+  spacedRune: string;
+  number: number;
+  height: number;
+  txidx: number;
+  timestamp: number;
+  divisibility: number;
+  symbol: string;
+  etching: string;
+  premine: string;
+  terms: {
+    amount: string;
+    cap: string;
+    heightStart: number;
+    heightEnd: number;
+    offsetStart: number;
+    offsetEnd: number;
+  };
+  mints: string;
+  burned: string;
+  holders: number;
+  transactions: number;
+}
+
+export interface AddressRunesTokenSummary {
+  runeInfo: RuneInfo;
+  runeBalance: RuneBalance;
+  mint: {
+    mintable: boolean;
+    remaining: string;
+    start: number;
+    end: number;
+  };
 }

@@ -1,6 +1,15 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { Atomical, DecodedPsbt, Inscription, RawTxInfo, SignPsbtOptions, ToSignInput, TxType } from '@/shared/types';
+import {
+  Atomical,
+  DecodedPsbt,
+  Inscription,
+  RawTxInfo,
+  RuneBalance,
+  SignPsbtOptions,
+  ToSignInput,
+  TxType
+} from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressText } from '@/ui/components/AddressText';
@@ -9,6 +18,7 @@ import AssetTag from '@/ui/components/AssetTag';
 import AtomicalsNFTPreview from '@/ui/components/AtomicalsNFTPreview';
 import BRC20Preview from '@/ui/components/BRC20Preview';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
+import RunesPreviewCard from '@/ui/components/RunesPreviewCard';
 import { SignPsbtWithRisksPopover } from '@/ui/components/SignPsbtWithRisksPopover';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
@@ -147,6 +157,8 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
     0
   );
 
+  const runesCount = txInfo.decodedPsbt.inputInfos.reduce((pre, cur) => (cur.runes ? cur.runes.length : 0) + pre, 0);
+
   const brc20Count = 0;
 
   const atomicals_nft: Atomical[] = [];
@@ -180,8 +192,18 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
     });
   });
 
+  const runesArray: RuneBalance[] = [];
+  txInfo.decodedPsbt.inputInfos.forEach((v) => {
+    if (v.runes) {
+      v.runes.forEach((w) => {
+        runesArray.push(w);
+      });
+    }
+  });
+
   const involvedAssets = useMemo(() => {
-    const involved = ordinalsInscriptionCount > 0 || atomicalsNFTCount > 0 || arc20Count > 0 || brc20Count > 0;
+    const involved =
+      ordinalsInscriptionCount > 0 || atomicalsNFTCount > 0 || arc20Count > 0 || brc20Count > 0 || runesCount > 0;
     if (!involved) return;
     return (
       <Column>
@@ -263,6 +285,30 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
                       inscriptionNumber={w.inscriptionNumber}
                     />
                   );
+                })}
+              </Row>
+            </Column>
+          ) : null}
+
+          {runesArray.length > 0 ? (
+            <Column
+              fullX
+              px="md"
+              pt="md"
+              pb="md"
+              style={{
+                backgroundColor: '#1e1a1e',
+                borderRadius: 10,
+                borderWidth: 1,
+                borderColor: colors.border
+              }}>
+              <Row>
+                <AssetTag type="RUNES" />
+              </Row>
+
+              <Row overflowX>
+                {runesArray.map((w, index) => {
+                  return <RunesPreviewCard key={'runes_' + index} balance={w} />;
                 })}
               </Row>
             </Column>
@@ -659,6 +705,7 @@ export default function SignPsbt({
                       const inscriptions = v.inscriptions;
                       const atomicals_nft = v.atomicals.filter((v) => v.type === 'NFT');
                       const atomicals_ft = v.atomicals.filter((v) => v.type === 'FT');
+                      const runes = v.runes || [];
                       return (
                         <Row
                           key={'output_' + index}
@@ -740,6 +787,19 @@ export default function SignPsbt({
                                 </Column>
                               </Row>
                             )}
+
+                            {runes.length > 0 && (
+                              <Row>
+                                <Column justifyCenter>
+                                  <Text text={`RUNES`} color={isToSign ? 'white' : 'textDim'} />
+                                  <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
+                                    {runes.map((w) => (
+                                      <RunesPreviewCard key={w.runeid} balance={w} />
+                                    ))}
+                                  </Row>
+                                </Column>
+                              </Row>
+                            )}
                           </Column>
                         </Row>
                       );
@@ -757,6 +817,7 @@ export default function SignPsbt({
                       const inscriptions = v.inscriptions;
                       const atomicals_nft = v.atomicals.filter((v) => v.type === 'NFT');
                       const atomicals_ft = v.atomicals.filter((v) => v.type === 'FT');
+                      const runes = v.runes || [];
                       return (
                         <Column
                           key={'output_' + index}
@@ -824,6 +885,19 @@ export default function SignPsbt({
                                 <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
                                   {atomicals_ft.map((w) => (
                                     <Arc20PreviewCard key={w.ticker} ticker={w.ticker || ''} amt={v.value} />
+                                  ))}
+                                </Row>
+                              </Column>
+                            </Row>
+                          )}
+
+                          {runes.length > 0 && (
+                            <Row>
+                              <Column justifyCenter>
+                                <Text text={`RUNES`} color={isMyAddress ? 'white' : 'textDim'} />
+                                <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
+                                  {runes.map((w) => (
+                                    <RunesPreviewCard key={w.runeid} balance={w} />
                                   ))}
                                 </Row>
                               </Column>

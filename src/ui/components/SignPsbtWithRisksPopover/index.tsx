@@ -14,6 +14,7 @@ import { Arc20BurningList } from './Arc20BurningList';
 import { BadFeeRate } from './BadFeeRate';
 import { ChangingInscription } from './ChangingInscription';
 import { InscriptionBurning } from './InscriptionBurning';
+import { RunesBurningList } from './RunesBurningList';
 import { SendingOutAssets } from './SendingOutAssets';
 
 const AGREEMENT_TEXT = 'CONFIRM';
@@ -27,7 +28,8 @@ const visibleRiskDetailTypes = [
   RiskType.HIGH_FEE_RATE,
   //   RiskType.SPLITTING_INSCRIPTIONS,
   //   RiskType.MERGING_INSCRIPTIONS,
-  RiskType.CHANGING_INSCRIPTION
+  RiskType.CHANGING_INSCRIPTION,
+  RiskType.RUNES_BURNING
 ];
 export const SignPsbtWithRisksPopover = ({
   decodedPsbt,
@@ -60,6 +62,8 @@ export const SignPsbtWithRisksPopover = ({
       return <BadFeeRate decodedPsbt={decodedPsbt} risk={detailRisk} onClose={() => setDetailRisk(null)} />;
     } else if (detailRisk.type === RiskType.CHANGING_INSCRIPTION) {
       return <ChangingInscription decodedPsbt={decodedPsbt} onClose={() => setDetailRisk(null)} />;
+    } else if (detailRisk.type === RiskType.RUNES_BURNING) {
+      return <RunesBurningList decodedPsbt={decodedPsbt} onClose={() => setDetailRisk(null)} />;
     }
   }
 

@@ -594,3 +594,96 @@ export function useAtomicalsTx() {
   const transactionsState = useTransactionsState();
   return transactionsState.atomicalsTx;
 }
+
+export function useAssetUtxosRunes() {
+  const transactionsState = useTransactionsState();
+  return transactionsState.assetUtxos_runes;
+}
+
+export function useFetchAssetUtxosRunesCallback() {
+  const dispatch = useAppDispatch();
+  const wallet = useWallet();
+  const account = useCurrentAccount();
+  return useCallback(
+    async (rune: string) => {
+      const data = await wallet.getAssetUtxosRunes(rune);
+      dispatch(transactionsActions.setAssetUtxosRunes(data));
+      return data;
+    },
+    [wallet, account]
+  );
+}
+
+export function usePrepareSendRunesCallback() {
+  const dispatch = useAppDispatch();
+  const wallet = useWallet();
+  const fromAddress = useAccountAddress();
+  const utxos = useUtxos();
+  const fetchUtxos = useFetchUtxosCallback();
+  const assetUtxosRunes = useAssetUtxosRunes();
+  const fetchAssetUtxosRunes = useFetchAssetUtxosRunesCallback();
+  return useCallback(
+    async ({
+      toAddressInfo,
+      runeid,
+      runeAmount,
+      outputValue,
+      feeRate,
+      enableRBF
+    }: {
+      toAddressInfo: ToAddressInfo;
+      runeid: string;
+      runeAmount: string;
+      outputValue: number;
+      feeRate: number;
+      enableRBF: boolean;
+    }) => {
+      let btcUtxos = utxos;
+      if (btcUtxos.length === 0) {
+        btcUtxos = await fetchUtxos();
+      }
+
+      let assetUtxos = assetUtxosRunes;
+      if (assetUtxos.length == 0) {
+        assetUtxos = await fetchAssetUtxosRunes(runeid);
+      }
+
+      const psbtHex = await wallet.sendRunes({
+        to: toAddressInfo.address,
+        runeid,
+        runeAmount,
+        outputValue,
+        feeRate,
+        enableRBF,
+        btcUtxos,
+        assetUtxos
+      });
+      const psbt = bitcoin.Psbt.fromHex(psbtHex);
+      const rawtx = psbt.extractTransaction().toHex();
+      dispatch(
+        transactionsActions.updateRunesTx({
+          rawtx,
+          psbtHex,
+          fromAddress,
+          feeRate,
+          enableRBF,
+          runeid,
+          runeAmount,
+          outputValue
+        })
+      );
+      const rawTxInfo: RawTxInfo = {
+        psbtHex,
+        rawtx,
+        toAddressInfo
+      };
+      return rawTxInfo;
+    },
+    [dispatch, wallet, fromAddress, utxos, assetUtxosRunes, fetchAssetUtxosRunes]
+  );
+}
+
+export function useRunesTx() {
+  const transactionsState = useTransactionsState();
+  return transactionsState.runesTx;
+}

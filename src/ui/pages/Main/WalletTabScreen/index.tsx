@@ -32,6 +32,7 @@ import { amountToSatoshis, satoshisToAmount, useWallet } from '@/ui/utils';
 import { useNavigate } from '../../MainRoute';
 import { AtomicalsTab } from './AtomicalsTab';
 import { OrdinalsTab } from './OrdinalsTab';
+import { RunesList } from './RunesList';
 
 const $noBreakStyle: CSSProperties = {
   whiteSpace: 'nowrap',
@@ -101,6 +102,11 @@ export default function WalletTabScreen() {
   }, []);
 
   const tabItems = [
+    {
+      key: AssetTabKey.RUNES,
+      label: 'Runes',
+      children: <RunesList />
+    },
     {
       key: AssetTabKey.ORDINALS,
       label: 'Ordinals',

@@ -37,6 +37,7 @@ export interface InputProps {
   disabled?: boolean;
   disableDecimal?: boolean;
   enableBrc20Decimal?: boolean;
+  runesDecimal?: number;
   enableMax?: boolean;
   onMaxClick?: () => void;
 }
@@ -99,6 +100,7 @@ function AmountInput(props: InputProps) {
     style: $inputStyleOverride,
     disableDecimal,
     enableBrc20Decimal,
+    runesDecimal,
     enableMax,
     onMaxClick,
     ...rest
@@ -124,6 +126,12 @@ function AmountInput(props: InputProps) {
     } else {
       if (enableBrc20Decimal) {
         if (/^\d+\.?\d{0,18}$/.test(value) || value === '') {
+          setValidAmount(value);
+          setInputValue(value);
+        }
+      } else if (runesDecimal !== undefined) {
+        const regex = new RegExp(`^\\d+\\.?\\d{0,${runesDecimal}}$`);
+        if (regex.test(value) || value === '') {
           setValidAmount(value);
           setInputValue(value);
         }

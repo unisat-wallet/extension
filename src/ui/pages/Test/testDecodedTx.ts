@@ -31,6 +31,15 @@ export const testDecodedTx = {
             ticker: 'atom'
           }
         ],
+        runes: [
+          {
+            runeid: '1222:90',
+            spacedRune: 'AAAAA',
+            amount: '100',
+            divisibility: 3,
+            symbol: 'G'
+          }
+        ],
         onchain: true,
         height: 824479
       },
@@ -69,7 +78,16 @@ export const testDecodedTx = {
             offset: 0
           }
         ],
-        atomicals: []
+        atomicals: [],
+        runes: [
+          {
+            runeid: '1222:90',
+            spacedRune: 'AAAAA',
+            amount: '10',
+            divisibility: 3,
+            symbol: 'G'
+          }
+        ]
       }
     ],
     feeRate: '11.0',
@@ -102,6 +120,12 @@ export const testDecodedTx = {
       },
       {
         type: 12,
+        level: 'warning',
+        title: 'Changing inscription detected',
+        desc: 'The outputValue of the inscription has been changed'
+      },
+      {
+        type: 13,
         level: 'warning',
         title: 'Changing inscription detected',
         desc: 'The outputValue of the inscription has been changed'

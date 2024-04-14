@@ -36,6 +36,8 @@ import OrdinalsInscriptionScreen from './Ordinals/OrdinalsInscriptionScreen';
 import SendOrdinalsInscriptionScreen from './Ordinals/SendOrdinalsInscriptionScreen';
 import SignOrdinalsTransactionScreen from './Ordinals/SignOrdinalsTransactionScreen';
 import SplitOrdinalsInscriptionScreen from './Ordinals/SplitOrdinalsInscriptionScreen';
+import RunesTokenScreen from './Runes/RunesTokenScreen';
+import SendRunesScreen from './Runes/SendRunesScreen';
 import AddressTypeScreen from './Settings/AddressTypeScreen';
 import AdvancedScreen from './Settings/AdvancedScreen';
 import ChangePasswordScreen from './Settings/ChangePasswordScreen';
@@ -240,6 +242,14 @@ const routes = {
   UnavailableUtxoScreen: {
     path: '/wallet/unavailable-utxo',
     element: <UnavailableUtxoScreen />
+  },
+  SendRunesScreen: {
+    path: '/runes/send-runes',
+    element: <SendRunesScreen />
+  },
+  RunesTokenScreen: {
+    path: '/runes/token',
+    element: <RunesTokenScreen />
   }
 };
 

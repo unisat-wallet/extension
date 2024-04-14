@@ -7,6 +7,7 @@ import { ConnectedSite } from '@/background/service/permission';
 import { AddressFlagType } from '@/shared/constant';
 import {
   Account,
+  AddressRunesTokenSummary,
   AddressSummary,
   AddressTokenSummary,
   AppSummary,
@@ -18,6 +19,7 @@ import {
   Inscription,
   InscriptionSummary,
   NetworkType,
+  RuneBalance,
   SignPsbtOptions,
   TokenBalance,
   TokenTransfer,
@@ -305,6 +307,27 @@ export interface WalletController {
 
   getEnableSignData(): Promise<boolean>;
   setEnableSignData(enable: boolean): Promise<void>;
+
+  getRunesList(
+    address: string,
+    currentPage: number,
+    pageSize: number
+  ): Promise<{ currentPage: number; pageSize: number; total: number; list: RuneBalance[] }>;
+
+  getAssetUtxosRunes(rune: string): Promise<UnspentOutput[]>;
+
+  getAddressRunesTokenSummary(address: string, runeid: string): Promise<AddressRunesTokenSummary>;
+
+  sendRunes(data: {
+    to: string;
+    runeid: string;
+    runeAmount: string;
+    feeRate: number;
+    enableRBF: boolean;
+    btcUtxos?: UnspentOutput[];
+    assetUtxos?: UnspentOutput[];
+    outputValue: number;
+  }): Promise<string>;
 }
 
 const WalletContext = createContext<{

@@ -1623,6 +1623,109 @@ export class WalletController extends BaseController {
   setEnableSignData = async (enable: boolean) => {
     return preferenceService.setEnableSignData(enable);
   };
+
+  getRunesList = async (address: string, currentPage: number, pageSize: number) => {
+    const cursor = (currentPage - 1) * pageSize;
+    const size = pageSize;
+    const { total, list } = await openapiService.getRunesList(address, cursor, size);
+
+    return {
+      currentPage,
+      pageSize,
+      total,
+      list
+    };
+  };
+
+  getAssetUtxosRunes = async (runeid: string) => {
+    const account = preferenceService.getCurrentAccount();
+    if (!account) throw new Error('no current account');
+    const runes_utxos = await openapiService.getRunesUtxos(account.address, runeid);
+
+    const assetUtxos = runes_utxos.map((v) => {
+      return Object.assign(v, { pubkey: account.pubkey });
+    });
+
+    assetUtxos.forEach((v) => {
+      v.inscriptions = [];
+      v.atomicals = [];
+    });
+    return assetUtxos;
+  };
+
+  getAddressRunesTokenSummary = async (address: string, runeid: string) => {
+    const tokenSummary = await openapiService.getAddressRunesTokenSummary(address, runeid);
+    return tokenSummary;
+  };
+
+  sendRunes = async ({
+    to,
+    runeid,
+    runeAmount,
+    feeRate,
+    enableRBF,
+    btcUtxos,
+    assetUtxos,
+    outputValue
+  }: {
+    to: string;
+    runeid: string;
+    runeAmount: string;
+    feeRate: number;
+    enableRBF: boolean;
+    btcUtxos?: UnspentOutput[];
+    assetUtxos?: UnspentOutput[];
+    outputValue: number;
+  }) => {
+    const account = preferenceService.getCurrentAccount();
+    if (!account) throw new Error('no current account');
+
+    const networkType = preferenceService.getNetworkType();
+
+    if (!assetUtxos) {
+      assetUtxos = await this.getAssetUtxosRunes(runeid);
+    }
+
+    const _assetUtxos: UnspentOutput[] = [];
+    let total = BigInt(0);
+    for (let i = 0; i < assetUtxos.length; i++) {
+      const v = assetUtxos[i];
+      v.runes?.forEach((r) => {
+        if (r.runeid == runeid) {
+          total = total + BigInt(r.amount);
+        }
+      });
+      _assetUtxos.push(v);
+      if (total >= BigInt(runeAmount)) {
+        break;
+      }
+    }
+    assetUtxos = _assetUtxos;
+
+    if (!btcUtxos) {
+      btcUtxos = await this.getBTCUtxos();
+    }
+
+    const { psbt, toSignInputs } = await txHelpers.sendRunes({
+      assetUtxos,
+      assetAddress: account.address,
+      btcUtxos,
+      btcAddress: account.address,
+      toAddress: to,
+      networkType,
+      feeRate,
+      enableRBF,
+      runeid,
+      runeAmount,
+      outputValue
+    });
+
+    this.setPsbtSignNonSegwitEnable(psbt, true);
+    await this.signPsbt(psbt, toSignInputs, true);
+    this.setPsbtSignNonSegwitEnable(psbt, false);
+
+    return psbt.toHex();
+  };
 }
 
 export default new WalletController();
