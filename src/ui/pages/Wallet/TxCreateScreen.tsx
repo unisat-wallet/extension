@@ -1,3 +1,4 @@
+import { Tooltip } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 
 import { COIN_DUST } from '@/shared/constant';
@@ -16,6 +17,7 @@ import {
   useSpendUnavailableUtxos
 } from '@/ui/state/transactions/hooks';
 import { useUiTxCreateScreen, useUpdateUiTxCreateScreen } from '@/ui/state/ui/hooks';
+import { fontSizes } from '@/ui/theme/font';
 import { amountToSatoshis, isValidAddress, satoshisToAmount } from '@/ui/utils';
 
 export default function TxCreateScreen() {
@@ -194,14 +196,26 @@ export default function TxCreateScreen() {
           </Row>
 
           <Row justifyBetween>
-            <Text
-              text="Unavailable"
-              // text="Unavailable >"
-              color="textDim"
-              // onClick={() => {
-              //   navigate('UnavailableUtxoScreen');
-              // }}
-            />
+            <Tooltip
+              title={`Includes Inscriptions, ARC20, Runes, and unconfirmed UTXO assets. Future versions will support spending these assets.`}
+              overlayStyle={{
+                fontSize: fontSizes.xs
+              }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <Row itemsCenter>
+                  <Text
+                    text="Unavailable"
+                    // text="Unavailable >"
+                    color="textDim"
+                    // onClick={() => {
+                    //   navigate('UnavailableUtxoScreen');
+                    // }}
+                  />
+
+                  <Icon icon="circle-question" color="textDim" />
+                </Row>
+              </div>
+            </Tooltip>
 
             {spendUnavailableSatoshis > 0 ? (
               <Row>
