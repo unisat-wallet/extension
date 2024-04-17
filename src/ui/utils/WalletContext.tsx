@@ -209,7 +209,7 @@ export interface WalletController {
   ): Promise<InscribeOrder>;
   getInscribeResult(orderId: string): Promise<TokenTransfer>;
 
-  decodePsbt(psbtHex: string): Promise<DecodedPsbt>;
+  decodePsbt(psbtHex: string, website: string): Promise<DecodedPsbt>;
 
   getAllInscriptionList(
     address: string,

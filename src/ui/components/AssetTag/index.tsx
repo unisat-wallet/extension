@@ -10,7 +10,7 @@ const colors = {
   ARC20: '#2B4E8B',
   Inscription: '#62A759',
   Unconfirmed: '#BC9238',
-  RUNES: '#936132'
+  RUNES: '#A14419'
 };
 
 export default function AssetTag(props: AssetTagProps) {

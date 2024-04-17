@@ -1,3 +1,4 @@
+import { Decimal } from 'decimal.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -44,6 +45,7 @@ export default function SendRunesScreen() {
     inscription: undefined
   });
 
+  const [availableBalance, setAvailableBalance] = useState('0');
   const [error, setError] = useState('');
 
   const defaultOutputValue = 546;
@@ -66,8 +68,18 @@ export default function SendRunesScreen() {
     tools.showLoading(true);
     fetchAssetUtxosRunes(runeInfo.runeid)
       .then((utxos) => {
-        // const available = utxos.reduce((pre, cur) => pre + cur.satoshis, 0);
-        // setArc20AvailableBalance(available);
+        let balance = new Decimal(0);
+        for (let i = 0; i < utxos.length; i++) {
+          const utxo = utxos[i];
+          if (utxo.runes) {
+            utxo.runes.forEach((rune) => {
+              if (rune.runeid === runeInfo.runeid) {
+                balance = balance.plus(new Decimal(rune.amount));
+              }
+            });
+          }
+        }
+        setAvailableBalance(balance.toString());
       })
       .finally(() => {
         tools.showLoading(false);
@@ -146,7 +158,7 @@ export default function SendRunesScreen() {
         console.log(e);
         setError(e.message);
       });
-  }, [toInfo, inputAmount, feeRate, enableRBF]);
+  }, [toInfo, inputAmount, feeRate, enableRBF, outputValue]);
   return (
     <Layout>
       <Header
@@ -162,6 +174,7 @@ export default function SendRunesScreen() {
             preset="bold"
             textCenter
             size="xxl"
+            wrap
           />
         </Row>
 
@@ -183,13 +196,14 @@ export default function SendRunesScreen() {
             <Row
               itemsCenter
               onClick={() => {
-                setInputAmount(runeBalance.amount.toString());
+                setInputAmount(runesUtils.toDecimalAmount(availableBalance, runeBalance.divisibility));
               }}>
               <Text text="MAX" preset="sub" style={{ color: colors.white_muted }} />
               <Text
-                text={`${runesUtils.toDecimalAmount(runeBalance.amount, runeBalance.divisibility)} ${runeInfo.symbol}`}
+                text={`${runesUtils.toDecimalAmount(availableBalance, runeBalance.divisibility)} ${runeInfo.symbol}`}
                 preset="bold"
                 size="sm"
+                wrap
               />
             </Row>
           </Row>

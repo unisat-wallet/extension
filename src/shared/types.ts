@@ -334,6 +334,9 @@ export interface DecodedPsbt {
     rbf: boolean;
   };
   risks: Risk[];
+  isScammer: boolean;
+  recommendedFeeRate: number;
+  shouldWarnFeeRate: boolean;
 }
 
 export interface ToAddressInfo {
@@ -362,6 +365,7 @@ export enum WebsiteState {
 }
 
 export interface AddressSummary {
+  address: string;
   totalSatoshis: number;
   btcSatoshis: number;
   assetSatoshis: number;
@@ -370,6 +374,7 @@ export interface AddressSummary {
   brc20Count: number;
   brc20Count5Byte: number;
   arc20Count: number;
+  runesCount: number;
   loading?: boolean;
 }
 
@@ -412,15 +417,13 @@ export interface RuneInfo {
   burned: string;
   holders: number;
   transactions: number;
+  mintable: boolean;
+  remaining: string;
+  start: number;
+  end: number;
 }
 
 export interface AddressRunesTokenSummary {
   runeInfo: RuneInfo;
   runeBalance: RuneBalance;
-  mint: {
-    mintable: boolean;
-    remaining: string;
-    start: number;
-    end: number;
-  };
 }

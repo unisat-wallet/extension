@@ -7,13 +7,14 @@ import { checkAddressFlag } from '@/shared/utils';
 import { Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
 import { AddressBar } from '@/ui/components/AddressBar';
-import AtomicalsFeatureButton from '@/ui/components/AtomicalsFeatureButton';
 import { Button } from '@/ui/components/Button';
+import { DisableUnconfirmedsPopover } from '@/ui/components/DisableUnconfirmedPopover';
 import { NavTabBar } from '@/ui/components/NavTabBar';
 import { NoticePopover } from '@/ui/components/NoticePopover';
 import { UpgradePopover } from '@/ui/components/UpgradePopover';
 import { getCurrentTab } from '@/ui/features/browser/tabs';
-import { useAccountBalance, useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { useAccountBalance, useAddressSummary, useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import {
@@ -68,6 +69,7 @@ export default function WalletTabScreen() {
   const versionInfo = useVersionInfo();
 
   const [showSafeNotice, setShowSafeNotice] = useState(false);
+  const [showDisableUnconfirmedUtxoNotice, setShowDisableUnconfirmedUtxoNotice] = useState(false);
 
   const fetchUtxos = useFetchUtxosCallback();
   const ref = useRef<{ fetchedUtxo: { [key: string]: { loading: boolean } } }>({
@@ -86,6 +88,23 @@ export default function WalletTabScreen() {
   const unavailableAmount = satoshisToAmount(unavailableSatoshis);
   const totalAmount = satoshisToAmount(totalSatoshis);
 
+  const addressSummary = useAddressSummary();
+
+  useEffect(() => {
+    if (currentAccount.address === addressSummary.address) {
+      if (addressSummary.arc20Count > 0 || addressSummary.runesCount > 0) {
+        if (!checkAddressFlag(currentAccount.flag, AddressFlagType.CONFIRMED_UTXO_MODE)) {
+          if (!checkAddressFlag(currentAccount.flag, AddressFlagType.DISABLE_AUTO_SWITCH_CONFIRMED)) {
+            wallet.addAddressFlag(currentAccount, AddressFlagType.CONFIRMED_UTXO_MODE).then((account) => {
+              dispatch(accountActions.setCurrent(account));
+            });
+            setShowDisableUnconfirmedUtxoNotice(true);
+          }
+        }
+      }
+    }
+  }, [addressSummary, currentAccount]);
+
   useEffect(() => {
     const run = async () => {
       const show = await wallet.getShowSafeNotice();
@@ -103,11 +122,6 @@ export default function WalletTabScreen() {
 
   const tabItems = [
     {
-      key: AssetTabKey.RUNES,
-      label: 'Runes',
-      children: <RunesList />
-    },
-    {
       key: AssetTabKey.ORDINALS,
       label: 'Ordinals',
       children: <OrdinalsTab />
@@ -115,11 +129,12 @@ export default function WalletTabScreen() {
     {
       key: AssetTabKey.ATOMICALS,
       label: 'Atomicals',
-      children: checkAddressFlag(currentAccount.flag, AddressFlagType.Is_Enable_Atomicals) ? (
-        <AtomicalsTab />
-      ) : (
-        <AtomicalsFeatureButton />
-      )
+      children: <AtomicalsTab />
+    },
+    {
+      key: AssetTabKey.RUNES,
+      label: 'Runes',
+      children: <RunesList />
     }
   ];
 
@@ -152,6 +167,7 @@ export default function WalletTabScreen() {
           </Card>
         }
       />
+
       <Content>
         <Column gap="xl">
           {currentKeyring.type === KEYRING_TYPE.HdKeyring && <AccountSelect />}
@@ -286,6 +302,10 @@ export default function WalletTabScreen() {
               skipVersion(versionInfo.newVersion);
             }}
           />
+        )}
+
+        {showDisableUnconfirmedUtxoNotice && (
+          <DisableUnconfirmedsPopover onClose={() => setShowDisableUnconfirmedUtxoNotice(false)} />
         )}
       </Content>
       <Footer px="zero" py="zero">

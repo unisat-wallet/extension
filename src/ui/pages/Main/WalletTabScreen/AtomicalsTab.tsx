@@ -1,5 +1,4 @@
 import { Column, Row } from '@/ui/components';
-import AtomicalsFeatureButton from '@/ui/components/AtomicalsFeatureButton';
 import { Empty } from '@/ui/components/Empty';
 import { TabBar } from '@/ui/components/TabBar';
 import { useAddressSummary } from '@/ui/state/accounts/hooks';
@@ -40,9 +39,6 @@ export function AtomicalsTab() {
 
   return (
     <Column>
-      {!addressSummary.loading && addressSummary.atomicalsCount === 0 && addressSummary.arc20Count === 0 && (
-        <AtomicalsFeatureButton />
-      )}
       <Row justifyBetween>
         <TabBar
           defaultActiveKey={tabKey}

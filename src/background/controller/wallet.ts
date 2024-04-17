@@ -670,7 +670,7 @@ export class WalletController extends BaseController {
 
     let utxos = await openapiService.getBTCUtxos(account.address);
 
-    if (openapiService.addressFlag == 1) {
+    if (checkAddressFlag(openapiService.addressFlag, AddressFlagType.CONFIRMED_UTXO_MODE)) {
       utxos = utxos.filter((v) => (v as any).height !== UNCONFIRMED_HEIGHT);
     }
 
@@ -1096,6 +1096,7 @@ export class WalletController extends BaseController {
       currentAccount.flag = preferenceService.getAddressFlag(currentAccount.address);
       openapiService.setClientAddress(currentAccount.address, currentAccount.flag);
     }
+
     return currentAccount;
   };
 
@@ -1272,8 +1273,8 @@ export class WalletController extends BaseController {
     return openapiService.getInscribeResult(orderId);
   };
 
-  decodePsbt = (psbtHex: string) => {
-    return openapiService.decodePsbt(psbtHex);
+  decodePsbt = (psbtHex: string, website: string) => {
+    return openapiService.decodePsbt(psbtHex, website);
   };
 
   getBRC20List = async (address: string, currentPage: number, pageSize: number) => {

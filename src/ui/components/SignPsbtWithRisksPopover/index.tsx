@@ -115,6 +115,17 @@ export const SignPsbtWithRisksPopover = ({
 
         <Row full>
           <Button
+            text={'Cancel'}
+            preset="default"
+            full
+            onClick={(e) => {
+              if (onClose) {
+                onClose();
+              }
+            }}
+          />
+
+          <Button
             text={'Confirm'}
             preset="danger"
             disabled={!understand}
@@ -122,17 +133,6 @@ export const SignPsbtWithRisksPopover = ({
             onClick={(e) => {
               if (onConfirm) {
                 onConfirm();
-              }
-            }}
-          />
-
-          <Button
-            text={'Cancel'}
-            preset="default"
-            full
-            onClick={(e) => {
-              if (onClose) {
-                onClose();
               }
             }}
           />

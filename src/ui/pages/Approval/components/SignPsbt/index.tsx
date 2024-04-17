@@ -1,3 +1,4 @@
+import { Tooltip } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import {
@@ -430,7 +431,6 @@ interface TxInfo {
   toSignInputs: ToSignInput[];
   txError: string;
   decodedPsbt: DecodedPsbt;
-  isScammer: boolean;
 }
 
 const initTxInfo: TxInfo = {
@@ -440,7 +440,6 @@ const initTxInfo: TxInfo = {
   psbtHex: '',
   toSignInputs: [],
   txError: '',
-  isScammer: false,
   decodedPsbt: {
     inputInfos: [],
     outputInfos: [],
@@ -450,7 +449,10 @@ const initTxInfo: TxInfo = {
     features: {
       rbf: false
     },
-    inscriptions: {}
+    inscriptions: {},
+    isScammer: false,
+    shouldWarnFeeRate: false,
+    recommendedFeeRate: 1
   }
 };
 
@@ -530,9 +532,7 @@ export default function SignPsbt({
       return;
     }
 
-    const { isScammer } = await wallet.checkWebsite(session?.origin || '');
-
-    const decodedPsbt = await wallet.decodePsbt(psbtHex);
+    const decodedPsbt = await wallet.decodePsbt(psbtHex, session?.origin || '');
 
     let toSignInputs: ToSignInput[] = [];
     if (type === TxType.SEND_BITCOIN || type === TxType.SEND_ORDINALS_INSCRIPTION) {
@@ -556,8 +556,7 @@ export default function SignPsbt({
       psbtHex,
       rawtx: '',
       toSignInputs,
-      txError,
-      isScammer
+      txError
     });
 
     setLoading(false);
@@ -640,7 +639,7 @@ export default function SignPsbt({
     );
   }
 
-  if (txInfo.isScammer) {
+  if (txInfo.decodedPsbt.isScammer) {
     return (
       <Layout>
         <Content>
@@ -675,7 +674,27 @@ export default function SignPsbt({
 
           {canChanged == false && (
             <Section title="Network Fee Rate:">
-              <Text text={txInfo.decodedPsbt.feeRate.toString()} />
+              {txInfo.decodedPsbt.shouldWarnFeeRate ? (
+                <Tooltip
+                  title={
+                    txInfo.decodedPsbt.recommendedFeeRate > txInfo.decodedPsbt.feeRate
+                      ? `The fee rate is much lower than recommended fee rate (${txInfo.decodedPsbt.recommendedFeeRate} sat/vB)`
+                      : `The fee rate is much higher than recommended fee rate (${txInfo.decodedPsbt.recommendedFeeRate} sat/vB)`
+                  }
+                  overlayStyle={{
+                    fontSize: fontSizes.xs
+                  }}>
+                  <div>
+                    <Row>
+                      <Text text={txInfo.decodedPsbt.feeRate.toString()} />
+                      <Icon icon="alert" color="warning" />
+                    </Row>
+                  </div>
+                </Tooltip>
+              ) : (
+                <Text text={txInfo.decodedPsbt.feeRate.toString()} />
+              )}
+
               <Text text="sat/vB" color="textDim" />
             </Section>
           )}

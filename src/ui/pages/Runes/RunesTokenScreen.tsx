@@ -52,9 +52,7 @@ export default function RunesTokenScreen() {
       timestamp: 0,
       burned: '',
       holders: 0,
-      transactions: 0
-    },
-    mint: {
+      transactions: 0,
       mintable: false,
       remaining: '',
       start: 0,
@@ -79,7 +77,7 @@ export default function RunesTokenScreen() {
 
   const unisatWebsite = useUnisatWebsite();
 
-  const enableMint = tokenSummary.mint.mintable;
+  const enableMint = tokenSummary.runeInfo.mintable;
 
   const enableTransfer = useMemo(() => {
     let enable = false;
@@ -133,7 +131,7 @@ export default function RunesTokenScreen() {
                 disabled={!enableMint}
                 icon="pencil"
                 onClick={(e) => {
-                  window.open(`${unisatWebsite}/inscribe`);
+                  window.open(`${unisatWebsite}/runes/inscribe`);
                 }}
                 full
               />
@@ -158,7 +156,13 @@ export default function RunesTokenScreen() {
           <Column gap="lg">
             <Section title="rune" value={tokenSummary.runeInfo.spacedRune} />
             <Section title="runeid" value={tokenSummary.runeInfo.runeid} />
-            <Section title="premine" value={tokenSummary.runeInfo.premine} />
+            <Section
+              title="premine"
+              value={`${runesUtils.toDecimalAmount(
+                tokenSummary.runeInfo.premine,
+                tokenSummary.runeInfo.divisibility
+              )} ${tokenSummary.runeInfo.symbol}`}
+            />
             <Section title="mints" value={tokenSummary.runeInfo.mints} />
             <Section title="symbol" value={tokenSummary.runeInfo.symbol} />
             <Section title="divisibility" value={tokenSummary.runeInfo.divisibility} />

@@ -209,6 +209,7 @@ export function useFetchBalanceCallback() {
     }
 
     const summary = await wallet.getAddressSummary(currentAccount.address);
+    summary.address = currentAccount.address;
     dispatch(accountActions.setAddressSummary(summary));
   }, [dispatch, wallet, currentAccount, balance]);
 }

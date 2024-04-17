@@ -1,10 +1,16 @@
 import { Checkbox, Switch } from 'antd';
 import { useEffect, useState } from 'react';
 
-import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
+import { AddressFlagType } from '@/shared/constant';
+import { checkAddressFlag } from '@/shared/utils';
+import { Button, Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
+import { EnableUnconfirmedPopover } from '@/ui/components/EnableUnconfirmedPopover';
 import { Popover } from '@/ui/components/Popover';
+import { useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { accountActions } from '@/ui/state/accounts/reducer';
+import { useAppDispatch } from '@/ui/state/hooks';
 import { ColorTypes, colors } from '@/ui/theme/colors';
-import { useWallet } from '@/ui/utils';
+import { shortAddress, useWallet } from '@/ui/utils';
 
 export default function AdvancedScreen() {
   const wallet = useWallet();
@@ -12,6 +18,12 @@ export default function AdvancedScreen() {
 
   const [enableSignDataPopoverVisible, setEnableSignDataPopoverVisible] = useState(false);
 
+  const [enableUnconfirmed, setEnableUnconfirmed] = useState(false);
+  const [unconfirmedPopoverVisible, setUnconfirmedPopoverVisible] = useState(false);
+
+  const currentAccount = useCurrentAccount();
+
+  const dispatch = useAppDispatch();
   const [init, setInit] = useState(false);
   useEffect(() => {
     wallet
@@ -22,6 +34,13 @@ export default function AdvancedScreen() {
       .finally(() => {
         setInit(true);
       });
+
+    const only_confirmed = checkAddressFlag(currentAccount.flag, AddressFlagType.CONFIRMED_UTXO_MODE);
+    if (only_confirmed) {
+      setEnableUnconfirmed(false);
+    } else {
+      setEnableUnconfirmed(true);
+    }
   }, []);
 
   if (!init) {
@@ -38,31 +57,86 @@ export default function AdvancedScreen() {
       />
       <Content>
         <Column>
-          <Column>
-            <Text text={'signData requests'} preset="bold" size="md" />
-            <Row>
-              <Text
-                text={`If you enable this setting, you might get signature requests that aren't readable. By signing a message you don't understand, you could be agreeing to give away your funds and NFTs.You're at risk for phishing attacks. Protect yourself by turning off signData.`}
-              />
-            </Row>
+          <Card>
+            <Column fullX>
+              <Text text={'Unconfirmed Balance'} preset="bold" size="md" />
+              <Row>
+                <Text
+                  text={` If you hold either ARC-20 or Runes assets, you cannot enable unconfirmed balance. Doing so might result in
+                asset burning.`}
+                />
+              </Row>
 
-            <Row itemsCenter>
-              <Switch
-                onChange={() => {
-                  if (enableSignData) {
-                    wallet.setEnableSignData(false).then(() => {
-                      setEnableSignData(false);
-                    });
-                  } else {
-                    setEnableSignDataPopoverVisible(true);
-                  }
-                }}
-                checked={enableSignData}></Switch>
-              {enableSignData ? <Text text={'ON (Not recommended)'} /> : <Text text={'OFF (Recommended)'} />}
-            </Row>
-          </Column>
+              <Row itemsCenter>
+                <Switch
+                  onChange={async () => {
+                    if (enableUnconfirmed) {
+                      let _currentAccount = currentAccount;
+                      _currentAccount = await wallet.addAddressFlag(
+                        _currentAccount,
+                        AddressFlagType.CONFIRMED_UTXO_MODE
+                      );
+                      dispatch(accountActions.setCurrent(_currentAccount));
+                      setEnableUnconfirmed(false);
+                    } else {
+                      setUnconfirmedPopoverVisible(true);
+                    }
+                  }}
+                  checked={enableUnconfirmed}></Switch>
+                {enableUnconfirmed ? (
+                  <Text text={`ON (${shortAddress(currentAccount.address)})`} />
+                ) : (
+                  <Text text={`OFF (${shortAddress(currentAccount.address)})`} />
+                )}
+              </Row>
+            </Column>
+          </Card>
+        </Column>
+
+        <Column>
+          <Card>
+            <Column fullX>
+              <Text text={'signData requests'} preset="bold" size="md" />
+              <Row>
+                <Text
+                  text={`If you enable this setting, you might get signature requests that aren't readable. By signing a message you don't understand, you could be agreeing to give away your funds and NFTs.You're at risk for phishing attacks. Protect yourself by turning off signData.`}
+                />
+              </Row>
+
+              <Row itemsCenter>
+                <Switch
+                  onChange={() => {
+                    if (enableSignData) {
+                      wallet.setEnableSignData(false).then(() => {
+                        setEnableSignData(false);
+                      });
+                    } else {
+                      setEnableSignDataPopoverVisible(true);
+                    }
+                  }}
+                  checked={enableSignData}></Switch>
+                {enableSignData ? <Text text={'ON (Not recommended)'} /> : <Text text={'OFF (Recommended)'} />}
+              </Row>
+            </Column>
+          </Card>
         </Column>
       </Content>
+      {unconfirmedPopoverVisible ? (
+        <EnableUnconfirmedPopover
+          onClose={() => setUnconfirmedPopoverVisible(false)}
+          onConfirm={async () => {
+            let _currentAccount = currentAccount;
+            _currentAccount = await wallet.addAddressFlag(
+              _currentAccount,
+              AddressFlagType.DISABLE_AUTO_SWITCH_CONFIRMED
+            );
+            _currentAccount = await wallet.removeAddressFlag(_currentAccount, AddressFlagType.CONFIRMED_UTXO_MODE);
+            dispatch(accountActions.setCurrent(_currentAccount));
+            setEnableUnconfirmed(true);
+            setUnconfirmedPopoverVisible(false);
+          }}
+        />
+      ) : null}
       {enableSignDataPopoverVisible ? (
         <EnableSignDataPopover
           onNext={() => {

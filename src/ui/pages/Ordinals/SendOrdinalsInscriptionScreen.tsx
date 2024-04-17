@@ -168,7 +168,7 @@ export default function SendOrdinalsInscriptionScreen() {
               <Text text="OutputValue" color="textDim" />
 
               <OutputValueBar
-                defaultValue={defaultOutputValue}
+                defaultValue={Math.max(defaultOutputValue, 546)}
                 minValue={minOutputValue}
                 onChange={(val) => {
                   setOutputValue(val);

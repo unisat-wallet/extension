@@ -157,7 +157,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
 
   const [inputDisabled, setInputDisabled] = useState(false);
 
-  const defaultOutputValue = getAddressUtxoDust(account.address);
+  const defaultOutputValue = 546; //getAddressUtxoDust(account.address);
 
   const [outputValue, setOutputValue] = useState<number>(defaultOutputValue);
 
@@ -208,8 +208,9 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
       return;
     }
 
-    if (outputValue < defaultOutputValue) {
-      setInputError(`OutputValue must be at least ${defaultOutputValue}`);
+    const dust = getAddressUtxoDust(account.address);
+    if (outputValue < dust) {
+      setInputError(`OutputValue must be at least ${dust}`);
       return;
     }
 

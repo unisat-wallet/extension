@@ -283,7 +283,6 @@ const slice = createSlice({
       state.assetUtxos_inscriptions = action.payload;
     },
     setAssetUtxosRunes(state, action: { payload: UnspentOutput[] }) {
-      console.log('setAssetUtxosRunes', action.payload);
       state.assetUtxos_runes = action.payload;
     },
     reset(state) {

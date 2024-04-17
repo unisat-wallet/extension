@@ -73,6 +73,13 @@ export const RunesBurningList = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
           spacedRune: inputTokenMap[ticker].spacedRune
         });
       }
+    } else {
+      burnList.push({
+        amount: inputTokenMap[ticker].amount,
+        symbol: inputTokenMap[ticker].symbol,
+        divisibility: inputTokenMap[ticker].divisibility,
+        spacedRune: inputTokenMap[ticker].spacedRune
+      });
     }
   });
 

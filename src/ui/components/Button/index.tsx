@@ -86,6 +86,11 @@ const $viewPresets = {
     height: '40px'
   } as CSSProperties),
 
+  approval: Object.assign({}, $baseViewStyle, {
+    backgroundColor: colors.orange,
+    height: '40px'
+  } as CSSProperties),
+
   bar: Object.assign({}, $baseViewStyle, {
     backgroundColor: colors.black_dark,
     height: '75px',
@@ -102,6 +107,9 @@ const $hoverViewPresets: Record<Presets, CSSProperties> = {
   },
   primary: {
     backgroundColor: colors.yellow_dark
+  },
+  approval: {
+    backgroundColor: colors.orange_dark
   },
   danger: {
     backgroundColor: colors.red_dark
@@ -127,6 +135,7 @@ const $baseTextStyle: CSSProperties = {
 const $textPresets: Record<Presets, CSSProperties> = {
   default: $baseTextStyle,
   primary: Object.assign({}, $baseTextStyle, { color: colors.black }),
+  approval: Object.assign({}, $baseTextStyle, { color: colors.black }),
   danger: Object.assign({}, $baseTextStyle, { color: colors.white }),
   bar: Object.assign({}, $baseTextStyle, { textAlign: 'left', fontWeight: 'bold' } as CSSProperties)
 };
@@ -135,6 +144,7 @@ const $pressedTextPresets: Record<Presets, CSSProperties> = {
   default: { opacity: 0.9 },
   primary: { opacity: 0.9 },
   danger: { opacity: 0.9 },
+  approval: { opacity: 0.9 },
   bar: { opacity: 0.9 }
 };
 

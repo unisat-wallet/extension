@@ -84,7 +84,7 @@ export const testDecodedTx = {
             runeid: '1222:90',
             spacedRune: 'AAAAA',
             amount: '10',
-            divisibility: 3,
+            divisibility: 20,
             symbol: 'G'
           }
         ]
