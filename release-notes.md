@@ -1,5 +1,13 @@
 # UniSat Wallet Release Notes
 
+## v1.3.0
+
+- Support Runes
+- Add a toggle for enabling unconfirmed balances.
+- No longer forcing pop-up warnings for transactions with high or low fee rates.
+- Reverted the default inscribe outputValue to 546 sats for simplified operations.
+- Fix MultiSignPsbt
+
 ## v1.2.10
 
 - Support 5-byte BRC20
