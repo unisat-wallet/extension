@@ -1,22 +1,22 @@
-import { Decimal } from 'decimal.js';
+import { BigNumber } from 'bignumber.js';
 
 // Max 38 decimal places
-function toDecimalAmount(amount, divisibility) {
-  const decimalAmount = new Decimal(amount).dividedBy(new Decimal(10).pow(divisibility));
-  return decimalAmount.toFixed();
+function toDecimalAmount(amount: string, divisibility: number) {
+  const decimalAmount = new BigNumber(amount).dividedBy(new BigNumber(10).pow(divisibility));
+  return decimalAmount.toString();
 }
 
 function toDecimalNumber(amount, divisibility) {
-  const decimalAmount = new Decimal(amount).dividedBy(new Decimal(10).pow(divisibility));
+  const decimalAmount = new BigNumber(amount).dividedBy(new BigNumber(10).pow(divisibility));
   return decimalAmount;
 }
 
-function fromDecimalAmount(decimalAmount, divisibility) {
+function fromDecimalAmount(decimalAmount: string, divisibility: number) {
   decimalAmount = decimalAmount.replace(/\.$/, '');
   if (divisibility === 0) {
     return decimalAmount;
   }
-  const amount = new Decimal(decimalAmount).times(new Decimal(10).pow(divisibility));
+  const amount = new BigNumber(decimalAmount).multipliedBy(new BigNumber(10).pow(divisibility));
   return amount.toString();
 }
 

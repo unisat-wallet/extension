@@ -169,4 +169,4 @@ export function useLocationState<T>() {
   return state as T;
 }
 
-BigNumber.config({ EXPONENTIAL_AT: [-20, 20] });
+BigNumber.config({ EXPONENTIAL_AT: 1e9, DECIMAL_PLACES: 38 });
