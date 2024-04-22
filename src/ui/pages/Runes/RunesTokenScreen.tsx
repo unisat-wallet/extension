@@ -131,7 +131,7 @@ export default function RunesTokenScreen() {
                 disabled={!enableMint}
                 icon="pencil"
                 onClick={(e) => {
-                  window.open(`${unisatWebsite}/runes/inscribe`);
+                  window.open(`${unisatWebsite}/runes/inscribe?tab=mint&rune=${tokenSummary.runeInfo.rune}`);
                 }}
                 full
               />
