@@ -18,6 +18,7 @@ export interface BitcoinTx {
   psbtHex: string;
   feeRate: number;
   toDomain: string;
+  enableRBF: boolean;
 }
 
 export interface OrdinalsTx {
@@ -34,6 +35,7 @@ export interface OrdinalsTx {
   feeRate: number;
   toDomain: string;
   outputValue: number;
+  enableRBF: boolean;
 }
 
 export interface AtomicalsTx {
@@ -51,16 +53,38 @@ export interface AtomicalsTx {
   toDomain: string;
   outputValue: number;
   sendArc20Amount?: number;
+  enableRBF: boolean;
+}
+
+export interface RunesTx {
+  fromAddress: string;
+  toAddress: string;
+  rawtx: string;
+  txid: string;
+  fee: number;
+  estimateFee: number;
+  changeSatoshis: number;
+  sending: boolean;
+  psbtHex: string;
+  feeRate: number;
+  toDomain: string;
+  outputValue: number;
+  enableRBF: boolean;
+  runeid?: string;
+  runeAmount?: string;
 }
 
 export interface TransactionsState {
   bitcoinTx: BitcoinTx;
   ordinalsTx: OrdinalsTx;
   atomicalsTx: AtomicalsTx;
+  runesTx: RunesTx;
   utxos: UnspentOutput[];
+  spendUnavailableUtxos: UnspentOutput[];
   assetUtxos_atomicals_ft: UnspentOutput[];
   assetUtxos_atomicals_nft: UnspentOutput[];
   assetUtxos_inscriptions: UnspentOutput[];
+  assetUtxos_runes: UnspentOutput[];
 }
 
 export const initialState: TransactionsState = {
@@ -77,14 +101,15 @@ export const initialState: TransactionsState = {
     autoAdjust: false,
     psbtHex: '',
     feeRate: 5,
-    toDomain: ''
+    toDomain: '',
+    enableRBF: false
   },
   ordinalsTx: {
     fromAddress: '',
     toAddress: '',
     inscription: {
-      id: '',
-      num: 0
+      inscriptionId: '',
+      inscriptionNumber: 0
     },
     rawtx: '',
     txid: '',
@@ -95,14 +120,15 @@ export const initialState: TransactionsState = {
     psbtHex: '',
     feeRate: 5,
     toDomain: '',
-    outputValue: 10000
+    outputValue: 10000,
+    enableRBF: false
   },
   atomicalsTx: {
     fromAddress: '',
     toAddress: '',
     inscription: {
-      id: '',
-      num: 0
+      inscriptionId: '',
+      inscriptionNumber: 0
     },
     rawtx: '',
     txid: '',
@@ -113,12 +139,30 @@ export const initialState: TransactionsState = {
     psbtHex: '',
     feeRate: 5,
     toDomain: '',
-    outputValue: 10000
+    outputValue: 10000,
+    enableRBF: false
+  },
+  runesTx: {
+    fromAddress: '',
+    toAddress: '',
+    rawtx: '',
+    txid: '',
+    fee: 0,
+    estimateFee: 0,
+    changeSatoshis: 0,
+    sending: false,
+    psbtHex: '',
+    feeRate: 5,
+    toDomain: '',
+    outputValue: 10000,
+    enableRBF: false
   },
   utxos: [],
+  spendUnavailableUtxos: [],
   assetUtxos_atomicals_ft: [],
   assetUtxos_atomicals_nft: [],
-  assetUtxos_inscriptions: []
+  assetUtxos_inscriptions: [],
+  assetUtxos_runes: []
 };
 
 const slice = createSlice({
@@ -142,6 +186,7 @@ const slice = createSlice({
           psbtHex?: string;
           feeRate?: number;
           toDomain?: string;
+          enableRBF?: boolean;
         };
       }
     ) {
@@ -165,6 +210,7 @@ const slice = createSlice({
           feeRate?: number;
           toDomain?: string;
           outputValue?: number;
+          enableRBF?: boolean;
         };
       }
     ) {
@@ -189,14 +235,43 @@ const slice = createSlice({
           toDomain?: string;
           outputValue?: number;
           sendArc20Amount?: number;
+          enableRBF?: boolean;
         };
       }
     ) {
       const { payload } = action;
       state.atomicalsTx = Object.assign({}, state.atomicalsTx, payload);
     },
+    updateRunesTx(
+      state,
+      action: {
+        payload: {
+          fromAddress?: string;
+          toAddress?: string;
+          changeSatoshis?: number;
+          rawtx?: string;
+          txid?: string;
+          fee?: number;
+          estimateFee?: number;
+          sending?: boolean;
+          psbtHex?: string;
+          feeRate?: number;
+          toDomain?: string;
+          outputValue?: number;
+          enableRBF?: boolean;
+          runeid?: string;
+          runeAmount?: string;
+        };
+      }
+    ) {
+      const { payload } = action;
+      state.runesTx = Object.assign({}, state.runesTx, payload);
+    },
     setUtxos(state, action: { payload: UnspentOutput[] }) {
       state.utxos = action.payload;
+    },
+    setSpendUnavailableUtxos(state, action: { payload: UnspentOutput[] }) {
+      state.spendUnavailableUtxos = action.payload;
     },
     setAssetUtxosAtomicalsFT(state, action: { payload: UnspentOutput[] }) {
       state.assetUtxos_atomicals_ft = action.payload;
@@ -206,6 +281,9 @@ const slice = createSlice({
     },
     setAssetUtxosInscriptions(state, action: { payload: UnspentOutput[] }) {
       state.assetUtxos_inscriptions = action.payload;
+    },
+    setAssetUtxosRunes(state, action: { payload: UnspentOutput[] }) {
+      state.assetUtxos_runes = action.payload;
     },
     reset(state) {
       return initialState;
@@ -225,6 +303,14 @@ const slice = createSlice({
 
       if (!state.assetUtxos_inscriptions) {
         state.assetUtxos_inscriptions = [];
+      }
+
+      if (!state.spendUnavailableUtxos) {
+        state.spendUnavailableUtxos = [];
+      }
+
+      if (!state.assetUtxos_runes) {
+        state.assetUtxos_runes = [];
       }
     });
   }

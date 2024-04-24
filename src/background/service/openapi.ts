@@ -3,6 +3,7 @@ import randomstring from 'randomstring';
 import { createPersistStore } from '@/background/utils';
 import { CHANNEL, OPENAPI_URL_MAINNET, OPENAPI_URL_TESTNET, VERSION } from '@/shared/constant';
 import {
+  AddressRunesTokenSummary,
   AddressSummary,
   AddressTokenSummary,
   AppSummary,
@@ -14,6 +15,7 @@ import {
   Inscription,
   InscriptionSummary,
   NetworkType,
+  RuneBalance,
   TokenBalance,
   TokenTransfer,
   UTXO,
@@ -194,6 +196,12 @@ export class OpenApiService {
     });
   }
 
+  async getUnavailableUtxos(address: string): Promise<UTXO[]> {
+    return this.httpGet('/address/unavailable-utxo', {
+      address
+    });
+  }
+
   async getBTCUtxos(address: string): Promise<UTXO[]> {
     return this.httpGet('/address/btc-utxo', {
       address
@@ -215,6 +223,12 @@ export class OpenApiService {
   async getInscriptionUtxos(inscriptionIds: string[]): Promise<UTXO[]> {
     return this.httpPost('/inscription/utxos', {
       inscriptionIds
+    });
+  }
+
+  async getInscriptionInfo(inscriptionId: string): Promise<Inscription> {
+    return this.httpGet('/inscription/info', {
+      inscriptionId
     });
   }
 
@@ -270,6 +284,14 @@ export class OpenApiService {
     return this.httpGet('/brc20/list', { address, cursor, size });
   }
 
+  async getBRC20List5Byte(
+    address: string,
+    cursor: number,
+    size: number
+  ): Promise<{ list: TokenBalance[]; total: number }> {
+    return this.httpGet('/brc20/5byte-list', { address, cursor, size, type: 5 });
+  }
+
   async getAddressTokenSummary(address: string, ticker: string): Promise<AddressTokenSummary> {
     return this.httpGet('/brc20/token-summary', { address, ticker: encodeURIComponent(ticker) });
   }
@@ -288,8 +310,8 @@ export class OpenApiService {
     });
   }
 
-  async decodePsbt(psbtHex: string): Promise<DecodedPsbt> {
-    return this.httpPost('/tx/decode', { psbtHex });
+  async decodePsbt(psbtHex: string, website: string): Promise<DecodedPsbt> {
+    return this.httpPost('/tx/decode2', { psbtHex, website });
   }
 
   async createMoonpayUrl(address: string): Promise<string> {
@@ -349,6 +371,21 @@ export class OpenApiService {
     return this.httpGet('/version/detail', {
       version
     });
+  }
+
+  async getRunesList(address: string, cursor: number, size: number): Promise<{ list: RuneBalance[]; total: number }> {
+    return this.httpGet('/runes/list', { address, cursor, size });
+  }
+
+  async getRunesUtxos(address: string, runeid: string): Promise<UTXO[]> {
+    return this.httpGet('/runes/utxos', {
+      address,
+      runeid
+    });
+  }
+
+  async getAddressRunesTokenSummary(address: string, runeid: string): Promise<AddressRunesTokenSummary> {
+    return this.httpGet(`/runes/token-summary?address=${address}&runeid=${runeid}`, {});
   }
 }
 

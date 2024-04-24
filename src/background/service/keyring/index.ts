@@ -58,6 +58,7 @@ export interface Keyring {
   getAccounts(): Promise<string[]>;
   signTransaction(psbt: bitcoin.Psbt, inputs: ToSignInput[]): Promise<bitcoin.Psbt>;
   signMessage(address: string, message: string): Promise<string>;
+  signData(address: string, data: string, type: string): Promise<string>;
   verifyMessage(address: string, message: string, sig: string): Promise<boolean>;
   exportAccount(address: string): Promise<string>;
   removeAccount(address: string): void;
@@ -96,6 +97,9 @@ class EmptyKeyring implements Keyring {
     throw new Error('Method not implemented.');
   }
   verifyMessage(address: string, message: string, sig: string): Promise<boolean> {
+    throw new Error('Method not implemented.');
+  }
+  signData(address: string, data: string, type: string): Promise<string> {
     throw new Error('Method not implemented.');
   }
   exportAccount(address: string): Promise<string> {
@@ -319,6 +323,7 @@ class KeyringService extends EventEmitter {
     this.memStore.updateState({ isUnlocked: false });
     // remove keyrings
     this.keyrings = [];
+    this.addressTypes = [];
     await this._updateMemStoreKeyrings();
     this.emit('lock');
     return this.fullUpdate();
@@ -539,6 +544,18 @@ class KeyringService extends EventEmitter {
   verifyMessage = async (address: string, data: string, sig: string) => {
     const keyring = await this.getKeyringForAccount(address);
     const result = await keyring.verifyMessage(address, data, sig);
+    return result;
+  };
+
+  /**
+   * Sign Data
+   *
+   * Sign any content, but note that the content signed by this method is unreadable, so use it with caution.
+   *
+   */
+  signData = async (address: string, data: string, type: string) => {
+    const keyring = await this.getKeyringForAccount(address);
+    const result = await keyring.signData(address, data, type);
     return result;
   };
 

@@ -66,7 +66,7 @@ export default function SplitOrdinalsInscriptionScreen() {
       return;
     }
 
-    if (feeRate == ordinalsTx.feeRate && outputValue == ordinalsTx.outputValue) {
+    if (feeRate == ordinalsTx.feeRate && outputValue == ordinalsTx.outputValue && enableRBF == ordinalsTx.enableRBF) {
       //Prevent repeated triggering caused by setAmount
       setDisabled(false);
       return;

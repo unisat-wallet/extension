@@ -7,6 +7,7 @@ import { ConnectedSite } from '@/background/service/permission';
 import { AddressFlagType } from '@/shared/constant';
 import {
   Account,
+  AddressRunesTokenSummary,
   AddressSummary,
   AddressTokenSummary,
   AppSummary,
@@ -18,6 +19,7 @@ import {
   Inscription,
   InscriptionSummary,
   NetworkType,
+  RuneBalance,
   SignPsbtOptions,
   TokenBalance,
   TokenTransfer,
@@ -131,6 +133,8 @@ export interface WalletController {
     btcUtxos: UnspentOutput[];
     feeRate: number;
     enableRBF: boolean;
+    memo?: string;
+    memos?: string[];
   }): Promise<string>;
 
   sendAllBTC(data: { to: string; btcUtxos: UnspentOutput[]; feeRate: number; enableRBF: boolean }): Promise<string>;
@@ -139,7 +143,7 @@ export interface WalletController {
     to: string;
     inscriptionId: string;
     feeRate: number;
-    outputValue: number;
+    outputValue?: number;
     enableRBF: boolean;
     btcUtxos: UnspentOutput[];
   }): Promise<string>;
@@ -167,6 +171,7 @@ export interface WalletController {
   getInscriptionSummary(): Promise<InscriptionSummary>;
   getAppSummary(): Promise<AppSummary>;
   getBTCUtxos(): Promise<UnspentOutput[]>;
+  getUnavailableUtxos(): Promise<UnspentOutput[]>;
   getAssetUtxosAtomicalsFT(ticker: string): Promise<UnspentOutput[]>;
   getAssetUtxosAtomicalsNFT(atomicalId: string): Promise<UnspentOutput[]>;
   getAssetUtxosInscriptions(inscriptionId: string): Promise<UnspentOutput[]>;
@@ -204,7 +209,7 @@ export interface WalletController {
   ): Promise<InscribeOrder>;
   getInscribeResult(orderId: string): Promise<TokenTransfer>;
 
-  decodePsbt(psbtHex: string): Promise<DecodedPsbt>;
+  decodePsbt(psbtHex: string, website: string): Promise<DecodedPsbt>;
 
   getAllInscriptionList(
     address: string,
@@ -213,6 +218,12 @@ export interface WalletController {
   ): Promise<{ currentPage: number; pageSize: number; total: number; list: Inscription[] }>;
 
   getBRC20List(
+    address: string,
+    currentPage: number,
+    pageSize: number
+  ): Promise<{ currentPage: number; pageSize: number; total: number; list: TokenBalance[] }>;
+
+  getBRC20List5Byte(
     address: string,
     currentPage: number,
     pageSize: number
@@ -250,6 +261,7 @@ export interface WalletController {
 
   getInscriptionUtxoDetail(inscriptionId: string): Promise<UTXO_Detail>;
   getUtxoByInscriptionId(inscriptionId: string): Promise<UTXO>;
+  getInscriptionInfo(inscriptionId: string): Promise<Inscription>;
 
   checkWebsite(website: string): Promise<{ isScammer: boolean; warning: string }>;
 
@@ -292,6 +304,30 @@ export interface WalletController {
   removeAddressFlag(account: Account, flag: AddressFlagType): Promise<Account>;
 
   getVersionDetail(version: string): Promise<VersionDetail>;
+
+  getEnableSignData(): Promise<boolean>;
+  setEnableSignData(enable: boolean): Promise<void>;
+
+  getRunesList(
+    address: string,
+    currentPage: number,
+    pageSize: number
+  ): Promise<{ currentPage: number; pageSize: number; total: number; list: RuneBalance[] }>;
+
+  getAssetUtxosRunes(rune: string): Promise<UnspentOutput[]>;
+
+  getAddressRunesTokenSummary(address: string, runeid: string): Promise<AddressRunesTokenSummary>;
+
+  sendRunes(data: {
+    to: string;
+    runeid: string;
+    runeAmount: string;
+    feeRate: number;
+    enableRBF: boolean;
+    btcUtxos?: UnspentOutput[];
+    assetUtxos?: UnspentOutput[];
+    outputValue: number;
+  }): Promise<string>;
 }
 
 const WalletContext = createContext<{

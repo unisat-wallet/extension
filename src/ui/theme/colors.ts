@@ -13,12 +13,13 @@ const palette = {
 
   black_dark: '#2a2626',
 
+  green_dark2: '#2D7E24',
   green_dark: '#379a29',
   green: '#41B530',
   green_light: '#5ec04f',
 
   yellow_dark: '#d5ac00',
-  yellow: 'rgb(253,224,71)',
+  yellow: '#e3bb5f',
   yellow_light: '#fcd226',
 
   red_dark: '#c92b40',
@@ -59,7 +60,12 @@ export const colors = Object.assign({}, palette, {
 
   border: 'rgba(255,255,255,0.1)',
 
-  icon_yellow:'#FFBA33'
+  icon_yellow: '#FFBA33',
+
+  brc20_deploy: '#233933',
+  brc20_transfer: '#375e4d',
+  brc20_transfer_selected: '#41B530',
+  brc20_other: '#3e3e3e'
 });
 
 export type ColorTypes = keyof typeof colors;

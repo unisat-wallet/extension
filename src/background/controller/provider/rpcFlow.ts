@@ -9,7 +9,7 @@ import eventBus from '@/shared/eventBus';
 import providerController from './controller';
 
 const isSignApproval = (type: string) => {
-  const SIGN_APPROVALS = ['SignText', 'SignPsbt', 'SignTx'];
+  const SIGN_APPROVALS = ['SignText', 'SignPsbt', 'SignTx', 'SignData'];
   return SIGN_APPROVALS.includes(type);
 };
 const windowHeight = 600;

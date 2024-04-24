@@ -37,6 +37,9 @@ export interface InputProps {
   disabled?: boolean;
   disableDecimal?: boolean;
   enableBrc20Decimal?: boolean;
+  runesDecimal?: number;
+  enableMax?: boolean;
+  onMaxClick?: () => void;
 }
 
 type Presets = keyof typeof $inputPresets;
@@ -97,6 +100,9 @@ function AmountInput(props: InputProps) {
     style: $inputStyleOverride,
     disableDecimal,
     enableBrc20Decimal,
+    runesDecimal,
+    enableMax,
+    onMaxClick,
     ...rest
   } = props;
   const $style = Object.assign({}, $baseInputStyle, $inputStyleOverride, disabled ? { color: colors.textDim } : {});
@@ -119,7 +125,13 @@ function AmountInput(props: InputProps) {
       }
     } else {
       if (enableBrc20Decimal) {
-        if (/^\d*\.?\d{0,18}$/.test(value) || value === '') {
+        if (/^\d+\.?\d{0,18}$/.test(value) || value === '') {
+          setValidAmount(value);
+          setInputValue(value);
+        }
+      } else if (runesDecimal !== undefined) {
+        const regex = new RegExp(`^\\d+\\.?\\d{0,${runesDecimal}}$`);
+        if (regex.test(value) || value === '') {
           setValidAmount(value);
           setInputValue(value);
         }
@@ -142,6 +154,16 @@ function AmountInput(props: InputProps) {
         disabled={disabled}
         {...rest}
       />
+      {enableMax ? (
+        <Text
+          onClick={() => {
+            if (onMaxClick) onMaxClick();
+          }}
+          text={'Max'}
+          color={'yellow'}
+          size="sm"
+        />
+      ) : null}
     </div>
   );
 }

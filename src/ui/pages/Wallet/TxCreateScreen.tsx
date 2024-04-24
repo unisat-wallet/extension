@@ -1,8 +1,8 @@
-import BigNumber from 'bignumber.js';
+import { Tooltip } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 
 import { COIN_DUST } from '@/shared/constant';
-import { Inscription, RawTxInfo } from '@/shared/types';
+import { RawTxInfo } from '@/shared/types';
 import { Button, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
@@ -13,9 +13,11 @@ import {
   useBitcoinTx,
   useFetchUtxosCallback,
   usePrepareSendBTCCallback,
-  useSafeBalance
+  useSafeBalance,
+  useSpendUnavailableUtxos
 } from '@/ui/state/transactions/hooks';
-import { colors } from '@/ui/theme/colors';
+import { useUiTxCreateScreen, useUpdateUiTxCreateScreen } from '@/ui/state/ui/hooks';
+import { fontSizes } from '@/ui/theme/font';
 import { amountToSatoshis, isValidAddress, satoshisToAmount } from '@/ui/utils';
 
 export default function TxCreateScreen() {
@@ -23,19 +25,16 @@ export default function TxCreateScreen() {
   const safeBalance = useSafeBalance();
   const navigate = useNavigate();
   const bitcoinTx = useBitcoinTx();
-  const [inputAmount, setInputAmount] = useState(
-    bitcoinTx.toSatoshis > 0 ? satoshisToAmount(bitcoinTx.toSatoshis) : ''
-  );
+
   const [disabled, setDisabled] = useState(true);
-  const [toInfo, setToInfo] = useState<{
-    address: string;
-    domain: string;
-    inscription?: Inscription;
-  }>({
-    address: bitcoinTx.toAddress,
-    domain: bitcoinTx.toDomain,
-    inscription: undefined
-  });
+
+  const setUiState = useUpdateUiTxCreateScreen();
+  const uiState = useUiTxCreateScreen();
+
+  const toInfo = uiState.toInfo;
+  const inputAmount = uiState.inputAmount;
+  const enableRBF = uiState.enableRBF;
+  const feeRate = uiState.feeRate;
 
   const [error, setError] = useState('');
 
@@ -52,7 +51,7 @@ export default function TxCreateScreen() {
 
   const prepareSendBTC = usePrepareSendBTCCallback();
 
-  const safeSatoshis = useMemo(() => {
+  const avaiableSatoshis = useMemo(() => {
     return amountToSatoshis(safeBalance);
   }, [safeBalance]);
 
@@ -63,11 +62,28 @@ export default function TxCreateScreen() {
 
   const dustAmount = useMemo(() => satoshisToAmount(COIN_DUST), [COIN_DUST]);
 
-  const [feeRate, setFeeRate] = useState(5);
-
   const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
 
-  const [enableRBF, setEnableRBF] = useState(false);
+  const spendUnavailableUtxos = useSpendUnavailableUtxos();
+  const spendUnavailableSatoshis = useMemo(() => {
+    return spendUnavailableUtxos.reduce((acc, cur) => {
+      return acc + cur.satoshis;
+    }, 0);
+  }, [spendUnavailableUtxos]);
+  const spendUnavailableAmount = satoshisToAmount(spendUnavailableSatoshis);
+
+  const totalAvailableSatoshis = avaiableSatoshis + spendUnavailableSatoshis;
+  const totalAvailableAmount = satoshisToAmount(totalAvailableSatoshis);
+
+  const totalSatoshis = amountToSatoshis(accountBalance.amount);
+  const unavailableSatoshis = totalSatoshis - avaiableSatoshis;
+
+  const avaiableAmount = safeBalance;
+  const unavailableAmount = satoshisToAmount(unavailableSatoshis);
+  const totalAmount = accountBalance.amount;
+
+  const unspendUnavailableAmount = satoshisToAmount(unavailableSatoshis - spendUnavailableSatoshis);
+
   useEffect(() => {
     setError('');
     setDisabled(true);
@@ -83,7 +99,7 @@ export default function TxCreateScreen() {
       return;
     }
 
-    if (toSatoshis > safeSatoshis) {
+    if (toSatoshis > avaiableSatoshis + spendUnavailableSatoshis) {
       setError('Amount exceeds your available balance');
       return;
     }
@@ -92,7 +108,12 @@ export default function TxCreateScreen() {
       return;
     }
 
-    if (toInfo.address == bitcoinTx.toAddress && toSatoshis == bitcoinTx.toSatoshis && feeRate == bitcoinTx.feeRate) {
+    if (
+      toInfo.address == bitcoinTx.toAddress &&
+      toSatoshis == bitcoinTx.toSatoshis &&
+      feeRate == bitcoinTx.feeRate &&
+      enableRBF == bitcoinTx.enableRBF
+    ) {
       //Prevent repeated triggering caused by setAmount
       setDisabled(false);
       return;
@@ -113,11 +134,6 @@ export default function TxCreateScreen() {
       });
   }, [toInfo, inputAmount, feeRate, enableRBF]);
 
-  const showSafeBalance = useMemo(
-    () => !new BigNumber(accountBalance.amount).eq(new BigNumber(safeBalance)),
-    [accountBalance.amount, safeBalance]
-  );
-
   return (
     <Layout>
       <Header
@@ -137,50 +153,14 @@ export default function TxCreateScreen() {
             preset="address"
             addressInputData={toInfo}
             onAddressInputChange={(val) => {
-              setToInfo(val);
+              setUiState({ toInfo: val });
             }}
             autoFocus={true}
           />
         </Column>
 
         <Column mt="lg">
-          <Row justifyBetween>
-            <Text text="Balance" color="textDim" />
-            {showSafeBalance ? (
-              <Text text={`${accountBalance.amount} BTC`} preset="bold" size="sm" />
-            ) : (
-              <Row
-                onClick={() => {
-                  setAutoAdjust(true);
-                  setInputAmount(accountBalance.amount);
-                }}>
-                <Text
-                  text="MAX"
-                  preset="sub"
-                  style={{ color: autoAdjust ? colors.yellow_light : colors.white_muted }}
-                />
-                <Text text={`${accountBalance.amount} BTC`} preset="bold" size="sm" />
-              </Row>
-            )}
-          </Row>
-          <Row justifyBetween>
-            <Text text="Unconfirmed BTC" color="textDim" />
-            <Text text={`${accountBalance.pending_btc_amount} BTC`} size="sm" preset="bold" color="textDim" />
-          </Row>
-          {showSafeBalance && (
-            <Row justifyBetween>
-              <Text text="Available (safe to send)" color="textDim" />
-
-              <Row
-                onClick={() => {
-                  setAutoAdjust(true);
-                  setInputAmount(safeBalance.toString());
-                }}>
-                <Text text={'MAX'} color={autoAdjust ? 'yellow' : 'textDim'} size="sm" />
-                <Text text={`${safeBalance} BTC`} preset="bold" size="sm" />
-              </Row>
-            </Row>
-          )}
+          <Text text="Transfer amount" preset="regular" color="textDim" />
           <Input
             preset="amount"
             placeholder={'Amount'}
@@ -190,9 +170,73 @@ export default function TxCreateScreen() {
               if (autoAdjust == true) {
                 setAutoAdjust(false);
               }
-              setInputAmount(amount);
+              setUiState({ inputAmount: amount });
+            }}
+            enableMax={true}
+            onMaxClick={() => {
+              setAutoAdjust(true);
+              setUiState({ inputAmount: totalAvailableAmount.toString() });
             }}
           />
+
+          <Row justifyBetween>
+            <Text text="Available" color="gold" />
+            {spendUnavailableSatoshis > 0 && (
+              <Row>
+                <Text text={`${spendUnavailableAmount}`} size="sm" style={{ color: '#65D5F0' }} />
+                <Text text={`BTC`} size="sm" color="textDim" />
+                <Text text={`+`} size="sm" color="textDim" />
+              </Row>
+            )}
+
+            <Row>
+              <Text text={`${avaiableAmount}`} size="sm" color="gold" />
+              <Text text={`BTC`} size="sm" color="textDim" />
+            </Row>
+          </Row>
+
+          <Row justifyBetween>
+            <Tooltip
+              title={`Includes Inscriptions, ARC20, Runes, and unconfirmed UTXO assets. Future versions will support spending these assets.`}
+              overlayStyle={{
+                fontSize: fontSizes.xs
+              }}>
+              <div style={{ display: 'flex', alignItems: 'center' }}>
+                <Row itemsCenter>
+                  <Text
+                    text="Unavailable"
+                    // text="Unavailable >"
+                    color="textDim"
+                    // onClick={() => {
+                    //   navigate('UnavailableUtxoScreen');
+                    // }}
+                  />
+
+                  <Icon icon="circle-question" color="textDim" />
+                </Row>
+              </div>
+            </Tooltip>
+
+            {spendUnavailableSatoshis > 0 ? (
+              <Row>
+                <Text text={`${unspendUnavailableAmount}`} size="sm" color="textDim" />
+                <Text text={`BTC`} size="sm" color="textDim" />
+              </Row>
+            ) : (
+              <Row>
+                <Text text={`${unavailableAmount}`} size="sm" color="textDim" />
+                <Text text={`BTC`} size="sm" color="textDim" />
+              </Row>
+            )}
+          </Row>
+
+          <Row justifyBetween>
+            <Text text="Total" color="textDim" />
+            <Row>
+              <Text text={`${totalAmount}`} size="sm" color="textDim" />
+              <Text text={`BTC`} size="sm" color="textDim" />
+            </Row>
+          </Row>
         </Column>
 
         <Column mt="lg">
@@ -200,15 +244,16 @@ export default function TxCreateScreen() {
 
           <FeeRateBar
             onChange={(val) => {
-              setFeeRate(val);
+              setUiState({ feeRate: val });
             }}
           />
         </Column>
 
         <Column mt="lg">
           <RBFBar
+            defaultValue={enableRBF}
             onChange={(val) => {
-              setEnableRBF(val);
+              setUiState({ enableRBF: val });
             }}
           />
         </Column>

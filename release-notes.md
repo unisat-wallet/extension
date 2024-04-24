@@ -1,5 +1,33 @@
 # UniSat Wallet Release Notes
 
+## v1.3.0
+
+- Support Runes
+- Add a toggle for enabling unconfirmed balances.
+- No longer forcing pop-up warnings for transactions with high or low fee rates.
+- Reverted the default inscribe outputValue to 546 sats for simplified operations.
+- Fix MultiSignPsbt
+
+## v1.2.10
+
+- Support 5-byte BRC20
+- Improve the display of BRC20
+
+## v1.2.9
+
+- Added `memos` parameter to `unisat.sendBitcoin` method, for constructing runes transactions (github #164 and #167)
+- Fixed a bug in the `unisat.sendInscription` method (github #159)
+- Fixed the problem where an order could not succeed when the wallet balance and the payment amount were exactly equal when inscribe a TRANSFER inscription
+- Improved balance display, showing both available and unavailable balances
+- Improved the asset display during transaction signing, added BRC20 display
+- Improved risk warnings during transaction signing, and now requires the input of CONFIRM to proceed when warnings appear.
+
+## v1.2.8
+
+- The unisat.sendBitcoin method has added a memo parameter, increasing OP_RETURN output when sending btc.
+- A new unisat.getBitcoinUtxos method has been added, through which the developers can get users UTXO without inscription assets.
+- A new unisat.signData method has been added, through which the developers can have users participate in multi-signature.
+
 ## v1.2.7
 
 - Allowing decimal inputs when inscribing BRC20 TRANSFER.

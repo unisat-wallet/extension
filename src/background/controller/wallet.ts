@@ -20,7 +20,8 @@ import {
   KEYRING_TYPES,
   NETWORK_TYPES,
   OPENAPI_URL_MAINNET,
-  OPENAPI_URL_TESTNET
+  OPENAPI_URL_TESTNET,
+  UNCONFIRMED_HEIGHT
 } from '@/shared/constant';
 import {
   Account,
@@ -511,6 +512,12 @@ export class WalletController extends BaseController {
     });
   };
 
+  signData = async (data: string, type = 'ecdsa') => {
+    const account = preferenceService.getCurrentAccount();
+    if (!account) throw new Error('no current account');
+    return keyringService.signData(account.pubkey, data, type);
+  };
+
   requestKeyring = (type: string, methodName: string, keyringId: number | null, ...params) => {
     let keyring;
     if (keyringId !== null && keyringId !== undefined) {
@@ -663,8 +670,8 @@ export class WalletController extends BaseController {
 
     let utxos = await openapiService.getBTCUtxos(account.address);
 
-    if (openapiService.addressFlag == 1) {
-      utxos = utxos.filter((v) => (v as any).height !== 4194303);
+    if (checkAddressFlag(openapiService.addressFlag, AddressFlagType.CONFIRMED_UTXO_MODE)) {
+      utxos = utxos.filter((v) => (v as any).height !== UNCONFIRMED_HEIGHT);
     }
 
     const btcUtxos = utxos.map((v) => {
@@ -680,6 +687,25 @@ export class WalletController extends BaseController {
       };
     });
     return btcUtxos;
+  };
+
+  getUnavailableUtxos = async () => {
+    const account = preferenceService.getCurrentAccount();
+    if (!account) throw new Error('no current account');
+    const utxos = await openapiService.getUnavailableUtxos(account.address);
+    const unavailableUtxos = utxos.map((v) => {
+      return {
+        txid: v.txid,
+        vout: v.vout,
+        satoshis: v.satoshis,
+        scriptPk: v.scriptPk,
+        addressType: v.addressType,
+        pubkey: account.pubkey,
+        inscriptions: v.inscriptions,
+        atomicals: v.atomicals
+      };
+    });
+    return unavailableUtxos;
   };
 
   getAssetUtxosAtomicalsFT = async (ticker: string) => {
@@ -699,13 +725,17 @@ export class WalletController extends BaseController {
     amount,
     feeRate,
     enableRBF,
-    btcUtxos
+    btcUtxos,
+    memo,
+    memos
   }: {
     to: string;
     amount: number;
     feeRate: number;
     enableRBF: boolean;
     btcUtxos?: UnspentOutput[];
+    memo?: string;
+    memos?: string[];
   }) => {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
@@ -726,7 +756,9 @@ export class WalletController extends BaseController {
       networkType,
       changeAddress: account.address,
       feeRate,
-      enableRBF
+      enableRBF,
+      memo,
+      memos
     });
 
     this.setPsbtSignNonSegwitEnable(psbt, true);
@@ -784,7 +816,7 @@ export class WalletController extends BaseController {
     to: string;
     inscriptionId: string;
     feeRate: number;
-    outputValue: number;
+    outputValue?: number;
     enableRBF: boolean;
     btcUtxos?: UnspentOutput[];
   }) => {
@@ -819,7 +851,7 @@ export class WalletController extends BaseController {
       networkType,
       changeAddress: account.address,
       feeRate,
-      outputValue,
+      outputValue: outputValue || assetUtxo.satoshis,
       enableRBF,
       enableMixed: true
     });
@@ -1064,6 +1096,7 @@ export class WalletController extends BaseController {
       currentAccount.flag = preferenceService.getAddressFlag(currentAccount.address);
       openapiService.setClientAddress(currentAccount.address, currentAccount.flag);
     }
+
     return currentAccount;
   };
 
@@ -1240,8 +1273,8 @@ export class WalletController extends BaseController {
     return openapiService.getInscribeResult(orderId);
   };
 
-  decodePsbt = (psbtHex: string) => {
-    return openapiService.decodePsbt(psbtHex);
+  decodePsbt = (psbtHex: string, website: string) => {
+    return openapiService.decodePsbt(psbtHex, website);
   };
 
   getBRC20List = async (address: string, currentPage: number, pageSize: number) => {
@@ -1260,6 +1293,19 @@ export class WalletController extends BaseController {
       total,
       list
     };
+    return {
+      currentPage,
+      pageSize,
+      total,
+      list
+    };
+  };
+
+  getBRC20List5Byte = async (address: string, currentPage: number, pageSize: number) => {
+    const cursor = (currentPage - 1) * pageSize;
+    const size = pageSize;
+    const { total, list } = await openapiService.getBRC20List5Byte(address, cursor, size);
+
     return {
       currentPage,
       pageSize,
@@ -1362,6 +1408,14 @@ export class WalletController extends BaseController {
     const utxo = await openapiService.getInscriptionUtxo(inscriptionId);
     if (!utxo) {
       throw new Error('UTXO not found.');
+    }
+    return utxo;
+  };
+
+  getInscriptionInfo = async (inscriptionId: string) => {
+    const utxo = await openapiService.getInscriptionInfo(inscriptionId);
+    if (!utxo) {
+      throw new Error('Inscription not found.');
     }
     return utxo;
   };
@@ -1561,6 +1615,117 @@ export class WalletController extends BaseController {
     const current = await this.getCurrentAccount();
     if (!current) return false;
     return checkAddressFlag(current?.flag, AddressFlagType.Is_Enable_Atomicals);
+  };
+
+  getEnableSignData = async () => {
+    return preferenceService.getEnableSignData();
+  };
+
+  setEnableSignData = async (enable: boolean) => {
+    return preferenceService.setEnableSignData(enable);
+  };
+
+  getRunesList = async (address: string, currentPage: number, pageSize: number) => {
+    const cursor = (currentPage - 1) * pageSize;
+    const size = pageSize;
+    const { total, list } = await openapiService.getRunesList(address, cursor, size);
+
+    return {
+      currentPage,
+      pageSize,
+      total,
+      list
+    };
+  };
+
+  getAssetUtxosRunes = async (runeid: string) => {
+    const account = preferenceService.getCurrentAccount();
+    if (!account) throw new Error('no current account');
+    const runes_utxos = await openapiService.getRunesUtxos(account.address, runeid);
+
+    const assetUtxos = runes_utxos.map((v) => {
+      return Object.assign(v, { pubkey: account.pubkey });
+    });
+
+    assetUtxos.forEach((v) => {
+      v.inscriptions = [];
+      v.atomicals = [];
+    });
+    return assetUtxos;
+  };
+
+  getAddressRunesTokenSummary = async (address: string, runeid: string) => {
+    const tokenSummary = await openapiService.getAddressRunesTokenSummary(address, runeid);
+    return tokenSummary;
+  };
+
+  sendRunes = async ({
+    to,
+    runeid,
+    runeAmount,
+    feeRate,
+    enableRBF,
+    btcUtxos,
+    assetUtxos,
+    outputValue
+  }: {
+    to: string;
+    runeid: string;
+    runeAmount: string;
+    feeRate: number;
+    enableRBF: boolean;
+    btcUtxos?: UnspentOutput[];
+    assetUtxos?: UnspentOutput[];
+    outputValue: number;
+  }) => {
+    const account = preferenceService.getCurrentAccount();
+    if (!account) throw new Error('no current account');
+
+    const networkType = preferenceService.getNetworkType();
+
+    if (!assetUtxos) {
+      assetUtxos = await this.getAssetUtxosRunes(runeid);
+    }
+
+    const _assetUtxos: UnspentOutput[] = [];
+    let total = BigInt(0);
+    for (let i = 0; i < assetUtxos.length; i++) {
+      const v = assetUtxos[i];
+      v.runes?.forEach((r) => {
+        if (r.runeid == runeid) {
+          total = total + BigInt(r.amount);
+        }
+      });
+      _assetUtxos.push(v);
+      if (total >= BigInt(runeAmount)) {
+        break;
+      }
+    }
+    assetUtxos = _assetUtxos;
+
+    if (!btcUtxos) {
+      btcUtxos = await this.getBTCUtxos();
+    }
+
+    const { psbt, toSignInputs } = await txHelpers.sendRunes({
+      assetUtxos,
+      assetAddress: account.address,
+      btcUtxos,
+      btcAddress: account.address,
+      toAddress: to,
+      networkType,
+      feeRate,
+      enableRBF,
+      runeid,
+      runeAmount,
+      outputValue
+    });
+
+    this.setPsbtSignNonSegwitEnable(psbt, true);
+    await this.signPsbt(psbt, toSignInputs, true);
+    this.setPsbtSignNonSegwitEnable(psbt, false);
+
+    return psbt.toHex();
   };
 }
 

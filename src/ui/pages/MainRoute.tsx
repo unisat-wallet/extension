@@ -36,7 +36,10 @@ import OrdinalsInscriptionScreen from './Ordinals/OrdinalsInscriptionScreen';
 import SendOrdinalsInscriptionScreen from './Ordinals/SendOrdinalsInscriptionScreen';
 import SignOrdinalsTransactionScreen from './Ordinals/SignOrdinalsTransactionScreen';
 import SplitOrdinalsInscriptionScreen from './Ordinals/SplitOrdinalsInscriptionScreen';
+import RunesTokenScreen from './Runes/RunesTokenScreen';
+import SendRunesScreen from './Runes/SendRunesScreen';
 import AddressTypeScreen from './Settings/AddressTypeScreen';
+import AdvancedScreen from './Settings/AdvancedScreen';
 import ChangePasswordScreen from './Settings/ChangePasswordScreen';
 import EditAccountNameScreen from './Settings/EditAccountNameScreen';
 import EditWalletNameScreen from './Settings/EditWalletNameScreen';
@@ -52,6 +55,7 @@ import TxConfirmScreen from './Wallet/TxConfirmScreen';
 import TxCreateScreen from './Wallet/TxCreateScreen';
 import TxFailScreen from './Wallet/TxFailScreen';
 import TxSuccessScreen from './Wallet/TxSuccessScreen';
+import UnavailableUtxoScreen from './Wallet/UnavailableUtxoScreen';
 import './index.module.less';
 
 const routes = {
@@ -167,6 +171,10 @@ const routes = {
     path: '/settings/export-privatekey',
     element: <ExportPrivateKeyScreen />
   },
+  AdvancedScreen: {
+    path: '/settings/advanced',
+    element: <AdvancedScreen />
+  },
   HistoryScreen: {
     path: '/wallet/history',
     element: <HistoryScreen />
@@ -230,6 +238,18 @@ const routes = {
   SplitOrdinalsInscriptionScreen: {
     path: '/wallet/split-tx/create',
     element: <SplitOrdinalsInscriptionScreen />
+  },
+  UnavailableUtxoScreen: {
+    path: '/wallet/unavailable-utxo',
+    element: <UnavailableUtxoScreen />
+  },
+  SendRunesScreen: {
+    path: '/runes/send-runes',
+    element: <SendRunesScreen />
+  },
+  RunesTokenScreen: {
+    path: '/runes/token',
+    element: <RunesTokenScreen />
   }
 };
 

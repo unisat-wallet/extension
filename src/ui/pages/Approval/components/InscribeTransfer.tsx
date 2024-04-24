@@ -6,6 +6,7 @@ import { InscribeOrder, RawTxInfo, TokenBalance, TokenInfo, TxType } from '@/sha
 import { Button, Card, Column, Content, Footer, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { Loading } from '@/ui/components/ActionComponent/Loading';
+import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { Empty } from '@/ui/components/Empty';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
@@ -156,7 +157,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
 
   const [inputDisabled, setInputDisabled] = useState(false);
 
-  const defaultOutputValue = getAddressUtxoDust(account.address);
+  const defaultOutputValue = 546; //getAddressUtxoDust(account.address);
 
   const [outputValue, setOutputValue] = useState<number>(defaultOutputValue);
 
@@ -180,6 +181,11 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
         return;
       }
     }
+
+    if (!inputAmount) {
+      return;
+    }
+
     const amount = new BigNumber(inputAmount);
     if (!amount) {
       return;
@@ -202,8 +208,9 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
       return;
     }
 
-    if (outputValue < defaultOutputValue) {
-      setInputError(`OutputValue must be at least ${defaultOutputValue}`);
+    const dust = getAddressUtxoDust(account.address);
+    if (outputValue < dust) {
+      setInputError(`OutputValue must be at least ${dust}`);
       return;
     }
 
@@ -241,7 +248,8 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
         toAddressInfo: { address: order.payAddress, domain: '' },
         toAmount: order.totalFee,
         feeRate: feeRate,
-        enableRBF
+        enableRBF,
+        disableAutoAdjust: true
       });
       updateContextData({ order, amount, rawTxInfo, step: Step.STEP2 });
     } catch (e) {
@@ -306,17 +314,18 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
                           </div>
                         </Tooltip>
 
-                        <Text text={`${tokenBalance.ticker}  `} textCenter size="xs" />
+                        <BRC20Ticker tick={tokenBalance.ticker} preset="sm" />
                       </Row>
                     ) : (
-                      <Text
-                        text={`${tokenBalance.availableBalanceSafe} ${tokenBalance.ticker}`}
-                        textCenter
-                        size="xs"
+                      <Row
+                        itemsCenter
                         onClick={() => {
                           setInputAmount(tokenBalance.availableBalanceSafe);
-                        }}
-                      />
+                        }}>
+                        <Text text={`${tokenBalance.availableBalanceSafe}`} textCenter size="xs" />
+
+                        <BRC20Ticker tick={tokenBalance.ticker} preset="sm" />
+                      </Row>
                     )}
                   </Column>
                 ) : (
@@ -424,14 +433,10 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
             <Text text="Inscribe TRANSFER" preset="title-bold" textCenter mt="lg" />
 
             <Column justifyCenter style={{ height: 250 }}>
-              <Text
-                text={`${amount} ${tokenBalance.ticker}`}
-                preset="title-bold"
-                size="xxl"
-                color="gold"
-                textCenter
-                wrap
-              />
+              <Row itemsCenter justifyCenter>
+                <Text text={`${amount}`} preset="title-bold" size="xxl" textCenter wrap />
+                <BRC20Ticker tick={tokenBalance.ticker} preset="lg" />
+              </Row>
 
               <Column mt="xxl">
                 <Text text="Preview" preset="sub-bold" />

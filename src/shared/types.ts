@@ -74,6 +74,13 @@ export interface Inscription {
   contentBody: string;
   utxoHeight: number;
   utxoConfirmation: number;
+  brc20?: {
+    op: string;
+    tick: string;
+    lim: string;
+    amt: string;
+    decimal: string;
+  };
 }
 
 export interface Atomical {
@@ -151,6 +158,12 @@ export interface UTXO {
     atomicalNumber: number;
     type: 'NFT' | 'FT';
     ticker?: string;
+  }[];
+
+  runes: {
+    runeid: string;
+    rune: string;
+    amount: string;
   }[];
 }
 
@@ -249,6 +262,8 @@ export interface TokenInfo {
   totalSupply: string;
   totalMinted: string;
   decimal: number;
+  holder: string;
+  inscriptionId: string;
 }
 
 export enum TokenInscriptionType {
@@ -270,6 +285,30 @@ export interface AddressTokenSummary {
   transferableList: TokenTransfer[];
 }
 
+export enum RiskType {
+  SIGHASH_NONE,
+  SCAMMER_ADDRESS,
+  UNCONFIRMED_UTXO,
+  INSCRIPTION_BURNING,
+  ATOMICALS_DISABLE,
+  ATOMICALS_NFT_BURNING,
+  ATOMICALS_FT_BURNING,
+  MULTIPLE_ASSETS,
+  LOW_FEE_RATE,
+  HIGH_FEE_RATE,
+  SPLITTING_INSCRIPTIONS,
+  MERGING_INSCRIPTIONS,
+  CHANGING_INSCRIPTION,
+  RUNES_BURNING
+}
+
+export interface Risk {
+  type: RiskType;
+  level: 'danger' | 'warning';
+  title: string;
+  desc: string;
+}
+
 export interface DecodedPsbt {
   inputInfos: {
     txid: string;
@@ -279,12 +318,14 @@ export interface DecodedPsbt {
     inscriptions: Inscription[];
     atomicals: Atomical[];
     sighashType: number;
+    runes: RuneBalance[];
   }[];
   outputInfos: {
     address: string;
     value: number;
     inscriptions: Inscription[];
     atomicals: Atomical[];
+    runes: RuneBalance[];
   }[];
   inscriptions: { [key: string]: Inscription };
   feeRate: number;
@@ -292,7 +333,10 @@ export interface DecodedPsbt {
   features: {
     rbf: boolean;
   };
-  risks: { level: 'high' | 'low'; desc: string }[];
+  risks: Risk[];
+  isScammer: boolean;
+  recommendedFeeRate: number;
+  shouldWarnFeeRate: boolean;
 }
 
 export interface ToAddressInfo {
@@ -321,13 +365,16 @@ export enum WebsiteState {
 }
 
 export interface AddressSummary {
+  address: string;
   totalSatoshis: number;
   btcSatoshis: number;
   assetSatoshis: number;
   inscriptionCount: number;
   atomicalsCount: number;
   brc20Count: number;
+  brc20Count5Byte: number;
   arc20Count: number;
+  runesCount: number;
   loading?: boolean;
 }
 
@@ -335,4 +382,48 @@ export interface VersionDetail {
   version: string;
   title: string;
   changelogs: string[];
+}
+
+export interface RuneBalance {
+  amount: string;
+  runeid: string;
+  rune: string;
+  spacedRune: string;
+  symbol: string;
+  divisibility: number;
+}
+
+export interface RuneInfo {
+  runeid: string;
+  rune: string;
+  spacedRune: string;
+  number: number;
+  height: number;
+  txidx: number;
+  timestamp: number;
+  divisibility: number;
+  symbol: string;
+  etching: string;
+  premine: string;
+  terms: {
+    amount: string;
+    cap: string;
+    heightStart: number;
+    heightEnd: number;
+    offsetStart: number;
+    offsetEnd: number;
+  };
+  mints: string;
+  burned: string;
+  holders: number;
+  transactions: number;
+  mintable: boolean;
+  remaining: string;
+  start: number;
+  end: number;
+}
+
+export interface AddressRunesTokenSummary {
+  runeInfo: RuneInfo;
+  runeBalance: RuneBalance;
 }

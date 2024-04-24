@@ -224,13 +224,29 @@ export class UnisatProvider extends EventEmitter {
     });
   };
 
-  sendBitcoin = async (toAddress: string, satoshis: number, options?: { feeRate: number }) => {
+  signData = async (data: string, type: string) => {
+    return this._request({
+      method: 'signData',
+      params: {
+        data,
+        type
+      }
+    });
+  };
+
+  sendBitcoin = async (
+    toAddress: string,
+    satoshis: number,
+    options?: { feeRate: number; memo?: string; memos?: string[] }
+  ) => {
     return this._request({
       method: 'sendBitcoin',
       params: {
         toAddress,
         satoshis,
         feeRate: options?.feeRate,
+        memo: options?.memo,
+        memos: options?.memos,
         type: TxType.SEND_BITCOIN
       }
     });
@@ -318,6 +334,16 @@ export class UnisatProvider extends EventEmitter {
   isAtomicalsEnabled = async () => {
     return this._request({
       method: 'isAtomicalsEnabled'
+    });
+  };
+
+  getBitcoinUtxos = async (cursor = 0, size = 20) => {
+    return this._request({
+      method: 'getBitcoinUtxos',
+      params: {
+        cursor,
+        size
+      }
     });
   };
 }

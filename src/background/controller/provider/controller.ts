@@ -117,7 +117,7 @@ class ProviderController extends BaseController {
 
   @Reflect.metadata('APPROVAL', ['SignPsbt', (req) => {
     const { data: { params: { toAddress, satoshis } } } = req;
-
+    
   }])
     sendBitcoin = async ({approvalRes:{psbtHex}}) => {
       const psbt = bitcoin.Psbt.fromHex(psbtHex);
@@ -145,6 +145,13 @@ class ProviderController extends BaseController {
       } else {
         return wallet.signMessage(text)
       }
+    }
+
+  @Reflect.metadata('APPROVAL', ['SignData', () => {
+    // todo check text
+  }])
+    signData = async ({ data: { params: { data, type } } }) => {
+      return wallet.signData(data,type)
     }
 
   // @Reflect.metadata('APPROVAL', ['SignTx', () => {
@@ -219,6 +226,14 @@ class ProviderController extends BaseController {
   @Reflect.metadata('SAFE', true)
     isAtomicalsEnabled = async () => {
       return await wallet.isAtomicalsEnabled()
+    };
+
+  @Reflect.metadata('SAFE', true)
+    getBitcoinUtxos = async () => {
+      const account = await wallet.getCurrentAccount();
+      if (!account) return [];
+      const utxos = await wallet.getBTCUtxos()
+      return utxos;
     };
     
 }

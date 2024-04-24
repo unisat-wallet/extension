@@ -46,6 +46,15 @@ const SettingList: Setting[] = [
   },
 
   {
+    label: 'Advanced',
+    value: 'Advanced settings',
+    desc: '',
+    action: 'advanced',
+    route: '/settings/advanced',
+    right: true
+  },
+
+  {
     label: 'Connected Sites',
     value: '',
     desc: '',

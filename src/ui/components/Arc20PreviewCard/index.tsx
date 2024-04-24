@@ -17,7 +17,7 @@ export default function Arc20PreviewCard({ ticker, amt, onClick }: Arc20PreviewC
         <Text text={ticker} color="white_muted" size="lg" />
       </Row>
 
-      <Text text={amt} size="xl" textCenter />
+      <Text text={amt} size="sm" textCenter />
     </Column>
   );
 }

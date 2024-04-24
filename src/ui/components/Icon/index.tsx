@@ -11,6 +11,7 @@ export const svgRegistry = {
   right: './images/icons/arrow-right.svg',
   left: './images/icons/arrow-left.svg',
   down: './images/icons/down.svg',
+  up: './images/icons/up.svg',
   link: './images/icons/arrow-up-right.svg',
 
   discord: './images/icons/discord.svg',
@@ -44,7 +45,8 @@ export const svgRegistry = {
   atomicals: '/images/icons/atomicals.svg',
   info: '/images/icons/info.svg',
   warning: '/images/icons/warning.svg',
-
+  alert: '/images/icons/alert.svg',
+  burn: ' /images/icons/burn.svg'
 };
 
 const iconImgList: Array<IconTypes> = ['success', 'delete', 'btc'];

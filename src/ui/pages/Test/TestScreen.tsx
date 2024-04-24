@@ -7,14 +7,30 @@ import { AddressText } from '@/ui/components/AddressText';
 import { AddressTypeCard2 } from '@/ui/components/AddressTypeCard';
 import BRC20BalanceCard from '@/ui/components/BRC20BalanceCard';
 import { RemoveWalletPopover } from '@/ui/components/RemoveWalletPopover';
+import { SignPsbtWithRisksPopover } from '@/ui/components/SignPsbtWithRisksPopover';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 
 import { Connect, SignPsbt, SignText, SwitchNetwork } from '../Approval/components';
 import MultiSignPsbt from '../Approval/components/MultiSignPsbt';
 import { useNavigate } from '../MainRoute';
+import { testDecodedTx } from './testDecodedTx';
 
 export default function TestScreen() {
-  return <TestAddressTypeCard />;
+  return <TestApprovalSignPsbt />;
+}
+
+function TestSignPsbtWithRisksPopover() {
+  return (
+    <SignPsbtWithRisksPopover
+      onClose={() => {
+        // todo
+      }}
+      onConfirm={() => {
+        // todo
+      }}
+      decodedPsbt={testDecodedTx.data as any}
+    />
+  );
 }
 
 const tokenBalance: TokenBalance = {

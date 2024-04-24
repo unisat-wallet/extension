@@ -376,16 +376,18 @@ function Step2({
 
   const [pathText, setPathText] = useState(contextData.customHdPath);
 
+  const [recommendedTypeIndex, setRecommendedTypeIndex] = useState(0);
+
   useEffect(() => {
     if (scannedGroups.length > 0) {
       const itemIndex = scannedGroups.findIndex((v) => v.address_arr.length > 0);
       const item = scannedGroups[itemIndex];
       updateContextData({ addressType: item.type, addressTypeIndex: itemIndex });
     } else {
-      const option = hdPathOptions[contextData.addressTypeIndex];
-      updateContextData({ addressType: option.addressType });
+      const option = hdPathOptions[recommendedTypeIndex];
+      updateContextData({ addressType: option.addressType, addressTypeIndex: recommendedTypeIndex });
     }
-  }, [contextData.addressTypeIndex, scannedGroups]);
+  }, [recommendedTypeIndex, scannedGroups]);
 
   const generateAddress = async () => {
     const addresses: string[] = [];
@@ -449,9 +451,7 @@ function Step2({
       }
     }
     if (maxSatoshis > 0) {
-      updateContextData({
-        addressTypeIndex: recommended
-      });
+      setRecommendedTypeIndex(recommended);
     }
 
     setAddressAssets(addressAssets);
