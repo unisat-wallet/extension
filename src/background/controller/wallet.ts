@@ -23,6 +23,7 @@ import {
   OPENAPI_URL_TESTNET,
   UNCONFIRMED_HEIGHT
 } from '@/shared/constant';
+import { runesUtils } from '@/shared/lib/runes-utils';
 import {
   Account,
   AddressType,
@@ -1651,6 +1652,13 @@ export class WalletController extends BaseController {
       v.inscriptions = [];
       v.atomicals = [];
     });
+
+    assetUtxos.sort((a, b) => {
+      const bAmount = b.runes.find((v) => v.runeid == runeid)?.amount || '0';
+      const aAmount = a.runes.find((v) => v.runeid == runeid)?.amount || '0';
+      return runesUtils.compareAmount(bAmount, aAmount);
+    });
+
     return assetUtxos;
   };
 

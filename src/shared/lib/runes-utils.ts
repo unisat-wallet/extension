@@ -20,8 +20,13 @@ function fromDecimalAmount(decimalAmount: string, divisibility: number) {
   return amount.toString();
 }
 
+function compareAmount(a: string, b: string) {
+  return new BigNumber(a).comparedTo(new BigNumber(b));
+}
+
 export const runesUtils = {
   toDecimalAmount,
   toDecimalNumber,
-  fromDecimalAmount
+  fromDecimalAmount,
+  compareAmount
 };
