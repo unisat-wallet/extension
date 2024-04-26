@@ -91,9 +91,10 @@ export interface InscriptionProps {
   data: Inscription;
   onClick?: (data: any) => void;
   preset: Presets;
+  asLogo?: boolean;
 }
 
-export default function InscriptionPreview({ data, onClick, preset }: InscriptionProps) {
+export default function InscriptionPreview({ data, onClick, preset, asLogo }: InscriptionProps) {
   const date = new Date(data.timestamp * 1000);
   const time = getDateShowdate(date);
   const isUnconfirmed = date.getTime() < 100;
@@ -103,6 +104,9 @@ export default function InscriptionPreview({ data, onClick, preset }: Inscriptio
   let preview = data.preview;
   if (!preview) {
     preview = url + '/preview/' + data.inscriptionId;
+  }
+  if (asLogo) {
+    return <Iframe preview={preview} style={$iframePresets[preset]} />;
   }
   return (
     <Column gap="zero" onClick={onClick} style={Object.assign({ position: 'relative' }, $containerPresets[preset])}>

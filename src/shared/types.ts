@@ -421,9 +421,12 @@ export interface RuneInfo {
   remaining: string;
   start: number;
   end: number;
+  supply: string;
+  parent?: string;
 }
 
 export interface AddressRunesTokenSummary {
   runeInfo: RuneInfo;
   runeBalance: RuneBalance;
+  runeLogo?: Inscription;
 }

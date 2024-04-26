@@ -5,8 +5,9 @@ import { AddressRunesTokenSummary } from '@/shared/types';
 import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
+import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useUnisatWebsite } from '@/ui/state/settings/hooks';
+import { useOrdinalsWebsite, useUnisatWebsite } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
@@ -56,7 +57,9 @@ export default function RunesTokenScreen() {
       mintable: false,
       remaining: '',
       start: 0,
-      end: 0
+      end: 0,
+      supply: '0',
+      parent: ''
     }
   });
 
@@ -88,6 +91,8 @@ export default function RunesTokenScreen() {
   }, [tokenSummary]);
 
   const tools = useTools();
+
+  const ordinalsWebsite = useOrdinalsWebsite();
   if (loading) {
     return (
       <Layout>
@@ -153,9 +158,25 @@ export default function RunesTokenScreen() {
             </Row>
           </Column>
 
+          <Text text={tokenSummary.runeInfo.spacedRune} preset="title-bold"></Text>
+          {tokenSummary.runeLogo ? (
+            <Row>
+              <InscriptionPreview data={tokenSummary.runeLogo} preset="small" asLogo />
+            </Row>
+          ) : null}
+
           <Column gap="lg">
-            <Section title="rune" value={tokenSummary.runeInfo.spacedRune} />
             <Section title="runeid" value={tokenSummary.runeInfo.runeid} />
+
+            <Section title="mints" value={tokenSummary.runeInfo.mints} />
+
+            <Section
+              title="supply"
+              value={`${runesUtils.toDecimalAmount(tokenSummary.runeInfo.supply, tokenSummary.runeInfo.divisibility)} ${
+                tokenSummary.runeInfo.symbol
+              }`}
+            />
+
             <Section
               title="premine"
               value={`${runesUtils.toDecimalAmount(
@@ -163,11 +184,24 @@ export default function RunesTokenScreen() {
                 tokenSummary.runeInfo.divisibility
               )} ${tokenSummary.runeInfo.symbol}`}
             />
-            <Section title="mints" value={tokenSummary.runeInfo.mints} />
-            <Section title="symbol" value={tokenSummary.runeInfo.symbol} />
+
+            <Section title="burned" value={tokenSummary.runeInfo.burned} />
+
             <Section title="divisibility" value={tokenSummary.runeInfo.divisibility} />
-            <Section title="etching" value={tokenSummary.runeInfo.etching} />
+
+            <Section title="symbol" value={tokenSummary.runeInfo.symbol} />
+
             <Section title="holders" value={tokenSummary.runeInfo.holders} />
+            <Section title="holders" value={tokenSummary.runeInfo.holders} />
+
+            <Section title="transactions" value={tokenSummary.runeInfo.transactions} />
+            {tokenSummary.runeInfo.parent ? (
+              <Section
+                title="parent"
+                value={tokenSummary.runeInfo.parent}
+                link={`${ordinalsWebsite}/inscription/${tokenSummary.runeInfo.parent}`}
+              />
+            ) : null}
           </Column>
         </Content>
       )}
