@@ -30,12 +30,12 @@ export default function OrdinalsInscriptionScreen() {
 
   const [isNeedToSplit, setIsNeedToSplit] = useState(false);
   const [isMultiStuck, setIsMultiStuck] = useState(false);
-  const [splitReason, setSplitReason] = useState('');
   const wallet = useWallet();
   // detect multiple inscriptions
   useEffect(() => {
     wallet.getUtxoByInscriptionId(inscription.inscriptionId).then((v) => {
-      if (v.inscriptions.length > 1) {
+      const offsetSet = new Set(v.inscriptions.map((v) => v.offset));
+      if (offsetSet.size > 1) {
         setIsNeedToSplit(true);
         setIsMultiStuck(true);
       }
@@ -95,7 +95,7 @@ export default function OrdinalsInscriptionScreen() {
           {isNeedToSplit &&
             (isMultiStuck ? (
               <Text
-                color="danger"
+                color="warning"
                 textCenter
                 text={'Multiple inscriptions are mixed together. You can split them first or send them once.'}
               />
