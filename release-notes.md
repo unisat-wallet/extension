@@ -1,5 +1,10 @@
 # UniSat Wallet Release Notes
 
+## v1.3.1
+
+- Fixed the bug of runes constructing a burn transaction
+- Fixed the bug of "can not convert 1+21 to bigint" appearing during transfer
+
 ## v1.3.0
 
 - Support Runes
