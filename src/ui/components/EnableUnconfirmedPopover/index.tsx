@@ -8,7 +8,7 @@ import { Text } from '../Text';
 
 export const EnableUnconfirmedPopover = ({ onClose, onConfirm }: { onClose: () => void; onConfirm: () => void }) => {
   return (
-    <Popover onClose={onClose}>
+    <Popover>
       <Column justifyCenter itemsCenter>
         <Icon icon={'warning'} color={'icon_yellow'} size={57} />
 
@@ -28,7 +28,7 @@ export const EnableUnconfirmedPopover = ({ onClose, onConfirm }: { onClose: () =
         <Column full mt={'xl'}>
           <Button
             text="Enable"
-            preset="primary"
+            preset="primaryV2"
             full
             onClick={(e) => {
               if (onConfirm) {
@@ -39,6 +39,7 @@ export const EnableUnconfirmedPopover = ({ onClose, onConfirm }: { onClose: () =
           <Button
             text="Cancel"
             full
+            preset="defaultV2"
             onClick={(e) => {
               if (onClose) {
                 onClose();

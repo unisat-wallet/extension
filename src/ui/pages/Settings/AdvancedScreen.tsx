@@ -57,17 +57,31 @@ export default function AdvancedScreen() {
       />
       <Content>
         <Column>
-          <Card>
+          <Card style={{ borderRadius: 10 }}>
             <Column fullX>
-              <Text text={'Unconfirmed Balance'} preset="bold" size="md" />
+              <Text text={'Unconfirmed Balance Not Spendable'} preset="bold" size="sm" />
               <Row>
                 <Text
-                  text={` If you hold either ARC-20 or Runes assets, you cannot enable unconfirmed balance. Doing so might result in
-                asset burning.`}
+                  preset="sub"
+                  size="sm"
+                  text={`To protect your assets, only confirmed balances are spendable when holding Runes (or ARC-20) assets. This is to prevent accidental asset burning.`}
                 />
               </Row>
+              <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
 
-              <Row itemsCenter>
+              <Row justifyBetween>
+                <Column fullX gap="zero">
+                  {enableUnconfirmed ? (
+                    <Text text={`Mandatory use of unconfirmed balance `} size="xs" />
+                  ) : (
+                    <Text text={`Mandatory use of unconfirmed balance`} size="xs" />
+                  )}
+                  <Text
+                    text={`Only applies to current address (${shortAddress(currentAccount.address)})`}
+                    preset="sub"
+                  />
+                </Column>
+
                 <Switch
                   onChange={async () => {
                     if (enableUnconfirmed) {
@@ -83,27 +97,28 @@ export default function AdvancedScreen() {
                     }
                   }}
                   checked={enableUnconfirmed}></Switch>
-                {enableUnconfirmed ? (
-                  <Text text={`ON (${shortAddress(currentAccount.address)})`} />
-                ) : (
-                  <Text text={`OFF (${shortAddress(currentAccount.address)})`} />
-                )}
               </Row>
             </Column>
           </Card>
         </Column>
 
         <Column>
-          <Card>
-            <Column fullX>
-              <Text text={'signData requests'} preset="bold" size="md" />
+          <Card style={{ borderRadius: 10 }}>
+            <Column>
+              <Text text={'signData requests'} preset="bold" size="sm" />
               <Row>
                 <Text
+                  preset="sub"
+                  size="sm"
                   text={`If you enable this setting, you might get signature requests that aren't readable. By signing a message you don't understand, you could be agreeing to give away your funds and NFTs.You're at risk for phishing attacks. Protect yourself by turning off signData.`}
                 />
               </Row>
 
-              <Row itemsCenter>
+              <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
+
+              <Row justifyBetween>
+                <Text text={'Allow signData requests'} size="xs" />
+
                 <Switch
                   onChange={() => {
                     if (enableSignData) {
@@ -115,7 +130,6 @@ export default function AdvancedScreen() {
                     }
                   }}
                   checked={enableSignData}></Switch>
-                {enableSignData ? <Text text={'ON (Not recommended)'} /> : <Text text={'OFF (Recommended)'} />}
               </Row>
             </Column>
           </Card>

@@ -98,6 +98,19 @@ const $viewPresets = {
 
     paddingTop: spacing.medium,
     paddingBottom: spacing.medium
+  } as CSSProperties),
+
+  defaultV2: Object.assign({}, $baseViewStyle, {
+    borderWidth: 1,
+    minHeight: 50,
+    borderColor: colors.white_muted,
+    borderRadius: 12
+  } as CSSProperties),
+
+  primaryV2: Object.assign({}, $baseViewStyle, {
+    background: 'linear-gradient(103.92deg, #EBB94C 0%, #E97E00 100%)',
+    minHeight: 50,
+    borderRadius: 12
   } as CSSProperties)
 };
 
@@ -116,6 +129,10 @@ const $hoverViewPresets: Record<Presets, CSSProperties> = {
   },
   bar: {
     backgroundColor: '#383535'
+  },
+  defaultV2: {},
+  primaryV2: {
+    backgroundColor: colors.yellow_dark
   }
 };
 
@@ -137,7 +154,10 @@ const $textPresets: Record<Presets, CSSProperties> = {
   primary: Object.assign({}, $baseTextStyle, { color: colors.black }),
   approval: Object.assign({}, $baseTextStyle, { color: colors.black }),
   danger: Object.assign({}, $baseTextStyle, { color: colors.white }),
-  bar: Object.assign({}, $baseTextStyle, { textAlign: 'left', fontWeight: 'bold' } as CSSProperties)
+  bar: Object.assign({}, $baseTextStyle, { textAlign: 'left', fontWeight: 'bold' } as CSSProperties),
+
+  defaultV2: Object.assign({}, $baseTextStyle, {}),
+  primaryV2: Object.assign({}, $baseTextStyle, { color: colors.black })
 };
 
 const $pressedTextPresets: Record<Presets, CSSProperties> = {
@@ -145,7 +165,9 @@ const $pressedTextPresets: Record<Presets, CSSProperties> = {
   primary: { opacity: 0.9 },
   danger: { opacity: 0.9 },
   approval: { opacity: 0.9 },
-  bar: { opacity: 0.9 }
+  bar: { opacity: 0.9 },
+  defaultV2: { opacity: 0.9 },
+  primaryV2: { opacity: 0.9 }
 };
 
 const $rightAccessoryStyle: CSSProperties = { marginLeft: spacing.extraSmall, zIndex: 1 };
