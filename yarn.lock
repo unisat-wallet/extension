@@ -1184,9 +1184,9 @@
     "@noble/secp256k1" "^1.7.1"
 
 "@bufbuild/protobuf@^1.2.0":
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/@bufbuild/protobuf/-/protobuf-1.8.0.tgz#1c8651ea34adb8019b483e09de02aeeb1cd57d79"
-  integrity sha512-qR9FwI8QKIveDnUYutvfzbC21UZJJryYrLuZGjeZ/VGz+vXelUkK+xgkOHsvPEdYEdxtgUUq4313N8QtOehJ1Q==
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/@bufbuild/protobuf/-/protobuf-1.9.0.tgz#fffac3183059a41ceef5311e07e3724d426a95c4"
+  integrity sha512-W7gp8Q/v1NlCZLsv8pQ3Y0uCu/SHgXOVFK+eUluUKWXmsb6VHkpNx0apdOWWcDbB9sJoKeP8uPrjmehJz6xETQ==
 
 "@csstools/normalize.css@*":
   version "12.0.0"
@@ -2975,12 +2975,25 @@
     "@typescript-eslint/types" "5.53.0"
     eslint-visitor-keys "^3.3.0"
 
-"@unisat/wallet-sdk@1.5.3":
-  version "1.5.3"
-  resolved "https://registry.yarnpkg.com/@unisat/wallet-sdk/-/wallet-sdk-1.5.3.tgz#22ad39bce9db05e082271e4af65100d90888db1c"
-  integrity sha512-2XxfP67u50MHbV+BL60UUOkcSFnXcXdb97VD/1XZAb+ndENpdj06BtWqeJsC4AbZKF7eT0ACLrx8+K284Xco6A==
+"@unisat/wallet-sdk@file:../../unisat-wallet-sdk":
+  version "1.6.0"
   dependencies:
     "@bitcoinerlab/secp256k1" "^1.0.5"
+    "@keystonehq/keystone-sdk" "^0.3.0"
+    big-integer "^1.6.52"
+    bignumber.js "^9.1.2"
+    bip39 "^3.1.0"
+    bitcoinjs-lib "^6.1.0"
+    bitcore-lib "^10.0.0"
+    ecpair "^2.1.0"
+    hdkey "^2.1.0"
+    tiny-secp256k1 "=2.2.1"
+
+"@unisat/wallet-sdk@file:/Users/jianjianjianjian/Documents/unisat-wallet-sdk":
+  version "1.6.0"
+  dependencies:
+    "@bitcoinerlab/secp256k1" "^1.0.5"
+    "@keystonehq/keystone-sdk" "^0.3.0"
     big-integer "^1.6.52"
     bignumber.js "^9.1.2"
     bip39 "^3.1.0"
@@ -3962,7 +3975,7 @@ bfj@^7.0.2:
     hoopy "^0.1.4"
     tryer "^1.0.1"
 
-big-integer@^1.6.52:
+big-integer@^1.6.48, big-integer@^1.6.52:
   version "1.6.52"
   resolved "https://registry.yarnpkg.com/big-integer/-/big-integer-1.6.52.tgz#60a887f3047614a8e1bffe5d7173490a97dc8c85"
   integrity sha512-QxD8cf2eVqJOOz63z6JIN9BzvVs/dlySa5HGSBH5xtR8dPteIRQnBxxKqkNTiT6jbDTF6jAfrd4oMcND9RGbQg==

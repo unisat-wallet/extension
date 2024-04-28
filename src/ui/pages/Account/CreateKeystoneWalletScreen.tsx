@@ -187,7 +187,6 @@ function Step3({
   }, [contextData.customHdPath]);
 
   const scanVaultAddress = async (accountCount = 1, isScanned = false) => {
-    debugger;
     tools.showLoading(true);
     setGroups([]);
     try {

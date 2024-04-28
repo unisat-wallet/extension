@@ -1,15 +1,17 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { KEYRING_TYPE } from '@/shared/constant';
-import { DecodedPsbt, Inscription, SignPsbtOptions, TxType } from '@/shared/types';
+import { DecodedPsbt, Inscription, SignPsbtOptions, ToSignInput, TxType } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
+import { useTools } from '@/ui/components/ActionComponent';
+import { Empty } from '@/ui/components/Empty';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import KeystoneSignScreen from '@/ui/pages/Wallet/KeystoneSignScreen';
-import { useAccountAddress } from '@/ui/state/accounts/hooks';
+import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
-import { satoshisToAmount, shortAddress, useApproval } from '@/ui/utils';
+import { satoshisToAmount, shortAddress, useApproval, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import SignPsbt from '../SignPsbt';
@@ -140,15 +142,32 @@ enum SignState {
   SUCCESS,
   FAILED
 }
+// unisat
+// interface TxInfo {
+//   psbtHexs: string[];
+//   txError: string;
+// }
 
+// const initTxInfo: TxInfo = {
+//   psbtHexs: [],
+//   txError: ''
+// };
+
+// keystone
 interface TxInfo {
   psbtHexs: string[];
   txError: string;
+  decodedPsbts: DecodedPsbt[];
+  toSignInputsArray: ToSignInput[][];
+  currentIndex: number;
 }
 
 const initTxInfo: TxInfo = {
   psbtHexs: [],
-  txError: ''
+  txError: '',
+  decodedPsbts: [],
+  toSignInputsArray: [],
+  currentIndex: 0
 };
 
 export default function MultiSignPsbt({
@@ -161,33 +180,31 @@ export default function MultiSignPsbt({
   handleConfirm
 }: Props) {
   const [getApproval, resolveApproval, rejectApproval] = useApproval();
-
   const [txInfo, setTxInfo] = useState<TxInfo>(initTxInfo);
-
   const [loading, setLoading] = useState(true);
-
   const [viewingPsbtIndex, setViewingPsbtIndex] = useState(-1);
-  const currentAccount = useCurrentAccount();
-
   const [signStates, setSignStates] = useState<SignState[]>(new Array(psbtHexs.length).fill(SignState.PENDING));
+
+  // keystone sign
+  const wallet = useWallet();
+  const tools = useTools();
+  const currentAccount = useCurrentAccount();
   const [isKeystoneSigning, setIsKeystoneSigning] = useState(false);
+  const [isWarningVisible, setIsWarningVisible] = useState(false);
   const [signIndex, setSignIndex] = useState(0);
 
   const init = async () => {
+    // keystone
     let txError = '';
-
-    const { isScammer } = await wallet.checkWebsite(session?.origin || '');
     const decodedPsbts: DecodedPsbt[] = [];
-
     for (let i = 0; i < psbtHexs.length; i++) {
       const psbtHex = psbtHexs[i];
-      const decodedPsbt = await wallet.decodePsbt(psbtHex);
+      const decodedPsbt = await wallet.decodePsbt(psbtHex, session?.origin || '');
       decodedPsbts.push(decodedPsbt);
       if (decodedPsbt.risks.length > 0) {
         setIsWarningVisible(true);
       }
     }
-
     const toSignInputsArray: ToSignInput[][] = [];
     try {
       for (let i = 0; i < psbtHexs.length; i++) {
@@ -201,30 +218,72 @@ export default function MultiSignPsbt({
     }
 
     setTxInfo({
+      decodedPsbts,
       psbtHexs,
-      txError: ''
+      toSignInputsArray,
+      txError,
+      currentIndex: 0
     });
-
     setLoading(false);
+    // unisat
+    // setTxInfo({
+    //   psbtHexs,
+    //   txError: ''
+    // });
+    // setLoading(false);
   };
 
   useEffect(() => {
     init();
   }, []);
 
+  const updateTxInfo = useCallback(
+    (params: { currentIndex?: number }) => {
+      setTxInfo(Object.assign({}, txInfo, params));
+    },
+    [txInfo, setTxInfo]
+  );
+  // keystone
   if (!handleCancel) {
     handleCancel = () => {
+      if (txInfo.currentIndex > 0) {
+        updateTxInfo({
+          currentIndex: txInfo.currentIndex - 1
+        });
+        return;
+      }
       rejectApproval();
     };
   }
+  // unisat
+  //   if (!handleCancel) {
+  //     handleCancel = () => {
+  //       rejectApproval();
+  //     };
+  //   }
 
   if (!handleConfirm) {
     handleConfirm = () => {
+      if (txInfo.currentIndex < txInfo.psbtHexs.length - 1) {
+        updateTxInfo({
+          currentIndex: txInfo.currentIndex + 1
+        });
+        return;
+      }
       resolveApproval({
         psbtHexs: txInfo.psbtHexs
       });
     };
   }
+
+  // unisat
+  //   if (!handleConfirm) {
+  //     handleConfirm = () => {
+  //       resolveApproval({
+  //         psbtHexs: txInfo.psbtHexs
+  //       });
+  //     };
+  //   }
 
   const originalHandleConfirm = handleConfirm;
   if (currentAccount.type === KEYRING_TYPE.KeystoneKeyring) {
@@ -281,6 +340,10 @@ export default function MultiSignPsbt({
     );
   }
 
+  if (!decodedPsbt) {
+    return <Empty />;
+  }
+
   if (!header && session) {
     header = (
       <Header>
@@ -291,35 +354,48 @@ export default function MultiSignPsbt({
 
   if (viewingPsbtIndex >= 0 && txInfo.psbtHexs) {
     return (
-      <SignPsbt
-        header=<Header
-          onBack={() => {
+      <>
+        <SignPsbt
+          header=<Header
+            onBack={() => {
+              setViewingPsbtIndex(-1);
+            }}
+          />
+          params={{
+            data: {
+              psbtHex: txInfo.psbtHexs[viewingPsbtIndex],
+              type: TxType.SIGN_TX,
+              options: options ? options[viewingPsbtIndex] : { autoFinalized: false }
+            }
+          }}
+          handleCancel={() => {
             setViewingPsbtIndex(-1);
+            signStates[viewingPsbtIndex] = SignState.FAILED;
+            setSignStates(signStates);
+          }}
+          handleConfirm={() => {
+            setViewingPsbtIndex(-1);
+            signStates[viewingPsbtIndex] = SignState.SUCCESS;
+            setSignStates(signStates);
           }}
         />
-        params={{
-          data: {
-            psbtHex: txInfo.psbtHexs[viewingPsbtIndex],
-            type: TxType.SIGN_TX,
-            options: options ? options[viewingPsbtIndex] : { autoFinalized: false }
-          }
-        }}
-        handleCancel={() => {
-          setViewingPsbtIndex(-1);
-          signStates[viewingPsbtIndex] = SignState.FAILED;
-          setSignStates(signStates);
-        }}
-        handleConfirm={() => {
-          setViewingPsbtIndex(-1);
-          signStates[viewingPsbtIndex] = SignState.SUCCESS;
-          setSignStates(signStates);
-        }}
-      />
+      </>
     );
   }
 
   const signedCount = signStates.filter((v) => v === SignState.SUCCESS).length;
   const isAllSigned = signedCount === txInfo.psbtHexs.length;
+
+  // keystone
+  const count = txInfo.psbtHexs.length;
+  const arr: { label: string; key: number }[] = [];
+  for (let i = 0; i < count; i++) {
+    arr.push({
+      label: `${i + 1}`,
+      key: i
+    });
+  }
+  const tabItems = arr;
 
   if (isKeystoneSigning) {
     return (

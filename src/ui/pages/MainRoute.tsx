@@ -249,10 +249,6 @@ const routes = {
     element: <UnavailableUtxoScreen />
   },
 
-  KeystoneSignScreen: {
-    path: '/keystone/sign',
-    element: <KeystoneSignScreen />
-  },
   SendRunesScreen: {
     path: '/runes/send-runes',
     element: <SendRunesScreen />

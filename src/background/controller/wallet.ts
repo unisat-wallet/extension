@@ -350,7 +350,6 @@ export class WalletController extends BaseController {
     );
 
     if (filterPubkey !== null && filterPubkey !== undefined && filterPubkey.length > 0) {
-      debugger;
       const accounts = await originKeyring.getAccounts();
       accounts.forEach((account) => {
         if (!filterPubkey.includes(account)) {
