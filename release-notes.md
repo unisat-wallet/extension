@@ -1,5 +1,13 @@
 # UniSat Wallet Release Notes
 
+## v1.3.2
+
+- Support cursed inscription
+- Optimized the UTXO selection strategy of runes to reduce gas fees
+- Add runes logo
+- Add Alichepay
+- Fix Runes details
+
 ## v1.3.1
 
 - Fixed the bug of runes constructing a burn transaction
