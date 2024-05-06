@@ -1,4 +1,4 @@
-import { Decimal } from 'decimal.js';
+import { BigNumber } from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -68,13 +68,13 @@ export default function SendRunesScreen() {
     tools.showLoading(true);
     fetchAssetUtxosRunes(runeInfo.runeid)
       .then((utxos) => {
-        let balance = new Decimal(0);
+        let balance = new BigNumber(0);
         for (let i = 0; i < utxos.length; i++) {
           const utxo = utxos[i];
           if (utxo.runes) {
             utxo.runes.forEach((rune) => {
               if (rune.runeid === runeInfo.runeid) {
-                balance = balance.plus(new Decimal(rune.amount));
+                balance = balance.plus(new BigNumber(rune.amount));
               }
             });
           }

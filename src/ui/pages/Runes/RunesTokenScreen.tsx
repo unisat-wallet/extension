@@ -7,7 +7,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useOrdinalsWebsite, useUnisatWebsite } from '@/ui/state/settings/hooks';
+import { useBlockstreamUrl, useOrdinalsWebsite, useUnisatWebsite } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
@@ -93,6 +93,8 @@ export default function RunesTokenScreen() {
   const tools = useTools();
 
   const ordinalsWebsite = useOrdinalsWebsite();
+
+  const mempoolWebsite = useBlockstreamUrl();
   if (loading) {
     return (
       <Layout>
@@ -158,7 +160,14 @@ export default function RunesTokenScreen() {
             </Row>
           </Column>
 
-          <Text text={tokenSummary.runeInfo.spacedRune} preset="title-bold"></Text>
+          <Text
+            text={tokenSummary.runeInfo.spacedRune}
+            preset="title-bold"
+            onClick={() => {
+              copyToClipboard(tokenSummary.runeInfo.spacedRune).then(() => {
+                tools.toastSuccess('Copied');
+              });
+            }}></Text>
           {tokenSummary.runeLogo ? (
             <Row>
               <InscriptionPreview data={tokenSummary.runeLogo} preset="small" asLogo />
@@ -192,9 +201,15 @@ export default function RunesTokenScreen() {
             <Section title="symbol" value={tokenSummary.runeInfo.symbol} />
 
             <Section title="holders" value={tokenSummary.runeInfo.holders} />
-            <Section title="holders" value={tokenSummary.runeInfo.holders} />
 
             <Section title="transactions" value={tokenSummary.runeInfo.transactions} />
+
+            <Section
+              title="etching"
+              value={tokenSummary.runeInfo.etching}
+              link={`${mempoolWebsite}/tx/${tokenSummary.runeInfo.etching}`}
+            />
+
             {tokenSummary.runeInfo.parent ? (
               <Section
                 title="parent"
