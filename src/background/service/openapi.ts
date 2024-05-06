@@ -314,8 +314,12 @@ export class OpenApiService {
     return this.httpPost('/tx/decode2', { psbtHex, website });
   }
 
-  async createMoonpayUrl(address: string): Promise<string> {
-    return this.httpPost('/moonpay/create', { address });
+  async getBuyBtcChannelList(): Promise<{ channel: string }[]> {
+    return this.httpGet('/buy-btc/channel-list', {});
+  }
+
+  async createPaymentUrl(address: string, channel: string): Promise<string> {
+    return this.httpPost('/buy-btc/create', { address, channel });
   }
 
   async checkWebsite(website: string): Promise<{ isScammer: boolean; warning: string }> {

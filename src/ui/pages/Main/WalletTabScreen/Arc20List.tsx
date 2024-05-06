@@ -41,7 +41,7 @@ export function Arc20List() {
 
   useEffect(() => {
     fetchData();
-  }, [pagination]);
+  }, [pagination, currentAccount.address]);
 
   if (total === -1) {
     return (

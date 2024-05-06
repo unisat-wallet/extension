@@ -14,20 +14,16 @@ export const EnableUnconfirmedPopover = ({ onClose, onConfirm }: { onClose: () =
 
         <Text text="Enable Unconfirmed Balance" preset="title-bold" />
         <Column gap="zero">
-          <div style={{ fontSize: fontSizes.sm, color: '#ddd' }}>
-            Once unconfirmed balance are enabled, you will be able to utilize and send them. Nevertheless, please be
-            mindful of the following risks:
-          </div>
-
-          <div style={{ fontSize: fontSizes.sm, color: '#ddd', fontWeight: 'bold', marginTop: 20 }}>
-            If you hold either ARC-20 or Runes assets, you cannot enable unconfirmed balance. Doing so might result in
-            asset burning.
+          <div style={{ fontSize: fontSizes.sm, color: '#ddd', marginTop: 20 }}>
+            If Runes (or ARC20) assets are detected in the given address, the unconfirmed UTXOs are explicitly not
+            allowed to be spent until it's confirmed. Forcely spending these unconfirmed assets will incur the risks of
+            losing assets.
           </div>
         </Column>
 
         <Column full mt={'xl'}>
           <Button
-            text="Enable"
+            text="Allow using Unconfirmed Balance"
             preset="primaryV2"
             full
             onClick={(e) => {

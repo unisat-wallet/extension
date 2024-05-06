@@ -286,3 +286,26 @@ export enum AddressFlagType {
 }
 
 export const UNCONFIRMED_HEIGHT = 4194303;
+
+export enum PaymentChannelType {
+  MoonPay = 'moonpay',
+  AlchePay = 'alchepay',
+
+  Transak = 'transak'
+}
+
+export const PAYMENT_CHANNELS = {
+  moonpay: {
+    name: 'MoonPay',
+    img: './images/artifacts/moonpay.png'
+  },
+  alchepay: {
+    name: 'AlchePay',
+    img: './images/artifacts/alchepay.png'
+  },
+
+  transak: {
+    name: 'Transak',
+    img: './images/artifacts/transak.png'
+  }
+};

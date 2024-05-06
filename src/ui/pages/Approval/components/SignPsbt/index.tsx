@@ -952,6 +952,7 @@ export default function SignPsbt({
           <Button preset="default" text="Reject" onClick={handleCancel} full />
           <Button
             preset="primary"
+            icon={txInfo.decodedPsbt.risks.length > 0 ? 'risk' : undefined}
             text={type == TxType.SIGN_TX ? 'Sign' : 'Sign & Pay'}
             onClick={() => {
               if (txInfo.decodedPsbt.risks.length > 0) {

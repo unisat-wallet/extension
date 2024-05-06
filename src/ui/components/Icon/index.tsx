@@ -46,7 +46,8 @@ export const svgRegistry = {
   info: '/images/icons/info.svg',
   warning: '/images/icons/warning.svg',
   alert: '/images/icons/alert.svg',
-  burn: ' /images/icons/burn.svg'
+  burn: ' /images/icons/burn.svg',
+  risk: '/images/icons/risk.svg'
 };
 
 const iconImgList: Array<IconTypes> = ['success', 'delete', 'btc'];

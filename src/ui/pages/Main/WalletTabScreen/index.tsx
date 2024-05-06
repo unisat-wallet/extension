@@ -30,6 +30,7 @@ import { AssetTabKey, uiActions } from '@/ui/state/ui/reducer';
 import { fontSizes } from '@/ui/theme/font';
 import { amountToSatoshis, satoshisToAmount, useWallet } from '@/ui/utils';
 
+import { BuyBTCModal } from '../../BuyBTC/BuyBTCModal';
 import { useNavigate } from '../../MainRoute';
 import { AtomicalsTab } from './AtomicalsTab';
 import { OrdinalsTab } from './OrdinalsTab';
@@ -140,6 +141,8 @@ export default function WalletTabScreen() {
 
   const blockstreamUrl = useBlockstreamUrl();
   const resetUiTxCreateScreen = useResetUiTxCreateScreen();
+
+  const [buyBtcModalVisible, setBuyBtcModalVisible] = useState(false);
   return (
     <Layout>
       <Header
@@ -263,17 +266,15 @@ export default function WalletTabScreen() {
               }}
               full
             />
-            {walletConfig.moonPayEnabled && (
-              <Button
-                text="Buy"
-                preset="default"
-                icon="bitcoin"
-                onClick={(e) => {
-                  navigate('MoonPayScreen');
-                }}
-                full
-              />
-            )}
+            <Button
+              text="Buy"
+              preset="default"
+              icon="bitcoin"
+              onClick={(e) => {
+                setBuyBtcModalVisible(true);
+              }}
+              full
+            />
           </Row>
 
           <Tabs
@@ -306,6 +307,13 @@ export default function WalletTabScreen() {
 
         {showDisableUnconfirmedUtxoNotice && (
           <DisableUnconfirmedsPopover onClose={() => setShowDisableUnconfirmedUtxoNotice(false)} />
+        )}
+        {buyBtcModalVisible && (
+          <BuyBTCModal
+            onClose={() => {
+              setBuyBtcModalVisible(false);
+            }}
+          />
         )}
       </Content>
       <Footer px="zero" py="zero">

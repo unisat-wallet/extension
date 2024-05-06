@@ -1381,8 +1381,8 @@ export class WalletController extends BaseController {
     return preferenceService.expireUICachedData(address);
   };
 
-  createMoonpayUrl = (address: string) => {
-    return openapiService.createMoonpayUrl(address);
+  createPaymentUrl = (address: string, channel: string) => {
+    return openapiService.createPaymentUrl(address, channel);
   };
 
   getWalletConfig = () => {
@@ -1696,19 +1696,48 @@ export class WalletController extends BaseController {
     }
 
     const _assetUtxos: UnspentOutput[] = [];
-    let total = BigInt(0);
+
+    // find the utxo that has the exact amount to split
     for (let i = 0; i < assetUtxos.length; i++) {
       const v = assetUtxos[i];
-      v.runes?.forEach((r) => {
-        if (r.runeid == runeid) {
-          total = total + BigInt(r.amount);
+      if (v.runes && v.runes.length > 1) {
+        const balance = v.runes.find((r) => r.runeid == runeid);
+        if (balance && balance.amount == runeAmount) {
+          _assetUtxos.push(v);
+          break;
         }
-      });
-      _assetUtxos.push(v);
-      if (total >= BigInt(runeAmount)) {
-        break;
       }
     }
+
+    if (_assetUtxos.length == 0) {
+      for (let i = 0; i < assetUtxos.length; i++) {
+        const v = assetUtxos[i];
+        if (v.runes) {
+          const balance = v.runes.find((r) => r.runeid == runeid);
+          if (balance && balance.amount == runeAmount) {
+            _assetUtxos.push(v);
+            break;
+          }
+        }
+      }
+    }
+
+    if (_assetUtxos.length == 0) {
+      let total = BigInt(0);
+      for (let i = 0; i < assetUtxos.length; i++) {
+        const v = assetUtxos[i];
+        v.runes?.forEach((r) => {
+          if (r.runeid == runeid) {
+            total = total + BigInt(r.amount);
+          }
+        });
+        _assetUtxos.push(v);
+        if (total >= BigInt(runeAmount)) {
+          break;
+        }
+      }
+    }
+
     assetUtxos = _assetUtxos;
 
     if (!btcUtxos) {
@@ -1734,6 +1763,10 @@ export class WalletController extends BaseController {
     this.setPsbtSignNonSegwitEnable(psbt, false);
 
     return psbt.toHex();
+  };
+
+  getBuyBtcChannelList = async () => {
+    return openapiService.getBuyBtcChannelList();
   };
 }
 

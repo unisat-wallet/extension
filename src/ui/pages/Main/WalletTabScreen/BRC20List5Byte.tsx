@@ -40,7 +40,7 @@ export function BRC20List5Byte() {
 
   useEffect(() => {
     fetchData();
-  }, [pagination]);
+  }, [pagination, currentAccount.address]);
 
   if (total === -1) {
     return (

@@ -42,7 +42,7 @@ export function InscriptionList() {
 
   useEffect(() => {
     fetchData();
-  }, [pagination]);
+  }, [pagination, currentAccount.address]);
 
   if (total === -1) {
     return (

@@ -252,7 +252,7 @@ export interface WalletController {
 
   expireUICachedData(address: string): Promise<void>;
 
-  createMoonpayUrl(address: string): Promise<string>;
+  createPaymentUrl(address: string, channel: string): Promise<string>;
 
   getWalletConfig(): Promise<WalletConfig>;
 
@@ -328,6 +328,8 @@ export interface WalletController {
     assetUtxos?: UnspentOutput[];
     outputValue: number;
   }): Promise<string>;
+
+  getBuyBtcChannelList(): Promise<{ channel: string }[]>;
 }
 
 const WalletContext = createContext<{
