@@ -62,6 +62,7 @@ export default function WalletTabScreen() {
 
   const dispatch = useAppDispatch();
   const assetTabKey = useAssetTabKey();
+  console.log(assetTabKey, '===assetTabKey')
 
   const skipVersion = useSkipVersionCallback();
 

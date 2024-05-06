@@ -5,6 +5,7 @@ import { Column, Row } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import BRC20BalanceCard2 from '@/ui/components/BRC20BalanceCard2';
 import { Empty } from '@/ui/components/Empty';
+import { NubitVerify } from '@/ui/components/NubitVerify';
 import { Pagination } from '@/ui/components/Pagination';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useWallet } from '@/ui/utils';
@@ -81,6 +82,7 @@ export function BRC20List5Byte() {
           }}
         />
       </Row>
+      <NubitVerify />
     </Column>
   );
 }
