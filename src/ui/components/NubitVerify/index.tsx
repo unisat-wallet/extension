@@ -51,7 +51,6 @@ export function NubitVerify(props: NubitVerifyProps) {
               return <Row justifyBetween key={index}>
                 <div style={{
                   fontSize: 12,
-                  background: '#888'
                 }}>{item?.name}</div>
                 <Row
                   selfItemsCenter
