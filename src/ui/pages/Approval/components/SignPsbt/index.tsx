@@ -588,9 +588,14 @@ export default function SignPsbt({
 
   if (!handleConfirm) {
     handleConfirm = (res) => {
-      resolveApproval({
-        psbtHex: (res ?? txInfo).psbtHex
-      });
+      if (res) {
+        resolveApproval({
+          // signed by hardware wallet
+          signedPsbtHex: res.psbtHex
+        });
+      } else {
+        resolveApproval();
+      }
     };
   }
 
