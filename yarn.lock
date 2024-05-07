@@ -2975,22 +2975,10 @@
     "@typescript-eslint/types" "5.53.0"
     eslint-visitor-keys "^3.3.0"
 
-"@unisat/wallet-sdk@file:../../unisat-wallet-sdk":
-  version "1.6.0"
-  dependencies:
-    "@bitcoinerlab/secp256k1" "^1.0.5"
-    "@keystonehq/keystone-sdk" "^0.3.0"
-    big-integer "^1.6.52"
-    bignumber.js "^9.1.2"
-    bip39 "^3.1.0"
-    bitcoinjs-lib "^6.1.0"
-    bitcore-lib "^10.0.0"
-    ecpair "^2.1.0"
-    hdkey "^2.1.0"
-    tiny-secp256k1 "=2.2.1"
-
-"@unisat/wallet-sdk@file:/Users/jianjianjianjian/Documents/unisat-wallet-sdk":
-  version "1.6.0"
+"@unisat/wallet-sdk@1.6.2":
+  version "1.6.2"
+  resolved "https://registry.yarnpkg.com/@unisat/wallet-sdk/-/wallet-sdk-1.6.2.tgz#471b8a17af62c1927a0ff83afdd49de41507efc5"
+  integrity sha512-WnBoaIMayQzCbj1hiTneWtPSxDWEBiDMf7PpxkElYO4YbR4GtAMGCRwTje84ioOPfrst7Rin4mqvPI3x4ygq9w==
   dependencies:
     "@bitcoinerlab/secp256k1" "^1.0.5"
     "@keystonehq/keystone-sdk" "^0.3.0"
