@@ -1,6 +1,6 @@
 import { Row } from '@/ui/components';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { copyToClipboard, shortAddress } from '@/ui/utils';
+import { copyToClipboard } from '@/ui/utils';
 import { CopyOutlined, LoadingOutlined } from '@ant-design/icons';
 import { lightRun } from "@nubit/modular-indexer-light-sdk";
 import { Tooltip } from 'antd';
@@ -199,7 +199,7 @@ export function NubitVerify(props: NubitVerifyProps) {
                       tools.toastSuccess('Copied');
                     });
                   }}>
-                  <Text text={shortAddress(item?.proof)} style={{ color: '#fff', fontSize: 12 }} />
+                  <Text text={item?.proof.slice(0, 5) + '...' + item?.proof.slice(item?.proof?.length - 15)} style={{ color: '#fff', fontSize: 12 }} />
                   <CopyOutlined style={{ color: '#fff', fontSize: 12 }} />
                 </Row>
               </Row>
