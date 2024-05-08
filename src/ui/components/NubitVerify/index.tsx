@@ -1,34 +1,155 @@
 import { Row } from '@/ui/components';
+import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { copyToClipboard, shortAddress } from '@/ui/utils';
-import { CopyOutlined } from '@ant-design/icons';
+import { CopyOutlined, LoadingOutlined } from '@ant-design/icons';
+import { lightLoadWasm } from "@nubit/modular-indexer-light-sdk";
 import { Tooltip } from 'antd';
-import { useState } from 'react';
+import Decimal from 'decimal.js';
+import { useEffect, useState } from 'react';
 import { useTools } from '../ActionComponent';
 import { Text } from '../Text';
 
 interface NubitVerifyProps {
-  text?: string;
+  tokens: any[];
 }
 export function NubitVerify(props: NubitVerifyProps) {
-  const { text } = props;
+
+  const { tokens } = props;
+  let verTokens = []
+  const currentAccount = useCurrentAccount();
   const tools = useTools();
   const [verStatus, setVerStatus] = useState(0);
+  const [verClick, setVerClick] = useState(false);
+
   const [verRes, setVerRes] = useState([
-    { name: 'nubit', address: '0000000000000000000330ca389d07a4793abec642ea8d04e93a3ac1e5321ac5' },
-    { name: 'auto', address: '0000000000000000000330ca389d07a4793abec642ea8d04e93a3ac1e5321ac5' },
-    { name: 'pepe', address: '0000000000000000000330ca389d07a4793abec642ea8d04e93a3ac1e5321ac5' }
+    // { name: 'nubit', proof: '0000000000000000000330ca389d07a4793abec642ea8d04e93a3ac1e5321ac5' },
+    // { name: 'auto', proof: '0000000000000000000330ca389d07a4793abec642ea8d04e93a3ac1e5321ac5' },
+    // { name: 'pepe', proof: '0000000000000000000330ca389d07a4793abec642ea8d04e93a3ac1e5321ac5' }
   ]);
+
   const [unVerRes, setUnVerRes] = useState([
-    { name: 'Committee Indexer 01 ', address: '0000000000000000000330ca389d07a4793abec642ea8d04e93a3ac1e5321ac5' },
-    { name: 'Committee Indexer 02 ', address: '0000000000000000000330ca389d07a4793abec642ea8d04e93a3ac1e5321ac5' },
-    { name: 'Committee Indexer 03 ', address: '0000000000000000000330ca389d07a4793abec642ea8d04e93a3ac1e5321ac5' }
+    //{ commitment: string,
+    // hash: string,
+    // height: string,
+    // metaProtocol: string,
+    // name: string,
+    // url: string,
+    // version: string}
+    // { name: 'nubit ' },
+    // { name: 'auto ' },
+    // { name: 'auto' }
   ]);
+
+  const init = async () => {
+    await lightLoadWasm()
+
+    await window?.lightSetConfig({
+      committeeIndexers: {
+        s3: [
+          {
+            "region": "us-west-2",
+            "bucket": "nubit-modular-indexer-brc-20",
+            "name": "nubit-official-00"
+          }
+        ],
+        da: []
+      },
+      verification: {
+        bitcoinRPC: "https://bitcoin-mainnet-archive.allthatnode.com",
+        metaProtocol: "brc-20",
+        minimalCheckpoint: 1
+      },
+    });
+    await window?.lightInitialize();
+
+    getLightStatus()
+
+  }
+
+  const getLightStatus = () => {
+    window?.lightStatus().then((res: any) => {
+      console.log('lightStatus', res);
+      if (res === 'verified') {
+        tokens.forEach((item, index) => {
+          getLightGetBalanceOfWallet(index)
+        })
+        return false
+      }
+      if (res === 'unverified') {
+        getLightGetCurrentCheckpoints()
+        return false
+      }
+      if (res === 'verifying') {
+        setVerStatus(0)
+        setTimeout(function () {
+          getLightStatus()
+        }, 1000);
+      }
+    })
+  }
+
+  const getLightGetBalanceOfWallet = (index: number) => {
+    window?.lightGetBalanceOfWallet(tokens[index].ticker, currentAccount.address)
+      .then((res: any) => {
+        console.log('lightGetBalanceOfWallet', res);
+        // let testRes = {
+        //   error: null,
+        //   proof: '212',
+        //   result: {
+        //     availableBalance: "500000000000000000000",
+        //     overallBalance: "500000000000000000000",
+        //     pkscript: "0014b06d92ebe9829abfeebd4e7fd164bbbea96fe675",
+        //   }
+        // }
+        // if(getBigString(res?.result?.availableBalance, (10 ** 18)) == tokens[index].availableBalance) {
+
+        // }
+        verTokens.push({
+          name: tokens[index].ticker,
+          proof: res?.proof
+        })
+        if (verTokens.length == tokens.length) {
+          setVerRes(verTokens)
+          setVerStatus(1)
+        }
+        // console.log(getBigString(res?.result?.availableBalance, (10 ** 18)), '===getBigString(res?.result?.availableBalance, (10 ** 18))')
+      })
+      .catch((err: any) => {
+        console.log('lightGetBalanceOfWallet', err);
+        setVerStatus(0)
+        setVerClick(false)
+      })
+  }
+
+  const getLightGetCurrentCheckpoints = () => {
+    window?.lightGetCurrentCheckpoints()
+      .then((res: any) => {
+        setUnVerRes(res)
+        setVerStatus(2)
+      })
+      .catch((err: any) => {
+        console.log('lightGetBalanceOfWallet', err);
+        setVerStatus(0)
+        setVerClick(false)
+      })
+  }
+
+  const getBigString = (numerator: any, denominator: any) => {
+    const decimalNumerator = new Decimal(numerator);
+    const decimalDenominator = new Decimal(denominator);
+    const divisionResult = decimalNumerator.dividedBy(decimalDenominator);
+    return divisionResult.toString();
+  }
+
+  useEffect(() => {
+    // init()
+  }, []);
 
 
   return (
     <>
       <Row justifyEnd mt="lg" style={{ marginBottom: '-15px' }}>
-        {verStatus === 0 && <div style={{
+        {verStatus === 0 && !verClick && <div style={{
           fontSize: 14,
           color: '#fff',
           cursor: 'pointer',
@@ -39,8 +160,23 @@ export function NubitVerify(props: NubitVerifyProps) {
           display: 'flex',
           alignItems: 'center'
         }} onClick={() => {
-          setVerStatus(1)
-        }}>VERIFY <img src="./images/icons/nubit-ver.svg" height={20} style={{ marginLeft: "3px" }} /></div>}
+          setVerClick(true)
+          init()
+        }}>
+          VERIFY <img src="./images/icons/nubit-ver.svg" height={20} style={{ marginLeft: "3px" }} />
+        </div>}
+        {verStatus === 0 && verClick && <div style={{
+          fontSize: 14,
+          color: '#fff',
+          backgroundColor: '#F7931A',
+          padding: '3px 5px',
+          borderRadius: '5px',
+          border: '1px solid #F7931A',
+          display: 'flex',
+          alignItems: 'center'
+        }}>
+          VERIFY <LoadingOutlined style={{ marginLeft: "3px" }} />
+        </div>}
         {verStatus === 1 &&
           <Tooltip placement="topRight" title={<>
             <Row justifyCenter style={{
@@ -56,11 +192,11 @@ export function NubitVerify(props: NubitVerifyProps) {
                   selfItemsCenter
                   itemsCenter
                   onClick={(e) => {
-                    copyToClipboard(item?.address).then(() => {
+                    copyToClipboard(item?.proof).then(() => {
                       tools.toastSuccess('Copied');
                     });
                   }}>
-                  <Text text={shortAddress(item?.address)} style={{ color: '#fff', fontSize: 12 }} />
+                  <Text text={shortAddress(item?.proof)} style={{ color: '#fff', fontSize: 12 }} />
                   <CopyOutlined style={{ color: '#fff', fontSize: 12 }} />
                 </Row>
               </Row>
@@ -86,18 +222,8 @@ export function NubitVerify(props: NubitVerifyProps) {
               return <Row justifyBetween key={index}>
                 <div style={{
                   fontSize: 12,
-                }}>{item?.name}</div>
-                <Row
-                  selfItemsCenter
-                  itemsCenter
-                  onClick={(e) => {
-                    copyToClipboard(item?.address).then(() => {
-                      tools.toastSuccess('Copied');
-                    });
-                  }}>
-                  <Text text={shortAddress(item?.address)} style={{ color: '#fff', fontSize: 12 }} />
-                  <CopyOutlined style={{ color: '#fff', fontSize: 12 }} />
-                </Row>
+                }}>{`Committee Indexer 0${index + 1}`}</div>
+                <div style={{ color: '#fff', fontSize: 12 }} >{item?.name}</div>
               </Row>
             })}
           </>}>

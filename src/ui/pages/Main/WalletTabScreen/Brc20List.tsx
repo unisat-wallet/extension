@@ -29,6 +29,7 @@ export function BRC20List() {
         pagination.currentPage,
         pagination.pageSize
       );
+      console.log('list', list);
       setTokens(list);
       setTotal(total);
     } catch (e) {
@@ -81,7 +82,7 @@ export function BRC20List() {
           }}
         />
       </Row>
-      <NubitVerify />
+      <NubitVerify tokens={tokens} />
     </Column>
   );
 }
