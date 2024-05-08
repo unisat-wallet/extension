@@ -15,7 +15,7 @@ interface NubitVerifyProps {
 export function NubitVerify(props: NubitVerifyProps) {
 
   const { tokens } = props;
-  let verTokens = []
+  const verTokens = []
   const currentAccount = useCurrentAccount();
   const tools = useTools();
   const [verStatus, setVerStatus] = useState(0);
