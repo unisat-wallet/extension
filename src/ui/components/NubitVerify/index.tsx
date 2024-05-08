@@ -4,8 +4,7 @@ import { copyToClipboard } from '@/ui/utils';
 import { CopyOutlined, LoadingOutlined } from '@ant-design/icons';
 import { lightRun } from "@nubit/modular-indexer-light-sdk";
 import { Tooltip } from 'antd';
-import Decimal from 'decimal.js';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useTools } from '../ActionComponent';
 import { Text } from '../Text';
 
@@ -21,24 +20,9 @@ export function NubitVerify(props: NubitVerifyProps) {
   const [verStatus, setVerStatus] = useState(0);
   const [verClick, setVerClick] = useState(false);
 
-  const [verRes, setVerRes] = useState([
-    // { name: 'nubit', proof: '0000000000000000000330ca389d07a4793abec642ea8d04e93a3ac1e5321ac5' },
-    // { name: 'auto', proof: '0000000000000000000330ca389d07a4793abec642ea8d04e93a3ac1e5321ac5' },
-    // { name: 'pepe', proof: '0000000000000000000330ca389d07a4793abec642ea8d04e93a3ac1e5321ac5' }
-  ]);
+  const [verRes, setVerRes] = useState([]);
 
-  const [unVerRes, setUnVerRes] = useState([
-    //{ commitment: string,
-    // hash: string,
-    // height: string,
-    // metaProtocol: string,
-    // name: string,
-    // url: string,
-    // version: string}
-    // { name: 'nubit ' },
-    // { name: 'auto ' },
-    // { name: 'auto' }
-  ]);
+  const [unVerRes, setUnVerRes] = useState([]);
 
   const init = async () => {
     await lightRun({
@@ -92,19 +76,6 @@ export function NubitVerify(props: NubitVerifyProps) {
   const getLightGetBalanceOfWallet = (index: number) => {
     window?.lightGetBalanceOfWallet(tokens[index].ticker, currentAccount.address)
       .then((res: any) => {
-        console.log('lightGetBalanceOfWallet', res);
-        // let testRes = {
-        //   error: null,
-        //   proof: '212',
-        //   result: {
-        //     availableBalance: "500000000000000000000",
-        //     overallBalance: "500000000000000000000",
-        //     pkscript: "0014b06d92ebe9829abfeebd4e7fd164bbbea96fe675",
-        //   }
-        // }
-        // if(getBigString(res?.result?.availableBalance, (10 ** 18)) == tokens[index].availableBalance) {
-
-        // }
         verTokens.push({
           name: tokens[index].ticker,
           proof: res?.proof
@@ -113,7 +84,6 @@ export function NubitVerify(props: NubitVerifyProps) {
           setVerRes(verTokens)
           setVerStatus(1)
         }
-        // console.log(getBigString(res?.result?.availableBalance, (10 ** 18)), '===getBigString(res?.result?.availableBalance, (10 ** 18))')
       })
       .catch((err: any) => {
         console.log('lightGetBalanceOfWallet', err);
@@ -136,18 +106,6 @@ export function NubitVerify(props: NubitVerifyProps) {
         tools.toastError('Network Unstable, Please Retry Later...');
       })
   }
-
-  const getBigString = (numerator: any, denominator: any) => {
-    const decimalNumerator = new Decimal(numerator);
-    const decimalDenominator = new Decimal(denominator);
-    const divisionResult = decimalNumerator.dividedBy(decimalDenominator);
-    return divisionResult.toString();
-  }
-
-  useEffect(() => {
-    // init()
-  }, []);
-
 
   return (
     <>
