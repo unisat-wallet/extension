@@ -118,6 +118,7 @@ export function NubitVerify(props: NubitVerifyProps) {
         console.log('lightGetBalanceOfWallet', err);
         setVerStatus(0)
         setVerClick(false)
+        tools.toastError('Network Unstable, Please Retry Later...');
       })
   }
 
@@ -131,6 +132,7 @@ export function NubitVerify(props: NubitVerifyProps) {
         console.log('lightGetBalanceOfWallet', err);
         setVerStatus(0)
         setVerClick(false)
+        tools.toastError('Network Unstable, Please Retry Later...');
       })
   }
 

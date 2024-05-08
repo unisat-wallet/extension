@@ -82,7 +82,7 @@ export function BRC20List5Byte() {
           }}
         />
       </Row>
-      <NubitVerify />
+      <NubitVerify tokens={tokens} />
     </Column>
   );
 }
