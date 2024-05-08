@@ -2,7 +2,7 @@ import { Row } from '@/ui/components';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { copyToClipboard, shortAddress } from '@/ui/utils';
 import { CopyOutlined, LoadingOutlined } from '@ant-design/icons';
-import { lightLoadWasm } from "@nubit/modular-indexer-light-sdk";
+import { lightRun } from "@nubit/modular-indexer-light-sdk";
 import { Tooltip } from 'antd';
 import Decimal from 'decimal.js';
 import { useEffect, useState } from 'react';
@@ -41,15 +41,13 @@ export function NubitVerify(props: NubitVerifyProps) {
   ]);
 
   const init = async () => {
-    await lightLoadWasm()
-
-    await window?.lightSetConfig({
+    await lightRun({
       committeeIndexers: {
         s3: [
           {
-            "region": "us-west-2",
-            "bucket": "nubit-modular-indexer-brc-20",
-            "name": "nubit-official-00"
+            region: "us-west-2",
+            bucket: "nubit-modular-indexer-brc-20",
+            name: "nubit-official-00"
           }
         ],
         da: []
@@ -60,32 +58,35 @@ export function NubitVerify(props: NubitVerifyProps) {
         minimalCheckpoint: 1
       },
     });
-    await window?.lightInitialize();
 
     getLightStatus()
 
   }
 
   const getLightStatus = () => {
-    window?.lightStatus().then((res: any) => {
-      console.log('lightStatus', res);
-      if (res === 'verified') {
-        tokens.forEach((item, index) => {
-          getLightGetBalanceOfWallet(index)
-        })
-        return false
-      }
-      if (res === 'unverified') {
-        getLightGetCurrentCheckpoints()
-        return false
-      }
-      if (res === 'verifying') {
-        setVerStatus(0)
-        setTimeout(function () {
-          getLightStatus()
-        }, 1000);
-      }
-    })
+    window?.lightStatus()
+      .then((res: any) => {
+        console.log('lightStatus', res);
+        if (res === 'verified') {
+          tokens.forEach((item, index) => {
+            getLightGetBalanceOfWallet(index)
+          })
+          return false
+        }
+        if (res === 'unverified') {
+          getLightGetCurrentCheckpoints()
+          return false
+        }
+        if (res === 'verifying') {
+          setVerStatus(0)
+          setTimeout(function () {
+            getLightStatus()
+          }, 1000);
+        }
+      })
+      .catch((err: any) => {
+        getLightStatus()
+      })
   }
 
   const getLightGetBalanceOfWallet = (index: number) => {
