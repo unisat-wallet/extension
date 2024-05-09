@@ -410,8 +410,8 @@ function Step3({
           options: { autoFinalized: false }
         }
       }}
-      handleConfirm={() => {
-        pushOrdinalsTx(contextData.rawTxInfo.rawtx).then(({ success, txid, error }) => {
+      handleConfirm={(res) => {
+        pushOrdinalsTx(res ? res.rawtx : contextData.rawTxInfo.rawtx).then(({ success, txid, error }) => {
           if (success) {
             navigate('TxSuccessScreen', { txid });
           } else {

@@ -588,14 +588,14 @@ export default function SignPsbt({
 
   if (!handleConfirm) {
     handleConfirm = (res) => {
-      if (res) {
-        resolveApproval({
-          // signed by hardware wallet
-          signedPsbtHex: res.psbtHex
-        });
-      } else {
-        resolveApproval();
+      let signed = true;
+      if (type === TxType.SIGN_TX && currentAccount.type !== KEYRING_TYPE.KeystoneKeyring) {
+        signed = false;
       }
+      resolveApproval({
+        psbtHex: (res ?? txInfo).psbtHex,
+        signed
+      });
     };
   }
 

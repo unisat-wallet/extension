@@ -221,7 +221,6 @@
     "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
     "@notionhq/client": "^1.0.4",
     "@trivago/prettier-plugin-sort-imports": "^4.0.0",
-    "@types/bitcore-lib": "^0.15.6",
     "@types/less": "^3.0.3",
     "@types/lodash": "^4.14.182",
     "@types/node-sass": "^4.11.2",

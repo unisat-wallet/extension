@@ -181,8 +181,8 @@ class ProviderController extends BaseController {
     req.data.params.psbtHex = formatPsbtHex(psbtHex);
   }])
   signPsbt = async ({ data: { params: { psbtHex, options } }, approvalRes }) => {
-    if (approvalRes?.signedPsbtHex) {
-      return approvalRes.signedPsbtHex
+    if (approvalRes && approvalRes.signed==true) {
+      return approvalRes.psbtHex
     }
     const networkType = wallet.getNetworkType()
     const psbtNetwork = toPsbtNetwork(networkType)

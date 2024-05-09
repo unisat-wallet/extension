@@ -1,12 +1,12 @@
 import { useCallback, useMemo } from 'react';
 
+import { KEYRING_TYPE } from '@/shared/constant';
 import { RawTxInfo, ToAddressInfo } from '@/shared/types';
 import { useTools } from '@/ui/components/ActionComponent';
 import { satoshisToAmount, satoshisToBTC, sleep, useWallet } from '@/ui/utils';
 import { UnspentOutput } from '@unisat/wallet-sdk';
 import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 
-import { KEYRING_TYPE } from '@/shared/constant';
 import { AppState } from '..';
 import { useAccountAddress, useCurrentAccount } from '../accounts/hooks';
 import { accountActions } from '../accounts/reducer';
@@ -629,6 +629,7 @@ export function usePrepareSendRunesCallback() {
   const fetchUtxos = useFetchUtxosCallback();
   const assetUtxosRunes = useAssetUtxosRunes();
   const fetchAssetUtxosRunes = useFetchAssetUtxosRunesCallback();
+  const account = useCurrentAccount();
   return useCallback(
     async ({
       toAddressInfo,
@@ -666,7 +667,8 @@ export function usePrepareSendRunesCallback() {
         assetUtxos
       });
       const psbt = bitcoin.Psbt.fromHex(psbtHex);
-      const rawtx = psbt.extractTransaction().toHex();
+
+      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction().toHex();
       dispatch(
         transactionsActions.updateRunesTx({
           rawtx,
@@ -686,7 +688,7 @@ export function usePrepareSendRunesCallback() {
       };
       return rawTxInfo;
     },
-    [dispatch, wallet, fromAddress, utxos, assetUtxosRunes, fetchAssetUtxosRunes]
+    [dispatch, wallet, fromAddress, utxos, assetUtxosRunes, fetchAssetUtxosRunes, account]
   );
 }
 

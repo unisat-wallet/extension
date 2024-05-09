@@ -2435,13 +2435,6 @@
   dependencies:
     bignumber.js "*"
 
-"@types/bitcore-lib@^0.15.6":
-  version "0.15.6"
-  resolved "https://registry.yarnpkg.com/@types/bitcore-lib/-/bitcore-lib-0.15.6.tgz#6cbb5889e7fdb49e26d2a7e4e522275b1d03d449"
-  integrity sha512-CtKDBgSBubPXZ0wFeCiUCSdzH+cuy6nFya3FboOqf44evi+OmkQPqEg3ASMpmPDYE8vkcxV302Iu8lZqCjYieg==
-  dependencies:
-    "@types/node" "*"
-
 "@types/bn.js@^5.1.0":
   version "5.1.5"
   resolved "https://registry.yarnpkg.com/@types/bn.js/-/bn.js-5.1.5.tgz#2e0dacdcce2c0f16b905d20ff87aedbc6f7b4bf0"

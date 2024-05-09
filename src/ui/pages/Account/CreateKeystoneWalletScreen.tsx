@@ -133,10 +133,11 @@ function Step3({
   const navigate = useNavigate();
   const wallet = useWallet();
   const tools = useTools();
-  const [addressType, setAddressType] = useState(AddressType.P2PKH);
+  const [addressType, setAddressType] = useState(AddressType.P2WPKH);
   const addressTypes = useMemo(() => {
-    return ADDRESS_TYPES.filter((item) => item.displayIndex < 4);
+    return ADDRESS_TYPES.filter((item) => item.displayIndex < 4).sort((a, b) => a.displayIndex - b.displayIndex);
   }, []);
+
   const [groups, setGroups] = useState<
     { type: AddressType; address_arr: string[]; pubkey_arr: string[]; satoshis_arr: number[] }[]
   >([]);

@@ -570,8 +570,8 @@ class KeyringService extends EventEmitter {
    *
    * Attempts to sign the provided message parameters.
    */
-  signMessage = async (address: string, data: string) => {
-    const keyring = await this.getKeyringForAccount(address);
+  signMessage = async (address: string, keyringType: string, data: string) => {
+    const keyring = await this.getKeyringForAccount(address, keyringType);
     const sig = await keyring.signMessage(address, data);
     return sig;
   };
@@ -861,6 +861,7 @@ class KeyringService extends EventEmitter {
   clearKeyrings = async (): Promise<void> => {
     // clear keyrings from memory
     this.keyrings = [];
+    this.addressTypes = [];
     this.memStore.updateState({
       keyrings: []
     });
