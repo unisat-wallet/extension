@@ -2,7 +2,7 @@ import { Row } from '@/ui/components';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { copyToClipboard } from '@/ui/utils';
 import { CopyOutlined, LoadingOutlined } from '@ant-design/icons';
-import { lightRun } from "@nubit/modular-indexer-light-sdk";
+import * as lightIndexer from '@nubit/modular-indexer-light-sdk';
 import { Tooltip } from 'antd';
 import { useState } from 'react';
 import { useTools } from '../ActionComponent';
@@ -25,7 +25,8 @@ export function NubitVerify(props: NubitVerifyProps) {
   const [unVerRes, setUnVerRes] = useState([]);
 
   const init = async () => {
-    await lightRun({
+    const sdk = await lightIndexer.create();
+    await sdk.run({
       committeeIndexers: {
         s3: [
           {
@@ -43,38 +44,38 @@ export function NubitVerify(props: NubitVerifyProps) {
       },
     });
 
-    getLightStatus()
+    getLightStatus(sdk)
 
   }
 
-  const getLightStatus = () => {
-    window?.lightStatus()
+  const getLightStatus = (sdk: lightIndexer.SDK) => {
+    sdk.getStatus()
       .then((res: any) => {
         console.log('lightStatus', res);
         if (res === 'verified') {
           tokens.forEach((item, index) => {
-            getLightGetBalanceOfWallet(index)
+            getLightGetBalanceOfWallet(sdk, index)
           })
           return false
         }
         if (res === 'unverified') {
-          getLightGetCurrentCheckpoints()
+          getLightGetCurrentCheckpoints(sdk)
           return false
         }
         if (res === 'verifying') {
           setVerStatus(0)
           setTimeout(function () {
-            getLightStatus()
+            getLightStatus(sdk)
           }, 1000);
         }
       })
       .catch((err: any) => {
-        getLightStatus()
+        getLightStatus(sdk)
       })
   }
 
-  const getLightGetBalanceOfWallet = (index: number) => {
-    window?.lightGetBalanceOfWallet(tokens[index].ticker, currentAccount.address)
+  const getLightGetBalanceOfWallet = (sdk: lightIndexer.SDK, index: number) => {
+    sdk.getBalanceOfWallet(tokens[index].ticker, currentAccount.address)
       .then((res: any) => {
         verTokens.push({
           name: tokens[index].ticker,
@@ -93,8 +94,8 @@ export function NubitVerify(props: NubitVerifyProps) {
       })
   }
 
-  const getLightGetCurrentCheckpoints = () => {
-    window?.lightGetCurrentCheckpoints()
+  const getLightGetCurrentCheckpoints = (sdk: lightIndexer.SDK) => {
+    sdk.getCurrentCheckpoints()
       .then((res: any) => {
         setUnVerRes(res)
         setVerStatus(2)

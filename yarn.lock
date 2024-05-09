@@ -1733,10 +1733,12 @@
     "@types/node-fetch" "^2.5.10"
     node-fetch "^2.6.1"
 
-"@nubit/modular-indexer-light-sdk@^0.2.0-rc.4":
-  version "0.2.0-rc.4"
-  resolved "https://registry.yarnpkg.com/@nubit/modular-indexer-light-sdk/-/modular-indexer-light-sdk-0.2.0-rc.4.tgz#363168ec7d07a8bdb32f16e29b01729d52dc51eb"
-  integrity sha512-NLXLJfUhLJud2ighUMMoQDqGP0RxSPhXV6cZDqfjucYiMIugYX9eeKDUB86gnJsalEX/sdByVAppvvG9u5qrhg==
+"@nubit/modular-indexer-light-sdk@0.2.0-rc.5":
+  version "0.2.0-rc.5"
+  resolved "https://registry.yarnpkg.com/@nubit/modular-indexer-light-sdk/-/modular-indexer-light-sdk-0.2.0-rc.5.tgz#0b2fb676e576cf520752b5871ad0f2053d12e4ac"
+  integrity sha512-lkzYinW9249s5WBdxtQOVygGeI3urAT7/wHqbskjZjZuxNGYWvCXthGnfff3uoTlM+s2p7YvEziVzDdkmY5N5g==
+  dependencies:
+    comlink "^4.4.1"
 
 "@pmmmwh/react-refresh-webpack-plugin@^0.5.3":
   version "0.5.10"
@@ -4453,6 +4455,11 @@ combined-stream@^1.0.8:
   integrity sha512-FQN4MRfuJeHf7cBbBMJFXhKSDq+2kAArBlmRBvcvFE5BB1HZKXtSFASDhdlz9zOYwxh8lDdnvmMOe/+5cdoEdg==
   dependencies:
     delayed-stream "~1.0.0"
+
+comlink@^4.4.1:
+  version "4.4.1"
+  resolved "https://registry.yarnpkg.com/comlink/-/comlink-4.4.1.tgz#e568b8e86410b809e8600eb2cf40c189371ef981"
+  integrity sha512-+1dlx0aY5Jo1vHy/tSsIGpSkN4tS9rZSW8FIhG0JH/crs9wwweswIo/POr451r7bZww3hFbPAKnTpimzL/mm4Q==
 
 commander@^2.20.0:
   version "2.20.3"
