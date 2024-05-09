@@ -1,5 +1,9 @@
 # UniSat Wallet Release Notes
 
+## v1.3.3
+
+- Support keystone
+
 ## v1.3.2
 
 - Support cursed inscription
