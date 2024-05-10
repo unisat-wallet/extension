@@ -35,7 +35,7 @@
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
     "@fortawesome/react-fontawesome": "^0.1.18",
     "@metamask/obs-store": "^7.0.0",
-    "@nubit/modular-indexer-light-sdk": "0.2.0-rc.5",
+    "@nubit/modular-indexer-light-sdk": "0.2.0",
     "@pmmmwh/react-refresh-webpack-plugin": "^0.5.3",
     "@reduxjs/toolkit": "^1.9.2",
     "@sentry/browser": "^6.19.7",
