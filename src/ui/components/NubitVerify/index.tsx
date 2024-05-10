@@ -4,7 +4,7 @@ import { copyToClipboard } from '@/ui/utils';
 import { CopyOutlined, LoadingOutlined } from '@ant-design/icons';
 import * as lightIndexer from '@nubit/modular-indexer-light-sdk';
 import { Tooltip } from 'antd';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useTools } from '../ActionComponent';
 import { Text } from '../Text';
 
@@ -113,6 +113,11 @@ export function NubitVerify(props: NubitVerifyProps) {
         tools.toastError('Network Unstable, Please Retry Later...');
       })
   }
+
+  useEffect(() => {
+    setVerStatus(0)
+    setVerClick(false)
+  }, [tokens]);
 
   return (
     <>
