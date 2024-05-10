@@ -11,16 +11,22 @@ import { Text } from '../Text';
 interface NubitVerifyProps {
   tokens: any[];
 }
+
+interface verTokenItem {
+  name: string;
+  proof: string;
+}
+
 export function NubitVerify(props: NubitVerifyProps) {
 
   const { tokens } = props;
-  const verTokens = []
+  const verTokens: Array<verTokenItem> = []
   const currentAccount = useCurrentAccount();
   const tools = useTools();
   const [verStatus, setVerStatus] = useState(0);
   const [verClick, setVerClick] = useState(false);
 
-  const [verRes, setVerRes] = useState([]);
+  const [verRes, setVerRes] = useState<any>([]);
 
   const [unVerRes, setUnVerRes] = useState([]);
 
@@ -145,7 +151,7 @@ export function NubitVerify(props: NubitVerifyProps) {
               color: '#F7931A',
               fontSize: 12,
             }}>PROOF</Row>
-            {verRes?.map((item, index) => {
+            {verRes?.map((item: any, index) => {
               return <Row justifyBetween key={index}>
                 <div style={{
                   fontSize: 12,
@@ -180,7 +186,7 @@ export function NubitVerify(props: NubitVerifyProps) {
               color: '#E10F0F',
               fontSize: 14,
             }}>Inconsistent Discovered</Row>
-            {unVerRes?.map((item, index) => {
+            {unVerRes?.map((item: any, index) => {
               return <Row justifyBetween key={index}>
                 <div style={{
                   fontSize: 12,
