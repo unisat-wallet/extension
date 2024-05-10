@@ -193,10 +193,8 @@ export function NubitVerify(props: NubitVerifyProps) {
             }}>Inconsistent Discovered</Row>
             {unVerRes?.map((item: any, index) => {
               return <Row justifyBetween key={index}>
-                <div style={{
-                  fontSize: 12,
-                }}>{`Committee Indexer 0${index + 1}`}</div>
-                <div style={{ color: '#fff', fontSize: 12 }} >{item?.name}</div>
+                <div style={{ fontSize: 12 }}>{item.name}</div>
+                <div style={{ color: '#fff', fontSize: 12, overflow: 'hidden' }} >{item.commitment}</div>
               </Row>
             })}
           </>}>
