@@ -27,7 +27,7 @@ function PaymentItem(props: { channelType: PaymentChannelType; onClick }) {
 
 export const BuyBTCModal = ({ onClose }: { onClose: () => void }) => {
   const [disclaimerModalVisible, setDisclaimerModalVisible] = useState(false);
-  const [channelType, setChannelType] = useState<PaymentChannelType>(PaymentChannelType.AlchePay);
+  const [channelType, setChannelType] = useState<PaymentChannelType>(PaymentChannelType.AlchemyPay);
 
   const [channels, setChannels] = useState<string[]>([]);
   const wallet = useWallet();
@@ -46,7 +46,7 @@ export const BuyBTCModal = ({ onClose }: { onClose: () => void }) => {
 
   const isMoonpayEnabled = channels.includes(PaymentChannelType.MoonPay);
   const isTransakEnabled = channels.includes(PaymentChannelType.Transak);
-  const isAlchePayEnabled = channels.includes(PaymentChannelType.AlchePay);
+  const isAlchemyPayEnabled = channels.includes(PaymentChannelType.AlchemyPay);
 
   return (
     <BottomModal onClose={onClose}>
@@ -77,11 +77,11 @@ export const BuyBTCModal = ({ onClose }: { onClose: () => void }) => {
             />
           ) : null}
 
-          {isAlchePayEnabled ? (
+          {isAlchemyPayEnabled ? (
             <PaymentItem
-              channelType={PaymentChannelType.AlchePay}
+              channelType={PaymentChannelType.AlchemyPay}
               onClick={() => {
-                setChannelType(PaymentChannelType.AlchePay);
+                setChannelType(PaymentChannelType.AlchemyPay);
                 setDisclaimerModalVisible(true);
               }}
             />

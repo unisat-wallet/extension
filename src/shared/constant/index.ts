@@ -299,8 +299,7 @@ export const UNCONFIRMED_HEIGHT = 4194303;
 
 export enum PaymentChannelType {
   MoonPay = 'moonpay',
-  AlchePay = 'alchepay',
-
+  AlchemyPay = 'alchemypay',
   Transak = 'transak'
 }
 
@@ -309,9 +308,9 @@ export const PAYMENT_CHANNELS = {
     name: 'MoonPay',
     img: './images/artifacts/moonpay.png'
   },
-  alchepay: {
-    name: 'AlchePay',
-    img: './images/artifacts/alchepay.png'
+  alchemypay: {
+    name: 'Alchemy Pay',
+    img: './images/artifacts/alchemypay.png'
   },
 
   transak: {
