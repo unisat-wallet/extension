@@ -1,6 +1,6 @@
 import { Card, Column, Content, Header, Layout, Text } from '@/ui/components';
-
 import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
+
 import { useNavigate } from '../MainRoute';
 
 export default function AddKeyringScreen() {
@@ -51,7 +51,7 @@ export default function AddKeyringScreen() {
             </Column>
           </Card>
 
-          <Text text="Conncet Hardware Wallet" preset="regular-bold" mt="lg" />
+          <Text text="Connect to Hardware Wallet" preset="regular-bold" mt="lg" />
 
           <Card
             justifyCenter

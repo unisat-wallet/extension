@@ -318,3 +318,24 @@ export const PAYMENT_CHANNELS = {
     img: './images/artifacts/transak.png'
   }
 };
+
+export enum HardwareWalletType {
+  Keystone = 'keystone',
+  Ledger = 'ledger',
+  Trezor = 'trezor'
+}
+
+export const HARDWARE_WALLETS = {
+  [HardwareWalletType.Keystone]: {
+    name: 'Keystone',
+    img: './images/artifacts/keystone.png'
+  },
+  [HardwareWalletType.Ledger]: {
+    name: 'Ledger',
+    img: './images/artifacts/ledger.png'
+  },
+  [HardwareWalletType.Trezor]: {
+    name: 'Trezor',
+    img: './images/artifacts/trezor.png'
+  }
+};

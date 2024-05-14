@@ -1,14 +1,19 @@
 /* eslint-disable quotes */
+import { useState } from 'react';
+
 import { Button, Column, Content, Layout, Logo, Row, Text } from '@/ui/components';
+import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
 import { useWallet } from '@/ui/utils';
 
-import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
 import { useNavigate } from '../MainRoute';
+import { ConnectHardwareModal } from './ConnectHardwareModal';
 
 export default function WelcomeScreen() {
   const navigate = useNavigate();
   const wallet = useWallet();
   const isInTab = useExtensionIsInTab();
+
+  const [connectHardwareModalVisible, setConnectHardwareModalVisible] = useState(false);
 
   return (
     <Layout>
@@ -49,25 +54,20 @@ export default function WelcomeScreen() {
               }}
             />
             <Button
-              text="Connect Keystone"
+              text="Connect to Hardware Wallet"
               preset="default"
               onClick={async () => {
-                const isBooted = await wallet.isBooted();
-                if (!isInTab) {
-                  if (isBooted) {
-                    window.open('#/account/create-keystone-wallet');
-                  } else {
-                    window.open('#/account/create-password?isKeystone=true');
-                  }
-                  return
-                }
-                if (isBooted) {
-                  navigate('CreateKeystoneWalletScreen');
-                } else {
-                  navigate('CreatePasswordScreen', { isKeystone: true });
-                }
+                setConnectHardwareModalVisible(true);
               }}
             />
+
+            {connectHardwareModalVisible && (
+              <ConnectHardwareModal
+                onClose={() => {
+                  setConnectHardwareModalVisible(false);
+                }}
+              />
+            )}
           </Column>
         </Column>
       </Content>
