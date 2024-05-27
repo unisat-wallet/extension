@@ -2241,10 +2241,10 @@
   dependencies:
     "@types/node" "*"
 
-"@types/chrome@^0.0.188":
-  version "0.0.188"
-  resolved "https://registry.yarnpkg.com/@types/chrome/-/chrome-0.0.188.tgz#ed73feca28a6d84f796ec50a2dbe7e41510175b3"
-  integrity sha512-fVxbcnSrQqCaaTFfaP9QooRr0Lf47Ni+QVGpd4SQafe6x8RlLrlp+AAgc4QKNUVK7W6xEoOePMAu5sBXrc2qhA==
+"@types/chrome@^0.0.267":
+  version "0.0.267"
+  resolved "https://registry.yarnpkg.com/@types/chrome/-/chrome-0.0.267.tgz#eefb7d2085993437d8109eb495431dfc0e3dbda1"
+  integrity sha512-vnCWPpYjazSPRMNmybRH+0q4f738F+Pbbls4ZPFsPr9/4TTNJyK1OLZDpSnghnEWb4stfmIUtq/GegnlfD4sPA==
   dependencies:
     "@types/filesystem" "*"
     "@types/har-format" "*"
