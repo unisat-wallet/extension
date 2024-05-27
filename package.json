@@ -52,7 +52,7 @@
     "@types/react-cache": "^2.0.1",
     "@types/react-dom": "^18.0.4",
     "@unisat/wallet-sdk": "1.5.3",
-    "antd": "^4.20.4",
+    "antd": "^5.17.0",
     "antd-dayjs-webpack-plugin": "1.0.6",
     "assert": "^2.0.0",
     "babel-jest": "^27.4.2",
