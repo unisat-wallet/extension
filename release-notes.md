@@ -1,5 +1,9 @@
 # UniSat Wallet Release Notes
 
+## v1.3.4
+
+- Compatible with partial token coloring for ARC20
+
 ## v1.3.3
 
 - Support keystone
