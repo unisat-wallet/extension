@@ -2968,17 +2968,17 @@
     "@typescript-eslint/types" "5.53.0"
     eslint-visitor-keys "^3.3.0"
 
-"@unisat/wallet-sdk@1.6.2":
-  version "1.6.2"
-  resolved "https://registry.yarnpkg.com/@unisat/wallet-sdk/-/wallet-sdk-1.6.2.tgz#471b8a17af62c1927a0ff83afdd49de41507efc5"
-  integrity sha512-WnBoaIMayQzCbj1hiTneWtPSxDWEBiDMf7PpxkElYO4YbR4GtAMGCRwTje84ioOPfrst7Rin4mqvPI3x4ygq9w==
+"@unisat/wallet-sdk@1.7.1":
+  version "1.7.1"
+  resolved "https://registry.yarnpkg.com/@unisat/wallet-sdk/-/wallet-sdk-1.7.1.tgz#86b5ead746db9a6d038934c6d8856ae8214dd923"
+  integrity sha512-MqXQB+NjducLB5fu7mcIwR7XWpQKfRGyoMsMSy/XEqIBJGP8B49gq39eiUPNN0gDzVreOySonGiSXGdfW2Q4eg==
   dependencies:
     "@bitcoinerlab/secp256k1" "^1.0.5"
     "@keystonehq/keystone-sdk" "^0.3.0"
     big-integer "^1.6.52"
     bignumber.js "^9.1.2"
     bip39 "^3.1.0"
-    bitcoinjs-lib "^6.1.0"
+    bitcoinjs-lib "^6.1.6"
     bitcore-lib "^10.0.0"
     ecpair "^2.1.0"
     hdkey "^2.1.0"
@@ -4009,10 +4009,10 @@ bip-schnorr@=0.6.4:
     randombytes "^2.1.0"
     safe-buffer "^5.2.1"
 
-bip174@^2.1.0:
-  version "2.1.0"
-  resolved "https://registry.yarnpkg.com/bip174/-/bip174-2.1.0.tgz#cd3402581feaa5116f0f00a0eaee87a5843a2d30"
-  integrity sha512-lkc0XyiX9E9KiVAS1ZiOqK1xfiwvf4FXDDdkDq5crcDzOq+xGytY+14qCsqz7kCiy8rpN1CRNfacRhf9G3JNSA==
+bip174@^2.1.1:
+  version "2.1.1"
+  resolved "https://registry.yarnpkg.com/bip174/-/bip174-2.1.1.tgz#ef3e968cf76de234a546962bcf572cc150982f9f"
+  integrity sha512-mdFV5+/v0XyNYXjBS6CQPLo9ekCx4gtKZFnJm5PMto7Fs9hTTDpkkzOB7/FtluRI6JbUUAu+snTYfJRgHLZbZQ==
 
 bip39@^3.1.0:
   version "3.1.0"
@@ -4021,19 +4021,17 @@ bip39@^3.1.0:
   dependencies:
     "@noble/hashes" "^1.2.0"
 
-bitcoinjs-lib@^6.1.0:
-  version "6.1.0"
-  resolved "https://registry.yarnpkg.com/bitcoinjs-lib/-/bitcoinjs-lib-6.1.0.tgz#2e3123d63eab5e8e752fd7e2f237314f35ed738f"
-  integrity sha512-eupi1FBTJmPuAZdChnzTXLv2HBqFW2AICpzXZQLniP0V9FWWeeUQSMKES6sP8isy/xO0ijDexbgkdEyFVrsuJw==
+bitcoinjs-lib@^6.1.6:
+  version "6.1.6"
+  resolved "https://registry.yarnpkg.com/bitcoinjs-lib/-/bitcoinjs-lib-6.1.6.tgz#f57c17c82511f860f11946d784c18da39f8618a8"
+  integrity sha512-Fk8+Vc+e2rMoDU5gXkW9tD+313rhkm5h6N9HfZxXvYU9LedttVvmXKTgd9k5rsQJjkSfsv6XRM8uhJv94SrvcA==
   dependencies:
+    "@noble/hashes" "^1.2.0"
     bech32 "^2.0.0"
-    bip174 "^2.1.0"
-    bs58check "^2.1.2"
-    create-hash "^1.1.0"
-    ripemd160 "^2.0.2"
+    bip174 "^2.1.1"
+    bs58check "^3.0.1"
     typeforce "^1.11.3"
     varuint-bitcoin "^1.1.2"
-    wif "^2.0.1"
 
 bitcore-lib@^10.0.0:
   version "10.0.0"
@@ -14098,7 +14096,7 @@ which@^2.0.1:
   dependencies:
     isexe "^2.0.0"
 
-wif@^2.0.1, wif@^2.0.6:
+wif@^2.0.6:
   version "2.0.6"
   resolved "https://registry.yarnpkg.com/wif/-/wif-2.0.6.tgz#08d3f52056c66679299726fade0d432ae74b4704"
   integrity sha512-HIanZn1zmduSF+BQhkE+YXIbEiH0xPr1012QbFEGB0xsKqJii0/SqJjyn8dFv6y36kOznMgMB+LGcbZTJ1xACQ==

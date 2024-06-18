@@ -158,6 +158,7 @@ export interface UTXO {
     atomicalNumber: number;
     type: 'NFT' | 'FT';
     ticker?: string;
+    atomicalValue?: number;
   }[];
 
   runes: {
