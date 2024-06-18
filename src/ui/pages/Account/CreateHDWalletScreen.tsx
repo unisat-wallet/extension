@@ -59,7 +59,7 @@ function Step1_Create({
   const tools = useTools();
 
   const init = async () => {
-    const _mnemonics = (await wallet.getPreMnemonics()) || (await wallet.generatePreMnemonic());
+    const _mnemonics = await wallet.generatePreMnemonic();
     updateContextData({
       mnemonics: _mnemonics
     });
