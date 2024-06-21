@@ -1,6 +1,6 @@
 
 import { permissionService, sessionService } from '@/background/service';
-import { NETWORK_TYPES, VERSION } from '@/shared/constant';
+import { CHAINS, CHAINS_MAP, ChainType, NETWORK_TYPES, VERSION } from '@/shared/constant';
 
 import { NetworkType } from '@/shared/types';
 import { amountToSatoshis } from '@/ui/utils';
@@ -24,6 +24,15 @@ function formatPsbtHex(psbtHex: string) {
     throw new Error('invalid psbt')
   }
   return formatData;
+}
+
+function getChainInfo(chainType:ChainType) {
+  const chain =  CHAINS_MAP[chainType];
+  return {
+    enum: chainType,
+    name: chain.label,
+    network: NETWORK_TYPES[chain.networkType].name
+  }
 }
 
 class ProviderController extends BaseController {
@@ -86,6 +95,30 @@ class ProviderController extends BaseController {
     const { data: { params: { networkType } } } = req;
     wallet.setNetworkType(networkType)
     return NETWORK_TYPES[networkType].name
+  }
+
+
+  @Reflect.metadata('SAFE', true)
+  getChain = async () => {
+    const chainType = wallet.getChainType()
+    return getChainInfo(chainType)
+  };
+
+  @Reflect.metadata('APPROVAL', ['SwitchChain', (req) => {
+    const chainType = req.data.params.chain;
+    if(!CHAINS_MAP[chainType]){
+      throw new Error(`the chain is invalid, supported chains: ${CHAINS.map(v => v.enum).join(',')}`)
+    }
+
+    if (chainType == wallet.getChainType()) {
+      // skip approval
+      return true;
+    }
+  }])
+  switchChain = async (req) => {
+    const { data: { params: { chain } } } = req;
+    wallet.setChainType(chain)
+    return getChainInfo(chain)
   }
 
   @Reflect.metadata('SAFE', true)

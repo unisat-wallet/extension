@@ -21,7 +21,7 @@ const format = (str, ...args) => {
   return args.reduce((m, n) => m.replace('_s_', n), str);
 };
 
-export { Message, t, format };
+export { Message, format, t };
 
 const chainsDict = keyBy(CHAINS, 'serverId');
 export const getChain = (chainId?: string) => {
@@ -30,7 +30,6 @@ export const getChain = (chainId?: string) => {
   }
   return chainsDict[chainId];
 };
-
 
 // Check if address flag is enabled
 export const checkAddressFlag = (currentFlag: number, flag: AddressFlagType): boolean => {

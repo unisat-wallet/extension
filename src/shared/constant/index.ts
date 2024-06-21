@@ -1,20 +1,11 @@
 /* eslint-disable quotes */
 
 /* constants pool */
-import { AddressType, Chain, NetworkType, RestoreWalletType } from '../types';
+import { AddressType, NetworkType, RestoreWalletType } from '../types';
 
 export enum CHAINS_ENUM {
   BTC = 'BTC'
 }
-
-export const CHAINS: Record<string, Chain> = {
-  [CHAINS_ENUM.BTC]: {
-    name: 'BTC',
-    enum: CHAINS_ENUM.BTC,
-    logo: '',
-    network: 'mainnet'
-  }
-};
 
 export const KEYRING_TYPE = {
   HdKeyring: 'HD Key Tree',
@@ -35,13 +26,13 @@ export const KEYRING_TYPE_TEXT = {
   [KEYRING_TYPE.HdKeyring]: 'Created by Mnemonic',
   [KEYRING_TYPE.SimpleKeyring]: 'Imported by Private Key',
   [KEYRING_TYPE.WatchAddressKeyring]: 'Watch Mode',
-  [KEYRING_TYPE.KeystoneKeyring]: 'Import from Keystone',
+  [KEYRING_TYPE.KeystoneKeyring]: 'Import from Keystone'
 };
 export const BRAND_ALIAN_TYPE_TEXT = {
   [KEYRING_TYPE.HdKeyring]: 'Account',
   [KEYRING_TYPE.SimpleKeyring]: 'Private Key',
   [KEYRING_TYPE.WatchAddressKeyring]: 'Watch',
-  [KEYRING_TYPE.KeystoneKeyring]: 'Account',
+  [KEYRING_TYPE.KeystoneKeyring]: 'Account'
 };
 
 export const KEYRING_TYPES: {
@@ -120,57 +111,56 @@ export const ADDRESS_TYPES: {
   hdPath: string;
   displayIndex: number;
   isUnisatLegacy?: boolean;
-}[] =
-  [
-    {
-      value: AddressType.P2PKH,
-      label: 'P2PKH',
-      name: 'Legacy (P2PKH)',
-      hdPath: "m/44'/0'/0'/0",
-      displayIndex: 3,
-      isUnisatLegacy: false
-    },
-    {
-      value: AddressType.P2WPKH,
-      label: 'P2WPKH',
-      name: 'Native Segwit (P2WPKH)',
-      hdPath: "m/84'/0'/0'/0",
-      displayIndex: 0,
-      isUnisatLegacy: false
-    },
-    {
-      value: AddressType.P2TR,
-      label: 'P2TR',
-      name: 'Taproot (P2TR)',
-      hdPath: "m/86'/0'/0'/0",
-      displayIndex: 2,
-      isUnisatLegacy: false
-    },
-    {
-      value: AddressType.P2SH_P2WPKH,
-      label: 'P2SH-P2WPKH',
-      name: 'Nested Segwit (P2SH-P2WPKH)',
-      hdPath: "m/49'/0'/0'/0",
-      displayIndex: 1,
-      isUnisatLegacy: false
-    },
-    {
-      value: AddressType.M44_P2WPKH,
-      label: 'P2WPKH',
-      name: 'Native SegWit (P2WPKH)',
-      hdPath: "m/44'/0'/0'/0",
-      displayIndex: 4,
-      isUnisatLegacy: true
-    },
-    {
-      value: AddressType.M44_P2TR,
-      label: 'P2TR',
-      name: 'Taproot (P2TR)',
-      hdPath: "m/44'/0'/0'/0",
-      displayIndex: 5,
-      isUnisatLegacy: true
-    }
-  ];
+}[] = [
+  {
+    value: AddressType.P2PKH,
+    label: 'P2PKH',
+    name: 'Legacy (P2PKH)',
+    hdPath: "m/44'/0'/0'/0",
+    displayIndex: 3,
+    isUnisatLegacy: false
+  },
+  {
+    value: AddressType.P2WPKH,
+    label: 'P2WPKH',
+    name: 'Native Segwit (P2WPKH)',
+    hdPath: "m/84'/0'/0'/0",
+    displayIndex: 0,
+    isUnisatLegacy: false
+  },
+  {
+    value: AddressType.P2TR,
+    label: 'P2TR',
+    name: 'Taproot (P2TR)',
+    hdPath: "m/86'/0'/0'/0",
+    displayIndex: 2,
+    isUnisatLegacy: false
+  },
+  {
+    value: AddressType.P2SH_P2WPKH,
+    label: 'P2SH-P2WPKH',
+    name: 'Nested Segwit (P2SH-P2WPKH)',
+    hdPath: "m/49'/0'/0'/0",
+    displayIndex: 1,
+    isUnisatLegacy: false
+  },
+  {
+    value: AddressType.M44_P2WPKH,
+    label: 'P2WPKH',
+    name: 'Native SegWit (P2WPKH)',
+    hdPath: "m/44'/0'/0'/0",
+    displayIndex: 4,
+    isUnisatLegacy: true
+  },
+  {
+    value: AddressType.M44_P2TR,
+    label: 'P2TR',
+    name: 'Taproot (P2TR)',
+    hdPath: "m/44'/0'/0'/0",
+    displayIndex: 5,
+    isUnisatLegacy: true
+  }
+];
 
 export const OW_HD_PATH = "m/86'/0'/0'";
 
@@ -216,10 +206,63 @@ export const RESTORE_WALLETS: { value: RestoreWalletType; name: string; addressT
   }
 ];
 
+export enum ChainType {
+  BITCOIN_MAINNET = 'BITCOIN_MAINNET',
+  BITCOIN_TESTNET = 'BITCOIN_TESTNET',
+  FRACTAL_BITCOIN_MAINNET = 'FRACTAL_BITCOIN_MAINNET'
+}
+
 export const NETWORK_TYPES = [
   { value: NetworkType.MAINNET, label: 'LIVENET', name: 'livenet', validNames: [0, 'livenet', 'mainnet'] },
   { value: NetworkType.TESTNET, label: 'TESTNET', name: 'testnet', validNames: ['testnet'] }
 ];
+
+type TypeChain = {
+  enum: ChainType;
+  label: string;
+  icon: string;
+  networkType: NetworkType;
+  endpoints: string[];
+  mempoolSpaceUrl: string;
+  unisatUrl: string;
+  ordinalsUrl: string;
+};
+
+export const CHAINS_MAP: { [key: string]: TypeChain } = {
+  [ChainType.BITCOIN_MAINNET]: {
+    enum: ChainType.BITCOIN_MAINNET,
+    label: 'Bitcoin Mainnet',
+    icon: './images/artifacts/bitcoin-mainnet.png',
+    networkType: NetworkType.MAINNET,
+    endpoints: ['https://wallet-api.unisat.io'],
+    mempoolSpaceUrl: 'https://mempool.space',
+    unisatUrl: 'https://unisat.io',
+    ordinalsUrl: 'https://ordinals.com'
+  },
+  [ChainType.BITCOIN_TESTNET]: {
+    enum: ChainType.BITCOIN_TESTNET,
+    label: 'Bitcoin Testnet',
+    icon: './images/artifacts/bitcoin-testnet.png',
+    networkType: NetworkType.TESTNET,
+    endpoints: ['https://wallet-api-testnet.unisat.space'],
+    mempoolSpaceUrl: 'https://mempool.space/testnet',
+    unisatUrl: 'https://testnet.unisat.io',
+    ordinalsUrl: 'https://testnet.ordinals.com'
+  },
+  [ChainType.FRACTAL_BITCOIN_MAINNET]: {
+    enum: ChainType.FRACTAL_BITCOIN_MAINNET,
+    label: 'Fractal Bitcoin (Beta)',
+    icon: './images/artifacts/fractalbitcoin-mainnet.png',
+    networkType: NetworkType.MAINNET,
+    endpoints: ['https://wallet-api-fractalbitcoin.unisat.space'],
+    mempoolSpaceUrl: 'https://fractalbitcoin-mempool.unisat.io',
+    unisatUrl: 'https://fractalbitcoin.unisat.io',
+    ordinalsUrl: 'https://fractalbitcoin-ordinals.unisat.io'
+  }
+};
+
+// 将 CHAINS_MAP 转换为数组
+export const CHAINS = Object.values(CHAINS_MAP);
 
 export const MINIMUM_GAS_LIMIT = 21000;
 
@@ -243,9 +286,6 @@ export const INTERNAL_REQUEST_SESSION = {
   origin: INTERNAL_REQUEST_ORIGIN,
   icon: './images/logo/logo@128x.png'
 };
-
-export const OPENAPI_URL_MAINNET = 'https://wallet-api.unisat.io/v5';
-export const OPENAPI_URL_TESTNET = 'https://wallet-api-testnet.unisat.io/v5';
 
 export const EVENTS = {
   broadcastToUI: 'broadcastToUI',

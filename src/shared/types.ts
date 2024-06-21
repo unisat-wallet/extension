@@ -357,6 +357,8 @@ export interface WalletConfig {
   version: string;
   moonPayEnabled: boolean;
   statusMessage: string;
+  endpoint: string;
+  chainTip: string;
 }
 
 export enum WebsiteState {

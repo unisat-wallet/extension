@@ -50,7 +50,6 @@ import NetworkTypeScreen from './Settings/NetworkTypeScreen';
 import UpgradeNoticeScreen from './Settings/UpgradeNoticeScreen';
 import TestScreen from './Test/TestScreen';
 import HistoryScreen from './Wallet/HistoryScreen';
-import KeystoneSignScreen from './Wallet/KeystoneSignScreen';
 import ReceiveScreen from './Wallet/ReceiveScreen';
 import TxConfirmScreen from './Wallet/TxConfirmScreen';
 import TxCreateScreen from './Wallet/TxCreateScreen';
@@ -298,10 +297,10 @@ const Main = () => {
       }
 
       if (!self.settingsLoaded) {
-        const networkType = await wallet.getNetworkType();
+        const chainType = await wallet.getChainType();
         dispatch(
           settingsActions.updateSettings({
-            networkType
+            chainType
           })
         );
 
@@ -322,9 +321,12 @@ const Main = () => {
       }
 
       if (!self.configLoaded) {
-        wallet.getWalletConfig().then((data) => {
-          dispatch(settingsActions.updateSettings({ walletConfig: data }));
-        });
+        self.configLoaded = true;
+
+        // already load when reloadAccounts
+        // wallet.getWalletConfig().then((data) => {
+        //   dispatch(settingsActions.updateSettings({ walletConfig: data }));
+        // });
         wallet.getSkippedVersion().then((data) => {
           dispatch(settingsActions.updateSettings({ skippedVersion: data }));
         });

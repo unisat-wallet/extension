@@ -186,6 +186,21 @@ export class UnisatProvider extends EventEmitter {
     });
   };
 
+  getChain = async () => {
+    return this._request({
+      method: 'getChain'
+    });
+  };
+
+  switchChain = async (chain: string) => {
+    return this._request({
+      method: 'switchChain',
+      params: {
+        chain
+      }
+    });
+  };
+
   getAccounts = async () => {
     return this._request({
       method: 'getAccounts'

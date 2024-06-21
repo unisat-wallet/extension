@@ -14,13 +14,13 @@ import {
   AddressFlagType,
   BRAND_ALIAN_TYPE_TEXT,
   CHAINS_ENUM,
+  CHAINS_MAP,
   COIN_NAME,
   COIN_SYMBOL,
+  ChainType,
   KEYRING_TYPE,
   KEYRING_TYPES,
   NETWORK_TYPES,
-  OPENAPI_URL_MAINNET,
-  OPENAPI_URL_TESTNET,
   UNCONFIRMED_HEIGHT
 } from '@/shared/constant';
 import { runesUtils } from '@/shared/lib/runes-utils';
@@ -734,21 +734,26 @@ export class WalletController extends BaseController {
   };
 
   getNetworkType = () => {
-    const networkType = preferenceService.getNetworkType();
-    return networkType;
+    const chainType = this.getChainType();
+    return CHAINS_MAP[chainType].networkType;
   };
 
   setNetworkType = async (networkType: NetworkType) => {
-    preferenceService.setNetworkType(networkType);
     if (networkType === NetworkType.MAINNET) {
-      this.openapi.setHost(OPENAPI_URL_MAINNET);
+      this.setChainType(ChainType.BITCOIN_MAINNET);
     } else {
-      this.openapi.setHost(OPENAPI_URL_TESTNET);
+      this.setChainType(ChainType.BITCOIN_TESTNET);
     }
-    const network = this.getNetworkName();
-    sessionService.broadcastEvent('networkChanged', {
-      network
-    });
+  };
+
+  getNetworkName = () => {
+    const networkType = this.getNetworkType();
+    return NETWORK_TYPES[networkType].name;
+  };
+
+  setChainType = async (chainType: ChainType) => {
+    preferenceService.setChainType(chainType);
+    this.openapi.setEndpoints(CHAINS_MAP[chainType].endpoints);
 
     const currentAccount = await this.getCurrentAccount();
     const keyring = await this.getCurrentKeyring();
@@ -756,9 +761,8 @@ export class WalletController extends BaseController {
     this.changeKeyring(keyring, currentAccount?.index);
   };
 
-  getNetworkName = () => {
-    const networkType = preferenceService.getNetworkType();
-    return NETWORK_TYPES[networkType].name;
+  getChainType = () => {
+    return preferenceService.getChainType();
   };
 
   getBTCUtxos = async () => {
@@ -921,7 +925,7 @@ export class WalletController extends BaseController {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
-    const networkType = preferenceService.getNetworkType();
+    const networkType = this.getNetworkType();
 
     const utxo = await openapiService.getInscriptionUtxo(inscriptionId);
     if (!utxo) {
@@ -977,7 +981,7 @@ export class WalletController extends BaseController {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
-    const networkType = preferenceService.getNetworkType();
+    const networkType = this.getNetworkType();
 
     const inscription_utxos = await openapiService.getInscriptionUtxos(inscriptionIds);
     if (!inscription_utxos) {
@@ -1042,7 +1046,7 @@ export class WalletController extends BaseController {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
-    const networkType = preferenceService.getNetworkType();
+    const networkType = this.getNetworkType();
 
     const utxo = await openapiService.getInscriptionUtxo(inscriptionId);
     if (!utxo) {
@@ -1086,7 +1090,7 @@ export class WalletController extends BaseController {
   };
 
   displayedKeyringToWalletKeyring = (displayedKeyring: DisplayedKeyring, index: number, initName = true) => {
-    const networkType = preferenceService.getNetworkType();
+    const networkType = this.getNetworkType();
     const addressType = displayedKeyring.addressType;
     const key = 'keyring_' + index;
     const type = displayedKeyring.type;
@@ -1579,7 +1583,7 @@ export class WalletController extends BaseController {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
-    const networkType = preferenceService.getNetworkType();
+    const networkType = this.getNetworkType();
 
     const utxo = await openapiService.getAtomicalsUtxo(atomicalId);
     if (!utxo) {
@@ -1636,7 +1640,7 @@ export class WalletController extends BaseController {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
-    const networkType = preferenceService.getNetworkType();
+    const networkType = this.getNetworkType();
 
     if (!assetUtxos) {
       assetUtxos = await this.getAssetUtxosAtomicalsFT(ticker);
@@ -1848,7 +1852,7 @@ export class WalletController extends BaseController {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
-    const networkType = preferenceService.getNetworkType();
+    const networkType = this.getNetworkType();
 
     if (!assetUtxos) {
       assetUtxos = await this.getAssetUtxosRunes(runeid);
