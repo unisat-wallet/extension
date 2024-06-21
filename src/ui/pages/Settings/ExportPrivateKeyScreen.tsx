@@ -1,11 +1,18 @@
+import { networks } from 'bitcoinjs-lib';
+import { ECPairFactory } from 'ecpair';
+import QRCode from 'qrcode.react';
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
+import * as ecc from 'tiny-secp256k1';
 
 import { Account } from '@/shared/types';
-import { Button, Input, Layout, Icon, Content, Header, Text, Column, Card, Row } from '@/ui/components';
+import { Button, Card, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
+import { sizes } from '@/ui/theme/spacing';
 import { copyToClipboard, useWallet } from '@/ui/utils';
+
+const ECPair = ECPairFactory(ecc);
 
 type Status = '' | 'error' | 'warning' | undefined;
 
@@ -21,6 +28,7 @@ export default function ExportPrivateKeyScreen() {
   const [disabled, setDisabled] = useState(true);
 
   const [privateKey, setPrivateKey] = useState({ hex: '', wif: '' });
+  const [publicKey, setPublicKey] = useState('');
   const [status, setStatus] = useState<Status>('');
   const [error, setError] = useState('');
   const wallet = useWallet();
@@ -30,6 +38,9 @@ export default function ExportPrivateKeyScreen() {
     try {
       const _res = await wallet.getPrivateKey(password, account);
       setPrivateKey(_res);
+      const keyPair = ECPair.fromWIF(_res.wif, networks.bitcoin);
+      const pubKey = keyPair.publicKey.toString('hex');
+      setPublicKey(pubKey);
     } catch (e) {
       setStatus('error');
       setError((e as any).message);
@@ -114,7 +125,16 @@ export default function ExportPrivateKeyScreen() {
             />
 
             <Text text="WIF Private Key:" preset="sub" size="sm" textCenter mt="lg" />
-
+            <Content>
+              <Column gap="xl" mt="lg">
+                <Column
+                  justifyCenter
+                  rounded
+                  style={{ backgroundColor: 'white', alignSelf: 'center', alignItems: 'center', padding: 10 }}>
+                  <QRCode value={privateKey.wif || ''} renderAs="svg" size={sizes.qrcode}></QRCode>
+                </Column>
+              </Column>
+            </Content>
             <Card
               onClick={(e) => {
                 copy(privateKey.wif);
@@ -133,6 +153,16 @@ export default function ExportPrivateKeyScreen() {
 
             <Text text="Hex Private Key:" preset="sub" size="sm" textCenter mt="lg" />
 
+            <Content>
+              <Column gap="xl" mt="lg">
+                <Column
+                  justifyCenter
+                  rounded
+                  style={{ backgroundColor: 'white', alignSelf: 'center', alignItems: 'center', padding: 10 }}>
+                  <QRCode value={privateKey.hex || ''} renderAs="svg" size={sizes.qrcode}></QRCode>
+                </Column>
+              </Column>
+            </Content>
             <Card
               onClick={(e) => {
                 copy(privateKey.hex);
@@ -141,6 +171,33 @@ export default function ExportPrivateKeyScreen() {
                 <Icon icon="copy" color="textDim" />
                 <Text
                   text={privateKey.hex}
+                  color="textDim"
+                  style={{
+                    overflowWrap: 'anywhere'
+                  }}
+                />
+              </Row>
+            </Card>
+            <Text text="Public Key:" preset="sub" size="sm" textCenter mt="lg" />
+
+            <Content>
+              <Column gap="xl" mt="lg">
+                <Column
+                  justifyCenter
+                  rounded
+                  style={{ backgroundColor: 'white', alignSelf: 'center', alignItems: 'center', padding: 10 }}>
+                  <QRCode value={publicKey || ''} renderAs="svg" size={sizes.qrcode}></QRCode>
+                </Column>
+              </Column>
+            </Content>
+            <Card
+              onClick={(e) => {
+                copy(publicKey);
+              }}>
+              <Row>
+                <Icon icon="copy" color="textDim" />
+                <Text
+                  text={publicKey}
                   color="textDim"
                   style={{
                     overflowWrap: 'anywhere'
