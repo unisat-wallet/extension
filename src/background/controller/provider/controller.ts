@@ -1,8 +1,9 @@
 
 import { permissionService, sessionService } from '@/background/service';
-import { CHAINS, CHAINS_MAP, ChainType, NETWORK_TYPES, VERSION } from '@/shared/constant';
+import { CHAINS, CHAINS_MAP, NETWORK_TYPES, VERSION } from '@/shared/constant';
 
 import { NetworkType } from '@/shared/types';
+import { getChainInfo } from '@/shared/utils';
 import { amountToSatoshis } from '@/ui/utils';
 import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 import { verifyMessageOfBIP322Simple } from '@unisat/wallet-sdk/lib/message';
@@ -26,14 +27,6 @@ function formatPsbtHex(psbtHex: string) {
   return formatData;
 }
 
-function getChainInfo(chainType:ChainType) {
-  const chain =  CHAINS_MAP[chainType];
-  return {
-    enum: chainType,
-    name: chain.label,
-    network: NETWORK_TYPES[chain.networkType].name
-  }
-}
 
 class ProviderController extends BaseController {
 

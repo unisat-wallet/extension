@@ -36,7 +36,7 @@ import {
   UTXO,
   WalletKeyring
 } from '@/shared/types';
-import { checkAddressFlag } from '@/shared/utils';
+import { checkAddressFlag, getChainInfo } from '@/shared/utils';
 import { UnspentOutput, txHelpers } from '@unisat/wallet-sdk';
 import { publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
 import { ECPair, bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
@@ -759,6 +759,8 @@ export class WalletController extends BaseController {
     const keyring = await this.getCurrentKeyring();
     if (!keyring) throw new Error('no current keyring');
     this.changeKeyring(keyring, currentAccount?.index);
+
+    sessionService.broadcastEvent('chainChanged', getChainInfo(chainType));
   };
 
   getChainType = () => {
