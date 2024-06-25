@@ -149,8 +149,7 @@ class ProviderController extends BaseController {
   }
 
   @Reflect.metadata('APPROVAL', ['SignPsbt', (req) => {
-    const { data: { params: { toAddress, satoshis } } } = req;
-
+    // todo check
   }])
   sendBitcoin = async ({ approvalRes: { psbtHex } }) => {
     const psbt = bitcoin.Psbt.fromHex(psbtHex);
@@ -160,9 +159,19 @@ class ProviderController extends BaseController {
   }
 
   @Reflect.metadata('APPROVAL', ['SignPsbt', (req) => {
-    const { data: { params: { toAddress, satoshis } } } = req;
+    // todo check
   }])
   sendInscription = async ({ approvalRes: { psbtHex } }) => {
+    const psbt = bitcoin.Psbt.fromHex(psbtHex);
+    const tx = psbt.extractTransaction();
+    const rawtx = tx.toHex()
+    return await wallet.pushTx(rawtx)
+  }
+
+  @Reflect.metadata('APPROVAL', ['SignPsbt', (req) => {
+    // todo check
+  }])
+  sendRunes = async ({ approvalRes: { psbtHex } }) => {
     const psbt = bitcoin.Psbt.fromHex(psbtHex);
     const tx = psbt.extractTransaction();
     const rawtx = tx.toHex()

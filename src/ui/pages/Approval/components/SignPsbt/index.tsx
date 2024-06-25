@@ -28,7 +28,8 @@ import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks'
 import {
   usePrepareSendAtomicalsNFTCallback,
   usePrepareSendBTCCallback,
-  usePrepareSendOrdinalsInscriptionCallback
+  usePrepareSendOrdinalsInscriptionCallback,
+  usePrepareSendRunesCallback
 } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
@@ -39,16 +40,30 @@ interface Props {
   header?: React.ReactNode;
   params: {
     data: {
+      type: TxType;
+
       psbtHex: string;
       options: SignPsbtOptions;
-      type: TxType;
-      toAddress?: string;
-      satoshis?: number;
-      feeRate?: number;
-      memo?: string;
-      memos?: string[];
-      inscriptionId?: string;
       rawTxInfo?: RawTxInfo;
+
+      sendBitcoinParams: {
+        toAddress: string;
+        satoshis: number;
+        memo: string;
+        memos: string[];
+        feeRate: number;
+      };
+      sendInscriptionParams: {
+        toAddress: string;
+        inscriptionId: string;
+        feeRate: number;
+      };
+      sendRunesParams?: {
+        toAddress: string;
+        runeid: string;
+        amount: string;
+        feeRate: number;
+      };
     };
     session?: {
       origin: string;
@@ -460,7 +475,7 @@ const initTxInfo: TxInfo = {
 
 export default function SignPsbt({
   params: {
-    data: { psbtHex, options, type, toAddress, satoshis, inscriptionId, feeRate, memo, memos, rawTxInfo, ...rest },
+    data: { psbtHex, options, type, sendBitcoinParams, sendInscriptionParams, sendRunesParams, rawTxInfo, ...rest },
     session
   },
   header,
@@ -476,6 +491,7 @@ export default function SignPsbt({
   const prepareSendBTC = usePrepareSendBTCCallback();
   const prepareSendOrdinalsInscription = usePrepareSendOrdinalsInscriptionCallback();
   const prepareSendAtomicalsInscription = usePrepareSendAtomicalsNFTCallback;
+  const prepareSendRunes = usePrepareSendRunesCallback();
 
   const wallet = useWallet();
   const [loading, setLoading] = useState(true);
@@ -502,15 +518,15 @@ export default function SignPsbt({
         }
       }
     } else if (type === TxType.SEND_BITCOIN) {
-      if (!psbtHex && toAddress && satoshis) {
+      if (sendBitcoinParams) {
         try {
           const rawTxInfo = await prepareSendBTC({
-            toAddressInfo: { address: toAddress, domain: '' },
-            toAmount: satoshis,
-            feeRate,
+            toAddressInfo: { address: sendBitcoinParams.toAddress, domain: '' },
+            toAmount: sendBitcoinParams.satoshis,
+            feeRate: sendBitcoinParams.feeRate,
             enableRBF: false,
-            memo,
-            memos,
+            memo: sendBitcoinParams.memo,
+            memos: sendBitcoinParams.memos,
             disableAutoAdjust: true
           });
           psbtHex = rawTxInfo.psbtHex;
@@ -521,12 +537,29 @@ export default function SignPsbt({
         }
       }
     } else if (type === TxType.SEND_ORDINALS_INSCRIPTION) {
-      if (!psbtHex && toAddress && inscriptionId) {
+      if (sendInscriptionParams) {
         try {
           const rawTxInfo = await prepareSendOrdinalsInscription({
-            toAddressInfo: { address: toAddress, domain: '' },
-            inscriptionId: inscriptionId,
-            feeRate,
+            toAddressInfo: { address: sendInscriptionParams.toAddress, domain: '' },
+            inscriptionId: sendInscriptionParams.inscriptionId,
+            feeRate: sendInscriptionParams.feeRate,
+            enableRBF: false
+          });
+          psbtHex = rawTxInfo.psbtHex;
+        } catch (e) {
+          console.log(e);
+          txError = (e as any).message;
+          tools.toastError(txError);
+        }
+      }
+    } else if (type === TxType.SEND_RUNES) {
+      if (sendRunesParams) {
+        try {
+          const rawTxInfo = await prepareSendRunes({
+            toAddressInfo: { address: sendRunesParams.toAddress, domain: '' },
+            runeid: sendRunesParams.runeid,
+            runeAmount: sendRunesParams.amount,
+            feeRate: sendRunesParams.feeRate,
             enableRBF: false
           });
           psbtHex = rawTxInfo.psbtHex;

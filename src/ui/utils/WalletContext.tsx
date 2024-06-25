@@ -360,7 +360,7 @@ export interface WalletController {
     enableRBF: boolean;
     btcUtxos?: UnspentOutput[];
     assetUtxos?: UnspentOutput[];
-    outputValue: number;
+    outputValue?: number;
   }): Promise<string>;
 
   getBuyBtcChannelList(): Promise<{ channel: string }[]>;

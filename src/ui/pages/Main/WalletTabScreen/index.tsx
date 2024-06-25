@@ -159,6 +159,9 @@ export default function WalletTabScreen() {
         RightComponent={
           <Card
             preset="style2"
+            style={{
+              backgroundColor: 'transparent'
+            }}
             onClick={() => {
               setSwitchChainModalVisible(true);
             }}>

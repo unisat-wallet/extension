@@ -37,7 +37,7 @@ import {
   WalletKeyring
 } from '@/shared/types';
 import { checkAddressFlag, getChainInfo } from '@/shared/utils';
-import { UnspentOutput, txHelpers } from '@unisat/wallet-sdk';
+import { UTXO_DUST, UnspentOutput, txHelpers } from '@unisat/wallet-sdk';
 import { publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
 import { ECPair, bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 import { KeystoneKeyring } from '@unisat/wallet-sdk/lib/keyring';
@@ -1849,7 +1849,7 @@ export class WalletController extends BaseController {
     enableRBF: boolean;
     btcUtxos?: UnspentOutput[];
     assetUtxos?: UnspentOutput[];
-    outputValue: number;
+    outputValue?: number;
   }) => {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
@@ -1920,7 +1920,7 @@ export class WalletController extends BaseController {
       enableRBF,
       runeid,
       runeAmount,
-      outputValue
+      outputValue: outputValue || UTXO_DUST
     });
 
     this.setPsbtSignNonSegwitEnable(psbt, true);
