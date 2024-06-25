@@ -172,7 +172,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
       if (w.type === 'FT') {
         atomicals_ft.push(w);
         const ticker = w.ticker || '';
-        arc20Map[ticker] = (arc20Map[ticker] || 0) + v.value;
+        arc20Map[ticker] = (arc20Map[ticker] || 0) + w.atomicalValue;
       } else {
         atomicals_nft.push(w);
       }
@@ -842,7 +842,7 @@ export default function SignPsbt({
                                   <Text text={'ARC20'} color={isToSign ? 'white' : 'textDim'} />
                                   <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
                                     {atomicals_ft.map((w) => (
-                                      <Arc20PreviewCard key={w.ticker} ticker={w.ticker || ''} amt={v.value} />
+                                      <Arc20PreviewCard key={w.ticker} ticker={w.ticker || ''} amt={w.atomicalValue} />
                                     ))}
                                   </Row>
                                 </Column>
@@ -945,7 +945,7 @@ export default function SignPsbt({
                                 <Text text={'ARC20'} color={isMyAddress ? 'white' : 'textDim'} />
                                 <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
                                   {atomicals_ft.map((w) => (
-                                    <Arc20PreviewCard key={w.ticker} ticker={w.ticker || ''} amt={v.value} />
+                                    <Arc20PreviewCard key={w.ticker} ticker={w.ticker || ''} amt={w.atomicalValue} />
                                   ))}
                                 </Row>
                               </Column>

@@ -88,6 +88,7 @@ export interface Atomical {
   atomicalNumber: number;
   type: 'FT' | 'NFT';
   ticker?: string;
+  atomicalValue: number;
 
   // mint info
   address: string;
