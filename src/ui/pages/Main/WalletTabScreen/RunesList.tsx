@@ -7,6 +7,7 @@ import { Empty } from '@/ui/components/Empty';
 import { Pagination } from '@/ui/components/Pagination';
 import RunesBalanceCard from '@/ui/components/RunesBalanceCard';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { useChainType } from '@/ui/state/settings/hooks';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
@@ -16,6 +17,7 @@ export function RunesList() {
   const navigate = useNavigate();
   const wallet = useWallet();
   const currentAccount = useCurrentAccount();
+  const chainType = useChainType();
 
   const [tokens, setTokens] = useState<RuneBalance[]>([]);
   const [total, setTotal] = useState(-1);
@@ -40,7 +42,7 @@ export function RunesList() {
 
   useEffect(() => {
     fetchData();
-  }, [pagination, currentAccount.address]);
+  }, [pagination, currentAccount.address, chainType]);
 
   if (total === -1) {
     return (
