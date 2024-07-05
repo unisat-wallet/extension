@@ -61,11 +61,14 @@ export class OpenApiService {
         deviceId: randomstring.generate(12)
       }
     });
-
+    //ycrydev edit this
     if (![OPENAPI_URL_MAINNET, OPENAPI_URL_TESTNET].includes(this.store.host)) {
       const networkType = preferenceService.getNetworkType();
+      console.log(networkType);
       if (networkType === NetworkType.MAINNET) {
         this.store.host = OPENAPI_URL_MAINNET;
+      } else if (networkType === 'OPNET') {
+        this.store.host = 'https://testnet.opnet.org';
       } else {
         this.store.host = OPENAPI_URL_TESTNET;
       }
@@ -390,6 +393,11 @@ export class OpenApiService {
 
   async getAddressRunesTokenSummary(address: string, runeid: string): Promise<AddressRunesTokenSummary> {
     return this.httpGet(`/runes/token-summary?address=${address}&runeid=${runeid}`, {});
+  }
+
+  //OP_NET
+  async getOpNetBalalnce(address: string): Promise<any> {
+    return this.httpGet(`/api/v1/address/get-balance?address=${address}`, {});
   }
 }
 

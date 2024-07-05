@@ -192,7 +192,8 @@ export interface WalletController {
   getAssetUtxosInscriptions(inscriptionId: string): Promise<UnspentOutput[]>;
 
   getNetworkType(): Promise<NetworkType>;
-  setNetworkType(type: NetworkType): Promise<void>;
+  //ycrydev edit this as well
+  setNetworkType(type: any): Promise<void>;
 
   getConnectedSites(): Promise<ConnectedSite[]>;
   removeConnectedSite(origin: string): Promise<void>;
@@ -361,6 +362,7 @@ export interface WalletController {
   }): Promise<string>;
 
   getBuyBtcChannelList(): Promise<{ channel: string }[]>;
+  getOpNetBalalnce(address: string): Promise<string>;
 }
 
 const WalletContext = createContext<{

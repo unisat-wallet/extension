@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ADDRESS_TYPES, DISCORD_URL, GITHUB_URL, KEYRING_TYPE, NETWORK_TYPES, TWITTER_URL } from '@/shared/constant';
+import { ADDRESS_TYPES, DISCORD_URL, GITHUB_URL, KEYRING_TYPE, TWITTER_URL } from '@/shared/constant';
 import { Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { Button } from '@/ui/components/Button';
@@ -135,10 +135,10 @@ export default function SettingsTabScreen() {
     if (v.action == 'connected-sites') {
       v.value = connected ? 'Connected' : 'Not connected';
     }
-
-    if (v.action == 'networkType') {
-      v.value = NETWORK_TYPES[networkType].label;
-    }
+    //edit this ycry
+    // if (v.action == 'networkType') {
+    //   v.value = NETWORK_TYPES[networkType].label;
+    // }
 
     if (v.action == 'addressType') {
       const item = ADDRESS_TYPES[currentKeyring.addressType];

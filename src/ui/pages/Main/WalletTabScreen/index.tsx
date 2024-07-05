@@ -33,6 +33,7 @@ import { amountToSatoshis, satoshisToAmount, useWallet } from '@/ui/utils';
 import { BuyBTCModal } from '../../BuyBTC/BuyBTCModal';
 import { useNavigate } from '../../MainRoute';
 import { AtomicalsTab } from './AtomicalsTab';
+import { OP_NETList } from './OP_NETList';
 import { OrdinalsTab } from './OrdinalsTab';
 import { RunesList } from './RunesList';
 
@@ -136,6 +137,11 @@ export default function WalletTabScreen() {
       key: AssetTabKey.RUNES,
       label: 'Runes',
       children: <RunesList />
+    },
+    {
+      key: AssetTabKey.OP_NET,
+      label: 'OP_NET',
+      children: <OP_NETList />
     }
   ];
 

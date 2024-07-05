@@ -393,6 +393,13 @@ export interface RuneBalance {
   symbol: string;
   divisibility: number;
 }
+export interface opNetBalance {
+  name: string;
+  amount: string;
+  address: string;
+  symbol?: string;
+  divisibility: number;
+}
 
 export interface RuneInfo {
   runeid: string;

@@ -35,13 +35,13 @@ export const KEYRING_TYPE_TEXT = {
   [KEYRING_TYPE.HdKeyring]: 'Created by Mnemonic',
   [KEYRING_TYPE.SimpleKeyring]: 'Imported by Private Key',
   [KEYRING_TYPE.WatchAddressKeyring]: 'Watch Mode',
-  [KEYRING_TYPE.KeystoneKeyring]: 'Import from Keystone',
+  [KEYRING_TYPE.KeystoneKeyring]: 'Import from Keystone'
 };
 export const BRAND_ALIAN_TYPE_TEXT = {
   [KEYRING_TYPE.HdKeyring]: 'Account',
   [KEYRING_TYPE.SimpleKeyring]: 'Private Key',
   [KEYRING_TYPE.WatchAddressKeyring]: 'Watch',
-  [KEYRING_TYPE.KeystoneKeyring]: 'Account',
+  [KEYRING_TYPE.KeystoneKeyring]: 'Account'
 };
 
 export const KEYRING_TYPES: {
@@ -120,57 +120,56 @@ export const ADDRESS_TYPES: {
   hdPath: string;
   displayIndex: number;
   isUnisatLegacy?: boolean;
-}[] =
-  [
-    {
-      value: AddressType.P2PKH,
-      label: 'P2PKH',
-      name: 'Legacy (P2PKH)',
-      hdPath: "m/44'/0'/0'/0",
-      displayIndex: 3,
-      isUnisatLegacy: false
-    },
-    {
-      value: AddressType.P2WPKH,
-      label: 'P2WPKH',
-      name: 'Native Segwit (P2WPKH)',
-      hdPath: "m/84'/0'/0'/0",
-      displayIndex: 0,
-      isUnisatLegacy: false
-    },
-    {
-      value: AddressType.P2TR,
-      label: 'P2TR',
-      name: 'Taproot (P2TR)',
-      hdPath: "m/86'/0'/0'/0",
-      displayIndex: 2,
-      isUnisatLegacy: false
-    },
-    {
-      value: AddressType.P2SH_P2WPKH,
-      label: 'P2SH-P2WPKH',
-      name: 'Nested Segwit (P2SH-P2WPKH)',
-      hdPath: "m/49'/0'/0'/0",
-      displayIndex: 1,
-      isUnisatLegacy: false
-    },
-    {
-      value: AddressType.M44_P2WPKH,
-      label: 'P2WPKH',
-      name: 'Native SegWit (P2WPKH)',
-      hdPath: "m/44'/0'/0'/0",
-      displayIndex: 4,
-      isUnisatLegacy: true
-    },
-    {
-      value: AddressType.M44_P2TR,
-      label: 'P2TR',
-      name: 'Taproot (P2TR)',
-      hdPath: "m/44'/0'/0'/0",
-      displayIndex: 5,
-      isUnisatLegacy: true
-    }
-  ];
+}[] = [
+  {
+    value: AddressType.P2PKH,
+    label: 'P2PKH',
+    name: 'Legacy (P2PKH)',
+    hdPath: "m/44'/0'/0'/0",
+    displayIndex: 3,
+    isUnisatLegacy: false
+  },
+  {
+    value: AddressType.P2WPKH,
+    label: 'P2WPKH',
+    name: 'Native Segwit (P2WPKH)',
+    hdPath: "m/84'/0'/0'/0",
+    displayIndex: 0,
+    isUnisatLegacy: false
+  },
+  {
+    value: AddressType.P2TR,
+    label: 'P2TR',
+    name: 'Taproot (P2TR)',
+    hdPath: "m/86'/0'/0'/0",
+    displayIndex: 2,
+    isUnisatLegacy: false
+  },
+  {
+    value: AddressType.P2SH_P2WPKH,
+    label: 'P2SH-P2WPKH',
+    name: 'Nested Segwit (P2SH-P2WPKH)',
+    hdPath: "m/49'/0'/0'/0",
+    displayIndex: 1,
+    isUnisatLegacy: false
+  },
+  {
+    value: AddressType.M44_P2WPKH,
+    label: 'P2WPKH',
+    name: 'Native SegWit (P2WPKH)',
+    hdPath: "m/44'/0'/0'/0",
+    displayIndex: 4,
+    isUnisatLegacy: true
+  },
+  {
+    value: AddressType.M44_P2TR,
+    label: 'P2TR',
+    name: 'Taproot (P2TR)',
+    hdPath: "m/44'/0'/0'/0",
+    displayIndex: 5,
+    isUnisatLegacy: true
+  }
+];
 
 export const OW_HD_PATH = "m/86'/0'/0'";
 

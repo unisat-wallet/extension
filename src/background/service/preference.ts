@@ -32,6 +32,7 @@ export interface PreferenceStore {
   historyMap: {
     [address: string]: TxHistoryItem[];
   };
+
   locale: string;
   watchAddressPreference: Record<string, number>;
   walletSavedList: [];
@@ -41,7 +42,8 @@ export interface PreferenceStore {
   firstOpen: boolean;
   currency: string;
   addressType: AddressType;
-  networkType: NetworkType;
+  //edit this ycry
+  networkType: any;
   keyringAlianNames: {
     [key: string]: string;
   };

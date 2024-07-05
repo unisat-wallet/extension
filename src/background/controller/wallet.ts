@@ -735,13 +735,17 @@ export class WalletController extends BaseController {
 
   getNetworkType = () => {
     const networkType = preferenceService.getNetworkType();
+    console.log(networkType);
     return networkType;
   };
-
-  setNetworkType = async (networkType: NetworkType) => {
+  //Ycry edit remember to change this
+  setNetworkType = async (networkType: any) => {
     preferenceService.setNetworkType(networkType);
+    console.log(networkType);
     if (networkType === NetworkType.MAINNET) {
       this.openapi.setHost(OPENAPI_URL_MAINNET);
+    } else if (networkType === 'OPNET') {
+      this.openapi.setHost('https://testnet.opnet.org');
     } else {
       this.openapi.setHost(OPENAPI_URL_TESTNET);
     }
@@ -1926,6 +1930,11 @@ export class WalletController extends BaseController {
 
   getBuyBtcChannelList = async () => {
     return openapiService.getBuyBtcChannelList();
+  };
+
+  //OPNET RPC APi
+  getOpNetBalalnce = async (address: string) => {
+    return openapiService.getOpNetBalalnce(address);
   };
 }
 

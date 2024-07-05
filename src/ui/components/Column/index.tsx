@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import { CSSProperties } from 'react';
 
 import { spacingGap } from '@/ui/theme/spacing';
 
@@ -14,6 +14,6 @@ const $columnStyle = {
 
 export function Column(props: ColumnProps) {
   const { style: $styleOverride, ...rest } = props;
-  const $style = Object.assign({}, $columnStyle, $styleOverride);
+  const $style = Object.assign({}, $styleOverride, $columnStyle);
   return <BaseView style={$style} {...rest} />;
 }
