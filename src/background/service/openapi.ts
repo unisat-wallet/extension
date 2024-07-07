@@ -67,8 +67,8 @@ export class OpenApiService {
       console.log(networkType);
       if (networkType === NetworkType.MAINNET) {
         this.store.host = OPENAPI_URL_MAINNET;
-      } else if (networkType === 'OPNET') {
-        this.store.host = 'https://testnet.opnet.org';
+      } else if (networkType === NetworkType.REGTEST) {
+        this.store.host = 'https://regtest.opnet.org';
       } else {
         this.store.host = OPENAPI_URL_TESTNET;
       }

@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
 import { Account } from '@/shared/types';
-import { Button, Input, Layout, Icon, Content, Header, Text, Column, Card, Row } from '@/ui/components';
+import { Button, Card, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { copyToClipboard, useWallet } from '@/ui/utils';
 
@@ -16,7 +16,8 @@ export default function ExportPrivateKeyScreen() {
   const { account } = state as {
     account: Account;
   };
-
+  console.log(state);
+  console.log(account);
   const [password, setPassword] = useState('');
   const [disabled, setDisabled] = useState(true);
 
@@ -28,7 +29,8 @@ export default function ExportPrivateKeyScreen() {
 
   const btnClick = async () => {
     try {
-      const _res = await wallet.getPrivateKey(password, account);
+      const _res = await wallet.getPrivateKey(account);
+      console.log(_res);
       setPrivateKey(_res);
     } catch (e) {
       setStatus('error');

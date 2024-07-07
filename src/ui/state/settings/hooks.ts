@@ -54,6 +54,7 @@ export function useChangeNetworkTypeCallback() {
   const wallet = useWallet();
   return useCallback(
     async (type: NetworkType) => {
+      console.log(type);
       await wallet.setNetworkType(type);
       dispatch(
         settingsActions.updateSettings({

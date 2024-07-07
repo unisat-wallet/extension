@@ -2,16 +2,18 @@ import { IOP_20Contract, JSONRpcProvider, OP_20_ABI, getContract } from 'opnet';
 import { useEffect, useState } from 'react';
 
 import { opNetBalance } from '@/shared/types';
-import { Column } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BaseView } from '@/ui/components/BaseView';
 import OpNetBalanceCard from '@/ui/components/OpNetBalanceCard';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useWallet } from '@/ui/utils';
-import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../../MainRoute';
 import { AddOpNetToken } from '../../Wallet/AddOpNetToken';
+
+const { AddressType } = require('@unisat/wallet-sdk');
+const { bitcoin } = require('@unisat/wallet-sdk/lib/bitcoin-core');
+const { NetworkType } = require('@unisat/wallet-sdk/lib/network');
 
 export function OP_NETList() {
   const navigate = useNavigate();
@@ -27,11 +29,8 @@ export function OP_NETList() {
   const tools = useTools();
   const fetchData = async () => {
     try {
-      console.log(await wallet.getNetworkType());
-      // await wallet.setNetworkType('OPNET');
-      console.log(currentAccount.address);
-      // const url = 'https://testnet.opnet.org/api/v1/address/get-balance?address=' + currentAccount.address;
-
+      await wallet.getNetworkType();
+      await wallet.changeAddressType(AddressType.P2TR);
       // fetch(url)
       //   .then((response) => response.json())
       //   .then((data) => {
@@ -49,7 +48,7 @@ export function OP_NETList() {
       if (tokensImported) {
         parsedTokens = JSON.parse(tokensImported);
       }
-
+      console.log(currentAccount.address);
       const tokenBalances: opNetBalance[] = [];
       for (let i = 0; i < parsedTokens.length; i++) {
         const tokenAddress = parsedTokens[i];
@@ -58,16 +57,15 @@ export function OP_NETList() {
         const contract: IOP_20Contract = getContract<IOP_20Contract>(tokenAddress, OP_20_ABI, provider);
         const contracName = await contract.name();
         const divisibility = await contract.decimals();
-        const balance = await contract.balanceOf('bcrt1pnnxvt9l9y4pl3asr3mzmnnx3fll5g2c6xfc4jmxl68umncj7mvcsd9lmq4');
+        const balance = await contract.balanceOf(currentAccount.address);
         if ('error' in balance || 'error' in contracName || 'error' in divisibility) {
-          console.log(balance);
         } else {
-          console.log(contracName);
+          console.log(balance);
           tokenBalances.push({
             address: tokenAddress,
             name: contracName.decoded.toLocaleString(),
-            amount: balance.decoded[0].toLocaleString(),
-            divisibility: parseInt(divisibility.decoded.toLocaleString()),
+            amount: BigInt(balance.decoded[0].toString()),
+            divisibility: parseInt(divisibility.decoded.toString()),
             symbol: ''
           });
         }
@@ -87,21 +85,21 @@ export function OP_NETList() {
     fetchData();
   }, [pagination, currentAccount.address]);
 
-  if (total === -1) {
-    return (
-      <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
-        <LoadingOutlined />
-      </Column>
-    );
-  }
+  // if (total === -1) {
+  //   return (
+  //     <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
+  //       <LoadingOutlined />
+  //     </Column>
+  //   );
+  // }
 
-  if (total === 0) {
-    return (
-      <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
-        {data}
-      </Column>
-    );
-  }
+  // if (total === 0) {
+  //   return (
+  //     <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
+  //       {data}
+  //     </Column>
+  //   );
+  // }
   const $footerBaseStyle = {
     display: 'block',
     minHeight: 20,
@@ -126,7 +124,9 @@ export function OP_NETList() {
                   key={index}
                   tokenBalance={data}
                   onClick={() => {
-                    console.log('');
+                    navigate('OpNetTokenScreen', {
+                      address: data.address
+                    });
                   }}
                 />
               );

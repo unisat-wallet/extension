@@ -205,8 +205,7 @@ export class WalletController extends BaseController {
 
   clearKeyrings = () => keyringService.clearKeyrings();
 
-  getPrivateKey = async (password: string, { pubkey, type }: { pubkey: string; type: string }) => {
-    await this.verifyPassword(password);
+  getPrivateKey = async ({ pubkey, type }: { pubkey: string; type: string }) => {
     const keyring = await keyringService.getKeyringForAccount(pubkey, type);
     if (!keyring) return null;
     const privateKey = await keyring.exportAccount(pubkey);
@@ -738,14 +737,14 @@ export class WalletController extends BaseController {
     console.log(networkType);
     return networkType;
   };
-  //Ycry edit remember to change this
+  //Ycry edit remember to change this later
   setNetworkType = async (networkType: any) => {
     preferenceService.setNetworkType(networkType);
     console.log(networkType);
     if (networkType === NetworkType.MAINNET) {
       this.openapi.setHost(OPENAPI_URL_MAINNET);
-    } else if (networkType === 'OPNET') {
-      this.openapi.setHost('https://testnet.opnet.org');
+    } else if (networkType === NetworkType.REGTEST) {
+      this.openapi.setHost('https://regtest.opnet.org/');
     } else {
       this.openapi.setHost(OPENAPI_URL_TESTNET);
     }

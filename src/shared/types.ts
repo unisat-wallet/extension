@@ -11,7 +11,8 @@ export enum AddressType {
 
 export enum NetworkType {
   MAINNET,
-  TESTNET
+  TESTNET,
+  REGTEST
 }
 
 export enum RestoreWalletType {
@@ -395,7 +396,7 @@ export interface RuneBalance {
 }
 export interface opNetBalance {
   name: string;
-  amount: string;
+  amount: bigint;
   address: string;
   symbol?: string;
   divisibility: number;

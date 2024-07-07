@@ -30,6 +30,7 @@ export default function NetworkTypeScreen() {
                   if (item.value == networkType) {
                     return;
                   }
+                  console.log(item.value);
                   await changeNetworkType(item.value);
                   reloadAccounts();
                   navigate('MainScreen');

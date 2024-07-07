@@ -33,6 +33,8 @@ import DiscoverTabScreen from './Main/DiscoverTabScreen';
 import SettingsTabScreen from './Main/SettingsTabScreen';
 import WalletTabScreen from './Main/WalletTabScreen';
 import WelcomeScreen from './Main/WelcomeScreen';
+import OpNetTokenScreen from './OpNet/OpNetTokenScreen';
+import SendOpNetScreen from './OpNet/SendOpNetScreen';
 import OrdinalsInscriptionScreen from './Ordinals/OrdinalsInscriptionScreen';
 import SendOrdinalsInscriptionScreen from './Ordinals/SendOrdinalsInscriptionScreen';
 import SignOrdinalsTransactionScreen from './Ordinals/SignOrdinalsTransactionScreen';
@@ -50,7 +52,6 @@ import NetworkTypeScreen from './Settings/NetworkTypeScreen';
 import UpgradeNoticeScreen from './Settings/UpgradeNoticeScreen';
 import TestScreen from './Test/TestScreen';
 import HistoryScreen from './Wallet/HistoryScreen';
-import KeystoneSignScreen from './Wallet/KeystoneSignScreen';
 import ReceiveScreen from './Wallet/ReceiveScreen';
 import TxConfirmScreen from './Wallet/TxConfirmScreen';
 import TxCreateScreen from './Wallet/TxCreateScreen';
@@ -252,6 +253,14 @@ const routes = {
   RunesTokenScreen: {
     path: '/runes/token',
     element: <RunesTokenScreen />
+  },
+  OpNetTokenScreen: {
+    path: '/opnet/token',
+    element: <OpNetTokenScreen />
+  },
+  SendOpNetScreen: {
+    path: '/opnet/send-opnet',
+    element: <SendOpNetScreen />
   }
 };
 

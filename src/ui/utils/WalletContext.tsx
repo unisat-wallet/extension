@@ -82,7 +82,7 @@ export interface WalletController {
   setCurrency(currency: string): Promise<void>;
 
   clearKeyrings(): Promise<void>;
-  getPrivateKey(password: string, account: { address: string; type: string }): Promise<{ hex: string; wif: string }>;
+  getPrivateKey(account: { address: string; type: string }): Promise<{ hex: string; wif: string }>;
   getMnemonics(
     password: string,
     keyring: WalletKeyring
@@ -193,7 +193,7 @@ export interface WalletController {
 
   getNetworkType(): Promise<NetworkType>;
   //ycrydev edit this as well
-  setNetworkType(type: any): Promise<void>;
+  setNetworkType(type: NetworkType): Promise<void>;
 
   getConnectedSites(): Promise<ConnectedSite[]>;
   removeConnectedSite(origin: string): Promise<void>;
