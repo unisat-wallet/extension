@@ -59,6 +59,7 @@ export function OP_NETList() {
         const divisibility = await contract.decimals();
         const balance = await contract.balanceOf(currentAccount.address);
         if ('error' in balance || 'error' in contracName || 'error' in divisibility) {
+          console.log(balance);
         } else {
           console.log(balance);
           tokenBalances.push({

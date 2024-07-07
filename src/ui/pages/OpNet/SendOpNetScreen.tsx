@@ -96,9 +96,9 @@ export default function SendOpNetScreen() {
     console.log(foundObject?.account);
     const wifWallet = await wallet.getPrivateKey(foundObject?.account as Account);
     const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, networks.regtest);
-    const opnetNode: string = 'https://regtest.opnet.org';
+    const opnetNode = 'https://regtest.opnet.org';
 
-    const utxoManager = new OPNetLimitedProvider('https://regtest.opnet.org');
+    const utxoManager = new OPNetLimitedProvider(opnetNode);
     const factory: TransactionFactory = new TransactionFactory(); // Transaction factory
     const abiCoder: ABICoder = new ABICoder();
     const transferSelector = Number(`0x` + abiCoder.encodeSelector('transfer'));
@@ -119,6 +119,9 @@ export default function SendOpNetScreen() {
 
     const utxos: UTXO[] = await utxoManager.fetchUTXO(utxoSetting);
     console.log(utxos);
+    if (!utxos.length) {
+      throw new Error('No UTXOs found');
+    }
   };
 
   getData(wallet);

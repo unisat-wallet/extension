@@ -45,6 +45,7 @@ export default function OpNetTokenScreen() {
       const divisibility = await contract.decimals();
       const balance = await contract.balanceOf(account.address);
       if ('error' in balance || 'error' in contracName || 'error' in divisibility) {
+        console.log(balance);
       } else {
         const newSummaryData = {
           opNetBalance: {
