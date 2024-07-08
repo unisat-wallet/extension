@@ -266,7 +266,7 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
     label: 'Bitcoin Opnet Regtest',
     icon: './images/artifacts/bitcoin-testnet.png',
     networkType: NetworkType.REGTEST,
-    endpoints: ['https://regtest.opnet.org'],
+    endpoints: ['https://wallet-api-testnet.unisat.space'],
     mempoolSpaceUrl: 'https://opnet.mempool.space',
     unisatUrl: 'https://unisat.io',
     ordinalsUrl: 'https://ordinals.com'
