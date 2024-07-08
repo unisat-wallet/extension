@@ -209,7 +209,8 @@ export const RESTORE_WALLETS: { value: RestoreWalletType; name: string; addressT
 export enum ChainType {
   BITCOIN_MAINNET = 'BITCOIN_MAINNET',
   BITCOIN_TESTNET = 'BITCOIN_TESTNET',
-  FRACTAL_BITCOIN_MAINNET = 'FRACTAL_BITCOIN_MAINNET'
+  FRACTAL_BITCOIN_MAINNET = 'FRACTAL_BITCOIN_MAINNET',
+  BITCOIN_REGTEST = 'BITCOIN_REGTEST'
 }
 
 export const NETWORK_TYPES = [
@@ -218,8 +219,8 @@ export const NETWORK_TYPES = [
   { value: NetworkType.REGTEST, label: 'REGTEST', name: 'regtest', validNames: ['regtest'] }
 ];
 
-type TypeChain = {
-  enum: ChainType;
+type TypeChain<T extends ChainType> = {
+  enum: T;
   label: string;
   icon: string;
   networkType: NetworkType;
@@ -229,7 +230,7 @@ type TypeChain = {
   ordinalsUrl: string;
 };
 
-export const CHAINS_MAP: { [key: string]: TypeChain } = {
+export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
   [ChainType.BITCOIN_MAINNET]: {
     enum: ChainType.BITCOIN_MAINNET,
     label: 'Bitcoin Mainnet',
@@ -259,6 +260,16 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     mempoolSpaceUrl: 'https://fractalbitcoin-mempool.unisat.io',
     unisatUrl: 'https://fractalbitcoin.unisat.io',
     ordinalsUrl: 'https://fractalbitcoin-ordinals.unisat.io'
+  },
+  [ChainType.BITCOIN_REGTEST]: {
+    enum: ChainType.BITCOIN_REGTEST,
+    label: 'Bitcoin Opnet Regtest',
+    icon: './images/artifacts/bitcoin-testnet.png',
+    networkType: NetworkType.REGTEST,
+    endpoints: ['https://regtest.opnet.org'],
+    mempoolSpaceUrl: 'https://opnet.mempool.space',
+    unisatUrl: 'https://unisat.io',
+    ordinalsUrl: 'https://ordinals.com'
   }
 };
 

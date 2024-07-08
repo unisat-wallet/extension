@@ -58,18 +58,6 @@ export class OpenApiService {
       }
     });
 
-    //ycrydev edit this
-    if (![OPENAPI_URL_MAINNET, OPENAPI_URL_TESTNET].includes(this.store.host)) {
-      const networkType = preferenceService.getNetworkType();
-      if (networkType === NetworkType.MAINNET) {
-        this.store.host = OPENAPI_URL_MAINNET;
-      } else if (networkType === NetworkType.REGTEST) {
-        this.store.host = 'https://regtest.opnet.org';
-      } else {
-        this.store.host = OPENAPI_URL_TESTNET;
-      }
-    }
-
     const chainType = preferenceService.getChainType();
     const chain = CHAINS_MAP[chainType];
     this.endpoint = chain.endpoints[0];
@@ -394,7 +382,7 @@ export class OpenApiService {
   }
 
   //OP_NET
-  async getOpNetBalalnce(address: string): Promise<any> {
+  async getOPNetBalance(address: string): Promise<string> {
     return this.httpGet(`/api/v1/address/get-balance?address=${address}`, {});
   }
 }

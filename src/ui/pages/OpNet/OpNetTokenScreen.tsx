@@ -37,7 +37,6 @@ export default function OpNetTokenScreen() {
 
   useEffect(() => {
     const getAddress = async () => {
-      console.log(address);
       const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
 
       const contract: IOP_20Contract = getContract<IOP_20Contract>(address, OP_20_ABI, provider);

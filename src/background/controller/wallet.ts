@@ -15,9 +15,9 @@ import {
   BRAND_ALIAN_TYPE_TEXT,
   CHAINS_ENUM,
   CHAINS_MAP,
+  ChainType,
   COIN_NAME,
   COIN_SYMBOL,
-  ChainType,
   KEYRING_TYPE,
   KEYRING_TYPES,
   NETWORK_TYPES,
@@ -37,9 +37,9 @@ import {
   WalletKeyring
 } from '@/shared/types';
 import { checkAddressFlag, getChainInfo } from '@/shared/utils';
-import { UnspentOutput, txHelpers } from '@unisat/wallet-sdk';
+import { txHelpers, UnspentOutput } from '@unisat/wallet-sdk';
 import { publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
-import { ECPair, bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
+import { bitcoin, ECPair } from '@unisat/wallet-sdk/lib/bitcoin-core';
 import { KeystoneKeyring } from '@unisat/wallet-sdk/lib/keyring';
 import {
   genPsbtOfBIP322Simple,
@@ -130,8 +130,16 @@ export class WalletController extends BaseController {
   };
 
   getAddressBalance = async (address: string) => {
-    const data = await openapiService.getAddressBalance(address);
+    let data: BitcoinBalance;
+
+    try {
+      data = await openapiService.getAddressBalance(address);
+    } catch(e) {
+      data = await this.getOpNetBalance(address);
+    }
+
     preferenceService.updateAddressBalance(address, data);
+
     return data;
   };
 
@@ -740,11 +748,11 @@ export class WalletController extends BaseController {
 
   setNetworkType = async (networkType: NetworkType) => {
     if (networkType === NetworkType.MAINNET) {
-      this.setChainType(ChainType.BITCOIN_MAINNET);
+      await this.setChainType(ChainType.BITCOIN_MAINNET);
     } else if (networkType === NetworkType.REGTEST) {
-      this.setChainType(ChainType.REGTEST);
+      await this.setChainType(ChainType.BITCOIN_REGTEST);
     } else {
-      this.setChainType(ChainType.BITCOIN_TESTNET);
+      await this.setChainType(ChainType.BITCOIN_TESTNET);
     }
   };
 
@@ -755,7 +763,7 @@ export class WalletController extends BaseController {
 
   setChainType = async (chainType: ChainType) => {
     preferenceService.setChainType(chainType);
-    this.openapi.setEndpoints(CHAINS_MAP[chainType].endpoints);
+    await this.openapi.setEndpoints(CHAINS_MAP[chainType].endpoints);
 
     const currentAccount = await this.getCurrentAccount();
     const keyring = await this.getCurrentKeyring();
@@ -1936,9 +1944,23 @@ export class WalletController extends BaseController {
     return openapiService.getBuyBtcChannelList();
   };
 
-  //OPNET RPC APi
-  getOpNetBalalnce = async (address: string) => {
-    return openapiService.getOpNetBalalnce(address);
+  //OPNET RPC API
+  getOpNetBalance = async (address: string): Promise<BitcoinBalance> => {
+    const balance: string = await openapiService.getOPNetBalance(address);
+    const btcBalance = BigInt(balance);
+
+    return {
+      confirm_amount: btcBalance.toString(),
+      pending_amount: '0',
+      amount: btcBalance.toString(),
+      confirm_btc_amount: btcBalance.toString(),
+      pending_btc_amount: '0',
+      btc_amount: btcBalance.toString(),
+      confirm_inscription_amount: '0',
+      pending_inscription_amount: '0',
+      inscription_amount: '0',
+      usd_value: '0.00',
+    };
   };
 }
 
