@@ -1,14 +1,14 @@
-import { NETWORK_TYPES } from '@/shared/constant';
-import { Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
+import { CHAINS } from '@/shared/constant';
+import { Card, Column, Content, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { useReloadAccounts } from '@/ui/state/accounts/hooks';
-import { useChangeNetworkTypeCallback, useNetworkType } from '@/ui/state/settings/hooks';
+import { useChainType, useChangeChainTypeCallback } from '@/ui/state/settings/hooks';
 
 import { useNavigate } from '../MainRoute';
 
 export default function NetworkTypeScreen() {
-  const networkType = useNetworkType();
-  const changeNetworkType = useChangeNetworkTypeCallback();
+  const chainType = useChainType();
+  const changeChainType = useChangeChainTypeCallback();
   const reloadAccounts = useReloadAccounts();
   const tools = useTools();
   const navigate = useNavigate();
@@ -18,29 +18,29 @@ export default function NetworkTypeScreen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Switch Network"
+        title="Select Network"
       />
       <Content>
         <Column>
-          {NETWORK_TYPES.map((item, index) => {
+          {CHAINS.map((item, index) => {
             return (
               <Card
                 key={index}
                 onClick={async () => {
-                  if (item.value == networkType) {
+                  if (item.enum == chainType) {
                     return;
                   }
-                  console.log(item.value);
-                  await changeNetworkType(item.value);
+                  await changeChainType(item.enum);
                   reloadAccounts();
                   navigate('MainScreen');
-                  tools.toastSuccess('Network type changed');
+                  tools.toastSuccess(`Changed to ${item.label}`);
                 }}>
                 <Row full justifyBetween itemsCenter>
                   <Row itemsCenter>
+                    <Image src={item.icon} size={30} />
                     <Text text={item.label} preset="regular-bold" />
                   </Row>
-                  <Column>{item.value == networkType && <Icon icon="check" />}</Column>
+                  <Column>{item.enum == chainType && <Icon icon="check" />}</Column>
                 </Row>
               </Card>
             );

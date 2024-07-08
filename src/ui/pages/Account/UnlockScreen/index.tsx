@@ -35,6 +35,7 @@ export default function UnlockScreen() {
         }
       }
     } catch (e) {
+      console.log(e);
       tools.toastError('PASSWORD ERROR');
     }
   };

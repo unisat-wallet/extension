@@ -1,7 +1,7 @@
 import { keyBy } from 'lodash';
 
 import browser from '@/background/webapi/browser';
-import { AddressFlagType, CHAINS } from '@/shared/constant';
+import { AddressFlagType, CHAINS, CHAINS_MAP, ChainType, NETWORK_TYPES } from '@/shared/constant';
 
 import BroadcastChannelMessage from './message/broadcastChannelMessage';
 import PortMessage from './message/portMessage';
@@ -21,7 +21,7 @@ const format = (str, ...args) => {
   return args.reduce((m, n) => m.replace('_s_', n), str);
 };
 
-export { Message, t, format };
+export { Message, format, t };
 
 const chainsDict = keyBy(CHAINS, 'serverId');
 export const getChain = (chainId?: string) => {
@@ -31,8 +31,16 @@ export const getChain = (chainId?: string) => {
   return chainsDict[chainId];
 };
 
-
 // Check if address flag is enabled
 export const checkAddressFlag = (currentFlag: number, flag: AddressFlagType): boolean => {
   return Boolean(currentFlag & flag);
 };
+
+export function getChainInfo(chainType: ChainType) {
+  const chain = CHAINS_MAP[chainType];
+  return {
+    enum: chainType,
+    name: chain.label,
+    network: NETWORK_TYPES[chain.networkType].name
+  };
+}

@@ -307,10 +307,10 @@ const Main = () => {
       }
 
       if (!self.settingsLoaded) {
-        const networkType = await wallet.getNetworkType();
+        const chainType = await wallet.getChainType();
         dispatch(
           settingsActions.updateSettings({
-            networkType
+            chainType
           })
         );
 
@@ -331,9 +331,12 @@ const Main = () => {
       }
 
       if (!self.configLoaded) {
-        wallet.getWalletConfig().then((data) => {
-          dispatch(settingsActions.updateSettings({ walletConfig: data }));
-        });
+        self.configLoaded = true;
+
+        // already load when reloadAccounts
+        // wallet.getWalletConfig().then((data) => {
+        //   dispatch(settingsActions.updateSettings({ walletConfig: data }));
+        // });
         wallet.getSkippedVersion().then((data) => {
           dispatch(settingsActions.updateSettings({ skippedVersion: data }));
         });

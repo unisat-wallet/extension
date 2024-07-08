@@ -1,7 +1,7 @@
 import compareVersions from 'compare-versions';
 import { useCallback } from 'react';
 
-import { VERSION } from '@/shared/constant';
+import { CHAINS_MAP, ChainType, VERSION } from '@/shared/constant';
 import { NetworkType } from '@/shared/types';
 import { useWallet } from '@/ui/utils';
 import i18n, { addResourceBundle } from '@/ui/utils/i18n';
@@ -46,7 +46,14 @@ export function useAddressType() {
 
 export function useNetworkType() {
   const accountsState = useSettingsState();
-  return accountsState.networkType;
+  if (
+    accountsState.chainType === ChainType.BITCOIN_MAINNET ||
+    accountsState.chainType === ChainType.FRACTAL_BITCOIN_MAINNET
+  ) {
+    return NetworkType.MAINNET;
+  } else {
+    return NetworkType.TESTNET;
+  }
 }
 
 export function useChangeNetworkTypeCallback() {
@@ -54,11 +61,45 @@ export function useChangeNetworkTypeCallback() {
   const wallet = useWallet();
   return useCallback(
     async (type: NetworkType) => {
-      console.log(type);
-      await wallet.setNetworkType(type);
+      if (type === NetworkType.MAINNET) {
+        await wallet.setChainType(ChainType.BITCOIN_MAINNET);
+        dispatch(
+          settingsActions.updateSettings({
+            chainType: ChainType.BITCOIN_MAINNET
+          })
+        );
+      } else if (type === NetworkType.TESTNET) {
+        await wallet.setChainType(ChainType.BITCOIN_TESTNET);
+        dispatch(
+          settingsActions.updateSettings({
+            chainType: ChainType.BITCOIN_TESTNET
+          })
+        );
+      }
+    },
+    [dispatch]
+  );
+}
+
+export function useChainType() {
+  const accountsState = useSettingsState();
+  return accountsState.chainType;
+}
+
+export function useChain() {
+  const accountsState = useSettingsState();
+  return CHAINS_MAP[accountsState.chainType];
+}
+
+export function useChangeChainTypeCallback() {
+  const dispatch = useAppDispatch();
+  const wallet = useWallet();
+  return useCallback(
+    async (type: ChainType) => {
+      await wallet.setChainType(type);
       dispatch(
         settingsActions.updateSettings({
-          networkType: type
+          chainType: type
         })
       );
     },
@@ -67,39 +108,24 @@ export function useChangeNetworkTypeCallback() {
 }
 
 export function useBlockstreamUrl() {
-  const networkType = useNetworkType();
-  if (networkType === NetworkType.MAINNET) {
-    return 'https://mempool.space';
-  } else {
-    return 'https://mempool.space/testnet';
-  }
+  const chainType = useChainType();
+  return CHAINS_MAP[chainType].mempoolSpaceUrl;
 }
 
 export function useTxIdUrl(txid: string) {
-  const networkType = useNetworkType();
-  if (networkType === NetworkType.MAINNET) {
-    return `https://mempool.space/tx/${txid}`;
-  } else {
-    return `https://mempool.space/testnet/tx/${txid}`;
-  }
+  const chainType = useChainType();
+  const mempoolSpaceUrl = CHAINS_MAP[chainType].mempoolSpaceUrl;
+  return `${mempoolSpaceUrl}/tx/${txid}`;
 }
 
 export function useUnisatWebsite() {
-  const networkType = useNetworkType();
-  if (networkType === NetworkType.MAINNET) {
-    return 'https://unisat.io';
-  } else {
-    return 'https://testnet.unisat.io';
-  }
+  const chainType = useChainType();
+  return CHAINS_MAP[chainType].unisatUrl;
 }
 
 export function useOrdinalsWebsite() {
-  const networkType = useNetworkType();
-  if (networkType === NetworkType.MAINNET) {
-    return 'https://ordinals.com';
-  } else {
-    return 'https://testnet.ordinals.com';
-  }
+  const chainType = useChainType();
+  return CHAINS_MAP[chainType].ordinalsUrl;
 }
 
 export function useWalletConfig() {

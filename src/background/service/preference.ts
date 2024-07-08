@@ -2,7 +2,7 @@ import compareVersions from 'compare-versions';
 import cloneDeep from 'lodash/cloneDeep';
 
 import { createPersistStore } from '@/background/utils';
-import { AddressFlagType, EVENTS } from '@/shared/constant';
+import { AddressFlagType, CHAINS, ChainType, EVENTS } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 import {
   Account,
@@ -32,7 +32,6 @@ export interface PreferenceStore {
   historyMap: {
     [address: string]: TxHistoryItem[];
   };
-
   locale: string;
   watchAddressPreference: Record<string, number>;
   walletSavedList: [];
@@ -42,6 +41,8 @@ export interface PreferenceStore {
   firstOpen: boolean;
   currency: string;
   addressType: AddressType;
+  networkType: NetworkType;
+  chainType: ChainType;
   //edit this ycry
   networkType: any;
   keyringAlianNames: {
@@ -119,6 +120,7 @@ class PreferenceService {
         currency: 'USD',
         addressType: AddressType.P2WPKH,
         networkType: NetworkType.MAINNET,
+        chainType: ChainType.BITCOIN_MAINNET,
         keyringAlianNames: {},
         accountAlianNames: {},
         uiCachedData: {},
@@ -209,6 +211,14 @@ class PreferenceService {
 
     if (typeof this.store.enableSignData !== 'boolean') {
       this.store.enableSignData = false;
+    }
+
+    if (!this.store.chainType) {
+      if (this.store.networkType === NetworkType.MAINNET) {
+        this.store.chainType = ChainType.BITCOIN_MAINNET;
+      } else {
+        this.store.chainType = ChainType.BITCOIN_TESTNET;
+      }
     }
   };
 
@@ -352,13 +362,25 @@ class PreferenceService {
     return this.store.addressType;
   };
 
-  // network type
-  getNetworkType = () => {
-    return this.store.networkType;
+  // // network type
+  // getNetworkType = () => {
+  //   return this.store.networkType;
+  // };
+
+  // setNetworkType = (networkType: NetworkType) => {
+  //   this.store.networkType = networkType;
+  // };
+
+  // chain type
+  getChainType = () => {
+    if (!CHAINS.find((chain) => chain.enum === this.store.chainType)) {
+      this.store.chainType = ChainType.BITCOIN_MAINNET;
+    }
+    return this.store.chainType;
   };
 
-  setNetworkType = (networkType: NetworkType) => {
-    this.store.networkType = networkType;
+  setChainType = (chainType: ChainType) => {
+    this.store.chainType = chainType;
   };
 
   // currentKeyringIndex

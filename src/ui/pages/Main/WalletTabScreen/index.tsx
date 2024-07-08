@@ -2,9 +2,8 @@ import { Tabs, Tooltip } from 'antd';
 import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 
 import { AddressFlagType, KEYRING_TYPE } from '@/shared/constant';
-import { NetworkType } from '@/shared/types';
 import { checkAddressFlag } from '@/shared/utils';
-import { Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
+import { Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
 import { AddressBar } from '@/ui/components/AddressBar';
 import { Button } from '@/ui/components/Button';
@@ -19,7 +18,7 @@ import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import {
   useBlockstreamUrl,
-  useNetworkType,
+  useChain,
   useSkipVersionCallback,
   useVersionInfo,
   useWalletConfig
@@ -32,6 +31,7 @@ import { amountToSatoshis, satoshisToAmount, useWallet } from '@/ui/utils';
 
 import { BuyBTCModal } from '../../BuyBTC/BuyBTCModal';
 import { useNavigate } from '../../MainRoute';
+import { SwitchChainModal } from '../../Settings/SwitchChainModal';
 import { AtomicalsTab } from './AtomicalsTab';
 import { OP_NETList } from './OP_NETList';
 import { OrdinalsTab } from './OrdinalsTab';
@@ -46,8 +46,7 @@ export default function WalletTabScreen() {
   const navigate = useNavigate();
 
   const accountBalance = useAccountBalance();
-  const networkType = useNetworkType();
-  const isTestNetwork = networkType === NetworkType.TESTNET;
+  const chain = useChain();
 
   const currentKeyring = useCurrentKeyring();
   const currentAccount = useCurrentAccount();
@@ -149,24 +148,12 @@ export default function WalletTabScreen() {
   const resetUiTxCreateScreen = useResetUiTxCreateScreen();
 
   const [buyBtcModalVisible, setBuyBtcModalVisible] = useState(false);
+
+  const [switchChainModalVisible, setSwitchChainModalVisible] = useState(false);
   return (
     <Layout>
       <Header
         LeftComponent={
-          <Column>
-            {connected && (
-              <Row
-                itemsCenter
-                onClick={() => {
-                  navigate('ConnectedSitesScreen');
-                }}>
-                <Text text="·" color="green" size="xxl" />
-                <Text text="Dapp Connected" size="xxs" />
-              </Row>
-            )}
-          </Column>
-        }
-        RightComponent={
           <Card
             preset="style2"
             onClick={() => {
@@ -175,13 +162,38 @@ export default function WalletTabScreen() {
             <Text text={currentKeyring.alianName} size="xxs" />
           </Card>
         }
+        RightComponent={
+          <Card
+            preset="style2"
+            onClick={() => {
+              setSwitchChainModalVisible(true);
+            }}>
+            <Image
+              src={'./images/artifacts/chain-bar.png'}
+              width={56}
+              height={28}
+              style={{
+                position: 'absolute',
+                right: 56 / 2
+              }}
+            />
+            <Image
+              src={chain.icon}
+              size={22}
+              style={{
+                position: 'absolute',
+                right: 55
+              }}
+            />
+          </Card>
+        }
       />
 
       <Content>
         <Column gap="xl">
           {currentKeyring.type === KEYRING_TYPE.HdKeyring && <AccountSelect />}
           {currentKeyring.type === KEYRING_TYPE.KeystoneKeyring && <AccountSelect />}
-          {isTestNetwork && <Text text="Bitcoin Testnet activated." color="danger" textCenter />}
+          {walletConfig.chainTip && <Text text={walletConfig.chainTip} color="danger" textCenter />}
 
           {walletConfig.statusMessage && <Text text={walletConfig.statusMessage} color="danger" textCenter />}
 
@@ -318,6 +330,13 @@ export default function WalletTabScreen() {
           <BuyBTCModal
             onClose={() => {
               setBuyBtcModalVisible(false);
+            }}
+          />
+        )}
+        {switchChainModalVisible && (
+          <SwitchChainModal
+            onClose={() => {
+              setSwitchChainModalVisible(false);
             }}
           />
         )}

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ADDRESS_TYPES, DISCORD_URL, GITHUB_URL, KEYRING_TYPE, NETWORK_TYPES, TWITTER_URL } from '@/shared/constant';
+import { ADDRESS_TYPES, DISCORD_URL, GITHUB_URL, KEYRING_TYPE, TWITTER_URL } from '@/shared/constant';
 import { Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { Button } from '@/ui/components/Button';
@@ -10,7 +10,7 @@ import { NavTabBar } from '@/ui/components/NavTabBar';
 import { getCurrentTab, useExtensionIsInTab, useOpenExtensionInTab } from '@/ui/features/browser/tabs';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { useNetworkType, useVersionInfo } from '@/ui/state/settings/hooks';
+import { useChain, useVersionInfo } from '@/ui/state/settings/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { spacing } from '@/ui/theme/spacing';
 import { useWallet } from '@/ui/utils';
@@ -99,8 +99,7 @@ const SettingList: Setting[] = [
 
 export default function SettingsTabScreen() {
   const navigate = useNavigate();
-
-  const networkType = useNetworkType();
+  const chain = useChain();
 
   const isInTab = useExtensionIsInTab();
 
@@ -137,7 +136,7 @@ export default function SettingsTabScreen() {
     }
     //edit this ycry
     if (v.action == 'networkType') {
-      v.value = NETWORK_TYPES[networkType].label;
+      v.value = chain.label;
     }
 
     if (v.action == 'addressType') {
