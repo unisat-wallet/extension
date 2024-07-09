@@ -1,5 +1,6 @@
 import { CSSProperties, useEffect, useState } from 'react';
 
+import { NetworkType } from '@/shared/types';
 import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
 
@@ -20,13 +21,25 @@ export function FeeRateBar({ readonly, onChange }: { readonly?: boolean; onChang
   const [feeOptions, setFeeOptions] = useState<{ title: string; desc?: string; feeRate: number }[]>([]);
 
   useEffect(() => {
-    wallet.getFeeSummary().then((v) => {
-      if (readonly) {
-        setFeeOptions(v.list);
+    const getData = async () => {
+      if ((await wallet.getNetworkType()) == NetworkType.REGTEST) {
+        const feeArray = [
+          { title: 'Slow', feeRate: 1 },
+          { title: 'Medium', feeRate: 1 },
+          { title: 'Fast', feeRate: 1 }
+        ];
+        setFeeOptions([...feeArray, { title: 'Custom', feeRate: 0 }]);
       } else {
-        setFeeOptions([...v.list, { title: 'Custom', feeRate: 0 }]);
+        wallet.getFeeSummary().then((v) => {
+          if (readonly) {
+            setFeeOptions(v.list);
+          } else {
+            setFeeOptions([...v.list, { title: 'Custom', feeRate: 0 }]);
+          }
+        });
       }
-    });
+    };
+    getData();
   }, []);
 
   const [feeOptionIndex, setFeeOptionIndex] = useState(FeeRateType.AVG);

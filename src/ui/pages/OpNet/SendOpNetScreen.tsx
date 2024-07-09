@@ -1,4 +1,5 @@
 import { networks } from 'bitcoinjs-lib';
+import { JSONRpcProvider } from 'opnet';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -21,7 +22,14 @@ import {
 import { colors } from '@/ui/theme/colors';
 import { isValidAddress, useWallet } from '@/ui/utils';
 import { ABICoder, BinaryWriter } from '@btc-vision/bsi-binary';
-import { FetchUTXOParams, OPNetLimitedProvider, TransactionFactory, UTXO, Wallet } from '@btc-vision/transaction';
+import {
+  FetchUTXOParamsMultiAddress,
+  IInteractionParameters,
+  OPNetLimitedProvider,
+  TransactionFactory,
+  UTXO,
+  Wallet
+} from '@btc-vision/transaction';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 interface ItemData {
@@ -41,6 +49,7 @@ export default function SendOpNetScreen() {
   const runesTx = useRunesTx();
   const [inputAmount, setInputAmount] = useState('');
   const [disabled, setDisabled] = useState(true);
+  const [OpnetRateInputVal, adjustFeeRateInput] = useState('800');
   const [toInfo, setToInfo] = useState<{
     address: string;
     domain: string;
@@ -90,7 +99,7 @@ export default function SendOpNetScreen() {
     });
     return _items;
   }, []);
-  const getData = async (wallet: any) => {
+  const sendOpNetoken = async (wallet: any) => {
     const foundObject = items.find((obj) => obj.account && obj.account.address === account.address);
 
     console.log(foundObject?.account);
@@ -111,20 +120,55 @@ export default function SendOpNetScreen() {
       addCalldata.writeU256(amount);
       return Buffer.from(addCalldata.getBuffer());
     }
-    const utxoSetting: FetchUTXOParams = {
-      address: walletGet.p2wpkh,
+    const utxoSetting: FetchUTXOParamsMultiAddress = {
+      addresses: [walletGet.p2wpkh, walletGet.p2tr],
       minAmount: 10000n,
       requestedAmount: 100000n
     };
+    console.log(walletGet.p2wpkh, walletGet.p2tr);
 
-    const utxos: UTXO[] = await utxoManager.fetchUTXO(utxoSetting);
+    const utxos: UTXO[] = await utxoManager.fetchUTXOMultiAddr(utxoSetting);
     console.log(utxos);
     if (!utxos.length) {
       throw new Error('No UTXOs found');
     }
-  };
+    try {
+      const amountToSend = 5000n; // Amount to send
+      const calldata = getTransferToCalldata(toInfo.address, amountToSend);
+      const interactionParameters: IInteractionParameters = {
+        from: walletGet.p2tr, // From address
+        to: OpNetBalance.address, // To address
+        utxos: utxos, // UTXOs
+        signer: walletGet.keypair, // Signer
+        network: networks.regtest, // Network
+        feeRate: feeRate, // Fee rate (satoshi per byte)
+        priorityFee: BigInt(OpnetRateInputVal), // Priority fee (opnet)
+        calldata: calldata // Calldata
+      };
+      console.log(interactionParameters);
+      // Sign and broadcast the transaction
+      const finalTx = factory.signInteraction(interactionParameters);
 
-  getData(wallet);
+      const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
+
+      const firstTxBroadcast = await provider.sendRawTransaction(finalTx[0], false);
+      console.log(`First transaction broadcasted: ${firstTxBroadcast}`);
+
+      if (!firstTxBroadcast) {
+        throw new Error('Could not broadcast first transaction');
+      }
+
+      const secondTxBroadcast = await provider.sendRawTransaction(finalTx[1], false);
+      console.log(`Second transaction broadcasted: ${secondTxBroadcast}`);
+
+      if (!secondTxBroadcast) {
+        throw new Error('Could not broadcast second transaction');
+      }
+      alert('Sent');
+    } catch (e) {
+      console.log(e);
+    }
+  };
 
   useEffect(() => {
     setError('');
@@ -255,7 +299,19 @@ export default function SendOpNetScreen() {
             }}
           />
         </Column>
-
+        <Input
+          preset="amount"
+          placeholder={'sat/vB'}
+          value={OpnetRateInputVal}
+          onAmountInputChange={(amount) => {
+            adjustFeeRateInput(amount);
+          }}
+          // onBlur={() => {
+          //   const val = parseInt(feeRateInputVal) + '';
+          //   setFeeRateInputVal(val);
+          // }}
+          autoFocus={true}
+        />
         <Column mt="lg">
           <RBFBar
             onChange={(val) => {
