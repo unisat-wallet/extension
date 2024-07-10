@@ -83,7 +83,7 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
           </Column>
 
           <Row itemsCenter fullY gap="zero">
-            <Text text={overallBalance} size="xs" />
+            <Text text={overallBalance} size="xs" digital/>
             <Row style={{ width: 30, height: 20 }} itemsCenter justifyCenter>
               <Icon
                 icon={detailVisible ? 'up' : 'down'}
@@ -125,7 +125,7 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
               <Row style={{ borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }} mt="sm" />
               <Row justifyBetween>
                 <Text text="Transferable:" color="textDim" size="xs" />
-                <Text text={transferableBalance} size="xs" />
+                <Text text={transferableBalance} size="xs" digital/>
               </Row>
               <Column>
                 <Row>
@@ -136,7 +136,7 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
                       bg={v === 'Transfer' ? 'brc20_transfer' : v === 'Deploy' ? 'brc20_deploy' : 'brc20_other'}>
                       <Column gap="zero">
                         <Text text={v} size={v === 'Transfer' ? 'sm' : v === 'Deploy' ? 'sm' : 'md'} />
-                        {v === 'Transfer' ? <Text text={`(${_amounts[index]})`} size="xxs" textCenter wrap /> : null}
+                        {v === 'Transfer' ? <Text text={`(${_amounts[index]})`} size="xxs" textCenter wrap digital/> : null}
                       </Column>
                     </Card>
                   ))}

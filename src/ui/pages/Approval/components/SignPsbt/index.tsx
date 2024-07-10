@@ -46,14 +46,14 @@ interface Props {
       options: SignPsbtOptions;
       rawTxInfo?: RawTxInfo;
 
-      sendBitcoinParams: {
+      sendBitcoinParams?: {
         toAddress: string;
         satoshis: number;
         memo: string;
         memos: string[];
         feeRate: number;
       };
-      sendInscriptionParams: {
+      sendInscriptionParams?: {
         toAddress: string;
         inscriptionId: string;
         feeRate: number;
@@ -591,7 +591,7 @@ export default function SignPsbt({
     }
 
     const decodedPsbt = await wallet.decodePsbt(psbtHex, session?.origin || '');
-    
+
     let toSignInputs: ToSignInput[] = [];
     if (type === TxType.SEND_BITCOIN || type === TxType.SEND_ORDINALS_INSCRIPTION) {
       toSignInputs = decodedPsbt.inputInfos.map((v, index) => ({

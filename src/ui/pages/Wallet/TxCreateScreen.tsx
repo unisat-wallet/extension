@@ -164,7 +164,6 @@ export default function TxCreateScreen() {
           <Input
             preset="amount"
             placeholder={'Amount'}
-            defaultValue={inputAmount}
             value={inputAmount}
             onAmountInputChange={(amount) => {
               if (autoAdjust == true) {

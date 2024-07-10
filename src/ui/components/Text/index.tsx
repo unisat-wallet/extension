@@ -4,6 +4,7 @@ import { colors, ColorTypes } from '@/ui/theme/colors';
 import { typography } from '@/ui/theme/typography';
 
 import { BaseView, BaseViewProps } from '../BaseView';
+import { showLongNumber } from '@/ui/utils';
 
 type Sizes = keyof typeof $sizeStyles;
 type Presets = keyof typeof $presets;
@@ -68,6 +69,7 @@ export interface TextProps extends BaseViewProps {
   wrap?: boolean;
   selectText?: boolean;
   disableTranslate?: boolean;
+  digital?: boolean;
 }
 
 export const $textPresets = $presets;
@@ -85,9 +87,10 @@ export function Text(props: TextProps) {
     selectText ? { userSelect: 'text' } : {}
   );
   const $style = Object.assign({}, $textStyle, $styleOverride);
+  const textUse = props.digital? showLongNumber(text): text;
   return (
     <BaseView style={$style} {...rest}>
-      {disableTranslate ? <span translate="no">{text}</span> : text}
+      {disableTranslate ? <span translate="no">{textUse}</span> : textUse}
     </BaseView>
   );
 }

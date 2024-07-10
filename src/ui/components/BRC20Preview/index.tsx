@@ -71,7 +71,7 @@ export default function BRC20Preview({
     <Column
       style={{
         backgroundColor: colors.bg4,
-        width,
+        // width,
         height,
         minWidth: width,
         minHeight: height,
@@ -99,7 +99,7 @@ export default function BRC20Preview({
         }}
         justifyCenter
         bg={bg}>
-        <Text text={balance} size={balanceSize as any} textCenter wrap />
+        <Text text={balance} size={balanceSize as any} textCenter wrap digital/>
       </Column>
 
       <Column px="sm" pb="sm" gap="sm" py="sm">
