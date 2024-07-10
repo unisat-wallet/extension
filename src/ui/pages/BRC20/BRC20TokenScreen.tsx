@@ -204,6 +204,7 @@ export default function BRC20TokenScreen() {
                   balance={v.amount}
                   inscriptionNumber={v.inscriptionNumber}
                   timestamp={v.timestamp}
+                  confirmations={v.confirmations}
                   type="TRANSFER"
                   onClick={async () => {
                     try {
