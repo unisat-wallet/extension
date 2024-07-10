@@ -6,6 +6,7 @@ import { Column } from '../Column';
 import { Row } from '../Row';
 import { RunesTicker } from '../RunesTicker';
 import { Text } from '../Text';
+import { showLongNumber } from '@/ui/utils';
 
 export interface RunesBalanceCardProps {
   tokenBalance: RuneBalance;
@@ -18,6 +19,8 @@ export default function RunesBalanceCard(props: RunesBalanceCardProps) {
   let str = balance.toString();
   if (balance.lt(0.0001)) {
     str = '<0.0001';
+  }else {
+    str = showLongNumber(balance.toString())
   }
   return (
     <Card

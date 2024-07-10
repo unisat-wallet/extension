@@ -10,7 +10,7 @@ import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useBlockstreamUrl, useOrdinalsWebsite, useUnisatWebsite } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
-import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
+import { copyToClipboard, showLongNumber, useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
@@ -126,6 +126,7 @@ export default function RunesTokenScreen() {
                 textCenter
                 size="xxl"
                 wrap
+                digital
               />
               <BRC20Ticker tick={tokenSummary.runeBalance.symbol} preset="lg" />
             </Row>
@@ -177,32 +178,32 @@ export default function RunesTokenScreen() {
           <Column gap="lg">
             <Section title="runeid" value={tokenSummary.runeInfo.runeid} />
 
-            <Section title="mints" value={tokenSummary.runeInfo.mints} />
+            <Section title="mints" value={showLongNumber(tokenSummary.runeInfo.mints)} />
 
             <Section
               title="supply"
-              value={`${runesUtils.toDecimalAmount(tokenSummary.runeInfo.supply, tokenSummary.runeInfo.divisibility)} ${
+              value={`${showLongNumber(runesUtils.toDecimalAmount(tokenSummary.runeInfo.supply, tokenSummary.runeInfo.divisibility))} ${
                 tokenSummary.runeInfo.symbol
               }`}
             />
 
             <Section
               title="premine"
-              value={`${runesUtils.toDecimalAmount(
+              value={`${ showLongNumber(runesUtils.toDecimalAmount(
                 tokenSummary.runeInfo.premine,
                 tokenSummary.runeInfo.divisibility
-              )} ${tokenSummary.runeInfo.symbol}`}
+              ))} ${tokenSummary.runeInfo.symbol}`}
             />
 
-            <Section title="burned" value={tokenSummary.runeInfo.burned} />
+            <Section title="burned" value={showLongNumber(tokenSummary.runeInfo.burned)} />
 
             <Section title="divisibility" value={tokenSummary.runeInfo.divisibility} />
 
             <Section title="symbol" value={tokenSummary.runeInfo.symbol} />
 
-            <Section title="holders" value={tokenSummary.runeInfo.holders} />
+            <Section title="holders" value={showLongNumber(tokenSummary.runeInfo.holders)} />
 
-            <Section title="transactions" value={tokenSummary.runeInfo.transactions} />
+            <Section title="transactions" value={showLongNumber(tokenSummary.runeInfo.transactions)} />
 
             <Section
               title="etching"

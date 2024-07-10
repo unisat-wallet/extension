@@ -17,7 +17,7 @@ import {
   useRunesTx
 } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
-import { isValidAddress } from '@/ui/utils';
+import { isValidAddress, showLongNumber } from '@/ui/utils';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 export default function SendRunesScreen() {
@@ -170,7 +170,7 @@ export default function SendRunesScreen() {
       <Content>
         <Row justifyCenter>
           <Text
-            text={`${runesUtils.toDecimalAmount(runeBalance.amount, runeBalance.divisibility)} ${runeInfo.symbol}`}
+            text={`${showLongNumber(runesUtils.toDecimalAmount(runeBalance.amount, runeBalance.divisibility))} ${runeInfo.symbol}`}
             preset="bold"
             textCenter
             size="xxl"
@@ -200,7 +200,7 @@ export default function SendRunesScreen() {
               }}>
               <Text text="MAX" preset="sub" style={{ color: colors.white_muted }} />
               <Text
-                text={`${runesUtils.toDecimalAmount(availableBalance, runeBalance.divisibility)} ${runeInfo.symbol}`}
+                text={`${showLongNumber(runesUtils.toDecimalAmount(availableBalance, runeBalance.divisibility))} ${runeInfo.symbol}`}
                 preset="bold"
                 size="sm"
                 wrap
@@ -210,7 +210,6 @@ export default function SendRunesScreen() {
           <Input
             preset="amount"
             placeholder={'Amount'}
-            defaultValue={inputAmount.toString()}
             value={inputAmount.toString()}
             onAmountInputChange={(amount) => {
               setInputAmount(amount);
