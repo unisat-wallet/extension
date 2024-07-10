@@ -12,7 +12,7 @@ import {
   AddressTokenSummary,
   AppSummary,
   Arc20Balance,
-  BitcoinBalance,
+  BitcoinBalance, BtcChannelItem,
   DecodedPsbt,
   FeeSummary,
   InscribeOrder,
@@ -363,7 +363,7 @@ export interface WalletController {
     outputValue?: number;
   }): Promise<string>;
 
-  getBuyBtcChannelList(): Promise<{ channel: string }[]>;
+  getBuyBtcChannelList(): Promise<BtcChannelItem[]>;
 }
 
 const WalletContext = createContext<{

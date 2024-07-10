@@ -1,4 +1,4 @@
-import { CHAINS_ENUM } from './constant';
+import { CHAINS_ENUM, PaymentChannelType } from './constant';
 
 export enum AddressType {
   P2PKH,
@@ -212,6 +212,7 @@ export interface ToSignInput {
   publicKey: string;
   sighashTypes?: number[];
 }
+
 export type WalletKeyring = {
   key: string;
   index: number;
@@ -273,6 +274,7 @@ export enum TokenInscriptionType {
   INSCRIBE_TRANSFER,
   INSCRIBE_MINT
 }
+
 export interface TokenTransfer {
   ticker: string;
   amount: string;
@@ -434,4 +436,10 @@ export interface AddressRunesTokenSummary {
   runeInfo: RuneInfo;
   runeBalance: RuneBalance;
   runeLogo?: Inscription;
+}
+
+export interface BtcChannelItem {
+  channel: PaymentChannelType;
+  quote: number;
+  payType: string[];
 }
