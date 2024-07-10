@@ -112,10 +112,18 @@ export default function SettingsTabScreen() {
   useEffect(() => {
     const run = async () => {
       const res = await getCurrentTab();
-      if (!res) return;
-      const site = await wallet.getCurrentConnectedSite(res.id);
-      if (site) {
-        setConnected(site.isConnected);
+      if (!res || !res.url) return;
+
+      const origin = new URL(res.url).origin;
+
+      if (origin === 'https://unisat.io') {
+        setConnected(true);
+      } else {
+        const sites = await wallet.getConnectedSites();
+
+        if (sites.find(i => i.origin === origin)) {
+          setConnected(true);
+        }
       }
     };
     run();
