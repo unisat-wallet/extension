@@ -15,6 +15,7 @@ export interface BRC20PreviewProps {
   selectable?: boolean;
   onClick?: () => void;
   preset?: 'small' | 'medium' | 'large';
+  confirmations?: number;
 }
 
 export default function BRC20Preview({
@@ -25,8 +26,10 @@ export default function BRC20Preview({
   type,
   selected,
   onClick,
-  preset
+  preset,
+  confirmations
 }: BRC20PreviewProps) {
+
   if (!balance) {
     balance = 'Deploy';
   }
@@ -101,7 +104,7 @@ export default function BRC20Preview({
 
       <Column px="sm" pb="sm" gap="sm" py="sm">
         <Row itemsCenter justifyCenter>
-          <Text text={`#${inscriptionNumber}`} color="primary" size={numberSize} />
+          <Text text={confirmations===0? 'Unconfirmed': `#${inscriptionNumber}`} color="primary" size={numberSize} />
         </Row>
       </Column>
     </Column>

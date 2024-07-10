@@ -281,6 +281,8 @@ export interface TokenTransfer {
   inscriptionId: string;
   inscriptionNumber: number;
   timestamp: number;
+  confirmations: number;
+  satoshi: number;
 }
 
 export interface AddressTokenSummary {
