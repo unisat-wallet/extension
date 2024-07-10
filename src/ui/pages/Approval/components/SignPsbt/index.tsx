@@ -196,7 +196,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
   const inscriptionArray = Object.values(txInfo.decodedPsbt.inscriptions);
   const arc20Array = Object.keys(arc20Map).map((v) => ({ ticker: v, amt: arc20Map[v] }));
 
-  const brc20Array: { tick: string; amt: string; inscriptionNumber: number }[] = [];
+  const brc20Array: { tick: string; amt: string; inscriptionNumber: number,preview:string }[] = [];
   txInfo.decodedPsbt.inputInfos.forEach((v) => {
     v.inscriptions.forEach((w) => {
       const inscriptionInfo = txInfo.decodedPsbt.inscriptions[w.inscriptionId];
@@ -204,7 +204,8 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
         brc20Array.push({
           tick: inscriptionInfo.brc20.tick,
           amt: inscriptionInfo.brc20.amt,
-          inscriptionNumber: w.inscriptionNumber
+          inscriptionNumber: w.inscriptionNumber,
+          preview: inscriptionInfo.preview,
         });
       }
     });
@@ -245,7 +246,14 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
 
               <Row overflowX>
                 {inscriptionArray.map((inscription, index) => {
-                  return <InscriptionPreview key={'inscription_' + index} data={inscription} preset="small" />;
+                  return <InscriptionPreview
+                    key={'inscription_' + index}
+                    data={inscription}
+                    preset="small"
+                    onClick={()=>{
+                      window.open(inscription.preview);
+                    }}
+                  />;
                 })}
               </Row>
             </Column>
@@ -301,6 +309,9 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
                       balance={w.amt}
                       type="TRANSFER"
                       inscriptionNumber={w.inscriptionNumber}
+                      onClick={()=>{
+                        window.open(w.preview);
+                      }}
                     />
                   );
                 })}
@@ -580,7 +591,7 @@ export default function SignPsbt({
     }
 
     const decodedPsbt = await wallet.decodePsbt(psbtHex, session?.origin || '');
-
+    
     let toSignInputs: ToSignInput[] = [];
     if (type === TxType.SEND_BITCOIN || type === TxType.SEND_ORDINALS_INSCRIPTION) {
       toSignInputs = decodedPsbt.inputInfos.map((v, index) => ({
@@ -837,7 +848,7 @@ export default function SignPsbt({
                                         data={txInfo.decodedPsbt.inscriptions[w.inscriptionId]}
                                         preset="small"
                                         onClick={() => {
-                                          window.open(w.preview);
+                                          window.open(txInfo.decodedPsbt.inscriptions[w.inscriptionId]?.preview);
                                         }}
                                       />
                                     ))}
@@ -926,7 +937,7 @@ export default function SignPsbt({
                             </Row>
                           </Column>
 
-                          {canChanged === false && inscriptions.length > 0 && (
+                          {!canChanged && inscriptions.length > 0 && (
                             <Row>
                               <Column justifyCenter>
                                 <Text
@@ -940,7 +951,7 @@ export default function SignPsbt({
                                       data={txInfo.decodedPsbt.inscriptions[w.inscriptionId]}
                                       preset="small"
                                       onClick={() => {
-                                        window.open(w.preview);
+                                        window.open(txInfo.decodedPsbt.inscriptions[w.inscriptionId]?.preview);
                                       }}
                                     />
                                   ))}
