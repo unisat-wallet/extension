@@ -12,7 +12,7 @@ import {
   AddressTokenSummary,
   AppSummary,
   Arc20Balance,
-  BitcoinBalance, BtcChannelItem,
+  BitcoinBalance, BtcChannelItem, BtcPrice,
   DecodedPsbt,
   FeeSummary,
   InscribeOrder,
@@ -211,6 +211,7 @@ export interface WalletController {
 
   setAccountAlianName(account: Account, name: string): Promise<Account>;
   getFeeSummary(): Promise<FeeSummary>;
+  getBtcPrice(): Promise<number>;
 
   setEditingKeyring(keyringIndex: number): Promise<void>;
   getEditingKeyring(): Promise<WalletKeyring>;

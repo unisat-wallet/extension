@@ -33,8 +33,9 @@ import {
 } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
-import { copyToClipboard, satoshisToAmount, shortAddress, useApproval, useWallet } from '@/ui/utils';
+import { amountToSatoshis, copyToClipboard, satoshisToAmount, shortAddress, useApproval, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
+import { BtcUsd } from '@/ui/components/BtcUsd';
 
 interface Props {
   header?: React.ReactNode;
@@ -74,6 +75,7 @@ interface Props {
   handleCancel?: () => void;
   handleConfirm?: (rawTxInfo?: RawTxInfo) => void;
 }
+
 interface InputInfo {
   txid: string;
   vout: number;
@@ -196,7 +198,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
   const inscriptionArray = Object.values(txInfo.decodedPsbt.inscriptions);
   const arc20Array = Object.keys(arc20Map).map((v) => ({ ticker: v, amt: arc20Map[v] }));
 
-  const brc20Array: { tick: string; amt: string; inscriptionNumber: number,preview:string }[] = [];
+  const brc20Array: { tick: string; amt: string; inscriptionNumber: number, preview: string }[] = [];
   txInfo.decodedPsbt.inputInfos.forEach((v) => {
     v.inscriptions.forEach((w) => {
       const inscriptionInfo = txInfo.decodedPsbt.inscriptions[w.inscriptionId];
@@ -205,7 +207,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
           tick: inscriptionInfo.brc20.tick,
           amt: inscriptionInfo.brc20.amt,
           inscriptionNumber: w.inscriptionNumber,
-          preview: inscriptionInfo.preview,
+          preview: inscriptionInfo.preview
         });
       }
     });
@@ -250,7 +252,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
                     key={'inscription_' + index}
                     data={inscription}
                     preset="small"
-                    onClick={()=>{
+                    onClick={() => {
                       window.open(inscription.preview);
                     }}
                   />;
@@ -309,7 +311,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
                       balance={w.amt}
                       type="TRANSFER"
                       inscriptionNumber={w.inscriptionNumber}
-                      onClick={()=>{
+                      onClick={() => {
                         window.open(w.preview);
                       }}
                     />
@@ -366,6 +368,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
                         size="xxl"
                       />
                       <Text text="BTC" color="textDim" />
+                      <BtcUsd sats={Math.abs(receivingSatoshis - sendingSatoshis)} bracket/>
                     </Row>
                   </Column>
                 </Column>
@@ -422,7 +425,12 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
                 <Text text={'Spend Amount'} textCenter color="textDim" />
 
                 <Column justifyCenter>
-                  <Text text={spendAmount} color="white" preset="bold" textCenter size="xxl" />
+                  <Row itemsCenter>
+                    <Text text={spendAmount} color="white" preset="bold" textCenter size="xxl" />
+                    <BtcUsd sats={spendSatoshis} textCenter bracket />
+                  </Row>
+
+
                   {sendingInscriptionSaotoshis > 0 && (
                     <Text text={`${sendingInscriptionAmount} (in inscriptions)`} preset="sub" textCenter />
                   )}
@@ -438,10 +446,13 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
   );
 }
 
-function Section({ title, children }: { title: string; children?: React.ReactNode }) {
+function Section({ title, children,extra }: { title: string; children?: React.ReactNode,extra?:React.ReactNode }) {
   return (
     <Column>
-      <Text text={title} preset="bold" />
+      <Row justifyBetween>
+        <Text text={title} preset="bold" />
+        {extra}
+      </Row>
       <Card>
         <Row full justifyBetween itemsCenter>
           {children}
@@ -485,14 +496,23 @@ const initTxInfo: TxInfo = {
 };
 
 export default function SignPsbt({
-  params: {
-    data: { psbtHex, options, type, sendBitcoinParams, sendInscriptionParams, sendRunesParams, rawTxInfo, ...rest },
-    session
-  },
-  header,
-  handleCancel,
-  handleConfirm
-}: Props) {
+                                   params: {
+                                     data: {
+                                       psbtHex,
+                                       options,
+                                       type,
+                                       sendBitcoinParams,
+                                       sendInscriptionParams,
+                                       sendRunesParams,
+                                       rawTxInfo,
+                                       ...rest
+                                     },
+                                     session
+                                   },
+                                   header,
+                                   handleCancel,
+                                   handleConfirm
+                                 }: Props) {
   const [getApproval, resolveApproval, rejectApproval] = useApproval();
 
   const [txInfo, setTxInfo] = useState<TxInfo>(initTxInfo);
@@ -752,7 +772,7 @@ export default function SignPsbt({
         <Column gap="xl">
           {detailsComponent}
           {canChanged == false && (
-            <Section title="Network Fee:">
+            <Section title="Network Fee:" extra={<BtcUsd sats={amountToSatoshis(networkFee)}/>}>
               <Text text={networkFee} />
               <Text text="BTC" color="textDim" />
             </Section>

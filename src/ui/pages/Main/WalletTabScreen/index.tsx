@@ -35,6 +35,7 @@ import { SwitchChainModal } from '../../Settings/SwitchChainModal';
 import { AtomicalsTab } from './AtomicalsTab';
 import { OrdinalsTab } from './OrdinalsTab';
 import { RunesList } from './RunesList';
+import { BtcUsd } from '@/ui/components/BtcUsd';
 
 const $noBreakStyle: CSSProperties = {
   whiteSpace: 'nowrap',
@@ -242,9 +243,10 @@ export default function WalletTabScreen() {
             overlayStyle={{
               fontSize: fontSizes.xs
             }}>
-            <div>
+            <Column itemsCenter>
               <Text text={balanceValue + '  BTC'} preset="title-bold" textCenter size="xxxl" />
-            </div>
+              <BtcUsd sats={amountToSatoshis(balanceValue)} textCenter size={'md'}/>
+            </Column>
           </Tooltip>
 
           <Row itemsCenter justifyCenter>

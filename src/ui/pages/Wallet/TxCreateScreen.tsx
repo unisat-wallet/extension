@@ -19,6 +19,7 @@ import {
 import { useUiTxCreateScreen, useUpdateUiTxCreateScreen } from '@/ui/state/ui/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { amountToSatoshis, isValidAddress, satoshisToAmount } from '@/ui/utils';
+import { BtcUsd } from '@/ui/components/BtcUsd';
 
 export default function TxCreateScreen() {
   const accountBalance = useAccountBalance();
@@ -160,7 +161,10 @@ export default function TxCreateScreen() {
         </Column>
 
         <Column mt="lg">
-          <Text text="Transfer amount" preset="regular" color="textDim" />
+          <Row justifyBetween>
+            <Text text="Transfer amount" preset="regular" color="textDim" />
+            <BtcUsd sats={toSatoshis}/>
+          </Row>
           <Input
             preset="amount"
             placeholder={'Amount'}

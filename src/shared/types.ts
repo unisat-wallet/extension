@@ -143,6 +143,11 @@ export interface FeeSummary {
   }[];
 }
 
+export interface BtcPrice {
+  price: number;
+  updateTime: number;
+}
+
 export interface UTXO {
   txid: string;
   vout: number;

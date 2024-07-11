@@ -8,7 +8,7 @@ import {
   AddressTokenSummary,
   AppSummary,
   Arc20Balance,
-  BitcoinBalance,
+  BitcoinBalance, BtcPrice,
   DecodedPsbt,
   FeeSummary,
   InscribeOrder,
@@ -249,6 +249,34 @@ export class OpenApiService {
 
   async getFeeSummary(): Promise<FeeSummary> {
     return this.httpGet('/v5/default/fee-summary', {});
+  }
+
+  private btcPriceCache: number | null = null;
+  private btcPriceUpdateTime = 0;
+
+  async refreshBtcPrice() {
+    const result: BtcPrice = await this.httpGet('/v5/default/btc-price', {});
+    // test
+    // const result: BtcPrice = await Promise.resolve({ price: 58145.19716040577, updateTime: 1634160000000 });
+
+    this.btcPriceCache = result.price;
+    this.btcPriceUpdateTime = Date.now();
+
+    return result.price;
+  }
+
+  async getBtcPrice(): Promise<number> {
+    //   30s cache
+    if (this.btcPriceCache && Date.now() - this.btcPriceUpdateTime < 30 * 1000) {
+      return this.btcPriceCache;
+    }
+    // 40s return cache and refresh
+    if (this.btcPriceCache && Date.now() - this.btcPriceUpdateTime < 40 * 1000) {
+      this.refreshBtcPrice().then();
+      return this.btcPriceCache;
+    }
+
+    return this.refreshBtcPrice();
   }
 
   async getDomainInfo(domain: string): Promise<Inscription> {

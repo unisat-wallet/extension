@@ -6,7 +6,7 @@ import { typography } from '@/ui/theme/typography';
 import { BaseView, BaseViewProps } from '../BaseView';
 import { showLongNumber } from '@/ui/utils';
 
-type Sizes = keyof typeof $sizeStyles;
+export type Sizes = keyof typeof $sizeStyles;
 type Presets = keyof typeof $presets;
 
 export const $sizeStyles = {

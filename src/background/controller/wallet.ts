@@ -1370,6 +1370,10 @@ export class WalletController extends BaseController {
     return openapiService.getFeeSummary();
   };
 
+  getBtcPrice = async () => {
+    return openapiService.getBtcPrice();
+  };
+
   inscribeBRC20Transfer = (address: string, tick: string, amount: string, feeRate: number, outputValue: number) => {
     return openapiService.inscribeBRC20Transfer(address, tick, amount, feeRate, outputValue);
   };
