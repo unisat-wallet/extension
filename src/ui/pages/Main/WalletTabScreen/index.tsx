@@ -243,11 +243,13 @@ export default function WalletTabScreen() {
             overlayStyle={{
               fontSize: fontSizes.xs
             }}>
-            <Column itemsCenter>
+            <div>
               <Text text={balanceValue + '  BTC'} preset="title-bold" textCenter size="xxxl" />
-              <BtcUsd sats={amountToSatoshis(balanceValue)} textCenter size={'md'}/>
-            </Column>
+            </div>
           </Tooltip>
+          <BtcUsd sats={amountToSatoshis(balanceValue)} textCenter size={'md'} style={{
+            marginTop:-16,marginBottom:-8
+          }}/>
 
           <Row itemsCenter justifyCenter>
             <AddressBar />
