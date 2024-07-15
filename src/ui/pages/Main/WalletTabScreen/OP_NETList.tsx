@@ -121,15 +121,18 @@ export function OP_NETList() {
           <>
             {tokens.map((data, index) => {
               return (
-                <OpNetBalanceCard
-                  key={index}
-                  tokenBalance={data}
-                  onClick={() => {
-                    navigate('OpNetTokenScreen', {
-                      address: data.address
-                    });
-                  }}
-                />
+                <>
+                  <OpNetBalanceCard
+                    key={index}
+                    tokenBalance={data}
+                    onClick={() => {
+                      navigate('OpNetTokenScreen', {
+                        address: data.address
+                      });
+                    }}
+                  />
+                  <br />
+                </>
               );
             })}
           </>

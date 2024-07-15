@@ -251,16 +251,6 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
     unisatUrl: 'https://testnet.unisat.io',
     ordinalsUrl: 'https://testnet.ordinals.com'
   },
-  [ChainType.FRACTAL_BITCOIN_MAINNET]: {
-    enum: ChainType.FRACTAL_BITCOIN_MAINNET,
-    label: 'Fractal Bitcoin (Beta)',
-    icon: './images/artifacts/fractalbitcoin-mainnet.png',
-    networkType: NetworkType.MAINNET,
-    endpoints: ['https://wallet-api-fractalbitcoin.unisat.space'],
-    mempoolSpaceUrl: 'https://fractalbitcoin-mempool.unisat.io',
-    unisatUrl: 'https://fractalbitcoin.unisat.io',
-    ordinalsUrl: 'https://fractalbitcoin-ordinals.unisat.io'
-  },
   [ChainType.BITCOIN_REGTEST]: {
     enum: ChainType.BITCOIN_REGTEST,
     label: 'Bitcoin Opnet Regtest',
@@ -270,6 +260,16 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
     mempoolSpaceUrl: 'https://opnet.mempool.space',
     unisatUrl: 'https://unisat.io',
     ordinalsUrl: 'https://ordinals.com'
+  },
+  [ChainType.FRACTAL_BITCOIN_MAINNET]: {
+    enum: ChainType.FRACTAL_BITCOIN_MAINNET,
+    label: 'Fractal Bitcoin (Beta)',
+    icon: './images/artifacts/fractalbitcoin-mainnet.png',
+    networkType: NetworkType.MAINNET,
+    endpoints: ['https://wallet-api-fractalbitcoin.unisat.space'],
+    mempoolSpaceUrl: 'https://fractalbitcoin-mempool.unisat.io',
+    unisatUrl: 'https://fractalbitcoin.unisat.io',
+    ordinalsUrl: 'https://fractalbitcoin-ordinals.unisat.io'
   }
 };
 

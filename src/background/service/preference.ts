@@ -43,8 +43,6 @@ export interface PreferenceStore {
   addressType: AddressType;
   networkType: NetworkType;
   chainType: ChainType;
-  //edit this ycry
-  networkType: any;
   keyringAlianNames: {
     [key: string]: string;
   };

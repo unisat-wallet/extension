@@ -18,6 +18,8 @@ interface LocationState {
 }
 
 export default function OpNetTokenScreen() {
+  const navigate = useNavigate();
+
   const { address } = useLocationState<LocationState>();
   const [tokenSummary, setTokenSummary] = useState<any>({
     opNetBalance: {
@@ -28,7 +30,15 @@ export default function OpNetTokenScreen() {
       divisibility: 0
     }
   });
-
+  const [btcBalance, setBtcBalance] = useState<any>({
+    opNetBalance: {
+      address: '',
+      name: '',
+      symbol: '',
+      amount: '',
+      divisibility: 0
+    }
+  });
   const wallet = useWallet();
 
   const account = useCurrentAccount();
@@ -38,11 +48,18 @@ export default function OpNetTokenScreen() {
   useEffect(() => {
     const getAddress = async () => {
       const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
-
+      const btcbalanceGet = await provider.getBalance(account.address);
       const contract: IOP_20Contract = getContract<IOP_20Contract>(address, OP_20_ABI, provider);
       const contracName = await contract.name();
       const divisibility = await contract.decimals();
       const balance = await contract.balanceOf(account.address);
+      setBtcBalance({
+        address: '',
+        amount: btcbalanceGet,
+        divisibility: 8,
+        symbol: '',
+        name: 'Bitcoin'
+      });
       if ('error' in balance || 'error' in contracName || 'error' in divisibility) {
         console.log(balance);
       } else {
@@ -63,8 +80,6 @@ export default function OpNetTokenScreen() {
     };
     getAddress();
   }, [account.address]);
-
-  const navigate = useNavigate();
 
   const unisatWebsite = useUnisatWebsite();
 
@@ -117,17 +132,37 @@ export default function OpNetTokenScreen() {
             </Row>
 
             <Row justifyBetween mt="lg">
-              {/* <Button
-                text="Mint"
-                preset="primary"
-                style={!enableMint ? { backgroundColor: 'grey' } : {}}
-                disabled={!enableMint}
-                icon="pencil"
-                onClick={(e) => {
-                  window.open(`${unisatWebsite}/runes/inscribe?tab=mint&rune=${tokenSummary.runeInfo.rune}`);
-                }}
-                full
-              /> */}
+              {tokenSummary.opNetBalance.address == 'bcrt1q99qtptumw027cw8w274tqzd564q66u537vn0lh' &&
+              btcBalance.divisibility == 8 ? (
+                <>
+                  <Button
+                    text="Wrap Bitcoin"
+                    preset="primary"
+                    icon="pencil"
+                    onClick={(e) => {
+                      console.log(btcBalance);
+                      navigate('WrapBitcoinOpnet', {
+                        OpNetBalance: btcBalance
+                      });
+                    }}
+                    full
+                  />
+                  <Button
+                    text="Un Wrap Bitcoin"
+                    preset="primary"
+                    icon="pencil"
+                    onClick={(e) => {
+                      console.log(btcBalance);
+                      navigate('UnWrapBitcoinOpnet', {
+                        OpNetBalance: tokenSummary.opNetBalance
+                      });
+                    }}
+                    full
+                  />
+                </>
+              ) : (
+                <></>
+              )}
 
               <Button
                 text="Send"

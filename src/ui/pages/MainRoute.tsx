@@ -35,6 +35,8 @@ import WalletTabScreen from './Main/WalletTabScreen';
 import WelcomeScreen from './Main/WelcomeScreen';
 import OpNetTokenScreen from './OpNet/OpNetTokenScreen';
 import SendOpNetScreen from './OpNet/SendOpNetScreen';
+import UnWrapBitcoinOpnet from './OpNet/UnWrapBitcoinOpnet';
+import WrapBitcoinOpnet from './OpNet/WrapBitcoinOpnet';
 import OrdinalsInscriptionScreen from './Ordinals/OrdinalsInscriptionScreen';
 import SendOrdinalsInscriptionScreen from './Ordinals/SendOrdinalsInscriptionScreen';
 import SignOrdinalsTransactionScreen from './Ordinals/SignOrdinalsTransactionScreen';
@@ -56,6 +58,7 @@ import ReceiveScreen from './Wallet/ReceiveScreen';
 import TxConfirmScreen from './Wallet/TxConfirmScreen';
 import TxCreateScreen from './Wallet/TxCreateScreen';
 import TxFailScreen from './Wallet/TxFailScreen';
+import TxOpnetConfirmScreen from './Wallet/TxOpnetConfirmScreen';
 import TxSuccessScreen from './Wallet/TxSuccessScreen';
 import UnavailableUtxoScreen from './Wallet/UnavailableUtxoScreen';
 import './index.module.less';
@@ -117,6 +120,10 @@ const routes = {
   TxConfirmScreen: {
     path: '/wallet/tx/confirm',
     element: <TxConfirmScreen />
+  },
+  TxOpnetConfirmScreen: {
+    path: '/wallet/tx/confirm-opnet',
+    element: <TxOpnetConfirmScreen />
   },
   TxSuccessScreen: {
     path: '/wallet/tx/success',
@@ -261,6 +268,14 @@ const routes = {
   SendOpNetScreen: {
     path: '/opnet/send-opnet',
     element: <SendOpNetScreen />
+  },
+  WrapBitcoinOpnet: {
+    path: '/opnet/wrap-opnet',
+    element: <WrapBitcoinOpnet />
+  },
+  UnWrapBitcoinOpnet: {
+    path: '/opnet/unwrap-opnet',
+    element: <UnWrapBitcoinOpnet />
   }
 };
 
@@ -268,9 +283,11 @@ type RouteTypes = keyof typeof routes;
 
 export function useNavigate() {
   const navigate = useNavigateOrigin();
+
   return useCallback(
     (routKey: RouteTypes, state?: any) => {
       navigate(routes[routKey].path, { state });
+      console.log(routes[routKey].path, { state });
     },
     [useNavigateOrigin]
   );

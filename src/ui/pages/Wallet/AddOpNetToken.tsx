@@ -42,6 +42,7 @@ export const AddOpNetToken = ({ onClose }: { onClose: () => void }) => {
       parsedTokens = [tokenState];
     }
     localStorage.setItem('tokensImported', JSON.stringify(parsedTokens));
+    tools.toastSuccess('Added token');
   };
   useEffect(() => {
     tools.showLoading(true);
@@ -85,8 +86,6 @@ export const AddOpNetToken = ({ onClose }: { onClose: () => void }) => {
         preset="primary"
         text="Next"
         onClick={(e) => {
-          console.log(tokenState);
-
           saveToLocalStorage();
         }}></Button>
     </BottomModal>

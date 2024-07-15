@@ -165,7 +165,9 @@ export function amountToSatoshis(val: any) {
 }
 
 export function useLocationState<T>() {
+  const getData = useLocation();
   const { state } = useLocation();
+  console.log(getData);
   return state as T;
 }
 

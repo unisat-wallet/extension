@@ -17,7 +17,6 @@ import {
   useRunesTx
 } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
-import { isValidAddress, useWallet } from '@/ui/utils';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../MainRoute';
@@ -26,7 +25,7 @@ interface ItemData {
   key: string;
   account?: Account;
 }
-export default function SendOpNetScreen() {
+export default function WrapBitcoinOpnet() {
   const { state } = useLocation();
   const props = state as {
     OpNetBalance: opNetBalance;
@@ -78,7 +77,6 @@ export default function SendOpNetScreen() {
 
   const [feeRate, setFeeRate] = useState(5);
   const [enableRBF, setEnableRBF] = useState(false);
-  const wallet = useWallet();
   const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
   const keyring = useCurrentKeyring();
   const items = useMemo(() => {
@@ -95,9 +93,6 @@ export default function SendOpNetScreen() {
     setError('');
     setDisabled(true);
 
-    if (!isValidAddress(toInfo.address)) {
-      return;
-    }
     if (!inputAmount) {
       return;
     }
@@ -111,19 +106,19 @@ export default function SendOpNetScreen() {
     //   return;
     // }
 
-    if ((toInfo.address != '', inputAmount != '')) {
+    if (inputAmount != '') {
       //Prevent repeated triggering caused by setAmount
       setDisabled(false);
       return;
     }
-  }, [toInfo, inputAmount, feeRate, enableRBF]);
+  }, [inputAmount, feeRate, enableRBF]);
   return (
     <Layout>
       <Header
         onBack={() => {
           window.history.go(-1);
         }}
-        title={'Send ' + OpNetBalance.name}
+        title={'Wrap Bitcoin'}
       />
       <Content>
         <Row justifyCenter>
@@ -137,24 +132,12 @@ export default function SendOpNetScreen() {
         </Row>
 
         <Column mt="lg">
-          <Text text="Recipient" preset="regular" color="textDim" />
-          <Input
-            preset="address"
-            addressInputData={toInfo}
-            onAddressInputChange={(val) => {
-              setToInfo(val);
-            }}
-            autoFocus={true}
-          />
-        </Column>
-
-        <Column mt="lg">
           <Row justifyBetween>
-            <Text text="Balance" color="textDim" />
+            <Text text="Amount" color="textDim" />
             <Row
               itemsCenter
               onClick={() => {
-                setInputAmount(runesUtils.toDecimalAmount(availableBalance, OpNetBalance.divisibility));
+                setInputAmount(runesUtils.toDecimalAmount(OpNetBalance.amount.toString(), OpNetBalance.divisibility));
               }}>
               <Text text="MAX" preset="sub" style={{ color: colors.white_muted }} />
               <Text
@@ -236,7 +219,7 @@ export default function SendOpNetScreen() {
                 address: toInfo.address, // replace with actual address
                 feeRate: feeRate, // replace with actual feeRate
                 OpnetRateInputVal: OpnetRateInputVal, // replace with actual OpnetRateInputVal
-                header: 'Send Token', // replace with actual header
+                header: 'Wrap Bitcoin', // replace with actual header
                 networkFee: feeRate, // replace with actual networkFee
                 features: {
                   rbf: false // replace with actual rbf value
@@ -250,7 +233,7 @@ export default function SendOpNetScreen() {
                     spacedRune: OpNetBalance.name
                   }
                 ],
-                action: 'send' // replace with actual opneTokens
+                action: 'wrap' // replace with actual opneTokens
               }
             });
           }}></Button>

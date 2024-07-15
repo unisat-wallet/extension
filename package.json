@@ -30,7 +30,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@babel/core": "^7.16.0",
-    "@btc-vision/transaction": "1.0.43",
+    "@btc-vision/transaction": "1.0.44",
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-regular-svg-icons": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
@@ -92,7 +92,7 @@
     "lodash-es": "^4.17.21",
     "loglevel": "^1.8.0",
     "mini-css-extract-plugin": "^2.4.5",
-    "opnet": "^1.0.34",
+    "opnet": "1.0.37",
     "postcss": "^8.4.4",
     "postcss-flexbugs-fixes": "^5.0.2",
     "postcss-loader": "^6.2.1",
