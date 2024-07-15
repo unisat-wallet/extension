@@ -11,7 +11,7 @@ export function BtcUsd(props: {
   sats: number;
   color?: ColorTypes;
   size?: Sizes;
-  bracket?: boolean;
+  bracket?: boolean;  // ()
 } & TextProps) {
   const { sats, color = 'textDim', size = 'sm', bracket = false } = props;
   const wallet = useWallet();
@@ -61,7 +61,7 @@ export function BtcUsd(props: {
   }
 
   if (bracket) {
-    return <Text color={color} size={size} text={`($ ${usd})`} {...props} />;
+    return <Text color={color} size={size} text={`($${usd})`} {...props} />;
   }
-  return <Text color={color} size={size} text={`$ ${usd}`} {...props} />;
+  return <Text color={color} size={size} text={`$${usd}`} {...props} />;
 }

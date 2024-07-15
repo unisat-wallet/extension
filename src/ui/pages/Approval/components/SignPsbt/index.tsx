@@ -426,9 +426,9 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
 
                 <Column justifyCenter>
                   <Row itemsCenter>
-                    <Text text={spendAmount} color="white" preset="bold" textCenter size="xxl" />
-                    <BtcUsd sats={spendSatoshis} textCenter bracket />
+                    <Text text={spendAmount + ' BTC'} color="white" preset="bold" textCenter size="xxl" />
                   </Row>
+                  <BtcUsd sats={spendSatoshis} textCenter bracket style={{marginTop:-8}} />
 
 
                   {sendingInscriptionSaotoshis > 0 && (
