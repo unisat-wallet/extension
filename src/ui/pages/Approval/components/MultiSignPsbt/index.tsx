@@ -242,12 +242,6 @@ export default function MultiSignPsbt({
 
   if (!handleConfirm) {
     handleConfirm = () => {
-      if (txInfo.currentIndex < txInfo.psbtHexs.length - 1) {
-        updateTxInfo({
-          currentIndex: txInfo.currentIndex + 1
-        });
-        return;
-      }
       resolveApproval({
         psbtHexs: txInfo.psbtHexs
       });
@@ -257,12 +251,6 @@ export default function MultiSignPsbt({
   const originalHandleConfirm = handleConfirm;
   if (currentAccount.type === KEYRING_TYPE.KeystoneKeyring) {
     handleConfirm = () => {
-      if (txInfo.currentIndex < txInfo.psbtHexs.length - 1) {
-        updateTxInfo({
-          currentIndex: txInfo.currentIndex + 1
-        });
-        return;
-      }
       setIsKeystoneSigning(true);
     };
   }
