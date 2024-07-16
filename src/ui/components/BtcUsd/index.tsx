@@ -16,12 +16,14 @@ export function BtcUsd(props: {
   const { sats, color = 'textDim', size = 'sm', bracket = false } = props;
   const wallet = useWallet();
   const [shown, setShown] = useState(false);
+  const [showNoValue, setShowNoValue] = useState(false);
   const [loading, setLoading] = useState(false);
   const [price, setPrice] = useState(0);
 
   useEffect(() => {
     wallet.getChainType().then((chainType) => {
       setShown(chainType === ChainType.BITCOIN_MAINNET);
+      setShowNoValue(chainType === ChainType.BITCOIN_TESTNET);
     }).catch(() => null);
   }, []);
 
@@ -47,6 +49,12 @@ export function BtcUsd(props: {
     return new BigNumber(sats).dividedBy(1e8).multipliedBy(price).toFixed(2);
   }, [price, sats]);
 
+  if (showNoValue) {
+    if (bracket) {
+      return <Text color={color} size={size} text={'($0.00)'} {...props} />;
+    }
+    return <Text color={color} size={size} text={'$0.00'} {...props} />;
+  }
 
   if (!shown) {
     return <></>;
