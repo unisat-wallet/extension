@@ -6,6 +6,7 @@ import { BigNumber } from 'bignumber.js';
 import { Spin } from 'antd';
 import { Sizes, TextProps } from '@/ui/components/Text';
 import type { ColorTypes } from '@/ui/theme/colors';
+import { useChainType } from '@/ui/state/settings/hooks';
 
 export function BtcUsd(props: {
   sats: number;
@@ -14,18 +15,20 @@ export function BtcUsd(props: {
   bracket?: boolean;  // ()
 } & TextProps) {
   const { sats, color = 'textDim', size = 'sm', bracket = false } = props;
+
   const wallet = useWallet();
+  const chainType = useChainType();
+
   const [shown, setShown] = useState(false);
   const [showNoValue, setShowNoValue] = useState(false);
   const [loading, setLoading] = useState(false);
   const [price, setPrice] = useState(0);
 
+
   useEffect(() => {
-    wallet.getChainType().then((chainType) => {
-      setShown(chainType === ChainType.BITCOIN_MAINNET);
-      setShowNoValue(chainType === ChainType.BITCOIN_TESTNET);
-    }).catch(() => null);
-  }, []);
+    setShown(chainType === ChainType.BITCOIN_MAINNET);
+    setShowNoValue(chainType === ChainType.BITCOIN_TESTNET);
+  }, [chainType]);
 
   useEffect(() => {
     if (!shown) {

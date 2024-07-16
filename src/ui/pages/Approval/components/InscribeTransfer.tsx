@@ -292,6 +292,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
                           text={`${tokenBalance.availableBalanceSafe}  `}
                           textCenter
                           size="xs"
+                          digital
                           onClick={() => {
                             setInputAmount(tokenBalance.availableBalanceSafe);
                           }}
@@ -308,6 +309,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
                                 textCenter
                                 color="textDim"
                                 size="xs"
+                                digital
                               />
                               <Icon icon="circle-question" color="textDim" />
                             </Row>
@@ -322,7 +324,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
                         onClick={() => {
                           setInputAmount(tokenBalance.availableBalanceSafe);
                         }}>
-                        <Text text={`${tokenBalance.availableBalanceSafe}`} textCenter size="xs" />
+                        <Text text={`${tokenBalance.availableBalanceSafe}`} digital textCenter size="xs" />
 
                         <BRC20Ticker tick={tokenBalance.ticker} preset="sm" />
                       </Row>
@@ -434,7 +436,7 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
 
             <Column justifyCenter style={{ height: 250 }}>
               <Row itemsCenter justifyCenter>
-                <Text text={`${amount}`} preset="title-bold" size="xxl" textCenter wrap />
+                <Text text={`${amount}`} preset="title-bold" size="xxl" textCenter wrap digital/>
                 <BRC20Ticker tick={tokenBalance.ticker} preset="lg" />
               </Row>
 
