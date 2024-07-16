@@ -46,8 +46,14 @@ export function BtcUsd(props: {
   }, [shown]);
 
   const usd = useMemo(() => {
-    if (price <= 0 || sats <= 0) {
+    if(isNaN(sats)){
       return '-';
+    }
+    if (price <= 0) {
+      return '-';
+    }
+    if(sats<=0){
+      return '0.00'
     }
     return new BigNumber(sats).dividedBy(1e8).multipliedBy(price).toFixed(2);
   }, [price, sats]);
@@ -63,12 +69,12 @@ export function BtcUsd(props: {
     return <></>;
   }
 
-  if (!sats) {
+  if (isNaN(sats)) {
     return <></>;
   }
 
   if (loading) {
-    return <Spin />;
+    return <Spin size={'small'} />;
   }
 
   if (bracket) {

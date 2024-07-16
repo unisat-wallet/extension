@@ -1,7 +1,7 @@
 import { Tabs, Tooltip } from 'antd';
 import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 
-import { AddressFlagType, KEYRING_TYPE } from '@/shared/constant';
+import { AddressFlagType, ChainType, KEYRING_TYPE } from '@/shared/constant';
 import { checkAddressFlag } from '@/shared/utils';
 import { Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
@@ -19,6 +19,7 @@ import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import {
   useBlockstreamUrl,
   useChain,
+  useChainType,
   useSkipVersionCallback,
   useVersionInfo,
   useWalletConfig
@@ -47,6 +48,7 @@ export default function WalletTabScreen() {
 
   const accountBalance = useAccountBalance();
   const chain = useChain();
+  const chainType = useChainType();
 
   const currentKeyring = useCurrentKeyring();
   const currentAccount = useCurrentAccount();
@@ -248,8 +250,8 @@ export default function WalletTabScreen() {
             </div>
           </Tooltip>
           <BtcUsd sats={amountToSatoshis(balanceValue)} textCenter size={'md'} style={{
-            marginTop:-16,marginBottom:-8
-          }}/>
+            marginTop: -16, marginBottom: -8
+          }} />
 
           <Row itemsCenter justifyCenter>
             <AddressBar />
@@ -285,15 +287,18 @@ export default function WalletTabScreen() {
               }}
               full
             />
-            <Button
-              text="Buy"
-              preset="default"
-              icon="bitcoin"
-              onClick={(e) => {
-                setBuyBtcModalVisible(true);
-              }}
-              full
-            />
+            {
+              chainType === ChainType.BITCOIN_MAINNET &&
+              <Button
+                text="Buy"
+                preset="default"
+                icon="bitcoin"
+                onClick={(e) => {
+                  setBuyBtcModalVisible(true);
+                }}
+                full
+              />
+            }
           </Row>
 
           <Tabs
