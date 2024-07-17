@@ -182,20 +182,24 @@ export default function RunesTokenScreen() {
 
             <Section
               title="supply"
-              value={`${showLongNumber(runesUtils.toDecimalAmount(tokenSummary.runeInfo.supply, tokenSummary.runeInfo.divisibility))} ${
-                tokenSummary.runeInfo.symbol
-              }`}
+              value={`${showLongNumber(
+                runesUtils.toDecimalAmount(tokenSummary.runeInfo.supply, tokenSummary.runeInfo.divisibility)
+              )} ${tokenSummary.runeInfo.symbol}`}
             />
 
             <Section
               title="premine"
-              value={`${ showLongNumber(runesUtils.toDecimalAmount(
-                tokenSummary.runeInfo.premine,
-                tokenSummary.runeInfo.divisibility
-              ))} ${tokenSummary.runeInfo.symbol}`}
+              value={`${showLongNumber(
+                runesUtils.toDecimalAmount(tokenSummary.runeInfo.premine, tokenSummary.runeInfo.divisibility)
+              )} ${tokenSummary.runeInfo.symbol}`}
             />
 
-            <Section title="burned" value={showLongNumber(tokenSummary.runeInfo.burned)} />
+            <Section
+              title="burned"
+              value={`${showLongNumber(
+                runesUtils.toDecimalAmount(tokenSummary.runeInfo.burned, tokenSummary.runeInfo.divisibility)
+              )} ${tokenSummary.runeInfo.symbol}`}
+            />
 
             <Section title="divisibility" value={tokenSummary.runeInfo.divisibility} />
 
