@@ -19,6 +19,7 @@ import Arc20PreviewCard from '@/ui/components/Arc20PreviewCard';
 import AssetTag from '@/ui/components/AssetTag';
 import AtomicalsNFTPreview from '@/ui/components/AtomicalsNFTPreview';
 import BRC20Preview from '@/ui/components/BRC20Preview';
+import { BtcUsd } from '@/ui/components/BtcUsd';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import RunesPreviewCard from '@/ui/components/RunesPreviewCard';
 import { SignPsbtWithRisksPopover } from '@/ui/components/SignPsbtWithRisksPopover';
@@ -35,7 +36,6 @@ import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { amountToSatoshis, copyToClipboard, satoshisToAmount, shortAddress, useApproval, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
-import { BtcUsd } from '@/ui/components/BtcUsd';
 
 interface Props {
   header?: React.ReactNode;
@@ -198,7 +198,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
   const inscriptionArray = Object.values(txInfo.decodedPsbt.inscriptions);
   const arc20Array = Object.keys(arc20Map).map((v) => ({ ticker: v, amt: arc20Map[v] }));
 
-  const brc20Array: { tick: string; amt: string; inscriptionNumber: number, preview: string }[] = [];
+  const brc20Array: { tick: string; amt: string; inscriptionNumber: number; preview: string }[] = [];
   txInfo.decodedPsbt.inputInfos.forEach((v) => {
     v.inscriptions.forEach((w) => {
       const inscriptionInfo = txInfo.decodedPsbt.inscriptions[w.inscriptionId];
@@ -248,14 +248,16 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
 
               <Row overflowX>
                 {inscriptionArray.map((inscription, index) => {
-                  return <InscriptionPreview
-                    key={'inscription_' + index}
-                    data={inscription}
-                    preset="small"
-                    onClick={() => {
-                      window.open(inscription.preview);
-                    }}
-                  />;
+                  return (
+                    <InscriptionPreview
+                      key={'inscription_' + index}
+                      data={inscription}
+                      preset="small"
+                      onClick={() => {
+                        window.open(inscription.preview);
+                      }}
+                    />
+                  );
                 })}
               </Row>
             </Column>
@@ -368,7 +370,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
                         size="xxl"
                       />
                       <Text text="BTC" color="textDim" />
-                      <BtcUsd sats={Math.abs(receivingSatoshis - sendingSatoshis)} bracket/>
+                      <BtcUsd sats={Math.abs(receivingSatoshis - sendingSatoshis)} bracket />
                     </Row>
                   </Column>
                 </Column>
@@ -428,8 +430,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
                   <Row itemsCenter>
                     <Text text={spendAmount + ' BTC'} color="white" preset="bold" textCenter size="xxl" />
                   </Row>
-                  <BtcUsd sats={spendSatoshis} textCenter bracket style={{marginTop:-8}} />
-
+                  <BtcUsd sats={spendSatoshis} textCenter bracket style={{ marginTop: -8 }} />
 
                   {sendingInscriptionSaotoshis > 0 && (
                     <Text text={`${sendingInscriptionAmount} (in inscriptions)`} preset="sub" textCenter />
@@ -446,7 +447,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
   );
 }
 
-function Section({ title, children,extra }: { title: string; children?: React.ReactNode,extra?:React.ReactNode }) {
+function Section({ title, children, extra }: { title: string; children?: React.ReactNode; extra?: React.ReactNode }) {
   return (
     <Column>
       <Row justifyBetween>
@@ -496,23 +497,14 @@ const initTxInfo: TxInfo = {
 };
 
 export default function SignPsbt({
-                                   params: {
-                                     data: {
-                                       psbtHex,
-                                       options,
-                                       type,
-                                       sendBitcoinParams,
-                                       sendInscriptionParams,
-                                       sendRunesParams,
-                                       rawTxInfo,
-                                       ...rest
-                                     },
-                                     session
-                                   },
-                                   header,
-                                   handleCancel,
-                                   handleConfirm
-                                 }: Props) {
+  params: {
+    data: { psbtHex, options, type, sendBitcoinParams, sendInscriptionParams, sendRunesParams, rawTxInfo, ...rest },
+    session
+  },
+  header,
+  handleCancel,
+  handleConfirm
+}: Props) {
   const [getApproval, resolveApproval, rejectApproval] = useApproval();
 
   const [txInfo, setTxInfo] = useState<TxInfo>(initTxInfo);
@@ -613,7 +605,7 @@ export default function SignPsbt({
     const decodedPsbt = await wallet.decodePsbt(psbtHex, session?.origin || '');
 
     let toSignInputs: ToSignInput[] = [];
-    if (type === TxType.SEND_BITCOIN || type === TxType.SEND_ORDINALS_INSCRIPTION) {
+    if (type === TxType.SEND_BITCOIN || type === TxType.SEND_ORDINALS_INSCRIPTION || type === TxType.SEND_RUNES) {
       toSignInputs = decodedPsbt.inputInfos.map((v, index) => ({
         index,
         publicKey: currentAccount.pubkey
@@ -772,7 +764,7 @@ export default function SignPsbt({
         <Column gap="xl">
           {detailsComponent}
           {canChanged == false && (
-            <Section title="Network Fee:" extra={<BtcUsd sats={amountToSatoshis(networkFee)}/>}>
+            <Section title="Network Fee:" extra={<BtcUsd sats={amountToSatoshis(networkFee)} />}>
               <Text text={networkFee} />
               <Text text="BTC" color="textDim" />
             </Section>
