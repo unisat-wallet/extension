@@ -50,6 +50,7 @@ module.exports = {
     'no-use-before-define': 0,
     camelcase: 0,
     '@typescript-eslint/no-var-requires': 0,
+    '@typescript-eslint/ban-ts-comment': 0,
 
     'react/display-name': 0,
     'react/react-in-jsx-scope': 0,
