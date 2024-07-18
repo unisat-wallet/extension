@@ -92,7 +92,7 @@
     "lodash-es": "^4.17.21",
     "loglevel": "^1.8.0",
     "mini-css-extract-plugin": "^2.4.5",
-    "opnet": "1.0.37",
+    "opnet": "^1.0.37",
     "postcss": "^8.4.4",
     "postcss-flexbugs-fixes": "^5.0.2",
     "postcss-loader": "^6.2.1",

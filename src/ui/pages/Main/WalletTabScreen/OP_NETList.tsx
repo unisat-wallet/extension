@@ -57,8 +57,10 @@ export function OP_NETList() {
         const contract: IOP_20Contract = getContract<IOP_20Contract>(tokenAddress, OP_20_ABI, provider);
         const contracName = await contract.name();
         const divisibility = await contract.decimals();
+        const symbol = await contract.symbol();
+
         const balance = await contract.balanceOf(currentAccount.address);
-        if ('error' in balance || 'error' in contracName || 'error' in divisibility) {
+        if ('error' in balance || 'error' in contracName || 'error' in divisibility || 'error' in symbol) {
           console.log(balance);
         } else {
           console.log(balance);
@@ -67,7 +69,7 @@ export function OP_NETList() {
             name: contracName.decoded.toLocaleString(),
             amount: BigInt(balance.decoded[0].toString()),
             divisibility: parseInt(divisibility.decoded.toString()),
-            symbol: ''
+            symbol: symbol.decoded.toString()
           });
         }
       }

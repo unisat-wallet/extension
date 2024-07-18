@@ -11214,7 +11214,7 @@ open@^8.0.9, open@^8.4.0:
     is-docker "^2.1.1"
     is-wsl "^2.2.0"
 
-opnet@1.0.37:
+opnet@^1.0.37:
   version "1.0.37"
   resolved "https://registry.yarnpkg.com/opnet/-/opnet-1.0.37.tgz#a652c719ddb76e54b3fd9243221c862cf0fd11bd"
   integrity sha512-cHzmRZ0rSStlby99U/BvfxfnzPKONA+jftiqZh/SOCueOaZpAmfTG5sTdlBKGsLCqD+Rcb7mfwNtgkl3NQdmSw==
