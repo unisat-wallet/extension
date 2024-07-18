@@ -1,3 +1,6 @@
+import { networks } from 'bitcoinjs-lib';
+import { JSONRpcProvider } from 'opnet';
+
 import {
   contactBookService,
   keyringService,
@@ -37,6 +40,7 @@ import {
   WalletKeyring
 } from '@/shared/types';
 import { checkAddressFlag, getChainInfo } from '@/shared/utils';
+import { IInteractionParameters, TransactionFactory, Wallet } from '@btc-vision/transaction';
 import { UnspentOutput, txHelpers } from '@unisat/wallet-sdk';
 import { publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
 import { ECPair, bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
@@ -616,6 +620,46 @@ export class WalletController extends BaseController {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
     return keyringService.signMessage(account.pubkey, account.type, text);
+  };
+  signInteraction = async (interactionParameters: IInteractionParameters) => {
+    try {
+      const account = preferenceService.getCurrentAccount();
+      if (!account) throw new Error('no current account');
+      const factory: TransactionFactory = new TransactionFactory(); // Transaction factory
+      const wifWallet = await this.getInternalPrivateKey({ pubkey: account.pubkey, type: account.type } as Account);
+      if (!wifWallet) throw new Error('no current account');
+      console.log(interactionParameters);
+      const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, networks.regtest);
+      const interactionParametesSubmit: IInteractionParameters = {
+        from: interactionParameters.from, // From address
+        to: interactionParameters.to, // To address
+        utxos: interactionParameters.utxos, // UTXOs
+        signer: walletGet.keypair, // Signer
+        network: networks.regtest, // Network
+        feeRate: interactionParameters.feeRate, // Fee rate (satoshi per byte)
+        priorityFee: interactionParameters.priorityFee, // Priority fee (opnet)
+        calldata: Buffer.from(interactionParameters.calldata) // Calldata
+      };
+      const sendTransact = await factory.signInteraction(interactionParametesSubmit);
+      const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
+      const firstTransaction = await provider.sendRawTransaction(sendTransact[0], false);
+      if (!firstTransaction) {
+        throw new Error('Error in Broadcast');
+      } else {
+        console.log(`Broadcasted:`, firstTransaction);
+      }
+
+      // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
+      const secondTransaction = await provider.sendRawTransaction(sendTransact[1], false);
+      if (!secondTransaction) {
+        throw new Error('Error in Broadcast');
+      } else {
+        console.log(`Broadcasted:`, secondTransaction);
+      }
+      return [firstTransaction, secondTransaction];
+    } catch (e) {
+      console.log(e);
+    }
   };
 
   signBIP322Simple = async (text: string) => {

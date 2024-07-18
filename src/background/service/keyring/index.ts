@@ -6,6 +6,7 @@ import log from 'loglevel';
 
 import { ADDRESS_TYPES, KEYRING_TYPE } from '@/shared/constant';
 import { AddressType } from '@/shared/types';
+import { IInteractionParameters } from '@btc-vision/transaction';
 import { ObservableStore } from '@metamask/obs-store';
 import { keyring } from '@unisat/wallet-sdk';
 import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
@@ -60,6 +61,7 @@ export interface Keyring {
   addAccounts(n: number): Promise<string[]>;
   getAccounts(): Promise<string[]>;
   signTransaction(psbt: bitcoin.Psbt, inputs: ToSignInput[]): Promise<bitcoin.Psbt>;
+  signInteraction(interactionParameters: IInteractionParameters): Promise<any>;
   signMessage(address: string, message: string): Promise<string>;
   signData(address: string, data: string, type: string): Promise<string>;
   verifyMessage(address: string, message: string, sig: string): Promise<boolean>;
@@ -101,6 +103,10 @@ class EmptyKeyring implements Keyring {
   signTransaction(psbt: bitcoin.Psbt, inputs: ToSignInput[]): Promise<bitcoin.Psbt> {
     throw new Error('Method not implemented.');
   }
+  signInteraction(interactionParameters: IInteractionParameters): Promise<any> {
+    throw new Error('Method not implemented.');
+  }
+
   signMessage(address: string, message: string): Promise<string> {
     throw new Error('Method not implemented.');
   }
@@ -565,6 +571,10 @@ class KeyringService extends EventEmitter {
     return keyring.signTransaction(psbt, inputs);
   };
 
+  signInteraction = (address: string, keyringType: string, interactionParameters: IInteractionParameters) => {
+    console.log(true);
+    return true;
+  };
   /**
    * Sign Message
    *

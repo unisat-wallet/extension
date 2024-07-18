@@ -18,11 +18,15 @@ import {
   Wallet
 } from '@btc-vision/transaction';
 
+import { useNavigate } from '../MainRoute';
+
 interface LocationState {
   rawTxInfo: any;
 }
 
 export default function TxOpnetConfirmScreen() {
+  const navigate = useNavigate();
+
   const { rawTxInfo } = useLocationState<LocationState>();
   console.log(rawTxInfo);
   const handleCancel = () => {
@@ -93,11 +97,14 @@ export default function TxOpnetConfirmScreen() {
       if (!secondTxBroadcast) {
         throw new Error('Could not broadcast second transaction');
       }
+      tools.toastSuccess(`"You have sucessfully transferd ${amountToSend} Bitcoin"`);
+      navigate('TxSuccessScreen', { secondTxBroadcast });
       alert('Sent');
     } catch (e) {
       console.log(e);
     }
   };
+
   const handleWrapConfirm = async () => {
     const foundObject = rawTxInfo.items.find((obj) => obj.account && obj.account.address === rawTxInfo.account.address);
     const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
@@ -141,19 +148,22 @@ export default function TxOpnetConfirmScreen() {
     const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
     const firstTxBroadcast = await provider.sendRawTransaction((await finalTx).transaction[0], false);
     if (!firstTxBroadcast) {
+      tools.toastError(`Error,Please Try again`);
       throw new Error('Could not broadcast first transaction');
     } else {
-      console.log(`First transaction broadcasted:`, firstTxBroadcast);
       console.log(firstTxBroadcast);
     }
     const secondTxBroadcast = await provider.sendRawTransaction((await finalTx).transaction[1], false);
     if (!secondTxBroadcast) {
+      tools.toastError(`Error,Please Try again`);
       throw new Error('Could not broadcast first transaction');
     } else {
       console.log(`Second transaction broadcasted:`, secondTxBroadcast);
       console.log(secondTxBroadcast);
     }
     console.log('finish');
+    tools.toastSuccess(`"You have sucessfully wraped ${wrapAmount} Bitcoin"`);
+    navigate('TxSuccessScreen', { secondTxBroadcast });
   };
   const handleUnWrapConfirm = async () => {
     const foundObject = rawTxInfo.items.find((obj) => obj.account && obj.account.address === rawTxInfo.account.address);
@@ -213,6 +223,7 @@ export default function TxOpnetConfirmScreen() {
       priorityFee: 50000n,
       calldata: withdrawalRequest.calldata as Buffer
     };
+    console.log(interactionParameters);
     const sendTransact = await factory.signInteraction(interactionParameters);
 
     // If this transaction is missing, opnet will deny the unwrapping request.
@@ -261,6 +272,8 @@ export default function TxOpnetConfirmScreen() {
       // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
       const unwrapTransaction = await provider.sendRawTransaction(finalTx.psbt, true);
       console.log(`Broadcasted:`, unwrapTransaction);
+      tools.toastSuccess(`"You have sucessfully unwraped ${unwrapAmount} Bitcoin"`);
+      navigate('TxSuccessScreen', { unwrapTransaction });
     } catch (e) {
       console.error(`Error:`, e);
     }

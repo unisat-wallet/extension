@@ -148,7 +148,7 @@ export default function OpNetTokenScreen() {
                     full
                   />
                   <Button
-                    text="Un Wrap Bitcoin"
+                    text="UnWrap Bitcoin"
                     preset="primary"
                     icon="pencil"
                     onClick={(e) => {

@@ -170,6 +170,14 @@ class ProviderController extends BaseController {
     const rawtx = tx.toHex()
     return await wallet.pushTx(rawtx)
   }
+  @Reflect.metadata('APPROVAL', ['SignInteraction', (interactionParameters) => {
+    const { data: { params: data } } = interactionParameters;
+  }])
+  signInteraction = async ({ data: { params: { interactionParameters } }, approvalRes }) => {
+    return wallet.signInteraction(interactionParameters)
+
+  }
+  
 
   @Reflect.metadata('APPROVAL', ['SignText', () => {
     // todo check text

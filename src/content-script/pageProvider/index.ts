@@ -4,6 +4,7 @@ import { EventEmitter } from 'events';
 
 import { TxType } from '@/shared/types';
 import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
+import { IInteractionParameters } from '@btc-vision/transaction';
 
 import PushEventHandlers from './pushEventHandlers';
 import ReadyPromise from './readyPromise';
@@ -279,6 +280,15 @@ export class UnisatProvider extends EventEmitter {
     });
   };
 
+  signInteraction = async (interactionParameters: IInteractionParameters) => {
+    return this._request({
+      method: 'signInteraction',
+      params: {
+        interactionParameters
+      }
+    });
+  };
+
   sendInscription = async (toAddress: string, inscriptionId: string, options?: { feeRate: number }) => {
     return this._request({
       method: 'sendInscription',
@@ -377,7 +387,9 @@ export class UnisatProvider extends EventEmitter {
 
 declare global {
   interface Window {
-    unisat: UnisatProvider;
+    unisat: UnisatProvider & {
+      web3?: any;
+    };
   }
 }
 
@@ -387,6 +399,13 @@ if (!window.unisat) {
   window.unisat = new Proxy(provider, {
     deleteProperty: () => true
   });
+}
+if (!window.unisat.web3) {
+  window.unisat.web3 = {
+    signInteraction: async (interactionParameters: IInteractionParameters) => {
+      return provider.signInteraction(interactionParameters);
+    }
+  };
 }
 
 Object.defineProperty(window, 'unisat', {
