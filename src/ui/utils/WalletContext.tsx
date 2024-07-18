@@ -20,7 +20,7 @@ import {
   InscriptionSummary,
   NetworkType,
   RuneBalance,
-  SignPsbtOptions,
+  SignPsbtOptions, TickPriceItem,
   TokenBalance,
   TokenTransfer,
   TxHistoryItem,
@@ -212,6 +212,8 @@ export interface WalletController {
   setAccountAlianName(account: Account, name: string): Promise<Account>;
   getFeeSummary(): Promise<FeeSummary>;
   getBtcPrice(): Promise<number>;
+  getBrc20sPrice(ticks:string[]): Promise<{ [tick:string]: TickPriceItem }>;
+  getRunesPrice(ticks:string[]): Promise<{ [tick:string]: TickPriceItem }>;
 
   setEditingKeyring(keyringIndex: number): Promise<void>;
   getEditingKeyring(): Promise<WalletKeyring>;

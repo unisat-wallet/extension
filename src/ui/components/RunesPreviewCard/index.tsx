@@ -4,6 +4,7 @@ import { RuneBalance } from '@/shared/types';
 import { Column } from '../Column';
 import { Row } from '../Row';
 import { Text } from '../Text';
+import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
 
 export interface RunesPreviewCardProps {
   balance: RuneBalance;
@@ -50,8 +51,13 @@ export default function RunesPreviewCard({ balance, onClick }: RunesPreviewCardP
         </Row>
       </Row>
 
-      <Column fullY justifyCenter>
+      <Column fullY justifyCenter itemsCenter gap={'xs'}>
         <Text text={balanceStr} size={size as any} textCenter wrap />
+        <TickUsdWithoutPrice
+          style={{marginBottom:-16}}
+          tick={balance.spacedRune}
+          balance={runesUtils.toDecimalAmount(balance.amount, balance.divisibility)}
+          type={'runes'} />
       </Column>
     </Column>
   );

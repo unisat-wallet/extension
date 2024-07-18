@@ -19,6 +19,7 @@ import {
 import { colors } from '@/ui/theme/colors';
 import { isValidAddress, showLongNumber } from '@/ui/utils';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
+import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
 
 export default function SendRunesScreen() {
   const { state } = useLocation();
@@ -177,6 +178,9 @@ export default function SendRunesScreen() {
             wrap
           />
         </Row>
+        <Row justifyCenter fullX  style={{marginTop:-12,marginBottom:-12}}>
+          <TickUsdWithoutPrice tick={runeInfo.spacedRune} balance={runesUtils.toDecimalAmount(runeBalance.amount, runeBalance.divisibility)} type={'runes'} size={'md'}/>
+        </Row>
 
         <Column mt="lg">
           <Text text="Recipient" preset="regular" color="textDim" />
@@ -193,6 +197,7 @@ export default function SendRunesScreen() {
         <Column mt="lg">
           <Row justifyBetween>
             <Text text="Balance" color="textDim" />
+            <TickUsdWithoutPrice tick={runeInfo.spacedRune} balance={inputAmount} type={'runes'}/>
             <Row
               itemsCenter
               onClick={() => {

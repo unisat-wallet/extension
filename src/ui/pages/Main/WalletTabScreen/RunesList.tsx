@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { RuneBalance } from '@/shared/types';
+import { RuneBalance, TickPriceItem } from '@/shared/types';
 import { Column, Row } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { Empty } from '@/ui/components/Empty';
@@ -22,6 +22,7 @@ export function RunesList() {
   const [tokens, setTokens] = useState<RuneBalance[]>([]);
   const [total, setTotal] = useState(-1);
   const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 100 });
+  const [priceMap, setPriceMap] = useState<{[key:string]:TickPriceItem}>();
 
   const tools = useTools();
   const fetchData = async () => {
@@ -33,6 +34,9 @@ export function RunesList() {
       );
       setTokens(list);
       setTotal(total);
+      if(list.length>0) {
+        wallet.getRunesPrice(list.map(item=>item.spacedRune)).then(setPriceMap)
+      }
     } catch (e) {
       tools.toastError((e as Error).message);
     } finally {
@@ -67,6 +71,8 @@ export function RunesList() {
           <RunesBalanceCard
             key={index}
             tokenBalance={data}
+            showPrice={priceMap!==undefined}
+            price={priceMap?.[data.spacedRune]}
             onClick={() => {
               navigate('RunesTokenScreen', {
                 runeid: data.runeid

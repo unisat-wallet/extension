@@ -4,6 +4,7 @@ import { BRC20Ticker } from '../BRC20Ticker';
 import { Column } from '../Column';
 import { Row } from '../Row';
 import { Text } from '../Text';
+import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
 
 export interface BRC20PreviewProps {
   tick: string;
@@ -19,16 +20,16 @@ export interface BRC20PreviewProps {
 }
 
 export default function BRC20Preview({
-  tick,
-  balance,
-  inscriptionNumber,
-  timestamp,
-  type,
-  selected,
-  onClick,
-  preset,
-  confirmations
-}: BRC20PreviewProps) {
+                                       tick,
+                                       balance,
+                                       inscriptionNumber,
+                                       timestamp,
+                                       type,
+                                       selected,
+                                       onClick,
+                                       preset,
+                                       confirmations
+                                     }: BRC20PreviewProps) {
 
   if (!balance) {
     balance = 'Deploy';
@@ -98,13 +99,20 @@ export default function BRC20Preview({
           height: bodyHeight
         }}
         justifyCenter
+        itemsCenter
+        gap={'xs'}
         bg={bg}>
-        <Text text={balance} size={balanceSize as any} textCenter wrap digital/>
+        <Text text={balance} size={balanceSize as any} textCenter wrap digital />
+        {type === 'TRANSFER'
+          && <TickUsdWithoutPrice tick={tick} balance={balance} type={'brc20'} />
+        }
+
       </Column>
 
       <Column px="sm" pb="sm" gap="sm" py="sm">
         <Row itemsCenter justifyCenter>
-          <Text text={confirmations===0? 'Unconfirmed': `#${inscriptionNumber}`} color="primary" size={numberSize} />
+          <Text text={confirmations === 0 ? 'Unconfirmed' : `#${inscriptionNumber}`} color="primary"
+                size={numberSize} />
         </Row>
       </Column>
     </Column>
