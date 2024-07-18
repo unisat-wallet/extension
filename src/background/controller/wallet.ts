@@ -18,9 +18,9 @@ import {
   BRAND_ALIAN_TYPE_TEXT,
   CHAINS_ENUM,
   CHAINS_MAP,
+  ChainType,
   COIN_NAME,
   COIN_SYMBOL,
-  ChainType,
   KEYRING_TYPE,
   KEYRING_TYPES,
   NETWORK_TYPES,
@@ -41,9 +41,9 @@ import {
 } from '@/shared/types';
 import { checkAddressFlag, getChainInfo } from '@/shared/utils';
 import { IInteractionParameters, TransactionFactory, Wallet } from '@btc-vision/transaction';
-import { UnspentOutput, txHelpers } from '@unisat/wallet-sdk';
+import { txHelpers, UnspentOutput } from '@unisat/wallet-sdk';
 import { publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
-import { ECPair, bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
+import { bitcoin, ECPair } from '@unisat/wallet-sdk/lib/bitcoin-core';
 import { KeystoneKeyring } from '@unisat/wallet-sdk/lib/keyring';
 import {
   genPsbtOfBIP322Simple,
@@ -58,6 +58,7 @@ import { ContactBookItem } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';
 import { ConnectedSite } from '../service/permission';
 import BaseController from './base';
+import { InteractionParametersWithoutSigner } from '@/content-script/pageProvider/Web3Provider.js';
 
 const stashKeyrings: Record<string, Keyring> = {};
 export type AccountAsset = {
@@ -621,7 +622,7 @@ export class WalletController extends BaseController {
     if (!account) throw new Error('no current account');
     return keyringService.signMessage(account.pubkey, account.type, text);
   };
-  signInteraction = async (interactionParameters: IInteractionParameters) => {
+  signInteraction = async (interactionParameters: InteractionParametersWithoutSigner) => {
     try {
       const account = preferenceService.getCurrentAccount();
       if (!account) throw new Error('no current account');
@@ -646,7 +647,7 @@ export class WalletController extends BaseController {
       if (!firstTransaction) {
         throw new Error('Error in Broadcast');
       } else {
-        console.log(`Broadcasted:`, firstTransaction);
+        console.log('Broadcasted:', firstTransaction);
       }
 
       // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
@@ -654,7 +655,7 @@ export class WalletController extends BaseController {
       if (!secondTransaction) {
         throw new Error('Error in Broadcast');
       } else {
-        console.log(`Broadcasted:`, secondTransaction);
+        console.log('Broadcasted:', secondTransaction);
       }
       return [firstTransaction, secondTransaction];
     } catch (e) {

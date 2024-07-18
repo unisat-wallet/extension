@@ -4,11 +4,11 @@ import { EventEmitter } from 'events';
 
 import { TxType } from '@/shared/types';
 import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
-import { IInteractionParameters } from '@btc-vision/transaction';
 
 import PushEventHandlers from './pushEventHandlers';
 import ReadyPromise from './readyPromise';
 import { $, domReadyCall } from './utils';
+import { InteractionParametersWithoutSigner, Web3Provider } from './Web3Provider';
 
 const log = (event, ...args) => {
   if (process.env.NODE_ENV !== 'production') {
@@ -49,6 +49,8 @@ export class UnisatProvider extends EventEmitter {
     initialized: false,
     isPermanentlyDisconnected: false
   };
+
+  public readonly web3: Web3Provider = new Web3Provider(this);
 
   private _pushEventHandlers: PushEventHandlers;
   private _requestPromise = new ReadyPromise(0);
@@ -266,8 +268,8 @@ export class UnisatProvider extends EventEmitter {
     toAddress: string,
     satoshis: number,
     options?: { feeRate: number; memo?: string; memos?: string[] }
-  ) => {
-    return this._request({
+  ): Promise<string> => {
+    return await this._request({
       method: 'sendBitcoin',
       params: {
         toAddress,
@@ -277,16 +279,16 @@ export class UnisatProvider extends EventEmitter {
         memos: options?.memos,
         type: TxType.SEND_BITCOIN
       }
-    });
+    }) as Promise<string>;
   };
 
-  signInteraction = async (interactionParameters: IInteractionParameters) => {
-    return this._request({
+  signInteraction = async (interactionParameters: InteractionParametersWithoutSigner): Promise<[string, string]> => {
+    return await this._request({
       method: 'signInteraction',
       params: {
         interactionParameters
       }
-    });
+    }) as Promise<[string, string]>;
   };
 
   sendInscription = async (toAddress: string, inscriptionId: string, options?: { feeRate: number }) => {
@@ -385,27 +387,13 @@ export class UnisatProvider extends EventEmitter {
   };
 }
 
-declare global {
-  interface Window {
-    unisat: UnisatProvider & {
-      web3?: any;
-    };
-  }
-}
-
 const provider = new UnisatProvider();
 
 if (!window.unisat) {
+  // @ts-ignore
   window.unisat = new Proxy(provider, {
     deleteProperty: () => true
   });
-}
-if (!window.unisat.web3) {
-  window.unisat.web3 = {
-    signInteraction: async (interactionParameters: IInteractionParameters) => {
-      return provider.signInteraction(interactionParameters);
-    }
-  };
 }
 
 Object.defineProperty(window, 'unisat', {
