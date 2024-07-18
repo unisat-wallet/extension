@@ -659,6 +659,7 @@ export class WalletController extends BaseController {
       return [firstTransaction, secondTransaction];
     } catch (e) {
       console.log(e);
+      throw new Error(String(e));
     }
   };
 
