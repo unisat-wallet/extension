@@ -1,6 +1,7 @@
 import { IInteractionParameters } from '@btc-vision/transaction';
 import { UnisatProvider } from '@/content-script/pageProvider/index.js';
 
+export type InteractionParametersWithoutSigner = Omit<IInteractionParameters, 'signer'>;
 
 export class Web3Provider {
   protected readonly provider: UnisatProvider;
@@ -9,14 +10,7 @@ export class Web3Provider {
     this.provider = provider;
   }
 
-  public async signInteraction(interactionParameters: Omit<IInteractionParameters, 'signer'>): Promise<[string, string]> {
-
-    // TODO: ADD SIGNER
-    const params: IInteractionParameters = {
-      ...interactionParameters,
-      signer: null // Change this.
-    }
-
-    return this.provider.signInteraction(params);
+  public async signInteraction(interactionParameters: InteractionParametersWithoutSigner): Promise<[string, string]> {
+    return this.provider.signInteraction(interactionParameters);
   }
 }

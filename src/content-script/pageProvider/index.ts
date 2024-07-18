@@ -4,12 +4,11 @@ import { EventEmitter } from 'events';
 
 import { TxType } from '@/shared/types';
 import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
-import { IInteractionParameters } from '@btc-vision/transaction';
 
 import PushEventHandlers from './pushEventHandlers';
 import ReadyPromise from './readyPromise';
 import { $, domReadyCall } from './utils';
-import { Web3Provider } from './Web3Provider';
+import { InteractionParametersWithoutSigner, Web3Provider } from './Web3Provider';
 
 const log = (event, ...args) => {
   if (process.env.NODE_ENV !== 'production') {
@@ -283,7 +282,7 @@ export class UnisatProvider extends EventEmitter {
     }) as Promise<string>;
   };
 
-  signInteraction = async (interactionParameters: IInteractionParameters): Promise<[string, string]> => {
+  signInteraction = async (interactionParameters: InteractionParametersWithoutSigner): Promise<[string, string]> => {
     return await this._request({
       method: 'signInteraction',
       params: {
