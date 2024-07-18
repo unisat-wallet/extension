@@ -26,6 +26,7 @@ import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 import { SignPsbt } from '../Approval/components';
 import { useNavigate } from '../MainRoute';
+import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
 
 function Step1({
   contextData,
@@ -176,6 +177,9 @@ function TransferableList({
         <Row justifyCenter itemsCenter>
           <Text text={`${contextData.transferAmount}`} size="xxl" textCenter my="lg" digital/>
           <BRC20Ticker tick={contextData.tokenBalance.ticker} />
+        </Row>
+        <Row justifyCenter itemsCenter style={{marginTop:-12}}>
+          <TickUsdWithoutPrice tick={contextData.tokenBalance.ticker} balance={contextData.transferAmount} type={'brc20'} size={'md'}/>
         </Row>
       </Column>
 
@@ -351,7 +355,10 @@ function Step2({
     <Content mt="lg">
       <Column full>
         <Column>
-          <Text text="Send" color="textDim" />
+          <Row justifyBetween>
+            <Text text="Send" color="textDim" />
+            <TickUsdWithoutPrice tick={contextData.tokenBalance.ticker} balance={contextData.transferAmount} type={'brc20'} size={'sm'}/>
+          </Row>
           <Input preset="text" value={`${showLongNumber(contextData.transferAmount)} ${contextData.tokenBalance.ticker}`} disabled />
         </Column>
 

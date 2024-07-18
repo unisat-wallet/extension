@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { AddressTokenSummary, TokenBalance } from '@/shared/types';
+import { AddressTokenSummary, TickPriceItem, TokenBalance } from '@/shared/types';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -11,14 +11,20 @@ import { Column } from '../Column';
 import { Icon } from '../Icon';
 import { Row } from '../Row';
 import { Text } from '../Text';
+import { TickPriceChange, TickUsd } from '@/ui/components/TickUsd';
+import { BtcUsd } from '@/ui/components/BtcUsd';
 
 export interface BRC20BalanceCard2Props {
-  tokenBalance: TokenBalance;
-  onClick?: () => void;
+  tokenBalance: TokenBalance,
+  onClick?: () => void,
+  showPrice?: boolean,
+  price?: TickPriceItem
 }
 
 export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
   const {
+    showPrice,
+    price,
     tokenBalance: {
       ticker,
       overallBalance,
@@ -29,6 +35,7 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
     },
     onClick
   } = props;
+
 
   const account = useCurrentAccount();
   const [detailVisible, setDetailVisible] = useState(false);
@@ -83,7 +90,7 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
           </Column>
 
           <Row itemsCenter fullY gap="zero">
-            <Text text={overallBalance} size="xs" digital/>
+            <Text text={overallBalance} size="xs" digital />
             <Row style={{ width: 30, height: 20 }} itemsCenter justifyCenter>
               <Icon
                 icon={detailVisible ? 'up' : 'down'}
@@ -112,7 +119,12 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
             </Row>
           </Row>
         </Row>
-
+        {
+          showPrice && <Row justifyBetween mt={'xs'}>
+            <TickPriceChange price={price} />
+            <TickUsd price={price} balance={overallBalance} />
+          </Row>
+        }
         {detailVisible ? (
           loading ? (
             <Column style={{ minHeight: 130 }} itemsCenter justifyCenter>
@@ -125,7 +137,7 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
               <Row style={{ borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }} mt="sm" />
               <Row justifyBetween>
                 <Text text="Transferable:" color="textDim" size="xs" />
-                <Text text={transferableBalance} size="xs" digital/>
+                <Text text={transferableBalance} size="xs" digital />
               </Row>
               <Column>
                 <Row>
@@ -136,7 +148,8 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
                       bg={v === 'Transfer' ? 'brc20_transfer' : v === 'Deploy' ? 'brc20_deploy' : 'brc20_other'}>
                       <Column gap="zero">
                         <Text text={v} size={v === 'Transfer' ? 'sm' : v === 'Deploy' ? 'sm' : 'md'} />
-                        {v === 'Transfer' ? <Text text={`(${_amounts[index]})`} size="xxs" textCenter wrap digital/> : null}
+                        {v === 'Transfer' ?
+                          <Text text={`(${_amounts[index]})`} size="xxs" textCenter wrap digital /> : null}
                       </Column>
                     </Card>
                   ))}

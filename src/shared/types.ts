@@ -450,3 +450,5 @@ export interface BtcChannelItem {
   quote: number;
   payType: string[];
 }
+
+export type TickPriceItem = number;

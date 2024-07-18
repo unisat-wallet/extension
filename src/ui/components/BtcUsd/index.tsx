@@ -55,7 +55,13 @@ export function BtcUsd(props: {
     if(sats<=0){
       return '0.00'
     }
-    return new BigNumber(sats).dividedBy(1e8).multipliedBy(price).toFixed(2);
+    const result = new BigNumber(sats).dividedBy(1e8).multipliedBy(price)
+
+    if(result.isLessThan('0.01')){
+      return result.toPrecision(4)
+    }
+
+    return result.toFixed(2);
   }, [price, sats]);
 
   if (showNoValue) {

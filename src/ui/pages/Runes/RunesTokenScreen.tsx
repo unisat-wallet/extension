@@ -14,6 +14,7 @@ import { copyToClipboard, showLongNumber, useLocationState, useWallet } from '@/
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
+import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
 
 interface LocationState {
   runeid: string;
@@ -129,6 +130,12 @@ export default function RunesTokenScreen() {
                 digital
               />
               <BRC20Ticker tick={tokenSummary.runeBalance.symbol} preset="lg" />
+            </Row>
+            <Row justifyCenter fullX>
+              <TickUsdWithoutPrice tick={tokenSummary.runeInfo.spacedRune} balance={runesUtils.toDecimalAmount(
+                tokenSummary.runeBalance.amount,
+                tokenSummary.runeBalance.divisibility
+              )} type={'runes'} size={'md'}/>
             </Row>
 
             <Row justifyBetween mt="lg">
