@@ -52,29 +52,30 @@ export default function TxOpnetConfirmScreen() {
       addCalldata.writeU256(amount);
       return Buffer.from(addCalldata.getBuffer());
     }
-    const utxoSetting: FetchUTXOParamsMultiAddress = {
-      addresses: [walletGet.p2wpkh, walletGet.p2tr],
-      minAmount: 10000n,
-      requestedAmount: 100000n
-    };
-    console.log(walletGet.p2wpkh, walletGet.p2tr);
 
-    const utxos: UTXO[] = await utxoManager.fetchUTXOMultiAddr(utxoSetting);
-    console.log(utxos);
-    if (!utxos.length) {
-      throw new Error('No UTXOs found');
-    }
     try {
       const result = 10 ** rawTxInfo.opneTokens[0].divisibility;
       const amountToSend = BigInt(rawTxInfo.inputAmount * result); // Amount to send
       const calldata = getTransferToCalldata(rawTxInfo.address, amountToSend);
+      const utxoSetting: FetchUTXOParamsMultiAddress = {
+        addresses: [walletGet.p2wpkh, walletGet.p2tr],
+        minAmount: 10000n,
+        requestedAmount: BigInt(amountToSend)
+      };
+      console.log(walletGet.p2wpkh, walletGet.p2tr);
+
+      const utxos: UTXO[] = await utxoManager.fetchUTXOMultiAddr(utxoSetting);
+      console.log(utxos);
+      if (!utxos.length) {
+        throw new Error('No UTXOs found');
+      }
       const interactionParameters: IInteractionParameters = {
         from: walletGet.p2tr, // From address
-        to: rawTxInfo.address, // To address
+        to: rawTxInfo.contractAddress, // To address
         utxos: utxos, // UTXOs
         signer: walletGet.keypair, // Signer
         network: networks.regtest, // Network
-        feeRate: rawTxInfo.feeRate, // Fee rate (satoshi per byte)
+        feeRate: 300, // Fee rate (satoshi per byte)
         priorityFee: BigInt(rawTxInfo.OpnetRateInputVal), // Priority fee (opnet)
         calldata: calldata // Calldata
       };
@@ -85,21 +86,20 @@ export default function TxOpnetConfirmScreen() {
       const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
 
       const firstTxBroadcast = await provider.sendRawTransaction(finalTx[0], false);
-      console.log(`First transaction broadcasted: ${firstTxBroadcast}`);
+      console.log(`First transaction broadcasted: ${firstTxBroadcast.result}`);
 
-      if (!firstTxBroadcast) {
+      if (!firstTxBroadcast.success) {
         throw new Error('Could not broadcast first transaction');
       }
 
       const secondTxBroadcast = await provider.sendRawTransaction(finalTx[1], false);
-      console.log(`Second transaction broadcasted: ${secondTxBroadcast}`);
+      console.log(`Second transaction broadcasted: ${secondTxBroadcast.result}`);
 
-      if (!secondTxBroadcast) {
+      if (!secondTxBroadcast.success) {
         throw new Error('Could not broadcast second transaction');
       }
       tools.toastSuccess(`"You have sucessfully transferd ${amountToSend} Bitcoin"`);
       navigate('TxSuccessScreen', { secondTxBroadcast });
-      alert('Sent');
     } catch (e) {
       console.log(e);
     }

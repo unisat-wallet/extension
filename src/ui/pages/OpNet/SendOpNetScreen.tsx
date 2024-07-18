@@ -231,6 +231,7 @@ export default function SendOpNetScreen() {
             navigate('TxOpnetConfirmScreen', {
               rawTxInfo: {
                 items: items,
+                contractAddress: OpNetBalance.address,
                 account: account, // replace with actual account
                 inputAmount: inputAmount, // replace with actual inputAmount
                 address: toInfo.address, // replace with actual address
