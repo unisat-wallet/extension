@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { TokenBalance } from '@/shared/types';
+import { TickPriceItem, TokenBalance } from '@/shared/types';
 import { Column, Row } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import BRC20BalanceCard2 from '@/ui/components/BRC20BalanceCard2';
@@ -22,6 +22,7 @@ export function BRC20List5Byte() {
   const [tokens, setTokens] = useState<TokenBalance[]>([]);
   const [total, setTotal] = useState(-1);
   const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 100 });
+  const [priceMap, setPriceMap] = useState<{[key:string]:TickPriceItem}>();
 
   const tools = useTools();
   const fetchData = async () => {
@@ -33,6 +34,9 @@ export function BRC20List5Byte() {
       );
       setTokens(list);
       setTotal(total);
+      if(list.length>0) {
+        wallet.getBrc20sPrice(list.map(item=>item.ticker)).then(setPriceMap)
+      }
     } catch (e) {
       tools.toastError((e as Error).message);
     } finally {
@@ -67,6 +71,8 @@ export function BRC20List5Byte() {
           <BRC20BalanceCard2
             key={index}
             tokenBalance={data}
+            showPrice={priceMap!==undefined}
+            price={priceMap?.[data.ticker]}
             onClick={() => {
               navigate('BRC20TokenScreen', { tokenBalance: data, ticker: data.ticker });
             }}

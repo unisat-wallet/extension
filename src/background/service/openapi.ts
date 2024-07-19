@@ -325,7 +325,10 @@ export class OpenApiService {
         return result;
       }
 
-      const resp: { [ticker: string]: TickPriceItem } = await this.httpPost('/v5/market/brc20/price', { ticks });
+      const resp: { [ticker: string]: TickPriceItem } = await this.httpPost('/v5/market/brc20/price', {
+        ticks,
+        nftType: 'brc20'
+      });
 
       for (let i = 0; i < ticks.length; i += 1) {
         const tick = ticks[i];
@@ -372,7 +375,10 @@ export class OpenApiService {
         return result;
       }
 
-      const resp: { [ticker: string]: TickPriceItem } = await this.httpPost('/v5/market/runes/price', { ticks });
+      const resp: { [ticker: string]: TickPriceItem } = await this.httpPost('/v5/market/runes/price', {
+        ticks,
+        nftType: 'runes'
+      });
 
       for (let i = 0; i < ticks.length; i += 1) {
         const tick = ticks[i];
