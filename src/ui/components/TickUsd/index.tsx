@@ -28,8 +28,8 @@ export function TickPriceChange(props: {
 
 
   return <Row>
-    <BtcUsd sats={price || 0} color={color} size={size} {...props} />
-    {/*<PriceChangePercent change={price?.changePercent || 0} size={size} />*/}
+    <BtcUsd sats={price?.curPrice || 0} color={color} size={size} {...props} />
+    <PriceChangePercent change={price?.changePercent || 0} size={size} />
   </Row>;
 }
 
@@ -46,7 +46,7 @@ export function TickUsd(props: {
     if (!price)
       return 0;
 
-    return new BigNumber(balance).multipliedBy(price).toNumber();
+    return new BigNumber(balance).multipliedBy(price.curPrice).toNumber();
   }, []);
 
   return <BtcUsd sats={sats} color={color} size={size} {...props} />;
@@ -85,7 +85,7 @@ export function TickUsdWithoutPrice(props: {
     if (!price)
       return 0;
 
-    return new BigNumber(balance).multipliedBy(price).toNumber();
+    return new BigNumber(balance).multipliedBy(price.curPrice).toNumber();
   }, [price, balance]);
 
   // if api call is failed, don't show anything

@@ -451,4 +451,7 @@ export interface BtcChannelItem {
   payType: string[];
 }
 
-export type TickPriceItem = number;
+export type TickPriceItem = {
+  curPrice: number;
+  changePercent:number;
+};
