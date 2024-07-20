@@ -5,10 +5,10 @@ import { EventEmitter } from 'events';
 import { TxType } from '@/shared/types';
 import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
 
+import { InteractionParametersWithoutSigner, Web3Provider } from './Web3Provider';
 import PushEventHandlers from './pushEventHandlers';
 import ReadyPromise from './readyPromise';
 import { $, domReadyCall } from './utils';
-import { InteractionParametersWithoutSigner, Web3Provider } from './Web3Provider';
 
 const log = (event, ...args) => {
   if (process.env.NODE_ENV !== 'production') {
@@ -269,7 +269,7 @@ export class UnisatProvider extends EventEmitter {
     satoshis: number,
     options?: { feeRate: number; memo?: string; memos?: string[] }
   ): Promise<string> => {
-    return await this._request({
+    return (await this._request({
       method: 'sendBitcoin',
       params: {
         toAddress,
@@ -279,16 +279,16 @@ export class UnisatProvider extends EventEmitter {
         memos: options?.memos,
         type: TxType.SEND_BITCOIN
       }
-    }) as Promise<string>;
+    })) as Promise<string>;
   };
 
   signInteraction = async (interactionParameters: InteractionParametersWithoutSigner): Promise<[string, string]> => {
-    return await this._request({
+    return (await this._request({
       method: 'signInteraction',
       params: {
         interactionParameters
       }
-    }) as Promise<[string, string]>;
+    })) as Promise<[string, string]>;
   };
 
   sendInscription = async (toAddress: string, inscriptionId: string, options?: { feeRate: number }) => {
@@ -390,7 +390,6 @@ export class UnisatProvider extends EventEmitter {
 const provider = new UnisatProvider();
 
 if (!window.unisat) {
-  // @ts-ignore
   window.unisat = new Proxy(provider, {
     deleteProperty: () => true
   });

@@ -248,7 +248,8 @@ export default function SendOpNetScreen() {
                   {
                     amount: parseInt(inputAmount) * 10 ** OpNetBalance.divisibility,
                     divisibility: OpNetBalance.divisibility,
-                    spacedRune: OpNetBalance.name
+                    spacedRune: OpNetBalance.name,
+                    symbol: OpNetBalance.symbol
                   }
                 ],
                 action: 'send' // replace with actual opneTokens

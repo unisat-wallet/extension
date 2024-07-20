@@ -34,7 +34,9 @@ import SettingsTabScreen from './Main/SettingsTabScreen';
 import WalletTabScreen from './Main/WalletTabScreen';
 import WelcomeScreen from './Main/WelcomeScreen';
 import OpNetTokenScreen from './OpNet/OpNetTokenScreen';
+import SWAP from './OpNet/SWAP';
 import SendOpNetScreen from './OpNet/SendOpNetScreen';
+import StakeWBTCoPNet from './OpNet/StakeWBTCoPNet';
 import UnWrapBitcoinOpnet from './OpNet/UnWrapBitcoinOpnet';
 import WrapBitcoinOpnet from './OpNet/WrapBitcoinOpnet';
 import OrdinalsInscriptionScreen from './Ordinals/OrdinalsInscriptionScreen';
@@ -276,6 +278,14 @@ const routes = {
   UnWrapBitcoinOpnet: {
     path: '/opnet/unwrap-opnet',
     element: <UnWrapBitcoinOpnet />
+  },
+  StakeWBTCoPNet: {
+    path: '/opnet/stake-wbtc',
+    element: <StakeWBTCoPNet />
+  },
+  SWAP: {
+    path: '/opnet/swap',
+    element: <SWAP />
   }
 };
 

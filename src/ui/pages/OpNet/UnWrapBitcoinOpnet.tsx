@@ -118,7 +118,7 @@ export default function UnWrapBitcoinOpnet() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title={'Wrap Bitcoin'}
+        title={'UnWrap Bitcoin'}
       />
       <Content>
         <Row justifyCenter>
@@ -230,7 +230,8 @@ export default function UnWrapBitcoinOpnet() {
                   {
                     amount: parseInt(inputAmount) * 10 ** OpNetBalance.divisibility,
                     divisibility: OpNetBalance.divisibility,
-                    spacedRune: OpNetBalance.name
+                    spacedRune: OpNetBalance.name,
+                    symbol: OpNetBalance.symbol
                   }
                 ],
                 action: 'unwrap' // replace with actual opneTokens

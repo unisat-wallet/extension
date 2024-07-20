@@ -128,6 +128,11 @@ export default function WalletTabScreen() {
       children: <OrdinalsTab />
     },
     {
+      key: AssetTabKey.OP_NET,
+      label: 'OPNET',
+      children: <OP_NETList />
+    },
+    {
       key: AssetTabKey.ATOMICALS,
       label: 'Atomicals',
       children: <AtomicalsTab />
@@ -136,11 +141,6 @@ export default function WalletTabScreen() {
       key: AssetTabKey.RUNES,
       label: 'Runes',
       children: <RunesList />
-    },
-    {
-      key: AssetTabKey.OP_NET,
-      label: 'OP_NET',
-      children: <OP_NETList />
     }
   ];
 

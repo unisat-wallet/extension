@@ -2,11 +2,13 @@ import { IOP_20Contract, JSONRpcProvider, OP_20_ABI, getContract } from 'opnet';
 import { useEffect, useState } from 'react';
 
 import { opNetBalance } from '@/shared/types';
+import { Button, Column, Row } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BaseView } from '@/ui/components/BaseView';
 import OpNetBalanceCard from '@/ui/components/OpNetBalanceCard';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useWallet } from '@/ui/utils';
+import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../../MainRoute';
 import { AddOpNetToken } from '../../Wallet/AddOpNetToken';
@@ -31,18 +33,6 @@ export function OP_NETList() {
     try {
       await wallet.getNetworkType();
       await wallet.changeAddressType(AddressType.P2TR);
-      // fetch(url)
-      //   .then((response) => response.json())
-      //   .then((data) => {
-      //     console.log(data);
-      //     setData(data);
-      //   })
-      //   .catch((error) => console.error('Error:', error));
-
-      // setData(data);
-
-      // const rpc = new JSONRpcProvider('https://testnet.opnet.org');
-      // console.log(await rpc.getUXTOs(currentAccount.address));
       const tokensImported = localStorage.getItem('tokensImported');
       let parsedTokens: string[] = [];
       if (tokensImported) {
@@ -88,13 +78,13 @@ export function OP_NETList() {
     fetchData();
   }, [pagination, currentAccount.address]);
 
-  // if (total === -1) {
-  //   return (
-  //     <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
-  //       <LoadingOutlined />
-  //     </Column>
-  //   );
-  // }
+  if (total === -1) {
+    return (
+      <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
+        <LoadingOutlined />
+      </Column>
+    );
+  }
 
   // if (total === 0) {
   //   return (
@@ -106,7 +96,9 @@ export function OP_NETList() {
   const $footerBaseStyle = {
     display: 'block',
     minHeight: 20,
-    paddingBottom: 10
+    paddingBottom: 10,
+    fontSize: 12,
+    cursor: 'pointer'
   } as any;
   const $opnet = {
     display: 'block',
@@ -116,6 +108,20 @@ export function OP_NETList() {
   const $style2 = Object.assign({}, $opnet);
   return (
     <div>
+      <Row justifyBetween mt="lg">
+        <>
+          <Button
+            text="SWAP "
+            preset="primary"
+            icon="pencil"
+            onClick={(e) => {
+              navigate('SWAP', {});
+            }}
+            full
+          />
+        </>
+      </Row>
+      <br />
       <BaseView style={$style2}>
         {total === 0 ? (
           <>Empty</>
@@ -123,7 +129,7 @@ export function OP_NETList() {
           <>
             {tokens.map((data, index) => {
               return (
-                <>
+                <div key={index}>
                   <OpNetBalanceCard
                     key={index}
                     tokenBalance={data}
@@ -134,7 +140,7 @@ export function OP_NETList() {
                     }}
                   />
                   <br />
-                </>
+                </div>
               );
             })}
           </>
@@ -143,6 +149,7 @@ export function OP_NETList() {
       <BaseView style={$style}>
         <div>
           <div onClick={() => setImportTokenBool(true)}>Import Tokens</div>
+          <br />
           <div>Refresh List</div>
         </div>
       </BaseView>

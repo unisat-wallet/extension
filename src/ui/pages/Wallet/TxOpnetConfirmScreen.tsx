@@ -44,7 +44,6 @@ export default function TxOpnetConfirmScreen() {
     const abiCoder: ABICoder = new ABICoder();
     const transferSelector = Number(`0x` + abiCoder.encodeSelector('transfer'));
 
-    console.log(walletGet);
     function getTransferToCalldata(to: string, amount: bigint): Buffer {
       const addCalldata: BinaryWriter = new BinaryWriter();
       addCalldata.writeSelector(transferSelector);
@@ -279,17 +278,82 @@ export default function TxOpnetConfirmScreen() {
     }
     console.log('finish');
   };
+  const stake = async () => {
+    const foundObject = rawTxInfo.items.find((obj) => obj.account && obj.account.address === rawTxInfo.account.address);
+    const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
+    const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
+    const result = 10 ** rawTxInfo.opneTokens[0].divisibility;
+    const amountToSend = BigInt(rawTxInfo.inputAmount * result);
+    console.log(amountToSend);
+    const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, networks.regtest);
+    const opnetNode = 'https://regtest.opnet.org';
+    const utxoManager = new OPNetLimitedProvider(opnetNode);
+    const factory: TransactionFactory = new TransactionFactory(); // Transaction factory
+
+    const contract: IWBTCContract = getContract<IWBTCContract>(
+      'bcrt1q99qtptumw027cw8w274tqzd564q66u537vn0lh',
+      WBTC_ABI,
+      provider,
+      walletGet.p2tr
+    );
+    const stakeData = (await contract.stake(amountToSend)) as unknown as { calldata: Buffer };
+    console.log(stakeData);
+    if ('error' in stakeData) {
+      throw new Error('Invalid calldata in stakeData');
+    }
+    const utxoSetting: FetchUTXOParamsMultiAddress = {
+      addresses: [walletGet.p2wpkh, walletGet.p2tr],
+      minAmount: 10000n,
+      requestedAmount: BigInt(amountToSend)
+    };
+    console.log(walletGet.p2wpkh, walletGet.p2tr);
+
+    const utxos: UTXO[] = await utxoManager.fetchUTXOMultiAddr(utxoSetting);
+    console.log(utxos);
+    const interactionParameters: IInteractionParameters = {
+      from: walletGet.p2tr,
+      to: contract.address.toString(),
+      utxos: utxos,
+      signer: walletGet.keypair,
+      network: networks.regtest,
+      feeRate: 450,
+      priorityFee: 50000n,
+      calldata: stakeData?.calldata as Buffer
+    };
+    console.log(interactionParameters);
+    const sendTransact = await factory.signInteraction(interactionParameters);
+
+    // If this transaction is missing, opnet will deny the unwrapping request.
+    const firstTransaction = await provider.sendRawTransaction(sendTransact[0], false);
+    if (!firstTransaction.success) {
+      console.log(`Broadcasted:`, false);
+    } else {
+      console.log(`Broadcasted:`, firstTransaction);
+    }
+
+    // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
+    const seconfTransaction = await provider.sendRawTransaction(sendTransact[1], false);
+    if (!seconfTransaction.success) {
+      console.log(`Broadcasted:`, false);
+    } else {
+      console.log(`Broadcasted:`, seconfTransaction);
+    }
+    tools.toastSuccess(`"You have sucessfully Staked ${amountToSend} Bitcoin"`);
+    navigate('TxSuccessScreen', { seconfTransaction });
+  };
   return (
     <Layout>
-      {rawTxInfo.header}
       <Content>
+        <Column gap="xl">
+          <Text text={rawTxInfo.header} />
+        </Column>
         <Column gap="xl">
           <Section title="Network Fee Rate:">
             <Text text={rawTxInfo.feeRate.toString()} />
 
             <Text text="sat/vB" color="textDim" />
           </Section>
-          i c
+
           <Section title="Opnet Fee Rate:">
             <Text text={rawTxInfo.OpnetRateInputVal.toString()} />
 
@@ -315,7 +379,7 @@ export default function TxOpnetConfirmScreen() {
                 <Column full justifyCenter>
                   <Row>
                     <Column justifyCenter>
-                      <Text text={'RUNES'} color={rawTxInfo.isToSign ? 'white' : 'textDim'} />
+                      <Text text={'TOKENS'} color={rawTxInfo.isToSign ? 'white' : 'textDim'} />
                       <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
                         {rawTxInfo.opneTokens.map((w, index) => (
                           <RunesPreviewCard key={index} balance={w} />
@@ -342,6 +406,8 @@ export default function TxOpnetConfirmScreen() {
                 handleWrapConfirm();
               } else if (rawTxInfo.action == 'unwrap') {
                 handleUnWrapConfirm();
+              } else if (rawTxInfo.action == 'stake') {
+                stake();
               } else {
                 handleConfirm();
               }

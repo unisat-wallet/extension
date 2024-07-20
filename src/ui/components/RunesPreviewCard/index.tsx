@@ -11,8 +11,7 @@ export interface RunesPreviewCardProps {
 }
 
 export default function RunesPreviewCard({ balance, onClick }: RunesPreviewCardProps) {
-  const balanceStr = `${runesUtils.toDecimalAmount(balance.amount, balance.divisibility)} ${balance.symbol}`;
-
+  const balanceStr = `${runesUtils.toDecimalAmount(balance.amount.toString(), balance.divisibility)} ${balance.symbol}`;
   let size = 'sm';
   if (balanceStr.length > 10) {
     size = 'xxs';

@@ -441,3 +441,27 @@ export interface AddressRunesTokenSummary {
   runeBalance: RuneBalance;
   runeLogo?: Inscription;
 }
+export interface OpneToken {
+  amount: number;
+  divisibility: number;
+  spacedRune: string;
+  symbol: string;
+}
+
+export interface RawTxInfo {
+  items: any[]; // Replace 'any' with the actual type of 'items'
+  account: Account; // Replace 'Account' with the actual type of 'account'
+  inputAmount: number;
+  address: string;
+  feeRate: number;
+  OpnetRateInputVal: number;
+  header: string;
+  networkFee: number;
+  features: {
+    rbf: boolean;
+  };
+  inputInfos: any[]; // Replace 'any' with the actual type of 'inputInfos'
+  isToSign: boolean;
+  opneTokens: OpneToken[];
+  action: string;
+}

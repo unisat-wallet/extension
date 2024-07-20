@@ -52,15 +52,16 @@ export default function OpNetTokenScreen() {
       const contract: IOP_20Contract = getContract<IOP_20Contract>(address, OP_20_ABI, provider);
       const contracName = await contract.name();
       const divisibility = await contract.decimals();
+      const symbol = await contract.symbol();
       const balance = await contract.balanceOf(account.address);
       setBtcBalance({
         address: '',
         amount: btcbalanceGet,
         divisibility: 8,
-        symbol: '',
+        symbol: 'BTC',
         name: 'Bitcoin'
       });
-      if ('error' in balance || 'error' in contracName || 'error' in divisibility) {
+      if ('error' in balance || 'error' in contracName || 'error' in divisibility || 'error' in symbol) {
         console.log(balance);
       } else {
         const newSummaryData = {
@@ -69,7 +70,7 @@ export default function OpNetTokenScreen() {
             name: contracName.decoded.toLocaleString(),
             amount: BigInt(balance.decoded[0].toString()),
             divisibility: parseInt(divisibility.decoded.toString()),
-            symbol: ''
+            symbol: symbol.decoded.toString()
           }
         };
         setTokenSummary(newSummaryData);
@@ -178,6 +179,39 @@ export default function OpNetTokenScreen() {
                 full
               />
             </Row>
+            <Row justifyBetween mt="lg">
+              {tokenSummary.opNetBalance.address == 'bcrt1q99qtptumw027cw8w274tqzd564q66u537vn0lh' &&
+              btcBalance.divisibility == 8 ? (
+                <>
+                  <Button
+                    text="Stake WBTC"
+                    preset="primary"
+                    icon="pencil"
+                    onClick={(e) => {
+                      console.log(btcBalance);
+                      navigate('StakeWBTCoPNet', {
+                        OpNetBalance: tokenSummary.opNetBalance
+                      });
+                    }}
+                    full
+                  />
+                  <Button
+                    text="Unstake WBTC"
+                    preset="primary"
+                    icon="pencil"
+                    onClick={(e) => {
+                      console.log(btcBalance);
+                      // navigate('UnStakeWBTCoPNet', {
+                      //   OpNetBalance: tokenSummary.opNetBalance
+                      // });
+                    }}
+                    full
+                  />
+                </>
+              ) : (
+                <></>
+              )}
+            </Row>
           </Column>
 
           <Text
@@ -188,56 +222,6 @@ export default function OpNetTokenScreen() {
                 tools.toastSuccess('Copied');
               });
             }}></Text>
-          {/* {tokenSummary.runeLogo ? (
-            <Row>
-              <InscriptionPreview data={tokenSummary.runeLogo} preset="small" asLogo />
-            </Row>
-          ) : null} */}
-
-          {/* <Column gap="lg">
-            <Section title="runeid" value={tokenSummary.runeInfo.runeid} />
-
-            <Section title="mints" value={tokenSummary.runeInfo.mints} />
-
-            <Section
-              title="supply"
-              value={`${runesUtils.toDecimalAmount(tokenSummary.runeInfo.supply, tokenSummary.runeInfo.divisibility)} ${
-                tokenSummary.runeInfo.symbol
-              }`}
-            />
-
-            <Section
-              title="premine"
-              value={`${runesUtils.toDecimalAmount(
-                tokenSummary.runeInfo.premine,
-                tokenSummary.runeInfo.divisibility
-              )} ${tokenSummary.runeInfo.symbol}`}
-            />
-
-            <Section title="burned" value={tokenSummary.runeInfo.burned} />
-
-            <Section title="divisibility" value={tokenSummary.runeInfo.divisibility} />
-
-            <Section title="symbol" value={tokenSummary.runeInfo.symbol} />
-
-            <Section title="holders" value={tokenSummary.runeInfo.holders} />
-
-            <Section title="transactions" value={tokenSummary.runeInfo.transactions} />
-
-            <Section
-              title="etching"
-              value={tokenSummary.runeInfo.etching}
-              link={`${mempoolWebsite}/tx/${tokenSummary.runeInfo.etching}`}
-            />
-
-            {tokenSummary.runeInfo.parent ? (
-              <Section
-                title="parent"
-                value={tokenSummary.runeInfo.parent}
-                link={`${ordinalsWebsite}/inscription/${tokenSummary.runeInfo.parent}`}
-              />
-            ) : null}
-          </Column> */}
         </Content>
       )}
     </Layout>

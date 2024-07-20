@@ -25,7 +25,7 @@ interface ItemData {
   key: string;
   account?: Account;
 }
-export default function WrapBitcoinOpnet() {
+export default function UnWrapBitcoinOpnet() {
   const { state } = useLocation();
   const props = state as {
     OpNetBalance: opNetBalance;
@@ -118,7 +118,7 @@ export default function WrapBitcoinOpnet() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title={'Wrap Bitcoin'}
+        title={'Stake Bitcoin'}
       />
       <Content>
         <Row justifyCenter>
@@ -133,7 +133,7 @@ export default function WrapBitcoinOpnet() {
 
         <Column mt="lg">
           <Row justifyBetween>
-            <Text text="Amount" color="textDim" />
+            <Text text="Choose how much WBTC you'd like to stake" color="textDim" />
             <Row
               itemsCenter
               onClick={() => {
@@ -219,7 +219,7 @@ export default function WrapBitcoinOpnet() {
                 address: toInfo.address, // replace with actual address
                 feeRate: feeRate, // replace with actual feeRate
                 OpnetRateInputVal: OpnetRateInputVal, // replace with actual OpnetRateInputVal
-                header: 'Wrap Bitcoin', // replace with actual header
+                header: 'Stake WBTC', // replace with actual header
                 networkFee: feeRate, // replace with actual networkFee
                 features: {
                   rbf: false // replace with actual rbf value
@@ -234,7 +234,7 @@ export default function WrapBitcoinOpnet() {
                     symbol: OpNetBalance.symbol
                   }
                 ],
-                action: 'wrap' // replace with actual opneTokens
+                action: 'stake' // replace with actual opneTokens
               }
             });
           }}></Button>
