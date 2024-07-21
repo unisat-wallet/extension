@@ -5,6 +5,7 @@ import { getContract, IOP_20Contract, JSONRpcProvider, OP_20_ABI } from 'opnet';
 import { ChainType } from '@/shared/constant';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { ContractLogo } from '@/shared/web3/metadata/ContractLogo';
+import { ContractNames } from '@/shared/web3/metadata/ContractNames';
 import { ABICoder } from '@btc-vision/bsi-binary';
 import {
   AddressVerificator,
@@ -93,6 +94,10 @@ class Web3API {
     return ContractLogo[address] ?? 'https://raw.githubusercontent.com/Cryptofonts/cryptoicons/master/128/btc.png';
   }
 
+  private getContractName(address: string): string | undefined {
+    return ContractNames[address] ?? 'Generic Contract';
+  }
+
   public isValidPKHAddress(address: string): boolean {
     return AddressVerificator.validatePKHAddress(address, this.network);
   }
@@ -128,7 +133,7 @@ class Web3API {
 
       const logo = this.getContractLogo(address);
       return {
-        name,
+        name: name ?? this.getContractName(address),
         symbol,
         decimals,
         logo

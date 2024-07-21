@@ -58,7 +58,12 @@ export default function SignText(props: Props) {
               interactionType={interactionType}></DecodedCalldata>
           ) : (
             <Card>
-              <Text text={interactionType} textCenter mt="lg" />
+              <Text
+                text={interactionType}
+                style={{ maxWidth: 254, overflow: 'hidden', whiteSpace: 'nowrap', textOverflow: 'ellipsis' }}
+                textCenter
+                mt="lg"
+              />
             </Card>
           )}
           <Text text="Calldata:" textCenter mt="lg" preset={'sub-bold'} />
