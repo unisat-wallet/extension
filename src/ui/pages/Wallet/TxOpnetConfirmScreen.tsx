@@ -26,6 +26,7 @@ interface LocationState {
 
 export default function TxOpnetConfirmScreen() {
   const navigate = useNavigate();
+  const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
 
   const { rawTxInfo } = useLocationState<LocationState>();
   console.log(rawTxInfo);
@@ -82,7 +83,6 @@ export default function TxOpnetConfirmScreen() {
       // Sign and broadcast the transaction
       const finalTx = await factory.signInteraction(interactionParameters);
       console.log(finalTx);
-      const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
 
       const firstTxBroadcast = await provider.sendRawTransaction(finalTx[0], false);
       console.log(`First transaction broadcasted: ${firstTxBroadcast.result}`);
@@ -144,7 +144,6 @@ export default function TxOpnetConfirmScreen() {
     console.log(wrapParameters);
     const finalTx = await factory.wrap(wrapParameters);
     console.log(`Final transaction:`, finalTx);
-    const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
     const firstTxBroadcast = await provider.sendRawTransaction((await finalTx).transaction[0], false);
     if (!firstTxBroadcast) {
       tools.toastError(`Error,Please Try again`);
@@ -199,7 +198,6 @@ export default function TxOpnetConfirmScreen() {
     const calldata = generateCalldata(unwrapAmount);
     console.log(calldata);
 
-    const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
     const contract: IWBTCContract = getContract<IWBTCContract>(
       'bcrt1q99qtptumw027cw8w274tqzd564q66u537vn0lh',
       WBTC_ABI,
@@ -281,7 +279,6 @@ export default function TxOpnetConfirmScreen() {
   const stake = async () => {
     const foundObject = rawTxInfo.items.find((obj) => obj.account && obj.account.address === rawTxInfo.account.address);
     const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
-    const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
     const result = 10 ** rawTxInfo.opneTokens[0].divisibility;
     const amountToSend = BigInt(rawTxInfo.inputAmount * result);
     console.log(amountToSend);
