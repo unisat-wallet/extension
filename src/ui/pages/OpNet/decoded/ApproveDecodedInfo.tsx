@@ -6,12 +6,17 @@ import { Card, Column, Image, Row, Text } from '@/ui/components';
 import { fontSizes } from '@/ui/theme/font';
 import { BinaryReader } from '@btc-vision/bsi-binary';
 
-export function decodeTransfer(selector: string, reader: BinaryReader): DecodedTransfer {
+export interface DecodedApprove extends Decoded {
+  readonly amount: bigint;
+  readonly spender: string;
+}
+
+export function decodeApprove(selector: string, reader: BinaryReader): DecodedApprove {
   let amount = 0n;
-  let to = '';
+  let spender = '';
   switch (selector) {
-    case InteractionType.Transfer: {
-      to = reader.readAddress();
+    case InteractionType.Approve: {
+      spender = reader.readAddress();
       amount = reader.readU256();
       break;
     }
@@ -20,7 +25,7 @@ export function decodeTransfer(selector: string, reader: BinaryReader): DecodedT
   return {
     selector,
     amount,
-    to
+    spender
   };
 }
 
@@ -29,13 +34,13 @@ export interface DecodedTransfer extends Decoded {
   readonly to: string;
 }
 
-interface DecodedTransferProps {
-  readonly decoded: DecodedTransfer;
+interface DecodedApproveProps {
+  readonly decoded: DecodedApprove;
   readonly contractInfo: ContractInformation;
   readonly interactionType: string;
 }
 
-export function TransferDecodedInfo(props: DecodedTransferProps): JSX.Element {
+export function ApproveDecodedInfo(props: DecodedApproveProps): JSX.Element {
   const { contractInfo } = props;
   const interactionType = props.interactionType;
   const decoded = props.decoded;
@@ -43,7 +48,7 @@ export function TransferDecodedInfo(props: DecodedTransferProps): JSX.Element {
   const amount = new BigNumber(decoded.amount.toString()).div(new BigNumber(10).pow(contractInfo.decimals || 8));
   const balanceFormatted = amount.toFormat(6).toString();
 
-  const slicedAddress = `${decoded.to.slice(0, 8)}...${decoded.to.slice(-12)}`;
+  const slicedAddress = `${decoded.spender.slice(0, 8)}...${decoded.spender.slice(-12)}`;
 
   return (
     <Card>
@@ -53,7 +58,7 @@ export function TransferDecodedInfo(props: DecodedTransferProps): JSX.Element {
           <Image src={contractInfo.logo} size={fontSizes.logo} />
           <Text text={`${balanceFormatted} ${(contractInfo.symbol || '').toUpperCase()}`} preset="large" textCenter />
         </Row>
-        <Text text={`➜ ${slicedAddress}`} preset="sub" textCenter />
+        <Text text={`spender: ✓ ${slicedAddress}`} preset="sub" textCenter />
       </Column>
     </Card>
   );

@@ -127,8 +127,6 @@ class Web3API {
       }
 
       const logo = this.getContractLogo(address);
-      console.log('logo', logo);
-
       return {
         name,
         symbol,

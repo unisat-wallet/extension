@@ -1,7 +1,11 @@
+import { decodeApprove } from '@/ui/pages/OpNet/decoded/ApproveDecodedInfo';
+import { decodeTransfer } from '@/ui/pages/OpNet/decoded/TransferDecodedInfo';
 import { BinaryReader } from '@btc-vision/bsi-binary';
 
 export enum InteractionType {
-  Transfer = '27f576ca'
+  Transfer = '27f576ca',
+  Approve = '74e21680',
+  TransferFrom = '23b872dd'
 }
 
 export function selectorToString(calldata: string): string {
@@ -11,14 +15,10 @@ export function selectorToString(calldata: string): string {
   switch (selector) {
     case InteractionType.Transfer:
       return 'transfer(address,uint256)';
-    case '23b872dd':
+    case InteractionType.Approve:
       return 'approve(address,uint256)';
-    case '095ea7b3':
+    case InteractionType.TransferFrom:
       return 'transferFrom(address,address,uint256)';
-    case '70a08231':
-      return 'balanceOf(address)';
-    case '313ce567':
-      return 'allowance(address,address)';
     default:
       return `Unknown Interaction : 0x${selector}`;
   }
@@ -28,30 +28,7 @@ export interface Decoded {
   readonly selector: string;
 }
 
-export interface DecodedTransfer extends Decoded {
-  readonly amount: bigint;
-  readonly to: string;
-}
-
-export function decodeTransfer(selector: string, reader: BinaryReader): DecodedTransfer {
-  let amount = 0n;
-  let to = '';
-  switch (selector) {
-    case InteractionType.Transfer: {
-      to = reader.readAddress();
-      amount = reader.readU256();
-      break;
-    }
-  }
-
-  return {
-    selector,
-    amount,
-    to
-  };
-}
-
-export function decodeCallData(calldata: string): Decoded {
+export function decodeCallData(calldata: string): Decoded | null {
   const data = Buffer.from(calldata, 'hex');
   const reader = new BinaryReader(data);
   reader.setOffset(4);
@@ -61,9 +38,9 @@ export function decodeCallData(calldata: string): Decoded {
   switch (selector) {
     case InteractionType.Transfer:
       return decodeTransfer(selector, reader);
+    case InteractionType.Approve:
+      return decodeApprove(selector, reader);
     default:
-      return {
-        selector
-      };
+      return null;
   }
 }

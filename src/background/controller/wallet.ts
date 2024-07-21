@@ -637,7 +637,7 @@ export class WalletController extends BaseController {
 
   signInteraction = async (
     interactionParameters: InteractionParametersWithoutSigner
-  ): Promise<[BroadcastedTransaction, BroadcastedTransaction]> => {
+  ): Promise<[BroadcastedTransaction, BroadcastedTransaction, import('@btc-vision/transaction').UTXO[]]> => {
     try {
       const account = preferenceService.getCurrentAccount();
       if (!account) throw new Error('no current account');
@@ -691,7 +691,7 @@ export class WalletController extends BaseController {
         throw new Error(secondTransaction.error);
       }
 
-      return [firstTransaction, secondTransaction];
+      return [firstTransaction, secondTransaction, sendTransaction[2]];
     } catch (e) {
       const err = e as Error;
 
