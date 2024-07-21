@@ -31,7 +31,7 @@ export default function TxOpnetConfirmScreen() {
   const handleCancel = () => {
     console.log();
   };
-  
+
   const wallet = useWallet();
   const tools = useTools();
 
@@ -41,6 +41,8 @@ export default function TxOpnetConfirmScreen() {
     const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, networks.regtest);
     const opnetNode = 'https://regtest.opnet.org';
     const utxoManager = new OPNetLimitedProvider(opnetNode);
+    const provider: JSONRpcProvider = new JSONRpcProvider(opnetNode);
+
     const factory: TransactionFactory = new TransactionFactory(); // Transaction factory
     const abiCoder: ABICoder = new ABICoder();
     const transferSelector = Number('0x' + abiCoder.encodeSelector('transfer'));
@@ -81,7 +83,6 @@ export default function TxOpnetConfirmScreen() {
 
       // Sign and broadcast the transaction
       const finalTx = await factory.signInteraction(interactionParameters);
-      const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
 
       const firstTxBroadcast = await provider.sendRawTransaction(finalTx[0], false);
       console.log(`First transaction broadcasted: ${firstTxBroadcast.result}`);
@@ -142,10 +143,10 @@ export default function TxOpnetConfirmScreen() {
       amount: wrapAmount,
       generationParameters: generationParameters
     };
-    console.log(wrapParameters);
+
     const finalTx = await factory.wrap(wrapParameters);
-    console.log('Final transaction:', finalTx);
     const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
+
     const firstTxBroadcast = await provider.sendRawTransaction((await finalTx).transaction[0], false);
     if (!firstTxBroadcast) {
       tools.toastError('Error,Please Try again');
@@ -161,15 +162,17 @@ export default function TxOpnetConfirmScreen() {
       console.log('Second transaction broadcasted:', secondTxBroadcast);
       console.log(secondTxBroadcast);
     }
-    console.log('finish');
+
     tools.toastSuccess(`"You have sucessfully wraped ${wrapAmount} Bitcoin"`);
     navigate('TxSuccessScreen', { secondTxBroadcast });
   };
+
   const handleUnWrapConfirm = async () => {
     const foundObject = rawTxInfo.items.find((obj) => obj.account && obj.account.address === rawTxInfo.account.address);
     const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
     const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, networks.regtest);
     const opnetNode = 'https://regtest.opnet.org';
+    const provider: JSONRpcProvider = new JSONRpcProvider(opnetNode);
     const opnet: OPNetLimitedProvider = new OPNetLimitedProvider(opnetNode);
     const factory: TransactionFactory = new TransactionFactory(); // Transaction factory
     const abiCoder: ABICoder = new ABICoder();
@@ -200,13 +203,13 @@ export default function TxOpnetConfirmScreen() {
     const calldata = generateCalldata(unwrapAmount);
     console.log(calldata);
 
-    const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
     const contract: IWBTCContract = getContract<IWBTCContract>(
       'bcrt1q99qtptumw027cw8w274tqzd564q66u537vn0lh',
       WBTC_ABI,
       provider,
       walletGet.p2tr
     );
+
     const withdrawalRequest = await contract.requestWithdrawal(unwrapAmount);
     console.log(unwrapAmount);
     console.log(withdrawalRequest);
@@ -277,17 +280,15 @@ export default function TxOpnetConfirmScreen() {
     } catch (e) {
       console.error('Error:', e);
     }
-    console.log('finish');
   };
   const stake = async () => {
     const foundObject = rawTxInfo.items.find((obj) => obj.account && obj.account.address === rawTxInfo.account.address);
     const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
-    const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
     const result = 10 ** rawTxInfo.opneTokens[0].divisibility;
     const amountToSend = BigInt(rawTxInfo.inputAmount * result);
-    console.log(amountToSend);
     const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, networks.regtest);
     const opnetNode = 'https://regtest.opnet.org';
+    const provider: JSONRpcProvider = new JSONRpcProvider(opnetNode);
     const utxoManager = new OPNetLimitedProvider(opnetNode);
     const factory: TransactionFactory = new TransactionFactory(); // Transaction factory
 
@@ -297,20 +298,20 @@ export default function TxOpnetConfirmScreen() {
       provider,
       walletGet.p2tr
     );
+
     const stakeData = (await contract.stake(amountToSend)) as unknown as { calldata: Buffer };
-    console.log(stakeData);
     if ('error' in stakeData) {
       throw new Error('Invalid calldata in stakeData');
     }
+
     const utxoSetting: FetchUTXOParamsMultiAddress = {
       addresses: [walletGet.p2wpkh, walletGet.p2tr],
       minAmount: 10000n,
       requestedAmount: BigInt(amountToSend)
     };
-    console.log(walletGet.p2wpkh, walletGet.p2tr);
 
     const utxos: UTXO[] = await utxoManager.fetchUTXOMultiAddr(utxoSetting);
-    console.log(utxos);
+
     const interactionParameters: IInteractionParameters = {
       from: walletGet.p2tr,
       to: contract.address.toString(),
@@ -321,7 +322,7 @@ export default function TxOpnetConfirmScreen() {
       priorityFee: 50000n,
       calldata: stakeData?.calldata as Buffer
     };
-    console.log(interactionParameters);
+
     const sendTransact = await factory.signInteraction(interactionParameters);
 
     // If this transaction is missing, opnet will deny the unwrapping request.

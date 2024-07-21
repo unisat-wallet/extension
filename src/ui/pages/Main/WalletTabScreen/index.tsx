@@ -1,4 +1,5 @@
 import { Tabs, Tooltip } from 'antd';
+import { JSONRpcProvider } from 'opnet';
 import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 
 import { AddressFlagType, KEYRING_TYPE } from '@/shared/constant';
@@ -90,6 +91,27 @@ export default function WalletTabScreen() {
   const totalAmount = satoshisToAmount(totalSatoshis);
 
   const addressSummary = useAddressSummary();
+  const [balanceValueRegtest, setBalanceValue] = useState<string | number>('--');
+
+  useEffect(() => {
+    const fetchBalance = async () => {
+      if (accountBalance.amount === '0') {
+        setBalanceValue('--');
+      } else {
+        if (chain.enum === 'BITCOIN_REGTEST') {
+          const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
+
+          const btcbalanceGet = await provider.getBalance(currentAccount.address);
+          console.log(btcbalanceGet);
+          setBalanceValue(parseInt(btcbalanceGet.toString()) / 10 ** 8);
+        } else {
+          setBalanceValue(accountBalance.amount);
+        }
+      }
+    };
+
+    fetchBalance();
+  }, [accountBalance.amount, chain.enum, currentAccount.address]);
 
   useEffect(() => {
     if (currentAccount.address === addressSummary.address) {
@@ -246,7 +268,12 @@ export default function WalletTabScreen() {
               fontSize: fontSizes.xs
             }}>
             <div>
-              <Text text={balanceValue + '  BTC'} preset="title-bold" textCenter size="xxxl" />
+              <Text
+                text={chain.enum == 'BITCOIN_REGTEST' ? balanceValueRegtest + '  BTC' : balanceValue + '  BTC'}
+                preset="title-bold"
+                textCenter
+                size="xxxl"
+              />
             </div>
           </Tooltip>
 

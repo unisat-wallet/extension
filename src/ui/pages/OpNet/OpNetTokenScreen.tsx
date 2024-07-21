@@ -19,6 +19,7 @@ interface LocationState {
 
 export default function OpNetTokenScreen() {
   const navigate = useNavigate();
+  const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
 
   const { address } = useLocationState<LocationState>();
   const [tokenSummary, setTokenSummary] = useState<any>({
@@ -47,7 +48,6 @@ export default function OpNetTokenScreen() {
 
   useEffect(() => {
     const getAddress = async () => {
-      const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
       const btcbalanceGet = await provider.getBalance(account.address);
       const contract: IOP_20Contract = getContract<IOP_20Contract>(address, OP_20_ABI, provider);
       const contracName = await contract.name();
