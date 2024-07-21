@@ -59,6 +59,7 @@ import { OpenApiService } from '../service/openapi';
 import { ConnectedSite } from '../service/permission';
 import BaseController from './base';
 import { InteractionParametersWithoutSigner } from '@/content-script/pageProvider/Web3Provider.js';
+import { Network } from 'bitcoinjs-lib/src/networks.js';
 
 const stashKeyrings: Record<string, Keyring> = {};
 export type AccountAsset = {
@@ -73,6 +74,8 @@ export class WalletController extends BaseController {
 
   private readonly opnetProvider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
   private readonly opnetFactory: TransactionFactory = new TransactionFactory()
+
+  private currentNetwork: Network = networks.regtest;
 
   /* wallet */
   boot = (password: string) => keyringService.boot(password);
@@ -636,13 +639,15 @@ export class WalletController extends BaseController {
 
       console.log('interactionParameters', interactionParameters);
 
-      const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, networks.regtest);
+      const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, this.currentNetwork);
+
+
       const interactionParametesSubmit: IInteractionParameters = {
         from: interactionParameters.from, // From address
         to: interactionParameters.to, // To address
         utxos: interactionParameters.utxos, // UTXOs
         signer: walletGet.keypair, // Signer
-        network: networks.regtest, // Network
+        network: this.currentNetwork, // Network
         feeRate: interactionParameters.feeRate, // Fee rate (satoshi per byte)
         priorityFee: interactionParameters.priorityFee, // Priority fee (opnet)
         calldata: Buffer.from(interactionParameters.calldata) // Calldata
