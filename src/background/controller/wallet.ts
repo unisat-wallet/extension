@@ -1,4 +1,5 @@
 import { networks } from 'bitcoinjs-lib';
+import { Network } from 'bitcoinjs-lib/src/networks.js';
 import { JSONRpcProvider } from 'opnet';
 
 import {
@@ -12,15 +13,16 @@ import {
 } from '@/background/service';
 import i18n from '@/background/service/i18n';
 import { DisplayedKeyring, Keyring } from '@/background/service/keyring';
+import { InteractionParametersWithoutSigner } from '@/content-script/pageProvider/Web3Provider.js';
 import {
   ADDRESS_TYPES,
   AddressFlagType,
   BRAND_ALIAN_TYPE_TEXT,
   CHAINS_ENUM,
   CHAINS_MAP,
-  ChainType,
   COIN_NAME,
   COIN_SYMBOL,
+  ChainType,
   KEYRING_TYPE,
   KEYRING_TYPES,
   NETWORK_TYPES,
@@ -41,9 +43,9 @@ import {
 } from '@/shared/types';
 import { checkAddressFlag, getChainInfo } from '@/shared/utils';
 import { IInteractionParameters, TransactionFactory, Wallet } from '@btc-vision/transaction';
-import { txHelpers, UnspentOutput } from '@unisat/wallet-sdk';
+import { UnspentOutput, txHelpers } from '@unisat/wallet-sdk';
 import { publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
-import { bitcoin, ECPair } from '@unisat/wallet-sdk/lib/bitcoin-core';
+import { ECPair, bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 import { KeystoneKeyring } from '@unisat/wallet-sdk/lib/keyring';
 import {
   genPsbtOfBIP322Simple,
@@ -58,8 +60,6 @@ import { ContactBookItem } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';
 import { ConnectedSite } from '../service/permission';
 import BaseController from './base';
-import { InteractionParametersWithoutSigner } from '@/content-script/pageProvider/Web3Provider.js';
-import { Network } from 'bitcoinjs-lib/src/networks.js';
 
 const stashKeyrings: Record<string, Keyring> = {};
 export type AccountAsset = {
@@ -73,7 +73,7 @@ export class WalletController extends BaseController {
   openapi: OpenApiService = openapiService;
 
   private readonly opnetProvider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
-  private readonly opnetFactory: TransactionFactory = new TransactionFactory()
+  private readonly opnetFactory: TransactionFactory = new TransactionFactory();
 
   private currentNetwork: Network = networks.regtest;
 
@@ -640,19 +640,22 @@ export class WalletController extends BaseController {
       console.log('interactionParameters', interactionParameters);
 
       const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, this.currentNetwork);
-
-
+      const utxos2 = interactionParameters.utxos.map((utxo) => ({
+        ...utxo,
+        value: BigInt(utxo.value) // Convert BigInt to number
+        // Alternatively, you can convert to string: value: utxo.value.toString()
+      }));
       const interactionParametesSubmit: IInteractionParameters = {
         from: interactionParameters.from, // From address
         to: interactionParameters.to, // To address
-        utxos: interactionParameters.utxos, // UTXOs
+        utxos: utxos2, // UTXOs
         signer: walletGet.keypair, // Signer
         network: this.currentNetwork, // Network
         feeRate: interactionParameters.feeRate, // Fee rate (satoshi per byte)
-        priorityFee: interactionParameters.priorityFee, // Priority fee (opnet)
-        calldata: Buffer.from(interactionParameters.calldata) // Calldata
+        priorityFee: BigInt(interactionParameters.priorityFee), // Priority fee (opnet)
+        calldata: interactionParameters.calldata // Calldata
       };
-
+      console.log(interactionParametesSubmit);
       const sendTransaction = await this.opnetFactory.signInteraction(interactionParametesSubmit);
       const firstTransaction = await this.opnetProvider.sendRawTransaction(sendTransaction[0], false);
 
@@ -662,7 +665,7 @@ export class WalletController extends BaseController {
         console.log('Broadcasted First Transaction:', firstTransaction);
       }
 
-      if(firstTransaction.error) {
+      if (firstTransaction.error) {
         throw new Error(firstTransaction.error);
       }
 
@@ -674,7 +677,7 @@ export class WalletController extends BaseController {
         console.log('Broadcasted Second Transaction:', secondTransaction);
       }
 
-      if(secondTransaction.error) {
+      if (secondTransaction.error) {
         throw new Error(secondTransaction.error);
       }
 
