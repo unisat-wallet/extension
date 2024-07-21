@@ -71,6 +71,8 @@ export type AccountAsset = {
 export class WalletController extends BaseController {
   openapi: OpenApiService = openapiService;
 
+  private readonly opnetProvider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
+
   /* wallet */
   boot = (password: string) => keyringService.boot(password);
   isBooted = () => keyringService.isBooted();
@@ -626,10 +628,14 @@ export class WalletController extends BaseController {
     try {
       const account = preferenceService.getCurrentAccount();
       if (!account) throw new Error('no current account');
+
       const factory: TransactionFactory = new TransactionFactory(); // Transaction factory
       const wifWallet = await this.getInternalPrivateKey({ pubkey: account.pubkey, type: account.type } as Account);
+
       if (!wifWallet) throw new Error('no current account');
-      console.log(interactionParameters);
+
+      console.log('interactionParameters', interactionParameters);
+
       const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, networks.regtest);
       const interactionParametesSubmit: IInteractionParameters = {
         from: interactionParameters.from, // From address
@@ -641,22 +647,32 @@ export class WalletController extends BaseController {
         priorityFee: interactionParameters.priorityFee, // Priority fee (opnet)
         calldata: Buffer.from(interactionParameters.calldata) // Calldata
       };
-      const sendTransact = await factory.signInteraction(interactionParametesSubmit);
-      const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
-      const firstTransaction = await provider.sendRawTransaction(sendTransact[0], false);
+
+      const sendTransaction = await factory.signInteraction(interactionParametesSubmit);
+      const firstTransaction = await this.opnetProvider.sendRawTransaction(sendTransaction[0], false);
+
       if (!firstTransaction) {
         throw new Error('Error in Broadcast');
       } else {
-        console.log('Broadcasted:', firstTransaction);
+        console.log('Broadcasted First Transaction:', firstTransaction);
+      }
+
+      if(firstTransaction.error) {
+        throw new Error(firstTransaction.error);
       }
 
       // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
-      const secondTransaction = await provider.sendRawTransaction(sendTransact[1], false);
+      const secondTransaction = await this.opnetProvider.sendRawTransaction(sendTransaction[1], false);
       if (!secondTransaction) {
         throw new Error('Error in Broadcast');
       } else {
-        console.log('Broadcasted:', secondTransaction);
+        console.log('Broadcasted Second Transaction:', secondTransaction);
       }
+
+      if(secondTransaction.error) {
+        throw new Error(secondTransaction.error);
+      }
+
       return [firstTransaction, secondTransaction];
     } catch (e) {
       console.log(e);
