@@ -72,6 +72,7 @@ export class WalletController extends BaseController {
   openapi: OpenApiService = openapiService;
 
   private readonly opnetProvider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
+  private readonly opnetFactory: TransactionFactory = new TransactionFactory()
 
   /* wallet */
   boot = (password: string) => keyringService.boot(password);
@@ -629,7 +630,6 @@ export class WalletController extends BaseController {
       const account = preferenceService.getCurrentAccount();
       if (!account) throw new Error('no current account');
 
-      const factory: TransactionFactory = new TransactionFactory(); // Transaction factory
       const wifWallet = await this.getInternalPrivateKey({ pubkey: account.pubkey, type: account.type } as Account);
 
       if (!wifWallet) throw new Error('no current account');
@@ -648,7 +648,7 @@ export class WalletController extends BaseController {
         calldata: Buffer.from(interactionParameters.calldata) // Calldata
       };
 
-      const sendTransaction = await factory.signInteraction(interactionParametesSubmit);
+      const sendTransaction = await this.opnetFactory.signInteraction(interactionParametesSubmit);
       const firstTransaction = await this.opnetProvider.sendRawTransaction(sendTransaction[0], false);
 
       if (!firstTransaction) {
@@ -675,8 +675,9 @@ export class WalletController extends BaseController {
 
       return [firstTransaction, secondTransaction];
     } catch (e) {
-      console.log(e);
-      throw new Error(String(e));
+      const err = e as Error;
+
+      throw new Error(err.stack);
     }
   };
 
