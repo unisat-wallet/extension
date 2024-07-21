@@ -31,7 +31,7 @@
     "@ant-design/icons": "^4.7.0",
     "@babel/core": "^7.16.0",
     "@btc-vision/bsi-binary": "^1.0.28",
-    "@btc-vision/transaction": "1.0.49",
+    "@btc-vision/transaction": "1.0.50",
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-regular-svg-icons": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
