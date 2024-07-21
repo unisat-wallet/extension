@@ -150,11 +150,14 @@ export function browserRuntimeOnConnect(listener) {
   browser.runtime.onConnect.addListener(listener);
 }
 
-export function browserRuntimeOnInstalled(listener) {
+export function browserRuntimeOnInstalled(listener: (details: chrome.runtime.InstalledDetails) => void) {
   browser.runtime.onInstalled.addListener(listener);
 }
 
-export function browserRuntimeConnect(extensionId?: string, connectInfo?: any) {
+export function browserRuntimeConnect(
+  extensionId?: string,
+  connectInfo?: chrome.runtime.ConnectInfo
+): chrome.runtime.Port {
   return browser.runtime.connect(extensionId, connectInfo);
 }
 

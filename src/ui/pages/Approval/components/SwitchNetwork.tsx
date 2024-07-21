@@ -25,12 +25,12 @@ export default function SwitchNetwork({ params: { data, session } }: Props) {
 
   const [getApproval, resolveApproval, rejectApproval] = useApproval();
 
-  const handleCancel = () => {
-    rejectApproval('User rejected the request.');
+  const handleCancel = async () => {
+    await rejectApproval('User rejected the request.');
   };
 
   const handleConnect = async () => {
-    resolveApproval();
+    await resolveApproval();
   };
 
   return (

@@ -1,4 +1,4 @@
-import { IOP_20Contract, JSONRpcProvider, OP_20_ABI, getContract } from 'opnet';
+import { getContract, IOP_20Contract, JSONRpcProvider, OP_20_ABI } from 'opnet';
 import { useEffect, useState } from 'react';
 
 import { opNetBalance } from '@/shared/types';
@@ -12,6 +12,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../../MainRoute';
 import { AddOpNetToken } from '../../Wallet/AddOpNetToken';
+
 
 const { AddressType } = require('@unisat/wallet-sdk');
 const { bitcoin } = require('@unisat/wallet-sdk/lib/bitcoin-core');
@@ -38,7 +39,6 @@ export function OP_NETList() {
       if (tokensImported) {
         parsedTokens = JSON.parse(tokensImported);
       }
-      console.log(currentAccount.address);
       const tokenBalances: opNetBalance[] = [];
       for (let i = 0; i < parsedTokens.length; i++) {
         try {
@@ -51,10 +51,7 @@ export function OP_NETList() {
           const symbol = await contract.symbol();
 
           const balance = await contract.balanceOf(currentAccount.address);
-          if ('error' in balance || 'error' in contracName || 'error' in divisibility || 'error' in symbol) {
-            console.log(balance);
-          } else {
-            console.log(balance);
+          if (!('error' in balance || 'error' in contracName || 'error' in divisibility || 'error' in symbol)) {
             tokenBalances.push({
               address: tokenAddress,
               name: contracName.decoded.toLocaleString(),
@@ -70,7 +67,6 @@ export function OP_NETList() {
           i--;
         }
       }
-      console.log(tokenBalances);
       setTokens(tokenBalances);
       setTotal(1);
     } catch (e) {

@@ -16,6 +16,7 @@ import AsyncMainRoute from './pages/MainRoute';
 import store from './state';
 import { WalletProvider } from './utils';
 
+
 // disabled sentry
 // Sentry.init({
 //   dsn: 'https://15ca58bf532f4234a2f400cd11edfa2f@o4504750033403904.ingest.sentry.io/4505044300201984',
@@ -85,6 +86,8 @@ const wallet: Record<string, any> = new Proxy(
             {},
             {
               get(obj, key) {
+                if (typeof key !== 'string') throw new Error('Invalid key');
+
                 return function (...params: any) {
                   return portMessageChannel.request({
                     type: 'openapi',
@@ -95,9 +98,10 @@ const wallet: Record<string, any> = new Proxy(
               }
             }
           );
-          break;
         default:
           return function (...params: any) {
+            if (typeof key !== 'string') throw new Error('Invalid key');
+
             return portMessageChannel.request({
               type: 'controller',
               method: key,
@@ -109,14 +113,14 @@ const wallet: Record<string, any> = new Proxy(
   }
 );
 
-portMessageChannel.listen((data) => {
+portMessageChannel.listen(async (data) => {
   if (data.type === 'broadcast') {
     eventBus.emit(data.method, data.params);
   }
 });
 
-eventBus.addEventListener(EVENTS.broadcastToBackground, (data) => {
-  portMessageChannel.request({
+eventBus.addEventListener(EVENTS.broadcastToBackground, async (data) => {
+  await portMessageChannel.request({
     type: 'broadcast',
     method: data.method,
     params: data.data

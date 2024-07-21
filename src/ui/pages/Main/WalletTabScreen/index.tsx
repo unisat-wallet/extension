@@ -102,7 +102,6 @@ export default function WalletTabScreen() {
           const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
 
           const btcbalanceGet = await provider.getBalance(currentAccount.address);
-          console.log(btcbalanceGet);
           setBalanceValue(parseInt(btcbalanceGet.toString()) / 10 ** 8);
         } else {
           setBalanceValue(accountBalance.amount);
@@ -110,7 +109,7 @@ export default function WalletTabScreen() {
       }
     };
 
-    fetchBalance();
+    void fetchBalance();
   }, [accountBalance.amount, chain.enum, currentAccount.address]);
 
   useEffect(() => {

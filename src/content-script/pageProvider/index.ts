@@ -1,31 +1,32 @@
 // this script is injected into webpage's context
 import { ethErrors, serializeError } from 'eth-rpc-errors';
 import { EventEmitter } from 'events';
+import { BroadcastedTransaction } from 'opnet';
 
 import { TxType } from '@/shared/types';
+import { RequestParams } from '@/shared/types/Request.js';
 import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
+import Web3API from '@/shared/web3/Web3API';
+import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 
 import { InteractionParametersWithoutSigner, Web3Provider } from './Web3Provider';
 import PushEventHandlers from './pushEventHandlers';
 import ReadyPromise from './readyPromise';
 import { $, domReadyCall } from './utils';
 
-const log = (event, ...args) => {
-  if (process.env.NODE_ENV !== 'production') {
-    // console.log(
-    //   `%c [unisat] (${new Date().toTimeString().slice(0, 8)}) ${event}`,
-    //   'font-weight: 600; background-color: #7d6ef9; color: white;',
-    //   ...args
-    // );
-  }
+
+const log = (event: string, ...args: unknown[]) => {
+  /*if (process && process.env.NODE_ENV !== 'production') {
+                              console.log(
+                                 `%c [unisat] (${new Date().toTimeString().slice(0, 8)}) ${event}`,
+                                 'font-weight: 600; background-color: #7d6ef9; color: white;',
+                                 ...args
+                              );
+                            }*/
 };
+
 const script = document.currentScript;
 const channelName = script?.getAttribute('channel') || 'UNISAT';
-
-export interface Interceptor {
-  onRequest?: (data: any) => any;
-  onResponse?: (res: any, data: any) => any;
-}
 
 interface StateProvider {
   accounts: string[] | null;
@@ -34,7 +35,7 @@ interface StateProvider {
   initialized: boolean;
   isPermanentlyDisconnected: boolean;
 }
-const EXTENSION_CONTEXT_INVALIDATED_CHROMIUM_ERROR = 'Extension context invalidated.';
+
 export class UnisatProvider extends EventEmitter {
   _selectedAddress: string | null = null;
   _network: string | null = null;
@@ -52,7 +53,7 @@ export class UnisatProvider extends EventEmitter {
 
   public readonly web3: Web3Provider = new Web3Provider(this);
 
-  private _pushEventHandlers: PushEventHandlers;
+  private readonly _pushEventHandlers: PushEventHandlers;
   private _requestPromise = new ReadyPromise(0);
 
   private _bcm = new BroadcastChannelMessage(channelName);
@@ -86,16 +87,18 @@ export class UnisatProvider extends EventEmitter {
     });
 
     try {
-      const { network, accounts, isUnlocked }: any = await this._request({
+      const { network, chain, accounts, isUnlocked }: any = await this._request({
         method: 'getProviderState'
       });
+
       if (isUnlocked) {
         this._isUnlocked = true;
         this._state.isUnlocked = true;
       }
       this.emit('connect', {});
       this._pushEventHandlers.networkChanged({
-        network
+        network,
+        chain
       });
 
       this._pushEventHandlers.accountsChanged(accounts);
@@ -107,21 +110,25 @@ export class UnisatProvider extends EventEmitter {
       this.emit('_initialized');
     }
 
-    this.keepAlive();
+    void this.keepAlive();
   };
 
   /**
    * Sending a message to the extension to receive will keep the service worker alive.
    */
-  private keepAlive = () => {
-    this._request({
-      method: 'keepAlive',
-      params: {}
-    }).then((v) => {
-      setTimeout(() => {
-        this.keepAlive();
-      }, 1000);
-    });
+  private keepAlive = async () => {
+    try {
+      await this._request({
+        method: 'keepAlive',
+        params: {}
+      });
+    } catch (e) {
+      log('[keepAlive: error]', serializeError(e));
+    }
+
+    setTimeout(() => {
+      this.keepAlive();
+    }, 1000);
   };
 
   private _requestPromiseCheckVisibility = () => {
@@ -145,26 +152,29 @@ export class UnisatProvider extends EventEmitter {
   //   return this._request(data);
   // };
 
-  _request = async (data) => {
+  _request = async (data: RequestParams) => {
     if (!data) {
       throw ethErrors.rpc.invalidRequest();
     }
 
     this._requestPromiseCheckVisibility();
 
-    return this._requestPromise.call(() => {
-      log('[request]', JSON.stringify(data, null, 2));
-      return this._bcm
-        .request(data)
-        .then((res) => {
-          log('[request: success]', data.method, res);
-          return res;
-        })
-        .catch((err) => {
+    return this._requestPromise
+      .call(async () => {
+        log('[request]', JSON.stringify(data, null, 2));
+
+        const res = await this._bcm.request(data).catch((err) => {
           log('[request: error]', data.method, serializeError(err));
           throw serializeError(err);
         });
-    });
+
+        log('[request: success]', data.method, res);
+
+        return res;
+      })
+      .catch((err) => {
+        throw err;
+      });
   };
 
   // public methods
@@ -282,13 +292,23 @@ export class UnisatProvider extends EventEmitter {
     })) as Promise<string>;
   };
 
-  signInteraction = async (interactionParameters: InteractionParametersWithoutSigner): Promise<[string, string]> => {
+  signInteraction = async (
+    interactionParameters: InteractionParametersWithoutSigner
+  ): Promise<[BroadcastedTransaction, BroadcastedTransaction]> => {
+    const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(
+      interactionParameters.to
+    );
+
     return (await this._request({
       method: 'signInteraction',
       params: {
-        interactionParameters
+        interactionParameters: {
+          ...interactionParameters,
+          calldata: interactionParameters.calldata.toString('hex')
+        },
+        contractInfo: contractInfo
       }
-    })) as Promise<[string, string]>;
+    })) as Promise<[BroadcastedTransaction, BroadcastedTransaction]>;
   };
 
   sendInscription = async (toAddress: string, inscriptionId: string, options?: { feeRate: number }) => {
@@ -392,7 +412,7 @@ const provider = new UnisatProvider();
 if (!window.unisat) {
   window.unisat = new Proxy(provider, {
     deleteProperty: () => true
-  });
+  }) as any;
 }
 
 Object.defineProperty(window, 'unisat', {

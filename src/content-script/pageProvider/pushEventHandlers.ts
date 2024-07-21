@@ -1,21 +1,24 @@
 import { ethErrors } from 'eth-rpc-errors';
 
+import Web3API from '@/shared/web3/Web3API';
+
 import { UnisatProvider } from './index';
+
 
 class PushEventHandlers {
   provider: UnisatProvider;
 
-  constructor(provider) {
+  constructor(provider: UnisatProvider) {
     this.provider = provider;
   }
 
-  _emit(event, data) {
+  _emit(event: string, data: object) {
     if (this.provider._initialized) {
       this.provider.emit(event, data);
     }
   }
 
-  connect = (data) => {
+  connect = (data: object) => {
     if (!this.provider._isConnected) {
       this.provider._isConnected = true;
       this.provider._state.isConnected = true;
@@ -54,10 +57,12 @@ class PushEventHandlers {
     this._emit('accountsChanged', accounts);
   };
 
-  networkChanged = ({ network }) => {
+  networkChanged = ({ network, chain }) => {
     this.connect({});
 
     if (network !== this.provider._network) {
+      Web3API.setNetwork(chain);
+
       this.provider._network = network;
       this._emit('networkChanged', network);
     }

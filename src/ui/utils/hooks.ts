@@ -9,21 +9,23 @@ export const useApproval = () => {
   const navigate = useNavigate();
   const getApproval = wallet.getApproval;
 
-  const resolveApproval = async (data?: any, stay = false, forceReject = false) => {
+  const resolveApproval = async (data?: unknown, stay = false, forceReject = false) => {
     const approval = await getApproval();
 
     if (approval) {
-      wallet.resolveApproval(data, forceReject);
+      await wallet.resolveApproval(data, forceReject);
     }
+
     if (stay) {
       return;
     }
+
     setTimeout(() => {
       navigate('/');
     });
   };
 
-  const rejectApproval = async (err?, stay = false, isInternal = false) => {
+  const rejectApproval = async (err?: unknown, stay = false, isInternal = false) => {
     const approval = await getApproval();
     if (approval) {
       await wallet.rejectApproval(err, stay, isInternal);
@@ -151,6 +153,7 @@ export const useWalletRequest = (
 
   return [run, loading, res, err] as const;
 };
+
 export interface UseHoverOptions {
   mouseEnterDelayMS?: number;
   mouseLeaveDelayMS?: number;

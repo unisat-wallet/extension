@@ -1,5 +1,6 @@
 import { EVENTS, MANIFEST_VERSION } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
+import { RequestParams } from '@/shared/types/Request.js';
 import { Message } from '@/shared/utils';
 import { openExtensionInTab } from '@/ui/features/browser/tabs';
 
@@ -18,6 +19,7 @@ import { browserRuntimeOnConnect, browserRuntimeOnInstalled } from './webapi/bro
 const { PortMessage } = Message;
 
 let appStoreLoaded = false;
+
 async function restoreAppState() {
   const keyringState = await storage.get('keyringState');
   keyringService.loadStore(keyringState);
@@ -34,13 +36,13 @@ async function restoreAppState() {
   appStoreLoaded = true;
 }
 
-restoreAppState();
+void restoreAppState();
 
 // for page provider
-browserRuntimeOnConnect((port) => {
+browserRuntimeOnConnect((port: chrome.runtime.Port) => {
   if (port.name === 'popup' || port.name === 'notification' || port.name === 'tab') {
-    const pm = new PortMessage(port as any);
-    pm.listen((data) => {
+    const pm = new PortMessage(port);
+    pm.listen((data: RequestParams) => {
       if (data?.type) {
         switch (data.type) {
           case 'broadcast':
@@ -60,8 +62,8 @@ browserRuntimeOnConnect((port) => {
       }
     });
 
-    const boardcastCallback = (data: any) => {
-      pm.request({
+    const boardcastCallback = async (data: RequestParams) => {
+      await pm.request({
         type: 'broadcast',
         method: data.method,
         params: data.params
@@ -94,7 +96,7 @@ browserRuntimeOnConnect((port) => {
 
     const req = { data, session };
     // for background push to respective page
-    req.session.pushMessage = (event, data) => {
+    req.session.pushMessage = (event: string, data: RequestParams) => {
       pm.send('message', { event, data });
     };
 
@@ -102,13 +104,14 @@ browserRuntimeOnConnect((port) => {
   });
 
   port.onDisconnect.addListener(() => {
-    // todo
+    // todo, remove session?
+    pm.dispose();
   });
 });
 
-const addAppInstalledEvent = () => {
+const addAppInstalledEvent = async () => {
   if (appStoreLoaded) {
-    openExtensionInTab();
+    await openExtensionInTab();
     return;
   }
   setTimeout(() => {
@@ -116,16 +119,16 @@ const addAppInstalledEvent = () => {
   }, 1000);
 };
 
-browserRuntimeOnInstalled((details) => {
+browserRuntimeOnInstalled(async (details) => {
   if (details.reason === 'install') {
-    addAppInstalledEvent();
+    await addAppInstalledEvent();
   }
 });
 
 if (MANIFEST_VERSION === 'mv3') {
   // Keep alive for MV3
   const INTERNAL_STAYALIVE_PORT = 'CT_Internal_port_alive';
-  let alivePort: any = null;
+  let alivePort: chrome.runtime.Port | null = null;
 
   setInterval(() => {
     // console.log('Highlander', Date.now());

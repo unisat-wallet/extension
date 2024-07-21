@@ -1,14 +1,14 @@
-import { IOP_20Contract, JSONRpcProvider, OP_20_ABI, getContract } from 'opnet';
+import { getContract, IOP_20Contract, JSONRpcProvider, OP_20_ABI } from 'opnet';
 import { useEffect, useMemo, useState } from 'react';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
+import Web3API from '@/shared/web3/Web3API';
 import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useBlockstreamUrl, useOrdinalsWebsite, useUnisatWebsite } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
-import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
+import { copyToClipboard, useLocationState } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
@@ -31,6 +31,7 @@ export default function OpNetTokenScreen() {
       divisibility: 0
     }
   });
+
   const [btcBalance, setBtcBalance] = useState<any>({
     opNetBalance: {
       address: '',
@@ -40,10 +41,8 @@ export default function OpNetTokenScreen() {
       divisibility: 0
     }
   });
-  const wallet = useWallet();
 
   const account = useCurrentAccount();
-
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
@@ -61,9 +60,7 @@ export default function OpNetTokenScreen() {
         symbol: 'BTC',
         name: 'Bitcoin'
       });
-      if ('error' in balance || 'error' in contracName || 'error' in divisibility || 'error' in symbol) {
-        console.log(balance);
-      } else {
+      if (!('error' in balance || 'error' in contracName || 'error' in divisibility || 'error' in symbol)) {
         const newSummaryData = {
           opNetBalance: {
             address: address,
@@ -77,12 +74,9 @@ export default function OpNetTokenScreen() {
       }
 
       setLoading(false);
-      console.log;
     };
-    getAddress();
+    void getAddress();
   }, [account.address]);
-
-  const unisatWebsite = useUnisatWebsite();
 
   const enableTransfer = useMemo(() => {
     let enable = false;
@@ -93,10 +87,6 @@ export default function OpNetTokenScreen() {
   }, [tokenSummary]);
 
   const tools = useTools();
-
-  const ordinalsWebsite = useOrdinalsWebsite();
-
-  const mempoolWebsite = useBlockstreamUrl();
   if (loading) {
     return (
       <Layout>
@@ -133,8 +123,7 @@ export default function OpNetTokenScreen() {
             </Row>
 
             <Row justifyBetween mt="lg">
-              {tokenSummary.opNetBalance.address == 'bcrt1q99qtptumw027cw8w274tqzd564q66u537vn0lh' &&
-              btcBalance.divisibility == 8 ? (
+              {tokenSummary.opNetBalance.address === Web3API.WBTC && btcBalance.divisibility == 8 ? (
                 <>
                   <Button
                     text="Wrap Bitcoin"
@@ -180,8 +169,7 @@ export default function OpNetTokenScreen() {
               />
             </Row>
             <Row justifyBetween mt="lg">
-              {tokenSummary.opNetBalance.address == 'bcrt1q99qtptumw027cw8w274tqzd564q66u537vn0lh' &&
-              btcBalance.divisibility == 8 ? (
+              {tokenSummary.opNetBalance.address === Web3API.WBTC && btcBalance.divisibility == 8 ? (
                 <>
                   <Button
                     text="Stake WBTC"

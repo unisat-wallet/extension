@@ -22,6 +22,7 @@ import {
   VersionDetail,
   WalletConfig
 } from '@/shared/types';
+import Web3API from '@/shared/web3/Web3API';
 
 import { preferenceService } from '.';
 
@@ -30,12 +31,10 @@ interface OpenApiStore {
   config?: WalletConfig;
 }
 
-const maxRPS = 100;
-
-enum API_STATUS {
-  FAILED = -1,
-  SUCCESS = 0
-}
+//enum API_STATUS {
+//FAILED = -1,
+//SUCCESS = 0
+//}
 
 export class OpenApiService {
   store!: OpenApiStore;
@@ -59,6 +58,8 @@ export class OpenApiService {
     });
 
     const chainType = preferenceService.getChainType();
+    Web3API.setNetwork(chainType);
+
     const chain = CHAINS_MAP[chainType];
     this.endpoint = chain.endpoints[0];
 
@@ -94,7 +95,8 @@ export class OpenApiService {
       throw new Error('Network error, json parse error');
     }
     if (!jsonRes) throw new Error('Network error,no response data');
-    if (jsonRes.code !== API_STATUS.SUCCESS) {
+    if (jsonRes.code !== 0) {
+      // API_STATUS.SUCCESS
       throw new Error(jsonRes.msg);
     }
     return jsonRes.data;
@@ -269,7 +271,14 @@ export class OpenApiService {
     return this.httpGet('/v5/brc20/order-result', { orderId });
   }
 
-  async getBRC20List(address: string, cursor: number, size: number): Promise<{ list: TokenBalance[]; total: number }> {
+  async getBRC20List(
+    address: string,
+    cursor: number,
+    size: number
+  ): Promise<{
+    list: TokenBalance[];
+    total: number;
+  }> {
     return this.httpGet('/v5/brc20/list', { address, cursor, size });
   }
 

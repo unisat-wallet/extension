@@ -16,6 +16,8 @@ interface HeaderProps {
   LeftComponent?: React.ReactNode;
   RightComponent?: React.ReactNode;
   children?: React.ReactNode;
+  height?: string;
+  padding?: number;
 }
 
 export function Header(props: HeaderProps) {
@@ -36,8 +38,8 @@ export function Header(props: HeaderProps) {
         justifyBetween
         itemsCenter
         style={{
-          height: '67.5px',
-          padding: 15
+          height: props.height !== undefined ? props.height : '67.5px',
+          padding: props.padding !== undefined ? props.padding : 15
         }}>
         <Row full>
           <Column selfItemsCenter>

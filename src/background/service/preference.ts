@@ -370,7 +370,11 @@ class PreferenceService {
   // };
 
   // chain type
-  getChainType = () => {
+  getChainType = (): ChainType => {
+    if (!this.store) {
+      throw new Error('Preference store is not initialized');
+    }
+
     if (!CHAINS.find((chain) => chain.enum === this.store.chainType)) {
       this.store.chainType = ChainType.BITCOIN_MAINNET;
     }
