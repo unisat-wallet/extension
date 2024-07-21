@@ -1,4 +1,5 @@
 import { MANIFEST_VERSION } from '@/shared/constant';
+import InstalledDetails = chrome.runtime.InstalledDetails;
 
 function getBrowser() {
   if (typeof globalThis.browser === 'undefined') {
@@ -150,11 +151,11 @@ export function browserRuntimeOnConnect(listener) {
   browser.runtime.onConnect.addListener(listener);
 }
 
-export function browserRuntimeOnInstalled(listener) {
+export function browserRuntimeOnInstalled(listener: (details: InstalledDetails) => void) {
   browser.runtime.onInstalled.addListener(listener);
 }
 
-export function browserRuntimeConnect(extensionId?: string, connectInfo?: any) {
+export function browserRuntimeConnect(extensionId?: string, connectInfo?: chrome.runtime.ConnectInfo): chrome.runtime.Port {
   return browser.runtime.connect(extensionId, connectInfo);
 }
 

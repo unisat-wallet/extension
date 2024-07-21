@@ -1,4 +1,5 @@
 import Message from './index';
+import { RequestParams } from '@/types/Request.js';
 
 export default class BroadcastChannelMessage extends Message {
   private _channel: BroadcastChannel;
@@ -13,30 +14,31 @@ export default class BroadcastChannelMessage extends Message {
   }
 
   connect = () => {
-    this._channel.onmessage = ({ data: { type, data } }) => {
+    this._channel.onmessage = async ({ data: { type, data } }) => {
       if (type === 'message') {
         this.emit('message', data);
       } else if (type === 'response') {
-        this.onResponse(data);
+        await this.onResponse(data);
       }
     };
 
     return this;
   };
 
-  listen = (listenCallback) => {
+  // eslint-disable-next-line no-unused-vars
+  listen = (listenCallback: (_: RequestParams) => Promise<unknown>) => {
     this.listenCallback = listenCallback;
 
-    this._channel.onmessage = ({ data: { type, data } }) => {
+    this._channel.onmessage = async ({ data: { type, data } }) => {
       if (type === 'request') {
-        this.onRequest(data);
+        await this.onRequest(data);
       }
     };
 
     return this;
   };
 
-  send = (type, data) => {
+  send = (type: string, data: object) => {
     this._channel.postMessage({
       type,
       data

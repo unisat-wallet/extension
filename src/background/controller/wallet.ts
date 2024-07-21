@@ -1,5 +1,5 @@
 import { networks } from 'bitcoinjs-lib';
-import { JSONRpcProvider } from 'opnet';
+import { BroadcastedTransaction, JSONRpcProvider } from 'opnet';
 
 import {
   contactBookService,
@@ -628,38 +628,39 @@ export class WalletController extends BaseController {
     if (!account) throw new Error('no current account');
     return keyringService.signMessage(account.pubkey, account.type, text);
   };
-  signInteraction = async (interactionParameters: InteractionParametersWithoutSigner) => {
+
+  signInteraction = async (interactionParameters: InteractionParametersWithoutSigner): Promise<[BroadcastedTransaction, BroadcastedTransaction]> => {
     try {
       const account = preferenceService.getCurrentAccount();
       if (!account) throw new Error('no current account');
 
       const wifWallet = await this.getInternalPrivateKey({ pubkey: account.pubkey, type: account.type } as Account);
-
       if (!wifWallet) throw new Error('no current account');
 
-      console.log('interactionParameters', interactionParameters);
-
       const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, this.currentNetwork);
+      const utxos = interactionParameters.utxos.map((utxo) => {
+        return {
+          ...utxo,
+          value: BigInt(utxo.value as unknown as string),
+        };
+      });
 
-
-      const interactionParametesSubmit: IInteractionParameters = {
+      const interactionParametersSubmit: IInteractionParameters = {
         from: interactionParameters.from, // From address
         to: interactionParameters.to, // To address
-        utxos: interactionParameters.utxos, // UTXOs
+        utxos: utxos, // UTXOs
         signer: walletGet.keypair, // Signer
         network: this.currentNetwork, // Network
-        feeRate: interactionParameters.feeRate, // Fee rate (satoshi per byte)
-        priorityFee: interactionParameters.priorityFee, // Priority fee (opnet)
-        calldata: Buffer.from(interactionParameters.calldata) // Calldata
+        feeRate:interactionParameters.feeRate, // Fee rate (satoshi per byte)
+        priorityFee: BigInt(interactionParameters.priorityFee), // Priority fee (opnet)
+        calldata: Buffer.from(interactionParameters.calldata as unknown as string, 'hex') // Calldata
       };
 
-      const sendTransaction = await this.opnetFactory.signInteraction(interactionParametesSubmit);
+      const sendTransaction = await this.opnetFactory.signInteraction(interactionParametersSubmit);
       const firstTransaction = await this.opnetProvider.sendRawTransaction(sendTransaction[0], false);
 
       if (!firstTransaction) {
         throw new Error('Error in Broadcast');
-      } else {
-        console.log('Broadcasted First Transaction:', firstTransaction);
       }
 
       if(firstTransaction.error) {
@@ -670,8 +671,6 @@ export class WalletController extends BaseController {
       const secondTransaction = await this.opnetProvider.sendRawTransaction(sendTransaction[1], false);
       if (!secondTransaction) {
         throw new Error('Error in Broadcast');
-      } else {
-        console.log('Broadcasted Second Transaction:', secondTransaction);
       }
 
       if(secondTransaction.error) {

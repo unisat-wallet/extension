@@ -3,13 +3,14 @@
  */
 import { ethErrors } from 'eth-rpc-errors';
 import { EventEmitter } from 'events';
+import { ListenCallback, RequestParams } from '@/types/Request.js';
 
 abstract class Message extends EventEmitter {
   // available id list
   // max concurrent request limit
   private _requestIdPool = [...Array(500).keys()];
   protected _EVENT_PRE = 'UNISAT_WALLET_';
-  protected listenCallback: any;
+  protected listenCallback?: ListenCallback;
 
   private _waitingMap = new Map<
     number,
@@ -22,7 +23,7 @@ abstract class Message extends EventEmitter {
 
   abstract send(type: string, data: any): void;
 
-  request = (data) => {
+  request = (data: RequestParams) => {
     if (!this._requestIdPool.length) {
       throw ethErrors.rpc.limitExceeded();
     }
@@ -35,7 +36,12 @@ abstract class Message extends EventEmitter {
         reject
       });
 
-      this.send('request', { ident, data });
+      try {
+        this.send('request', { ident, data });
+      } catch (e) {
+        this._waitingMap.delete(ident);
+        reject(e);
+      }
     });
   };
 
@@ -58,7 +64,10 @@ abstract class Message extends EventEmitter {
 
       try {
         res = await this.listenCallback(data);
-      } catch (e: any) {
+      } catch (_e) {
+
+        const e = _e as Error & { code?: number; data?: unknown };
+
         err = {
           message: e.message,
           stack: e.stack

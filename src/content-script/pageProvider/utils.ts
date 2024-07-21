@@ -1,10 +1,11 @@
 let tryCount = 0;
-const checkLoaded = (callback) => {
+const checkLoaded = (callback: () => void): boolean => {
   tryCount++;
   if (tryCount > 600) {
     // some error happen?
-    return;
+    return false;
   }
+  
   if (document.readyState === 'complete') {
     callback();
     return true;
@@ -13,8 +14,11 @@ const checkLoaded = (callback) => {
       checkLoaded(callback);
     }, 100);
   }
+
+  return false;
 };
-const domReadyCall = (callback) => {
+
+const domReadyCall = (callback: () => void): void => {
   checkLoaded(callback);
 
   // if (document.readyState === 'complete') {

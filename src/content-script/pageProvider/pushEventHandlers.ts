@@ -5,17 +5,17 @@ import { UnisatProvider } from './index';
 class PushEventHandlers {
   provider: UnisatProvider;
 
-  constructor(provider) {
+  constructor(provider: UnisatProvider) {
     this.provider = provider;
   }
 
-  _emit(event, data) {
+  _emit(event: string, data: object) {
     if (this.provider._initialized) {
       this.provider.emit(event, data);
     }
   }
 
-  connect = (data) => {
+  connect = (data: object) => {
     if (!this.provider._isConnected) {
       this.provider._isConnected = true;
       this.provider._state.isConnected = true;

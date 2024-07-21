@@ -11,6 +11,10 @@ export class Web3Provider {
   }
 
   public async signInteraction(interactionParameters: InteractionParametersWithoutSigner): Promise<[string, string]> {
+    if('signer' in interactionParameters) {
+      throw new Error('signer is not allowed in interaction parameters');
+    }
+
     return this.provider.signInteraction(interactionParameters);
   }
 }

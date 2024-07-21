@@ -2,13 +2,12 @@ import extension from 'extensionizer';
 import { nanoid } from 'nanoid';
 
 import { Message } from '@/shared/utils';
+import { RequestParams } from '@/types/Request.js';
 
 const channelName = nanoid();
 
 /**
  * Injects a script tag into the current document
- *
- * @param {string} content - Code to be executed in the current document
  */
 function injectScript() {
   try {
@@ -23,8 +22,9 @@ function injectScript() {
     const { BroadcastChannelMessage, PortMessage } = Message;
 
     const pm = new PortMessage().connect();
-
-    const bcm = new BroadcastChannelMessage(channelName).listen((data) => pm.request(data));
+    const bcm = new BroadcastChannelMessage(channelName).listen( (data: RequestParams) => {
+      return pm.request(data)
+    });
 
     // background notification
     pm.on('message', (data) => {
@@ -45,7 +45,7 @@ function injectScript() {
  *
  * @returns {boolean} {@code true} if the doctype is html or if none exists
  */
-function doctypeCheck() {
+function doctypeCheck(): boolean {
   const { doctype } = window.document;
   if (doctype) {
     return doctype.name === 'html';
@@ -62,7 +62,7 @@ function doctypeCheck() {
  *
  * @returns {boolean} whether or not the extension of the current document is prohibited
  */
-function suffixCheck() {
+function suffixCheck(): boolean {
   const prohibitedTypes = [/\.xml$/u, /\.pdf$/u];
   const currentUrl = window.location.pathname;
   for (let i = 0; i < prohibitedTypes.length; i++) {
@@ -78,7 +78,7 @@ function suffixCheck() {
  *
  * @returns {boolean} {@code true} if the documentElement is an html node or if none exists
  */
-function documentElementCheck() {
+function documentElementCheck(): boolean {
   const documentElement = document.documentElement.nodeName;
   if (documentElement) {
     return documentElement.toLowerCase() === 'html';
@@ -91,10 +91,15 @@ function documentElementCheck() {
  *
  * @returns {boolean} {@code true} if the current domain is blocked
  */
-function blockedDomainCheck() {
+function blockedDomainCheck(): boolean {
   const blockedDomains: string[] = [];
+  if(!blockedDomains.length) {
+    return false;
+  }
+
   const currentUrl = window.location.href;
-  let currentRegex;
+
+  let currentRegex: RegExp;
   for (let i = 0; i < blockedDomains.length; i++) {
     const blockedDomain = blockedDomains[i].replace('.', '\\.');
     currentRegex = new RegExp(`(?:https?:\\/\\/)(?:(?!${blockedDomain}).)*$`, 'u');
@@ -102,16 +107,12 @@ function blockedDomainCheck() {
       return true;
     }
   }
+
   return false;
 }
 
-function iframeCheck() {
-  const isInIframe = self != top;
-  if (isInIframe) {
-    return true;
-  } else {
-    return false;
-  }
+function iframeCheck(): boolean {
+  return self != top;
 }
 
 /**
@@ -119,7 +120,7 @@ function iframeCheck() {
  *
  * @returns {boolean} {@code true} Whether the provider should be injected
  */
-function shouldInjectProvider() {
+function shouldInjectProvider(): boolean {
   return doctypeCheck() && suffixCheck() && documentElementCheck() && !blockedDomainCheck() && !iframeCheck();
 }
 

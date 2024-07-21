@@ -1,5 +1,5 @@
 import { networks } from 'bitcoinjs-lib';
-import { IWBTCContract, JSONRpcProvider, WBTC_ABI, getContract } from 'opnet';
+import { getContract, IWBTCContract, JSONRpcProvider, WBTC_ABI } from 'opnet';
 
 import { Account } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Layout, Row, Text } from '@/ui/components';
@@ -28,12 +28,13 @@ export default function TxOpnetConfirmScreen() {
   const navigate = useNavigate();
 
   const { rawTxInfo } = useLocationState<LocationState>();
-  console.log(rawTxInfo);
   const handleCancel = () => {
     console.log();
   };
+  
   const wallet = useWallet();
   const tools = useTools();
+
   const handleConfirm = async () => {
     const foundObject = rawTxInfo.items.find((obj) => obj.account && obj.account.address === rawTxInfo.account.address);
     const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
@@ -42,7 +43,7 @@ export default function TxOpnetConfirmScreen() {
     const utxoManager = new OPNetLimitedProvider(opnetNode);
     const factory: TransactionFactory = new TransactionFactory(); // Transaction factory
     const abiCoder: ABICoder = new ABICoder();
-    const transferSelector = Number(`0x` + abiCoder.encodeSelector('transfer'));
+    const transferSelector = Number('0x' + abiCoder.encodeSelector('transfer'));
 
     function getTransferToCalldata(to: string, amount: bigint): Buffer {
       const addCalldata: BinaryWriter = new BinaryWriter();
@@ -61,13 +62,12 @@ export default function TxOpnetConfirmScreen() {
         minAmount: 10000n,
         requestedAmount: BigInt(amountToSend)
       };
-      console.log(walletGet.p2wpkh, walletGet.p2tr);
 
       const utxos: UTXO[] = await utxoManager.fetchUTXOMultiAddr(utxoSetting);
-      console.log(utxos);
       if (!utxos.length) {
         throw new Error('No UTXOs found');
       }
+
       const interactionParameters: IInteractionParameters = {
         from: walletGet.p2tr, // From address
         to: rawTxInfo.contractAddress, // To address
@@ -78,10 +78,9 @@ export default function TxOpnetConfirmScreen() {
         priorityFee: BigInt(rawTxInfo.OpnetRateInputVal), // Priority fee (opnet)
         calldata: calldata // Calldata
       };
-      console.log(interactionParameters);
+
       // Sign and broadcast the transaction
       const finalTx = await factory.signInteraction(interactionParameters);
-      console.log(finalTx);
       const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
 
       const firstTxBroadcast = await provider.sendRawTransaction(finalTx[0], false);
@@ -97,7 +96,9 @@ export default function TxOpnetConfirmScreen() {
       if (!secondTxBroadcast.success) {
         throw new Error('Could not broadcast second transaction');
       }
-      tools.toastSuccess(`"You have sucessfully transferd ${amountToSend} Bitcoin"`);
+
+      tools.toastSuccess(`"You have successfully transferred ${amountToSend} Bitcoin"`);
+
       navigate('TxSuccessScreen', { secondTxBroadcast });
     } catch (e) {
       console.log(e);
@@ -143,21 +144,21 @@ export default function TxOpnetConfirmScreen() {
     };
     console.log(wrapParameters);
     const finalTx = await factory.wrap(wrapParameters);
-    console.log(`Final transaction:`, finalTx);
+    console.log('Final transaction:', finalTx);
     const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
     const firstTxBroadcast = await provider.sendRawTransaction((await finalTx).transaction[0], false);
     if (!firstTxBroadcast) {
-      tools.toastError(`Error,Please Try again`);
+      tools.toastError('Error,Please Try again');
       throw new Error('Could not broadcast first transaction');
     } else {
       console.log(firstTxBroadcast);
     }
     const secondTxBroadcast = await provider.sendRawTransaction((await finalTx).transaction[1], false);
     if (!secondTxBroadcast) {
-      tools.toastError(`Error,Please Try again`);
+      tools.toastError('Error,Please Try again');
       throw new Error('Could not broadcast first transaction');
     } else {
-      console.log(`Second transaction broadcasted:`, secondTxBroadcast);
+      console.log('Second transaction broadcasted:', secondTxBroadcast);
       console.log(secondTxBroadcast);
     }
     console.log('finish');
@@ -177,7 +178,7 @@ export default function TxOpnetConfirmScreen() {
     const amountToSend = BigInt(rawTxInfo.inputAmount * result);
 
     const unwrapAmount = amountToSend; // Minimum amount to unwrap
-    const requestWithdrawalSelector = Number(`0x` + abiCoder.encodeSelector('requestWithdrawal'));
+    const requestWithdrawalSelector = Number('0x' + abiCoder.encodeSelector('requestWithdrawal'));
 
     function generateCalldata(unwrapAmount: bigint): Buffer {
       const addCalldata: BinaryWriter = new BinaryWriter();
@@ -228,17 +229,17 @@ export default function TxOpnetConfirmScreen() {
     // If this transaction is missing, opnet will deny the unwrapping request.
     const firstTransaction = await provider.sendRawTransaction(sendTransact[0], false);
     if (!firstTransaction) {
-      console.log(`Broadcasted:`, false);
+      console.log('Broadcasted:', false);
     } else {
-      console.log(`Broadcasted:`, firstTransaction);
+      console.log('Broadcasted:', firstTransaction);
     }
 
     // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
     const seconfTransaction = await provider.sendRawTransaction(sendTransact[1], false);
     if (!seconfTransaction) {
-      console.log(`Broadcasted:`, false);
+      console.log('Broadcasted:', false);
     } else {
-      console.log(`Broadcasted:`, seconfTransaction);
+      console.log('Broadcasted:', seconfTransaction);
     }
     const unwrapUtxos = await opnet.fetchUnWrapParameters(unwrapAmount, walletGet.p2tr);
     if (!unwrapUtxos) {
@@ -262,19 +263,19 @@ export default function TxOpnetConfirmScreen() {
       console.log(
         `Due to bitcoin fees, you will lose ${finalTx.feeRefundOrLoss} satoshis by unwrapping. Do you want to proceed?`
       );
-      console.log(`Final transaction:`, finalTx);
+      console.log('Final transaction:', finalTx);
 
       // If this transaction is missing, opnet will deny the unwrapping request.
       const fundingTransaction = await provider.sendRawTransaction(finalTx.fundingTransaction, false);
-      console.log(`Broadcasted:`, fundingTransaction);
+      console.log('Broadcasted:', fundingTransaction);
 
       // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
       const unwrapTransaction = await provider.sendRawTransaction(finalTx.psbt, true);
-      console.log(`Broadcasted:`, unwrapTransaction);
+      console.log('Broadcasted:', unwrapTransaction);
       tools.toastSuccess(`"You have sucessfully unwraped ${unwrapAmount} Bitcoin"`);
       navigate('TxSuccessScreen', { unwrapTransaction });
     } catch (e) {
-      console.error(`Error:`, e);
+      console.error('Error:', e);
     }
     console.log('finish');
   };
@@ -326,17 +327,17 @@ export default function TxOpnetConfirmScreen() {
     // If this transaction is missing, opnet will deny the unwrapping request.
     const firstTransaction = await provider.sendRawTransaction(sendTransact[0], false);
     if (!firstTransaction.success) {
-      console.log(`Broadcasted:`, false);
+      console.log('Broadcasted:', false);
     } else {
-      console.log(`Broadcasted:`, firstTransaction);
+      console.log('Broadcasted:', firstTransaction);
     }
 
     // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
     const seconfTransaction = await provider.sendRawTransaction(sendTransact[1], false);
     if (!seconfTransaction.success) {
-      console.log(`Broadcasted:`, false);
+      console.log('Broadcasted:', false);
     } else {
-      console.log(`Broadcasted:`, seconfTransaction);
+      console.log('Broadcasted:', seconfTransaction);
     }
     tools.toastSuccess(`"You have sucessfully Staked ${amountToSend} Bitcoin"`);
     navigate('TxSuccessScreen', { seconfTransaction });

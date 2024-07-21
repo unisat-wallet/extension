@@ -1,4 +1,3 @@
-
 import { permissionService, sessionService } from '@/background/service';
 import { CHAINS, CHAINS_MAP, NETWORK_TYPES, VERSION } from '@/shared/constant';
 
@@ -11,6 +10,8 @@ import { toPsbtNetwork } from '@unisat/wallet-sdk/lib/network';
 import { ethErrors } from 'eth-rpc-errors';
 import BaseController from '../base';
 import wallet from '../wallet';
+import { InteractionParametersWithoutSigner } from '@/content-script/pageProvider/Web3Provider.js';
+import { RequestData } from '@/types/Request.js';
 
 function formatPsbtHex(psbtHex: string) {
   let formatData = '';
@@ -150,9 +151,8 @@ class ProviderController extends BaseController {
     return verifyMessageOfBIP322Simple(params.address, params.message, params.signature, params.network) ? 1 : 0;
   }
 
-  @Reflect.metadata('APPROVAL', ['SignPsbt', (req) => {
-    const { data: { params: { toAddress, satoshis } } } = req;
-
+  @Reflect.metadata('APPROVAL', ['SignPsbt', (_req: RequestData) => {
+    //const { data: { params: { toAddress, satoshis } } } = req;
   }])
   sendBitcoin = async ({ approvalRes: { psbtHex } }) => {
     const psbt = bitcoin.Psbt.fromHex(psbtHex);
@@ -161,8 +161,8 @@ class ProviderController extends BaseController {
     return await wallet.pushTx(rawtx)
   }
 
-  @Reflect.metadata('APPROVAL', ['SignPsbt', (req) => {
-    const { data: { params: { toAddress, satoshis } } } = req;
+  @Reflect.metadata('APPROVAL', ['SignPsbt', (_req: RequestData) => {
+    //const { data: { params: { toAddress, satoshis } } } = req;
   }])
   sendInscription = async ({ approvalRes: { psbtHex } }) => {
     const psbt = bitcoin.Psbt.fromHex(psbtHex);
@@ -170,14 +170,13 @@ class ProviderController extends BaseController {
     const rawtx = tx.toHex()
     return await wallet.pushTx(rawtx)
   }
-  @Reflect.metadata('APPROVAL', ['SignInteraction', (interactionParameters) => {
-    const { data: { params: data } } = interactionParameters;
-  }])
-  signInteraction = async ({ data: { params: { interactionParameters } }, approvalRes }) => {
-    return wallet.signInteraction(interactionParameters)
 
+  @Reflect.metadata('APPROVAL', ['SignInteraction', (_req: RequestData) => {
+    //const { data: { params: data } } = interactionParameters;
+  }])
+  signInteraction = async (request: { data: {params: {interactionParameters: InteractionParametersWithoutSigner}}}) => {
+    return wallet.signInteraction(request.data.params.interactionParameters);
   }
-  
 
   @Reflect.metadata('APPROVAL', ['SignText', () => {
     // todo check text
