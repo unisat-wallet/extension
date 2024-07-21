@@ -15,7 +15,8 @@ import {
   OPNetLimitedProvider,
   TransactionFactory,
   UTXO,
-  Wallet
+  Wallet,
+  wBTC
 } from '@btc-vision/transaction';
 
 import { useNavigate } from '../MainRoute';
@@ -35,16 +36,18 @@ export default function TxOpnetConfirmScreen() {
   const wallet = useWallet();
   const tools = useTools();
 
+  const network = networks.regtest;
+
+  const opnetNode = 'https://regtest.opnet.org';
+  const provider: JSONRpcProvider = new JSONRpcProvider(opnetNode);
+  const opnet: OPNetLimitedProvider = new OPNetLimitedProvider(opnetNode);
+  const factory: TransactionFactory = new TransactionFactory(); // Transaction factory
+  const abiCoder: ABICoder = new ABICoder();
+
   const handleConfirm = async () => {
     const foundObject = rawTxInfo.items.find((obj) => obj.account && obj.account.address === rawTxInfo.account.address);
     const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
-    const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, networks.regtest);
-    const opnetNode = 'https://regtest.opnet.org';
-    const utxoManager = new OPNetLimitedProvider(opnetNode);
-    const provider: JSONRpcProvider = new JSONRpcProvider(opnetNode);
-
-    const factory: TransactionFactory = new TransactionFactory(); // Transaction factory
-    const abiCoder: ABICoder = new ABICoder();
+    const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, network);
     const transferSelector = Number('0x' + abiCoder.encodeSelector('transfer'));
 
     function getTransferToCalldata(to: string, amount: bigint): Buffer {
@@ -65,7 +68,7 @@ export default function TxOpnetConfirmScreen() {
         requestedAmount: BigInt(amountToSend)
       };
 
-      const utxos: UTXO[] = await utxoManager.fetchUTXOMultiAddr(utxoSetting);
+      const utxos: UTXO[] = await opnet.fetchUTXOMultiAddr(utxoSetting);
       if (!utxos.length) {
         throw new Error('No UTXOs found');
       }
@@ -75,7 +78,7 @@ export default function TxOpnetConfirmScreen() {
         to: rawTxInfo.contractAddress, // To address
         utxos: utxos, // UTXOs
         signer: walletGet.keypair, // Signer
-        network: networks.regtest, // Network
+        network: network, // Network
         feeRate: 300, // Fee rate (satoshi per byte)
         priorityFee: BigInt(rawTxInfo.OpnetRateInputVal), // Priority fee (opnet)
         calldata: calldata // Calldata
@@ -109,11 +112,7 @@ export default function TxOpnetConfirmScreen() {
   const handleWrapConfirm = async () => {
     const foundObject = rawTxInfo.items.find((obj) => obj.account && obj.account.address === rawTxInfo.account.address);
     const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
-    const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, networks.regtest);
-    const opnetNode = 'https://regtest.opnet.org';
-    const opnet: OPNetLimitedProvider = new OPNetLimitedProvider(opnetNode);
-    const factory: TransactionFactory = new TransactionFactory(); // Transaction factory
-    const abiCoder: ABICoder = new ABICoder();
+    const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, network);
     const result = 10 ** 9;
 
     const amountToSend = BigInt(rawTxInfo.inputAmount * result);
@@ -128,16 +127,17 @@ export default function TxOpnetConfirmScreen() {
     if (!utxos) {
       throw new Error('No UTXOs found');
     }
-    console.log(utxos);
+
     const generationParameters = await opnet.fetchWrapParameters(wrapAmount);
     if (!generationParameters) {
       throw new Error('No generation parameters found');
     }
+
     const wrapParameters: IWrapParameters = {
       from: walletGet.p2tr,
       utxos: utxos,
       signer: walletGet.keypair,
-      network: networks.regtest,
+      network: network,
       feeRate: 400,
       priorityFee: BigInt(rawTxInfo.OpnetRateInputVal),
       amount: wrapAmount,
@@ -145,8 +145,6 @@ export default function TxOpnetConfirmScreen() {
     };
 
     const finalTx = await factory.wrap(wrapParameters);
-    const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
-
     const firstTxBroadcast = await provider.sendRawTransaction((await finalTx).transaction[0], false);
     if (!firstTxBroadcast) {
       tools.toastError('Error,Please Try again');
@@ -170,17 +168,10 @@ export default function TxOpnetConfirmScreen() {
   const handleUnWrapConfirm = async () => {
     const foundObject = rawTxInfo.items.find((obj) => obj.account && obj.account.address === rawTxInfo.account.address);
     const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
-    const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, networks.regtest);
-    const opnetNode = 'https://regtest.opnet.org';
-    const provider: JSONRpcProvider = new JSONRpcProvider(opnetNode);
-    const opnet: OPNetLimitedProvider = new OPNetLimitedProvider(opnetNode);
-    const factory: TransactionFactory = new TransactionFactory(); // Transaction factory
-    const abiCoder: ABICoder = new ABICoder();
+    const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, network);
     const result = 10 ** 9;
 
-    const amountToSend = BigInt(rawTxInfo.inputAmount * result);
-
-    const unwrapAmount = amountToSend; // Minimum amount to unwrap
+    const unwrapAmount = BigInt(rawTxInfo.inputAmount * result); // Minimum amount to unwrap
     const requestWithdrawalSelector = Number('0x' + abiCoder.encodeSelector('requestWithdrawal'));
 
     function generateCalldata(unwrapAmount: bigint): Buffer {
@@ -200,33 +191,31 @@ export default function TxOpnetConfirmScreen() {
     if (!utxos) {
       throw new Error('No UTXOs found');
     }
-    const calldata = generateCalldata(unwrapAmount);
-    console.log(calldata);
 
+    const calldata = generateCalldata(unwrapAmount);
     const contract: IWBTCContract = getContract<IWBTCContract>(
-      'bcrt1q99qtptumw027cw8w274tqzd564q66u537vn0lh',
+      wBTC.getAddress(network),
       WBTC_ABI,
       provider,
       walletGet.p2tr
     );
 
     const withdrawalRequest = await contract.requestWithdrawal(unwrapAmount);
-    console.log(unwrapAmount);
-    console.log(withdrawalRequest);
     if ('error' in withdrawalRequest) {
       throw new Error('Invalid calldata in withdrawal request');
     }
+
     const interactionParameters: IInteractionParameters = {
       from: walletGet.p2tr,
       to: contract.address.toString(),
       utxos: utxos,
       signer: walletGet.keypair,
-      network: networks.regtest,
+      network: network,
       feeRate: 450,
       priorityFee: 50000n,
       calldata: withdrawalRequest.calldata as Buffer
     };
-    console.log(interactionParameters);
+
     const sendTransact = await factory.signInteraction(interactionParameters);
 
     // If this transaction is missing, opnet will deny the unwrapping request.
@@ -254,8 +243,8 @@ export default function TxOpnetConfirmScreen() {
       utxos: utxos, // User UTXOs to spend
       unwrapUTXOs: unwrapUtxos.vaultUTXOs, // Vault UTXOs to unwrap
       signer: walletGet.keypair, // Signer
-      network: networks.regtest, // Bitcoin network
-      feeRate: 100, // Fee rate in satoshis per byte (bitcoin fee)
+      network: network, // Bitcoin network
+      feeRate: 300, // Fee rate in satoshis per byte (bitcoin fee)
       priorityFee: 10000n, // OPNet priority fee (incl gas.)
       amount: unwrapAmount,
       calldata: calldata
@@ -281,19 +270,16 @@ export default function TxOpnetConfirmScreen() {
       console.error('Error:', e);
     }
   };
+
   const stake = async () => {
     const foundObject = rawTxInfo.items.find((obj) => obj.account && obj.account.address === rawTxInfo.account.address);
     const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
     const result = 10 ** rawTxInfo.opneTokens[0].divisibility;
     const amountToSend = BigInt(rawTxInfo.inputAmount * result);
-    const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, networks.regtest);
-    const opnetNode = 'https://regtest.opnet.org';
-    const provider: JSONRpcProvider = new JSONRpcProvider(opnetNode);
-    const utxoManager = new OPNetLimitedProvider(opnetNode);
-    const factory: TransactionFactory = new TransactionFactory(); // Transaction factory
+    const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, network);
 
     const contract: IWBTCContract = getContract<IWBTCContract>(
-      'bcrt1q99qtptumw027cw8w274tqzd564q66u537vn0lh',
+      wBTC.getAddress(network),
       WBTC_ABI,
       provider,
       walletGet.p2tr
@@ -310,14 +296,14 @@ export default function TxOpnetConfirmScreen() {
       requestedAmount: BigInt(amountToSend)
     };
 
-    const utxos: UTXO[] = await utxoManager.fetchUTXOMultiAddr(utxoSetting);
+    const utxos: UTXO[] = await opnet.fetchUTXOMultiAddr(utxoSetting);
 
     const interactionParameters: IInteractionParameters = {
       from: walletGet.p2tr,
       to: contract.address.toString(),
       utxos: utxos,
       signer: walletGet.keypair,
-      network: networks.regtest,
+      network: network,
       feeRate: 450,
       priorityFee: 50000n,
       calldata: stakeData?.calldata as Buffer
@@ -421,6 +407,7 @@ export default function TxOpnetConfirmScreen() {
     </Layout>
   );
 }
+
 function Section({ title, children }: { title: string; children?: React.ReactNode }) {
   return (
     <Column>
