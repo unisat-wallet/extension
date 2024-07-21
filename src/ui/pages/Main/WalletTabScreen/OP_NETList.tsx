@@ -41,26 +41,33 @@ export function OP_NETList() {
       console.log(currentAccount.address);
       const tokenBalances: opNetBalance[] = [];
       for (let i = 0; i < parsedTokens.length; i++) {
-        const tokenAddress = parsedTokens[i];
-        const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
+        try {
+          const tokenAddress = parsedTokens[i];
+          const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
 
-        const contract: IOP_20Contract = getContract<IOP_20Contract>(tokenAddress, OP_20_ABI, provider);
-        const contracName = await contract.name();
-        const divisibility = await contract.decimals();
-        const symbol = await contract.symbol();
+          const contract: IOP_20Contract = getContract<IOP_20Contract>(tokenAddress, OP_20_ABI, provider);
+          const contracName = await contract.name();
+          const divisibility = await contract.decimals();
+          const symbol = await contract.symbol();
 
-        const balance = await contract.balanceOf(currentAccount.address);
-        if ('error' in balance || 'error' in contracName || 'error' in divisibility || 'error' in symbol) {
-          console.log(balance);
-        } else {
-          console.log(balance);
-          tokenBalances.push({
-            address: tokenAddress,
-            name: contracName.decoded.toLocaleString(),
-            amount: BigInt(balance.decoded[0].toString()),
-            divisibility: parseInt(divisibility.decoded.toString()),
-            symbol: symbol.decoded.toString()
-          });
+          const balance = await contract.balanceOf(currentAccount.address);
+          if ('error' in balance || 'error' in contracName || 'error' in divisibility || 'error' in symbol) {
+            console.log(balance);
+          } else {
+            console.log(balance);
+            tokenBalances.push({
+              address: tokenAddress,
+              name: contracName.decoded.toLocaleString(),
+              amount: BigInt(balance.decoded[0].toString()),
+              divisibility: parseInt(divisibility.decoded.toString()),
+              symbol: symbol.decoded.toString()
+            });
+          }
+        } catch (e) {
+          console.log(`Error processing token at index ${i}:`, e);
+          parsedTokens.splice(i, 1);
+          localStorage.setItem('tokensImported', JSON.stringify(parsedTokens));
+          i--;
         }
       }
       console.log(tokenBalances);
@@ -147,14 +154,16 @@ export function OP_NETList() {
         )}
       </BaseView>
       <BaseView style={$style}>
-        <div>
-          <div onClick={() => setImportTokenBool(true)}>Import Tokens</div>
+        <Row>
+          <Button text="Import Tokens" preset="primary" onClick={() => setImportTokenBool(true)}></Button>
           <br />
-          <div>Refresh List</div>
-        </div>
+          <Button text="Refresh List" preset="primary" onClick={() => fetchData()}></Button>
+        </Row>
       </BaseView>
       {importTokenBool && (
         <AddOpNetToken
+          setImportTokenBool={setImportTokenBool}
+          fetchData={fetchData}
           onClose={() => {
             setImportTokenBool(false);
           }}

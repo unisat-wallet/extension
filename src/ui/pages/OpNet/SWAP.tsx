@@ -44,7 +44,7 @@ export default function OpNetTokenScreen() {
         'bcrt1p2m2yz9hae5lkypuf8heh6udnt0tchmxhaftcfslqsr5vrwzh34yqgn6hs6'
       );
       const getQuote: IMotoswapRouterContract = getContract<IMotoswapRouterContract>(
-        'bcrt1q709e3evz4ma4x08yvaccm3stj6j9g7gaekwccu',
+        'bcrt1qelqwcguvwkgr90w6u5f2q0a7gqlnq4w8rl26ht',
         MOTOSWAP_ROUTER_ABI,
         provider
       );

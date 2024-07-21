@@ -22,7 +22,15 @@ function PaymentItem(props: { channelType: PaymentChannelType; onClick }) {
   );
 }
 
-export const AddOpNetToken = ({ onClose }: { onClose: () => void }) => {
+export const AddOpNetToken = ({
+  onClose,
+  setImportTokenBool,
+  fetchData
+}: {
+  onClose: () => void;
+  setImportTokenBool: (value: boolean) => void;
+  fetchData: () => void;
+}) => {
   const [disclaimerModalVisible, setDisclaimerModalVisible] = useState(false);
   const [channelType, setChannelType] = useState<PaymentChannelType>(PaymentChannelType.AlchemyPay);
   const [tokenState, setTokenState] = useState<string>('');
@@ -37,9 +45,12 @@ export const AddOpNetToken = ({ onClose }: { onClose: () => void }) => {
       parsedTokens = JSON.parse(tokensImported);
       if (!parsedTokens.includes(tokenState)) {
         parsedTokens.push(tokenState);
+        fetchData();
+        setImportTokenBool(false);
       }
     } else {
       parsedTokens = [tokenState];
+      tools.toastError('Token Exists');
     }
     localStorage.setItem('tokensImported', JSON.stringify(parsedTokens));
     tools.toastSuccess('Added token');
