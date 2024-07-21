@@ -1,5 +1,6 @@
+import { RequestParams } from '@/shared/types/Request.js';
+
 import Message from './index';
-import { RequestParams } from '@/types/Request.js';
 
 export default class BroadcastChannelMessage extends Message {
   private _channel: BroadcastChannel;

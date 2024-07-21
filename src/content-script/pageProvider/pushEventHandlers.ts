@@ -1,6 +1,9 @@
 import { ethErrors } from 'eth-rpc-errors';
 
+import Web3API from '@/shared/web3/Web3API';
+
 import { UnisatProvider } from './index';
+
 
 class PushEventHandlers {
   provider: UnisatProvider;
@@ -54,10 +57,12 @@ class PushEventHandlers {
     this._emit('accountsChanged', accounts);
   };
 
-  networkChanged = ({ network }) => {
+  networkChanged = ({ network, chain }) => {
     this.connect({});
 
     if (network !== this.provider._network) {
+      Web3API.setNetwork(chain);
+
       this.provider._network = network;
       this._emit('networkChanged', network);
     }

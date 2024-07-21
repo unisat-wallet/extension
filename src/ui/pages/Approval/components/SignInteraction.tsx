@@ -1,18 +1,16 @@
-import { useState } from 'react';
-
-import { KEYRING_TYPE } from '@/shared/constant';
+import { decodeCallData, Decoded, selectorToString } from '@/shared/web3/decoder/CalldataDecoder';
+import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
+import { DetailedInteractionParameters } from '@/shared/web3/interfaces/DetailedInteractionParameters';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import WebsiteBar from '@/ui/components/WebsiteBar';
+import InteractionHeader from '@/ui/pages/Approval/components/Headers/InteractionHeader';
+import { DecodedCalldata } from '@/ui/pages/OpNet/decoded/DecodedCalldata';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useApproval } from '@/ui/utils';
-
-import KeystoneSignScreen from '../../Wallet/KeystoneSignScreen';
+import { useApproval } from '@/ui/utils/hooks';
 
 interface Props {
   params: {
-    data: {
-      interactionParameters: any;
-    };
+    data: DetailedInteractionParameters;
     session: {
       origin: string;
       icon: string;
@@ -20,65 +18,70 @@ interface Props {
     };
   };
 }
-export default function SignText({ params: { data, session } }: Props) {
-  const [getApproval, resolveApproval, rejectApproval] = useApproval();
+
+export default function SignText(props: Props) {
+  const {
+    params: { data, session }
+  } = props;
+
+  const to: string = data.interactionParameters.to;
+  const [_, resolveApproval, rejectApproval] = useApproval();
   const account = useCurrentAccount();
-  const [isKeystoneSigning, setIsKeystoneSigning] = useState(false);
 
-  const handleCancel = () => {
-    rejectApproval();
+  const handleCancel = async () => {
+    await rejectApproval('User rejected the request.');
   };
 
-  const handleConfirm = () => {
-    if (account.type === KEYRING_TYPE.KeystoneKeyring) {
-      setIsKeystoneSigning(true);
-      return;
-    }
-    resolveApproval();
+  const handleConfirm = async () => {
+    await resolveApproval();
   };
-  if (isKeystoneSigning) {
-    return (
-      <KeystoneSignScreen
-        type={'msg'}
-        data={data.interactionParameters}
-        onSuccess={({ signature }) => {
-          resolveApproval({ signature });
-        }}
-        onBack={() => {
-          setIsKeystoneSigning(false);
-        }}
-      />
-    );
-  }
+
+  const contractInfo: ContractInformation = data.contractInfo;
+  const interactionType = selectorToString(data.interactionParameters.calldata as unknown as string);
+  const decoded: Decoded | null = decodeCallData(data.interactionParameters.calldata as unknown as string);
+
   return (
     <Layout>
       <Content>
-        <Header>
-          <WebsiteBar session={session} />
+        <Header padding={8} height={'140px'}>
+          <Column>
+            <WebsiteBar session={session} />
+            <InteractionHeader session={session} contract={to} contractInfo={data.contractInfo} />
+          </Column>
         </Header>
         <Column>
-          <Text text="Signature request" preset="title-bold" textCenter mt="lg" />
-          <Text
-            text="Only sign this message if you fully understand the content and trust the requesting site."
-            preset="sub"
-            textCenter
-            mt="lg"
-          />
-          <Text text="You are signing:" textCenter mt="lg" />
-
+          <Text text="Decoded:" textCenter mt="lg" preset={'sub-bold'} />
+          {decoded ? (
+            <DecodedCalldata
+              decoded={decoded}
+              contractInfo={contractInfo}
+              interactionType={interactionType}></DecodedCalldata>
+          ) : (
+            <Card>
+              <Text text={interactionType} textCenter mt="lg" />
+            </Card>
+          )}
+          <Text text="Calldata:" textCenter mt="lg" preset={'sub-bold'} />
           <Card>
             <div
               style={{
                 userSelect: 'text',
                 maxHeight: 384,
-                overflow: 'auto',
+                overflow: 'hidden',
                 whiteSpace: 'pre-wrap',
                 wordBreak: 'break-word',
-                flexWrap: 'wrap'
+                flexWrap: 'wrap',
+                fontSize: 12
               }}>
-              {'OPNet priority fee:' + data.interactionParameters.priorityFee}
+              {`0x${data.interactionParameters.calldata}`}
             </div>
           </Card>
+          <Text
+            text="Only sign this transaction if you fully understand the content and trust the requesting site."
+            preset="sub"
+            textCenter
+            mt="lg"
+          />
         </Column>
       </Content>
 

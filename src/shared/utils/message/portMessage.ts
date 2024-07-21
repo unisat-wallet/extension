@@ -1,7 +1,8 @@
 import { browserRuntimeConnect } from '@/background/webapi/browser';
+import { ListenCallback, RequestData } from '@/shared/types/Request.js';
 
 import Message from './index';
-import { ListenCallback, RequestData } from '@/types/Request.js';
+
 
 // Make bigint serializable
 BigInt.prototype.toJSON = function () {
@@ -52,9 +53,9 @@ class PortMessage extends Message {
     if (!this.port) return;
 
     //try {
-      this.port.postMessage({ _type_: `${this._EVENT_PRE}${type}`, data });
+    this.port.postMessage({ _type_: `${this._EVENT_PRE}${type}`, data });
     //} catch (e) {
-      // DO NOTHING BUT CATCH THIS ERROR
+    // DO NOTHING BUT CATCH THIS ERROR
     //}
   };
 

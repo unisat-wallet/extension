@@ -30,6 +30,7 @@
   "dependencies": {
     "@ant-design/icons": "^4.7.0",
     "@babel/core": "^7.16.0",
+    "@btc-vision/bsi-binary": "^1.0.28",
     "@btc-vision/transaction": "1.0.47",
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-regular-svg-icons": "^6.1.1",
@@ -255,7 +256,7 @@
     "stylus-loader": "^6.2.0",
     "typed-css-modules-loader": "^0.0.18",
     "wasm-module-webpack-plugin": "^3.0.0",
-    "webpack-cli": "^4.9.2",
+    "webpack-cli": "^5.1.4",
     "webpack-stream": "^7.0.0"
   },
   "lint-staged": {

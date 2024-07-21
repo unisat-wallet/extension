@@ -1,8 +1,8 @@
 import extension from 'extensionizer';
 import { nanoid } from 'nanoid';
 
+import { RequestParams } from '@/shared/types/Request.js';
 import { Message } from '@/shared/utils';
-import { RequestParams } from '@/types/Request.js';
 
 const channelName = nanoid();
 
@@ -22,8 +22,8 @@ function injectScript() {
     const { BroadcastChannelMessage, PortMessage } = Message;
 
     const pm = new PortMessage().connect();
-    const bcm = new BroadcastChannelMessage(channelName).listen( (data: RequestParams) => {
-      return pm.request(data)
+    const bcm = new BroadcastChannelMessage(channelName).listen((data: RequestParams) => {
+      return pm.request(data);
     });
 
     // background notification
@@ -93,7 +93,7 @@ function documentElementCheck(): boolean {
  */
 function blockedDomainCheck(): boolean {
   const blockedDomains: string[] = [];
-  if(!blockedDomains.length) {
+  if (!blockedDomains.length) {
     return false;
   }
 

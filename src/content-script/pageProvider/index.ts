@@ -1,24 +1,28 @@
 // this script is injected into webpage's context
 import { ethErrors, serializeError } from 'eth-rpc-errors';
 import { EventEmitter } from 'events';
+import { BroadcastedTransaction } from 'opnet';
 
 import { TxType } from '@/shared/types';
+import { RequestParams } from '@/shared/types/Request.js';
 import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
+import Web3API from '@/shared/web3/Web3API';
+import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 
 import { InteractionParametersWithoutSigner, Web3Provider } from './Web3Provider';
 import PushEventHandlers from './pushEventHandlers';
 import ReadyPromise from './readyPromise';
 import { $, domReadyCall } from './utils';
-import { RequestParams } from '@/types/Request.js';
+
 
 const log = (event: string, ...args: unknown[]) => {
   /*if (process && process.env.NODE_ENV !== 'production') {
-    console.log(
-       `%c [unisat] (${new Date().toTimeString().slice(0, 8)}) ${event}`,
-       'font-weight: 600; background-color: #7d6ef9; color: white;',
-       ...args
-    );
-  }*/
+                              console.log(
+                                 `%c [unisat] (${new Date().toTimeString().slice(0, 8)}) ${event}`,
+                                 'font-weight: 600; background-color: #7d6ef9; color: white;',
+                                 ...args
+                              );
+                            }*/
 };
 
 const script = document.currentScript;
@@ -83,16 +87,18 @@ export class UnisatProvider extends EventEmitter {
     });
 
     try {
-      const { network, accounts, isUnlocked }: any = await this._request({
+      const { network, chain, accounts, isUnlocked }: any = await this._request({
         method: 'getProviderState'
       });
+
       if (isUnlocked) {
         this._isUnlocked = true;
         this._state.isUnlocked = true;
       }
       this.emit('connect', {});
       this._pushEventHandlers.networkChanged({
-        network
+        network,
+        chain
       });
 
       this._pushEventHandlers.accountsChanged(accounts);
@@ -116,7 +122,7 @@ export class UnisatProvider extends EventEmitter {
         method: 'keepAlive',
         params: {}
       });
-    } catch(e) {
+    } catch (e) {
       log('[keepAlive: error]', serializeError(e));
     }
 
@@ -153,22 +159,22 @@ export class UnisatProvider extends EventEmitter {
 
     this._requestPromiseCheckVisibility();
 
-    return this._requestPromise.call(async () => {
-      log('[request]', JSON.stringify(data, null, 2));
+    return this._requestPromise
+      .call(async () => {
+        log('[request]', JSON.stringify(data, null, 2));
 
-      const res = await this._bcm
-        .request(data)
-        .catch((err) => {
+        const res = await this._bcm.request(data).catch((err) => {
           log('[request: error]', data.method, serializeError(err));
           throw serializeError(err);
         });
 
-      log('[request: success]', data.method, res);
+        log('[request: success]', data.method, res);
 
-      return res;
-    }).catch((err) => {
-      throw err;
-    });
+        return res;
+      })
+      .catch((err) => {
+        throw err;
+      });
   };
 
   // public methods
@@ -286,16 +292,23 @@ export class UnisatProvider extends EventEmitter {
     })) as Promise<string>;
   };
 
-  signInteraction = async (interactionParameters: InteractionParametersWithoutSigner): Promise<[string, string]> => {
+  signInteraction = async (
+    interactionParameters: InteractionParametersWithoutSigner
+  ): Promise<[BroadcastedTransaction, BroadcastedTransaction]> => {
+    const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(
+      interactionParameters.to
+    );
+
     return (await this._request({
       method: 'signInteraction',
       params: {
         interactionParameters: {
           ...interactionParameters,
           calldata: interactionParameters.calldata.toString('hex')
-        }
+        },
+        contractInfo: contractInfo
       }
-    })) as Promise<[string, string]>;
+    })) as Promise<[BroadcastedTransaction, BroadcastedTransaction]>;
   };
 
   sendInscription = async (toAddress: string, inscriptionId: string, options?: { feeRate: number }) => {

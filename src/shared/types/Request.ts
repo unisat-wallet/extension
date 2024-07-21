@@ -1,4 +1,3 @@
-
 export interface RequestParams {
   readonly method: string;
   readonly type?: string;
@@ -10,4 +9,4 @@ export interface RequestData {
   event?: string;
 }
 
-export type ListenCallback = ((data: RequestParams) => Promise<unknown>) | undefined
+export type ListenCallback = ((data: RequestParams) => Promise<unknown>) | undefined;

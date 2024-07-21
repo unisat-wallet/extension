@@ -1,5 +1,4 @@
-import { networks } from 'bitcoinjs-lib';
-import { BroadcastedTransaction, JSONRpcProvider } from 'opnet';
+import { BroadcastedTransaction } from 'opnet';
 
 import {
   contactBookService,
@@ -12,6 +11,7 @@ import {
 } from '@/background/service';
 import i18n from '@/background/service/i18n';
 import { DisplayedKeyring, Keyring } from '@/background/service/keyring';
+import { InteractionParametersWithoutSigner } from '@/content-script/pageProvider/Web3Provider.js';
 import {
   ADDRESS_TYPES,
   AddressFlagType,
@@ -40,7 +40,8 @@ import {
   WalletKeyring
 } from '@/shared/types';
 import { checkAddressFlag, getChainInfo } from '@/shared/utils';
-import { IInteractionParameters, TransactionFactory, Wallet } from '@btc-vision/transaction';
+import Web3API from '@/shared/web3/Web3API';
+import { IInteractionParameters, Wallet } from '@btc-vision/transaction';
 import { txHelpers, UnspentOutput } from '@unisat/wallet-sdk';
 import { publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
 import { bitcoin, ECPair } from '@unisat/wallet-sdk/lib/bitcoin-core';
@@ -58,8 +59,6 @@ import { ContactBookItem } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';
 import { ConnectedSite } from '../service/permission';
 import BaseController from './base';
-import { InteractionParametersWithoutSigner } from '@/content-script/pageProvider/Web3Provider.js';
-import { Network } from 'bitcoinjs-lib/src/networks.js';
 
 const stashKeyrings: Record<string, Keyring> = {};
 export type AccountAsset = {
@@ -71,22 +70,23 @@ export type AccountAsset = {
 
 export class WalletController extends BaseController {
   openapi: OpenApiService = openapiService;
-
-  private readonly opnetProvider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
-  private readonly opnetFactory: TransactionFactory = new TransactionFactory()
-
-  private currentNetwork: Network = networks.regtest;
-
-  /* wallet */
-  boot = (password: string) => keyringService.boot(password);
-  isBooted = () => keyringService.isBooted();
-
   getApproval = notificationService.getApproval;
   resolveApproval = notificationService.resolveApproval;
   rejectApproval = notificationService.rejectApproval;
 
+  getConnectedSite = permissionService.getConnectedSite;
+  getSite = permissionService.getSite;
+  getConnectedSites = permissionService.getConnectedSites;
+
+  /* wallet */
+  boot = (password: string) => keyringService.boot(password);
+
+  isBooted = () => keyringService.isBooted();
+
   hasVault = () => keyringService.hasVault();
+
   verifyPassword = (password: string) => keyringService.verifyPassword(password);
+
   changePassword = (password: string, newPassword: string) => keyringService.changePassword(password, newPassword);
 
   initAlianNames = async () => {
@@ -126,6 +126,7 @@ export class WalletController extends BaseController {
       this.initAlianNames();
     }
   };
+
   isUnlocked = () => {
     return keyringService.memStore.getState().isUnlocked;
   };
@@ -208,6 +209,8 @@ export class WalletController extends BaseController {
     return preferenceService.getLocale();
   };
 
+  /* keyrings */
+
   setLocale = (locale: string) => {
     preferenceService.setLocale(locale);
   };
@@ -219,8 +222,6 @@ export class WalletController extends BaseController {
   setCurrency = (currency: string) => {
     preferenceService.setCurrency(currency);
   };
-
-  /* keyrings */
 
   clearKeyrings = () => keyringService.clearKeyrings();
 
@@ -238,6 +239,7 @@ export class WalletController extends BaseController {
       wif
     };
   };
+
   getInternalPrivateKey = async ({ pubkey, type }: { pubkey: string; type: string }) => {
     const keyring = await keyringService.getKeyringForAccount(pubkey, type);
     if (!keyring) return null;
@@ -251,6 +253,7 @@ export class WalletController extends BaseController {
       wif
     };
   };
+
   getMnemonics = async (password: string, keyring: WalletKeyring) => {
     await this.verifyPassword(password);
     const originKeyring = keyringService.keyrings[keyring.index];
@@ -285,8 +288,11 @@ export class WalletController extends BaseController {
   };
 
   getPreMnemonics = () => keyringService.getPreMnemonics();
+
   generatePreMnemonic = () => keyringService.generatePreMnemonic();
+
   removePreMnemonics = () => keyringService.removePreMnemonics();
+
   createKeyringWithMnemonics = async (
     mnemonic: string,
     hdPath: string,
@@ -629,19 +635,27 @@ export class WalletController extends BaseController {
     return keyringService.signMessage(account.pubkey, account.type, text);
   };
 
-  signInteraction = async (interactionParameters: InteractionParametersWithoutSigner): Promise<[BroadcastedTransaction, BroadcastedTransaction]> => {
+  signInteraction = async (
+    interactionParameters: InteractionParametersWithoutSigner
+  ): Promise<[BroadcastedTransaction, BroadcastedTransaction]> => {
     try {
       const account = preferenceService.getCurrentAccount();
       if (!account) throw new Error('no current account');
 
-      const wifWallet = await this.getInternalPrivateKey({ pubkey: account.pubkey, type: account.type } as Account);
+      const wifWallet = await this.getInternalPrivateKey({
+        pubkey: account.pubkey,
+        type: account.type
+      } as Account);
       if (!wifWallet) throw new Error('no current account');
 
-      const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, this.currentNetwork);
+      const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
       const utxos = interactionParameters.utxos.map((utxo) => {
         return {
           ...utxo,
-          value: BigInt(utxo.value as unknown as string),
+          value:
+            (typeof utxo.value as unknown as string | bigint) === 'bigint'
+              ? utxo.value
+              : BigInt(utxo.value as unknown as string)
         };
       });
 
@@ -650,30 +664,30 @@ export class WalletController extends BaseController {
         to: interactionParameters.to, // To address
         utxos: utxos, // UTXOs
         signer: walletGet.keypair, // Signer
-        network: this.currentNetwork, // Network
-        feeRate:interactionParameters.feeRate, // Fee rate (satoshi per byte)
+        network: Web3API.network, // Network
+        feeRate: interactionParameters.feeRate, // Fee rate (satoshi per byte)
         priorityFee: BigInt(interactionParameters.priorityFee), // Priority fee (opnet)
         calldata: Buffer.from(interactionParameters.calldata as unknown as string, 'hex') // Calldata
       };
 
-      const sendTransaction = await this.opnetFactory.signInteraction(interactionParametersSubmit);
-      const firstTransaction = await this.opnetProvider.sendRawTransaction(sendTransaction[0], false);
+      const sendTransaction = await Web3API.transactionFactory.signInteraction(interactionParametersSubmit);
+      const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransaction[0], false);
 
       if (!firstTransaction) {
         throw new Error('Error in Broadcast');
       }
 
-      if(firstTransaction.error) {
+      if (firstTransaction.error) {
         throw new Error(firstTransaction.error);
       }
 
       // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
-      const secondTransaction = await this.opnetProvider.sendRawTransaction(sendTransaction[1], false);
+      const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransaction[1], false);
       if (!secondTransaction) {
         throw new Error('Error in Broadcast');
       }
 
-      if(secondTransaction.error) {
+      if (secondTransaction.error) {
         throw new Error(secondTransaction.error);
       }
 
@@ -720,16 +734,6 @@ export class WalletController extends BaseController {
     }
   };
 
-  private _getKeyringByType = (type: string): Keyring => {
-    const keyring = keyringService.getKeyringsByType(type)[0];
-
-    if (keyring) {
-      return keyring;
-    }
-
-    throw new Error(`No ${type} keyring found`);
-  };
-
   addContact = (data: ContactBookItem) => {
     contactBookService.addContact(data);
   };
@@ -757,11 +761,6 @@ export class WalletController extends BaseController {
 
   getContactByAddress = (address: string) => {
     return contactBookService.getContactByAddress(address);
-  };
-
-  private _generateAlianName = (type: string, index: number) => {
-    const alianName = `${BRAND_ALIAN_TYPE_TEXT[type]} ${index}`;
-    return alianName;
   };
 
   getNextAlianName = (keyring: WalletKeyring) => {
@@ -841,6 +840,8 @@ export class WalletController extends BaseController {
   };
 
   setChainType = async (chainType: ChainType) => {
+    Web3API.setNetwork(chainType as ChainType);
+
     preferenceService.setChainType(chainType);
     await this.openapi.setEndpoints(CHAINS_MAP[chainType].endpoints);
 
@@ -1365,15 +1366,14 @@ export class WalletController extends BaseController {
     return data;
   };
 
-  getConnectedSite = permissionService.getConnectedSite;
-  getSite = permissionService.getSite;
-  getConnectedSites = permissionService.getConnectedSites;
   setRecentConnectedSites = (sites: ConnectedSite[]) => {
     permissionService.setRecentConnectedSites(sites);
   };
+
   getRecentConnectedSites = () => {
     return permissionService.getRecentConnectedSites();
   };
+
   getCurrentSite = (tabId: number): ConnectedSite | null => {
     const { origin, name, icon } = sessionService.getSession(tabId) || {};
     if (!origin) {
@@ -1393,10 +1393,12 @@ export class WalletController extends BaseController {
       isTop: false
     };
   };
+
   getCurrentConnectedSite = (tabId: number) => {
     const { origin } = sessionService.getSession(tabId) || {};
     return permissionService.getWithoutUpdate(origin);
   };
+
   setSite = (data: ConnectedSite) => {
     permissionService.setSite(data);
     if (data.isConnected) {
@@ -1410,6 +1412,7 @@ export class WalletController extends BaseController {
       );
     }
   };
+
   updateConnectSite = (origin: string, data: ConnectedSite) => {
     permissionService.updateConnectSite(origin, data);
     const network = this.getNetworkName();
@@ -1421,12 +1424,14 @@ export class WalletController extends BaseController {
       data.origin
     );
   };
+
   removeAllRecentConnectedSites = () => {
     const sites = permissionService.getRecentConnectedSites().filter((item) => !item.isTop);
     sites.forEach((item) => {
       this.removeConnectedSite(item.origin);
     });
   };
+
   removeConnectedSite = (origin: string) => {
     sessionService.broadcastEvent('accountsChanged', [], origin);
     permissionService.removeConnectedSite(origin);
@@ -1449,6 +1454,7 @@ export class WalletController extends BaseController {
     openapiService.setClientAddress(account.address, account.flag);
     return account;
   };
+
   removeAddressFlag = (account: Account, flag: AddressFlagType) => {
     account.flag = preferenceService.removeAddressFlag(account.address, flag);
     openapiService.setClientAddress(account.address, account.flag);
@@ -2040,6 +2046,21 @@ export class WalletController extends BaseController {
       inscription_amount: '0',
       usd_value: '0.00'
     };
+  };
+
+  private _getKeyringByType = (type: string): Keyring => {
+    const keyring = keyringService.getKeyringsByType(type)[0];
+
+    if (keyring) {
+      return keyring;
+    }
+
+    throw new Error(`No ${type} keyring found`);
+  };
+
+  private _generateAlianName = (type: string, index: number) => {
+    const alianName = `${BRAND_ALIAN_TYPE_TEXT[type]} ${index}`;
+    return alianName;
   };
 }
 

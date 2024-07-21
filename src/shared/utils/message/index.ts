@@ -3,7 +3,8 @@
  */
 import { ethErrors } from 'eth-rpc-errors';
 import { EventEmitter } from 'events';
-import { ListenCallback, RequestParams } from '@/types/Request.js';
+
+import { ListenCallback, RequestParams } from '@/shared/types/Request.js';
 
 abstract class Message extends EventEmitter {
   // available id list
@@ -65,7 +66,6 @@ abstract class Message extends EventEmitter {
       try {
         res = await this.listenCallback(data);
       } catch (_e) {
-
         const e = _e as Error & { code?: number; data?: unknown };
 
         err = {

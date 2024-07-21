@@ -1,5 +1,6 @@
 import { EVENTS, MANIFEST_VERSION } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
+import { RequestParams } from '@/shared/types/Request.js';
 import { Message } from '@/shared/utils';
 import { openExtensionInTab } from '@/ui/features/browser/tabs';
 
@@ -14,11 +15,11 @@ import {
 } from './service';
 import { storage } from './webapi';
 import { browserRuntimeOnConnect, browserRuntimeOnInstalled } from './webapi/browser';
-import { RequestParams } from '@/types/Request.js';
 
 const { PortMessage } = Message;
 
 let appStoreLoaded = false;
+
 async function restoreAppState() {
   const keyringState = await storage.get('keyringState');
   keyringService.loadStore(keyringState);

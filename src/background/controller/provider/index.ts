@@ -2,10 +2,11 @@ import { ethErrors } from 'eth-rpc-errors';
 
 import { keyringService, sessionService } from '@/background/service';
 import { tab } from '@/background/webapi';
+import { RequestData } from '@/shared/types/Request.js';
 
 import internalMethod from './internalMethod';
 import rpcFlow from './rpcFlow';
-import { RequestData } from '@/types/Request.js';
+
 
 tab.on('tabRemove', (id) => {
   sessionService.deleteSession(id);
