@@ -11,6 +11,7 @@ import {
   AddressVerificator,
   FetchUTXOParamsMultiAddress,
   OPNetLimitedProvider,
+  ROUTER_ADDRESS,
   TransactionFactory,
   UTXO,
   wBTC
@@ -29,7 +30,7 @@ class Web3API {
   }
 
   public get MOTOSWAP_ROUTER(): string {
-    return 'bcrt1qelqwcguvwkgr90w6u5f2q0a7gqlnq4w8rl26ht';
+    return ROUTER_ADDRESS;
   }
 
   public get provider(): JSONRpcProvider {
