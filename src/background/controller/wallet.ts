@@ -745,8 +745,7 @@ export class WalletController extends BaseController {
         calldata: Buffer.from(interactionParameters.calldata as unknown as string, 'hex') // Calldata
       };
 
-      const sendTransaction = await Web3API.transactionFactory.signInteraction(interactionParametersSubmit);
-      return [sendTransaction[0], sendTransaction[1], sendTransaction[2]];
+      return await Web3API.transactionFactory.signInteraction(interactionParametersSubmit);
     } catch (e) {
       const err = e as Error;
 
