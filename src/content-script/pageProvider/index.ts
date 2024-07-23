@@ -14,7 +14,6 @@ import PushEventHandlers from './pushEventHandlers';
 import ReadyPromise from './readyPromise';
 import { $, domReadyCall } from './utils';
 
-
 const log = (event: string, ...args: unknown[]) => {
   /*if (process && process.env.NODE_ENV !== 'production') {
                               console.log(
@@ -291,10 +290,9 @@ export class UnisatProvider extends EventEmitter {
       }
     })) as Promise<string>;
   };
-
   signInteraction = async (
     interactionParameters: InteractionParametersWithoutSigner
-  ): Promise<[BroadcastedTransaction, BroadcastedTransaction]> => {
+  ): Promise<[string, string, import('@btc-vision/transaction').UTXO[]]> => {
     const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(
       interactionParameters.to
     );
@@ -307,6 +305,34 @@ export class UnisatProvider extends EventEmitter {
           calldata: interactionParameters.calldata.toString('hex')
         },
         contractInfo: contractInfo
+      }
+    })) as Promise<[string, string, import('@btc-vision/transaction').UTXO[]]>;
+  };
+
+  signAndBroadcastInteraction = async (
+    interactionParameters: InteractionParametersWithoutSigner
+  ): Promise<[BroadcastedTransaction, BroadcastedTransaction]> => {
+    const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(
+      interactionParameters.to
+    );
+
+    return (await this._request({
+      method: 'signAndBroadcastInteraction',
+      params: {
+        interactionParameters: {
+          ...interactionParameters,
+          calldata: interactionParameters.calldata.toString('hex')
+        },
+        contractInfo: contractInfo
+      }
+    })) as Promise<[BroadcastedTransaction, BroadcastedTransaction]>;
+  };
+
+  broadcast = async (finalTx: any[]): Promise<[BroadcastedTransaction, BroadcastedTransaction]> => {
+    return (await this._request({
+      method: 'broadcast',
+      params: {
+        finalTx
       }
     })) as Promise<[BroadcastedTransaction, BroadcastedTransaction]>;
   };

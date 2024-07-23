@@ -20,9 +20,9 @@ import {
   BRAND_ALIAN_TYPE_TEXT,
   CHAINS_ENUM,
   CHAINS_MAP,
-  ChainType,
   COIN_NAME,
   COIN_SYMBOL,
+  ChainType,
   KEYRING_TYPE,
   KEYRING_TYPES,
   NETWORK_TYPES,
@@ -44,9 +44,9 @@ import {
 import { checkAddressFlag, getChainInfo } from '@/shared/utils';
 import Web3API from '@/shared/web3/Web3API';
 import { IInteractionParameters, TransactionFactory, Wallet } from '@btc-vision/transaction';
-import { txHelpers, UnspentOutput } from '@unisat/wallet-sdk';
+import { UnspentOutput, txHelpers } from '@unisat/wallet-sdk';
 import { publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
-import { bitcoin, ECPair } from '@unisat/wallet-sdk/lib/bitcoin-core';
+import { ECPair, bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 import { KeystoneKeyring } from '@unisat/wallet-sdk/lib/keyring';
 import {
   genPsbtOfBIP322Simple,
@@ -646,8 +646,7 @@ export class WalletController extends BaseController {
     if (!account) throw new Error('no current account');
     return keyringService.signMessage(account.pubkey, account.type, text);
   };
-
-  signInteraction = async (
+  signAndBroadcastInteraction = async (
     interactionParameters: InteractionParametersWithoutSigner
   ): Promise<[BroadcastedTransaction, BroadcastedTransaction, import('@btc-vision/transaction').UTXO[]]> => {
     try {
@@ -683,6 +682,7 @@ export class WalletController extends BaseController {
       };
 
       const sendTransaction = await Web3API.transactionFactory.signInteraction(interactionParametersSubmit);
+
       const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransaction[0], false);
 
       if (!firstTransaction) {
@@ -704,6 +704,81 @@ export class WalletController extends BaseController {
       }
 
       return [firstTransaction, secondTransaction, sendTransaction[2]];
+    } catch (e) {
+      const err = e as Error;
+
+      throw new Error(err.stack);
+    }
+  };
+  signInteraction = async (
+    interactionParameters: InteractionParametersWithoutSigner
+  ): Promise<[string, string, import('@btc-vision/transaction').UTXO[]]> => {
+    try {
+      const account = preferenceService.getCurrentAccount();
+      if (!account) throw new Error('no current account');
+
+      const wifWallet = await this.getInternalPrivateKey({
+        pubkey: account.pubkey,
+        type: account.type
+      } as Account);
+      if (!wifWallet) throw new Error('no current account');
+
+      const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
+      const utxos = interactionParameters.utxos.map((utxo) => {
+        return {
+          ...utxo,
+          value:
+            (typeof utxo.value as unknown as string | bigint) === 'bigint'
+              ? utxo.value
+              : BigInt(utxo.value as unknown as string)
+        };
+      });
+
+      const interactionParametersSubmit: IInteractionParameters = {
+        from: interactionParameters.from, // From address
+        to: interactionParameters.to, // To address
+        utxos: utxos, // UTXOs
+        signer: walletGet.keypair, // Signer
+        network: Web3API.network, // Network
+        feeRate: interactionParameters.feeRate, // Fee rate (satoshi per byte)
+        priorityFee: BigInt(interactionParameters.priorityFee), // Priority fee (opnet)
+        calldata: Buffer.from(interactionParameters.calldata as unknown as string, 'hex') // Calldata
+      };
+
+      const sendTransaction = await Web3API.transactionFactory.signInteraction(interactionParametersSubmit);
+      return [sendTransaction[0], sendTransaction[1], sendTransaction[2]];
+    } catch (e) {
+      const err = e as Error;
+
+      throw new Error(err.stack);
+    }
+  };
+
+  broadcast = async (
+    finalTX: any
+  ): Promise<[BroadcastedTransaction, BroadcastedTransaction, import('@btc-vision/transaction').UTXO[]]> => {
+    try {
+      const firstTransaction = await Web3API.provider.sendRawTransaction(finalTX[0], false);
+
+      if (!firstTransaction) {
+        throw new Error('Error in Broadcast');
+      }
+
+      if (firstTransaction.error) {
+        throw new Error(firstTransaction.error);
+      }
+
+      // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
+      const secondTransaction = await Web3API.provider.sendRawTransaction(finalTX[1], false);
+      if (!secondTransaction) {
+        throw new Error('Error in Broadcast');
+      }
+
+      if (secondTransaction.error) {
+        throw new Error(secondTransaction.error);
+      }
+
+      return [firstTransaction, secondTransaction, finalTX[2]];
     } catch (e) {
       const err = e as Error;
 

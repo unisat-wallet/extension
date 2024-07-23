@@ -62,6 +62,7 @@ export interface Keyring {
   getAccounts(): Promise<string[]>;
   signTransaction(psbt: bitcoin.Psbt, inputs: ToSignInput[]): Promise<bitcoin.Psbt>;
   signInteraction(interactionParameters: InteractionParametersWithoutSigner): Promise<any>;
+  signAndBroadcastInteraction(interactionParameters: InteractionParametersWithoutSigner): Promise<any>;
   signMessage(address: string, message: string): Promise<string>;
   signData(address: string, data: string, type: string): Promise<string>;
   verifyMessage(address: string, message: string, sig: string): Promise<boolean>;
@@ -106,7 +107,9 @@ class EmptyKeyring implements Keyring {
   signInteraction(interactionParameters: InteractionParametersWithoutSigner): Promise<any> {
     throw new Error('Method not implemented.');
   }
-
+  signAndBroadcastInteraction(interactionParameters: InteractionParametersWithoutSigner): Promise<any> {
+    throw new Error('Method not implemented.');
+  }
   signMessage(address: string, message: string): Promise<string> {
     throw new Error('Method not implemented.');
   }
@@ -572,6 +575,14 @@ class KeyringService extends EventEmitter {
   };
 
   signInteraction = (
+    address: string,
+    keyringType: string,
+    interactionParameters: InteractionParametersWithoutSigner
+  ) => {
+    console.log(true);
+    return true;
+  };
+  signAndBroadcastInteraction = (
     address: string,
     keyringType: string,
     interactionParameters: InteractionParametersWithoutSigner

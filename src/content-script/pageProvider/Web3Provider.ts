@@ -12,13 +12,25 @@ export class Web3Provider {
     this.provider = provider;
   }
 
-  public async signInteraction(
+  public async signAndBroadcastInteraction(
     interactionParameters: InteractionParametersWithoutSigner
   ): Promise<[BroadcastedTransaction, BroadcastedTransaction]> {
     if ('signer' in interactionParameters) {
       throw new Error('signer is not allowed in interaction parameters');
     }
 
+    return this.provider.signAndBroadcastInteraction(interactionParameters);
+  }
+  public async signInteraction(
+    interactionParameters: InteractionParametersWithoutSigner
+  ): Promise<[string, string, import('@btc-vision/transaction').UTXO[]]> {
+    if ('signer' in interactionParameters) {
+      throw new Error('signer is not allowed in interaction parameters');
+    }
+
     return this.provider.signInteraction(interactionParameters);
+  }
+  public async broadcast(finalTx: any[]): Promise<[BroadcastedTransaction, BroadcastedTransaction]> {
+    return this.provider.broadcast(finalTx);
   }
 }
