@@ -1,7 +1,6 @@
 import { networks } from 'bitcoinjs-lib';
 import { Network } from 'bitcoinjs-lib/src/networks.js';
-import { JSONRpcProvider } from 'opnet';
-import { BroadcastedTransaction } from 'opnet';
+import { BroadcastedTransaction, JSONRpcProvider } from 'opnet';
 
 import {
   contactBookService,
@@ -21,9 +20,9 @@ import {
   BRAND_ALIAN_TYPE_TEXT,
   CHAINS_ENUM,
   CHAINS_MAP,
+  ChainType,
   COIN_NAME,
   COIN_SYMBOL,
-  ChainType,
   KEYRING_TYPE,
   KEYRING_TYPES,
   NETWORK_TYPES,
@@ -43,11 +42,11 @@ import {
   WalletKeyring
 } from '@/shared/types';
 import { checkAddressFlag, getChainInfo } from '@/shared/utils';
-import { IInteractionParameters, TransactionFactory, Wallet } from '@btc-vision/transaction';
-import { UnspentOutput, txHelpers } from '@unisat/wallet-sdk';
 import Web3API from '@/shared/web3/Web3API';
+import { IInteractionParameters, TransactionFactory, Wallet } from '@btc-vision/transaction';
+import { txHelpers, UnspentOutput } from '@unisat/wallet-sdk';
 import { publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
-import { ECPair, bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
+import { bitcoin, ECPair } from '@unisat/wallet-sdk/lib/bitcoin-core';
 import { KeystoneKeyring } from '@unisat/wallet-sdk/lib/keyring';
 import {
   genPsbtOfBIP322Simple,
@@ -704,7 +703,7 @@ export class WalletController extends BaseController {
         throw new Error(secondTransaction.error);
       }
 
-      return [firstTransaction, secondTransaction, utxos];
+      return [firstTransaction, secondTransaction, sendTransaction[2]];
     } catch (e) {
       const err = e as Error;
 
