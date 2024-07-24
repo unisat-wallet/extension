@@ -8,11 +8,13 @@ import { RequestParams } from '@/shared/types/Request.js';
 import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
 import Web3API from '@/shared/web3/Web3API';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
+import { UTXO } from '@btc-vision/transaction';
 
-import { InteractionParametersWithoutSigner, Web3Provider } from './Web3Provider';
+import { BroadcastTransactionOptions, InteractionParametersWithoutSigner, Web3Provider } from './Web3Provider';
 import PushEventHandlers from './pushEventHandlers';
 import ReadyPromise from './readyPromise';
 import { $, domReadyCall } from './utils';
+
 
 const log = (event: string, ...args: unknown[]) => {
   /*if (process && process.env.NODE_ENV !== 'production') {
@@ -290,9 +292,10 @@ export class UnisatProvider extends EventEmitter {
       }
     })) as Promise<string>;
   };
+
   signInteraction = async (
     interactionParameters: InteractionParametersWithoutSigner
-  ): Promise<[string, string, import('@btc-vision/transaction').UTXO[]]> => {
+  ): Promise<[string, string, UTXO[]]> => {
     const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(
       interactionParameters.to
     );
@@ -306,12 +309,12 @@ export class UnisatProvider extends EventEmitter {
         },
         contractInfo: contractInfo
       }
-    })) as Promise<[string, string, import('@btc-vision/transaction').UTXO[]]>;
+    })) as Promise<[string, string, UTXO[]]>;
   };
 
   signAndBroadcastInteraction = async (
     interactionParameters: InteractionParametersWithoutSigner
-  ): Promise<[BroadcastedTransaction, BroadcastedTransaction]> => {
+  ): Promise<[BroadcastedTransaction, BroadcastedTransaction, UTXO[]]> => {
     const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(
       interactionParameters.to
     );
@@ -325,15 +328,13 @@ export class UnisatProvider extends EventEmitter {
         },
         contractInfo: contractInfo
       }
-    })) as Promise<[BroadcastedTransaction, BroadcastedTransaction]>;
+    })) as Promise<[BroadcastedTransaction, BroadcastedTransaction, UTXO[]]>;
   };
 
-  broadcast = async (finalTx: any[]): Promise<[BroadcastedTransaction, BroadcastedTransaction]> => {
+  broadcast = async (transactions: BroadcastTransactionOptions[]): Promise<BroadcastedTransaction[]> => {
     return (await this._request({
       method: 'broadcast',
-      params: {
-        finalTx
-      }
+      params: transactions
     })) as Promise<[BroadcastedTransaction, BroadcastedTransaction]>;
   };
 
