@@ -12,24 +12,26 @@ import { Input } from './Input';
 import { Layout } from './Layout';
 import { Logo } from './Logo';
 import { Row } from './Row';
+import { Select } from './Select';
 import { Text } from './Text';
 import { TextArea } from './TextArea';
 
 export {
-  Button,
-  Layout,
-  Content,
-  Icon,
-  Header,
-  Text,
-  Logo,
-  Input,
-  Footer,
   AddressBar,
-  Column,
-  Row,
+  Button,
   Card,
+  Column,
+  Content,
+  Footer,
   Grid,
+  Header,
+  Icon,
   Image,
+  Input,
+  Layout,
+  Logo,
+  Row,
+  Select,
+  Text,
   TextArea
 };

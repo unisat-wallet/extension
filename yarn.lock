@@ -1360,40 +1360,10 @@
     ts-loader "^9.5.1"
     ts-node "^10.9.2"
 
-"@btc-vision/transaction@1.0.53":
+"@btc-vision/transaction@1.0.53", "@btc-vision/transaction@^1.0.53":
   version "1.0.53"
   resolved "https://registry.yarnpkg.com/@btc-vision/transaction/-/transaction-1.0.53.tgz#b304e5d139e36e7e318f61ec3c7075e16025e9a2"
   integrity sha512-csamk8+iofafV08Sdk/cpdGYc1Q1lb7n03+6P1XrftjCMK3zqpY1ivNFlgH17UeaOr0ienQcLNF6imxxbpFA9Q==
-  dependencies:
-    "@babel/plugin-proposal-object-rest-spread" "^7.20.7"
-    "@bitcoinerlab/secp256k1" "^1.1.1"
-    "@btc-vision/bsi-binary" "^1.0.37"
-    "@btc-vision/bsi-bitcoin-rpc" "^1.0.22"
-    "@btc-vision/bsi-common" "^1.0.16"
-    "@btc-vision/logger" "^1.0.2"
-    assert "^2.1.0"
-    babel-loader "^9.1.3"
-    babel-plugin-transform-import-meta "^2.2.1"
-    babel-preset-react "^6.24.1"
-    babelify "^10.0.0"
-    bech32 "^2.0.0"
-    bip32 "^4.0.0"
-    bitcoinjs-lib "github:btc-vision/bitcoinjs-lib"
-    browserify-zlib "^0.2.0"
-    buffer "^6.0.3"
-    ecpair "^2.1.0"
-    gulp "^4.0.2"
-    gulp-cached "^1.1.1"
-    gulp-logger "^0.0.2"
-    gulp-typescript "^6.0.0-alpha.1"
-    gulplog "^2.2.0"
-    ts-loader "^9.5.1"
-    ts-node "^10.9.2"
-
-"@btc-vision/transaction@^1.0.52":
-  version "1.0.52"
-  resolved "https://registry.yarnpkg.com/@btc-vision/transaction/-/transaction-1.0.52.tgz#5a0be2deec669a1b5f0218b7bdd97395ab4c09a3"
-  integrity sha512-0PlX4Hz9wPZ+hU40r0RYlwRC4JoV+M1BhxejQrPqZR1zZ2gVjfM1H3+PT80iXxDNZvbDQ5NXMtAVVitznSqCrQ==
   dependencies:
     "@babel/plugin-proposal-object-rest-spread" "^7.20.7"
     "@bitcoinerlab/secp256k1" "^1.1.1"
@@ -11077,16 +11047,16 @@ open@^8.0.9, open@^8.4.0:
     is-docker "^2.1.1"
     is-wsl "^2.2.0"
 
-opnet@1.0.40:
-  version "1.0.40"
-  resolved "https://registry.yarnpkg.com/opnet/-/opnet-1.0.40.tgz#025c58f94804bff28958cd13615f14cc87ecf480"
-  integrity sha512-UkVE1d83uQyeoKnArb28wjQW7dtcnstDqKK//1ABnsxclnUqy0J3SUp5tcbzkyB+Aduw+taWM3mRKz26kfg/xQ==
+opnet@1.0.42:
+  version "1.0.42"
+  resolved "https://registry.yarnpkg.com/opnet/-/opnet-1.0.42.tgz#f09c1337257d4fed05d402179340850045247948"
+  integrity sha512-JLVBV4rKL0IvmPrh2aCgRVE1UwxtFHmBhrrM4KjqBIXuJPxTULU6BQ+JxsWI6c5+WNZo7xaP34w/Ql3Lxs6SGw==
   dependencies:
     "@babel/plugin-proposal-object-rest-spread" "^7.20.7"
     "@bitcoinerlab/secp256k1" "^1.1.1"
     "@btc-vision/bsi-binary" "^1.0.37"
     "@btc-vision/bsi-common" "^1.0.16"
-    "@btc-vision/transaction" "^1.0.52"
+    "@btc-vision/transaction" "^1.0.53"
     "@noble/hashes" "^1.4.0"
     babel-loader "^9.1.3"
     babel-plugin-transform-import-meta "^2.2.1"

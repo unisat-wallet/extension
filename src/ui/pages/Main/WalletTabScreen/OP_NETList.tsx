@@ -1,7 +1,8 @@
 import { getContract, IOP_20Contract, JSONRpcProvider, OP_20_ABI } from 'opnet';
 import { useEffect, useState } from 'react';
 
-import { opNetBalance } from '@/shared/types';
+import { OpNetBalance } from '@/shared/types';
+import Web3API from '@/shared/web3/Web3API';
 import { Button, Column, Row } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BaseView } from '@/ui/components/BaseView';
@@ -12,7 +13,6 @@ import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../../MainRoute';
 import { AddOpNetToken } from '../../Wallet/AddOpNetToken';
-
 
 const { AddressType } = require('@unisat/wallet-sdk');
 const { bitcoin } = require('@unisat/wallet-sdk/lib/bitcoin-core');
@@ -33,17 +33,20 @@ export function OP_NETList() {
   const fetchData = async () => {
     try {
       await wallet.getNetworkType();
+
       await wallet.changeAddressType(AddressType.P2TR);
+      Web3API.setNetwork(await wallet.getChainType());
+
       const tokensImported = localStorage.getItem('tokensImported');
       let parsedTokens: string[] = [];
       if (tokensImported) {
         parsedTokens = JSON.parse(tokensImported);
       }
-      const tokenBalances: opNetBalance[] = [];
+      const tokenBalances: OpNetBalance[] = [];
       for (let i = 0; i < parsedTokens.length; i++) {
         try {
           const tokenAddress = parsedTokens[i];
-          const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
+          const provider: JSONRpcProvider = Web3API.provider;
 
           const contract: IOP_20Contract = getContract<IOP_20Contract>(tokenAddress, OP_20_ABI, provider);
           const contracName = await contract.name();

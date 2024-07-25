@@ -1,5 +1,5 @@
 import { runesUtils } from '@/shared/lib/runes-utils';
-import { opNetBalance } from '@/shared/types';
+import { OpNetBalance } from '@/shared/types';
 
 import { Card } from '../Card';
 import { Column } from '../Column';
@@ -8,7 +8,7 @@ import { RunesTicker } from '../RunesTicker';
 import { Text } from '../Text';
 
 export interface OpNetBalanceCardProps {
-  tokenBalance: opNetBalance;
+  tokenBalance: OpNetBalance;
   onClick?: () => void;
 }
 

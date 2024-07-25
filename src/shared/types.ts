@@ -396,12 +396,13 @@ export interface RuneBalance {
   symbol: string;
   divisibility: number;
 }
-export interface opNetBalance {
+export interface OpNetBalance {
   name: string;
   amount: bigint;
   address: string;
   symbol?: string;
   divisibility: number;
+  logo?: string;
 }
 
 export interface RuneInfo {

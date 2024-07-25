@@ -1,4 +1,5 @@
 import { getContract, IWBTCContract, WBTC_ABI } from 'opnet';
+import { useEffect } from 'react';
 
 import { Account } from '@/shared/types';
 import Web3API from '@/shared/web3/Web3API';
@@ -29,6 +30,12 @@ export default function TxOpnetConfirmScreen() {
   const handleCancel = () => {
     console.log();
   };
+  useEffect(() => {
+    const setWallet = async () => {
+      Web3API.setNetwork(await wallet.getChainType());
+    };
+    setWallet();
+  });
 
   const wallet = useWallet();
   const tools = useTools();
@@ -65,7 +72,6 @@ export default function TxOpnetConfirmScreen() {
         calldata: calldata // Calldata
       };
 
-      // Sign and broadcast the transaction
       const finalTx = await Web3API.transactionFactory.signInteraction(interactionParameters);
 
       const firstTxBroadcast = await Web3API.provider.sendRawTransaction(finalTx[0], false);
