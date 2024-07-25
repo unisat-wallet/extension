@@ -36,7 +36,7 @@ import WelcomeScreen from './Main/WelcomeScreen';
 import OpNetTokenScreen from './OpNet/OpNetTokenScreen';
 import SendOpNetScreen from './OpNet/SendOpNetScreen';
 import StakeWBTCoPNet from './OpNet/StakeWBTCoPNet';
-import Swap from './OpNet/Swap';
+import Swap from './OpNet/SwapToken';
 import UnWrapBitcoinOpnet from './OpNet/UnWrapBitcoinOpnet';
 import WrapBitcoinOpnet from './OpNet/WrapBitcoinOpnet';
 import OrdinalsInscriptionScreen from './Ordinals/OrdinalsInscriptionScreen';
