@@ -12,7 +12,7 @@ import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 import '@btc-vision/transaction';
 
-export default function OpNetTokenScreen() {
+export default function Swap() {
   const [loading, setLoading] = useState(true);
   const [switchOptions, setSwitchOptions] = useState<OpNetBalance[]>([]);
   const [selectedOption, setSelectedOption] = useState<OpNetBalance | null>(null);
