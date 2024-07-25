@@ -11047,10 +11047,10 @@ open@^8.0.9, open@^8.4.0:
     is-docker "^2.1.1"
     is-wsl "^2.2.0"
 
-opnet@1.0.42:
-  version "1.0.42"
-  resolved "https://registry.yarnpkg.com/opnet/-/opnet-1.0.42.tgz#f09c1337257d4fed05d402179340850045247948"
-  integrity sha512-JLVBV4rKL0IvmPrh2aCgRVE1UwxtFHmBhrrM4KjqBIXuJPxTULU6BQ+JxsWI6c5+WNZo7xaP34w/Ql3Lxs6SGw==
+opnet@1.0.43:
+  version "1.0.43"
+  resolved "https://registry.yarnpkg.com/opnet/-/opnet-1.0.43.tgz#812f4b00668960a3188f2db246d2ecb5b6ed3339"
+  integrity sha512-B3wjRQ+B+D1OdLnU3mi7JZ4ZnPS8454jzUcRDO8+gmnok4ZXYY3I86Kx8tgB0Hd+qTb8NgKaXneJzNF74nbq8w==
   dependencies:
     "@babel/plugin-proposal-object-rest-spread" "^7.20.7"
     "@bitcoinerlab/secp256k1" "^1.1.1"

@@ -1,4 +1,4 @@
-import { IMotoswapRouterContract, IOP_20Contract, MOTOSWAP_ROUTER_ABI, OP_20_ABI, getContract } from 'opnet';
+import { getContract, IMotoswapRouterContract, IOP_20Contract, MOTOSWAP_ROUTER_ABI, OP_20_ABI } from 'opnet';
 import { CSSProperties, useState } from 'react';
 
 import { OpNetBalance } from '@/shared/types';
@@ -11,6 +11,7 @@ import { fontSizes } from '@/ui/theme/font';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 import '@btc-vision/transaction';
+import { MOTO_ADDRESS_REGTEST, ROUTER_ADDRESS_REGTEST, WBTC_ADDRESS_REGTEST } from '@btc-vision/transaction';
 
 export default function OpNetTokenScreen() {
   const [loading, setLoading] = useState(true);
@@ -88,10 +89,8 @@ export default function OpNetTokenScreen() {
     const getData = async () => {
       console.log(await wallet.getChainType());
       Web3API.setNetwork(await wallet.getChainType());
-      const parsedTokens = [
-        'bcrt1qefq0lwqwpt5lx7hl2dr2r8q6z063725tccuqrg',
-        'bcrt1q8reuxx9naek4mqesrfsgdpjv3q7a5g2llkh6ua'
-      ];
+      const parsedTokens = [WBTC_ADDRESS_REGTEST, MOTO_ADDRESS_REGTEST];
+
       const tokenBalances: OpNetBalance[] = [];
       for (let i = 0; i < parsedTokens.length; i++) {
         try {
@@ -130,15 +129,12 @@ export default function OpNetTokenScreen() {
       // console.log(getSwap);
 
       const getQuote: IMotoswapRouterContract = getContract<IMotoswapRouterContract>(
-        'bcrt1qyx492l440f6cm5hdppw5pmkd2fc7k3qayuuvh6',
+        ROUTER_ADDRESS_REGTEST,
         MOTOSWAP_ROUTER_ABI,
         Web3API.provider
       );
 
-      const getData = await getQuote.getAmountsOut(10000n, [
-        'bcrt1qefq0lwqwpt5lx7hl2dr2r8q6z063725tccuqrg',
-        'bcrt1q8reuxx9naek4mqesrfsgdpjv3q7a5g2llkh6ua'
-      ]);
+      const getData = await getQuote.getAmountsOut(1000n, [WBTC_ADDRESS_REGTEST, MOTO_ADDRESS_REGTEST]);
       console.log(getData);
 
       setLoading(false);
