@@ -13,7 +13,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import '@btc-vision/transaction';
 import { MOTO_ADDRESS_REGTEST, ROUTER_ADDRESS_REGTEST, WBTC_ADDRESS_REGTEST } from '@btc-vision/transaction';
 
-export default function OpNetTokenScreen() {
+export default function Swap() {
   const [loading, setLoading] = useState(true);
   const [switchOptions, setSwitchOptions] = useState<OpNetBalance[]>([]);
   const [selectedOption, setSelectedOption] = useState<OpNetBalance | null>(null);

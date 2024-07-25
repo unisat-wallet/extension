@@ -121,7 +121,7 @@ export function OP_NETList() {
             preset="primary"
             icon="pencil"
             onClick={(e) => {
-              navigate('SWAP', {});
+              navigate('Swap', {});
             }}
             full
           />
