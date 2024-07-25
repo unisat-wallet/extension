@@ -1,11 +1,11 @@
 import BigNumber from 'bignumber.js';
 import {
   BaseContractProperty,
+  getContract,
   IMotoswapRouterContract,
   IOP_20Contract,
   MOTOSWAP_ROUTER_ABI,
-  OP_20_ABI,
-  getContract
+  OP_20_ABI
 } from 'opnet';
 import { CSSProperties, useMemo, useState } from 'react';
 
@@ -25,14 +25,16 @@ import {
   IInteractionParameters,
   MOTO_ADDRESS_REGTEST,
   ROUTER_ADDRESS_REGTEST,
-  WBTC_ADDRESS_REGTEST,
-  Wallet
+  UTXO,
+  Wallet,
+  WBTC_ADDRESS_REGTEST
 } from '@btc-vision/transaction';
 
 interface ItemData {
   key: string;
   account?: Account;
 }
+
 export default function Swap() {
   const [loading, setLoading] = useState(true);
   const [switchOptions, setSwitchOptions] = useState<OpNetBalance[]>([]);
@@ -217,9 +219,8 @@ export default function Swap() {
       //   10000n
       // );
       console.log(inputAmount);
-      const inputAmountBigInt = expandToDecimals(parseInt(inputAmount), selectedOption.divisibility);
-
-      const outPutAmountBigInt = expandToDecimals(parseInt(outputAmount), selectedOptionOutput.divisibility);
+      const inputAmountBigInt = expandToDecimals(inputAmount, selectedOption.divisibility);
+      const outPutAmountBigInt = expandToDecimals(outputAmount, selectedOptionOutput.divisibility);
 
       const contractResult = await getSwap.encodeCalldata('swapExactTokensForTokensSupportingFeeOnTransferTokens', [
         BigInt(Number(inputAmount) * Math.pow(10, selectedOption.divisibility)),
@@ -260,12 +261,12 @@ export default function Swap() {
       }
     }
   };
-  const approveToken = async (walletGet: Wallet, tokenAddress: string, utxos: any) => {
+  const approveToken = async (walletGet: Wallet, tokenAddress: string, utxos: UTXO[]) => {
     const contract = getContract<IOP_20Contract>(tokenAddress, OP_20_ABI, Web3API.provider, currentAccount.address);
-    const maxUint256 = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
-    const contractApprove: BaseContractProperty = await contract.approve(currentAccount.address, maxUint256);
+    const maxUint256 = 0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffn;
+    const contractApprove: BaseContractProperty = await contract.approve(ROUTER_ADDRESS_REGTEST, maxUint256);
     if ('error' in contractApprove) {
-      throw new Error('Invalid calldata in withdrawal request');
+      throw new Error(contractApprove.error);
     }
 
     const interactionParameters: IInteractionParameters = {
@@ -278,7 +279,7 @@ export default function Swap() {
       priorityFee: 50000n,
       calldata: contractApprove.calldata as Buffer
     };
-    console.log(interactionParameters);
+
     const sendTransact = await Web3API.transactionFactory.signInteraction(interactionParameters);
 
     // If this transaction is missing, opnet will deny the unwrapping request.
