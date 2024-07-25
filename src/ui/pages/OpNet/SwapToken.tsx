@@ -216,10 +216,10 @@ export default function Swap() {
       //   currentAccount.address,
       //   10000n
       // );
-      console.log(inputAmount);
-      const inputAmountBigInt = expandToDecimals(parseInt(inputAmount), selectedOption.divisibility);
+      console.log(inputAmount, selectedOption.divisibility);
+      const inputAmountBigInt = expandToDecimals(parseFloat(inputAmount), selectedOption.divisibility);
 
-      const outPutAmountBigInt = expandToDecimals(parseInt(outputAmount), selectedOptionOutput.divisibility);
+      const outPutAmountBigInt = expandToDecimals(parseFloat(outputAmount), selectedOptionOutput.divisibility);
 
       const contractResult = await getSwap.encodeCalldata('swapExactTokensForTokensSupportingFeeOnTransferTokens', [
         BigInt(Number(inputAmount) * Math.pow(10, selectedOption.divisibility)),
@@ -263,7 +263,7 @@ export default function Swap() {
   const approveToken = async (walletGet: Wallet, tokenAddress: string, utxos: any) => {
     const contract = getContract<IOP_20Contract>(tokenAddress, OP_20_ABI, Web3API.provider, currentAccount.address);
     const maxUint256 = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
-    const contractApprove: BaseContractProperty = await contract.approve(currentAccount.address, maxUint256);
+    const contractApprove: BaseContractProperty = await contract.approve(ROUTER_ADDRESS_REGTEST, maxUint256);
     if ('error' in contractApprove) {
       throw new Error('Invalid calldata in withdrawal request');
     }
