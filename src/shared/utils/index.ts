@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import { keyBy } from 'lodash';
 
 import browser from '@/background/webapi/browser';
@@ -43,4 +44,9 @@ export function getChainInfo(chainType: ChainType) {
     name: chain.label,
     network: NETWORK_TYPES[chain.networkType].name
   };
+}
+export function expandToDecimals(n: number, decimals: number) {
+  const amount = new BigNumber(n).multipliedBy(new BigNumber(10).pow(decimals)).decimalPlaces(0);
+
+  return BigInt(amount.toString());
 }
