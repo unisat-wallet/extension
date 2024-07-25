@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
-import { Account, Inscription, OpNetBalance, RawTxInfo } from '@/shared/types';
+import { Account, Inscription, RawTxInfo, opNetBalance } from '@/shared/types';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
@@ -28,7 +28,7 @@ interface ItemData {
 export default function WrapBitcoinOpnet() {
   const { state } = useLocation();
   const props = state as {
-    OpNetBalance: OpNetBalance;
+    OpNetBalance: opNetBalance;
   };
 
   const OpNetBalance = props.OpNetBalance;
