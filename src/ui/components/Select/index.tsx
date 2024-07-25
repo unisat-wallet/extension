@@ -30,8 +30,7 @@ const $selectStyle = {
   gap: '10px',
   display: 'flex',
   alignItems: 'center',
-  height: '42px',
-  width: '120px'
+  height: '42px'
 } as CSSProperties;
 
 const $modalStyle = {

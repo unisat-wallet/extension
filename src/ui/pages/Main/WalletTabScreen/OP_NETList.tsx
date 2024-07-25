@@ -32,7 +32,6 @@ export function OP_NETList() {
   const tools = useTools();
   const fetchData = async () => {
     try {
-      setTotal(-1);
       await wallet.getNetworkType();
 
       await wallet.changeAddressType(AddressType.P2TR);
