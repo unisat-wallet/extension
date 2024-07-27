@@ -3,7 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { Account, Inscription, OpNetBalance, RawTxInfo } from '@/shared/types';
-import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
+import { Button, Column, Content, Header, Image, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { OutputValueBar } from '@/ui/components/OutputValueBar';
@@ -17,6 +17,7 @@ import {
   useRunesTx
 } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
+import { fontSizes } from '@/ui/theme/font';
 import { isValidAddress, useWallet } from '@/ui/utils';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
@@ -126,9 +127,12 @@ export default function SendOpNetScreen() {
         title={'Send ' + OpNetBalance.name}
       />
       <Content>
-        <Row justifyCenter>
+        <Row itemsCenter fullX justifyCenter>
+          {OpNetBalance.logo && <Image src={OpNetBalance.logo} size={fontSizes.tiny} />}
           <Text
-            text={`${runesUtils.toDecimalAmount(OpNetBalance.amount.toString(), OpNetBalance.divisibility)} `}
+            text={`${runesUtils.toDecimalAmount(OpNetBalance.amount.toString(), OpNetBalance.divisibility)} ${
+              OpNetBalance.symbol
+            } `}
             preset="bold"
             textCenter
             size="xxl"

@@ -1,7 +1,17 @@
-import { getContract, IWBTCContract, WBTC_ABI } from 'opnet';
+import {
+  BaseContractProperty,
+  IMotoswapRouterContract,
+  IOP_20Contract,
+  IWBTCContract,
+  MOTOSWAP_ROUTER_ABI,
+  OP_20_ABI,
+  WBTC_ABI,
+  getContract
+} from 'opnet';
 import { useEffect } from 'react';
 
 import { Account } from '@/shared/types';
+import { expandToDecimals } from '@/shared/utils';
 import Web3API from '@/shared/web3/Web3API';
 import { Button, Card, Column, Content, Footer, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -12,6 +22,7 @@ import {
   IInteractionParameters,
   IUnwrapParameters,
   IWrapParameters,
+  ROUTER_ADDRESS_REGTEST,
   UTXO,
   Wallet,
   wBTC
@@ -100,9 +111,8 @@ export default function TxOpnetConfirmScreen() {
     const foundObject = rawTxInfo.items.find((obj) => obj.account && obj.account.address === rawTxInfo.account.address);
     const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
     const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
-    const result = 10 ** 8; // 8 decimals
 
-    const wrapAmount = BigInt(rawTxInfo.inputAmount * result);
+    const wrapAmount = expandToDecimals(rawTxInfo.inputAmount, 8);
     const utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], wrapAmount);
 
     const generationParameters = await Web3API.limitedProvider.fetchWrapParameters(wrapAmount);
@@ -154,7 +164,7 @@ export default function TxOpnetConfirmScreen() {
     const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
     const result = 10 ** 8;
 
-    const unwrapAmount = BigInt(rawTxInfo.inputAmount * result); // Minimum amount to unwrap
+    const unwrapAmount = expandToDecimals(rawTxInfo.inputAmount, 8); // Minimum amount to unwrap
     const requestWithdrawalSelector = Number('0x' + Web3API.abiCoder.encodeSelector('requestWithdrawal'));
 
     function generateCalldata(unwrapAmount: bigint): Buffer {
@@ -178,7 +188,6 @@ export default function TxOpnetConfirmScreen() {
     if ('error' in withdrawalRequest) {
       throw new Error('Invalid calldata in withdrawal request');
     }
-
     const interactionParameters: IInteractionParameters = {
       from: walletGet.p2tr,
       to: contract.address.toString(),
@@ -228,6 +237,7 @@ export default function TxOpnetConfirmScreen() {
 
     try {
       const finalTx = await Web3API.transactionFactory.unwrap(unwrapParameters);
+      console.log(finalTx);
       console.log(
         `Due to bitcoin fees, you will lose ${finalTx.feeRefundOrLoss} satoshis by unwrapping. Do you want to proceed?`
       );
@@ -247,7 +257,7 @@ export default function TxOpnetConfirmScreen() {
       }
 
       tools.toastSuccess(`"You have sucessfully unwraped ${unwrapAmount} Bitcoin"`);
-      navigate('TxSuccessScreen', { unwrapTransaction });
+      navigate('TxSuccessScreen', { txid: unwrapTransaction.result });
     } catch (e) {
       console.error('Error:', e);
     }
@@ -257,7 +267,7 @@ export default function TxOpnetConfirmScreen() {
     const foundObject = rawTxInfo.items.find((obj) => obj.account && obj.account.address === rawTxInfo.account.address);
     const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
     const result = 10 ** rawTxInfo.opneTokens[0].divisibility;
-    const amountToSend = BigInt(rawTxInfo.inputAmount * result);
+    const amountToSend = expandToDecimals(rawTxInfo.inputAmount, rawTxInfo.opneTokens[0].divisibility);
     const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
 
     const contract: IWBTCContract = getContract<IWBTCContract>(
@@ -303,14 +313,113 @@ export default function TxOpnetConfirmScreen() {
       console.log('Broadcasted:', seconfTransaction);
     }
     tools.toastSuccess(`"You have sucessfully Staked ${amountToSend} Bitcoin"`);
-    navigate('TxSuccessScreen', { seconfTransaction });
+    navigate('TxSuccessScreen', { txid: seconfTransaction.result });
+  };
+
+  const swap = async () => {
+    const getSwap: IMotoswapRouterContract = getContract<IMotoswapRouterContract>(
+      ROUTER_ADDRESS_REGTEST,
+      MOTOSWAP_ROUTER_ABI,
+      Web3API.provider,
+      rawTxInfo.account
+    );
+    const foundObject = rawTxInfo.items.find((obj) => obj.account && obj.account.address === rawTxInfo.account.address);
+    const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
+    const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
+    const maxUint256 = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
+
+    const utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], maxUint256);
+    const getData = await approveToken(walletGet, rawTxInfo.contractAddress[0], utxos);
+    const getnextUtxo = await approveToken(walletGet, rawTxInfo.contractAddress[1], getData);
+    const inputAmountBigInt = expandToDecimals(rawTxInfo.inputAmount[0], rawTxInfo.opneTokens[0].divisibility);
+    const outPutAmountBigInt = expandToDecimals(rawTxInfo.inputAmount[1], rawTxInfo.opneTokens[0].divisibility);
+
+    const contractResult = await getSwap.encodeCalldata('swapExactTokensForTokensSupportingFeeOnTransferTokens', [
+      inputAmountBigInt,
+      0n,
+      [rawTxInfo.contractAddress[0], rawTxInfo.contractAddress[1]],
+      rawTxInfo.account.address,
+      10000n
+    ]);
+    const interactionParameters: IInteractionParameters = {
+      from: walletGet.p2tr,
+      to: ROUTER_ADDRESS_REGTEST,
+      utxos: getnextUtxo,
+      signer: walletGet.keypair,
+      network: Web3API.network,
+      feeRate: 450,
+      priorityFee: 50000n,
+      calldata: contractResult as Buffer
+    };
+    console.log(interactionParameters);
+    const sendTransact = await Web3API.transactionFactory.signInteraction(interactionParameters);
+
+    // If this transaction is missing, opnet will deny the unwrapping request.
+    const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact[0], false);
+    if (!firstTransaction || !firstTransaction.success) {
+      // tools.toastError('Error,Please Try again');
+      console.log(firstTransaction);
+      throw new Error('Could not broadcast first transaction');
+    }
+
+    // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
+    const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransact[1], false);
+    if (!secondTransaction || !secondTransaction.success) {
+      // tools.toastError('Error,Please Try again');
+      throw new Error('Could not broadcast first transaction');
+    } else {
+      console.log(secondTransaction);
+      tools.toastSuccess(
+        `"You have sucessfully swapped ${rawTxInfo.inputAmount[0]} ${rawTxInfo.opneTokens[0].symbol} for ${rawTxInfo.inputAmount[2]}  ${rawTxInfo.opneTokens[1].symbol}"`
+      );
+      navigate('TxSuccessScreen', { txid: secondTransaction.result });
+    }
+  };
+  const approveToken = async (walletGet: Wallet, tokenAddress: string, utxos: UTXO[]) => {
+    const contract = getContract<IOP_20Contract>(tokenAddress, OP_20_ABI, Web3API.provider, rawTxInfo.account.address);
+    const maxUint256 = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
+    const contractApprove: BaseContractProperty = await contract.approve(ROUTER_ADDRESS_REGTEST, maxUint256);
+    if ('error' in contractApprove) {
+      throw new Error(contractApprove.error);
+    }
+
+    const interactionParameters: IInteractionParameters = {
+      from: walletGet.p2tr,
+      to: contract.address.toString(),
+      utxos: utxos,
+      signer: walletGet.keypair,
+      network: Web3API.network,
+      feeRate: rawTxInfo.feeRate,
+      priorityFee: 50000n,
+      calldata: contractApprove.calldata as Buffer
+    };
+
+    const sendTransact = await Web3API.transactionFactory.signInteraction(interactionParameters);
+
+    // If this transaction is missing, opnet will deny the unwrapping request.
+    const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact[0], false);
+    if (!firstTransaction || !firstTransaction.success) {
+      // tools.toastError('Error,Please Try again');
+      console.log(firstTransaction);
+      throw new Error('Could not broadcast first transaction');
+    }
+
+    // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
+    const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransact[1], false);
+    if (!secondTransaction || !secondTransaction.success) {
+      // tools.toastError('Error,Please Try again');
+      throw new Error('Could not broadcast first transaction');
+    } else {
+      console.log(secondTransaction);
+    }
+    return sendTransact[2];
   };
   return (
     <Layout>
       <Content>
-        <Column gap="xl">
-          <Text text={rawTxInfo.header} />
-        </Column>
+        <Row itemsCenter fullX justifyCenter>
+          <Text text={rawTxInfo.header} size="xxl" />
+        </Row>
         <Column gap="xl">
           <Section title="Network Fee Rate:">
             <Text text={rawTxInfo.feeRate.toString()} />
@@ -343,7 +452,7 @@ export default function TxOpnetConfirmScreen() {
           </Section>
           <Column gap="xl">
             <Column>
-              <Text text={`Inputs: (${rawTxInfo.inputInfos.length})`} preset="bold" />
+              <Text text={`Data: (${rawTxInfo.inputInfos.length})`} preset="bold" />
               <Card>
                 <Column full justifyCenter>
                   <Row>
@@ -377,6 +486,8 @@ export default function TxOpnetConfirmScreen() {
                 handleUnWrapConfirm();
               } else if (rawTxInfo.action == 'stake') {
                 stake();
+              } else if (rawTxInfo.action == 'swap') {
+                swap();
               } else {
                 handleConfirm();
               }

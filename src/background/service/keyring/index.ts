@@ -4,7 +4,10 @@ import encryptor from 'browser-passworder';
 import { EventEmitter } from 'events';
 import log from 'loglevel';
 
-import { InteractionParametersWithoutSigner } from '@/content-script/pageProvider/Web3Provider.js';
+import {
+  InteractionParametersWithoutSigner,
+  IWrapParametersWithoutSigner
+} from '@/content-script/pageProvider/Web3Provider.js';
 import { ADDRESS_TYPES, KEYRING_TYPE } from '@/shared/constant';
 import { AddressType } from '@/shared/types';
 import { ObservableStore } from '@metamask/obs-store';
@@ -62,6 +65,7 @@ export interface Keyring {
   getAccounts(): Promise<string[]>;
   signTransaction(psbt: bitcoin.Psbt, inputs: ToSignInput[]): Promise<bitcoin.Psbt>;
   signInteraction(interactionParameters: InteractionParametersWithoutSigner): Promise<any>;
+  wrap(IUnwrapParameters: IWrapParametersWithoutSigner): Promise<any>;
   signAndBroadcastInteraction(interactionParameters: InteractionParametersWithoutSigner): Promise<any>;
   signMessage(address: string, message: string): Promise<string>;
   signData(address: string, data: string, type: string): Promise<string>;
@@ -105,6 +109,9 @@ class EmptyKeyring implements Keyring {
     throw new Error('Method not implemented.');
   }
   signInteraction(interactionParameters: InteractionParametersWithoutSigner): Promise<any> {
+    throw new Error('Method not implemented.');
+  }
+  wrap(IWrapParameters: IWrapParametersWithoutSigner): Promise<any> {
     throw new Error('Method not implemented.');
   }
   signAndBroadcastInteraction(interactionParameters: InteractionParametersWithoutSigner): Promise<any> {
