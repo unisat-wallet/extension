@@ -475,7 +475,7 @@ export default function TxOpnetConfirmScreen() {
       ROUTER_ADDRESS_REGTEST,
       MOTOSWAP_ROUTER_ABI,
       Web3API.provider,
-      rawTxInfo.account
+      rawTxInfo.account.address
     );
     const foundObject = rawTxInfo.items.find((obj) => obj.account && obj.account.address === rawTxInfo.account.address);
     const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
