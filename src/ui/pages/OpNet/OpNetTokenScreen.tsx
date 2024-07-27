@@ -3,7 +3,8 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
 import Web3API from '@/shared/web3/Web3API';
-import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
+import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
+import { Button, Column, Content, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { colors } from '@/ui/theme/colors';
@@ -49,25 +50,27 @@ export default function OpNetTokenScreen() {
     const getAddress = async () => {
       const btcbalanceGet = await provider.getBalance(account.address);
       const contract: IOP_20Contract = getContract<IOP_20Contract>(address, OP_20_ABI, provider);
-      const contracName = await contract.name();
-      const divisibility = await contract.decimals();
-      const symbol = await contract.symbol();
+      const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(address);
+
       const balance = await contract.balanceOf(account.address);
+
       setBtcBalance({
         address: '',
         amount: btcbalanceGet,
         divisibility: 8,
         symbol: 'BTC',
-        name: 'Bitcoin'
+        name: 'Bitcoin',
+        logo: ''
       });
-      if (!('error' in balance || 'error' in contracName || 'error' in divisibility || 'error' in symbol)) {
+      if (!('error' in balance)) {
         const newSummaryData = {
           opNetBalance: {
             address: address,
-            name: contracName.decoded.toLocaleString(),
+            name: contractInfo?.name || '',
             amount: BigInt(balance.decoded[0].toString()),
-            divisibility: parseInt(divisibility.decoded.toString()),
-            symbol: symbol.decoded.toString()
+            divisibility: contractInfo?.decimals || 8,
+            symbol: contractInfo?.symbol,
+            logo: contractInfo?.logo
           }
         };
         setTokenSummary(newSummaryData);
@@ -109,17 +112,17 @@ export default function OpNetTokenScreen() {
         <Content>
           <Column py="xl" style={{ borderBottomWidth: 1, borderColor: colors.white_muted }}>
             <Row itemsCenter fullX justifyCenter>
+              <Image src={tokenSummary.opNetBalance.logo} size={fontSizes.tiny} />
               <Text
                 text={`${runesUtils.toDecimalAmount(
                   tokenSummary.opNetBalance.amount,
                   tokenSummary.opNetBalance.divisibility
-                )}`}
+                )} ${tokenSummary.opNetBalance.symbol}`}
                 preset="bold"
                 textCenter
                 size="xxl"
                 wrap
               />
-              {/* <BRC20Ticker tick={tokenSummary.runeBalance.symbol} preset="lg" /> */}
             </Row>
 
             <Row justifyBetween mt="lg">

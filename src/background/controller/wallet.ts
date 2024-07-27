@@ -15,6 +15,7 @@ import i18n from '@/background/service/i18n';
 import { DisplayedKeyring, Keyring } from '@/background/service/keyring';
 import {
   BroadcastTransactionOptions,
+  IWrapParametersWithoutSigner,
   InteractionParametersWithoutSigner
 } from '@/content-script/pageProvider/Web3Provider.js';
 import {
@@ -23,9 +24,9 @@ import {
   BRAND_ALIAN_TYPE_TEXT,
   CHAINS_ENUM,
   CHAINS_MAP,
-  ChainType,
   COIN_NAME,
   COIN_SYMBOL,
+  ChainType,
   KEYRING_TYPE,
   KEYRING_TYPES,
   NETWORK_TYPES,
@@ -49,7 +50,7 @@ import Web3API from '@/shared/web3/Web3API';
 import { IInteractionParameters, TransactionFactory, Wallet } from '@btc-vision/transaction';
 import { UTXO_DUST, UnspentOutput, txHelpers } from '@unisat/wallet-sdk';
 import { publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
-import { bitcoin, ECPair } from '@unisat/wallet-sdk/lib/bitcoin-core';
+import { ECPair, bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 import { KeystoneKeyring } from '@unisat/wallet-sdk/lib/keyring';
 import {
   genPsbtOfBIP322Simple,
@@ -88,10 +89,6 @@ export class WalletController extends BaseController {
   getApproval = notificationService.getApproval;
   resolveApproval = notificationService.resolveApproval;
   rejectApproval = notificationService.rejectApproval;
-
-  getConnectedSite = permissionService.getConnectedSite;
-  getSite = permissionService.getSite;
-  getConnectedSites = permissionService.getConnectedSites;
 
   /* wallet */
   // boot = (password: string) => keyringService.boot(password);
@@ -765,6 +762,39 @@ export class WalletController extends BaseController {
     return broadcastedTransactions;
   };
 
+  wrap = async (IWrapParameters: IWrapParametersWithoutSigner): Promise<WrapResult> => {
+    const account = preferenceService.getCurrentAccount();
+    if (!account) throw new Error('no current account');
+
+    const wifWallet = await this.getInternalPrivateKey({
+      pubkey: account.pubkey,
+      type: account.type
+    } as Account);
+
+    if (!wifWallet) throw new Error('no current account');
+    const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
+
+    const utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], IWrapParameters.amount);
+
+    const generationParameters = await Web3API.limitedProvider.fetchWrapParameters(IWrapParameters.amount);
+    if (!generationParameters) {
+      throw new Error('No generation parameters found');
+    }
+
+    const IWrapParametersSubmit: IWrapParameters = {
+      from: walletGet.p2tr,
+      utxos: utxos,
+      signer: walletGet.keypair,
+      network: Web3API.network,
+      feeRate: 400,
+      priorityFee: IWrapParameters.priorityFee,
+      amount: IWrapParameters.amount,
+      generationParameters: generationParameters
+    };
+
+    return await Web3API.transactionFactory.wrap(IWrapParametersSubmit);
+  };
+
   signBIP322Simple = async (text: string) => {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
@@ -1432,9 +1462,6 @@ export class WalletController extends BaseController {
     return data;
   };
 
-  getConnectedSite = permissionService.getConnectedSite;
-  getSite = permissionService.getSite;
-  getConnectedSites = permissionService.getConnectedSites;
   setRecentConnectedSites = (sites: ConnectedSite[]) => {
     permissionService.setRecentConnectedSites(sites);
   };

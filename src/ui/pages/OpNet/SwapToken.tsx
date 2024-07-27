@@ -1,19 +1,12 @@
 import BigNumber from 'bignumber.js';
-import {
-  BaseContractProperty,
-  getContract,
-  IMotoswapRouterContract,
-  IOP_20Contract,
-  MOTOSWAP_ROUTER_ABI,
-  OP_20_ABI
-} from 'opnet';
+import { getContract, IMotoswapRouterContract, IOP_20Contract, MOTOSWAP_ROUTER_ABI, OP_20_ABI } from 'opnet';
 import { CSSProperties, useMemo, useState } from 'react';
 
 import { Account, OpNetBalance } from '@/shared/types';
-import { expandToDecimals } from '@/shared/utils';
 import Web3API from '@/shared/web3/Web3API';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { Button, Column, Content, Header, Icon, Layout, Row, Select } from '@/ui/components';
+import { useTools } from '@/ui/components/ActionComponent';
 import { BaseView } from '@/ui/components/BaseView';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
@@ -21,14 +14,9 @@ import { fontSizes } from '@/ui/theme/font';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 import '@btc-vision/transaction';
-import {
-  IInteractionParameters,
-  MOTO_ADDRESS_REGTEST,
-  ROUTER_ADDRESS_REGTEST,
-  UTXO,
-  Wallet,
-  WBTC_ADDRESS_REGTEST
-} from '@btc-vision/transaction';
+import { MOTO_ADDRESS_REGTEST, ROUTER_ADDRESS_REGTEST, WBTC_ADDRESS_REGTEST } from '@btc-vision/transaction';
+
+import { useNavigate } from '../MainRoute';
 
 interface ItemData {
   key: string;
@@ -41,6 +29,7 @@ export default function Swap() {
   const [selectedOption, setSelectedOption] = useState<OpNetBalance | null>(null);
   const [selectedOptionOutput, setSelectedOptioOutput] = useState<OpNetBalance | null>(null);
   BigNumber.config({ EXPONENTIAL_AT: 256 });
+  const navigate = useNavigate();
 
   const [inputAmount, setInputAmount] = useState<string>('0');
   const [outputAmount, setOutPutAmount] = useState<string>('0');
@@ -48,6 +37,7 @@ export default function Swap() {
 
   const wallet = useWallet();
   const currentAccount = useCurrentAccount();
+  const tools = useTools();
 
   const items = useMemo(() => {
     const _items: ItemData[] = keyring.accounts.map((v) => {
@@ -59,11 +49,19 @@ export default function Swap() {
     return _items;
   }, []);
 
-  const handleSelect = (option) => {
+  const handleSelect = (option: OpNetBalance) => {
+    if (option.address == selectedOptionOutput?.address) {
+      tools.toastError(`Error,You can't set input to output`);
+      return;
+    }
     setSelectedOption(option);
     console.log('Selected option:', option);
   };
-  const handleSelectOutput = (option) => {
+  const handleSelectOutput = (option: OpNetBalance) => {
+    if (option.address == selectedOption?.address) {
+      tools.toastError(`Error,You can't set input to output`);
+      return;
+    }
     setSelectedOptioOutput(option);
     console.log('Selected option:', option);
   };
@@ -92,7 +90,7 @@ export default function Swap() {
           console.log(BigInt(Number(numericValue) * Math.pow(10, selectedOption.divisibility)));
           const getData = await getQuote.getAmountsOut(
             BigInt(Number(numericValue) * Math.pow(10, selectedOption.divisibility)),
-            [WBTC_ADDRESS_REGTEST, MOTO_ADDRESS_REGTEST]
+            [selectedOption.address, selectedOptionOutput.address]
           );
           console.log(getData);
           if ('error' in getData) {
@@ -116,7 +114,7 @@ export default function Swap() {
   const $searchInputStyle = {
     width: '30%',
     padding: 8,
-    fontSize: fontSizes.xs,
+    fontSize: fontSizes.md,
     border: 'none',
     borderRadius: 0,
     outline: 'none',
@@ -194,112 +192,7 @@ export default function Swap() {
 
     void getData();
   });
-  const swap = async () => {
-    const getSwap: IMotoswapRouterContract = getContract<IMotoswapRouterContract>(
-      ROUTER_ADDRESS_REGTEST,
-      MOTOSWAP_ROUTER_ABI,
-      Web3API.provider,
-      currentAccount.address
-    );
-    console.log(getSwap);
-    if (selectedOption && selectedOptionOutput) {
-      const foundObject = items.find((obj) => obj.account && obj.account.address === currentAccount.address);
-      const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
-      const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
-      const maxUint256 = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
 
-      const utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], maxUint256);
-      const getData = await approveToken(walletGet, selectedOption.address, utxos);
-      const getnextUtxo = await approveToken(walletGet, selectedOptionOutput.address, getData);
-      // const contractResult = await getSwap.swapExactTokensForTokensSupportingFeeOnTransferTokens(
-      //   BigInt(Number(inputAmount) * Math.pow(10, selectedOption.divisibility)),
-      //   BigInt(Number(outputAmount) * Math.pow(10, selectedOptionOutput.divisibility)),
-      //   [selectedOption.address, selectedOptionOutput.address],
-      //   currentAccount.address,
-      //   10000n
-      // );
-      console.log(inputAmount);
-      const inputAmountBigInt = expandToDecimals(inputAmount, selectedOption.divisibility);
-      const outPutAmountBigInt = expandToDecimals(outputAmount, selectedOptionOutput.divisibility);
-
-      const contractResult = await getSwap.encodeCalldata('swapExactTokensForTokensSupportingFeeOnTransferTokens', [
-        BigInt(Number(inputAmount) * Math.pow(10, selectedOption.divisibility)),
-        0n,
-        [selectedOption.address, selectedOptionOutput.address],
-        currentAccount.address,
-        10000n
-      ]);
-      console.log(inputAmountBigInt, outPutAmountBigInt);
-      const interactionParameters: IInteractionParameters = {
-        from: walletGet.p2tr,
-        to: ROUTER_ADDRESS_REGTEST,
-        utxos: getnextUtxo,
-        signer: walletGet.keypair,
-        network: Web3API.network,
-        feeRate: 450,
-        priorityFee: 50000n,
-        calldata: contractResult as Buffer
-      };
-      console.log(interactionParameters);
-      const sendTransact = await Web3API.transactionFactory.signInteraction(interactionParameters);
-
-      // If this transaction is missing, opnet will deny the unwrapping request.
-      const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact[0], false);
-      if (!firstTransaction || !firstTransaction.success) {
-        // tools.toastError('Error,Please Try again');
-        console.log(firstTransaction);
-        throw new Error('Could not broadcast first transaction');
-      }
-
-      // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
-      const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransact[1], false);
-      if (!secondTransaction || !secondTransaction.success) {
-        // tools.toastError('Error,Please Try again');
-        throw new Error('Could not broadcast first transaction');
-      } else {
-        console.log(secondTransaction);
-      }
-    }
-  };
-  const approveToken = async (walletGet: Wallet, tokenAddress: string, utxos: UTXO[]) => {
-    const contract = getContract<IOP_20Contract>(tokenAddress, OP_20_ABI, Web3API.provider, currentAccount.address);
-    const maxUint256 = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
-    const contractApprove: BaseContractProperty = await contract.approve(ROUTER_ADDRESS_REGTEST, maxUint256);
-    if ('error' in contractApprove) {
-      throw new Error(contractApprove.error);
-    }
-
-    const interactionParameters: IInteractionParameters = {
-      from: walletGet.p2tr,
-      to: contract.address.toString(),
-      utxos: utxos,
-      signer: walletGet.keypair,
-      network: Web3API.network,
-      feeRate: 450,
-      priorityFee: 50000n,
-      calldata: contractApprove.calldata as Buffer
-    };
-
-    const sendTransact = await Web3API.transactionFactory.signInteraction(interactionParameters);
-
-    // If this transaction is missing, opnet will deny the unwrapping request.
-    const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact[0], false);
-    if (!firstTransaction || !firstTransaction.success) {
-      // tools.toastError('Error,Please Try again');
-      console.log(firstTransaction);
-      throw new Error('Could not broadcast first transaction');
-    }
-
-    // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
-    const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransact[1], false);
-    if (!secondTransaction || !secondTransaction.success) {
-      // tools.toastError('Error,Please Try again');
-      throw new Error('Could not broadcast first transaction');
-    } else {
-      console.log(secondTransaction);
-    }
-    return sendTransact[2];
-  };
   if (loading) {
     return (
       <Layout>
@@ -338,7 +231,7 @@ export default function Swap() {
               disabled
               type="text"
               placeholder="0"
-              value={Number(outputAmount).toFixed(2)}
+              value={Number(outputAmount)}
               onChange={handleInputChange}
               style={$searchInputStyle}
             />
@@ -351,7 +244,41 @@ export default function Swap() {
           // icon="pencil"
           style={$styleButton}
           onClick={(e) => {
-            swap();
+            const resultInput = 10 ** (selectedOption?.divisibility ?? 8);
+            const resultOutput = 10 ** (selectedOptionOutput?.divisibility ?? 8);
+            navigate('TxOpnetConfirmScreen', {
+              rawTxInfo: {
+                items: items,
+                contractAddress: [selectedOption?.address, selectedOptionOutput?.address],
+                account: currentAccount, // replace with actual account
+                inputAmount: [inputAmount, outputAmount], // replace with actual inputAmount
+                address: selectedOptionOutput?.address, // replace with actual address
+                feeRate: '100', // replace with actual feeRate
+                OpnetRateInputVal: '800', // replace with actual OpnetRateInputVal
+                header: 'Swap Token', // replace with actual header
+                networkFee: '100', // replace with actual networkFee
+                features: {
+                  rbf: false // replace with actual rbf value
+                },
+                inputInfos: [], // replace with actual inputInfos
+                isToSign: false, // replace with actual isToSign value
+                opneTokens: [
+                  {
+                    amount: parseFloat(inputAmount) * resultInput,
+                    divisibility: selectedOption?.divisibility,
+                    spacedRune: selectedOption?.name,
+                    symbol: selectedOption?.symbol
+                  },
+                  {
+                    amount: parseFloat(outputAmount) * resultOutput,
+                    divisibility: selectedOptionOutput?.divisibility,
+                    spacedRune: selectedOptionOutput?.name,
+                    symbol: selectedOptionOutput?.symbol
+                  }
+                ],
+                action: 'swap' // replace with actual opneTokens
+              }
+            });
           }}
           full
         />

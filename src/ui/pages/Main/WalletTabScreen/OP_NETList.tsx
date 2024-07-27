@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 
 import { OpNetBalance } from '@/shared/types';
 import Web3API from '@/shared/web3/Web3API';
+import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { Button, Column, Row } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BaseView } from '@/ui/components/BaseView';
@@ -10,6 +11,7 @@ import OpNetBalanceCard from '@/ui/components/OpNetBalanceCard';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
+import { MOTO_ADDRESS_REGTEST, WBTC_ADDRESS_REGTEST } from '@btc-vision/transaction';
 
 import { useNavigate } from '../../MainRoute';
 import { AddOpNetToken } from '../../Wallet/AddOpNetToken';
@@ -43,6 +45,16 @@ export function OP_NETList() {
       if (tokensImported) {
         parsedTokens = JSON.parse(tokensImported);
       }
+      if ((await wallet.getNetworkType()) == 2) {
+        if (!parsedTokens.includes(WBTC_ADDRESS_REGTEST)) {
+          parsedTokens.push(WBTC_ADDRESS_REGTEST);
+        }
+        if (!parsedTokens.includes(MOTO_ADDRESS_REGTEST)) {
+          parsedTokens.push(MOTO_ADDRESS_REGTEST);
+        }
+        localStorage.setItem('tokensImported', JSON.stringify(parsedTokens));
+      }
+
       const tokenBalances: OpNetBalance[] = [];
       for (let i = 0; i < parsedTokens.length; i++) {
         try {
@@ -50,18 +62,17 @@ export function OP_NETList() {
           const provider: JSONRpcProvider = Web3API.provider;
 
           const contract: IOP_20Contract = getContract<IOP_20Contract>(tokenAddress, OP_20_ABI, provider);
-          const contracName = await contract.name();
-          const divisibility = await contract.decimals();
-          const symbol = await contract.symbol();
+          const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(tokenAddress);
 
           const balance = await contract.balanceOf(currentAccount.address);
-          if (!('error' in balance || 'error' in contracName || 'error' in divisibility || 'error' in symbol)) {
+          if (!('error' in balance)) {
             tokenBalances.push({
               address: tokenAddress,
-              name: contracName.decoded.toLocaleString(),
+              name: contractInfo?.name || '',
               amount: BigInt(balance.decoded[0].toString()),
-              divisibility: parseInt(divisibility.decoded.toString()),
-              symbol: symbol.decoded.toString()
+              divisibility: contractInfo?.decimals || 8,
+              symbol: contractInfo?.symbol,
+              logo: contractInfo?.logo
             });
           }
         } catch (e) {

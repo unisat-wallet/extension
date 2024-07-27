@@ -1,8 +1,10 @@
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { OpNetBalance } from '@/shared/types';
+import { fontSizes } from '@/ui/theme/font';
 
 import { Card } from '../Card';
 import { Column } from '../Column';
+import { Image } from '../Image';
 import { Row } from '../Row';
 import { RunesTicker } from '../RunesTicker';
 import { Text } from '../Text';
@@ -31,10 +33,13 @@ export default function OpNetBalanceCard(props: OpNetBalanceCardProps) {
         onClick && onClick();
       }}>
       <Column full py="zero" gap="zero">
-        <Row fullY justifyBetween justifyCenter>
-          <Column fullY justifyCenter>
-            <RunesTicker tick={tokenBalance.name} />
-          </Column>
+        <Row itemsCenter fullX justifyBetween>
+          <Row itemsCenter fullX>
+            {tokenBalance.logo && <Image src={tokenBalance.logo} size={fontSizes.tiny} />}
+            <Column fullY justifyCenter>
+              <RunesTicker tick={tokenBalance.name} />
+            </Column>
+          </Row>
 
           <Row itemsCenter fullY gap="zero">
             <Text text={str} size="xs" />
