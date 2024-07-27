@@ -224,7 +224,9 @@ export default function TxOpnetConfirmScreen() {
 
     const wbtcBalanceSimulation = await contract.balanceOf(walletGet.p2tr);
     if ('error' in wbtcBalanceSimulation) {
-      throw new Error(`Something went wrong while simulating the check withdraw balance: ${wbtcBalanceSimulation.error}`);
+      throw new Error(
+        `Something went wrong while simulating the check withdraw balance: ${wbtcBalanceSimulation.error}`
+      );
     }
 
     const wbtcBalance = wbtcBalanceSimulation.decoded[0] as bigint;
@@ -234,18 +236,29 @@ export default function TxOpnetConfirmScreen() {
       return;
     }
 
-    const checkWithdrawalRequest = await contract.withdrawableBalanceOf(walletGet.p2tr); //rawTxInfo.account.address
+    const checkWithdrawalRequest = await contract.withdrawableBalanceOf(walletGet.p2tr);
     if ('error' in checkWithdrawalRequest) {
-      throw new Error(`Something went wrong while simulating the check withdraw balance: ${checkWithdrawalRequest.error}`);
+      throw new Error(
+        `Something went wrong while simulating the check withdraw balance: ${checkWithdrawalRequest.error}`
+      );
     }
 
     const alreadyWithdrawable = checkWithdrawalRequest.decoded[0] as bigint;
     const requiredAmountDifference: bigint = alreadyWithdrawable - unwrapAmount;
 
-    console.log('amount', unwrapAmount, 'actual', wbtcBalance, 'balance', alreadyWithdrawable, 'diff', requiredAmountDifference);
+    console.log(
+      'amount',
+      unwrapAmount,
+      'actual',
+      wbtcBalance,
+      'balance',
+      alreadyWithdrawable,
+      'diff',
+      requiredAmountDifference
+    );
 
     let utxosForUnwrap: UTXO[] = utxos;
-    if(requiredAmountDifference < 0n) {
+    if (requiredAmountDifference < 0n) {
       console.log('We must request a withdrawal');
       const diff = absBigInt(requiredAmountDifference);
 
@@ -496,15 +509,16 @@ export default function TxOpnetConfirmScreen() {
     navigate('TxSuccessScreen', { txid: seconfTransaction.result });
   };
   const swap = async () => {
+    const foundObject = rawTxInfo.items.find((obj) => obj.account && obj.account.address === rawTxInfo.account.address);
+    const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
+    const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
     const getSwap: IMotoswapRouterContract = getContract<IMotoswapRouterContract>(
       ROUTER_ADDRESS_REGTEST,
       MOTOSWAP_ROUTER_ABI,
       Web3API.provider,
-      rawTxInfo.account.address
+      walletGet.p2tr
     );
-    const foundObject = rawTxInfo.items.find((obj) => obj.account && obj.account.address === rawTxInfo.account.address);
-    const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
-    const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
+
     const maxUint256 = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
     const inputAmountBigInt = expandToDecimals(rawTxInfo.inputAmount[0], rawTxInfo.opneTokens[0].divisibility);
 
@@ -517,7 +531,7 @@ export default function TxOpnetConfirmScreen() {
       inputAmountBigInt,
       0n,
       [rawTxInfo.contractAddress[0], rawTxInfo.contractAddress[1]],
-      rawTxInfo.account.address,
+      walletGet.p2tr,
       10000n
     ]);
     const interactionParameters: IInteractionParameters = {
@@ -555,12 +569,7 @@ export default function TxOpnetConfirmScreen() {
   };
   const approveToken = async (inputAmountBigInt: bigint, walletGet: Wallet, tokenAddress: string, utxos: UTXO[]) => {
     try {
-      const contract = getContract<IOP_20Contract>(
-        tokenAddress,
-        OP_20_ABI,
-        Web3API.provider,
-        rawTxInfo.account.address
-      );
+      const contract = getContract<IOP_20Contract>(tokenAddress, OP_20_ABI, Web3API.provider, walletGet.p2tr);
       const getRemaining = await contract.allowance(walletGet.p2tr, ROUTER_ADDRESS_REGTEST);
       if ('error' in getRemaining) {
         throw new Error(getRemaining.error);
@@ -625,7 +634,7 @@ export default function TxOpnetConfirmScreen() {
       feeRate: 100,
       priorityFee: 1000n,
       to: rawTxInfo.address,
-      from: rawTxInfo.account.address
+      from: walletGet.p2tr
     };
     const sendTransact = await Web3API.transactionFactory.createBTCTransfer(IFundingTransactionParameters);
     const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact.tx, false);
