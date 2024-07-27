@@ -7,7 +7,6 @@ import { AddressFlagType, CHAINS, CHAINS_MAP, ChainType, NETWORK_TYPES } from '@
 import BroadcastChannelMessage from './message/broadcastChannelMessage';
 import PortMessage from './message/portMessage';
 
-
 const Message = {
   BroadcastChannelMessage,
   PortMessage
@@ -51,4 +50,8 @@ export function expandToDecimals(n: number | string, decimals: number | string) 
   const amount = new BigNumber(n).multipliedBy(new BigNumber(10).pow(decimals)).decimalPlaces(0);
 
   return BigInt(amount.toString());
+}
+export function addressShortner(address: string) {
+  const str = address.slice(0, 4) + '...' + address.slice(address.length - 4, address.length);
+  return str;
 }

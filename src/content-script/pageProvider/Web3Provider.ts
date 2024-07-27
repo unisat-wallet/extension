@@ -1,10 +1,18 @@
 import { BroadcastedTransaction } from 'opnet';
 
 import { UnisatProvider } from '@/content-script/pageProvider/index.js';
-import { IInteractionParameters, IWrapParameters, UTXO, WrapResult } from '@btc-vision/transaction';
+import {
+  IInteractionParameters,
+  IUnwrapParameters,
+  IWrapParameters,
+  UTXO,
+  UnwrapResult,
+  WrapResult
+} from '@btc-vision/transaction';
 
 export type InteractionParametersWithoutSigner = Omit<IInteractionParameters, 'signer'>;
 export type IWrapParametersWithoutSigner = Omit<IWrapParameters, 'signer'>;
+export type IUnwrapParametersSigner = Omit<IUnwrapParameters, 'signer'>;
 
 export interface BroadcastTransactionOptions {
   raw: string;
@@ -43,5 +51,8 @@ export class Web3Provider {
   }
   public async wrap(wrapParameters: IWrapParametersWithoutSigner): Promise<WrapResult> {
     return this.provider.wrap(wrapParameters);
+  }
+  public async unwrap(unWrapParameters: IUnwrapParametersSigner): Promise<UnwrapResult> {
+    return this.provider.unwrap(unWrapParameters);
   }
 }

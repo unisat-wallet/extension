@@ -214,21 +214,21 @@ export default function UnWrapBitcoinOpnet() {
             navigate('TxOpnetConfirmScreen', {
               rawTxInfo: {
                 items: items,
-                account: account, // replace with actual account
-                inputAmount: inputAmount, // replace with actual inputAmount
-                address: toInfo.address, // replace with actual address
-                feeRate: feeRate, // replace with actual feeRate
-                OpnetRateInputVal: OpnetRateInputVal, // replace with actual OpnetRateInputVal
-                header: 'Stake WBTC', // replace with actual header
-                networkFee: feeRate, // replace with actual networkFee
+                account: account,
+                inputAmount: inputAmount,
+                address: toInfo.address,
+                feeRate: feeRate,
+                OpnetRateInputVal: OpnetRateInputVal,
+                header: 'Stake WBTC',
+                networkFee: feeRate,
                 features: {
-                  rbf: false // replace with actual rbf value
+                  rbf: false
                 },
-                inputInfos: [], // replace with actual inputInfos
-                isToSign: false, // replace with actual isToSign value
+                inputInfos: [],
+                isToSign: false,
                 opneTokens: [
                   {
-                    amount: parseInt(inputAmount) * 10 ** OpNetBalance.divisibility,
+                    amount: parseFloat(inputAmount) * 10 ** OpNetBalance.divisibility,
                     divisibility: OpNetBalance.divisibility,
                     spacedRune: OpNetBalance.name,
                     symbol: OpNetBalance.symbol

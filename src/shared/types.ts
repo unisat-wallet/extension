@@ -460,8 +460,8 @@ export interface OpneToken {
   symbol: string;
 }
 
-export interface RawTxInfo {
-  items: any[]; // Replace 'any' with the actual type of 'items'
+export interface RawTxInfoOpnet {
+  items: any[];
   account: Account; // Replace 'Account' with the actual type of 'account'
   inputAmount: number;
   address: string;
@@ -486,5 +486,5 @@ export interface BtcChannelItem {
 
 export type TickPriceItem = {
   curPrice: number;
-  changePercent:number;
+  changePercent: number;
 };

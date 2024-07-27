@@ -191,10 +191,9 @@ export default function OpNetTokenScreen() {
                     preset="primary"
                     icon="pencil"
                     onClick={(e) => {
-                      console.log(btcBalance);
-                      // navigate('UnStakeWBTCoPNet', {
-                      //   OpNetBalance: tokenSummary.opNetBalance
-                      // });
+                      navigate('UnStakeWBTCoPNet', {
+                        OpNetBalance: tokenSummary.opNetBalance
+                      });
                     }}
                     full
                   />

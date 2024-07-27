@@ -15,8 +15,9 @@ import i18n from '@/background/service/i18n';
 import { DisplayedKeyring, Keyring } from '@/background/service/keyring';
 import {
   BroadcastTransactionOptions,
-  InteractionParametersWithoutSigner,
-  IWrapParametersWithoutSigner
+  IUnwrapParametersSigner,
+  IWrapParametersWithoutSigner,
+  InteractionParametersWithoutSigner
 } from '@/content-script/pageProvider/Web3Provider.js';
 import {
   ADDRESS_TYPES,
@@ -24,15 +25,14 @@ import {
   BRAND_ALIAN_TYPE_TEXT,
   CHAINS_ENUM,
   CHAINS_MAP,
-  ChainType,
   COIN_NAME,
   COIN_SYMBOL,
+  ChainType,
   KEYRING_TYPE,
   KEYRING_TYPES,
   NETWORK_TYPES,
   UNCONFIRMED_HEIGHT
 } from '@/shared/constant';
-
 import { runesUtils } from '@/shared/lib/runes-utils';
 import {
   Account,
@@ -50,14 +50,16 @@ import { checkAddressFlag, getChainInfo } from '@/shared/utils';
 import Web3API from '@/shared/web3/Web3API';
 import {
   IInteractionParameters,
+  IUnwrapParameters,
   IWrapParameters,
   TransactionFactory,
+  UnwrapResult,
   Wallet,
   WrapResult
 } from '@btc-vision/transaction';
-import { txHelpers, UnspentOutput, UTXO_DUST } from '@unisat/wallet-sdk';
+import { UTXO_DUST, UnspentOutput, txHelpers } from '@unisat/wallet-sdk';
 import { publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
-import { bitcoin, ECPair } from '@unisat/wallet-sdk/lib/bitcoin-core';
+import { ECPair, bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 import { KeystoneKeyring } from '@unisat/wallet-sdk/lib/keyring';
 import {
   genPsbtOfBIP322Simple,
@@ -799,6 +801,39 @@ export class WalletController extends BaseController {
 
     return await Web3API.transactionFactory.wrap(IWrapParametersSubmit);
   };
+  unwrap = async (IWrapParameters: IUnwrapParametersSigner): Promise<UnwrapResult> => {
+    const account = preferenceService.getCurrentAccount();
+    if (!account) throw new Error('no current account');
+
+    const wifWallet = await this.getInternalPrivateKey({
+      pubkey: account.pubkey,
+      type: account.type
+    } as Account);
+
+    if (!wifWallet) throw new Error('no current account');
+    const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
+
+    const utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], IWrapParameters.amount);
+
+    const generationParameters = await Web3API.limitedProvider.fetchWrapParameters(IWrapParameters.amount);
+    if (!generationParameters) {
+      throw new Error('No generation parameters found');
+    }
+
+    const unwrapParametersSubmit: IUnwrapParameters = {
+      from: walletGet.p2tr,
+      utxos: IWrapParameters.utxos,
+      signer: walletGet.keypair,
+      unwrapUTXOs: IWrapParameters.unwrapUTXOs,
+      network: Web3API.network,
+      feeRate: 100,
+      priorityFee: 1000n,
+      amount: IWrapParameters.amount,
+      calldata: IWrapParameters.calldata
+    };
+
+    return await Web3API.transactionFactory.unwrap(unwrapParametersSubmit);
+  };
 
   signBIP322Simple = async (text: string) => {
     const account = preferenceService.getCurrentAccount();
@@ -1016,14 +1051,14 @@ export class WalletController extends BaseController {
   };
 
   sendBTC = async ({
-                     to,
-                     amount,
-                     feeRate,
-                     enableRBF,
-                     btcUtxos,
-                     memo,
-                     memos
-                   }: {
+    to,
+    amount,
+    feeRate,
+    enableRBF,
+    btcUtxos,
+    memo,
+    memos
+  }: {
     to: string;
     amount: number;
     feeRate: number;
@@ -1063,11 +1098,11 @@ export class WalletController extends BaseController {
   };
 
   sendAllBTC = async ({
-                        to,
-                        feeRate,
-                        enableRBF,
-                        btcUtxos
-                      }: {
+    to,
+    feeRate,
+    enableRBF,
+    btcUtxos
+  }: {
     to: string;
     feeRate: number;
     enableRBF: boolean;
@@ -1101,13 +1136,13 @@ export class WalletController extends BaseController {
   };
 
   sendOrdinalsInscription = async ({
-                                     to,
-                                     inscriptionId,
-                                     feeRate,
-                                     outputValue,
-                                     enableRBF,
-                                     btcUtxos
-                                   }: {
+    to,
+    inscriptionId,
+    feeRate,
+    outputValue,
+    enableRBF,
+    btcUtxos
+  }: {
     to: string;
     inscriptionId: string;
     feeRate: number;
@@ -1158,12 +1193,12 @@ export class WalletController extends BaseController {
   };
 
   sendOrdinalsInscriptions = async ({
-                                      to,
-                                      inscriptionIds,
-                                      feeRate,
-                                      enableRBF,
-                                      btcUtxos
-                                    }: {
+    to,
+    inscriptionIds,
+    feeRate,
+    enableRBF,
+    btcUtxos
+  }: {
     to: string;
     inscriptionIds: string[];
     utxos: UTXO[];
@@ -1223,12 +1258,12 @@ export class WalletController extends BaseController {
   };
 
   splitOrdinalsInscription = async ({
-                                      inscriptionId,
-                                      feeRate,
-                                      outputValue,
-                                      enableRBF,
-                                      btcUtxos
-                                    }: {
+    inscriptionId,
+    feeRate,
+    outputValue,
+    enableRBF,
+    btcUtxos
+  }: {
     to: string;
     inscriptionId: string;
     feeRate: number;
@@ -1778,12 +1813,12 @@ export class WalletController extends BaseController {
   };
 
   sendAtomicalsNFT = async ({
-                              to,
-                              atomicalId,
-                              feeRate,
-                              enableRBF,
-                              btcUtxos
-                            }: {
+    to,
+    atomicalId,
+    feeRate,
+    enableRBF,
+    btcUtxos
+  }: {
     to: string;
     atomicalId: string;
     feeRate: number;
@@ -1831,14 +1866,14 @@ export class WalletController extends BaseController {
   };
 
   sendAtomicalsFT = async ({
-                             to,
-                             ticker,
-                             amount,
-                             feeRate,
-                             enableRBF,
-                             btcUtxos,
-                             assetUtxos
-                           }: {
+    to,
+    ticker,
+    amount,
+    feeRate,
+    enableRBF,
+    btcUtxos,
+    assetUtxos
+  }: {
     to: string;
     ticker: string;
     amount: number;
@@ -2041,15 +2076,15 @@ export class WalletController extends BaseController {
   };
 
   sendRunes = async ({
-                       to,
-                       runeid,
-                       runeAmount,
-                       feeRate,
-                       enableRBF,
-                       btcUtxos,
-                       assetUtxos,
-                       outputValue
-                     }: {
+    to,
+    runeid,
+    runeAmount,
+    feeRate,
+    enableRBF,
+    btcUtxos,
+    assetUtxos,
+    outputValue
+  }: {
     to: string;
     runeid: string;
     runeAmount: string;

@@ -8,10 +8,11 @@ import { RequestParams } from '@/shared/types/Request.js';
 import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
 import Web3API from '@/shared/web3/Web3API';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
-import { UTXO, WrapResult } from '@btc-vision/transaction';
+import { UTXO, UnwrapResult, WrapResult } from '@btc-vision/transaction';
 
 import {
   BroadcastTransactionOptions,
+  IUnwrapParametersSigner,
   IWrapParametersWithoutSigner,
   InteractionParametersWithoutSigner,
   Web3Provider
@@ -349,7 +350,12 @@ export class UnisatProvider extends EventEmitter {
       params: wrapParameters
     })) as Promise<WrapResult>;
   };
-
+  unwrap = async (unWrapParameters: IUnwrapParametersSigner): Promise<UnwrapResult> => {
+    return (await this._request({
+      method: 'unwrap',
+      params: unWrapParameters
+    })) as Promise<UnwrapResult>;
+  };
   sendInscription = async (toAddress: string, inscriptionId: string, options?: { feeRate: number }) => {
     return this._request({
       method: 'sendInscription',
