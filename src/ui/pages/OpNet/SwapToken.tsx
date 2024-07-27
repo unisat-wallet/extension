@@ -87,7 +87,6 @@ export default function Swap() {
             MOTOSWAP_ROUTER_ABI,
             Web3API.provider
           );
-          console.log(BigInt(Number(numericValue) * Math.pow(10, selectedOption.divisibility)));
           const getData = await getQuote.getAmountsOut(
             BigInt(Number(numericValue) * Math.pow(10, selectedOption.divisibility)),
             [selectedOption.address, selectedOptionOutput.address]
