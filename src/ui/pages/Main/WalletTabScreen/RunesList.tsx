@@ -1,12 +1,13 @@
 import { useEffect, useState } from 'react';
 
-import { RuneBalance } from '@/shared/types';
+import { RuneBalance, TickPriceItem } from '@/shared/types';
 import { Column, Row } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { Empty } from '@/ui/components/Empty';
 import { Pagination } from '@/ui/components/Pagination';
 import RunesBalanceCard from '@/ui/components/RunesBalanceCard';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { useChainType } from '@/ui/state/settings/hooks';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
@@ -16,10 +17,12 @@ export function RunesList() {
   const navigate = useNavigate();
   const wallet = useWallet();
   const currentAccount = useCurrentAccount();
+  const chainType = useChainType();
 
   const [tokens, setTokens] = useState<RuneBalance[]>([]);
   const [total, setTotal] = useState(-1);
   const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 100 });
+  const [priceMap, setPriceMap] = useState<{[key:string]:TickPriceItem}>();
 
   const tools = useTools();
   const fetchData = async () => {
@@ -31,6 +34,9 @@ export function RunesList() {
       );
       setTokens(list);
       setTotal(total);
+      if(list.length>0) {
+        wallet.getRunesPrice(list.map(item=>item.spacedRune)).then(setPriceMap)
+      }
     } catch (e) {
       tools.toastError((e as Error).message);
     } finally {
@@ -40,7 +46,7 @@ export function RunesList() {
 
   useEffect(() => {
     fetchData();
-  }, [pagination, currentAccount.address]);
+  }, [pagination, currentAccount.address, chainType]);
 
   if (total === -1) {
     return (
@@ -65,6 +71,8 @@ export function RunesList() {
           <RunesBalanceCard
             key={index}
             tokenBalance={data}
+            showPrice={priceMap!==undefined}
+            price={priceMap?.[data.spacedRune]}
             onClick={() => {
               navigate('RunesTokenScreen', {
                 runeid: data.runeid

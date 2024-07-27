@@ -22,11 +22,13 @@ import {
 } from '@/ui/state/transactions/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { spacing } from '@/ui/theme/spacing';
-import { satoshisToAmount, useApproval, useLocationState, useWallet } from '@/ui/utils';
+import { amountToSatoshis, satoshisToAmount, useApproval, useLocationState, useWallet } from '@/ui/utils';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../../MainRoute';
 import SignPsbt from './SignPsbt';
+import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
+import { BtcUsd } from '@/ui/components/BtcUsd';
 
 interface Props {
   params: {
@@ -281,9 +283,9 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
             <Text text="Inscribe TRANSFER" preset="title-bold" textCenter my="lg" />
 
             <Column>
-              <Row justifyBetween>
+              <Row justifyBetween itemsCenter>
                 <Text text="Available" color="textDim" />
-
+                <TickUsdWithoutPrice tick={contextData.ticker} balance={inputAmount} type={'brc20'}/>
                 {tokenBalance ? (
                   <Column>
                     {tokenBalance.availableBalanceUnSafe != '0' ? (
@@ -292,6 +294,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
                           text={`${tokenBalance.availableBalanceSafe}  `}
                           textCenter
                           size="xs"
+                          digital
                           onClick={() => {
                             setInputAmount(tokenBalance.availableBalanceSafe);
                           }}
@@ -308,6 +311,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
                                 textCenter
                                 color="textDim"
                                 size="xs"
+                                digital
                               />
                               <Icon icon="circle-question" color="textDim" />
                             </Row>
@@ -322,7 +326,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
                         onClick={() => {
                           setInputAmount(tokenBalance.availableBalanceSafe);
                         }}>
-                        <Text text={`${tokenBalance.availableBalanceSafe}`} textCenter size="xs" />
+                        <Text text={`${tokenBalance.availableBalanceSafe}`} digital textCenter size="xs" />
 
                         <BRC20Ticker tick={tokenBalance.ticker} preset="sm" />
                       </Row>
@@ -434,10 +438,12 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
 
             <Column justifyCenter style={{ height: 250 }}>
               <Row itemsCenter justifyCenter>
-                <Text text={`${amount}`} preset="title-bold" size="xxl" textCenter wrap />
+                <Text text={`${amount}`} preset="title-bold" size="xxl" textCenter wrap digital/>
                 <BRC20Ticker tick={tokenBalance.ticker} preset="lg" />
               </Row>
-
+              <Row itemsCenter justifyCenter>
+                <TickUsdWithoutPrice tick={tokenBalance.ticker} balance={amount+''} type={'brc20'}/>
+              </Row>
               <Column mt="xxl">
                 <Text text="Preview" preset="sub-bold" />
                 <Card preset="style2">
@@ -484,6 +490,10 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
               <Row justifyBetween>
                 <Text text="Total" color="gold" />
                 <Text text={`${totalFee} BTC`} color="gold" />
+              </Row>
+              <Row justifyBetween>
+                <div></div>
+                <BtcUsd sats={amountToSatoshis(totalFee)}/>
               </Row>
             </Column>
           </Column>

@@ -15,7 +15,7 @@ export const Arc20BurningList = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
       if (ins.type === 'FT') {
         const ticker = ins.ticker || '';
         inputTokenMap[ticker] = inputTokenMap[ticker] || 0;
-        inputTokenMap[ticker] += inputInfo.value;
+        inputTokenMap[ticker] += ins.atomicalValue;
       }
     });
   });
@@ -26,7 +26,7 @@ export const Arc20BurningList = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
       if (ins.type === 'FT') {
         const ticker = ins.ticker || '';
         outputTokenMap[ticker] = outputTokenMap[ticker] || 0;
-        outputTokenMap[ticker] += outputInfo.value;
+        outputTokenMap[ticker] += ins.atomicalValue;
       }
     });
   });

@@ -32,7 +32,7 @@ export function OutputValueBar({
     }
   ];
   const [optionIndex, setOptionIndex] = useState(FeeRateType.CURRENT);
-  const [inputVal, setInputVal] = useState('');
+  const [inputVal, setInputVal] = useState('546');
   const [currentValue, setCurrentValue] = useState(defaultValue);
 
   useEffect(() => {

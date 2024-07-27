@@ -9,18 +9,40 @@ import { useWallet } from '@/ui/utils';
 import { CloseOutlined } from '@ant-design/icons';
 
 import DisclaimerModal from './DisclaimerModal';
+import { BtcChannelItem } from '@/shared/types';
+import { Skeleton } from 'antd';
 
-function PaymentItem(props: { channelType: PaymentChannelType; onClick }) {
-  const channelInfo = PAYMENT_CHANNELS[props.channelType];
+function SupportPaymentList({ list }: { list: string[] }) {
+  if(!list || list.length === 0)
+    return <></>
+  return <Row itemsCenter>
+    {list.map((item) => {
+      return <Image key={item} src={`./images/artifacts/${item.replaceAll(' ','').toLowerCase()}.png`} width={28} height={19} />
+      }
+    )}
+  </Row>;
+}
 
+function PaymentItem({ channel, onClick }: { channel: BtcChannelItem; onClick: () => void }) {
+  const channelInfo = PAYMENT_CHANNELS[channel.channel];
+  if (!channelInfo) return <></>;
   return (
-    <Card style={{ backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 10 }} mt="lg" onClick={props.onClick}>
-      <Row fullX>
-        <Row itemsCenter>
-          <Image src={channelInfo.img} size={30} />
-          <Text text={channelInfo.name} />
+    <Card style={{ backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 10 }} mt="lg" onClick={onClick}>
+      <Column fullX gap={'md'}>
+        <Row fullX justifyBetween>
+          <Row itemsCenter>
+            <Image src={channelInfo.img} size={32} />
+            <Text text={channelInfo.name} />
+          </Row>
+          <SupportPaymentList list={channel.payType} />
         </Row>
-      </Row>
+        {
+          channel.quote > 0 &&   <Row fullX justifyBetween>
+            <Text size="sm" color="textDim" text={'$300'} />
+            <Text text={`≈ ${channel.quote?.toFixed(8)} BTC`} style={{ fontWeight: 'bold' }} />
+          </Row>
+        }
+      </Column>
     </Card>
   );
 }
@@ -29,24 +51,21 @@ export const BuyBTCModal = ({ onClose }: { onClose: () => void }) => {
   const [disclaimerModalVisible, setDisclaimerModalVisible] = useState(false);
   const [channelType, setChannelType] = useState<PaymentChannelType>(PaymentChannelType.AlchemyPay);
 
-  const [channels, setChannels] = useState<string[]>([]);
+  const [channels, setChannels] = useState<BtcChannelItem[] | undefined>(undefined);
   const wallet = useWallet();
   const tools = useTools();
   useEffect(() => {
     tools.showLoading(true);
     wallet
       .getBuyBtcChannelList()
-      .then((list) => {
-        setChannels(list.map((v) => v.channel));
+      .then(setChannels)
+      .catch(_ => {
+        setChannels([]);
       })
       .finally(() => {
         tools.showLoading(false);
       });
   }, []);
-
-  const isMoonpayEnabled = channels.includes(PaymentChannelType.MoonPay);
-  const isTransakEnabled = channels.includes(PaymentChannelType.Transak);
-  const isAlchemyPayEnabled = channels.includes(PaymentChannelType.AlchemyPay);
 
   return (
     <BottomModal onClose={onClose}>
@@ -66,36 +85,21 @@ export const BuyBTCModal = ({ onClose }: { onClose: () => void }) => {
 
         <Column gap="zero" mt="sm" mb="lg">
           <Text size="sm" color="textDim" text={`Please select a service provider below to buy BTC.`} />
-
-          {isMoonpayEnabled ? (
-            <PaymentItem
-              channelType={PaymentChannelType.MoonPay}
-              onClick={() => {
-                setChannelType(PaymentChannelType.MoonPay);
-                setDisclaimerModalVisible(true);
-              }}
-            />
-          ) : null}
-
-          {isAlchemyPayEnabled ? (
-            <PaymentItem
-              channelType={PaymentChannelType.AlchemyPay}
-              onClick={() => {
-                setChannelType(PaymentChannelType.AlchemyPay);
-                setDisclaimerModalVisible(true);
-              }}
-            />
-          ) : null}
-
-          {isTransakEnabled ? (
-            <PaymentItem
-              channelType={PaymentChannelType.Transak}
-              onClick={() => {
-                setChannelType(PaymentChannelType.Transak);
-                setDisclaimerModalVisible(true);
-              }}
-            />
-          ) : null}
+          {
+            !channels ? <Skeleton active />
+              : channels.length <= 0
+                ? <Text size="sm" color="textDim" text={`No service provider available.`} />
+                : channels.map((channel, index) => (
+                  <PaymentItem
+                    key={index}
+                    channel={channel}
+                    onClick={() => {
+                      setChannelType(channel.channel);
+                      setDisclaimerModalVisible(true);
+                    }}
+                  />
+                ))
+          }
         </Column>
       </Column>
       {disclaimerModalVisible && (

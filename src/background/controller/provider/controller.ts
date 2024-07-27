@@ -1,3 +1,4 @@
+
 import { permissionService, sessionService } from '@/background/service';
 import { CHAINS, CHAINS_MAP, NETWORK_TYPES, VERSION } from '@/shared/constant';
 
@@ -287,8 +288,8 @@ class ProviderController extends BaseController {
     // todo
   }])
   inscribeTransfer = async ({ approvalRes }) => {
-    return approvalRes;
-  };
+    return approvalRes
+  }
 
   @Reflect.metadata('SAFE', true)
   getVersion = async () => {

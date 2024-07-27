@@ -110,8 +110,8 @@ function AmountInput(props: InputProps) {
   if (!onAmountInputChange) {
     return <div />;
   }
-  const [inputValue, setInputValue] = useState('');
-  const [validAmount, setValidAmount] = useState('');
+  const [inputValue, setInputValue] = useState(props.value||'');
+  const [validAmount, setValidAmount] = useState(props.value||'');
   useEffect(() => {
     onAmountInputChange(validAmount);
   }, [validAmount]);

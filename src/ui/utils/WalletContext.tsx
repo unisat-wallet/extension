@@ -12,7 +12,7 @@ import {
   AddressTokenSummary,
   AppSummary,
   Arc20Balance,
-  BitcoinBalance,
+  BitcoinBalance, BtcChannelItem, BtcPrice,
   DecodedPsbt,
   FeeSummary,
   InscribeOrder,
@@ -20,7 +20,7 @@ import {
   InscriptionSummary,
   NetworkType,
   RuneBalance,
-  SignPsbtOptions,
+  SignPsbtOptions, TickPriceItem,
   TokenBalance,
   TokenTransfer,
   TxHistoryItem,
@@ -193,7 +193,6 @@ export interface WalletController {
   getAssetUtxosInscriptions(inscriptionId: string): Promise<UnspentOutput[]>;
 
   getNetworkType(): Promise<NetworkType>;
-  //ycrydev edit this as well
   setNetworkType(type: NetworkType): Promise<void>;
 
   getChainType(): Promise<ChainType>;
@@ -213,6 +212,9 @@ export interface WalletController {
 
   setAccountAlianName(account: Account, name: string): Promise<Account>;
   getFeeSummary(): Promise<FeeSummary>;
+  getBtcPrice(): Promise<number>;
+  getBrc20sPrice(ticks:string[]): Promise<{ [tick:string]: TickPriceItem }>;
+  getRunesPrice(ticks:string[]): Promise<{ [tick:string]: TickPriceItem }>;
 
   setEditingKeyring(keyringIndex: number): Promise<void>;
   getEditingKeyring(): Promise<WalletKeyring>;
@@ -362,11 +364,11 @@ export interface WalletController {
     enableRBF: boolean;
     btcUtxos?: UnspentOutput[];
     assetUtxos?: UnspentOutput[];
-    outputValue: number;
+    outputValue?: number;
   }): Promise<string>;
 
-  getBuyBtcChannelList(): Promise<{ channel: string }[]>;
   getOpNetBalalnce(address: string): Promise<string>;
+  getBuyBtcChannelList(): Promise<BtcChannelItem[]>;
 }
 
 const WalletContext = createContext<{

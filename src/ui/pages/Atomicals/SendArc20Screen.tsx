@@ -14,7 +14,7 @@ import {
   usePrepareSendArc20Callback
 } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
-import { isValidAddress } from '@/ui/utils';
+import { isValidAddress, showLongNumber } from '@/ui/utils';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 export default function SendArc20Screen() {
@@ -133,7 +133,7 @@ export default function SendArc20Screen() {
       />
       <Content>
         <Row justifyCenter>
-          <Text text={`${arc20Balance.balance} ${arc20Balance.ticker}`} preset="bold" textCenter size="xxl" />
+          <Text text={`${showLongNumber(arc20Balance.balance)} ${arc20Balance.ticker}`} preset="bold" textCenter size="xxl" />
         </Row>
 
         <Column mt="lg">
@@ -157,13 +157,12 @@ export default function SendArc20Screen() {
                 setInputAmount(arc20AvailableBalance.toString());
               }}>
               <Text text="MAX" preset="sub" style={{ color: colors.white_muted }} />
-              <Text text={`${arc20AvailableBalance} ${arc20Balance.ticker}`} preset="bold" size="sm" />
+              <Text text={`${showLongNumber(arc20AvailableBalance)} ${arc20Balance.ticker}`} preset="bold" size="sm" />
             </Row>
           </Row>
           <Input
             preset="amount"
             placeholder={'Amount'}
-            defaultValue={inputAmount.toString()}
             value={inputAmount.toString()}
             onAmountInputChange={(amount) => {
               setInputAmount(amount);

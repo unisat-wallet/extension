@@ -283,11 +283,13 @@ export class UnisatProvider extends EventEmitter {
     return (await this._request({
       method: 'sendBitcoin',
       params: {
-        toAddress,
-        satoshis,
-        feeRate: options?.feeRate,
-        memo: options?.memo,
-        memos: options?.memos,
+        sendBitcoinParams: {
+          toAddress,
+          satoshis,
+          feeRate: options?.feeRate,
+          memo: options?.memo,
+          memos: options?.memos
+        },
         type: TxType.SEND_BITCOIN
       }
     })) as Promise<string>;
@@ -342,10 +344,27 @@ export class UnisatProvider extends EventEmitter {
     return this._request({
       method: 'sendInscription',
       params: {
-        toAddress,
-        inscriptionId,
-        feeRate: options?.feeRate,
+        sendInscriptionParams: {
+          toAddress,
+          inscriptionId,
+          feeRate: options?.feeRate
+        },
         type: TxType.SEND_ORDINALS_INSCRIPTION
+      }
+    });
+  };
+
+  sendRunes = async (toAddress: string, runeid: string, amount: string, options?: { feeRate: number }) => {
+    return this._request({
+      method: 'sendRunes',
+      params: {
+        sendRunesParams: {
+          toAddress,
+          runeid,
+          amount,
+          feeRate: options?.feeRate
+        },
+        type: TxType.SEND_RUNES
       }
     });
   };

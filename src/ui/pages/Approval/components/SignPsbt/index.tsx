@@ -28,27 +28,43 @@ import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks'
 import {
   usePrepareSendAtomicalsNFTCallback,
   usePrepareSendBTCCallback,
-  usePrepareSendOrdinalsInscriptionCallback
+  usePrepareSendOrdinalsInscriptionCallback,
+  usePrepareSendRunesCallback
 } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
-import { copyToClipboard, satoshisToAmount, shortAddress, useApproval, useWallet } from '@/ui/utils';
+import { amountToSatoshis, copyToClipboard, satoshisToAmount, shortAddress, useApproval, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
+import { BtcUsd } from '@/ui/components/BtcUsd';
 
 interface Props {
   header?: React.ReactNode;
   params: {
     data: {
+      type: TxType;
+
       psbtHex: string;
       options: SignPsbtOptions;
-      type: TxType;
-      toAddress?: string;
-      satoshis?: number;
-      feeRate?: number;
-      memo?: string;
-      memos?: string[];
-      inscriptionId?: string;
       rawTxInfo?: RawTxInfo;
+
+      sendBitcoinParams?: {
+        toAddress: string;
+        satoshis: number;
+        memo: string;
+        memos: string[];
+        feeRate: number;
+      };
+      sendInscriptionParams?: {
+        toAddress: string;
+        inscriptionId: string;
+        feeRate: number;
+      };
+      sendRunesParams?: {
+        toAddress: string;
+        runeid: string;
+        amount: string;
+        feeRate: number;
+      };
     };
     session?: {
       origin: string;
@@ -59,6 +75,7 @@ interface Props {
   handleCancel?: () => void;
   handleConfirm?: (rawTxInfo?: RawTxInfo) => void;
 }
+
 interface InputInfo {
   txid: string;
   vout: number;
@@ -172,7 +189,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
       if (w.type === 'FT') {
         atomicals_ft.push(w);
         const ticker = w.ticker || '';
-        arc20Map[ticker] = (arc20Map[ticker] || 0) + v.value;
+        arc20Map[ticker] = (arc20Map[ticker] || 0) + w.atomicalValue;
       } else {
         atomicals_nft.push(w);
       }
@@ -181,7 +198,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
   const inscriptionArray = Object.values(txInfo.decodedPsbt.inscriptions);
   const arc20Array = Object.keys(arc20Map).map((v) => ({ ticker: v, amt: arc20Map[v] }));
 
-  const brc20Array: { tick: string; amt: string; inscriptionNumber: number }[] = [];
+  const brc20Array: { tick: string; amt: string; inscriptionNumber: number, preview: string }[] = [];
   txInfo.decodedPsbt.inputInfos.forEach((v) => {
     v.inscriptions.forEach((w) => {
       const inscriptionInfo = txInfo.decodedPsbt.inscriptions[w.inscriptionId];
@@ -189,7 +206,8 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
         brc20Array.push({
           tick: inscriptionInfo.brc20.tick,
           amt: inscriptionInfo.brc20.amt,
-          inscriptionNumber: w.inscriptionNumber
+          inscriptionNumber: w.inscriptionNumber,
+          preview: inscriptionInfo.preview
         });
       }
     });
@@ -230,7 +248,14 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
 
               <Row overflowX>
                 {inscriptionArray.map((inscription, index) => {
-                  return <InscriptionPreview key={'inscription_' + index} data={inscription} preset="small" />;
+                  return <InscriptionPreview
+                    key={'inscription_' + index}
+                    data={inscription}
+                    preset="small"
+                    onClick={() => {
+                      window.open(inscription.preview);
+                    }}
+                  />;
                 })}
               </Row>
             </Column>
@@ -286,6 +311,9 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
                       balance={w.amt}
                       type="TRANSFER"
                       inscriptionNumber={w.inscriptionNumber}
+                      onClick={() => {
+                        window.open(w.preview);
+                      }}
                     />
                   );
                 })}
@@ -340,6 +368,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
                         size="xxl"
                       />
                       <Text text="BTC" color="textDim" />
+                      <BtcUsd sats={Math.abs(receivingSatoshis - sendingSatoshis)} bracket/>
                     </Row>
                   </Column>
                 </Column>
@@ -396,7 +425,12 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
                 <Text text={'Spend Amount'} textCenter color="textDim" />
 
                 <Column justifyCenter>
-                  <Text text={spendAmount} color="white" preset="bold" textCenter size="xxl" />
+                  <Row itemsCenter>
+                    <Text text={spendAmount + ' BTC'} color="white" preset="bold" textCenter size="xxl" />
+                  </Row>
+                  <BtcUsd sats={spendSatoshis} textCenter bracket style={{marginTop:-8}} />
+
+
                   {sendingInscriptionSaotoshis > 0 && (
                     <Text text={`${sendingInscriptionAmount} (in inscriptions)`} preset="sub" textCenter />
                   )}
@@ -412,10 +446,13 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
   );
 }
 
-function Section({ title, children }: { title: string; children?: React.ReactNode }) {
+function Section({ title, children,extra }: { title: string; children?: React.ReactNode,extra?:React.ReactNode }) {
   return (
     <Column>
-      <Text text={title} preset="bold" />
+      <Row justifyBetween>
+        <Text text={title} preset="bold" />
+        {extra}
+      </Row>
       <Card>
         <Row full justifyBetween itemsCenter>
           {children}
@@ -459,14 +496,23 @@ const initTxInfo: TxInfo = {
 };
 
 export default function SignPsbt({
-  params: {
-    data: { psbtHex, options, type, toAddress, satoshis, inscriptionId, feeRate, memo, memos, rawTxInfo, ...rest },
-    session
-  },
-  header,
-  handleCancel,
-  handleConfirm
-}: Props) {
+                                   params: {
+                                     data: {
+                                       psbtHex,
+                                       options,
+                                       type,
+                                       sendBitcoinParams,
+                                       sendInscriptionParams,
+                                       sendRunesParams,
+                                       rawTxInfo,
+                                       ...rest
+                                     },
+                                     session
+                                   },
+                                   header,
+                                   handleCancel,
+                                   handleConfirm
+                                 }: Props) {
   const [getApproval, resolveApproval, rejectApproval] = useApproval();
 
   const [txInfo, setTxInfo] = useState<TxInfo>(initTxInfo);
@@ -476,6 +522,7 @@ export default function SignPsbt({
   const prepareSendBTC = usePrepareSendBTCCallback();
   const prepareSendOrdinalsInscription = usePrepareSendOrdinalsInscriptionCallback();
   const prepareSendAtomicalsInscription = usePrepareSendAtomicalsNFTCallback;
+  const prepareSendRunes = usePrepareSendRunesCallback();
 
   const wallet = useWallet();
   const [loading, setLoading] = useState(true);
@@ -502,15 +549,15 @@ export default function SignPsbt({
         }
       }
     } else if (type === TxType.SEND_BITCOIN) {
-      if (!psbtHex && toAddress && satoshis) {
+      if (sendBitcoinParams) {
         try {
           const rawTxInfo = await prepareSendBTC({
-            toAddressInfo: { address: toAddress, domain: '' },
-            toAmount: satoshis,
-            feeRate,
+            toAddressInfo: { address: sendBitcoinParams.toAddress, domain: '' },
+            toAmount: sendBitcoinParams.satoshis,
+            feeRate: sendBitcoinParams.feeRate,
             enableRBF: false,
-            memo,
-            memos,
+            memo: sendBitcoinParams.memo,
+            memos: sendBitcoinParams.memos,
             disableAutoAdjust: true
           });
           psbtHex = rawTxInfo.psbtHex;
@@ -521,12 +568,29 @@ export default function SignPsbt({
         }
       }
     } else if (type === TxType.SEND_ORDINALS_INSCRIPTION) {
-      if (!psbtHex && toAddress && inscriptionId) {
+      if (sendInscriptionParams) {
         try {
           const rawTxInfo = await prepareSendOrdinalsInscription({
-            toAddressInfo: { address: toAddress, domain: '' },
-            inscriptionId: inscriptionId,
-            feeRate,
+            toAddressInfo: { address: sendInscriptionParams.toAddress, domain: '' },
+            inscriptionId: sendInscriptionParams.inscriptionId,
+            feeRate: sendInscriptionParams.feeRate,
+            enableRBF: false
+          });
+          psbtHex = rawTxInfo.psbtHex;
+        } catch (e) {
+          console.log(e);
+          txError = (e as any).message;
+          tools.toastError(txError);
+        }
+      }
+    } else if (type === TxType.SEND_RUNES) {
+      if (sendRunesParams) {
+        try {
+          const rawTxInfo = await prepareSendRunes({
+            toAddressInfo: { address: sendRunesParams.toAddress, domain: '' },
+            runeid: sendRunesParams.runeid,
+            runeAmount: sendRunesParams.amount,
+            feeRate: sendRunesParams.feeRate,
             enableRBF: false
           });
           psbtHex = rawTxInfo.psbtHex;
@@ -708,7 +772,7 @@ export default function SignPsbt({
         <Column gap="xl">
           {detailsComponent}
           {canChanged == false && (
-            <Section title="Network Fee:">
+            <Section title="Network Fee:" extra={<BtcUsd sats={amountToSatoshis(networkFee)}/>}>
               <Text text={networkFee} />
               <Text text="BTC" color="textDim" />
             </Section>
@@ -804,7 +868,7 @@ export default function SignPsbt({
                                         data={txInfo.decodedPsbt.inscriptions[w.inscriptionId]}
                                         preset="small"
                                         onClick={() => {
-                                          window.open(w.preview);
+                                          window.open(txInfo.decodedPsbt.inscriptions[w.inscriptionId]?.preview);
                                         }}
                                       />
                                     ))}
@@ -842,7 +906,7 @@ export default function SignPsbt({
                                   <Text text={'ARC20'} color={isToSign ? 'white' : 'textDim'} />
                                   <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
                                     {atomicals_ft.map((w) => (
-                                      <Arc20PreviewCard key={w.ticker} ticker={w.ticker || ''} amt={v.value} />
+                                      <Arc20PreviewCard key={w.ticker} ticker={w.ticker || ''} amt={w.atomicalValue} />
                                     ))}
                                   </Row>
                                 </Column>
@@ -893,7 +957,7 @@ export default function SignPsbt({
                             </Row>
                           </Column>
 
-                          {canChanged === false && inscriptions.length > 0 && (
+                          {!canChanged && inscriptions.length > 0 && (
                             <Row>
                               <Column justifyCenter>
                                 <Text
@@ -907,7 +971,7 @@ export default function SignPsbt({
                                       data={txInfo.decodedPsbt.inscriptions[w.inscriptionId]}
                                       preset="small"
                                       onClick={() => {
-                                        window.open(w.preview);
+                                        window.open(txInfo.decodedPsbt.inscriptions[w.inscriptionId]?.preview);
                                       }}
                                     />
                                   ))}
@@ -945,7 +1009,7 @@ export default function SignPsbt({
                                 <Text text={'ARC20'} color={isMyAddress ? 'white' : 'textDim'} />
                                 <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
                                   {atomicals_ft.map((w) => (
-                                    <Arc20PreviewCard key={w.ticker} ticker={w.ticker || ''} amt={v.value} />
+                                    <Arc20PreviewCard key={w.ticker} ticker={w.ticker || ''} amt={w.atomicalValue} />
                                   ))}
                                 </Row>
                               </Column>

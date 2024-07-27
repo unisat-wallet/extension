@@ -7,6 +7,7 @@ import { Empty } from '@/ui/components/Empty';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { Pagination } from '@/ui/components/Pagination';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { useChainType } from '@/ui/state/settings/hooks';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
@@ -16,7 +17,7 @@ export function InscriptionList() {
   const navigate = useNavigate();
   const wallet = useWallet();
   const currentAccount = useCurrentAccount();
-
+  const chainType = useChainType();
   const [inscriptions, setInscriptions] = useState<Inscription[]>([]);
   const [total, setTotal] = useState(-1);
   const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 100 });
@@ -42,7 +43,7 @@ export function InscriptionList() {
 
   useEffect(() => {
     fetchData();
-  }, [pagination, currentAccount.address]);
+  }, [pagination, currentAccount.address, chainType]);
 
   if (total === -1) {
     return (

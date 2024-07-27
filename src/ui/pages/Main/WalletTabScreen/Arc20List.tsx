@@ -7,6 +7,7 @@ import Arc20BalanceCard from '@/ui/components/Arc20BalanceCard';
 import { Empty } from '@/ui/components/Empty';
 import { Pagination } from '@/ui/components/Pagination';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { useChainType } from '@/ui/state/settings/hooks';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
@@ -16,6 +17,7 @@ export function Arc20List() {
   const navigate = useNavigate();
   const wallet = useWallet();
   const currentAccount = useCurrentAccount();
+  const chainType = useChainType();
 
   const [arc20Balances, setArc20Balances] = useState<Arc20Balance[]>([]);
   const [total, setTotal] = useState(-1);
@@ -41,7 +43,7 @@ export function Arc20List() {
 
   useEffect(() => {
     fetchData();
-  }, [pagination, currentAccount.address]);
+  }, [pagination, currentAccount.address, chainType]);
 
   if (total === -1) {
     return (
