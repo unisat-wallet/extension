@@ -1,10 +1,8 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 import { PAYMENT_CHANNELS, PaymentChannelType } from '@/shared/constant';
-import { Button, Card, Column, Image, Input, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
+import { Button, Card, Column, Image, Row, Text } from '@/ui/components';
 import { BottomModal } from '@/ui/components/BottomModal';
-import { useWallet } from '@/ui/utils';
 import { CloseOutlined } from '@ant-design/icons';
 
 function PaymentItem(props: { channelType: PaymentChannelType; onClick }) {
@@ -22,50 +20,16 @@ function PaymentItem(props: { channelType: PaymentChannelType; onClick }) {
   );
 }
 
-export const AddOpNetToken = ({
+export const ConfirmUnWrap = ({
+  acceptWrapMessage,
   onClose,
-  setImportTokenBool,
-  fetchData
+  setAcceptWrap
 }: {
+  acceptWrapMessage: string;
   onClose: () => void;
-  setImportTokenBool: (value: boolean) => void;
-  fetchData: () => void;
+  setAcceptWrap: (value: boolean) => void;
 }) => {
-  const [disclaimerModalVisible, setDisclaimerModalVisible] = useState(false);
-  const [channelType, setChannelType] = useState<PaymentChannelType>(PaymentChannelType.AlchemyPay);
   const [tokenState, setTokenState] = useState<string>('');
-  const [channels, setChannels] = useState<string[]>([]);
-  const wallet = useWallet();
-  const tools = useTools();
-
-  const saveToLocalStorage = () => {
-    const tokensImported = localStorage.getItem('tokensImported');
-    let parsedTokens: string[] = [];
-    if (tokensImported) {
-      parsedTokens = JSON.parse(tokensImported);
-      if (!parsedTokens.includes(tokenState)) {
-        parsedTokens.push(tokenState);
-        fetchData();
-        setImportTokenBool(false);
-      }
-    } else {
-      parsedTokens = [tokenState];
-      tools.toastError('Token Exists');
-    }
-    localStorage.setItem('tokensImported', JSON.stringify(parsedTokens));
-    tools.toastSuccess('Added token');
-  };
-  useEffect(() => {
-    tools.showLoading(true);
-    wallet
-      .getBuyBtcChannelList()
-      .then((list) => {
-        setChannels(list.map((v) => v.channel));
-      })
-      .finally(() => {
-        tools.showLoading(false);
-      });
-  }, []);
 
   return (
     <BottomModal onClose={onClose}>
@@ -81,24 +45,21 @@ export const AddOpNetToken = ({
           </Row>
         </Row>
         <Column mt="lg" style={{ width: '100%', marginBottom: '20px' }}>
-          <Text text="Token Address" preset="regular" color="textDim" />
-          <Input
-            preset="text"
-            value={tokenState}
-            onChange={(e) => {
-              setTokenState(e.target.value);
-            }}
-            autoFocus={true}
-          />
+          <Text text={acceptWrapMessage} preset="regular" color="textDim" />
         </Column>
       </Column>
-      <Button
-        disabled={false}
-        preset="primary"
-        text="Next"
-        onClick={(e) => {
-          saveToLocalStorage();
-        }}></Button>
+      <Row full>
+        <Button preset="default" text="Reject" onClick={() => onClose()} full />
+
+        <Button
+          disabled={false}
+          preset="primary"
+          text="Next"
+          onClick={(e) => {
+            setAcceptWrap(true);
+          }}
+          full></Button>
+      </Row>
     </BottomModal>
   );
 };

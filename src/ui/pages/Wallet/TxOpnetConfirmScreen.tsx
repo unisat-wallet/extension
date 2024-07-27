@@ -8,7 +8,7 @@ import {
   WBTC_ABI,
   getContract
 } from 'opnet';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Account } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
@@ -24,11 +24,13 @@ import {
   IWrapParameters,
   ROUTER_ADDRESS_REGTEST,
   UTXO,
+  UnwrapResult,
   Wallet,
   wBTC
 } from '@btc-vision/transaction';
 
 import { useNavigate } from '../MainRoute';
+import { ConfirmUnWrap } from './ConfirmUnWrap';
 
 interface LocationState {
   rawTxInfo: any;
@@ -36,10 +38,14 @@ interface LocationState {
 
 export default function TxOpnetConfirmScreen() {
   const navigate = useNavigate();
-
+  const [finalUnwrapTx, setfinalUnwrapTx] = useState<UnwrapResult>();
+  const [acceptWrap, setAcceptWrap] = useState<boolean>(false);
+  const [acceptWrapMessage, setAcceptWrapMessage] = useState<string>('false');
+  const [openAcceptbar, setAcceptBar] = useState<boolean>(false);
+  const [unwrapUseAmount, setUnWrapAmount] = useState<bigint>(0n);
   const { rawTxInfo } = useLocationState<LocationState>();
   const handleCancel = () => {
-    console.log();
+    window.history.go(-1);
   };
   useEffect(() => {
     const setWallet = async () => {
@@ -47,7 +53,34 @@ export default function TxOpnetConfirmScreen() {
     };
     setWallet();
   });
+  useEffect(() => {
+    if (acceptWrap && finalUnwrapTx) {
+      const completeUnwrap = async () => {
+        setAcceptBar(false);
+        // If this transaction is missing, opnet will deny the unwrapping request.
+        const fundingTransaction = await Web3API.provider.sendRawTransaction(finalUnwrapTx.fundingTransaction, false);
+        if (!fundingTransaction || !fundingTransaction.success) {
+          console.log(fundingTransaction);
+          tools.toastError('Error. Please Try again');
+          return;
+        }
 
+        // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
+        const unwrapTransaction = await Web3API.provider.sendRawTransaction(finalUnwrapTx.psbt, true);
+        if (!unwrapTransaction || !unwrapTransaction.success) {
+          console.log(fundingTransaction);
+          tools.toastError('Error. Please Try again');
+          return;
+        }
+
+        tools.toastSuccess(
+          `"You have sucessfully unwraped ${unwrapUseAmount + finalUnwrapTx.feeRefundOrLoss} Bitcoin"`
+        );
+        navigate('TxSuccessScreen', { txid: unwrapTransaction.result });
+      };
+      completeUnwrap();
+    }
+  }, [acceptWrap]);
   const wallet = useWallet();
   const tools = useTools();
 
@@ -204,20 +237,24 @@ export default function TxOpnetConfirmScreen() {
     // If this transaction is missing, opnet will deny the unwrapping request.
     const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact[0], false);
     if (!firstTransaction || !firstTransaction.success) {
-      tools.toastError('Error,Please Try again');
-      throw new Error('Could not broadcast first transaction');
+      tools.toastError('Error: Could not broadcast first transaction');
+      console.error('Transaction failed:', firstTransaction);
+      return;
     }
 
     // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
     const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransact[1], false);
     if (!secondTransaction || !secondTransaction.success) {
-      tools.toastError('Error,Please Try again');
-      throw new Error('Could not broadcast first transaction');
+      tools.toastError('Error: Could not broadcast second transaction');
+      console.error('Transaction failed:', firstTransaction);
+      return;
     }
 
     const unwrapUtxos = await Web3API.limitedProvider.fetchUnWrapParameters(unwrapAmount, walletGet.p2tr);
     if (!unwrapUtxos) {
-      throw new Error('No vault UTXOs or something went wrong. Please try again.');
+      tools.toastError('No vault UTXOs or something went wrong. Please try again.');
+      console.error('Transaction failed:', firstTransaction);
+      return;
     }
 
     // TODO: Use the new UTXO from the previous transaction
@@ -238,27 +275,16 @@ export default function TxOpnetConfirmScreen() {
     try {
       const finalTx = await Web3API.transactionFactory.unwrap(unwrapParameters);
       console.log(finalTx);
-      console.log(
-        `Due to bitcoin fees, you will lose ${finalTx.feeRefundOrLoss} satoshis by unwrapping. Do you want to proceed?`
+      setfinalUnwrapTx(finalTx);
+      setAcceptBar(true);
+      setAcceptWrapMessage(
+        `Due to bitcoin fees, you will only get ${
+          unwrapAmount + finalTx.feeRefundOrLoss
+        } satoshis by unwrapping. Do you want to proceed?`
       );
-
-      // If this transaction is missing, opnet will deny the unwrapping request.
-      const fundingTransaction = await Web3API.provider.sendRawTransaction(finalTx.fundingTransaction, false);
-      if (!fundingTransaction || !fundingTransaction.success) {
-        tools.toastError('Error. Please Try again');
-        return;
-      }
-
-      // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
-      const unwrapTransaction = await Web3API.provider.sendRawTransaction(finalTx.psbt, true);
-      if (!unwrapTransaction || !unwrapTransaction.success) {
-        tools.toastError('Error. Please Try again');
-        return;
-      }
-
-      tools.toastSuccess(`"You have sucessfully unwraped ${unwrapAmount} Bitcoin"`);
-      navigate('TxSuccessScreen', { txid: unwrapTransaction.result });
+      setUnWrapAmount(unwrapAmount);
     } catch (e) {
+      tools.toastError('Error please ty again later');
       console.error('Error:', e);
     }
   };
@@ -279,7 +305,9 @@ export default function TxOpnetConfirmScreen() {
 
     const stakeData = (await contract.stake(amountToSend)) as unknown as { calldata: Buffer };
     if ('error' in stakeData) {
-      throw new Error('Invalid calldata in stakeData');
+      tools.toastError('Invalid calldata in stakeData');
+      console.error('stakeDatas:', stakeData);
+      return;
     }
 
     const utxos: UTXO[] = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], amountToSend);
@@ -301,6 +329,7 @@ export default function TxOpnetConfirmScreen() {
     const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact[0], false);
     if (!firstTransaction.success) {
       console.log('Broadcasted:', false);
+      return;
     } else {
       console.log('Broadcasted:', firstTransaction);
     }
@@ -309,6 +338,7 @@ export default function TxOpnetConfirmScreen() {
     const seconfTransaction = await Web3API.provider.sendRawTransaction(sendTransact[1], false);
     if (!seconfTransaction.success) {
       console.log('Broadcasted:', false);
+      return;
     } else {
       console.log('Broadcasted:', seconfTransaction);
     }
@@ -496,6 +526,13 @@ export default function TxOpnetConfirmScreen() {
           />
         </Row>
       </Footer>
+      {openAcceptbar && (
+        <ConfirmUnWrap
+          onClose={() => setAcceptBar(false)}
+          acceptWrapMessage={acceptWrapMessage}
+          setAcceptWrap={setAcceptWrap}
+        />
+      )}
     </Layout>
   );
 }

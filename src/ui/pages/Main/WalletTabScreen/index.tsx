@@ -7,6 +7,7 @@ import { checkAddressFlag } from '@/shared/utils';
 import { Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
 import { AddressBar } from '@/ui/components/AddressBar';
+import { BtcUsd } from '@/ui/components/BtcUsd';
 import { Button } from '@/ui/components/Button';
 import { DisableUnconfirmedsPopover } from '@/ui/components/DisableUnconfirmedPopover';
 import { NavTabBar } from '@/ui/components/NavTabBar';
@@ -38,7 +39,6 @@ import { AtomicalsTab } from './AtomicalsTab';
 import { OP_NETList } from './OP_NETList';
 import { OrdinalsTab } from './OrdinalsTab';
 import { RunesList } from './RunesList';
-import { BtcUsd } from '@/ui/components/BtcUsd';
 
 const $noBreakStyle: CSSProperties = {
   whiteSpace: 'nowrap',
@@ -153,7 +153,7 @@ export default function WalletTabScreen() {
     },
     {
       key: AssetTabKey.OP_NET,
-      label: 'OPNET',
+      label: 'OP_NET',
       children: <OP_NETList />
     },
     {
@@ -281,9 +281,15 @@ export default function WalletTabScreen() {
               />
             </div>
           </Tooltip>
-          <BtcUsd sats={amountToSatoshis(balanceValue)} textCenter size={'md'} style={{
-            marginTop: -16, marginBottom: -8
-          }} />
+          <BtcUsd
+            sats={amountToSatoshis(balanceValue)}
+            textCenter
+            size={'md'}
+            style={{
+              marginTop: -16,
+              marginBottom: -8
+            }}
+          />
 
           <Row itemsCenter justifyCenter>
             <AddressBar />
@@ -319,8 +325,7 @@ export default function WalletTabScreen() {
               }}
               full
             />
-            {
-              chainType === ChainType.BITCOIN_MAINNET &&
+            {chainType === ChainType.BITCOIN_MAINNET && (
               <Button
                 text="Buy"
                 preset="default"
@@ -330,7 +335,7 @@ export default function WalletTabScreen() {
                 }}
                 full
               />
-            }
+            )}
           </Row>
 
           <Tabs
