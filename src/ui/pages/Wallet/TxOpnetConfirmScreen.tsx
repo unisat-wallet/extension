@@ -1,12 +1,12 @@
 import {
   BaseContractProperty,
+  getContract,
   IMotoswapRouterContract,
   IOP_20Contract,
   IWBTCContract,
   MOTOSWAP_ROUTER_ABI,
   OP_20_ABI,
-  WBTC_ABI,
-  getContract
+  WBTC_ABI
 } from 'opnet';
 import { useEffect, useState } from 'react';
 
@@ -24,8 +24,8 @@ import {
   IUnwrapParameters,
   IWrapParameters,
   ROUTER_ADDRESS_REGTEST,
-  UTXO,
   UnwrapResult,
+  UTXO,
   Wallet,
   wBTC
 } from '@btc-vision/transaction';
@@ -35,6 +35,10 @@ import { ConfirmUnWrap } from './ConfirmUnWrap';
 
 interface LocationState {
   rawTxInfo: any;
+}
+
+function absBigInt(value: bigint): bigint {
+  return value < 0n ? -value : value;
 }
 
 export default function TxOpnetConfirmScreen() {
@@ -198,89 +202,110 @@ export default function TxOpnetConfirmScreen() {
     const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
 
     const unwrapAmount = expandToDecimals(rawTxInfo.inputAmount, 8); // Minimum amount to unwrap
-    const requestWithdrawalSelector = Number('0x' + Web3API.abiCoder.encodeSelector('requestWithdrawal'));
+    //const requestWithdrawalSelector = Number('0x' + Web3API.abiCoder.encodeSelector('requestWithdrawal'));
 
-    function generateCalldata(unwrapAmount: bigint): Buffer {
+    /*function generateCalldata(unwrapAmount: bigint): Buffer {
       const addCalldata: BinaryWriter = new BinaryWriter();
       addCalldata.writeSelector(requestWithdrawalSelector);
       addCalldata.writeU256(unwrapAmount);
       return Buffer.from(addCalldata.getBuffer());
-    }
+    }*/
 
-    let utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], unwrapAmount);
+    const utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], unwrapAmount);
+    console.log('unwrap amount', unwrapAmount, 'utxos', utxos);
 
-    const calldata = generateCalldata(unwrapAmount);
+    //const calldata = generateCalldata(unwrapAmount);
     const contract: IWBTCContract = getContract<IWBTCContract>(
       wBTC.getAddress(Web3API.network),
       WBTC_ABI,
       Web3API.provider,
       walletGet.p2tr
     );
-    const checkWithdrawalRequest = await contract.withdrawableBalanceOf(rawTxInfo.account.address);
 
+    const wbtcBalanceSimulation = await contract.balanceOf(walletGet.p2tr);
+    if ('error' in wbtcBalanceSimulation) {
+      throw new Error(`Something went wrong while simulating the check withdraw balance: ${wbtcBalanceSimulation.error}`);
+    }
+
+    const wbtcBalance = wbtcBalanceSimulation.decoded[0] as bigint;
+    if (wbtcBalance < unwrapAmount) {
+      // todo convert to human readable base decimals
+      tools.toastError('You can only withdraw a maximum of' + wbtcBalance);
+      return;
+    }
+
+    const checkWithdrawalRequest = await contract.withdrawableBalanceOf(walletGet.p2tr); //rawTxInfo.account.address
     if ('error' in checkWithdrawalRequest) {
-      throw new Error('Invalid calldata in withdrawal request');
-    }
-    if ((checkWithdrawalRequest.decoded[0] as bigint) < unwrapAmount) {
-      tools.toastError('Your withdrawable WBTC balance is ' + (checkWithdrawalRequest.decoded[0] as bigint));
-      return;
-    }
-    const withdrawalRequest = await contract.requestWithdrawal(unwrapAmount);
-
-    if ('error' in withdrawalRequest || 'error' in checkWithdrawalRequest) {
-      tools.toastError('Invalid calldata in withdrawal request');
-      console.log(withdrawalRequest);
-      throw new Error(`Something went wrong while simulating the withdraw request: ${withdrawalRequest}`);
-    }
-    const interactionParameters: IInteractionParameters = {
-      from: walletGet.p2tr,
-      to: contract.address.toString(),
-      utxos: utxos,
-      signer: walletGet.keypair,
-      network: Web3API.network,
-      feeRate: 100,
-      priorityFee: 1000n,
-      calldata: withdrawalRequest.calldata as Buffer
-    };
-
-    const sendTransact = await Web3API.transactionFactory.signInteraction(interactionParameters);
-
-    // If this transaction is missing, opnet will deny the unwrapping request.
-    const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact[0], false);
-    if (!firstTransaction || !firstTransaction.success) {
-      tools.toastError('Error: Could not broadcast first transaction');
-      console.error('Transaction failed:', firstTransaction);
-      return;
+      throw new Error(`Something went wrong while simulating the check withdraw balance: ${checkWithdrawalRequest.error}`);
     }
 
-    // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
-    const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransact[1], false);
-    if (!secondTransaction || !secondTransaction.success) {
-      tools.toastError('Error: Could not broadcast second transaction');
-      console.error('Transaction failed:', firstTransaction);
-      return;
+    const alreadyWithdrawable = checkWithdrawalRequest.decoded[0] as bigint;
+    const requiredAmountDifference: bigint = alreadyWithdrawable - unwrapAmount;
+
+    console.log('amount', unwrapAmount, 'actual', wbtcBalance, 'balance', alreadyWithdrawable, 'diff', requiredAmountDifference);
+
+    let utxosForUnwrap: UTXO[] = utxos;
+    if(requiredAmountDifference < 0n) {
+      console.log('We must request a withdrawal');
+      const diff = absBigInt(requiredAmountDifference);
+
+      const withdrawalRequest = await contract.requestWithdrawal(diff);
+      if ('error' in withdrawalRequest) {
+        tools.toastError(`Withdrawal simulation reverted: ${withdrawalRequest.error}`);
+        throw new Error(`Something went wrong while simulating the withdraw request: ${withdrawalRequest}`);
+      }
+
+      const interactionParameters: IInteractionParameters = {
+        from: walletGet.p2tr,
+        to: contract.address.toString(),
+        utxos: utxos,
+        signer: walletGet.keypair,
+        network: Web3API.network,
+        feeRate: 100,
+        priorityFee: 1000n,
+        calldata: withdrawalRequest.calldata as Buffer
+      };
+
+      const sendTransaction = await Web3API.transactionFactory.signInteraction(interactionParameters);
+
+      // If this transaction is missing, opnet will deny the unwrapping request.
+      const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransaction[0], false);
+      if (!firstTransaction || !firstTransaction.success) {
+        tools.toastError('Error: Could not broadcast first transaction');
+        console.error('Transaction failed:', firstTransaction);
+        return;
+      }
+
+      // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
+      const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransaction[1], false);
+      if (!secondTransaction || !secondTransaction.success) {
+        tools.toastError('Error: Could not broadcast second transaction');
+        console.error('Transaction failed:', firstTransaction);
+        return;
+      }
+
+      utxosForUnwrap = sendTransaction[2];
     }
 
     const unwrapUtxos = await Web3API.limitedProvider.fetchUnWrapParameters(unwrapAmount, walletGet.p2tr);
     if (!unwrapUtxos) {
       tools.toastError('No vault UTXOs or something went wrong. Please try again.');
-      console.error('Transaction failed:', firstTransaction);
       return;
     }
 
-    // TODO: Use the new UTXO from the previous transaction
-
-    utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], unwrapAmount);
+    // TODO: Verify that the UTXOs have enough money in them to process to the transaction, if not, we have to fetch more UTXOs.
     const unwrapParameters: IUnwrapParameters = {
       from: walletGet.p2tr, // Address to unwrap
-      utxos: sendTransact[2], // Use the UTXO generated from the withdrawal request
+      utxos: utxosForUnwrap, // Use the UTXO generated from the withdrawal request
       unwrapUTXOs: unwrapUtxos.vaultUTXOs, // Vault UTXOs to unwrap
       signer: walletGet.keypair, // Signer
       network: Web3API.network, // Bitcoin network
       feeRate: 100, // Fee rate in satoshis per byte (bitcoin fee)
       priorityFee: 1000n, // OPNet priority fee (incl gas.)
-      amount: unwrapAmount + (checkWithdrawalRequest.decoded[0] as bigint)
+      amount: unwrapAmount
     };
+
+    console.log('unwrapParameters', unwrapParameters, unwrapUtxos, utxos);
 
     try {
       const finalTx = await Web3API.transactionFactory.unwrap(unwrapParameters);
