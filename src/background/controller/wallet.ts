@@ -47,7 +47,6 @@ import {
 import { checkAddressFlag, getChainInfo } from '@/shared/utils';
 import Web3API from '@/shared/web3/Web3API';
 import { IInteractionParameters, TransactionFactory, Wallet } from '@btc-vision/transaction';
-import { txHelpers, UnspentOutput } from '@unisat/wallet-sdk';
 import { UTXO_DUST, UnspentOutput, txHelpers } from '@unisat/wallet-sdk';
 import { publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
 import { bitcoin, ECPair } from '@unisat/wallet-sdk/lib/bitcoin-core';
