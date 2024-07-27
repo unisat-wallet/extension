@@ -15,8 +15,8 @@ import i18n from '@/background/service/i18n';
 import { DisplayedKeyring, Keyring } from '@/background/service/keyring';
 import {
   BroadcastTransactionOptions,
-  IWrapParametersWithoutSigner,
-  InteractionParametersWithoutSigner
+  InteractionParametersWithoutSigner,
+  IWrapParametersWithoutSigner
 } from '@/content-script/pageProvider/Web3Provider.js';
 import {
   ADDRESS_TYPES,
@@ -24,14 +24,15 @@ import {
   BRAND_ALIAN_TYPE_TEXT,
   CHAINS_ENUM,
   CHAINS_MAP,
+  ChainType,
   COIN_NAME,
   COIN_SYMBOL,
-  ChainType,
   KEYRING_TYPE,
   KEYRING_TYPES,
   NETWORK_TYPES,
   UNCONFIRMED_HEIGHT
 } from '@/shared/constant';
+
 import { runesUtils } from '@/shared/lib/runes-utils';
 import {
   Account,
@@ -47,10 +48,10 @@ import {
 } from '@/shared/types';
 import { checkAddressFlag, getChainInfo } from '@/shared/utils';
 import Web3API from '@/shared/web3/Web3API';
-import { IInteractionParameters, TransactionFactory, Wallet } from '@btc-vision/transaction';
-import { UTXO_DUST, UnspentOutput, txHelpers } from '@unisat/wallet-sdk';
+import { IInteractionParameters, TransactionFactory, Wallet, WrapResult } from '@btc-vision/transaction';
+import { txHelpers, UnspentOutput, UTXO_DUST } from '@unisat/wallet-sdk';
 import { publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
-import { ECPair, bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
+import { bitcoin, ECPair } from '@unisat/wallet-sdk/lib/bitcoin-core';
 import { KeystoneKeyring } from '@unisat/wallet-sdk/lib/keyring';
 import {
   genPsbtOfBIP322Simple,
@@ -76,19 +77,17 @@ export type AccountAsset = {
 
 export class WalletController extends BaseController {
   openapi: OpenApiService = openapiService;
-
+  getApproval = notificationService.getApproval;
+  resolveApproval = notificationService.resolveApproval;
+  rejectApproval = notificationService.rejectApproval;
   private readonly opnetProvider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
   private readonly opnetFactory: TransactionFactory = new TransactionFactory();
-
   private currentNetwork: Network = networks.regtest;
 
   /* wallet */
   boot = (password: string) => keyringService.boot(password);
-  isBooted = () => keyringService.isBooted();
 
-  getApproval = notificationService.getApproval;
-  resolveApproval = notificationService.resolveApproval;
-  rejectApproval = notificationService.rejectApproval;
+  isBooted = () => keyringService.isBooted();
 
   /* wallet */
   // boot = (password: string) => keyringService.boot(password);
