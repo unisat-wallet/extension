@@ -8,13 +8,13 @@ import {
   AddressTokenSummary,
   AppSummary,
   Arc20Balance,
-  BitcoinBalance,
+  BitcoinBalance, BtcPrice,
   DecodedPsbt,
   FeeSummary,
   InscribeOrder,
   Inscription,
   InscriptionSummary,
-  RuneBalance,
+  RuneBalance, TickPriceItem,
   TokenBalance,
   TokenTransfer,
   UTXO,
@@ -251,6 +251,145 @@ export class OpenApiService {
 
   async getFeeSummary(): Promise<FeeSummary> {
     return this.httpGet('/v5/default/fee-summary', {});
+  }
+
+  private btcPriceCache: number | null = null;
+  private btcPriceUpdateTime = 0;
+  private isRefreshingBtcPrice = false;
+
+  async refreshBtcPrice() {
+    try {
+      this.isRefreshingBtcPrice = true;
+      const result: BtcPrice = await this.httpGet('/v5/default/btc-price', {});
+      // test
+      // const result: BtcPrice = await Promise.resolve({ price: 58145.19716040577, updateTime: 1634160000000 });
+
+      this.btcPriceCache = result.price;
+      this.btcPriceUpdateTime = Date.now();
+
+      return result.price;
+    } finally {
+      this.isRefreshingBtcPrice = false;
+    }
+
+  }
+
+  async getBtcPrice(): Promise<number> {
+    while (this.isRefreshingBtcPrice) {
+      await new Promise(resolve => setTimeout(resolve, 100));
+    }
+
+    //   30s cache
+    if (this.btcPriceCache && Date.now() - this.btcPriceUpdateTime < 30 * 1000) {
+      return this.btcPriceCache;
+    }
+    // 40s return cache and refresh
+    if (this.btcPriceCache && Date.now() - this.btcPriceUpdateTime < 40 * 1000) {
+      this.refreshBtcPrice().then();
+      return this.btcPriceCache;
+    }
+
+    return this.refreshBtcPrice();
+  }
+
+  private brc20PriceCache: { [key: string]: { cacheTime: number, data: TickPriceItem } } = {};
+  private currentRequestBrc20 = {};
+
+  async getBrc20sPrice(ticks: string[]) {
+    if (ticks.length < 0) {
+      return {};
+    }
+    const tickLine = ticks.join('');
+    if (!tickLine)
+      return {};
+
+    try {
+      while (this.currentRequestBrc20[tickLine]) {
+        console.log(this.currentRequestBrc20);
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      this.currentRequestBrc20[tickLine] = true;
+
+      const result = {} as { [key: string]: TickPriceItem };
+
+      for (let i = 0; i < ticks.length; i += 1) {
+        const tick = ticks[i];
+        const cache = this.brc20PriceCache[tick];
+        if (!cache) {
+          break;
+        }
+        if (cache.cacheTime + 5 * 60 * 1000 > Date.now()) {
+          result[tick] = cache.data;
+        }
+      }
+
+      if (Object.keys(result).length === ticks.length) {
+        return result;
+      }
+
+      const resp: { [ticker: string]: TickPriceItem } = await this.httpPost('/v5/market/brc20/price', {
+        ticks,
+        nftType: 'brc20'
+      });
+
+      for (let i = 0; i < ticks.length; i += 1) {
+        const tick = ticks[i];
+        this.brc20PriceCache[tick] = { cacheTime: Date.now(), data: resp[tick] };
+      }
+      return resp;
+    } finally {
+      this.currentRequestBrc20[tickLine] = false;
+    }
+  }
+
+  private runesPriceCache: { [key: string]: { cacheTime: number, data: TickPriceItem } } = {};
+  private currentRequestRune = {};
+
+  async getRunesPrice(ticks: string[]) {
+    if (ticks.length < 0) {
+      return {};
+    }
+    const tickLine = ticks.join('');
+    if (!tickLine)
+      return {};
+
+    try {
+      while (this.currentRequestRune[tickLine]) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      this.currentRequestRune[tickLine] = true;
+
+
+      const result = {} as { [key: string]: TickPriceItem };
+
+      for (let i = 0; i < ticks.length; i += 1) {
+        const tick = ticks[i];
+        const cache = this.runesPriceCache[tick];
+        if (!cache) {
+          break;
+        }
+        if (cache.cacheTime + 5 * 60 * 1000 > Date.now()) {
+          result[tick] = cache.data;
+        }
+      }
+
+      if (Object.keys(result).length === ticks.length) {
+        return result;
+      }
+
+      const resp: { [ticker: string]: TickPriceItem } = await this.httpPost('/v5/market/runes/price', {
+        ticks,
+        nftType: 'runes'
+      });
+
+      for (let i = 0; i < ticks.length; i += 1) {
+        const tick = ticks[i];
+        this.runesPriceCache[tick] = { cacheTime: Date.now(), data: resp[tick] };
+      }
+      return resp;
+    } finally {
+      this.currentRequestRune[tickLine] = false;
+    }
   }
 
   async getDomainInfo(domain: string): Promise<Inscription> {

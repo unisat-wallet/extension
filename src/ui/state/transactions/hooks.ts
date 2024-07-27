@@ -642,10 +642,15 @@ export function usePrepareSendRunesCallback() {
       toAddressInfo: ToAddressInfo;
       runeid: string;
       runeAmount: string;
-      outputValue: number;
+      outputValue?: number;
       feeRate: number;
       enableRBF: boolean;
     }) => {
+      if (!feeRate) {
+        const summary = await wallet.getFeeSummary();
+        feeRate = summary.list[1].feeRate;
+      }
+
       let btcUtxos = utxos;
       if (btcUtxos.length === 0) {
         btcUtxos = await fetchUtxos();

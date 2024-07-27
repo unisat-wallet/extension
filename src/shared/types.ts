@@ -1,4 +1,4 @@
-import { CHAINS_ENUM } from './constant';
+import { CHAINS_ENUM, PaymentChannelType } from './constant';
 
 export enum AddressType {
   P2PKH,
@@ -89,6 +89,7 @@ export interface Atomical {
   atomicalNumber: number;
   type: 'FT' | 'NFT';
   ticker?: string;
+  atomicalValue: number;
 
   // mint info
   address: string;
@@ -143,6 +144,11 @@ export interface FeeSummary {
   }[];
 }
 
+export interface BtcPrice {
+  price: number;
+  updateTime: number;
+}
+
 export interface UTXO {
   txid: string;
   vout: number;
@@ -182,7 +188,8 @@ export enum TxType {
   SIGN_TX,
   SEND_BITCOIN,
   SEND_ORDINALS_INSCRIPTION,
-  SEND_ATOMICALS_INSCRIPTION
+  SEND_ATOMICALS_INSCRIPTION,
+  SEND_RUNES
 }
 
 interface BaseUserToSignInput {
@@ -211,6 +218,7 @@ export interface ToSignInput {
   publicKey: string;
   sighashTypes?: number[];
 }
+
 export type WalletKeyring = {
   key: string;
   index: number;
@@ -272,12 +280,15 @@ export enum TokenInscriptionType {
   INSCRIBE_TRANSFER,
   INSCRIBE_MINT
 }
+
 export interface TokenTransfer {
   ticker: string;
   amount: string;
   inscriptionId: string;
   inscriptionNumber: number;
   timestamp: number;
+  confirmations: number;
+  satoshi: number;
 }
 
 export interface AddressTokenSummary {
@@ -466,3 +477,14 @@ export interface RawTxInfo {
   opneTokens: OpneToken[];
   action: string;
 }
+
+export interface BtcChannelItem {
+  channel: PaymentChannelType;
+  quote: number;
+  payType: string[];
+}
+
+export type TickPriceItem = {
+  curPrice: number;
+  changePercent:number;
+};

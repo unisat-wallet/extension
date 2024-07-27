@@ -51,7 +51,7 @@ export function FeeRateBar({ readonly, onChange }: { readonly?: boolean; onChang
 
     let val = defaultVal;
     if (feeOptionIndex === FeeRateType.CUSTOM) {
-      val = parseInt(feeRateInputVal) || 0;
+      val = parseFloat(feeRateInputVal) || 0;
     } else if (feeOptions.length > 0) {
       val = feeOptions[feeOptionIndex].feeRate;
     }
@@ -59,7 +59,7 @@ export function FeeRateBar({ readonly, onChange }: { readonly?: boolean; onChang
   }, [feeOptions, feeOptionIndex, feeRateInputVal]);
 
   const adjustFeeRateInput = (inputVal: string) => {
-    let val = parseInt(inputVal);
+    const val = parseFloat(inputVal);
     if (!val) {
       setFeeRateInputVal('');
       return;
@@ -67,9 +67,9 @@ export function FeeRateBar({ readonly, onChange }: { readonly?: boolean; onChang
     const defaultOption = feeOptions[1];
     const defaultVal = defaultOption ? defaultOption.feeRate : 1;
     if (val <= 0) {
-      val = defaultVal;
+      setFeeRateInputVal(defaultVal.toString());
     }
-    setFeeRateInputVal(val.toString());
+    setFeeRateInputVal(inputVal);
   };
 
   return (
@@ -133,6 +133,7 @@ export function FeeRateBar({ readonly, onChange }: { readonly?: boolean; onChang
           preset="amount"
           placeholder={'sat/vB'}
           value={feeRateInputVal}
+          runesDecimal={1}
           onAmountInputChange={(amount) => {
             adjustFeeRateInput(amount);
           }}

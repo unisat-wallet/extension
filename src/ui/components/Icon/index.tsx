@@ -17,6 +17,7 @@ export const svgRegistry = {
   discord: './images/icons/discord.svg',
   twitter: './images/icons/twitter.svg',
   github: './images/icons/github.svg',
+  telegram: './images/icons/telegram.svg',
 
   btc: './images/icons/btc.svg',
   qrcode: './images/icons/qrcode.svg',

@@ -38,13 +38,21 @@ export default function DisclaimerModal({ channelType, onClose }: { channelType:
 
         <Row fullX style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
 
-        <Column justifyCenter rounded mb="lg">
+        <Column justifyCenter rounded mb="lg" style={{maxHeight:'50vh',overflow:'auto'}}>
           <Text style={{ fontSize: fontSizes.sm, lineHeight: 2 }} text={disclaimStr} />
 
           <Text
             mt="lg"
             style={{ fontSize: fontSizes.sm, lineHeight: 2 }}
-            text={'Before proceeding, please carefully read and accept the disclaimer:'}></Text>
+            text={'Risk Warning: Don\'t invest unless you\'re prepared to lose all the money you invest.'}></Text>
+          <Text
+            mt="lg"
+            style={{ fontSize: fontSizes.sm, lineHeight: 2 }}
+            text={'Additional transaction fees apply when purchasing through third-party platforms. Rates vary by country and payment method. Please review each platform\'s fees before proceeding with transactions.'}></Text>
+          <Text
+            mt="lg"
+            style={{ fontSize: fontSizes.sm, lineHeight: 2 }}
+            text={'Before proceeding, please carefully read and accept the disclaimer.'}></Text>
         </Column>
 
         <Row justifyCenter>

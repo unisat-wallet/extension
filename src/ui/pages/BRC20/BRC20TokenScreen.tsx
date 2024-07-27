@@ -15,6 +15,7 @@ import { useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
+import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
 
 interface LocationState {
   ticker: string;
@@ -117,8 +118,11 @@ export default function BRC20TokenScreen() {
         <Content>
           <Column py="xl" style={{ borderBottomWidth: 1, borderColor: colors.white_muted }}>
             <Row itemsCenter fullX justifyCenter>
-              <Text text={`${balance}`} preset="bold" textCenter size="xxl" wrap />
+              <Text text={`${balance}`} preset="bold" textCenter size="xxl" wrap digital/>
               <BRC20Ticker tick={ticker} preset="lg" />
+            </Row>
+            <Row justifyCenter fullX>
+              <TickUsdWithoutPrice tick={ticker} balance={balance} type={'brc20'} size={'md'}/>
             </Row>
 
             <Row justifyBetween mt="lg">
@@ -162,7 +166,7 @@ export default function BRC20TokenScreen() {
             <Row justifyBetween>
               <Text text="Transferable" preset="bold" size="md" />
               <Row itemsCenter justifyCenter>
-                <Text text={`${tokenSummary.tokenBalance.transferableBalance}`} size="md" wrap />
+                <Text text={`${tokenSummary.tokenBalance.transferableBalance}`} size="md" wrap digital/>
                 <BRC20Ticker tick={ticker} />
               </Row>
             </Row>
@@ -204,6 +208,7 @@ export default function BRC20TokenScreen() {
                   balance={v.amount}
                   inscriptionNumber={v.inscriptionNumber}
                   timestamp={v.timestamp}
+                  confirmations={v.confirmations}
                   type="TRANSFER"
                   onClick={async () => {
                     try {

@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ADDRESS_TYPES, DISCORD_URL, GITHUB_URL, KEYRING_TYPE, TWITTER_URL } from '@/shared/constant';
+import { ADDRESS_TYPES, DISCORD_URL, GITHUB_URL, KEYRING_TYPE, TELEGRAM_URL, TWITTER_URL } from '@/shared/constant';
 import { Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { Button } from '@/ui/components/Button';
@@ -112,10 +112,18 @@ export default function SettingsTabScreen() {
   useEffect(() => {
     const run = async () => {
       const res = await getCurrentTab();
-      if (!res) return;
-      const site = await wallet.getCurrentConnectedSite(res.id);
-      if (site) {
-        setConnected(site.isConnected);
+      if (!res || !res.url) return;
+
+      const origin = new URL(res.url).origin;
+
+      if (origin === 'https://unisat.io') {
+        setConnected(true);
+      } else {
+        const sites = await wallet.getConnectedSites();
+
+        if (sites.find(i => i.origin === origin)) {
+          setConnected(true);
+        }
       }
     };
     run();
@@ -245,6 +253,15 @@ export default function SettingsTabScreen() {
               color="textDim"
               onClick={() => {
                 window.open(GITHUB_URL);
+              }}
+            />
+
+            <Icon
+              icon="telegram"
+              size={fontSizes.iconMiddle}
+              color="textDim"
+              onClick={() => {
+                window.open(TELEGRAM_URL);
               }}
             />
           </Row>
