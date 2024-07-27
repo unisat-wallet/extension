@@ -1,14 +1,19 @@
 import { Tooltip } from 'antd';
+import { JSONRpcProvider } from 'opnet';
 import { useEffect, useMemo, useState } from 'react';
 
 import { COIN_DUST } from '@/shared/constant';
-import { RawTxInfo } from '@/shared/types';
+import { Account, RawTxInfo } from '@/shared/types';
+import Web3API from '@/shared/web3/Web3API';
 import { Button, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
+import { BtcUsd } from '@/ui/components/BtcUsd';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import { useNavigate } from '@/ui/pages/MainRoute';
-import { useAccountBalance } from '@/ui/state/accounts/hooks';
+import { useAccountBalance, useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
+import { useChain } from '@/ui/state/settings/hooks';
 import {
   useBitcoinTx,
   useFetchUtxosCallback,
@@ -18,10 +23,13 @@ import {
 } from '@/ui/state/transactions/hooks';
 import { useUiTxCreateScreen, useUpdateUiTxCreateScreen } from '@/ui/state/ui/hooks';
 import { fontSizes } from '@/ui/theme/font';
-import { amountToSatoshis, isValidAddress, satoshisToAmount } from '@/ui/utils';
-import { BtcUsd } from '@/ui/components/BtcUsd';
+import { amountToSatoshis, isValidAddress, satoshisToAmount, useWallet } from '@/ui/utils';
 
 export default function TxCreateScreen() {
+  interface ItemData {
+    key: string;
+    account?: Account;
+  }
   const accountBalance = useAccountBalance();
   const safeBalance = useSafeBalance();
   const navigate = useNavigate();
@@ -38,7 +46,8 @@ export default function TxCreateScreen() {
   const feeRate = uiState.feeRate;
 
   const [error, setError] = useState('');
-
+  const [balanceValueRegtest, setBalanceValue] = useState<number>(0);
+  const [OpnetRateInputVal, setOpnetRateInputVal] = useState<string>('0');
   const [autoAdjust, setAutoAdjust] = useState(false);
   const fetchUtxos = useFetchUtxosCallback();
 
@@ -48,6 +57,17 @@ export default function TxCreateScreen() {
     fetchUtxos().finally(() => {
       tools.showLoading(false);
     });
+  }, []);
+  const keyring = useCurrentKeyring();
+
+  const items = useMemo(() => {
+    const _items: ItemData[] = keyring.accounts.map((v) => {
+      return {
+        key: v.address,
+        account: v
+      };
+    });
+    return _items;
   }, []);
 
   const prepareSendBTC = usePrepareSendBTCCallback();
@@ -82,9 +102,29 @@ export default function TxCreateScreen() {
   const avaiableAmount = safeBalance;
   const unavailableAmount = satoshisToAmount(unavailableSatoshis);
   const totalAmount = accountBalance.amount;
+  const wallet = useWallet();
+  const account = useCurrentAccount();
+  const chain = useChain();
 
+  useEffect(() => {
+    const fetchBalance = async () => {
+      if (chain.enum === 'BITCOIN_REGTEST') {
+        const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
+
+        const btcbalanceGet = await provider.getBalance(account.address);
+        setBalanceValue(parseInt(btcbalanceGet.toString()) / 10 ** 8);
+      }
+    };
+
+    void fetchBalance();
+  }, [chain.enum, account.address]);
   const unspendUnavailableAmount = satoshisToAmount(unavailableSatoshis - spendUnavailableSatoshis);
-
+  useEffect(() => {
+    const setWallet = async () => {
+      Web3API.setNetwork(await wallet.getChainType());
+    };
+    setWallet();
+  });
   useEffect(() => {
     setError('');
     setDisabled(true);
@@ -99,40 +139,51 @@ export default function TxCreateScreen() {
       setError(`Amount must be at least ${dustAmount} BTC`);
       return;
     }
-
-    if (toSatoshis > avaiableSatoshis + spendUnavailableSatoshis) {
-      setError('Amount exceeds your available balance');
-      return;
+    if (!(chain.enum === 'BITCOIN_REGTEST')) {
+      if (toSatoshis > avaiableSatoshis + spendUnavailableSatoshis) {
+        setError('Amount exceeds your available balance');
+        return;
+      }
+    } else {
+      if (toSatoshis / 10 ** 8 > balanceValueRegtest) {
+        setError('Amount exceeds your available balance');
+        return;
+      }
     }
 
     if (feeRate <= 0) {
       return;
     }
-
-    if (
-      toInfo.address == bitcoinTx.toAddress &&
-      toSatoshis == bitcoinTx.toSatoshis &&
-      feeRate == bitcoinTx.feeRate &&
-      enableRBF == bitcoinTx.enableRBF
-    ) {
-      //Prevent repeated triggering caused by setAmount
-      setDisabled(false);
-      return;
-    }
-
-    prepareSendBTC({ toAddressInfo: toInfo, toAmount: toSatoshis, feeRate, enableRBF })
-      .then((data) => {
-        // if (data.fee < data.estimateFee) {
-        //   setError(`Network fee must be at leat ${data.estimateFee}`);
-        //   return;
-        // }
-        setRawTxInfo(data);
+    const runTransfer = async () => {
+      if (
+        toInfo.address == bitcoinTx.toAddress &&
+        toSatoshis == bitcoinTx.toSatoshis &&
+        feeRate == bitcoinTx.feeRate &&
+        enableRBF == bitcoinTx.enableRBF
+      ) {
+        //Prevent repeated triggering caused by setAmount
         setDisabled(false);
-      })
-      .catch((e) => {
-        console.log(e);
-        setError(e.message);
-      });
+        return;
+      }
+      if (!((await wallet.getNetworkType()) == 2)) {
+        prepareSendBTC({ toAddressInfo: toInfo, toAmount: toSatoshis, feeRate, enableRBF })
+          .then((data) => {
+            // if (data.fee < data.estimateFee) {
+            //   setError(`Network fee must be at leat ${data.estimateFee}`);
+            //   return;
+            // }
+            setRawTxInfo(data);
+            setDisabled(false);
+          })
+          .catch((e) => {
+            console.log(e);
+            setError(e.message);
+          });
+      } else {
+        setDisabled(false);
+      }
+    };
+    runTransfer();
   }, [toInfo, inputAmount, feeRate, enableRBF]);
 
   return (
@@ -163,7 +214,7 @@ export default function TxCreateScreen() {
         <Column mt="lg">
           <Row justifyBetween>
             <Text text="Transfer amount" preset="regular" color="textDim" />
-            <BtcUsd sats={toSatoshis}/>
+            <BtcUsd sats={toSatoshis} />
           </Row>
           <Input
             preset="amount"
@@ -178,24 +229,39 @@ export default function TxCreateScreen() {
             enableMax={true}
             onMaxClick={() => {
               setAutoAdjust(true);
-              setUiState({ inputAmount: totalAvailableAmount.toString() });
+              setUiState({
+                inputAmount:
+                  chain.enum == 'BITCOIN_REGTEST' ? balanceValueRegtest.toString() : totalAvailableAmount.toString()
+              });
             }}
           />
 
           <Row justifyBetween>
             <Text text="Available" color="gold" />
-            {spendUnavailableSatoshis > 0 && (
-              <Row>
-                <Text text={`${spendUnavailableAmount}`} size="sm" style={{ color: '#65D5F0' }} />
-                <Text text={`BTC`} size="sm" color="textDim" />
-                <Text text={`+`} size="sm" color="textDim" />
-              </Row>
+            {chain.enum == 'BITCOIN_REGTEST' ? (
+              <>
+                {' '}
+                <Row>
+                  <Text text={`${balanceValueRegtest}`} size="sm" color="gold" />
+                  <Text text={`BTC`} size="sm" color="textDim" />
+                </Row>
+              </>
+            ) : (
+              <>
+                {' '}
+                {spendUnavailableSatoshis > 0 && (
+                  <Row>
+                    <Text text={`${spendUnavailableAmount}`} size="sm" style={{ color: '#65D5F0' }} />
+                    <Text text={`BTC`} size="sm" color="textDim" />
+                    <Text text={`+`} size="sm" color="textDim" />
+                  </Row>
+                )}
+                <Row>
+                  <Text text={`${avaiableAmount}`} size="sm" color="gold" />
+                  <Text text={`BTC`} size="sm" color="textDim" />
+                </Row>
+              </>
             )}
-
-            <Row>
-              <Text text={`${avaiableAmount}`} size="sm" color="gold" />
-              <Text text={`BTC`} size="sm" color="textDim" />
-            </Row>
           </Row>
 
           <Row justifyBetween>
@@ -236,7 +302,11 @@ export default function TxCreateScreen() {
           <Row justifyBetween>
             <Text text="Total" color="textDim" />
             <Row>
-              <Text text={`${totalAmount}`} size="sm" color="textDim" />
+              <Text
+                text={`${chain.enum == 'BITCOIN_REGTEST' ? balanceValueRegtest : totalAmount}`}
+                size="sm"
+                color="textDim"
+              />
               <Text text={`BTC`} size="sm" color="textDim" />
             </Row>
           </Row>
@@ -251,6 +321,25 @@ export default function TxCreateScreen() {
             }}
           />
         </Column>
+        {chain.enum == 'BITCOIN_REGTEST' && (
+          <>
+            {' '}
+            <Text text="Opnet Fee" color="textDim" />
+            <Input
+              preset="amount"
+              placeholder={'sat/vB'}
+              value={OpnetRateInputVal}
+              onAmountInputChange={(amount) => {
+                setOpnetRateInputVal(amount);
+              }}
+              // onBlur={() => {
+              //   const val = parseInt(feeRateInputVal) + '';
+              //   setFeeRateInputVal(val);
+              // }}
+              autoFocus={true}
+            />
+          </>
+        )}
 
         <Column mt="lg">
           <RBFBar
@@ -268,7 +357,37 @@ export default function TxCreateScreen() {
           preset="primary"
           text="Next"
           onClick={(e) => {
-            navigate('TxConfirmScreen', { rawTxInfo });
+            if (!(chain.enum == 'BITCOIN_REGTEST')) {
+              navigate('TxConfirmScreen', { rawTxInfo });
+            } else {
+              navigate('TxOpnetConfirmScreen', {
+                rawTxInfo: {
+                  items: items,
+                  contractAddress: 'BTC',
+                  account: account,
+                  inputAmount: inputAmount,
+                  address: toInfo.address,
+                  feeRate: feeRate, // replace with actual feeRate
+                  OpnetRateInputVal: OpnetRateInputVal, // replace with actual OpnetRateInputVal
+                  header: 'Send BTC', // replace with actual header
+                  networkFee: feeRate, // replace with actual networkFee
+                  features: {
+                    rbf: false // replace with actual rbf value
+                  },
+                  inputInfos: [], // replace with actual inputInfos
+                  isToSign: false, // replace with actual isToSign value
+                  opneTokens: [
+                    {
+                      amount: parseFloat(inputAmount) * 10 ** 8,
+                      divisibility: 8,
+                      spacedRune: 'Bitcoin',
+                      symbol: 'BTC'
+                    }
+                  ],
+                  action: 'sendBTC' // replace with actual opneTokens
+                }
+              });
+            }
           }}></Button>
       </Content>
     </Layout>

@@ -16,8 +16,7 @@ export default function ExportPrivateKeyScreen() {
   const { account } = state as {
     account: Account;
   };
-  console.log(state);
-  console.log(account);
+
   const [password, setPassword] = useState('');
   const [disabled, setDisabled] = useState(true);
 

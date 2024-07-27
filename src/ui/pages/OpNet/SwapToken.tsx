@@ -55,7 +55,6 @@ export default function Swap() {
       return;
     }
     setSelectedOption(option);
-    console.log('Selected option:', option);
   };
   const handleSelectOutput = (option: OpNetBalance) => {
     if (option.address == selectedOption?.address) {
@@ -63,7 +62,6 @@ export default function Swap() {
       return;
     }
     setSelectedOptioOutput(option);
-    console.log('Selected option:', option);
   };
   const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
@@ -72,7 +70,6 @@ export default function Swap() {
     if (value === '' || /^\d*\.?\d*$/.test(value)) {
       if (selectedOption && selectedOptionOutput) {
         const maxBalance = Number(selectedOption.amount) / Math.pow(10, selectedOption.divisibility);
-        console.log(maxBalance);
         // If the input is not empty and is a valid number
         if (value !== '' && value !== '.') {
           const numericValue = parseFloat(value);
@@ -91,11 +88,9 @@ export default function Swap() {
             BigInt(Number(numericValue) * Math.pow(10, selectedOption.divisibility)),
             [selectedOption.address, selectedOptionOutput.address]
           );
-          console.log(getData);
           if ('error' in getData) {
             return;
           } else {
-            console.log(getData.decoded[0][1]);
             setOutPutAmount(
               (parseInt(getData.decoded[0][1].toString()) / Math.pow(10, selectedOptionOutput.divisibility)).toString()
             );
@@ -145,7 +140,6 @@ export default function Swap() {
 
   useState(() => {
     const getData = async () => {
-      console.log(await wallet.getChainType());
       Web3API.setNetwork(await wallet.getChainType());
       const parsedTokens = [WBTC_ADDRESS_REGTEST, MOTO_ADDRESS_REGTEST];
 
@@ -159,7 +153,6 @@ export default function Swap() {
 
           const balance = await contract.balanceOf(currentAccount.address);
           if (!('error' in balance)) {
-            console.log(contractInfo?.logo);
             tokenBalances.push({
               address: tokenAddress,
               name: contractInfo?.name || '',

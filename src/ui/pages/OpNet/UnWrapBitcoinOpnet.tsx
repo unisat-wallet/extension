@@ -1,8 +1,10 @@
+import { IWBTCContract, WBTC_ABI, getContract } from 'opnet';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { Account, Inscription, OpNetBalance, RawTxInfo } from '@/shared/types';
+import Web3API from '@/shared/web3/Web3API';
 import { Button, Column, Content, Header, Image, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
@@ -18,6 +20,8 @@ import {
 } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
+import { useWallet } from '@/ui/utils';
+import { wBTC } from '@btc-vision/transaction';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../MainRoute';
@@ -34,7 +38,7 @@ export default function UnWrapBitcoinOpnet() {
 
   const OpNetBalance = props.OpNetBalance;
   const account = useCurrentAccount();
-
+  const wallet = useWallet();
   const navigate = useNavigate();
   const runesTx = useRunesTx();
   const [inputAmount, setInputAmount] = useState('');
@@ -70,8 +74,28 @@ export default function UnWrapBitcoinOpnet() {
   const tools = useTools();
   useEffect(() => {
     fetchUtxos();
-    setAvailableBalance((parseInt(OpNetBalance.amount.toString()) / 10 ** OpNetBalance.divisibility).toString());
-    tools.showLoading(false);
+    const checkAvailableBalance = async () => {
+      Web3API.setNetwork(await wallet.getChainType());
+
+      const contract: IWBTCContract = getContract<IWBTCContract>(
+        wBTC.getAddress(Web3API.network),
+        WBTC_ABI,
+        Web3API.provider,
+        account.address
+      );
+      const checkWithdrawalRequest = await contract.withdrawableBalanceOf(account.address);
+
+      if ('error' in checkWithdrawalRequest) {
+        tools.toastError('Error getting WBTC');
+        throw new Error('Invalid calldata in withdrawal request');
+      }
+      console.log(checkWithdrawalRequest.decoded[0]);
+      setAvailableBalance(
+        (Number(checkWithdrawalRequest.decoded[0] as bigint) / 10 ** OpNetBalance.divisibility).toString()
+      );
+      tools.showLoading(false);
+    };
+    checkAvailableBalance();
   }, []);
 
   const prepareSendRunes = usePrepareSendRunesCallback();

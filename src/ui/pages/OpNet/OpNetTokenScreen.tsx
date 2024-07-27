@@ -133,7 +133,6 @@ export default function OpNetTokenScreen() {
                     preset="primary"
                     icon="pencil"
                     onClick={(e) => {
-                      console.log(btcBalance);
                       navigate('WrapBitcoinOpnet', {
                         OpNetBalance: btcBalance
                       });
@@ -145,7 +144,6 @@ export default function OpNetTokenScreen() {
                     preset="primary"
                     icon="pencil"
                     onClick={(e) => {
-                      console.log(btcBalance);
                       navigate('UnWrapBitcoinOpnet', {
                         OpNetBalance: tokenSummary.opNetBalance
                       });
@@ -179,7 +177,6 @@ export default function OpNetTokenScreen() {
                     preset="primary"
                     icon="pencil"
                     onClick={(e) => {
-                      console.log(btcBalance);
                       navigate('StakeWBTCoPNet', {
                         OpNetBalance: tokenSummary.opNetBalance
                       });

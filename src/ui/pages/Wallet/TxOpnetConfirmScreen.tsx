@@ -19,6 +19,7 @@ import RunesPreviewCard from '@/ui/components/RunesPreviewCard';
 import { useLocationState, useWallet } from '@/ui/utils';
 import { BinaryWriter } from '@btc-vision/bsi-binary';
 import {
+  IFundingTransactionParameters,
   IInteractionParameters,
   IUnwrapParameters,
   IWrapParameters,
@@ -215,10 +216,21 @@ export default function TxOpnetConfirmScreen() {
       Web3API.provider,
       walletGet.p2tr
     );
+    const checkWithdrawalRequest = await contract.withdrawableBalanceOf(rawTxInfo.account.address);
 
-    const withdrawalRequest = await contract.requestWithdrawal(unwrapAmount);
-    if ('error' in withdrawalRequest) {
+    if ('error' in checkWithdrawalRequest) {
       throw new Error('Invalid calldata in withdrawal request');
+    }
+    if ((checkWithdrawalRequest.decoded[0] as bigint) < unwrapAmount) {
+      tools.toastError('Your withdrawable WBTC balance is ' + (checkWithdrawalRequest.decoded[0] as bigint));
+      return;
+    }
+    const withdrawalRequest = await contract.requestWithdrawal(unwrapAmount);
+
+    if ('error' in withdrawalRequest || 'error' in checkWithdrawalRequest) {
+      tools.toastError('Invalid calldata in withdrawal request');
+      console.log(withdrawalRequest);
+      throw new Error(`Something went wrong while simulating the withdraw request: ${withdrawalRequest}`);
     }
     const interactionParameters: IInteractionParameters = {
       from: walletGet.p2tr,
@@ -267,8 +279,7 @@ export default function TxOpnetConfirmScreen() {
       network: Web3API.network, // Bitcoin network
       feeRate: 100, // Fee rate in satoshis per byte (bitcoin fee)
       priorityFee: 1000n, // OPNet priority fee (incl gas.)
-      amount: unwrapAmount,
-      calldata: calldata
+      amount: unwrapAmount + (checkWithdrawalRequest.decoded[0] as bigint)
     };
 
     try {
@@ -494,7 +505,6 @@ export default function TxOpnetConfirmScreen() {
       priorityFee: 50000n,
       calldata: contractResult as Buffer
     };
-    console.log(interactionParameters);
     const sendTransact = await Web3API.transactionFactory.signInteraction(interactionParameters);
 
     // If this transaction is missing, opnet will deny the unwrapping request.
@@ -574,6 +584,36 @@ export default function TxOpnetConfirmScreen() {
       return utxos;
     }
   };
+  const sendBTC = async () => {
+    const foundObject = rawTxInfo.items.find((obj) => obj.account && obj.account.address === rawTxInfo.account.address);
+    const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
+    const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
+    const utxos = await Web3API.getUTXOs(
+      [walletGet.p2wpkh, walletGet.p2tr],
+      expandToDecimals(rawTxInfo.inputAmount, 8)
+    );
+    const IFundingTransactionParameters: IFundingTransactionParameters = {
+      amount: expandToDecimals(rawTxInfo.inputAmount, 8),
+      utxos: utxos,
+      signer: walletGet.keypair,
+      network: Web3API.network,
+      feeRate: 100,
+      priorityFee: 1000n,
+      to: rawTxInfo.address,
+      from: rawTxInfo.account.address
+    };
+    const sendTransact = await Web3API.transactionFactory.createBTCTransfer(IFundingTransactionParameters);
+    const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact.tx, false);
+    if (!firstTransaction || !firstTransaction.success) {
+      tools.toastError('Error: Could not broadcast first transaction');
+      console.error('Transaction failed:', firstTransaction);
+      return;
+    }
+    tools.toastSuccess(
+      `"You have sucessfully swapped ${rawTxInfo.inputAmount[0]} ${rawTxInfo.opneTokens[0].symbol} for ${rawTxInfo.inputAmount[2]}  ${rawTxInfo.opneTokens[1].symbol}"`
+    );
+    navigate('TxSuccessScreen', { txid: firstTransaction.result });
+  };
   return (
     <Layout>
       <Content>
@@ -652,6 +692,8 @@ export default function TxOpnetConfirmScreen() {
                 claim();
               } else if (rawTxInfo.action == 'swap') {
                 swap();
+              } else if (rawTxInfo.action == 'sendBTC') {
+                sendBTC();
               } else {
                 handleConfirm();
               }
