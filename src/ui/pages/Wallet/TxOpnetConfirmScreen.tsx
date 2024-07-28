@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { Account } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
 import Web3API from '@/shared/web3/Web3API';
-import { Button, Card, Column, Content, Footer, Layout, Row, Text } from '@/ui/components';
+import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import RunesPreviewCard from '@/ui/components/RunesPreviewCard';
 import { useLocationState, useWallet } from '@/ui/utils';
@@ -702,10 +702,13 @@ export default function TxOpnetConfirmScreen() {
   };
   return (
     <Layout>
+      <Header
+        onBack={() => {
+          window.history.go(-1);
+        }}
+        title={rawTxInfo.header}
+      />
       <Content>
-        <Row itemsCenter fullX justifyCenter>
-          <Text text={rawTxInfo.header} size="xxl" />
-        </Row>
         <Column gap="xl">
           <Section title="Network Fee Rate:">
             <Text text={rawTxInfo.feeRate.toString()} />
