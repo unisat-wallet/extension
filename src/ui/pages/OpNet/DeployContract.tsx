@@ -98,10 +98,12 @@ export default function WrapBitcoinOpnet() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title={'Wrap Bitcoin'}
+        title={'deploy Contract'}
       />
       <Content>
         <Text text="Upload Contract" color="textDim" />
+        <Text text={getFile?.name} />
+
         <div
           style={{
             border: '2px dashed #ccc',
