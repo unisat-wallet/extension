@@ -19,6 +19,7 @@ import RunesPreviewCard from '@/ui/components/RunesPreviewCard';
 import { useLocationState, useWallet } from '@/ui/utils';
 import { BinaryWriter } from '@btc-vision/bsi-binary';
 import {
+  IDeploymentParameters,
   IFundingTransactionParameters,
   IInteractionParameters,
   IUnwrapParameters,
@@ -78,10 +79,9 @@ export default function TxOpnetConfirmScreen() {
           return;
         }
 
-        tools.toastSuccess(
-          `"You have sucessfully unwraped ${unwrapUseAmount + finalUnwrapTx.feeRefundOrLoss} Bitcoin"`
-        );
-        navigate('TxSuccessScreen', { txid: unwrapTransaction.result });
+        tools.toastSuccess(`"You have sucessfully unwraped your Bitcoin"`);
+
+        navigate('TxSuccessScreen', { txid: unwrapTransaction });
       };
       completeUnwrap();
     }
@@ -184,7 +184,7 @@ export default function TxOpnetConfirmScreen() {
       throw new Error('Could not broadcast first transaction');
     }
 
-    tools.toastSuccess(`"You have sucessfully wraped ${wrapAmount} Bitcoin"`);
+    tools.toastSuccess(`"You have sucessfully wraped ${Number(wrapAmount) / 10 ** 8} Bitcoin"`);
     navigate('TxSuccessScreen', { secondTxBroadcast });
   };
 
@@ -658,6 +658,48 @@ export default function TxOpnetConfirmScreen() {
     );
     navigate('TxSuccessScreen', { txid: firstTransaction.result });
   };
+  const deployContract = async () => {
+    try {
+      const foundObject = rawTxInfo.items.find(
+        (obj) => obj.account && obj.account.address === rawTxInfo.account.address
+      );
+      const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
+      const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
+      const utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], expandToDecimals(0.08, 8));
+      const arrayBuffer = await rawTxInfo.file.arrayBuffer();
+      const uint8Array = new Uint8Array(arrayBuffer);
+
+      const deploymentParameters: IDeploymentParameters = {
+        utxos: utxos,
+        signer: walletGet.keypair,
+        network: Web3API.network,
+        feeRate: 100,
+        priorityFee: 1000n,
+        from: walletGet.p2tr,
+        bytecode: Buffer.from(uint8Array)
+      };
+      const sendTransact = await Web3API.transactionFactory.signDeployment(deploymentParameters);
+      const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact.transaction[0], false);
+      if (!firstTransaction || !firstTransaction.success) {
+        // tools.toastError('Error,Please Try again');
+        console.log(firstTransaction);
+        throw new Error('Could not broadcast first transaction');
+      }
+
+      // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
+      const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransact.transaction[1], false);
+      if (!secondTransaction || !secondTransaction.success) {
+        // tools.toastError('Error,Please Try again');
+        throw new Error('Could not broadcast first transaction');
+      } else {
+        console.log(secondTransaction);
+        tools.toastSuccess(`"You have sucessfully deployed a contract"`);
+        navigate('TxSuccessScreen', { txid: secondTransaction.result });
+      }
+    } catch (e) {
+      console.log(e);
+    }
+  };
   return (
     <Layout>
       <Content>
@@ -738,6 +780,8 @@ export default function TxOpnetConfirmScreen() {
                 swap();
               } else if (rawTxInfo.action == 'sendBTC') {
                 sendBTC();
+              } else if (rawTxInfo.action == 'deploy') {
+                deployContract();
               } else {
                 handleConfirm();
               }

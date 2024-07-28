@@ -33,6 +33,7 @@ import DiscoverTabScreen from './Main/DiscoverTabScreen';
 import SettingsTabScreen from './Main/SettingsTabScreen';
 import WalletTabScreen from './Main/WalletTabScreen';
 import WelcomeScreen from './Main/WelcomeScreen';
+import DeployContract from './OpNet/DeployContract';
 import OpNetTokenScreen from './OpNet/OpNetTokenScreen';
 import SendOpNetScreen from './OpNet/SendOpNetScreen';
 import StakeWBTCoPNet from './OpNet/StakeWBTCoPNet';
@@ -291,6 +292,10 @@ const routes = {
   Swap: {
     path: '/opnet/swap',
     element: <Swap />
+  },
+  DeployContract: {
+    path: '/opnet/deploy-contract',
+    element: <DeployContract />
   }
 };
 

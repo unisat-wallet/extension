@@ -169,6 +169,7 @@ export function OP_NETList() {
           <Button text="Import Tokens" preset="primary" onClick={() => setImportTokenBool(true)}></Button>
           <br />
           <Button text="Refresh List" preset="primary" onClick={() => fetchData()}></Button>
+          <Button text="Deploy" preset="primary" onClick={() => navigate('DeployContract', {})}></Button>
         </Row>
       </BaseView>
       {importTokenBool && (
