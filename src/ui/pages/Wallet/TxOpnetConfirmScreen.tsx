@@ -171,10 +171,6 @@ export default function TxOpnetConfirmScreen() {
 
     const finalTx = await Web3API.transactionFactory.wrap(wrapParameters);
     const firstTxBroadcast = await Web3API.provider.sendRawTransaction(finalTx.transaction[0], false);
-    if (!firstTxBroadcast) {
-      tools.toastError('Error,Please Try again');
-      throw new Error('Could not broadcast first transaction');
-    }
 
     if (!firstTxBroadcast.success) {
       tools.toastError('Error,Please Try again');
@@ -182,10 +178,6 @@ export default function TxOpnetConfirmScreen() {
     }
 
     const secondTxBroadcast = await Web3API.provider.sendRawTransaction(finalTx.transaction[1], false);
-    if (!secondTxBroadcast) {
-      tools.toastError('Error,Please Try again');
-      throw new Error('Could not broadcast first transaction');
-    }
 
     if (!secondTxBroadcast.success) {
       tools.toastError('Error,Please Try again');
@@ -298,6 +290,24 @@ export default function TxOpnetConfirmScreen() {
       }
 
       utxosForUnwrap = sendTransaction[2];
+      let transactionHash;
+      let attempts = 0;
+      const maxAttempts = 12; // 1 minute max wait time
+
+      while (!transactionHash && attempts < maxAttempts) {
+        const txResult = await Web3API.provider.getTransaction(sendTransaction[1]);
+        console.log(txResult);
+        if (txResult && !('error' in txResult) && txResult.hash) {
+          transactionHash = txResult.hash;
+        } else {
+          await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait 5 seconds
+          attempts++;
+        }
+      }
+
+      if (!transactionHash) {
+        throw new Error('Failed to get transaction hash after multiple attempts');
+      }
     }
 
     const unwrapUtxos = await Web3API.limitedProvider.fetchUnWrapParameters(unwrapAmount, walletGet.p2tr);
