@@ -296,7 +296,6 @@ export default function TxOpnetConfirmScreen() {
 
       while (!transactionHash && attempts < maxAttempts) {
         const txResult = await Web3API.provider.getTransaction(sendTransaction[1]);
-        console.log(txResult);
         if (txResult && !('error' in txResult) && txResult.hash) {
           transactionHash = txResult.hash;
         } else {

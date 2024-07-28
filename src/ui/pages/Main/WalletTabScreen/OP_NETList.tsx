@@ -11,7 +11,12 @@ import OpNetBalanceCard from '@/ui/components/OpNetBalanceCard';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
-import { MOTO_ADDRESS_REGTEST, WBTC_ADDRESS_REGTEST } from '@btc-vision/transaction';
+import {
+  MOTO_ADDRESS_REGTEST,
+  MOTO_ADDRESS_TESTNET,
+  WBTC_ADDRESS_REGTEST,
+  WBTC_ADDRESS_TESTNET
+} from '@btc-vision/transaction';
 
 import { useNavigate } from '../../MainRoute';
 import { AddOpNetToken } from '../../Wallet/AddOpNetToken';
@@ -45,13 +50,34 @@ export function OP_NETList() {
       if (tokensImported) {
         parsedTokens = JSON.parse(tokensImported);
       }
-      if ((await wallet.getNetworkType()) == 2) {
-        if (!parsedTokens.includes(WBTC_ADDRESS_REGTEST)) {
-          parsedTokens.push(WBTC_ADDRESS_REGTEST);
+
+      const currentNetwork = await wallet.getNetworkType();
+
+      switch(currentNetwork) {
+        case NetworkType.MAINNET: {
+          break;
         }
-        if (!parsedTokens.includes(MOTO_ADDRESS_REGTEST)) {
-          parsedTokens.push(MOTO_ADDRESS_REGTEST);
+        case NetworkType.TESTNET: {
+          if (!parsedTokens.includes(WBTC_ADDRESS_TESTNET)) {
+            parsedTokens.push(WBTC_ADDRESS_TESTNET);
+          }
+          if (!parsedTokens.includes(MOTO_ADDRESS_TESTNET)) {
+            parsedTokens.push(MOTO_ADDRESS_TESTNET);
+          }
+          break;
         }
+        case NetworkType.REGTEST: {
+          if (!parsedTokens.includes(WBTC_ADDRESS_REGTEST)) {
+            parsedTokens.push(WBTC_ADDRESS_REGTEST);
+          }
+          if (!parsedTokens.includes(MOTO_ADDRESS_REGTEST)) {
+            parsedTokens.push(MOTO_ADDRESS_REGTEST);
+          }
+          break;
+        }
+      }
+
+      if(parsedTokens.length) {
         localStorage.setItem('tokensImported', JSON.stringify(parsedTokens));
       }
 

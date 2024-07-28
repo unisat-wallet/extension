@@ -1,4 +1,4 @@
-import { getContract, IOP_20Contract, JSONRpcProvider, OP_20_ABI } from 'opnet';
+import { getContract, IOP_20Contract, OP_20_ABI } from 'opnet';
 import { useEffect, useMemo, useState } from 'react';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
@@ -20,7 +20,6 @@ interface LocationState {
 
 export default function OpNetTokenScreen() {
   const navigate = useNavigate();
-  const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
 
   const { address } = useLocationState<LocationState>();
   const [tokenSummary, setTokenSummary] = useState<any>({
@@ -48,8 +47,8 @@ export default function OpNetTokenScreen() {
 
   useEffect(() => {
     const getAddress = async () => {
-      const btcbalanceGet = await provider.getBalance(account.address);
-      const contract: IOP_20Contract = getContract<IOP_20Contract>(address, OP_20_ABI, provider);
+      const btcbalanceGet = await Web3API.provider.getBalance(account.address);
+      const contract: IOP_20Contract = getContract<IOP_20Contract>(address, OP_20_ABI, Web3API.provider);
       const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(address);
 
       const balance = await contract.balanceOf(account.address);
