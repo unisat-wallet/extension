@@ -806,7 +806,7 @@ export default function TxOpnetConfirmScreen() {
       return;
     }
     tools.toastSuccess(
-      `"You have sucessfully swapped ${rawTxInfo.inputAmount[0]} ${rawTxInfo.opneTokens[0].symbol} for ${rawTxInfo.inputAmount[2]}  ${rawTxInfo.opneTokens[1].symbol}"`
+      `"You have sucessfully swapped ${rawTxInfo.inputAmount[0]} ${rawTxInfo.opneTokens[0].symbol} for ${rawTxInfo.inputAmount[2]}  ${rawTxInfo.opneTokens[0].symbol}"`
     );
     navigate('TxSuccessScreen', { txid: firstTransaction.result });
   };
