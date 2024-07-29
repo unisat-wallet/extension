@@ -115,7 +115,7 @@ export default function Mint() {
         console.error('Error fetching supply:', maxSupply.error || totalSupply);
         return;
       }
-      setMaxSupply(BigInt(Number(maxSupply.decoded[0] as bigint) - Number(totalSupply.decoded[0] as bigint)));
+      setMaxSupply(BigInt((maxSupply.decoded[0] as bigint) - (totalSupply.decoded[0] as bigint)));
     };
     setWallet();
 
