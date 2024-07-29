@@ -239,7 +239,7 @@ export default function OpNetTokenScreen() {
               });
             }}></Text>
 
-          {!isOwner ? (
+          {isOwner ? (
             <Row justifyBetween full>
               <Button
                 text="Mint"

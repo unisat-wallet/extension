@@ -162,6 +162,7 @@ export default function WrapBitcoinOpnet() {
                 features: {
                   rbf: false // replace with actual rbf value
                 },
+                automine: true,
                 file: getFile,
                 inputInfos: [], // replace with actual inputInfos
                 isToSign: false, // replace with actual isToSign value

@@ -21,6 +21,7 @@ import RunesPreviewCard from '@/ui/components/RunesPreviewCard';
 import { useLocationState, useWallet } from '@/ui/utils';
 import { ABIDataTypes, Address, BinaryWriter } from '@btc-vision/bsi-binary';
 import {
+  DeploymentResult,
   IDeploymentParameters,
   IFundingTransactionParameters,
   IInteractionParameters,
@@ -317,23 +318,24 @@ export default function TxOpnetConfirmScreen() {
       }
 
       utxosForUnwrap = sendTransaction[2];
-      let transactionHash;
-      let attempts = 0;
-      const maxAttempts = 12; // 1 minute max wait time
 
-      while (!transactionHash && attempts < maxAttempts) {
-        const txResult = await Web3API.provider.getTransaction(sendTransaction[1]);
-        if (txResult && !('error' in txResult) && txResult.hash) {
-          transactionHash = txResult.hash;
-        } else {
+      const waitForTransaction = async () => {
+        let attempts = 0;
+        const maxAttempts = 12; // 1 minute max wait time
+
+        while (attempts < maxAttempts) {
+          const txResult = await Web3API.provider.getTransaction(sendTransaction[1]);
+          if (txResult && !('error' in txResult) && txResult.hash) {
+            return txResult.hash;
+          }
           await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait 5 seconds
           attempts++;
         }
-      }
-
-      if (!transactionHash) {
         throw new Error('Failed to get transaction hash after multiple attempts');
-      }
+      };
+
+      const transactionHash = await waitForTransaction();
+      console.log(transactionHash);
     }
 
     const unwrapUtxos = await Web3API.limitedProvider.fetchUnWrapParameters(unwrapAmount, walletGet.p2tr);
@@ -829,7 +831,7 @@ export default function TxOpnetConfirmScreen() {
         bytecode: Buffer.from(uint8Array)
       };
 
-      const sendTransact = await Web3API.transactionFactory.signDeployment(deploymentParameters);
+      const sendTransact: DeploymentResult = await Web3API.transactionFactory.signDeployment(deploymentParameters);
       const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact.transaction[0], false);
       if (!firstTransaction || !firstTransaction.success) {
         // tools.toastError('Error,Please Try again');
@@ -851,7 +853,67 @@ export default function TxOpnetConfirmScreen() {
       const airdropTo: Map<Address, bigint> = new Map();
       airdropTo.set(walletGet.p2tr, 100_000n * 10n ** 18n);
       console.log(sendTransact.contractAddress);
-      await airdropOwner(sendTransact.contractAddress, airdropTo, sendTransact.utxos);
+      const tokensImported = localStorage.getItem('tokensImported');
+      let updatedTokens: string[] = tokensImported ? JSON.parse(tokensImported) : [];
+      if (tokensImported) {
+        updatedTokens = JSON.parse(tokensImported);
+      }
+      if (!updatedTokens.includes(sendTransact.contractAddress.toString())) {
+        updatedTokens.push(sendTransact.contractAddress.toString());
+        localStorage.setItem('tokensImported', JSON.stringify(updatedTokens));
+      }
+      // await airdropOwner(sendTransact.contractAddress, airdropTo, sendTransact.utxos);
+      // if (rawTxInfo.automine) {
+      //   const contract = await getContract<IOP_20Contract>(
+      //     sendTransact.contractAddress,
+      //     OP_20_ABI,
+      //     Web3API.provider,
+      //     walletGet.p2tr
+      //   );
+      //   const getSupply = await contract.totalSupply();
+      //   if ('error' in getSupply) {
+      //     console.log(getSupply);
+      //     return;
+      //   }
+      //   console.log(getSupply);
+
+      //   const mintData = await contract.mint(walletGet.p2tr, getSupply.decoded[0] as bigint);
+      //   if ('error' in mintData) {
+      //     console.log(mintData);
+      //     tools.toastError('Error');
+      //     return;
+      //   }
+      //   const interactionParameters: IInteractionParameters = {
+      //     from: walletGet.p2tr,
+      //     to: contract.address.toString(),
+      //     utxos: utxos,
+      //     signer: walletGet.keypair,
+      //     network: Web3API.network,
+      //     feeRate: rawTxInfo.feeRate,
+      //     priorityFee: rawTxInfo.priorityFee,
+      //     calldata: mintData.calldata as Buffer
+      //   };
+
+      //   const sendTransact2 = await Web3API.transactionFactory.signInteraction(interactionParameters);
+      //   const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact2[0], false);
+      //   if (!firstTransaction || !firstTransaction.success) {
+      //     // tools.toastError('Error,Please Try again');
+      //     console.log(firstTransaction);
+      //     throw new Error('Could not broadcast first transaction');
+      //   }
+
+      //   // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
+      //   const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransact2[1], false);
+      //   if (!secondTransaction || !secondTransaction.success) {
+      //     // tools.toastError('Error,Please Try again');
+      //     throw new Error('Could not broadcast first transaction');
+      //   }
+
+      //   tools.toastSuccess(`You have successfully minted ${rawTxInfo.inputAmount} `);
+      //   navigate('TxSuccessScreen', { txid: secondTransaction.result });
+      // }
+      tools.toastSuccess(`You have successfully deployed ${sendTransact.contractAddress}`);
+      navigate('TxSuccessScreen', { txid: secondTransaction.result, contractAddress: sendTransact.contractAddress });
     } catch (e) {
       console.log(e);
     }

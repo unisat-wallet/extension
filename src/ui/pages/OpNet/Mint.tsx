@@ -1,8 +1,11 @@
+import { IOP_20Contract, OP_20_ABI, getContract } from 'opnet';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
+import { runesUtils } from '@/shared/lib/runes-utils';
 import { Account, Inscription, OpNetBalance, RawTxInfo } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
+import Web3API from '@/shared/web3/Web3API';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
@@ -16,6 +19,7 @@ import {
   usePrepareSendRunesCallback,
   useRunesTx
 } from '@/ui/state/transactions/hooks';
+import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
@@ -30,6 +34,9 @@ export default function Mint() {
   const props = state as {
     OpNetBalance: OpNetBalance;
   };
+  interface IOP_20ContractWithMaxSupply extends IOP_20Contract {
+    maximumSupply(): any;
+  }
 
   const OpNetBalance = props.OpNetBalance;
   const account = useCurrentAccount();
@@ -78,6 +85,7 @@ export default function Mint() {
   const [feeRate, setFeeRate] = useState(5);
   const [enableRBF, setEnableRBF] = useState(false);
   const wallet = useWallet();
+  const [maxSupply, setMaxSupply] = useState<bigint>(0n);
   const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
   const keyring = useCurrentKeyring();
   const items = useMemo(() => {
@@ -93,6 +101,24 @@ export default function Mint() {
   useEffect(() => {
     setError('');
     setDisabled(true);
+    const setWallet = async () => {
+      Web3API.setNetwork(await wallet.getChainType());
+      const contract: IOP_20ContractWithMaxSupply = getContract<IOP_20ContractWithMaxSupply>(
+        OpNetBalance.address,
+        OP_20_ABI,
+        Web3API.provider
+      );
+      const maxSupply = await contract.maximumSupply();
+      const totalSupply = await contract.totalSupply();
+
+      if ('error' in maxSupply || 'error' in totalSupply) {
+        console.error('Error fetching supply:', maxSupply.error || totalSupply);
+        return;
+      }
+      setMaxSupply(BigInt(Number(maxSupply.decoded[0] as bigint) - Number(totalSupply.decoded[0] as bigint)));
+    };
+    setWallet();
+
     if (!inputAmount) {
       return;
     }
@@ -126,7 +152,22 @@ export default function Mint() {
         </Row> */}
 
         <Column mt="lg">
-          <Row justifyBetween></Row>
+          <Row justifyBetween>
+            <Text text="Balance" color="textDim" />
+            <Row
+              itemsCenter
+              onClick={() => {
+                setInputAmount(runesUtils.toDecimalAmount(maxSupply.toString(), OpNetBalance.divisibility));
+              }}>
+              <Text text="MAX" preset="sub" style={{ color: colors.white_muted }} />
+              <Text
+                text={`${runesUtils.toDecimalAmount(maxSupply.toString(), OpNetBalance.divisibility)} `}
+                preset="bold"
+                size="sm"
+                wrap
+              />
+            </Row>
+          </Row>
           <Input
             preset="amount"
             placeholder={'Amount'}
