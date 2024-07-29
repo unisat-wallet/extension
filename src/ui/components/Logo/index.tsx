@@ -1,5 +1,3 @@
-import { fontSizes } from '@/ui/theme/font';
-
 import { Image } from '../Image';
 import { Row } from '../Row';
 
@@ -8,7 +6,7 @@ export function Logo(props: { preset?: 'large' | 'small' }) {
   if (preset === 'large') {
     return (
       <Row justifyCenter itemsCenter>
-        <Image src="./images/logo/opnet_logo_dark.svg" size={fontSizes.xxxl} />
+        <Image src="./images/logo/opnet_logo_dark.svg" width={150} height={80} />
 
         {/* <Text text="OP_WALLET" preset="title-bold" size="xxl" disableTranslate /> */}
       </Row>
@@ -16,7 +14,7 @@ export function Logo(props: { preset?: 'large' | 'small' }) {
   } else {
     return (
       <Row justifyCenter itemsCenter>
-        <Image src="./images/logo/opnet_logo_dark.svg" size={fontSizes.xxl} />
+        <Image src="./images/logo/opnet_logo_dark.svg" height={30} width={100} />
         {/* <Text text="OP_WALLET" preset="title-bold" disableTranslate /> */}
       </Row>
     );
