@@ -80,7 +80,7 @@ export default function UnWrapBitcoinOpnet() {
       }
       console.log(checkWithdrawalRequest.decoded[0]);
       const result = 10 ** OpNetBalance.divisibility;
-      setAvailableBalance((Number(checkWithdrawalRequest.decoded[0] as bigint) / result).toString());
+      setAvailableBalance(Number(checkWithdrawalRequest.decoded[0] as bigint).toString());
       tools.showLoading(false);
     };
     checkAvailableBalance();
