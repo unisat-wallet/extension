@@ -177,7 +177,7 @@ export default function Mint() {
               if (numAmount <= Number(maxSupply) / 10 ** OpNetBalance.divisibility) {
                 setInputAmount(amount);
               } else {
-                setInputAmount(maxSupply.toString());
+                setInputAmount(runesUtils.toDecimalAmount(maxSupply.toString(), OpNetBalance.divisibility));
               }
             }}
             runesDecimal={OpNetBalance.divisibility}
