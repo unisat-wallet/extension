@@ -263,7 +263,7 @@ export default function Swap() {
         <Button
           text="Swap "
           preset="primary"
-          // icon="pencil"
+          icon="swap"
           style={$styleButton}
           onClick={(e) => {
             const resultInput = 10 ** (selectedOption?.divisibility ?? 8);

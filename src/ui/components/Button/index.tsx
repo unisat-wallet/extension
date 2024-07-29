@@ -217,7 +217,13 @@ export function Button(props: ButtonProps) {
         onClick={disabled ? undefined : onClick}>
         <Row>
           {LeftAccessory && <div style={$leftAccessoryStyle}>{LeftAccessory}</div>}
-          {icon && <Icon icon={icon} color={'white'} style={{ marginRight: spacing.tiny }} />}
+          {icon && (
+            <Icon
+              icon={icon}
+              color={'white'}
+              style={{ marginRight: spacing.tiny, width: icon === 'swap' ? '20px' : undefined }}
+            />
+          )}
           <Column justifyCenter gap="zero">
             {text && <Text text={text} style={$textStyle} />}
             {subText && <Text text={subText} style={$subTextStyle} />}
