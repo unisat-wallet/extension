@@ -1039,28 +1039,39 @@ export default function TxOpnetConfirmScreen() {
             icon={undefined}
             text={'Sign'}
             onClick={() => {
-              if (rawTxInfo.action == 'wrap') {
-                handleWrapConfirm();
-              } else if (rawTxInfo.action == 'unwrap') {
-                handleUnWrapConfirm();
-              } else if (rawTxInfo.action == 'stake') {
-                stake();
-              } else if (rawTxInfo.action == 'unstake') {
-                unstake();
-              } else if (rawTxInfo.action == 'claim') {
-                claim();
-              } else if (rawTxInfo.action == 'swap') {
-                swap();
-              } else if (rawTxInfo.action == 'sendBTC') {
-                sendBTC();
-              } else if (rawTxInfo.action == 'deploy') {
-                deployContract();
-              } else if (rawTxInfo.action == 'mint') {
-                mint();
-              } else if (rawTxInfo.action == 'airdrop') {
-                airdrop();
-              } else {
-                handleConfirm();
+              switch (rawTxInfo.action) {
+                case 'wrap':
+                  handleWrapConfirm();
+                  break;
+                case 'unwrap':
+                  handleUnWrapConfirm();
+                  break;
+                case 'stake':
+                  stake();
+                  break;
+                case 'unstake':
+                  unstake();
+                  break;
+                case 'claim':
+                  claim();
+                  break;
+                case 'swap':
+                  swap();
+                  break;
+                case 'sendBTC':
+                  sendBTC();
+                  break;
+                case 'deploy':
+                  deployContract();
+                  break;
+                case 'mint':
+                  mint();
+                  break;
+                case 'airdrop':
+                  airdrop();
+                  break;
+                default:
+                  handleConfirm();
               }
             }}
             full
