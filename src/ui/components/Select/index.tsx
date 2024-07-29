@@ -125,7 +125,10 @@ export function Select(props: SelectProps) {
           const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(searchTerm);
 
           const balance = await contract.balanceOf(account.address);
-
+          if (balance == undefined) {
+            setFilteredOptions([]);
+            setLoading(false);
+          }
           if (!('error' in balance)) {
             const opNetBalance: OpNetBalance = {
               address: searchTerm,
