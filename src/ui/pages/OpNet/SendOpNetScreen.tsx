@@ -241,7 +241,7 @@ export default function SendOpNetScreen() {
                 isToSign: false,
                 opneTokens: [
                   {
-                    amount: parseInt(inputAmount) * 10 ** OpNetBalance.divisibility,
+                    amount: parseFloat(inputAmount) * 10 ** OpNetBalance.divisibility,
                     divisibility: OpNetBalance.divisibility,
                     spacedRune: OpNetBalance.name,
                     symbol: OpNetBalance.symbol

@@ -218,7 +218,7 @@ export default function WrapBitcoinOpnet() {
                 isToSign: false, // replace with actual isToSign value
                 opneTokens: [
                   {
-                    amount: parseInt(inputAmount) * 10 ** OpNetBalance.divisibility,
+                    amount: parseFloat(inputAmount) * 10 ** OpNetBalance.divisibility,
                     divisibility: OpNetBalance.divisibility,
                     spacedRune: OpNetBalance.name,
                     symbol: OpNetBalance.symbol
