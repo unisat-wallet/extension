@@ -167,7 +167,7 @@ export const OW_HD_PATH = "m/86'/0'/0'";
 export const RESTORE_WALLETS: { value: RestoreWalletType; name: string; addressTypes: AddressType[] }[] = [
   {
     value: RestoreWalletType.UNISAT,
-    name: 'OP_Wallet',
+    name: 'OP_WALLET',
     addressTypes: [
       AddressType.P2WPKH,
       AddressType.P2SH_P2WPKH,
@@ -294,9 +294,9 @@ export const WALLETCONNECT_STATUS_MAP = {
 export const INTERNAL_REQUEST_ORIGIN = 'https://unisat.io';
 
 export const INTERNAL_REQUEST_SESSION = {
-  name: 'OP_Wallet',
+  name: 'OP_WALLET',
   origin: INTERNAL_REQUEST_ORIGIN,
-  icon: './images/logo/logo@128x.png'
+  icon: './images/logo/opnet_logo_dark.svg'
 };
 
 export const EVENTS = {

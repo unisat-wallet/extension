@@ -117,7 +117,7 @@ export class OpenApiService {
       c++;
     }
     const headers = new Headers();
-    headers.append('X-Client', 'OP_Wallet');
+    headers.append('X-Client', 'OP_WALLET');
     headers.append('X-Version', VERSION);
     headers.append('x-address', this.clientAddress);
     headers.append('x-flag', this.addressFlag + '');
@@ -136,7 +136,7 @@ export class OpenApiService {
   httpPost = async (route: string, params: any) => {
     const url = this.endpoint + route;
     const headers = new Headers();
-    headers.append('X-Client', 'OP_Wallet');
+    headers.append('X-Client', 'OP_WALLET');
     headers.append('X-Version', VERSION);
     headers.append('x-address', this.clientAddress);
     headers.append('x-flag', this.addressFlag + '');
