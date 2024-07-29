@@ -1,15 +1,17 @@
-import { Layout, Header, Content, Icon, Text, Column, Footer, Button, Row } from '@/ui/components';
+import { Button, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useBlockstreamUrl } from '@/ui/state/settings/hooks';
 import { spacing } from '@/ui/theme/spacing';
 import { useLocationState } from '@/ui/utils';
+import { Address } from '@btc-vision/bsi-binary';
 
 interface LocationState {
   txid: string;
+  contractAddress?: Address;
 }
 
 export default function TxSuccessScreen() {
-  const { txid } = useLocationState<LocationState>();
+  const { txid, contractAddress } = useLocationState<LocationState>();
   const navigate = useNavigate();
   const blockstreamUrl = useBlockstreamUrl();
 
@@ -34,6 +36,15 @@ export default function TxSuccessScreen() {
             <Icon icon="eye" color="textDim" />
             <Text preset="regular-bold" text="View on Block Explorer" color="textDim" />
           </Row>
+
+          {
+            contractAddress && (
+              <Row
+                justifyCenter>
+                <Text preset="regular-bold" color="textDim">Contract Address: {contractAddress}</Text>
+              </Row>
+            )
+          }
         </Column>
       </Content>
       <Footer>

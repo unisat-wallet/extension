@@ -1,5 +1,7 @@
 import {
   BaseContractProperty,
+  BitcoinAbiTypes,
+  BitcoinInterfaceAbi,
   getContract,
   IMotoswapRouterContract,
   IOP_20Contract,
@@ -17,7 +19,7 @@ import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from
 import { useTools } from '@/ui/components/ActionComponent';
 import RunesPreviewCard from '@/ui/components/RunesPreviewCard';
 import { useLocationState, useWallet } from '@/ui/utils';
-import { BinaryWriter } from '@btc-vision/bsi-binary';
+import { ABIDataTypes, Address, BinaryWriter } from '@btc-vision/bsi-binary';
 import {
   IDeploymentParameters,
   IFundingTransactionParameters,
@@ -40,6 +42,31 @@ interface LocationState {
 
 function absBigInt(value: bigint): bigint {
   return value < 0n ? -value : value;
+}
+
+export const AIRDROP_ABI: BitcoinInterfaceAbi = [
+  ...OP_20_ABI,
+
+  {
+    name: 'airdrop',
+    inputs: [
+      {
+        name: 'wallets',
+        type: ABIDataTypes.ADDRESS_UINT256_TUPLE,
+      },
+    ],
+    outputs: [
+      {
+        name: 'ok',
+        type: ABIDataTypes.BOOL,
+      },
+    ],
+    type: BitcoinAbiTypes.Function,
+  },
+];
+
+export interface AirdropInterface extends IOP_20Contract {
+  airdrop(to: Map<Address, bigint>): Promise<BaseContractProperty>;
 }
 
 export default function TxOpnetConfirmScreen() {
@@ -459,6 +486,53 @@ export default function TxOpnetConfirmScreen() {
     tools.toastSuccess(`"You have sucessfully Staked ${amountToSend} Bitcoin"`);
     navigate('TxSuccessScreen', { txid: seconfTransaction.result });
   };
+  const airdropOwner = async (contractAddress: Address, amounts: Map<Address, bigint>, utxos: UTXO[]) => {
+    const foundObject = rawTxInfo.items.find((obj) => obj.account && obj.account.address === rawTxInfo.account.address);
+    const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
+    const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
+
+    const contract: AirdropInterface = getContract<AirdropInterface>(
+      contractAddress,
+      AIRDROP_ABI,
+      Web3API.provider,
+      walletGet.p2tr
+    );
+
+    const calldata = contract.encodeCalldata('airdrop', [amounts]);
+
+    const interactionParameters: IInteractionParameters = {
+      from: walletGet.p2tr,
+      to: contract.address.toString(),
+      utxos: utxos,
+      signer: walletGet.keypair,
+      network: Web3API.network,
+      feeRate: rawTxInfo.feeRate,
+      priorityFee: rawTxInfo.priorityFee,
+      calldata: calldata
+    };
+
+    console.log(interactionParameters);
+
+    const sendTransact = await Web3API.transactionFactory.signInteraction(interactionParameters);
+
+    // If this transaction is missing, opnet will deny the unwrapping request.
+    const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact[0], false);
+    if (!firstTransaction.success) {
+      console.log('Broadcasted:', false);
+      return;
+    } else {
+      console.log('Broadcasted:', firstTransaction);
+    }
+
+    // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
+    const seconfTransaction = await Web3API.provider.sendRawTransaction(sendTransact[1], false);
+    if (!seconfTransaction.success) {
+      console.log('Broadcasted:', false);
+      return;
+    } else {
+      console.log('Broadcasted:', seconfTransaction);
+    }
+  };
   const claim = async () => {
     const foundObject = rawTxInfo.items.find((obj) => obj.account && obj.account.address === rawTxInfo.account.address);
     const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
@@ -680,6 +754,7 @@ export default function TxOpnetConfirmScreen() {
         from: walletGet.p2tr,
         bytecode: Buffer.from(uint8Array)
       };
+
       const sendTransact = await Web3API.transactionFactory.signDeployment(deploymentParameters);
       const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact.transaction[0], false);
       if (!firstTransaction || !firstTransaction.success) {
@@ -695,9 +770,14 @@ export default function TxOpnetConfirmScreen() {
         throw new Error('Could not broadcast first transaction');
       } else {
         console.log(secondTransaction);
-        tools.toastSuccess(`"You have sucessfully deployed a contract"`);
-        navigate('TxSuccessScreen', { txid: secondTransaction.result });
+        tools.toastSuccess(`You have successfully deployed ${sendTransact.contractAddress}`);
+        navigate('TxSuccessScreen', { txid: secondTransaction.result, contractAddress: sendTransact.contractAddress });
       }
+
+      const airdropTo: Map<Address, bigint> = new Map();
+      airdropTo.set(walletGet.p2tr, 100_000n * (10n ** 18n));
+
+      await airdropOwner(sendTransact.contractAddress, airdropTo, sendTransact.utxos);
     } catch (e) {
       console.log(e);
     }

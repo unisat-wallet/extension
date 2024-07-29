@@ -6,12 +6,7 @@ import { Button, Content, Header, Layout, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import {
-  useFetchAssetUtxosRunesCallback,
-  useFetchUtxosCallback,
-  usePrepareSendRunesCallback,
-  useRunesTx
-} from '@/ui/state/transactions/hooks';
+import { useRunesTx } from '@/ui/state/transactions/hooks';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../MainRoute';
@@ -45,7 +40,7 @@ export default function WrapBitcoinOpnet() {
     inscription: undefined
   });
 
-  const [availableBalance, setAvailableBalance] = useState('0');
+  //const [availableBalance, setAvailableBalance] = useState('0');
   const [error, setError] = useState('');
 
   const defaultOutputValue = 546;
@@ -59,12 +54,12 @@ export default function WrapBitcoinOpnet() {
     }
   }, [toInfo.address]);
 
-  const fetchUtxos = useFetchUtxosCallback();
+  //const fetchUtxos = useFetchUtxosCallback();
 
-  const fetchAssetUtxosRunes = useFetchAssetUtxosRunesCallback();
+  //const fetchAssetUtxosRunes = useFetchAssetUtxosRunesCallback();
   const tools = useTools();
 
-  const prepareSendRunes = usePrepareSendRunesCallback();
+  //const prepareSendRunes = usePrepareSendRunesCallback();
   const [file, ç] = useState<File | null>(null);
 
   const [feeRate, setFeeRate] = useState(5);
@@ -84,7 +79,6 @@ export default function WrapBitcoinOpnet() {
   useEffect(() => {
     setError('');
     setDisabled(false);
-    console.log(getFile);
     if (!getFile) {
       setDisabled(true);
     }
