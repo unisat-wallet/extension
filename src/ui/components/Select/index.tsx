@@ -1,10 +1,16 @@
+import { IOP_20Contract, OP_20_ABI, getContract } from 'opnet';
 import { CSSProperties, useEffect, useState } from 'react';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { OpNetBalance } from '@/shared/types';
-import { Column, Image, Row, Text } from '@/ui/components';
+import Web3API from '@/shared/web3/Web3API';
+import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
+import { Column, Icon, Image, Row, Text } from '@/ui/components';
+import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
+import { useWallet } from '@/ui/utils';
+import { LoadingOutlined } from '@ant-design/icons';
 
 import { BaseView, BaseViewProps } from '../BaseView';
 import { RunesTicker } from '../RunesTicker';
@@ -82,22 +88,63 @@ export function Select(props: SelectProps) {
   const [selectedOption, setSelectedOption] = useState<OpNetBalance | null>(null);
   const [searchTerm, setSearchTerm] = useState('');
   const [filteredOptions, setFilteredOptions] = useState(options);
+  const account = useCurrentAccount();
+  const wallet = useWallet();
+  const [loading, setLoading] = useState(true);
 
   const $style = Object.assign({}, $selectStyle, $styleOverride);
-
   useEffect(() => {
-    if (searchTerm) {
-      const lowercasedSearch = searchTerm.toLowerCase();
-      setFilteredOptions(
-        options.filter(
-          (option) =>
-            option.name.toLowerCase().includes(lowercasedSearch) ||
-            option.address.toLowerCase().includes(lowercasedSearch)
-        )
-      );
-    } else {
-      setFilteredOptions(options);
-    }
+    const setWallet = async () => {
+      Web3API.setNetwork(await wallet.getChainType());
+    };
+    setWallet();
+  }, []);
+  useEffect(() => {
+    const checkOption = async () => {
+      if (searchTerm) {
+        setLoading(true);
+        const lowercasedSearch = searchTerm.toLowerCase();
+        setFilteredOptions(
+          options.filter(
+            (option) =>
+              option.name.toLowerCase().includes(lowercasedSearch) ||
+              option.address.toLowerCase().includes(lowercasedSearch)
+          )
+        );
+        if (
+          options.filter(
+            (option) =>
+              option.name.toLowerCase().includes(lowercasedSearch) ||
+              option.address.toLowerCase().includes(lowercasedSearch)
+          ).length == 0
+        ) {
+          if (searchTerm.length > 20) {
+            setLoading(true);
+          }
+          const contract: IOP_20Contract = getContract<IOP_20Contract>(searchTerm, OP_20_ABI, Web3API.provider);
+          const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(searchTerm);
+
+          const balance = await contract.balanceOf(account.address);
+
+          if (!('error' in balance)) {
+            const opNetBalance: OpNetBalance = {
+              address: searchTerm,
+              name: contractInfo?.name || '',
+              amount: BigInt(balance.decoded[0].toString()),
+              divisibility: contractInfo?.decimals || 8,
+              symbol: contractInfo?.symbol,
+              logo: contractInfo?.logo
+            };
+            setFilteredOptions([opNetBalance]);
+            setLoading(false);
+          }
+        }
+      } else {
+        setFilteredOptions(options);
+        setLoading(false);
+      }
+    };
+    checkOption();
   }, [searchTerm, options]);
 
   const handleSelect = (option: OpNetBalance) => {
@@ -151,6 +198,7 @@ export function Select(props: SelectProps) {
       {isOpen && (
         <div style={$modalStyle} onClick={() => setIsOpen(false)}>
           <div style={$modalContentStyle} onClick={(e) => e.stopPropagation()}>
+            {' '}
             <input
               type="text"
               placeholder="Search..."
@@ -158,13 +206,25 @@ export function Select(props: SelectProps) {
               onChange={(e) => setSearchTerm(e.target.value)}
               style={$searchInputStyle}
             />
-            {filteredOptions.map((option) => (
-              <div key={option.address} style={$optionStyle} onClick={() => handleSelect(option)}>
-                <Image src={option.logo} size={fontSizes.tiny} />
-                {option.name}
-              </div>
-            ))}
-            {filteredOptions.length === 0 && <div style={{ padding: 10, color: colors.text }}>No options found</div>}
+            {loading ? (
+              <Row itemsCenter justifyCenter>
+                <Icon size={fontSizes.xxxl} color="gold">
+                  <LoadingOutlined />
+                </Icon>
+              </Row>
+            ) : (
+              <>
+                {filteredOptions.map((option) => (
+                  <div key={option.address} style={$optionStyle} onClick={() => handleSelect(option)}>
+                    <Image src={option.logo} size={fontSizes.tiny} />
+                    {option.name}
+                  </div>
+                ))}
+                {filteredOptions.length === 0 && (
+                  <div style={{ padding: 10, color: colors.text }}>No options found</div>
+                )}
+              </>
+            )}
           </div>
         </div>
       )}
