@@ -166,7 +166,7 @@ export function Select(props: SelectProps) {
   };
   const calculateBalance = (amount: bigint | undefined, divisibility: number | undefined) => {
     const balance = runesUtils.toDecimalNumber(amount, divisibility);
-    let str = balance.toFixed(2);
+    let str = balance.toFixed(8);
     if (balance.lt(0.0001)) {
       str = '0';
     }
