@@ -153,7 +153,7 @@ export default function Mint() {
 
         <Column mt="lg">
           <Row justifyBetween>
-            <Text text="Balance" color="textDim" />
+            <Text text="Amount" color="textDim" />
             <Row
               itemsCenter
               onClick={() => {
@@ -173,7 +173,12 @@ export default function Mint() {
             placeholder={'Amount'}
             value={inputAmount.toString()}
             onAmountInputChange={(amount) => {
-              setInputAmount(amount);
+              const numAmount = Number(amount);
+              if (numAmount <= Number(maxSupply) / 10 ** OpNetBalance.divisibility) {
+                setInputAmount(amount);
+              } else {
+                setInputAmount(maxSupply.toString());
+              }
             }}
             runesDecimal={OpNetBalance.divisibility}
           />
