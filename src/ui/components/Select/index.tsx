@@ -137,6 +137,9 @@ export function Select(props: SelectProps) {
             };
             setFilteredOptions([opNetBalance]);
             setLoading(false);
+          } else {
+            setFilteredOptions([]);
+            setLoading(false);
           }
         }
       } else {
