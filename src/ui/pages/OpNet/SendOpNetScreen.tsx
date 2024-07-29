@@ -121,9 +121,9 @@ export default function SendOpNetScreen() {
         <Row itemsCenter fullX justifyCenter>
           {OpNetBalance.logo && <Image src={OpNetBalance.logo} size={fontSizes.tiny} />}
           <Text
-            text={`${runesUtils.toDecimalAmount(OpNetBalance.amount.toString(), OpNetBalance.divisibility)} ${
-              OpNetBalance.symbol
-            } `}
+            text={`${Number(
+              runesUtils.toDecimalAmount(OpNetBalance.amount.toString(), OpNetBalance.divisibility)
+            ).toFixed(8)} ${OpNetBalance.symbol} `}
             preset="bold"
             textCenter
             size="xxl"
@@ -153,7 +153,9 @@ export default function SendOpNetScreen() {
               }}>
               <Text text="MAX" preset="sub" style={{ color: colors.white_muted }} />
               <Text
-                text={`${runesUtils.toDecimalAmount(OpNetBalance.amount.toString(), OpNetBalance.divisibility)} `}
+                text={`${Number(
+                  runesUtils.toDecimalAmount(OpNetBalance.amount.toString(), OpNetBalance.divisibility)
+                ).toFixed(8)} ${OpNetBalance.symbol} `}
                 preset="bold"
                 size="sm"
                 wrap
