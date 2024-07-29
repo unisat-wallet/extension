@@ -53,7 +53,7 @@ export function OP_NETList() {
 
       const currentNetwork = await wallet.getNetworkType();
 
-      switch(currentNetwork) {
+      switch (currentNetwork) {
         case NetworkType.MAINNET: {
           break;
         }
@@ -77,7 +77,7 @@ export function OP_NETList() {
         }
       }
 
-      if(parsedTokens.length) {
+      if (parsedTokens.length) {
         localStorage.setItem('tokensImported', JSON.stringify(parsedTokens));
       }
 
