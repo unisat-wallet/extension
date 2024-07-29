@@ -79,9 +79,8 @@ export default function UnWrapBitcoinOpnet() {
         throw new Error('Invalid calldata in withdrawal request');
       }
       console.log(checkWithdrawalRequest.decoded[0]);
-      setAvailableBalance(
-        (Number(checkWithdrawalRequest.decoded[0] as bigint) / 10 ** OpNetBalance.divisibility).toString()
-      );
+      const result = 10 ** OpNetBalance.divisibility;
+      setAvailableBalance((Number(checkWithdrawalRequest.decoded[0] as bigint) / result).toString());
       tools.showLoading(false);
     };
     checkAvailableBalance();
@@ -158,6 +157,21 @@ export default function UnWrapBitcoinOpnet() {
               <Text text="MAX" preset="sub" style={{ color: colors.white_muted }} />
               <Text
                 text={`${runesUtils.toDecimalAmount(OpNetBalance.amount.toString(), OpNetBalance.divisibility)} `}
+                preset="bold"
+                size="sm"
+                wrap
+              />
+            </Row>
+          </Row>
+          <Row justifyBetween>
+            <Text text="Pending Withdrawal" color="textDim" />
+            <Row
+              itemsCenter
+              onClick={() => {
+                setInputAmount(runesUtils.toDecimalAmount(OpNetBalance.amount.toString(), OpNetBalance.divisibility));
+              }}>
+              <Text
+                text={`${runesUtils.toDecimalAmount(availableBalance.toString(), OpNetBalance.divisibility)} `}
                 preset="bold"
                 size="sm"
                 wrap
