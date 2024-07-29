@@ -9,7 +9,7 @@ export function Logo(props: { preset?: 'large' | 'small' }) {
   if (preset === 'large') {
     return (
       <Row justifyCenter itemsCenter>
-        <Image src="./images/logo/wallet-logo.jpg" size={fontSizes.xxxl} />
+        <Image src="./images/logo/opnet_logo_dark.svg" size={fontSizes.xxxl} />
 
         <Text text="OP_wallet" preset="title-bold" size="xxl" disableTranslate />
       </Row>
@@ -17,7 +17,7 @@ export function Logo(props: { preset?: 'large' | 'small' }) {
   } else {
     return (
       <Row justifyCenter itemsCenter>
-        <Image src="./images/logo/wallet-logo.jpg" size={fontSizes.xxl} />
+        <Image src="./images/logo/opnet_logo_dark.svg" size={fontSizes.xxl} />
         <Text text="OP_wallet" preset="title-bold" disableTranslate />
       </Row>
     );
