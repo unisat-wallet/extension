@@ -14,7 +14,7 @@ export default function TxSuccessScreen() {
   const { txid, contractAddress } = useLocationState<LocationState>();
   const navigate = useNavigate();
   const blockstreamUrl = useBlockstreamUrl();
-
+console.log(contractAddress);
   return (
     <Layout>
       <Header />
@@ -38,12 +38,15 @@ export default function TxSuccessScreen() {
           </Row>
 
           {
-            contractAddress && (
+            contractAddress !== undefined ? (
               <Row
-                justifyCenter>
-                <Text preset="regular-bold" color="textDim">Contract Address: {contractAddress}</Text>
+                justifyCenter
+                onClick={() => {
+                  window.open(`${blockstreamUrl}/address/${contractAddress}`);
+                }}>
+                <Text preset="sub-bold" text={`Contract Address: ${contractAddress}`} color="textDim"></Text>
               </Row>
-            )
+            ) : null
           }
         </Column>
       </Content>

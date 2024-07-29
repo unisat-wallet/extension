@@ -769,7 +769,6 @@ export default function TxOpnetConfirmScreen() {
         // tools.toastError('Error,Please Try again');
         throw new Error('Could not broadcast first transaction');
       } else {
-        console.log(secondTransaction);
         tools.toastSuccess(`You have successfully deployed ${sendTransact.contractAddress}`);
         navigate('TxSuccessScreen', { txid: secondTransaction.result, contractAddress: sendTransact.contractAddress });
       }
