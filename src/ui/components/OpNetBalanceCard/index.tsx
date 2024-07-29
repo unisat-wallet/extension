@@ -17,7 +17,7 @@ export interface OpNetBalanceCardProps {
 export default function OpNetBalanceCard(props: OpNetBalanceCardProps) {
   const { tokenBalance, onClick } = props;
   const balance = runesUtils.toDecimalNumber(tokenBalance.amount, tokenBalance.divisibility);
-  let str = balance.toString();
+  let str = balance.toFixed(2);
   if (balance.lt(0.0001)) {
     str = '0';
   }
