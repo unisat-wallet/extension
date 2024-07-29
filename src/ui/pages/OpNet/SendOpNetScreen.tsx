@@ -149,7 +149,7 @@ export default function SendOpNetScreen() {
             <Row
               itemsCenter
               onClick={() => {
-                setInputAmount(runesUtils.toDecimalAmount(availableBalance, OpNetBalance.divisibility));
+                setInputAmount(runesUtils.toDecimalAmount(OpNetBalance.amount.toString(), OpNetBalance.divisibility));
               }}>
               <Text text="MAX" preset="sub" style={{ color: colors.white_muted }} />
               <Text
