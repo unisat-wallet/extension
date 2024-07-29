@@ -2,6 +2,7 @@ import { getContract, IOP_20Contract, OP_20_ABI } from 'opnet';
 import { useEffect, useMemo, useState } from 'react';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
+import { addressShortner } from '@/shared/utils';
 import Web3API from '@/shared/web3/Web3API';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { Button, Column, Content, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
@@ -9,7 +10,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
-import { copyToClipboard, useLocationState } from '@/ui/utils';
+import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
@@ -44,15 +45,24 @@ export default function OpNetTokenScreen() {
 
   const account = useCurrentAccount();
   const [loading, setLoading] = useState(true);
+  const [isOwner, setIsOwner] = useState(false);
+
+  const wallet = useWallet();
 
   useEffect(() => {
     const getAddress = async () => {
+      Web3API.setNetwork(await wallet.getChainType());
+
       const btcbalanceGet = await Web3API.provider.getBalance(account.address);
       const contract: IOP_20Contract = getContract<IOP_20Contract>(address, OP_20_ABI, Web3API.provider);
       const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(address);
 
       const balance = await contract.balanceOf(account.address);
+      const getOwner = await contract.isAddressOwner(account.address);
 
+      if (!('error' in getOwner)) {
+        setIsOwner(getOwner.decoded[0] as boolean);
+      }
       setBtcBalance({
         address: '',
         amount: btcbalanceGet,
@@ -87,7 +97,10 @@ export default function OpNetTokenScreen() {
     }
     return enable;
   }, [tokenSummary]);
-
+  const copy = (data) => {
+    copyToClipboard(data);
+    tools.toastSuccess('Copied' + data);
+  };
   const tools = useTools();
   if (loading) {
     return (
@@ -121,6 +134,23 @@ export default function OpNetTokenScreen() {
                 textCenter
                 size="xxl"
                 wrap
+              />
+            </Row>
+
+            <Row
+              itemsCenter
+              fullX
+              justifyCenter
+              onClick={(e) => {
+                copy(tokenSummary.opNetBalance.address);
+              }}>
+              <Icon icon="copy" color="textDim" />
+              <Text
+                text={addressShortner(tokenSummary.opNetBalance.address)}
+                color="textDim"
+                style={{
+                  overflowWrap: 'anywhere'
+                }}
               />
             </Row>
 
@@ -208,6 +238,35 @@ export default function OpNetTokenScreen() {
                 tools.toastSuccess('Copied');
               });
             }}></Text>
+
+          {!isOwner ? (
+            <Row justifyBetween full>
+              <Button
+                text="Mint"
+                preset="primary"
+                icon="pencil"
+                onClick={(e) => {
+                  navigate('Mint', {
+                    OpNetBalance: tokenSummary.opNetBalance
+                  });
+                }}
+                full
+              />
+              {/* <Button
+                text="Airdrop"
+                preset="primary"
+                icon="pencil"
+                onClick={(e) => {
+                  navigate('Airdrop', {
+                    OpNetBalance: tokenSummary.opNetBalance
+                  });
+                }}
+                full
+              /> */}
+            </Row>
+          ) : (
+            <></>
+          )}
         </Content>
       )}
     </Layout>

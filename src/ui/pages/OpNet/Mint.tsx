@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { runesUtils } from '@/shared/lib/runes-utils';
 import { Account, Inscription, OpNetBalance, RawTxInfo } from '@/shared/types';
-import { Button, Column, Content, Header, Image, Input, Layout, Row, Text } from '@/ui/components';
+import { expandToDecimals } from '@/shared/utils';
+import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { OutputValueBar } from '@/ui/components/OutputValueBar';
@@ -16,9 +16,7 @@ import {
   usePrepareSendRunesCallback,
   useRunesTx
 } from '@/ui/state/transactions/hooks';
-import { colors } from '@/ui/theme/colors';
-import { fontSizes } from '@/ui/theme/font';
-import { isValidAddress, useWallet } from '@/ui/utils';
+import { useWallet } from '@/ui/utils';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../MainRoute';
@@ -27,7 +25,7 @@ interface ItemData {
   key: string;
   account?: Account;
 }
-export default function SendOpNetScreen() {
+export default function Mint() {
   const { state } = useLocation();
   const props = state as {
     OpNetBalance: OpNetBalance;
@@ -95,10 +93,6 @@ export default function SendOpNetScreen() {
   useEffect(() => {
     setError('');
     setDisabled(true);
-
-    if (!isValidAddress(toInfo.address)) {
-      return;
-    }
     if (!inputAmount) {
       return;
     }
@@ -108,17 +102,17 @@ export default function SendOpNetScreen() {
       setDisabled(false);
       return;
     }
-  }, [toInfo, inputAmount, feeRate, enableRBF]);
+  }, [inputAmount, feeRate, enableRBF]);
   return (
     <Layout>
       <Header
         onBack={() => {
           window.history.go(-1);
         }}
-        title={'Send ' + OpNetBalance.name}
+        title={'Mint ' + OpNetBalance.name}
       />
       <Content>
-        <Row itemsCenter fullX justifyCenter>
+        {/* <Row itemsCenter fullX justifyCenter>
           {OpNetBalance.logo && <Image src={OpNetBalance.logo} size={fontSizes.tiny} />}
           <Text
             text={`${runesUtils.toDecimalAmount(OpNetBalance.amount.toString(), OpNetBalance.divisibility)} ${
@@ -129,37 +123,10 @@ export default function SendOpNetScreen() {
             size="xxl"
             wrap
           />
-        </Row>
+        </Row> */}
 
         <Column mt="lg">
-          <Text text="Recipient" preset="regular" color="textDim" />
-          <Input
-            preset="address"
-            addressInputData={toInfo}
-            onAddressInputChange={(val) => {
-              setToInfo(val);
-            }}
-            autoFocus={true}
-          />
-        </Column>
-
-        <Column mt="lg">
-          <Row justifyBetween>
-            <Text text="Balance" color="textDim" />
-            <Row
-              itemsCenter
-              onClick={() => {
-                setInputAmount(runesUtils.toDecimalAmount(availableBalance, OpNetBalance.divisibility));
-              }}>
-              <Text text="MAX" preset="sub" style={{ color: colors.white_muted }} />
-              <Text
-                text={`${runesUtils.toDecimalAmount(OpNetBalance.amount.toString(), OpNetBalance.divisibility)} `}
-                preset="bold"
-                size="sm"
-                wrap
-              />
-            </Row>
-          </Row>
+          <Row justifyBetween></Row>
           <Input
             preset="amount"
             placeholder={'Amount'}
@@ -202,10 +169,6 @@ export default function SendOpNetScreen() {
           onAmountInputChange={(amount) => {
             adjustFeeRateInput(amount);
           }}
-          // onBlur={() => {
-          //   const val = parseInt(feeRateInputVal) + '';
-          //   setFeeRateInputVal(val);
-          // }}
           autoFocus={true}
         />
         <Column mt="lg">
@@ -228,11 +191,11 @@ export default function SendOpNetScreen() {
                 items: items,
                 contractAddress: OpNetBalance.address,
                 account: account,
-                inputAmount: inputAmount,
+                inputAmount: expandToDecimals(inputAmount, OpNetBalance.divisibility),
                 address: toInfo.address,
                 feeRate: feeRate,
                 priorityFee: BigInt(OpnetRateInputVal),
-                header: 'Send Token',
+                header: 'Mint Token',
                 networkFee: feeRate,
                 features: {
                   rbf: false
@@ -247,7 +210,7 @@ export default function SendOpNetScreen() {
                     symbol: OpNetBalance.symbol
                   }
                 ],
-                action: 'send' // replace with actual opneTokens
+                action: 'mint' // replace with actual opneTokens
               }
             });
           }}></Button>

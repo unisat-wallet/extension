@@ -33,7 +33,9 @@ import DiscoverTabScreen from './Main/DiscoverTabScreen';
 import SettingsTabScreen from './Main/SettingsTabScreen';
 import WalletTabScreen from './Main/WalletTabScreen';
 import WelcomeScreen from './Main/WelcomeScreen';
+import Airdrop from './OpNet/Airdrop';
 import DeployContract from './OpNet/DeployContract';
+import Mint from './OpNet/Mint';
 import OpNetTokenScreen from './OpNet/OpNetTokenScreen';
 import SendOpNetScreen from './OpNet/SendOpNetScreen';
 import StakeWBTCoPNet from './OpNet/StakeWBTCoPNet';
@@ -296,6 +298,14 @@ const routes = {
   DeployContract: {
     path: '/opnet/deploy-contract',
     element: <DeployContract />
+  },
+  Mint: {
+    path: '/opnet/mint',
+    element: <Mint />
+  },
+  Airdrop: {
+    path: '/opnet/airdrop',
+    element: <Airdrop />
   }
 };
 

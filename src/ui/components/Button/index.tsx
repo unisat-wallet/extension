@@ -111,12 +111,19 @@ const $viewPresets = {
     background: 'linear-gradient(103.92deg, #EBB94C 0%, #E97E00 100%)',
     minHeight: 50,
     borderRadius: 12
+  } as CSSProperties),
+  fontsmall: Object.assign({}, $baseViewStyle, {
+    backgroundColor: colors.yellow,
+    height: '40px'
   } as CSSProperties)
 };
 
 const $hoverViewPresets: Record<Presets, CSSProperties> = {
   default: {
     backgroundColor: '#383535'
+  },
+  fontsmall: {
+    backgroundColor: colors.yellow_dark
   },
   primary: {
     backgroundColor: colors.yellow_dark
@@ -155,6 +162,7 @@ const $textPresets: Record<Presets, CSSProperties> = {
   approval: Object.assign({}, $baseTextStyle, { color: colors.black }),
   danger: Object.assign({}, $baseTextStyle, { color: colors.white }),
   bar: Object.assign({}, $baseTextStyle, { textAlign: 'left', fontWeight: 'bold' } as CSSProperties),
+  fontsmall: Object.assign({}, $baseTextStyle, { fontSize: '10px', color: colors.black }),
 
   defaultV2: Object.assign({}, $baseTextStyle, {}),
   primaryV2: Object.assign({}, $baseTextStyle, { color: colors.black })
@@ -166,6 +174,7 @@ const $pressedTextPresets: Record<Presets, CSSProperties> = {
   danger: { opacity: 0.9 },
   approval: { opacity: 0.9 },
   bar: { opacity: 0.9 },
+  fontsmall: { opacity: 0.9 },
   defaultV2: { opacity: 0.9 },
   primaryV2: { opacity: 0.9 }
 };

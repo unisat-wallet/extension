@@ -52,17 +52,17 @@ export const AIRDROP_ABI: BitcoinInterfaceAbi = [
     inputs: [
       {
         name: 'wallets',
-        type: ABIDataTypes.ADDRESS_UINT256_TUPLE,
-      },
+        type: ABIDataTypes.ADDRESS_UINT256_TUPLE
+      }
     ],
     outputs: [
       {
         name: 'ok',
-        type: ABIDataTypes.BOOL,
-      },
+        type: ABIDataTypes.BOOL
+      }
     ],
-    type: BitcoinAbiTypes.Function,
-  },
+    type: BitcoinAbiTypes.Function
+  }
 ];
 
 export interface AirdropInterface extends IOP_20Contract {
@@ -530,7 +530,81 @@ export default function TxOpnetConfirmScreen() {
       console.log('Broadcasted:', false);
       return;
     } else {
+      // Add contractAddress to tokensImported in localStorage
+      const tokensImported = localStorage.getItem('tokensImported');
+      let updatedTokens: string[] = tokensImported ? JSON.parse(tokensImported) : [];
+      if (tokensImported) {
+        updatedTokens = JSON.parse(tokensImported);
+      }
+      if (!updatedTokens.includes(contractAddress.toString())) {
+        updatedTokens.push(contractAddress.toString());
+        localStorage.setItem('tokensImported', JSON.stringify(updatedTokens));
+      }
       console.log('Broadcasted:', seconfTransaction);
+      tools.toastSuccess(`You have successfully deployed ${contractAddress}`);
+      navigate('TxSuccessScreen', { txid: seconfTransaction.result, contractAddress: contractAddress });
+    }
+  };
+  const airdrop = async () => {
+    const contractAddress = rawTxInfo.address;
+    const amounts = rawTxInfo.amounts;
+    const foundObject = rawTxInfo.items.find((obj) => obj.account && obj.account.address === rawTxInfo.account.address);
+    const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
+    const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
+    const utxos: UTXO[] = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], 100000n);
+
+    const contract: AirdropInterface = getContract<AirdropInterface>(
+      contractAddress,
+      AIRDROP_ABI,
+      Web3API.provider,
+      walletGet.p2tr
+    );
+
+    const calldata = contract.encodeCalldata('airdrop', [amounts]);
+
+    const interactionParameters: IInteractionParameters = {
+      from: walletGet.p2tr,
+      to: contract.address.toString(),
+      utxos: utxos,
+      signer: walletGet.keypair,
+      network: Web3API.network,
+      feeRate: rawTxInfo.feeRate,
+      priorityFee: rawTxInfo.priorityFee,
+      calldata: calldata
+    };
+
+    console.log(interactionParameters);
+
+    const sendTransact = await Web3API.transactionFactory.signInteraction(interactionParameters);
+
+    // If this transaction is missing, opnet will deny the unwrapping request.
+    const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact[0], false);
+    if (!firstTransaction.success) {
+      console.log('Broadcasted:', false);
+      return;
+    } else {
+      console.log('Broadcasted:', firstTransaction);
+    }
+
+    // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
+    const seconfTransaction = await Web3API.provider.sendRawTransaction(sendTransact[1], false);
+    if (!seconfTransaction.success) {
+      console.log('Broadcasted:', false);
+      return;
+    } else {
+      // Add contractAddress to tokensImported in localStorage
+      const tokensImported = localStorage.getItem('tokensImported');
+      let updatedTokens: string[] = tokensImported ? JSON.parse(tokensImported) : [];
+      if (tokensImported) {
+        updatedTokens = JSON.parse(tokensImported);
+      }
+      if (!updatedTokens.includes(contractAddress.toString())) {
+        updatedTokens.push(contractAddress.toString());
+        localStorage.setItem('tokensImported', JSON.stringify(updatedTokens));
+      }
+      console.log('Broadcasted:', seconfTransaction);
+      tools.toastSuccess(`You have successfully deployed ${contractAddress}`);
+      navigate('TxSuccessScreen', { txid: seconfTransaction.result, contractAddress: contractAddress });
     }
   };
   const claim = async () => {
@@ -591,6 +665,7 @@ export default function TxOpnetConfirmScreen() {
     tools.toastSuccess(`"You have sucessfully Staked ${amountToSend} Bitcoin"`);
     navigate('TxSuccessScreen', { txid: seconfTransaction.result });
   };
+
   const swap = async () => {
     const foundObject = rawTxInfo.items.find((obj) => obj.account && obj.account.address === rawTxInfo.account.address);
     const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
@@ -668,7 +743,6 @@ export default function TxOpnetConfirmScreen() {
       if ('error' in contractApprove) {
         throw new Error(contractApprove.error);
       }
-
       const interactionParameters: IInteractionParameters = {
         from: walletGet.p2tr,
         to: contract.address.toString(),
@@ -761,6 +835,8 @@ export default function TxOpnetConfirmScreen() {
         // tools.toastError('Error,Please Try again');
         console.log(firstTransaction);
         throw new Error('Could not broadcast first transaction');
+      } else {
+        console.log(firstTransaction);
       }
 
       // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
@@ -769,14 +845,65 @@ export default function TxOpnetConfirmScreen() {
         // tools.toastError('Error,Please Try again');
         throw new Error('Could not broadcast first transaction');
       } else {
-        tools.toastSuccess(`You have successfully deployed ${sendTransact.contractAddress}`);
-        navigate('TxSuccessScreen', { txid: secondTransaction.result, contractAddress: sendTransact.contractAddress });
+        console.log(firstTransaction);
       }
 
       const airdropTo: Map<Address, bigint> = new Map();
-      airdropTo.set(walletGet.p2tr, 100_000n * (10n ** 18n));
-
+      airdropTo.set(walletGet.p2tr, 100_000n * 10n ** 18n);
+      console.log(sendTransact.contractAddress);
       await airdropOwner(sendTransact.contractAddress, airdropTo, sendTransact.utxos);
+    } catch (e) {
+      console.log(e);
+    }
+  };
+  const mint = async () => {
+    try {
+      const foundObject = rawTxInfo.items.find(
+        (obj) => obj.account && obj.account.address === rawTxInfo.account.address
+      );
+      const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
+      const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
+      const utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], expandToDecimals(0.08, 8));
+      const contract = getContract<IOP_20Contract>(
+        rawTxInfo.contractAddress,
+        OP_20_ABI,
+        Web3API.provider,
+        walletGet.p2tr
+      );
+      const mintData = await contract.mint(walletGet.p2tr, rawTxInfo.inputAmount);
+      if ('error' in mintData) {
+        console.log(mintData);
+        tools.toastError('Error');
+        return;
+      }
+      const interactionParameters: IInteractionParameters = {
+        from: walletGet.p2tr,
+        to: contract.address.toString(),
+        utxos: utxos,
+        signer: walletGet.keypair,
+        network: Web3API.network,
+        feeRate: rawTxInfo.feeRate,
+        priorityFee: rawTxInfo.priorityFee,
+        calldata: mintData.calldata as Buffer
+      };
+
+      const sendTransact = await Web3API.transactionFactory.signInteraction(interactionParameters);
+      const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact[0], false);
+      if (!firstTransaction || !firstTransaction.success) {
+        // tools.toastError('Error,Please Try again');
+        console.log(firstTransaction);
+        throw new Error('Could not broadcast first transaction');
+      }
+
+      // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
+      const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransact[1], false);
+      if (!secondTransaction || !secondTransaction.success) {
+        // tools.toastError('Error,Please Try again');
+        throw new Error('Could not broadcast first transaction');
+      }
+
+      tools.toastSuccess(`You have successfully minted ${rawTxInfo.inputAmount} `);
+      navigate('TxSuccessScreen', { txid: secondTransaction.result });
     } catch (e) {
       console.log(e);
     }
@@ -866,6 +993,10 @@ export default function TxOpnetConfirmScreen() {
                 sendBTC();
               } else if (rawTxInfo.action == 'deploy') {
                 deployContract();
+              } else if (rawTxInfo.action == 'mint') {
+                mint();
+              } else if (rawTxInfo.action == 'airdrop') {
+                airdrop();
               } else {
                 handleConfirm();
               }

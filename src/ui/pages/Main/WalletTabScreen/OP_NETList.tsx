@@ -1,5 +1,5 @@
 import { getContract, IOP_20Contract, JSONRpcProvider, OP_20_ABI } from 'opnet';
-import { useEffect, useState } from 'react';
+import { CSSProperties, useEffect, useState } from 'react';
 
 import { OpNetBalance } from '@/shared/types';
 import Web3API from '@/shared/web3/Web3API';
@@ -143,11 +143,15 @@ export function OP_NETList() {
     paddingBottom: 10,
     fontSize: 12,
     cursor: 'pointer'
-  } as any;
+  } as CSSProperties;
   const $opnet = {
     display: 'block',
     minHeight: 100
-  } as any;
+  } as CSSProperties;
+  const $btnStyle = {
+    width: '33%',
+    fontSize: '10px'
+  } as CSSProperties;
   const $style = Object.assign({}, $footerBaseStyle);
   const $style2 = Object.assign({}, $opnet);
   return (
@@ -192,10 +196,18 @@ export function OP_NETList() {
       </BaseView>
       <BaseView style={$style}>
         <Row>
-          <Button text="Import Tokens" preset="primary" onClick={() => setImportTokenBool(true)}></Button>
-          <br />
-          <Button text="Refresh List" preset="primary" onClick={() => fetchData()}></Button>
-          <Button text="Deploy" preset="primary" onClick={() => navigate('DeployContract', {})}></Button>
+          <Button
+            style={$btnStyle}
+            text="Import Tokens"
+            preset="fontsmall"
+            onClick={() => setImportTokenBool(true)}></Button>
+
+          <Button style={$btnStyle} text="Refresh List" preset="fontsmall" onClick={() => fetchData()}></Button>
+          <Button
+            style={$btnStyle}
+            text="Deploy"
+            preset="fontsmall"
+            onClick={() => navigate('DeployContract', {})}></Button>
         </Row>
       </BaseView>
       {importTokenBool && (
