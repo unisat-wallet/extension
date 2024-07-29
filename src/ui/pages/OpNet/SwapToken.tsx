@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { getContract, IMotoswapRouterContract, IOP_20Contract, MOTOSWAP_ROUTER_ABI, OP_20_ABI } from 'opnet';
 import { CSSProperties, useMemo, useState } from 'react';
+import { useLocation } from 'react-router-dom';
 
 import { Account, OpNetBalance } from '@/shared/types';
 import Web3API from '@/shared/web3/Web3API';
@@ -25,6 +26,12 @@ interface ItemData {
 }
 
 export default function Swap() {
+  const { state } = useLocation();
+  const props = state as {
+    OpNetBalance: OpNetBalance;
+  };
+  const OpNetBalance = props.OpNetBalance;
+
   const [loading, setLoading] = useState(true);
   const [switchOptions, setSwitchOptions] = useState<OpNetBalance[]>([]);
   const [selectedOption, setSelectedOption] = useState<OpNetBalance | null>(null);
@@ -145,7 +152,9 @@ export default function Swap() {
     const getData = async () => {
       Web3API.setNetwork(await wallet.getChainType());
       const parsedTokens = [WBTC_ADDRESS_REGTEST, MOTO_ADDRESS_REGTEST];
-
+      if (OpNetBalance?.address) {
+        setSelectedOption(OpNetBalance);
+      }
       const tokenBalances: OpNetBalance[] = [];
       for (let i = 0; i < parsedTokens.length; i++) {
         try {
@@ -198,7 +207,12 @@ export default function Swap() {
       <Column py="xl" style={$columnstyle}>
         <BaseView style={$style}>
           <Row itemsCenter fullX justifyBetween style={{ alignItems: 'baseline' }}>
-            <Select options={switchOptions} placeholder={'Select Token'} onSelect={handleSelect} />
+            <Select
+              options={switchOptions}
+              selectedoptionuse={selectedOption}
+              placeholder={'Select Token'}
+              onSelect={handleSelect}
+            />
             <input
               type="text"
               placeholder="0"

@@ -238,21 +238,22 @@ export default function OpNetTokenScreen() {
                 tools.toastSuccess('Copied');
               });
             }}></Text>
+          <Row justifyBetween full>
+            {isOwner ? (
+              <>
+                <Button
+                  text="Mint"
+                  preset="primary"
+                  icon="pencil"
+                  onClick={(e) => {
+                    navigate('Mint', {
+                      OpNetBalance: tokenSummary.opNetBalance
+                    });
+                  }}
+                  full
+                />
 
-          {isOwner ? (
-            <Row justifyBetween full>
-              <Button
-                text="Mint"
-                preset="primary"
-                icon="pencil"
-                onClick={(e) => {
-                  navigate('Mint', {
-                    OpNetBalance: tokenSummary.opNetBalance
-                  });
-                }}
-                full
-              />
-              {/* <Button
+                {/* <Button
                 text="Airdrop"
                 preset="primary"
                 icon="pencil"
@@ -263,10 +264,25 @@ export default function OpNetTokenScreen() {
                 }}
                 full
               /> */}
-            </Row>
-          ) : (
-            <></>
-          )}
+              </>
+            ) : (
+              <></>
+            )}
+
+            <Button
+              text="Swap"
+              preset="primary"
+              icon="swap"
+              style={!enableTransfer ? { backgroundColor: 'grey' } : {}}
+              disabled={!enableTransfer}
+              onClick={(e) => {
+                navigate('Swap', {
+                  OpNetBalance: tokenSummary.opNetBalance
+                });
+              }}
+              full
+            />
+          </Row>
         </Content>
       )}
     </Layout>

@@ -24,6 +24,7 @@ export interface SelectProps extends BaseViewProps {
   options: OpNetBalance[];
   onSelect: (option: OpNetBalance) => void;
   placeholder?: string;
+  selectedoptionuse?: OpNetBalance | null;
 }
 
 const $selectStyle = {
@@ -97,8 +98,12 @@ export function Select(props: SelectProps) {
     const setWallet = async () => {
       Web3API.setNetwork(await wallet.getChainType());
     };
+
+    if (props.selectedoptionuse) {
+      setSelectedOption(props.selectedoptionuse);
+    }
     setWallet();
-  }, []);
+  }, [props.selectedoptionuse]);
   useEffect(() => {
     const checkOption = async () => {
       if (searchTerm) {
@@ -220,8 +225,8 @@ export function Select(props: SelectProps) {
               </Row>
             ) : (
               <>
-                {filteredOptions.map((option) => (
-                  <div key={option.address} style={$optionStyle} onClick={() => handleSelect(option)}>
+                {filteredOptions.map((option, index) => (
+                  <div key={index} style={$optionStyle} onClick={() => handleSelect(option)}>
                     <Image src={option.logo} size={fontSizes.tiny} />
                     {option.name}
                   </div>
