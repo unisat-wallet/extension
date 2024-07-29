@@ -249,17 +249,17 @@ export default function TxOpnetConfirmScreen() {
     }
 
     const wbtcBalance = wbtcBalanceSimulation.decoded[0] as bigint;
-    if (wbtcBalance < unwrapAmount) {
-      // todo convert to human readable base decimals
-      tools.toastError('You can only withdraw a maximum of' + wbtcBalance);
-      return;
-    }
-
     const checkWithdrawalRequest = await contract.withdrawableBalanceOf(walletGet.p2tr);
     if ('error' in checkWithdrawalRequest) {
       throw new Error(
         `Something went wrong while simulating the check withdraw balance: ${checkWithdrawalRequest.error}`
       );
+    }
+
+    if (wbtcBalance + (checkWithdrawalRequest.decoded[0] as bigint) < unwrapAmount) {
+      // todo convert to human readable base decimals
+      tools.toastError('You can only withdraw a maximum of' + wbtcBalance);
+      return;
     }
 
     const alreadyWithdrawable = checkWithdrawalRequest.decoded[0] as bigint;
