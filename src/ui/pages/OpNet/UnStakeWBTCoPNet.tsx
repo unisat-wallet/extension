@@ -2,19 +2,13 @@ import { IWBTCContract, WBTC_ABI, getContract } from 'opnet';
 import { CSSProperties, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { Account, OpNetBalance, RawTxInfo } from '@/shared/types';
+import { Account, OpNetBalance } from '@/shared/types';
 import { addressShortner } from '@/shared/utils';
 import Web3API from '@/shared/web3/Web3API';
 import { Button, Content, Header, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import {
-  useFetchAssetUtxosRunesCallback,
-  useFetchUtxosCallback,
-  usePrepareSendRunesCallback,
-  useRunesTx
-} from '@/ui/state/transactions/hooks';
 import { useWallet } from '@/ui/utils';
 import { wBTC } from '@btc-vision/transaction';
 
@@ -34,7 +28,6 @@ export default function UnWrapBitcoinOpnet() {
   const account = useCurrentAccount();
 
   const navigate = useNavigate();
-  const runesTx = useRunesTx();
   const [inputAmount, setInputAmount] = useState('');
   const [disabled, setDisabled] = useState(true);
   const [OpnetRateInputVal, adjustFeeRateInput] = useState('800');
@@ -47,11 +40,6 @@ export default function UnWrapBitcoinOpnet() {
 
   const defaultOutputValue = 546;
 
-  const [outputValue, setOutputValue] = useState(defaultOutputValue);
-
-  const fetchUtxos = useFetchUtxosCallback();
-
-  const fetchAssetUtxosRunes = useFetchAssetUtxosRunesCallback();
   const $style = { maxWidth: '350px', marginRight: 'auto', marginLeft: 'auto', width: '100%' } as CSSProperties;
 
   const tools = useTools();
@@ -75,16 +63,13 @@ export default function UnWrapBitcoinOpnet() {
       setStakedAmount(getStakedAmount.decoded[0]);
     };
     setWallet();
-    fetchUtxos();
+
     setAvailableBalance((parseInt(OpNetBalance.amount.toString()) / 10 ** OpNetBalance.divisibility).toString());
     tools.showLoading(false);
   }, []);
 
-  const prepareSendRunes = usePrepareSendRunesCallback();
-
   const [feeRate, setFeeRate] = useState(5);
   const [enableRBF, setEnableRBF] = useState(false);
-  const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
   const keyring = useCurrentKeyring();
   const items = useMemo(() => {
     const _items: ItemData[] = keyring.accounts.map((v) => {
@@ -149,7 +134,7 @@ export default function UnWrapBitcoinOpnet() {
                   inputAmount: Number(stakedReward) / 10 ** OpNetBalance.divisibility, // replace with actual inputAmount
                   address: wBTC.getAddress(Web3API.network), // replace with actual address
                   feeRate: feeRate, // replace with actual feeRate
-                  OpnetRateInputVal: OpnetRateInputVal, // replace with actual OpnetRateInputVal
+                  priorityFee: BigInt(OpnetRateInputVal), // replace with actual OpnetRateInputVal
                   header: 'Stake WBTC', // replace with actual header
                   networkFee: feeRate, // replace with actual networkFee
                   features: {
@@ -184,7 +169,7 @@ export default function UnWrapBitcoinOpnet() {
                   inputAmount: Number(stakedAmount) / 10 ** OpNetBalance.divisibility, // replace with actual inputAmount
                   address: wBTC.getAddress(Web3API.network), // replace with actual address
                   feeRate: feeRate, // replace with actual feeRate
-                  OpnetRateInputVal: OpnetRateInputVal, // replace with actual OpnetRateInputVal
+                  priorityFee: BigInt(OpnetRateInputVal), // replace with actual OpnetRateInputVal
                   header: 'Stake WBTC', // replace with actual header
                   networkFee: feeRate, // replace with actual networkFee
                   features: {

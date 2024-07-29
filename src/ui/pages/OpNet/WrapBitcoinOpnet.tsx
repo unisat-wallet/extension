@@ -10,12 +10,7 @@ import { OutputValueBar } from '@/ui/components/OutputValueBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import {
-  useFetchAssetUtxosRunesCallback,
-  useFetchUtxosCallback,
-  usePrepareSendRunesCallback,
-  useRunesTx
-} from '@/ui/state/transactions/hooks';
+import { usePrepareSendRunesCallback } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
@@ -35,7 +30,6 @@ export default function WrapBitcoinOpnet() {
   const account = useCurrentAccount();
 
   const navigate = useNavigate();
-  const runesTx = useRunesTx();
   const [inputAmount, setInputAmount] = useState('');
   const [disabled, setDisabled] = useState(true);
   const [OpnetRateInputVal, adjustFeeRateInput] = useState('800');
@@ -44,8 +38,8 @@ export default function WrapBitcoinOpnet() {
     domain: string;
     inscription?: Inscription;
   }>({
-    address: runesTx.toAddress,
-    domain: runesTx.toDomain,
+    address: '',
+    domain: '',
     inscription: undefined
   });
 
@@ -63,12 +57,8 @@ export default function WrapBitcoinOpnet() {
     }
   }, [toInfo.address]);
 
-  const fetchUtxos = useFetchUtxosCallback();
-
-  const fetchAssetUtxosRunes = useFetchAssetUtxosRunesCallback();
   const tools = useTools();
   useEffect(() => {
-    fetchUtxos();
     setAvailableBalance((parseInt(OpNetBalance.amount.toString()) / 10 ** OpNetBalance.divisibility).toString());
     tools.showLoading(false);
   }, []);
@@ -218,7 +208,7 @@ export default function WrapBitcoinOpnet() {
                 inputAmount: inputAmount, // replace with actual inputAmount
                 address: toInfo.address, // replace with actual address
                 feeRate: feeRate, // replace with actual feeRate
-                OpnetRateInputVal: OpnetRateInputVal, // replace with actual OpnetRateInputVal
+                priorityFee: BigInt(OpnetRateInputVal), // replace with actual OpnetRateInputVal
                 header: 'Wrap Bitcoin', // replace with actual header
                 networkFee: feeRate, // replace with actual networkFee
                 features: {

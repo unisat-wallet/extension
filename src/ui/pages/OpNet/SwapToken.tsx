@@ -5,9 +5,10 @@ import { CSSProperties, useMemo, useState } from 'react';
 import { Account, OpNetBalance } from '@/shared/types';
 import Web3API from '@/shared/web3/Web3API';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
-import { Button, Column, Content, Header, Icon, Layout, Row, Select } from '@/ui/components';
+import { Button, Column, Content, Header, Icon, Input, Layout, Row, Select, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BaseView } from '@/ui/components/BaseView';
+import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { fontSizes } from '@/ui/theme/font';
@@ -29,8 +30,10 @@ export default function Swap() {
   const [selectedOption, setSelectedOption] = useState<OpNetBalance | null>(null);
   const [selectedOptionOutput, setSelectedOptioOutput] = useState<OpNetBalance | null>(null);
   BigNumber.config({ EXPONENTIAL_AT: 256 });
+  const [OpnetRateInputVal, adjustFeeRateInput] = useState<string>('800');
+  const [slippageTolerance, setSlippageTolerance] = useState<string>('5');
   const navigate = useNavigate();
-
+  const [feeRate, setFeeRate] = useState(5);
   const [inputAmount, setInputAmount] = useState<string>('0');
   const [outputAmount, setOutPutAmount] = useState<string>('0');
   const keyring = useCurrentKeyring();
@@ -54,6 +57,7 @@ export default function Swap() {
       tools.toastError(`Error,You can't set input to output`);
       return;
     }
+    handleInputChange(inputAmount);
     setSelectedOption(option);
   };
   const handleSelectOutput = (option: OpNetBalance) => {
@@ -61,11 +65,10 @@ export default function Swap() {
       tools.toastError(`Error,You can't set input to output`);
       return;
     }
+    handleInputChange(inputAmount);
     setSelectedOptioOutput(option);
   };
-  const handleInputChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const value = e.target.value;
-
+  const handleInputChange = async (value: string) => {
     // Allow empty input, numbers, and one decimal point
     if (value === '' || /^\d*\.?\d*$/.test(value)) {
       if (selectedOption && selectedOptionOutput) {
@@ -106,7 +109,7 @@ export default function Swap() {
     }
   };
   const $searchInputStyle = {
-    width: '30%',
+    width: '40%',
     padding: 8,
     fontSize: fontSizes.md,
     border: 'none',
@@ -167,17 +170,6 @@ export default function Swap() {
         }
       }
       setSwitchOptions(tokenBalances);
-      // // const foundObject = rawTxInfo.items.find((obj) => obj.account && obj.account.address === rawTxInfo.account.address);
-      // // const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
-      // // const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, networks.regtest);
-
-      // const getSwap: IMotoswapPoolContract = getContract<IMotoswapPoolContract>(
-      //   Web3API.WBTC,
-      //   WBTC_ABI,
-      //   Web3API.provider,
-      //   'bcrt1p2m2yz9hae5lkypuf8heh6udnt0tchmxhaftcfslqsr5vrwzh34yqgn6hs6'
-      // );
-      // console.log(getSwap);
 
       setLoading(false);
     };
@@ -211,7 +203,7 @@ export default function Swap() {
               type="text"
               placeholder="0"
               value={inputAmount}
-              onChange={handleInputChange}
+              onChange={(e) => handleInputChange(e.target.value)}
               style={$searchInputStyle}
             />
           </Row>
@@ -224,10 +216,48 @@ export default function Swap() {
               type="text"
               placeholder="0"
               value={Number(outputAmount)}
-              onChange={handleInputChange}
+              onChange={(e) => handleInputChange(e.target.value)}
               style={$searchInputStyle}
             />
           </Row>
+        </BaseView>
+        <br />
+        <BaseView style={$style}>
+          <Text text="Slippage Tolerance" color="textDim" />
+          <Input
+            preset="amount"
+            placeholder={'5%'}
+            value={slippageTolerance}
+            onAmountInputChange={(value) => {
+              const numValue = Number(value);
+              if (!isNaN(numValue) && numValue >= 0 && numValue <= 100) {
+                setSlippageTolerance(value.toString());
+              }
+            }}
+            autoFocus={true}
+          />
+
+          <Text text="Opnet Fee" color="textDim" />
+          <Input
+            preset="amount"
+            placeholder={'sat/vB'}
+            value={OpnetRateInputVal}
+            onAmountInputChange={(amount) => {
+              adjustFeeRateInput(amount);
+            }}
+            // onBlur={() => {
+            //   const val = parseInt(feeRateInputVal) + '';
+            //   setFeeRateInputVal(val);
+            // }}
+            autoFocus={true}
+          />
+          <Text text="Fee" color="textDim" />
+
+          <FeeRateBar
+            onChange={(val) => {
+              setFeeRate(val);
+            }}
+          />
         </BaseView>
         <br />
         <Button
@@ -245,10 +275,11 @@ export default function Swap() {
                 account: currentAccount, // replace with actual account
                 inputAmount: [inputAmount, outputAmount], // replace with actual inputAmount
                 address: selectedOptionOutput?.address, // replace with actual address
-                feeRate: '100', // replace with actual feeRate
-                OpnetRateInputVal: '800', // replace with actual OpnetRateInputVal
+                feeRate: feeRate,
+                priorityFee: BigInt(OpnetRateInputVal), // replace with actual OpnetRateInputVal
                 header: 'Swap Token', // replace with actual header
-                networkFee: '100', // replace with actual networkFee
+                networkFee: '100',
+                slippageTolerance: slippageTolerance, // replace with actual networkFee
                 features: {
                   rbf: false // replace with actual rbf value
                 },

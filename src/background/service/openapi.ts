@@ -8,13 +8,15 @@ import {
   AddressTokenSummary,
   AppSummary,
   Arc20Balance,
-  BitcoinBalance, BtcPrice,
+  BitcoinBalance,
+  BtcPrice,
   DecodedPsbt,
   FeeSummary,
   InscribeOrder,
   Inscription,
   InscriptionSummary,
-  RuneBalance, TickPriceItem,
+  RuneBalance,
+  TickPriceItem,
   TokenBalance,
   TokenTransfer,
   UTXO,
@@ -115,7 +117,7 @@ export class OpenApiService {
       c++;
     }
     const headers = new Headers();
-    headers.append('X-Client', 'UniSat Wallet');
+    headers.append('X-Client', 'OP_Wallet');
     headers.append('X-Version', VERSION);
     headers.append('x-address', this.clientAddress);
     headers.append('x-flag', this.addressFlag + '');
@@ -134,7 +136,7 @@ export class OpenApiService {
   httpPost = async (route: string, params: any) => {
     const url = this.endpoint + route;
     const headers = new Headers();
-    headers.append('X-Client', 'UniSat Wallet');
+    headers.append('X-Client', 'OP_Wallet');
     headers.append('X-Version', VERSION);
     headers.append('x-address', this.clientAddress);
     headers.append('x-flag', this.addressFlag + '');
@@ -271,12 +273,11 @@ export class OpenApiService {
     } finally {
       this.isRefreshingBtcPrice = false;
     }
-
   }
 
   async getBtcPrice(): Promise<number> {
     while (this.isRefreshingBtcPrice) {
-      await new Promise(resolve => setTimeout(resolve, 100));
+      await new Promise((resolve) => setTimeout(resolve, 100));
     }
 
     //   30s cache
@@ -292,7 +293,7 @@ export class OpenApiService {
     return this.refreshBtcPrice();
   }
 
-  private brc20PriceCache: { [key: string]: { cacheTime: number, data: TickPriceItem } } = {};
+  private brc20PriceCache: { [key: string]: { cacheTime: number; data: TickPriceItem } } = {};
   private currentRequestBrc20 = {};
 
   async getBrc20sPrice(ticks: string[]) {
@@ -300,13 +301,12 @@ export class OpenApiService {
       return {};
     }
     const tickLine = ticks.join('');
-    if (!tickLine)
-      return {};
+    if (!tickLine) return {};
 
     try {
       while (this.currentRequestBrc20[tickLine]) {
         console.log(this.currentRequestBrc20);
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
       this.currentRequestBrc20[tickLine] = true;
 
@@ -342,7 +342,7 @@ export class OpenApiService {
     }
   }
 
-  private runesPriceCache: { [key: string]: { cacheTime: number, data: TickPriceItem } } = {};
+  private runesPriceCache: { [key: string]: { cacheTime: number; data: TickPriceItem } } = {};
   private currentRequestRune = {};
 
   async getRunesPrice(ticks: string[]) {
@@ -350,15 +350,13 @@ export class OpenApiService {
       return {};
     }
     const tickLine = ticks.join('');
-    if (!tickLine)
-      return {};
+    if (!tickLine) return {};
 
     try {
       while (this.currentRequestRune[tickLine]) {
-        await new Promise(resolve => setTimeout(resolve, 100));
+        await new Promise((resolve) => setTimeout(resolve, 100));
       }
       this.currentRequestRune[tickLine] = true;
-
 
       const result = {} as { [key: string]: TickPriceItem };
 

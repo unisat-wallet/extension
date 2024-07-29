@@ -12,12 +12,7 @@ import { OutputValueBar } from '@/ui/components/OutputValueBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import {
-  useFetchAssetUtxosRunesCallback,
-  useFetchUtxosCallback,
-  usePrepareSendRunesCallback,
-  useRunesTx
-} from '@/ui/state/transactions/hooks';
+import { usePrepareSendRunesCallback } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { useWallet } from '@/ui/utils';
@@ -40,7 +35,6 @@ export default function UnWrapBitcoinOpnet() {
   const account = useCurrentAccount();
   const wallet = useWallet();
   const navigate = useNavigate();
-  const runesTx = useRunesTx();
   const [inputAmount, setInputAmount] = useState('');
   const [disabled, setDisabled] = useState(true);
   const [OpnetRateInputVal, adjustFeeRateInput] = useState('800');
@@ -49,8 +43,8 @@ export default function UnWrapBitcoinOpnet() {
     domain: string;
     inscription?: Inscription;
   }>({
-    address: runesTx.toAddress,
-    domain: runesTx.toDomain,
+    address: '',
+    domain: '',
     inscription: undefined
   });
 
@@ -68,12 +62,8 @@ export default function UnWrapBitcoinOpnet() {
     }
   }, [toInfo.address]);
 
-  const fetchUtxos = useFetchUtxosCallback();
-
-  const fetchAssetUtxosRunes = useFetchAssetUtxosRunesCallback();
   const tools = useTools();
   useEffect(() => {
-    fetchUtxos();
     const checkAvailableBalance = async () => {
       Web3API.setNetwork(await wallet.getChainType());
 
@@ -245,7 +235,7 @@ export default function UnWrapBitcoinOpnet() {
                 inputAmount: inputAmount, // replace with actual inputAmount
                 address: toInfo.address, // replace with actual address
                 feeRate: feeRate, // replace with actual feeRate
-                OpnetRateInputVal: OpnetRateInputVal, // replace with actual OpnetRateInputVal
+                priorityFee: BigInt(OpnetRateInputVal), // replace with actual OpnetRateInputVal
                 header: 'Unwrap bitcoin', // replace with actual header
                 networkFee: feeRate, // replace with actual networkFee
                 features: {

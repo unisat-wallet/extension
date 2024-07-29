@@ -24,9 +24,9 @@ export function FeeRateBar({ readonly, onChange }: { readonly?: boolean; onChang
     const getData = async () => {
       if ((await wallet.getNetworkType()) == NetworkType.REGTEST) {
         const feeArray = [
-          { title: 'Slow', feeRate: 1 },
-          { title: 'Medium', feeRate: 1 },
-          { title: 'Fast', feeRate: 1 }
+          { title: 'Slow', desc: 'Slow', feeRate: 100 },
+          { title: 'Medium', desc: 'Medium', feeRate: 100 },
+          { title: 'Fast', desc: 'Fast', feeRate: 100 }
         ];
         setFeeOptions([...feeArray, { title: 'Custom', feeRate: 0 }]);
       } else {

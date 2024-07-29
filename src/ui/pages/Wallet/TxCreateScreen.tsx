@@ -368,7 +368,7 @@ export default function TxCreateScreen() {
                   inputAmount: inputAmount,
                   address: toInfo.address,
                   feeRate: feeRate, // replace with actual feeRate
-                  OpnetRateInputVal: OpnetRateInputVal, // replace with actual OpnetRateInputVal
+                  priorityFee: BigInt(OpnetRateInputVal), // replace with actual OpnetRateInputVal
                   header: 'Send BTC', // replace with actual header
                   networkFee: feeRate, // replace with actual networkFee
                   features: {

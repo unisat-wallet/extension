@@ -116,8 +116,8 @@ export default function TxOpnetConfirmScreen() {
         utxos: utxos, // UTXOs
         signer: walletGet.keypair, // Signer
         network: Web3API.network, // Network
-        feeRate: 300, // Fee rate (satoshi per byte)
-        priorityFee: BigInt(rawTxInfo.OpnetRateInputVal), // Priority fee (opnet)
+        feeRate: rawTxInfo.feeRate,
+        priorityFee: rawTxInfo.priorityFee, // Priority fee (opnet)
         calldata: calldata // Calldata
       };
 
@@ -163,8 +163,8 @@ export default function TxOpnetConfirmScreen() {
       utxos: utxos,
       signer: walletGet.keypair,
       network: Web3API.network,
-      feeRate: 400,
-      priorityFee: BigInt(rawTxInfo.OpnetRateInputVal),
+      feeRate: rawTxInfo.feeRate,
+      priorityFee: rawTxInfo.priorityFee,
       amount: wrapAmount,
       generationParameters: generationParameters
     };
@@ -266,8 +266,8 @@ export default function TxOpnetConfirmScreen() {
         utxos: utxos,
         signer: walletGet.keypair,
         network: Web3API.network,
-        feeRate: 100,
-        priorityFee: 1000n,
+        feeRate: rawTxInfo.feeRate,
+        priorityFee: rawTxInfo.priorityFee,
         calldata: withdrawalRequest.calldata as Buffer
       };
 
@@ -323,8 +323,8 @@ export default function TxOpnetConfirmScreen() {
       unwrapUTXOs: unwrapUtxos.vaultUTXOs, // Vault UTXOs to unwrap
       signer: walletGet.keypair, // Signer
       network: Web3API.network, // Bitcoin network
-      feeRate: 100, // Fee rate in satoshis per byte (bitcoin fee)
-      priorityFee: 1000n, // OPNet priority fee (incl gas.)
+      feeRate: rawTxInfo.feeRate, // Fee rate in satoshis per byte (bitcoin fee)
+      priorityFee: rawTxInfo.priorityFee, // OPNet priority fee (incl gas.)
       amount: unwrapAmount
     };
 
@@ -376,8 +376,8 @@ export default function TxOpnetConfirmScreen() {
       utxos: utxos,
       signer: walletGet.keypair,
       network: Web3API.network,
-      feeRate: 300,
-      priorityFee: 10000n,
+      feeRate: rawTxInfo.feeRate,
+      priorityFee: rawTxInfo.priorityFee,
       calldata: stakeData?.calldata as Buffer
     };
 
@@ -433,8 +433,8 @@ export default function TxOpnetConfirmScreen() {
       utxos: utxos,
       signer: walletGet.keypair,
       network: Web3API.network,
-      feeRate: 300,
-      priorityFee: 10000n,
+      feeRate: rawTxInfo.feeRate,
+      priorityFee: rawTxInfo.priorityFee,
       calldata: stakeData?.calldata as Buffer
     };
 
@@ -491,8 +491,8 @@ export default function TxOpnetConfirmScreen() {
       utxos: utxos,
       signer: walletGet.keypair,
       network: Web3API.network,
-      feeRate: 300,
-      priorityFee: 10000n,
+      feeRate: rawTxInfo.feeRate,
+      priorityFee: rawTxInfo.priorityFee,
       calldata: stakeData?.calldata as Buffer
     };
 
@@ -535,11 +535,14 @@ export default function TxOpnetConfirmScreen() {
     const utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], maxUint256);
     const getData = await approveToken(inputAmountBigInt, walletGet, rawTxInfo.contractAddress[0], utxos);
     const getnextUtxo = await approveToken(inputAmountBigInt, walletGet, rawTxInfo.contractAddress[1], getData);
-    const outPutAmountBigInt = expandToDecimals(rawTxInfo.inputAmount[1], rawTxInfo.opneTokens[0].divisibility);
+    const outPutAmountBigInt = expandToDecimals(
+      rawTxInfo.inputAmount[1] * Number(rawTxInfo.slippageTolerance / 100),
+      rawTxInfo.opneTokens[0].divisibility
+    );
 
     const contractResult = await getSwap.encodeCalldata('swapExactTokensForTokensSupportingFeeOnTransferTokens', [
       inputAmountBigInt,
-      0n,
+      outPutAmountBigInt,
       [rawTxInfo.contractAddress[0], rawTxInfo.contractAddress[1]],
       walletGet.p2tr,
       10000n
@@ -550,8 +553,8 @@ export default function TxOpnetConfirmScreen() {
       utxos: getnextUtxo,
       signer: walletGet.keypair,
       network: Web3API.network,
-      feeRate: 450,
-      priorityFee: 50000n,
+      feeRate: rawTxInfo.feeRate,
+      priorityFee: rawTxInfo.priorityFee,
       calldata: contractResult as Buffer
     };
     const sendTransact = await Web3API.transactionFactory.signInteraction(interactionParameters);
@@ -600,7 +603,7 @@ export default function TxOpnetConfirmScreen() {
         signer: walletGet.keypair,
         network: Web3API.network,
         feeRate: rawTxInfo.feeRate,
-        priorityFee: 1000n,
+        priorityFee: rawTxInfo.priorityFee,
         calldata: contractApprove.calldata as Buffer
       };
 
@@ -641,8 +644,8 @@ export default function TxOpnetConfirmScreen() {
       utxos: utxos,
       signer: walletGet.keypair,
       network: Web3API.network,
-      feeRate: 100,
-      priorityFee: 1000n,
+      feeRate: rawTxInfo.feeRate,
+      priorityFee: rawTxInfo.priorityFee,
       to: rawTxInfo.address,
       from: walletGet.p2tr
     };
@@ -673,8 +676,8 @@ export default function TxOpnetConfirmScreen() {
         utxos: utxos,
         signer: walletGet.keypair,
         network: Web3API.network,
-        feeRate: 100,
-        priorityFee: 1000n,
+        feeRate: rawTxInfo.feeRate,
+        priorityFee: rawTxInfo.priorityFee,
         from: walletGet.p2tr,
         bytecode: Buffer.from(uint8Array)
       };
@@ -717,7 +720,7 @@ export default function TxOpnetConfirmScreen() {
           </Section>
 
           <Section title="Opnet Fee Rate:">
-            <Text text={rawTxInfo.OpnetRateInputVal.toString()} />
+            <Text text={rawTxInfo.priorityFee.toString()} />
 
             <Text text="sat/vB" color="textDim" />
           </Section>

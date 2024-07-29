@@ -162,7 +162,7 @@ export default function WrapBitcoinOpnet() {
                 inputAmount: inputAmount, // replace with actual inputAmount
                 address: toInfo.address, // replace with actual address
                 feeRate: feeRate, // replace with actual feeRate
-                OpnetRateInputVal: OpnetRateInputVal, // replace with actual OpnetRateInputVal
+                priorityFee: BigInt(OpnetRateInputVal), // replace with actual OpnetRateInputVal
                 header: 'Deploy Contract', // replace with actual header
                 networkFee: feeRate, // replace with actual networkFee
                 features: {

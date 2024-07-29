@@ -218,7 +218,7 @@ export default function UnWrapBitcoinOpnet() {
                 inputAmount: inputAmount,
                 address: toInfo.address,
                 feeRate: feeRate,
-                OpnetRateInputVal: OpnetRateInputVal,
+                priorityFee: BigInt(OpnetRateInputVal),
                 header: 'Stake WBTC',
                 networkFee: feeRate,
                 features: {

@@ -9,16 +9,16 @@ export function Logo(props: { preset?: 'large' | 'small' }) {
   if (preset === 'large') {
     return (
       <Row justifyCenter itemsCenter>
-        <Image src="./images/logo/wallet-logo.png" size={fontSizes.xxxl} />
+        <Image src="./images/logo/wallet-logo.jpg" size={fontSizes.xxxl} />
 
-        <Text text="UNISAT" preset="title-bold" size="xxl" disableTranslate />
+        <Text text="OP_wallet" preset="title-bold" size="xxl" disableTranslate />
       </Row>
     );
   } else {
     return (
       <Row justifyCenter itemsCenter>
-        <Image src="./images/logo/wallet-logo.png" size={fontSizes.xxl} />
-        <Text text="UNISAT" preset="title-bold" disableTranslate />
+        <Image src="./images/logo/wallet-logo.jpg" size={fontSizes.xxl} />
+        <Text text="OP_wallet" preset="title-bold" disableTranslate />
       </Row>
     );
   }

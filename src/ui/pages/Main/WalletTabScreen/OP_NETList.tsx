@@ -131,7 +131,7 @@ export function OP_NETList() {
           <Button
             text="SWAP "
             preset="primary"
-            icon="pencil"
+            icon="swap"
             onClick={(e) => {
               navigate('Swap', {});
             }}
