@@ -319,23 +319,24 @@ export default function TxOpnetConfirmScreen() {
 
       utxosForUnwrap = sendTransaction[2];
 
+      // TODO show loading screen?
       const waitForTransaction = async () => {
         let attempts = 0;
-        const maxAttempts = 12; // 1 minute max wait time
+        const maxAttempts = 100; // 1 minute max wait time
 
         while (attempts < maxAttempts) {
           const txResult = await Web3API.provider.getTransaction(sendTransaction[1]);
           if (txResult && !('error' in txResult) && txResult.hash) {
             return txResult.hash;
           }
-          await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait 5 seconds
+          await new Promise((resolve) => setTimeout(resolve, 10000)); // Wait 5 seconds
           attempts++;
         }
         throw new Error('Failed to get transaction hash after multiple attempts');
       };
 
       const transactionHash = await waitForTransaction();
-      console.log(transactionHash);
+      console.log('confirmed!', transactionHash);
     }
 
     const unwrapUtxos = await Web3API.limitedProvider.fetchUnWrapParameters(unwrapAmount, walletGet.p2tr);
