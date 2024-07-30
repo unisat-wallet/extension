@@ -1343,7 +1343,39 @@
     ts-loader "^9.5.1"
     ts-node "^10.9.2"
 
-"@btc-vision/transaction@1.0.60", "@btc-vision/transaction@^1.0.58":
+"@btc-vision/transaction@1.0.61":
+  version "1.0.61"
+  resolved "https://registry.yarnpkg.com/@btc-vision/transaction/-/transaction-1.0.61.tgz#d2e843d4a97b5c034c28f72e5f7e342e70a7947e"
+  integrity sha512-S5m14D4EvpKopKtLruQHGAI8mZuMk1RMGR1+L6onFfGRXOH9anw3YYavYpkG+6epB41Rl4bK2IlYTTK1XhM3/Q==
+  dependencies:
+    "@babel/plugin-proposal-object-rest-spread" "^7.20.7"
+    "@bitcoinerlab/secp256k1" "^1.1.1"
+    "@btc-vision/bsi-binary" "^1.0.37"
+    "@btc-vision/bsi-bitcoin-rpc" "^1.0.22"
+    "@btc-vision/bsi-common" "^1.0.16"
+    "@btc-vision/logger" "^1.0.2"
+    assert "^2.1.0"
+    babel-loader "^9.1.3"
+    babel-plugin-transform-import-meta "^2.2.1"
+    babel-preset-react "^6.24.1"
+    babelify "^10.0.0"
+    bech32 "^2.0.0"
+    bignumber.js "^9.1.2"
+    bip32 "^4.0.0"
+    bitcoinjs-lib "github:btc-vision/bitcoinjs-lib"
+    browserify-zlib "^0.2.0"
+    buffer "^6.0.3"
+    ecpair "^2.1.0"
+    gulp "^4.0.2"
+    gulp-cached "^1.1.1"
+    gulp-logger "^0.0.2"
+    gulp-typescript "^6.0.0-alpha.1"
+    gulplog "^2.2.0"
+    process "^0.11.10"
+    ts-loader "^9.5.1"
+    ts-node "^10.9.2"
+
+"@btc-vision/transaction@^1.0.58":
   version "1.0.60"
   resolved "https://registry.yarnpkg.com/@btc-vision/transaction/-/transaction-1.0.60.tgz#9ac7ae2fac95c36a30508951791927e4e6c56997"
   integrity sha512-TE3+0Oq9zf23YItJ5M6q8WxjjrJnNDLjozHeKY+JVl97td1HuVpfJ+L4K1GHrf+MmU26LQdj8B7Jm10KSQgo7w==

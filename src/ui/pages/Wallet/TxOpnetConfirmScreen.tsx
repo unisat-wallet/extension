@@ -197,8 +197,6 @@ export default function TxOpnetConfirmScreen() {
       generationParameters: generationParameters
     };
 
-    console.log(wrapParameters);
-
     const finalTx = await Web3API.transactionFactory.wrap(wrapParameters);
     const firstTxBroadcast = await Web3API.provider.sendRawTransaction(finalTx.transaction[0], false);
 
