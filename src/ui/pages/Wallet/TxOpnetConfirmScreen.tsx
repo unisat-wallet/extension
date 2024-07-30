@@ -107,7 +107,7 @@ export default function TxOpnetConfirmScreen() {
           return;
         }
 
-        tools.toastSuccess(`"You have sucessfully unwraped your Bitcoin"`);
+        tools.toastSuccess('"You have sucessfully unwraped your Bitcoin"');
 
         navigate('TxSuccessScreen', { txid: unwrapTransaction });
       };
@@ -196,6 +196,8 @@ export default function TxOpnetConfirmScreen() {
       amount: wrapAmount,
       generationParameters: generationParameters
     };
+
+    console.log(wrapParameters);
 
     const finalTx = await Web3API.transactionFactory.wrap(wrapParameters);
     const firstTxBroadcast = await Web3API.provider.sendRawTransaction(finalTx.transaction[0], false);

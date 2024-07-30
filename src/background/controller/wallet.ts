@@ -763,7 +763,7 @@ export class WalletController extends BaseController {
     return broadcastedTransactions;
   };
 
-  wrap = async (IWrapParameters: IWrapParametersWithoutSigner): Promise<WrapResult> => {
+  wrap = async (wrapParameters: IWrapParametersWithoutSigner): Promise<WrapResult> => {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
@@ -775,27 +775,29 @@ export class WalletController extends BaseController {
     if (!wifWallet) throw new Error('no current account');
     const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
 
-    const utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], IWrapParameters.amount);
-
-    const generationParameters = await Web3API.limitedProvider.fetchWrapParameters(IWrapParameters.amount);
+    const generationParameters = await Web3API.limitedProvider.fetchWrapParameters(wrapParameters.amount);
     if (!generationParameters) {
       throw new Error('No generation parameters found');
     }
 
+    if (!wrapParameters.utxos) {
+      throw new Error('WRAP. No utxos found');
+    }
+
     const IWrapParametersSubmit: IWrapParameters = {
       from: walletGet.p2tr,
-      utxos: utxos,
+      utxos: wrapParameters.utxos,
       signer: walletGet.keypair,
       network: Web3API.network,
-      feeRate: 400,
-      priorityFee: IWrapParameters.priorityFee,
-      amount: IWrapParameters.amount,
+      feeRate: wrapParameters.feeRate,
+      priorityFee: wrapParameters.priorityFee,
+      amount: wrapParameters.amount,
       generationParameters: generationParameters
     };
 
     return await Web3API.transactionFactory.wrap(IWrapParametersSubmit);
   };
-  unwrap = async (IWrapParameters: IUnwrapParametersSigner): Promise<UnwrapResult> => {
+  unwrap = async (unwrapParameters: IUnwrapParametersSigner): Promise<UnwrapResult> => {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
@@ -807,23 +809,21 @@ export class WalletController extends BaseController {
     if (!wifWallet) throw new Error('no current account');
     const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
 
-    const utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], IWrapParameters.amount);
-
-    const generationParameters = await Web3API.limitedProvider.fetchWrapParameters(IWrapParameters.amount);
+    const generationParameters = await Web3API.limitedProvider.fetchWrapParameters(unwrapParameters.amount);
     if (!generationParameters) {
       throw new Error('No generation parameters found');
     }
 
     const unwrapParametersSubmit: IUnwrapParameters = {
       from: walletGet.p2tr,
-      utxos: IWrapParameters.utxos,
+      utxos: unwrapParameters.utxos,
       signer: walletGet.keypair,
-      unwrapUTXOs: IWrapParameters.unwrapUTXOs,
+      unwrapUTXOs: unwrapParameters.unwrapUTXOs,
       network: Web3API.network,
-      feeRate: 100,
-      priorityFee: 1000n,
-      amount: IWrapParameters.amount,
-      calldata: IWrapParameters.calldata
+      feeRate: unwrapParameters.feeRate,
+      priorityFee: unwrapParameters.priorityFee,
+      amount: unwrapParameters.amount,
+      calldata: unwrapParameters.calldata
     };
 
     return await Web3API.transactionFactory.unwrap(unwrapParametersSubmit);
