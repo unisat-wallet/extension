@@ -11,10 +11,6 @@
 
 # Installing the OP_WALLET Chrome Extension
 
-This guide will walk you through the steps to install the OP_WALLET Chrome extension from the prebuilt files.
-
-## Step-by-Step Guide
-
 ### 1. Download the OP_WALLET Prebuilt Files
 
 - Go to the [OP_WALLET GitHub repository](https://github.com/btc-vision/opwallet).
