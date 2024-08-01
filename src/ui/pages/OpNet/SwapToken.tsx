@@ -37,7 +37,7 @@ export default function Swap() {
     const [selectedOption, setSelectedOption] = useState<OpNetBalance | null>(null);
     const [selectedOptionOutput, setSelectedOptioOutput] = useState<OpNetBalance | null>(null);
     BigNumber.config({ EXPONENTIAL_AT: 256 });
-    const [OpnetRateInputVal, adjustFeeRateInput] = useState<string>('800');
+    const [OpnetRateInputVal, adjustFeeRateInput] = useState<string>('8600');
     const [slippageTolerance, setSlippageTolerance] = useState<string>('5');
     const navigate = useNavigate();
     const [feeRate, setFeeRate] = useState(5);
