@@ -31,7 +31,7 @@ export default function UnWrapBitcoinOpnet() {
     const navigate = useNavigate();
     const [inputAmount, setInputAmount] = useState('');
     const [disabled, setDisabled] = useState(true);
-    const [OpnetRateInputVal, adjustFeeRateInput] = useState('800');
+    const [OpnetRateInputVal, adjustFeeRateInput] = useState('5000');
     const [stakedReward, setStakeReward] = useState<bigint>(0n);
     const [stakedAmount, setStakedAmount] = useState<bigint>(0n);
     const wallet = useWallet();

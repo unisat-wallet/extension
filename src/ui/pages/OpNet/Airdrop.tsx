@@ -29,7 +29,7 @@ export default function WrapBitcoinOpnet() {
     const runesTx = useRunesTx();
     const [inputAmount, setInputAmount] = useState('');
     const [disabled, setDisabled] = useState(true);
-    const [OpnetRateInputVal, adjustFeeRateInput] = useState('800');
+    const [OpnetRateInputVal, adjustFeeRateInput] = useState('5000');
     const [getFile, setFile] = useState<File | null>(null);
 
     const [toInfo, setToInfo] = useState<{

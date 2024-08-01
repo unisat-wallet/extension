@@ -47,7 +47,7 @@ export default function Mint() {
     const runesTx = useRunesTx();
     const [inputAmount, setInputAmount] = useState('');
     const [disabled, setDisabled] = useState(true);
-    const [OpnetRateInputVal, adjustFeeRateInput] = useState('800');
+    const [OpnetRateInputVal, adjustFeeRateInput] = useState('5000');
     const [toInfo, setToInfo] = useState<{
         address: string;
         domain: string;

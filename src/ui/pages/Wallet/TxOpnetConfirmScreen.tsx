@@ -193,7 +193,7 @@ export default function TxOpnetConfirmScreen() {
             throw new Error('No generation parameters found');
         }
 
-        console.log(generationParameters, wrapAmount);
+        console.log('generationParameters', generationParameters, wrapAmount);
 
         const wrapParameters: IWrapParameters = {
             from: walletGet.p2tr,
