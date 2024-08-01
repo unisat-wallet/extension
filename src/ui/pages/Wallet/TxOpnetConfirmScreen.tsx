@@ -133,14 +133,15 @@ export default function TxOpnetConfirmScreen() {
             addCalldata.writeSelector(transferSelector);
             addCalldata.writeAddress(to);
             addCalldata.writeU256(amount);
+
             return Buffer.from(addCalldata.getBuffer());
         }
 
         try {
             const result = 10 ** rawTxInfo.opneTokens[0].divisibility;
             const amountToSend = BigInt(rawTxInfo.inputAmount * result); // Amount to send
-            const calldata = getTransferToCalldata(rawTxInfo.address, amountToSend);
 
+            const calldata = getTransferToCalldata(rawTxInfo.address, amountToSend);
             const utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], amountToSend);
 
             const interactionParameters: IInteractionParameters = {
@@ -155,7 +156,6 @@ export default function TxOpnetConfirmScreen() {
             };
 
             const finalTx = await Web3API.transactionFactory.signInteraction(interactionParameters);
-
             const firstTxBroadcast = await Web3API.provider.sendRawTransaction(finalTx[0], false);
             console.log(`First transaction broadcasted: ${firstTxBroadcast.result}`);
 
@@ -193,6 +193,8 @@ export default function TxOpnetConfirmScreen() {
             throw new Error('No generation parameters found');
         }
 
+        console.log(generationParameters, wrapAmount);
+
         const wrapParameters: IWrapParameters = {
             from: walletGet.p2tr,
             utxos: utxos,
@@ -213,37 +215,27 @@ export default function TxOpnetConfirmScreen() {
         }
 
         const secondTxBroadcast = await Web3API.provider.sendRawTransaction(finalTx.transaction[1], false);
-
         if (!secondTxBroadcast.success) {
             tools.toastError('Error,Please Try again');
             throw new Error('Could not broadcast first transaction');
         }
 
-        tools.toastSuccess(`"You have sucessfully wraped ${Number(wrapAmount) / 10 ** 8} Bitcoin"`);
-        navigate('TxSuccessScreen', { secondTxBroadcast });
+        tools.toastSuccess(`"You have successfully wrapped ${Number(wrapAmount) / 10 ** 8} Bitcoin"`);
+        navigate('TxSuccessScreen', { txid: secondTxBroadcast.result });
     };
 
     const handleUnWrapConfirm = async () => {
         const foundObject = rawTxInfo.items.find(
             (obj) => obj.account && obj.account.address === rawTxInfo.account.address
         );
+
         const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
         const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
-
         const unwrapAmount = expandToDecimals(rawTxInfo.inputAmount, 8); // Minimum amount to unwrap
-        //const requestWithdrawalSelector = Number('0x' + Web3API.abiCoder.encodeSelector('requestWithdrawal'));
-
-        /*function generateCalldata(unwrapAmount: bigint): Buffer {
-      const addCalldata: BinaryWriter = new BinaryWriter();
-      addCalldata.writeSelector(requestWithdrawalSelector);
-      addCalldata.writeU256(unwrapAmount);
-      return Buffer.from(addCalldata.getBuffer());
-    }*/
-
         const utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], unwrapAmount);
+
         console.log('unwrap amount', unwrapAmount, 'utxos', utxos);
 
-        //const calldata = generateCalldata(unwrapAmount);
         const contract: IWBTCContract = getContract<IWBTCContract>(
             wBTC.getAddress(Web3API.network),
             WBTC_ABI,
@@ -272,8 +264,8 @@ export default function TxOpnetConfirmScreen() {
             return;
         }
 
-        const alreadyWithdrawable = checkWithdrawalRequest.decoded[0] as bigint;
-        const requiredAmountDifference: bigint = alreadyWithdrawable - unwrapAmount;
+        const alreadyWithdrawal = checkWithdrawalRequest.decoded[0] as bigint;
+        const requiredAmountDifference: bigint = alreadyWithdrawal - unwrapAmount;
 
         console.log(
             'amount',
@@ -281,7 +273,7 @@ export default function TxOpnetConfirmScreen() {
             'actual',
             wbtcBalance,
             'balance',
-            alreadyWithdrawable,
+            alreadyWithdrawal,
             'diff',
             requiredAmountDifference
         );
