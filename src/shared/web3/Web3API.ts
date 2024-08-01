@@ -21,6 +21,7 @@ class Web3API {
   public network: Network = networks.bitcoin;
   public transactionFactory: TransactionFactory = new TransactionFactory();
   public readonly abiCoder: ABICoder = new ABICoder();
+  private nextUTXOs: UTXO[] = [];
 
   private _limitedProvider: OPNetLimitedProvider | undefined;
   private _provider: JSONRpcProvider | undefined;
@@ -83,7 +84,12 @@ class Web3API {
       requestedAmount: requiredAmount
     };
 
-    const utxos: UTXO[] = await this.limitedProvider.fetchUTXOMultiAddr(utxoSetting);
+    let utxos: UTXO[];
+    if (this.nextUTXOs.length > 0) {
+      utxos = this.nextUTXOs;
+    } else {
+      utxos = await this.limitedProvider.fetchUTXOMultiAddr(utxoSetting);
+    }
     if (!utxos.length) {
       throw new Error('No UTXOs found');
     }
