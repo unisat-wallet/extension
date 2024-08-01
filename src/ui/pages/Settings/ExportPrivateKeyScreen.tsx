@@ -28,7 +28,7 @@ export default function ExportPrivateKeyScreen() {
 
     const btnClick = async () => {
         try {
-            const _res = await wallet.getPrivateKey(account);
+            const _res = await wallet.getPrivateKey(password, account);
             console.log(_res);
             setPrivateKey(_res);
         } catch (e) {

@@ -98,7 +98,7 @@ export interface WalletController {
 
     clearKeyrings(): Promise<void>;
 
-    getPrivateKey(account: { address: string; type: string }): Promise<{ hex: string; wif: string }>;
+    getPrivateKey(password: string, account: { address: string; type: string }): Promise<{ hex: string; wif: string }>;
 
     getInternalPrivateKey(account: { address: string; type: string }): Promise<{ hex: string; wif: string }>;
 
