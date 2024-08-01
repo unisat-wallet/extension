@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
-import { Account, Inscription, OpNetBalance, RawTxInfo } from '@/shared/types';
+import { Account, Inscription, OpNetBalance } from '@/shared/types';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
@@ -10,7 +10,6 @@ import { OutputValueBar } from '@/ui/components/OutputValueBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { usePrepareSendRunesCallback } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
@@ -63,11 +62,8 @@ export default function WrapBitcoinOpnet() {
     tools.showLoading(false);
   }, []);
 
-  const prepareSendRunes = usePrepareSendRunesCallback();
-
-  const [feeRate, setFeeRate] = useState(5);
+  const [feeRate, setFeeRate] = useState(50);
   const [enableRBF, setEnableRBF] = useState(false);
-  const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
   const keyring = useCurrentKeyring();
   const items = useMemo(() => {
     const _items: ItemData[] = keyring.accounts.map((v) => {
