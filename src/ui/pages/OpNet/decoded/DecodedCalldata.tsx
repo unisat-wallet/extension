@@ -7,49 +7,49 @@ import { ApproveDecodedInfo, DecodedApprove, DecodedTransfer } from '@/ui/pages/
 import { TransferDecodedInfo } from '@/ui/pages/OpNet/decoded/TransferDecodedInfo';
 
 interface DecodedProps {
-  readonly decoded: Decoded;
-  readonly contractInfo: ContractInformation;
-  readonly interactionType: string;
+    readonly decoded: Decoded;
+    readonly contractInfo: ContractInformation;
+    readonly interactionType: string;
 }
 
 export function DecodedCalldata(props: DecodedProps): JSX.Element {
-  const contractInfo = props.contractInfo;
-  const decoded = props.decoded;
-  const interactionType = props.interactionType;
+    const contractInfo = props.contractInfo;
+    const decoded = props.decoded;
+    const interactionType = props.interactionType;
 
-  switch (decoded.selector) {
-    case InteractionType.Transfer: {
-      return (
-        <TransferDecodedInfo
-          decoded={decoded as DecodedTransfer}
-          contractInfo={contractInfo}
-          interactionType={interactionType}
-        />
-      );
-    }
+    switch (decoded.selector) {
+        case InteractionType.Transfer: {
+            return (
+                <TransferDecodedInfo
+                    decoded={decoded as DecodedTransfer}
+                    contractInfo={contractInfo}
+                    interactionType={interactionType}
+                />
+            );
+        }
 
-    case InteractionType.Approve: {
-      return (
-        <ApproveDecodedInfo
-          decoded={decoded as DecodedApprove}
-          contractInfo={contractInfo}
-          interactionType={interactionType}
-        />
-      );
-    }
+        case InteractionType.Approve: {
+            return (
+                <ApproveDecodedInfo
+                    decoded={decoded as DecodedApprove}
+                    contractInfo={contractInfo}
+                    interactionType={interactionType}
+                />
+            );
+        }
 
-    case InteractionType.AddLiquidity: {
-      return (
-        <AddLiquidityDecodedInfo
-          decoded={decoded as AddLiquidityDecoded}
-          contractInfo={contractInfo}
-          interactionType={interactionType}
-        />
-      );
-    }
+        case InteractionType.AddLiquidity: {
+            return (
+                <AddLiquidityDecodedInfo
+                    decoded={decoded as AddLiquidityDecoded}
+                    contractInfo={contractInfo}
+                    interactionType={interactionType}
+                />
+            );
+        }
 
-    default: {
-      return <></>;
+        default: {
+            return <></>;
+        }
     }
-  }
 }

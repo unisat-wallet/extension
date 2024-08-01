@@ -8,30 +8,30 @@ import { Row } from '../Row';
 import { Text } from '../Text';
 
 export function RBFBar({ defaultValue, onChange }: { defaultValue?: boolean; onChange: (val: boolean) => void }) {
-  const [enableRBF, setEnableRBF] = useState(defaultValue || false);
+    const [enableRBF, setEnableRBF] = useState(defaultValue || false);
 
-  useEffect(() => {
-    onChange(enableRBF);
-  }, [enableRBF]);
-  return (
-    <Row justifyBetween>
-      <Tooltip
-        title={`A feature allows the transaction to be replaced.`}
-        overlayStyle={{
-          fontSize: fontSizes.xs
-        }}>
-        <div style={{ display: 'flex', alignItems: 'center' }}>
-          <Row itemsCenter>
-            <Text text="RBF" color="textDim" />
-            <Icon icon="circle-question" color="textDim" />
-          </Row>
-        </div>
-      </Tooltip>
-      <Checkbox
-        onChange={() => {
-          setEnableRBF(!enableRBF);
-        }}
-        checked={enableRBF}></Checkbox>
-    </Row>
-  );
+    useEffect(() => {
+        onChange(enableRBF);
+    }, [enableRBF]);
+    return (
+        <Row justifyBetween>
+            <Tooltip
+                title={'A feature allows the transaction to be replaced.'}
+                overlayStyle={{
+                    fontSize: fontSizes.xs
+                }}>
+                <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Row itemsCenter>
+                        <Text text="RBF" color="textDim" />
+                        <Icon icon="circle-question" color="textDim" />
+                    </Row>
+                </div>
+            </Tooltip>
+            <Checkbox
+                onChange={() => {
+                    setEnableRBF(!enableRBF);
+                }}
+                checked={enableRBF}></Checkbox>
+        </Row>
+    );
 }

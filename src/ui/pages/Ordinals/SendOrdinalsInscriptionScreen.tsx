@@ -9,9 +9,9 @@ import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { OutputValueBar } from '@/ui/components/OutputValueBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import {
-  useFetchUtxosCallback,
-  useOrdinalsTx,
-  usePrepareSendOrdinalsInscriptionCallback
+    useFetchUtxosCallback,
+    useOrdinalsTx,
+    usePrepareSendOrdinalsInscriptionCallback
 } from '@/ui/state/transactions/hooks';
 import { isValidAddress, useWallet } from '@/ui/utils';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
@@ -19,193 +19,193 @@ import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 import { useNavigate } from '../MainRoute';
 
 export default function SendOrdinalsInscriptionScreen() {
-  const [disabled, setDisabled] = useState(true);
-  const navigate = useNavigate();
+    const [disabled, setDisabled] = useState(true);
+    const navigate = useNavigate();
 
-  const { state } = useLocation();
-  const { inscription } = state as {
-    inscription: Inscription;
-  };
-  const ordinalsTx = useOrdinalsTx();
-  const [toInfo, setToInfo] = useState({
-    address: ordinalsTx.toAddress,
-    domain: ordinalsTx.toDomain
-  });
-
-  const fetchBtcUtxos = useFetchUtxosCallback();
-  const tools = useTools();
-  useEffect(() => {
-    tools.showLoading(true);
-    fetchBtcUtxos().finally(() => {
-      tools.showLoading(false);
+    const { state } = useLocation();
+    const { inscription } = state as {
+        inscription: Inscription;
+    };
+    const ordinalsTx = useOrdinalsTx();
+    const [toInfo, setToInfo] = useState({
+        address: ordinalsTx.toAddress,
+        domain: ordinalsTx.toDomain
     });
-  }, []);
 
-  const [error, setError] = useState('');
-  const prepareSendOrdinalsInscription = usePrepareSendOrdinalsInscriptionCallback();
+    const fetchBtcUtxos = useFetchUtxosCallback();
+    const tools = useTools();
+    useEffect(() => {
+        tools.showLoading(true);
+        fetchBtcUtxos().finally(() => {
+            tools.showLoading(false);
+        });
+    }, []);
 
-  const [feeRate, setFeeRate] = useState(5);
-  const [enableRBF, setEnableRBF] = useState(false);
-  const defaultOutputValue = inscription ? inscription.outputValue : 10000;
+    const [error, setError] = useState('');
+    const prepareSendOrdinalsInscription = usePrepareSendOrdinalsInscriptionCallback();
 
-  const [outputValue, setOutputValue] = useState(defaultOutputValue);
-  const [inscriptions, setInscriptions] = useState<Inscription[]>([]);
+    const [feeRate, setFeeRate] = useState(5);
+    const [enableRBF, setEnableRBF] = useState(false);
+    const defaultOutputValue = inscription ? inscription.outputValue : 10000;
 
-  const wallet = useWallet();
-  useEffect(() => {
-    wallet.getInscriptionUtxoDetail(inscription.inscriptionId).then((v) => {
-      setInscriptions(v.inscriptions);
-    });
-  }, []);
+    const [outputValue, setOutputValue] = useState(defaultOutputValue);
+    const [inscriptions, setInscriptions] = useState<Inscription[]>([]);
 
-  const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
+    const wallet = useWallet();
+    useEffect(() => {
+        wallet.getInscriptionUtxoDetail(inscription.inscriptionId).then((v) => {
+            setInscriptions(v.inscriptions);
+        });
+    }, []);
 
-  const minOutputValue = useMemo(() => {
-    if (toInfo.address) {
-      return getAddressUtxoDust(toInfo.address);
-    } else {
-      return 0;
-    }
-  }, [toInfo.address]);
+    const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
 
-  useEffect(() => {
-    setDisabled(true);
-    setError('');
+    const minOutputValue = useMemo(() => {
+        if (toInfo.address) {
+            return getAddressUtxoDust(toInfo.address);
+        } else {
+            return 0;
+        }
+    }, [toInfo.address]);
 
-    if (feeRate <= 0) {
-      setError('Invalid fee rate');
-      return;
-    }
+    useEffect(() => {
+        setDisabled(true);
+        setError('');
 
-    let dustUtxo = inscription.outputValue;
-    try {
-      if (toInfo.address) {
-        dustUtxo = getAddressUtxoDust(toInfo.address);
-      }
-    } catch (e) {
-      // console.log(e);
-    }
+        if (feeRate <= 0) {
+            setError('Invalid fee rate');
+            return;
+        }
 
-    const maxOffset = inscriptions.reduce((pre, cur) => {
-      return Math.max(pre, cur.offset);
-    }, 0);
+        let dustUtxo = inscription.outputValue;
+        try {
+            if (toInfo.address) {
+                dustUtxo = getAddressUtxoDust(toInfo.address);
+            }
+        } catch (e) {
+            // console.log(e);
+        }
 
-    const minOutputValue = Math.max(maxOffset + 1, dustUtxo);
+        const maxOffset = inscriptions.reduce((pre, cur) => {
+            return Math.max(pre, cur.offset);
+        }, 0);
 
-    if (outputValue < minOutputValue) {
-      setError(`OutputValue must be at least ${minOutputValue}`);
-      return;
-    }
+        const minOutputValue = Math.max(maxOffset + 1, dustUtxo);
 
-    if (!outputValue) {
-      return;
-    }
+        if (outputValue < minOutputValue) {
+            setError(`OutputValue must be at least ${minOutputValue}`);
+            return;
+        }
 
-    if (!isValidAddress(toInfo.address)) {
-      return;
-    }
+        if (!outputValue) {
+            return;
+        }
 
-    if (
-      toInfo.address == ordinalsTx.toAddress &&
-      feeRate == ordinalsTx.feeRate &&
-      outputValue == ordinalsTx.outputValue &&
-      enableRBF == ordinalsTx.enableRBF
-    ) {
-      //Prevent repeated triggering caused by setAmount
-      setDisabled(false);
-      return;
-    }
+        if (!isValidAddress(toInfo.address)) {
+            return;
+        }
 
-    prepareSendOrdinalsInscription({
-      toAddressInfo: toInfo,
-      inscriptionId: inscription.inscriptionId,
-      feeRate,
-      outputValue,
-      enableRBF
-    })
-      .then((data) => {
-        setRawTxInfo(data);
-        setDisabled(false);
-      })
-      .catch((e) => {
-        console.log(e);
-        setError(e.message);
-      });
-  }, [toInfo, feeRate, outputValue, enableRBF, inscriptions]);
+        if (
+            toInfo.address == ordinalsTx.toAddress &&
+            feeRate == ordinalsTx.feeRate &&
+            outputValue == ordinalsTx.outputValue &&
+            enableRBF == ordinalsTx.enableRBF
+        ) {
+            //Prevent repeated triggering caused by setAmount
+            setDisabled(false);
+            return;
+        }
 
-  return (
-    <Layout>
-      <Header
-        onBack={() => {
-          window.history.go(-1);
-        }}
-        title="Send Inscription"
-      />
-      <Content>
-        <Column>
-          <Text text={`Ordinals Inscriptions (${inscriptions.length})`} color="textDim" />
-          <Row justifyBetween>
-            <Row overflowX gap="lg" pb="md">
-              {inscriptions.map((v) => (
-                <InscriptionPreview key={v.inscriptionId} data={v} preset="small" />
-              ))}
-            </Row>
-          </Row>
+        prepareSendOrdinalsInscription({
+            toAddressInfo: toInfo,
+            inscriptionId: inscription.inscriptionId,
+            feeRate,
+            outputValue,
+            enableRBF
+        })
+            .then((data) => {
+                setRawTxInfo(data);
+                setDisabled(false);
+            })
+            .catch((e) => {
+                console.log(e);
+                setError(e.message);
+            });
+    }, [toInfo, feeRate, outputValue, enableRBF, inscriptions]);
 
-          <Text text="Recipient" color="textDim" />
-
-          <Input
-            preset="address"
-            addressInputData={toInfo}
-            autoFocus={true}
-            onAddressInputChange={(val) => {
-              setToInfo(val);
-            }}
-          />
-
-          {toInfo.address ? (
-            <Column mt="lg">
-              <Text text="OutputValue" color="textDim" />
-
-              <OutputValueBar
-                defaultValue={Math.max(defaultOutputValue, 546)}
-                minValue={minOutputValue}
-                onChange={(val) => {
-                  setOutputValue(val);
+    return (
+        <Layout>
+            <Header
+                onBack={() => {
+                    window.history.go(-1);
                 }}
-              />
-            </Column>
-          ) : null}
-
-          <Column mt="lg">
-            <Text text="Fee" color="textDim" />
-
-            <FeeRateBar
-              onChange={(val) => {
-                setFeeRate(val);
-              }}
+                title="Send Inscription"
             />
-          </Column>
+            <Content>
+                <Column>
+                    <Text text={`Ordinals Inscriptions (${inscriptions.length})`} color="textDim" />
+                    <Row justifyBetween>
+                        <Row overflowX gap="lg" pb="md">
+                            {inscriptions.map((v) => (
+                                <InscriptionPreview key={v.inscriptionId} data={v} preset="small" />
+                            ))}
+                        </Row>
+                    </Row>
 
-          <Column mt="lg">
-            <RBFBar
-              onChange={(val) => {
-                setEnableRBF(val);
-              }}
-            />
-          </Column>
+                    <Text text="Recipient" color="textDim" />
 
-          {error && <Text text={error} color="error" />}
-          <Button
-            disabled={disabled}
-            preset="primary"
-            text="Next"
-            onClick={(e) => {
-              navigate('SignOrdinalsTransactionScreen', { rawTxInfo });
-            }}
-          />
-        </Column>
-      </Content>
-    </Layout>
-  );
+                    <Input
+                        preset="address"
+                        addressInputData={toInfo}
+                        autoFocus={true}
+                        onAddressInputChange={(val) => {
+                            setToInfo(val);
+                        }}
+                    />
+
+                    {toInfo.address ? (
+                        <Column mt="lg">
+                            <Text text="OutputValue" color="textDim" />
+
+                            <OutputValueBar
+                                defaultValue={Math.max(defaultOutputValue, 546)}
+                                minValue={minOutputValue}
+                                onChange={(val) => {
+                                    setOutputValue(val);
+                                }}
+                            />
+                        </Column>
+                    ) : null}
+
+                    <Column mt="lg">
+                        <Text text="Fee" color="textDim" />
+
+                        <FeeRateBar
+                            onChange={(val) => {
+                                setFeeRate(val);
+                            }}
+                        />
+                    </Column>
+
+                    <Column mt="lg">
+                        <RBFBar
+                            onChange={(val) => {
+                                setEnableRBF(val);
+                            }}
+                        />
+                    </Column>
+
+                    {error && <Text text={error} color="error" />}
+                    <Button
+                        disabled={disabled}
+                        preset="primary"
+                        text="Next"
+                        onClick={(e) => {
+                            navigate('SignOrdinalsTransactionScreen', { rawTxInfo });
+                        }}
+                    />
+                </Column>
+            </Content>
+        </Layout>
+    );
 }

@@ -15,77 +15,81 @@ const disclaimStr = `Please note that you are about to buy Bitcoin through a thi
 
 `;
 export default function DisclaimerModal({ channelType, onClose }: { channelType: PaymentChannelType; onClose: any }) {
-  const currentAccount = useCurrentAccount();
-  const wallet = useWallet();
+    const currentAccount = useCurrentAccount();
+    const wallet = useWallet();
 
-  const [understand, setUnderstand] = useState(false);
+    const [understand, setUnderstand] = useState(false);
 
-  const channelInfo = PAYMENT_CHANNELS[channelType];
-  const tools = useTools();
-  return (
-    <BottomModal onClose={onClose}>
-      <Column>
-        <Row justifyBetween itemsCenter style={{ height: 20 }}>
-          <Row />
-          <Text text="Disclaimer" textCenter size="md" />
-          <Row
-            onClick={() => {
-              onClose();
-            }}>
-            <CloseOutlined />
-          </Row>
-        </Row>
+    const channelInfo = PAYMENT_CHANNELS[channelType];
+    const tools = useTools();
+    return (
+        <BottomModal onClose={onClose}>
+            <Column>
+                <Row justifyBetween itemsCenter style={{ height: 20 }}>
+                    <Row />
+                    <Text text="Disclaimer" textCenter size="md" />
+                    <Row
+                        onClick={() => {
+                            onClose();
+                        }}>
+                        <CloseOutlined />
+                    </Row>
+                </Row>
 
-        <Row fullX style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
+                <Row fullX style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
 
-        <Column justifyCenter rounded mb="lg" style={{maxHeight:'50vh',overflow:'auto'}}>
-          <Text style={{ fontSize: fontSizes.sm, lineHeight: 2 }} text={disclaimStr} />
+                <Column justifyCenter rounded mb="lg" style={{ maxHeight: '50vh', overflow: 'auto' }}>
+                    <Text style={{ fontSize: fontSizes.sm, lineHeight: 2 }} text={disclaimStr} />
 
-          <Text
-            mt="lg"
-            style={{ fontSize: fontSizes.sm, lineHeight: 2 }}
-            text={'Risk Warning: Don\'t invest unless you\'re prepared to lose all the money you invest.'}></Text>
-          <Text
-            mt="lg"
-            style={{ fontSize: fontSizes.sm, lineHeight: 2 }}
-            text={'Additional transaction fees apply when purchasing through third-party platforms. Rates vary by country and payment method. Please review each platform\'s fees before proceeding with transactions.'}></Text>
-          <Text
-            mt="lg"
-            style={{ fontSize: fontSizes.sm, lineHeight: 2 }}
-            text={'Before proceeding, please carefully read and accept the disclaimer.'}></Text>
-        </Column>
+                    <Text
+                        mt="lg"
+                        style={{ fontSize: fontSizes.sm, lineHeight: 2 }}
+                        text={
+                            "Risk Warning: Don't invest unless you're prepared to lose all the money you invest."
+                        }></Text>
+                    <Text
+                        mt="lg"
+                        style={{ fontSize: fontSizes.sm, lineHeight: 2 }}
+                        text={
+                            "Additional transaction fees apply when purchasing through third-party platforms. Rates vary by country and payment method. Please review each platform's fees before proceeding with transactions."
+                        }></Text>
+                    <Text
+                        mt="lg"
+                        style={{ fontSize: fontSizes.sm, lineHeight: 2 }}
+                        text={'Before proceeding, please carefully read and accept the disclaimer.'}></Text>
+                </Column>
 
-        <Row justifyCenter>
-          <Checkbox
-            onChange={() => {
-              setUnderstand(!understand);
-            }}
-            checked={understand}
-            style={{ fontSize: fontSizes.sm }}>
-            <Text text="I have read and agree to the above disclaimer" />
-          </Checkbox>
-        </Row>
+                <Row justifyCenter>
+                    <Checkbox
+                        onChange={() => {
+                            setUnderstand(!understand);
+                        }}
+                        checked={understand}
+                        style={{ fontSize: fontSizes.sm }}>
+                        <Text text="I have read and agree to the above disclaimer" />
+                    </Checkbox>
+                </Row>
 
-        <Button
-          text={`Continue with ${channelInfo.name}`}
-          preset="primaryV2"
-          disabled={!understand}
-          onClick={() => {
-            tools.showLoading(true);
-            wallet
-              .createPaymentUrl(currentAccount.address, channelType)
-              .then((url) => {
-                window.open(url);
-              })
-              .catch((e) => {
-                tools.toastError(e.message);
-              })
-              .finally(() => {
-                tools.showLoading(false);
-              });
-          }}
-        />
-      </Column>
-    </BottomModal>
-  );
+                <Button
+                    text={`Continue with ${channelInfo.name}`}
+                    preset="primaryV2"
+                    disabled={!understand}
+                    onClick={() => {
+                        tools.showLoading(true);
+                        wallet
+                            .createPaymentUrl(currentAccount.address, channelType)
+                            .then((url) => {
+                                window.open(url);
+                            })
+                            .catch((e) => {
+                                tools.toastError(e.message);
+                            })
+                            .finally(() => {
+                                tools.showLoading(false);
+                            });
+                    }}
+                />
+            </Column>
+        </BottomModal>
+    );
 }

@@ -9,36 +9,36 @@ import { Row } from '../Row';
 import { Text } from '../Text';
 
 export const BadFeeRate = ({
-  decodedPsbt,
-  risk,
-  onClose
+    decodedPsbt,
+    risk,
+    onClose
 }: {
-  decodedPsbt: DecodedPsbt;
-  risk: Risk;
-  onClose: () => void;
+    decodedPsbt: DecodedPsbt;
+    risk: Risk;
+    onClose: () => void;
 }) => {
-  return (
-    <Popover>
-      <Column justifyCenter itemsCenter>
-        <Row fullX justifyBetween>
-          <Row />
-          <Text text={risk.title} preset="bold" />
-          <Icon
-            icon="close"
-            onClick={() => {
-              onClose();
-            }}
-          />
-        </Row>
+    return (
+        <Popover>
+            <Column justifyCenter itemsCenter>
+                <Row fullX justifyBetween>
+                    <Row />
+                    <Text text={risk.title} preset="bold" />
+                    <Icon
+                        icon="close"
+                        onClick={() => {
+                            onClose();
+                        }}
+                    />
+                </Row>
 
-        <Row fullX style={{ borderBottomWidth: 1, borderColor: colors.border }} />
+                <Row fullX style={{ borderBottomWidth: 1, borderColor: colors.border }} />
 
-        <Text text={`Current fee rate:`} preset="sub" />
-        <Text text={`${decodedPsbt.feeRate} sat/vB`} />
+                <Text text={'Current fee rate:'} preset="sub" />
+                <Text text={`${decodedPsbt.feeRate} sat/vB`} />
 
-        <Text text={`Recommended fee rates:`} preset="sub" mt="lg" />
-        <FeeRateBar readonly />
-      </Column>
-    </Popover>
-  );
+                <Text text={'Recommended fee rates:'} preset="sub" mt="lg" />
+                <FeeRateBar readonly />
+            </Column>
+        </Popover>
+    );
 };

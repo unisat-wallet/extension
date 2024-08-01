@@ -13,17 +13,17 @@ import ui from './ui/reducer';
 
 const PERSISTED_KEYS: string[] = ['ui'];
 const store = configureStore({
-  reducer: {
-    accounts,
-    transactions,
-    settings,
-    global,
-    keyrings,
-    ui
-  },
-  middleware: (getDefaultMiddleware) =>
-    getDefaultMiddleware({ thunk: true }).concat(save({ states: PERSISTED_KEYS, debounce: 1000 })),
-  preloadedState: load({ states: PERSISTED_KEYS, disableWarnings: true })
+    reducer: {
+        accounts,
+        transactions,
+        settings,
+        global,
+        keyrings,
+        ui
+    },
+    middleware: (getDefaultMiddleware) =>
+        getDefaultMiddleware({ thunk: true }).concat(save({ states: PERSISTED_KEYS, debounce: 1000 })),
+    preloadedState: load({ states: PERSISTED_KEYS, disableWarnings: true })
 });
 
 store.dispatch(updateVersion());

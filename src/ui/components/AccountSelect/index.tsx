@@ -8,24 +8,24 @@ import { Text } from '../Text';
 import './index.less';
 
 const AccountSelect = () => {
-  const navigate = useNavigate();
-  const currentAccount = useCurrentAccount();
+    const navigate = useNavigate();
+    const currentAccount = useCurrentAccount();
 
-  return (
-    <Row
-      justifyBetween
-      px="md"
-      py="md"
-      bg="card"
-      rounded
-      onClick={(e) => {
-        navigate('SwitchAccountScreen');
-      }}>
-      <Icon icon="user" />
-      <Text text={shortAddress(currentAccount?.alianName, 8)} />
-      <Icon icon="down" />
-    </Row>
-  );
+    return (
+        <Row
+            justifyBetween
+            px="md"
+            py="md"
+            bg="card"
+            rounded
+            onClick={(e) => {
+                navigate('SwitchAccountScreen');
+            }}>
+            <Icon icon="user" />
+            <Text text={shortAddress(currentAccount?.alianName, 8)} />
+            <Icon icon="down" />
+        </Row>
+    );
 };
 
 export default AccountSelect;

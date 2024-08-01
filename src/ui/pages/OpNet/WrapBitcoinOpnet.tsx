@@ -16,215 +16,227 @@ import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 import { useNavigate } from '../MainRoute';
 
 interface ItemData {
-  key: string;
-  account?: Account;
+    key: string;
+    account?: Account;
 }
+
 export default function WrapBitcoinOpnet() {
-  const { state } = useLocation();
-  const props = state as {
-    OpNetBalance: OpNetBalance;
-  };
+    const { state } = useLocation();
+    const props = state as {
+        OpNetBalance: OpNetBalance;
+    };
 
-  const OpNetBalance = props.OpNetBalance;
-  const account = useCurrentAccount();
+    const OpNetBalance = props.OpNetBalance;
+    const account = useCurrentAccount();
 
-  const navigate = useNavigate();
-  const [inputAmount, setInputAmount] = useState('');
-  const [disabled, setDisabled] = useState(true);
-  const [OpnetRateInputVal, adjustFeeRateInput] = useState('800');
-  const [toInfo, setToInfo] = useState<{
-    address: string;
-    domain: string;
-    inscription?: Inscription;
-  }>({
-    address: '',
-    domain: '',
-    inscription: undefined
-  });
-
-  const [availableBalance, setAvailableBalance] = useState('0');
-  const [error, setError] = useState('');
-
-  const defaultOutputValue = 546;
-
-  const [outputValue, setOutputValue] = useState(defaultOutputValue);
-  const minOutputValue = useMemo(() => {
-    if (toInfo.address) {
-      return getAddressUtxoDust(toInfo.address);
-    } else {
-      return 0;
-    }
-  }, [toInfo.address]);
-
-  const tools = useTools();
-  useEffect(() => {
-    setAvailableBalance((parseInt(OpNetBalance.amount.toString()) / 10 ** OpNetBalance.divisibility).toString());
-    tools.showLoading(false);
-  }, []);
-
-  const [feeRate, setFeeRate] = useState(50);
-  const [enableRBF, setEnableRBF] = useState(false);
-  const keyring = useCurrentKeyring();
-  const items = useMemo(() => {
-    const _items: ItemData[] = keyring.accounts.map((v) => {
-      return {
-        key: v.address,
-        account: v
-      };
+    const navigate = useNavigate();
+    const [inputAmount, setInputAmount] = useState('');
+    const [disabled, setDisabled] = useState(true);
+    const [OpnetRateInputVal, adjustFeeRateInput] = useState('800');
+    const [toInfo, setToInfo] = useState<{
+        address: string;
+        domain: string;
+        inscription?: Inscription;
+    }>({
+        address: '',
+        domain: '',
+        inscription: undefined
     });
-    return _items;
-  }, []);
 
-  useEffect(() => {
-    setError('');
-    setDisabled(true);
+    const [availableBalance, setAvailableBalance] = useState('0');
+    const [error, setError] = useState('');
 
-    if (!inputAmount) {
-      return;
-    }
+    const defaultOutputValue = 546;
 
-    // if (outputValue < minOutputValue) {
-    //   setError(`OutputValue must be at least ${minOutputValue}`);
-    //   return;
-    // }
+    const [outputValue, setOutputValue] = useState(defaultOutputValue);
+    const minOutputValue = useMemo(() => {
+        if (toInfo.address) {
+            return getAddressUtxoDust(toInfo.address);
+        } else {
+            return 0;
+        }
+    }, [toInfo.address]);
 
-    // if (!outputValue) {
-    //   return;
-    // }
+    const tools = useTools();
+    useEffect(() => {
+        setAvailableBalance((parseInt(OpNetBalance.amount.toString()) / 10 ** OpNetBalance.divisibility).toString());
+        tools.showLoading(false);
+    }, []);
 
-    if (inputAmount != '') {
-      //Prevent repeated triggering caused by setAmount
-      setDisabled(false);
-      return;
-    }
-  }, [inputAmount, feeRate, enableRBF]);
-  return (
-    <Layout>
-      <Header
-        onBack={() => {
-          window.history.go(-1);
-        }}
-        title={'Wrap Bitcoin'}
-      />
-      <Content>
-        <Row justifyCenter>
-          <Text
-            text={`${runesUtils.toDecimalAmount(OpNetBalance.amount.toString(), OpNetBalance.divisibility)} `}
-            preset="bold"
-            textCenter
-            size="xxl"
-            wrap
-          />
-        </Row>
+    const [feeRate, setFeeRate] = useState(50);
+    const [enableRBF, setEnableRBF] = useState(false);
+    const keyring = useCurrentKeyring();
+    const items = useMemo(() => {
+        const _items: ItemData[] = keyring.accounts.map((v) => {
+            return {
+                key: v.address,
+                account: v
+            };
+        });
+        return _items;
+    }, []);
 
-        <Column mt="lg">
-          <Row justifyBetween>
-            <Text text="Amount" color="textDim" />
-            <Row
-              itemsCenter
-              onClick={() => {
-                setInputAmount(runesUtils.toDecimalAmount(OpNetBalance.amount.toString(), OpNetBalance.divisibility));
-              }}>
-              <Text text="MAX" preset="sub" style={{ color: colors.white_muted }} />
-              <Text
-                text={`${runesUtils.toDecimalAmount(OpNetBalance.amount.toString(), OpNetBalance.divisibility)} `}
-                preset="bold"
-                size="sm"
-                wrap
-              />
-            </Row>
-          </Row>
-          <Input
-            preset="amount"
-            placeholder={'Amount'}
-            value={inputAmount.toString()}
-            onAmountInputChange={(amount) => {
-              setInputAmount(amount);
-            }}
-            runesDecimal={OpNetBalance.divisibility}
-          />
-        </Column>
+    useEffect(() => {
+        setError('');
+        setDisabled(true);
 
-        {toInfo.address ? (
-          <Column mt="lg">
-            <Text text="OutputValue" color="textDim" />
+        if (!inputAmount) {
+            return;
+        }
 
-            <OutputValueBar
-              defaultValue={defaultOutputValue}
-              minValue={minOutputValue}
-              onChange={(val) => {
-                setOutputValue(val);
-              }}
+        // if (outputValue < minOutputValue) {
+        //   setError(`OutputValue must be at least ${minOutputValue}`);
+        //   return;
+        // }
+
+        // if (!outputValue) {
+        //   return;
+        // }
+
+        if (inputAmount != '') {
+            //Prevent repeated triggering caused by setAmount
+            setDisabled(false);
+            return;
+        }
+    }, [inputAmount, feeRate, enableRBF]);
+    return (
+        <Layout>
+            <Header
+                onBack={() => {
+                    window.history.go(-1);
+                }}
+                title={'Wrap Bitcoin'}
             />
-          </Column>
-        ) : null}
+            <Content>
+                <Row justifyCenter>
+                    <Text
+                        text={`${runesUtils.toDecimalAmount(
+                            OpNetBalance.amount.toString(),
+                            OpNetBalance.divisibility
+                        )} `}
+                        preset="bold"
+                        textCenter
+                        size="xxl"
+                        wrap
+                    />
+                </Row>
 
-        <Column mt="lg">
-          <Text text="Fee" color="textDim" />
+                <Column mt="lg">
+                    <Row justifyBetween>
+                        <Text text="Amount" color="textDim" />
+                        <Row
+                            itemsCenter
+                            onClick={() => {
+                                setInputAmount(
+                                    runesUtils.toDecimalAmount(
+                                        OpNetBalance.amount.toString(),
+                                        OpNetBalance.divisibility
+                                    )
+                                );
+                            }}>
+                            <Text text="MAX" preset="sub" style={{ color: colors.white_muted }} />
+                            <Text
+                                text={`${runesUtils.toDecimalAmount(
+                                    OpNetBalance.amount.toString(),
+                                    OpNetBalance.divisibility
+                                )} `}
+                                preset="bold"
+                                size="sm"
+                                wrap
+                            />
+                        </Row>
+                    </Row>
+                    <Input
+                        preset="amount"
+                        placeholder={'Amount'}
+                        value={inputAmount.toString()}
+                        onAmountInputChange={(amount) => {
+                            setInputAmount(amount);
+                        }}
+                        runesDecimal={OpNetBalance.divisibility}
+                    />
+                </Column>
 
-          <FeeRateBar
-            onChange={(val) => {
-              setFeeRate(val);
-            }}
-          />
-        </Column>
-        <Text text="Opnet Fee" color="textDim" />
-        <Input
-          preset="amount"
-          placeholder={'sat/vB'}
-          value={OpnetRateInputVal}
-          onAmountInputChange={(amount) => {
-            adjustFeeRateInput(amount);
-          }}
-          // onBlur={() => {
-          //   const val = parseInt(feeRateInputVal) + '';
-          //   setFeeRateInputVal(val);
-          // }}
-          autoFocus={true}
-        />
-        <Column mt="lg">
-          <RBFBar
-            onChange={(val) => {
-              setEnableRBF(val);
-            }}
-          />
-        </Column>
+                {toInfo.address ? (
+                    <Column mt="lg">
+                        <Text text="OutputValue" color="textDim" />
 
-        {error && <Text text={error} color="error" />}
+                        <OutputValueBar
+                            defaultValue={defaultOutputValue}
+                            minValue={minOutputValue}
+                            onChange={(val) => {
+                                setOutputValue(val);
+                            }}
+                        />
+                    </Column>
+                ) : null}
 
-        <Button
-          disabled={disabled}
-          preset="primary"
-          text="Next"
-          onClick={(e) => {
-            navigate('TxOpnetConfirmScreen', {
-              rawTxInfo: {
-                items: items,
-                account: account, // replace with actual account
-                inputAmount: inputAmount, // replace with actual inputAmount
-                address: toInfo.address, // replace with actual address
-                feeRate: feeRate, // replace with actual feeRate
-                priorityFee: BigInt(OpnetRateInputVal), // replace with actual OpnetRateInputVal
-                header: 'Wrap Bitcoin', // replace with actual header
-                networkFee: feeRate, // replace with actual networkFee
-                features: {
-                  rbf: false // replace with actual rbf value
-                },
-                inputInfos: [], // replace with actual inputInfos
-                isToSign: false, // replace with actual isToSign value
-                opneTokens: [
-                  {
-                    amount: parseFloat(inputAmount) * 10 ** OpNetBalance.divisibility,
-                    divisibility: OpNetBalance.divisibility,
-                    spacedRune: OpNetBalance.name,
-                    symbol: OpNetBalance.symbol
-                  }
-                ],
-                action: 'wrap' // replace with actual opneTokens
-              }
-            });
-          }}></Button>
-      </Content>
-    </Layout>
-  );
+                <Column mt="lg">
+                    <Text text="Fee" color="textDim" />
+
+                    <FeeRateBar
+                        onChange={(val) => {
+                            setFeeRate(val);
+                        }}
+                    />
+                </Column>
+                <Text text="Opnet Fee" color="textDim" />
+                <Input
+                    preset="amount"
+                    placeholder={'sat/vB'}
+                    value={OpnetRateInputVal}
+                    onAmountInputChange={(amount) => {
+                        adjustFeeRateInput(amount);
+                    }}
+                    // onBlur={() => {
+                    //   const val = parseInt(feeRateInputVal) + '';
+                    //   setFeeRateInputVal(val);
+                    // }}
+                    autoFocus={true}
+                />
+                <Column mt="lg">
+                    <RBFBar
+                        onChange={(val) => {
+                            setEnableRBF(val);
+                        }}
+                    />
+                </Column>
+
+                {error && <Text text={error} color="error" />}
+
+                <Button
+                    disabled={disabled}
+                    preset="primary"
+                    text="Next"
+                    onClick={(e) => {
+                        navigate('TxOpnetConfirmScreen', {
+                            rawTxInfo: {
+                                items: items,
+                                account: account, // replace with actual account
+                                inputAmount: inputAmount, // replace with actual inputAmount
+                                address: toInfo.address, // replace with actual address
+                                feeRate: feeRate, // replace with actual feeRate
+                                priorityFee: BigInt(OpnetRateInputVal), // replace with actual OpnetRateInputVal
+                                header: 'Wrap Bitcoin', // replace with actual header
+                                networkFee: feeRate, // replace with actual networkFee
+                                features: {
+                                    rbf: false // replace with actual rbf value
+                                },
+                                inputInfos: [], // replace with actual inputInfos
+                                isToSign: false, // replace with actual isToSign value
+                                opneTokens: [
+                                    {
+                                        amount: parseFloat(inputAmount) * 10 ** OpNetBalance.divisibility,
+                                        divisibility: OpNetBalance.divisibility,
+                                        spacedRune: OpNetBalance.name,
+                                        symbol: OpNetBalance.symbol
+                                    }
+                                ],
+                                action: 'wrap' // replace with actual opneTokens
+                            }
+                        });
+                    }}></Button>
+            </Content>
+        </Layout>
+    );
 }

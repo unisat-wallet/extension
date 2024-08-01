@@ -12,68 +12,68 @@ import { getUiType, useWallet } from '@/ui/utils';
 import { useNavigate } from '../../MainRoute';
 
 export default function UnlockScreen() {
-  const wallet = useWallet();
-  const navigate = useNavigate();
-  const [password, setPassword] = useState('');
-  const [disabled, setDisabled] = useState(true);
-  const UIType = getUiType();
-  const isInNotification = UIType.isNotification;
-  const unlock = useUnlockCallback();
-  const tools = useTools();
-  const btnClick = async () => {
-    // run(password);
-    try {
-      await unlock(password);
-      if (!isInNotification) {
-        const hasVault = await wallet.hasVault();
-        if (!hasVault) {
-          navigate('WelcomeScreen');
-          return;
-        } else {
-          navigate('MainScreen');
-          return;
+    const wallet = useWallet();
+    const navigate = useNavigate();
+    const [password, setPassword] = useState('');
+    const [disabled, setDisabled] = useState(true);
+    const UIType = getUiType();
+    const isInNotification = UIType.isNotification;
+    const unlock = useUnlockCallback();
+    const tools = useTools();
+    const btnClick = async () => {
+        // run(password);
+        try {
+            await unlock(password);
+            if (!isInNotification) {
+                const hasVault = await wallet.hasVault();
+                if (!hasVault) {
+                    navigate('WelcomeScreen');
+                    return;
+                } else {
+                    navigate('MainScreen');
+                    return;
+                }
+            }
+        } catch (e) {
+            console.log(e);
+            tools.toastError('PASSWORD ERROR');
         }
-      }
-    } catch (e) {
-      console.log(e);
-      tools.toastError('PASSWORD ERROR');
-    }
-  };
+    };
 
-  const handleOnKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if (!disabled && 'Enter' == e.key) {
-      btnClick();
-    }
-  };
+    const handleOnKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        if (!disabled && 'Enter' == e.key) {
+            btnClick();
+        }
+    };
 
-  useEffect(() => {
-    if (password) {
-      setDisabled(false);
-    } else {
-      setDisabled(true);
-    }
-  }, [password]);
-  return (
-    <Layout>
-      <Content preset="middle">
-        <Column fullX>
-          <Row justifyCenter>
-            <Logo preset="large" />
-          </Row>
+    useEffect(() => {
+        if (password) {
+            setDisabled(false);
+        } else {
+            setDisabled(true);
+        }
+    }, [password]);
+    return (
+        <Layout>
+            <Content preset="middle">
+                <Column fullX>
+                    <Row justifyCenter>
+                        <Logo preset="large" />
+                    </Row>
 
-          <Column gap="xl" mt="xxl">
-            <Text preset="title-bold" text="Enter your password" textCenter />
-            <Input
-              preset="password"
-              placeholder="Password"
-              onChange={(e) => setPassword(e.target.value)}
-              onKeyUp={(e) => handleOnKeyUp(e)}
-              autoFocus={true}
-            />
-            <Button disabled={disabled} text="Unlock" preset="primary" onClick={btnClick} />
-          </Column>
-        </Column>
-      </Content>
-    </Layout>
-  );
+                    <Column gap="xl" mt="xxl">
+                        <Text preset="title-bold" text="Enter your password" textCenter />
+                        <Input
+                            preset="password"
+                            placeholder="Password"
+                            onChange={(e) => setPassword(e.target.value)}
+                            onKeyUp={(e) => handleOnKeyUp(e)}
+                            autoFocus={true}
+                        />
+                        <Button disabled={disabled} text="Unlock" preset="primary" onClick={btnClick} />
+                    </Column>
+                </Column>
+            </Content>
+        </Layout>
+    );
 }

@@ -17,21 +17,21 @@ import { Text } from './Text';
 import { TextArea } from './TextArea';
 
 export {
-  AddressBar,
-  Button,
-  Card,
-  Column,
-  Content,
-  Footer,
-  Grid,
-  Header,
-  Icon,
-  Image,
-  Input,
-  Layout,
-  Logo,
-  Row,
-  Select,
-  Text,
-  TextArea
+    AddressBar,
+    Button,
+    Card,
+    Column,
+    Content,
+    Footer,
+    Grid,
+    Header,
+    Icon,
+    Image,
+    Input,
+    Layout,
+    Logo,
+    Row,
+    Select,
+    Text,
+    TextArea
 };

@@ -7,59 +7,63 @@ import { fontSizes } from '@/ui/theme/font';
 import { BinaryReader } from '@btc-vision/bsi-binary';
 
 export interface DecodedApprove extends Decoded {
-  readonly amount: bigint;
-  readonly spender: string;
+    readonly amount: bigint;
+    readonly spender: string;
 }
 
 export function decodeApprove(selector: string, reader: BinaryReader): DecodedApprove {
-  let amount = 0n;
-  let spender = '';
-  switch (selector) {
-    case InteractionType.Approve: {
-      spender = reader.readAddress();
-      amount = reader.readU256();
-      break;
+    let amount = 0n;
+    let spender = '';
+    switch (selector) {
+        case InteractionType.Approve: {
+            spender = reader.readAddress();
+            amount = reader.readU256();
+            break;
+        }
     }
-  }
 
-  return {
-    selector,
-    amount,
-    spender
-  };
+    return {
+        selector,
+        amount,
+        spender
+    };
 }
 
 export interface DecodedTransfer extends Decoded {
-  readonly amount: bigint;
-  readonly to: string;
+    readonly amount: bigint;
+    readonly to: string;
 }
 
 interface DecodedApproveProps {
-  readonly decoded: DecodedApprove;
-  readonly contractInfo: ContractInformation;
-  readonly interactionType: string;
+    readonly decoded: DecodedApprove;
+    readonly contractInfo: ContractInformation;
+    readonly interactionType: string;
 }
 
 export function ApproveDecodedInfo(props: DecodedApproveProps): JSX.Element {
-  const { contractInfo } = props;
-  const interactionType = props.interactionType;
-  const decoded = props.decoded;
+    const { contractInfo } = props;
+    const interactionType = props.interactionType;
+    const decoded = props.decoded;
 
-  const amount = new BigNumber(decoded.amount.toString()).div(new BigNumber(10).pow(contractInfo.decimals || 8));
-  const balanceFormatted = amount.toFormat(6).toString();
+    const amount = new BigNumber(decoded.amount.toString()).div(new BigNumber(10).pow(contractInfo.decimals || 8));
+    const balanceFormatted = amount.toFormat(6).toString();
 
-  const slicedAddress = `${decoded.spender.slice(0, 8)}...${decoded.spender.slice(-12)}`;
+    const slicedAddress = `${decoded.spender.slice(0, 8)}...${decoded.spender.slice(-12)}`;
 
-  return (
-    <Card>
-      <Column>
-        <Text text={interactionType} preset="sub" textCenter />
-        <Row>
-          <Image src={contractInfo.logo} size={fontSizes.logo} />
-          <Text text={`${balanceFormatted} ${(contractInfo.symbol || '').toUpperCase()}`} preset="large" textCenter />
-        </Row>
-        <Text text={`spender: ✓ ${slicedAddress}`} preset="sub" textCenter />
-      </Column>
-    </Card>
-  );
+    return (
+        <Card>
+            <Column>
+                <Text text={interactionType} preset="sub" textCenter />
+                <Row>
+                    <Image src={contractInfo.logo} size={fontSizes.logo} />
+                    <Text
+                        text={`${balanceFormatted} ${(contractInfo.symbol || '').toUpperCase()}`}
+                        preset="large"
+                        textCenter
+                    />
+                </Row>
+                <Text text={`spender: ✓ ${slicedAddress}`} preset="sub" textCenter />
+            </Column>
+        </Card>
+    );
 }

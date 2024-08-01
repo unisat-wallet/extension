@@ -3,7 +3,7 @@ import { ContractInformation } from '@/shared/web3/interfaces/ContractInformatio
 import { InteractionParametersWithoutSigner } from '@btc-vision/transaction';
 
 export interface DetailedInteractionParameters {
-  readonly interactionParameters: InteractionParametersWithoutSigner;
-  readonly contractInfo: ContractInformation;
-  network: ChainType;
+    readonly interactionParameters: InteractionParametersWithoutSigner;
+    readonly contractInfo: ContractInformation;
+    network: ChainType;
 }

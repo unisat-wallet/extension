@@ -3,68 +3,67 @@ import { ListenCallback, RequestData } from '@/shared/types/Request.js';
 
 import Message from './index';
 
-
 // Make bigint serializable
 BigInt.prototype.toJSON = function () {
-  return this.toString();
+    return this.toString();
 };
 
 class PortMessage extends Message {
-  port: chrome.runtime.Port | null = null;
-  listenCallback?: ListenCallback;
+    port: chrome.runtime.Port | null = null;
+    listenCallback?: ListenCallback;
 
-  constructor(port?: chrome.runtime.Port) {
-    super();
+    constructor(port?: chrome.runtime.Port) {
+        super();
 
-    if (port) {
-      this.port = port;
+        if (port) {
+            this.port = port;
+        }
     }
-  }
 
-  connect = (name?: string) => {
-    this.port = browserRuntimeConnect(undefined, name ? { name } : undefined);
-    this.port.onMessage.addListener(async ({ _type_, data }): Promise<void> => {
-      if (_type_ === `${this._EVENT_PRE}message`) {
-        this.emit('message', data);
-        return;
-      }
+    connect = (name?: string) => {
+        this.port = browserRuntimeConnect(undefined, name ? { name } : undefined);
+        this.port.onMessage.addListener(async ({ _type_, data }): Promise<void> => {
+            if (_type_ === `${this._EVENT_PRE}message`) {
+                this.emit('message', data);
+                return;
+            }
 
-      if (_type_ === `${this._EVENT_PRE}response`) {
-        await this.onResponse(data);
-      }
-    });
+            if (_type_ === `${this._EVENT_PRE}response`) {
+                await this.onResponse(data);
+            }
+        });
 
-    return this;
-  };
+        return this;
+    };
 
-  listen = (listenCallback: ListenCallback) => {
-    if (!this.port) return;
-    this.listenCallback = listenCallback;
-    this.port.onMessage.addListener(async ({ _type_, data }): Promise<void> => {
-      if (_type_ === `${this._EVENT_PRE}request`) {
-        await this.onRequest(data);
-      }
-    });
+    listen = (listenCallback: ListenCallback) => {
+        if (!this.port) return;
+        this.listenCallback = listenCallback;
+        this.port.onMessage.addListener(async ({ _type_, data }): Promise<void> => {
+            if (_type_ === `${this._EVENT_PRE}request`) {
+                await this.onRequest(data);
+            }
+        });
 
-    return this;
-  };
+        return this;
+    };
 
-  send = (type: string, data: RequestData) => {
-    if (!this.port) return;
+    send = (type: string, data: RequestData) => {
+        if (!this.port) return;
 
-    //try {
-    this.port.postMessage({ _type_: `${this._EVENT_PRE}${type}`, data });
-    //} catch (e) {
-    // DO NOTHING BUT CATCH THIS ERROR
-    //}
-  };
+        //try {
+        this.port.postMessage({ _type_: `${this._EVENT_PRE}${type}`, data });
+        //} catch (e) {
+        // DO NOTHING BUT CATCH THIS ERROR
+        //}
+    };
 
-  dispose = () => {
-    this._dispose();
-    this.port?.disconnect();
+    dispose = () => {
+        this._dispose();
+        this.port?.disconnect();
 
-    this.port = null;
-  };
+        this.port = null;
+    };
 }
 
 export default PortMessage;

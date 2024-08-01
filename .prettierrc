@@ -1,6 +1,6 @@
 {
   "printWidth": 120,
-  "tabWidth": 2,
+  "tabWidth": 4,
   "singleQuote": true,
   "useTabs": false,
   "semi": true,
@@ -11,6 +11,10 @@
   "arrowParens": "always",
   "requirePragma": false,
   "insertPragma": false,
-  "importOrder": ["^@formily/(.*)", "^@(.*)$", "^[./]"],
+  "importOrder": [
+    "^@formily/(.*)",
+    "^@(.*)$",
+    "^[./]"
+  ],
   "importOrderSeparation": true
 }
