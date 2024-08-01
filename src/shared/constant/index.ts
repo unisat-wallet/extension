@@ -209,6 +209,7 @@ export const RESTORE_WALLETS: { value: RestoreWalletType; name: string; addressT
 export enum ChainType {
   BITCOIN_MAINNET = 'BITCOIN_MAINNET',
   BITCOIN_TESTNET = 'BITCOIN_TESTNET',
+  BITCOIN_SIGNET = 'BITCOIN_SIGNET',
   FRACTAL_BITCOIN_MAINNET = 'FRACTAL_BITCOIN_MAINNET'
 }
 
@@ -242,12 +243,22 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
   [ChainType.BITCOIN_TESTNET]: {
     enum: ChainType.BITCOIN_TESTNET,
     label: 'Bitcoin Testnet',
-    icon: './images/artifacts/bitcoin-testnet.png',
+    icon: './images/artifacts/bitcoin-testnet.svg',
     networkType: NetworkType.TESTNET,
     endpoints: ['https://wallet-api-testnet.unisat.space'],
     mempoolSpaceUrl: 'https://mempool.space/testnet',
     unisatUrl: 'https://testnet.unisat.io',
     ordinalsUrl: 'https://testnet.ordinals.com'
+  },
+  [ChainType.BITCOIN_SIGNET]:{
+    enum: ChainType.BITCOIN_SIGNET,
+    label: 'Bitcoin Signet',
+    icon: './images/artifacts/bitcoin-signet.svg',
+    networkType: NetworkType.TESTNET,
+    endpoints: ['https://wallet-api-signet.unisat.space'],
+    mempoolSpaceUrl: 'https://mempool.space/signet',
+    unisatUrl: 'https://signet.unisat.io',
+    ordinalsUrl: 'https://signet.ordinals.com'
   },
   [ChainType.FRACTAL_BITCOIN_MAINNET]: {
     enum: ChainType.FRACTAL_BITCOIN_MAINNET,
@@ -258,7 +269,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     mempoolSpaceUrl: 'https://fractalbitcoin-mempool.unisat.io',
     unisatUrl: 'https://fractalbitcoin.unisat.io',
     ordinalsUrl: 'https://fractalbitcoin-ordinals.unisat.io'
-  }
+  },
 };
 
 // 将 CHAINS_MAP 转换为数组
