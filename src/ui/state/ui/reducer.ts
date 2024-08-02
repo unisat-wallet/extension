@@ -119,7 +119,7 @@ const slice = createSlice({
         builder.addCase(updateVersion, (state) => {
             // todo
             if (!state.assetTabKey) {
-                state.assetTabKey = AssetTabKey.ORDINALS;
+                state.assetTabKey = AssetTabKey.OP_NET;
             }
             if (!state.ordinalsAssetTabKey) {
                 state.ordinalsAssetTabKey = OrdinalsAssetTabKey.ALL;
