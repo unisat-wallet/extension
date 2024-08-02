@@ -34,6 +34,9 @@ export default function UnWrapBitcoinOpnet() {
     const [OpnetRateInputVal, adjustFeeRateInput] = useState('5000');
     const [stakedReward, setStakeReward] = useState<bigint>(0n);
     const [stakedAmount, setStakedAmount] = useState<bigint>(0n);
+    const [totalStaked, setTotalStaked] = useState<bigint>(0n);
+    const [rewardPool, setRewardPool] = useState<bigint>(0n);
+
     const wallet = useWallet();
 
     const [availableBalance, setAvailableBalance] = useState('0');
@@ -47,12 +50,15 @@ export default function UnWrapBitcoinOpnet() {
     useEffect(() => {
         const setWallet = async () => {
             Web3API.setNetwork(await wallet.getChainType());
-            const contract: IWBTCContract = await getContract<IWBTCContract>(
+            const contract: IWBTCContract = getContract<IWBTCContract>(
                 wBTC.getAddress(Web3API.network),
                 WBTC_ABI,
                 Web3API.provider,
                 account.address
             );
+
+            console.log('addy', account.address);
+
             const getRewards = (await contract.stakedReward(account.address)) as unknown as { decoded: bigint[] };
             const getStakedAmount = (await contract.stakedAmount(account.address)) as unknown as { decoded: bigint[] };
 
@@ -62,6 +68,16 @@ export default function UnWrapBitcoinOpnet() {
 
             setStakeReward(getRewards.decoded[0]);
             setStakedAmount(getStakedAmount.decoded[0]);
+
+            const rewardPool = (await contract.rewardPool()) as unknown as { decoded: bigint[] };
+            const totalStaked = (await contract.totalStaked()) as unknown as { decoded: bigint[] };
+
+            if ('error' in rewardPool || 'error' in totalStaked) {
+                throw new Error('Can not get reward pool or total staked');
+            }
+
+            setRewardPool(rewardPool.decoded[0]);
+            setTotalStaked(totalStaked.decoded[0]);
         };
         setWallet();
 
@@ -120,6 +136,14 @@ export default function UnWrapBitcoinOpnet() {
                 <Row itemsCenter fullX justifyBetween>
                     <Text text={'Reward'} color="textDim" size="md" />
                     <Text text={(Number(stakedReward) / 10 ** OpNetBalance.divisibility).toString()} size="md" />
+                </Row>
+                <Row itemsCenter fullX justifyBetween>
+                    <Text text={'Total Staked'} color="textDim" size="md" />
+                    <Text text={(Number(totalStaked) / 10 ** OpNetBalance.divisibility).toString()} size="md" />
+                </Row>
+                <Row itemsCenter fullX justifyBetween>
+                    <Text text={'Reward Pool'} color="textDim" size="md" />
+                    <Text text={(Number(rewardPool) / 10 ** OpNetBalance.divisibility).toString()} size="md" />
                 </Row>
                 <Row full>
                     <Button
