@@ -20,10 +20,10 @@ export interface UIState {
 }
 
 export enum AssetTabKey {
+    OP_NET,
     ORDINALS,
     ATOMICALS,
-    RUNES,
-    OP_NET
+    RUNES
 }
 
 export enum OrdinalsAssetTabKey {
