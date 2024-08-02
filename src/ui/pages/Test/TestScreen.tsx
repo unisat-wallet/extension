@@ -1,6 +1,6 @@
 import { useEffect } from 'react';
 
-import { NetworkType, TokenBalance, TxType } from '@/shared/types';
+import { NetworkType, ToAddressInfo, TokenBalance, TxType } from '@/shared/types';
 import { Card, Column, Content, Input, Layout, Text } from '@/ui/components';
 import { AddressDetailPopover } from '@/ui/components/AddressDetailPopover';
 import { AddressText } from '@/ui/components/AddressText';
@@ -113,7 +113,7 @@ function TestAddressDetail() {
 }
 
 function TestAddressTextA() {
-  return <AddressText addressInfo={testAddressInfo} />;
+  return <AddressText addressInfo={testAddressInfo as ToAddressInfo} />;
 }
 
 function TestAddressTextB() {
@@ -141,7 +141,8 @@ function TestApprovalSignPsbt() {
         data: {
           psbtHex:
             '70736274ff01007d0200000001d0baba4fd7980fe2c29b1efc4eb9eb2aa43aa1a4dbe2d9f8f38facef3446f5900100000000fdffffff02a086010000000000225120517aaf863dcf93a135664bbede4dc219c054a63fdd5b8b10a7c2b61bd8d3e28f3fc95500000000001600143dcf0a89a523ff619a31af413954960414a7c21e000000000001011f79505700000000001600143dcf0a89a523ff619a31af413954960414a7c21e01086c024830450221008b3706ec6cff7e882fe6dbcbeacc09195f3f10f8b268acce6367bf4f37058edd02203ca6b1c8f6efdad8f6aa63cfe091d5871e1f19d44e3e267d311c31e51cb81f1c0121026887958bcc4cb6f8c04ea49260f0d10e312c41baf485252953b14724db552aac000000',
-          type: TxType.SIGN_TX
+          type: TxType.SIGN_TX,
+          options:{autoFinalized:false}
         },
         session: {
           origin: 'https://mail.google.com/',
@@ -167,8 +168,9 @@ function TestApprovalSignPsbtB() {
           rawTxInfo: {
             psbtHex,
             rawtx: '',
-            toAddressInfo: testAddressInfo
-          }
+            toAddressInfo: testAddressInfo as ToAddressInfo
+          },
+          options:{autoFinalized:false}
         },
         session: {
           origin: 'https://mail.google.com/',
@@ -191,7 +193,8 @@ function TestApprovalMultiSignPsbt() {
     <MultiSignPsbt
       params={{
         data: {
-          psbtHexs: [psbtHex, psbtHex2]
+          psbtHexs: [psbtHex, psbtHex2],
+          options:[]
         },
         session: {
           origin: 'https://mail.google.com/',
@@ -225,7 +228,8 @@ function TestApprovalSignText() {
     <SignText
       params={{
         data: {
-          text: 'hello'
+          text: 'hello',
+          type:''
         },
         session: {
           origin: 'https://mail.google.com/',
