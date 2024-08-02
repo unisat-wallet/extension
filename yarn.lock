@@ -1343,10 +1343,10 @@
     ts-loader "^9.5.1"
     ts-node "^10.9.2"
 
-"@btc-vision/transaction@1.0.70":
-  version "1.0.70"
-  resolved "https://registry.yarnpkg.com/@btc-vision/transaction/-/transaction-1.0.70.tgz#b4d5297cebd26e74e8beed6cca3669b517c3147e"
-  integrity sha512-cPnMY5gu7IMQmzHtWZmTU8hVPJ5Hs58vxALK1mvonKDZo4l/6pXcrEGGOdv8/zjGPGb0tWfIzL9GNR80T2BfXQ==
+"@btc-vision/transaction@1.0.71":
+  version "1.0.71"
+  resolved "https://registry.yarnpkg.com/@btc-vision/transaction/-/transaction-1.0.71.tgz#ddfd1ecd7c217e972d9f1b282f2b5468d675e922"
+  integrity sha512-ItVIliOOOvCqBpig4q2LUWh+b5zgqcG5gquIskqSppIJ9NPDhLrgEAGJSpBucvPqY1axz6MOjGGsxmjRY8iOww==
   dependencies:
     "@babel/plugin-proposal-object-rest-spread" "^7.20.7"
     "@bitcoinerlab/secp256k1" "^1.1.1"
