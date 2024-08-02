@@ -39,7 +39,7 @@ export enum AtomicalsAssetTabKey {
 }
 
 export const initialState: UIState = {
-    assetTabKey: AssetTabKey.ORDINALS,
+    assetTabKey: AssetTabKey.OP_NET,
     ordinalsAssetTabKey: OrdinalsAssetTabKey.ALL,
     atomicalsAssetTabKey: AtomicalsAssetTabKey.ARC20,
     uiTxCreateScreen: {

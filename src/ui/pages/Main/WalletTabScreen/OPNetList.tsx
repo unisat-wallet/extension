@@ -25,7 +25,7 @@ const { AddressType } = require('@unisat/wallet-sdk');
 const { bitcoin } = require('@unisat/wallet-sdk/lib/bitcoin-core');
 const { NetworkType } = require('@unisat/wallet-sdk/lib/network');
 
-export function OP_NETList() {
+export function OPNetList() {
     const navigate = useNavigate();
     const wallet = useWallet();
     const currentAccount = useCurrentAccount();

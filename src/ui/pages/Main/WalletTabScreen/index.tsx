@@ -36,7 +36,7 @@ import { BuyBTCModal } from '../../BuyBTC/BuyBTCModal';
 import { useNavigate } from '../../MainRoute';
 import { SwitchChainModal } from '../../Settings/SwitchChainModal';
 import { AtomicalsTab } from './AtomicalsTab';
-import { OP_NETList } from './OP_NETList';
+import { OPNetList } from './OPNetList';
 import { OrdinalsTab } from './OrdinalsTab';
 import { RunesList } from './RunesList';
 
@@ -147,14 +147,14 @@ export default function WalletTabScreen() {
 
     const tabItems = [
         {
+            key: AssetTabKey.OP_NET,
+            label: 'OP_NET',
+            children: <OPNetList />
+        },
+        {
             key: AssetTabKey.ORDINALS,
             label: 'Ordinals',
             children: <OrdinalsTab />
-        },
-        {
-            key: AssetTabKey.OP_NET,
-            label: 'OP_NET',
-            children: <OP_NETList />
         },
         {
             key: AssetTabKey.ATOMICALS,
