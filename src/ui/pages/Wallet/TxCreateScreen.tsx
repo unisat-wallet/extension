@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { COIN_DUST } from '@/shared/constant';
 import { Account, RawTxInfo } from '@/shared/types';
+import { expandToDecimals } from '@/shared/utils';
 import Web3API from '@/shared/web3/Web3API';
 import { Button, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -387,7 +388,8 @@ export default function TxCreateScreen() {
                                     isToSign: false, // replace with actual isToSign value
                                     opneTokens: [
                                         {
-                                            amount: parseFloat(inputAmount) * 10 ** 8,
+                                            amount: expandToDecimals(inputAmount, 8),
+
                                             divisibility: 8,
                                             spacedRune: 'Bitcoin',
                                             symbol: 'BTC'

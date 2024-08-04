@@ -4,6 +4,7 @@ import { CSSProperties, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { Account, OpNetBalance } from '@/shared/types';
+import { expandToDecimals } from '@/shared/utils';
 import Web3API from '@/shared/web3/Web3API';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { Button, Column, Content, Header, Icon, Input, Layout, Row, Select, Text } from '@/ui/components';
@@ -12,11 +13,12 @@ import { BaseView } from '@/ui/components/BaseView';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
+import { useChain } from '@/ui/state/settings/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 import '@btc-vision/transaction';
-import { MOTO_ADDRESS_REGTEST, ROUTER_ADDRESS_REGTEST, WBTC_ADDRESS_REGTEST } from '@btc-vision/transaction';
+import { ROUTER_ADDRESS_REGTEST, ROUTER_ADDRESS_TESTNET } from '@btc-vision/transaction';
 
 import { useNavigate } from '../MainRoute';
 
@@ -31,6 +33,7 @@ export default function Swap() {
         OpNetBalance: OpNetBalance;
     };
     const OpNetBalance = props.OpNetBalance;
+    const chain = useChain();
 
     const [loading, setLoading] = useState(true);
     const [switchOptions, setSwitchOptions] = useState<OpNetBalance[]>([]);
@@ -90,7 +93,7 @@ export default function Swap() {
                         setInputAmount(maxBalance.toString());
                     }
                     const getQuote: IMotoswapRouterContract = getContract<IMotoswapRouterContract>(
-                        ROUTER_ADDRESS_REGTEST,
+                        chain.enum == 'BITCOIN_REGTEST' ? ROUTER_ADDRESS_REGTEST : ROUTER_ADDRESS_TESTNET,
                         MOTOSWAP_ROUTER_ABI,
                         Web3API.provider
                     );
@@ -154,7 +157,10 @@ export default function Swap() {
     useState(() => {
         const getData = async () => {
             Web3API.setNetwork(await wallet.getChainType());
-            const parsedTokens = [WBTC_ADDRESS_REGTEST, MOTO_ADDRESS_REGTEST];
+            const getChain = await wallet.getChainType();
+            let parsedTokens: string[] = [];
+            const tokensImported = localStorage.getItem('tokensImported_' + getChain);
+            parsedTokens = tokensImported ? JSON.parse(tokensImported) : [];
             if (OpNetBalance?.address) {
                 setSelectedOption(OpNetBalance);
             }
@@ -285,8 +291,6 @@ export default function Swap() {
                     icon="swap"
                     style={$styleButton}
                     onClick={(e) => {
-                        const resultInput = 10 ** (selectedOption?.divisibility ?? 8);
-                        const resultOutput = 10 ** (selectedOptionOutput?.divisibility ?? 8);
                         navigate('TxOpnetConfirmScreen', {
                             rawTxInfo: {
                                 items: items,
@@ -306,13 +310,13 @@ export default function Swap() {
                                 isToSign: false, // replace with actual isToSign value
                                 opneTokens: [
                                     {
-                                        amount: parseFloat(inputAmount) * resultInput,
+                                        amount: expandToDecimals(inputAmount, selectedOption?.divisibility ?? 8),
                                         divisibility: selectedOption?.divisibility,
                                         spacedRune: selectedOption?.name,
                                         symbol: selectedOption?.symbol
                                     },
                                     {
-                                        amount: parseFloat(outputAmount) * resultOutput,
+                                        amount: expandToDecimals(outputAmount, selectedOption?.divisibility ?? 8),
                                         divisibility: selectedOptionOutput?.divisibility,
                                         spacedRune: selectedOptionOutput?.name,
                                         symbol: selectedOptionOutput?.symbol

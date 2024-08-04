@@ -1,9 +1,9 @@
 import { Tabs, Tooltip } from 'antd';
-import { JSONRpcProvider } from 'opnet';
 import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 
 import { AddressFlagType, ChainType, KEYRING_TYPE } from '@/shared/constant';
 import { checkAddressFlag } from '@/shared/utils';
+import Web3API from '@/shared/web3/Web3API';
 import { Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
 import { AddressBar } from '@/ui/components/AddressBar';
@@ -101,10 +101,9 @@ export default function WalletTabScreen() {
             if (accountBalance.amount === '0') {
                 setBalanceValue('--');
             } else {
-                if (chain.enum === 'BITCOIN_REGTEST') {
-                    const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
-
-                    const btcbalanceGet = await provider.getBalance(currentAccount.address);
+                Web3API.setNetwork(await wallet.getChainType());
+                if (chain.enum === 'BITCOIN_REGTEST' || chain.enum === 'BITCOIN_TESTNET') {
+                    const btcbalanceGet = await Web3API.provider.getBalance(currentAccount.address);
                     setBalanceValue(parseInt(btcbalanceGet.toString()) / 10 ** 8);
                 } else {
                     setBalanceValue(accountBalance.amount);

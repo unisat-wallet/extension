@@ -38,8 +38,9 @@ export const AddOpNetToken = ({
     const wallet = useWallet();
     const tools = useTools();
 
-    const saveToLocalStorage = () => {
-        const tokensImported = localStorage.getItem('tokensImported');
+    const saveToLocalStorage = async () => {
+        const getChain = await wallet.getChainType();
+        const tokensImported = localStorage.getItem('tokensImported_' + getChain);
         let parsedTokens: string[] = [];
         if (tokensImported) {
             parsedTokens = JSON.parse(tokensImported);
@@ -52,7 +53,7 @@ export const AddOpNetToken = ({
             parsedTokens = [tokenState];
             tools.toastError('Token Exists');
         }
-        localStorage.setItem('tokensImported', JSON.stringify(parsedTokens));
+        localStorage.setItem('tokensImported_' + getChain, JSON.stringify(parsedTokens));
         tools.toastSuccess('Added token');
     };
     useEffect(() => {

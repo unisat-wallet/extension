@@ -101,6 +101,17 @@ export default function OpNetTokenScreen() {
         copyToClipboard(data);
         tools.toastSuccess('Copied' + data);
     };
+    const deleteToken = async () => {
+        const getChain = await wallet.getChainType();
+        const tokensImported = localStorage.getItem('tokensImported_' + getChain);
+        if (tokensImported) {
+            let updatedTokens = JSON.parse(tokensImported);
+            updatedTokens = updatedTokens.filter((address) => address !== tokenSummary.opNetBalance.address);
+            localStorage.setItem('tokensImported_' + getChain, JSON.stringify(updatedTokens));
+        }
+        tools.toastSuccess('Token removed from imported list');
+        window.history.go(-1);
+    };
     const tools = useTools();
     if (loading) {
         return (
@@ -279,6 +290,18 @@ export default function OpNetTokenScreen() {
                                 navigate('Swap', {
                                     OpNetBalance: tokenSummary.opNetBalance
                                 });
+                            }}
+                            full
+                        />
+                        <Button
+                            text="Delete"
+                            preset="primary"
+                            icon="pencil"
+                            style={!enableTransfer ? { backgroundColor: 'grey' } : {}}
+                            disabled={!enableTransfer}
+                            onClick={(e) => {
+                                // Remove the token address from tokensImported in localStorage
+                                deleteToken();
                             }}
                             full
                         />

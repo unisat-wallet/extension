@@ -18,6 +18,7 @@ import Web3API from '@/shared/web3/Web3API';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import RunesPreviewCard from '@/ui/components/RunesPreviewCard';
+import { useChain } from '@/ui/state/settings/hooks';
 import { useLocationState, useWallet } from '@/ui/utils';
 import { ABIDataTypes, Address, BinaryWriter } from '@btc-vision/bsi-binary';
 import {
@@ -28,6 +29,7 @@ import {
     IUnwrapParameters,
     IWrapParameters,
     ROUTER_ADDRESS_REGTEST,
+    ROUTER_ADDRESS_TESTNET,
     UnwrapResult,
     UTXO,
     Wallet,
@@ -73,6 +75,7 @@ export interface AirdropInterface extends IOP_20Contract {
 export default function TxOpnetConfirmScreen() {
     const navigate = useNavigate();
     const [finalUnwrapTx, setfinalUnwrapTx] = useState<UnwrapResult>();
+    const [useNextUTXO, setUseNextUTXO] = useState<boolean>(false);
     const [acceptWrap, setAcceptWrap] = useState<boolean>(false);
     const [acceptWrapMessage, setAcceptWrapMessage] = useState<string>('false');
     const [openAcceptbar, setAcceptBar] = useState<boolean>(false);
@@ -81,9 +84,16 @@ export default function TxOpnetConfirmScreen() {
     const handleCancel = () => {
         window.history.go(-1);
     };
+    const chain = useChain();
+    const [routerAddress, setRouterAddress] = useState<string>('');
     useEffect(() => {
         const setWallet = async () => {
             Web3API.setNetwork(await wallet.getChainType());
+            if (chain.enum === 'BITCOIN_REGTEST') {
+                setRouterAddress(ROUTER_ADDRESS_REGTEST);
+            } else if (chain.enum === 'BITCOIN_TESTNET') {
+                setRouterAddress(ROUTER_ADDRESS_TESTNET);
+            }
         };
         setWallet();
     });
@@ -171,7 +181,9 @@ export default function TxOpnetConfirmScreen() {
             }
 
             tools.toastSuccess(`"You have successfully transferred ${amountToSend} Bitcoin"`);
-
+            // Store the next UTXO in localStorage
+            const nextUTXO = finalTx[2];
+            localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
             navigate('TxSuccessScreen', { secondTxBroadcast });
         } catch (e) {
             console.log(e);
@@ -186,8 +198,19 @@ export default function TxOpnetConfirmScreen() {
         const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
 
         const wrapAmount = expandToDecimals(rawTxInfo.inputAmount, 8);
-        const utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], wrapAmount);
-
+        let utxos: UTXO[] = [];
+        if (!useNextUTXO) {
+            utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], wrapAmount);
+            console.log(utxos);
+        } else {
+            const storedUTXO = localStorage.getItem('nextUTXO');
+            utxos = storedUTXO
+                ? JSON.parse(storedUTXO).map((utxo) => ({
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
+                : [];
+        }
         const generationParameters = await Web3API.limitedProvider.fetchWrapParameters(wrapAmount);
         if (!generationParameters) {
             throw new Error('No generation parameters found');
@@ -211,6 +234,8 @@ export default function TxOpnetConfirmScreen() {
 
         if (!firstTxBroadcast.success) {
             tools.toastError('Error,Please Try again');
+            console.log(firstTxBroadcast);
+            setUseNextUTXO(true);
             throw new Error('Could not broadcast first transaction');
         }
 
@@ -219,7 +244,8 @@ export default function TxOpnetConfirmScreen() {
             tools.toastError('Error,Please Try again');
             throw new Error('Could not broadcast first transaction');
         }
-
+        const nextUTXO = finalTx.utxos;
+        localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
         tools.toastSuccess(`"You have successfully wrapped ${Number(wrapAmount) / 10 ** 8} Bitcoin"`);
         navigate('TxSuccessScreen', { txid: secondTxBroadcast.result });
     };
@@ -399,8 +425,19 @@ export default function TxOpnetConfirmScreen() {
             console.error('stakeDatas:', stakeData);
             return;
         }
-
-        const utxos: UTXO[] = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], amountToSend);
+        let utxos: UTXO[] = [];
+        if (!useNextUTXO) {
+            utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], amountToSend);
+            console.log(utxos);
+        } else {
+            const storedUTXO = localStorage.getItem('nextUTXO');
+            utxos = storedUTXO
+                ? JSON.parse(storedUTXO).map((utxo) => ({
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
+                : [];
+        }
 
         const interactionParameters: IInteractionParameters = {
             from: walletGet.p2tr,
@@ -419,6 +456,9 @@ export default function TxOpnetConfirmScreen() {
         const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact[0], false);
         if (!firstTransaction.success) {
             console.log('Broadcasted:', false);
+            tools.toastError('Error,Please Try again');
+            setUseNextUTXO(true);
+
             return;
         } else {
             console.log('Broadcasted:', firstTransaction);
@@ -428,11 +468,14 @@ export default function TxOpnetConfirmScreen() {
         const seconfTransaction = await Web3API.provider.sendRawTransaction(sendTransact[1], false);
         if (!seconfTransaction.success) {
             console.log('Broadcasted:', false);
+            tools.toastError('Error,Please Try again');
             return;
         } else {
             console.log('Broadcasted:', seconfTransaction);
         }
         tools.toastSuccess(`"You have sucessfully Staked ${amountToSend} Bitcoin"`);
+        const nextUTXO = sendTransact[2];
+        localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
         navigate('TxSuccessScreen', { txid: seconfTransaction.result });
     };
     const unstake = async () => {
@@ -459,7 +502,19 @@ export default function TxOpnetConfirmScreen() {
             return;
         }
 
-        const utxos: UTXO[] = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], amountToSend);
+        let utxos: UTXO[] = [];
+        if (!useNextUTXO) {
+            utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], amountToSend);
+            console.log(utxos);
+        } else {
+            const storedUTXO = localStorage.getItem('nextUTXO');
+            utxos = storedUTXO
+                ? JSON.parse(storedUTXO).map((utxo) => ({
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
+                : [];
+        }
 
         const interactionParameters: IInteractionParameters = {
             from: walletGet.p2tr,
@@ -478,6 +533,9 @@ export default function TxOpnetConfirmScreen() {
         const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact[0], false);
         if (!firstTransaction.success) {
             console.log('Broadcasted:', false);
+            tools.toastError('Error,Please Try again');
+            setUseNextUTXO(true);
+
             return;
         } else {
             console.log('Broadcasted:', firstTransaction);
@@ -492,6 +550,8 @@ export default function TxOpnetConfirmScreen() {
             console.log('Broadcasted:', seconfTransaction);
         }
         tools.toastSuccess(`"You have sucessfully Staked ${amountToSend} Bitcoin"`);
+        const nextUTXO = sendTransact[2];
+        localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
         navigate('TxSuccessScreen', { txid: seconfTransaction.result });
     };
     const airdropOwner = async (contractAddress: Address, amounts: Map<Address, bigint>, utxos: UTXO[]) => {
@@ -541,14 +601,16 @@ export default function TxOpnetConfirmScreen() {
             return;
         } else {
             // Add contractAddress to tokensImported in localStorage
-            const tokensImported = localStorage.getItem('tokensImported');
+            const getChain = await wallet.getChainType();
+
+            const tokensImported = localStorage.getItem('tokensImported_' + getChain);
             let updatedTokens: string[] = tokensImported ? JSON.parse(tokensImported) : [];
             if (tokensImported) {
                 updatedTokens = JSON.parse(tokensImported);
             }
             if (!updatedTokens.includes(contractAddress.toString())) {
                 updatedTokens.push(contractAddress.toString());
-                localStorage.setItem('tokensImported', JSON.stringify(updatedTokens));
+                localStorage.setItem('tokensImported_' + getChain, JSON.stringify(updatedTokens));
             }
             console.log('Broadcasted:', seconfTransaction);
             tools.toastSuccess(`You have successfully deployed ${contractAddress}`);
@@ -605,14 +667,16 @@ export default function TxOpnetConfirmScreen() {
             return;
         } else {
             // Add contractAddress to tokensImported in localStorage
-            const tokensImported = localStorage.getItem('tokensImported');
+            const getChain = await wallet.getChainType();
+
+            const tokensImported = localStorage.getItem('tokensImported_' + getChain);
             let updatedTokens: string[] = tokensImported ? JSON.parse(tokensImported) : [];
             if (tokensImported) {
                 updatedTokens = JSON.parse(tokensImported);
             }
             if (!updatedTokens.includes(contractAddress.toString())) {
                 updatedTokens.push(contractAddress.toString());
-                localStorage.setItem('tokensImported', JSON.stringify(updatedTokens));
+                localStorage.setItem('tokensImported_' + getChain, JSON.stringify(updatedTokens));
             }
             console.log('Broadcasted:', seconfTransaction);
             tools.toastSuccess(`You have successfully deployed ${contractAddress}`);
@@ -644,8 +708,19 @@ export default function TxOpnetConfirmScreen() {
             return;
         }
 
-        const utxos: UTXO[] = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], amountToSend);
-
+        let utxos: UTXO[] = [];
+        if (!useNextUTXO) {
+            utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], amountToSend);
+            console.log(utxos);
+        } else {
+            const storedUTXO = localStorage.getItem('nextUTXO');
+            utxos = storedUTXO
+                ? JSON.parse(storedUTXO).map((utxo) => ({
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
+                : [];
+        }
         const interactionParameters: IInteractionParameters = {
             from: walletGet.p2tr,
             to: contract.address.toString(),
@@ -663,6 +738,8 @@ export default function TxOpnetConfirmScreen() {
         const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact[0], false);
         if (!firstTransaction.success) {
             console.log('Broadcasted:', false);
+            tools.toastError('Error,Please Try again');
+            setUseNextUTXO(true);
             return;
         } else {
             console.log('Broadcasted:', firstTransaction);
@@ -677,6 +754,8 @@ export default function TxOpnetConfirmScreen() {
             console.log('Broadcasted:', seconfTransaction);
         }
         tools.toastSuccess(`"You have sucessfully Staked ${amountToSend} Bitcoin"`);
+        const nextUTXO = sendTransact[2];
+        localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
         navigate('TxSuccessScreen', { txid: seconfTransaction.result });
     };
 
@@ -687,7 +766,7 @@ export default function TxOpnetConfirmScreen() {
         const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
         const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
         const getSwap: IMotoswapRouterContract = getContract<IMotoswapRouterContract>(
-            ROUTER_ADDRESS_REGTEST,
+            routerAddress,
             MOTOSWAP_ROUTER_ABI,
             Web3API.provider,
             walletGet.p2tr
@@ -695,15 +774,33 @@ export default function TxOpnetConfirmScreen() {
 
         const maxUint256 = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
         const inputAmountBigInt = expandToDecimals(rawTxInfo.inputAmount[0], rawTxInfo.opneTokens[0].divisibility);
+        const storedUTXO = localStorage.getItem('nextUTXO');
+        let utxos: UTXO[] = [];
 
-        const utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], maxUint256);
+        if (!useNextUTXO) {
+            utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], maxUint256);
+            console.log(utxos);
+        } else {
+            utxos = storedUTXO
+                ? JSON.parse(storedUTXO).map((utxo) => ({
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
+                : [];
+        }
         const getData = await approveToken(inputAmountBigInt, walletGet, rawTxInfo.contractAddress[0], utxos);
         const getnextUtxo = await approveToken(inputAmountBigInt, walletGet, rawTxInfo.contractAddress[1], getData);
+        const sliipageAmount = Number(rawTxInfo.inputAmount[1]) * Number(rawTxInfo.slippageTolerance / 100);
         const outPutAmountBigInt = expandToDecimals(
-            rawTxInfo.inputAmount[1] * Number(rawTxInfo.slippageTolerance / 100),
-            rawTxInfo.opneTokens[0].divisibility
+            rawTxInfo.inputAmount[1] - sliipageAmount,
+            rawTxInfo.opneTokens[1].divisibility
         );
-
+        console.log(
+            rawTxInfo.inputAmount[1],
+            rawTxInfo.opneTokens[1].divisibility,
+            Number(rawTxInfo.slippageTolerance / 100)
+        );
+        console.log(outPutAmountBigInt);
         const contractResult = await getSwap.encodeCalldata('swapExactTokensForTokensSupportingFeeOnTransferTokens', [
             inputAmountBigInt,
             outPutAmountBigInt,
@@ -713,7 +810,7 @@ export default function TxOpnetConfirmScreen() {
         ]);
         const interactionParameters: IInteractionParameters = {
             from: walletGet.p2tr,
-            to: ROUTER_ADDRESS_REGTEST,
+            to: routerAddress,
             utxos: getnextUtxo,
             signer: walletGet.keypair,
             network: Web3API.network,
@@ -727,6 +824,8 @@ export default function TxOpnetConfirmScreen() {
         const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact[0], false);
         if (!firstTransaction || !firstTransaction.success) {
             // tools.toastError('Error,Please Try again');
+            tools.toastError('Error,Please Try again');
+            setUseNextUTXO(true);
             console.log(firstTransaction);
             throw new Error('Could not broadcast first transaction');
         }
@@ -741,13 +840,15 @@ export default function TxOpnetConfirmScreen() {
             tools.toastSuccess(
                 `"You have sucessfully swapped ${rawTxInfo.inputAmount[0]} ${rawTxInfo.opneTokens[0].symbol} for ${rawTxInfo.inputAmount[2]}  ${rawTxInfo.opneTokens[1].symbol}"`
             );
+            const nextUTXO = sendTransact[2];
+            localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
             navigate('TxSuccessScreen', { txid: secondTransaction.result });
         }
     };
     const approveToken = async (inputAmountBigInt: bigint, walletGet: Wallet, tokenAddress: string, utxos: UTXO[]) => {
         try {
             const contract = getContract<IOP_20Contract>(tokenAddress, OP_20_ABI, Web3API.provider, walletGet.p2tr);
-            const getRemaining = await contract.allowance(walletGet.p2tr, ROUTER_ADDRESS_REGTEST);
+            const getRemaining = await contract.allowance(walletGet.p2tr, routerAddress);
             if ('error' in getRemaining) {
                 throw new Error(getRemaining.error);
             }
@@ -755,7 +856,7 @@ export default function TxOpnetConfirmScreen() {
                 return utxos;
             }
             const maxUint256 = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
-            const contractApprove: BaseContractProperty = await contract.approve(ROUTER_ADDRESS_REGTEST, maxUint256);
+            const contractApprove: BaseContractProperty = await contract.approve(routerAddress, maxUint256);
             if ('error' in contractApprove) {
                 throw new Error(contractApprove.error);
             }
@@ -833,7 +934,21 @@ export default function TxOpnetConfirmScreen() {
             );
             const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
             const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
-            const utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], expandToDecimals(0.08, 8));
+
+            let utxos: UTXO[] = [];
+            if (!useNextUTXO) {
+                utxos = await await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], expandToDecimals(0.08, 8));
+                console.log(utxos);
+            } else {
+                const storedUTXO = localStorage.getItem('nextUTXO');
+                utxos = storedUTXO
+                    ? JSON.parse(storedUTXO).map((utxo) => ({
+                          ...utxo,
+                          value: BigInt(utxo.value)
+                      }))
+                    : [];
+            }
+
             const arrayBuffer = await rawTxInfo.file.arrayBuffer();
             const uint8Array = new Uint8Array(arrayBuffer);
 
@@ -850,10 +965,13 @@ export default function TxOpnetConfirmScreen() {
             const sendTransact: DeploymentResult = await Web3API.transactionFactory.signDeployment(
                 deploymentParameters
             );
+
             const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact.transaction[0], false);
             if (!firstTransaction || !firstTransaction.success) {
                 // tools.toastError('Error,Please Try again');
                 console.log(firstTransaction);
+                tools.toastError('Error,Please Try again');
+                setUseNextUTXO(true);
                 throw new Error('Could not broadcast first transaction');
             } else {
                 console.log(firstTransaction);
@@ -871,14 +989,16 @@ export default function TxOpnetConfirmScreen() {
             const airdropTo: Map<Address, bigint> = new Map();
             airdropTo.set(walletGet.p2tr, 100_000n * 10n ** 18n);
             console.log(sendTransact.contractAddress);
-            const tokensImported = localStorage.getItem('tokensImported');
+            const getChain = await wallet.getChainType();
+
+            const tokensImported = localStorage.getItem('tokensImported_' + getChain);
             let updatedTokens: string[] = tokensImported ? JSON.parse(tokensImported) : [];
             if (tokensImported) {
                 updatedTokens = JSON.parse(tokensImported);
             }
             if (!updatedTokens.includes(sendTransact.contractAddress.toString())) {
                 updatedTokens.push(sendTransact.contractAddress.toString());
-                localStorage.setItem('tokensImported', JSON.stringify(updatedTokens));
+                localStorage.setItem('tokensImported_' + getChain, JSON.stringify(updatedTokens));
             }
             // await airdropOwner(sendTransact.contractAddress, airdropTo, sendTransact.utxos);
             // if (rawTxInfo.automine) {
@@ -931,6 +1051,8 @@ export default function TxOpnetConfirmScreen() {
             //   navigate('TxSuccessScreen', { txid: secondTransaction.result });
             // }
             tools.toastSuccess(`You have successfully deployed ${sendTransact.contractAddress}`);
+            const nextUTXO = sendTransact.utxos;
+            localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
             navigate('TxSuccessScreen', {
                 txid: secondTransaction.result,
                 contractAddress: sendTransact.contractAddress
@@ -946,7 +1068,20 @@ export default function TxOpnetConfirmScreen() {
             );
             const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
             const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
-            const utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], expandToDecimals(0.08, 8));
+
+            let utxos: UTXO[] = [];
+            if (!useNextUTXO) {
+                utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], expandToDecimals(0.08, 8));
+                console.log(utxos);
+            } else {
+                const storedUTXO = localStorage.getItem('nextUTXO');
+                utxos = storedUTXO
+                    ? JSON.parse(storedUTXO).map((utxo) => ({
+                          ...utxo,
+                          value: BigInt(utxo.value)
+                      }))
+                    : [];
+            }
             const contract = getContract<IOP_20Contract>(
                 rawTxInfo.contractAddress,
                 OP_20_ABI,
@@ -975,6 +1110,8 @@ export default function TxOpnetConfirmScreen() {
             if (!firstTransaction || !firstTransaction.success) {
                 // tools.toastError('Error,Please Try again');
                 console.log(firstTransaction);
+                tools.toastError('Error,Please Try again');
+                setUseNextUTXO(true);
                 throw new Error('Could not broadcast first transaction');
             }
 
@@ -986,6 +1123,8 @@ export default function TxOpnetConfirmScreen() {
             }
 
             tools.toastSuccess(`You have successfully minted ${rawTxInfo.inputAmount} `);
+            const nextUTXO = sendTransact[2];
+            localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
             navigate('TxSuccessScreen', { txid: secondTransaction.result });
         } catch (e) {
             console.log(e);

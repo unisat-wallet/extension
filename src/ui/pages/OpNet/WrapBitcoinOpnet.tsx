@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { Account, Inscription, OpNetBalance } from '@/shared/types';
+import { expandToDecimals } from '@/shared/utils';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
@@ -226,7 +227,7 @@ export default function WrapBitcoinOpnet() {
                                 isToSign: false, // replace with actual isToSign value
                                 opneTokens: [
                                     {
-                                        amount: parseFloat(inputAmount) * 10 ** OpNetBalance.divisibility,
+                                        amount: expandToDecimals(inputAmount, OpNetBalance.divisibility),
                                         divisibility: OpNetBalance.divisibility,
                                         spacedRune: OpNetBalance.name,
                                         symbol: OpNetBalance.symbol

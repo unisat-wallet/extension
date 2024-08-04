@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { Account, Inscription, OpNetBalance, RawTxInfo } from '@/shared/types';
+import { expandToDecimals } from '@/shared/utils';
 import { Button, Column, Content, Header, Image, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
@@ -10,12 +11,7 @@ import { OutputValueBar } from '@/ui/components/OutputValueBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import {
-    useFetchAssetUtxosRunesCallback,
-    useFetchUtxosCallback,
-    usePrepareSendRunesCallback,
-    useRunesTx
-} from '@/ui/state/transactions/hooks';
+import { usePrepareSendRunesCallback, useRunesTx } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { isValidAddress, useWallet } from '@/ui/utils';
@@ -66,12 +62,8 @@ export default function SendOpNetScreen() {
         }
     }, [toInfo.address]);
 
-    const fetchUtxos = useFetchUtxosCallback();
-
-    const fetchAssetUtxosRunes = useFetchAssetUtxosRunesCallback();
     const tools = useTools();
     useEffect(() => {
-        fetchUtxos();
         setAvailableBalance((parseInt(OpNetBalance.amount.toString()) / 10 ** OpNetBalance.divisibility).toString());
         tools.showLoading(false);
     }, []);
@@ -252,7 +244,7 @@ export default function SendOpNetScreen() {
                                 isToSign: false,
                                 opneTokens: [
                                     {
-                                        amount: parseFloat(inputAmount) * 10 ** OpNetBalance.divisibility,
+                                        amount: expandToDecimals(inputAmount, OpNetBalance.divisibility),
                                         divisibility: OpNetBalance.divisibility,
                                         spacedRune: OpNetBalance.name,
                                         symbol: OpNetBalance.symbol

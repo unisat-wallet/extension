@@ -43,9 +43,10 @@ export function OPNetList() {
             await wallet.getNetworkType();
 
             await wallet.changeAddressType(AddressType.P2TR);
-            Web3API.setNetwork(await wallet.getChainType());
+            const getChain = await wallet.getChainType();
+            Web3API.setNetwork(getChain);
 
-            const tokensImported = localStorage.getItem('tokensImported');
+            const tokensImported = localStorage.getItem('tokensImported_' + getChain);
             let parsedTokens: string[] = [];
             if (tokensImported) {
                 parsedTokens = JSON.parse(tokensImported);
@@ -78,7 +79,7 @@ export function OPNetList() {
             }
 
             if (parsedTokens.length) {
-                localStorage.setItem('tokensImported', JSON.stringify(parsedTokens));
+                localStorage.setItem('tokensImported_' + getChain, JSON.stringify(parsedTokens));
             }
 
             const tokenBalances: OpNetBalance[] = [];
@@ -106,7 +107,7 @@ export function OPNetList() {
                 } catch (e) {
                     console.log(`Error processing token at index ${i}:`, e);
                     parsedTokens.splice(i, 1);
-                    localStorage.setItem('tokensImported', JSON.stringify(parsedTokens));
+                    localStorage.setItem('tokensImported_' + getChain, JSON.stringify(parsedTokens));
                     i--;
                 }
             }
@@ -161,7 +162,7 @@ export function OPNetList() {
             <Row justifyBetween mt="lg">
                 <>
                     <Button
-                        text="SWAP "
+                        text="SWAP"
                         preset="primary"
                         icon="swap"
                         onClick={(e) => {
