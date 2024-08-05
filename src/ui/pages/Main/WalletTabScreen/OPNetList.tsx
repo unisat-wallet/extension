@@ -164,7 +164,7 @@ export function OPNetList() {
                     <Button
                         text="SWAP"
                         preset="primary"
-                        icon="swap"
+                        icon="send"
                         onClick={(e) => {
                             navigate('Swap', {});
                         }}

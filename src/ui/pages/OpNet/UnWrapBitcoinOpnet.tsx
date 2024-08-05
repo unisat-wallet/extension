@@ -133,7 +133,7 @@ export default function UnWrapBitcoinOpnet() {
                 onBack={() => {
                     window.history.go(-1);
                 }}
-                title={'UnWrap Bitcoin'}
+                title={'Unwrap Bitcoin'}
             />
             <Content>
                 <Row itemsCenter fullX justifyCenter>
