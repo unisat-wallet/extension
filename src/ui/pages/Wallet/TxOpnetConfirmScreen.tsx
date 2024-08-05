@@ -123,7 +123,8 @@ export default function TxOpnetConfirmScreen() {
                     tools.toastError('Error. Please Try again');
                     return;
                 }
-
+                const nextUTXO = finalUnwrapTx.utxos;
+                localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
                 tools.toastSuccess('"You have sucessfully unwraped your Bitcoin"');
 
                 navigate('TxSuccessScreen', { txid: unwrapTransaction });
@@ -174,6 +175,8 @@ export default function TxOpnetConfirmScreen() {
             console.log(`First transaction broadcasted: ${firstTxBroadcast.result}`);
 
             if (!firstTxBroadcast.success) {
+                tools.toastError('Error,Please Try again');
+                setUseNextUTXO(true);
                 throw new Error('Could not broadcast first transaction');
             }
 
@@ -190,6 +193,8 @@ export default function TxOpnetConfirmScreen() {
             localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
             navigate('TxSuccessScreen', { secondTxBroadcast });
         } catch (e) {
+            tools.toastError('Error,Please Try again');
+            setUseNextUTXO(true);
             console.log(e);
         }
     };
@@ -262,7 +267,19 @@ export default function TxOpnetConfirmScreen() {
         const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
         const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
         const unwrapAmount = expandToDecimals(rawTxInfo.inputAmount, 8); // Minimum amount to unwrap
-        const utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], unwrapAmount);
+        let utxos: UTXO[] = [];
+        if (!useNextUTXO) {
+            utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], unwrapAmount);
+            console.log(utxos);
+        } else {
+            const storedUTXO = localStorage.getItem('nextUTXO');
+            utxos = storedUTXO
+                ? JSON.parse(storedUTXO).map((utxo) => ({
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
+                : [];
+        }
 
         console.log('unwrap amount', unwrapAmount, 'utxos', utxos);
 
@@ -335,7 +352,8 @@ export default function TxOpnetConfirmScreen() {
             // If this transaction is missing, opnet will deny the unwrapping request.
             const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransaction[0], false);
             if (!firstTransaction || !firstTransaction.success) {
-                tools.toastError('Error: Could not broadcast first transaction');
+                tools.toastError('Error,Please Try again');
+                setUseNextUTXO(true);
                 console.error('Transaction failed:', firstTransaction);
                 return;
             }
@@ -354,7 +372,7 @@ export default function TxOpnetConfirmScreen() {
                 let attempts = 0;
                 const maxAttempts = 60; // 10 minutes max wait time
                 setOpenLoading(true);
-
+                console.log(sendTransaction[1]);
                 try {
                     while (attempts < maxAttempts) {
                         const txResult = await Web3API.provider.getTransaction(txHash);
