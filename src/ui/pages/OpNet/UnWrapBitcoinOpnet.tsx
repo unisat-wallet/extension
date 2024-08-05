@@ -175,7 +175,7 @@ export default function UnWrapBitcoinOpnet() {
                         </Row>
                     </Row>
                     <Row justifyBetween>
-                        <Text text="Pending Withdrawal" color="textDim" />
+                        <Text text="Available to Unwrap" color="textDim" />
                         <Row
                             itemsCenter
                             onClick={() => {
@@ -187,10 +187,20 @@ export default function UnWrapBitcoinOpnet() {
                                 );
                             }}>
                             <Text
-                                text={`${runesUtils.toDecimalAmount(
-                                    availableBalance.toString(),
-                                    OpNetBalance.divisibility
-                                )} `}
+                                text={`${
+                                    parseFloat(
+                                        runesUtils.toDecimalAmount(
+                                            availableBalance.toString(),
+                                            OpNetBalance.divisibility
+                                        )
+                                    ) +
+                                    parseFloat(
+                                        runesUtils.toDecimalAmount(
+                                            OpNetBalance.amount.toString(),
+                                            OpNetBalance.divisibility
+                                        )
+                                    )
+                                } `}
                                 preset="bold"
                                 size="sm"
                                 wrap

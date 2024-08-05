@@ -871,7 +871,7 @@ export default function TxOpnetConfirmScreen() {
         } else {
             console.log(secondTransaction);
             tools.toastSuccess(
-                `"You have sucessfully swapped ${rawTxInfo.inputAmount[0]} ${rawTxInfo.opneTokens[0].symbol} for ${rawTxInfo.inputAmount[2]}  ${rawTxInfo.opneTokens[1].symbol}"`
+                `"You have sucessfully swapped ${rawTxInfo.inputAmount[0]} ${rawTxInfo.opneTokens[0].symbol} for ${rawTxInfo.inputAmount[1]}  ${rawTxInfo.opneTokens[1].symbol}"`
             );
             const nextUTXO = sendTransact[2];
             localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
