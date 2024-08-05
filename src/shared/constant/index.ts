@@ -265,7 +265,7 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
     },
     [ChainType.BITCOIN_REGTEST]: {
         enum: ChainType.BITCOIN_REGTEST,
-        label: 'Bitcoin Opnet Regtest',
+        label: 'Bitcoin OP_NET Regtest',
         icon: './images/artifacts/bitcoin-testnet.png',
         networkType: NetworkType.REGTEST,
         endpoints: ['https://wallet-api-testnet.unisat.space'],
