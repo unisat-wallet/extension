@@ -308,7 +308,7 @@ export const INTERNAL_REQUEST_ORIGIN = 'https://unisat.io';
 export const INTERNAL_REQUEST_SESSION = {
     name: 'OP_WALLET',
     origin: INTERNAL_REQUEST_ORIGIN,
-    icon: './images/logo/opnet_logo_dark.svg'
+    icon: './images/logo/opwallet_logo_dark.svg'
 };
 
 export const EVENTS = {
