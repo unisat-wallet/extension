@@ -58,7 +58,7 @@ export const UpgradePopover = ({ onClose }: { onClose: () => void }) => {
                         full
                         preset="primary"
                         onClick={(e) => {
-                            window.open('https://unisat.io/extension/update');
+                            window.open('https://opnet.org/wallet');
                         }}
                     />
                 </Row>

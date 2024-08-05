@@ -275,7 +275,7 @@ export default function SettingsTabScreen() {
                             color="red"
                             textCenter
                             onClick={() => {
-                                window.open('https://unisat.io/extension/update');
+                                window.open('https://opnet.org/wallet');
                             }}
                         />
                     )}

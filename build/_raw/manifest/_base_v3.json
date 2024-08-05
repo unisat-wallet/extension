@@ -23,11 +23,11 @@
     "default_title": "__MSG_appName__"
   },
 
-  "author": "https://unisat.io",
+  "author": "https://opnet.org",
   "background": {
     "service_worker": "background.js"
   },
-  "homepage_url": "https://unisat.io",
+  "homepage_url": "https://opnet.org",
   "permissions": ["storage", "unlimitedStorage", "activeTab"],
   "short_name": "__MSG_appName__",
 
