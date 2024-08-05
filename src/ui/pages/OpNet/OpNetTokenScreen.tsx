@@ -171,7 +171,7 @@ export default function OpNetTokenScreen() {
                                     <Button
                                         text="Wrap Bitcoin"
                                         preset="primary"
-                                        icon="pencil"
+                                        icon="wallet"
                                         onClick={(e) => {
                                             navigate('WrapBitcoinOpnet', {
                                                 OpNetBalance: btcBalance
@@ -180,9 +180,9 @@ export default function OpNetTokenScreen() {
                                         full
                                     />
                                     <Button
-                                        text="UnWrap Bitcoin"
+                                        text="Unwrap Bitcoin"
                                         preset="primary"
-                                        icon="pencil"
+                                        icon="wallet"
                                         onClick={(e) => {
                                             navigate('UnWrapBitcoinOpnet', {
                                                 OpNetBalance: tokenSummary.opNetBalance
@@ -215,7 +215,7 @@ export default function OpNetTokenScreen() {
                                     <Button
                                         text="Stake WBTC"
                                         preset="primary"
-                                        icon="pencil"
+                                        icon="down"
                                         onClick={(e) => {
                                             navigate('StakeWBTCoPNet', {
                                                 OpNetBalance: tokenSummary.opNetBalance
@@ -226,7 +226,7 @@ export default function OpNetTokenScreen() {
                                     <Button
                                         text="Unstake WBTC"
                                         preset="primary"
-                                        icon="pencil"
+                                        icon="up"
                                         onClick={(e) => {
                                             navigate('UnStakeWBTCoPNet', {
                                                 OpNetBalance: tokenSummary.opNetBalance
@@ -283,7 +283,7 @@ export default function OpNetTokenScreen() {
                         <Button
                             text="Swap"
                             preset="primary"
-                            icon="swap"
+                            icon="send"
                             style={!enableTransfer ? { backgroundColor: 'grey' } : {}}
                             disabled={!enableTransfer}
                             onClick={(e) => {
@@ -296,7 +296,7 @@ export default function OpNetTokenScreen() {
                         <Button
                             text="Delete"
                             preset="primary"
-                            icon="pencil"
+                            icon="close"
                             style={!enableTransfer ? { backgroundColor: 'grey' } : {}}
                             disabled={!enableTransfer}
                             onClick={(e) => {

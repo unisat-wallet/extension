@@ -265,7 +265,7 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
     },
     [ChainType.BITCOIN_REGTEST]: {
         enum: ChainType.BITCOIN_REGTEST,
-        label: 'Bitcoin Opnet Regtest',
+        label: 'Bitcoin OP_NET Regtest',
         icon: './images/artifacts/bitcoin-testnet.png',
         networkType: NetworkType.REGTEST,
         endpoints: ['https://wallet-api-testnet.unisat.space'],
@@ -308,7 +308,7 @@ export const INTERNAL_REQUEST_ORIGIN = 'https://unisat.io';
 export const INTERNAL_REQUEST_SESSION = {
     name: 'OP_WALLET',
     origin: INTERNAL_REQUEST_ORIGIN,
-    icon: './images/logo/opnet_logo_dark.svg'
+    icon: './images/logo/opwallet_logo_dark.svg'
 };
 
 export const EVENTS = {
