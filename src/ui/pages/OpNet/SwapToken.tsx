@@ -102,6 +102,7 @@ export default function Swap() {
                         [selectedOption.address, selectedOptionOutput.address]
                     );
                     if ('error' in getData) {
+                        console.log(getData);
                         return;
                     } else {
                         setOutPutAmount(

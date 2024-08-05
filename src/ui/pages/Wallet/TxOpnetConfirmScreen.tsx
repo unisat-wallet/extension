@@ -17,9 +17,11 @@ import { expandToDecimals } from '@/shared/utils';
 import Web3API from '@/shared/web3/Web3API';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
+import { BottomModal } from '@/ui/components/BottomModal';
 import RunesPreviewCard from '@/ui/components/RunesPreviewCard';
 import { useChain } from '@/ui/state/settings/hooks';
 import { useLocationState, useWallet } from '@/ui/utils';
+import { LoadingOutlined } from '@ant-design/icons';
 import { ABIDataTypes, Address, BinaryWriter } from '@btc-vision/bsi-binary';
 import {
     DeploymentResult,
@@ -79,6 +81,8 @@ export default function TxOpnetConfirmScreen() {
     const [acceptWrap, setAcceptWrap] = useState<boolean>(false);
     const [acceptWrapMessage, setAcceptWrapMessage] = useState<string>('false');
     const [openAcceptbar, setAcceptBar] = useState<boolean>(false);
+    const [openLoading, setOpenLoading] = useState<boolean>(false);
+
     const [unwrapUseAmount, setUnWrapAmount] = useState<bigint>(0n);
     const { rawTxInfo } = useLocationState<LocationState>();
     const handleCancel = () => {
@@ -346,23 +350,34 @@ export default function TxOpnetConfirmScreen() {
 
             utxosForUnwrap = sendTransaction[2];
 
-            // TODO show loading screen?
-            const waitForTransaction = async () => {
+            const waitForTransaction = async (txHash: string) => {
                 let attempts = 0;
-                const maxAttempts = 100; // 1 minute max wait time
+                const maxAttempts = 60; // 10 minutes max wait time
+                setOpenLoading(true);
 
-                while (attempts < maxAttempts) {
-                    const txResult = await Web3API.provider.getTransaction(sendTransaction[1]);
-                    if (txResult && !('error' in txResult) && txResult.hash) {
-                        return txResult.hash;
+                try {
+                    while (attempts < maxAttempts) {
+                        const txResult = await Web3API.provider.getTransaction(txHash);
+                        if (txResult && !('error' in txResult)) {
+                            console.log('Transaction confirmed:', txResult);
+                            setOpenLoading(false);
+                            return txResult.hash;
+                        }
+                        await new Promise((resolve) => setTimeout(resolve, 10000)); // Wait 10 seconds
+                        attempts++;
                     }
-                    await new Promise((resolve) => setTimeout(resolve, 10000)); // Wait 5 seconds
-                    attempts++;
+                    throw new Error('Transaction not confirmed after 10 minutes');
+                } catch (error) {
+                    console.error('Error while waiting for transaction:', error);
+                    setOpenLoading(false);
+                    tools.toastError('Failed to confirm transaction. Please check later.');
+                    throw error;
+                } finally {
+                    setOpenLoading(false);
                 }
-                throw new Error('Failed to get transaction hash after multiple attempts');
             };
 
-            const transactionHash = await waitForTransaction();
+            const transactionHash = await waitForTransaction(sendTransaction[1]);
             console.log('confirmed!', transactionHash);
         }
 
@@ -1248,6 +1263,13 @@ export default function TxOpnetConfirmScreen() {
                     acceptWrapMessage={acceptWrapMessage}
                     setAcceptWrap={setAcceptWrap}
                 />
+            )}
+            {openLoading && (
+                <BottomModal onClose={() => setOpenLoading(false)}>
+                    <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
+                        <LoadingOutlined />
+                    </Column>
+                </BottomModal>
             )}
         </Layout>
     );
