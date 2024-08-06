@@ -12,7 +12,7 @@
 ### 1. Download the OP_WALLET Prebuilt Files
 
 - Go to the [OP_WALLET GitHub repository](https://github.com/btc-vision/opwallet).
-- Download the prebuilt extension files from the repository.
+- Download the latest prebuilt extension zip file from the [releases](https://github.com/btc-vision/opwallet/releases).
 
 ### 2. Unzip the Prebuilt Extension
 
