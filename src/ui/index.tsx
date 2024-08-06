@@ -15,6 +15,7 @@ import { AppDimensions } from './components/Responsive';
 import AsyncMainRoute from './pages/MainRoute';
 import store from './state';
 import { WalletProvider } from './utils';
+import { PriceProvider } from '@/ui/provider/PriceProvider';
 
 // disabled sentry
 // Sentry.init({
@@ -46,7 +47,7 @@ if (
   window.screenLeft > window.screen.width ||
   window.screenTop > window.screen.height
 ) {
-  browser.runtime.getPlatformInfo(function (info) {
+  browser.runtime.getPlatformInfo(function(info) {
     if (info.os === 'mac') {
       const fontFaceSheet = new CSSStyleSheet();
       fontFaceSheet.insertRule(`
@@ -85,7 +86,7 @@ const wallet: Record<string, any> = new Proxy(
             {},
             {
               get(obj, key) {
-                return function (...params: any) {
+                return function(...params: any) {
                   return portMessageChannel.request({
                     type: 'openapi',
                     method: key,
@@ -97,7 +98,7 @@ const wallet: Record<string, any> = new Proxy(
           );
           break;
         default:
-          return function (...params: any) {
+          return function(...params: any) {
             return portMessageChannel.request({
               type: 'controller',
               method: key,
@@ -155,8 +156,10 @@ root.render(
     <WalletProvider {...antdConfig} wallet={wallet as any}>
       <ActionComponentProvider>
         <AppDimensions>
-          <Updaters />
-          <AsyncMainRoute />
+          <PriceProvider>
+            <Updaters />
+            <AsyncMainRoute />
+          </PriceProvider>
         </AppDimensions>
       </ActionComponentProvider>
     </WalletProvider>

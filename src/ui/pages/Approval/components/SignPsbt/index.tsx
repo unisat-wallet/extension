@@ -9,10 +9,11 @@ import {
   RawTxInfo,
   RuneBalance,
   SignPsbtOptions,
+  TickPriceItem,
   ToSignInput,
   TxType
 } from '@/shared/types';
-import { Button, Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
+import { Button, Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressText } from '@/ui/components/AddressText';
 import Arc20PreviewCard from '@/ui/components/Arc20PreviewCard';
@@ -26,6 +27,7 @@ import { SignPsbtWithRisksPopover } from '@/ui/components/SignPsbtWithRisksPopov
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import KeystoneSignScreen from '@/ui/pages/Wallet/KeystoneSignScreen';
 import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { useChain } from '@/ui/state/settings/hooks';
 import {
   usePrepareSendAtomicalsNFTCallback,
   usePrepareSendBTCCallback,
@@ -100,8 +102,21 @@ interface InscriptioinInfo {
   isSent: boolean;
 }
 
-function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?: RawTxInfo; type: TxType }) {
+function SignTxDetails({
+  txInfo,
+  type,
+  rawTxInfo,
+  runesPriceMap,
+  brc20PriceMap
+}: {
+  txInfo: TxInfo;
+  rawTxInfo?: RawTxInfo;
+  type: TxType;
+  runesPriceMap: undefined | { [key: string]: TickPriceItem };
+  brc20PriceMap: undefined | { [key: string]: TickPriceItem };
+}) {
   const address = useAccountAddress();
+  const chain = useChain();
 
   const sendingInscriptions = useMemo(() => {
     return txInfo.decodedPsbt.inputInfos
@@ -316,6 +331,8 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
                       onClick={() => {
                         window.open(w.preview);
                       }}
+                      priceInProps={true}
+                      price={brc20PriceMap?.[w.tick]}
                     />
                   );
                 })}
@@ -341,7 +358,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
 
               <Row overflowX>
                 {runesArray.map((w, index) => {
-                  return <RunesPreviewCard key={'runes_' + index} balance={w} />;
+                  return <RunesPreviewCard key={'runes_' + index} balance={w} price={runesPriceMap?.[w.spacedRune]} />;
                 })}
               </Row>
             </Column>
@@ -354,7 +371,13 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
   if (type === TxType.SIGN_TX) {
     return (
       <Column gap="lg">
-        <Text text="Sign Transaction" preset="title-bold" textCenter mt="lg" />
+        <Row itemsCenter justifyBetween fullX py={'sm'}>
+          <Text text="Sign Transaction" preset="title-bold" textCenter />
+          <Row itemsCenter>
+            <Image src={chain.icon} size={32} />
+            <Text text={chain.label} />
+          </Row>
+        </Row>
         <Row justifyCenter>
           <Card style={{ backgroundColor: '#272626', maxWidth: 320, width: 320 }}>
             <Column gap="lg">
@@ -385,8 +408,14 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
   }
 
   return (
-    <Column gap="lg">
-      <Text text="Sign Transaction" preset="title-bold" textCenter mt="lg" />
+    <Column gap="lg" style={{ position: 'relative' }}>
+      <Row itemsCenter justifyBetween fullX py={'sm'}>
+        <Text text="Sign Transaction" preset="title-bold" textCenter />
+        <Row itemsCenter>
+          <Image src={chain.icon} size={32} />
+          <Text text={chain.label} />
+        </Row>
+      </Row>
       <Row justifyCenter>
         <Card style={{ backgroundColor: '#272626', maxWidth: 320, width: 320 }}>
           <Column gap="lg">
@@ -527,6 +556,42 @@ export default function SignPsbt({
   const [isPsbtRiskPopoverVisible, setIsPsbtRiskPopoverVisible] = useState(false);
   const [isKeystoneSigning, setIsKeystoneSigning] = useState(false);
 
+  const [brc20PriceMap, setBrc20PriceMap] = useState<{ [key: string]: TickPriceItem }>();
+  const [runesPriceMap, setRunesPriceMap] = useState<{ [key: string]: TickPriceItem }>();
+
+  useEffect(() => {
+    if (txInfo?.decodedPsbt?.inputInfos) {
+      const runesMap: { [spacedRune: string]: boolean } = {};
+      const brc20Map: { [tick: string]: boolean } = {};
+      txInfo.decodedPsbt.inputInfos.forEach((v) => {
+        if (v.runes) {
+          v.runes.forEach((w) => {
+            runesMap[w.spacedRune] = true;
+          });
+        }
+        if (v.inscriptions) {
+          v.inscriptions.forEach((w) => {
+            if (w.brc20) {
+              brc20Map[w.brc20.tick] = true;
+            }
+          });
+        }
+      });
+      if (Object.keys(runesMap).length > 0) {
+        wallet
+          .getRunesPrice(Object.keys(runesMap))
+          .then(setRunesPriceMap)
+          .catch((e) => tools.toastError((e as Error).message));
+      }
+      if (Object.keys(brc20Map).length > 0) {
+        wallet
+          .getBrc20sPrice(Object.keys(brc20Map))
+          .then(setBrc20PriceMap)
+          .catch((e) => tools.toastError((e as Error).message));
+      }
+    }
+  }, [txInfo]);
+
   const init = async () => {
     let txError = '';
     if (type === TxType.SIGN_TX) {
@@ -665,8 +730,16 @@ export default function SignPsbt({
   const networkFee = useMemo(() => satoshisToAmount(txInfo.decodedPsbt.fee), [txInfo.decodedPsbt]);
 
   const detailsComponent = useMemo(() => {
-    return <SignTxDetails txInfo={txInfo} rawTxInfo={rawTxInfo} type={type} />;
-  }, [txInfo]);
+    return (
+      <SignTxDetails
+        txInfo={txInfo}
+        rawTxInfo={rawTxInfo}
+        type={type}
+        runesPriceMap={runesPriceMap}
+        brc20PriceMap={brc20PriceMap}
+      />
+    );
+  }, [txInfo, brc20PriceMap, runesPriceMap]);
 
   const isValidData = useMemo(() => {
     if (txInfo.psbtHex === '') {
@@ -911,7 +984,11 @@ export default function SignPsbt({
                                   <Text text={'RUNES'} color={isToSign ? 'white' : 'textDim'} />
                                   <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
                                     {runes.map((w) => (
-                                      <RunesPreviewCard key={w.runeid} balance={w} />
+                                      <RunesPreviewCard
+                                        key={w.runeid}
+                                        balance={w}
+                                        price={runesPriceMap?.[w.spacedRune]}
+                                      />
                                     ))}
                                   </Row>
                                 </Column>
@@ -1014,7 +1091,11 @@ export default function SignPsbt({
                                 <Text text={'RUNES'} color={isMyAddress ? 'white' : 'textDim'} />
                                 <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
                                   {runes.map((w) => (
-                                    <RunesPreviewCard key={w.runeid} balance={w} />
+                                    <RunesPreviewCard
+                                      key={w.runeid}
+                                      balance={w}
+                                      price={runesPriceMap?.[w.spacedRune]}
+                                    />
                                   ))}
                                 </Row>
                               </Column>

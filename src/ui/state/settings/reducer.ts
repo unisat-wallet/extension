@@ -21,7 +21,9 @@ export const initialState: SettingsState = {
   walletConfig: {
     version: '',
     moonPayEnabled: true,
-    statusMessage: ''
+    statusMessage: '',
+    endpoint: '',
+    chainTip: ''
   },
   skippedVersion: ''
 };

@@ -16,11 +16,11 @@ export default function SignOrdinalsTransactionScreen() {
   const pushOrdinalsTx = usePushOrdinalsTxCallback();
   return (
     <SignPsbt
-      header=<Header
+      header={<Header
         onBack={() => {
           window.history.go(-1);
         }}
-      />
+      />}
       params={{
         data: {
           psbtHex: rawTxInfo.psbtHex,
