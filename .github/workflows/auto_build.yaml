@@ -17,9 +17,7 @@ jobs:
       - uses: ./.github/actions/setup
 
       - name: Build Chrome
-        run: |
-          yarn build:chrome
-          yarn build:chrome:mv3
+        run: yarn build:chrome:mv3
 
       - name: Create Release
         id: create_release
@@ -42,23 +40,12 @@ jobs:
           result-encoding: string
 
       - name: Upload Asset
-        id: upload-asset1
+        id: upload-asset
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/unisat-chrome-mv2-${{steps.get-version.outputs.result}}.zip
-          asset_name: unisat-chrome-mv2-${{steps.get-version.outputs.result}}.zip
-          asset_content_type: application/zip
-
-      - name: Upload Asset
-        id: upload-asset2
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/unisat-chrome-mv3-${{steps.get-version.outputs.result}}.zip
-          asset_name: unisat-chrome-mv3-${{steps.get-version.outputs.result}}.zip
+          asset_path: dist/opwallet-chrome-mv3-${{steps.get-version.outputs.result}}.zip
+          asset_name: opwallet-chrome-mv3-${{steps.get-version.outputs.result}}.zip
           asset_content_type: application/zip
