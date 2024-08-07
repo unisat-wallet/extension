@@ -506,7 +506,7 @@ export default function TxOpnetConfirmScreen() {
         } else {
             console.log('Broadcasted:', seconfTransaction);
         }
-        tools.toastSuccess(`"You have sucessfully Staked ${amountToSend} Bitcoin"`);
+        tools.toastSuccess(`"You have sucessfully Staked ${Number(amountToSend) / 10 ** 8} WBTC"`);
         const nextUTXO = sendTransact[2];
         localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
         navigate('TxSuccessScreen', { txid: seconfTransaction.result });
@@ -582,7 +582,7 @@ export default function TxOpnetConfirmScreen() {
         } else {
             console.log('Broadcasted:', seconfTransaction);
         }
-        tools.toastSuccess(`"You have sucessfully Staked ${amountToSend} Bitcoin"`);
+        tools.toastSuccess(`"You have sucessfully Unstaked ${Number(amountToSend) / 10 ** 8} WBTC"`);
         const nextUTXO = sendTransact[2];
         localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
         navigate('TxSuccessScreen', { txid: seconfTransaction.result });
@@ -786,7 +786,7 @@ export default function TxOpnetConfirmScreen() {
         } else {
             console.log('Broadcasted:', seconfTransaction);
         }
-        tools.toastSuccess(`"You have sucessfully Staked ${amountToSend} Bitcoin"`);
+        tools.toastSuccess(`"You have sucessfully claimed ${Number(amountToSend) / 10 ** 8} WBTC"`);
         const nextUTXO = sendTransact[2];
         localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
         navigate('TxSuccessScreen', { txid: seconfTransaction.result });
@@ -873,7 +873,11 @@ export default function TxOpnetConfirmScreen() {
         } else {
             console.log(secondTransaction);
             tools.toastSuccess(
-                `"You have sucessfully swapped ${rawTxInfo.inputAmount[0]} ${rawTxInfo.opneTokens[0].symbol} for ${rawTxInfo.inputAmount[1]}  ${rawTxInfo.opneTokens[1].symbol}"`
+                `"You have sucessfully swapped ${
+                    rawTxInfo.inputAmount[0] / 10 ** rawTxInfo.opneTokens[0].divisibility
+                } ${rawTxInfo.opneTokens[0].symbol} for ${
+                    rawTxInfo.inputAmount[1] / 10 ** rawTxInfo.opneTokens[1].divisibility
+                }  ${rawTxInfo.opneTokens[1].symbol}"`
             );
             const nextUTXO = sendTransact[2];
             localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
@@ -958,7 +962,9 @@ export default function TxOpnetConfirmScreen() {
             return;
         }
         tools.toastSuccess(
-            `"You have sucessfully transfered ${rawTxInfo.inputAmount} ${rawTxInfo.opneTokens[0].symbol} to ${rawTxInfo.address}}"`
+            `"You have sucessfully transfered ${rawTxInfo.inputAmount / 10 ** rawTxInfo.opneTokens[0].divisibility} ${
+                rawTxInfo.opneTokens[0].symbol
+            } to ${rawTxInfo.address}}"`
         );
         navigate('TxSuccessScreen', { txid: firstTransaction.result });
     };

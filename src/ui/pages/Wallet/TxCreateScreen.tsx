@@ -389,7 +389,6 @@ export default function TxCreateScreen() {
                                     opneTokens: [
                                         {
                                             amount: expandToDecimals(inputAmount, 8),
-
                                             divisibility: 8,
                                             spacedRune: 'Bitcoin',
                                             symbol: 'BTC'
