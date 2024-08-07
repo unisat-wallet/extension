@@ -834,12 +834,14 @@ export default function TxOpnetConfirmScreen() {
             Number(rawTxInfo.slippageTolerance / 100)
         );
         console.log(outPutAmountBigInt);
+        const block = await Web3API.provider.getBlockNumber();
+
         const contractResult = await getSwap.encodeCalldata('swapExactTokensForTokensSupportingFeeOnTransferTokens', [
             inputAmountBigInt,
             outPutAmountBigInt,
             [rawTxInfo.contractAddress[0], rawTxInfo.contractAddress[1]],
             walletGet.p2tr,
-            10000n
+            block + 10000n
         ]);
         const interactionParameters: IInteractionParameters = {
             from: walletGet.p2tr,
