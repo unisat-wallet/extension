@@ -78,6 +78,12 @@ export default function Swap() {
         handleInputChange(inputAmount);
         setSelectedOptioOutput(option);
     };
+    const setMax = () => {
+        if (selectedOption && selectedOptionOutput) {
+            const maxBalance = Number(selectedOption.amount) / Math.pow(10, selectedOption.divisibility);
+            setInputAmount(maxBalance.toString());
+        }
+    };
     const handleInputChange = async (value: string) => {
         // Allow empty input, numbers, and one decimal point
         if (value === '' || /^\d*\.?\d*$/.test(value)) {
@@ -220,6 +226,8 @@ export default function Swap() {
                 <BaseView style={$style}>
                     <Row itemsCenter fullX justifyBetween style={{ alignItems: 'baseline' }}>
                         <Select
+                            index={0}
+                            setMax={setMax}
                             options={switchOptions}
                             selectedoptionuse={selectedOption}
                             placeholder={'Select Token'}
@@ -236,7 +244,12 @@ export default function Swap() {
                     <hr style={{ width: 'calc(100% + 37px)', marginLeft: '-20px' }} />
                     <br />
                     <Row itemsCenter fullX justifyBetween style={{ alignItems: 'baseline' }}>
-                        <Select options={switchOptions} placeholder={'Select Token'} onSelect={handleSelectOutput} />
+                        <Select
+                            index={1}
+                            options={switchOptions}
+                            placeholder={'Select Token'}
+                            onSelect={handleSelectOutput}
+                        />
                         <input
                             disabled
                             type="text"

@@ -21,6 +21,8 @@ export interface SelectOption {
 }
 
 export interface SelectProps extends BaseViewProps {
+    setMax?: () => void;
+    index: number;
     options: OpNetBalance[];
     onSelect: (option: OpNetBalance) => void;
     placeholder?: string;
@@ -198,7 +200,7 @@ export function Select(props: SelectProps) {
                 </BaseView>
                 <div onClick={() => setIsOpen(true)} {...rest}>
                     {selectedOption ? (
-                        <>
+                        <Row justifyBetween fullX>
                             <Row itemsCenter fullY gap="zero">
                                 <Text text={'Balance:'} size="xs" />
                                 <Text
@@ -209,7 +211,12 @@ export function Select(props: SelectProps) {
                                     size="xs"
                                 />
                             </Row>
-                        </>
+                            {
+                                (props.index = 0 && (
+                                    <Text text="MAX" preset="sub" style={{ color: colors.icon_yellow }} />
+                                ))
+                            }{' '}
+                        </Row>
                     ) : (
                         <Text text={'Balance:0'} size="xs" />
                     )}
