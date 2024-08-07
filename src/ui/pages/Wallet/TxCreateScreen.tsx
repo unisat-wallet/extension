@@ -20,12 +20,14 @@ import { useUiTxCreateScreen, useUpdateUiTxCreateScreen } from '@/ui/state/ui/ho
 import { fontSizes } from '@/ui/theme/font';
 import { amountToSatoshis, isValidAddress, satoshisToAmount } from '@/ui/utils';
 import { BtcUsd } from '@/ui/components/BtcUsd';
+import { useBTCUnit } from '@/ui/state/settings/hooks';
 
 export default function TxCreateScreen() {
   const accountBalance = useAccountBalance();
   const safeBalance = useSafeBalance();
   const navigate = useNavigate();
   const bitcoinTx = useBitcoinTx();
+  const btcUnit = useBTCUnit();
 
   const [disabled, setDisabled] = useState(true);
 
@@ -96,7 +98,7 @@ export default function TxCreateScreen() {
       return;
     }
     if (toSatoshis < COIN_DUST) {
-      setError(`Amount must be at least ${dustAmount} BTC`);
+      setError(`Amount must be at least ${dustAmount} ${btcUnit}`);
       return;
     }
 
@@ -141,7 +143,7 @@ export default function TxCreateScreen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Send BTC"
+        title={`Send ${btcUnit}`}
       />
       <Content style={{ padding: '0px 16px 24px' }}>
         <Row justifyCenter>
@@ -187,14 +189,14 @@ export default function TxCreateScreen() {
             {spendUnavailableSatoshis > 0 && (
               <Row>
                 <Text text={`${spendUnavailableAmount}`} size="sm" style={{ color: '#65D5F0' }} />
-                <Text text={`BTC`} size="sm" color="textDim" />
+                <Text text={btcUnit} size="sm" color="textDim" />
                 <Text text={`+`} size="sm" color="textDim" />
               </Row>
             )}
 
             <Row>
               <Text text={`${avaiableAmount}`} size="sm" color="gold" />
-              <Text text={`BTC`} size="sm" color="textDim" />
+              <Text text={btcUnit} size="sm" color="textDim" />
             </Row>
           </Row>
 
@@ -223,12 +225,12 @@ export default function TxCreateScreen() {
             {spendUnavailableSatoshis > 0 ? (
               <Row>
                 <Text text={`${unspendUnavailableAmount}`} size="sm" color="textDim" />
-                <Text text={`BTC`} size="sm" color="textDim" />
+                <Text text={btcUnit} size="sm" color="textDim" />
               </Row>
             ) : (
               <Row>
                 <Text text={`${unavailableAmount}`} size="sm" color="textDim" />
-                <Text text={`BTC`} size="sm" color="textDim" />
+                <Text text={btcUnit} size="sm" color="textDim" />
               </Row>
             )}
           </Row>
@@ -237,7 +239,7 @@ export default function TxCreateScreen() {
             <Text text="Total" color="textDim" />
             <Row>
               <Text text={`${totalAmount}`} size="sm" color="textDim" />
-              <Text text={`BTC`} size="sm" color="textDim" />
+              <Text text={btcUnit} size="sm" color="textDim" />
             </Row>
           </Row>
         </Column>

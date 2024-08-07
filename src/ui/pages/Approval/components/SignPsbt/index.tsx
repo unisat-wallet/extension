@@ -27,7 +27,7 @@ import { SignPsbtWithRisksPopover } from '@/ui/components/SignPsbtWithRisksPopov
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import KeystoneSignScreen from '@/ui/pages/Wallet/KeystoneSignScreen';
 import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useChain } from '@/ui/state/settings/hooks';
+import { useBTCUnit, useChain } from '@/ui/state/settings/hooks';
 import {
   usePrepareSendAtomicalsNFTCallback,
   usePrepareSendBTCCallback,
@@ -117,6 +117,7 @@ function SignTxDetails({
 }) {
   const address = useAccountAddress();
   const chain = useChain();
+  const btcUnit = useBTCUnit();
 
   const sendingInscriptions = useMemo(() => {
     return txInfo.decodedPsbt.inputInfos
@@ -392,7 +393,7 @@ function SignTxDetails({
                         textCenter
                         size="xxl"
                       />
-                      <Text text="BTC" color="textDim" />
+                      <Text text={btcUnit} color="textDim" />
                       <BtcUsd sats={Math.abs(receivingSatoshis - sendingSatoshis)} bracket />
                     </Row>
                   </Column>
@@ -457,7 +458,7 @@ function SignTxDetails({
 
                 <Column justifyCenter>
                   <Row itemsCenter>
-                    <Text text={spendAmount + ' BTC'} color="white" preset="bold" textCenter size="xxl" />
+                    <Text text={spendAmount + ' '+btcUnit} color="white" preset="bold" textCenter size="xxl" />
                   </Row>
                   <BtcUsd sats={spendSatoshis} textCenter bracket style={{ marginTop: -8 }} />
 
@@ -539,6 +540,8 @@ export default function SignPsbt({
   const [txInfo, setTxInfo] = useState<TxInfo>(initTxInfo);
 
   const [tabState, setTabState] = useState(TabState.DATA);
+
+  const btcUnit = useBTCUnit();
 
   const prepareSendBTC = usePrepareSendBTCCallback();
   const prepareSendOrdinalsInscription = usePrepareSendOrdinalsInscriptionCallback();
@@ -839,7 +842,7 @@ export default function SignPsbt({
           {canChanged == false && (
             <Section title="Network Fee:" extra={<BtcUsd sats={amountToSatoshis(networkFee)} />}>
               <Text text={networkFee} />
-              <Text text="BTC" color="textDim" />
+              <Text text={btcUnit} color="textDim" />
             </Section>
           )}
 
@@ -915,7 +918,7 @@ export default function SignPsbt({
                               </Column>
                               <Row>
                                 <Text text={`${satoshisToAmount(v.value)}`} color={isToSign ? 'white' : 'textDim'} />
-                                <Text text="BTC" color="textDim" />
+                                <Text text={btcUnit} color="textDim" />
                               </Row>
                             </Row>
 
@@ -1021,7 +1024,7 @@ export default function SignPsbt({
                               <AddressText address={v.address} color={isMyAddress ? 'white' : 'textDim'} />
                               <Row>
                                 <Text text={`${satoshisToAmount(v.value)}`} color={isMyAddress ? 'white' : 'textDim'} />
-                                <Text text="BTC" color="textDim" />
+                                <Text text={btcUnit} color="textDim" />
                               </Row>
                             </Row>
                           </Column>

@@ -222,6 +222,7 @@ type TypeChain = {
   enum: ChainType;
   label: string;
   icon: string;
+  unit:string;
   networkType: NetworkType;
   endpoints: string[];
   mempoolSpaceUrl: string;
@@ -234,6 +235,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     enum: ChainType.BITCOIN_MAINNET,
     label: 'Bitcoin Mainnet',
     icon: './images/artifacts/bitcoin-mainnet.png',
+    unit: 'BTC',
     networkType: NetworkType.MAINNET,
     endpoints: ['https://wallet-api.unisat.io'],
     mempoolSpaceUrl: 'https://mempool.space',
@@ -244,6 +246,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     enum: ChainType.BITCOIN_TESTNET,
     label: 'Bitcoin Testnet',
     icon: './images/artifacts/bitcoin-testnet.svg',
+    unit: 'tBTC',
     networkType: NetworkType.TESTNET,
     endpoints: ['https://wallet-api-testnet.unisat.space'],
     mempoolSpaceUrl: 'https://mempool.space/testnet',
@@ -254,6 +257,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     enum: ChainType.BITCOIN_SIGNET,
     label: 'Bitcoin Signet',
     icon: './images/artifacts/bitcoin-signet.svg',
+    unit: 'sBTC',
     networkType: NetworkType.TESTNET,
     endpoints: ['https://wallet-api-signet.unisat.space'],
     mempoolSpaceUrl: 'https://mempool.space/signet',
@@ -264,6 +268,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     enum: ChainType.FRACTAL_BITCOIN_MAINNET,
     label: 'Fractal Bitcoin (Beta)',
     icon: './images/artifacts/fractalbitcoin-mainnet.png',
+    unit: 'FB',
     networkType: NetworkType.MAINNET,
     endpoints: ['https://wallet-api-fractalbitcoin.unisat.space'],
     mempoolSpaceUrl: 'https://mempool.fractalbitcoin.io',

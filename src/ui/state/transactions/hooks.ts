@@ -12,6 +12,7 @@ import { useAccountAddress, useCurrentAccount } from '../accounts/hooks';
 import { accountActions } from '../accounts/reducer';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { transactionsActions } from './reducer';
+import { useBTCUnit } from '@/ui/state/settings/hooks';
 
 export function useTransactionsState(): AppState['transactions'] {
   return useAppSelector((state) => state.transactions);
@@ -30,6 +31,7 @@ export function usePrepareSendBTCCallback() {
   const spendUnavailableUtxos = useSpendUnavailableUtxos();
   const fetchUtxos = useFetchUtxosCallback();
   const account = useCurrentAccount();
+  const btcUnit = useBTCUnit();
   return useCallback(
     async ({
       toAddressInfo,
@@ -61,7 +63,7 @@ export function usePrepareSendBTCCallback() {
         throw new Error(
           `Insufficient balance. Non-Inscription balance(${satoshisToAmount(
             safeBalance
-          )} BTC) is lower than ${satoshisToAmount(toAmount)} BTC `
+          )} ${btcUnit}) is lower than ${satoshisToAmount(toAmount)} ${btcUnit} `
         );
       }
 

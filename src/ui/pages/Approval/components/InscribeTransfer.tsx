@@ -14,7 +14,7 @@ import { OutputValueBar } from '@/ui/components/OutputValueBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useNetworkType } from '@/ui/state/settings/hooks';
+import { useBTCUnit, useNetworkType } from '@/ui/state/settings/hooks';
 import {
   useFetchUtxosCallback,
   usePrepareSendBTCCallback,
@@ -285,7 +285,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
             <Column>
               <Row justifyBetween itemsCenter>
                 <Text text="Available" color="textDim" />
-                <TickUsdWithoutPrice tick={contextData.ticker} balance={inputAmount} type={'brc20'}/>
+                <TickUsdWithoutPrice tick={contextData.ticker} balance={inputAmount} type={'brc20'} />
                 {tokenBalance ? (
                   <Column>
                     {tokenBalance.availableBalanceUnSafe != '0' ? (
@@ -403,6 +403,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
 
 function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
   const { order, tokenBalance, amount, rawTxInfo, session } = contextData;
+  const btcUnit = useBTCUnit();
 
   if (!order || !tokenBalance || !rawTxInfo) {
     return <Empty />;
@@ -438,11 +439,11 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
 
             <Column justifyCenter style={{ height: 250 }}>
               <Row itemsCenter justifyCenter>
-                <Text text={`${amount}`} preset="title-bold" size="xxl" textCenter wrap digital/>
+                <Text text={`${amount}`} preset="title-bold" size="xxl" textCenter wrap digital />
                 <BRC20Ticker tick={tokenBalance.ticker} preset="lg" />
               </Row>
               <Row itemsCenter justifyCenter>
-                <TickUsdWithoutPrice tick={tokenBalance.ticker} balance={amount+''} type={'brc20'}/>
+                <TickUsdWithoutPrice tick={tokenBalance.ticker} balance={amount + ''} type={'brc20'} />
               </Row>
               <Column mt="xxl">
                 <Text text="Preview" preset="sub-bold" />
@@ -459,17 +460,17 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
             <Column>
               <Row justifyBetween>
                 <Text text="Payment Network Fee" color="textDim" />
-                <Text text={`${networkFee} BTC`} />
+                <Text text={`${networkFee} ${btcUnit}`} />
               </Row>
 
               <Row justifyBetween>
                 <Text text="Inscription Output Value" color="textDim" />
-                <Text text={`${outputValue} BTC`} />
+                <Text text={`${outputValue} ${btcUnit}`} />
               </Row>
 
               <Row justifyBetween>
                 <Text text="Inscription Network Fee" color="textDim" />
-                <Text text={`${minerFee} BTC`} />
+                <Text text={`${minerFee} ${btcUnit}`} />
               </Row>
 
               <Row justifyBetween>
@@ -477,23 +478,23 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
                 {originServiceFee != serviceFee ? (
                   <Column>
                     <Text
-                      text={`${originServiceFee} BTC`}
+                      text={`${originServiceFee} ${btcUnit}`}
                       style={{ textDecorationLine: 'line-through' }}
                       color="textDim"
                     />
-                    <Text text={`${serviceFee} BTC`} />
+                    <Text text={`${serviceFee} ${btcUnit}`} />
                   </Column>
                 ) : (
-                  <Text text={`${serviceFee} BTC`} />
+                  <Text text={`${serviceFee} ${btcUnit}`} />
                 )}
               </Row>
               <Row justifyBetween>
                 <Text text="Total" color="gold" />
-                <Text text={`${totalFee} BTC`} color="gold" />
+                <Text text={`${totalFee} ${btcUnit}`} color="gold" />
               </Row>
               <Row justifyBetween>
                 <div></div>
-                <BtcUsd sats={amountToSatoshis(totalFee)}/>
+                <BtcUsd sats={amountToSatoshis(totalFee)} />
               </Row>
             </Column>
           </Column>
@@ -547,9 +548,9 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
 }
 
 function InscribeSignStep({
-  contextData,
-  updateContextData
-}: {
+                            contextData,
+                            updateContextData
+                          }: {
   contextData: ContextData;
   updateContextData: (params: UpdateContextDataParams) => void;
 }) {
@@ -597,9 +598,9 @@ function InscribeSignStep({
 }
 
 function InscribeResultStep({
-  contextData,
-  updateContextData
-}: {
+                              contextData,
+                              updateContextData
+                            }: {
   contextData: ContextData;
   updateContextData: (params: UpdateContextDataParams) => void;
 }) {

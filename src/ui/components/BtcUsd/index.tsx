@@ -25,7 +25,7 @@ export function BtcUsd(props: {
 
   useEffect(() => {
     setShown(chainType === ChainType.BITCOIN_MAINNET);
-    setShowNoValue(chainType === ChainType.BITCOIN_TESTNET);
+    setShowNoValue(chainType === ChainType.BITCOIN_TESTNET || chainType === ChainType.BITCOIN_SIGNET);
   }, [chainType]);
 
 

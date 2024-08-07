@@ -17,7 +17,7 @@ import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import {
-  useBlockstreamUrl,
+  useBlockstreamUrl, useBTCUnit,
   useChain,
   useChainType,
   useSkipVersionCallback,
@@ -143,6 +143,7 @@ export default function WalletTabScreen() {
 
   const blockstreamUrl = useBlockstreamUrl();
   const resetUiTxCreateScreen = useResetUiTxCreateScreen();
+  const btcUnit = useBTCUnit();
 
   const [buyBtcModalVisible, setBuyBtcModalVisible] = useState(false);
 
@@ -204,15 +205,15 @@ export default function WalletTabScreen() {
                 <>
                   <Row justifyBetween>
                     <span style={$noBreakStyle}>{'Available '}</span>
-                    <span style={$noBreakStyle}>{` ${avaiableAmount} BTC`}</span>
+                    <span style={$noBreakStyle}>{` ${avaiableAmount} ${btcUnit}`}</span>
                   </Row>
                   <Row justifyBetween>
                     <span style={$noBreakStyle}>{'Unavailable '}</span>
-                    <span style={$noBreakStyle}>{` ${unavailableAmount} BTC`}</span>
+                    <span style={$noBreakStyle}>{` ${unavailableAmount} ${btcUnit}`}</span>
                   </Row>
                   <Row justifyBetween>
                     <span style={$noBreakStyle}>{'Total '}</span>
-                    <span style={$noBreakStyle}>{` ${totalAmount} BTC`}</span>
+                    <span style={$noBreakStyle}>{` ${totalAmount} ${btcUnit}`}</span>
                   </Row>
                 </>
               ) : (
@@ -227,7 +228,7 @@ export default function WalletTabScreen() {
                   </Row>
                   <Row justifyBetween>
                     <span style={$noBreakStyle}>{'Total '}</span>
-                    <span style={$noBreakStyle}>{` ${totalAmount} BTC`}</span>
+                    <span style={$noBreakStyle}>{` ${totalAmount} ${btcUnit}`}</span>
                   </Row>
                 </>
               )
@@ -246,7 +247,7 @@ export default function WalletTabScreen() {
               fontSize: fontSizes.xs
             }}>
             <div>
-              <Text text={balanceValue + '  BTC'} preset="title-bold" textCenter size="xxxl" />
+              <Text text={balanceValue + ' ' + btcUnit} preset="title-bold" textCenter size="xxxl" />
             </div>
           </Tooltip>
           <BtcUsd sats={amountToSatoshis(balanceValue)} textCenter size={'md'} style={{
