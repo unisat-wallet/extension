@@ -86,7 +86,15 @@ const $searchInputStyle = {
 } as CSSProperties;
 
 export function Select(props: SelectProps) {
-    const { style: $styleOverride, options, onSelect, placeholder = 'Select an option', ...rest } = props;
+    const {
+        style: $styleOverride,
+        options,
+        onSelect,
+        placeholder = 'Select an option',
+        selectIndex,
+        setMax,
+        ...rest
+    } = props;
     const [isOpen, setIsOpen] = useState(false);
     const [selectedOption, setSelectedOption] = useState<OpNetBalance | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
@@ -198,9 +206,9 @@ export function Select(props: SelectProps) {
                         <RunesTicker tick={placeholder} />
                     )}
                 </BaseView>
-                <div onClick={() => setIsOpen(true)} {...rest}>
+                <div {...rest}>
                     {selectedOption ? (
-                        <Row justifyBetween fullX>
+                        <Row justifyBetween full>
                             <Row itemsCenter fullY gap="zero">
                                 <Text text={'Balance:'} size="xs" />
                                 <Text
@@ -211,11 +219,9 @@ export function Select(props: SelectProps) {
                                     size="xs"
                                 />
                             </Row>
-                            {
-                                (props.selectIndex = 0 && (
-                                    <Text text="MAX" preset="sub" style={{ color: colors.icon_yellow }} />
-                                ))
-                            }{' '}
+                            {selectIndex == 0 && (
+                                <Text onClick={setMax} text="MAX" preset="sub" style={{ color: colors.icon_yellow }} />
+                            )}{' '}
                         </Row>
                     ) : (
                         <Text text={'Balance:0'} size="xs" />

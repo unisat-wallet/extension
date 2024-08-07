@@ -79,7 +79,7 @@ export default function Swap() {
         setSelectedOptioOutput(option);
     };
     const setMax = () => {
-        if (selectedOption && selectedOptionOutput) {
+        if (selectedOption) {
             const maxBalance = Number(selectedOption.amount) / Math.pow(10, selectedOption.divisibility);
             setInputAmount(maxBalance.toString());
         }
@@ -227,7 +227,7 @@ export default function Swap() {
                     <Row itemsCenter fullX justifyBetween style={{ alignItems: 'baseline' }}>
                         <Select
                             selectIndex={0}
-                            setMax={setMax}
+                            setMax={() => setMax()}
                             options={switchOptions}
                             selectedoptionuse={selectedOption}
                             placeholder={'Select Token'}
