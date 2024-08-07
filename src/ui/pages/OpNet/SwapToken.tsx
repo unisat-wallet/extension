@@ -226,7 +226,7 @@ export default function Swap() {
                 <BaseView style={$style}>
                     <Row itemsCenter fullX justifyBetween style={{ alignItems: 'baseline' }}>
                         <Select
-                            index={0}
+                            selectIndex={0}
                             setMax={setMax}
                             options={switchOptions}
                             selectedoptionuse={selectedOption}
@@ -245,7 +245,7 @@ export default function Swap() {
                     <br />
                     <Row itemsCenter fullX justifyBetween style={{ alignItems: 'baseline' }}>
                         <Select
-                            index={1}
+                            selectIndex={1}
                             options={switchOptions}
                             placeholder={'Select Token'}
                             onSelect={handleSelectOutput}

@@ -22,7 +22,7 @@ export interface SelectOption {
 
 export interface SelectProps extends BaseViewProps {
     setMax?: () => void;
-    index: number;
+    selectIndex: number;
     options: OpNetBalance[];
     onSelect: (option: OpNetBalance) => void;
     placeholder?: string;
@@ -212,7 +212,7 @@ export function Select(props: SelectProps) {
                                 />
                             </Row>
                             {
-                                (props.index = 0 && (
+                                (props.selectIndex = 0 && (
                                     <Text text="MAX" preset="sub" style={{ color: colors.icon_yellow }} />
                                 ))
                             }{' '}
