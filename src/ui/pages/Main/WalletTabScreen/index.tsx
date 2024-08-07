@@ -309,17 +309,6 @@ export default function WalletTabScreen() {
                     </Row>
 
                     <Row justifyBetween>
-                        {chain.enum == 'BITCOIN_REGTEST' && (
-                            <Button
-                                text="Faucet"
-                                preset="default"
-                                icon="faucet"
-                                onClick={(e) => {
-                                    window.open('https://faucet.opnet.org/', '_blank');
-                                }}
-                                full
-                            />
-                        )}
                         <Button
                             text="Receive"
                             preset="default"
@@ -340,6 +329,17 @@ export default function WalletTabScreen() {
                             }}
                             full
                         />
+                        {chain.enum == 'BITCOIN_REGTEST' && (
+                            <Button
+                                text="Faucet"
+                                preset="default"
+                                icon="faucet"
+                                onClick={(e) => {
+                                    window.open('https://faucet.opnet.org/', '_blank');
+                                }}
+                                full
+                            />
+                        )}
                         {chainType === ChainType.BITCOIN_MAINNET && (
                             <Button
                                 text="Buy"

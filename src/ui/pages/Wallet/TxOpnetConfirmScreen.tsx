@@ -966,6 +966,7 @@ export default function TxOpnetConfirmScreen() {
                 rawTxInfo.opneTokens[0].symbol
             } to ${rawTxInfo.address}}"`
         );
+        console.log(firstTransaction);
         navigate('TxSuccessScreen', { txid: firstTransaction.result });
     };
     const deployContract = async () => {
