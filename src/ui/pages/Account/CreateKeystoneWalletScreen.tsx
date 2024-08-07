@@ -292,10 +292,11 @@ function Step3({
       }
       return filtItems;
     } else {
+      const hdPath = addressTypes.find((v) => v.value === addressType)?.hdPath;
       const items = group.address_arr.map((v, index) => ({
         address: v,
         satoshis: group.satoshis_arr[index],
-        path: `${addressTypes[addressType].hdPath}/${index}`
+        path: `${hdPath}/${index}`
       }));
       const filtItems = items.filter((v) => v.satoshis >= 0);
       if (filtItems.length === 0) {
