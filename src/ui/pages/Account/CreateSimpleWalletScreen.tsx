@@ -12,9 +12,9 @@ import { satoshisToAmount, useWallet } from '@/ui/utils';
 import { useNavigate } from '../MainRoute';
 
 function Step1({
-    contextData,
-    updateContextData
-}: {
+                   contextData,
+                   updateContextData
+               }: {
     contextData: ContextData;
     updateContextData: (params: UpdateContextDataParams) => void;
 }) {
@@ -77,9 +77,9 @@ function Step1({
 }
 
 function Step2({
-    contextData,
-    updateContextData
-}: {
+                   contextData,
+                   updateContextData
+               }: {
     contextData: ContextData;
     updateContextData: (params: UpdateContextDataParams) => void;
 }) {

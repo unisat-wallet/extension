@@ -45,13 +45,13 @@ export default function DisclaimerModal({ channelType, onClose }: { channelType:
                         mt="lg"
                         style={{ fontSize: fontSizes.sm, lineHeight: 2 }}
                         text={
-                            "Risk Warning: Don't invest unless you're prepared to lose all the money you invest."
+                            'Risk Warning: Don\'t invest unless you\'re prepared to lose all the money you invest.'
                         }></Text>
                     <Text
                         mt="lg"
                         style={{ fontSize: fontSizes.sm, lineHeight: 2 }}
                         text={
-                            "Additional transaction fees apply when purchasing through third-party platforms. Rates vary by country and payment method. Please review each platform's fees before proceeding with transactions."
+                            'Additional transaction fees apply when purchasing through third-party platforms. Rates vary by country and payment method. Please review each platform\'s fees before proceeding with transactions.'
                         }></Text>
                     <Text
                         mt="lg"

@@ -109,7 +109,7 @@ export default function Mint() {
                 OpNetBalance.address,
                 OP_20_ABI,
                 Web3API.provider
-            ); 
+            );
             const maxSupply = await contract.maximumSupply();
             const totalSupply = await contract.totalSupply();
 

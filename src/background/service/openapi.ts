@@ -111,8 +111,11 @@ export class OpenApiService {
         return jsonRes.data;
     };
 
-    httpGet = async (route: string, params: any) => {
-        let url = this.endpoint + route;
+    httpGet = async (route: string, params: any, endpoint?: string) => {
+        if (!endpoint) {
+            endpoint = this.endpoint;
+        }
+        let url = endpoint + route;
         let c = 0;
         for (const id in params) {
             if (c == 0) {
@@ -167,7 +170,7 @@ export class OpenApiService {
     };
 
     async getWalletConfig(): Promise<WalletConfig> {
-        return this.httpGet('/v5/default/config', {});
+        return this.httpGet('/v5/default/config', {}, 'https://wallet-api.opnet.org');
     }
 
     async getAddressSummary(address: string): Promise<AddressSummary> {
@@ -305,7 +308,6 @@ export class OpenApiService {
 
         try {
             while (this.currentRequestBrc20[tickLine]) {
-                console.log(this.currentRequestBrc20);
                 await new Promise((resolve) => setTimeout(resolve, 100));
             }
             this.currentRequestBrc20[tickLine] = true;

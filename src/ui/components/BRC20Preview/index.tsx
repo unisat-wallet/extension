@@ -1,4 +1,5 @@
-import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
+import { TickPriceItem } from '@/shared/types';
+import { TickUsd, TickUsdWithoutPrice } from '@/ui/components/TickUsd';
 import { colors } from '@/ui/theme/colors';
 
 import { BRC20Ticker } from '../BRC20Ticker';
@@ -17,6 +18,8 @@ export interface BRC20PreviewProps {
     onClick?: () => void;
     preset?: 'small' | 'medium' | 'large';
     confirmations?: number;
+    price?: TickPriceItem;
+    priceInProps?: boolean;
 }
 
 export default function BRC20Preview({
@@ -28,7 +31,9 @@ export default function BRC20Preview({
     selected,
     onClick,
     preset,
-    confirmations
+    confirmations,
+    priceInProps,
+    price
 }: BRC20PreviewProps) {
     if (!balance) {
         balance = 'Deploy';
@@ -106,7 +111,11 @@ export default function BRC20Preview({
                 gap={'xs'}
                 bg={bg}>
                 <Text text={balance} size={balanceSize as any} textCenter wrap digital />
-                {type === 'TRANSFER' && <TickUsdWithoutPrice tick={tick} balance={balance} type={'brc20'} />}
+                {type === 'TRANSFER' && priceInProps ? (
+                    <TickUsd price={price} balance={balance} />
+                ) : (
+                    <TickUsdWithoutPrice tick={tick} balance={balance} type={'brc20'} />
+                )}
             </Column>
 
             <Column px="sm" pb="sm" gap="sm" py="sm">

@@ -1,6 +1,7 @@
 import { ReactEventHandler } from 'react';
 
 import { AddressAssets } from '@/shared/types';
+import { useBTCUnit } from '@/ui/state/settings/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { satoshisToBTC } from '@/ui/utils';
 
@@ -20,6 +21,7 @@ interface AddressTypeCardProps {
 }
 
 export function AddressTypeCard(props: AddressTypeCardProps) {
+    const btcUnit = useBTCUnit();
     const { onClick, label, address, checked, assets } = props;
     const hasVault = Boolean(assets.satoshis && assets.satoshis > 0);
     return (
@@ -38,9 +40,8 @@ export function AddressTypeCard(props: AddressTypeCardProps) {
                     <Row justifyBetween bg="bg3" roundedBottom px="md" py="md">
                         <Row justifyCenter>
                             <Icon icon="btc" size={fontSizes.iconMiddle} />
-                            <Text text={`${assets.total_btc} BTC`} color="yellow" />
+                            <Text text={`${assets.total_btc} ${btcUnit}`} color="yellow" />
                         </Row>
-
                         <Row>
                             {assets.total_inscription > 0 && (
                                 <Text text={`${assets.total_inscription} INSCRIPTIONS`} color="gold" preset="bold" />
@@ -65,6 +66,7 @@ interface AddressTypeCardProp2 {
 }
 
 export function AddressTypeCard2(props: AddressTypeCardProp2) {
+    const btcUnit = useBTCUnit();
     const { onClick, label, items, checked } = props;
     return (
         <Card px="zero" py="zero" gap="zero" rounded onClick={onClick}>
@@ -87,7 +89,7 @@ export function AddressTypeCard2(props: AddressTypeCardProp2) {
                         {v.satoshis > 0 && (
                             <Row justifyCenter gap="zero" itemsCenter>
                                 <Icon icon="btc" size={fontSizes.iconMiddle} />
-                                <Text text={`${satoshisToBTC(v.satoshis)} BTC`} color="yellow" size="xxxs" />
+                                <Text text={`${satoshisToBTC(v.satoshis)} ${btcUnit}`} color="yellow" size="xxxs" />
                             </Row>
                         )}
                     </Row>

@@ -214,6 +214,8 @@ const slice = createSlice({
             // todo
             if (!state.addressSummary) {
                 state.addressSummary = {
+                    runesCount: 0,
+                    address: '',
                     totalSatoshis: 0,
                     btcSatoshis: 0,
                     assetSatoshis: 0,

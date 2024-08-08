@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { KEYRING_TYPE } from '@/shared/constant';
 import { RawTxInfo, ToAddressInfo } from '@/shared/types';
 import { useTools } from '@/ui/components/ActionComponent';
+import { useBTCUnit } from '@/ui/state/settings/hooks';
 import { satoshisToAmount, satoshisToBTC, sleep, useWallet } from '@/ui/utils';
 import { UnspentOutput } from '@unisat/wallet-sdk';
 import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
@@ -30,6 +31,7 @@ export function usePrepareSendBTCCallback() {
     const spendUnavailableUtxos = useSpendUnavailableUtxos();
     const fetchUtxos = useFetchUtxosCallback();
     const account = useCurrentAccount();
+    const btcUnit = useBTCUnit();
     return useCallback(
         async ({
             toAddressInfo,
@@ -63,7 +65,7 @@ export function usePrepareSendBTCCallback() {
                 throw new Error(
                     `Insufficient balance. Non-Inscription balance(${satoshisToAmount(
                         safeBalance
-                    )} BTC) is lower than ${satoshisToAmount(toAmount)} BTC `
+                    )} ${btcUnit}) is lower than ${satoshisToAmount(toAmount)} ${btcUnit} `
                 );
             }
 

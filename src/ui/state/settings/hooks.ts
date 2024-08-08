@@ -112,6 +112,11 @@ export function useBlockstreamUrl() {
     return CHAINS_MAP[chainType].mempoolSpaceUrl;
 }
 
+export function useBTCUnit() {
+    const chainType = useChainType();
+    return CHAINS_MAP[chainType].unit;
+}
+
 export function useTxIdUrl(txid: string) {
     const chainType = useChainType();
     const mempoolSpaceUrl = CHAINS_MAP[chainType].mempoolSpaceUrl;

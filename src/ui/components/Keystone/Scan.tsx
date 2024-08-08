@@ -8,9 +8,9 @@ import { useAnimatedQRScanner } from '@keystonehq/animated-qr';
 import KeystonePopover from './Popover';
 
 export default function KeystoneScan({
-    onSucceed,
-    size
-}: {
+                                         onSucceed,
+                                         size
+                                     }: {
     onSucceed: (data: { type: string; cbor: string }) => void;
     size?: number;
 }) {
