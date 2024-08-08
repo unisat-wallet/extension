@@ -71,7 +71,6 @@ export function TickUsdWithoutPrice(
         if (tick) {
             (type === 'brc20' ? wallet.getBrc20sPrice : wallet.getRunesPrice)([tick])
                 .then((priceMap) => {
-                    console.log(priceMap);
                     setPrice(priceMap[tick]);
                     setShown(true);
                 })

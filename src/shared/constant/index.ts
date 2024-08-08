@@ -61,48 +61,9 @@ export const KEYRING_TYPES: {
 
 export const IS_CHROME = /Chrome\//i.test(navigator.userAgent);
 
-export const IS_FIREFOX = /Firefox\//i.test(navigator.userAgent);
-
 export const IS_LINUX = /linux/i.test(navigator.userAgent);
 
-let chromeVersion: number | null = null;
-
-if (IS_CHROME) {
-    const matches = navigator.userAgent.match(/Chrome\/(\d+[^.\s])/);
-    if (matches && matches.length >= 2) {
-        chromeVersion = Number(matches[1]);
-    }
-}
-
-export const IS_AFTER_CHROME91 = IS_CHROME ? chromeVersion && chromeVersion >= 91 : false;
-
-export const GAS_LEVEL_TEXT = {
-    slow: 'Standard',
-    normal: 'Fast',
-    fast: 'Instant',
-    custom: 'Custom'
-};
-
 export const IS_WINDOWS = /windows/i.test(navigator.userAgent);
-
-export const LANGS = [
-    {
-        value: 'en',
-        label: 'English'
-    },
-    {
-        value: 'zh_CN',
-        label: 'Chinese'
-    },
-    {
-        value: 'ja',
-        label: 'Japanese'
-    },
-    {
-        value: 'es',
-        label: 'Spanish'
-    }
-];
 
 export const ADDRESS_TYPES: {
     value: AddressType;
@@ -221,8 +182,9 @@ export const RESTORE_WALLETS: { value: RestoreWalletType; name: string; addressT
 export enum ChainType {
     BITCOIN_MAINNET = 'BITCOIN_MAINNET',
     BITCOIN_TESTNET = 'BITCOIN_TESTNET',
-    FRACTAL_BITCOIN_MAINNET = 'FRACTAL_BITCOIN_MAINNET',
-    BITCOIN_REGTEST = 'BITCOIN_REGTEST'
+    BITCOIN_REGTEST = 'BITCOIN_REGTEST',
+    BITCOIN_SIGNET = 'BITCOIN_SIGNET',
+    FRACTAL_BITCOIN_MAINNET = 'FRACTAL_BITCOIN_MAINNET'
 }
 
 export const NETWORK_TYPES = [
@@ -235,6 +197,7 @@ type TypeChain<T extends ChainType> = {
     enum: T;
     label: string;
     icon: string;
+    unit: string;
     networkType: NetworkType;
     endpoints: string[];
     mempoolSpaceUrl: string;
@@ -246,6 +209,7 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
     [ChainType.BITCOIN_MAINNET]: {
         enum: ChainType.BITCOIN_MAINNET,
         label: 'Bitcoin Mainnet',
+        unit: 'BTC',
         icon: './images/artifacts/bitcoin-mainnet.png',
         networkType: NetworkType.MAINNET,
         endpoints: ['https://wallet-api.unisat.io'],
@@ -256,6 +220,7 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
     [ChainType.BITCOIN_TESTNET]: {
         enum: ChainType.BITCOIN_TESTNET,
         label: 'Bitcoin Testnet',
+        unit: 'tBTC',
         icon: './images/artifacts/bitcoin-testnet.png',
         networkType: NetworkType.TESTNET,
         endpoints: ['https://wallet-api-testnet.unisat.space'],
@@ -266,6 +231,7 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
     [ChainType.BITCOIN_REGTEST]: {
         enum: ChainType.BITCOIN_REGTEST,
         label: 'Bitcoin OP_NET Regtest',
+        unit: 'rBTC',
         icon: './images/artifacts/bitcoin-testnet.png',
         networkType: NetworkType.REGTEST,
         endpoints: ['https://wallet-api-testnet.unisat.space'],
@@ -273,9 +239,21 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         unisatUrl: 'https://unisat.io',
         ordinalsUrl: 'https://ordinals.com'
     },
+    [ChainType.BITCOIN_SIGNET]: {
+        enum: ChainType.BITCOIN_SIGNET,
+        label: 'Bitcoin Signet',
+        icon: './images/artifacts/bitcoin-signet.svg',
+        unit: 'sBTC',
+        networkType: NetworkType.TESTNET,
+        endpoints: ['https://wallet-api-signet.unisat.space'],
+        mempoolSpaceUrl: 'https://mempool.space/signet',
+        unisatUrl: 'https://signet.unisat.io',
+        ordinalsUrl: 'https://signet.ordinals.com'
+    },
     [ChainType.FRACTAL_BITCOIN_MAINNET]: {
         enum: ChainType.FRACTAL_BITCOIN_MAINNET,
         label: 'Fractal Bitcoin (Beta)',
+        unit: 'FB',
         icon: './images/artifacts/fractalbitcoin-mainnet.png',
         networkType: NetworkType.MAINNET,
         endpoints: ['https://wallet-api-fractalbitcoin.unisat.space'],

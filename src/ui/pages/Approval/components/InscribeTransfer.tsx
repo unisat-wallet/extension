@@ -16,7 +16,7 @@ import { RBFBar } from '@/ui/components/RBFBar';
 import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useNetworkType } from '@/ui/state/settings/hooks';
+import { useBTCUnit, useNetworkType } from '@/ui/state/settings/hooks';
 import {
     useFetchUtxosCallback,
     usePrepareSendBTCCallback,
@@ -408,6 +408,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
 
 function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
     const { order, tokenBalance, amount, rawTxInfo, session } = contextData;
+    const btcUnit = useBTCUnit();
 
     if (!order || !tokenBalance || !rawTxInfo) {
         return <Empty />;
@@ -464,17 +465,17 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
                         <Column>
                             <Row justifyBetween>
                                 <Text text="Payment Network Fee" color="textDim" />
-                                <Text text={`${networkFee} BTC`} />
+                                <Text text={`${networkFee} ${btcUnit}`} />
                             </Row>
 
                             <Row justifyBetween>
                                 <Text text="Inscription Output Value" color="textDim" />
-                                <Text text={`${outputValue} BTC`} />
+                                <Text text={`${outputValue} ${btcUnit}`} />
                             </Row>
 
                             <Row justifyBetween>
                                 <Text text="Inscription Network Fee" color="textDim" />
-                                <Text text={`${minerFee} BTC`} />
+                                <Text text={`${minerFee} ${btcUnit}`} />
                             </Row>
 
                             <Row justifyBetween>
@@ -482,19 +483,19 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
                                 {originServiceFee != serviceFee ? (
                                     <Column>
                                         <Text
-                                            text={`${originServiceFee} BTC`}
+                                            text={`${originServiceFee} ${btcUnit}`}
                                             style={{ textDecorationLine: 'line-through' }}
                                             color="textDim"
                                         />
-                                        <Text text={`${serviceFee} BTC`} />
+                                        <Text text={`${serviceFee} ${btcUnit}`} />
                                     </Column>
                                 ) : (
-                                    <Text text={`${serviceFee} BTC`} />
+                                    <Text text={`${serviceFee} ${btcUnit}`} />
                                 )}
                             </Row>
                             <Row justifyBetween>
                                 <Text text="Total" color="gold" />
-                                <Text text={`${totalFee} BTC`} color="gold" />
+                                <Text text={`${totalFee} ${btcUnit}`} color="gold" />
                             </Row>
                             <Row justifyBetween>
                                 <div></div>

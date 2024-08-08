@@ -7,6 +7,7 @@ import browser from '@/background/webapi/browser';
 import { EVENTS } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 import { Message } from '@/shared/utils';
+import { PriceProvider } from '@/ui/provider/PriceProvider';
 import AccountUpdater from '@/ui/state/accounts/updater';
 import '@/ui/styles/global.less';
 
@@ -78,13 +79,13 @@ portMessageChannel.connect('popup');
 const wallet: Record<string, any> = new Proxy(
     {},
     {
-        get(obj, key) {
+        get(_, key) {
             switch (key) {
                 case 'openapi':
                     return new Proxy(
                         {},
                         {
-                            get(obj, key) {
+                            get(_, key) {
                                 if (typeof key !== 'string') throw new Error('Invalid key');
 
                                 return function (...params: any) {
@@ -158,8 +159,10 @@ root.render(
         <WalletProvider {...antdConfig} wallet={wallet as any}>
             <ActionComponentProvider>
                 <AppDimensions>
-                    <Updaters />
-                    <AsyncMainRoute />
+                    <PriceProvider>
+                        <Updaters />
+                        <AsyncMainRoute />
+                    </PriceProvider>
                 </AppDimensions>
             </ActionComponentProvider>
         </WalletProvider>

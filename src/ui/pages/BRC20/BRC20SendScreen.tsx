@@ -29,9 +29,9 @@ import { SignPsbt } from '../Approval/components';
 import { useNavigate } from '../MainRoute';
 
 function Step1({
-    contextData,
-    updateContextData
-}: {
+                   contextData,
+                   updateContextData
+               }: {
     contextData: ContextData;
     updateContextData: (params: UpdateContextDataParams) => void;
 }) {
@@ -150,9 +150,9 @@ function Step1({
 // }
 
 function TransferableList({
-    contextData,
-    updateContextData
-}: {
+                              contextData,
+                              updateContextData
+                          }: {
     contextData: ContextData;
     updateContextData: (params: UpdateContextDataParams) => void;
 }) {
@@ -315,9 +315,9 @@ function TransferableList({
 }
 
 function Step2({
-    contextData,
-    updateContextData
-}: {
+                   contextData,
+                   updateContextData
+               }: {
     contextData: ContextData;
     updateContextData: (params: UpdateContextDataParams) => void;
 }) {
@@ -435,9 +435,9 @@ function Step2({
 }
 
 function Step3({
-    contextData,
-    updateContextData
-}: {
+                   contextData,
+                   updateContextData
+               }: {
     contextData: ContextData;
     updateContextData: (params: UpdateContextDataParams) => void;
 }) {

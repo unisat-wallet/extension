@@ -5,9 +5,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { ChainType } from '@/shared/constant';
 import { Text } from '@/ui/components';
 import { Sizes, TextProps } from '@/ui/components/Text';
+import { usePrice } from '@/ui/provider/PriceProvider';
 import { useChainType } from '@/ui/state/settings/hooks';
 import type { ColorTypes } from '@/ui/theme/colors';
-import { useWallet } from '@/ui/utils';
 
 export function BtcUsd(
     props: {
@@ -19,55 +19,43 @@ export function BtcUsd(
 ) {
     const { sats, color = 'textDim', size = 'sm', bracket = false } = props;
 
-    const wallet = useWallet();
+    const { btcPrice, refreshBtcPrice, isLoadingBtcPrice } = usePrice();
     const chainType = useChainType();
 
     const [shown, setShown] = useState(false);
     const [showNoValue, setShowNoValue] = useState(false);
-    const [loading, setLoading] = useState(false);
-    const [price, setPrice] = useState(0);
 
     useEffect(() => {
         setShown(chainType === ChainType.BITCOIN_MAINNET);
-        setShowNoValue(chainType === ChainType.BITCOIN_TESTNET);
+        setShowNoValue(
+            chainType === ChainType.BITCOIN_TESTNET ||
+                chainType === ChainType.BITCOIN_SIGNET ||
+                chainType === ChainType.BITCOIN_REGTEST
+        );
     }, [chainType]);
 
     useEffect(() => {
-        if (!shown) {
-            return;
-        }
-        setLoading(true);
-        wallet
-            .getBtcPrice()
-            .then((price) => {
-                setPrice(price);
-            })
-            .catch(() => {
-                setPrice(0);
-            })
-            .finally(() => {
-                setLoading(false);
-            });
-    }, [shown]);
+        refreshBtcPrice();
+    }, []);
 
     const usd = useMemo(() => {
         if (isNaN(sats)) {
             return '-';
         }
-        if (price <= 0) {
+        if (btcPrice <= 0) {
             return '-';
         }
         if (sats <= 0) {
             return '0.00';
         }
-        const result = new BigNumber(sats).dividedBy(1e8).multipliedBy(price);
+        const result = new BigNumber(sats).dividedBy(1e8).multipliedBy(btcPrice);
 
         if (result.isLessThan('0.01')) {
             return result.toPrecision(4);
         }
 
         return result.toFixed(2);
-    }, [price, sats]);
+    }, [btcPrice, sats]);
 
     if (showNoValue) {
         if (bracket) {
@@ -84,7 +72,7 @@ export function BtcUsd(
         return <></>;
     }
 
-    if (loading) {
+    if (isLoadingBtcPrice) {
         return <Spin size={'small'} />;
     }
 

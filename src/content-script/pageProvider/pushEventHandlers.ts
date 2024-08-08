@@ -1,5 +1,7 @@
 import { ethErrors } from 'eth-rpc-errors';
 
+import ReadyPromise from '@/content-script/pageProvider/readyPromise';
+import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
 import Web3API from '@/shared/web3/Web3API';
 
 import { UnisatProvider } from './index';
@@ -7,38 +9,53 @@ import { UnisatProvider } from './index';
 class PushEventHandlers {
     provider: UnisatProvider;
 
-    constructor(provider: UnisatProvider) {
+    _unisatProviderPrivate: any;
+
+    constructor(
+        provider: UnisatProvider,
+        _unisatProviderPrivate: {
+            _selectedAddress: string | null;
+            _network: string | null;
+            _isConnected: boolean;
+            _initialized: boolean;
+            _isUnlocked: boolean;
+            _pushEventHandlers: PushEventHandlers | null;
+            _requestPromise: ReadyPromise;
+            _bcm: BroadcastChannelMessage;
+        }
+    ) {
         this.provider = provider;
+        this._unisatProviderPrivate = _unisatProviderPrivate;
     }
 
     _emit(event: string, data: object) {
-        if (this.provider._initialized) {
+        if (this._unisatProviderPrivate._initialized) {
             this.provider.emit(event, data);
         }
     }
 
     connect = (data: object) => {
-        if (!this.provider._isConnected) {
-            this.provider._isConnected = true;
-            this.provider._state.isConnected = true;
+        if (!this._unisatProviderPrivate._isConnected) {
+            this._unisatProviderPrivate._isConnected = true;
+            this._unisatProviderPrivate._state.isConnected = true;
             this._emit('connect', data);
         }
     };
 
     unlock = () => {
-        this.provider._isUnlocked = true;
-        this.provider._state.isUnlocked = true;
+        this._unisatProviderPrivate._isUnlocked = true;
+        this._unisatProviderPrivate._state.isUnlocked = true;
     };
 
     lock = () => {
-        this.provider._isUnlocked = false;
+        this._unisatProviderPrivate._isUnlocked = false;
     };
 
     disconnect = () => {
-        this.provider._isConnected = false;
-        this.provider._state.isConnected = false;
-        this.provider._state.accounts = null;
-        this.provider._selectedAddress = null;
+        this._unisatProviderPrivate._isConnected = false;
+        this._unisatProviderPrivate._state.isConnected = false;
+        this._unisatProviderPrivate._state.accounts = null;
+        this._unisatProviderPrivate._selectedAddress = null;
         const disconnectError = ethErrors.provider.disconnected();
 
         this._emit('accountsChanged', []);
@@ -47,22 +64,22 @@ class PushEventHandlers {
     };
 
     accountsChanged = (accounts: string[]) => {
-        if (accounts?.[0] === this.provider._selectedAddress) {
+        if (accounts?.[0] === this._unisatProviderPrivate._selectedAddress) {
             return;
         }
 
-        this.provider._selectedAddress = accounts?.[0];
-        this.provider._state.accounts = accounts;
+        this._unisatProviderPrivate._selectedAddress = accounts?.[0];
+        this._unisatProviderPrivate._state.accounts = accounts;
         this._emit('accountsChanged', accounts);
     };
 
     networkChanged = ({ network, chain }) => {
         this.connect({});
 
-        if (network !== this.provider._network) {
+        if (network !== this._unisatProviderPrivate._network) {
             Web3API.setNetwork(chain);
 
-            this.provider._network = network;
+            this._unisatProviderPrivate._network = network;
             this._emit('networkChanged', network);
         }
     };

@@ -1426,7 +1426,7 @@ export class WalletController extends BaseController {
         }
         if (currentAccount) {
             currentAccount.flag = preferenceService.getAddressFlag(currentAccount.address);
-            openapiService.setClientAddress(currentAccount.address, currentAccount.flag);
+            await openapiService.setClientAddress(currentAccount.address, currentAccount.flag);
         }
 
         return currentAccount;
@@ -1499,8 +1499,7 @@ export class WalletController extends BaseController {
     };
 
     getAddressUtxo = async (address: string) => {
-        const data = await openapiService.getBTCUtxos(address);
-        return data;
+        return await openapiService.getBTCUtxos(address);
     };
 
     setRecentConnectedSites = (sites: ConnectedSite[]) => {
@@ -1903,7 +1902,7 @@ export class WalletController extends BaseController {
         let change = 0;
         for (let i = 0; i < assetUtxos.length; i++) {
             const v = assetUtxos[i];
-            total += v.satoshis;
+            total += v.atomicals.reduce((p, c) => p + (c?.atomicalValue || 0), 0);
             _assetUtxos.push(v);
             if (total >= amount) {
                 change = total - amount;

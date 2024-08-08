@@ -69,6 +69,15 @@ const flowContext = flow
                 );
                 permissionService.addConnectedSite(origin, name, icon, CHAINS_ENUM.BTC);
             }
+        } else {
+            if (!permissionService.hasPermission(origin)) {
+                //   connect wallet first
+                if (['getAccounts'].includes(mapMethod)) {
+                    return [];
+                } else {
+                    throw ethErrors.provider.unauthorized();
+                }
+            }
         }
 
         return next();

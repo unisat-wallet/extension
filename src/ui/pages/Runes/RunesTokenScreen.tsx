@@ -214,7 +214,15 @@ export default function RunesTokenScreen() {
                             )} ${tokenSummary.runeInfo.symbol}`}
                         />
 
-                        <Section title="burned" value={showLongNumber(tokenSummary.runeInfo.burned)} />
+                        <Section
+                            title="burned"
+                            value={`${showLongNumber(
+                                runesUtils.toDecimalAmount(
+                                    tokenSummary.runeInfo.burned,
+                                    tokenSummary.runeInfo.divisibility
+                                )
+                            )} ${tokenSummary.runeInfo.symbol}`}
+                        />
 
                         <Section title="divisibility" value={tokenSummary.runeInfo.divisibility} />
 

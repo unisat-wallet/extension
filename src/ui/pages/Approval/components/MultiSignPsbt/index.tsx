@@ -318,11 +318,13 @@ export default function MultiSignPsbt({
         return (
             <>
                 <SignPsbt
-                    header=<Header
-                        onBack={() => {
-                            setViewingPsbtIndex(-1);
-                        }}
-                    />
+                    header={
+                        <Header
+                            onBack={() => {
+                                setViewingPsbtIndex(-1);
+                            }}
+                        />
+                    }
                     params={{
                         data: {
                             psbtHex: txInfo.psbtHexs[viewingPsbtIndex],

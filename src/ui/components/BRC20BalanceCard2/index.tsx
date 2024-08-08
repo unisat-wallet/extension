@@ -147,8 +147,8 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
                                                 v === 'Transfer'
                                                     ? 'brc20_transfer'
                                                     : v === 'Deploy'
-                                                    ? 'brc20_deploy'
-                                                    : 'brc20_other'
+                                                        ? 'brc20_deploy'
+                                                        : 'brc20_other'
                                             }>
                                             <Column gap="zero">
                                                 <Text
