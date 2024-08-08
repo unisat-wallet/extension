@@ -141,18 +141,19 @@ export class UnisatProvider extends EventEmitter {
 
         this._requestPromiseCheckVisibility();
 
-        return _unisatPrividerPrivate._requestPromise.call(async () => {
-            log('[request]', JSON.stringify(data, null, 2));
+        return _unisatPrividerPrivate._requestPromise
+            .call(async () => {
+                log('[request]', JSON.stringify(data, null, 2));
 
-            const res = await _unisatPrividerPrivate._bcm.request(data).catch((err) => {
-                log('[request: error]', data.method, serializeError(err));
-                throw serializeError(err);
-            });
+                const res = await _unisatPrividerPrivate._bcm.request(data).catch((err) => {
+                    log('[request: error]', data.method, serializeError(err));
+                    throw serializeError(err);
+                });
 
-            log('[request: success]', data.method, res);
+                log('[request: success]', data.method, res);
 
-            return res;
-        })
+                return res;
+            })
             .catch((err) => {
                 throw err;
             });

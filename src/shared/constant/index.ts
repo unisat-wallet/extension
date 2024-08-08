@@ -180,11 +180,11 @@ export const RESTORE_WALLETS: { value: RestoreWalletType; name: string; addressT
 ];
 
 export enum ChainType {
-  BITCOIN_MAINNET = 'BITCOIN_MAINNET',
-  BITCOIN_TESTNET = 'BITCOIN_TESTNET',
-  BITCOIN_REGTEST = 'BITCOIN_REGTEST',
-  BITCOIN_SIGNET = 'BITCOIN_SIGNET',
-  FRACTAL_BITCOIN_MAINNET = 'FRACTAL_BITCOIN_MAINNET'
+    BITCOIN_MAINNET = 'BITCOIN_MAINNET',
+    BITCOIN_TESTNET = 'BITCOIN_TESTNET',
+    BITCOIN_REGTEST = 'BITCOIN_REGTEST',
+    BITCOIN_SIGNET = 'BITCOIN_SIGNET',
+    FRACTAL_BITCOIN_MAINNET = 'FRACTAL_BITCOIN_MAINNET'
 }
 
 export const NETWORK_TYPES = [
@@ -194,15 +194,15 @@ export const NETWORK_TYPES = [
 ];
 
 type TypeChain<T extends ChainType> = {
-  enum: T;
-  label: string;
-  icon: string;
-  unit:string;
-  networkType: NetworkType;
-  endpoints: string[];
-  mempoolSpaceUrl: string;
-  unisatUrl: string;
-  ordinalsUrl: string;
+    enum: T;
+    label: string;
+    icon: string;
+    unit: string;
+    networkType: NetworkType;
+    endpoints: string[];
+    mempoolSpaceUrl: string;
+    unisatUrl: string;
+    ordinalsUrl: string;
 };
 
 export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {

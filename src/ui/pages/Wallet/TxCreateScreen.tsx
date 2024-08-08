@@ -14,7 +14,7 @@ import { RBFBar } from '@/ui/components/RBFBar';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useAccountBalance, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { useChain } from '@/ui/state/settings/hooks';
+import { useBTCUnit, useChain } from '@/ui/state/settings/hooks';
 import {
     useBitcoinTx,
     useFetchUtxosCallback,
@@ -25,7 +25,6 @@ import {
 import { useUiTxCreateScreen, useUpdateUiTxCreateScreen } from '@/ui/state/ui/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { amountToSatoshis, isValidAddress, satoshisToAmount, useWallet } from '@/ui/utils';
-import { useBTCUnit } from '@/ui/state/settings/hooks';
 
 export default function TxCreateScreen() {
     interface ItemData {
@@ -37,7 +36,7 @@ export default function TxCreateScreen() {
     const safeBalance = useSafeBalance();
     const navigate = useNavigate();
     const bitcoinTx = useBitcoinTx();
-  const btcUnit = useBTCUnit();
+    const btcUnit = useBTCUnit();
 
     const [disabled, setDisabled] = useState(true);
 
@@ -188,18 +187,18 @@ export default function TxCreateScreen() {
         runTransfer();
     }, [toInfo, inputAmount, feeRate, enableRBF]);
 
-  return (
-    <Layout>
-      <Header
-        onBack={() => {
-          window.history.go(-1);
-        }}
-        title={`Send ${btcUnit}`}
-      />
-      <Content style={{ padding: '0px 16px 24px' }}>
-        <Row justifyCenter>
-          <Icon icon="btc" size={50} />
-        </Row>
+    return (
+        <Layout>
+            <Header
+                onBack={() => {
+                    window.history.go(-1);
+                }}
+                title={`Send ${btcUnit}`}
+            />
+            <Content style={{ padding: '0px 16px 24px' }}>
+                <Row justifyCenter>
+                    <Icon icon="btc" size={50} />
+                </Row>
 
                 <Column mt="lg">
                     <Text text="Recipient" preset="regular" color="textDim" />
@@ -296,18 +295,18 @@ export default function TxCreateScreen() {
                             </div>
                         </Tooltip>
 
-            {spendUnavailableSatoshis > 0 ? (
-              <Row>
-                <Text text={`${unspendUnavailableAmount}`} size="sm" color="textDim" />
-                <Text text={btcUnit} size="sm" color="textDim" />
-              </Row>
-            ) : (
-              <Row>
-                <Text text={`${unavailableAmount}`} size="sm" color="textDim" />
-                <Text text={btcUnit} size="sm" color="textDim" />
-              </Row>
-            )}
-          </Row>
+                        {spendUnavailableSatoshis > 0 ? (
+                            <Row>
+                                <Text text={`${unspendUnavailableAmount}`} size="sm" color="textDim" />
+                                <Text text={btcUnit} size="sm" color="textDim" />
+                            </Row>
+                        ) : (
+                            <Row>
+                                <Text text={`${unavailableAmount}`} size="sm" color="textDim" />
+                                <Text text={btcUnit} size="sm" color="textDim" />
+                            </Row>
+                        )}
+                    </Row>
 
                     <Row justifyBetween>
                         <Text text="Total" color="textDim" />

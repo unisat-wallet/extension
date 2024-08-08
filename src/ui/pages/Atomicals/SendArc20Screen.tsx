@@ -46,19 +46,22 @@ export default function SendArc20Screen() {
 
     const [arc20AvailableBalance, setArc20AvailableBalance] = useState(0);
 
-  const tools = useTools();
-  useEffect(() => {
-    fetchUtxos();
-    tools.showLoading(true);
-    fetchAssetUtxosAtomicalsFT(arc20Balance.ticker)
-      .then((utxos) => {
-        const available = utxos.reduce((pre, cur) => pre + cur.atomicals.reduce((p, c) => p + (c?.atomicalValue || 0), 0), 0);
-        setArc20AvailableBalance(available);
-      })
-      .finally(() => {
-        tools.showLoading(false);
-      });
-  }, []);
+    const tools = useTools();
+    useEffect(() => {
+        fetchUtxos();
+        tools.showLoading(true);
+        fetchAssetUtxosAtomicalsFT(arc20Balance.ticker)
+            .then((utxos) => {
+                const available = utxos.reduce(
+                    (pre, cur) => pre + cur.atomicals.reduce((p, c) => p + (c?.atomicalValue || 0), 0),
+                    0
+                );
+                setArc20AvailableBalance(available);
+            })
+            .finally(() => {
+                tools.showLoading(false);
+            });
+    }, []);
 
     const prepareSendArc20 = usePrepareSendArc20Callback();
 
@@ -103,39 +106,43 @@ export default function SendArc20Screen() {
             return;
         }
 
-    prepareSendArc20({
-      toAddressInfo: toInfo,
-      ticker: arc20Balance.ticker,
-      amount: parseInt(inputAmount),
-      feeRate,
-      enableRBF
-    })
-      .then((data) => {
-        // if (data.fee < data.estimateFee) {
-        //   setError(`Network fee must be at leat ${data.estimateFee}`);
-        //   return;
-        // }
-        setRawTxInfo(data);
-        setDisabled(false);
-      })
-      .catch((e) => {
-        console.log(e);
-        setError(e.message);
-      });
-  }, [toInfo, inputAmount, feeRate, enableRBF]);
-  return (
-    <Layout>
-      <Header
-        onBack={() => {
-          window.history.go(-1);
-        }}
-        title="Send ARC-20"
-      />
-      <Content>
-        <Row justifyCenter>
-          <Text text={`${showLongNumber(arc20Balance.balance)} ${arc20Balance.ticker}`} preset="bold" textCenter
-                size="xxl" />
-        </Row>
+        prepareSendArc20({
+            toAddressInfo: toInfo,
+            ticker: arc20Balance.ticker,
+            amount: parseInt(inputAmount),
+            feeRate,
+            enableRBF
+        })
+            .then((data) => {
+                // if (data.fee < data.estimateFee) {
+                //   setError(`Network fee must be at leat ${data.estimateFee}`);
+                //   return;
+                // }
+                setRawTxInfo(data);
+                setDisabled(false);
+            })
+            .catch((e) => {
+                console.log(e);
+                setError(e.message);
+            });
+    }, [toInfo, inputAmount, feeRate, enableRBF]);
+    return (
+        <Layout>
+            <Header
+                onBack={() => {
+                    window.history.go(-1);
+                }}
+                title="Send ARC-20"
+            />
+            <Content>
+                <Row justifyCenter>
+                    <Text
+                        text={`${showLongNumber(arc20Balance.balance)} ${arc20Balance.ticker}`}
+                        preset="bold"
+                        textCenter
+                        size="xxl"
+                    />
+                </Row>
 
                 <Column mt="lg">
                     <Text text="Recipient" preset="regular" color="textDim" />

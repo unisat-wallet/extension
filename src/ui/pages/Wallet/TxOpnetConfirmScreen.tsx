@@ -215,9 +215,9 @@ export default function TxOpnetConfirmScreen() {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
+                    ...utxo,
+                    value: BigInt(utxo.value)
+                }))
                 : [];
         }
         const generationParameters = await Web3API.limitedProvider.fetchWrapParameters(wrapAmount);
@@ -275,9 +275,9 @@ export default function TxOpnetConfirmScreen() {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
+                    ...utxo,
+                    value: BigInt(utxo.value)
+                }))
                 : [];
         }
 
@@ -466,9 +466,9 @@ export default function TxOpnetConfirmScreen() {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
+                    ...utxo,
+                    value: BigInt(utxo.value)
+                }))
                 : [];
         }
 
@@ -543,9 +543,9 @@ export default function TxOpnetConfirmScreen() {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
+                    ...utxo,
+                    value: BigInt(utxo.value)
+                }))
                 : [];
         }
 
@@ -749,9 +749,9 @@ export default function TxOpnetConfirmScreen() {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
+                    ...utxo,
+                    value: BigInt(utxo.value)
+                }))
                 : [];
         }
         const interactionParameters: IInteractionParameters = {
@@ -816,9 +816,9 @@ export default function TxOpnetConfirmScreen() {
         } else {
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
+                    ...utxo,
+                    value: BigInt(utxo.value)
+                }))
                 : [];
         }
         const getData = await approveToken(inputAmountBigInt, walletGet, rawTxInfo.contractAddress[0], utxos);
@@ -985,9 +985,9 @@ export default function TxOpnetConfirmScreen() {
                 const storedUTXO = localStorage.getItem('nextUTXO');
                 utxos = storedUTXO
                     ? JSON.parse(storedUTXO).map((utxo) => ({
-                          ...utxo,
-                          value: BigInt(utxo.value)
-                      }))
+                        ...utxo,
+                        value: BigInt(utxo.value)
+                    }))
                     : [];
             }
 
@@ -1119,9 +1119,9 @@ export default function TxOpnetConfirmScreen() {
                 const storedUTXO = localStorage.getItem('nextUTXO');
                 utxos = storedUTXO
                     ? JSON.parse(storedUTXO).map((utxo) => ({
-                          ...utxo,
-                          value: BigInt(utxo.value)
-                      }))
+                        ...utxo,
+                        value: BigInt(utxo.value)
+                    }))
                     : [];
             }
             const contract = getContract<IOP_20Contract>(

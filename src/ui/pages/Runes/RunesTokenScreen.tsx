@@ -6,6 +6,7 @@ import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/c
 import { useTools } from '@/ui/components/ActionComponent';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
+import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useBlockstreamUrl, useOrdinalsWebsite, useUnisatWebsite } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
@@ -14,7 +15,6 @@ import { copyToClipboard, showLongNumber, useLocationState, useWallet } from '@/
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
-import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
 
 interface LocationState {
     runeid: string;
@@ -194,26 +194,35 @@ export default function RunesTokenScreen() {
 
                         <Section title="mints" value={showLongNumber(tokenSummary.runeInfo.mints)} />
 
-            <Section
-              title="supply"
-              value={`${showLongNumber(
-                runesUtils.toDecimalAmount(tokenSummary.runeInfo.supply, tokenSummary.runeInfo.divisibility)
-              )} ${tokenSummary.runeInfo.symbol}`}
-            />
+                        <Section
+                            title="supply"
+                            value={`${showLongNumber(
+                                runesUtils.toDecimalAmount(
+                                    tokenSummary.runeInfo.supply,
+                                    tokenSummary.runeInfo.divisibility
+                                )
+                            )} ${tokenSummary.runeInfo.symbol}`}
+                        />
 
-            <Section
-              title="premine"
-              value={`${showLongNumber(
-                runesUtils.toDecimalAmount(tokenSummary.runeInfo.premine, tokenSummary.runeInfo.divisibility)
-              )} ${tokenSummary.runeInfo.symbol}`}
-            />
+                        <Section
+                            title="premine"
+                            value={`${showLongNumber(
+                                runesUtils.toDecimalAmount(
+                                    tokenSummary.runeInfo.premine,
+                                    tokenSummary.runeInfo.divisibility
+                                )
+                            )} ${tokenSummary.runeInfo.symbol}`}
+                        />
 
-            <Section
-              title="burned"
-              value={`${showLongNumber(
-                runesUtils.toDecimalAmount(tokenSummary.runeInfo.burned, tokenSummary.runeInfo.divisibility)
-              )} ${tokenSummary.runeInfo.symbol}`}
-            />
+                        <Section
+                            title="burned"
+                            value={`${showLongNumber(
+                                runesUtils.toDecimalAmount(
+                                    tokenSummary.runeInfo.burned,
+                                    tokenSummary.runeInfo.divisibility
+                                )
+                            )} ${tokenSummary.runeInfo.symbol}`}
+                        />
 
                         <Section title="divisibility" value={tokenSummary.runeInfo.divisibility} />
 

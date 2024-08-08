@@ -7,11 +7,13 @@ import { Button, Card, Column, Content, Footer, Header, Icon, Input, Layout, Row
 import { useTools } from '@/ui/components/ActionComponent';
 import { Loading } from '@/ui/components/ActionComponent/Loading';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
+import { BtcUsd } from '@/ui/components/BtcUsd';
 import { Empty } from '@/ui/components/Empty';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { OutputValueBar } from '@/ui/components/OutputValueBar';
 import { RBFBar } from '@/ui/components/RBFBar';
+import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useBTCUnit, useNetworkType } from '@/ui/state/settings/hooks';
@@ -27,8 +29,6 @@ import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../../MainRoute';
 import SignPsbt from './SignPsbt';
-import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
-import { BtcUsd } from '@/ui/components/BtcUsd';
 
 interface Props {
     params: {
@@ -282,41 +282,41 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
                     <Column gap="lg" full>
                         <Text text="Inscribe TRANSFER" preset="title-bold" textCenter my="lg" />
 
-            <Column>
-              <Row justifyBetween itemsCenter>
-                <Text text="Available" color="textDim" />
-                <TickUsdWithoutPrice tick={contextData.ticker} balance={inputAmount} type={'brc20'} />
-                {tokenBalance ? (
-                  <Column>
-                    {tokenBalance.availableBalanceUnSafe != '0' ? (
-                      <Row justifyCenter>
-                        <Text
-                          text={`${tokenBalance.availableBalanceSafe}  `}
-                          textCenter
-                          size="xs"
-                          digital
-                          onClick={() => {
-                            setInputAmount(tokenBalance.availableBalanceSafe);
-                          }}
-                        />
-                        <Tooltip
-                          title={`${tokenBalance.availableBalanceUnSafe} ${tokenBalance.ticker} is unconfirmed, please wait for confirmation `}
-                          overlayStyle={{
-                            fontSize: fontSizes.xs
-                          }}>
-                          <div>
-                            <Row>
-                              <Text
-                                text={` + ${tokenBalance.availableBalanceUnSafe}`}
-                                textCenter
-                                color="textDim"
-                                size="xs"
-                                digital
-                              />
-                              <Icon icon="circle-question" color="textDim" />
-                            </Row>
-                          </div>
-                        </Tooltip>
+                        <Column>
+                            <Row justifyBetween itemsCenter>
+                                <Text text="Available" color="textDim" />
+                                <TickUsdWithoutPrice tick={contextData.ticker} balance={inputAmount} type={'brc20'} />
+                                {tokenBalance ? (
+                                    <Column>
+                                        {tokenBalance.availableBalanceUnSafe != '0' ? (
+                                            <Row justifyCenter>
+                                                <Text
+                                                    text={`${tokenBalance.availableBalanceSafe}  `}
+                                                    textCenter
+                                                    size="xs"
+                                                    digital
+                                                    onClick={() => {
+                                                        setInputAmount(tokenBalance.availableBalanceSafe);
+                                                    }}
+                                                />
+                                                <Tooltip
+                                                    title={`${tokenBalance.availableBalanceUnSafe} ${tokenBalance.ticker} is unconfirmed, please wait for confirmation `}
+                                                    overlayStyle={{
+                                                        fontSize: fontSizes.xs
+                                                    }}>
+                                                    <div>
+                                                        <Row>
+                                                            <Text
+                                                                text={` + ${tokenBalance.availableBalanceUnSafe}`}
+                                                                textCenter
+                                                                color="textDim"
+                                                                size="xs"
+                                                                digital
+                                                            />
+                                                            <Icon icon="circle-question" color="textDim" />
+                                                        </Row>
+                                                    </div>
+                                                </Tooltip>
 
                                                 <BRC20Ticker tick={tokenBalance.ticker} preset="sm" />
                                             </Row>
@@ -407,8 +407,8 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
 }
 
 function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
-  const { order, tokenBalance, amount, rawTxInfo, session } = contextData;
-  const btcUnit = useBTCUnit();
+    const { order, tokenBalance, amount, rawTxInfo, session } = contextData;
+    const btcUnit = useBTCUnit();
 
     if (!order || !tokenBalance || !rawTxInfo) {
         return <Empty />;
@@ -442,122 +442,122 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
                     <Column gap="lg" full>
                         <Text text="Inscribe TRANSFER" preset="title-bold" textCenter mt="lg" />
 
-            <Column justifyCenter style={{ height: 250 }}>
-              <Row itemsCenter justifyCenter>
-                <Text text={`${amount}`} preset="title-bold" size="xxl" textCenter wrap digital />
-                <BRC20Ticker tick={tokenBalance.ticker} preset="lg" />
-              </Row>
-              <Row itemsCenter justifyCenter>
-                <TickUsdWithoutPrice tick={tokenBalance.ticker} balance={amount + ''} type={'brc20'} />
-              </Row>
-              <Column mt="xxl">
-                <Text text="Preview" preset="sub-bold" />
-                <Card preset="style2">
-                  <Text
-                    text={`{"p":"brc-20","op":"transfer","tick":"${tokenBalance.ticker}","amt":"${amount}"}`}
-                    size="xs"
-                    wrap
-                  />
-                </Card>
-              </Column>
-            </Column>
+                        <Column justifyCenter style={{ height: 250 }}>
+                            <Row itemsCenter justifyCenter>
+                                <Text text={`${amount}`} preset="title-bold" size="xxl" textCenter wrap digital />
+                                <BRC20Ticker tick={tokenBalance.ticker} preset="lg" />
+                            </Row>
+                            <Row itemsCenter justifyCenter>
+                                <TickUsdWithoutPrice tick={tokenBalance.ticker} balance={amount + ''} type={'brc20'} />
+                            </Row>
+                            <Column mt="xxl">
+                                <Text text="Preview" preset="sub-bold" />
+                                <Card preset="style2">
+                                    <Text
+                                        text={`{"p":"brc-20","op":"transfer","tick":"${tokenBalance.ticker}","amt":"${amount}"}`}
+                                        size="xs"
+                                        wrap
+                                    />
+                                </Card>
+                            </Column>
+                        </Column>
 
-            <Column>
-              <Row justifyBetween>
-                <Text text="Payment Network Fee" color="textDim" />
-                <Text text={`${networkFee} ${btcUnit}`} />
-              </Row>
+                        <Column>
+                            <Row justifyBetween>
+                                <Text text="Payment Network Fee" color="textDim" />
+                                <Text text={`${networkFee} ${btcUnit}`} />
+                            </Row>
 
-              <Row justifyBetween>
-                <Text text="Inscription Output Value" color="textDim" />
-                <Text text={`${outputValue} ${btcUnit}`} />
-              </Row>
+                            <Row justifyBetween>
+                                <Text text="Inscription Output Value" color="textDim" />
+                                <Text text={`${outputValue} ${btcUnit}`} />
+                            </Row>
 
-              <Row justifyBetween>
-                <Text text="Inscription Network Fee" color="textDim" />
-                <Text text={`${minerFee} ${btcUnit}`} />
-              </Row>
+                            <Row justifyBetween>
+                                <Text text="Inscription Network Fee" color="textDim" />
+                                <Text text={`${minerFee} ${btcUnit}`} />
+                            </Row>
 
-              <Row justifyBetween>
-                <Text text="Service Fee" color="textDim" />
-                {originServiceFee != serviceFee ? (
-                  <Column>
-                    <Text
-                      text={`${originServiceFee} ${btcUnit}`}
-                      style={{ textDecorationLine: 'line-through' }}
-                      color="textDim"
-                    />
-                    <Text text={`${serviceFee} ${btcUnit}`} />
-                  </Column>
-                ) : (
-                  <Text text={`${serviceFee} ${btcUnit}`} />
-                )}
-              </Row>
-              <Row justifyBetween>
-                <Text text="Total" color="gold" />
-                <Text text={`${totalFee} ${btcUnit}`} color="gold" />
-              </Row>
-              <Row justifyBetween>
-                <div></div>
-                <BtcUsd sats={amountToSatoshis(totalFee)} />
-              </Row>
-            </Column>
-          </Column>
-        </Column>
-      </Content>
-      {contextData.isApproval ? (
-        <Footer>
-          <Row full>
-            <Button
-              text="Back"
-              preset="default"
-              onClick={() => {
-                updateContextData({
-                  step: Step.STEP1
-                });
-              }}
-              full
-            />
-            <Button
-              text="Next"
-              preset="primary"
-              onClick={() => {
-                updateContextData({
-                  step: Step.STEP3
-                });
-                // onClickConfirm();
-              }}
-              full
-            />
-          </Row>
-        </Footer>
-      ) : (
-        <Footer>
-          <Row full>
-            <Button
-              text="Next"
-              preset="primary"
-              onClick={() => {
-                updateContextData({
-                  step: Step.STEP3
-                });
-                // onClickConfirm();
-              }}
-              full
-            />
-          </Row>
-        </Footer>
-      )}
-    </Layout>
-  );
+                            <Row justifyBetween>
+                                <Text text="Service Fee" color="textDim" />
+                                {originServiceFee != serviceFee ? (
+                                    <Column>
+                                        <Text
+                                            text={`${originServiceFee} ${btcUnit}`}
+                                            style={{ textDecorationLine: 'line-through' }}
+                                            color="textDim"
+                                        />
+                                        <Text text={`${serviceFee} ${btcUnit}`} />
+                                    </Column>
+                                ) : (
+                                    <Text text={`${serviceFee} ${btcUnit}`} />
+                                )}
+                            </Row>
+                            <Row justifyBetween>
+                                <Text text="Total" color="gold" />
+                                <Text text={`${totalFee} ${btcUnit}`} color="gold" />
+                            </Row>
+                            <Row justifyBetween>
+                                <div></div>
+                                <BtcUsd sats={amountToSatoshis(totalFee)} />
+                            </Row>
+                        </Column>
+                    </Column>
+                </Column>
+            </Content>
+            {contextData.isApproval ? (
+                <Footer>
+                    <Row full>
+                        <Button
+                            text="Back"
+                            preset="default"
+                            onClick={() => {
+                                updateContextData({
+                                    step: Step.STEP1
+                                });
+                            }}
+                            full
+                        />
+                        <Button
+                            text="Next"
+                            preset="primary"
+                            onClick={() => {
+                                updateContextData({
+                                    step: Step.STEP3
+                                });
+                                // onClickConfirm();
+                            }}
+                            full
+                        />
+                    </Row>
+                </Footer>
+            ) : (
+                <Footer>
+                    <Row full>
+                        <Button
+                            text="Next"
+                            preset="primary"
+                            onClick={() => {
+                                updateContextData({
+                                    step: Step.STEP3
+                                });
+                                // onClickConfirm();
+                            }}
+                            full
+                        />
+                    </Row>
+                </Footer>
+            )}
+        </Layout>
+    );
 }
 
 function InscribeSignStep({
-                            contextData,
-                            updateContextData
-                          }: {
-  contextData: ContextData;
-  updateContextData: (params: UpdateContextDataParams) => void;
+    contextData,
+    updateContextData
+}: {
+    contextData: ContextData;
+    updateContextData: (params: UpdateContextDataParams) => void;
 }) {
     const pushBitcoinTx = usePushBitcoinTxCallback();
     const navigate = useNavigate();
@@ -603,11 +603,11 @@ function InscribeSignStep({
 }
 
 function InscribeResultStep({
-                              contextData,
-                              updateContextData
-                            }: {
-  contextData: ContextData;
-  updateContextData: (params: UpdateContextDataParams) => void;
+    contextData,
+    updateContextData
+}: {
+    contextData: ContextData;
+    updateContextData: (params: UpdateContextDataParams) => void;
 }) {
     if (!contextData.order || !contextData.tokenBalance) {
         return <Empty />;

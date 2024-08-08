@@ -23,10 +23,10 @@ function PaymentItem(props: { channelType: PaymentChannelType; onClick }) {
 }
 
 export const AddOpNetToken = ({
-    onClose,
-    setImportTokenBool,
-    fetchData
-}: {
+                                  onClose,
+                                  setImportTokenBool,
+                                  fetchData
+                              }: {
     onClose: () => void;
     setImportTokenBool: (value: boolean) => void;
     fetchData: () => void;

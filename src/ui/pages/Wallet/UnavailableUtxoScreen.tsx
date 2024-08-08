@@ -19,8 +19,8 @@ type UnavailableUnspentOutput = UnspentOutput & {
     height?: number;
 };
 export default function UnavailableUtxoScreen() {
-  const wallet = useWallet();
-  const unitBtc = useBTCUnit();
+    const wallet = useWallet();
+    const unitBtc = useBTCUnit();
 
     const [utxos, setUtxos] = useState<UnavailableUnspentOutput[]>([]);
 
@@ -133,13 +133,13 @@ export default function UnavailableUtxoScreen() {
                                                 style={{ borderBottomWidth: 1, borderColor: colors.border }}></Row>
                                         ) : null}
 
-                    <Row full justifyBetween>
-                      <Row itemsCenter>
-                        <Text text={satoshisToAmount(item.satoshis)} preset="bold" />
-                        <Text text={unitBtc} preset="sub" />
-                      </Row>
-                      <Row>
-                        <Text text={''} preset="sub" />
+                                        <Row full justifyBetween>
+                                            <Row itemsCenter>
+                                                <Text text={satoshisToAmount(item.satoshis)} preset="bold" />
+                                                <Text text={unitBtc} preset="sub" />
+                                            </Row>
+                                            <Row>
+                                                <Text text={''} preset="sub" />
 
                                                 <Checkbox
                                                     onChange={(e) => {

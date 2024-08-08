@@ -14,18 +14,18 @@ export interface SettingsState {
 }
 
 export const initialState: SettingsState = {
-  locale: 'English',
-  addressType: AddressType.P2TR,
-  networkType: NetworkType.MAINNET,
-  chainType: ChainType.BITCOIN_MAINNET,
-  walletConfig: {
-    version: '',
-    moonPayEnabled: true,
-    statusMessage: '',
-    endpoint: '',
-    chainTip: ''
-  },
-  skippedVersion: ''
+    locale: 'English',
+    addressType: AddressType.P2TR,
+    networkType: NetworkType.MAINNET,
+    chainType: ChainType.BITCOIN_MAINNET,
+    walletConfig: {
+        version: '',
+        moonPayEnabled: true,
+        statusMessage: '',
+        endpoint: '',
+        chainTip: ''
+    },
+    skippedVersion: ''
 };
 
 const slice = createSlice({

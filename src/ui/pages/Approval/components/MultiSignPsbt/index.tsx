@@ -314,36 +314,38 @@ export default function MultiSignPsbt({
         );
     }
 
-  if (viewingPsbtIndex >= 0 && txInfo.psbtHexs) {
-    return (
-      <>
-        <SignPsbt
-          header={<Header
-            onBack={() => {
-              setViewingPsbtIndex(-1);
-            }}
-          />}
-          params={{
-            data: {
-              psbtHex: txInfo.psbtHexs[viewingPsbtIndex],
-              type: TxType.SIGN_TX,
-              options: options ? options[viewingPsbtIndex] : { autoFinalized: false }
-            }
-          }}
-          handleCancel={() => {
-            setViewingPsbtIndex(-1);
-            signStates[viewingPsbtIndex] = SignState.FAILED;
-            setSignStates(signStates);
-          }}
-          handleConfirm={() => {
-            setViewingPsbtIndex(-1);
-            signStates[viewingPsbtIndex] = SignState.SUCCESS;
-            setSignStates(signStates);
-          }}
-        />
-      </>
-    );
-  }
+    if (viewingPsbtIndex >= 0 && txInfo.psbtHexs) {
+        return (
+            <>
+                <SignPsbt
+                    header={
+                        <Header
+                            onBack={() => {
+                                setViewingPsbtIndex(-1);
+                            }}
+                        />
+                    }
+                    params={{
+                        data: {
+                            psbtHex: txInfo.psbtHexs[viewingPsbtIndex],
+                            type: TxType.SIGN_TX,
+                            options: options ? options[viewingPsbtIndex] : { autoFinalized: false }
+                        }
+                    }}
+                    handleCancel={() => {
+                        setViewingPsbtIndex(-1);
+                        signStates[viewingPsbtIndex] = SignState.FAILED;
+                        setSignStates(signStates);
+                    }}
+                    handleConfirm={() => {
+                        setViewingPsbtIndex(-1);
+                        signStates[viewingPsbtIndex] = SignState.SUCCESS;
+                        setSignStates(signStates);
+                    }}
+                />
+            </>
+        );
+    }
 
     const signedCount = signStates.filter((v) => v === SignState.SUCCESS).length;
     const isAllSigned = signedCount === txInfo.psbtHexs.length;

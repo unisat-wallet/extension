@@ -19,12 +19,13 @@ import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import {
-  useBlockstreamUrl, useBTCUnit,
-  useChain,
-  useChainType,
-  useSkipVersionCallback,
-  useVersionInfo,
-  useWalletConfig
+    useBlockstreamUrl,
+    useBTCUnit,
+    useChain,
+    useChainType,
+    useSkipVersionCallback,
+    useVersionInfo,
+    useWalletConfig
 } from '@/ui/state/settings/hooks';
 import { useFetchUtxosCallback, useSafeBalance } from '@/ui/state/transactions/hooks';
 import { useAssetTabKey, useResetUiTxCreateScreen } from '@/ui/state/ui/hooks';
@@ -39,7 +40,6 @@ import { AtomicalsTab } from './AtomicalsTab';
 import { OPNetList } from './OPNetList';
 import { OrdinalsTab } from './OrdinalsTab';
 import { RunesList } from './RunesList';
-import { BtcUsd } from '@/ui/components/BtcUsd';
 
 const $noBreakStyle: CSSProperties = {
     whiteSpace: 'nowrap',
@@ -169,9 +169,9 @@ export default function WalletTabScreen() {
         }
     ];
 
-  const blockstreamUrl = useBlockstreamUrl();
-  const resetUiTxCreateScreen = useResetUiTxCreateScreen();
-  const btcUnit = useBTCUnit();
+    const blockstreamUrl = useBlockstreamUrl();
+    const resetUiTxCreateScreen = useResetUiTxCreateScreen();
+    const btcUnit = useBTCUnit();
 
     const [buyBtcModalVisible, setBuyBtcModalVisible] = useState(false);
 

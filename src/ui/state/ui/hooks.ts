@@ -31,11 +31,11 @@ export function useUiTxCreateScreen() {
 export function useUpdateUiTxCreateScreen() {
     const dispatch = useAppDispatch();
     return ({
-        toInfo,
-        inputAmount,
-        enableRBF,
-        feeRate
-    }: {
+                toInfo,
+                inputAmount,
+                enableRBF,
+                feeRate
+            }: {
         toInfo?: { address: string; domain: string; inscription?: Inscription };
         inputAmount?: string;
         enableRBF?: boolean;
