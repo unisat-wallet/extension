@@ -41,6 +41,7 @@ interface StateProvider {
     initialized: boolean;
     isPermanentlyDisconnected: boolean;
 }
+
 const EXTENSION_CONTEXT_INVALIDATED_CHROMIUM_ERROR = 'Extension context invalidated.';
 
 const _unisatPrividerPrivate: {
@@ -52,7 +53,7 @@ const _unisatPrividerPrivate: {
 
     _state: StateProvider;
 
-    _pushEventHandlers: PushEventHandlers|null;
+    _pushEventHandlers: PushEventHandlers | null;
     _requestPromise: ReadyPromise;
     _bcm: BroadcastChannelMessage;
 } = {
@@ -78,104 +79,84 @@ const _unisatPrividerPrivate: {
 export class UnisatProvider extends EventEmitter {
     public readonly web3: Web3Provider = new Web3Provider(this);
 
-  constructor({ maxListeners = 100 } = {}) {
-    super();
-    this.setMaxListeners(maxListeners);
-    void this.initialize();
-    _unisatPrividerPrivate._pushEventHandlers = new PushEventHandlers(this,_unisatPrividerPrivate);
-  }
+    constructor({ maxListeners = 100 } = {}) {
+        super();
+        this.setMaxListeners(maxListeners);
+        void this.initialize();
+        _unisatPrividerPrivate._pushEventHandlers = new PushEventHandlers(this, _unisatPrividerPrivate);
+    }
 
     initialize = async () => {
         document.addEventListener('visibilitychange', this._requestPromiseCheckVisibility);
 
-    _unisatPrividerPrivate._bcm.connect().on('message', this._handleBackgroundMessage);
-    domReadyCall(() => {
-      const origin = window.top?.location.origin;
-      const icon =
-        ($('head > link[rel~="icon"]') as HTMLLinkElement)?.href ||
-        ($('head > meta[itemprop="image"]') as HTMLMetaElement)?.content;
+        _unisatPrividerPrivate._bcm.connect().on('message', this._handleBackgroundMessage);
+        domReadyCall(() => {
+            const origin = window.top?.location.origin;
+            const icon =
+                ($('head > link[rel~="icon"]') as HTMLLinkElement)?.href ||
+                ($('head > meta[itemprop="image"]') as HTMLMetaElement)?.content;
 
             const name = document.title || ($('head > meta[name="title"]') as HTMLMetaElement)?.content || origin;
 
-      _unisatPrividerPrivate._bcm.request({
-        method: 'tabCheckin',
-        params: { icon, name, origin }
-      });
+            _unisatPrividerPrivate._bcm.request({
+                method: 'tabCheckin',
+                params: { icon, name, origin }
+            });
 
             // Do not force to tabCheckin
             // this._requestPromise.check(2);
         });
 
-    try {
-      const { network, accounts, isUnlocked }: any = await this._request({
-        method: 'getProviderState'
-      });
+        try {
+            const { network, chain, accounts, isUnlocked }: any = await this._request({
+                method: 'getProviderState'
+            });
 
-      if (isUnlocked) {
-        _unisatPrividerPrivate._isUnlocked = true;
-        _unisatPrividerPrivate._state.isUnlocked = true;
-      }
-      this.emit('connect', {});
-      _unisatPrividerPrivate._pushEventHandlers?.networkChanged({
-        network
-      });
+            if (isUnlocked) {
+                _unisatPrividerPrivate._isUnlocked = true;
+                _unisatPrividerPrivate._state.isUnlocked = true;
+            }
+            this.emit('connect', {});
+            _unisatPrividerPrivate._pushEventHandlers?.networkChanged({
+                network,
+                chain
+            });
 
-      _unisatPrividerPrivate._pushEventHandlers?.accountsChanged(accounts);
-    } catch {
-      //
-    } finally {
-      _unisatPrividerPrivate._initialized = true;
-      _unisatPrividerPrivate._state.initialized = true;
-      this.emit('_initialized');
-    }
+            _unisatPrividerPrivate._pushEventHandlers?.accountsChanged(accounts);
+        } catch {
+            //
+        } finally {
+            _unisatPrividerPrivate._initialized = true;
+            _unisatPrividerPrivate._state.initialized = true;
+            this.emit('_initialized');
+        }
 
-    void this.keepAlive();
-  };
+        void this.keepAlive();
+    };
 
-  private _requestPromiseCheckVisibility = () => {
-    if (document.visibilityState === 'visible') {
-      _unisatPrividerPrivate._requestPromise.check(1);
-    } else {
-      _unisatPrividerPrivate._requestPromise.uncheck(1);
-    }
-  };
-
-  private _handleBackgroundMessage = ({ event, data }) => {
-    log('[push event]', event, data);
-    if (_unisatPrividerPrivate._pushEventHandlers?.[event]) {
-      return _unisatPrividerPrivate._pushEventHandlers[event](data);
-    }
-
-    this.emit(event, data);
-  };
-  // TODO: support multi request!
-  // request = async (data) => {
-  //   return this._request(data);
-  // };
-
-  _request = async (data: RequestParams) => {
-    if (!data) {
-      throw ethErrors.rpc.invalidRequest();
-    }
+    _request = async (data: RequestParams) => {
+        if (!data) {
+            throw ethErrors.rpc.invalidRequest();
+        }
 
         this._requestPromiseCheckVisibility();
 
-    return _unisatPrividerPrivate._requestPromise.call(async () => {
-        log('[request]', JSON.stringify(data, null, 2));
+        return _unisatPrividerPrivate._requestPromise.call(async () => {
+            log('[request]', JSON.stringify(data, null, 2));
 
-        const res = await _unisatPrividerPrivate._bcm.request(data).catch((err) => {
-            log('[request: error]', data.method, serializeError(err));
-            throw serializeError(err);
-        });
+            const res = await _unisatPrividerPrivate._bcm.request(data).catch((err) => {
+                log('[request: error]', data.method, serializeError(err));
+                throw serializeError(err);
+            });
 
-        log('[request: success]', data.method, res);
+            log('[request: success]', data.method, res);
 
-        return res;
-    })
-        .catch((err) => {
-            throw err;
-        });
-  };
+            return res;
+        })
+            .catch((err) => {
+                throw err;
+            });
+    };
 
     // public methods
     requestAccounts = async () => {
@@ -183,12 +164,16 @@ export class UnisatProvider extends EventEmitter {
             method: 'requestAccounts'
         });
     };
+    // TODO: support multi request!
+    // request = async (data) => {
+    //   return this._request(data);
+    // };
 
-  getNetwork = async () => {
-    return this._request({
-      method: 'getNetwork'
-    });
-  };
+    getNetwork = async () => {
+        return this._request({
+            method: 'getNetwork'
+        });
+    };
 
     switchNetwork = async (network: string) => {
         return this._request({
@@ -415,15 +400,6 @@ export class UnisatProvider extends EventEmitter {
         });
     };
 
-    // signTx = async (rawtx: string) => {
-    //   return this._request({
-    //     method: 'signTx',
-    //     params: {
-    //       rawtx
-    //     }
-    //   });
-    // };
-
     pushPsbt = async (psbtHex: string) => {
         return this._request({
             method: 'pushPsbt',
@@ -442,6 +418,15 @@ export class UnisatProvider extends EventEmitter {
             }
         });
     };
+
+    // signTx = async (rawtx: string) => {
+    //   return this._request({
+    //     method: 'signTx',
+    //     params: {
+    //       rawtx
+    //     }
+    //   });
+    // };
 
     getVersion = async () => {
         return this._request({
@@ -463,6 +448,23 @@ export class UnisatProvider extends EventEmitter {
                 size
             }
         });
+    };
+
+    private _requestPromiseCheckVisibility = () => {
+        if (document.visibilityState === 'visible') {
+            _unisatPrividerPrivate._requestPromise.check(1);
+        } else {
+            _unisatPrividerPrivate._requestPromise.uncheck(1);
+        }
+    };
+
+    private _handleBackgroundMessage = ({ event, data }) => {
+        log('[push event]', event, data);
+        if (_unisatPrividerPrivate._pushEventHandlers?.[event]) {
+            return _unisatPrividerPrivate._pushEventHandlers[event](data);
+        }
+
+        this.emit(event, data);
     };
 
     /**
