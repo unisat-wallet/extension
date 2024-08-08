@@ -21,7 +21,9 @@ export const initialState: SettingsState = {
     walletConfig: {
         version: '',
         moonPayEnabled: true,
-        statusMessage: ''
+        statusMessage: '',
+        endpoint: '',
+        chainTip: ''
     },
     skippedVersion: ''
 };
@@ -30,7 +32,7 @@ const slice = createSlice({
     name: 'settings',
     initialState,
     reducers: {
-        reset(state) {
+        reset() {
             return initialState;
         },
         updateSettings(
