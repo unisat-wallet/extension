@@ -82,7 +82,7 @@ export default function TxOpnetConfirmScreen() {
     const [acceptWrapMessage, setAcceptWrapMessage] = useState<string>('false');
     const [openAcceptbar, setAcceptBar] = useState<boolean>(false);
     const [openLoading, setOpenLoading] = useState<boolean>(false);
-
+    const [disabled, setDisabled] = useState<boolean>(false);
     const [unwrapUseAmount, setUnWrapAmount] = useState<bigint>(0n);
     const { rawTxInfo } = useLocationState<LocationState>();
     const handleCancel = () => {
@@ -177,6 +177,7 @@ export default function TxOpnetConfirmScreen() {
             if (!firstTxBroadcast.success) {
                 tools.toastError('Error,Please Try again');
                 setUseNextUTXO(true);
+                setDisabled(false);
                 throw new Error('Could not broadcast first transaction');
             }
 
@@ -195,6 +196,8 @@ export default function TxOpnetConfirmScreen() {
         } catch (e) {
             tools.toastError('Error,Please Try again');
             setUseNextUTXO(true);
+            setDisabled(false);
+
             console.log(e);
         }
     };
@@ -245,12 +248,14 @@ export default function TxOpnetConfirmScreen() {
             tools.toastError('Error,Please Try again');
             console.log(firstTxBroadcast);
             setUseNextUTXO(true);
+            setDisabled(false);
             throw new Error('Could not broadcast first transaction');
         }
 
         const secondTxBroadcast = await Web3API.provider.sendRawTransaction(finalTx.transaction[1], false);
         if (!secondTxBroadcast.success) {
             tools.toastError('Error,Please Try again');
+            setDisabled(false);
             throw new Error('Could not broadcast first transaction');
         }
         const nextUTXO = finalTx.utxos;
@@ -354,6 +359,7 @@ export default function TxOpnetConfirmScreen() {
             if (!firstTransaction || !firstTransaction.success) {
                 tools.toastError('Error,Please Try again');
                 setUseNextUTXO(true);
+                setDisabled(false);
                 console.error('Transaction failed:', firstTransaction);
                 return;
             }
@@ -363,6 +369,7 @@ export default function TxOpnetConfirmScreen() {
             if (!secondTransaction || !secondTransaction.success) {
                 tools.toastError('Error: Could not broadcast second transaction');
                 console.error('Transaction failed:', firstTransaction);
+                setDisabled(false);
                 return;
             }
 
@@ -388,6 +395,7 @@ export default function TxOpnetConfirmScreen() {
                 } catch (error) {
                     console.error('Error while waiting for transaction:', error);
                     setOpenLoading(false);
+                    setDisabled(false);
                     tools.toastError('Failed to confirm transaction. Please check later.');
                     throw error;
                 } finally {
@@ -432,6 +440,7 @@ export default function TxOpnetConfirmScreen() {
             setUnWrapAmount(unwrapAmount);
         } catch (e) {
             tools.toastError('Error please ty again later');
+            setDisabled(false);
             console.error('Error:', e);
         }
     };
@@ -491,7 +500,7 @@ export default function TxOpnetConfirmScreen() {
             console.log('Broadcasted:', false);
             tools.toastError('Error,Please Try again');
             setUseNextUTXO(true);
-
+            setDisabled(false);
             return;
         } else {
             console.log('Broadcasted:', firstTransaction);
@@ -568,7 +577,7 @@ export default function TxOpnetConfirmScreen() {
             console.log('Broadcasted:', false);
             tools.toastError('Error,Please Try again');
             setUseNextUTXO(true);
-
+            setDisabled(false);
             return;
         } else {
             console.log('Broadcasted:', firstTransaction);
@@ -578,6 +587,7 @@ export default function TxOpnetConfirmScreen() {
         const seconfTransaction = await Web3API.provider.sendRawTransaction(sendTransact[1], false);
         if (!seconfTransaction.success) {
             console.log('Broadcasted:', false);
+            setDisabled(false);
             return;
         } else {
             console.log('Broadcasted:', seconfTransaction);
@@ -773,6 +783,7 @@ export default function TxOpnetConfirmScreen() {
             console.log('Broadcasted:', false);
             tools.toastError('Error,Please Try again');
             setUseNextUTXO(true);
+            setDisabled(false);
             return;
         } else {
             console.log('Broadcasted:', firstTransaction);
@@ -861,6 +872,7 @@ export default function TxOpnetConfirmScreen() {
             // tools.toastError('Error,Please Try again');
             tools.toastError('Error,Please Try again');
             setUseNextUTXO(true);
+            setDisabled(false);
             console.log(firstTransaction);
             throw new Error('Could not broadcast first transaction');
         }
@@ -931,6 +943,7 @@ export default function TxOpnetConfirmScreen() {
             return sendTransact[2];
         } catch (e) {
             console.log(e);
+            setDisabled(false);
             return utxos;
         }
     };
@@ -1014,6 +1027,7 @@ export default function TxOpnetConfirmScreen() {
                 console.log(firstTransaction);
                 tools.toastError('Error,Please Try again');
                 setUseNextUTXO(true);
+                setDisabled(false);
                 throw new Error('Could not broadcast first transaction');
             } else {
                 console.log(firstTransaction);
@@ -1101,6 +1115,8 @@ export default function TxOpnetConfirmScreen() {
             });
         } catch (e) {
             console.log(e);
+            setDisabled(false);
+            setDisabled(false);
         }
     };
     const mint = async () => {
@@ -1154,6 +1170,7 @@ export default function TxOpnetConfirmScreen() {
                 console.log(firstTransaction);
                 tools.toastError('Error,Please Try again');
                 setUseNextUTXO(true);
+                setDisabled(false);
                 throw new Error('Could not broadcast first transaction');
             }
 
@@ -1169,6 +1186,7 @@ export default function TxOpnetConfirmScreen() {
             localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
             navigate('TxSuccessScreen', { txid: secondTransaction.result });
         } catch (e) {
+            setDisabled(false);
             console.log(e);
         }
     };
@@ -1242,9 +1260,11 @@ export default function TxOpnetConfirmScreen() {
                     <Button preset="default" text="Reject" onClick={handleCancel} full />
                     <Button
                         preset="primary"
+                        disabled={disabled}
                         icon={undefined}
                         text={'Sign'}
                         onClick={() => {
+                            setDisabled(true);
                             switch (rawTxInfo.action) {
                                 case 'wrap':
                                     handleWrapConfirm();

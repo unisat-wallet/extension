@@ -52,6 +52,11 @@ export function expandToDecimals(n: number | string, decimals: number | string) 
     return BigInt(amount.toString());
 }
 
+export function bigintToDecimal(n: bigint, decimals: number | string): number {
+    const divisor = BigInt(10) ** BigInt(decimals);
+    const quotient = Number(n) / Number(divisor);
+    return quotient;
+}
 export function addressShortner(address: string) {
     const str = address.slice(0, 4) + '...' + address.slice(address.length - 4, address.length);
     return str;

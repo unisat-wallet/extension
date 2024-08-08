@@ -89,9 +89,10 @@ export default function WalletTabScreen() {
 
     const totalSatoshis = amountToSatoshis(accountBalance.amount);
     const unavailableSatoshis = totalSatoshis - avaiableSatoshis;
-    const avaiableAmount = safeBalance;
+    const [avaiableAmount, setAvailableAmount] = useState(safeBalance);
     const unavailableAmount = satoshisToAmount(unavailableSatoshis);
-    const totalAmount = satoshisToAmount(totalSatoshis);
+    const totalAmountUse = satoshisToAmount(totalSatoshis);
+    const [totalAmount, setTotalAmount] = useState(totalAmountUse);
 
     const addressSummary = useAddressSummary();
     const [balanceValueRegtest, setBalanceValue] = useState<string | number>('--');
@@ -105,6 +106,8 @@ export default function WalletTabScreen() {
                 if (chain.enum === 'BITCOIN_REGTEST' || chain.enum === 'BITCOIN_TESTNET') {
                     const btcbalanceGet = await Web3API.provider.getBalance(currentAccount.address);
                     setBalanceValue(parseInt(btcbalanceGet.toString()) / 10 ** 8);
+                    setAvailableAmount(parseInt(btcbalanceGet.toString()) / 10 ** 8);
+                    setTotalAmount((parseInt(btcbalanceGet.toString()) / 10 ** 8).toString());
                 } else {
                     setBalanceValue(accountBalance.amount);
                 }
