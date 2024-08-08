@@ -41,108 +41,141 @@ interface StateProvider {
     initialized: boolean;
     isPermanentlyDisconnected: boolean;
 }
+const EXTENSION_CONTEXT_INVALIDATED_CHROMIUM_ERROR = 'Extension context invalidated.';
 
-export class UnisatProvider extends EventEmitter {
-    _selectedAddress: string | null = null;
-    _network: string | null = null;
-    _isConnected = false;
-    _initialized = false;
-    _isUnlocked = false;
+const _unisatPrividerPrivate: {
+    _selectedAddress: string | null;
+    _network: string | null;
+    _isConnected: boolean;
+    _initialized: boolean;
+    _isUnlocked: boolean;
 
-    _state: StateProvider = {
+    _state: StateProvider;
+
+    _pushEventHandlers: PushEventHandlers|null;
+    _requestPromise: ReadyPromise;
+    _bcm: BroadcastChannelMessage;
+} = {
+    _selectedAddress: null,
+    _network: null,
+    _isConnected: false,
+    _initialized: false,
+    _isUnlocked: false,
+
+    _state: {
         accounts: null,
         isConnected: false,
         isUnlocked: false,
         initialized: false,
         isPermanentlyDisconnected: false
-    };
+    },
 
+    _pushEventHandlers: null,
+    _requestPromise: new ReadyPromise(0),
+    _bcm: new BroadcastChannelMessage(channelName)
+};
+
+export class UnisatProvider extends EventEmitter {
     public readonly web3: Web3Provider = new Web3Provider(this);
 
-    private readonly _pushEventHandlers: PushEventHandlers;
-    private _requestPromise = new ReadyPromise(0);
-
-    private _bcm = new BroadcastChannelMessage(channelName);
-
-    constructor({ maxListeners = 100 } = {}) {
-        super();
-        this.setMaxListeners(maxListeners);
-        this.initialize();
-        this._pushEventHandlers = new PushEventHandlers(this);
-    }
+  constructor({ maxListeners = 100 } = {}) {
+    super();
+    this.setMaxListeners(maxListeners);
+    void this.initialize();
+    _unisatPrividerPrivate._pushEventHandlers = new PushEventHandlers(this,_unisatPrividerPrivate);
+  }
 
     initialize = async () => {
         document.addEventListener('visibilitychange', this._requestPromiseCheckVisibility);
 
-        this._bcm.connect().on('message', this._handleBackgroundMessage);
-        domReadyCall(() => {
-            const origin = window.top?.location.origin;
-            const icon =
-                ($('head > link[rel~="icon"]') as HTMLLinkElement)?.href ||
-                ($('head > meta[itemprop="image"]') as HTMLMetaElement)?.content;
+    _unisatPrividerPrivate._bcm.connect().on('message', this._handleBackgroundMessage);
+    domReadyCall(() => {
+      const origin = window.top?.location.origin;
+      const icon =
+        ($('head > link[rel~="icon"]') as HTMLLinkElement)?.href ||
+        ($('head > meta[itemprop="image"]') as HTMLMetaElement)?.content;
 
             const name = document.title || ($('head > meta[name="title"]') as HTMLMetaElement)?.content || origin;
 
-            this._bcm.request({
-                method: 'tabCheckin',
-                params: { icon, name, origin }
-            });
+      _unisatPrividerPrivate._bcm.request({
+        method: 'tabCheckin',
+        params: { icon, name, origin }
+      });
 
             // Do not force to tabCheckin
             // this._requestPromise.check(2);
         });
 
-        try {
-            const { network, chain, accounts, isUnlocked }: any = await this._request({
-                method: 'getProviderState'
-            });
+    try {
+      const { network, accounts, isUnlocked }: any = await this._request({
+        method: 'getProviderState'
+      });
 
-            if (isUnlocked) {
-                this._isUnlocked = true;
-                this._state.isUnlocked = true;
-            }
-            this.emit('connect', {});
-            this._pushEventHandlers.networkChanged({
-                network,
-                chain
-            });
+      if (isUnlocked) {
+        _unisatPrividerPrivate._isUnlocked = true;
+        _unisatPrividerPrivate._state.isUnlocked = true;
+      }
+      this.emit('connect', {});
+      _unisatPrividerPrivate._pushEventHandlers?.networkChanged({
+        network
+      });
 
-            this._pushEventHandlers.accountsChanged(accounts);
-        } catch {
-            //
-        } finally {
-            this._initialized = true;
-            this._state.initialized = true;
-            this.emit('_initialized');
-        }
+      _unisatPrividerPrivate._pushEventHandlers?.accountsChanged(accounts);
+    } catch {
+      //
+    } finally {
+      _unisatPrividerPrivate._initialized = true;
+      _unisatPrividerPrivate._state.initialized = true;
+      this.emit('_initialized');
+    }
 
-        void this.keepAlive();
-    };
+    void this.keepAlive();
+  };
 
-    _request = async (data: RequestParams) => {
-        if (!data) {
-            throw ethErrors.rpc.invalidRequest();
-        }
+  private _requestPromiseCheckVisibility = () => {
+    if (document.visibilityState === 'visible') {
+      _unisatPrividerPrivate._requestPromise.check(1);
+    } else {
+      _unisatPrividerPrivate._requestPromise.uncheck(1);
+    }
+  };
+
+  private _handleBackgroundMessage = ({ event, data }) => {
+    log('[push event]', event, data);
+    if (_unisatPrividerPrivate._pushEventHandlers?.[event]) {
+      return _unisatPrividerPrivate._pushEventHandlers[event](data);
+    }
+
+    this.emit(event, data);
+  };
+  // TODO: support multi request!
+  // request = async (data) => {
+  //   return this._request(data);
+  // };
+
+  _request = async (data: RequestParams) => {
+    if (!data) {
+      throw ethErrors.rpc.invalidRequest();
+    }
 
         this._requestPromiseCheckVisibility();
 
-        return this._requestPromise
-            .call(async () => {
-                log('[request]', JSON.stringify(data, null, 2));
+    return _unisatPrividerPrivate._requestPromise.call(async () => {
+        log('[request]', JSON.stringify(data, null, 2));
 
-                const res = await this._bcm.request(data).catch((err) => {
-                    log('[request: error]', data.method, serializeError(err));
-                    throw serializeError(err);
-                });
+        const res = await _unisatPrividerPrivate._bcm.request(data).catch((err) => {
+            log('[request: error]', data.method, serializeError(err));
+            throw serializeError(err);
+        });
 
-                log('[request: success]', data.method, res);
+        log('[request: success]', data.method, res);
 
-                return res;
-            })
-            .catch((err) => {
-                throw err;
-            });
-    };
+        return res;
+    })
+        .catch((err) => {
+            throw err;
+        });
+  };
 
     // public methods
     requestAccounts = async () => {
@@ -151,15 +184,11 @@ export class UnisatProvider extends EventEmitter {
         });
     };
 
-    getNetwork = async () => {
-        return this._request({
-            method: 'getNetwork'
-        });
-    };
-    // TODO: support multi request!
-    // request = async (data) => {
-    //   return this._request(data);
-    // };
+  getNetwork = async () => {
+    return this._request({
+      method: 'getNetwork'
+    });
+  };
 
     switchNetwork = async (network: string) => {
         return this._request({
@@ -452,23 +481,6 @@ export class UnisatProvider extends EventEmitter {
         setTimeout(() => {
             this.keepAlive();
         }, 1000);
-    };
-
-    private _requestPromiseCheckVisibility = () => {
-        if (document.visibilityState === 'visible') {
-            this._requestPromise.check(1);
-        } else {
-            this._requestPromise.uncheck(1);
-        }
-    };
-
-    private _handleBackgroundMessage = ({ event, data }) => {
-        log('[push event]', event, data);
-        if (this._pushEventHandlers[event]) {
-            return this._pushEventHandlers[event](data);
-        }
-
-        this.emit(event, data);
     };
 }
 

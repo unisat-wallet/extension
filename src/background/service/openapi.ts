@@ -306,12 +306,11 @@ export class OpenApiService {
         const tickLine = ticks.join('');
         if (!tickLine) return {};
 
-        try {
-            while (this.currentRequestBrc20[tickLine]) {
-                console.log(this.currentRequestBrc20);
-                await new Promise((resolve) => setTimeout(resolve, 100));
-            }
-            this.currentRequestBrc20[tickLine] = true;
+    try {
+      while (this.currentRequestBrc20[tickLine]) {
+        await new Promise(resolve => setTimeout(resolve, 100));
+      }
+      this.currentRequestBrc20[tickLine] = true;
 
             const result = {} as { [key: string]: TickPriceItem };
 

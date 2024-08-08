@@ -8,7 +8,7 @@ import Arc20PreviewCard from '@/ui/components/Arc20PreviewCard';
 import AssetTag from '@/ui/components/AssetTag';
 import { Empty } from '@/ui/components/Empty';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
-import { useBlockstreamUrl, useOrdinalsWebsite } from '@/ui/state/settings/hooks';
+import { useBlockstreamUrl, useBTCUnit, useOrdinalsWebsite } from '@/ui/state/settings/hooks';
 import { useSetSpendUnavailableUtxosCallback } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
@@ -19,7 +19,8 @@ type UnavailableUnspentOutput = UnspentOutput & {
     height?: number;
 };
 export default function UnavailableUtxoScreen() {
-    const wallet = useWallet();
+  const wallet = useWallet();
+  const unitBtc = useBTCUnit();
 
     const [utxos, setUtxos] = useState<UnavailableUnspentOutput[]>([]);
 
@@ -132,13 +133,13 @@ export default function UnavailableUtxoScreen() {
                                                 style={{ borderBottomWidth: 1, borderColor: colors.border }}></Row>
                                         ) : null}
 
-                                        <Row full justifyBetween>
-                                            <Row itemsCenter>
-                                                <Text text={satoshisToAmount(item.satoshis)} preset="bold" />
-                                                <Text text={'BTC'} preset="sub" />
-                                            </Row>
-                                            <Row>
-                                                <Text text={''} preset="sub" />
+                    <Row full justifyBetween>
+                      <Row itemsCenter>
+                        <Text text={satoshisToAmount(item.satoshis)} preset="bold" />
+                        <Text text={unitBtc} preset="sub" />
+                      </Row>
+                      <Row>
+                        <Text text={''} preset="sub" />
 
                                                 <Checkbox
                                                     onChange={(e) => {

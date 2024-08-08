@@ -19,12 +19,12 @@ import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import {
-    useBlockstreamUrl,
-    useChain,
-    useChainType,
-    useSkipVersionCallback,
-    useVersionInfo,
-    useWalletConfig
+  useBlockstreamUrl, useBTCUnit,
+  useChain,
+  useChainType,
+  useSkipVersionCallback,
+  useVersionInfo,
+  useWalletConfig
 } from '@/ui/state/settings/hooks';
 import { useFetchUtxosCallback, useSafeBalance } from '@/ui/state/transactions/hooks';
 import { useAssetTabKey, useResetUiTxCreateScreen } from '@/ui/state/ui/hooks';
@@ -39,6 +39,7 @@ import { AtomicalsTab } from './AtomicalsTab';
 import { OPNetList } from './OPNetList';
 import { OrdinalsTab } from './OrdinalsTab';
 import { RunesList } from './RunesList';
+import { BtcUsd } from '@/ui/components/BtcUsd';
 
 const $noBreakStyle: CSSProperties = {
     whiteSpace: 'nowrap',
@@ -168,8 +169,9 @@ export default function WalletTabScreen() {
         }
     ];
 
-    const blockstreamUrl = useBlockstreamUrl();
-    const resetUiTxCreateScreen = useResetUiTxCreateScreen();
+  const blockstreamUrl = useBlockstreamUrl();
+  const resetUiTxCreateScreen = useResetUiTxCreateScreen();
+  const btcUnit = useBTCUnit();
 
     const [buyBtcModalVisible, setBuyBtcModalVisible] = useState(false);
 
@@ -231,15 +233,15 @@ export default function WalletTabScreen() {
                                 <>
                                     <Row justifyBetween>
                                         <span style={$noBreakStyle}>{'Available '}</span>
-                                        <span style={$noBreakStyle}>{` ${avaiableAmount} BTC`}</span>
+                                        <span style={$noBreakStyle}>{` ${avaiableAmount} ${btcUnit}`}</span>
                                     </Row>
                                     <Row justifyBetween>
                                         <span style={$noBreakStyle}>{'Unavailable '}</span>
-                                        <span style={$noBreakStyle}>{` ${unavailableAmount} BTC`}</span>
+                                        <span style={$noBreakStyle}>{` ${unavailableAmount} ${btcUnit}`}</span>
                                     </Row>
                                     <Row justifyBetween>
                                         <span style={$noBreakStyle}>{'Total '}</span>
-                                        <span style={$noBreakStyle}>{` ${totalAmount} BTC`}</span>
+                                        <span style={$noBreakStyle}>{` ${totalAmount} ${btcUnit}`}</span>
                                     </Row>
                                 </>
                             ) : (
@@ -254,12 +256,12 @@ export default function WalletTabScreen() {
                                     </Row>
                                     <Row justifyBetween>
                                         <span style={$noBreakStyle}>{'Total '}</span>
-                                        <span style={$noBreakStyle}>{` ${totalAmount} BTC`}</span>
+                                        <span style={$noBreakStyle}>{` ${totalAmount} ${btcUnit}`}</span>
                                     </Row>
                                 </>
                             )
                         }
-                        onOpenChange={(v) => {
+                        onOpenChange={() => {
                             if (!ref.current.fetchedUtxo[currentAccount.address]) {
                                 ref.current.fetchedUtxo[currentAccount.address] = { loading: true };
                                 setLoadingFetch(true);
@@ -273,11 +275,14 @@ export default function WalletTabScreen() {
                             fontSize: fontSizes.xs
                         }}>
                         <div>
+                            {/*<div>
+                                <Text text={balanceValue + ' ' + btcUnit} preset="title-bold" textCenter size="xxxl" />
+                            </div>*/}
                             <Text
                                 text={
                                     chain.enum == 'BITCOIN_REGTEST'
-                                        ? balanceValueRegtest + '  BTC'
-                                        : balanceValue + '  BTC'
+                                        ? balanceValueRegtest + `  ${btcUnit}`
+                                        : balanceValue + `  ${btcUnit}`
                                 }
                                 preset="title-bold"
                                 textCenter

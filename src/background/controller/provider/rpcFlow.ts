@@ -43,33 +43,42 @@ const flowContext = flow
             }
         }
 
-        return next();
-    })
-    .use(async (ctx, next) => {
-        // check connect
-        const {
-            request: {
-                session: { origin, name, icon }
+    return next();
+  })
+  .use(async (ctx, next) => {
+    // check connect
+    const {
+      request: {
+        session: { origin, name, icon }
+      },
+      mapMethod
+    } = ctx;
+    if (!Reflect.getMetadata('SAFE', providerController, mapMethod)) {
+      if (!permissionService.hasPermission(origin)) {
+        ctx.request.requestedApproval = true;
+        await notificationService.requestApproval(
+          {
+            params: {
+              method: 'connect',
+              data: {},
+              session: { origin, name, icon }
             },
-            mapMethod
-        } = ctx;
-        if (!Reflect.getMetadata('SAFE', providerController, mapMethod)) {
-            if (!permissionService.hasPermission(origin)) {
-                ctx.request.requestedApproval = true;
-                await notificationService.requestApproval(
-                    {
-                        params: {
-                            method: 'connect',
-                            data: {},
-                            session: { origin, name, icon }
-                        },
-                        approvalComponent: 'Connect'
-                    },
-                    { height: windowHeight }
-                );
-                permissionService.addConnectedSite(origin, name, icon, CHAINS_ENUM.BTC);
-            }
+            approvalComponent: 'Connect'
+          },
+          { height: windowHeight }
+        );
+        permissionService.addConnectedSite(origin, name, icon, CHAINS_ENUM.BTC);
+      }
+    }else{
+      if (!permissionService.hasPermission(origin)) {
+      //   connect wallet first
+        if(['getAccounts'].includes(mapMethod)){
+          return [];
+        }else {
+          throw ethErrors.provider.unauthorized();
         }
+      }
+    }
 
         return next();
     })

@@ -15,6 +15,7 @@ import { AppDimensions } from './components/Responsive';
 import AsyncMainRoute from './pages/MainRoute';
 import store from './state';
 import { WalletProvider } from './utils';
+import { PriceProvider } from '@/ui/provider/PriceProvider';
 
 // disabled sentry
 // Sentry.init({
@@ -46,10 +47,10 @@ if (
     window.screenLeft > window.screen.width ||
     window.screenTop > window.screen.height
 ) {
-    browser.runtime.getPlatformInfo(function (info) {
-        if (info.os === 'mac') {
-            const fontFaceSheet = new CSSStyleSheet();
-            fontFaceSheet.insertRule(`
+  browser.runtime.getPlatformInfo(function(info) {
+    if (info.os === 'mac') {
+      const fontFaceSheet = new CSSStyleSheet();
+      fontFaceSheet.insertRule(`
         @keyframes redraw {
           0% {
             opacity: 1;
@@ -78,13 +79,13 @@ portMessageChannel.connect('popup');
 const wallet: Record<string, any> = new Proxy(
     {},
     {
-        get(obj, key) {
+        get(_, key) {
             switch (key) {
                 case 'openapi':
                     return new Proxy(
                         {},
                         {
-                            get(obj, key) {
+                            get(_, key) {
                                 if (typeof key !== 'string') throw new Error('Invalid key');
 
                                 return function (...params: any) {
@@ -154,14 +155,16 @@ function Updaters() {
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
-    <Provider store={store}>
-        <WalletProvider {...antdConfig} wallet={wallet as any}>
-            <ActionComponentProvider>
-                <AppDimensions>
-                    <Updaters />
-                    <AsyncMainRoute />
-                </AppDimensions>
-            </ActionComponentProvider>
-        </WalletProvider>
-    </Provider>
+  <Provider store={store}>
+    <WalletProvider {...antdConfig} wallet={wallet as any}>
+      <ActionComponentProvider>
+        <AppDimensions>
+          <PriceProvider>
+            <Updaters />
+            <AsyncMainRoute />
+          </PriceProvider>
+        </AppDimensions>
+      </ActionComponentProvider>
+    </WalletProvider>
+  </Provider>
 );
