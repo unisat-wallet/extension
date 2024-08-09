@@ -61,6 +61,8 @@ export const initialState: AccountsState = {
         mintedList: []
     },
     addressSummary: {
+        address: '',
+        runesCount: 0,
         totalSatoshis: 0,
         btcSatoshis: 0,
         assetSatoshis: 0,
