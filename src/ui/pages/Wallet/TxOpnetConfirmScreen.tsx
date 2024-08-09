@@ -379,7 +379,8 @@ export default function TxOpnetConfirmScreen() {
                 let attempts = 0;
                 const maxAttempts = 60; // 10 minutes max wait time
                 setOpenLoading(true);
-                console.log(secondTransaction.success);
+                console.log(secondTransaction);
+
                 try {
                     while (attempts < maxAttempts) {
                         const txResult = await Web3API.provider.getTransaction(txHash);
@@ -403,7 +404,18 @@ export default function TxOpnetConfirmScreen() {
                 }
             };
 
-            const transactionHash = await waitForTransaction(secondTransaction.success);
+            if (!secondTransaction.result) {
+                setOpenLoading(false);
+                setDisabled(false);
+                tools.toastError(`Transaction failed: ${secondTransaction.error}`);
+
+                throw new Error(`Transaction failed: ${secondTransaction.error}`);
+            }
+
+            tools.showLoading(true, 'Waiting for transaction confirmation...');
+            const transactionHash = await waitForTransaction(secondTransaction.result);
+            tools.showLoading(false);
+
             console.log('confirmed!', transactionHash);
         }
 
