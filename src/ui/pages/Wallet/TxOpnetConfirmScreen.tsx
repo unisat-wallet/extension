@@ -123,11 +123,12 @@ export default function TxOpnetConfirmScreen() {
                     tools.toastError('Error. Please Try again');
                     return;
                 }
+
                 const nextUTXO = finalUnwrapTx.utxos;
                 localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
                 tools.toastSuccess('"You have sucessfully unwraped your Bitcoin"');
 
-                navigate('TxSuccessScreen', { txid: unwrapTransaction });
+                navigate('TxSuccessScreen', { txid: unwrapTransaction.result });
             };
             completeUnwrap();
         }
@@ -448,7 +449,6 @@ export default function TxOpnetConfirmScreen() {
 
         try {
             const finalTx = await Web3API.transactionFactory.unwrap(unwrapParameters);
-            console.log(finalTx);
             setfinalUnwrapTx(finalTx);
             setAcceptBar(true);
             setAcceptWrapMessage(
