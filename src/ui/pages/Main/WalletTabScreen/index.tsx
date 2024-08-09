@@ -6,6 +6,7 @@ import { checkAddressFlag } from '@/shared/utils';
 import { Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
 import { AddressBar } from '@/ui/components/AddressBar';
+import { BtcUsd } from '@/ui/components/BtcUsd';
 import { Button } from '@/ui/components/Button';
 import { DisableUnconfirmedsPopover } from '@/ui/components/DisableUnconfirmedPopover';
 import { NavTabBar } from '@/ui/components/NavTabBar';
@@ -17,7 +18,8 @@ import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import {
-  useBlockstreamUrl, useBTCUnit,
+  useBlockstreamUrl,
+  useBTCUnit,
   useChain,
   useChainType,
   useSkipVersionCallback,
@@ -36,7 +38,6 @@ import { SwitchChainModal } from '../../Settings/SwitchChainModal';
 import { AtomicalsTab } from './AtomicalsTab';
 import { OrdinalsTab } from './OrdinalsTab';
 import { RunesList } from './RunesList';
-import { BtcUsd } from '@/ui/components/BtcUsd';
 
 const $noBreakStyle: CSSProperties = {
   whiteSpace: 'nowrap',
@@ -123,7 +124,7 @@ export default function WalletTabScreen() {
     run();
   }, []);
 
-  const tabItems = [
+  let tabItems = [
     {
       key: AssetTabKey.ORDINALS,
       label: 'Ordinals',
@@ -140,6 +141,29 @@ export default function WalletTabScreen() {
       children: <RunesList />
     }
   ];
+
+  if (chainType !== ChainType.BITCOIN_MAINNET) {
+    tabItems = [
+      {
+        key: AssetTabKey.ORDINALS,
+        label: 'Ordinals',
+        children: <OrdinalsTab />
+      },
+      {
+        key: AssetTabKey.RUNES,
+        label: 'Runes',
+        children: <RunesList />
+      }
+    ];
+  }
+
+  const finalAssetTabKey = useMemo(() => {
+    if (chainType !== ChainType.BITCOIN_MAINNET && assetTabKey === AssetTabKey.ATOMICALS) {
+      return AssetTabKey.ORDINALS;
+    } else {
+      return assetTabKey;
+    }
+  }, [assetTabKey, chainType]);
 
   const blockstreamUrl = useBlockstreamUrl();
   const resetUiTxCreateScreen = useResetUiTxCreateScreen();
@@ -250,9 +274,15 @@ export default function WalletTabScreen() {
               <Text text={balanceValue + ' ' + btcUnit} preset="title-bold" textCenter size="xxxl" />
             </div>
           </Tooltip>
-          <BtcUsd sats={amountToSatoshis(balanceValue)} textCenter size={'md'} style={{
-            marginTop: -16, marginBottom: -8
-          }} />
+          <BtcUsd
+            sats={amountToSatoshis(balanceValue)}
+            textCenter
+            size={'md'}
+            style={{
+              marginTop: -16,
+              marginBottom: -8
+            }}
+          />
 
           <Row itemsCenter justifyCenter>
             <AddressBar />
@@ -288,8 +318,7 @@ export default function WalletTabScreen() {
               }}
               full
             />
-            {
-              chainType === ChainType.BITCOIN_MAINNET &&
+            {chainType === ChainType.BITCOIN_MAINNET && (
               <Button
                 text="Buy"
                 preset="default"
@@ -299,13 +328,13 @@ export default function WalletTabScreen() {
                 }}
                 full
               />
-            }
+            )}
           </Row>
 
           <Tabs
             size={'small'}
-            defaultActiveKey={assetTabKey as unknown as string}
-            activeKey={assetTabKey as unknown as string}
+            defaultActiveKey={finalAssetTabKey as unknown as string}
+            activeKey={finalAssetTabKey as unknown as string}
             items={tabItems as unknown as any[]}
             onTabClick={(key) => {
               dispatch(uiActions.updateAssetTabScreen({ assetTabKey: key as unknown as AssetTabKey }));

@@ -458,14 +458,14 @@ function SignTxDetails({
 
                 <Column justifyCenter>
                   <Row itemsCenter>
-                    <Text text={spendAmount + ' '+btcUnit} color="white" preset="bold" textCenter size="xxl" />
+                    <Text text={spendAmount + ' ' + btcUnit} color="white" preset="bold" textCenter size="xxl" />
                   </Row>
                   <BtcUsd sats={spendSatoshis} textCenter bracket style={{ marginTop: -8 }} />
 
                   {sendingInscriptionSaotoshis > 0 && (
                     <Text text={`${sendingInscriptionAmount} (in inscriptions)`} preset="sub" textCenter />
                   )}
-                  {isCurrentToPayFee && <Text text={`${feeAmount} (network fee)`} preset="sub" textCenter />}
+                  {isCurrentToPayFee && <Text text={`${feeAmount} ${btcUnit} (network fee)`} preset="sub" textCenter />}
                 </Column>
               </Column>
             </Column>
