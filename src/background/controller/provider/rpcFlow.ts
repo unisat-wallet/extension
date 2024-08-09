@@ -54,6 +54,7 @@ const flowContext = flow
       mapMethod
     } = ctx;
     // if (!Reflect.getMetadata('SAFE', providerController, mapMethod)) {
+    if(!['getNetwork','switchNetwork','getChain','switchChain'].includes(mapMethod)){
       if (!permissionService.hasPermission(origin)) {
         if (['getAccounts'].includes(mapMethod)) {
           return [];
@@ -72,7 +73,7 @@ const flowContext = flow
         );
         permissionService.addConnectedSite(origin, name, icon, CHAINS_ENUM.BTC);
       }
-    // }
+    }
 
     return next();
   })
