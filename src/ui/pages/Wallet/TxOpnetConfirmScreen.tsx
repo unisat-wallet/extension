@@ -193,7 +193,7 @@ export default function TxOpnetConfirmScreen() {
             // Store the next UTXO in localStorage
             const nextUTXO = finalTx[2];
             localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
-            navigate('TxSuccessScreen', { secondTxBroadcast });
+            navigate('TxSuccessScreen', { txid: secondTxBroadcast.result });
         } catch (e) {
             tools.toastError('Error,Please Try again');
             setUseNextUTXO(true);
