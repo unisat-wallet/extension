@@ -320,17 +320,6 @@ export default function TxOpnetConfirmScreen() {
         const alreadyWithdrawal = checkWithdrawalRequest.decoded[0] as bigint;
         const requiredAmountDifference: bigint = alreadyWithdrawal - unwrapAmount;
 
-        console.log(
-            'amount',
-            unwrapAmount,
-            'actual',
-            wbtcBalance,
-            'balance',
-            alreadyWithdrawal,
-            'diff',
-            requiredAmountDifference
-        );
-
         let utxosForUnwrap: UTXO[] = utxos;
         if (requiredAmountDifference < 0n) {
             console.log('We must request a withdrawal');
