@@ -383,18 +383,25 @@ export default function TxOpnetConfirmScreen() {
 
                 try {
                     while (attempts < maxAttempts) {
-                        const txResult = await Web3API.provider.getTransaction(txHash);
-                        if (txResult && !('error' in txResult)) {
-                            console.log('Transaction confirmed:', txResult);
-                            setOpenLoading(false);
-                            return txResult.hash;
+                        try {
+                            const txResult = await Web3API.provider.getTransaction(txHash);
+                            if (txResult && !('error' in txResult)) {
+                                console.log('Transaction confirmed:', txResult);
+                                setOpenLoading(false);
+                                return txResult.hash;
+                            }
+                        } catch (e) {
+                            const str = (e as Error).message;
+
+                            if (!str.includes('ould not find the transactio')) {
+                                throw e;
+                            }
                         }
                         await new Promise((resolve) => setTimeout(resolve, 10000)); // Wait 10 seconds
                         attempts++;
                     }
                     throw new Error('Transaction not confirmed after 10 minutes');
                 } catch (error) {
-                    console.error('Error while waiting for transaction:', error);
                     setOpenLoading(false);
                     setDisabled(false);
                     tools.toastError('Failed to confirm transaction. Please check later.');
