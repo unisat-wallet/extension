@@ -2,7 +2,7 @@ import { Tooltip } from 'antd';
 import { JSONRpcProvider } from 'opnet';
 import { useEffect, useMemo, useState } from 'react';
 
-import { COIN_DUST } from '@/shared/constant';
+import { ChainType, COIN_DUST } from '@/shared/constant';
 import { Account, RawTxInfo } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
 import Web3API from '@/shared/web3/Web3API';
@@ -111,12 +111,19 @@ export default function TxCreateScreen() {
 
     useEffect(() => {
         const fetchBalance = async () => {
-            if (chain.enum === 'BITCOIN_REGTEST') {
-                const provider: JSONRpcProvider = new JSONRpcProvider('https://regtest.opnet.org');
+            let providerUrl = 'https://api.opnet.org';
 
-                const btcbalanceGet = await provider.getBalance(account.address);
-                setBalanceValue(parseInt(btcbalanceGet.toString()) / 10 ** 8);
+            if (chain.enum === ChainType.BITCOIN_REGTEST) {
+                providerUrl = 'https://regtest.opnet.org';
+            } else if (chain.enum === ChainType.FRACTAL_BITCOIN_MAINNET) {
+                providerUrl = 'https://fractal.opnet.org';
+            } else if (chain.enum === ChainType.BITCOIN_TESTNET) {
+                providerUrl = 'https://testnet.opnet.org';
             }
+
+            const provider: JSONRpcProvider = new JSONRpcProvider(providerUrl);
+            const btcbalanceGet = await provider.getBalance(account.address);
+            setBalanceValue(parseInt(btcbalanceGet.toString()) / 10 ** 8);
         };
 
         void fetchBalance();

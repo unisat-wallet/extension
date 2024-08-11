@@ -63,13 +63,16 @@ class Web3API {
             case ChainType.BITCOIN_REGTEST:
                 this.network = networks.regtest;
                 break;
+            case ChainType.FRACTAL_BITCOIN_MAINNET:
+                this.network = networks.bitcoin;
+                break;
             default:
                 this.network = networks.bitcoin;
                 break;
         }
 
         if (oldNetwork !== this.network) {
-            this.setProvider();
+            this.setProvider(network);
         }
     }
 
@@ -155,10 +158,14 @@ class Web3API {
         return ContractNames[address] ?? 'Generic Contract';
     }
 
-    private setProvider(): void {
+    private setProvider(network: ChainType): void {
         switch (this.network) {
             case networks.bitcoin:
-                this.setProviderFromUrl('https://api.opnet.org');
+                if (network === ChainType.FRACTAL_BITCOIN_MAINNET) {
+                    this.setProviderFromUrl('https://fractal.opnet.org');
+                } else {
+                    this.setProviderFromUrl('https://api.opnet.org');
+                }
                 break;
             case networks.testnet:
                 this.setProviderFromUrl('https://testnet.opnet.org');

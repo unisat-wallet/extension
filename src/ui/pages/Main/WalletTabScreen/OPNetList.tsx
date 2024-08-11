@@ -20,6 +20,7 @@ import {
 
 import { useNavigate } from '../../MainRoute';
 import { AddOpNetToken } from '../../Wallet/AddOpNetToken';
+import { ChainType } from '@/shared/constant';
 
 const { AddressType } = require('@unisat/wallet-sdk');
 const { bitcoin } = require('@unisat/wallet-sdk/lib/bitcoin-core');
@@ -56,6 +57,23 @@ export function OPNetList() {
 
             switch (currentNetwork) {
                 case NetworkType.MAINNET: {
+                    switch (getChain) {
+                        case ChainType.FRACTAL_BITCOIN_MAINNET: {
+                            /*if (!parsedTokens.includes(WBTC_ADDRESS_FRACTAL)) {
+                                parsedTokens.push(WBTC_ADDRESS_TESTNET);
+                            }
+                            if (!parsedTokens.includes(MOTO_ADDRESS_FRACTAL)) {
+                                parsedTokens.push(MOTO_ADDRESS_TESTNET);
+                            }*/
+                            break;
+                        }
+                        case ChainType.BITCOIN_MAINNET: {
+                            break;
+                        }
+                        default: {
+                            throw new Error('Invalid chain');
+                        }
+                    }
                     break;
                 }
                 case NetworkType.TESTNET: {
