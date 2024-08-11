@@ -63,7 +63,8 @@ export default function UnWrapBitcoinOpnet() {
             const getStakedAmount = (await contract.stakedAmount(account.address)) as unknown as { decoded: bigint[] };
 
             if ('error' in getRewards || 'error' in getStakedAmount) {
-                throw new Error('getRewards');
+                tools.toastError('Error in getting Stake Rewards');
+                return;
             }
 
             setStakeReward(getRewards.decoded[0]);
@@ -71,9 +72,10 @@ export default function UnWrapBitcoinOpnet() {
 
             const rewardPool = (await contract.rewardPool()) as unknown as { decoded: bigint[] };
             const totalStaked = (await contract.totalStaked()) as unknown as { decoded: bigint[] };
-
+            const timeStaked = (await contract.unstake()) as unknown as { decoded: any };
+            console.log(timeStaked);
             if ('error' in rewardPool || 'error' in totalStaked) {
-                throw new Error('Can not get reward pool or total staked');
+                tools.toastError('Can not get reward pool or total staked');
             }
 
             setRewardPool(rewardPool.decoded[0]);
