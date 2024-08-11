@@ -42,7 +42,7 @@ export function OPNetList() {
             setTotal(-1);
             await wallet.getNetworkType();
 
-            await wallet.changeAddressType(AddressType.P2TR);
+            // await wallet.changeAddressType(AddressType.P2TR);
             const getChain = await wallet.getChainType();
             Web3API.setNetwork(getChain);
 

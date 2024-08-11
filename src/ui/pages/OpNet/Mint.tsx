@@ -114,7 +114,7 @@ export default function Mint() {
             const totalSupply = await contract.totalSupply();
 
             if ('error' in maxSupply || 'error' in totalSupply) {
-                tools.toastError('Error fetching supply: ' + (maxSupply.error || totalSupply || 'Unknown error'));
+                console.error('Error fetching supply:', maxSupply.error || totalSupply);
                 return;
             }
             setMaxSupply(BigInt((maxSupply.decoded[0] as bigint) - (totalSupply.decoded[0] as bigint)));
