@@ -127,7 +127,7 @@ export default function TxOpnetConfirmScreen() {
                 const nextUTXO = finalUnwrapTx.utxos;
                 localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
                 tools.toastSuccess('"You have sucessfully unwraped your Bitcoin"');
-
+                console.log(unwrapTransaction);
                 navigate('TxSuccessScreen', { txid: unwrapTransaction.result });
             };
             completeUnwrap();
@@ -179,14 +179,14 @@ export default function TxOpnetConfirmScreen() {
                 tools.toastError('Error,Please Try again');
                 setUseNextUTXO(true);
                 setDisabled(false);
-                throw new Error('Could not broadcast first transaction');
+                tools.toastError('Could not broadcast first transaction');
             }
 
             const secondTxBroadcast = await Web3API.provider.sendRawTransaction(finalTx[1], false);
             console.log(`Second transaction broadcasted: ${secondTxBroadcast.result}`);
 
             if (!secondTxBroadcast.success) {
-                throw new Error('Could not broadcast second transaction');
+                tools.toastError('Could not broadcast second transaction');
             }
 
             tools.toastSuccess(`"You have successfully transferred ${amountToSend} Bitcoin"`);
@@ -219,14 +219,15 @@ export default function TxOpnetConfirmScreen() {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                    ...utxo,
-                    value: BigInt(utxo.value)
-                }))
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
                 : [];
         }
         const generationParameters = await Web3API.limitedProvider.fetchWrapParameters(wrapAmount);
         if (!generationParameters) {
-            throw new Error('No generation parameters found');
+            tools.toastError('No generation parameters found');
+            return;
         }
 
         console.log('generationParameters', generationParameters, wrapAmount);
@@ -250,14 +251,14 @@ export default function TxOpnetConfirmScreen() {
             console.log(firstTxBroadcast);
             setUseNextUTXO(true);
             setDisabled(false);
-            throw new Error('Could not broadcast first transaction');
+            tools.toastError('Could not broadcast first transaction');
         }
 
         const secondTxBroadcast = await Web3API.provider.sendRawTransaction(finalTx.transaction[1], false);
         if (!secondTxBroadcast.success) {
             tools.toastError('Error,Please Try again');
             setDisabled(false);
-            throw new Error('Could not broadcast first transaction');
+            tools.toastError('Could not broadcast first transaction');
         }
         const nextUTXO = finalTx.utxos;
         localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
@@ -281,9 +282,9 @@ export default function TxOpnetConfirmScreen() {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                    ...utxo,
-                    value: BigInt(utxo.value)
-                }))
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
                 : [];
         }
 
@@ -298,17 +299,19 @@ export default function TxOpnetConfirmScreen() {
 
         const wbtcBalanceSimulation = await contract.balanceOf(walletGet.p2tr);
         if ('error' in wbtcBalanceSimulation) {
-            throw new Error(
+            tools.toastError(
                 `Something went wrong while simulating the check withdraw balance: ${wbtcBalanceSimulation.error}`
             );
+            return;
         }
 
         const wbtcBalance = wbtcBalanceSimulation.decoded[0] as bigint;
         const checkWithdrawalRequest = await contract.withdrawableBalanceOf(walletGet.p2tr);
         if ('error' in checkWithdrawalRequest) {
-            throw new Error(
+            tools.toastError(
                 `Something went wrong while simulating the check withdraw balance: ${checkWithdrawalRequest.error}`
             );
+            return;
         }
 
         if (wbtcBalance + (checkWithdrawalRequest.decoded[0] as bigint) < unwrapAmount) {
@@ -327,8 +330,8 @@ export default function TxOpnetConfirmScreen() {
 
             const withdrawalRequest = await contract.requestWithdrawal(diff);
             if ('error' in withdrawalRequest) {
-                tools.toastError(`Withdrawal simulation reverted: ${withdrawalRequest.error}`);
-                throw new Error(`Something went wrong while simulating the withdraw request: ${withdrawalRequest}`);
+                tools.toastError(`Something went wrong while simulating the withdraw request: ${withdrawalRequest}`);
+                return;
             }
 
             const interactionParameters: IInteractionParameters = {
@@ -350,7 +353,6 @@ export default function TxOpnetConfirmScreen() {
                 tools.toastError('Error,Please Try again');
                 setUseNextUTXO(true);
                 setDisabled(false);
-                console.error('Transaction failed:', firstTransaction);
                 return;
             }
 
@@ -358,7 +360,6 @@ export default function TxOpnetConfirmScreen() {
             const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransaction[1], false);
             if (!secondTransaction || !secondTransaction.success) {
                 tools.toastError('Error: Could not broadcast second transaction');
-                console.error('Transaction failed:', firstTransaction);
                 setDisabled(false);
                 return;
             }
@@ -371,42 +372,30 @@ export default function TxOpnetConfirmScreen() {
                 setOpenLoading(true);
                 console.log(secondTransaction);
 
-                try {
-                    while (attempts < maxAttempts) {
-                        try {
-                            const txResult = await Web3API.provider.getTransaction(txHash);
-                            if (txResult && !('error' in txResult)) {
-                                console.log('Transaction confirmed:', txResult);
-                                setOpenLoading(false);
-                                return txResult.hash;
-                            }
-                        } catch (e) {
-                            const str = (e as Error).message;
-
-                            if (!str.includes('ould not find the transactio')) {
-                                throw e;
-                            }
+                while (attempts < maxAttempts) {
+                    try {
+                        const txResult = await Web3API.provider.getTransaction(txHash);
+                        if (txResult && !('error' in txResult)) {
+                            console.log('Transaction confirmed:', txResult);
+                            setOpenLoading(false);
+                            return txResult.hash;
                         }
-                        await new Promise((resolve) => setTimeout(resolve, 10000)); // Wait 10 seconds
-                        attempts++;
+                    } catch (error) {
+                        console.error('Error fetching transaction:', error);
                     }
-                    throw new Error('Transaction not confirmed after 10 minutes');
-                } catch (error) {
-                    setOpenLoading(false);
-                    setDisabled(false);
-                    tools.toastError('Failed to confirm transaction. Please check later.');
-                    throw error;
-                } finally {
-                    setOpenLoading(false);
+                    console.log(attempts);
+                    await new Promise((resolve) => setTimeout(resolve, 10000)); // Wait 10 seconds
+                    attempts++;
                 }
+                tools.toastError('Transaction not confirmed after 10 minutes');
             };
 
             if (!secondTransaction.result) {
                 setOpenLoading(false);
                 setDisabled(false);
-                tools.toastError(`Transaction failed: ${secondTransaction.error}`);
 
-                throw new Error(`Transaction failed: ${secondTransaction.error}`);
+                tools.toastError(`Transaction failed: ${secondTransaction.error}`);
+                return;
             }
 
             tools.showLoading(true, 'Waiting for transaction confirmation...');
@@ -449,7 +438,6 @@ export default function TxOpnetConfirmScreen() {
         } catch (e) {
             tools.toastError('Error please ty again later');
             setDisabled(false);
-            console.error('Error:', e);
         }
     };
 
@@ -472,7 +460,6 @@ export default function TxOpnetConfirmScreen() {
         const stakeData = (await contract.stake(amountToSend)) as unknown as { calldata: Buffer };
         if ('error' in stakeData) {
             tools.toastError('Invalid calldata in stakeData');
-            console.error('stakeDatas:', stakeData);
             return;
         }
         let utxos: UTXO[] = [];
@@ -483,9 +470,9 @@ export default function TxOpnetConfirmScreen() {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                    ...utxo,
-                    value: BigInt(utxo.value)
-                }))
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
                 : [];
         }
 
@@ -523,7 +510,7 @@ export default function TxOpnetConfirmScreen() {
         } else {
             console.log('Broadcasted:', seconfTransaction);
         }
-        tools.toastSuccess(`"You have sucessfully Staked ${Number(amountToSend) / 10 ** 8} WBTC"`);
+        tools.toastSuccess(`You have sucessfully Staked ${Number(amountToSend) / 10 ** 8} WBTC`);
         const nextUTXO = sendTransact[2];
         localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
         navigate('TxSuccessScreen', { txid: seconfTransaction.result });
@@ -547,7 +534,6 @@ export default function TxOpnetConfirmScreen() {
         const stakeData = (await contract.unstake()) as unknown as { calldata: Buffer };
         if ('error' in stakeData) {
             tools.toastError('Invalid calldata in stakeData');
-            console.error('stakeDatas:', 'Too Early');
             tools.toastError(stakeData.error as string);
             return;
         }
@@ -560,9 +546,9 @@ export default function TxOpnetConfirmScreen() {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                    ...utxo,
-                    value: BigInt(utxo.value)
-                }))
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
                 : [];
         }
 
@@ -600,7 +586,7 @@ export default function TxOpnetConfirmScreen() {
         } else {
             console.log('Broadcasted:', seconfTransaction);
         }
-        tools.toastSuccess(`"You have sucessfully Unstaked ${Number(amountToSend) / 10 ** 8} WBTC"`);
+        tools.toastSuccess(`You have sucessfully Unstaked ${Number(amountToSend) / 10 ** 8} WBTC`);
         const nextUTXO = sendTransact[2];
         localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
         navigate('TxSuccessScreen', { txid: seconfTransaction.result });
@@ -767,9 +753,9 @@ export default function TxOpnetConfirmScreen() {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                    ...utxo,
-                    value: BigInt(utxo.value)
-                }))
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
                 : [];
         }
         const interactionParameters: IInteractionParameters = {
@@ -805,7 +791,7 @@ export default function TxOpnetConfirmScreen() {
         } else {
             console.log('Broadcasted:', seconfTransaction);
         }
-        tools.toastSuccess(`"You have sucessfully claimed ${Number(amountToSend) / 10 ** 8} WBTC"`);
+        tools.toastSuccess(`You have sucessfully claimed ${Number(amountToSend) / 10 ** 8} WBTC`);
         const nextUTXO = sendTransact[2];
         localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
         navigate('TxSuccessScreen', { txid: seconfTransaction.result });
@@ -835,9 +821,9 @@ export default function TxOpnetConfirmScreen() {
         } else {
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                    ...utxo,
-                    value: BigInt(utxo.value)
-                }))
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
                 : [];
         }
         const getData = await approveToken(inputAmountBigInt, walletGet, rawTxInfo.contractAddress[0], utxos);
@@ -882,14 +868,15 @@ export default function TxOpnetConfirmScreen() {
             setUseNextUTXO(true);
             setDisabled(false);
             console.log(firstTransaction);
-            throw new Error('Could not broadcast first transaction');
+            tools.toastError('Could not broadcast first transaction');
         }
 
         // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
         const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransact[1], false);
         if (!secondTransaction || !secondTransaction.success) {
             // tools.toastError('Error,Please Try again');
-            throw new Error('Could not broadcast first transaction');
+            tools.toastError('Could not broadcast first transaction');
+            return;
         } else {
             console.log(secondTransaction);
             tools.toastSuccess(
@@ -909,6 +896,7 @@ export default function TxOpnetConfirmScreen() {
             const contract = getContract<IOP_20Contract>(tokenAddress, OP_20_ABI, Web3API.provider, walletGet.p2tr);
             const getRemaining = await contract.allowance(walletGet.p2tr, routerAddress);
             if ('error' in getRemaining) {
+                tools.toastError(getRemaining.error);
                 throw new Error(getRemaining.error);
             }
             if ((getRemaining.decoded[0] as bigint) > inputAmountBigInt) {
@@ -917,6 +905,7 @@ export default function TxOpnetConfirmScreen() {
             const maxUint256 = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
             const contractApprove: BaseContractProperty = await contract.approve(routerAddress, maxUint256);
             if ('error' in contractApprove) {
+                tools.toastError(contractApprove.error);
                 throw new Error(contractApprove.error);
             }
             const interactionParameters: IInteractionParameters = {
@@ -937,14 +926,14 @@ export default function TxOpnetConfirmScreen() {
             if (!firstTransaction || !firstTransaction.success) {
                 // tools.toastError('Error,Please Try again');
                 console.log(firstTransaction);
-                throw new Error('Could not broadcast first transaction');
+                tools.toastError('Could not broadcast first transaction');
             }
 
             // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
             const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransact[1], false);
             if (!secondTransaction || !secondTransaction.success) {
                 // tools.toastError('Error,Please Try again');
-                throw new Error('Could not broadcast first transaction');
+                tools.toastError('Could not broadcast first transaction');
             } else {
                 console.log(secondTransaction);
             }
@@ -979,7 +968,6 @@ export default function TxOpnetConfirmScreen() {
         const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact.tx, false);
         if (!firstTransaction || !firstTransaction.success) {
             tools.toastError('Error: Could not broadcast first transaction');
-            console.error('Transaction failed:', firstTransaction);
             return;
         }
         tools.toastSuccess(
@@ -1006,9 +994,9 @@ export default function TxOpnetConfirmScreen() {
                 const storedUTXO = localStorage.getItem('nextUTXO');
                 utxos = storedUTXO
                     ? JSON.parse(storedUTXO).map((utxo) => ({
-                        ...utxo,
-                        value: BigInt(utxo.value)
-                    }))
+                          ...utxo,
+                          value: BigInt(utxo.value)
+                      }))
                     : [];
             }
 
@@ -1036,7 +1024,7 @@ export default function TxOpnetConfirmScreen() {
                 tools.toastError('Error,Please Try again');
                 setUseNextUTXO(true);
                 setDisabled(false);
-                throw new Error('Could not broadcast first transaction');
+                tools.toastError('Could not broadcast first transaction');
             } else {
                 console.log(firstTransaction);
             }
@@ -1045,7 +1033,7 @@ export default function TxOpnetConfirmScreen() {
             const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransact.transaction[1], false);
             if (!secondTransaction || !secondTransaction.success) {
                 // tools.toastError('Error,Please Try again');
-                throw new Error('Could not broadcast first transaction');
+                tools.toastError('Could not broadcast first transaction');
             } else {
                 console.log(firstTransaction);
             }
@@ -1143,9 +1131,9 @@ export default function TxOpnetConfirmScreen() {
                 const storedUTXO = localStorage.getItem('nextUTXO');
                 utxos = storedUTXO
                     ? JSON.parse(storedUTXO).map((utxo) => ({
-                        ...utxo,
-                        value: BigInt(utxo.value)
-                    }))
+                          ...utxo,
+                          value: BigInt(utxo.value)
+                      }))
                     : [];
             }
             const contract = getContract<IOP_20Contract>(
@@ -1179,14 +1167,14 @@ export default function TxOpnetConfirmScreen() {
                 tools.toastError('Error,Please Try again');
                 setUseNextUTXO(true);
                 setDisabled(false);
-                throw new Error('Could not broadcast first transaction');
+                tools.toastError('Could not broadcast first transaction');
             }
 
             // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
             const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransact[1], false);
             if (!secondTransaction || !secondTransaction.success) {
                 // tools.toastError('Error,Please Try again');
-                throw new Error('Could not broadcast first transaction');
+                tools.toastError('Could not broadcast first transaction');
             }
 
             tools.toastSuccess(`You have successfully minted ${rawTxInfo.inputAmount} `);
@@ -1318,13 +1306,20 @@ export default function TxOpnetConfirmScreen() {
             </Footer>
             {openAcceptbar && (
                 <ConfirmUnWrap
-                    onClose={() => setAcceptBar(false)}
+                    onClose={() => {
+                        setDisabled(false);
+                        setAcceptBar(false);
+                    }}
                     acceptWrapMessage={acceptWrapMessage}
                     setAcceptWrap={setAcceptWrap}
                 />
             )}
             {openLoading && (
-                <BottomModal onClose={() => setOpenLoading(false)}>
+                <BottomModal
+                    onClose={() => {
+                        setDisabled(false);
+                        setOpenLoading(false);
+                    }}>
                     <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
                         <LoadingOutlined />
                     </Column>

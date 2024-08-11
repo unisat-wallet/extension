@@ -78,7 +78,7 @@ export default function UnWrapBitcoinOpnet() {
 
             if ('error' in checkWithdrawalRequest) {
                 tools.toastError('Error getting WBTC');
-                throw new Error('Invalid calldata in withdrawal request');
+                return;
             }
             console.log(checkWithdrawalRequest.decoded[0]);
             const result = 10 ** OpNetBalance.divisibility;
