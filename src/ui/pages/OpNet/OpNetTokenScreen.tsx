@@ -14,6 +14,7 @@ import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
+import { useBTCUnit } from '@/ui/state/settings/hooks';
 
 interface LocationState {
     address: string;
@@ -91,6 +92,7 @@ export default function OpNetTokenScreen() {
         tools.showLoading(false);
     }, []);
 
+    const unitBtc = useBTCUnit();
     useEffect(() => {
         const getAddress = async () => {
             Web3API.setNetwork(await wallet.getChainType());
@@ -109,7 +111,7 @@ export default function OpNetTokenScreen() {
                 address: '',
                 amount: btcBalance,
                 divisibility: 8,
-                symbol: 'BTC',
+                symbol: unitBtc,
                 name: 'Bitcoin',
                 logo: ''
             });
@@ -130,7 +132,7 @@ export default function OpNetTokenScreen() {
             setLoading(false);
         };
         void getAddress();
-    }, [account.address]);
+    }, [account.address, unitBtc]);
 
     const enableTransfer = useMemo(() => {
         let enable = false;
@@ -225,7 +227,7 @@ export default function OpNetTokenScreen() {
                                         text="Unwrap Bitcoin"
                                         preset="primary"
                                         icon="wallet"
-                                        onClick={(e) => {
+                                        onClick={() => {
                                             navigate('UnWrapBitcoinOpnet', {
                                                 OpNetBalance: tokenSummary.opNetBalance
                                             });

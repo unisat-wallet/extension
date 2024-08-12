@@ -35,7 +35,7 @@ export default function UnWrapBitcoinOpnet() {
     const navigate = useNavigate();
     const [inputAmount, setInputAmount] = useState('');
     const [disabled, setDisabled] = useState(true);
-    const [OpnetRateInputVal, adjustFeeRateInput] = useState('5000');
+    const [OpnetRateInputVal, adjustFeeRateInput] = useState('330');
     const [toInfo, setToInfo] = useState<{
         address: string;
         domain: string;
@@ -87,7 +87,7 @@ export default function UnWrapBitcoinOpnet() {
 
     //const prepareSendRunes = usePrepareSendRunesCallback();
 
-    const [feeRate, setFeeRate] = useState(5);
+    const [feeRate, setFeeRate] = useState(10);
     const [enableRBF, setEnableRBF] = useState(false);
     const keyring = useCurrentKeyring();
     const items = useMemo(() => {
@@ -107,15 +107,6 @@ export default function UnWrapBitcoinOpnet() {
         if (!inputAmount) {
             return;
         }
-
-        // if (outputValue < minOutputValue) {
-        //   setError(`OutputValue must be at least ${minOutputValue}`);
-        //   return;
-        // }
-
-        // if (!outputValue) {
-        //   return;
-        // }
 
         if (inputAmount != '') {
             //Prevent repeated triggering caused by setAmount

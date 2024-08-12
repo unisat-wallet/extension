@@ -16,6 +16,8 @@ import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../MainRoute';
 import { bigIntToDecimal } from '@/shared/web3/Web3API';
+import { currentConsensusConfig } from '@btc-vision/transaction';
+import { useBTCUnit } from '@/ui/state/settings/hooks';
 
 interface ItemData {
     key: string;
@@ -34,7 +36,7 @@ export default function WrapBitcoinOpnet() {
     const navigate = useNavigate();
     const [inputAmount, setInputAmount] = useState('');
     const [disabled, setDisabled] = useState(true);
-    const [OpnetRateInputVal, adjustFeeRateInput] = useState('5000');
+    const [OpnetRateInputVal, adjustFeeRateInput] = useState('330');
     const [toInfo, setToInfo] = useState<{
         address: string;
         domain: string;
@@ -65,9 +67,11 @@ export default function WrapBitcoinOpnet() {
         tools.showLoading(false);
     }, []);
 
-    const [feeRate, setFeeRate] = useState(50);
+    const [feeRate, setFeeRate] = useState(10);
     const [enableRBF, setEnableRBF] = useState(false);
     const keyring = useCurrentKeyring();
+    const unitBtc = useBTCUnit();
+
     const items = useMemo(() => {
         const _items: ItemData[] = keyring.accounts.map((v) => {
             return {
@@ -87,26 +91,19 @@ export default function WrapBitcoinOpnet() {
             return;
         }
 
-        if (parseFloat(inputAmount) < 0.002) {
+        const minimalWrapAmount = bigIntToDecimal(currentConsensusConfig.VAULT_MINIMUM_AMOUNT, 8);
+        if (parseFloat(inputAmount) < parseFloat(minimalWrapAmount)) {
+            tools.toastWarning(`You must wrap at least ${minimalWrapAmount} ${unitBtc}`);
             setDisabled(true);
             return;
         }
-
-        // if (outputValue < minOutputValue) {
-        //   setError(`OutputValue must be at least ${minOutputValue}`);
-        //   return;
-        // }
-
-        // if (!outputValue) {
-        //   return;
-        // }
 
         if (inputAmount !== '') {
             //Prevent repeated triggering caused by setAmount
             setDisabled(false);
             return;
         }
-    }, [inputAmount, feeRate, enableRBF]);
+    }, [inputAmount, feeRate, enableRBF, unitBtc]);
     return (
         <Layout>
             <Header
