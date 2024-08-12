@@ -47,14 +47,14 @@ export function FeeRateBar({ readonly, onChange }: { readonly?: boolean; onChang
 
     useEffect(() => {
         const defaultOption = feeOptions[1];
-        let val = defaultOption ? defaultOption.feeRate : 10;
+        let val = defaultOption ? defaultOption.feeRate : 15;
         if (feeOptionIndex === FeeRateType.CUSTOM) {
             val = parseFloat(feeRateInputVal) || 0;
         } else if (feeOptions.length > 0) {
             val = feeOptions[feeOptionIndex].feeRate;
 
-            if (val < 10) {
-                val = 10;
+            if (val < 5) {
+                val = 5;
             }
         }
 
