@@ -170,6 +170,9 @@ function Step2({
     return (
         <Column gap="lg">
             <Text text="Address Type" preset="bold" />
+
+            <Text text="OP_NET is currently only compatible with Taproot (P2TR) addresses." color="red" />
+
             {hdPathOptions.map((item, index) => {
                 const address = previewAddresses[index];
                 const assets = addressAssets[address] || {

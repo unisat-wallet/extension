@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { ADDRESS_TYPES, KEYRING_TYPE } from '@/shared/constant';
-import { Column, Content, Header, Layout } from '@/ui/components';
+import { Column, Content, Header, Layout, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressTypeCard } from '@/ui/components/AddressTypeCard';
 import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
@@ -90,6 +90,7 @@ export default function AddressTypeScreen() {
                 title="Address Type"
             />
             <Content>
+                <Text text="OP_NET is currently only compatible with Taproot (P2TR) addresses." color="red" />
                 <Column>
                     {addressTypes.map((item, index) => {
                         const address = addresses[item.value];

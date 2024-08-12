@@ -86,7 +86,7 @@ export function Step2({
 
     const [pathText, setPathText] = useState(contextData.customHdPath);
 
-    const [recommendedTypeIndex, setRecommendedTypeIndex] = useState(0);
+    const [recommendedTypeIndex, setRecommendedTypeIndex] = useState(ADDRESS_TYPES[AddressType.P2TR].displayIndex);
 
     useEffect(() => {
         if (scannedGroups.length > 0) {
@@ -291,6 +291,8 @@ export function Step2({
             ) : (
                 <Text text="Address Type" preset="bold" />
             )}
+
+            <Text text="OP_NET is currently only compatible with Taproot (P2TR) addresses." color="red" />
 
             {scannedGroups.length > 0 &&
                 scannedGroups.map((item, index) => {
