@@ -282,24 +282,34 @@ export default function OpNetTokenScreen() {
                             )}
                         </Row>
 
-                        <Row itemsCenter fullX justifyBetween>
-                            <Text text={'Active Stake'} color="textDim" size="md" />
-                            <Text text={bigIntToDecimal(stakedAmount, 8).toString()}
-                                  size="md" />
-                        </Row>
-                        <Row itemsCenter fullX justifyBetween>
-                            <Text text={'Reward'} color="textDim" size="md" />
-                            <Text text={bigIntToDecimal(stakedReward, 8).toString()}
-                                  size="md" />
-                        </Row>
-                        <Row itemsCenter fullX justifyBetween>
-                            <Text text={'Total Staked'} color="textDim" size="md" />
-                            <Text text={bigIntToDecimal(totalStaked, 8).toString()} size="md" />
-                        </Row>
-                        <Row itemsCenter fullX justifyBetween>
-                            <Text text={'Reward Pool'} color="textDim" size="md" />
-                            <Text text={bigIntToDecimal(rewardPool, 8).toString()} size="md" />
-                        </Row>
+                        {tokenSummary.opNetBalance.address === Web3API.WBTC && btcBalance.divisibility == 8 ? (
+                            <>
+                                <Row itemsCenter fullX justifyBetween>
+                                    <Text text={'Active Stake'} color="textDim" size="md" />
+                                    <Text
+                                        text={bigIntToDecimal(stakedAmount, 8).toString() + ' ' + tokenSummary.opNetBalance.symbol}
+                                        size="md" />
+                                </Row>
+                                <Row itemsCenter fullX justifyBetween>
+                                    <Text text={'Reward'} color="textDim" size="md" />
+                                    <Text
+                                        text={bigIntToDecimal(stakedReward, 8).toString() + ' ' + tokenSummary.opNetBalance.symbol}
+                                        size="md" />
+                                </Row>
+                                <Row itemsCenter fullX justifyBetween>
+                                    <Text text={'Total Staked'} color="textDim" size="md" />
+                                    <Text
+                                        text={bigIntToDecimal(totalStaked, 8).toString() + ' ' + tokenSummary.opNetBalance.symbol}
+                                        size="md" />
+                                </Row>
+                                <Row itemsCenter fullX justifyBetween>
+                                    <Text text={'Reward Pool'} color="textDim" size="md" />
+                                    <Text
+                                        text={bigIntToDecimal(rewardPool, 8).toString() + ' ' + tokenSummary.opNetBalance.symbol}
+                                        size="md" />
+                                </Row>
+                            </>
+                        ) : <></>}
                     </Column>
 
                     <Text
