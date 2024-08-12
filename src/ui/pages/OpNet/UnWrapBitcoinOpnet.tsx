@@ -1,8 +1,6 @@
 import { getContract, IWBTCContract, WBTC_ABI } from 'opnet';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
-
-import { runesUtils } from '@/shared/lib/runes-utils';
 import { Account, Inscription, OpNetBalance } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
 import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
@@ -48,7 +46,7 @@ export default function UnWrapBitcoinOpnet() {
         inscription: undefined
     });
 
-    const [availableBalance, setAvailableBalance] = useState('0');
+    const [availableBalance, setAvailableBalance] = useState(0n);
     const [error, setError] = useState('');
 
     const defaultOutputValue = 546;
@@ -80,8 +78,8 @@ export default function UnWrapBitcoinOpnet() {
                 return;
             }
 
-            const balance = bigIntToDecimal(checkWithdrawalRequest.decoded[0] as bigint, 8);
-            setAvailableBalance(balance.toString());
+            //const balance = bigIntToDecimal(checkWithdrawalRequest.decoded[0] as bigint, 8);
+            setAvailableBalance(checkWithdrawalRequest.decoded[0] as bigint);
             tools.showLoading(false);
         };
         void checkAvailableBalance();
@@ -137,8 +135,8 @@ export default function UnWrapBitcoinOpnet() {
                 <Row itemsCenter fullX justifyCenter>
                     {OpNetBalance.logo && <Image src={OpNetBalance.logo} size={fontSizes.tiny} />}
                     <Text
-                        text={`${runesUtils.toDecimalAmount(
-                            OpNetBalance.amount.toString(),
+                        text={`${bigIntToDecimal(
+                            OpNetBalance.amount,
                             OpNetBalance.divisibility
                         )} ${OpNetBalance.symbol} `}
                         preset="bold"
@@ -149,21 +147,21 @@ export default function UnWrapBitcoinOpnet() {
                 </Row>
                 <Column mt="lg">
                     <Row justifyBetween>
-                        <Text text="Amount" color="textDim" />
+                        <Text text="WBTC Balance (total)" color="textDim" />
                         <Row
                             itemsCenter
                             onClick={() => {
                                 setInputAmount(
-                                    runesUtils.toDecimalAmount(
-                                        OpNetBalance.amount.toString(),
+                                    bigIntToDecimal(
+                                        OpNetBalance.amount + availableBalance,
                                         OpNetBalance.divisibility
                                     )
                                 );
                             }}>
                             <Text text="MAX" preset="sub" style={{ color: colors.white_muted }} />
                             <Text
-                                text={`${runesUtils.toDecimalAmount(
-                                    OpNetBalance.amount.toString(),
+                                text={`${bigIntToDecimal(
+                                    OpNetBalance.amount + availableBalance,
                                     OpNetBalance.divisibility
                                 )} `}
                                 preset="bold"
@@ -178,25 +176,17 @@ export default function UnWrapBitcoinOpnet() {
                             itemsCenter
                             onClick={() => {
                                 setInputAmount(
-                                    runesUtils.toDecimalAmount(
-                                        OpNetBalance.amount.toString(),
+                                    bigIntToDecimal(
+                                        OpNetBalance.amount,
                                         OpNetBalance.divisibility
                                     )
                                 );
                             }}>
                             <Text
                                 text={`${
-                                    parseFloat(
-                                        runesUtils.toDecimalAmount(
-                                            availableBalance.toString(),
-                                            OpNetBalance.divisibility
-                                        )
-                                    ) +
-                                    parseFloat(
-                                        runesUtils.toDecimalAmount(
-                                            OpNetBalance.amount.toString(),
-                                            OpNetBalance.divisibility
-                                        )
+                                    bigIntToDecimal(
+                                        OpNetBalance.amount + availableBalance,
+                                        OpNetBalance.divisibility
                                     )
                                 } `}
                                 preset="bold"
@@ -267,7 +257,7 @@ export default function UnWrapBitcoinOpnet() {
                     disabled={disabled}
                     preset="primary"
                     text="Next"
-                    onClick={(e) => {
+                    onClick={() => {
                         navigate('TxOpnetConfirmScreen', {
                             rawTxInfo: {
                                 items: items,

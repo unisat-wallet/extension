@@ -271,6 +271,7 @@ export default function TxOpnetConfirmScreen() {
         const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
         const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
         const unwrapAmount = expandToDecimals(rawTxInfo.inputAmount, 8); // Minimum amount to unwrap
+
         let utxos: UTXO[] = [];
         if (!useNextUTXO) {
             utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], unwrapAmount);
@@ -392,7 +393,8 @@ export default function TxOpnetConfirmScreen() {
             }
 
             tools.showLoading(true, 'Waiting for transaction confirmation...');
-            const transactionHash = await waitForTransaction(secondTransaction.result);
+            await waitForTransaction(secondTransaction.result);
+
             tools.showLoading(false);
         }
 
@@ -402,10 +404,13 @@ export default function TxOpnetConfirmScreen() {
             return;
         }
 
+        const chainId = getOPNetChainType(await wallet.getChainType());
+
         // TODO: Verify that the UTXOs have enough money in them to process to the transaction, if not, we have to fetch more UTXOs.
         const unwrapParameters: IUnwrapParameters = {
             from: walletGet.p2tr, // Address to unwrap
             utxos: utxosForUnwrap, // Use the UTXO generated from the withdrawal request
+            chainId: chainId,
             unwrapUTXOs: unwrapUtxos.vaultUTXOs, // Vault UTXOs to unwrap
             signer: walletGet.keypair, // Signer
             network: Web3API.network, // Bitcoin network
@@ -413,7 +418,7 @@ export default function TxOpnetConfirmScreen() {
             priorityFee: rawTxInfo.priorityFee, // OPNet priority fee (incl gas.)
             amount: unwrapAmount
         };
-
+        
         try {
             const finalTx = await Web3API.transactionFactory.unwrap(unwrapParameters);
             setfinalUnwrapTx(finalTx);
@@ -425,7 +430,8 @@ export default function TxOpnetConfirmScreen() {
             );
             setUnWrapAmount(unwrapAmount);
         } catch (e) {
-            tools.toastError('Error please ty again later');
+            console.log('Something went wrong while building the unwrap transaction', e);
+            tools.toastError('Something went wrong while building the unwrap request. Please try again later.');
             setDisabled(false);
         }
     };

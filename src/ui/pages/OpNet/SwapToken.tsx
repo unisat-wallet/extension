@@ -13,7 +13,6 @@ import { BaseView } from '@/ui/components/BaseView';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { useChain } from '@/ui/state/settings/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -32,7 +31,6 @@ export default function Swap() {
         OpNetBalance: OpNetBalance;
     };
     const OpNetBalance = props.OpNetBalance;
-    const chain = useChain();
 
     const [loading, setLoading] = useState(true);
     const [switchOptions, setSwitchOptions] = useState<OpNetBalance[]>([]);
@@ -74,7 +72,7 @@ export default function Swap() {
             tools.toastError('Error,You can\'t set input to output');
             return;
         }
-        handleInputChange(inputAmount);
+        void handleInputChange(inputAmount);
         setSelectedOptioOutput(option);
     };
     const setMax = () => {
@@ -304,7 +302,7 @@ export default function Swap() {
                     preset="primary"
                     icon="swap"
                     style={$styleButton}
-                    onClick={(e) => {
+                    onClick={() => {
                         navigate('TxOpnetConfirmScreen', {
                             rawTxInfo: {
                                 items: items,
@@ -315,13 +313,13 @@ export default function Swap() {
                                 feeRate: feeRate,
                                 priorityFee: BigInt(OpnetRateInputVal), // replace with actual OpnetRateInputVal
                                 header: 'Swap Token', // replace with actual header
-                                networkFee: '100',
+                                networkFee: feeRate,
                                 slippageTolerance: slippageTolerance, // replace with actual networkFee
                                 features: {
                                     rbf: false // replace with actual rbf value
                                 },
                                 inputInfos: [], // replace with actual inputInfos
-                                isToSign: false, // replace with actual isToSign value
+                                isToSign: false, // replace with acdetual isToSign value
                                 opneTokens: [
                                     {
                                         amount: expandToDecimals(inputAmount, selectedOption?.divisibility ?? 8),
