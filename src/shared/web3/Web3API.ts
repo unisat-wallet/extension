@@ -167,8 +167,9 @@ class Web3API {
     public async getUTXOs(addresses: string[], requiredAmount: bigint): Promise<UTXO[]> {
         const utxoSetting: FetchUTXOParamsMultiAddress = {
             addresses,
-            minAmount: 50_000n, // we ensure we are not using Ordinals UTXOs
-            requestedAmount: requiredAmount
+            minAmount: 20_000n, // we ensure we are not using Ordinals UTXOs
+            requestedAmount: requiredAmount,
+            optimized: true
         };
 
         let utxos: UTXO[];
