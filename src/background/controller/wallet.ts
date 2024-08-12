@@ -38,7 +38,7 @@ import {
 } from '@/shared/types';
 import { checkAddressFlag, getChainInfo } from '@/shared/utils';
 import { UTXO_DUST, UnspentOutput, txHelpers } from '@unisat/wallet-sdk';
-import { publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
+import { isValidAddress, publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
 import { ECPair, bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 import { KeystoneKeyring } from '@unisat/wallet-sdk/lib/keyring';
 import {
@@ -825,14 +825,14 @@ export class WalletController extends BaseController {
   };
 
   sendBTC = async ({
-                     to,
-                     amount,
-                     feeRate,
-                     enableRBF,
-                     btcUtxos,
-                     memo,
-                     memos
-                   }: {
+    to,
+    amount,
+    feeRate,
+    enableRBF,
+    btcUtxos,
+    memo,
+    memos
+  }: {
     to: string;
     amount: number;
     feeRate: number;
@@ -854,6 +854,10 @@ export class WalletController extends BaseController {
       throw new Error('Insufficient balance.');
     }
 
+    if (!isValidAddress(to, networkType)) {
+      throw new Error('Invalid address.');
+    }
+
     const { psbt, toSignInputs } = await txHelpers.sendBTC({
       btcUtxos: btcUtxos,
       tos: [{ address: to, satoshis: amount }],
@@ -872,11 +876,11 @@ export class WalletController extends BaseController {
   };
 
   sendAllBTC = async ({
-                        to,
-                        feeRate,
-                        enableRBF,
-                        btcUtxos
-                      }: {
+    to,
+    feeRate,
+    enableRBF,
+    btcUtxos
+  }: {
     to: string;
     feeRate: number;
     enableRBF: boolean;
@@ -910,13 +914,13 @@ export class WalletController extends BaseController {
   };
 
   sendOrdinalsInscription = async ({
-                                     to,
-                                     inscriptionId,
-                                     feeRate,
-                                     outputValue,
-                                     enableRBF,
-                                     btcUtxos
-                                   }: {
+    to,
+    inscriptionId,
+    feeRate,
+    outputValue,
+    enableRBF,
+    btcUtxos
+  }: {
     to: string;
     inscriptionId: string;
     feeRate: number;
@@ -967,12 +971,12 @@ export class WalletController extends BaseController {
   };
 
   sendOrdinalsInscriptions = async ({
-                                      to,
-                                      inscriptionIds,
-                                      feeRate,
-                                      enableRBF,
-                                      btcUtxos
-                                    }: {
+    to,
+    inscriptionIds,
+    feeRate,
+    enableRBF,
+    btcUtxos
+  }: {
     to: string;
     inscriptionIds: string[];
     utxos: UTXO[];
@@ -1032,12 +1036,12 @@ export class WalletController extends BaseController {
   };
 
   splitOrdinalsInscription = async ({
-                                      inscriptionId,
-                                      feeRate,
-                                      outputValue,
-                                      enableRBF,
-                                      btcUtxos
-                                    }: {
+    inscriptionId,
+    feeRate,
+    outputValue,
+    enableRBF,
+    btcUtxos
+  }: {
     to: string;
     inscriptionId: string;
     feeRate: number;
@@ -1582,12 +1586,12 @@ export class WalletController extends BaseController {
   };
 
   sendAtomicalsNFT = async ({
-                              to,
-                              atomicalId,
-                              feeRate,
-                              enableRBF,
-                              btcUtxos
-                            }: {
+    to,
+    atomicalId,
+    feeRate,
+    enableRBF,
+    btcUtxos
+  }: {
     to: string;
     atomicalId: string;
     feeRate: number;
@@ -1635,14 +1639,14 @@ export class WalletController extends BaseController {
   };
 
   sendAtomicalsFT = async ({
-                             to,
-                             ticker,
-                             amount,
-                             feeRate,
-                             enableRBF,
-                             btcUtxos,
-                             assetUtxos
-                           }: {
+    to,
+    ticker,
+    amount,
+    feeRate,
+    enableRBF,
+    btcUtxos,
+    assetUtxos
+  }: {
     to: string;
     ticker: string;
     amount: number;
@@ -1845,15 +1849,15 @@ export class WalletController extends BaseController {
   };
 
   sendRunes = async ({
-                       to,
-                       runeid,
-                       runeAmount,
-                       feeRate,
-                       enableRBF,
-                       btcUtxos,
-                       assetUtxos,
-                       outputValue
-                     }: {
+    to,
+    runeid,
+    runeAmount,
+    feeRate,
+    enableRBF,
+    btcUtxos,
+    assetUtxos,
+    outputValue
+  }: {
     to: string;
     runeid: string;
     runeAmount: string;

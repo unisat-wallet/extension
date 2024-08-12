@@ -279,7 +279,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
   [ChainType.FRACTAL_BITCOIN_MAINNET]: {
     enum: ChainType.FRACTAL_BITCOIN_MAINNET,
     label: 'Fractal Bitcoin (Beta)',
-    icon: './images/artifacts/fractalbitcoin-mainnet.png',
+    icon: './images/artifacts/fractalbitcoin-mainnet.svg',
     unit: 'FB',
     networkType: NetworkType.MAINNET,
     endpoints: ['https://wallet-api-fractal.unisat.io'],
