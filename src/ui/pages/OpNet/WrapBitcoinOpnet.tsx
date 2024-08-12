@@ -83,6 +83,12 @@ export default function WrapBitcoinOpnet() {
         setDisabled(true);
 
         if (!inputAmount) {
+            setDisabled(true);
+            return;
+        }
+
+        if (parseFloat(inputAmount) < 0.002) {
+            setDisabled(true);
             return;
         }
 
@@ -95,7 +101,7 @@ export default function WrapBitcoinOpnet() {
         //   return;
         // }
 
-        if (inputAmount != '') {
+        if (inputAmount !== '') {
             //Prevent repeated triggering caused by setAmount
             setDisabled(false);
             return;
@@ -210,7 +216,7 @@ export default function WrapBitcoinOpnet() {
                     disabled={disabled}
                     preset="primary"
                     text="Next"
-                    onClick={(e) => {
+                    onClick={() => {
                         navigate('TxOpnetConfirmScreen', {
                             rawTxInfo: {
                                 items: items,
