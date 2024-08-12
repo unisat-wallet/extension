@@ -31,8 +31,6 @@ export const AddOpNetToken = ({
     setImportTokenBool: (value: boolean) => void;
     fetchData: () => void;
 }) => {
-    const [disclaimerModalVisible, setDisclaimerModalVisible] = useState(false);
-    const [channelType, setChannelType] = useState<PaymentChannelType>(PaymentChannelType.AlchemyPay);
     const [tokenState, setTokenState] = useState<string>('');
     const [channels, setChannels] = useState<string[]>([]);
     const wallet = useWallet();
@@ -97,8 +95,8 @@ export const AddOpNetToken = ({
                 disabled={false}
                 preset="primary"
                 text="Next"
-                onClick={(e) => {
-                    saveToLocalStorage();
+                onClick={() => {
+                    void saveToLocalStorage();
                 }}></Button>
         </BottomModal>
     );

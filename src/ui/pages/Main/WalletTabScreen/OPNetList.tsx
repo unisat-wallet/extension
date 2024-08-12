@@ -79,6 +79,14 @@ export function OPNetList() {
                         tokenAddress
                     );
 
+                    if (contractInfo?.name === 'Generic Contract') {
+                        tools.toastError(`Invalid Token ${tokenAddress}`);
+                        parsedTokens.splice(i, 1);
+                        localStorage.setItem('tokensImported_' + getChain, JSON.stringify(parsedTokens));
+                        i--;
+                        continue;
+                    }
+
                     const balance = await contract.balanceOf(currentAccount.address);
                     if (!('error' in balance)) {
                         tokenBalances.push({
