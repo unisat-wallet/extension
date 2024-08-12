@@ -108,7 +108,12 @@ class Web3API {
         }
 
         if (oldNetwork !== this.network) {
-            this._metadata = OPNetMetadata.getAddresses(this.getOPNetNetwork(), getOPNetChainType(chainType));
+            try {
+                this._metadata = OPNetMetadata.getAddresses(this.getOPNetNetwork(), getOPNetChainType(chainType));
+            } catch (e) {
+                //
+            }
+
             this.setProvider(chainType);
         }
     }
