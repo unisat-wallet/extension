@@ -171,9 +171,7 @@ class Web3API {
             requestedAmount: requiredAmount,
             optimized: true
         };
-
-        console.log(utxoSetting);
-
+        
         let utxos: UTXO[];
         if (this.nextUTXOs.length > 0) {
             utxos = this.nextUTXOs;
