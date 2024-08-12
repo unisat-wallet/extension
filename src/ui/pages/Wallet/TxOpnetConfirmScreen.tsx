@@ -363,7 +363,7 @@ export default function TxOpnetConfirmScreen() {
 
             const waitForTransaction = async (txHash: string) => {
                 let attempts = 0;
-                const maxAttempts = 60; // 10 minutes max wait time
+                const maxAttempts = 360; // 10 minutes max wait time
                 setOpenLoading(true);
 
                 while (attempts < maxAttempts) {
@@ -375,9 +375,9 @@ export default function TxOpnetConfirmScreen() {
                             return txResult.hash;
                         }
                     } catch (error) {
-                        console.error('Error fetching transaction:', error);
+                        console.log('Error fetching transaction:', error);
                     }
-                    await new Promise((resolve) => setTimeout(resolve, 10000)); // Wait 10 seconds
+                    await new Promise((resolve) => setTimeout(resolve, 2500)); // Wait 10 seconds
                     attempts++;
                 }
                 tools.toastError('Transaction not confirmed after 10 minutes');
