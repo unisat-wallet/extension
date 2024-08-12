@@ -425,7 +425,7 @@ export interface WalletController {
         outputValue?: number;
     }): Promise<string>;
 
-    getOpNetBalalnce(address: string): Promise<string>;
+    getOPNetBalance(address: string): Promise<string>;
 
     getBuyBtcChannelList(): Promise<BtcChannelItem[]>;
 }

@@ -95,7 +95,7 @@ export default function OpNetTokenScreen() {
         const getAddress = async () => {
             Web3API.setNetwork(await wallet.getChainType());
 
-            const btcbalanceGet = await Web3API.provider.getBalance(account.address);
+            const btcBalance = await Web3API.getBalance(account.address, true);
             const contract: IOP_20Contract = getContract<IOP_20Contract>(address, OP_20_ABI, Web3API.provider);
             const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(address);
 
@@ -107,7 +107,7 @@ export default function OpNetTokenScreen() {
             }
             setBtcBalance({
                 address: '',
-                amount: btcbalanceGet,
+                amount: btcBalance,
                 divisibility: 8,
                 symbol: 'BTC',
                 name: 'Bitcoin',
@@ -214,7 +214,7 @@ export default function OpNetTokenScreen() {
                                         text="Wrap Bitcoin"
                                         preset="primary"
                                         icon="wallet"
-                                        onClick={(e) => {
+                                        onClick={() => {
                                             navigate('WrapBitcoinOpnet', {
                                                 OpNetBalance: btcBalance
                                             });

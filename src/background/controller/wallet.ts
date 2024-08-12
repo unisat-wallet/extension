@@ -45,7 +45,7 @@ import {
     WalletKeyring
 } from '@/shared/types';
 import { checkAddressFlag, getChainInfo } from '@/shared/utils';
-import Web3API from '@/shared/web3/Web3API';
+import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
 import {
     IInteractionParameters,
     IUnwrapParameters,
@@ -160,9 +160,13 @@ export class WalletController extends BaseController {
         let data: BitcoinBalance;
 
         try {
-            data = await this.getOpNetBalance(address);
+            if (address.startsWith('bcrt1')) {
+                data = await this.getOpNetBalance(address);
+            } else {
+                data = await openapiService.getAddressBalance(address);
+            }
         } catch (e) {
-            data = await openapiService.getAddressBalance(address);
+            data = await this.getOpNetBalance(address);
         }
 
         preferenceService.updateAddressBalance(address, data);
@@ -2180,19 +2184,25 @@ export class WalletController extends BaseController {
 
     //OPNET RPC API
     getOpNetBalance = async (address: string): Promise<BitcoinBalance> => {
-        const balance: string = await openapiService.getOPNetBalance(address);
-        const btcBalance = BigInt(balance);
+        const btcBalanceSpendable: bigint = await Web3API.getBalance(address, true); //await openapiService.getOPNetBalance(address);
+        //const btcBalanceSpendableStr: string = bigIntToDecimal(btcBalanceSpendable, 8);
+
+        const btcBalanceTotal: bigint = await Web3API.getBalance(address, false);
+        const btcBalanceTotalStr: string = bigIntToDecimal(btcBalanceTotal, 8);
+
+        const inscriptionAmount: bigint = btcBalanceTotal - btcBalanceSpendable;
+        const inscriptionAmountStr: string = bigIntToDecimal(inscriptionAmount, 8);
 
         return {
-            confirm_amount: btcBalance.toString(),
+            confirm_amount: btcBalanceTotalStr,
             pending_amount: '0',
-            amount: btcBalance.toString(),
-            confirm_btc_amount: btcBalance.toString(),
+            amount: btcBalanceTotalStr,
+            confirm_btc_amount: btcBalanceTotalStr,
             pending_btc_amount: '0',
-            btc_amount: btcBalance.toString(),
+            btc_amount: btcBalanceTotalStr,
             confirm_inscription_amount: '0',
             pending_inscription_amount: '0',
-            inscription_amount: '0',
+            inscription_amount: inscriptionAmountStr,
             usd_value: '0.00'
         };
     };

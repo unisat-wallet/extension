@@ -85,36 +85,36 @@ export default function WalletTabScreen() {
     const [loadingFetch, setLoadingFetch] = useState(false);
 
     const safeBalance = useSafeBalance();
-    const avaiableSatoshis = useMemo(() => {
+    const availableSatoshis = amountToSatoshis(accountBalance.amount) - amountToSatoshis(accountBalance.inscription_amount);
+
+    /*
+    useMemo(() => {
         return amountToSatoshis(safeBalance);
     }, [safeBalance]);
+     */
 
     const totalSatoshis = amountToSatoshis(accountBalance.amount);
-    const unavailableSatoshis = totalSatoshis - avaiableSatoshis;
-    const [avaiableAmount, setAvailableAmount] = useState(safeBalance);
+    const unavailableSatoshis = totalSatoshis - availableSatoshis;
+    const [availableAmount, setAvailableAmount] = useState(safeBalance);
     const unavailableAmount = satoshisToAmount(unavailableSatoshis);
     const totalAmountUse = satoshisToAmount(totalSatoshis);
     const [totalAmount, setTotalAmount] = useState(totalAmountUse);
 
     const addressSummary = useAddressSummary();
-    const [balanceValueRegtest, setBalanceValue] = useState<string | number>('--');
 
     useEffect(() => {
         const fetchBalance = async () => {
             if (accountBalance.amount === '0') {
-                setBalanceValue('--');
+                setAvailableAmount(0);
             } else {
                 try {
                     Web3API.setNetwork(await wallet.getChainType());
 
-                    const btcBalanceGet = await Web3API.provider.getBalance(currentAccount.address);
-                    setBalanceValue(bigIntToDecimal(btcBalanceGet, 8).toString());
-                    setAvailableAmount(new BigNumber(bigIntToDecimal(btcBalanceGet, 8)).toNumber());
-                    setTotalAmount(bigIntToDecimal(btcBalanceGet, 8).toString());
-
-                    console.log('btcBalanceGet', btcBalanceGet);
+                    const btcBalance = await Web3API.getBalance(currentAccount.address, true);
+                    setAvailableAmount(new BigNumber(bigIntToDecimal(btcBalance, 8)).toNumber());
+                    setTotalAmount(bigIntToDecimal(btcBalance, 8).toString());
                 } catch (e) {
-                    setBalanceValue(accountBalance.amount);
+                    console.warn(`Unable to fetch balance -> ${e}`);
                 }
             }
         };
@@ -149,8 +149,7 @@ export default function WalletTabScreen() {
                 setConnected(site.isConnected);
             }
         };
-        console.log(assetTabKey);
-        run();
+        void run();
     }, []);
 
     const tabItems = [
@@ -240,7 +239,7 @@ export default function WalletTabScreen() {
                                 <>
                                     <Row justifyBetween>
                                         <span style={$noBreakStyle}>{'Available '}</span>
-                                        <span style={$noBreakStyle}>{` ${avaiableAmount} ${btcUnit}`}</span>
+                                        <span style={$noBreakStyle}>{` ${availableAmount} ${btcUnit}`}</span>
                                     </Row>
                                     <Row justifyBetween>
                                         <span style={$noBreakStyle}>{'Unavailable '}</span>
@@ -282,14 +281,9 @@ export default function WalletTabScreen() {
                             fontSize: fontSizes.xs
                         }}>
                         <div>
-                            {/*<div>
-                                <Text text={balanceValue + ' ' + btcUnit} preset="title-bold" textCenter size="xxxl" />
-                            </div>*/}
                             <Text
                                 text={
-                                    chain.enum == 'BITCOIN_REGTEST'
-                                        ? balanceValueRegtest + `  ${btcUnit}`
-                                        : balanceValue + `  ${btcUnit}`
+                                    `${balanceValue}  ${btcUnit}`
                                 }
                                 preset="title-bold"
                                 textCenter

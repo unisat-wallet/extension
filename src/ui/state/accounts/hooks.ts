@@ -193,6 +193,7 @@ export function useFetchBalanceCallback() {
         if (!currentAccount.address) return;
         const cachedBalance = await wallet.getAddressCacheBalance(currentAccount.address);
         const _accountBalance = await wallet.getAddressBalance(currentAccount.address);
+
         dispatch(
             accountActions.setBalance({
                 address: currentAccount.address,
@@ -203,8 +204,9 @@ export function useFetchBalanceCallback() {
                 pending_btc_amount: _accountBalance.pending_btc_amount
             })
         );
+
         if (cachedBalance.amount !== _accountBalance.amount) {
-            wallet.expireUICachedData(currentAccount.address);
+            await wallet.expireUICachedData(currentAccount.address);
             dispatch(accountActions.expireHistory());
         }
 

@@ -111,7 +111,7 @@ export class OpenApiService {
         return jsonRes.data;
     };
 
-    httpGet = async (route: string, params: any, endpoint?: string) => {
+    httpGet = async (route: string, params: object, endpoint?: string) => {
         if (!endpoint) {
             endpoint = this.endpoint;
         }
@@ -136,14 +136,15 @@ export class OpenApiService {
         let res: Response;
         try {
             res = await fetch(new Request(url), { method: 'GET', headers, mode: 'cors', cache: 'default' });
-        } catch (e: any) {
+        } catch (err: unknown) {
+            const e: Error = err as Error;
             throw new Error('Network error: ' + e && e.message);
         }
 
         return this.getRespData(res);
     };
 
-    httpPost = async (route: string, params: any) => {
+    httpPost = async (route: string, params: object) => {
         const url = this.endpoint + route;
         const headers = new Headers();
         headers.append('X-Client', 'OP_WALLET');
@@ -524,11 +525,6 @@ export class OpenApiService {
 
     async getAddressRunesTokenSummary(address: string, runeid: string): Promise<AddressRunesTokenSummary> {
         return this.httpGet(`/v5/runes/token-summary?address=${address}&runeid=${runeid}`, {});
-    }
-
-    //OP_NET
-    async getOPNetBalance(address: string): Promise<string> {
-        return this.httpGet(`/api/v1/address/get-balance?address=${address}`, {});
     }
 }
 

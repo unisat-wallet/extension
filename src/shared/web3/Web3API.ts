@@ -160,7 +160,7 @@ class Web3API {
     }
 
     public setProviderFromUrl(url: string): void {
-        this._provider = new JSONRpcProvider(url);
+        this._provider = new JSONRpcProvider(url, 6000);
         this._limitedProvider = new OPNetLimitedProvider(url);
     }
 
@@ -171,6 +171,8 @@ class Web3API {
             requestedAmount: requiredAmount,
             optimized: true
         };
+
+        console.log(utxoSetting);
 
         let utxos: UTXO[];
         if (this.nextUTXOs.length > 0) {
@@ -183,6 +185,10 @@ class Web3API {
         }
 
         return utxos;
+    }
+
+    public async getBalance(address: Address, filterOrdinals: boolean): Promise<bigint> {
+        return await this.provider.getBalance(address, filterOrdinals);
     }
 
     public isValidPKHAddress(address: string): boolean {
