@@ -14,7 +14,6 @@ import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
-import { wBTC } from '@btc-vision/transaction';
 
 interface LocationState {
     address: string;
@@ -59,7 +58,7 @@ export default function OpNetTokenScreen() {
         const setWallet = async () => {
             Web3API.setNetwork(await wallet.getChainType());
             const contract: IWBTCContract = getContract<IWBTCContract>(
-                wBTC.getAddress(Web3API.network),
+                Web3API.WBTC,
                 WBTC_ABI,
                 Web3API.provider,
                 account.address
@@ -282,7 +281,7 @@ export default function OpNetTokenScreen() {
                                 <></>
                             )}
                         </Row>
-                        
+
                         <Row itemsCenter fullX justifyBetween>
                             <Text text={'Active Stake'} color="textDim" size="md" />
                             <Text text={bigIntToDecimal(stakedAmount, 8).toString()}

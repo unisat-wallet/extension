@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react';
 
 import { Account } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
-import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
+import Web3API, { bigIntToDecimal, getOPNetChainType } from '@/shared/web3/Web3API';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BottomModal } from '@/ui/components/BottomModal';
@@ -31,8 +31,7 @@ import {
     IWrapParameters,
     UnwrapResult,
     UTXO,
-    Wallet,
-    wBTC
+    Wallet
 } from '@btc-vision/transaction';
 
 import { useNavigate } from '../MainRoute';
@@ -203,6 +202,7 @@ export default function TxOpnetConfirmScreen() {
         const foundObject = rawTxInfo.items.find(
             (obj) => obj.account && obj.account.address === rawTxInfo.account.address
         );
+
         const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
         const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
 
@@ -225,8 +225,11 @@ export default function TxOpnetConfirmScreen() {
             return;
         }
 
+        const getChain = await wallet.getChainType();
         const wrapParameters: IWrapParameters = {
             from: walletGet.p2tr,
+            to: Web3API.WBTC,
+            chainId: getOPNetChainType(getChain),
             utxos: utxos,
             signer: walletGet.keypair,
             network: Web3API.network,
@@ -282,7 +285,7 @@ export default function TxOpnetConfirmScreen() {
         }
 
         const contract: IWBTCContract = getContract<IWBTCContract>(
-            wBTC.getAddress(Web3API.network),
+            Web3API.WBTC,
             WBTC_ABI,
             Web3API.provider,
             walletGet.p2tr
@@ -324,9 +327,11 @@ export default function TxOpnetConfirmScreen() {
                 return;
             }
 
+            const getChain = await wallet.getChainType();
             const interactionParameters: IInteractionParameters = {
                 from: walletGet.p2tr,
                 to: contract.address.toString(),
+                chainId: getOPNetChainType(getChain),
                 utxos: utxos,
                 signer: walletGet.keypair,
                 network: Web3API.network,
@@ -434,7 +439,7 @@ export default function TxOpnetConfirmScreen() {
         const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
 
         const contract: IWBTCContract = getContract<IWBTCContract>(
-            wBTC.getAddress(Web3API.network),
+            Web3API.WBTC,
             WBTC_ABI,
             Web3API.provider,
             walletGet.p2tr
@@ -502,7 +507,7 @@ export default function TxOpnetConfirmScreen() {
         const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
 
         const contract: IWBTCContract = getContract<IWBTCContract>(
-            wBTC.getAddress(Web3API.network),
+            Web3API.WBTC,
             WBTC_ABI,
             Web3API.provider,
             walletGet.p2tr
@@ -702,7 +707,7 @@ export default function TxOpnetConfirmScreen() {
         const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
 
         const contract: IWBTCContract = getContract<IWBTCContract>(
-            wBTC.getAddress(Web3API.network),
+            Web3API.WBTC,
             WBTC_ABI,
             Web3API.provider,
             walletGet.p2tr
@@ -717,7 +722,7 @@ export default function TxOpnetConfirmScreen() {
             return;
         }
 
-        let utxos: UTXO[] = [];
+        let utxos: UTXO[];
         if (!useNextUTXO) {
             utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], amountToSend);
         } else {

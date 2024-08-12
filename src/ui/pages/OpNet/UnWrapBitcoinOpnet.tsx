@@ -16,7 +16,6 @@ import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { useWallet } from '@/ui/utils';
-import { wBTC } from '@btc-vision/transaction';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../MainRoute';
@@ -69,7 +68,7 @@ export default function UnWrapBitcoinOpnet() {
             Web3API.setNetwork(await wallet.getChainType());
 
             const contract: IWBTCContract = getContract<IWBTCContract>(
-                wBTC.getAddress(Web3API.network),
+                Web3API.WBTC,
                 WBTC_ABI,
                 Web3API.provider,
                 account.address

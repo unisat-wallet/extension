@@ -51,7 +51,7 @@ export default function UnWrapBitcoinOpnet() {
         const setWallet = async () => {
             Web3API.setNetwork(await wallet.getChainType());
             const contract: IWBTCContract = getContract<IWBTCContract>(
-                wBTC.getAddress(Web3API.network),
+                Web3API.WBTC,
                 WBTC_ABI,
                 Web3API.provider,
                 account.address
@@ -159,7 +159,7 @@ export default function UnWrapBitcoinOpnet() {
                                     items: items,
                                     account: account,
                                     inputAmount: new BigNumber(bigIntToDecimal(stakedReward, OpNetBalance.divisibility)).toNumber(), // replace with actual inputAmount
-                                    address: wBTC.getAddress(Web3API.network), // replace with actual address
+                                    address: Web3API.WBTC, // replace with actual address
                                     feeRate: feeRate, // replace with actual feeRate
                                     priorityFee: BigInt(OpnetRateInputVal), // replace with actual OpnetRateInputVal
                                     header: 'Stake WBTC', // replace with actual header
@@ -194,7 +194,7 @@ export default function UnWrapBitcoinOpnet() {
                                     items: items,
                                     account: account,
                                     inputAmount: new BigNumber(bigIntToDecimal(stakedAmount, OpNetBalance.divisibility)).toNumber(), // replace with actual inputAmount
-                                    address: wBTC.getAddress(Web3API.network), // replace with actual address
+                                    address: Web3API.WBTC, // replace with actual address
                                     feeRate: feeRate, // replace with actual feeRate
                                     priorityFee: BigInt(OpnetRateInputVal), // replace with actual OpnetRateInputVal
                                     header: 'Stake WBTC', // replace with actual header
