@@ -25,13 +25,17 @@ function pushDefaultTokens(tokens: Address[], chain: ChainType, network: Network
     const chainId = getOPNetChainType(chain);
     const opnetNetwork = getOPNetNetwork(network);
 
-    const metadata = OPNetMetadata.getAddresses(opnetNetwork, chainId);
-    if (!tokens.includes(metadata.moto)) {
-        tokens.push(metadata.moto);
-    }
+    try {
+        const metadata = OPNetMetadata.getAddresses(opnetNetwork, chainId);
+        if (!tokens.includes(metadata.moto)) {
+            tokens.push(metadata.moto);
+        }
 
-    if (!tokens.includes(metadata.wbtc)) {
-        tokens.push(metadata.wbtc);
+        if (!tokens.includes(metadata.wbtc)) {
+            tokens.push(metadata.wbtc);
+        }
+    } catch (e) {
+        //
     }
 }
 
