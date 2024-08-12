@@ -4,7 +4,7 @@ import { useLocation } from 'react-router-dom';
 
 import { Account, OpNetBalance } from '@/shared/types';
 import { addressShortner } from '@/shared/utils';
-import Web3API from '@/shared/web3/Web3API';
+import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
 import { Button, Content, Header, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
@@ -13,6 +13,7 @@ import { useWallet } from '@/ui/utils';
 import { wBTC } from '@btc-vision/transaction';
 
 import { useNavigate } from '../MainRoute';
+import BigNumber from 'bignumber.js';
 
 interface ItemData {
     key: string;
@@ -31,6 +32,7 @@ export default function UnWrapBitcoinOpnet() {
     const navigate = useNavigate();
     const [inputAmount, setInputAmount] = useState('');
     const [disabled, setDisabled] = useState(true);
+
     const [OpnetRateInputVal, adjustFeeRateInput] = useState('5000');
     const [stakedReward, setStakeReward] = useState<bigint>(0n);
     const [stakedAmount, setStakedAmount] = useState<bigint>(0n);
@@ -41,8 +43,6 @@ export default function UnWrapBitcoinOpnet() {
 
     const [availableBalance, setAvailableBalance] = useState('0');
     const [error, setError] = useState('');
-
-    const defaultOutputValue = 546;
 
     const $style = { maxWidth: '350px', marginRight: 'auto', marginLeft: 'auto', width: '100%' } as CSSProperties;
 
@@ -57,8 +57,6 @@ export default function UnWrapBitcoinOpnet() {
                 account.address
             );
 
-            console.log('addy', account.address);
-
             const getRewards = (await contract.stakedReward(account.address)) as unknown as { decoded: bigint[] };
             const getStakedAmount = (await contract.stakedAmount(account.address)) as unknown as { decoded: bigint[] };
 
@@ -72,8 +70,8 @@ export default function UnWrapBitcoinOpnet() {
 
             const rewardPool = (await contract.rewardPool()) as unknown as { decoded: bigint[] };
             const totalStaked = (await contract.totalStaked()) as unknown as { decoded: bigint[] };
-            const timeStaked = (await contract.unstake()) as unknown as { decoded: any };
-            console.log(timeStaked);
+            //const timeStaked = (await contract.unstake()) as unknown as { decoded: any };
+
             if ('error' in rewardPool || 'error' in totalStaked) {
                 tools.toastError('Can not get reward pool or total staked');
             }
@@ -81,9 +79,11 @@ export default function UnWrapBitcoinOpnet() {
             setRewardPool(rewardPool.decoded[0]);
             setTotalStaked(totalStaked.decoded[0]);
         };
-        setWallet();
+        void setWallet();
 
-        setAvailableBalance((parseInt(OpNetBalance.amount.toString()) / 10 ** OpNetBalance.divisibility).toString());
+        const balance = bigIntToDecimal(OpNetBalance.amount, OpNetBalance.divisibility);
+        setAvailableBalance(balance.toString());
+
         tools.showLoading(false);
     }, []);
 
@@ -129,23 +129,23 @@ export default function UnWrapBitcoinOpnet() {
                 </Row>
                 <Row itemsCenter fullX justifyBetween>
                     <Text text={'Balance'} size="md" color="textDim" />
-                    <Text text={(Number(OpNetBalance.amount) / 10 ** OpNetBalance.divisibility).toString()} size="md" />
+                    <Text text={bigIntToDecimal(OpNetBalance.amount, OpNetBalance.divisibility).toString()} size="md" />
                 </Row>
                 <Row itemsCenter fullX justifyBetween>
                     <Text text={'Active Stake'} color="textDim" size="md" />
-                    <Text text={(Number(stakedAmount) / 10 ** OpNetBalance.divisibility).toString()} size="md" />
+                    <Text text={bigIntToDecimal(stakedAmount, OpNetBalance.divisibility).toString()} size="md" />
                 </Row>
                 <Row itemsCenter fullX justifyBetween>
                     <Text text={'Reward'} color="textDim" size="md" />
-                    <Text text={(Number(stakedReward) / 10 ** OpNetBalance.divisibility).toString()} size="md" />
+                    <Text text={bigIntToDecimal(stakedReward, OpNetBalance.divisibility).toString()} size="md" />
                 </Row>
                 <Row itemsCenter fullX justifyBetween>
                     <Text text={'Total Staked'} color="textDim" size="md" />
-                    <Text text={(Number(totalStaked) / 10 ** OpNetBalance.divisibility).toString()} size="md" />
+                    <Text text={bigIntToDecimal(totalStaked, OpNetBalance.divisibility).toString()} size="md" />
                 </Row>
                 <Row itemsCenter fullX justifyBetween>
                     <Text text={'Reward Pool'} color="textDim" size="md" />
-                    <Text text={(Number(rewardPool) / 10 ** OpNetBalance.divisibility).toString()} size="md" />
+                    <Text text={bigIntToDecimal(rewardPool, OpNetBalance.divisibility).toString()} size="md" />
                 </Row>
                 <Row full>
                     <Button
@@ -153,12 +153,12 @@ export default function UnWrapBitcoinOpnet() {
                         style={{ height: '42px' }}
                         text="Claim"
                         full
-                        onClick={(e) => {
+                        onClick={() => {
                             navigate('TxOpnetConfirmScreen', {
                                 rawTxInfo: {
                                     items: items,
                                     account: account,
-                                    inputAmount: Number(stakedReward) / 10 ** OpNetBalance.divisibility, // replace with actual inputAmount
+                                    inputAmount: new BigNumber(bigIntToDecimal(stakedReward, OpNetBalance.divisibility)).toNumber(), // replace with actual inputAmount
                                     address: wBTC.getAddress(Web3API.network), // replace with actual address
                                     feeRate: feeRate, // replace with actual feeRate
                                     priorityFee: BigInt(OpnetRateInputVal), // replace with actual OpnetRateInputVal
@@ -188,12 +188,12 @@ export default function UnWrapBitcoinOpnet() {
                         style={{ height: '42px' }}
                         preset="primary"
                         text="Unstake"
-                        onClick={(e) => {
+                        onClick={() => {
                             navigate('TxOpnetConfirmScreen', {
                                 rawTxInfo: {
                                     items: items,
                                     account: account,
-                                    inputAmount: Number(stakedAmount) / 10 ** OpNetBalance.divisibility, // replace with actual inputAmount
+                                    inputAmount: new BigNumber(bigIntToDecimal(stakedAmount, OpNetBalance.divisibility)).toNumber(), // replace with actual inputAmount
                                     address: wBTC.getAddress(Web3API.network), // replace with actual address
                                     feeRate: feeRate, // replace with actual feeRate
                                     priorityFee: BigInt(OpnetRateInputVal), // replace with actual OpnetRateInputVal

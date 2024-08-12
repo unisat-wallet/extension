@@ -15,6 +15,7 @@ import { colors } from '@/ui/theme/colors';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../MainRoute';
+import { bigIntToDecimal } from '@/shared/web3/Web3API';
 
 interface ItemData {
     key: string;
@@ -60,7 +61,7 @@ export default function WrapBitcoinOpnet() {
 
     const tools = useTools();
     useEffect(() => {
-        setAvailableBalance((parseInt(OpNetBalance.amount.toString()) / 10 ** OpNetBalance.divisibility).toString());
+        setAvailableBalance(bigIntToDecimal(OpNetBalance.amount, OpNetBalance.divisibility).toString());
         tools.showLoading(false);
     }, []);
 

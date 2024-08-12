@@ -5,7 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { ChainType, COIN_DUST } from '@/shared/constant';
 import { Account, RawTxInfo } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
-import Web3API from '@/shared/web3/Web3API';
+import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
 import { Button, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BtcUsd } from '@/ui/components/BtcUsd';
@@ -25,6 +25,9 @@ import {
 import { useUiTxCreateScreen, useUpdateUiTxCreateScreen } from '@/ui/state/ui/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { amountToSatoshis, isValidAddress, satoshisToAmount, useWallet } from '@/ui/utils';
+import BigNumber from 'bignumber.js';
+
+BigNumber.config({ EXPONENTIAL_AT: 256 });
 
 export default function TxCreateScreen() {
     interface ItemData {
@@ -122,8 +125,8 @@ export default function TxCreateScreen() {
             }
 
             const provider: JSONRpcProvider = new JSONRpcProvider(providerUrl);
-            const btcbalanceGet = await provider.getBalance(account.address);
-            setBalanceValue(parseInt(btcbalanceGet.toString()) / 10 ** 8);
+            const btcBalanceGet = await provider.getBalance(account.address);
+            setBalanceValue(new BigNumber(bigIntToDecimal(btcBalanceGet, 8)).toNumber());
         };
 
         void fetchBalance();

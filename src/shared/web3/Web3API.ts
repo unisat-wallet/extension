@@ -19,6 +19,9 @@ import {
     UTXO
 } from '@btc-vision/transaction';
 import { NetworkType } from '@/shared/types';
+import BigNumber from 'bignumber.js';
+
+BigNumber.config({ EXPONENTIAL_AT: 256 });
 
 export function getOPNetChainType(chain: ChainType): ChainId {
     switch (chain) {
@@ -43,8 +46,16 @@ export function getOPNetNetwork(network: NetworkType): OPNetNetwork {
     }
 }
 
+export function bigIntToDecimal(amount: bigint, decimal: number): string {
+    const number = new BigNumber(amount.toString()).dividedBy(new BigNumber(10).pow(decimal));
+
+    return number.decimalPlaces(decimal).toPrecision();
+}
+
 class Web3API {
     public network: Network = networks.bitcoin;
+    public chainId: ChainId = ChainId.Bitcoin;
+
     public transactionFactory: TransactionFactory = new TransactionFactory();
     public readonly abiCoder: ABICoder = new ABICoder();
     private nextUTXOs: UTXO[] = [];
@@ -107,9 +118,12 @@ class Web3API {
                 break;
         }
 
-        if (oldNetwork !== this.network) {
+        const chainId = getOPNetChainType(chainType);
+        if (oldNetwork !== this.network || chainId !== this.chainId) {
+            this.chainId = chainId;
+
             try {
-                this._metadata = OPNetMetadata.getAddresses(this.getOPNetNetwork(), getOPNetChainType(chainType));
+                this._metadata = OPNetMetadata.getAddresses(this.getOPNetNetwork(), chainId);
             } catch (e) {
                 //
             }
@@ -157,10 +171,18 @@ class Web3API {
     }
 
     public isValidPKHAddress(address: string): boolean {
+        if (!this.network) {
+            throw new Error('Network not set');
+        }
+
         return AddressVerificator.validatePKHAddress(address, this.network);
     }
 
     public isValidP2TRAddress(address: string): boolean {
+        if (!this.network) {
+            throw new Error('Network not set');
+        }
+
         return AddressVerificator.isValidP2TRAddress(address, this.network);
     }
 

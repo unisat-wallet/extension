@@ -3,9 +3,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
-import { Account, Inscription, OpNetBalance, RawTxInfo } from '@/shared/types';
+import { Account, Inscription, OpNetBalance } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
-import Web3API from '@/shared/web3/Web3API';
+import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
@@ -13,12 +13,7 @@ import { OutputValueBar } from '@/ui/components/OutputValueBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import {
-    useFetchAssetUtxosRunesCallback,
-    useFetchUtxosCallback,
-    usePrepareSendRunesCallback,
-    useRunesTx
-} from '@/ui/state/transactions/hooks';
+import { useFetchUtxosCallback, useRunesTx } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
@@ -74,21 +69,20 @@ export default function Mint() {
 
     const fetchUtxos = useFetchUtxosCallback();
 
-    const fetchAssetUtxosRunes = useFetchAssetUtxosRunesCallback();
     const tools = useTools();
     useEffect(() => {
-        fetchUtxos();
-        setAvailableBalance((parseInt(OpNetBalance.amount.toString()) / 10 ** OpNetBalance.divisibility).toString());
+        void fetchUtxos();
+
+        const balance = bigIntToDecimal(OpNetBalance.amount, OpNetBalance.divisibility);
+        setAvailableBalance(balance.toString());
+
         tools.showLoading(false);
     }, []);
-
-    const prepareSendRunes = usePrepareSendRunesCallback();
 
     const [feeRate, setFeeRate] = useState(5);
     const [enableRBF, setEnableRBF] = useState(false);
     const wallet = useWallet();
     const [maxSupply, setMaxSupply] = useState<bigint>(0n);
-    const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
     const keyring = useCurrentKeyring();
     const items = useMemo(() => {
         const _items: ItemData[] = keyring.accounts.map((v) => {
@@ -178,7 +172,9 @@ export default function Mint() {
                         value={inputAmount.toString()}
                         onAmountInputChange={(amount) => {
                             const numAmount = Number(amount);
-                            if (numAmount <= Number(maxSupply) / 10 ** OpNetBalance.divisibility) {
+                            const maxSupplyParsed = bigIntToDecimal(maxSupply, OpNetBalance.divisibility);
+
+                            if (numAmount <= Number(maxSupplyParsed)) {
                                 setInputAmount(amount);
                             } else {
                                 setInputAmount(

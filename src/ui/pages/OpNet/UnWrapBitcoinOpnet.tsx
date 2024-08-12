@@ -3,9 +3,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
-import { Account, Inscription, OpNetBalance, RawTxInfo } from '@/shared/types';
+import { Account, Inscription, OpNetBalance } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
-import Web3API from '@/shared/web3/Web3API';
+import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
 import { Button, Column, Content, Header, Image, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
@@ -74,25 +74,24 @@ export default function UnWrapBitcoinOpnet() {
                 Web3API.provider,
                 account.address
             );
-            const checkWithdrawalRequest = await contract.withdrawableBalanceOf(account.address);
 
+            const checkWithdrawalRequest = await contract.withdrawableBalanceOf(account.address);
             if ('error' in checkWithdrawalRequest) {
                 tools.toastError('Error getting WBTC');
                 return;
             }
-            console.log(checkWithdrawalRequest.decoded[0]);
-            const result = 10 ** OpNetBalance.divisibility;
-            setAvailableBalance(Number(checkWithdrawalRequest.decoded[0] as bigint).toString());
+
+            const balance = bigIntToDecimal(checkWithdrawalRequest.decoded[0] as bigint, 8);
+            setAvailableBalance(balance.toString());
             tools.showLoading(false);
         };
-        checkAvailableBalance();
+        void checkAvailableBalance();
     }, []);
 
     //const prepareSendRunes = usePrepareSendRunesCallback();
 
     const [feeRate, setFeeRate] = useState(5);
     const [enableRBF, setEnableRBF] = useState(false);
-    const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
     const keyring = useCurrentKeyring();
     const items = useMemo(() => {
         const _items: ItemData[] = keyring.accounts.map((v) => {

@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
-import { Account, Inscription, OpNetBalance, RawTxInfo } from '@/shared/types';
+import { Account, Inscription, OpNetBalance } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
 import { Button, Column, Content, Header, Image, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -11,13 +11,17 @@ import { OutputValueBar } from '@/ui/components/OutputValueBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { usePrepareSendRunesCallback, useRunesTx } from '@/ui/state/transactions/hooks';
+import { useRunesTx } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
-import { isValidAddress, useWallet } from '@/ui/utils';
+import { isValidAddress } from '@/ui/utils';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../MainRoute';
+import { bigIntToDecimal } from '@/shared/web3/Web3API';
+import BigNumber from 'bignumber.js';
+
+BigNumber.config({ EXPONENTIAL_AT: 256 });
 
 interface ItemData {
     key: string;
@@ -64,16 +68,14 @@ export default function SendOpNetScreen() {
 
     const tools = useTools();
     useEffect(() => {
-        setAvailableBalance((parseInt(OpNetBalance.amount.toString()) / 10 ** OpNetBalance.divisibility).toString());
+        const balance = bigIntToDecimal(OpNetBalance.amount, OpNetBalance.divisibility);
+        setAvailableBalance(balance.toString());
+
         tools.showLoading(false);
     }, []);
 
-    const prepareSendRunes = usePrepareSendRunesCallback();
-
     const [feeRate, setFeeRate] = useState(5);
     const [enableRBF, setEnableRBF] = useState(false);
-    const wallet = useWallet();
-    const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
     const keyring = useCurrentKeyring();
     const items = useMemo(() => {
         const _items: ItemData[] = keyring.accounts.map((v) => {

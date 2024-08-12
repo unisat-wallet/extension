@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
-import { Account, Inscription, OpNetBalance, RawTxInfo } from '@/shared/types';
+import { Account, Inscription, OpNetBalance } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -11,21 +11,20 @@ import { OutputValueBar } from '@/ui/components/OutputValueBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import {
-    useFetchAssetUtxosRunesCallback,
-    useFetchUtxosCallback,
-    usePrepareSendRunesCallback,
-    useRunesTx
-} from '@/ui/state/transactions/hooks';
+import { useFetchUtxosCallback, useRunesTx } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../MainRoute';
+import { bigIntToDecimal } from '@/shared/web3/Web3API';
+import BigNumber from 'bignumber.js';
 
 interface ItemData {
     key: string;
     account?: Account;
 }
+
+BigNumber.config({ EXPONENTIAL_AT: 256 });
 
 export default function UnWrapBitcoinOpnet() {
     const { state } = useLocation();
@@ -67,19 +66,17 @@ export default function UnWrapBitcoinOpnet() {
 
     const fetchUtxos = useFetchUtxosCallback();
 
-    const fetchAssetUtxosRunes = useFetchAssetUtxosRunesCallback();
     const tools = useTools();
     useEffect(() => {
-        fetchUtxos();
-        setAvailableBalance((parseInt(OpNetBalance.amount.toString()) / 10 ** OpNetBalance.divisibility).toString());
+        void fetchUtxos();
+
+        const balance = bigIntToDecimal(OpNetBalance.amount, OpNetBalance.divisibility);
+        setAvailableBalance(balance.toString());
         tools.showLoading(false);
     }, []);
 
-    const prepareSendRunes = usePrepareSendRunesCallback();
-
     const [feeRate, setFeeRate] = useState(5);
     const [enableRBF, setEnableRBF] = useState(false);
-    const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
     const keyring = useCurrentKeyring();
     const items = useMemo(() => {
         const _items: ItemData[] = keyring.accounts.map((v) => {

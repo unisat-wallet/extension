@@ -1,4 +1,3 @@
-import { runesUtils } from '@/shared/lib/runes-utils';
 import { OpNetBalance } from '@/shared/types';
 import { fontSizes } from '@/ui/theme/font';
 
@@ -8,6 +7,8 @@ import { Image } from '../Image';
 import { Row } from '../Row';
 import { RunesTicker } from '../RunesTicker';
 import { Text } from '../Text';
+import { bigIntToDecimal } from '@/shared/web3/Web3API';
+import BigNumber from 'bignumber.js';
 
 export interface OpNetBalanceCardProps {
     tokenBalance: OpNetBalance;
@@ -16,11 +17,9 @@ export interface OpNetBalanceCardProps {
 
 export default function OpNetBalanceCard(props: OpNetBalanceCardProps) {
     const { tokenBalance, onClick } = props;
-    const balance = runesUtils.toDecimalNumber(tokenBalance.amount, tokenBalance.divisibility);
-    let str = balance.toFixed(8);
-    if (balance.lt(0.0001)) {
-        str = '0';
-    }
+    const balance = new BigNumber(bigIntToDecimal(tokenBalance.amount, tokenBalance.divisibility)); //runesUtils.toDecimalNumber(tokenBalance.amount, tokenBalance.divisibility);
+    const str = balance.toPrecision();
+
     return (
         <Card
             style={{

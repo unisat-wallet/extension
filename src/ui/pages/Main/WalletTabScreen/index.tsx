@@ -3,7 +3,7 @@ import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 
 import { AddressFlagType, ChainType, KEYRING_TYPE } from '@/shared/constant';
 import { checkAddressFlag } from '@/shared/utils';
-import Web3API from '@/shared/web3/Web3API';
+import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
 import { Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
 import { AddressBar } from '@/ui/components/AddressBar';
@@ -40,6 +40,7 @@ import { AtomicalsTab } from './AtomicalsTab';
 import { OPNetList } from './OPNetList';
 import { OrdinalsTab } from './OrdinalsTab';
 import { RunesList } from './RunesList';
+import BigNumber from 'bignumber.js';
 
 const $noBreakStyle: CSSProperties = {
     whiteSpace: 'nowrap',
@@ -64,7 +65,7 @@ export default function WalletTabScreen() {
     }, [accountBalance.amount]);
 
     const wallet = useWallet();
-    const [connected, setConnected] = useState(false);
+    const [_connected, setConnected] = useState(false);
 
     const dispatch = useAppDispatch();
     const assetTabKey = useAssetTabKey();
@@ -103,13 +104,16 @@ export default function WalletTabScreen() {
             if (accountBalance.amount === '0') {
                 setBalanceValue('--');
             } else {
-                Web3API.setNetwork(await wallet.getChainType());
-                if (chain.enum === 'BITCOIN_REGTEST' || chain.enum === 'BITCOIN_TESTNET') {
-                    const btcbalanceGet = await Web3API.provider.getBalance(currentAccount.address);
-                    setBalanceValue(parseInt(btcbalanceGet.toString()) / 10 ** 8);
-                    setAvailableAmount(parseInt(btcbalanceGet.toString()) / 10 ** 8);
-                    setTotalAmount((parseInt(btcbalanceGet.toString()) / 10 ** 8).toString());
-                } else {
+                try {
+                    Web3API.setNetwork(await wallet.getChainType());
+
+                    const btcBalanceGet = await Web3API.provider.getBalance(currentAccount.address);
+                    setBalanceValue(bigIntToDecimal(btcBalanceGet, 8).toString());
+                    setAvailableAmount(new BigNumber(bigIntToDecimal(btcBalanceGet, 8)).toNumber());
+                    setTotalAmount(bigIntToDecimal(btcBalanceGet, 8).toString());
+
+                    console.log('btcBalanceGet', btcBalanceGet);
+                } catch (e) {
                     setBalanceValue(accountBalance.amount);
                 }
             }

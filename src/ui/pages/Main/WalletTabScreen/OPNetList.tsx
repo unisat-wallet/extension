@@ -17,7 +17,9 @@ import { useNavigate } from '../../MainRoute';
 import { AddOpNetToken } from '../../Wallet/AddOpNetToken';
 import { ChainType } from '@/shared/constant';
 import { Address } from '@btc-vision/bsi-binary';
-import { AddressType } from '@unisat/wallet-sdk';
+import BigNumber from 'bignumber.js';
+
+BigNumber.config({ EXPONENTIAL_AT: 256 });
 
 function pushDefaultTokens(tokens: Address[], chain: ChainType, network: NetworkType) {
     const chainId = getOPNetChainType(chain);
@@ -40,8 +42,7 @@ export function OPNetList() {
 
     const [tokens, setTokens] = useState<any[]>([]);
     const [total, setTotal] = useState(-1);
-    const [data, setData] = useState<string>();
-    const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 100 });
+    const [pagination, _setPagination] = useState({ currentPage: 1, pageSize: 100 });
     const [importTokenBool, setImportTokenBool] = useState(false);
 
     const tools = useTools();
@@ -90,7 +91,7 @@ export function OPNetList() {
                         });
                     }
                 } catch (e) {
-                    console.log(`Error processing token at index ${i}:`, e);
+                    console.log(`Error processing token at index ${i}:`, e, parsedTokens[i]);
                     parsedTokens.splice(i, 1);
                     localStorage.setItem('tokensImported_' + getChain, JSON.stringify(parsedTokens));
                     i--;
@@ -150,7 +151,7 @@ export function OPNetList() {
                         text="SWAP"
                         preset="primary"
                         icon="send"
-                        onClick={(e) => {
+                        onClick={() => {
                             navigate('Swap', {});
                         }}
                         full

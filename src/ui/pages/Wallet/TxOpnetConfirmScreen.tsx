@@ -14,7 +14,7 @@ import { useEffect, useState } from 'react';
 
 import { Account } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
-import Web3API from '@/shared/web3/Web3API';
+import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BottomModal } from '@/ui/components/BottomModal';
@@ -37,6 +37,9 @@ import {
 
 import { useNavigate } from '../MainRoute';
 import { ConfirmUnWrap } from './ConfirmUnWrap';
+import BigNumber from 'bignumber.js';
+
+BigNumber.config({ EXPONENTIAL_AT: 256 });
 
 interface LocationState {
     rawTxInfo: any;
@@ -120,7 +123,7 @@ export default function TxOpnetConfirmScreen() {
 
                 const nextUTXO = finalUnwrapTx.utxos;
                 localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
-                tools.toastSuccess('"You have sucessfully unwraped your Bitcoin"');
+                tools.toastSuccess('"You have successfully un-wrapped your Bitcoin"');
                 navigate('TxSuccessScreen', { txid: unwrapTransaction.result });
             };
             void completeUnwrap();
@@ -252,7 +255,8 @@ export default function TxOpnetConfirmScreen() {
 
         const nextUTXO = finalTx.utxos;
         localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
-        tools.toastSuccess(`"You have successfully wrapped ${Number(wrapAmount) / 10 ** 8} Bitcoin"`);
+        const wrappedAmount = bigIntToDecimal(wrapAmount, 8).toString();
+        tools.toastSuccess(`"You have successfully wrapped ${wrappedAmount} Bitcoin"`);
         navigate('TxSuccessScreen', { txid: secondTxBroadcast.result });
     };
 
@@ -483,7 +487,8 @@ export default function TxOpnetConfirmScreen() {
             return;
         }
 
-        tools.toastSuccess(`You have sucessfully Staked ${Number(amountToSend) / 10 ** 8} WBTC`);
+        const stakeAmount = bigIntToDecimal(amountToSend, 8).toString();
+        tools.toastSuccess(`You have successfully staked ${stakeAmount} WBTC`);
         const nextUTXO = sendTransact[2];
         localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
         navigate('TxSuccessScreen', { txid: secondTransaction.result });
@@ -551,8 +556,10 @@ export default function TxOpnetConfirmScreen() {
             setDisabled(false);
             return;
         }
-        
-        tools.toastSuccess(`You have sucessfully Unstaked ${Number(amountToSend) / 10 ** 8} WBTC`);
+
+        const unstakeAmount = bigIntToDecimal(amountToSend, 8).toString();
+        tools.toastSuccess(`You have successfully un-staked ${unstakeAmount} WBTC`);
+
         const nextUTXO = sendTransact[2];
         localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
         navigate('TxSuccessScreen', { txid: seconfTransaction.result });
@@ -691,7 +698,6 @@ export default function TxOpnetConfirmScreen() {
             (obj) => obj.account && obj.account.address === rawTxInfo.account.address
         );
         const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
-        const result = 10 ** rawTxInfo.opneTokens[0].divisibility;
         const amountToSend = expandToDecimals(rawTxInfo.inputAmount, rawTxInfo.opneTokens[0].divisibility);
         const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
 
@@ -714,7 +720,6 @@ export default function TxOpnetConfirmScreen() {
         let utxos: UTXO[] = [];
         if (!useNextUTXO) {
             utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], amountToSend);
-            console.log(utxos);
         } else {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
@@ -745,8 +750,6 @@ export default function TxOpnetConfirmScreen() {
             setUseNextUTXO(true);
             setDisabled(false);
             return;
-        } else {
-            console.log('Broadcasted:', firstTransaction);
         }
 
         // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
@@ -754,10 +757,11 @@ export default function TxOpnetConfirmScreen() {
         if (!seconfTransaction.success) {
             console.log('Broadcasted:', false);
             return;
-        } else {
-            console.log('Broadcasted:', seconfTransaction);
         }
-        tools.toastSuccess(`You have sucessfully claimed ${Number(amountToSend) / 10 ** 8} WBTC`);
+
+        const claimAmount = bigIntToDecimal(amountToSend, 8).toString();
+
+        tools.toastSuccess(`You have successfully claimed ${claimAmount} WBTC`);
         const nextUTXO = sendTransact[2];
         localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
         navigate('TxSuccessScreen', { txid: seconfTransaction.result });
@@ -844,12 +848,13 @@ export default function TxOpnetConfirmScreen() {
             tools.toastError('Could not broadcast first transaction');
             return;
         } else {
-            console.log(secondTransaction);
+            const amountA = bigIntToDecimal(rawTxInfo.inputAmount[0], rawTxInfo.opneTokens[0].divisibility).toString();
+            const amountB = bigIntToDecimal(rawTxInfo.inputAmount[1], rawTxInfo.opneTokens[1].divisibility).toString();
             tools.toastSuccess(
-                `"You have sucessfully swapped ${
-                    rawTxInfo.inputAmount[0] / 10 ** rawTxInfo.opneTokens[0].divisibility
+                `"You have successfully swapped ${
+                    amountA
                 } ${rawTxInfo.opneTokens[0].symbol} for ${
-                    rawTxInfo.inputAmount[1] / 10 ** rawTxInfo.opneTokens[1].divisibility
+                    amountB
                 }  ${rawTxInfo.opneTokens[1].symbol}"`
             );
             const nextUTXO = sendTransact[2];
@@ -936,8 +941,10 @@ export default function TxOpnetConfirmScreen() {
             tools.toastError('Error: Could not broadcast first transaction');
             return;
         }
+
+        const amountA = bigIntToDecimal(rawTxInfo.inputAmount, rawTxInfo.opneTokens[0].divisibility).toString();
         tools.toastSuccess(
-            `"You have sucessfully transfered ${rawTxInfo.inputAmount / 10 ** rawTxInfo.opneTokens[0].divisibility} ${
+            `"You have successfully transferred ${amountA} ${
                 rawTxInfo.opneTokens[0].symbol
             } to ${rawTxInfo.address}}"`
         );
@@ -1004,9 +1011,8 @@ export default function TxOpnetConfirmScreen() {
                 console.log(firstTransaction);
             }
 
-            const airdropTo: Map<Address, bigint> = new Map();
-            airdropTo.set(walletGet.p2tr, 100_000n * 10n ** 18n);
-            console.log(sendTransact.contractAddress);
+            //const airdropTo: Map<Address, bigint> = new Map();
+            //airdropTo.set(walletGet.p2tr, 100_000n * 10n ** 18n);
             const getChain = await wallet.getChainType();
 
             const tokensImported = localStorage.getItem('tokensImported_' + getChain);

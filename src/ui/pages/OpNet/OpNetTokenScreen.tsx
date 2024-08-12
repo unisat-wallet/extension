@@ -1,9 +1,9 @@
-import { getContract, IOP_20Contract, OP_20_ABI } from 'opnet';
+import { getContract, IOP_20Contract, IWBTCContract, OP_20_ABI, WBTC_ABI } from 'opnet';
 import { useEffect, useMemo, useState } from 'react';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { addressShortner } from '@/shared/utils';
-import Web3API from '@/shared/web3/Web3API';
+import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { Button, Column, Content, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -14,6 +14,7 @@ import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
+import { wBTC } from '@btc-vision/transaction';
 
 interface LocationState {
     address: string;
@@ -47,7 +48,49 @@ export default function OpNetTokenScreen() {
     const [loading, setLoading] = useState(true);
     const [isOwner, setIsOwner] = useState(false);
 
+    const [stakedReward, setStakeReward] = useState<bigint>(0n);
+    const [stakedAmount, setStakedAmount] = useState<bigint>(0n);
+    const [totalStaked, setTotalStaked] = useState<bigint>(0n);
+    const [rewardPool, setRewardPool] = useState<bigint>(0n);
+
     const wallet = useWallet();
+
+    useEffect(() => {
+        const setWallet = async () => {
+            Web3API.setNetwork(await wallet.getChainType());
+            const contract: IWBTCContract = getContract<IWBTCContract>(
+                wBTC.getAddress(Web3API.network),
+                WBTC_ABI,
+                Web3API.provider,
+                account.address
+            );
+
+            const getRewards = (await contract.stakedReward(account.address)) as unknown as { decoded: bigint[] };
+            const getStakedAmount = (await contract.stakedAmount(account.address)) as unknown as { decoded: bigint[] };
+
+            if ('error' in getRewards || 'error' in getStakedAmount) {
+                tools.toastError('Error in getting Stake Rewards');
+                return;
+            }
+
+            setStakeReward(getRewards.decoded[0]);
+            setStakedAmount(getStakedAmount.decoded[0]);
+
+            const rewardPool = (await contract.rewardPool()) as unknown as { decoded: bigint[] };
+            const totalStaked = (await contract.totalStaked()) as unknown as { decoded: bigint[] };
+            //const timeStaked = (await contract.unstake()) as unknown as { decoded: any };
+
+            if ('error' in rewardPool || 'error' in totalStaked) {
+                tools.toastError('Can not get reward pool or total staked');
+            }
+
+            setRewardPool(rewardPool.decoded[0]);
+            setTotalStaked(totalStaked.decoded[0]);
+        };
+        void setWallet();
+
+        tools.showLoading(false);
+    }, []);
 
     useEffect(() => {
         const getAddress = async () => {
@@ -238,6 +281,25 @@ export default function OpNetTokenScreen() {
                             ) : (
                                 <></>
                             )}
+                        </Row>
+                        
+                        <Row itemsCenter fullX justifyBetween>
+                            <Text text={'Active Stake'} color="textDim" size="md" />
+                            <Text text={bigIntToDecimal(stakedAmount, 8).toString()}
+                                  size="md" />
+                        </Row>
+                        <Row itemsCenter fullX justifyBetween>
+                            <Text text={'Reward'} color="textDim" size="md" />
+                            <Text text={bigIntToDecimal(stakedReward, 8).toString()}
+                                  size="md" />
+                        </Row>
+                        <Row itemsCenter fullX justifyBetween>
+                            <Text text={'Total Staked'} color="textDim" size="md" />
+                            <Text text={bigIntToDecimal(totalStaked, 8).toString()} size="md" />
+                        </Row>
+                        <Row itemsCenter fullX justifyBetween>
+                            <Text text={'Reward Pool'} color="textDim" size="md" />
+                            <Text text={bigIntToDecimal(rewardPool, 8).toString()} size="md" />
                         </Row>
                     </Column>
 
