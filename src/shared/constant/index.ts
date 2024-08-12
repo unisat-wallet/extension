@@ -229,6 +229,9 @@ type TypeChain = {
   mempoolSpaceUrl: string;
   unisatUrl: string;
   ordinalsUrl: string;
+  unisatExplorerUrl: string;
+  okxExplorerUrl: string;
+  isViewTxHistoryInternally?:boolean;
 };
 
 export const CHAINS_MAP: { [key: string]: TypeChain } = {
@@ -241,7 +244,9 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     endpoints: ['https://wallet-api.unisat.io'],
     mempoolSpaceUrl: 'https://mempool.space',
     unisatUrl: 'https://unisat.io',
-    ordinalsUrl: 'https://ordinals.com'
+    ordinalsUrl: 'https://ordinals.com',
+    unisatExplorerUrl:'',
+    okxExplorerUrl:'',
   },
   [ChainType.BITCOIN_TESTNET]: {
     enum: ChainType.BITCOIN_TESTNET,
@@ -252,7 +257,9 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     endpoints: ['https://wallet-api-testnet.unisat.io'],
     mempoolSpaceUrl: 'https://mempool.space/testnet',
     unisatUrl: 'https://testnet.unisat.io',
-    ordinalsUrl: 'https://testnet.ordinals.com'
+    ordinalsUrl: 'https://testnet.ordinals.com',
+    unisatExplorerUrl:'',
+    okxExplorerUrl:'',
   },
   [ChainType.BITCOIN_TESTNET4]: {
     enum: ChainType.BITCOIN_TESTNET4,
@@ -263,7 +270,9 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     endpoints: ['https://wallet-api-testnet4.unisat.io'],
     mempoolSpaceUrl: 'https://mempool.space/testnet4',
     unisatUrl: 'https://testnet4.unisat.io',
-    ordinalsUrl: 'https://testnet4.ordinals.com'
+    ordinalsUrl: 'https://testnet4.ordinals.com',
+    unisatExplorerUrl:'',
+    okxExplorerUrl:'',
   },
   [ChainType.BITCOIN_SIGNET]: {
     enum: ChainType.BITCOIN_SIGNET,
@@ -274,7 +283,9 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     endpoints: ['https://wallet-api-signet.unisat.io'],
     mempoolSpaceUrl: 'https://mempool.space/signet',
     unisatUrl: 'https://signet.unisat.io',
-    ordinalsUrl: 'https://signet.ordinals.com'
+    ordinalsUrl: 'https://signet.ordinals.com',
+    unisatExplorerUrl:'',
+    okxExplorerUrl:'',
   },
   [ChainType.FRACTAL_BITCOIN_MAINNET]: {
     enum: ChainType.FRACTAL_BITCOIN_MAINNET,
@@ -285,7 +296,10 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     endpoints: ['https://wallet-api-fractal.unisat.io'],
     mempoolSpaceUrl: 'https://mempool.fractalbitcoin.io',
     unisatUrl: 'https://fractal.unisat.io',
-    ordinalsUrl: 'https://ordinals.fractalbitcoin.io'
+    ordinalsUrl: 'https://ordinals.fractalbitcoin.io',
+    unisatExplorerUrl:'https://explorer.fractalbitcoin.io',
+    okxExplorerUrl:'',
+    isViewTxHistoryInternally:true,
   }
 };
 

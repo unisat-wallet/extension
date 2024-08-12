@@ -515,6 +515,10 @@ export class OpenApiService {
   async getAddressRunesTokenSummary(address: string, runeid: string): Promise<AddressRunesTokenSummary> {
     return this.httpGet(`/v5/runes/token-summary?address=${address}&runeid=${runeid}`, {});
   }
+
+  async getAddressRecentHistory(params: { address: string, start: number, limit: number }) {
+    return this.httpGet('/v5/address/history', params);
+  }
 }
 
 export default new OpenApiService();

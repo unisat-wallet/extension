@@ -70,7 +70,7 @@ export interface WalletController {
     size: number
   ): Promise<{ list: Inscription[]; total: number }>;
 
-  getAddressHistory: (address: string) => Promise<TxHistoryItem[]>;
+  getAddressHistory: (params:{address: string,start:number,limit:number}) => Promise<{start:number,total:number,detail:TxHistoryItem[]}>;
   getAddressCacheHistory: (address: string) => Promise<TxHistoryItem[]>;
 
   listChainAssets: (address: string) => Promise<AccountAsset[]>;

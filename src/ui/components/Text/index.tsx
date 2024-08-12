@@ -59,6 +59,7 @@ const $presets = {
   } as CSSProperties),
   default: $baseStyle
 };
+
 export interface TextProps extends BaseViewProps {
   text?: string | number;
   preset?: Presets;
@@ -70,12 +71,24 @@ export interface TextProps extends BaseViewProps {
   selectText?: boolean;
   disableTranslate?: boolean;
   digital?: boolean;
+  ellipsis?: boolean;
 }
 
 export const $textPresets = $presets;
 
 export function Text(props: TextProps) {
-  const { size, text, textCenter, textEnd, wrap, selectText, disableTranslate, style: $styleOverride, ...rest } = props;
+  const {
+    size,
+    text,
+    textCenter,
+    textEnd,
+    wrap,
+    selectText,
+    disableTranslate,
+    ellipsis,
+    style: $styleOverride,
+    ...rest
+  } = props;
   const preset: Presets = props.preset || 'regular';
   const $textStyle = Object.assign(
     {},
@@ -84,10 +97,15 @@ export function Text(props: TextProps) {
     textCenter ? { textAlign: 'center' } : {},
     textEnd ? { textAlign: 'end' } : {},
     wrap ? { overflowWrap: 'anywhere' } : {},
-    selectText ? { userSelect: 'text' } : {}
+    selectText ? { userSelect: 'text' } : {},
+    ellipsis ? {
+      whiteSpace: 'nowrap',
+      textOverflow: 'ellipsis',
+      overflow: 'hidden'
+    } : {}
   );
   const $style = Object.assign({}, $textStyle, $styleOverride);
-  const textUse = props.digital? showLongNumber(text): text;
+  const textUse = props.digital ? showLongNumber(text) : text;
   return (
     <BaseView style={$style} {...rest}>
       {disableTranslate ? <span translate="no">{textUse}</span> : textUse}

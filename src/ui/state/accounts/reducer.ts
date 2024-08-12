@@ -69,7 +69,9 @@ export const initialState: AccountsState = {
     brc20Count: 0,
     brc20Count5Byte: 0,
     arc20Count: 0,
-    loading: true
+    loading: true,
+    address:'',
+    runesCount: 0
   }
 };
 
@@ -221,7 +223,9 @@ const slice = createSlice({
           atomicalsCount: 0,
           brc20Count: 0,
           brc20Count5Byte: 0,
-          arc20Count: 0
+          arc20Count: 0,
+          address:'',
+          runesCount:0,
         };
       }
     });

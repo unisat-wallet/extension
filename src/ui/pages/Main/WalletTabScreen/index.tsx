@@ -290,7 +290,11 @@ export default function WalletTabScreen() {
               style={{ marginLeft: 8 }}
               itemsCenter
               onClick={() => {
-                window.open(`${blockstreamUrl}/address/${currentAccount.address}`);
+                if (chain.isViewTxHistoryInternally) {
+                  navigate('HistoryScreen');
+                } else {
+                  window.open(`${blockstreamUrl}/address/${currentAccount.address}`);
+                }
               }}>
               <Text text={'View History'} size="xs" />
               <Icon icon="link" size={fontSizes.xs} />

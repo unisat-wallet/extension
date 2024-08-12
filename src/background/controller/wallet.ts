@@ -160,11 +160,12 @@ export class WalletController extends BaseController {
     return preferenceService.getAddressBalance(address) || defaultBalance;
   };
 
-  getAddressHistory = async (address: string) => {
-    // const data = await openapiService.getAddressRecentHistory(address);
+  getAddressHistory = async (params:{address: string,start:number,limit:number}) => {
+    const data = await openapiService.getAddressRecentHistory(params);
     // preferenceService.updateAddressHistory(address, data);
     // return data;
     //   todo
+    return data
   };
 
   getAddressInscriptions = async (address: string, cursor: number, size: number) => {
