@@ -1343,10 +1343,10 @@
     ts-loader "^9.5.1"
     ts-node "^10.9.2"
 
-"@btc-vision/transaction@^1.0.71":
-  version "1.0.71"
-  resolved "https://registry.yarnpkg.com/@btc-vision/transaction/-/transaction-1.0.71.tgz#ddfd1ecd7c217e972d9f1b282f2b5468d675e922"
-  integrity sha512-ItVIliOOOvCqBpig4q2LUWh+b5zgqcG5gquIskqSppIJ9NPDhLrgEAGJSpBucvPqY1axz6MOjGGsxmjRY8iOww==
+"@btc-vision/transaction@1.0.75":
+  version "1.0.75"
+  resolved "https://registry.yarnpkg.com/@btc-vision/transaction/-/transaction-1.0.75.tgz#469082abf7bddd846a03cbff734f22ac6da5ba6b"
+  integrity sha512-SznltmiwfPAwld5OAWRoi4cJc9tNHI8peMCmTwzMtJMdvv6GtoP5LGdmFrxuqgRFqlCqxpUNijETwT3ZtWdvxQ==
   dependencies:
     "@babel/plugin-proposal-object-rest-spread" "^7.20.7"
     "@bitcoinerlab/secp256k1" "^1.1.1"
@@ -1375,10 +1375,10 @@
     ts-loader "^9.5.1"
     ts-node "^10.9.2"
 
-"@btc-vision/transaction@^1.0.74":
-  version "1.0.74"
-  resolved "https://registry.yarnpkg.com/@btc-vision/transaction/-/transaction-1.0.74.tgz#b5cfd137aee6fae80efaef151f0c26cbc9dd8f5c"
-  integrity sha512-OJWgjfEu/lhRCQWI53z1D+ZaV6qCZvS80s6VZp5mVh7yxUmUIO4EV3CmVGuXvVHBGGTRiIZaN1jeL+osUKUXTA==
+"@btc-vision/transaction@^1.0.71":
+  version "1.0.71"
+  resolved "https://registry.yarnpkg.com/@btc-vision/transaction/-/transaction-1.0.71.tgz#ddfd1ecd7c217e972d9f1b282f2b5468d675e922"
+  integrity sha512-ItVIliOOOvCqBpig4q2LUWh+b5zgqcG5gquIskqSppIJ9NPDhLrgEAGJSpBucvPqY1axz6MOjGGsxmjRY8iOww==
   dependencies:
     "@babel/plugin-proposal-object-rest-spread" "^7.20.7"
     "@bitcoinerlab/secp256k1" "^1.1.1"

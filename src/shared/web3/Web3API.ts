@@ -6,16 +6,42 @@ import { ChainType } from '@/shared/constant';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { ContractLogo } from '@/shared/web3/metadata/ContractLogo';
 import { ContractNames } from '@/shared/web3/metadata/ContractNames';
-import { ABICoder } from '@btc-vision/bsi-binary';
+import { ABICoder, Address } from '@btc-vision/bsi-binary';
 import {
     AddressVerificator,
+    ChainId,
     FetchUTXOParamsMultiAddress,
     OPNetLimitedProvider,
-    ROUTER_ADDRESS_REGTEST,
+    OPNetMetadata,
+    OPNetNetwork,
+    OPNetTokenMetadata,
     TransactionFactory,
-    UTXO,
-    wBTC
+    UTXO
 } from '@btc-vision/transaction';
+import { NetworkType } from '@/shared/types';
+
+export function getOPNetChainType(chain: ChainType): ChainId {
+    switch (chain) {
+        case ChainType.FRACTAL_BITCOIN_MAINNET: {
+            return ChainId.Fractal;
+        }
+        default:
+            return ChainId.Bitcoin;
+    }
+}
+
+export function getOPNetNetwork(network: NetworkType): OPNetNetwork {
+    switch (network) {
+        case NetworkType.MAINNET:
+            return OPNetNetwork.Mainnet;
+        case NetworkType.TESTNET:
+            return OPNetNetwork.Testnet;
+        case NetworkType.REGTEST:
+            return OPNetNetwork.Regtest;
+        default:
+            throw new Error('Invalid network type');
+    }
+}
 
 class Web3API {
     public network: Network = networks.bitcoin;
@@ -44,16 +70,26 @@ class Web3API {
     }
 
     public get WBTC(): string {
-        return wBTC.getAddress(this.network);
+        return this.metadata.wbtc;
     }
 
-    public get MOTOSWAP_ROUTER(): string {
-        return ROUTER_ADDRESS_REGTEST;
+    public get ROUTER_ADDRESS(): Address {
+        return this.metadata.router;
     }
 
-    public setNetwork(network: ChainType): void {
+    private _metadata?: OPNetTokenMetadata;
+
+    private get metadata(): OPNetTokenMetadata {
+        if (!this._metadata) {
+            throw new Error('Metadata not set');
+        }
+
+        return this._metadata;
+    }
+
+    public setNetwork(chainType: ChainType): void {
         const oldNetwork = this.network;
-        switch (network) {
+        switch (chainType) {
             case ChainType.BITCOIN_MAINNET:
                 this.network = networks.bitcoin;
                 break;
@@ -72,7 +108,21 @@ class Web3API {
         }
 
         if (oldNetwork !== this.network) {
-            this.setProvider(network);
+            this._metadata = OPNetMetadata.getAddresses(this.getOPNetNetwork(), getOPNetChainType(chainType));
+            this.setProvider(chainType);
+        }
+    }
+
+    public getOPNetNetwork(): OPNetNetwork {
+        switch (this.network) {
+            case networks.bitcoin:
+                return OPNetNetwork.Mainnet;
+            case networks.testnet:
+                return OPNetNetwork.Testnet;
+            case networks.regtest:
+                return OPNetNetwork.Regtest;
+            default:
+                throw new Error('Invalid network');
         }
     }
 
@@ -142,9 +192,8 @@ class Web3API {
                 logo
             };
         } catch (e) {
-            const error = e as Error;
-
-            console.log(error.message);
+            /*const error = e as Error;
+            console.log(error.message);*/
 
             return;
         }

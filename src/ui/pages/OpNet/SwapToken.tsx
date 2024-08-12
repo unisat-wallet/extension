@@ -18,7 +18,6 @@ import { fontSizes } from '@/ui/theme/font';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 import '@btc-vision/transaction';
-import { ROUTER_ADDRESS_REGTEST, ROUTER_ADDRESS_TESTNET } from '@btc-vision/transaction';
 
 import { useNavigate } from '../MainRoute';
 
@@ -99,10 +98,11 @@ export default function Swap() {
                         setInputAmount(maxBalance.toString());
                     }
                     const getQuote: IMotoswapRouterContract = getContract<IMotoswapRouterContract>(
-                        chain.enum == 'BITCOIN_REGTEST' ? ROUTER_ADDRESS_REGTEST : ROUTER_ADDRESS_TESTNET,
+                        Web3API.ROUTER_ADDRESS,
                         MOTOSWAP_ROUTER_ABI,
                         Web3API.provider
                     );
+
                     const getData = await getQuote.getAmountsOut(
                         BigInt(Number(numericValue) * Math.pow(10, selectedOption.divisibility)),
                         [selectedOption.address, selectedOptionOutput.address]

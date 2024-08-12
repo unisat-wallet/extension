@@ -19,7 +19,6 @@ import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from
 import { useTools } from '@/ui/components/ActionComponent';
 import { BottomModal } from '@/ui/components/BottomModal';
 import RunesPreviewCard from '@/ui/components/RunesPreviewCard';
-import { useChain } from '@/ui/state/settings/hooks';
 import { useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 import { ABIDataTypes, Address, BinaryWriter } from '@btc-vision/bsi-binary';
@@ -30,8 +29,6 @@ import {
     IInteractionParameters,
     IUnwrapParameters,
     IWrapParameters,
-    ROUTER_ADDRESS_REGTEST,
-    ROUTER_ADDRESS_TESTNET,
     UnwrapResult,
     UTXO,
     Wallet,
@@ -83,23 +80,20 @@ export default function TxOpnetConfirmScreen() {
     const [openAcceptbar, setAcceptBar] = useState<boolean>(false);
     const [openLoading, setOpenLoading] = useState<boolean>(false);
     const [disabled, setDisabled] = useState<boolean>(false);
-    const [unwrapUseAmount, setUnWrapAmount] = useState<bigint>(0n);
+    const [_unwrapUseAmount, setUnWrapAmount] = useState<bigint>(0n);
     const { rawTxInfo } = useLocationState<LocationState>();
     const handleCancel = () => {
         window.history.go(-1);
     };
-    const chain = useChain();
     const [routerAddress, setRouterAddress] = useState<string>('');
     useEffect(() => {
         const setWallet = async () => {
             Web3API.setNetwork(await wallet.getChainType());
-            if (chain.enum === 'BITCOIN_REGTEST') {
-                setRouterAddress(ROUTER_ADDRESS_REGTEST);
-            } else if (chain.enum === 'BITCOIN_TESTNET') {
-                setRouterAddress(ROUTER_ADDRESS_TESTNET);
-            }
+
+            setRouterAddress(Web3API.ROUTER_ADDRESS);
         };
-        setWallet();
+
+        void setWallet();
     });
     useEffect(() => {
         if (acceptWrap && finalUnwrapTx) {
@@ -127,10 +121,9 @@ export default function TxOpnetConfirmScreen() {
                 const nextUTXO = finalUnwrapTx.utxos;
                 localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
                 tools.toastSuccess('"You have sucessfully unwraped your Bitcoin"');
-                console.log(unwrapTransaction);
                 navigate('TxSuccessScreen', { txid: unwrapTransaction.result });
             };
-            completeUnwrap();
+            void completeUnwrap();
         }
     }, [acceptWrap]);
     const wallet = useWallet();
@@ -211,17 +204,16 @@ export default function TxOpnetConfirmScreen() {
         const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
 
         const wrapAmount = expandToDecimals(rawTxInfo.inputAmount, 8);
-        let utxos: UTXO[] = [];
+        let utxos: UTXO[];
         if (!useNextUTXO) {
             utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], wrapAmount);
-            console.log(utxos);
         } else {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
+                    ...utxo,
+                    value: BigInt(utxo.value)
+                }))
                 : [];
         }
         const generationParameters = await Web3API.limitedProvider.fetchWrapParameters(wrapAmount);
@@ -229,8 +221,6 @@ export default function TxOpnetConfirmScreen() {
             tools.toastError('No generation parameters found');
             return;
         }
-
-        console.log('generationParameters', generationParameters, wrapAmount);
 
         const wrapParameters: IWrapParameters = {
             from: walletGet.p2tr,
@@ -248,7 +238,6 @@ export default function TxOpnetConfirmScreen() {
 
         if (!firstTxBroadcast.success) {
             tools.toastError('Error,Please Try again');
-            console.log(firstTxBroadcast);
             setUseNextUTXO(true);
             setDisabled(false);
             tools.toastError('Could not broadcast first transaction');
@@ -260,6 +249,7 @@ export default function TxOpnetConfirmScreen() {
             setDisabled(false);
             tools.toastError('Could not broadcast first transaction');
         }
+
         const nextUTXO = finalTx.utxos;
         localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
         tools.toastSuccess(`"You have successfully wrapped ${Number(wrapAmount) / 10 ** 8} Bitcoin"`);
@@ -277,18 +267,15 @@ export default function TxOpnetConfirmScreen() {
         let utxos: UTXO[] = [];
         if (!useNextUTXO) {
             utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], unwrapAmount);
-            console.log(utxos);
         } else {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
+                    ...utxo,
+                    value: BigInt(utxo.value)
+                }))
                 : [];
         }
-
-        console.log('unwrap amount', unwrapAmount, 'utxos', utxos);
 
         const contract: IWBTCContract = getContract<IWBTCContract>(
             wBTC.getAddress(Web3API.network),
@@ -325,7 +312,6 @@ export default function TxOpnetConfirmScreen() {
 
         let utxosForUnwrap: UTXO[] = utxos;
         if (requiredAmountDifference < 0n) {
-            console.log('We must request a withdrawal');
             const diff = absBigInt(requiredAmountDifference);
 
             const withdrawalRequest = await contract.requestWithdrawal(diff);
@@ -370,7 +356,6 @@ export default function TxOpnetConfirmScreen() {
                 let attempts = 0;
                 const maxAttempts = 60; // 10 minutes max wait time
                 setOpenLoading(true);
-                console.log(secondTransaction);
 
                 while (attempts < maxAttempts) {
                     try {
@@ -383,7 +368,6 @@ export default function TxOpnetConfirmScreen() {
                     } catch (error) {
                         console.error('Error fetching transaction:', error);
                     }
-                    console.log(attempts);
                     await new Promise((resolve) => setTimeout(resolve, 10000)); // Wait 10 seconds
                     attempts++;
                 }
@@ -401,8 +385,6 @@ export default function TxOpnetConfirmScreen() {
             tools.showLoading(true, 'Waiting for transaction confirmation...');
             const transactionHash = await waitForTransaction(secondTransaction.result);
             tools.showLoading(false);
-
-            console.log('confirmed!', transactionHash);
         }
 
         const unwrapUtxos = await Web3API.limitedProvider.fetchUnWrapParameters(unwrapAmount, walletGet.p2tr);
@@ -422,8 +404,6 @@ export default function TxOpnetConfirmScreen() {
             priorityFee: rawTxInfo.priorityFee, // OPNet priority fee (incl gas.)
             amount: unwrapAmount
         };
-
-        console.log('unwrapParameters', unwrapParameters, unwrapUtxos, utxos);
 
         try {
             const finalTx = await Web3API.transactionFactory.unwrap(unwrapParameters);
@@ -446,7 +426,6 @@ export default function TxOpnetConfirmScreen() {
             (obj) => obj.account && obj.account.address === rawTxInfo.account.address
         );
         const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
-        const result = 10 ** rawTxInfo.opneTokens[0].divisibility;
         const amountToSend = expandToDecimals(rawTxInfo.inputAmount, rawTxInfo.opneTokens[0].divisibility);
         const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
 
@@ -462,17 +441,16 @@ export default function TxOpnetConfirmScreen() {
             tools.toastError('Invalid calldata in stakeData');
             return;
         }
-        let utxos: UTXO[] = [];
+        let utxos: UTXO[];
         if (!useNextUTXO) {
             utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], amountToSend);
-            console.log(utxos);
         } else {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
+                    ...utxo,
+                    value: BigInt(utxo.value)
+                }))
                 : [];
         }
 
@@ -492,35 +470,29 @@ export default function TxOpnetConfirmScreen() {
         // If this transaction is missing, opnet will deny the unwrapping request.
         const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact[0], false);
         if (!firstTransaction.success) {
-            console.log('Broadcasted:', false);
             tools.toastError('Error,Please Try again');
             setUseNextUTXO(true);
             setDisabled(false);
             return;
-        } else {
-            console.log('Broadcasted:', firstTransaction);
         }
 
         // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
-        const seconfTransaction = await Web3API.provider.sendRawTransaction(sendTransact[1], false);
-        if (!seconfTransaction.success) {
-            console.log('Broadcasted:', false);
+        const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransact[1], false);
+        if (!secondTransaction.success) {
             tools.toastError('Error,Please Try again');
             return;
-        } else {
-            console.log('Broadcasted:', seconfTransaction);
         }
+
         tools.toastSuccess(`You have sucessfully Staked ${Number(amountToSend) / 10 ** 8} WBTC`);
         const nextUTXO = sendTransact[2];
         localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
-        navigate('TxSuccessScreen', { txid: seconfTransaction.result });
+        navigate('TxSuccessScreen', { txid: secondTransaction.result });
     };
     const unstake = async () => {
         const foundObject = rawTxInfo.items.find(
             (obj) => obj.account && obj.account.address === rawTxInfo.account.address
         );
         const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
-        const result = 10 ** rawTxInfo.opneTokens[0].divisibility;
         const amountToSend = expandToDecimals(rawTxInfo.inputAmount, rawTxInfo.opneTokens[0].divisibility);
         const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
 
@@ -541,14 +513,13 @@ export default function TxOpnetConfirmScreen() {
         let utxos: UTXO[] = [];
         if (!useNextUTXO) {
             utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], amountToSend);
-            console.log(utxos);
         } else {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
+                    ...utxo,
+                    value: BigInt(utxo.value)
+                }))
                 : [];
         }
 
@@ -568,24 +539,19 @@ export default function TxOpnetConfirmScreen() {
         // If this transaction is missing, opnet will deny the unwrapping request.
         const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact[0], false);
         if (!firstTransaction.success) {
-            console.log('Broadcasted:', false);
             tools.toastError('Error,Please Try again');
             setUseNextUTXO(true);
             setDisabled(false);
             return;
-        } else {
-            console.log('Broadcasted:', firstTransaction);
         }
 
         // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
         const seconfTransaction = await Web3API.provider.sendRawTransaction(sendTransact[1], false);
         if (!seconfTransaction.success) {
-            console.log('Broadcasted:', false);
             setDisabled(false);
             return;
-        } else {
-            console.log('Broadcasted:', seconfTransaction);
         }
+        
         tools.toastSuccess(`You have sucessfully Unstaked ${Number(amountToSend) / 10 ** 8} WBTC`);
         const nextUTXO = sendTransact[2];
         localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
@@ -753,9 +719,9 @@ export default function TxOpnetConfirmScreen() {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
+                    ...utxo,
+                    value: BigInt(utxo.value)
+                }))
                 : [];
         }
         const interactionParameters: IInteractionParameters = {
@@ -821,9 +787,9 @@ export default function TxOpnetConfirmScreen() {
         } else {
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
+                    ...utxo,
+                    value: BigInt(utxo.value)
+                }))
                 : [];
         }
         const getData = await approveToken(inputAmountBigInt, walletGet, rawTxInfo.contractAddress[0], utxos);
@@ -994,9 +960,9 @@ export default function TxOpnetConfirmScreen() {
                 const storedUTXO = localStorage.getItem('nextUTXO');
                 utxos = storedUTXO
                     ? JSON.parse(storedUTXO).map((utxo) => ({
-                          ...utxo,
-                          value: BigInt(utxo.value)
-                      }))
+                        ...utxo,
+                        value: BigInt(utxo.value)
+                    }))
                     : [];
             }
 
@@ -1131,9 +1097,9 @@ export default function TxOpnetConfirmScreen() {
                 const storedUTXO = localStorage.getItem('nextUTXO');
                 utxos = storedUTXO
                     ? JSON.parse(storedUTXO).map((utxo) => ({
-                          ...utxo,
-                          value: BigInt(utxo.value)
-                      }))
+                        ...utxo,
+                        value: BigInt(utxo.value)
+                    }))
                     : [];
             }
             const contract = getContract<IOP_20Contract>(
