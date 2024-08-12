@@ -138,6 +138,7 @@ class ProviderController extends BaseController {
     getBalance = async () => {
         const account = await wallet.getCurrentAccount();
         if (!account) return null;
+
         const balance = await wallet.getAddressBalance(account.address);
         return {
             confirmed: amountToSatoshis(balance.confirm_amount),

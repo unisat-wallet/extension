@@ -155,6 +155,7 @@ export class UnisatProvider extends EventEmitter {
                 return res;
             })
             .catch((err) => {
+                console.log(err);
                 throw err;
             });
     };
