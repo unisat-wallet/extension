@@ -42,10 +42,10 @@ const ActionComponentContext = React.createContext<ContextType>(initContext);
 
 function ToastContainer({ handler }: { handler: ContextType }) {
     const [toasts, setToasts] = useState<{ key: string; props: ToastProps }[]>([]);
-
     const selfRef = useRef<{ toasts: { key: string; props: ToastProps }[] }>({
         toasts: []
     });
+    
     const self = selfRef.current;
     const basicToast = useCallback(
         (content: string, preset?: ToastPresets) => {
