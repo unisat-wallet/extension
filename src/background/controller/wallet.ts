@@ -358,6 +358,7 @@ export class WalletController extends BaseController {
     createTmpKeyringWithPrivateKey = async (privateKey: string, addressType: AddressType) => {
         const originKeyring = keyringService.createTmpKeyring(KEYRING_TYPE.SimpleKeyring, [privateKey]);
         const displayedKeyring = await keyringService.displayForKeyring(originKeyring, addressType, -1);
+
         preferenceService.setShowSafeNotice(true);
         return this.displayedKeyringToWalletKeyring(displayedKeyring, -1, false);
     };

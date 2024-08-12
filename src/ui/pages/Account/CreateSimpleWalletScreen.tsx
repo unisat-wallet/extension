@@ -10,6 +10,9 @@ import { TabBar } from '@/ui/components/TabBar';
 import { satoshisToAmount, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
+import { Wallet } from '@btc-vision/transaction';
+import { getBitcoinLibJSNetwork } from '@/shared/web3/Web3API';
+import { networks } from 'bitcoinjs-lib';
 
 function Step1({
                    contextData,
@@ -40,12 +43,22 @@ function Step1({
     const tools = useTools();
 
     const btnClick = async () => {
+        const network = await wallet.getNetworkType();
+        const bitcoinNetwork = getBitcoinLibJSNetwork(network);
+
         try {
-            const _res = await wallet.createTmpKeyringWithPrivateKey(wif, AddressType.P2TR);
+            /*const _res = await wallet.createTmpKeyringWithPrivateKey(wif, AddressType.P2TR);
             if (_res.accounts.length == 0) {
+                throw new Error('Invalid PrivateKey');
+            }*/
+            console.log('network', bitcoinNetwork);
+
+            const address = Wallet.fromWif(contextData.wif, networks.bitcoin); //keyring.accounts[0].address;
+            if (!address.p2tr) {
                 throw new Error('Invalid PrivateKey');
             }
         } catch (e) {
+            console.log(e);
             tools.toastError((e as Error).message);
             return;
         }
@@ -122,12 +135,19 @@ function Step2({
     const self = selfRef.current;
     const run = async () => {
         const addresses: string[] = [];
+        const network = await wallet.getNetworkType();
+        const bitcoinNetwork = getBitcoinLibJSNetwork(network);
+
         for (let i = 0; i < hdPathOptions.length; i++) {
-            const options = hdPathOptions[i];
-            const keyring = await wallet.createTmpKeyringWithPrivateKey(contextData.wif, options.addressType);
-            const address = keyring.accounts[0].address;
-            addresses.push(address);
+            //const options = hdPathOptions[i];
+            console.log('contextData', contextData);
+            //const keyring = await wallet.createTmpKeyringWithPrivateKey(contextData.wif, options.addressType);
+            const address = Wallet.fromWif(contextData.wif, bitcoinNetwork); //keyring.accounts[0].address;
+            console.log(address);
+            addresses.push(address.p2tr);
         }
+
+        console.log(addresses);
 
         const balances = await wallet.getMultiAddressAssets(addresses.join(','));
         for (let i = 0; i < addresses.length; i++) {

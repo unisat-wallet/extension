@@ -500,8 +500,7 @@ class KeyringService extends EventEmitter {
 
     createTmpKeyring = (type: string, opts: unknown) => {
         const Keyring = this.getKeyringClassForType(type);
-        const keyring = new Keyring(opts);
-        return keyring;
+        return new Keyring(opts);
     };
 
     /**

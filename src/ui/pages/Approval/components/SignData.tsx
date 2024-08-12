@@ -23,34 +23,11 @@ const AGREEMENT_TEXT = 'I only sign what I understand';
 export default function SignData({ params: { data, session } }: Props) {
     const [getApproval, resolveApproval, rejectApproval] = useApproval();
 
-    const [canClick, setCanClick] = useState(true);
-
-    useEffect(() => {
-        if (!canClick) {
-            setTimeout(() => {
-                setCanClick(true);
-                console.log('May click again.');
-            }, 3000);
-        }
-    }, [canClick]);
-
     const handleCancel = () => {
-        if (!canClick) {
-            return;
-        }
-
-        setCanClick(false);
-
         void rejectApproval();
     };
 
     const handleConfirm = () => {
-        if (!canClick) {
-            return;
-        }
-
-        setCanClick(false);
-
         void resolveApproval();
     };
 

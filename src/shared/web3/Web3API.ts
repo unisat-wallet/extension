@@ -46,6 +46,20 @@ export function getOPNetNetwork(network: NetworkType): OPNetNetwork {
     }
 }
 
+export function getBitcoinLibJSNetwork(network: NetworkType): Network {
+    switch (network) {
+        case NetworkType.MAINNET:
+            return networks.bitcoin;
+        case NetworkType.TESTNET:
+            return networks.testnet;
+        case NetworkType.REGTEST:
+            return networks.regtest;
+        default:
+            throw new Error('Invalid network type');
+    }
+
+}
+
 export function bigIntToDecimal(amount: bigint, decimal: number): string {
     const number = new BigNumber(amount.toString()).dividedBy(new BigNumber(10).pow(decimal));
 
