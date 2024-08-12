@@ -86,13 +86,7 @@ export default function WalletTabScreen() {
 
     const safeBalance = useSafeBalance();
     const availableSatoshis = amountToSatoshis(accountBalance.amount) - amountToSatoshis(accountBalance.inscription_amount);
-
-    /*
-    useMemo(() => {
-        return amountToSatoshis(safeBalance);
-    }, [safeBalance]);
-     */
-
+    
     const totalSatoshis = amountToSatoshis(accountBalance.amount);
     const unavailableSatoshis = totalSatoshis - availableSatoshis;
     const [availableAmount, setAvailableAmount] = useState(safeBalance);
