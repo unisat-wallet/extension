@@ -3,12 +3,14 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { COIN_DUST } from '@/shared/constant';
 import { RawTxInfo } from '@/shared/types';
-import { Button, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
+import { Button, Column, Content, Header, Icon, Image, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
+import { BtcUsd } from '@/ui/components/BtcUsd';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useAccountBalance } from '@/ui/state/accounts/hooks';
+import { useBTCUnit, useChain } from '@/ui/state/settings/hooks';
 import {
   useBitcoinTx,
   useFetchUtxosCallback,
@@ -19,8 +21,6 @@ import {
 import { useUiTxCreateScreen, useUpdateUiTxCreateScreen } from '@/ui/state/ui/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { amountToSatoshis, isValidAddress, satoshisToAmount } from '@/ui/utils';
-import { BtcUsd } from '@/ui/components/BtcUsd';
-import { useBTCUnit } from '@/ui/state/settings/hooks';
 
 export default function TxCreateScreen() {
   const accountBalance = useAccountBalance();
@@ -87,6 +87,7 @@ export default function TxCreateScreen() {
 
   const unspendUnavailableAmount = satoshisToAmount(unavailableSatoshis - spendUnavailableSatoshis);
 
+  const chain = useChain();
   useEffect(() => {
     setError('');
     setDisabled(true);
@@ -147,7 +148,7 @@ export default function TxCreateScreen() {
       />
       <Content style={{ padding: '0px 16px 24px' }}>
         <Row justifyCenter>
-          <Icon icon="btc" size={50} />
+          <Image src={chain.icon} size={50} />
         </Row>
 
         <Column mt="lg">
@@ -165,7 +166,7 @@ export default function TxCreateScreen() {
         <Column mt="lg">
           <Row justifyBetween>
             <Text text="Transfer amount" preset="regular" color="textDim" />
-            <BtcUsd sats={toSatoshis}/>
+            <BtcUsd sats={toSatoshis} />
           </Row>
           <Input
             preset="amount"
