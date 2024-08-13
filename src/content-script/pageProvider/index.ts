@@ -31,8 +31,10 @@ const log = (event: string, ...args: unknown[]) => {
                           }*/
 };
 
+//declare const window: any
+
 const script = document.currentScript;
-const channelName = script?.getAttribute('channel') || 'UNISAT';
+const channelName = script?.getAttribute('channel') || 'OPNET';
 
 interface StateProvider {
     accounts: string[] | null;
@@ -44,7 +46,7 @@ interface StateProvider {
 
 const EXTENSION_CONTEXT_INVALIDATED_CHROMIUM_ERROR = 'Extension context invalidated.';
 
-const _unisatPrividerPrivate: {
+const _opnetPrividerPrivate: {
     _selectedAddress: string | null;
     _network: string | null;
     _isConnected: boolean;
@@ -76,20 +78,20 @@ const _unisatPrividerPrivate: {
     _bcm: new BroadcastChannelMessage(channelName)
 };
 
-export class UnisatProvider extends EventEmitter {
+export class OpnetProvider extends EventEmitter {
     public readonly web3: Web3Provider = new Web3Provider(this);
 
     constructor({ maxListeners = 100 } = {}) {
         super();
         this.setMaxListeners(maxListeners);
         void this.initialize();
-        _unisatPrividerPrivate._pushEventHandlers = new PushEventHandlers(this, _unisatPrividerPrivate);
+        _opnetPrividerPrivate._pushEventHandlers = new PushEventHandlers(this, _opnetPrividerPrivate);
     }
 
     initialize = async () => {
         document.addEventListener('visibilitychange', this._requestPromiseCheckVisibility);
 
-        _unisatPrividerPrivate._bcm.connect().on('message', this._handleBackgroundMessage);
+        _opnetPrividerPrivate._bcm.connect().on('message', this._handleBackgroundMessage);
         domReadyCall(() => {
             const origin = window.top?.location.origin;
             const icon =
@@ -98,7 +100,7 @@ export class UnisatProvider extends EventEmitter {
 
             const name = document.title || ($('head > meta[name="title"]') as HTMLMetaElement)?.content || origin;
 
-            _unisatPrividerPrivate._bcm.request({
+            _opnetPrividerPrivate._bcm.request({
                 method: 'tabCheckin',
                 params: { icon, name, origin }
             });
@@ -113,21 +115,21 @@ export class UnisatProvider extends EventEmitter {
             });
 
             if (isUnlocked) {
-                _unisatPrividerPrivate._isUnlocked = true;
-                _unisatPrividerPrivate._state.isUnlocked = true;
+                _opnetPrividerPrivate._isUnlocked = true;
+                _opnetPrividerPrivate._state.isUnlocked = true;
             }
             this.emit('connect', {});
-            _unisatPrividerPrivate._pushEventHandlers?.networkChanged({
+            _opnetPrividerPrivate._pushEventHandlers?.networkChanged({
                 network,
                 chain
             });
 
-            _unisatPrividerPrivate._pushEventHandlers?.accountsChanged(accounts);
+            _opnetPrividerPrivate._pushEventHandlers?.accountsChanged(accounts);
         } catch {
             //
         } finally {
-            _unisatPrividerPrivate._initialized = true;
-            _unisatPrividerPrivate._state.initialized = true;
+            _opnetPrividerPrivate._initialized = true;
+            _opnetPrividerPrivate._state.initialized = true;
             this.emit('_initialized');
         }
 
@@ -141,11 +143,11 @@ export class UnisatProvider extends EventEmitter {
 
         this._requestPromiseCheckVisibility();
 
-        return _unisatPrividerPrivate._requestPromise
+        return _opnetPrividerPrivate._requestPromise
             .call(async () => {
                 log('[request]', JSON.stringify(data, null, 2));
 
-                const res = await _unisatPrividerPrivate._bcm.request(data).catch((err) => {
+                const res = await _opnetPrividerPrivate._bcm.request(data).catch((err) => {
                     log('[request: error]', data.method, serializeError(err));
                     throw serializeError(err);
                 });
@@ -454,16 +456,16 @@ export class UnisatProvider extends EventEmitter {
 
     private _requestPromiseCheckVisibility = () => {
         if (document.visibilityState === 'visible') {
-            _unisatPrividerPrivate._requestPromise.check(1);
+            _opnetPrividerPrivate._requestPromise.check(1);
         } else {
-            _unisatPrividerPrivate._requestPromise.uncheck(1);
+            _opnetPrividerPrivate._requestPromise.uncheck(1);
         }
     };
 
     private _handleBackgroundMessage = ({ event, data }) => {
         log('[push event]', event, data);
-        if (_unisatPrividerPrivate._pushEventHandlers?.[event]) {
-            return _unisatPrividerPrivate._pushEventHandlers[event](data);
+        if (_opnetPrividerPrivate._pushEventHandlers?.[event]) {
+            return _opnetPrividerPrivate._pushEventHandlers[event](data);
         }
 
         this.emit(event, data);
@@ -488,19 +490,25 @@ export class UnisatProvider extends EventEmitter {
     };
 }
 
-const provider = new UnisatProvider();
+declare global {
+    interface Window {
+      opnet: OpnetProvider;
+    }
+  }
 
-if (!window.unisat) {
-    window.unisat = new Proxy(provider, {
+const provider = new OpnetProvider();
+
+if (!window.opnet) {
+    window.opnet = new Proxy(provider, {
         deleteProperty: () => true
     }) as any;
 }
 
-Object.defineProperty(window, 'unisat', {
+Object.defineProperty(window, 'opnet', {
     value: new Proxy(provider, {
         deleteProperty: () => true
     }),
     writable: false
 });
 
-window.dispatchEvent(new Event('unisat#initialized'));
+window.dispatchEvent(new Event('opnet#initialized'));
