@@ -32,7 +32,7 @@
     "@babel/core": "^7.16.0",
     "@btc-vision/bsi-binary": "1.0.37",
     "@btc-vision/passworder": "github:btc-vision/passworder",
-    "@btc-vision/transaction": "1.0.84",
+    "@btc-vision/transaction": "1.0.85",
     "@fortawesome/fontawesome-svg-core": "^6.1.1",
     "@fortawesome/free-regular-svg-icons": "^6.1.1",
     "@fortawesome/free-solid-svg-icons": "^6.1.1",
