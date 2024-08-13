@@ -10,9 +10,12 @@ import { TabBar } from '@/ui/components/TabBar';
 import { satoshisToAmount, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
-import { Wallet } from '@btc-vision/transaction';
 import { getBitcoinLibJSNetwork } from '@/shared/web3/Web3API';
-import { networks } from 'bitcoinjs-lib';
+import * as ecc from '@bitcoinerlab/secp256k1';
+import { ECPairFactory } from 'ecpair';
+import { EcKeyPair, Wallet } from '@btc-vision/transaction';
+
+const ECPair = ECPairFactory(ecc);
 
 function Step1({
                    contextData,
@@ -51,15 +54,16 @@ function Step1({
             if (_res.accounts.length == 0) {
                 throw new Error('Invalid PrivateKey');
             }*/
-            console.log('network', bitcoinNetwork);
 
-            const address = Wallet.fromWif(contextData.wif, networks.bitcoin); //keyring.accounts[0].address;
+            ECPair.fromWIF(wif, bitcoinNetwork);
+
+            /*const address = Wallet.fromWif(contextData.wif, bitcoinNetwork); //keyring.accounts[0].address;
             if (!address.p2tr) {
                 throw new Error('Invalid PrivateKey');
-            }
+            }*/
         } catch (e) {
             console.log(e);
-            tools.toastError((e as Error).message);
+            tools.toastError(`${(e as Error).message} (Are you on the right network?)`);
             return;
         }
         updateContextData({
@@ -76,7 +80,7 @@ function Step1({
                 placeholder={'WIF Private Key or Hex Private Key'}
                 onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) => {
                     if ('Enter' == e.key) {
-                        btnClick();
+                        void btnClick();
                     }
                 }}
                 onChange={onChange}
@@ -132,6 +136,7 @@ function Step2({
         count: 0,
         addressBalances: {}
     });
+
     const self = selfRef.current;
     const run = async () => {
         const addresses: string[] = [];
@@ -139,19 +144,25 @@ function Step2({
         const bitcoinNetwork = getBitcoinLibJSNetwork(network);
 
         for (let i = 0; i < hdPathOptions.length; i++) {
-            //const options = hdPathOptions[i];
-            console.log('contextData', contextData);
+            const options = hdPathOptions[i];
             //const keyring = await wallet.createTmpKeyringWithPrivateKey(contextData.wif, options.addressType);
-            const address = Wallet.fromWif(contextData.wif, bitcoinNetwork); //keyring.accounts[0].address;
-            console.log(address);
-            addresses.push(address.p2tr);
-        }
+            const address = Wallet.fromWif(contextData.wif, bitcoinNetwork); //keyring.accounts[0].address; //
+            //console.log(address);
+            //addresses.push(address.p2tr);
 
-        console.log(addresses);
+            if (options.addressType == AddressType.P2TR) {
+                addresses.push(address.p2tr);
+            } else if (options.addressType == AddressType.P2WPKH) {
+                addresses.push(address.p2wpkh);
+            } else {
+                addresses.push(EcKeyPair.getLegacyAddress(ECPair.fromWIF(contextData.wif, bitcoinNetwork), bitcoinNetwork));
+            }
+        }
 
         const balances = await wallet.getMultiAddressAssets(addresses.join(','));
         for (let i = 0; i < addresses.length; i++) {
             const address = addresses[i];
+
             const balance = balances[i];
             const satoshis = balance.totalSatoshis;
             self.addressBalances[address] = {
@@ -170,7 +181,7 @@ function Step2({
         setPreviewAddresses(addresses);
     };
     useEffect(() => {
-        run();
+        void run();
     }, [contextData.wif]);
 
     const pathIndex = useMemo(() => {
@@ -219,7 +230,7 @@ function Step2({
             })}
 
             <FooterButtonContainer>
-                <Button text="Coninue" preset="primary" onClick={onNext} />
+                <Button text="Continue" preset="primary" onClick={onNext} />
             </FooterButtonContainer>
         </Column>
     );

@@ -279,6 +279,7 @@ export const AddressInput = (props: InputProps) => {
                 return;
             }
         } else {
+            // @ts-ignore
             const isValid = bitcore.Address.isValid(inputAddress);
             if (!isValid) {
                 setFormatError('Recipient address is invalid');

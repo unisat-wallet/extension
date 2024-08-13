@@ -29,7 +29,6 @@ export default function ExportPrivateKeyScreen() {
     const btnClick = async () => {
         try {
             const _res = await wallet.getPrivateKey(password, account);
-            console.log(_res);
             setPrivateKey(_res);
         } catch (e) {
             setStatus('error');
@@ -39,7 +38,7 @@ export default function ExportPrivateKeyScreen() {
 
     const handleOnKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
         if ('Enter' == e.key) {
-            btnClick();
+            void btnClick();
         }
     };
 
@@ -53,7 +52,7 @@ export default function ExportPrivateKeyScreen() {
     }, [password]);
 
     function copy(str: string) {
-        copyToClipboard(str);
+        void copyToClipboard(str);
         tools.toastSuccess('Copied');
     }
 
@@ -121,7 +120,7 @@ export default function ExportPrivateKeyScreen() {
                         <Text text="WIF Private Key:" preset="sub" size="sm" textCenter mt="lg" />
 
                         <Card
-                            onClick={(e) => {
+                            onClick={() => {
                                 copy(privateKey.wif);
                             }}>
                             <Row>
@@ -139,7 +138,7 @@ export default function ExportPrivateKeyScreen() {
                         <Text text="Hex Private Key:" preset="sub" size="sm" textCenter mt="lg" />
 
                         <Card
-                            onClick={(e) => {
+                            onClick={() => {
                                 copy(privateKey.hex);
                             }}>
                             <Row>

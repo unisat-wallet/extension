@@ -9,7 +9,6 @@ import {
     preferenceService,
     sessionService
 } from '@/background/service';
-import i18n from '@/background/service/i18n';
 import { DisplayedKeyring, Keyring } from '@/background/service/keyring';
 import {
     BroadcastTransactionOptions,
@@ -45,7 +44,7 @@ import {
     WalletKeyring
 } from '@/shared/types';
 import { checkAddressFlag, getChainInfo } from '@/shared/utils';
-import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
+import Web3API, { bigIntToDecimal, getBitcoinLibJSNetwork } from '@/shared/web3/Web3API';
 import {
     IInteractionParameters,
     IUnwrapParameters,
@@ -71,6 +70,7 @@ import { ContactBookItem } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';
 import { ConnectedSite } from '../service/permission';
 import BaseController from './base';
+import { SimpleKeyring } from '../../../../wallet-sdk/src';
 
 const stashKeyrings: Record<string, Keyring> = {};
 export type AccountAsset = {
@@ -248,13 +248,17 @@ export class WalletController extends BaseController {
         await this.verifyPassword(password);
         const keyring = await keyringService.getKeyringForAccount(pubkey, type);
         if (!keyring) return null;
+
         const privateKey = await keyring.exportAccount(pubkey);
         const networkType = this.getNetworkType();
         const network = toPsbtNetwork(networkType);
-        const hex = privateKey;
+        console.log('network', network, networkType);
+
         const wif = ECPair.fromPrivateKey(Buffer.from(privateKey, 'hex'), { network }).toWIF();
+        console.log('from network', network, privateKey, wif);
+
         return {
-            hex,
+            hex: privateKey,
             wif
         };
     };
@@ -276,7 +280,12 @@ export class WalletController extends BaseController {
     getMnemonics = async (password: string, keyring: WalletKeyring) => {
         await this.verifyPassword(password);
         const originKeyring = keyringService.keyrings[keyring.index];
-        const serialized = await originKeyring.serialize();
+        const serialized = originKeyring.serialize();
+
+        if (!('mnemonic' in serialized)) {
+            throw new Error('No mnemonic found');
+        }
+
         return {
             mnemonic: serialized.mnemonic,
             hdPath: serialized.hdPath,
@@ -285,16 +294,15 @@ export class WalletController extends BaseController {
     };
 
     createKeyringWithPrivateKey = async (data: string, addressType: AddressType, alianName?: string) => {
-        const error = new Error(i18n.t('The private key is invalid'));
-
         let originKeyring: Keyring;
         try {
             originKeyring = await keyringService.importPrivateKey(data, addressType);
         } catch (e) {
-            console.log(e);
+            console.warn('Something went wrong while attempting to load keyring', e);
             throw e;
         }
-        const pubkeys = await originKeyring.getAccounts();
+
+        const pubkeys = originKeyring.getAccounts();
         if (alianName) this.updateAlianName(pubkeys[0], alianName);
 
         const displayedKeyring = await keyringService.displayForKeyring(
@@ -303,7 +311,7 @@ export class WalletController extends BaseController {
             keyringService.keyrings.length - 1
         );
         const keyring = this.displayedKeyringToWalletKeyring(displayedKeyring, keyringService.keyrings.length - 1);
-        this.changeKeyring(keyring);
+        await this.changeKeyring(keyring);
     };
 
     getPreMnemonics = () => keyringService.getPreMnemonics();
@@ -349,18 +357,27 @@ export class WalletController extends BaseController {
         for (let i = 0; i < accountCount; i++) {
             activeIndexes.push(i);
         }
+
+        const network = this.getNetworkType();
         const originKeyring = keyringService.createTmpKeyring('HD Key Tree', {
             mnemonic,
             activeIndexes,
             hdPath,
-            passphrase
+            passphrase,
+            network: getBitcoinLibJSNetwork(network)
         });
+
         const displayedKeyring = await keyringService.displayForKeyring(originKeyring, addressType, -1);
         return this.displayedKeyringToWalletKeyring(displayedKeyring, -1, false);
     };
 
     createTmpKeyringWithPrivateKey = async (privateKey: string, addressType: AddressType) => {
-        const originKeyring = keyringService.createTmpKeyring(KEYRING_TYPE.SimpleKeyring, [privateKey]);
+        const network = this.getNetworkType();
+
+        const originKeyring = keyringService.createTmpKeyring(KEYRING_TYPE.SimpleKeyring, {
+            privateKeys: [privateKey],
+            network: getBitcoinLibJSNetwork(network)
+        });
         const displayedKeyring = await keyringService.displayForKeyring(originKeyring, addressType, -1);
 
         preferenceService.setShowSafeNotice(true);
@@ -384,7 +401,10 @@ export class WalletController extends BaseController {
             accountCount && tmpKeyring.addAccounts(accountCount);
         }
 
-        const opts = await tmpKeyring.serialize();
+        const opts = tmpKeyring.serialize();
+        //const network = this.getNetworkType();
+        //opts.network = getBitcoinLibJSNetwork(network);
+
         const originKeyring = keyringService.createTmpKeyring(KEYRING_TYPE.KeystoneKeyring, opts);
         const displayedKeyring = await keyringService.displayForKeyring(originKeyring, addressType, -1);
         preferenceService.setShowSafeNotice(false);
@@ -408,14 +428,14 @@ export class WalletController extends BaseController {
         );
 
         if (filterPubkey !== null && filterPubkey !== undefined && filterPubkey.length > 0) {
-            const accounts = await originKeyring.getAccounts();
+            const accounts = originKeyring.getAccounts();
             accounts.forEach((account) => {
                 if (!filterPubkey.includes(account)) {
                     originKeyring.removeAccount(account);
                 }
             });
         }
-        const account = await originKeyring.getAccounts();
+        //const account = await originKeyring.getAccounts();
         const displayedKeyring = await keyringService.displayForKeyring(
             originKeyring,
             addressType,
@@ -456,7 +476,7 @@ export class WalletController extends BaseController {
         return accounts.filter((x) => x).length;
     };
 
-    changeKeyring = (keyring: WalletKeyring, accountIndex = 0) => {
+    changeKeyring = async (keyring: WalletKeyring, accountIndex = 0) => {
         preferenceService.setCurrentKeyringIndex(keyring.index);
         preferenceService.setCurrentAccount(keyring.accounts[accountIndex]);
         const flag = preferenceService.getAddressFlag(keyring.accounts[accountIndex].address);
@@ -466,7 +486,7 @@ export class WalletController extends BaseController {
     getAllAddresses = (keyring: WalletKeyring, index: number) => {
         const networkType = this.getNetworkType();
         const addresses: string[] = [];
-        const _keyring = keyringService.keyrings[keyring.index];
+        const _keyring = keyringService.keyrings[keyring.index] as KeystoneKeyring;
         if (keyring.type === KEYRING_TYPE.HdKeyring || keyring.type === KEYRING_TYPE.KeystoneKeyring) {
             const pathPubkey: { [path: string]: string } = {};
             ADDRESS_TYPES.filter((v) => v.displayIndex >= 0).forEach((v) => {
@@ -583,7 +603,7 @@ export class WalletController extends BaseController {
 
         const keyring = await this.getCurrentKeyring();
         if (!keyring) throw new Error('no current keyring');
-        const _keyring = keyringService.keyrings[keyring.index];
+        const __keyring = keyringService.keyrings[keyring.index];
 
         const networkType = this.getNetworkType();
         const psbtNetwork = toPsbtNetwork(networkType);
@@ -611,6 +631,7 @@ export class WalletController extends BaseController {
         });
 
         if (keyring.type === KEYRING_TYPE.KeystoneKeyring) {
+            const _keyring = __keyring as KeystoneKeyring;
             if (!_keyring.mfp) {
                 throw new Error('no mfp in keyring');
             }
@@ -636,7 +657,7 @@ export class WalletController extends BaseController {
             return psbt;
         }
 
-        psbt = await keyringService.signTransaction(_keyring, psbt, toSignInputs);
+        psbt = keyringService.signTransaction(__keyring, psbt, toSignInputs);
         if (autoFinalized) {
             toSignInputs.forEach((v) => {
                 // psbt.validateSignaturesOfInput(v.index, validator);
@@ -851,7 +872,7 @@ export class WalletController extends BaseController {
         });
     };
 
-    signData = async (data: string, type = 'ecdsa') => {
+    signData = async (data: string, type: 'ecdsa' | 'schnorr' = 'ecdsa') => {
         const account = preferenceService.getCurrentAccount();
         if (!account) throw new Error('no current account');
         return keyringService.signData(account.pubkey, data, type);
@@ -865,7 +886,8 @@ export class WalletController extends BaseController {
             try {
                 keyring = this._getKeyringByType(type);
             } catch {
-                const Keyring = keyringService.getKeyringClassForType(type);
+                const Keyring = keyringService.getKeyringClassForType(type) as typeof SimpleKeyring | undefined;
+                if (!Keyring) throw new Error('no keyring');
                 keyring = new Keyring();
             }
         }
@@ -1985,12 +2007,14 @@ export class WalletController extends BaseController {
 
     genSignPsbtUr = async (psbtHex: string) => {
         const { keyring } = await this.checkKeyringMethod('genSignPsbtUr');
-        return await keyring.genSignPsbtUr!(psbtHex);
+
+        return await (keyring as KeystoneKeyring).genSignPsbtUr!(psbtHex);
     };
 
     parseSignPsbtUr = async (type: string, cbor: string, isFinalize = true) => {
         const { keyring } = await this.checkKeyringMethod('parseSignPsbtUr');
-        const psbtHex = await keyring.parseSignPsbtUr!(type, cbor);
+
+        const psbtHex = await (keyring as KeystoneKeyring).parseSignPsbtUr!(type, cbor);
         const psbt = bitcoin.Psbt.fromHex(psbtHex);
         isFinalize && psbt.finalizeAllInputs();
         return {
@@ -2013,7 +2037,7 @@ export class WalletController extends BaseController {
             return await this.genSignPsbtUr(psbt.toHex());
         }
         const { account, keyring } = await this.checkKeyringMethod('genSignMsgUr');
-        return await keyring.genSignMsgUr!(account.pubkey, text);
+        return await (keyring as KeystoneKeyring).genSignMsgUr!(account.pubkey, text);
     };
 
     parseSignMsgUr = async (type: string, cbor: string, msgType: string) => {
@@ -2026,7 +2050,7 @@ export class WalletController extends BaseController {
             };
         }
         const { keyring } = await this.checkKeyringMethod('parseSignMsgUr');
-        const sig = await keyring.parseSignMsgUr!(type, cbor);
+        const sig = await (keyring as KeystoneKeyring).parseSignMsgUr!(type, cbor);
         sig.signature = Buffer.from(sig.signature, 'hex').toString('base64');
         return sig;
     };

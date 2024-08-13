@@ -88,7 +88,7 @@ export class OpenApiService {
         }
     };
 
-    setClientAddress = async (token: string, flag: number) => {
+    setClientAddress = (token: string, flag: number) => {
         this.clientAddress = token;
         this.addressFlag = flag;
     };
