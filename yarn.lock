@@ -3334,7 +3334,7 @@
 
 "@unisat/wallet-sdk@github:btc-vision/wallet-sdk":
   version "1.7.2"
-  resolved "https://codeload.github.com/btc-vision/wallet-sdk/tar.gz/899acad7ecb6c28eefac55e1b4dc13cd693a4b31"
+  resolved "https://codeload.github.com/btc-vision/wallet-sdk/tar.gz/1521bd40563383a9e33a0eb7db2869b5832e271d"
   dependencies:
     "@bitcoinerlab/secp256k1" "^1.1.1"
     "@keystonehq/keystone-sdk" "^0.3.0"
