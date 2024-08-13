@@ -1,5 +1,17 @@
 # UniSat Wallet Release Notes
 
+## v1.4.1
+
+- Support for setting transfer fees with one decimal place
+- Added display of USD prices for BTC、BRC20 and Runes
+- Real-time fee displays for various buy BTC options
+- Fix unisat.sendRunes
+- Fix unisat.multiSginPsbt
+
+## v1.4.0
+
+- Support fractalbitcoin
+
 ## v1.3.4
 
 - Compatible with partial token coloring for ARC20
