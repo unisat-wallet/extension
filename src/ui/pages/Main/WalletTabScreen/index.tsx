@@ -57,11 +57,7 @@ export default function WalletTabScreen() {
     const currentKeyring = useCurrentKeyring();
     const currentAccount = useCurrentAccount();
     const balanceValue = useMemo(() => {
-        if (accountBalance.amount === '0') {
-            return '--';
-        } else {
-            return accountBalance.amount;
-        }
+        return accountBalance.amount;
     }, [accountBalance.amount]);
 
     const wallet = useWallet();
@@ -86,7 +82,7 @@ export default function WalletTabScreen() {
 
     const safeBalance = useSafeBalance();
     const availableSatoshis = amountToSatoshis(accountBalance.amount) - amountToSatoshis(accountBalance.inscription_amount);
-    
+
     const totalSatoshis = amountToSatoshis(accountBalance.amount);
     const unavailableSatoshis = totalSatoshis - availableSatoshis;
     const [availableAmount, setAvailableAmount] = useState(safeBalance);
