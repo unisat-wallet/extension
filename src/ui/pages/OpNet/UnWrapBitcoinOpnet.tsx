@@ -14,7 +14,7 @@ import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { useWallet } from '@/ui/utils';
-import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
+import { getAddressUtxoDust } from '@btc-vision/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../MainRoute';
 

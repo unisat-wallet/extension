@@ -1340,9 +1340,10 @@
     ts-loader "^9.5.1"
     ts-node "^10.9.2"
 
-"@btc-vision/passworder@github:btc-vision/passworder":
+"@btc-vision/passworder@1.0.0":
   version "1.0.0"
-  resolved "https://codeload.github.com/btc-vision/passworder/tar.gz/6585db9465c549c7f191de043cf5770401bc073f"
+  resolved "https://registry.yarnpkg.com/@btc-vision/passworder/-/passworder-1.0.0.tgz#ef893296ed520f2951e773004df7d3594de961c5"
+  integrity sha512-kRzmC4EKjtiAkvwTeicEB04khIr0r+Ifz3E+mK+7UXJ6A+aojTkO3Z7MMLc4VX3f5PH28bc0QdxlCmK91EDmdw==
   dependencies:
     "@metamask/utils" "^9.0.0"
 
@@ -1377,6 +1378,22 @@
     process "^0.11.10"
     ts-loader "^9.5.1"
     ts-node "^10.9.2"
+
+"@btc-vision/wallet-sdk@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@btc-vision/wallet-sdk/-/wallet-sdk-1.0.0.tgz#f781246cb3a12954ff4f894a84b4cf761b869d3d"
+  integrity sha512-8DXxQfVGYW6WciQeH4w/2HXtCSGbsvR/+qGjcCpBAe+xN90rhuCf1DRMmSc+4h1EOFUiQqKW09NE0N0m7rq9JA==
+  dependencies:
+    "@bitcoinerlab/secp256k1" "^1.1.1"
+    "@keystonehq/keystone-sdk" "^0.3.0"
+    big-integer "^1.6.52"
+    bignumber.js "^9.1.2"
+    bip-schnorr "^0.6.7"
+    bip39 "^3.1.0"
+    bitcoinjs-lib "^6.1.6"
+    bitcore-lib "^10.2.1"
+    ecpair "^2.1.0"
+    hdkey "^2.1.0"
 
 "@bufbuild/protobuf@^1.2.0":
   version "1.10.0"
@@ -1580,31 +1597,31 @@
   resolved "https://npm.fontawesome.com/@fortawesome/fontawesome-common-types/-/6.6.0/fontawesome-common-types-6.6.0.tgz#31ab07ca6a06358c5de4d295d4711b675006163f"
   integrity sha512-xyX0X9mc0kyz9plIyryrRbl7ngsA9jz77mCZJsUkLl+ZKs0KWObgaEBoSgQiYWAsSmjz/yjl0F++Got0Mdp4Rw==
 
-"@fortawesome/fontawesome-svg-core@^6.1.1":
+"@fortawesome/fontawesome-svg-core@^6.6.0":
   version "6.6.0"
   resolved "https://npm.fontawesome.com/@fortawesome/fontawesome-svg-core/-/6.6.0/fontawesome-svg-core-6.6.0.tgz#2a24c32ef92136e98eae2ff334a27145188295ff"
   integrity sha512-KHwPkCk6oRT4HADE7smhfsKudt9N/9lm6EJ5BVg0tD1yPA5hht837fB87F8pn15D8JfTqQOjhKTktwmLMiD7Kg==
   dependencies:
     "@fortawesome/fontawesome-common-types" "6.6.0"
 
-"@fortawesome/free-regular-svg-icons@^6.1.1":
+"@fortawesome/free-regular-svg-icons@^6.6.0":
   version "6.6.0"
   resolved "https://npm.fontawesome.com/@fortawesome/free-regular-svg-icons/-/6.6.0/free-regular-svg-icons-6.6.0.tgz#fc49a947ac8dfd20403c9ea5f37f0919425bdf04"
   integrity sha512-Yv9hDzL4aI73BEwSEh20clrY8q/uLxawaQ98lekBx6t9dQKDHcDzzV1p2YtBGTtolYtNqcWdniOnhzB+JPnQEQ==
   dependencies:
     "@fortawesome/fontawesome-common-types" "6.6.0"
 
-"@fortawesome/free-solid-svg-icons@^6.1.1":
+"@fortawesome/free-solid-svg-icons@^6.6.0":
   version "6.6.0"
   resolved "https://npm.fontawesome.com/@fortawesome/free-solid-svg-icons/-/6.6.0/free-solid-svg-icons-6.6.0.tgz#061751ca43be4c4d814f0adbda8f006164ec9f3b"
   integrity sha512-IYv/2skhEDFc2WGUcqvFJkeK39Q+HyPf5GHUrT/l2pKbtgEIv1al1TKd6qStR5OIwQdN1GZP54ci3y4mroJWjA==
   dependencies:
     "@fortawesome/fontawesome-common-types" "6.6.0"
 
-"@fortawesome/react-fontawesome@^0.1.18":
-  version "0.1.19"
-  resolved "https://npm.fontawesome.com/@fortawesome/react-fontawesome/-/0.1.19/react-fontawesome-0.1.19.tgz#2b36917578596f31934e71f92b7cf9c425fd06e4"
-  integrity sha512-Hyb+lB8T18cvLNX0S3llz7PcSOAJMLwiVKBuuzwM/nI5uoBw+gQjnf9il0fR1C3DKOI5Kc79pkJ4/xB0Uw9aFQ==
+"@fortawesome/react-fontawesome@^0.2.2":
+  version "0.2.2"
+  resolved "https://npm.fontawesome.com/@fortawesome/react-fontawesome/-/0.2.2/react-fontawesome-0.2.2.tgz#68b058f9132b46c8599875f6a636dad231af78d4"
+  integrity sha512-EnkrprPNqI6SXJl//m29hpaNzOp1bruISWaOiRtkMi/xSvHJlzc2j2JAYS7egxt/EbjSNV/k6Xy0AQI6vB2+1g==
   dependencies:
     prop-types "^15.8.1"
 
@@ -3364,22 +3381,6 @@
   version "1.2.0"
   resolved "https://registry.yarnpkg.com/@ungap/structured-clone/-/structured-clone-1.2.0.tgz#756641adb587851b5ccb3e095daf27ae581c8406"
   integrity sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==
-
-"@unisat/wallet-sdk@github:btc-vision/wallet-sdk":
-  version "1.7.2"
-  resolved "https://codeload.github.com/btc-vision/wallet-sdk/tar.gz/1521bd40563383a9e33a0eb7db2869b5832e271d"
-  dependencies:
-    "@bitcoinerlab/secp256k1" "^1.1.1"
-    "@keystonehq/keystone-sdk" "^0.3.0"
-    big-integer "^1.6.52"
-    bignumber.js "^9.1.2"
-    bip-schnorr "^0.6.7"
-    bip39 "^3.1.0"
-    bitcoinjs-lib "^6.1.6"
-    bitcore-lib "^10.2.1"
-    ecpair "^2.1.0"
-    hdkey "^2.1.0"
-    tiny-secp256k1 "=2.2.1"
 
 "@webassemblyjs/ast@1.11.1":
   version "1.11.1"
@@ -14990,13 +14991,6 @@ timers-browserify@^1.0.1:
   integrity sha512-PIxwAupJZiYU4JmVZYwXp9FKsHMXb5h0ZEFyuXTAn8WLHOlcij+FEcbrvDsom1o5dr1YggEtFbECvGCW2sT53Q==
   dependencies:
     process "~0.11.0"
-
-tiny-secp256k1@=2.2.1:
-  version "2.2.1"
-  resolved "https://registry.yarnpkg.com/tiny-secp256k1/-/tiny-secp256k1-2.2.1.tgz#a61d4791b7031aa08a9453178a131349c3e10f9b"
-  integrity sha512-/U4xfVqnVxJXN4YVsru0E6t5wVncu2uunB8+RVR40fYUxkKYUPS10f+ePQZgFBoE/Jbf9H1NBveupF2VmB58Ng==
-  dependencies:
-    uint8array-tools "0.0.7"
 
 tiny-secp256k1@^2.2.3:
   version "2.2.3"

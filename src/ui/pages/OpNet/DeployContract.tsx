@@ -7,7 +7,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { useRunesTx } from '@/ui/state/transactions/hooks';
-import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
+import { getAddressUtxoDust } from '@btc-vision/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../MainRoute';
 

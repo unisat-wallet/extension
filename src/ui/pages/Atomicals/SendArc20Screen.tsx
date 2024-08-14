@@ -15,7 +15,7 @@ import {
 } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { isValidAddress, showLongNumber } from '@/ui/utils';
-import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
+import { getAddressUtxoDust } from '@btc-vision/wallet-sdk/lib/transaction';
 
 export default function SendArc20Screen() {
     const { state } = useLocation();

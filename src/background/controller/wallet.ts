@@ -53,18 +53,18 @@ import {
     Wallet,
     WrapResult
 } from '@btc-vision/transaction';
-import { txHelpers, UnspentOutput, UTXO_DUST } from '@unisat/wallet-sdk';
-import { publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
-import { bitcoin, ECPair } from '@unisat/wallet-sdk/lib/bitcoin-core';
-import { KeystoneKeyring } from '@unisat/wallet-sdk/lib/keyring';
+import { txHelpers, UnspentOutput, UTXO_DUST } from '@btc-vision/wallet-sdk';
+import { publicKeyToAddress, scriptPkToAddress } from '@btc-vision/wallet-sdk/lib/address';
+import { bitcoin, ECPair } from '@btc-vision/wallet-sdk/lib/bitcoin-core';
+import { KeystoneKeyring } from '@btc-vision/wallet-sdk/lib/keyring';
 import {
     genPsbtOfBIP322Simple,
     getSignatureFromPsbtOfBIP322Simple,
     signMessageOfBIP322Simple
-} from '@unisat/wallet-sdk/lib/message';
-import { toPsbtNetwork } from '@unisat/wallet-sdk/lib/network';
-import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
-import { toXOnly } from '@unisat/wallet-sdk/lib/utils';
+} from '@btc-vision/wallet-sdk/lib/message';
+import { toPsbtNetwork } from '@btc-vision/wallet-sdk/lib/network';
+import { getAddressUtxoDust } from '@btc-vision/wallet-sdk/lib/transaction';
+import { toXOnly } from '@btc-vision/wallet-sdk/lib/utils';
 
 import { ContactBookItem } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';

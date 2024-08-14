@@ -12,7 +12,7 @@ import { RBFBar } from '@/ui/components/RBFBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { colors } from '@/ui/theme/colors';
-import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
+import { getAddressUtxoDust } from '@btc-vision/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../MainRoute';
 import { bigIntToDecimal } from '@/shared/web3/Web3API';
