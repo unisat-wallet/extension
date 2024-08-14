@@ -53,7 +53,7 @@ import {
     Wallet,
     WrapResult
 } from '@btc-vision/transaction';
-import { txHelpers, UnspentOutput, UTXO_DUST } from '@btc-vision/wallet-sdk';
+import { SimpleKeyring, txHelpers, UnspentOutput, UTXO_DUST } from '@btc-vision/wallet-sdk';
 import { publicKeyToAddress, scriptPkToAddress } from '@btc-vision/wallet-sdk/lib/address';
 import { bitcoin, ECPair } from '@btc-vision/wallet-sdk/lib/bitcoin-core';
 import { KeystoneKeyring } from '@btc-vision/wallet-sdk/lib/keyring';
@@ -70,7 +70,6 @@ import { ContactBookItem } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';
 import { ConnectedSite } from '../service/permission';
 import BaseController from './base';
-import { SimpleKeyring } from '../../../../wallet-sdk/src';
 
 const stashKeyrings: Record<string, Keyring> = {};
 export type AccountAsset = {
@@ -829,7 +828,7 @@ export class WalletController extends BaseController {
         try {
             return await Web3API.transactionFactory.wrap(IWrapParametersSubmit);
         } catch (e) {
-            return { error: e };
+            return { error: e as Error };
         }
     };
     unwrap = async (unwrapParameters: IUnwrapParametersSigner): Promise<UnwrapResult> => {

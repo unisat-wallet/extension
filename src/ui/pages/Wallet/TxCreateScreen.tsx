@@ -52,7 +52,7 @@ export default function TxCreateScreen() {
     const feeRate = uiState.feeRate;
 
     const [error, setError] = useState('');
-    const [balanceValueRegtest, setBalanceValue] = useState<number>(0);
+    const [totalAvailableAmount, setBalanceValue] = useState<number>(0);
     const [OpnetRateInputVal, setOpnetRateInputVal] = useState<string>('0');
     const [autoAdjust, setAutoAdjust] = useState(false);
     const fetchUtxos = useFetchUtxosCallback();
@@ -99,8 +99,8 @@ export default function TxCreateScreen() {
     }, [spendUnavailableUtxos]);
     const spendUnavailableAmount = satoshisToAmount(spendUnavailableSatoshis);
 
-    const totalAvailableSatoshis = avaiableSatoshis + spendUnavailableSatoshis;
-    const totalAvailableAmount = satoshisToAmount(totalAvailableSatoshis);
+    //const totalAvailableSatoshis = avaiableSatoshis + spendUnavailableSatoshis;
+    //const totalAvailableAmount2 = satoshisToAmount(totalAvailableSatoshis);
 
     const totalSatoshis = amountToSatoshis(accountBalance.amount);
     const unavailableSatoshis = totalSatoshis - avaiableSatoshis;
@@ -136,7 +136,7 @@ export default function TxCreateScreen() {
         const setWallet = async () => {
             Web3API.setNetwork(await wallet.getChainType());
         };
-        setWallet();
+        void setWallet();
     });
     useEffect(() => {
         setError('');
@@ -157,7 +157,7 @@ export default function TxCreateScreen() {
                 setError('Amount exceeds your available balance');
                 return;
             }
-        } else if (toSatoshis / 10 ** 8 > balanceValueRegtest) {
+        } else if (toSatoshis / 10 ** 8 > totalAvailableAmount) {
             setError('Amount exceeds your available balance');
             return;
         }
@@ -194,7 +194,7 @@ export default function TxCreateScreen() {
                 setDisabled(false);
             }
         };
-        runTransfer();
+        void runTransfer();
     }, [toInfo, inputAmount, feeRate, enableRBF]);
 
     return (
@@ -232,7 +232,7 @@ export default function TxCreateScreen() {
                         placeholder={'Amount'}
                         value={inputAmount}
                         onAmountInputChange={(amount) => {
-                            if (autoAdjust == true) {
+                            if (autoAdjust) {
                                 setAutoAdjust(false);
                             }
                             setUiState({ inputAmount: amount });
@@ -242,9 +242,7 @@ export default function TxCreateScreen() {
                             setAutoAdjust(true);
                             setUiState({
                                 inputAmount:
-                                    chain.enum == 'BITCOIN_REGTEST'
-                                        ? balanceValueRegtest.toString()
-                                        : totalAvailableAmount.toString()
+                                        totalAvailableAmount.toString()
                             });
                         }}
                     />
@@ -255,7 +253,7 @@ export default function TxCreateScreen() {
                             <>
                                 {' '}
                                 <Row>
-                                    <Text text={`${balanceValueRegtest}`} size="sm" color="gold" />
+                                    <Text text={`${totalAvailableAmount}`} size="sm" color="gold" />
                                     <Text text={btcUnit} size="sm" color="textDim" />
                                 </Row>
                             </>
@@ -322,7 +320,7 @@ export default function TxCreateScreen() {
                         <Text text="Total" color="textDim" />
                         <Row>
                             <Text
-                                text={`${chain.enum == 'BITCOIN_REGTEST' ? balanceValueRegtest : totalAmount}`}
+                                text={`${totalAvailableAmount}`}
                                 size="sm"
                                 color="textDim"
                             />
@@ -340,7 +338,7 @@ export default function TxCreateScreen() {
                         }}
                     />
                 </Column>
-                {chain.enum == 'BITCOIN_REGTEST' && (
+
                     <>
                         {' '}
                         <Text text="Opnet Fee" color="textDim" />
@@ -358,7 +356,6 @@ export default function TxCreateScreen() {
                             autoFocus={true}
                         />
                     </>
-                )}
 
                 <Column mt="lg">
                     <RBFBar
@@ -375,38 +372,40 @@ export default function TxCreateScreen() {
                     disabled={disabled}
                     preset="primary"
                     text="Next"
-                    onClick={(e) => {
-                        if (!(chain.enum == 'BITCOIN_REGTEST')) {
-                            navigate('TxConfirmScreen', { rawTxInfo });
-                        } else {
-                            navigate('TxOpnetConfirmScreen', {
-                                rawTxInfo: {
-                                    items: items,
-                                    contractAddress: 'BTC',
-                                    account: account,
-                                    inputAmount: inputAmount,
-                                    address: toInfo.address,
-                                    feeRate: feeRate, // replace with actual feeRate
-                                    priorityFee: BigInt(OpnetRateInputVal), // replace with actual OpnetRateInputVal
-                                    header: 'Send BTC', // replace with actual header
-                                    networkFee: feeRate, // replace with actual networkFee
-                                    features: {
-                                        rbf: false // replace with actual rbf value
-                                    },
-                                    inputInfos: [], // replace with actual inputInfos
-                                    isToSign: false, // replace with actual isToSign value
-                                    opneTokens: [
-                                        {
-                                            amount: expandToDecimals(inputAmount, 8),
-                                            divisibility: 8,
-                                            spacedRune: 'Bitcoin',
-                                            symbol: 'BTC'
-                                        }
-                                    ],
-                                    action: 'sendBTC' // replace with actual opneTokens
-                                }
-                            });
-                        }
+                    onClick={() => {
+                        navigate('TxOpnetConfirmScreen', {
+                            rawTxInfo: {
+                                items: items,
+                                contractAddress: 'BTC',
+                                account: account,
+                                inputAmount: inputAmount,
+                                address: toInfo.address,
+                                feeRate: feeRate, // replace with actual feeRate
+                                priorityFee: BigInt(OpnetRateInputVal), // replace with actual OpnetRateInputVal
+                                header: `Send ${btcUnit}`, // replace with actual header
+                                networkFee: feeRate, // replace with actual networkFee
+                                features: {
+                                    rbf: false // replace with actual rbf value
+                                },
+                                inputInfos: [], // replace with actual inputInfos
+                                isToSign: false, // replace with actual isToSign value
+                                opneTokens: [
+                                    {
+                                        amount: expandToDecimals(inputAmount, 8),
+                                        divisibility: 8,
+                                        spacedRune: 'Bitcoin',
+                                        symbol: btcUnit
+                                    }
+                                ],
+                                action: 'sendBTC' // replace with actual opneTokens
+                            }
+                        });
+
+                        //if (!(chain.enum == 'BITCOIN_REGTEST')) {
+                            //navigate('TxConfirmScreen', { rawTxInfo });
+                        /*} else {
+
+                        }*/
                     }}></Button>
             </Content>
         </Layout>
