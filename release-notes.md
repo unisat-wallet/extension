@@ -213,7 +213,7 @@ updates:
 - Disable RBF to prevent accidental triggering
 - Display the output value of inscription by default
 - Display balance details when hovering over the balance
-- Use mempool.space to display transaction history
+- Use mempool.space/opscan.org to display transaction history
 - Add a prompt to wait for BRC20 updates after inscribing a TRANSFER
 
 ## v1.1.19
@@ -247,7 +247,7 @@ updates:
     - Support BIP322
     - Sign multiple PSBT in one time
 - Adjust
-    - Use mempool.space data as fee options
+    - Use mempool.space/opscan.org data as fee options
     - Show 100 inscriptions per page
 - Fix
     - Fix display error of pagination
