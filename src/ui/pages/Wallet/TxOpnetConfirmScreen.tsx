@@ -198,6 +198,17 @@ export default function TxOpnetConfirmScreen() {
         }
     };
 
+    function getErrorMessage(err: Error): string {
+        let message = `Something went wrong: ${err.message}`;
+        if (err.message.includes(`Outputs are spending`)) {
+            message = `Not enough funds to send transaction including bitcoin mining fee.`;
+        } else if (err.message.includes(`Not finalized`)) {
+            message = `Please use a taproot wallet.`;
+        }
+
+        return message;
+    }
+
     const handleWrapConfirm = async () => {
         const foundObject = rawTxInfo.items.find(
             (obj) => obj.account && obj.account.address === rawTxInfo.account.address
@@ -239,200 +250,214 @@ export default function TxOpnetConfirmScreen() {
             generationParameters: generationParameters
         };
 
-        const finalTx = await Web3API.transactionFactory.wrap(wrapParameters);
-        const firstTxBroadcast = await Web3API.provider.sendRawTransaction(finalTx.transaction[0], false);
+        try {
+            const finalTx = await Web3API.transactionFactory.wrap(wrapParameters);
+            const firstTxBroadcast = await Web3API.provider.sendRawTransaction(finalTx.transaction[0], false);
 
-        if (!firstTxBroadcast.success) {
-            tools.toastError('Error,Please Try again');
-            setUseNextUTXO(true);
-            setDisabled(false);
-            tools.toastError('Could not broadcast first transaction');
-        }
-
-        const secondTxBroadcast = await Web3API.provider.sendRawTransaction(finalTx.transaction[1], false);
-        if (!secondTxBroadcast.success) {
-            tools.toastError('Error,Please Try again');
-            setDisabled(false);
-            tools.toastError('Could not broadcast first transaction');
-        }
-
-        const nextUTXO = finalTx.utxos;
-        localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
-        const wrappedAmount = bigIntToDecimal(wrapAmount, 8).toString();
-        tools.toastSuccess(`"You have successfully wrapped ${wrappedAmount} Bitcoin"`);
-        navigate('TxSuccessScreen', { txid: secondTxBroadcast.result });
-    };
-
-    const handleUnWrapConfirm = async () => {
-        const foundObject = rawTxInfo.items.find(
-            (obj) => obj.account && obj.account.address === rawTxInfo.account.address
-        );
-
-        const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
-        const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
-        const unwrapAmount = expandToDecimals(rawTxInfo.inputAmount, 8); // Minimum amount to unwrap
-
-        let utxos: UTXO[] = [];
-        if (!useNextUTXO) {
-            utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], unwrapAmount);
-        } else {
-            const storedUTXO = localStorage.getItem('nextUTXO');
-            utxos = storedUTXO
-                ? JSON.parse(storedUTXO).map((utxo) => ({
-                    ...utxo,
-                    value: BigInt(utxo.value)
-                }))
-                : [];
-        }
-
-        const contract: IWBTCContract = getContract<IWBTCContract>(
-            Web3API.WBTC,
-            WBTC_ABI,
-            Web3API.provider,
-            walletGet.p2tr
-        );
-
-        const wbtcBalanceSimulation = await contract.balanceOf(walletGet.p2tr);
-        if ('error' in wbtcBalanceSimulation) {
-            tools.toastError(
-                `Something went wrong while simulating the check withdraw balance: ${wbtcBalanceSimulation.error}`
-            );
-            return;
-        }
-
-        const wbtcBalance = wbtcBalanceSimulation.decoded[0] as bigint;
-        const checkWithdrawalRequest = await contract.withdrawableBalanceOf(walletGet.p2tr);
-        if ('error' in checkWithdrawalRequest) {
-            tools.toastError(
-                `Something went wrong while simulating the check withdraw balance: ${checkWithdrawalRequest.error}`
-            );
-            return;
-        }
-
-        if (wbtcBalance + (checkWithdrawalRequest.decoded[0] as bigint) < unwrapAmount) {
-            // todo convert to human readable base decimals
-            tools.toastError('You can only withdraw a maximum of' + wbtcBalance);
-            return;
-        }
-
-        const alreadyWithdrawal = checkWithdrawalRequest.decoded[0] as bigint;
-        const requiredAmountDifference: bigint = alreadyWithdrawal - unwrapAmount;
-
-        let utxosForUnwrap: UTXO[] = utxos;
-        if (requiredAmountDifference < 0n) {
-            const diff = absBigInt(requiredAmountDifference);
-
-            const withdrawalRequest = await contract.requestWithdrawal(diff);
-            if ('error' in withdrawalRequest) {
-                tools.toastError(`Something went wrong while simulating the withdraw request: ${withdrawalRequest}`);
-                return;
-            }
-
-            const getChain = await wallet.getChainType();
-            const interactionParameters: IInteractionParameters = {
-                from: walletGet.p2tr,
-                to: contract.address.toString(),
-                chainId: getOPNetChainType(getChain),
-                utxos: utxos,
-                signer: walletGet.keypair,
-                network: Web3API.network,
-                feeRate: rawTxInfo.feeRate,
-                priorityFee: rawTxInfo.priorityFee,
-                calldata: withdrawalRequest.calldata as Buffer
-            };
-
-            const sendTransaction = await Web3API.transactionFactory.signInteraction(interactionParameters);
-
-            // If this transaction is missing, opnet will deny the unwrapping request.
-            const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransaction[0], false);
-            if (!firstTransaction || !firstTransaction.success) {
+            if (!firstTxBroadcast.success) {
                 tools.toastError('Error,Please Try again');
                 setUseNextUTXO(true);
                 setDisabled(false);
-                return;
+                tools.toastError('Could not broadcast first transaction');
             }
 
-            // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
-            const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransaction[1], false);
-            if (!secondTransaction || !secondTransaction.success) {
-                tools.toastError('Error: Could not broadcast second transaction');
+            const secondTxBroadcast = await Web3API.provider.sendRawTransaction(finalTx.transaction[1], false);
+            if (!secondTxBroadcast.success) {
+                tools.toastError('Error,Please Try again');
                 setDisabled(false);
+                tools.toastError('Could not broadcast first transaction');
+            }
+
+            const nextUTXO = finalTx.utxos;
+            localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
+            const wrappedAmount = bigIntToDecimal(wrapAmount, 8).toString();
+            tools.toastSuccess(`"You have successfully wrapped ${wrappedAmount} Bitcoin"`);
+            navigate('TxSuccessScreen', { txid: secondTxBroadcast.result });
+        } catch (e) {
+            const msg = getErrorMessage(e as Error);
+            console.warn(e);
+
+            tools.toastWarning(msg);
+        }
+    };
+
+    const handleUnWrapConfirm = async () => {
+        try {
+            const foundObject = rawTxInfo.items.find(
+                (obj) => obj.account && obj.account.address === rawTxInfo.account.address
+            );
+
+            const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
+            const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
+            const unwrapAmount = expandToDecimals(rawTxInfo.inputAmount, 8); // Minimum amount to unwrap
+
+            let utxos: UTXO[] = [];
+            if (!useNextUTXO) {
+                utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], unwrapAmount);
+            } else {
+                const storedUTXO = localStorage.getItem('nextUTXO');
+                utxos = storedUTXO
+                    ? JSON.parse(storedUTXO).map((utxo) => ({
+                        ...utxo,
+                        value: BigInt(utxo.value)
+                    }))
+                    : [];
+            }
+
+            const contract: IWBTCContract = getContract<IWBTCContract>(
+                Web3API.WBTC,
+                WBTC_ABI,
+                Web3API.provider,
+                walletGet.p2tr
+            );
+
+            const wbtcBalanceSimulation = await contract.balanceOf(walletGet.p2tr);
+            if ('error' in wbtcBalanceSimulation) {
+                tools.toastError(
+                    `Something went wrong while simulating the check withdraw balance: ${wbtcBalanceSimulation.error}`
+                );
                 return;
             }
 
-            utxosForUnwrap = sendTransaction[2];
+            const wbtcBalance = wbtcBalanceSimulation.decoded[0] as bigint;
+            const checkWithdrawalRequest = await contract.withdrawableBalanceOf(walletGet.p2tr);
+            if ('error' in checkWithdrawalRequest) {
+                tools.toastError(
+                    `Something went wrong while simulating the check withdraw balance: ${checkWithdrawalRequest.error}`
+                );
+                return;
+            }
 
-            const waitForTransaction = async (txHash: string) => {
-                let attempts = 0;
-                const maxAttempts = 360; // 10 minutes max wait time
-                setOpenLoading(true);
+            if (wbtcBalance + (checkWithdrawalRequest.decoded[0] as bigint) < unwrapAmount) {
+                // todo convert to human readable base decimals
+                tools.toastError('You can only withdraw a maximum of' + wbtcBalance);
+                return;
+            }
 
-                while (attempts < maxAttempts) {
-                    try {
-                        const txResult = await Web3API.provider.getTransaction(txHash);
-                        if (txResult && !('error' in txResult)) {
-                            console.log('Transaction confirmed:', txResult);
-                            setOpenLoading(false);
-                            return txResult.hash;
-                        }
-                    } catch (error) {
-                        console.log('Error fetching transaction:', error);
-                    }
-                    await new Promise((resolve) => setTimeout(resolve, 2500)); // Wait 10 seconds
-                    attempts++;
+            const alreadyWithdrawal = checkWithdrawalRequest.decoded[0] as bigint;
+            const requiredAmountDifference: bigint = alreadyWithdrawal - unwrapAmount;
+
+            let utxosForUnwrap: UTXO[] = utxos;
+            if (requiredAmountDifference < 0n) {
+                const diff = absBigInt(requiredAmountDifference);
+
+                const withdrawalRequest = await contract.requestWithdrawal(diff);
+                if ('error' in withdrawalRequest) {
+                    tools.toastError(`Something went wrong while simulating the withdraw request: ${withdrawalRequest}`);
+                    return;
                 }
-                tools.toastError('Transaction not confirmed after 10 minutes');
+
+                const getChain = await wallet.getChainType();
+                const interactionParameters: IInteractionParameters = {
+                    from: walletGet.p2tr,
+                    to: contract.address.toString(),
+                    chainId: getOPNetChainType(getChain),
+                    utxos: utxos,
+                    signer: walletGet.keypair,
+                    network: Web3API.network,
+                    feeRate: rawTxInfo.feeRate,
+                    priorityFee: rawTxInfo.priorityFee,
+                    calldata: withdrawalRequest.calldata as Buffer
+                };
+
+                const sendTransaction = await Web3API.transactionFactory.signInteraction(interactionParameters);
+
+                // If this transaction is missing, opnet will deny the unwrapping request.
+                const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransaction[0], false);
+                if (!firstTransaction || !firstTransaction.success) {
+                    tools.toastError('Error,Please Try again');
+                    setUseNextUTXO(true);
+                    setDisabled(false);
+                    return;
+                }
+
+                // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
+                const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransaction[1], false);
+                if (!secondTransaction || !secondTransaction.success) {
+                    tools.toastError('Error: Could not broadcast second transaction');
+                    setDisabled(false);
+                    return;
+                }
+
+                utxosForUnwrap = sendTransaction[2];
+
+                const waitForTransaction = async (txHash: string) => {
+                    let attempts = 0;
+                    const maxAttempts = 360; // 10 minutes max wait time
+                    setOpenLoading(true);
+
+                    while (attempts < maxAttempts) {
+                        try {
+                            const txResult = await Web3API.provider.getTransaction(txHash);
+                            if (txResult && !('error' in txResult)) {
+                                console.log('Transaction confirmed:', txResult);
+                                setOpenLoading(false);
+                                return txResult.hash;
+                            }
+                        } catch (error) {
+                            console.log('Error fetching transaction:', error);
+                        }
+                        await new Promise((resolve) => setTimeout(resolve, 2500)); // Wait 10 seconds
+                        attempts++;
+                    }
+                    tools.toastError('Transaction not confirmed after 10 minutes');
+                };
+
+                if (!secondTransaction.result) {
+                    setOpenLoading(false);
+                    setDisabled(false);
+
+                    tools.toastError(`Transaction failed: ${secondTransaction.error}`);
+                    return;
+                }
+
+                tools.showLoading(true, 'Waiting for transaction confirmation...');
+                await waitForTransaction(secondTransaction.result);
+
+                tools.showLoading(false);
+            }
+
+            const unwrapUtxos = await Web3API.limitedProvider.fetchUnWrapParameters(unwrapAmount, walletGet.p2tr);
+            if (!unwrapUtxos) {
+                tools.toastError('No vault UTXOs or something went wrong. Please try again.');
+                return;
+            }
+
+            const chainId = getOPNetChainType(await wallet.getChainType());
+
+            // TODO: Verify that the UTXOs have enough money in them to process to the transaction, if not, we have to fetch more UTXOs.
+            const unwrapParameters: IUnwrapParameters = {
+                from: walletGet.p2tr, // Address to unwrap
+                utxos: utxosForUnwrap, // Use the UTXO generated from the withdrawal request
+                chainId: chainId,
+                unwrapUTXOs: unwrapUtxos.vaultUTXOs, // Vault UTXOs to unwrap
+                signer: walletGet.keypair, // Signer
+                network: Web3API.network, // Bitcoin network
+                feeRate: rawTxInfo.feeRate, // Fee rate in satoshis per byte (bitcoin fee)
+                priorityFee: rawTxInfo.priorityFee, // OPNet priority fee (incl gas.)
+                amount: unwrapAmount
             };
 
-            if (!secondTransaction.result) {
-                setOpenLoading(false);
+            try {
+                const finalTx = await Web3API.transactionFactory.unwrap(unwrapParameters);
+                setfinalUnwrapTx(finalTx);
+                setAcceptBar(true);
+                setAcceptWrapMessage(
+                    `Due to bitcoin fees, you will only get ${
+                        unwrapAmount + finalTx.feeRefundOrLoss
+                    } satoshis by unwrapping. Do you want to proceed?`
+                );
+                setUnWrapAmount(unwrapAmount);
+            } catch (e) {
+                console.log('Something went wrong while building the unwrap transaction', e);
+                tools.toastError('Something went wrong while building the unwrap request. Please try again later.');
                 setDisabled(false);
-
-                tools.toastError(`Transaction failed: ${secondTransaction.error}`);
-                return;
             }
-
-            tools.showLoading(true, 'Waiting for transaction confirmation...');
-            await waitForTransaction(secondTransaction.result);
-
-            tools.showLoading(false);
-        }
-
-        const unwrapUtxos = await Web3API.limitedProvider.fetchUnWrapParameters(unwrapAmount, walletGet.p2tr);
-        if (!unwrapUtxos) {
-            tools.toastError('No vault UTXOs or something went wrong. Please try again.');
-            return;
-        }
-
-        const chainId = getOPNetChainType(await wallet.getChainType());
-
-        // TODO: Verify that the UTXOs have enough money in them to process to the transaction, if not, we have to fetch more UTXOs.
-        const unwrapParameters: IUnwrapParameters = {
-            from: walletGet.p2tr, // Address to unwrap
-            utxos: utxosForUnwrap, // Use the UTXO generated from the withdrawal request
-            chainId: chainId,
-            unwrapUTXOs: unwrapUtxos.vaultUTXOs, // Vault UTXOs to unwrap
-            signer: walletGet.keypair, // Signer
-            network: Web3API.network, // Bitcoin network
-            feeRate: rawTxInfo.feeRate, // Fee rate in satoshis per byte (bitcoin fee)
-            priorityFee: rawTxInfo.priorityFee, // OPNet priority fee (incl gas.)
-            amount: unwrapAmount
-        };
-        
-        try {
-            const finalTx = await Web3API.transactionFactory.unwrap(unwrapParameters);
-            setfinalUnwrapTx(finalTx);
-            setAcceptBar(true);
-            setAcceptWrapMessage(
-                `Due to bitcoin fees, you will only get ${
-                    unwrapAmount + finalTx.feeRefundOrLoss
-                } satoshis by unwrapping. Do you want to proceed?`
-            );
-            setUnWrapAmount(unwrapAmount);
         } catch (e) {
-            console.log('Something went wrong while building the unwrap transaction', e);
-            tools.toastError('Something went wrong while building the unwrap request. Please try again later.');
-            setDisabled(false);
+            const msg = getErrorMessage(e as Error);
+            console.warn(e);
+
+            tools.toastWarning(msg);
         }
     };
 

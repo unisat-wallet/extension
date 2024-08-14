@@ -794,7 +794,7 @@ export class WalletController extends BaseController {
         return broadcastedTransactions;
     };
 
-    wrap = async (wrapParameters: IWrapParametersWithoutSigner): Promise<WrapResult> => {
+    wrap = async (wrapParameters: IWrapParametersWithoutSigner): Promise<WrapResult | { error: Error }> => {
         const account = preferenceService.getCurrentAccount();
         if (!account) throw new Error('no current account');
 
@@ -826,7 +826,11 @@ export class WalletController extends BaseController {
             generationParameters: generationParameters
         };
 
-        return await Web3API.transactionFactory.wrap(IWrapParametersSubmit);
+        try {
+            return await Web3API.transactionFactory.wrap(IWrapParametersSubmit);
+        } catch (e) {
+            return { error: e };
+        }
     };
     unwrap = async (unwrapParameters: IUnwrapParametersSigner): Promise<UnwrapResult> => {
         const account = preferenceService.getCurrentAccount();
