@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import {
     BaseContractProperty,
     BitcoinAbiTypes,
@@ -36,7 +37,6 @@ import {
 
 import { useNavigate } from '../MainRoute';
 import { ConfirmUnWrap } from './ConfirmUnWrap';
-import BigNumber from 'bignumber.js';
 
 BigNumber.config({ EXPONENTIAL_AT: 256 });
 
@@ -153,7 +153,7 @@ export default function TxOpnetConfirmScreen() {
             const amountToSend = BigInt(rawTxInfo.inputAmount * result); // Amount to send
 
             const calldata = getTransferToCalldata(rawTxInfo.address, amountToSend);
-            const utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], amountToSend);
+            const utxos = await Web3API.getUTXOs(walletGet.addresses, amountToSend);
 
             const interactionParameters: IInteractionParameters = {
                 from: walletGet.p2tr, // From address
@@ -220,14 +220,14 @@ export default function TxOpnetConfirmScreen() {
         const wrapAmount = expandToDecimals(rawTxInfo.inputAmount, 8);
         let utxos: UTXO[];
         if (!useNextUTXO) {
-            utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], wrapAmount);
+            utxos = await Web3API.getUTXOs(walletGet.addresses, wrapAmount);
         } else {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                    ...utxo,
-                    value: BigInt(utxo.value)
-                }))
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
                 : [];
         }
         const generationParameters = await Web3API.limitedProvider.fetchWrapParameters(wrapAmount);
@@ -293,14 +293,14 @@ export default function TxOpnetConfirmScreen() {
 
             let utxos: UTXO[] = [];
             if (!useNextUTXO) {
-                utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], unwrapAmount);
+                utxos = await Web3API.getUTXOs(walletGet.addresses, unwrapAmount);
             } else {
                 const storedUTXO = localStorage.getItem('nextUTXO');
                 utxos = storedUTXO
                     ? JSON.parse(storedUTXO).map((utxo) => ({
-                        ...utxo,
-                        value: BigInt(utxo.value)
-                    }))
+                          ...utxo,
+                          value: BigInt(utxo.value)
+                      }))
                     : [];
             }
 
@@ -343,7 +343,9 @@ export default function TxOpnetConfirmScreen() {
 
                 const withdrawalRequest = await contract.requestWithdrawal(diff);
                 if ('error' in withdrawalRequest) {
-                    tools.toastError(`Something went wrong while simulating the withdraw request: ${withdrawalRequest}`);
+                    tools.toastError(
+                        `Something went wrong while simulating the withdraw request: ${withdrawalRequest}`
+                    );
                     return;
                 }
 
@@ -483,14 +485,14 @@ export default function TxOpnetConfirmScreen() {
         }
         let utxos: UTXO[];
         if (!useNextUTXO) {
-            utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], amountToSend);
+            utxos = await Web3API.getUTXOs(walletGet.addresses, amountToSend);
         } else {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                    ...utxo,
-                    value: BigInt(utxo.value)
-                }))
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
                 : [];
         }
 
@@ -553,14 +555,14 @@ export default function TxOpnetConfirmScreen() {
 
         let utxos: UTXO[] = [];
         if (!useNextUTXO) {
-            utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], amountToSend);
+            utxos = await Web3API.getUTXOs(walletGet.addresses, amountToSend);
         } else {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                    ...utxo,
-                    value: BigInt(utxo.value)
-                }))
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
                 : [];
         }
 
@@ -671,7 +673,7 @@ export default function TxOpnetConfirmScreen() {
         );
         const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
         const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
-        const utxos: UTXO[] = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], 100000n);
+        const utxos: UTXO[] = await Web3API.getUTXOs(walletGet.addresses, 100_000n);
 
         const contract: AirdropInterface = getContract<AirdropInterface>(
             contractAddress,
@@ -755,14 +757,14 @@ export default function TxOpnetConfirmScreen() {
 
         let utxos: UTXO[];
         if (!useNextUTXO) {
-            utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], amountToSend);
+            utxos = await Web3API.getUTXOs(walletGet.addresses, amountToSend);
         } else {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                    ...utxo,
-                    value: BigInt(utxo.value)
-                }))
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
                 : [];
         }
         const interactionParameters: IInteractionParameters = {
@@ -822,14 +824,14 @@ export default function TxOpnetConfirmScreen() {
         let utxos: UTXO[] = [];
 
         if (!useNextUTXO) {
-            utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], maxUint256);
+            utxos = await Web3API.getUTXOs(walletGet.addresses, maxUint256);
             console.log(utxos);
         } else {
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                    ...utxo,
-                    value: BigInt(utxo.value)
-                }))
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
                 : [];
         }
         const getData = await approveToken(inputAmountBigInt, walletGet, rawTxInfo.contractAddress[0], utxos);
@@ -887,11 +889,7 @@ export default function TxOpnetConfirmScreen() {
             const amountA = bigIntToDecimal(rawTxInfo.inputAmount[0], rawTxInfo.opneTokens[0].divisibility).toString();
             const amountB = bigIntToDecimal(rawTxInfo.inputAmount[1], rawTxInfo.opneTokens[1].divisibility).toString();
             tools.toastSuccess(
-                `"You have successfully swapped ${
-                    amountA
-                } ${rawTxInfo.opneTokens[0].symbol} for ${
-                    amountB
-                }  ${rawTxInfo.opneTokens[1].symbol}"`
+                `"You have successfully swapped ${amountA} ${rawTxInfo.opneTokens[0].symbol} for ${amountB}  ${rawTxInfo.opneTokens[1].symbol}"`
             );
             const nextUTXO = sendTransact[2];
             localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
@@ -951,18 +949,35 @@ export default function TxOpnetConfirmScreen() {
             return utxos;
         }
     };
+
     const sendBTC = async () => {
+        const currentNetwork = await wallet.getChainType();
+        Web3API.setNetwork(currentNetwork);
+
         const foundObject = rawTxInfo.items.find(
             (obj) => obj.account && obj.account.address === rawTxInfo.account.address
         );
+
         const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
         const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
-        const utxos = await Web3API.getUTXOs(
-            [walletGet.p2wpkh, walletGet.p2tr],
-            expandToDecimals(rawTxInfo.inputAmount, 8)
-        );
+
+        const storedUTXO = localStorage.getItem('nextUTXO');
+        let utxos: UTXO[] = storedUTXO
+            ? JSON.parse(storedUTXO).map((utxo) => ({
+                  ...utxo,
+                  value: BigInt(utxo.value)
+              }))
+            : [];
+
+        if (!utxos || (utxos && utxos.length === 0) || useNextUTXO) {
+            utxos = await Web3API.getUTXOs(
+                [walletGet.p2tr, walletGet.p2wpkh],
+                expandToDecimals(rawTxInfo.inputAmount, 8) * 2n
+            );
+        }
+
         const IFundingTransactionParameters: IFundingTransactionParameters = {
-            amount: expandToDecimals(rawTxInfo.inputAmount, 8),
+            amount: expandToDecimals(rawTxInfo.inputAmount, 8) - 330n,
             utxos: utxos,
             signer: walletGet.keypair,
             network: Web3API.network,
@@ -971,21 +986,31 @@ export default function TxOpnetConfirmScreen() {
             to: rawTxInfo.address,
             from: walletGet.p2tr
         };
-        const sendTransact = await Web3API.transactionFactory.createBTCTransfer(IFundingTransactionParameters);
-        const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact.tx, false);
-        if (!firstTransaction || !firstTransaction.success) {
-            tools.toastError('Error: Could not broadcast first transaction');
-            return;
-        }
 
-        const amountA = bigIntToDecimal(rawTxInfo.inputAmount, rawTxInfo.opneTokens[0].divisibility).toString();
-        tools.toastSuccess(
-            `"You have successfully transferred ${amountA} ${
-                rawTxInfo.opneTokens[0].symbol
-            } to ${rawTxInfo.address}}"`
-        );
-        console.log(firstTransaction);
-        navigate('TxSuccessScreen', { txid: firstTransaction.result });
+        try {
+            const sendTransact = await Web3API.transactionFactory.createBTCTransfer(IFundingTransactionParameters);
+            const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact.tx, false);
+            if (!firstTransaction || !firstTransaction.success) {
+                setUseNextUTXO(true);
+                setDisabled(false);
+                tools.toastError('Error: Could not broadcast first transaction');
+                return;
+            }
+
+            const amountA = bigIntToDecimal(rawTxInfo.inputAmount, rawTxInfo.opneTokens[0].divisibility).toString();
+            tools.toastSuccess(
+                `"You have successfully transferred ${amountA} ${rawTxInfo.opneTokens[0].symbol} to ${rawTxInfo.address}}"`
+            );
+
+            localStorage.setItem('nextUTXO', JSON.stringify(sendTransact.nextUTXOs));
+            navigate('TxSuccessScreen', { txid: firstTransaction.result });
+
+            setUseNextUTXO(false);
+        } catch (e) {
+            setUseNextUTXO(true);
+            setDisabled(false);
+            throw e;
+        }
     };
     const deployContract = async () => {
         try {
@@ -997,15 +1022,15 @@ export default function TxOpnetConfirmScreen() {
 
             let utxos: UTXO[] = [];
             if (!useNextUTXO) {
-                utxos = await await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], expandToDecimals(0.08, 8));
+                utxos = await Web3API.getUTXOs(walletGet.addresses, expandToDecimals(0.08, 8));
                 console.log(utxos);
             } else {
                 const storedUTXO = localStorage.getItem('nextUTXO');
                 utxos = storedUTXO
                     ? JSON.parse(storedUTXO).map((utxo) => ({
-                        ...utxo,
-                        value: BigInt(utxo.value)
-                    }))
+                          ...utxo,
+                          value: BigInt(utxo.value)
+                      }))
                     : [];
             }
 
@@ -1133,15 +1158,15 @@ export default function TxOpnetConfirmScreen() {
 
             let utxos: UTXO[] = [];
             if (!useNextUTXO) {
-                utxos = await Web3API.getUTXOs([walletGet.p2wpkh, walletGet.p2tr], expandToDecimals(0.08, 8));
+                utxos = await Web3API.getUTXOs(walletGet.addresses, expandToDecimals(0.08, 8));
                 console.log(utxos);
             } else {
                 const storedUTXO = localStorage.getItem('nextUTXO');
                 utxos = storedUTXO
                     ? JSON.parse(storedUTXO).map((utxo) => ({
-                        ...utxo,
-                        value: BigInt(utxo.value)
-                    }))
+                          ...utxo,
+                          value: BigInt(utxo.value)
+                      }))
                     : [];
             }
             const contract = getContract<IOP_20Contract>(

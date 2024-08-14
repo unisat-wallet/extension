@@ -1,9 +1,10 @@
 import { Tooltip } from 'antd';
+import BigNumber from 'bignumber.js';
 import { JSONRpcProvider } from 'opnet';
 import { useEffect, useMemo, useState } from 'react';
 
 import { ChainType, COIN_DUST } from '@/shared/constant';
-import { Account, RawTxInfo } from '@/shared/types';
+import { Account } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
 import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
 import { Button, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
@@ -18,14 +19,12 @@ import { useBTCUnit, useChain } from '@/ui/state/settings/hooks';
 import {
     useBitcoinTx,
     useFetchUtxosCallback,
-    usePrepareSendBTCCallback,
     useSafeBalance,
     useSpendUnavailableUtxos
 } from '@/ui/state/transactions/hooks';
 import { useUiTxCreateScreen, useUpdateUiTxCreateScreen } from '@/ui/state/ui/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { amountToSatoshis, isValidAddress, satoshisToAmount, useWallet } from '@/ui/utils';
-import BigNumber from 'bignumber.js';
 
 BigNumber.config({ EXPONENTIAL_AT: 256 });
 
@@ -76,7 +75,7 @@ export default function TxCreateScreen() {
         return _items;
     }, []);
 
-    const prepareSendBTC = usePrepareSendBTCCallback();
+    //const prepareSendBTC = usePrepareSendBTCCallback();
 
     const avaiableSatoshis = useMemo(() => {
         return amountToSatoshis(safeBalance);
@@ -89,15 +88,13 @@ export default function TxCreateScreen() {
 
     const dustAmount = useMemo(() => satoshisToAmount(COIN_DUST), [COIN_DUST]);
 
-    const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
-
     const spendUnavailableUtxos = useSpendUnavailableUtxos();
     const spendUnavailableSatoshis = useMemo(() => {
         return spendUnavailableUtxos.reduce((acc, cur) => {
             return acc + cur.satoshis;
         }, 0);
     }, [spendUnavailableUtxos]);
-    const spendUnavailableAmount = satoshisToAmount(spendUnavailableSatoshis);
+    //const spendUnavailableAmount = satoshisToAmount(spendUnavailableSatoshis);
 
     //const totalAvailableSatoshis = avaiableSatoshis + spendUnavailableSatoshis;
     //const totalAvailableAmount2 = satoshisToAmount(totalAvailableSatoshis);
@@ -107,7 +104,6 @@ export default function TxCreateScreen() {
 
     const avaiableAmount = safeBalance;
     const unavailableAmount = satoshisToAmount(unavailableSatoshis);
-    const totalAmount = accountBalance.amount;
     const wallet = useWallet();
     const account = useCurrentAccount();
     const chain = useChain();
@@ -152,12 +148,12 @@ export default function TxCreateScreen() {
             setError(`Amount must be at least ${dustAmount} ${btcUnit}`);
             return;
         }
-        if (!(chain.enum === 'BITCOIN_REGTEST')) {
+        /*if (!(chain.enum === 'BITCOIN_REGTEST')) {
             if (toSatoshis > avaiableSatoshis + spendUnavailableSatoshis) {
                 setError('Amount exceeds your available balance');
                 return;
-            }
-        } else if (toSatoshis / 10 ** 8 > totalAvailableAmount) {
+            }*/
+        if (toSatoshis / 10 ** 8 > totalAvailableAmount) {
             setError('Amount exceeds your available balance');
             return;
         }
@@ -176,7 +172,7 @@ export default function TxCreateScreen() {
                 setDisabled(false);
                 return;
             }
-            if (!((await wallet.getNetworkType()) == 2)) {
+            /*if (!((await wallet.getNetworkType()) == 2)) {
                 prepareSendBTC({ toAddressInfo: toInfo, toAmount: toSatoshis, feeRate, enableRBF })
                     .then((data) => {
                         // if (data.fee < data.estimateFee) {
@@ -190,9 +186,9 @@ export default function TxCreateScreen() {
                         console.log(e);
                         setError(e.message);
                     });
-            } else {
-                setDisabled(false);
-            }
+            } else {*/
+            setDisabled(false);
+            //}
         };
         void runTransfer();
     }, [toInfo, inputAmount, feeRate, enableRBF]);
@@ -241,8 +237,7 @@ export default function TxCreateScreen() {
                         onMaxClick={() => {
                             setAutoAdjust(true);
                             setUiState({
-                                inputAmount:
-                                        totalAvailableAmount.toString()
+                                inputAmount: totalAvailableAmount.toString()
                             });
                         }}
                     />
@@ -262,11 +257,7 @@ export default function TxCreateScreen() {
                                 {' '}
                                 {spendUnavailableSatoshis > 0 && (
                                     <Row>
-                                        <Text
-                                            text={`${spendUnavailableAmount}`}
-                                            size="sm"
-                                            style={{ color: '#65D5F0' }}
-                                        />
+                                        <Text text={`${totalAvailableAmount}`} size="sm" style={{ color: '#65D5F0' }} />
                                         <Text text={btcUnit} size="sm" color="textDim" />
                                         <Text text={'+'} size="sm" color="textDim" />
                                     </Row>
@@ -319,11 +310,7 @@ export default function TxCreateScreen() {
                     <Row justifyBetween>
                         <Text text="Total" color="textDim" />
                         <Row>
-                            <Text
-                                text={`${totalAvailableAmount}`}
-                                size="sm"
-                                color="textDim"
-                            />
+                            <Text text={`${totalAvailableAmount}`} size="sm" color="textDim" />
                             <Text text={btcUnit} size="sm" color="textDim" />
                         </Row>
                     </Row>
@@ -339,23 +326,20 @@ export default function TxCreateScreen() {
                     />
                 </Column>
 
-                    <>
-                        {' '}
-                        <Text text="Opnet Fee" color="textDim" />
-                        <Input
-                            preset="amount"
-                            placeholder={'sat/vB'}
-                            value={OpnetRateInputVal}
-                            onAmountInputChange={(amount) => {
-                                setOpnetRateInputVal(amount);
-                            }}
-                            // onBlur={() => {
-                            //   const val = parseInt(feeRateInputVal) + '';
-                            //   setFeeRateInputVal(val);
-                            // }}
-                            autoFocus={true}
-                        />
-                    </>
+                <Text text="Opnet Fee" color="textDim" />
+                <Input
+                    preset="amount"
+                    placeholder={'sat/vB'}
+                    value={OpnetRateInputVal}
+                    onAmountInputChange={(amount) => {
+                        setOpnetRateInputVal(amount);
+                    }}
+                    // onBlur={() => {
+                    //   const val = parseInt(feeRateInputVal) + '';
+                    //   setFeeRateInputVal(val);
+                    // }}
+                    autoFocus={true}
+                />
 
                 <Column mt="lg">
                     <RBFBar
@@ -373,6 +357,9 @@ export default function TxCreateScreen() {
                     preset="primary"
                     text="Next"
                     onClick={() => {
+                        //if (!(chain.enum == 'BITCOIN_REGTEST')) {
+                        //    navigate('TxConfirmScreen', { rawTxInfo });
+                        //} else {
                         navigate('TxOpnetConfirmScreen', {
                             rawTxInfo: {
                                 items: items,
@@ -400,9 +387,10 @@ export default function TxCreateScreen() {
                                 action: 'sendBTC' // replace with actual opneTokens
                             }
                         });
+                        //}
 
                         //if (!(chain.enum == 'BITCOIN_REGTEST')) {
-                            //navigate('TxConfirmScreen', { rawTxInfo });
+                        //navigate('TxConfirmScreen', { rawTxInfo });
                         /*} else {
 
                         }*/
