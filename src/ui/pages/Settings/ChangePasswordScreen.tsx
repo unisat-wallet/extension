@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useTranslation } from 'react-i18next';
 
-import { Button, Input, Layout, Header, Content, Column } from '@/ui/components';
+import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { useWallet } from '@/ui/utils';
+import { getPasswordStrengthWord, MIN_PASSWORD_LENGTH } from '@/ui/utils/password-utils';
 
 import { useNavigate } from '../MainRoute';
 
@@ -19,8 +20,49 @@ export default function ChangePasswordScreen() {
   const wallet = useWallet();
   const tools = useTools();
 
+  const strongText = useMemo(() => {
+    if (!newPassword) {
+      return;
+    }
+    const { text, color, level } = getPasswordStrengthWord(newPassword);
+
+    const basicCom = (
+      <Row>
+        <Text size="xs" text={'Password strength: '} />
+        <Text size="xs" text={text} style={{ color: color }} />
+      </Row>
+    );
+
+    if (level == 1 || level == 2) {
+      return (
+        <Column>
+          {basicCom}
+          <Text size="xs" preset="sub" text={'A strong password can better protect the security of your assets'} />
+        </Column>
+      );
+    } else {
+      return basicCom;
+    }
+  }, [newPassword]);
+
+  const matchText = useMemo(() => {
+    if (!confirmPassword) {
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      return (
+        <Row>
+          <Text size="xs" text={`Passwords don't match`} color="red" />
+        </Row>
+      );
+    } else {
+      return;
+    }
+  }, [newPassword, confirmPassword]);
+
   useEffect(() => {
-    if (originPassword.length > 0 && newPassword.length >= 5 && newPassword === confirmPassword) {
+    if (originPassword.length > 0 && newPassword.length >= MIN_PASSWORD_LENGTH && newPassword === confirmPassword) {
       setDisabled(false);
     } else {
       setDisabled(true);
@@ -57,31 +99,19 @@ export default function ChangePasswordScreen() {
           <Input
             preset="password"
             placeholder="New Password"
-            onBlur={(e) => {
-              if (newPassword.length < 5) {
-                tools.toastWarning('at least five characters');
-                return;
-              }
-              if (newPassword.length > 0 && confirmPassword.length > 0 && newPassword !== confirmPassword) {
-                tools.toastWarning('Entered passwords differ');
-              }
-            }}
             onChange={(e) => {
               setNewPassword(e.target.value);
             }}
           />
+          {strongText}
           <Input
             preset="password"
             placeholder="Confirm Password"
-            onBlur={(e) => {
-              if (newPassword.length > 0 && confirmPassword.length > 0 && newPassword !== confirmPassword) {
-                tools.toastWarning('Entered passwords differ');
-              }
-            }}
             onChange={(e) => {
               setConfirmPassword(e.target.value);
             }}
           />
+          {matchText}
           <Button
             disabled={disabled}
             text="Change Password"
