@@ -52,6 +52,10 @@ class ProviderController extends BaseController {
     return account
   };
 
+  disconnect = async ({ session: { origin } }) => {
+    wallet.removeConnectedSite(origin)
+  };
+
   @Reflect.metadata('SAFE', true)
   getAccounts = async ({ session: { origin } }) => {
     if (!permissionService.hasPermission(origin)) {
