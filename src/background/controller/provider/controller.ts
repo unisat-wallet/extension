@@ -40,7 +40,7 @@ class ProviderController extends BaseController {
     sessionService.broadcastEvent('accountsChanged', account);
     const connectSite = permissionService.getConnectedSite(origin);
     if (connectSite) {
-      const network = wallet.getNetworkName()
+      const network = wallet.getLegacyNetworkName()
       sessionService.broadcastEvent(
         'networkChanged',
         {

@@ -160,12 +160,12 @@ export class WalletController extends BaseController {
     return preferenceService.getAddressBalance(address) || defaultBalance;
   };
 
-  getAddressHistory = async (params:{address: string,start:number,limit:number}) => {
+  getAddressHistory = async (params: { address: string; start: number; limit: number }) => {
     const data = await openapiService.getAddressRecentHistory(params);
     // preferenceService.updateAddressHistory(address, data);
     // return data;
     //   todo
-    return data
+    return data;
   };
 
   getAddressInscriptions = async (address: string, cursor: number, size: number) => {
@@ -752,6 +752,19 @@ export class WalletController extends BaseController {
     return NETWORK_TYPES[networkType].name;
   };
 
+  getLegacyNetworkName = () => {
+    const chainType = this.getChainType();
+    if (
+      chainType === ChainType.BITCOIN_MAINNET ||
+      chainType === ChainType.BITCOIN_TESTNET ||
+      chainType === ChainType.BITCOIN_TESTNET4
+    ) {
+      return NETWORK_TYPES[CHAINS_MAP[chainType].networkType].name;
+    } else {
+      return 'unknown';
+    }
+  };
+
   setChainType = async (chainType: ChainType) => {
     preferenceService.setChainType(chainType);
     this.openapi.setEndpoints(CHAINS_MAP[chainType].endpoints);
@@ -761,7 +774,13 @@ export class WalletController extends BaseController {
     if (!keyring) throw new Error('no current keyring');
     this.changeKeyring(keyring, currentAccount?.index);
 
-    sessionService.broadcastEvent('chainChanged', getChainInfo(chainType));
+    const chainInfo = getChainInfo(chainType);
+    sessionService.broadcastEvent('chainChanged', chainInfo);
+
+    const network = this.getLegacyNetworkName();
+    sessionService.broadcastEvent('networkChanged', {
+      network
+    });
   };
 
   getChainType = () => {
@@ -1316,7 +1335,7 @@ export class WalletController extends BaseController {
   setSite = (data: ConnectedSite) => {
     permissionService.setSite(data);
     if (data.isConnected) {
-      const network = this.getNetworkName();
+      const network = this.getLegacyNetworkName();
       sessionService.broadcastEvent(
         'networkChanged',
         {
@@ -1328,7 +1347,7 @@ export class WalletController extends BaseController {
   };
   updateConnectSite = (origin: string, data: ConnectedSite) => {
     permissionService.updateConnectSite(origin, data);
-    const network = this.getNetworkName();
+    const network = this.getLegacyNetworkName();
     sessionService.broadcastEvent(
       'networkChanged',
       {

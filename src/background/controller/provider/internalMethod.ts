@@ -25,7 +25,7 @@ const getProviderState = async (req) => {
     }
   }
   return {
-    network: wallet.getNetworkName(),
+    network: wallet.getLegacyNetworkName(),
     isUnlocked,
     accounts
   };
