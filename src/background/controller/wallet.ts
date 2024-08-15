@@ -27,8 +27,7 @@ import {
     COIN_SYMBOL,
     KEYRING_TYPE,
     KEYRING_TYPES,
-    NETWORK_TYPES,
-    UNCONFIRMED_HEIGHT
+    NETWORK_TYPES
 } from '@/shared/constant';
 import { runesUtils } from '@/shared/lib/runes-utils';
 import {
@@ -1013,7 +1012,7 @@ export class WalletController extends BaseController {
         const currentAccount = await this.getCurrentAccount();
         const keyring = await this.getCurrentKeyring();
         if (!keyring) throw new Error('no current keyring');
-        this.changeKeyring(keyring, currentAccount?.index);
+        await this.changeKeyring(keyring, currentAccount?.index);
 
         sessionService.broadcastEvent('chainChanged', getChainInfo(chainType));
     };
@@ -1027,7 +1026,7 @@ export class WalletController extends BaseController {
         const account = preferenceService.getCurrentAccount();
         if (!account) throw new Error('no current account');
 
-        let utxos = await openapiService.getBTCUtxos(account.address);
+        /*let utxos = await openapiService.getBTCUtxos(account.address);
 
         if (checkAddressFlag(openapiService.addressFlag, AddressFlagType.CONFIRMED_UTXO_MODE)) {
             utxos = utxos.filter((v) => (v as any).height !== UNCONFIRMED_HEIGHT);
@@ -1044,12 +1043,27 @@ export class WalletController extends BaseController {
                 inscriptions: v.inscriptions,
                 atomicals: v.atomicals
             };
+        });*/
+
+        const utxos = await Web3API.getUTXOs([account.address], 1000000000000000n);
+
+        return utxos.map((utxoOpnet) => {
+            return {
+                runes: [],
+                txid: utxoOpnet.transactionId,
+                vout: utxoOpnet.outputIndex,
+                satoshis: Number(utxoOpnet.value),
+                scriptPk: utxoOpnet.scriptPubKey.hex,
+                addressType: AddressType.P2PKH,
+                pubkey: account.pubkey,
+                inscriptions: [],
+                atomicals: []
+            };
         });
-        return btcUtxos;
     };
 
     getUnavailableUtxos = async () => {
-        const account = preferenceService.getCurrentAccount();
+        /*const account = preferenceService.getCurrentAccount();
         if (!account) throw new Error('no current account');
         const utxos = await openapiService.getUnavailableUtxos(account.address);
         const unavailableUtxos = utxos.map((v) => {
@@ -1064,7 +1078,9 @@ export class WalletController extends BaseController {
                 atomicals: v.atomicals
             };
         });
-        return unavailableUtxos;
+        return unavailableUtxos;*/
+
+        return [];
     };
 
     getAssetUtxosAtomicalsFT = async (ticker: string) => {
@@ -1080,14 +1096,14 @@ export class WalletController extends BaseController {
     };
 
     sendBTC = async ({
-                         to,
-                         amount,
-                         feeRate,
-                         enableRBF,
-                         btcUtxos,
-                         memo,
-                         memos
-                     }: {
+        to,
+        amount,
+        feeRate,
+        enableRBF,
+        btcUtxos,
+        memo,
+        memos
+    }: {
         to: string;
         amount: number;
         feeRate: number;
@@ -1127,11 +1143,11 @@ export class WalletController extends BaseController {
     };
 
     sendAllBTC = async ({
-                            to,
-                            feeRate,
-                            enableRBF,
-                            btcUtxos
-                        }: {
+        to,
+        feeRate,
+        enableRBF,
+        btcUtxos
+    }: {
         to: string;
         feeRate: number;
         enableRBF: boolean;
@@ -1165,13 +1181,13 @@ export class WalletController extends BaseController {
     };
 
     sendOrdinalsInscription = async ({
-                                         to,
-                                         inscriptionId,
-                                         feeRate,
-                                         outputValue,
-                                         enableRBF,
-                                         btcUtxos
-                                     }: {
+        to,
+        inscriptionId,
+        feeRate,
+        outputValue,
+        enableRBF,
+        btcUtxos
+    }: {
         to: string;
         inscriptionId: string;
         feeRate: number;
@@ -1222,12 +1238,12 @@ export class WalletController extends BaseController {
     };
 
     sendOrdinalsInscriptions = async ({
-                                          to,
-                                          inscriptionIds,
-                                          feeRate,
-                                          enableRBF,
-                                          btcUtxos
-                                      }: {
+        to,
+        inscriptionIds,
+        feeRate,
+        enableRBF,
+        btcUtxos
+    }: {
         to: string;
         inscriptionIds: string[];
         utxos: UTXO[];
@@ -1287,12 +1303,12 @@ export class WalletController extends BaseController {
     };
 
     splitOrdinalsInscription = async ({
-                                          inscriptionId,
-                                          feeRate,
-                                          outputValue,
-                                          enableRBF,
-                                          btcUtxos
-                                      }: {
+        inscriptionId,
+        feeRate,
+        outputValue,
+        enableRBF,
+        btcUtxos
+    }: {
         to: string;
         inscriptionId: string;
         feeRate: number;
@@ -1456,7 +1472,7 @@ export class WalletController extends BaseController {
         }
         if (currentAccount) {
             currentAccount.flag = preferenceService.getAddressFlag(currentAccount.address);
-            await openapiService.setClientAddress(currentAccount.address, currentAccount.flag);
+            openapiService.setClientAddress(currentAccount.address, currentAccount.flag);
         }
 
         return currentAccount;
@@ -1843,12 +1859,12 @@ export class WalletController extends BaseController {
     };
 
     sendAtomicalsNFT = async ({
-                                  to,
-                                  atomicalId,
-                                  feeRate,
-                                  enableRBF,
-                                  btcUtxos
-                              }: {
+        to,
+        atomicalId,
+        feeRate,
+        enableRBF,
+        btcUtxos
+    }: {
         to: string;
         atomicalId: string;
         feeRate: number;
@@ -1896,14 +1912,14 @@ export class WalletController extends BaseController {
     };
 
     sendAtomicalsFT = async ({
-                                 to,
-                                 ticker,
-                                 amount,
-                                 feeRate,
-                                 enableRBF,
-                                 btcUtxos,
-                                 assetUtxos
-                             }: {
+        to,
+        ticker,
+        amount,
+        feeRate,
+        enableRBF,
+        btcUtxos,
+        assetUtxos
+    }: {
         to: string;
         ticker: string;
         amount: number;
@@ -2108,15 +2124,15 @@ export class WalletController extends BaseController {
     };
 
     sendRunes = async ({
-                           to,
-                           runeid,
-                           runeAmount,
-                           feeRate,
-                           enableRBF,
-                           btcUtxos,
-                           assetUtxos,
-                           outputValue
-                       }: {
+        to,
+        runeid,
+        runeAmount,
+        feeRate,
+        enableRBF,
+        btcUtxos,
+        assetUtxos,
+        outputValue
+    }: {
         to: string;
         runeid: string;
         runeAmount: string;
