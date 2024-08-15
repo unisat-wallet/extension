@@ -1490,8 +1490,7 @@ export class WalletController extends BaseController {
     };
 
     getEditingAccount = async () => {
-        const account = preferenceService.getEditingAccount();
-        return account;
+        return preferenceService.getEditingAccount();
     };
 
     setEditingAccount = async (account: Account) => {

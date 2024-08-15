@@ -84,6 +84,7 @@ export default function TxOpnetConfirmScreen() {
     const [disabled, setDisabled] = useState<boolean>(false);
     const [_unwrapUseAmount, setUnWrapAmount] = useState<bigint>(0n);
     const { rawTxInfo } = useLocationState<LocationState>();
+
     const handleCancel = () => {
         window.history.go(-1);
     };
@@ -809,6 +810,7 @@ export default function TxOpnetConfirmScreen() {
         const foundObject = rawTxInfo.items.find(
             (obj) => obj.account && obj.account.address === rawTxInfo.account.address
         );
+
         const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
         const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
         const getSwap: IMotoswapRouterContract = getContract<IMotoswapRouterContract>(
@@ -841,21 +843,17 @@ export default function TxOpnetConfirmScreen() {
             rawTxInfo.inputAmount[1] - sliipageAmount,
             rawTxInfo.opneTokens[1].divisibility
         );
-        console.log(
-            rawTxInfo.inputAmount[1],
-            rawTxInfo.opneTokens[1].divisibility,
-            Number(rawTxInfo.slippageTolerance / 100)
-        );
-        console.log(outPutAmountBigInt);
+
         const block = await Web3API.provider.getBlockNumber();
 
-        const contractResult = await getSwap.encodeCalldata('swapExactTokensForTokensSupportingFeeOnTransferTokens', [
+        const contractResult = getSwap.encodeCalldata('swapExactTokensForTokensSupportingFeeOnTransferTokens', [
             inputAmountBigInt,
             outPutAmountBigInt,
             [rawTxInfo.contractAddress[0], rawTxInfo.contractAddress[1]],
             walletGet.p2tr,
             block + 10000n
         ]);
+
         const interactionParameters: IInteractionParameters = {
             from: walletGet.p2tr,
             to: routerAddress,
@@ -951,43 +949,43 @@ export default function TxOpnetConfirmScreen() {
     };
 
     const sendBTC = async () => {
-        const currentNetwork = await wallet.getChainType();
-        Web3API.setNetwork(currentNetwork);
-
-        const foundObject = rawTxInfo.items.find(
-            (obj) => obj.account && obj.account.address === rawTxInfo.account.address
-        );
-
-        const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
-        const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
-
-        const storedUTXO = localStorage.getItem('nextUTXO');
-        let utxos: UTXO[] = storedUTXO
-            ? JSON.parse(storedUTXO).map((utxo) => ({
-                  ...utxo,
-                  value: BigInt(utxo.value)
-              }))
-            : [];
-
-        if (!utxos || (utxos && utxos.length === 0) || useNextUTXO) {
-            utxos = await Web3API.getUTXOs(
-                [walletGet.p2tr, walletGet.p2wpkh],
-                expandToDecimals(rawTxInfo.inputAmount, 8) * 2n
-            );
-        }
-
-        const IFundingTransactionParameters: IFundingTransactionParameters = {
-            amount: expandToDecimals(rawTxInfo.inputAmount, 8) - 330n,
-            utxos: utxos,
-            signer: walletGet.keypair,
-            network: Web3API.network,
-            feeRate: rawTxInfo.feeRate,
-            priorityFee: rawTxInfo.priorityFee,
-            to: rawTxInfo.address,
-            from: walletGet.p2tr
-        };
-
         try {
+            const currentNetwork = await wallet.getChainType();
+            Web3API.setNetwork(currentNetwork);
+
+            const foundObject = rawTxInfo.items.find(
+                (obj) => obj.account && obj.account.address === rawTxInfo.account.address
+            );
+
+            const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
+            const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
+
+            const storedUTXO = localStorage.getItem('nextUTXO');
+            let utxos: UTXO[] = storedUTXO
+                ? JSON.parse(storedUTXO).map((utxo) => ({
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
+                : [];
+
+            if (!utxos || (utxos && utxos.length === 0) || useNextUTXO) {
+                utxos = await Web3API.getUTXOs(
+                    [walletGet.p2tr, walletGet.p2wpkh],
+                    expandToDecimals(rawTxInfo.inputAmount, 8) * 2n
+                );
+            }
+
+            const IFundingTransactionParameters: IFundingTransactionParameters = {
+                amount: expandToDecimals(rawTxInfo.inputAmount, 8) - 330n,
+                utxos: utxos,
+                signer: walletGet.keypair,
+                network: Web3API.network,
+                feeRate: rawTxInfo.feeRate,
+                priorityFee: rawTxInfo.priorityFee,
+                to: rawTxInfo.address,
+                from: walletGet.p2tr
+            };
+
             const sendTransact = await Web3API.transactionFactory.createBTCTransfer(IFundingTransactionParameters);
             const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact.tx, false);
             if (!firstTransaction || !firstTransaction.success) {
@@ -1007,6 +1005,7 @@ export default function TxOpnetConfirmScreen() {
 
             setUseNextUTXO(false);
         } catch (e) {
+            tools.toastError(`Error: ${e}`);
             setUseNextUTXO(true);
             setDisabled(false);
             throw e;
@@ -1296,7 +1295,7 @@ export default function TxOpnetConfirmScreen() {
                         disabled={disabled}
                         icon={undefined}
                         text={'Sign'}
-                        onClick={() => {
+                        onClick={async () => {
                             setDisabled(true);
                             switch (rawTxInfo.action) {
                                 case 'wrap':
@@ -1318,7 +1317,7 @@ export default function TxOpnetConfirmScreen() {
                                     swap();
                                     break;
                                 case 'sendBTC':
-                                    sendBTC();
+                                    await sendBTC();
                                     break;
                                 case 'deploy':
                                     deployContract();
