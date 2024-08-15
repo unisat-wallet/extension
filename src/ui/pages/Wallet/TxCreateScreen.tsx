@@ -4,8 +4,7 @@ import { JSONRpcProvider } from 'opnet';
 import { useEffect, useMemo, useState } from 'react';
 
 import { ChainType, COIN_DUST } from '@/shared/constant';
-import { Account } from '@/shared/types';
-import { expandToDecimals } from '@/shared/utils';
+import { Account, RawTxInfo } from '@/shared/types';
 import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
 import { Button, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -19,6 +18,7 @@ import { useBTCUnit, useChain } from '@/ui/state/settings/hooks';
 import {
     useBitcoinTx,
     useFetchUtxosCallback,
+    usePrepareSendBTCCallback,
     useSafeBalance,
     useSpendUnavailableUtxos
 } from '@/ui/state/transactions/hooks';
@@ -49,6 +49,10 @@ export default function TxCreateScreen() {
     const inputAmount = uiState.inputAmount;
     const enableRBF = uiState.enableRBF;
     const feeRate = uiState.feeRate;
+
+    const prepareSendBTC = usePrepareSendBTCCallback();
+
+    const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
 
     const [error, setError] = useState('');
     const [totalAvailableAmount, setBalanceValue] = useState<number>(0);
@@ -172,7 +176,7 @@ export default function TxCreateScreen() {
                 setDisabled(false);
                 return;
             }
-            /*if (!((await wallet.getNetworkType()) == 2)) {
+            if (!((await wallet.getNetworkType()) == 2)) {
                 prepareSendBTC({ toAddressInfo: toInfo, toAmount: toSatoshis, feeRate, enableRBF })
                     .then((data) => {
                         // if (data.fee < data.estimateFee) {
@@ -186,9 +190,9 @@ export default function TxCreateScreen() {
                         console.log(e);
                         setError(e.message);
                     });
-            } else {*/
-            setDisabled(false);
-            //}
+            } else {
+                setDisabled(false);
+            }
         };
         void runTransfer();
     }, [toInfo, inputAmount, feeRate, enableRBF]);
@@ -358,9 +362,9 @@ export default function TxCreateScreen() {
                     text="Next"
                     onClick={() => {
                         //if (!(chain.enum == 'BITCOIN_REGTEST')) {
-                        //    navigate('TxConfirmScreen', { rawTxInfo });
+                        navigate('TxConfirmScreen', { rawTxInfo });
                         //} else {
-                        navigate('TxOpnetConfirmScreen', {
+                        /*navigate('TxOpnetConfirmScreen', {
                             rawTxInfo: {
                                 items: items,
                                 contractAddress: 'BTC',
