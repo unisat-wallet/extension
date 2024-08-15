@@ -422,3 +422,16 @@ export const HARDWARE_WALLETS = {
     img: './images/artifacts/trezor.png'
   }
 };
+
+export const AUTO_LOCKTIMES = [
+  { id: 0, time: 30000, label: '30 Seconds' },
+  { id: 1, time: 60000, label: '1 Minute' },
+  { id: 2, time: 180000, label: '3 Minutes' },
+  { id: 3, time: 300000, label: '5 Minutes' },
+  { id: 4, time: 600000, label: '10 Minutes' },
+  { id: 5, time: 1800000, label: '30 Minutes' },
+  { id: 6, time: 3600000, label: '1 Hour' },
+  { id: 7, time: 14400000, label: '4 Hours' }
+];
+
+export const DEFAULT_LOCKTIME_ID = 5;

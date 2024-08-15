@@ -112,7 +112,7 @@ export function useBlockstreamUrl() {
   return CHAINS_MAP[chainType].mempoolSpaceUrl;
 }
 
-export function useBTCUnit(){
+export function useBTCUnit() {
   const chainType = useChainType();
   return CHAINS_MAP[chainType].unit;
 }
@@ -185,4 +185,9 @@ export function useSkipVersionCallback() {
       dispatch(settingsActions.updateSettings({ skippedVersion: version }));
     });
   }, []);
+}
+
+export function useAutoLockTimeId() {
+  const state = useSettingsState();
+  return state.autoLockTimeId;
 }

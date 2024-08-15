@@ -11,6 +11,7 @@ import i18n from '@/background/service/i18n';
 import { DisplayedKeyring, Keyring } from '@/background/service/keyring';
 import {
   ADDRESS_TYPES,
+  AUTO_LOCKTIMES,
   AddressFlagType,
   BRAND_ALIAN_TYPE_TEXT,
   CHAINS_ENUM,
@@ -18,11 +19,14 @@ import {
   COIN_NAME,
   COIN_SYMBOL,
   ChainType,
+  DEFAULT_LOCKTIME_ID,
+  EVENTS,
   KEYRING_TYPE,
   KEYRING_TYPES,
   NETWORK_TYPES,
   UNCONFIRMED_HEIGHT
 } from '@/shared/constant';
+import eventBus from '@/shared/eventBus';
 import { runesUtils } from '@/shared/lib/runes-utils';
 import {
   Account,
@@ -65,6 +69,8 @@ export type AccountAsset = {
 
 export class WalletController extends BaseController {
   openapi: OpenApiService = openapiService;
+
+  timer: any = null;
 
   /* wallet */
   boot = (password: string) => keyringService.boot(password);
@@ -114,6 +120,8 @@ export class WalletController extends BaseController {
     if (!alianNameInited && alianNames.length === 0) {
       this.initAlianNames();
     }
+
+    this._resetTimeout();
   };
   isUnlocked = () => {
     return keyringService.memStore.getState().isUnlocked;
@@ -123,6 +131,10 @@ export class WalletController extends BaseController {
     await keyringService.setLocked();
     sessionService.broadcastEvent('accountsChanged', []);
     sessionService.broadcastEvent('lock');
+    eventBus.emit(EVENTS.broadcastToUI, {
+      method: 'lock',
+      params: {}
+    });
   };
 
   setPopupOpen = (isOpen: boolean) => {
@@ -1968,6 +1980,32 @@ export class WalletController extends BaseController {
 
   getBuyBtcChannelList = async () => {
     return openapiService.getBuyBtcChannelList();
+  };
+
+  getAutoLockTimeId = () => {
+    return preferenceService.getAutoLockTimeId();
+  };
+
+  setAutoLockTimeId = (timeId: number) => {
+    preferenceService.setAutoLockTimeId(timeId);
+    this._resetTimeout();
+  };
+
+  setLastActiveTime = () => {
+    this._resetTimeout();
+  };
+
+  _resetTimeout = async () => {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+
+    const timeId = preferenceService.getAutoLockTimeId();
+    const timeConfig = AUTO_LOCKTIMES[timeId] || AUTO_LOCKTIMES[DEFAULT_LOCKTIME_ID];
+    this.timer = setTimeout(() => {
+      console.log('timeout setLocked!');
+      this.lockWallet();
+    }, timeConfig.time);
   };
 }
 
