@@ -132,11 +132,7 @@ function SignTxDetails({
   }, [txInfo.decodedPsbt]);
 
   const isCurrentToPayFee = useMemo(() => {
-    if (type === TxType.SIGN_TX) {
-      return false;
-    } else {
-      return true;
-    }
+    return type !== TxType.SIGN_TX;
   }, [type]);
 
   const spendSatoshis = useMemo(() => {
@@ -745,10 +741,8 @@ export default function SignPsbt({
   }, [txInfo, brc20PriceMap, runesPriceMap]);
 
   const isValidData = useMemo(() => {
-    if (txInfo.psbtHex === '') {
-      return false;
-    }
-    return true;
+    return txInfo.psbtHex !== '';
+
   }, [txInfo.psbtHex]);
 
   const isValid = useMemo(() => {
@@ -894,7 +888,7 @@ export default function SignPsbt({
                 <Card>
                   <Column full justifyCenter>
                     {txInfo.decodedPsbt.inputInfos.map((v, index) => {
-                      const isToSign = txInfo.toSignInputs.find((v) => v.index === index) ? true : false;
+                      const isToSign = !!txInfo.toSignInputs.find((v) => v.index === index);
                       const inscriptions = v.inscriptions;
                       const atomicals_nft = v.atomicals.filter((v) => v.type === 'NFT');
                       const atomicals_ft = v.atomicals.filter((v) => v.type === 'FT');

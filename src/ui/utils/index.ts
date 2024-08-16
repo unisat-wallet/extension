@@ -113,8 +113,7 @@ export async function sleep(timeSec: number) {
 }
 
 export function isValidAddress(address: string) {
-  if (!address) return false;
-  return true;
+  return !!address;
 }
 
 export const copyToClipboard = (textToCopy: string | number) => {

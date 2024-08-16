@@ -29,10 +29,8 @@ export default function EditWalletNameScreen() {
   };
 
   const isValidName = useMemo(() => {
-    if (alianName.length == 0) {
-      return false;
-    }
-    return true;
+    return alianName.length != 0;
+
   }, [alianName]);
 
   return (
