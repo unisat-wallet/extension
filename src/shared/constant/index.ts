@@ -232,6 +232,7 @@ type TypeChain = {
   unisatExplorerUrl: string;
   okxExplorerUrl: string;
   isViewTxHistoryInternally?: boolean;
+  foldIn?:string,
 };
 
 export const CHAINS_MAP: { [key: string]: TypeChain } = {
@@ -259,7 +260,8 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     unisatUrl: 'https://testnet.unisat.io',
     ordinalsUrl: 'https://testnet.ordinals.com',
     unisatExplorerUrl: '',
-    okxExplorerUrl: ''
+    okxExplorerUrl: '',
+    foldIn:"Bitcoin Testnet"
   },
   [ChainType.BITCOIN_TESTNET4]: {
     enum: ChainType.BITCOIN_TESTNET4,
@@ -272,7 +274,8 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     unisatUrl: 'https://testnet4.unisat.io',
     ordinalsUrl: 'https://testnet4.ordinals.com',
     unisatExplorerUrl: '',
-    okxExplorerUrl: ''
+    okxExplorerUrl: '',
+    foldIn:"Bitcoin Testnet",
   },
   [ChainType.BITCOIN_SIGNET]: {
     enum: ChainType.BITCOIN_SIGNET,
@@ -285,7 +288,8 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     unisatUrl: 'https://signet.unisat.io',
     ordinalsUrl: 'https://signet.ordinals.com',
     unisatExplorerUrl: '',
-    okxExplorerUrl: ''
+    okxExplorerUrl: '',
+    foldIn:"Bitcoin Testnet",
   },
   [ChainType.FRACTAL_BITCOIN_MAINNET]: {
     enum: ChainType.FRACTAL_BITCOIN_MAINNET,
