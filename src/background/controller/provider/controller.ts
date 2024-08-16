@@ -222,7 +222,7 @@ class ProviderController extends BaseController {
     const networkType = wallet.getNetworkType()
     const psbtNetwork = toPsbtNetwork(networkType)
     const psbt = bitcoin.Psbt.fromHex(psbtHex, { network: psbtNetwork })
-    const autoFinalized = (options && options.autoFinalized == false) ? false : true;
+    const autoFinalized = !(options && options.autoFinalized == false);
     const toSignInputs = await wallet.formatOptionsToSignInputs(psbtHex, options);
     await wallet.signPsbt(psbt, toSignInputs, autoFinalized);
     return psbt.toHex();
@@ -240,7 +240,7 @@ class ProviderController extends BaseController {
     const result: string[] = [];
     for (let i = 0; i < psbtHexs.length; i++) {
       const psbt = bitcoin.Psbt.fromHex(psbtHexs[i], { network: psbtNetwork });
-      const autoFinalized = (options && options[i] && options[i].autoFinalized == false) ? false : true;
+      const autoFinalized = !(options && options[i] && !options[i].autoFinalized);
       const toSignInputs = await wallet.formatOptionsToSignInputs(psbtHexs[i], options[i]);
       await wallet.signPsbt(psbt, toSignInputs, autoFinalized);
       result.push(psbt.toHex())
