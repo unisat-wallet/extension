@@ -1347,10 +1347,10 @@
   dependencies:
     "@metamask/utils" "^9.0.0"
 
-"@btc-vision/transaction@1.0.87":
-  version "1.0.87"
-  resolved "https://registry.yarnpkg.com/@btc-vision/transaction/-/transaction-1.0.87.tgz#e6d1c0fa1ec1376c1cc4eb8c236ab0fe0abc0aa8"
-  integrity sha512-l3yzigdOErJzfEQC+kaTphpRgxmE0ETU7LyFeiZ8GDKg4U3Yj8Le80lBgqoauFFFj5czJijb3kNLuAUV/3zgSw==
+"@btc-vision/transaction@1.0.89":
+  version "1.0.89"
+  resolved "https://registry.yarnpkg.com/@btc-vision/transaction/-/transaction-1.0.89.tgz#4fd16d8cc0f9befd47478054bed308c76d6e69f3"
+  integrity sha512-quYvvGr7kjwKIk7LXzBLrtYVWDf1Ya/hox1UEVjt+Tkr+zY2QNPNRc3xCIlaQnWPzNw+xg9B7ei0H5S8YcsOUw==
   dependencies:
     "@babel/plugin-proposal-object-rest-spread" "^7.20.7"
     "@bitcoinerlab/secp256k1" "^1.1.1"

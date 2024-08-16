@@ -5,6 +5,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { ChainType, COIN_DUST } from '@/shared/constant';
 import { Account, RawTxInfo } from '@/shared/types';
+import { expandToDecimals } from '@/shared/utils';
 import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
 import { Button, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -362,9 +363,9 @@ export default function TxCreateScreen() {
                     text="Next"
                     onClick={() => {
                         //if (!(chain.enum == 'BITCOIN_REGTEST')) {
-                        navigate('TxConfirmScreen', { rawTxInfo });
+                        //navigate('TxConfirmScreen', { rawTxInfo });
                         //} else {
-                        /*navigate('TxOpnetConfirmScreen', {
+                        navigate('TxOpnetConfirmScreen', {
                             rawTxInfo: {
                                 items: items,
                                 contractAddress: 'BTC',
