@@ -8,13 +8,13 @@ import { colors } from '@/ui/theme/colors';
 import { ArrowLeftOutlined, CloseOutlined, RightOutlined } from '@ant-design/icons';
 import { useMemo, useState } from 'react';
 
-function ChainItem(props: { selected: boolean; chainType: ChainType; onClick, hasFold?: boolean }) {
+function ChainItem(props: { selected: boolean, chainType: ChainType, onClick, hasFold?: boolean, disable?: boolean }) {
   const chain = CHAINS_MAP[props.chainType];
 
   return (
     <Card
       style={{
-        backgroundColor: 'rgba(255,255,255,0.1)',
+        backgroundColor: props.disable ? 'rgba(255,255,255,0.06)' : 'rgba(255,255,255,0.1)',
         borderRadius: 10,
         borderColor: colors.gold,
         borderWidth: props.selected ? 1 : 0
@@ -23,8 +23,8 @@ function ChainItem(props: { selected: boolean; chainType: ChainType; onClick, ha
       onClick={props.onClick}>
       <Row fullX justifyBetween itemsCenter>
         <Row itemsCenter>
-          <Image src={chain.icon} size={30} />
-          <Text text={chain.label} />
+          <Image src={chain.icon} size={30} style={{ opacity: props.disable ? 0.7 : 1 }} />
+          <Text text={chain.label} color={props.disable ? 'textDim' : 'text'} />
         </Row>
         {
           props.hasFold && <RightOutlined />
@@ -79,7 +79,7 @@ export const SwitchChainModal = ({ onClose }: { onClose: () => void }) => {
               setFoldKey('');
             }}>
               <ArrowLeftOutlined />
-            </Row> : <Row style={{width:18}} />
+            </Row> : <Row style={{ width: 18 }} />
           }
 
           <Text text="Select Network" textCenter size="md" />
@@ -99,8 +99,12 @@ export const SwitchChainModal = ({ onClose }: { onClose: () => void }) => {
               key={v.enum}
               selected={v.enum == chain.enum && !v.foldIn}
               chainType={v.enum}
-              hasFold={(v.children?.length||0) > 0}
+              disable={v.disable}
+              hasFold={(v.children?.length || 0) > 0}
               onClick={async () => {
+                if (v.disable) {
+                  return tools.toastError('This network is not available');
+                }
                 if (v.foldIn) {
                   return setFoldKey(v.foldIn);
                 }
