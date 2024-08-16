@@ -211,7 +211,8 @@ export enum ChainType {
   BITCOIN_TESTNET = 'BITCOIN_TESTNET',
   BITCOIN_TESTNET4 = 'BITCOIN_TESTNET4',
   BITCOIN_SIGNET = 'BITCOIN_SIGNET',
-  FRACTAL_BITCOIN_MAINNET = 'FRACTAL_BITCOIN_MAINNET'
+  FRACTAL_BITCOIN_MAINNET = 'FRACTAL_BITCOIN_MAINNET',
+  FRACTAL_BITCOIN_TESTNET = 'FRACTAL_BITCOIN_TESTNET'
 }
 
 export const NETWORK_TYPES = [
@@ -232,6 +233,8 @@ type TypeChain = {
   unisatExplorerUrl: string;
   okxExplorerUrl: string;
   isViewTxHistoryInternally?: boolean;
+  foldIn?:string,
+  disable?:boolean
 };
 
 export const CHAINS_MAP: { [key: string]: TypeChain } = {
@@ -259,7 +262,8 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     unisatUrl: 'https://testnet.unisat.io',
     ordinalsUrl: 'https://testnet.ordinals.com',
     unisatExplorerUrl: '',
-    okxExplorerUrl: ''
+    okxExplorerUrl: '',
+    foldIn:"Bitcoin Testnet"
   },
   [ChainType.BITCOIN_TESTNET4]: {
     enum: ChainType.BITCOIN_TESTNET4,
@@ -272,7 +276,8 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     unisatUrl: 'https://testnet4.unisat.io',
     ordinalsUrl: 'https://testnet4.ordinals.com',
     unisatExplorerUrl: '',
-    okxExplorerUrl: ''
+    okxExplorerUrl: '',
+    foldIn:"Bitcoin Testnet",
   },
   [ChainType.BITCOIN_SIGNET]: {
     enum: ChainType.BITCOIN_SIGNET,
@@ -285,11 +290,12 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     unisatUrl: 'https://signet.unisat.io',
     ordinalsUrl: 'https://signet.ordinals.com',
     unisatExplorerUrl: '',
-    okxExplorerUrl: ''
+    okxExplorerUrl: '',
+    foldIn:"Bitcoin Testnet",
   },
   [ChainType.FRACTAL_BITCOIN_MAINNET]: {
     enum: ChainType.FRACTAL_BITCOIN_MAINNET,
-    label: 'Fractal Bitcoin (Beta)',
+    label: 'Fractal Bitcoin Mainnet (Beta)',
     icon: './images/artifacts/fractalbitcoin-mainnet.svg',
     unit: 'FB',
     networkType: NetworkType.MAINNET,
@@ -300,7 +306,22 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     unisatExplorerUrl: 'https://explorer.fractalbitcoin.io',
     okxExplorerUrl: '',
     isViewTxHistoryInternally: false
-  }
+  },
+  [ChainType.FRACTAL_BITCOIN_TESTNET]: {
+    enum: ChainType.FRACTAL_BITCOIN_TESTNET,
+    label: 'Fractal Bitcoin Testnet (Beta)',
+    icon: './images/artifacts/fractalbitcoin-mainnet.svg',
+    unit: 'FB',
+    networkType: NetworkType.TESTNET,
+    endpoints: ['https://wallet-api-fractal.unisat.io'],
+    mempoolSpaceUrl: 'https://mempool.fractalbitcoin.io',
+    unisatUrl: 'https://fractal.unisat.io',
+    ordinalsUrl: 'https://ordinals.fractalbitcoin.io',
+    unisatExplorerUrl: 'https://explorer.fractalbitcoin.io',
+    okxExplorerUrl: '',
+    isViewTxHistoryInternally: false,
+    disable:true,
+  },
 };
 
 // 将 CHAINS_MAP 转换为数组
