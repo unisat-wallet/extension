@@ -48,7 +48,7 @@ export const colors = Object.assign({}, palette, {
 
   error: '#e52937',
 
-  danger: palette.red,
+  danger: 'rgba(245, 84, 84, 0.90)',
 
   card: '#262222',
   warning: palette.orange,

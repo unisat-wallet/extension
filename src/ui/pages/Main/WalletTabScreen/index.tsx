@@ -218,9 +218,22 @@ export default function WalletTabScreen() {
         <Column gap="xl">
           {currentKeyring.type === KEYRING_TYPE.HdKeyring && <AccountSelect />}
           {currentKeyring.type === KEYRING_TYPE.KeystoneKeyring && <AccountSelect />}
-          {walletConfig.chainTip && <Text text={walletConfig.chainTip} color="danger" textCenter />}
+          {
+            (walletConfig.chainTip || walletConfig.statusMessage) &&
+            <Column
+              py={'lg'}
+              px={'md'}
+              gap={'lg'}
+              style={{
+              borderRadius: 12,
+              border: '1px solid rgba(245, 84, 84, 0.35)',
+              background: 'rgba(245, 84, 84, 0.08)',
+            }}>
+              {walletConfig.chainTip && <Text text={walletConfig.chainTip} color="text" textCenter />}
+              {walletConfig.statusMessage && <Text text={walletConfig.statusMessage} color="danger" textCenter />}
+            </Column>
+          }
 
-          {walletConfig.statusMessage && <Text text={walletConfig.statusMessage} color="danger" textCenter />}
 
           <Tooltip
             placement={'bottom'}
