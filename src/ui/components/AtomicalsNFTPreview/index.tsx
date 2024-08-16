@@ -5,7 +5,7 @@ import { Atomical } from '@/shared/types';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 
-import { formatDate } from '../../utils';
+import { formatDate } from '@/ui/utils';
 import { Column } from '../Column';
 import Iframe from '../Iframe';
 import { Row } from '../Row';
@@ -130,7 +130,7 @@ export default function AtomicalsNFTPreview({ data, onClick, preset }: Atomicals
       </div>
       <Column px="md" py="sm" gap="zero" bg="bg4" full>
         <Text text={numberStr} color="gold" size={$numberPresets[preset] as any} />
-        {isUnconfirmed == false && <Text text={time} preset="sub" size={$timePresets[preset] as any} />}
+        {!isUnconfirmed && <Text text={time} preset="sub" size={$timePresets[preset] as any} />}
       </Column>
     </Column>
   );

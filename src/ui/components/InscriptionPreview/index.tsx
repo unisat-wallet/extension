@@ -6,7 +6,7 @@ import { useOrdinalsWebsite } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 
-import { formatDate } from '../../utils';
+import { formatDate } from '@/ui/utils';
 import { Column } from '../Column';
 import Iframe from '../Iframe';
 import { Row } from '../Row';
@@ -142,7 +142,7 @@ export default function InscriptionPreview({ data, onClick, preset, asLogo }: In
       ) : null}
       <Column px="md" py="sm" gap="zero" bg="bg4" full>
         <Text text={numberStr} color="gold" size={$numberPresets[preset] as any} />
-        {isUnconfirmed == false && data.timestamp && (
+        {!isUnconfirmed && data.timestamp && (
           <Text text={time} preset="sub" size={$timePresets[preset] as any} />
         )}
       </Column>
