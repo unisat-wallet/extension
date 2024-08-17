@@ -103,12 +103,12 @@ interface InscriptioinInfo {
 }
 
 function SignTxDetails({
-  txInfo,
-  type,
-  rawTxInfo,
-  runesPriceMap,
-  brc20PriceMap
-}: {
+                         txInfo,
+                         type,
+                         rawTxInfo,
+                         runesPriceMap,
+                         brc20PriceMap
+                       }: {
   txInfo: TxInfo;
   rawTxInfo?: RawTxInfo;
   type: TxType;
@@ -372,36 +372,35 @@ function SignTxDetails({
   if (type === TxType.SIGN_TX) {
     return (
       <Column gap="lg">
-        <Row itemsCenter justifyBetween fullX py={'sm'}>
+        <Row itemsCenter justifyCenter fullX py={'sm'}>
           <Text text="Sign Transaction" preset="title-bold" textCenter />
-          <Row itemsCenter>
-            <Image src={chain.icon} size={32} />
-            <Text text={chain.label} />
-          </Row>
         </Row>
-        <Row justifyCenter>
-          <Card style={{ backgroundColor: '#272626', maxWidth: 320, width: 320 }}>
-            <Column gap="lg">
-              <Column>
-                <Column>
-                  <Column justifyCenter>
-                    <Row itemsCenter>
-                      <Text
-                        text={(receivingSatoshis > sendingSatoshis ? '+' : '') + balanceChangedAmount}
-                        color={receivingSatoshis > sendingSatoshis ? 'white' : 'white'}
-                        preset="bold"
-                        textCenter
-                        size="xxl"
-                      />
-                      <Text text={btcUnit} color="textDim" />
-                      <BtcUsd sats={Math.abs(receivingSatoshis - sendingSatoshis)} bracket />
-                    </Row>
-                  </Column>
-                </Column>
+        <Row justifyCenter fullX>
+          <Card style={{ backgroundColor: '#272626' ,flex:'1'}}>
+            <Column fullX itemsCenter>
+              <Row itemsCenter>
+                <Image src={chain.icon} size={24} />
+                <Text text={chain.label} />
+              </Row>
+              <Row style={{ borderTopWidth: 1, borderColor: colors.border, borderStyle: 'dashed', alignSelf: 'stretch' }}
+                   my="md" />
+              <Column justifyCenter>
+                <Row itemsCenter>
+                  <Text
+                    text={(receivingSatoshis > sendingSatoshis ? '+' : '') + balanceChangedAmount}
+                    color={receivingSatoshis > sendingSatoshis ? 'white' : 'white'}
+                    preset="bold"
+                    textCenter
+                    size="xxl"
+                  />
+                  <Text text={btcUnit} color="textDim" />
+                  <BtcUsd sats={Math.abs(receivingSatoshis - sendingSatoshis)} bracket />
+                </Row>
               </Column>
             </Column>
           </Card>
         </Row>
+        <div/>
 
         {involvedAssets}
       </Column>
@@ -410,63 +409,66 @@ function SignTxDetails({
 
   return (
     <Column gap="lg" style={{ position: 'relative' }}>
-      <Row itemsCenter justifyBetween fullX py={'sm'}>
+      <Row itemsCenter justifyCenter fullX py={'sm'}>
         <Text text="Sign Transaction" preset="title-bold" textCenter />
-        <Row itemsCenter>
-          <Image src={chain.icon} size={32} />
-          <Text text={chain.label} />
-        </Row>
       </Row>
       <Row justifyCenter>
-        <Card style={{ backgroundColor: '#272626', maxWidth: 320, width: 320 }}>
-          <Column gap="lg">
-            <Column>
-              {rawTxInfo && (
-                <Column>
-                  <Text text={'Send to'} textCenter color="textDim" />
-                  <Row justifyCenter>
-                    <AddressText addressInfo={rawTxInfo.toAddressInfo} textCenter />
-                  </Row>
-                </Column>
-              )}
-              {rawTxInfo && <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />}
-
-              {sendingInscriptions.length > 0 && (
-                <Column justifyCenter>
-                  <Text
-                    text={
-                      sendingInscriptions.length === 1
-                        ? 'Spend Inscription'
-                        : `Spend Inscription (${sendingInscriptions.length})`
-                    }
-                    textCenter
-                    color="textDim"
-                  />
-                  <Row overflowX gap="lg" justifyCenter style={{ width: 280 }} pb="lg">
-                    {sendingInscriptions.map((v) => (
-                      <InscriptionPreview key={v.inscriptionId} data={v} preset="small" />
-                    ))}
-                  </Row>
-                </Column>
-              )}
-              {sendingInscriptions.length > 0 && (
-                <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
-              )}
-
+        <Card style={{ backgroundColor: '#272626',flex:'1'}}>
+          <Column fullX itemsCenter>
+            <Row itemsCenter justifyCenter>
+              <Image src={chain.icon} size={24} />
+              <Text text={chain.label} />
+            </Row>
+            <Row style={{ borderTopWidth: 1, borderColor: colors.border, borderStyle: 'dashed', alignSelf: 'stretch' }}
+                 my="md" />
+            {rawTxInfo && (
               <Column>
-                <Text text={'Spend Amount'} textCenter color="textDim" />
+                <Text text={'Send to'} textCenter color="textDim" />
+                <Row justifyCenter>
+                  <AddressText addressInfo={rawTxInfo.toAddressInfo} textCenter />
+                </Row>
+              </Column>
+            )}
+            {rawTxInfo &&
+              <Row
+                style={{ borderTopWidth: 1, borderColor: colors.border, borderStyle: 'dashed', alignSelf: 'stretch' }}
+                my="md" />}
 
-                <Column justifyCenter>
-                  <Row itemsCenter>
-                    <Text text={spendAmount + ' ' + btcUnit} color="white" preset="bold" textCenter size="xxl" />
-                  </Row>
-                  <BtcUsd sats={spendSatoshis} textCenter bracket style={{ marginTop: -8 }} />
+            {sendingInscriptions.length > 0 && (
+              <Column justifyCenter>
+                <Text
+                  text={
+                    sendingInscriptions.length === 1
+                      ? 'Spend Inscription'
+                      : `Spend Inscription (${sendingInscriptions.length})`
+                  }
+                  textCenter
+                  color="textDim"
+                />
+                <Row overflowX gap="lg" justifyCenter style={{ width: 280 }} pb="lg">
+                  {sendingInscriptions.map((v) => (
+                    <InscriptionPreview key={v.inscriptionId} data={v} preset="small" />
+                  ))}
+                </Row>
+              </Column>
+            )}
+            {sendingInscriptions.length > 0 && (
+              <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
+            )}
 
-                  {sendingInscriptionSaotoshis > 0 && (
-                    <Text text={`${sendingInscriptionAmount} (in inscriptions)`} preset="sub" textCenter />
-                  )}
-                  {isCurrentToPayFee && <Text text={`${feeAmount} ${btcUnit} (network fee)`} preset="sub" textCenter />}
-                </Column>
+            <Column>
+              <Text text={'Spend Amount'} textCenter color="textDim" />
+
+              <Column justifyCenter>
+                <Row itemsCenter>
+                  <Text text={spendAmount + ' ' + btcUnit} color="white" preset="bold" textCenter size="xxl" />
+                </Row>
+                <BtcUsd sats={spendSatoshis} textCenter bracket style={{ marginTop: -8 }} />
+
+                {sendingInscriptionSaotoshis > 0 && (
+                  <Text text={`${sendingInscriptionAmount} (in inscriptions)`} preset="sub" textCenter />
+                )}
+                {isCurrentToPayFee && <Text text={`${feeAmount} ${btcUnit} (network fee)`} preset="sub" textCenter />}
               </Column>
             </Column>
           </Column>
@@ -527,14 +529,23 @@ const initTxInfo: TxInfo = {
 };
 
 export default function SignPsbt({
-  params: {
-    data: { psbtHex, options, type, sendBitcoinParams, sendInscriptionParams, sendRunesParams, rawTxInfo, ...rest },
-    session
-  },
-  header,
-  handleCancel,
-  handleConfirm
-}: Props) {
+                                   params: {
+                                     data: {
+                                       psbtHex,
+                                       options,
+                                       type,
+                                       sendBitcoinParams,
+                                       sendInscriptionParams,
+                                       sendRunesParams,
+                                       rawTxInfo,
+                                       ...rest
+                                     },
+                                     session
+                                   },
+                                   header,
+                                   handleCancel,
+                                   handleConfirm
+                                 }: Props) {
   const [getApproval, resolveApproval, rejectApproval] = useApproval();
 
   const [txInfo, setTxInfo] = useState<TxInfo>(initTxInfo);
@@ -839,6 +850,8 @@ export default function SignPsbt({
       <Content>
         <Column gap="xl">
           {detailsComponent}
+          {/*this div is used to double gap*/}
+          <div/>
           {canChanged == false && (
             <Section title="Network Fee:" extra={<BtcUsd sats={amountToSatoshis(networkFee)} />}>
               <Text text={networkFee} />
@@ -881,7 +894,7 @@ export default function SignPsbt({
                 <Text
                   text="RBF"
                   color="white"
-                  style={{ backgroundColor: 'red', padding: 5, borderRadius: 5, textDecoration: 'line-through' }}
+                  style={{ backgroundColor: '#F55454', padding: 5, borderRadius: 5, textDecoration: 'line-through' }}
                 />
               )}
             </Row>
