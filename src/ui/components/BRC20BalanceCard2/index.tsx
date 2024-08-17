@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { AddressTokenSummary, TickPriceItem, TokenBalance } from '@/shared/types';
+import { TickPriceChange, TickUsd } from '@/ui/components/TickUsd';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -11,14 +12,12 @@ import { Column } from '../Column';
 import { Icon } from '../Icon';
 import { Row } from '../Row';
 import { Text } from '../Text';
-import { TickPriceChange, TickUsd } from '@/ui/components/TickUsd';
-import { BtcUsd } from '@/ui/components/BtcUsd';
 
 export interface BRC20BalanceCard2Props {
-  tokenBalance: TokenBalance,
-  onClick?: () => void,
-  showPrice?: boolean,
-  price?: TickPriceItem
+  tokenBalance: TokenBalance;
+  onClick?: () => void;
+  showPrice?: boolean;
+  price?: TickPriceItem;
 }
 
 export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
@@ -35,7 +34,6 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
     },
     onClick
   } = props;
-
 
   const account = useCurrentAccount();
   const [detailVisible, setDetailVisible] = useState(false);
@@ -75,9 +73,9 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
   return (
     <Card
       style={{
-        backgroundColor: '#141414',
+        backgroundColor: '#1E1F24',
         borderColor: 'rgba(255,255,255,0.1)',
-        borderWidth: 1
+        borderRadius: 12
       }}
       fullX
       onClick={() => {
@@ -119,12 +117,12 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
             </Row>
           </Row>
         </Row>
-        {
-          showPrice && <Row justifyBetween mt={'xs'}>
+        {showPrice && (
+          <Row justifyBetween mt={'xs'}>
             <TickPriceChange price={price} />
             <TickUsd price={price} balance={overallBalance} />
           </Row>
-        }
+        )}
         {detailVisible ? (
           loading ? (
             <Column style={{ minHeight: 130 }} itemsCenter justifyCenter>
@@ -148,8 +146,9 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
                       bg={v === 'Transfer' ? 'brc20_transfer' : v === 'Deploy' ? 'brc20_deploy' : 'brc20_other'}>
                       <Column gap="zero">
                         <Text text={v} size={v === 'Transfer' ? 'sm' : v === 'Deploy' ? 'sm' : 'md'} />
-                        {v === 'Transfer' ?
-                          <Text text={`(${_amounts[index]})`} size="xxs" textCenter wrap digital /> : null}
+                        {v === 'Transfer' ? (
+                          <Text text={`(${_amounts[index]})`} size="xxs" textCenter wrap digital />
+                        ) : null}
                       </Column>
                     </Card>
                   ))}

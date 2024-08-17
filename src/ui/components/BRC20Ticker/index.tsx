@@ -5,7 +5,6 @@ import { Text } from '../Text';
 
 // eslint-disable-next-line no-control-regex
 const regex = /[\u0000-\u001F\u007F-\u009F\s]/;
-
 const $tickerPresets: { sm: { textSize: any }; md: { textSize: any }; lg: { textSize: any } } = {
   sm: {
     textSize: 'xs'
@@ -31,11 +30,11 @@ export function BRC20Ticker({ tick, preset }: { tick: string | undefined; preset
             if (regex.test(char)) {
               return <Text key={index} text={encodeURIComponent(char)} color="textDim" size={style.textSize} />;
             }
-            return <Text key={index} text={char} size={style.textSize} color="gold" />;
+            return <Text key={index} text={char} size={style.textSize} wrap color="ticker_color" />;
           })}
         </Row>
       );
     }
-    return <Text text={tick} size={style.textSize} color="gold" />;
+    return <Text text={tick} size={style.textSize} wrap color="ticker_color" />;
   }, [tick]);
 }

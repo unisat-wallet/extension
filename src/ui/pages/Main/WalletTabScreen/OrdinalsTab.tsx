@@ -1,7 +1,10 @@
+import { useMemo } from 'react';
+
 import { Column, Row } from '@/ui/components';
 import { TabBar } from '@/ui/components/TabBar';
 import { useAddressSummary } from '@/ui/state/accounts/hooks';
 import { useAppDispatch } from '@/ui/state/hooks';
+import { useChain } from '@/ui/state/settings/hooks';
 import { useOrdinalsAssetTabKey } from '@/ui/state/ui/hooks';
 import { OrdinalsAssetTabKey, uiActions } from '@/ui/state/ui/reducer';
 
@@ -11,26 +14,35 @@ import { InscriptionList } from './InscriptionList';
 
 export function OrdinalsTab() {
   const addressSummary = useAddressSummary();
-  const tabItems = [
-    {
-      key: OrdinalsAssetTabKey.ALL,
-      label: `ALL (${addressSummary.inscriptionCount})`,
-      children: <InscriptionList />
-    },
-    {
-      key: OrdinalsAssetTabKey.BRC20,
-      label: `BRC-20 (${addressSummary.brc20Count})`,
-      children: <BRC20List />
-    },
-    {
-      key: OrdinalsAssetTabKey.BRC20_5BYTE,
-      label: `BRC-20[5-byte] (${addressSummary.brc20Count5Byte || 0})`,
-      children: <BRC20List5Byte />
-    }
-  ];
+
+  const chain = useChain();
 
   const tabKey = useOrdinalsAssetTabKey();
   const dispatch = useAppDispatch();
+
+  const tabItems = useMemo(() => {
+    const items = [
+      {
+        key: OrdinalsAssetTabKey.ALL,
+        label: `ALL (${addressSummary.inscriptionCount})`,
+        children: <InscriptionList />
+      },
+      {
+        key: OrdinalsAssetTabKey.BRC20,
+        label: `BRC-20 (${addressSummary.brc20Count})`,
+        children: <BRC20List />
+      }
+    ];
+
+    if (!chain.isFractal) {
+      items.push({
+        key: OrdinalsAssetTabKey.BRC20_5BYTE,
+        label: `BRC-20[5-byte] (${addressSummary.brc20Count5Byte || 0})`,
+        children: <BRC20List5Byte />
+      });
+    }
+    return items;
+  }, [addressSummary, chain]);
   return (
     <Column>
       <Row justifyBetween>

@@ -233,8 +233,9 @@ type TypeChain = {
   unisatExplorerUrl: string;
   okxExplorerUrl: string;
   isViewTxHistoryInternally?: boolean;
-  foldIn?:string,
-  disable?:boolean
+  foldIn?: string;
+  disable?: boolean;
+  isFractal?: boolean;
 };
 
 export const CHAINS_MAP: { [key: string]: TypeChain } = {
@@ -263,7 +264,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     ordinalsUrl: 'https://testnet.ordinals.com',
     unisatExplorerUrl: '',
     okxExplorerUrl: '',
-    foldIn:"Bitcoin Testnet"
+    foldIn: 'Bitcoin Testnet'
   },
   [ChainType.BITCOIN_TESTNET4]: {
     enum: ChainType.BITCOIN_TESTNET4,
@@ -277,7 +278,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     ordinalsUrl: 'https://testnet4.ordinals.com',
     unisatExplorerUrl: '',
     okxExplorerUrl: '',
-    foldIn:"Bitcoin Testnet",
+    foldIn: 'Bitcoin Testnet'
   },
   [ChainType.BITCOIN_SIGNET]: {
     enum: ChainType.BITCOIN_SIGNET,
@@ -291,11 +292,11 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     ordinalsUrl: 'https://signet.ordinals.com',
     unisatExplorerUrl: '',
     okxExplorerUrl: '',
-    foldIn:"Bitcoin Testnet",
+    foldIn: 'Bitcoin Testnet'
   },
   [ChainType.FRACTAL_BITCOIN_MAINNET]: {
     enum: ChainType.FRACTAL_BITCOIN_MAINNET,
-    label: 'Fractal Bitcoin Mainnet (Beta)',
+    label: 'Fractal Bitcoin Mainnet (Not Ready)',
     icon: './images/artifacts/fractalbitcoin-mainnet.svg',
     unit: 'FB',
     networkType: NetworkType.MAINNET,
@@ -305,27 +306,61 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     ordinalsUrl: 'https://ordinals.fractalbitcoin.io',
     unisatExplorerUrl: 'https://explorer.fractalbitcoin.io',
     okxExplorerUrl: '',
-    isViewTxHistoryInternally: false
+    isViewTxHistoryInternally: false,
+    disable: true,
+    isFractal: true
   },
   [ChainType.FRACTAL_BITCOIN_TESTNET]: {
     enum: ChainType.FRACTAL_BITCOIN_TESTNET,
-    label: 'Fractal Bitcoin Testnet (Beta)',
+    label: 'Fractal Bitcoin Testnet',
     icon: './images/artifacts/fractalbitcoin-mainnet.svg',
-    unit: 'FB',
-    networkType: NetworkType.TESTNET,
-    endpoints: ['https://wallet-api-fractal.unisat.io'],
-    mempoolSpaceUrl: 'https://mempool.fractalbitcoin.io',
-    unisatUrl: 'https://fractal.unisat.io',
-    ordinalsUrl: 'https://ordinals.fractalbitcoin.io',
-    unisatExplorerUrl: 'https://explorer.fractalbitcoin.io',
+    unit: 'tFB',
+    networkType: NetworkType.MAINNET,
+    endpoints: ['https://fractal-testnet.unisat.io/wallet-api'],
+    mempoolSpaceUrl: 'https://mempool-testnet.fractalbitcoin.io',
+    unisatUrl: 'https://fractal-testnet.unisat.io',
+    ordinalsUrl: 'https://ordinals-testnet.fractalbitcoin.io',
+    unisatExplorerUrl: 'https://explorer-testnet.fractalbitcoin.io',
     okxExplorerUrl: '',
     isViewTxHistoryInternally: false,
-    disable:true,
-  },
+    isFractal: true
+  }
 };
 
-// 将 CHAINS_MAP 转换为数组
 export const CHAINS = Object.values(CHAINS_MAP);
+
+export type TypeChainGroup = {
+  type: 'single' | 'list';
+  chain?: TypeChain;
+  label?: string;
+  icon?: string;
+  items?: TypeChain[];
+};
+
+export const CHAIN_GROUPS: TypeChainGroup[] = [
+  {
+    type: 'single',
+    chain: CHAINS_MAP[ChainType.BITCOIN_MAINNET]
+  },
+  {
+    type: 'list',
+    label: 'Bitcoin Testnet',
+    icon: './images/artifacts/bitcoin-testnet.svg',
+    items: [
+      CHAINS_MAP[ChainType.BITCOIN_TESTNET],
+      CHAINS_MAP[ChainType.BITCOIN_TESTNET4],
+      CHAINS_MAP[ChainType.BITCOIN_SIGNET]
+    ]
+  },
+  {
+    type: 'single',
+    chain: CHAINS_MAP[ChainType.FRACTAL_BITCOIN_MAINNET]
+  },
+  {
+    type: 'single',
+    chain: CHAINS_MAP[ChainType.FRACTAL_BITCOIN_TESTNET]
+  }
+];
 
 export const MINIMUM_GAS_LIMIT = 21000;
 

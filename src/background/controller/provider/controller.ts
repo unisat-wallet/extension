@@ -69,8 +69,7 @@ class ProviderController extends BaseController {
 
   @Reflect.metadata('SAFE', true)
   getNetwork = async () => {
-    const networkType = wallet.getNetworkType()
-    return NETWORK_TYPES[networkType].name
+    return wallet.getLegacyNetworkName()
   };
 
   @Reflect.metadata('APPROVAL', ['SwitchNetwork', (req) => {

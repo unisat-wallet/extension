@@ -16,12 +16,16 @@ interface HeaderProps {
   LeftComponent?: React.ReactNode;
   RightComponent?: React.ReactNode;
   children?: React.ReactNode;
+  hideLogo?: boolean;
 }
 
 export function Header(props: HeaderProps) {
-  const { onBack, title, LeftComponent, RightComponent, children } = props;
+  const { hideLogo, onBack, title, LeftComponent, RightComponent, children } = props;
 
   const CenterComponent = useMemo(() => {
+    if (hideLogo) {
+      return;
+    }
     if (children) {
       return children;
     } else if (title) {
@@ -31,7 +35,12 @@ export function Header(props: HeaderProps) {
     }
   }, [title]);
   return (
-    <div style={{ display: 'block' }}>
+    <div style={{ display: 'block', backgroundColor: '#070606' }}>
+      <img
+        src={'./images/artifacts/top-linear-gradient.png'}
+        alt=""
+        style={{ width: '100%', height: 182, position: 'absolute', left: 0, top: 0, pointerEvents: 'none' }}
+      />
       <Row
         justifyBetween
         itemsCenter

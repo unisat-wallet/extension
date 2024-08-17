@@ -20,7 +20,7 @@ module.exports = {
       colors: {
         primary: 'rgb(234,202,68)',
         'primary-active': '#383535',
-        'hard-black': '#1C1919',
+        'hard-black': '#070606',
         'soft-black': '#2A2626',
         'soft-white': '#AAAAAA',
         'custom-green': '#4BB21A',

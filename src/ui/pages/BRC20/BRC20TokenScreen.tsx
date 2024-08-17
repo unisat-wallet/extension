@@ -8,14 +8,13 @@ import { useTools } from '@/ui/components/ActionComponent';
 import BRC20Preview from '@/ui/components/BRC20Preview';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { Empty } from '@/ui/components/Empty';
+import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useUnisatWebsite } from '@/ui/state/settings/hooks';
-import { colors } from '@/ui/theme/colors';
 import { useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
-import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
 
 interface LocationState {
   ticker: string;
@@ -116,13 +115,13 @@ export default function BRC20TokenScreen() {
       />
       {tokenSummary && (
         <Content>
-          <Column py="xl" style={{ borderBottomWidth: 1, borderColor: colors.white_muted }}>
-            <Row itemsCenter fullX justifyCenter>
-              <Text text={`${balance}`} preset="bold" textCenter size="xxl" wrap digital/>
+          <Column py="xl">
+            <Column itemsCenter fullX justifyCenter>
+              <Text text={`${balance}`} preset="bold" textCenter size="xxl" wrap digital />
               <BRC20Ticker tick={ticker} preset="lg" />
-            </Row>
+            </Column>
             <Row justifyCenter fullX>
-              <TickUsdWithoutPrice tick={ticker} balance={balance} type={'brc20'} size={'md'}/>
+              <TickUsdWithoutPrice tick={ticker} balance={balance} type={'brc20'} size={'md'} />
             </Row>
 
             <Row justifyBetween mt="lg">
@@ -162,14 +161,25 @@ export default function BRC20TokenScreen() {
               />
             </Row>
           </Column>
+          <Row style={{ borderTopWidth: 1, borderColor: '#FFFFFF1F', alignSelf: 'stretch', width: '100%' }} my="md" />
+
           <Column>
-            <Row justifyBetween>
+            <Column>
               <Text text="Transferable" preset="bold" size="md" />
-              <Row itemsCenter justifyCenter>
-                <Text text={`${tokenSummary.tokenBalance.transferableBalance}`} size="md" wrap digital/>
+              <Row itemsCenter>
+                <Text text={`${tokenSummary.tokenBalance.transferableBalance}`} size="md" wrap digital />
                 <BRC20Ticker tick={ticker} />
               </Row>
-            </Row>
+            </Column>
+            <Row style={{ borderTopWidth: 1, borderColor: '#FFFFFF1F', alignSelf: 'stretch' }} my="md" />
+
+            {deployInscription || tokenSummary.transferableList.length > 0 ? (
+              <Row>
+                <Icon icon="circle-info" />
+                <Text text={'You may click on the inscription to send it directly.'} preset="sub" textCenter />
+              </Row>
+            ) : null}
+
             {tokenSummary.transferableList.length == 0 && !deployInscription && (
               <Column style={{ minHeight: 130 }} itemsCenter justifyCenter>
                 {loading ? (
@@ -224,10 +234,6 @@ export default function BRC20TokenScreen() {
                 />
               ))}
             </Row>
-
-            {deployInscription || tokenSummary.transferableList.length > 0 ? (
-              <Text text={'You may click on the inscription to send it directly.'} preset="sub" textCenter />
-            ) : null}
           </Column>
         </Content>
       )}

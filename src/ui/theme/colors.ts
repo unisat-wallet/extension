@@ -44,7 +44,7 @@ export const colors = Object.assign({}, palette, {
 
   textDim: palette.white_muted,
 
-  background: '#D8E0EF',
+  background: '#070606',
 
   error: '#e52937',
 
@@ -69,6 +69,8 @@ export const colors = Object.assign({}, palette, {
 
   value_up_color: '#4DA474',
   value_down_color: '#BF3F4D',
+
+  ticker_color: '#FFFFFFCC'
 });
 
 export type ColorTypes = keyof typeof colors;

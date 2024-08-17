@@ -22,7 +22,7 @@ export function BRC20List() {
   const [tokens, setTokens] = useState<TokenBalance[]>([]);
   const [total, setTotal] = useState(-1);
   const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 100 });
-  const [priceMap, setPriceMap] = useState<{[key:string]:TickPriceItem}>();
+  const [priceMap, setPriceMap] = useState<{ [key: string]: TickPriceItem }>();
 
   const tools = useTools();
   const fetchData = async () => {
@@ -35,8 +35,8 @@ export function BRC20List() {
       );
       setTokens(list);
       setTotal(total);
-      if(list.length>0) {
-        wallet.getBrc20sPrice(list.map(item=>item.ticker)).then(setPriceMap)
+      if (list.length > 0) {
+        wallet.getBrc20sPrice(list.map((item) => item.ticker)).then(setPriceMap);
       }
     } catch (e) {
       tools.toastError((e as Error).message);
@@ -67,19 +67,19 @@ export function BRC20List() {
 
   return (
     <Column>
-      <Row style={{ flexWrap: 'wrap' }} gap="sm">
+      <Column gap="md">
         {tokens.map((data, index) => (
           <BRC20BalanceCard2
             key={index}
             tokenBalance={data}
-            showPrice={priceMap!==undefined}
+            showPrice={priceMap !== undefined}
             price={priceMap?.[data.ticker]}
             onClick={() => {
               navigate('BRC20TokenScreen', { tokenBalance: data, ticker: data.ticker });
             }}
           />
         ))}
-      </Row>
+      </Column>
 
       <Row justifyCenter mt="lg">
         <Pagination

@@ -58,7 +58,7 @@ export interface ButtonProps {
 const $baseViewStyle: CSSProperties = {
   display: 'flex',
   minHeight: 36,
-  borderRadius: 4,
+  borderRadius: 8,
   justifyContent: 'center',
   alignItems: 'center',
   flexDirection: 'row',
@@ -73,22 +73,23 @@ const $baseViewStyle: CSSProperties = {
 
 const $viewPresets = {
   default: Object.assign({}, $baseViewStyle, {
-    backgroundColor: colors.black_dark
+    backgroundColor: colors.black_dark,
+    height: '48px'
   }) as CSSProperties,
 
   primary: Object.assign({}, $baseViewStyle, {
-    backgroundColor: colors.yellow,
-    height: '40px'
+    background: 'linear-gradient(103.92deg, #EBB94C 0%, #E97E00 100%)',
+    height: '48px'
   } as CSSProperties),
 
   danger: Object.assign({}, $baseViewStyle, {
     backgroundColor: colors.red,
-    height: '40px'
+    height: '48px'
   } as CSSProperties),
 
   approval: Object.assign({}, $baseViewStyle, {
     backgroundColor: colors.orange,
-    height: '40px'
+    height: '48px'
   } as CSSProperties),
 
   bar: Object.assign({}, $baseViewStyle, {
@@ -111,7 +112,18 @@ const $viewPresets = {
     background: 'linear-gradient(103.92deg, #EBB94C 0%, #E97E00 100%)',
     minHeight: 50,
     borderRadius: 12
-  } as CSSProperties)
+  } as CSSProperties),
+
+  home: Object.assign({}, $baseViewStyle, {
+    backgroundColor: colors.black_dark,
+    width: 64,
+    height: 64,
+    flexDirection: 'column',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: '#FFFFFF4D',
+    padding: 5
+  }) as CSSProperties
 };
 
 const $hoverViewPresets: Record<Presets, CSSProperties> = {
@@ -133,6 +145,9 @@ const $hoverViewPresets: Record<Presets, CSSProperties> = {
   defaultV2: {},
   primaryV2: {
     backgroundColor: colors.yellow_dark
+  },
+  home: {
+    backgroundColor: '#383535'
   }
 };
 
@@ -157,7 +172,11 @@ const $textPresets: Record<Presets, CSSProperties> = {
   bar: Object.assign({}, $baseTextStyle, { textAlign: 'left', fontWeight: 'bold' } as CSSProperties),
 
   defaultV2: Object.assign({}, $baseTextStyle, {}),
-  primaryV2: Object.assign({}, $baseTextStyle, { color: colors.black })
+  primaryV2: Object.assign({}, $baseTextStyle, { color: colors.black }),
+  home: Object.assign({}, $baseTextStyle, {
+    color: colors.textDim,
+    fontSize: 12
+  })
 };
 
 const $pressedTextPresets: Record<Presets, CSSProperties> = {
@@ -167,7 +186,8 @@ const $pressedTextPresets: Record<Presets, CSSProperties> = {
   approval: { opacity: 0.9 },
   bar: { opacity: 0.9 },
   defaultV2: { opacity: 0.9 },
-  primaryV2: { opacity: 0.9 }
+  primaryV2: { opacity: 0.9 },
+  home: { opacity: 0.9 }
 };
 
 const $rightAccessoryStyle: CSSProperties = { marginLeft: spacing.extraSmall, zIndex: 1 };
@@ -227,6 +247,19 @@ export function Button(props: ButtonProps) {
         </Row>
 
         {RightAccessory && <div style={$rightAccessoryStyle}>{RightAccessory}</div>}
+      </div>
+    );
+  }
+
+  if (preset === 'home') {
+    return (
+      <div
+        style={$viewStyle}
+        onClick={disabled ? undefined : onClick}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}>
+        {icon && <Icon icon={icon} style={{ marginRight: spacing.tiny, backgroundColor: colors.white }} />}
+        {text && <Text style={$textStyle} text={text} preset="regular" mt="sm" />}
       </div>
     );
   }
