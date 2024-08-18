@@ -295,7 +295,7 @@ export interface WalletController {
   readTab(tabName: string): Promise<void>;
   readApp(appid: number): Promise<void>;
 
-  formatOptionsToSignInputs(psbtHex: string, options: SignPsbtOptions): Promise<ToSignInput[]>;
+  formatOptionsToSignInputs(psbtHex: string, options?: SignPsbtOptions): Promise<ToSignInput[]>;
 
   getArc20BalanceList(
     address: string,

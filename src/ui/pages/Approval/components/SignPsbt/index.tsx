@@ -46,7 +46,7 @@ interface Props {
       type: TxType;
 
       psbtHex: string;
-      options: SignPsbtOptions;
+      options?: SignPsbtOptions;
       rawTxInfo?: RawTxInfo;
 
       sendBitcoinParams?: {
@@ -103,12 +103,12 @@ interface InscriptioinInfo {
 }
 
 function SignTxDetails({
-                         txInfo,
-                         type,
-                         rawTxInfo,
-                         runesPriceMap,
-                         brc20PriceMap
-                       }: {
+  txInfo,
+  type,
+  rawTxInfo,
+  runesPriceMap,
+  brc20PriceMap
+}: {
   txInfo: TxInfo;
   rawTxInfo?: RawTxInfo;
   type: TxType;
@@ -218,7 +218,7 @@ function SignTxDetails({
   txInfo.decodedPsbt.inputInfos.forEach((v) => {
     v.inscriptions.forEach((w) => {
       const inscriptionInfo = txInfo.decodedPsbt.inscriptions[w.inscriptionId];
-      if (inscriptionInfo.brc20) {
+      if (inscriptionInfo.brc20 && inscriptionInfo.brc20.op == 'transfer') {
         brc20Array.push({
           tick: inscriptionInfo.brc20.tick,
           amt: inscriptionInfo.brc20.amt,
@@ -376,14 +376,16 @@ function SignTxDetails({
           <Text text="Sign Transaction" preset="title-bold" textCenter />
         </Row>
         <Row justifyCenter fullX>
-          <Card style={{ backgroundColor: '#272626' ,flex:'1'}}>
+          <Card style={{ backgroundColor: '#272626', flex: '1' }}>
             <Column fullX itemsCenter>
               <Row itemsCenter>
                 <Image src={chain.icon} size={24} />
                 <Text text={chain.label} />
               </Row>
-              <Row style={{ borderTopWidth: 1, borderColor: colors.border, borderStyle: 'dashed', alignSelf: 'stretch' }}
-                   my="md" />
+              <Row
+                style={{ borderTopWidth: 1, borderColor: colors.border, borderStyle: 'dashed', alignSelf: 'stretch' }}
+                my="md"
+              />
               <Column justifyCenter>
                 <Row itemsCenter>
                   <Text
@@ -400,7 +402,7 @@ function SignTxDetails({
             </Column>
           </Card>
         </Row>
-        <div/>
+        <div />
 
         {involvedAssets}
       </Column>
@@ -413,14 +415,16 @@ function SignTxDetails({
         <Text text="Sign Transaction" preset="title-bold" textCenter />
       </Row>
       <Row justifyCenter>
-        <Card style={{ backgroundColor: '#272626',flex:'1'}}>
+        <Card style={{ backgroundColor: '#272626', flex: '1' }}>
           <Column fullX itemsCenter>
             <Row itemsCenter justifyCenter>
               <Image src={chain.icon} size={24} />
               <Text text={chain.label} />
             </Row>
-            <Row style={{ borderTopWidth: 1, borderColor: colors.border, borderStyle: 'dashed', alignSelf: 'stretch' }}
-                 my="md" />
+            <Row
+              style={{ borderTopWidth: 1, borderColor: colors.border, borderStyle: 'dashed', alignSelf: 'stretch' }}
+              my="md"
+            />
             {rawTxInfo && (
               <Column>
                 <Text text={'Send to'} textCenter color="textDim" />
@@ -429,10 +433,12 @@ function SignTxDetails({
                 </Row>
               </Column>
             )}
-            {rawTxInfo &&
+            {rawTxInfo && (
               <Row
                 style={{ borderTopWidth: 1, borderColor: colors.border, borderStyle: 'dashed', alignSelf: 'stretch' }}
-                my="md" />}
+                my="md"
+              />
+            )}
 
             {sendingInscriptions.length > 0 && (
               <Column justifyCenter>
@@ -529,23 +535,14 @@ const initTxInfo: TxInfo = {
 };
 
 export default function SignPsbt({
-                                   params: {
-                                     data: {
-                                       psbtHex,
-                                       options,
-                                       type,
-                                       sendBitcoinParams,
-                                       sendInscriptionParams,
-                                       sendRunesParams,
-                                       rawTxInfo,
-                                       ...rest
-                                     },
-                                     session
-                                   },
-                                   header,
-                                   handleCancel,
-                                   handleConfirm
-                                 }: Props) {
+  params: {
+    data: { psbtHex, options, type, sendBitcoinParams, sendInscriptionParams, sendRunesParams, rawTxInfo, ...rest },
+    session
+  },
+  header,
+  handleCancel,
+  handleConfirm
+}: Props) {
   const [getApproval, resolveApproval, rejectApproval] = useApproval();
 
   const [txInfo, setTxInfo] = useState<TxInfo>(initTxInfo);
@@ -851,7 +848,7 @@ export default function SignPsbt({
         <Column gap="xl">
           {detailsComponent}
           {/*this div is used to double gap*/}
-          <div/>
+          <div />
           {canChanged == false && (
             <Section title="Network Fee:" extra={<BtcUsd sats={amountToSatoshis(networkFee)} />}>
               <Text text={networkFee} />
