@@ -73,8 +73,10 @@ const $baseViewStyle: CSSProperties = {
 
 const $viewPresets = {
   default: Object.assign({}, $baseViewStyle, {
-    backgroundColor: colors.black_dark,
-    height: '48px'
+    borderWidth: 1,
+    minHeight: 50,
+    borderColor: colors.white_muted,
+    borderRadius: 12
   }) as CSSProperties,
 
   primary: Object.assign({}, $baseViewStyle, {
@@ -116,13 +118,15 @@ const $viewPresets = {
 
   home: Object.assign({}, $baseViewStyle, {
     backgroundColor: colors.black_dark,
-    width: 64,
-    height: 64,
+    minWidth: 64,
+    minHeight: 64,
     flexDirection: 'column',
     borderRadius: 16,
     borderWidth: 1,
     borderColor: '#FFFFFF4D',
-    padding: 5
+    padding: 5,
+    marginRight: 5,
+    marginLeft: 5
   }) as CSSProperties
 };
 

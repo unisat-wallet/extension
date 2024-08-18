@@ -297,7 +297,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
   [ChainType.FRACTAL_BITCOIN_MAINNET]: {
     enum: ChainType.FRACTAL_BITCOIN_MAINNET,
     label: 'Fractal Bitcoin Mainnet (Not Ready)',
-    icon: './images/artifacts/fractalbitcoin-mainnet.svg',
+    icon: './images/artifacts/fractal-mainnet.svg',
     unit: 'FB',
     networkType: NetworkType.MAINNET,
     endpoints: ['https://wallet-api-fractal.unisat.io'],
@@ -313,10 +313,10 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
   [ChainType.FRACTAL_BITCOIN_TESTNET]: {
     enum: ChainType.FRACTAL_BITCOIN_TESTNET,
     label: 'Fractal Bitcoin Testnet',
-    icon: './images/artifacts/fractalbitcoin-mainnet.svg',
+    icon: './images/artifacts/fractal-testnet.svg',
     unit: 'tFB',
     networkType: NetworkType.MAINNET,
-    endpoints: ['https://fractal-testnet.unisat.io/wallet-api'],
+    endpoints: ['https://wallet-api-fractal-testnet.unisat.io'],
     mempoolSpaceUrl: 'https://mempool-testnet.fractalbitcoin.io',
     unisatUrl: 'https://fractal-testnet.unisat.io',
     ordinalsUrl: 'https://ordinals-testnet.fractalbitcoin.io',
@@ -345,7 +345,7 @@ export const CHAIN_GROUPS: TypeChainGroup[] = [
   {
     type: 'list',
     label: 'Bitcoin Testnet',
-    icon: './images/artifacts/bitcoin-testnet.svg',
+    icon: './images/artifacts/bitcoin-testnet-all.svg',
     items: [
       CHAINS_MAP[ChainType.BITCOIN_TESTNET],
       CHAINS_MAP[ChainType.BITCOIN_TESTNET4],

@@ -1,7 +1,7 @@
 import { Tabs, Tooltip } from 'antd';
 import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 
-import { AddressFlagType, ChainType, KEYRING_TYPE } from '@/shared/constant';
+import { AddressFlagType, ChainType } from '@/shared/constant';
 import { checkAddressFlag } from '@/shared/utils';
 import { Card, Column, Content, Footer, Header, Image, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
@@ -214,8 +214,7 @@ export default function WalletTabScreen() {
       />
 
       <Content>
-        {currentKeyring.type === KEYRING_TYPE.HdKeyring && <AccountSelect />}
-        {currentKeyring.type === KEYRING_TYPE.KeystoneKeyring && <AccountSelect />}
+        <AccountSelect />
 
         <Column gap="lg2" mt="md">
           {(walletConfig.chainTip || walletConfig.statusMessage) && (
@@ -296,7 +295,7 @@ export default function WalletTabScreen() {
             }}
           />
 
-          <Row justifyBetween mt="md">
+          <Row justifyCenter mt="md">
             <Button
               text="Receive"
               preset="home"

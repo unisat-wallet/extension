@@ -70,7 +70,7 @@ export const colors = Object.assign({}, palette, {
   value_up_color: '#4DA474',
   value_down_color: '#BF3F4D',
 
-  ticker_color: '#FFFFFFCC'
+  ticker_color: '#eac249'
 });
 
 export type ColorTypes = keyof typeof colors;

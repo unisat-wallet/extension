@@ -64,25 +64,17 @@ export default function CreatePasswordScreen() {
     if (!newPassword) {
       return;
     }
-    const { text, color, level } = getPasswordStrengthWord(newPassword);
+    const { text, color, tip } = getPasswordStrengthWord(newPassword);
 
-    const basicCom = (
-      <Row>
-        <Text size="xs" text={'Password strength: '} />
-        <Text size="xs" text={text} style={{ color: color }} />
-      </Row>
+    return (
+      <Column>
+        <Row>
+          <Text size="xs" text={'Password strength: '} />
+          <Text size="xs" text={text} style={{ color: color }} />
+        </Row>
+        {tip ? <Text size="xs" preset="sub" text={tip} /> : null}
+      </Column>
     );
-
-    if (level == 1 || level == 2) {
-      return (
-        <Column>
-          {basicCom}
-          <Text size="xs" preset="sub" text={'A strong password can better protect the security of your assets'} />
-        </Column>
-      );
-    } else {
-      return basicCom;
-    }
   }, [newPassword]);
 
   const matchText = useMemo(() => {

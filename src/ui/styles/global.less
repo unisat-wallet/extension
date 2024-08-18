@@ -55,14 +55,14 @@ div {
 
 // For scrollbar
 ::-webkit-scrollbar {
-  width: 4px;
+  width: 0px;
   height: 4px;
 }
 
 ::-webkit-scrollbar-thumb {
   border-radius: 3px;
   box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
-  background: rgba(255, 255, 255, 0.854);
+  background: rgba(255, 255, 255, 0);
 }
 
 ::-webkit-scrollbar-track {
@@ -73,6 +73,14 @@ div {
   background: transparent;
 }
 
-.ant-tooltip{
+.ant-tooltip {
   max-width: 300px !important;
+}
+
+.ant-tag {
+  background-clip: unset !important;
+
+  &.ant-tag-orange {
+    -webkit-text-fill-color: orange !important;
+  }
 }

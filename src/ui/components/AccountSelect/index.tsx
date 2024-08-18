@@ -17,11 +17,17 @@ const AccountSelect = () => {
   const address = currentAccount.address;
   return (
     <Row justifyBetween px="md" py="md" bg="card" rounded itemsCenter>
-      <Icon icon="user" />
+      <Row style={{ flex: 1 }}>
+        <Icon icon="user" />
+      </Row>
+
       <Column
         justifyCenter
         rounded
         px="sm"
+        style={{
+          flex: 1
+        }}
         onClick={(e) => {
           copyToClipboard(address).then(() => {
             tools.toastSuccess('Copied');
@@ -34,12 +40,16 @@ const AccountSelect = () => {
         </Row>
       </Column>
 
-      <Icon
-        icon="right"
+      <Row
+        style={{ flex: 1 }}
+        fullY
+        justifyEnd
+        itemsCenter
         onClick={(e) => {
           navigate('SwitchAccountScreen');
-        }}
-      />
+        }}>
+        <Icon icon="right" />
+      </Row>
     </Row>
   );
 };

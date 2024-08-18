@@ -30,7 +30,8 @@ export default function BRC20TokenScreen() {
       availableBalance: '',
       transferableBalance: '',
       availableBalanceSafe: '',
-      availableBalanceUnSafe: ''
+      availableBalanceUnSafe: '',
+      selfMint: false
     },
     tokenInfo: {
       totalSupply: '',

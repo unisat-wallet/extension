@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { CHAIN_GROUPS, CHAINS_MAP, ChainType, TypeChainGroup } from '@/shared/constant';
 import { Card, Column, Icon, Image, Row, Text } from '@/ui/components';
@@ -42,9 +42,9 @@ function ChainItem(props: { chainType: ChainType; inGroup?: boolean; onClose: ()
           return;
         }
         await changeChainType(chain.enum);
+        props.onClose();
         reloadAccounts();
         tools.toastSuccess(`Changed to ${chain.label}`);
-        props.onClose();
       }}>
       <Row fullX justifyBetween itemsCenter>
         <Row itemsCenter>
@@ -58,7 +58,20 @@ function ChainItem(props: { chainType: ChainType; inGroup?: boolean; onClose: ()
 
 function ChainGroup(props: { group: TypeChainGroup; onClose: () => void }) {
   const group = props.group;
-  const [folded, setFolded] = useState(false);
+  const currentChain = useChain();
+
+  const [folded, setFolded] = useState(true);
+
+  useEffect(() => {
+    if (group.type === 'list') {
+      let defaultFolded = true;
+      if (group.items && group.items.find((v) => v.enum == currentChain.enum)) {
+        defaultFolded = false;
+      }
+      setFolded(defaultFolded);
+    }
+  }, [currentChain]);
+
   if (group.type === 'single') {
     return <ChainItem chainType={group.chain!.enum} onClose={props.onClose} />;
   } else {
@@ -121,7 +134,7 @@ export const SwitchChainModal = ({ onClose }: { onClose: () => void }) => {
 
         <Column gap="zero" mt="sm" mb="lg" fullX>
           {CHAIN_GROUPS.map((v, index) => (
-            <ChainGroup key={index} group={v} onClose={onClose} />
+            <ChainGroup key={'chain_group_' + index} group={v} onClose={onClose} />
           ))}
         </Column>
       </Column>
