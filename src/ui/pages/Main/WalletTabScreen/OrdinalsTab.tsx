@@ -17,7 +17,11 @@ export function OrdinalsTab() {
 
   const chain = useChain();
 
-  const tabKey = useOrdinalsAssetTabKey();
+  let tabKey = useOrdinalsAssetTabKey();
+  if (chain.isFractal && tabKey === OrdinalsAssetTabKey.BRC20_5BYTE) {
+    tabKey = OrdinalsAssetTabKey.BRC20;
+  }
+
   const dispatch = useAppDispatch();
 
   const tabItems = useMemo(() => {
@@ -43,6 +47,7 @@ export function OrdinalsTab() {
     }
     return items;
   }, [addressSummary, chain]);
+
   return (
     <Column>
       <Row justifyBetween>
@@ -57,7 +62,7 @@ export function OrdinalsTab() {
         />
       </Row>
 
-      {tabItems[tabKey].children}
+      {tabItems[tabKey] ? tabItems[tabKey].children : null}
     </Column>
   );
 }

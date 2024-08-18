@@ -46,11 +46,9 @@ export function useAddressType() {
 
 export function useNetworkType() {
   const accountsState = useSettingsState();
-  if (
-    accountsState.chainType === ChainType.BITCOIN_MAINNET ||
-    accountsState.chainType === ChainType.FRACTAL_BITCOIN_MAINNET
-  ) {
-    return NetworkType.MAINNET;
+  const chain = CHAINS_MAP[accountsState.chainType];
+  if (chain) {
+    return chain.networkType;
   } else {
     return NetworkType.TESTNET;
   }

@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
 
-import { brc20Utils } from '@/shared/lib/brc20-utils';
 import { AddressTokenSummary, Inscription } from '@/shared/types';
 import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -84,7 +83,7 @@ export default function BRC20TokenScreen() {
 
   const enableMint = useMemo(() => {
     let enable = false;
-    if (brc20Utils.is5Byte(ticker)) {
+    if (tokenSummary.tokenBalance.selfMint) {
       if (tokenSummary.tokenInfo.holder == account.address) {
         if (tokenSummary.tokenInfo.totalMinted != tokenSummary.tokenInfo.totalSupply) {
           enable = true;

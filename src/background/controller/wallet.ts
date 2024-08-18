@@ -2003,7 +2003,6 @@ export class WalletController extends BaseController {
     const timeId = preferenceService.getAutoLockTimeId();
     const timeConfig = AUTO_LOCKTIMES[timeId] || AUTO_LOCKTIMES[DEFAULT_LOCKTIME_ID];
     this.timer = setTimeout(() => {
-      console.log('timeout setLocked!');
       this.lockWallet();
     }, timeConfig.time);
   };
