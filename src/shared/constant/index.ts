@@ -233,9 +233,9 @@ type TypeChain = {
   unisatExplorerUrl: string;
   okxExplorerUrl: string;
   isViewTxHistoryInternally?: boolean;
-  foldIn?: string;
   disable?: boolean;
   isFractal?: boolean;
+  showPrice: boolean;
 };
 
 export const CHAINS_MAP: { [key: string]: TypeChain } = {
@@ -250,7 +250,8 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     unisatUrl: 'https://unisat.io',
     ordinalsUrl: 'https://ordinals.com',
     unisatExplorerUrl: '',
-    okxExplorerUrl: ''
+    okxExplorerUrl: '',
+    showPrice: true
   },
   [ChainType.BITCOIN_TESTNET]: {
     enum: ChainType.BITCOIN_TESTNET,
@@ -264,7 +265,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     ordinalsUrl: 'https://testnet.ordinals.com',
     unisatExplorerUrl: '',
     okxExplorerUrl: '',
-    foldIn: 'Bitcoin Testnet'
+    showPrice: false
   },
   [ChainType.BITCOIN_TESTNET4]: {
     enum: ChainType.BITCOIN_TESTNET4,
@@ -278,7 +279,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     ordinalsUrl: 'https://testnet4.ordinals.com',
     unisatExplorerUrl: '',
     okxExplorerUrl: '',
-    foldIn: 'Bitcoin Testnet'
+    showPrice: false
   },
   [ChainType.BITCOIN_SIGNET]: {
     enum: ChainType.BITCOIN_SIGNET,
@@ -292,7 +293,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     ordinalsUrl: 'https://signet.ordinals.com',
     unisatExplorerUrl: '',
     okxExplorerUrl: '',
-    foldIn: 'Bitcoin Testnet'
+    showPrice: false
   },
   [ChainType.FRACTAL_BITCOIN_MAINNET]: {
     enum: ChainType.FRACTAL_BITCOIN_MAINNET,
@@ -308,7 +309,8 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     okxExplorerUrl: '',
     isViewTxHistoryInternally: false,
     disable: true,
-    isFractal: true
+    isFractal: true,
+    showPrice: true
   },
   [ChainType.FRACTAL_BITCOIN_TESTNET]: {
     enum: ChainType.FRACTAL_BITCOIN_TESTNET,
@@ -323,7 +325,8 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     unisatExplorerUrl: 'https://explorer-testnet.fractalbitcoin.io',
     okxExplorerUrl: '',
     isViewTxHistoryInternally: false,
-    isFractal: true
+    isFractal: true,
+    showPrice: false
   }
 };
 
