@@ -11,6 +11,7 @@ import i18n from '@/background/service/i18n';
 import { DisplayedKeyring, Keyring } from '@/background/service/keyring';
 import {
   ADDRESS_TYPES,
+  AUTO_LOCKTIMES,
   AddressFlagType,
   BRAND_ALIAN_TYPE_TEXT,
   CHAINS_ENUM,
@@ -18,11 +19,14 @@ import {
   COIN_NAME,
   COIN_SYMBOL,
   ChainType,
+  DEFAULT_LOCKTIME_ID,
+  EVENTS,
   KEYRING_TYPE,
   KEYRING_TYPES,
   NETWORK_TYPES,
   UNCONFIRMED_HEIGHT
 } from '@/shared/constant';
+import eventBus from '@/shared/eventBus';
 import { runesUtils } from '@/shared/lib/runes-utils';
 import {
   Account,
@@ -65,6 +69,8 @@ export type AccountAsset = {
 
 export class WalletController extends BaseController {
   openapi: OpenApiService = openapiService;
+
+  timer: any = null;
 
   /* wallet */
   boot = (password: string) => keyringService.boot(password);
@@ -110,6 +116,8 @@ export class WalletController extends BaseController {
     if (!alianNameInited && alianNames.length === 0) {
       this.initAlianNames();
     }
+
+    this._resetTimeout();
   };
   isUnlocked = () => {
     return keyringService.memStore.getState().isUnlocked;
@@ -119,6 +127,10 @@ export class WalletController extends BaseController {
     await keyringService.setLocked();
     sessionService.broadcastEvent('accountsChanged', []);
     sessionService.broadcastEvent('lock');
+    eventBus.emit(EVENTS.broadcastToUI, {
+      method: 'lock',
+      params: {}
+    });
   };
 
   setPopupOpen = (isOpen: boolean) => {
@@ -156,12 +168,12 @@ export class WalletController extends BaseController {
     return preferenceService.getAddressBalance(address) || defaultBalance;
   };
 
-  getAddressHistory = async (params:{address: string,start:number,limit:number}) => {
+  getAddressHistory = async (params: { address: string; start: number; limit: number }) => {
     const data = await openapiService.getAddressRecentHistory(params);
     // preferenceService.updateAddressHistory(address, data);
     // return data;
     //   todo
-    return data
+    return data;
   };
 
   getAddressInscriptions = async (address: string, cursor: number, size: number) => {
@@ -748,6 +760,19 @@ export class WalletController extends BaseController {
     return NETWORK_TYPES[networkType].name;
   };
 
+  getLegacyNetworkName = () => {
+    const chainType = this.getChainType();
+    if (
+      chainType === ChainType.BITCOIN_MAINNET ||
+      chainType === ChainType.BITCOIN_TESTNET ||
+      chainType === ChainType.BITCOIN_TESTNET4
+    ) {
+      return NETWORK_TYPES[CHAINS_MAP[chainType].networkType].name;
+    } else {
+      return 'unknown';
+    }
+  };
+
   setChainType = async (chainType: ChainType) => {
     preferenceService.setChainType(chainType);
     this.openapi.setEndpoints(CHAINS_MAP[chainType].endpoints);
@@ -757,7 +782,13 @@ export class WalletController extends BaseController {
     if (!keyring) throw new Error('no current keyring');
     this.changeKeyring(keyring, currentAccount?.index);
 
-    sessionService.broadcastEvent('chainChanged', getChainInfo(chainType));
+    const chainInfo = getChainInfo(chainType);
+    sessionService.broadcastEvent('chainChanged', chainInfo);
+
+    const network = this.getLegacyNetworkName();
+    sessionService.broadcastEvent('networkChanged', {
+      network
+    });
   };
 
   getChainType = () => {
@@ -1312,7 +1343,7 @@ export class WalletController extends BaseController {
   setSite = (data: ConnectedSite) => {
     permissionService.setSite(data);
     if (data.isConnected) {
-      const network = this.getNetworkName();
+      const network = this.getLegacyNetworkName();
       sessionService.broadcastEvent(
         'networkChanged',
         {
@@ -1324,7 +1355,7 @@ export class WalletController extends BaseController {
   };
   updateConnectSite = (origin: string, data: ConnectedSite) => {
     permissionService.updateConnectSite(origin, data);
-    const network = this.getNetworkName();
+    const network = this.getLegacyNetworkName();
     sessionService.broadcastEvent(
       'networkChanged',
       {
@@ -1945,6 +1976,31 @@ export class WalletController extends BaseController {
 
   getBuyBtcChannelList = async () => {
     return openapiService.getBuyBtcChannelList();
+  };
+
+  getAutoLockTimeId = () => {
+    return preferenceService.getAutoLockTimeId();
+  };
+
+  setAutoLockTimeId = (timeId: number) => {
+    preferenceService.setAutoLockTimeId(timeId);
+    this._resetTimeout();
+  };
+
+  setLastActiveTime = () => {
+    this._resetTimeout();
+  };
+
+  _resetTimeout = async () => {
+    if (this.timer) {
+      clearTimeout(this.timer);
+    }
+
+    const timeId = preferenceService.getAutoLockTimeId();
+    const timeConfig = AUTO_LOCKTIMES[timeId] || AUTO_LOCKTIMES[DEFAULT_LOCKTIME_ID];
+    this.timer = setTimeout(() => {
+      this.lockWallet();
+    }, timeConfig.time);
   };
 }
 

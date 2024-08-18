@@ -1,6 +1,7 @@
 import VirtualList from 'rc-virtual-list';
 import { forwardRef, useMemo, useState } from 'react';
 
+import { KEYRING_CLASS, KEYRING_TYPE } from '@/shared/constant';
 import { Account } from '@/shared/types';
 import { Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -19,7 +20,6 @@ import {
   PlusCircleOutlined
 } from '@ant-design/icons';
 
-import { KEYRING_TYPE } from '@/shared/constant';
 import { useNavigate } from '../MainRoute';
 
 export interface ItemData {
@@ -43,7 +43,10 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
     return <div />;
   }
   const [optionsVisible, setOptionsVisible] = useState(false);
-  const path = keyring.hdPath + '/' + account.index;
+  let path = '';
+  if (keyring.type !== KEYRING_CLASS.PRIVATE_KEY) {
+    path = ` (${keyring.hdPath + '/' + account.index})`;
+  }
 
   const tools = useTools();
 
@@ -67,7 +70,7 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
             if (autoNav) navigate('MainScreen');
           }}>
           <Text text={account.alianName} />
-          <Text text={`${shortAddress(account.address)} (${path})`} preset="sub" />
+          <Text text={`${shortAddress(account.address)}${path}`} preset="sub" />
         </Column>
       </Row>
       <Column relative>
@@ -122,13 +125,15 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
               <CopyOutlined />
               <Text text="Copy address" size="sm" />
             </Row>
-            {account.type !== KEYRING_TYPE.KeystoneKeyring && <Row
-              onClick={() => {
-                navigate('ExportPrivateKeyScreen', { account });
-              }}>
-              <KeyOutlined />
-              <Text text="Export Private Key" size="sm" />
-            </Row>}
+            {account.type !== KEYRING_TYPE.KeystoneKeyring && (
+              <Row
+                onClick={() => {
+                  navigate('ExportPrivateKeyScreen', { account });
+                }}>
+                <KeyOutlined />
+                <Text text="Export Private Key" size="sm" />
+              </Row>
+            )}
           </Column>
         )}
       </Column>
@@ -149,7 +154,6 @@ export default function SwitchAccountScreen() {
     return _items;
   }, []);
   const ForwardMyItem = forwardRef(MyItem);
-
   return (
     <Layout>
       <Header
@@ -158,12 +162,14 @@ export default function SwitchAccountScreen() {
         }}
         title="Switch Account"
         RightComponent={
-          <Icon
-            onClick={() => {
-              navigate('CreateAccountScreen');
-            }}>
-            <PlusCircleOutlined />
-          </Icon>
+          keyring.type == KEYRING_CLASS.PRIVATE_KEY ? null : (
+            <Icon
+              onClick={() => {
+                navigate('CreateAccountScreen');
+              }}>
+              <PlusCircleOutlined />
+            </Icon>
+          )
         }
       />
       <Content>

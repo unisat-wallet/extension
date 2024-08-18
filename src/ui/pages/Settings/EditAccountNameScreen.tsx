@@ -48,6 +48,7 @@ export default function EditAccountNameScreen() {
       <Content>
         <Input
           placeholder={account.alianName}
+          defaultValue={account.alianName}
           onChange={(e) => {
             setAlianName(e.target.value);
           }}

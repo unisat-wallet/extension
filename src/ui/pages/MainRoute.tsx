@@ -3,7 +3,7 @@ import { HashRouter, Route, Routes, useNavigate as useNavigateOrigin } from 'rea
 
 import { LoadingOutlined } from '@ant-design/icons';
 
-import { Content, Icon, Layout } from '../components';
+import { Content, Icon } from '../components';
 import { accountActions } from '../state/accounts/reducer';
 import { useIsReady, useIsUnlocked } from '../state/global/hooks';
 import { globalActions } from '../state/global/reducer';
@@ -58,7 +58,7 @@ import TxSuccessScreen from './Wallet/TxSuccessScreen';
 import UnavailableUtxoScreen from './Wallet/UnavailableUtxoScreen';
 import './index.module.less';
 
-const routes = {
+export const routes = {
   BoostScreen: {
     path: '/',
     element: <BoostScreen />
@@ -330,6 +330,10 @@ const Main = () => {
         wallet.getSkippedVersion().then((data) => {
           dispatch(settingsActions.updateSettings({ skippedVersion: data }));
         });
+
+        wallet.getAutoLockTimeId().then((data) => {
+          dispatch(settingsActions.updateSettings({ autoLockTimeId: data }));
+        });
       }
 
       dispatch(globalActions.update({ isReady: true }));
@@ -341,12 +345,9 @@ const Main = () => {
   useEffect(() => {
     wallet.hasVault().then((val) => {
       if (val) {
+        dispatch(globalActions.update({ isBooted: true }));
         wallet.isUnlocked().then((isUnlocked) => {
           dispatch(globalActions.update({ isUnlocked }));
-          if (!isUnlocked && !location.href.includes(routes.UnlockScreen.path)) {
-            const basePath = location.href.split('#')[0];
-            location.href = `${basePath}#${routes.UnlockScreen.path}`;
-          }
         });
       }
     });
@@ -358,15 +359,24 @@ const Main = () => {
 
   if (!isReady) {
     return (
-      <Layout>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: '100vw',
+          height: '100vh',
+          overflowY: 'auto',
+          overflowX: 'hidden'
+        }}>
         <Content justifyCenter itemsCenter>
           <Icon>
             <LoadingOutlined />
           </Icon>
         </Content>
-      </Layout>
+      </div>
     );
   }
+
   return (
     <HashRouter>
       <Routes>

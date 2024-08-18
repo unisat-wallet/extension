@@ -30,6 +30,11 @@ export function useSetTabCallback() {
   );
 }
 
+export function useBooted() {
+  const globalState = useGlobalState();
+  return globalState.isBooted;
+}
+
 export function useIsUnlocked() {
   const globalState = useGlobalState();
   return globalState.isUnlocked;

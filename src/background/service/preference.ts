@@ -2,7 +2,7 @@ import compareVersions from 'compare-versions';
 import cloneDeep from 'lodash/cloneDeep';
 
 import { createPersistStore } from '@/background/utils';
-import { AddressFlagType, CHAINS, ChainType, EVENTS } from '@/shared/constant';
+import { AddressFlagType, CHAINS, ChainType, DEFAULT_LOCKTIME_ID, EVENTS } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 import {
   Account,
@@ -87,6 +87,7 @@ export interface PreferenceStore {
   showSafeNotice: boolean;
   addressFlags: { [key: string]: number };
   enableSignData: boolean;
+  autoLockTimeId: number;
 }
 
 const SUPPORT_LOCALES = ['en'];
@@ -130,7 +131,8 @@ class PreferenceService {
         },
         showSafeNotice: true,
         addressFlags: {},
-        enableSignData: false
+        enableSignData: false,
+        autoLockTimeId: DEFAULT_LOCKTIME_ID
       }
     });
     if (!this.store.locale || this.store.locale !== defaultLang) {
@@ -217,6 +219,10 @@ class PreferenceService {
       } else {
         this.store.chainType = ChainType.BITCOIN_TESTNET;
       }
+    }
+
+    if (typeof this.store.autoLockTimeId !== 'number') {
+      this.store.autoLockTimeId = DEFAULT_LOCKTIME_ID;
     }
   };
 
@@ -521,6 +527,14 @@ class PreferenceService {
 
   setEnableSignData = (enableSignData: boolean) => {
     this.store.enableSignData = enableSignData;
+  };
+
+  getAutoLockTimeId = () => {
+    return this.store.autoLockTimeId;
+  };
+
+  setAutoLockTimeId = (id: number) => {
+    this.store.autoLockTimeId = id;
   };
 }
 

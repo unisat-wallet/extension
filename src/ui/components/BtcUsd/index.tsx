@@ -1,38 +1,39 @@
-import { Text } from '@/ui/components';
-import { useEffect, useMemo, useState } from 'react';
-import { ChainType } from '@/shared/constant';
-import { BigNumber } from 'bignumber.js';
 import { Spin } from 'antd';
-import { Sizes, TextProps } from '@/ui/components/Text';
-import type { ColorTypes } from '@/ui/theme/colors';
-import { useChainType } from '@/ui/state/settings/hooks';
-import { usePrice } from '@/ui/provider/PriceProvider';
+import { BigNumber } from 'bignumber.js';
+import { useEffect, useMemo, useState } from 'react';
 
-export function BtcUsd(props: {
-  sats: number;
-  color?: ColorTypes;
-  size?: Sizes;
-  bracket?: boolean;  // ()
-} & TextProps) {
+import { ChainType } from '@/shared/constant';
+import { Text } from '@/ui/components';
+import { Sizes, TextProps } from '@/ui/components/Text';
+import { usePrice } from '@/ui/provider/PriceProvider';
+import { useChain, useChainType } from '@/ui/state/settings/hooks';
+import type { ColorTypes } from '@/ui/theme/colors';
+
+export function BtcUsd(
+  props: {
+    sats: number;
+    color?: ColorTypes;
+    size?: Sizes;
+    bracket?: boolean; // ()
+  } & TextProps
+) {
   const { sats, color = 'textDim', size = 'sm', bracket = false } = props;
 
   const { btcPrice, refreshBtcPrice, isLoadingBtcPrice } = usePrice();
   const chainType = useChainType();
+  const chain = useChain();
 
   const [shown, setShown] = useState(false);
   const [showNoValue, setShowNoValue] = useState(false);
-
 
   useEffect(() => {
     setShown(chainType === ChainType.BITCOIN_MAINNET);
     setShowNoValue(chainType === ChainType.BITCOIN_TESTNET || chainType === ChainType.BITCOIN_SIGNET);
   }, [chainType]);
 
-
   useEffect(() => {
     refreshBtcPrice();
-  },[]);
-
+  }, []);
 
   const usd = useMemo(() => {
     if (isNaN(sats)) {
@@ -52,6 +53,10 @@ export function BtcUsd(props: {
 
     return result.toFixed(2);
   }, [btcPrice, sats]);
+
+  if (!chain.showPrice) {
+    return <></>;
+  }
 
   if (showNoValue) {
     if (bracket) {

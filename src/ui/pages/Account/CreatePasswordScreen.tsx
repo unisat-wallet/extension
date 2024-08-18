@@ -1,9 +1,10 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { Button, Column, Content, Input, Layout, Text } from '@/ui/components';
+import { Button, Column, Content, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { useWallet, useWalletRequest } from '@/ui/utils';
+import { getPasswordStrengthWord, MIN_PASSWORD_LENGTH } from '@/ui/utils/password-utils';
 
 import { useNavigate } from '../MainRoute';
 
@@ -21,12 +22,12 @@ export default function CreatePasswordScreen() {
   if (params.size > 0) {
     params.forEach((value, key) => {
       state[key] = value;
-    })
+    });
   }
   const { isNewAccount, isKeystone } = state as { isNewAccount: boolean; isKeystone: boolean };
-  const [password, setPassword] = useState('');
+  const [newPassword, setNewPassword] = useState('');
 
-  const [password2, setPassword2] = useState('');
+  const [confirmPassword, setConfirmPassword] = useState('');
 
   const [disabled, setDisabled] = useState(true);
 
@@ -47,32 +48,50 @@ export default function CreatePasswordScreen() {
   });
 
   const btnClick = () => {
-    run(password.trim());
-  };
-
-  const verify = (pwd2: string) => {
-    if (pwd2 && pwd2 !== password) {
-      tools.toastWarning('Entered passwords differ');
-    }
+    run(newPassword.trim());
   };
 
   useEffect(() => {
     setDisabled(true);
 
-    if (password) {
-      if (password.length < 5) {
-        tools.toastWarning('Password must contain at least 5 characters');
-        return;
-      }
-
-      if (password2) {
-        if (password === password2) {
-          setDisabled(false);
-          return;
-        }
-      }
+    if (newPassword && newPassword.length >= MIN_PASSWORD_LENGTH && newPassword === confirmPassword) {
+      setDisabled(false);
+      return;
     }
-  }, [password, password2]);
+  }, [newPassword, confirmPassword]);
+
+  const strongText = useMemo(() => {
+    if (!newPassword) {
+      return;
+    }
+    const { text, color, tip } = getPasswordStrengthWord(newPassword);
+
+    return (
+      <Column>
+        <Row>
+          <Text size="xs" text={'Password strength: '} />
+          <Text size="xs" text={text} style={{ color: color }} />
+        </Row>
+        {tip ? <Text size="xs" preset="sub" text={tip} /> : null}
+      </Column>
+    );
+  }, [newPassword]);
+
+  const matchText = useMemo(() => {
+    if (!confirmPassword) {
+      return;
+    }
+
+    if (newPassword !== confirmPassword) {
+      return (
+        <Row>
+          <Text size="xs" text={`Passwords don't match`} color="red" />
+        </Row>
+      );
+    } else {
+      return;
+    }
+  }, [newPassword, confirmPassword]);
 
   const handleOnKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
     if (!disabled && 'Enter' == e.key) {
@@ -83,28 +102,33 @@ export default function CreatePasswordScreen() {
   return (
     <Layout>
       <Content preset="middle">
-        <Column fullX>
-          <Column gap="xl" mt="xxl">
+        <Column fullX fullY>
+          <Column gap="xl" style={{ marginTop: 200 }}>
             <Text text="Create a password" preset="title-bold" textCenter />
             <Text text="You will use this to unlock your wallet" preset="sub" textCenter />
-            <Input
-              preset="password"
-              onBlur={(e) => {
-                setPassword(e.target.value);
-              }}
-              autoFocus={true}
-            />
-            <Input
-              preset="password"
-              placeholder="Confirm Password"
-              onChange={(e) => {
-                setPassword2(e.target.value);
-              }}
-              onBlur={(e) => {
-                verify(e.target.value);
-              }}
-              onKeyUp={(e) => handleOnKeyUp(e)}
-            />
+            <Column>
+              <Input
+                preset="password"
+                onChange={(e) => {
+                  setNewPassword(e.target.value);
+                }}
+                autoFocus={true}
+              />
+              {strongText}
+            </Column>
+
+            <Column>
+              <Input
+                preset="password"
+                placeholder="Confirm Password"
+                onChange={(e) => {
+                  setConfirmPassword(e.target.value);
+                }}
+                onKeyUp={(e) => handleOnKeyUp(e)}
+              />
+              {matchText}
+            </Column>
+
             <Button disabled={disabled} text="Continue" preset="primary" onClick={btnClick} />
           </Column>
         </Column>

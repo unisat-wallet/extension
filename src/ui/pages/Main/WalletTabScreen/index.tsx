@@ -1,11 +1,10 @@
 import { Tabs, Tooltip } from 'antd';
 import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 
-import { AddressFlagType, ChainType, KEYRING_TYPE } from '@/shared/constant';
+import { AddressFlagType, ChainType } from '@/shared/constant';
 import { checkAddressFlag } from '@/shared/utils';
-import { Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
+import { Card, Column, Content, Footer, Header, Image, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
-import { AddressBar } from '@/ui/components/AddressBar';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { Button } from '@/ui/components/Button';
 import { DisableUnconfirmedsPopover } from '@/ui/components/DisableUnconfirmedPopover';
@@ -215,12 +214,23 @@ export default function WalletTabScreen() {
       />
 
       <Content>
-        <Column gap="xl">
-          {currentKeyring.type === KEYRING_TYPE.HdKeyring && <AccountSelect />}
-          {currentKeyring.type === KEYRING_TYPE.KeystoneKeyring && <AccountSelect />}
-          {walletConfig.chainTip && <Text text={walletConfig.chainTip} color="danger" textCenter />}
+        <AccountSelect />
 
-          {walletConfig.statusMessage && <Text text={walletConfig.statusMessage} color="danger" textCenter />}
+        <Column gap="lg2" mt="md">
+          {(walletConfig.chainTip || walletConfig.statusMessage) && (
+            <Column
+              py={'lg'}
+              px={'md'}
+              gap={'lg'}
+              style={{
+                borderRadius: 12,
+                border: '1px solid rgba(245, 84, 84, 0.35)',
+                background: 'rgba(245, 84, 84, 0.08)'
+              }}>
+              {walletConfig.chainTip && <Text text={walletConfig.chainTip} color="text" textCenter />}
+              {walletConfig.statusMessage && <Text text={walletConfig.statusMessage} color="danger" textCenter />}
+            </Column>
+          )}
 
           <Tooltip
             placement={'bottom'}
@@ -271,7 +281,8 @@ export default function WalletTabScreen() {
               fontSize: fontSizes.xs
             }}>
             <div>
-              <Text text={balanceValue + ' ' + btcUnit} preset="title-bold" textCenter size="xxxl" />
+              <Text text={'TOTAL BALANCE'} textCenter color="textDim" />
+              <Text text={balanceValue + ' ' + btcUnit} preset="title-bold" textCenter size="xxxl" my="sm" />
             </div>
           </Tooltip>
           <BtcUsd
@@ -284,55 +295,46 @@ export default function WalletTabScreen() {
             }}
           />
 
-          <Row itemsCenter justifyCenter>
-            <AddressBar />
-            <Row
-              style={{ marginLeft: 8 }}
-              itemsCenter
-              onClick={() => {
-                if (chain.isViewTxHistoryInternally) {
-                  navigate('HistoryScreen');
-                } else {
-                  window.open(`${blockstreamUrl}/address/${currentAccount.address}`);
-                }
-              }}>
-              <Text text={'View History'} size="xs" />
-              <Icon icon="link" size={fontSizes.xs} />
-            </Row>
-          </Row>
-
-          <Row justifyBetween>
+          <Row justifyCenter mt="md">
             <Button
               text="Receive"
-              preset="default"
+              preset="home"
               icon="receive"
               onClick={(e) => {
                 navigate('ReceiveScreen');
               }}
-              full
             />
 
             <Button
               text="Send"
-              preset="default"
+              preset="home"
               icon="send"
               onClick={(e) => {
                 resetUiTxCreateScreen();
                 navigate('TxCreateScreen');
               }}
-              full
             />
-            {chainType === ChainType.BITCOIN_MAINNET && (
-              <Button
-                text="Buy"
-                preset="default"
-                icon="bitcoin"
-                onClick={(e) => {
-                  setBuyBtcModalVisible(true);
-                }}
-                full
-              />
-            )}
+            <Button
+              text="History"
+              preset="home"
+              icon="history"
+              onClick={(e) => {
+                if (chain.isViewTxHistoryInternally) {
+                  navigate('HistoryScreen');
+                } else {
+                  window.open(`${blockstreamUrl}/address/${currentAccount.address}`);
+                }
+              }}
+            />
+            <Button
+              text="Buy"
+              preset="home"
+              icon="bitcoin"
+              onClick={(e) => {
+                setBuyBtcModalVisible(true);
+              }}
+              disabled={chainType !== ChainType.BITCOIN_MAINNET}
+            />
           </Row>
 
           <Tabs

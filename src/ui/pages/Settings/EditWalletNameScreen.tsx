@@ -48,6 +48,7 @@ export default function EditWalletNameScreen() {
             onChange={(e) => {
               setAlianName(e.target.value);
             }}
+            defaultValue={keyring.alianName}
             onKeyUp={(e) => handleOnKeyUp(e)}
             autoFocus={true}
           />

@@ -45,7 +45,7 @@ const _unisatPrividerPrivate: {
 
   _state: StateProvider;
 
-  _pushEventHandlers: PushEventHandlers|null;
+  _pushEventHandlers: PushEventHandlers | null;
   _requestPromise: ReadyPromise;
   _bcm: BroadcastChannelMessage;
 } = {
@@ -69,13 +69,11 @@ const _unisatPrividerPrivate: {
 };
 
 export class UnisatProvider extends EventEmitter {
-
-
   constructor({ maxListeners = 100 } = {}) {
     super();
     this.setMaxListeners(maxListeners);
     this.initialize();
-    _unisatPrividerPrivate._pushEventHandlers = new PushEventHandlers(this,_unisatPrividerPrivate);
+    _unisatPrividerPrivate._pushEventHandlers = new PushEventHandlers(this, _unisatPrividerPrivate);
   }
 
   initialize = async () => {
@@ -185,6 +183,12 @@ export class UnisatProvider extends EventEmitter {
   requestAccounts = async () => {
     return this._request({
       method: 'requestAccounts'
+    });
+  };
+
+  disconnect = async () => {
+    return this._request({
+      method: 'disconnect'
     });
   };
 

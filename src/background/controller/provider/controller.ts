@@ -40,7 +40,7 @@ class ProviderController extends BaseController {
     sessionService.broadcastEvent('accountsChanged', account);
     const connectSite = permissionService.getConnectedSite(origin);
     if (connectSite) {
-      const network = wallet.getNetworkName()
+      const network = wallet.getLegacyNetworkName()
       sessionService.broadcastEvent(
         'networkChanged',
         {
@@ -50,6 +50,10 @@ class ProviderController extends BaseController {
       );
     }
     return account
+  };
+
+  disconnect = async ({ session: { origin } }) => {
+    wallet.removeConnectedSite(origin)
   };
 
   @Reflect.metadata('SAFE', true)
@@ -65,8 +69,7 @@ class ProviderController extends BaseController {
 
   @Reflect.metadata('SAFE', true)
   getNetwork = async () => {
-    const networkType = wallet.getNetworkType()
-    return NETWORK_TYPES[networkType].name
+    return wallet.getLegacyNetworkName()
   };
 
   @Reflect.metadata('APPROVAL', ['SwitchNetwork', (req) => {

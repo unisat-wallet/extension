@@ -49,11 +49,11 @@ export interface AddressAssets {
 }
 
 export interface TxHistoryInOutItem {
-  address:string;
-  value:number;
-  inscriptions:{inscriptionId:string}[];
-  runes:{spacedRune:string,symbol:string,divisibility:number,amount:string}[],
-  brc20:{ticker:string,amount:string}[],
+  address: string;
+  value: number;
+  inscriptions: { inscriptionId: string }[];
+  runes: { spacedRune: string; symbol: string; divisibility: number; amount: string }[];
+  brc20: { ticker: string; amount: string }[];
 }
 
 export interface TxHistoryItem {
@@ -65,10 +65,10 @@ export interface TxHistoryItem {
   feeRate: number;
   fee: number;
   outputValue: number;
-  vin:TxHistoryInOutItem[],
-  vout:TxHistoryInOutItem[],
-  types: string[],
-  methods: string[],
+  vin: TxHistoryInOutItem[];
+  vout: TxHistoryInOutItem[];
+  types: string[];
+  methods: string[];
 }
 
 export interface Inscription {
@@ -272,6 +272,7 @@ export interface TokenBalance {
   transferableBalance: string;
   availableBalanceSafe: string;
   availableBalanceUnSafe: string;
+  selfMint: boolean;
 }
 
 export interface Arc20Balance {
@@ -287,6 +288,7 @@ export interface TokenInfo {
   decimal: number;
   holder: string;
   inscriptionId: string;
+  selfMint?: boolean;
 }
 
 export enum TokenInscriptionType {
@@ -467,5 +469,5 @@ export interface BtcChannelItem {
 
 export type TickPriceItem = {
   curPrice: number;
-  changePercent:number;
+  changePercent: number;
 };

@@ -1,6 +1,6 @@
 {
   "name": "unisat-extension",
-  "version": "1.4.2",
+  "version": "1.4.5",
   "private": true,
   "homepage": "https://github.com/unisat-wallet/extension#readme",
   "bugs": {
@@ -109,6 +109,7 @@
     "react-dom": "^18.1.0",
     "react-hooks-global-state": "^2.0.0-rc.0",
     "react-i18next": "^11.16.9",
+    "react-idle-timer": "^5.7.2",
     "react-modal": "^3.15.1",
     "react-redux": "^8.0.1",
     "react-refresh": "^0.11.0",
@@ -138,7 +139,8 @@
     "webpack": "^5.64.4",
     "webpack-dev-server": "^4.6.0",
     "webpack-manifest-plugin": "^4.0.2",
-    "workbox-webpack-plugin": "^6.4.1"
+    "workbox-webpack-plugin": "^6.4.1",
+    "zxcvbn": "^4.4.2"
   },
   "browserslist": {
     "production": [

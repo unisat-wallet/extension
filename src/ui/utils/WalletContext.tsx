@@ -12,7 +12,8 @@ import {
   AddressTokenSummary,
   AppSummary,
   Arc20Balance,
-  BitcoinBalance, BtcChannelItem, BtcPrice,
+  BitcoinBalance,
+  BtcChannelItem,
   DecodedPsbt,
   FeeSummary,
   InscribeOrder,
@@ -20,7 +21,8 @@ import {
   InscriptionSummary,
   NetworkType,
   RuneBalance,
-  SignPsbtOptions, TickPriceItem,
+  SignPsbtOptions,
+  TickPriceItem,
   TokenBalance,
   TokenTransfer,
   TxHistoryItem,
@@ -70,7 +72,11 @@ export interface WalletController {
     size: number
   ): Promise<{ list: Inscription[]; total: number }>;
 
-  getAddressHistory: (params:{address: string,start:number,limit:number}) => Promise<{start:number,total:number,detail:TxHistoryItem[]}>;
+  getAddressHistory: (params: {
+    address: string;
+    start: number;
+    limit: number;
+  }) => Promise<{ start: number; total: number; detail: TxHistoryItem[] }>;
   getAddressCacheHistory: (address: string) => Promise<TxHistoryItem[]>;
 
   listChainAssets: (address: string) => Promise<AccountAsset[]>;
@@ -212,8 +218,8 @@ export interface WalletController {
   setAccountAlianName(account: Account, name: string): Promise<Account>;
   getFeeSummary(): Promise<FeeSummary>;
   getBtcPrice(): Promise<number>;
-  getBrc20sPrice(ticks:string[]): Promise<{ [tick:string]: TickPriceItem }>;
-  getRunesPrice(ticks:string[]): Promise<{ [tick:string]: TickPriceItem }>;
+  getBrc20sPrice(ticks: string[]): Promise<{ [tick: string]: TickPriceItem }>;
+  getRunesPrice(ticks: string[]): Promise<{ [tick: string]: TickPriceItem }>;
 
   setEditingKeyring(keyringIndex: number): Promise<void>;
   getEditingKeyring(): Promise<WalletKeyring>;
@@ -289,7 +295,7 @@ export interface WalletController {
   readTab(tabName: string): Promise<void>;
   readApp(appid: number): Promise<void>;
 
-  formatOptionsToSignInputs(psbtHex: string, options: SignPsbtOptions): Promise<ToSignInput[]>;
+  formatOptionsToSignInputs(psbtHex: string, options?: SignPsbtOptions): Promise<ToSignInput[]>;
 
   getArc20BalanceList(
     address: string,
@@ -367,6 +373,9 @@ export interface WalletController {
   }): Promise<string>;
 
   getBuyBtcChannelList(): Promise<BtcChannelItem[]>;
+
+  setAutoLockTimeId(timeId: number): Promise<void>;
+  getAutoLockTimeId(): Promise<number>;
 }
 
 const WalletContext = createContext<{
