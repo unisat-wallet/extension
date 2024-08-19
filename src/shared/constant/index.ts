@@ -3,6 +3,7 @@
 /* constants pool */
 import { AddressType, NetworkType, RestoreWalletType } from '../types';
 
+
 export enum CHAINS_ENUM {
     BTC = 'BTC'
 }
@@ -257,7 +258,7 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         icon: './images/artifacts/fractalbitcoin-mainnet.png',
         networkType: NetworkType.MAINNET,
         endpoints: ['https://wallet-api-fractalbitcoin.unisat.space'],
-        mempoolSpaceUrl: 'https://fractalbitcoin-mempool.unisat.io',
+        mempoolSpaceUrl: 'https://mempool-testnet.fractalbitcoin.io',
         unisatUrl: 'https://fractalbitcoin.unisat.io',
         ordinalsUrl: 'https://fractalbitcoin-ordinals.unisat.io'
     }
