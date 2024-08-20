@@ -1347,10 +1347,10 @@
   dependencies:
     "@metamask/utils" "^9.0.0"
 
-"@btc-vision/transaction@1.0.92":
-  version "1.0.92"
-  resolved "https://registry.yarnpkg.com/@btc-vision/transaction/-/transaction-1.0.92.tgz#155e5647cce158f386123e80dd5a33c306e8da0b"
-  integrity sha512-C8Kdlrnb1IpsVpE5GIKcbCFqZopAtuHk+VPw8sbatI3Dfj3/CsP8OcjI5gYgHgyr9FF44tb9Mpu6swbXRmoNzg==
+"@btc-vision/transaction@1.0.93":
+  version "1.0.93"
+  resolved "https://registry.yarnpkg.com/@btc-vision/transaction/-/transaction-1.0.93.tgz#7e5f252d9bcffc3d20786f2b166451a2edac3712"
+  integrity sha512-7FfNyNMjiRmuWEyEhrLzJpUWhUXJgGZRpztCTcSp62f3J5PqjMibd+BVERq0yzmckvZJuMNlDwtJNEt/rJRZ1Q==
   dependencies:
     "@babel/plugin-proposal-object-rest-spread" "^7.20.7"
     "@bitcoinerlab/secp256k1" "^1.1.1"
@@ -1375,7 +1375,6 @@
     gulp-logger "^0.0.2"
     gulp-typescript "^6.0.0-alpha.1"
     gulplog "^2.2.0"
-    process "^0.11.10"
     ts-loader "^9.5.1"
     ts-node "^10.9.2"
 
