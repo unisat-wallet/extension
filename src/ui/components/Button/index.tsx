@@ -111,7 +111,12 @@ const $viewPresets = {
         borderRadius: 12
     } as CSSProperties),
 
-    fontsmall: {},
+    fontsmall: Object.assign({}, $baseViewStyle, {
+        borderWidth: 1,
+        minHeight: 50,
+        borderColor: colors.white_muted,
+        borderRadius: 12
+    }) as CSSProperties,
 
     primaryV2: Object.assign({}, $baseViewStyle, {
         background: 'linear-gradient(103.92deg, #EBB94C 0%, #E97E00 100%)',
@@ -149,7 +154,9 @@ const $hoverViewPresets: Record<Presets, CSSProperties> = {
     bar: {
         backgroundColor: '#383535'
     },
-    fontsmall: {},
+    fontsmall: {
+        backgroundColor: '#383535'
+    },
     defaultV2: {},
     primaryV2: {
         backgroundColor: colors.yellow_dark
@@ -180,7 +187,7 @@ const $textPresets: Record<Presets, CSSProperties> = {
     danger: Object.assign({}, $baseTextStyle, { color: colors.white }),
     bar: Object.assign({}, $baseTextStyle, { textAlign: 'left', fontWeight: 'bold' } as CSSProperties),
 
-    fontsmall: Object.assign({}, $baseTextStyle, { fontSize: '10px', color: colors.black }),
+    fontsmall: Object.assign({}, $baseTextStyle, { fontSize: '10px', color: colors.white }),
 
     defaultV2: Object.assign({}, $baseTextStyle, {}),
     primaryV2: Object.assign({}, $baseTextStyle, { color: colors.black }),

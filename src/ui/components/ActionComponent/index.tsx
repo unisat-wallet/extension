@@ -8,7 +8,7 @@ import { Toast, ToastPresets, ToastProps } from './Toast';
 type ToastFunction = (content: string) => void;
 type LoadingFunction = (visible: boolean, content?: string) => void;
 
-interface ContextType {
+export interface ContextType {
     toast: ToastFunction;
     toastSuccess: ToastFunction;
     toastError: ToastFunction;
@@ -155,6 +155,5 @@ export function ActionComponentProvider({ children }: { children: React.ReactNod
 }
 
 export function useTools() {
-    const ctx = useContext(ActionComponentContext);
-    return ctx;
+    return useContext(ActionComponentContext);
 }

@@ -52,7 +52,7 @@ export default function WalletTabScreen() {
     const accountBalance = useAccountBalance();
     const chain = useChain();
     const chainType = useChainType();
-
+    
     const currentKeyring = useCurrentKeyring();
     const currentAccount = useCurrentAccount();
     const balanceValue = useMemo(() => {
@@ -167,6 +167,11 @@ export default function WalletTabScreen() {
 
     if (chainType !== ChainType.BITCOIN_MAINNET) {
         tabItems = [
+            {
+                key: AssetTabKey.OP_NET,
+                label: 'OP_NET',
+                children: <OPNetList />
+            },
             {
                 key: AssetTabKey.ORDINALS,
                 label: 'Ordinals',
@@ -345,7 +350,7 @@ export default function WalletTabScreen() {
                             text="Receive"
                             preset="home"
                             icon="receive"
-                            onClick={(e) => {
+                            onClick={() => {
                                 navigate('ReceiveScreen');
                             }}
                         />
@@ -354,32 +359,43 @@ export default function WalletTabScreen() {
                             text="Send"
                             preset="home"
                             icon="send"
-                            onClick={(e) => {
+                            onClick={() => {
                                 resetUiTxCreateScreen();
                                 navigate('TxCreateScreen');
                             }}
-                            full
                         />
 
-                        <Button
-                            text="Faucet"
-                            preset="default"
-                            icon="faucet"
-                            onClick={() => {
-                                window.open('https://faucet.opnet.org/', '_blank');
-                            }}
-                            full
-                            disabled={chain.enum !== ChainType.BITCOIN_REGTEST}
-                        />
-                        <Button
-                            text="Buy"
-                            preset="home"
-                            icon="bitcoin"
-                            onClick={(e) => {
-                                setBuyBtcModalVisible(true);
-                            }}
-                            disabled={chainType !== ChainType.BITCOIN_MAINNET}
-                        />
+                        {
+                            (chainType === ChainType.BITCOIN_REGTEST || chainType === ChainType.FRACTAL_BITCOIN_TESTNET) && (
+                                <Button
+                                    text="Faucet"
+                                    preset="default"
+                                    icon="faucet"
+                                    onClick={() => {
+                                        let url = 'https://faucet.opnet.org/';
+                                        if (chainType === ChainType.FRACTAL_BITCOIN_TESTNET) {
+                                            url = 'https://fractal-faucet.opnet.org/';
+                                        }
+
+                                        window.open(url, '_blank');
+                                    }}
+                                    full
+                                />
+                            )
+                        }
+
+                        {
+                            chainType === ChainType.BITCOIN_MAINNET && (
+                                <Button
+                                    text="Buy"
+                                    preset="home"
+                                    icon="bitcoin"
+                                    onClick={() => {
+                                        setBuyBtcModalVisible(true);
+                                    }}
+                                />
+                            )
+                        }
                     </Row>
 
                     <Tabs

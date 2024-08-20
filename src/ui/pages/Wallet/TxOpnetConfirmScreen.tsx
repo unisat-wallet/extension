@@ -11,19 +11,20 @@ import {
     OP_20_ABI,
     WBTC_ABI
 } from 'opnet';
-import { useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 
 import { Account } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
 import Web3API, { bigIntToDecimal, getOPNetChainType } from '@/shared/web3/Web3API';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
+import { ContextType, useTools } from '@/ui/components/ActionComponent';
 import { BottomModal } from '@/ui/components/BottomModal';
 import RunesPreviewCard from '@/ui/components/RunesPreviewCard';
 import { useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 import { ABIDataTypes, Address, BinaryWriter } from '@btc-vision/bsi-binary';
 import {
+    currentConsensusConfig,
     DeploymentResult,
     IDeploymentParameters,
     IFundingTransactionParameters,
@@ -72,6 +73,28 @@ export const AIRDROP_ABI: BitcoinInterfaceAbi = [
 export interface AirdropInterface extends IOP_20Contract {
     airdrop(to: Map<Address, bigint>): Promise<BaseContractProperty>;
 }
+
+const waitForTransaction = async (txHash: string, setOpenLoading: Dispatch<SetStateAction<boolean>>, tools: ContextType) => {
+    let attempts = 0;
+    const maxAttempts = 360; // 10 minutes max wait time
+    setOpenLoading(true);
+
+    while (attempts < maxAttempts) {
+        try {
+            const txResult = await Web3API.provider.getTransaction(txHash);
+            if (txResult && !('error' in txResult)) {
+                console.log('Transaction confirmed:', txResult);
+                setOpenLoading(false);
+                return txResult.hash;
+            }
+        } catch (error) {
+            console.log('Error fetching transaction:', error);
+        }
+        await new Promise((resolve) => setTimeout(resolve, 5000)); // Wait 10 seconds
+        attempts++;
+    }
+    tools.toastError('Transaction not confirmed after 10 minutes');
+};
 
 export default function TxOpnetConfirmScreen() {
     const navigate = useNavigate();
@@ -220,17 +243,34 @@ export default function TxOpnetConfirmScreen() {
 
         const wrapAmount = expandToDecimals(rawTxInfo.inputAmount, 8);
         let utxos: UTXO[];
+
+        const amountRequired = (wrapAmount + currentConsensusConfig.UNWRAP_CONSOLIDATION_PREPAID_FEES) + 50_000n; // add fee
         if (!useNextUTXO) {
-            utxos = await Web3API.getUTXOs(walletGet.addresses, wrapAmount);
+            utxos = await Web3API.getUTXOs(walletGet.addresses, amountRequired + 1_000_000n);
         } else {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
+                    ...utxo,
+                    value: BigInt(utxo.value)
+                }))
                 : [];
         }
+
+        if (utxos.length !== 0) {
+            // verify if have enough
+
+            const totalAmount = utxos.reduce((acc, utxo) => acc + utxo.value, 0n);
+            console.log('amount', totalAmount, amountRequired, utxos);
+            if (totalAmount < amountRequired) {
+                tools.toastError(`Not enough funds to wrap. You need at least ${amountRequired} sat.`);
+                return;
+            }
+        } else {
+            tools.toastError('No UTXOs found');
+            return;
+        }
+
         const generationParameters = await Web3API.limitedProvider.fetchWrapParameters(wrapAmount);
         if (!generationParameters) {
             tools.toastError('No generation parameters found');
@@ -299,9 +339,9 @@ export default function TxOpnetConfirmScreen() {
                 const storedUTXO = localStorage.getItem('nextUTXO');
                 utxos = storedUTXO
                     ? JSON.parse(storedUTXO).map((utxo) => ({
-                          ...utxo,
-                          value: BigInt(utxo.value)
-                      }))
+                        ...utxo,
+                        value: BigInt(utxo.value)
+                    }))
                     : [];
             }
 
@@ -384,28 +424,6 @@ export default function TxOpnetConfirmScreen() {
 
                 utxosForUnwrap = sendTransaction[2];
 
-                const waitForTransaction = async (txHash: string) => {
-                    let attempts = 0;
-                    const maxAttempts = 360; // 10 minutes max wait time
-                    setOpenLoading(true);
-
-                    while (attempts < maxAttempts) {
-                        try {
-                            const txResult = await Web3API.provider.getTransaction(txHash);
-                            if (txResult && !('error' in txResult)) {
-                                console.log('Transaction confirmed:', txResult);
-                                setOpenLoading(false);
-                                return txResult.hash;
-                            }
-                        } catch (error) {
-                            console.log('Error fetching transaction:', error);
-                        }
-                        await new Promise((resolve) => setTimeout(resolve, 2500)); // Wait 10 seconds
-                        attempts++;
-                    }
-                    tools.toastError('Transaction not confirmed after 10 minutes');
-                };
-
                 if (!secondTransaction.result) {
                     setOpenLoading(false);
                     setDisabled(false);
@@ -415,7 +433,7 @@ export default function TxOpnetConfirmScreen() {
                 }
 
                 tools.showLoading(true, 'Waiting for transaction confirmation...');
-                await waitForTransaction(secondTransaction.result);
+                await waitForTransaction(secondTransaction.result, setOpenLoading, tools);
 
                 tools.showLoading(false);
             }
@@ -491,9 +509,9 @@ export default function TxOpnetConfirmScreen() {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
+                    ...utxo,
+                    value: BigInt(utxo.value)
+                }))
                 : [];
         }
 
@@ -561,9 +579,9 @@ export default function TxOpnetConfirmScreen() {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
+                    ...utxo,
+                    value: BigInt(utxo.value)
+                }))
                 : [];
         }
 
@@ -763,9 +781,9 @@ export default function TxOpnetConfirmScreen() {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
+                    ...utxo,
+                    value: BigInt(utxo.value)
+                }))
                 : [];
         }
         const interactionParameters: IInteractionParameters = {
@@ -831,9 +849,9 @@ export default function TxOpnetConfirmScreen() {
         } else {
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
+                    ...utxo,
+                    value: BigInt(utxo.value)
+                }))
                 : [];
         }
         const getData = await approveToken(inputAmountBigInt, walletGet, rawTxInfo.contractAddress[0], utxos);
@@ -963,9 +981,9 @@ export default function TxOpnetConfirmScreen() {
             const storedUTXO = localStorage.getItem('nextUTXO');
             let utxos: UTXO[] = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
+                    ...utxo,
+                    value: BigInt(utxo.value)
+                }))
                 : [];
 
             if (!utxos || (utxos && utxos.length === 0) || useNextUTXO) {
@@ -1016,20 +1034,20 @@ export default function TxOpnetConfirmScreen() {
             const foundObject = rawTxInfo.items.find(
                 (obj) => obj.account && obj.account.address === rawTxInfo.account.address
             );
+
             const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
             const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
 
             let utxos: UTXO[] = [];
             if (!useNextUTXO) {
                 utxos = await Web3API.getUTXOs(walletGet.addresses, expandToDecimals(0.08, 8));
-                console.log(utxos);
             } else {
                 const storedUTXO = localStorage.getItem('nextUTXO');
                 utxos = storedUTXO
                     ? JSON.parse(storedUTXO).map((utxo) => ({
-                          ...utxo,
-                          value: BigInt(utxo.value)
-                      }))
+                        ...utxo,
+                        value: BigInt(utxo.value)
+                    }))
                     : [];
             }
 
@@ -1051,96 +1069,45 @@ export default function TxOpnetConfirmScreen() {
             );
 
             const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact.transaction[0], false);
-            if (!firstTransaction || !firstTransaction.success) {
-                // tools.toastError('Error,Please Try again');
-                console.log(firstTransaction);
-                tools.toastError('Error,Please Try again');
+            if (!firstTransaction || !firstTransaction.success || firstTransaction.error) {
                 setUseNextUTXO(true);
                 setDisabled(false);
                 tools.toastError('Could not broadcast first transaction');
-            } else {
-                console.log(firstTransaction);
+
+                return;
             }
 
             // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
             const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransact.transaction[1], false);
-            if (!secondTransaction || !secondTransaction.success) {
-                // tools.toastError('Error,Please Try again');
-                tools.toastError('Could not broadcast first transaction');
+            if (secondTransaction.result && !secondTransaction.error && secondTransaction.success) {
+                await waitForTransaction(secondTransaction.result, setOpenLoading, tools);
+
+                const getChain = await wallet.getChainType();
+                const tokensImported = localStorage.getItem('tokensImported_' + getChain);
+                let updatedTokens: string[] = tokensImported ? JSON.parse(tokensImported) : [];
+                if (tokensImported) {
+                    updatedTokens = JSON.parse(tokensImported);
+                }
+
+                if (!updatedTokens.includes(sendTransact.contractAddress.toString())) {
+                    updatedTokens.push(sendTransact.contractAddress.toString());
+                    localStorage.setItem('tokensImported_' + getChain, JSON.stringify(updatedTokens));
+                }
+
+                tools.toastSuccess(`You have successfully deployed ${sendTransact.contractAddress}`);
+
+                const nextUTXO = sendTransact.utxos;
+                localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
+                navigate('TxSuccessScreen', {
+                    txid: secondTransaction.result,
+                    contractAddress: sendTransact.contractAddress
+                });
             } else {
-                console.log(firstTransaction);
+                tools.toastError(`Error: ${secondTransaction.error}`);
+
+                setOpenLoading(false);
+                setDisabled(false);
             }
-
-            //const airdropTo: Map<Address, bigint> = new Map();
-            //airdropTo.set(walletGet.p2tr, 100_000n * 10n ** 18n);
-            const getChain = await wallet.getChainType();
-
-            const tokensImported = localStorage.getItem('tokensImported_' + getChain);
-            let updatedTokens: string[] = tokensImported ? JSON.parse(tokensImported) : [];
-            if (tokensImported) {
-                updatedTokens = JSON.parse(tokensImported);
-            }
-            if (!updatedTokens.includes(sendTransact.contractAddress.toString())) {
-                updatedTokens.push(sendTransact.contractAddress.toString());
-                localStorage.setItem('tokensImported_' + getChain, JSON.stringify(updatedTokens));
-            }
-            // await airdropOwner(sendTransact.contractAddress, airdropTo, sendTransact.utxos);
-            // if (rawTxInfo.automine) {
-            //   const contract = await getContract<IOP_20Contract>(
-            //     sendTransact.contractAddress,
-            //     OP_20_ABI,
-            //     Web3API.provider,
-            //     walletGet.p2tr
-            //   );
-            //   const getSupply = await contract.totalSupply();
-            //   if ('error' in getSupply) {
-            //     console.log(getSupply);
-            //     return;
-            //   }
-            //   console.log(getSupply);
-
-            //   const mintData = await contract.mint(walletGet.p2tr, getSupply.decoded[0] as bigint);
-            //   if ('error' in mintData) {
-            //     console.log(mintData);
-            //     tools.toastError('Error');
-            //     return;
-            //   }
-            //   const interactionParameters: IInteractionParameters = {
-            //     from: walletGet.p2tr,
-            //     to: contract.address.toString(),
-            //     utxos: utxos,
-            //     signer: walletGet.keypair,
-            //     network: Web3API.network,
-            //     feeRate: rawTxInfo.feeRate,
-            //     priorityFee: rawTxInfo.priorityFee,
-            //     calldata: mintData.calldata as Buffer
-            //   };
-
-            //   const sendTransact2 = await Web3API.transactionFactory.signInteraction(interactionParameters);
-            //   const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact2[0], false);
-            //   if (!firstTransaction || !firstTransaction.success) {
-            //     // tools.toastError('Error,Please Try again');
-            //     console.log(firstTransaction);
-            //     throw new Error('Could not broadcast first transaction');
-            //   }
-
-            //   // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
-            //   const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransact2[1], false);
-            //   if (!secondTransaction || !secondTransaction.success) {
-            //     // tools.toastError('Error,Please Try again');
-            //     throw new Error('Could not broadcast first transaction');
-            //   }
-
-            //   tools.toastSuccess(`You have successfully minted ${rawTxInfo.inputAmount} `);
-            //   navigate('TxSuccessScreen', { txid: secondTransaction.result });
-            // }
-            tools.toastSuccess(`You have successfully deployed ${sendTransact.contractAddress}`);
-            const nextUTXO = sendTransact.utxos;
-            localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
-            navigate('TxSuccessScreen', {
-                txid: secondTransaction.result,
-                contractAddress: sendTransact.contractAddress
-            });
         } catch (e) {
             console.log(e);
             setDisabled(false);
@@ -1158,14 +1125,13 @@ export default function TxOpnetConfirmScreen() {
             let utxos: UTXO[] = [];
             if (!useNextUTXO) {
                 utxos = await Web3API.getUTXOs(walletGet.addresses, expandToDecimals(0.08, 8));
-                console.log(utxos);
             } else {
                 const storedUTXO = localStorage.getItem('nextUTXO');
                 utxos = storedUTXO
                     ? JSON.parse(storedUTXO).map((utxo) => ({
-                          ...utxo,
-                          value: BigInt(utxo.value)
-                      }))
+                        ...utxo,
+                        value: BigInt(utxo.value)
+                    }))
                     : [];
             }
             const contract = getContract<IOP_20Contract>(
@@ -1299,37 +1265,37 @@ export default function TxOpnetConfirmScreen() {
                             setDisabled(true);
                             switch (rawTxInfo.action) {
                                 case 'wrap':
-                                    handleWrapConfirm();
+                                    await handleWrapConfirm();
                                     break;
                                 case 'unwrap':
-                                    handleUnWrapConfirm();
+                                    await handleUnWrapConfirm();
                                     break;
                                 case 'stake':
-                                    stake();
+                                    await stake();
                                     break;
                                 case 'unstake':
-                                    unstake();
+                                    await unstake();
                                     break;
                                 case 'claim':
-                                    claim();
+                                    await claim();
                                     break;
                                 case 'swap':
-                                    swap();
+                                    await swap();
                                     break;
                                 case 'sendBTC':
                                     await sendBTC();
                                     break;
                                 case 'deploy':
-                                    deployContract();
+                                    await deployContract();
                                     break;
                                 case 'mint':
-                                    mint();
+                                    await mint();
                                     break;
                                 case 'airdrop':
-                                    airdrop();
+                                    await airdrop();
                                     break;
                                 default:
-                                    handleConfirm();
+                                    await handleConfirm();
                             }
                         }}
                         full

@@ -1,9 +1,8 @@
 import { Tooltip } from 'antd';
 import BigNumber from 'bignumber.js';
-import { JSONRpcProvider } from 'opnet';
 import { useEffect, useMemo, useState } from 'react';
 
-import { ChainType, COIN_DUST } from '@/shared/constant';
+import { COIN_DUST } from '@/shared/constant';
 import { Account, RawTxInfo } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
 import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
@@ -54,7 +53,6 @@ export default function TxCreateScreen() {
     const prepareSendBTC = usePrepareSendBTCCallback();
 
     const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
-
     const [error, setError] = useState('');
     const [totalAvailableAmount, setBalanceValue] = useState<number>(0);
     const [OpnetRateInputVal, setOpnetRateInputVal] = useState<string>('0');
@@ -68,8 +66,8 @@ export default function TxCreateScreen() {
             tools.showLoading(false);
         });
     }, []);
-    const keyring = useCurrentKeyring();
 
+    const keyring = useCurrentKeyring();
     const items = useMemo(() => {
         const _items: ItemData[] = keyring.accounts.map((v) => {
             return {
@@ -90,42 +88,27 @@ export default function TxCreateScreen() {
     }, [inputAmount]);
 
     const dustAmount = useMemo(() => satoshisToAmount(COIN_DUST), [COIN_DUST]);
-
     const spendUnavailableUtxos = useSpendUnavailableUtxos();
     const spendUnavailableSatoshis = useMemo(() => {
         return spendUnavailableUtxos.reduce((acc, cur) => {
             return acc + cur.satoshis;
         }, 0);
     }, [spendUnavailableUtxos]);
-    //const spendUnavailableAmount = satoshisToAmount(spendUnavailableSatoshis);
-
-    //const totalAvailableSatoshis = avaiableSatoshis + spendUnavailableSatoshis;
-    //const totalAvailableAmount2 = satoshisToAmount(totalAvailableSatoshis);
 
     const totalSatoshis = amountToSatoshis(accountBalance.amount);
     const unavailableSatoshis = totalSatoshis - avaiableSatoshis;
 
-    const avaiableAmount = safeBalance;
+    const currentBalance = safeBalance;
     const unavailableAmount = satoshisToAmount(unavailableSatoshis);
     const wallet = useWallet();
     const account = useCurrentAccount();
     const chain = useChain();
+
     const unspendUnavailableAmount = satoshisToAmount(unavailableSatoshis - spendUnavailableSatoshis);
 
     useEffect(() => {
         const fetchBalance = async () => {
-            let providerUrl = 'https://api.opnet.org';
-
-            if (chain.enum === ChainType.BITCOIN_REGTEST) {
-                providerUrl = 'https://regtest.opnet.org';
-            } else if (chain.enum === ChainType.FRACTAL_BITCOIN_MAINNET) {
-                providerUrl = 'https://fractal.opnet.org';
-            } else if (chain.enum === ChainType.BITCOIN_TESTNET) {
-                providerUrl = 'https://testnet.opnet.org';
-            }
-
-            const provider: JSONRpcProvider = new JSONRpcProvider(providerUrl);
-            const btcBalanceGet = await provider.getBalance(account.address);
+            const btcBalanceGet = await Web3API.getBalance(account.address, true);
             setBalanceValue(new BigNumber(bigIntToDecimal(btcBalanceGet, 8)).toNumber());
         };
 
@@ -265,7 +248,7 @@ export default function TxCreateScreen() {
                                     </Row>
                                 )}
                                 <Row>
-                                    <Text text={`${avaiableAmount}`} size="sm" color="gold" />
+                                    <Text text={`${currentBalance}`} size="sm" color="gold" />
                                     <Text text={btcUnit} size="sm" color="textDim" />
                                 </Row>
                             </>

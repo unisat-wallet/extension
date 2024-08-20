@@ -28,6 +28,9 @@ export function getOPNetChainType(chain: ChainType): ChainId {
         case ChainType.FRACTAL_BITCOIN_MAINNET: {
             return ChainId.Fractal;
         }
+        case ChainType.FRACTAL_BITCOIN_TESTNET: {
+            return ChainId.Fractal;
+        }
         default:
             return ChainId.Bitcoin;
     }
@@ -134,6 +137,9 @@ class Web3API {
                 this.network = networks.regtest;
                 break;
             case ChainType.FRACTAL_BITCOIN_MAINNET:
+                this.network = networks.bitcoin;
+                break;
+            case ChainType.FRACTAL_BITCOIN_TESTNET:
                 this.network = networks.bitcoin;
                 break;
             default:
@@ -265,7 +271,7 @@ class Web3API {
     private setProvider(network: ChainType): void {
         switch (this.network) {
             case networks.bitcoin:
-                if (network === ChainType.FRACTAL_BITCOIN_MAINNET) {
+                if (network === ChainType.FRACTAL_BITCOIN_TESTNET) {
                     this.setProviderFromUrl('https://fractal.opnet.org');
                 } else {
                     this.setProviderFromUrl('https://api.opnet.org');

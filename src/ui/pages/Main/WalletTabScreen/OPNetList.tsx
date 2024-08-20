@@ -199,18 +199,21 @@ export function OPNetList() {
                 <Row>
                     <Button
                         style={$btnStyle}
-                        text="Import Tokens"
+                        text="Import Token"
                         preset="fontsmall"
+                        icon={'eye'}
                         onClick={() => setImportTokenBool(true)}></Button>
 
                     <Button
                         style={$btnStyle}
                         text="Refresh List"
                         preset="fontsmall"
+                        icon={'history'}
                         onClick={() => fetchData()}></Button>
                     <Button
                         style={$btnStyle}
                         text="Deploy"
+                        icon={'pencil'}
                         preset="fontsmall"
                         onClick={() => navigate('DeployContract', {})}></Button>
                 </Row>

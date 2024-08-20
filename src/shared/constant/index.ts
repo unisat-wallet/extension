@@ -77,7 +77,7 @@ export const ADDRESS_TYPES: {
         value: AddressType.P2PKH,
         label: 'P2PKH',
         name: 'Legacy (P2PKH)',
-        hdPath: "m/44'/0'/0'/0",
+        hdPath: 'm/44\'/0\'/0\'/0',
         displayIndex: 3,
         isUnisatLegacy: false
     },
@@ -85,7 +85,7 @@ export const ADDRESS_TYPES: {
         value: AddressType.P2WPKH,
         label: 'P2WPKH',
         name: 'Native Segwit (P2WPKH)',
-        hdPath: "m/84'/0'/0'/0",
+        hdPath: 'm/84\'/0\'/0\'/0',
         displayIndex: 0,
         isUnisatLegacy: false
     },
@@ -93,7 +93,7 @@ export const ADDRESS_TYPES: {
         value: AddressType.P2TR,
         label: 'P2TR',
         name: 'Taproot (P2TR)',
-        hdPath: "m/86'/0'/0'/0",
+        hdPath: 'm/86\'/0\'/0\'/0',
         displayIndex: 2,
         isUnisatLegacy: false
     },
@@ -101,7 +101,7 @@ export const ADDRESS_TYPES: {
         value: AddressType.P2SH_P2WPKH,
         label: 'P2SH-P2WPKH',
         name: 'Nested Segwit (P2SH-P2WPKH)',
-        hdPath: "m/49'/0'/0'/0",
+        hdPath: 'm/49\'/0\'/0\'/0',
         displayIndex: 1,
         isUnisatLegacy: false
     },
@@ -109,7 +109,7 @@ export const ADDRESS_TYPES: {
         value: AddressType.M44_P2WPKH,
         label: 'P2WPKH',
         name: 'Native SegWit (P2WPKH)',
-        hdPath: "m/44'/0'/0'/0",
+        hdPath: 'm/44\'/0\'/0\'/0',
         displayIndex: 4,
         isUnisatLegacy: true
     },
@@ -117,13 +117,13 @@ export const ADDRESS_TYPES: {
         value: AddressType.M44_P2TR,
         label: 'P2TR',
         name: 'Taproot (P2TR)',
-        hdPath: "m/44'/0'/0'/0",
+        hdPath: 'm/44\'/0\'/0\'/0',
         displayIndex: 5,
         isUnisatLegacy: true
     }
 ];
 
-export const OW_HD_PATH = "m/86'/0'/0'";
+export const OW_HD_PATH = 'm/86\'/0\'/0\'';
 
 export const RESTORE_WALLETS: { value: RestoreWalletType; name: string; addressTypes: AddressType[] }[] = [
     {
@@ -232,7 +232,7 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         enum: ChainType.BITCOIN_TESTNET,
         label: 'Bitcoin Testnet',
         unit: 'tBTC',
-        icon: './images/artifacts/bitcoin-testnet.png',
+        icon: './images/artifacts/bitcoin-testnet.svg',
         networkType: NetworkType.TESTNET,
         endpoints: ['https://wallet-api-testnet.unisat.space'],
         mempoolSpaceUrl: 'https://mempool.space/testnet',
@@ -260,7 +260,7 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         enum: ChainType.BITCOIN_REGTEST,
         label: 'Bitcoin OP_NET Regtest',
         unit: 'rBTC',
-        icon: './images/artifacts/bitcoin-testnet.png',
+        icon: './images/artifacts/bitcoin-testnet.svg',
         networkType: NetworkType.REGTEST,
         endpoints: ['https://wallet-api-testnet.unisat.space'],
         mempoolSpaceUrl: 'https://mempool.opnet.org',
@@ -339,18 +339,20 @@ export const CHAIN_GROUPS: TypeChainGroup[] = [
         label: 'Bitcoin Testnet',
         icon: './images/artifacts/bitcoin-testnet-all.svg',
         items: [
+            CHAINS_MAP[ChainType.BITCOIN_REGTEST],
             CHAINS_MAP[ChainType.BITCOIN_TESTNET],
             CHAINS_MAP[ChainType.BITCOIN_TESTNET4],
             CHAINS_MAP[ChainType.BITCOIN_SIGNET]
         ]
     },
     {
-        type: 'single',
-        chain: CHAINS_MAP[ChainType.FRACTAL_BITCOIN_MAINNET]
-    },
-    {
-        type: 'single',
-        chain: CHAINS_MAP[ChainType.FRACTAL_BITCOIN_TESTNET]
+        type: 'list',
+        label: 'Fractal',
+        icon: './images/artifacts/fractal-mainnet.svg',
+        items: [
+            CHAINS_MAP[ChainType.FRACTAL_BITCOIN_MAINNET],
+            CHAINS_MAP[ChainType.FRACTAL_BITCOIN_TESTNET]
+        ]
     }
 ];
 
