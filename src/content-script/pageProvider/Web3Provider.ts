@@ -1,6 +1,6 @@
 import { BroadcastedTransaction } from 'opnet';
 
-import { UnisatProvider } from '@/content-script/pageProvider/index.js';
+import { OpnetProvider } from '@/content-script/pageProvider/index.js';
 import {
     IInteractionParameters,
     IUnwrapParameters,
@@ -20,9 +20,9 @@ export interface BroadcastTransactionOptions {
 }
 
 export class Web3Provider {
-    protected readonly provider: UnisatProvider;
+    protected readonly provider: OpnetProvider;
 
-    constructor(provider: UnisatProvider) {
+    constructor(provider: OpnetProvider) {
         this.provider = provider;
     }
 

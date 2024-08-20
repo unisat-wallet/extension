@@ -4,16 +4,16 @@ import ReadyPromise from '@/content-script/pageProvider/readyPromise';
 import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
 import Web3API from '@/shared/web3/Web3API';
 
-import { UnisatProvider } from './index';
+import { OpnetProvider } from './index';
 
 class PushEventHandlers {
-    provider: UnisatProvider;
+    provider: OpnetProvider;
 
     _unisatProviderPrivate: any;
 
     constructor(
-        provider: UnisatProvider,
-        _unisatProviderPrivate: {
+        provider: OpnetProvider,
+        _opnetProviderPrivate: {
             _selectedAddress: string | null;
             _network: string | null;
             _isConnected: boolean;
@@ -25,7 +25,7 @@ class PushEventHandlers {
         }
     ) {
         this.provider = provider;
-        this._unisatProviderPrivate = _unisatProviderPrivate;
+        this._unisatProviderPrivate = _opnetProviderPrivate;
     }
 
     _emit(event: string, data: object) {
