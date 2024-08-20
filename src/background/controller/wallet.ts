@@ -1017,16 +1017,7 @@ export class WalletController extends BaseController {
 
     getLegacyNetworkName = () => {
         const chainType = this.getChainType();
-        if (
-            chainType === ChainType.BITCOIN_MAINNET ||
-            chainType === ChainType.BITCOIN_TESTNET ||
-            chainType === ChainType.BITCOIN_TESTNET4 ||
-            chainType === ChainType.BITCOIN_REGTEST
-        ) {
-            return NETWORK_TYPES[CHAINS_MAP[chainType].networkType].name;
-        } else {
-            return 'unknown';
-        }
+        return NETWORK_TYPES[CHAINS_MAP[chainType].networkType].name;
     };
 
     setChainType = async (chainType: ChainType) => {

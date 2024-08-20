@@ -170,7 +170,7 @@ class Web3API {
             case networks.regtest:
                 return OPNetNetwork.Regtest;
             default:
-                throw new Error('Invalid network');
+                throw new Error(`Invalid network ${this.network}`);
         }
     }
 
