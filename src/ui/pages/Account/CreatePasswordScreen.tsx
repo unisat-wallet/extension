@@ -13,24 +13,25 @@ export default function CreatePasswordScreen() {
     const wallet = useWallet();
     const loc = useLocation();
     const params = new URLSearchParams(loc.search);
+
     let state = {};
     if (loc.state) {
         state = loc.state;
     }
-    if (params.size > 0) {
+
+    if (Array.from(params).length > 0) {
         params.forEach((value, key) => {
             state[key] = value;
         });
     }
+
     const { isNewAccount, isKeystone } = state as { isNewAccount: boolean; isKeystone: boolean };
     const [newPassword, setNewPassword] = useState('');
-
     const [confirmPassword, setConfirmPassword] = useState('');
-
     const [disabled, setDisabled] = useState(true);
 
     const tools = useTools();
-    const [run, loading] = useWalletRequest(wallet.boot, {
+    const [run, _] = useWalletRequest(wallet.boot, {
         onSuccess() {
             if (isKeystone) {
                 navigate('CreateKeystoneWalletScreen', { fromUnlock: true });
@@ -46,7 +47,7 @@ export default function CreatePasswordScreen() {
     });
 
     const btnClick = () => {
-        run(newPassword.trim());
+        void run(newPassword.trim());
     };
 
     useEffect(() => {

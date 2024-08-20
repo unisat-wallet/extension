@@ -40,9 +40,6 @@ export interface WalletController {
         [key: string]: (...params: any) => Promise<any>;
     };
     changePassword: (password: string, newPassword: string) => Promise<void>;
-    getAddressHistory: (address: string) => Promise<TxHistoryItem[]>;
-    getAddressCacheHistory: (address: string) => Promise<TxHistoryItem[]>;
-    listChainAssets: (address: string) => Promise<AccountAsset[]>;
     getAllAlianName: () => (ContactBookItem | undefined)[];
     getContactsByMap: () => ContactBookStore;
     updateAlianName: (pubkey: string, name: string) => Promise<void>;
@@ -52,6 +49,7 @@ export interface WalletController {
         start: number;
         limit: number;
     }) => Promise<{ start: number; total: number; detail: TxHistoryItem[] }>;
+
     getAddressCacheHistory: (address: string) => Promise<TxHistoryItem[]>;
     listChainAssets: (address: string) => Promise<AccountAsset[]>;
 

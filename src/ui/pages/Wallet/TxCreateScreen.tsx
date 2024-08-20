@@ -80,8 +80,6 @@ export default function TxCreateScreen() {
         return _items;
     }, []);
 
-    //const prepareSendBTC = usePrepareSendBTCCallback();
-
     const avaiableSatoshis = useMemo(() => {
         return amountToSatoshis(safeBalance);
     }, [safeBalance]);
@@ -147,18 +145,16 @@ export default function TxCreateScreen() {
         if (!isValidAddress(toInfo.address)) {
             return;
         }
+
         if (!toSatoshis) {
             return;
         }
+
         if (toSatoshis < COIN_DUST) {
             setError(`Amount must be at least ${dustAmount} ${btcUnit}`);
             return;
         }
-        /*if (!(chain.enum === 'BITCOIN_REGTEST')) {
-            if (toSatoshis > avaiableSatoshis + spendUnavailableSatoshis) {
-                setError('Amount exceeds your available balance');
-                return;
-            }*/
+
         if (toSatoshis / 10 ** 8 > totalAvailableAmount) {
             setError('Amount exceeds your available balance');
             return;
@@ -363,43 +359,37 @@ export default function TxCreateScreen() {
                     preset="primary"
                     text="Next"
                     onClick={() => {
-                        //if (!(chain.enum == 'BITCOIN_REGTEST')) {
-                        //navigate('TxConfirmScreen', { rawTxInfo });
-                        //} else {
-                        navigate('TxOpnetConfirmScreen', {
-                            rawTxInfo: {
-                                items: items,
-                                contractAddress: 'BTC',
-                                account: account,
-                                inputAmount: inputAmount,
-                                address: toInfo.address,
-                                feeRate: feeRate, // replace with actual feeRate
-                                priorityFee: BigInt(OpnetRateInputVal), // replace with actual OpnetRateInputVal
-                                header: `Send ${btcUnit}`, // replace with actual header
-                                networkFee: feeRate, // replace with actual networkFee
-                                features: {
-                                    rbf: false // replace with actual rbf value
-                                },
-                                inputInfos: [], // replace with actual inputInfos
-                                isToSign: false, // replace with actual isToSign value
-                                opneTokens: [
-                                    {
-                                        amount: expandToDecimals(inputAmount, 8),
-                                        divisibility: 8,
-                                        spacedRune: 'Bitcoin',
-                                        symbol: btcUnit
-                                    }
-                                ],
-                                action: 'sendBTC' // replace with actual opneTokens
-                            }
-                        });
-                        //}
-
-                        //if (!(chain.enum == 'BITCOIN_REGTEST')) {
-                        //navigate('TxConfirmScreen', { rawTxInfo });
-                        /*} else {
-
-                        }*/
+                        if (!(chain.enum == 'BITCOIN_REGTEST')) {
+                            navigate('TxConfirmScreen', { rawTxInfo });
+                        } else {
+                            navigate('TxOpnetConfirmScreen', {
+                                rawTxInfo: {
+                                    items: items,
+                                    contractAddress: 'BTC',
+                                    account: account,
+                                    inputAmount: inputAmount,
+                                    address: toInfo.address,
+                                    feeRate: feeRate, // replace with actual feeRate
+                                    priorityFee: BigInt(OpnetRateInputVal), // replace with actual OpnetRateInputVal
+                                    header: `Send ${btcUnit}`, // replace with actual header
+                                    networkFee: feeRate, // replace with actual networkFee
+                                    features: {
+                                        rbf: false // replace with actual rbf value
+                                    },
+                                    inputInfos: [], // replace with actual inputInfos
+                                    isToSign: false, // replace with actual isToSign value
+                                    opneTokens: [
+                                        {
+                                            amount: expandToDecimals(inputAmount, 8),
+                                            divisibility: 8,
+                                            spacedRune: 'Bitcoin',
+                                            symbol: btcUnit
+                                        }
+                                    ],
+                                    action: 'sendBTC' // replace with actual opneTokens
+                                }
+                            });
+                        }
                     }}></Button>
             </Content>
         </Layout>
