@@ -15,7 +15,7 @@ import { useImportAccountsFromKeystoneCallback } from '@/ui/state/global/hooks';
 import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
 import { ScanOutlined } from '@ant-design/icons';
-import { AddressType } from '@unisat/wallet-sdk';
+import { AddressType } from '@btc-vision/wallet-sdk';
 
 import { useNavigate } from '../MainRoute';
 

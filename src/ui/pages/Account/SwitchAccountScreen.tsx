@@ -1,7 +1,7 @@
 import VirtualList from 'rc-virtual-list';
 import { forwardRef, useMemo, useState } from 'react';
 
-import { KEYRING_TYPE } from '@/shared/constant';
+import { KEYRING_CLASS, KEYRING_TYPE } from '@/shared/constant';
 import { Account } from '@/shared/types';
 import { Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -43,7 +43,10 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
         return <div />;
     }
     const [optionsVisible, setOptionsVisible] = useState(false);
-    const path = keyring.hdPath + '/' + account.index;
+    let path = '';
+    if (keyring.type !== KEYRING_CLASS.PRIVATE_KEY) {
+        path = ` (${keyring.hdPath + '/' + account.index})`;
+    }
 
     const tools = useTools();
 
@@ -67,7 +70,7 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
                         if (autoNav) navigate('MainScreen');
                     }}>
                     <Text text={account.alianName} />
-                    <Text text={`${shortAddress(account.address)} (${path})`} preset="sub" />
+                    <Text text={`${shortAddress(account.address)}${path}`} preset="sub" />
                 </Column>
             </Row>
             <Column relative>
@@ -160,17 +163,19 @@ export default function SwitchAccountScreen() {
                 }}
                 title="Switch Account"
                 RightComponent={
-                    <Icon
-                        onClick={() => {
-                            navigate('CreateAccountScreen');
-                        }}>
-                        <PlusCircleOutlined />
-                    </Icon>
+                    keyring.type == KEYRING_CLASS.PRIVATE_KEY ? null : (
+                        <Icon
+                            onClick={() => {
+                                navigate('CreateAccountScreen');
+                            }}>
+                            <PlusCircleOutlined />
+                        </Icon>
+                    )
                 }
             />
             <Content>
                 <VirtualList data={items} data-id="list" itemHeight={20} itemKey={(item) => item.key}>
-                    {(item, index) => <ForwardMyItem account={item.account} autoNav={true} />}
+                    {(item) => <ForwardMyItem account={item.account} autoNav={true} />}
                 </VirtualList>
             </Content>
         </Layout>

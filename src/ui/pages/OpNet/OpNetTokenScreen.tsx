@@ -8,13 +8,13 @@ import { ContractInformation } from '@/shared/web3/interfaces/ContractInformatio
 import { Button, Column, Content, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { useBTCUnit } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
-import { useBTCUnit } from '@/ui/state/settings/hooks';
 
 interface LocationState {
     address: string;
@@ -289,29 +289,51 @@ export default function OpNetTokenScreen() {
                                 <Row itemsCenter fullX justifyBetween>
                                     <Text text={'Active Stake'} color="textDim" size="md" />
                                     <Text
-                                        text={bigIntToDecimal(stakedAmount, 8).toString() + ' ' + tokenSummary.opNetBalance.symbol}
-                                        size="md" />
+                                        text={
+                                            bigIntToDecimal(stakedAmount, 8).toString() +
+                                            ' ' +
+                                            tokenSummary.opNetBalance.symbol
+                                        }
+                                        size="md"
+                                    />
                                 </Row>
                                 <Row itemsCenter fullX justifyBetween>
                                     <Text text={'Reward'} color="textDim" size="md" />
                                     <Text
-                                        text={bigIntToDecimal(stakedReward, 8).toString() + ' ' + tokenSummary.opNetBalance.symbol}
-                                        size="md" />
+                                        text={
+                                            bigIntToDecimal(stakedReward, 8).toString() +
+                                            ' ' +
+                                            tokenSummary.opNetBalance.symbol
+                                        }
+                                        size="md"
+                                    />
                                 </Row>
                                 <Row itemsCenter fullX justifyBetween>
                                     <Text text={'Total Staked'} color="textDim" size="md" />
                                     <Text
-                                        text={bigIntToDecimal(totalStaked, 8).toString() + ' ' + tokenSummary.opNetBalance.symbol}
-                                        size="md" />
+                                        text={
+                                            bigIntToDecimal(totalStaked, 8).toString() +
+                                            ' ' +
+                                            tokenSummary.opNetBalance.symbol
+                                        }
+                                        size="md"
+                                    />
                                 </Row>
                                 <Row itemsCenter fullX justifyBetween>
                                     <Text text={'Reward Pool'} color="textDim" size="md" />
                                     <Text
-                                        text={bigIntToDecimal(rewardPool, 8).toString() + ' ' + tokenSummary.opNetBalance.symbol}
-                                        size="md" />
+                                        text={
+                                            bigIntToDecimal(rewardPool, 8).toString() +
+                                            ' ' +
+                                            tokenSummary.opNetBalance.symbol
+                                        }
+                                        size="md"
+                                    />
                                 </Row>
                             </>
-                        ) : <></>}
+                        ) : (
+                            <></>
+                        )}
                     </Column>
 
                     <Text

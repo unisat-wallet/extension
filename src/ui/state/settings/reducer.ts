@@ -1,4 +1,4 @@
-import { ChainType } from '@/shared/constant';
+import { ChainType, DEFAULT_LOCKTIME_ID } from '@/shared/constant';
 import { AddressType, NetworkType, WalletConfig } from '@/shared/types';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -11,6 +11,7 @@ export interface SettingsState {
     chainType: ChainType;
     walletConfig: WalletConfig;
     skippedVersion: string;
+    autoLockTimeId: number;
 }
 
 export const initialState: SettingsState = {
@@ -25,7 +26,8 @@ export const initialState: SettingsState = {
         endpoint: '',
         chainTip: ''
     },
-    skippedVersion: ''
+    skippedVersion: '',
+    autoLockTimeId: DEFAULT_LOCKTIME_ID
 };
 
 const slice = createSlice({
@@ -45,6 +47,7 @@ const slice = createSlice({
                     walletConfig?: WalletConfig;
                     skippedVersion?: string;
                     chainType?: ChainType;
+                    autoLockTimeId?: number;
                 };
             }
         ) {

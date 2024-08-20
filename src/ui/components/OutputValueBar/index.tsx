@@ -32,7 +32,7 @@ export function OutputValueBar({
         }
     ];
     const [optionIndex, setOptionIndex] = useState(FeeRateType.CURRENT);
-    const [inputVal, setInputVal] = useState('546');
+    const [inputVal, setInputVal] = useState('');
     const [currentValue, setCurrentValue] = useState(defaultValue);
 
     useEffect(() => {
@@ -47,9 +47,9 @@ export function OutputValueBar({
         } else if (options.length > 0) {
             val = options[optionIndex].value;
         }
-        if (val + '' != inputVal) {
-            setInputVal(val);
-        }
+        // if (val + '' != inputVal) {
+        //   setInputVal(val);
+        // }
         onChange(val);
         setCurrentValue(val);
     }, [optionIndex, inputVal]);

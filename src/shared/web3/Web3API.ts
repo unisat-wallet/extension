@@ -1,8 +1,10 @@
+import BigNumber from 'bignumber.js';
 import { networks } from 'bitcoinjs-lib';
 import { Network } from 'bitcoinjs-lib/src/networks.js';
 import { getContract, IOP_20Contract, JSONRpcProvider, OP_20_ABI } from 'opnet';
 
 import { ChainType } from '@/shared/constant';
+import { NetworkType } from '@/shared/types';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { ContractLogo } from '@/shared/web3/metadata/ContractLogo';
 import { ContractNames } from '@/shared/web3/metadata/ContractNames';
@@ -18,14 +20,15 @@ import {
     TransactionFactory,
     UTXO
 } from '@btc-vision/transaction';
-import { NetworkType } from '@/shared/types';
-import BigNumber from 'bignumber.js';
 
 BigNumber.config({ EXPONENTIAL_AT: 256 });
 
 export function getOPNetChainType(chain: ChainType): ChainId {
     switch (chain) {
         case ChainType.FRACTAL_BITCOIN_MAINNET: {
+            return ChainId.Fractal;
+        }
+        case ChainType.FRACTAL_BITCOIN_TESTNET: {
             return ChainId.Fractal;
         }
         default:
@@ -57,7 +60,6 @@ export function getBitcoinLibJSNetwork(network: NetworkType): Network {
         default:
             throw new Error('Invalid network type');
     }
-
 }
 
 export function bigIntToDecimal(amount: bigint, decimal: number): string {
@@ -73,6 +75,10 @@ class Web3API {
     public transactionFactory: TransactionFactory = new TransactionFactory();
     public readonly abiCoder: ABICoder = new ABICoder();
     private nextUTXOs: UTXO[] = [];
+
+    constructor() {
+        this.setProviderFromUrl('https://api.opnet.org');
+    }
 
     private _limitedProvider: OPNetLimitedProvider | undefined;
 
@@ -106,7 +112,13 @@ class Web3API {
 
     private get metadata(): OPNetTokenMetadata {
         if (!this._metadata) {
-            throw new Error('Metadata not set');
+            return {
+                wbtc: '',
+                router: '',
+                factory: '',
+                moto: '',
+                pool: ''
+            };
         }
 
         return this._metadata;
@@ -125,6 +137,9 @@ class Web3API {
                 this.network = networks.regtest;
                 break;
             case ChainType.FRACTAL_BITCOIN_MAINNET:
+                this.network = networks.bitcoin;
+                break;
+            case ChainType.FRACTAL_BITCOIN_TESTNET:
                 this.network = networks.bitcoin;
                 break;
             default:
@@ -171,7 +186,7 @@ class Web3API {
             requestedAmount: requiredAmount,
             optimized: true
         };
-        
+
         let utxos: UTXO[];
         if (this.nextUTXOs.length > 0) {
             utxos = this.nextUTXOs;
@@ -256,7 +271,7 @@ class Web3API {
     private setProvider(network: ChainType): void {
         switch (this.network) {
             case networks.bitcoin:
-                if (network === ChainType.FRACTAL_BITCOIN_MAINNET) {
+                if (network === ChainType.FRACTAL_BITCOIN_TESTNET) {
                     this.setProviderFromUrl('https://fractal.opnet.org');
                 } else {
                     this.setProviderFromUrl('https://api.opnet.org');

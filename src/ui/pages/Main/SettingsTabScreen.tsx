@@ -16,6 +16,8 @@ import { spacing } from '@/ui/theme/spacing';
 import { useWallet } from '@/ui/utils';
 import { RightOutlined } from '@ant-design/icons';
 
+import { SwitchChainModal } from '../Settings/SwitchChainModal';
+
 interface Setting {
     label?: string;
     value?: string;
@@ -109,6 +111,9 @@ export default function SettingsTabScreen() {
     const currentAccount = useCurrentAccount();
     const versionInfo = useVersionInfo();
     const wallet = useWallet();
+
+    const [switchChainModalVisible, setSwitchChainModalVisible] = useState(false);
+
     useEffect(() => {
         const run = async () => {
             const res = await getCurrentTab();
@@ -126,7 +131,7 @@ export default function SettingsTabScreen() {
                 }
             }
         };
-        run();
+        void run();
     }, []);
 
     const isCustomHdPath = useMemo(() => {
@@ -176,44 +181,45 @@ export default function SettingsTabScreen() {
                 <Column>
                     <div>
                         {toRenderSettings.map((item) => {
+                            const onClick = () => {
+                                if (item.action == 'expand-view') {
+                                    openExtensionInTab();
+                                    return;
+                                }
+                                if (item.action == 'lock-wallet') {
+                                    wallet.lockWallet();
+                                    navigate('/account/unlock');
+                                    return;
+                                }
+
+                                if (item.action == 'networkType') {
+                                    setSwitchChainModalVisible(true);
+                                    return;
+                                }
+                                if (item.action == 'addressType') {
+                                    if (isCustomHdPath) {
+                                        tools.showTip(
+                                            'The wallet currently uses a custom HD path and does not support switching address types.'
+                                        );
+                                        return;
+                                    }
+                                    navigate('/settings/address-type');
+                                    return;
+                                }
+                                navigate(item.route);
+                            };
                             if (!item.label) {
                                 return (
                                     <Button
                                         key={item.action}
                                         style={{ marginTop: spacing.small, height: 50 }}
                                         text={item.desc}
-                                        onClick={(e) => {
-                                            if (item.action == 'expand-view') {
-                                                openExtensionInTab();
-                                                return;
-                                            }
-                                            if (item.action == 'lock-wallet') {
-                                                wallet.lockWallet();
-                                                navigate('/account/unlock');
-                                                return;
-                                            }
-                                            navigate(item.route);
-                                        }}
+                                        onClick={onClick}
                                     />
                                 );
                             }
                             return (
-                                <Card
-                                    key={item.action}
-                                    mt="lg"
-                                    onClick={(e) => {
-                                        if (item.action == 'addressType') {
-                                            if (isCustomHdPath) {
-                                                tools.showTip(
-                                                    'The wallet currently uses a custom HD path and does not support switching address types.'
-                                                );
-                                                return;
-                                            }
-                                            navigate('/settings/address-type');
-                                            return;
-                                        }
-                                        navigate(item.route);
-                                    }}>
+                                <Card key={item.action} mt="lg" onClick={onClick}>
                                     <Row full justifyBetween>
                                         <Column justifyCenter>
                                             <Text text={item.label || item.desc} preset="regular-bold" />
@@ -280,6 +286,14 @@ export default function SettingsTabScreen() {
                         />
                     )}
                 </Column>
+
+                {switchChainModalVisible && (
+                    <SwitchChainModal
+                        onClose={() => {
+                            setSwitchChainModalVisible(false);
+                        }}
+                    />
+                )}
             </Content>
             <Footer px="zero" py="zero">
                 <NavTabBar tab="settings" />

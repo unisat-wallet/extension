@@ -53,8 +53,12 @@ const flowContext = flow
             },
             mapMethod
         } = ctx;
-        if (!Reflect.getMetadata('SAFE', providerController, mapMethod)) {
+        // if (!Reflect.getMetadata('SAFE', providerController, mapMethod)) {
+        if (!['getNetwork', 'switchNetwork', 'getChain', 'switchChain'].includes(mapMethod)) {
             if (!permissionService.hasPermission(origin)) {
+                if (['getAccounts'].includes(mapMethod)) {
+                    return [];
+                }
                 ctx.request.requestedApproval = true;
                 await notificationService.requestApproval(
                     {
@@ -68,15 +72,6 @@ const flowContext = flow
                     { height: windowHeight }
                 );
                 permissionService.addConnectedSite(origin, name, icon, CHAINS_ENUM.BTC);
-            }
-        } else {
-            if (!permissionService.hasPermission(origin)) {
-                //   connect wallet first
-                if (['getAccounts'].includes(mapMethod)) {
-                    return [];
-                } else {
-                    throw ethErrors.provider.unauthorized();
-                }
             }
         }
 

@@ -5,8 +5,8 @@ import { RawTxInfo, ToAddressInfo } from '@/shared/types';
 import { useTools } from '@/ui/components/ActionComponent';
 import { useBTCUnit } from '@/ui/state/settings/hooks';
 import { satoshisToAmount, satoshisToBTC, sleep, useWallet } from '@/ui/utils';
-import { UnspentOutput } from '@unisat/wallet-sdk';
-import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
+import { UnspentOutput } from '@btc-vision/wallet-sdk';
+import { bitcoin } from '@btc-vision/wallet-sdk/lib/bitcoin-core';
 
 import { AppState } from '..';
 import { useAccountAddress, useCurrentAccount } from '../accounts/hooks';

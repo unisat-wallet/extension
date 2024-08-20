@@ -8,10 +8,10 @@ import { Row } from '../Row';
 import { Text } from '../Text';
 
 export default function KeystonePopover({
-                                            onClose,
-                                            onConfirm,
-                                            msg
-                                        }: {
+    onClose,
+    onConfirm,
+    msg
+}: {
     onClose: () => void;
     onConfirm: () => void;
     msg: string;

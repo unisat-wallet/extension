@@ -23,7 +23,6 @@ export default function TxConfirmScreen() {
                     }}
                 />
             }
-            // @ts-ignore
             params={{ data: { psbtHex: rawTxInfo.psbtHex, type: TxType.SEND_BITCOIN, rawTxInfo } }}
             handleCancel={() => {
                 window.history.go(-1);

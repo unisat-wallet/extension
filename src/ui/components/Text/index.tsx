@@ -71,6 +71,7 @@ export interface TextProps extends BaseViewProps {
     selectText?: boolean;
     disableTranslate?: boolean;
     digital?: boolean;
+    ellipsis?: boolean;
 }
 
 export const $textPresets = $presets;
@@ -84,6 +85,7 @@ export function Text(props: TextProps) {
         wrap,
         selectText,
         disableTranslate,
+        ellipsis,
         style: $styleOverride,
         ...rest
     } = props;
@@ -95,7 +97,14 @@ export function Text(props: TextProps) {
         textCenter ? { textAlign: 'center' } : {},
         textEnd ? { textAlign: 'end' } : {},
         wrap ? { overflowWrap: 'anywhere' } : {},
-        selectText ? { userSelect: 'text' } : {}
+        selectText ? { userSelect: 'text' } : {},
+        ellipsis
+            ? {
+                  whiteSpace: 'nowrap',
+                  textOverflow: 'ellipsis',
+                  overflow: 'hidden'
+              }
+            : {}
     );
     const $style = Object.assign({}, $textStyle, $styleOverride);
     const textUse = props.digital ? showLongNumber(text) : text;

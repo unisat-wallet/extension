@@ -44,11 +44,11 @@ export const colors = Object.assign({}, palette, {
 
     textDim: palette.white_muted,
 
-    background: '#D8E0EF',
+    background: '#070606',
 
     error: '#e52937',
 
-    danger: palette.red,
+    danger: 'rgba(245, 84, 84, 0.90)',
 
     card: '#262222',
     warning: palette.orange,
@@ -68,7 +68,9 @@ export const colors = Object.assign({}, palette, {
     brc20_other: '#3e3e3e',
 
     value_up_color: '#4DA474',
-    value_down_color: '#BF3F4D'
+    value_down_color: '#BF3F4D',
+
+    ticker_color: '#eac249'
 });
 
 export type ColorTypes = keyof typeof colors;

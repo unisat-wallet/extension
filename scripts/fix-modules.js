@@ -1,9 +1,9 @@
 const fs = require('fs');
 const fixWindowError = () => {
-  const file = './node_modules/bitcore-lib/lib/crypto/random.js';
-  let fileData = fs.readFileSync(file).toString();
-  fileData = fileData.replace(
-    `Random.getRandomBufferBrowser = function(size) {
+    const file = './node_modules/bitcore-lib/lib/crypto/random.js';
+    let fileData = fs.readFileSync(file).toString();
+    fileData = fileData.replace(
+        `Random.getRandomBufferBrowser = function(size) {
   if (!window.crypto && !window.msCrypto)
     throw new Error('window.crypto not available');
 
@@ -20,39 +20,39 @@ const fixWindowError = () => {
 
   return buf;
 };`,
-    `Random.getRandomBufferBrowser = function(size) {
+        `Random.getRandomBufferBrowser = function(size) {
   var bbuf = new Uint8Array(size);
   crypto.getRandomValues(bbuf);
   var buf = Buffer.from(bbuf);
 
   return buf;
 };`
-  );
-  fs.writeFileSync(file, fileData);
+    );
+    fs.writeFileSync(file, fileData);
 };
 
 const fixWindowError2 = () => {
-  const file = './node_modules/tiny-secp256k1/lib/rand.browser.js';
-  let fileData = fs.readFileSync(file).toString();
-  fileData = fileData.replace('window.crypto', 'crypto');
-  fs.writeFileSync(file, fileData);
+    const file = './node_modules/tiny-secp256k1/lib/rand.browser.js';
+    let fileData = fs.readFileSync(file).toString();
+    fileData = fileData.replace('window.crypto', 'crypto');
+    fs.writeFileSync(file, fileData);
 };
 
 const fixWindowError3 = () => {
-  const file = './node_modules/bitcoinjs-lib/src/payments/p2tr.js';
-  let fileData = fs.readFileSync(file).toString();
-  fileData = fileData.replace(
-    'signature: types_1.typeforce.maybe(types_1.typeforce.BufferN(64))',
-    'signature: types_1.typeforce.maybe(types_1.typeforce.Buffer)'
-  );
-  fs.writeFileSync(file, fileData);
+    const file = './node_modules/bitcoinjs-lib/src/payments/p2tr.js';
+    let fileData = fs.readFileSync(file).toString();
+    fileData = fileData.replace(
+        'signature: types_1.typeforce.maybe(types_1.typeforce.BufferN(64))',
+        'signature: types_1.typeforce.maybe(types_1.typeforce.Buffer)'
+    );
+    fs.writeFileSync(file, fileData);
 };
 
 const fixBufferError = () => {
-  const file = './node_modules/bitcore-lib/lib/crypto/signature.js';
-  let fileData = fs.readFileSync(file).toString();
-  fileData = fileData.replace(
-    `var Signature = function Signature(r, s) {
+    const file = './node_modules/bitcore-lib/lib/crypto/signature.js';
+    let fileData = fs.readFileSync(file).toString();
+    fileData = fileData.replace(
+        `var Signature = function Signature(r, s) {
   if (!(this instanceof Signature)) {
     return new Signature(r, s);
   }
@@ -66,7 +66,7 @@ const fixBufferError = () => {
     this.set(obj);
   }
 };`,
-    `var Signature = function Signature(r, s) {
+        `var Signature = function Signature(r, s) {
   if (!(this instanceof Signature)) {
     return new Signature(r, s);
   }
@@ -83,20 +83,20 @@ const fixBufferError = () => {
   this.r = BN.fromString(this.r.toString(16), 16)
   this.s = BN.fromString(this.s.toString(16),16)
 };`
-  );
-  fs.writeFileSync(file, fileData);
+    );
+    fs.writeFileSync(file, fileData);
 };
 
-const fixWalletSdkError = () => {
-  const file = './node_modules/@unisat/wallet-sdk/lib/bitcoin-core.js';
+/*const fixWalletSdkError = () => {
+  const file = './node_modules/@btc-vision/wallet-sdk/lib/bitcoin-core.js';
   let fileData = fs.readFileSync(file).toString();
   fileData = `"use strict";
   Object.defineProperty(exports, "__esModule", { value: true });
   exports.ecc = exports.bitcoin = exports.ECPair = void 0;
-  
+
   const bitcoin = require("bitcoinjs-lib");
   const ecpair = require("ecpair");
-  
+
   let eccPromise;
   try {
     // Attempt to import tiny-secp256k1
@@ -105,7 +105,7 @@ const fixWalletSdkError = () => {
     // If import fails, fallback to a synchronous import
     eccPromise = Promise.resolve(require("tiny-secp256k1"));
   }
-  
+
   eccPromise.then((ecc) => {
     exports.bitcoin = bitcoin;
     exports.ecc = ecc;
@@ -114,22 +114,22 @@ const fixWalletSdkError = () => {
   });
   `;
   fs.writeFileSync(file, fileData);
-};
+};*/
 
 const run = async () => {
-  let success = true;
-  try {
-    fixWindowError();
-    fixWindowError2();
-    fixWindowError3();
-    fixBufferError();
-    fixWalletSdkError();
-  } catch (e) {
-    console.error('error:', e.message);
-    success = false;
-  } finally {
-    console.log('Fix modules result: ', success ? 'success' : 'failed');
-  }
+    let success = true;
+    try {
+        fixWindowError();
+        fixWindowError2();
+        fixWindowError3();
+        fixBufferError();
+        //fixWalletSdkError();
+    } catch (e) {
+        console.error('error:', e.message);
+        success = false;
+    } finally {
+        console.log('Fix modules result: ', success ? 'success' : 'failed');
+    }
 };
 
-run();
+void run();

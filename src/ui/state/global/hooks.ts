@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { useApproval, useWallet } from '@/ui/utils';
-import { AddressType } from '@unisat/wallet-sdk';
+import { AddressType } from '@btc-vision/wallet-sdk';
 
 import { AppState } from '..';
 import { useAppDispatch, useAppSelector } from '../hooks';
@@ -28,6 +28,11 @@ export function useSetTabCallback() {
         },
         [dispatch]
     );
+}
+
+export function useBooted() {
+    const globalState = useGlobalState();
+    return globalState.isBooted;
 }
 
 export function useIsUnlocked() {

@@ -61,7 +61,7 @@ export default function Swap() {
 
     const handleSelect = (option: OpNetBalance) => {
         if (option.address == selectedOptionOutput?.address) {
-            tools.toastError('Error,You can\'t set input to output');
+            tools.toastError("Error,You can't set input to output");
             return;
         }
         handleInputChange(inputAmount);
@@ -69,7 +69,7 @@ export default function Swap() {
     };
     const handleSelectOutput = (option: OpNetBalance) => {
         if (option.address == selectedOption?.address) {
-            tools.toastError('Error,You can\'t set input to output');
+            tools.toastError("Error,You can't set input to output");
             return;
         }
         void handleInputChange(inputAmount);

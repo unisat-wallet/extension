@@ -25,7 +25,7 @@ import {
 import { fontSizes } from '@/ui/theme/font';
 import { spacing } from '@/ui/theme/spacing';
 import { amountToSatoshis, satoshisToAmount, useApproval, useLocationState, useWallet } from '@/ui/utils';
-import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
+import { getAddressUtxoDust } from '@btc-vision/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../../MainRoute';
 import SignPsbt from './SignPsbt';

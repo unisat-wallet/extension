@@ -1,14 +1,18 @@
 import { Checkbox, Switch } from 'antd';
 import { useEffect, useState } from 'react';
 
-import { AddressFlagType } from '@/shared/constant';
+import { AddressFlagType, AUTO_LOCKTIMES, DEFAULT_LOCKTIME_ID } from '@/shared/constant';
 import { checkAddressFlag } from '@/shared/utils';
 import { Button, Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
+import { useTools } from '@/ui/components/ActionComponent';
+import { Loading } from '@/ui/components/ActionComponent/Loading';
 import { EnableUnconfirmedPopover } from '@/ui/components/EnableUnconfirmedPopover';
 import { Popover } from '@/ui/components/Popover';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
+import { useAutoLockTimeId } from '@/ui/state/settings/hooks';
+import { settingsActions } from '@/ui/state/settings/reducer';
 import { colors, ColorTypes } from '@/ui/theme/colors';
 import { shortAddress, useWallet } from '@/ui/utils';
 
@@ -20,6 +24,12 @@ export default function AdvancedScreen() {
 
     const [enableUnconfirmed, setEnableUnconfirmed] = useState(false);
     const [unconfirmedPopoverVisible, setUnconfirmedPopoverVisible] = useState(false);
+
+    const [lockTimePopoverVisible, setLockTimePopoverVisible] = useState(false);
+    const autoLockTimeId = useAutoLockTimeId();
+    const lockTimeConfig = AUTO_LOCKTIMES[autoLockTimeId] || AUTO_LOCKTIMES[DEFAULT_LOCKTIME_ID];
+
+    console.log('autoLockTimeId', autoLockTimeId);
 
     const currentAccount = useCurrentAccount();
 
@@ -140,6 +150,30 @@ export default function AdvancedScreen() {
                         </Column>
                     </Card>
                 </Column>
+                <Column>
+                    <Card style={{ borderRadius: 10 }}>
+                        <Row
+                            onClick={() => {
+                                setLockTimePopoverVisible(true);
+                            }}
+                            justifyCenter
+                            itemsCenter
+                            full>
+                            <Column>
+                                <Icon size={16} icon="overview"></Icon>
+                            </Column>
+                            <Column>
+                                <Text size="sm" text={'Automatic Lock Time'} preset="bold"></Text>
+                            </Column>
+                            <Column style={{ marginLeft: 'auto' }}>
+                                <Row justifyCenter itemsCenter>
+                                    <Text size="sm" color="gold" text={lockTimeConfig.label}></Text>
+                                    <Icon icon="down" size={18}></Icon>
+                                </Row>
+                            </Column>
+                        </Row>
+                    </Card>
+                </Column>
             </Content>
             {unconfirmedPopoverVisible ? (
                 <EnableUnconfirmedPopover
@@ -170,6 +204,17 @@ export default function AdvancedScreen() {
                     }}
                     onCancel={() => {
                         setEnableSignDataPopoverVisible(false);
+                    }}
+                />
+            ) : null}
+
+            {lockTimePopoverVisible ? (
+                <LockTimePopover
+                    onNext={() => {
+                        setLockTimePopoverVisible(false);
+                    }}
+                    onCancel={() => {
+                        setLockTimePopoverVisible(false);
                     }}
                 />
             ) : null}
@@ -250,6 +295,57 @@ export const EnableSignDataPopover = ({ onNext, onCancel }: { onNext: () => void
                         }}
                     />
                 </Row>
+            </Column>
+        </Popover>
+    );
+};
+
+export const LockTimePopover = ({ onNext, onCancel }: { onNext: () => void; onCancel: () => void }) => {
+    const [loading, setLoading] = useState(false);
+
+    const autoLockTimeId = useAutoLockTimeId();
+    const dispatch = useAppDispatch();
+    const wallet = useWallet();
+    const tools = useTools();
+    return (
+        <Popover onClose={onCancel}>
+            <Column>
+                {AUTO_LOCKTIMES.map((v, i) => {
+                    const check = v.id === autoLockTimeId;
+                    return (
+                        <Card
+                            key={i}
+                            mb="sm"
+                            preset="style1"
+                            style={{
+                                height: 50,
+                                minHeight: 50,
+                                backgroundColor: 'rgba(255,255,255,0.01)',
+                                borderBottomColor: colors.transparent,
+                                borderBottomWidth: 0.2
+                            }}>
+                            <Row
+                                onClick={async () => {
+                                    const lockTimeId = v.id;
+                                    await wallet.setAutoLockTimeId(lockTimeId);
+                                    dispatch(settingsActions.updateSettings({ autoLockTimeId: lockTimeId }));
+                                    tools.toastSuccess(`The auto-lock time has been changed to ${v.label}`);
+                                    onNext();
+                                }}
+                                itemsCenter
+                                full>
+                                <Column>
+                                    <Text color={check ? 'white' : 'textDim'} size="sm" text={v.label}></Text>
+                                </Column>
+                                <Column style={{ marginLeft: 'auto' }}>
+                                    {check && !loading && <Icon icon="check"></Icon>}
+                                    {check && loading && <Loading />}
+                                </Column>
+                            </Row>
+                        </Card>
+                    );
+                })}
+                <Row></Row>
             </Column>
         </Popover>
     );

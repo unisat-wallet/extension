@@ -82,7 +82,6 @@ export class OpenApiService {
             if (config.endpoint && config.endpoint !== this.endpoint) {
                 this.endpoint = config.endpoint;
             }
-            console.log('OpenApiService init success', config);
         } catch (e) {
             console.error(e);
         }
@@ -525,6 +524,10 @@ export class OpenApiService {
 
     async getAddressRunesTokenSummary(address: string, runeid: string): Promise<AddressRunesTokenSummary> {
         return this.httpGet(`/v5/runes/token-summary?address=${address}&runeid=${runeid}`, {});
+    }
+
+    async getAddressRecentHistory(params: { address: string; start: number; limit: number }) {
+        return this.httpGet('/v5/address/history', params);
     }
 }
 

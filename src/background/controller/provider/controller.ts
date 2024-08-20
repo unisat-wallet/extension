@@ -7,9 +7,9 @@ import { getChainInfo } from '@/shared/utils';
 import Web3API from '@/shared/web3/Web3API';
 import { DetailedInteractionParameters } from '@/shared/web3/interfaces/DetailedInteractionParameters';
 import { amountToSatoshis } from '@/ui/utils';
-import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
-import { verifyMessageOfBIP322Simple } from '@unisat/wallet-sdk/lib/message';
-import { toPsbtNetwork } from '@unisat/wallet-sdk/lib/network';
+import { bitcoin } from '@btc-vision/wallet-sdk/lib/bitcoin-core';
+import { verifyMessageOfBIP322Simple } from '@btc-vision/wallet-sdk/lib/message';
+import { toPsbtNetwork } from '@btc-vision/wallet-sdk/lib/network';
 import { ethErrors } from 'eth-rpc-errors';
 import BaseController from '../base';
 import wallet from '../wallet';
@@ -42,7 +42,7 @@ class ProviderController extends BaseController {
         sessionService.broadcastEvent('accountsChanged', account);
         const connectSite = permissionService.getConnectedSite(origin);
         if (connectSite) {
-            const network = wallet.getNetworkName();
+            const network = wallet.getLegacyNetworkName();
             sessionService.broadcastEvent(
                 'networkChanged',
                 {
@@ -53,6 +53,10 @@ class ProviderController extends BaseController {
             );
         }
         return account;
+    };
+
+    disconnect = async ({ session: { origin } }) => {
+        wallet.removeConnectedSite(origin);
     };
 
     @Reflect.metadata('SAFE', true)
@@ -68,8 +72,7 @@ class ProviderController extends BaseController {
 
     @Reflect.metadata('SAFE', true)
     getNetwork = async () => {
-        const networkType = wallet.getNetworkType();
-        return NETWORK_TYPES[networkType].name;
+        return wallet.getLegacyNetworkName();
     };
 
     @Reflect.metadata('APPROVAL', ['SwitchNetwork', (req) => {

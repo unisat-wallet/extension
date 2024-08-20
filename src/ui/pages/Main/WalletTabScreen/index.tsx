@@ -1,12 +1,12 @@
 import { Tabs, Tooltip } from 'antd';
-import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
+import BigNumber from 'bignumber.js';
+import React, { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 
-import { AddressFlagType, ChainType, KEYRING_TYPE } from '@/shared/constant';
+import { AddressFlagType, ChainType } from '@/shared/constant';
 import { checkAddressFlag } from '@/shared/utils';
 import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
-import { Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
+import { AddressBar, Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
-import { AddressBar } from '@/ui/components/AddressBar';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { Button } from '@/ui/components/Button';
 import { DisableUnconfirmedsPopover } from '@/ui/components/DisableUnconfirmedPopover';
@@ -40,7 +40,6 @@ import { AtomicalsTab } from './AtomicalsTab';
 import { OPNetList } from './OPNetList';
 import { OrdinalsTab } from './OrdinalsTab';
 import { RunesList } from './RunesList';
-import BigNumber from 'bignumber.js';
 
 const $noBreakStyle: CSSProperties = {
     whiteSpace: 'nowrap',
@@ -53,15 +52,11 @@ export default function WalletTabScreen() {
     const accountBalance = useAccountBalance();
     const chain = useChain();
     const chainType = useChainType();
-
+    
     const currentKeyring = useCurrentKeyring();
     const currentAccount = useCurrentAccount();
     const balanceValue = useMemo(() => {
-        if (accountBalance.amount === '0') {
-            return '--';
-        } else {
-            return accountBalance.amount;
-        }
+        return accountBalance.amount;
     }, [accountBalance.amount]);
 
     const wallet = useWallet();
@@ -85,8 +80,9 @@ export default function WalletTabScreen() {
     const [loadingFetch, setLoadingFetch] = useState(false);
 
     const safeBalance = useSafeBalance();
-    const availableSatoshis = amountToSatoshis(accountBalance.amount) - amountToSatoshis(accountBalance.inscription_amount);
-    
+    const availableSatoshis =
+        amountToSatoshis(accountBalance.amount) - amountToSatoshis(accountBalance.inscription_amount);
+
     const totalSatoshis = amountToSatoshis(accountBalance.amount);
     const unavailableSatoshis = totalSatoshis - availableSatoshis;
     const [availableAmount, setAvailableAmount] = useState(safeBalance);
@@ -146,7 +142,7 @@ export default function WalletTabScreen() {
         void run();
     }, []);
 
-    const tabItems = [
+    let tabItems = [
         {
             key: AssetTabKey.OP_NET,
             label: 'OP_NET',
@@ -168,6 +164,34 @@ export default function WalletTabScreen() {
             children: <RunesList />
         }
     ];
+
+    if (chainType !== ChainType.BITCOIN_MAINNET) {
+        tabItems = [
+            {
+                key: AssetTabKey.OP_NET,
+                label: 'OP_NET',
+                children: <OPNetList />
+            },
+            {
+                key: AssetTabKey.ORDINALS,
+                label: 'Ordinals',
+                children: <OrdinalsTab />
+            },
+            {
+                key: AssetTabKey.RUNES,
+                label: 'Runes',
+                children: <RunesList />
+            }
+        ];
+    }
+
+    const finalAssetTabKey = useMemo(() => {
+        if (chainType !== ChainType.BITCOIN_MAINNET && assetTabKey === AssetTabKey.ATOMICALS) {
+            return AssetTabKey.ORDINALS;
+        } else {
+            return assetTabKey;
+        }
+    }, [assetTabKey, chainType]);
 
     const blockstreamUrl = useBlockstreamUrl();
     const resetUiTxCreateScreen = useResetUiTxCreateScreen();
@@ -219,12 +243,25 @@ export default function WalletTabScreen() {
             />
 
             <Content>
-                <Column gap="xl">
-                    {currentKeyring.type === KEYRING_TYPE.HdKeyring && <AccountSelect />}
-                    {currentKeyring.type === KEYRING_TYPE.KeystoneKeyring && <AccountSelect />}
-                    {walletConfig.chainTip && <Text text={walletConfig.chainTip} color="danger" textCenter />}
+                <AccountSelect />
 
-                    {walletConfig.statusMessage && <Text text={walletConfig.statusMessage} color="danger" textCenter />}
+                <Column gap="lg2" mt="md">
+                    {(walletConfig.chainTip || walletConfig.statusMessage) && (
+                        <Column
+                            py={'lg'}
+                            px={'md'}
+                            gap={'lg'}
+                            style={{
+                                borderRadius: 12,
+                                border: '1px solid rgba(245, 84, 84, 0.35)',
+                                background: 'rgba(245, 84, 84, 0.08)'
+                            }}>
+                            {walletConfig.chainTip && <Text text={walletConfig.chainTip} color="text" textCenter />}
+                            {walletConfig.statusMessage && (
+                                <Text text={walletConfig.statusMessage} color="danger" textCenter />
+                            )}
+                        </Column>
+                    )}
 
                     <Tooltip
                         placement={'bottom'}
@@ -261,7 +298,7 @@ export default function WalletTabScreen() {
                                 </>
                             )
                         }
-                        onOpenChange={() => {
+                        onOpenChange={(v) => {
                             if (!ref.current.fetchedUtxo[currentAccount.address]) {
                                 ref.current.fetchedUtxo[currentAccount.address] = { loading: true };
                                 setLoadingFetch(true);
@@ -275,13 +312,13 @@ export default function WalletTabScreen() {
                             fontSize: fontSizes.xs
                         }}>
                         <div>
+                            <Text text={'TOTAL BALANCE'} textCenter color="textDim" />
                             <Text
-                                text={
-                                    `${balanceValue}  ${btcUnit}`
-                                }
+                                text={balanceValue + ' ' + btcUnit}
                                 preset="title-bold"
                                 textCenter
                                 size="xxxl"
+                                my="sm"
                             />
                         </div>
                     </Tooltip>
@@ -308,55 +345,63 @@ export default function WalletTabScreen() {
                         </Row>
                     </Row>
 
-                    <Row justifyBetween>
+                    <Row justifyCenter mt="md">
                         <Button
                             text="Receive"
-                            preset="default"
+                            preset="home"
                             icon="receive"
-                            onClick={(e) => {
+                            onClick={() => {
                                 navigate('ReceiveScreen');
                             }}
-                            full
                         />
 
                         <Button
                             text="Send"
-                            preset="default"
+                            preset="home"
                             icon="send"
-                            onClick={(e) => {
+                            onClick={() => {
                                 resetUiTxCreateScreen();
                                 navigate('TxCreateScreen');
                             }}
-                            full
                         />
-                        {chain.enum == 'BITCOIN_REGTEST' && (
-                            <Button
-                                text="Faucet"
-                                preset="default"
-                                icon="faucet"
-                                onClick={(e) => {
-                                    window.open('https://faucet.opnet.org/', '_blank');
-                                }}
-                                full
-                            />
-                        )}
-                        {chainType === ChainType.BITCOIN_MAINNET && (
-                            <Button
-                                text="Buy"
-                                preset="default"
-                                icon="bitcoin"
-                                onClick={(e) => {
-                                    setBuyBtcModalVisible(true);
-                                }}
-                                full
-                            />
-                        )}
+
+                        {
+                            (chainType === ChainType.BITCOIN_REGTEST || chainType === ChainType.FRACTAL_BITCOIN_TESTNET) && (
+                                <Button
+                                    text="Faucet"
+                                    preset="default"
+                                    icon="faucet"
+                                    onClick={() => {
+                                        let url = 'https://faucet.opnet.org/';
+                                        if (chainType === ChainType.FRACTAL_BITCOIN_TESTNET) {
+                                            url = 'https://fractal-faucet.opnet.org/';
+                                        }
+
+                                        window.open(url, '_blank');
+                                    }}
+                                    full
+                                />
+                            )
+                        }
+
+                        {
+                            chainType === ChainType.BITCOIN_MAINNET && (
+                                <Button
+                                    text="Buy"
+                                    preset="home"
+                                    icon="bitcoin"
+                                    onClick={() => {
+                                        setBuyBtcModalVisible(true);
+                                    }}
+                                />
+                            )
+                        }
                     </Row>
 
                     <Tabs
                         size={'small'}
-                        defaultActiveKey={assetTabKey as unknown as string}
-                        activeKey={assetTabKey as unknown as string}
+                        defaultActiveKey={finalAssetTabKey as unknown as string}
+                        activeKey={finalAssetTabKey as unknown as string}
                         items={tabItems as unknown as any[]}
                         onTabClick={(key) => {
                             dispatch(uiActions.updateAssetTabScreen({ assetTabKey: key as unknown as AssetTabKey }));

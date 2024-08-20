@@ -8,7 +8,7 @@ import { RequestParams } from '@/shared/types/Request.js';
 import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
 import Web3API from '@/shared/web3/Web3API';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
-import { UnwrapResult, UTXO, WrapResult } from '@btc-vision/transaction';
+import { Unisat, UnwrapResult, UTXO, WrapResult } from '@btc-vision/transaction';
 
 import {
     BroadcastTransactionOptions,
@@ -17,9 +17,16 @@ import {
     IWrapParametersWithoutSigner,
     Web3Provider
 } from './Web3Provider';
+
 import PushEventHandlers from './pushEventHandlers';
 import ReadyPromise from './readyPromise';
 import { $, domReadyCall } from './utils';
+
+declare global {
+    interface Window {
+        opnet?: Unisat;
+    }
+}
 
 const log = (event: string, ...args: unknown[]) => {
     /*if (process && process.env.NODE_ENV !== 'production') {
@@ -43,8 +50,6 @@ interface StateProvider {
     initialized: boolean;
     isPermanentlyDisconnected: boolean;
 }
-
-const EXTENSION_CONTEXT_INVALIDATED_CHROMIUM_ERROR = 'Extension context invalidated.';
 
 const _opnetPrividerPrivate: {
     _selectedAddress: string | null;
@@ -172,6 +177,12 @@ export class OpnetProvider extends EventEmitter {
     // request = async (data) => {
     //   return this._request(data);
     // };
+
+    disconnect = async () => {
+        return this._request({
+            method: 'disconnect'
+        });
+    };
 
     getNetwork = async () => {
         return this._request({
@@ -498,11 +509,26 @@ declare global {
 
 const provider = new OpnetProvider();
 
-if (!window.opnet) {
-    window.opnet = new Proxy(provider, {
+if (!window.unisat) {
+    window.unisat = new Proxy(provider, {
         deleteProperty: () => true
     }) as any;
+
+    Object.defineProperty(window, 'unisat', {
+        value: new Proxy(provider, {
+            deleteProperty: () => true
+        }),
+        writable: true
+    });
+
+    window.dispatchEvent(new Event('unisat#initialized'));
 }
+
+// force opnet.
+
+window.opnet = new Proxy(provider, {
+    deleteProperty: () => true
+}) as any;
 
 Object.defineProperty(window, 'opnet', {
     value: new Proxy(provider, {
@@ -512,3 +538,4 @@ Object.defineProperty(window, 'opnet', {
 });
 
 window.dispatchEvent(new Event('opnet#initialized'));
+

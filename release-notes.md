@@ -1,5 +1,27 @@
 # UniSat Wallet Release Notes
 
+## v1.4.2
+
+- Support Testnet4
+- Support Signet
+- Fixed the issue of the app crashing when transferring Runes with multiple UTXOs
+- Fixed the issue with the display of the available balance of partially-colored funds during an ARC20 transfer
+- Fixed the issue with the incorrect display of HdPath in Keystone
+- Audit fix: Removed private methods from the browser plugin object to enhance security
+- Audit fix: Methods such as getPublicKey, getNetwork, switchNetwork are now only accessible after authorization for improved security.
+
+## v1.4.1
+
+- Support for setting transfer fees with one decimal place
+- Added display of USD prices for BTC、BRC20 and Runes
+- Real-time fee displays for various buy BTC options
+- Fix unisat.sendRunes
+- Fix unisat.multiSginPsbt
+
+## v1.4.0
+
+- Support fractalbitcoin
+
 ## v1.3.4
 
 - Compatible with partial token coloring for ARC20
@@ -38,16 +60,20 @@
 
 - Added `memos` parameter to `unisat.sendBitcoin` method, for constructing runes transactions (github #164 and #167)
 - Fixed a bug in the `unisat.sendInscription` method (github #159)
-- Fixed the problem where an order could not succeed when the wallet balance and the payment amount were exactly equal when inscribe a TRANSFER inscription
+- Fixed the problem where an order could not succeed when the wallet balance and the payment amount were exactly equal
+  when inscribe a TRANSFER inscription
 - Improved balance display, showing both available and unavailable balances
 - Improved the asset display during transaction signing, added BRC20 display
-- Improved risk warnings during transaction signing, and now requires the input of CONFIRM to proceed when warnings appear.
+- Improved risk warnings during transaction signing, and now requires the input of CONFIRM to proceed when warnings
+  appear.
 
 ## v1.2.8
 
 - The unisat.sendBitcoin method has added a memo parameter, increasing OP_RETURN output when sending btc.
-- A new unisat.getBitcoinUtxos method has been added, through which the developers can get users UTXO without inscription assets.
-- A new unisat.signData method has been added, through which the developers can have users participate in multi-signature.
+- A new unisat.getBitcoinUtxos method has been added, through which the developers can get users UTXO without
+  inscription assets.
+- A new unisat.signData method has been added, through which the developers can have users participate in
+  multi-signature.
 
 ## v1.2.7
 
@@ -59,9 +85,9 @@
 
 - Mixed inscriptions can now be sent without splitting
 - Fixed an issue with the address amount input box restrictions:
-  - Limited BTC input to a maximum of 8 decimal places.
-  - Spaces are now ignored when entering an address.
-  - Restricted ARC20 input amount.
+    - Limited BTC input to a maximum of 8 decimal places.
+    - Spaces are now ignored when entering an address.
+    - Restricted ARC20 input amount.
 
 ## v1.2.5
 
@@ -91,7 +117,7 @@
 ## v1.2.0
 
 - Added support for Atomicals.
-- Refactored underlying code using @unisat/wallet-sdk.
+- Refactored underlying code using @btc-vision/wallet-sdk.
 
 ## v1.1.33
 
@@ -127,7 +153,8 @@
 
 ## v1.1.26
 
-In this version, we focused on security upgrades and introduced several new features and enhancements. Here are the updates:
+In this version, we focused on security upgrades and introduced several new features and enhancements. Here are the
+updates:
 
 1. Manual Wallet Locking
 
@@ -135,23 +162,29 @@ In this version, we focused on security upgrades and introduced several new feat
 
 2. Protection against Phishing Websites
 
-- To protect users from potential phishing attacks, the wallet will now block connections to suspicious websites during wallet access and transaction signing.
+- To protect users from potential phishing attacks, the wallet will now block connections to suspicious websites during
+  wallet access and transaction signing.
 
 3. Blacklist Address Blocking
 
-- Transactions containing addresses on the blacklist will be blocked during the signing process to prevent potential security risks.
+- Transactions containing addresses on the blacklist will be blocked during the signing process to prevent potential
+  security risks.
 
 4. Risk Warning on Transaction Signing Exceptions
 
-- Users will receive a risk warning if any abnormal behavior is detected while signing transactions. Currently, abnormal behavior is identified by the loss of plaintext.
+- Users will receive a risk warning if any abnormal behavior is detected while signing transactions. Currently, abnormal
+  behavior is identified by the loss of plaintext.
 
 5. Risk Warning during Batch Transaction Signing
 
-- A risk warning will be displayed when performing batch transaction signing, ensuring users are aware of potential risks.
+- A risk warning will be displayed when performing batch transaction signing, ensuring users are aware of potential
+  risks.
 
 6. Improved Inscription Splitting
 
-- We have improved the process of inscription spliting, allowing users to choose a minimum amount of satoshis for each split inscription, providing greater flexibility. For individual inscription balances exceeding 10,000 satoshis, users can split the balance for better management.
+- We have improved the process of inscription spliting, allowing users to choose a minimum amount of satoshis for each
+  split inscription, providing greater flexibility. For individual inscription balances exceeding 10,000 satoshis, users
+  can split the balance for better management.
 
 ## v1.1.25
 
@@ -175,7 +208,8 @@ In this version, we focused on security upgrades and introduced several new feat
 
 - Support exporting Hex Private Key
 - Add risk warnings when exporting Private Key and Secret Recovery Phrase
-- Fix a issue that when exporting a non-active wallet, incorrectly exports the Secret Recovery Phrase of the active wallet
+- Fix a issue that when exporting a non-active wallet, incorrectly exports the Secret Recovery Phrase of the active
+  wallet
 - Fix a display issue of "Failed to fetch."
 - Fix a issue that "getBalance " API returns incorrect unconfirmed balance
 
@@ -201,7 +235,7 @@ In this version, we focused on security upgrades and introduced several new feat
 - Disable RBF to prevent accidental triggering
 - Display the output value of inscription by default
 - Display balance details when hovering over the balance
-- Use mempool.space to display transaction history
+- Use mempool.space/opscan.org to display transaction history
 - Add a prompt to wait for BRC20 updates after inscribing a TRANSFER
 
 ## v1.1.19
@@ -221,7 +255,7 @@ In this version, we focused on security upgrades and introduced several new feat
 **Major changes**
 
 - Feature
-  - Add API unisat.inscribeTransfer(ticker:string, amount:string)
+    - Add API unisat.inscribeTransfer(ticker:string, amount:string)
 
 **Minor changes**
 
@@ -232,38 +266,38 @@ In this version, we focused on security upgrades and introduced several new feat
 **Major changes**
 
 - Feature
-  - Support BIP322
-  - Sign multiple PSBT in one time
+    - Support BIP322
+    - Sign multiple PSBT in one time
 - Adjust
-  - Use mempool.space data as fee options
-  - Show 100 inscriptions per page
+    - Use mempool.space/opscan.org data as fee options
+    - Show 100 inscriptions per page
 - Fix
-  - Fix display error of pagination
-  - Fix a issue that addresses holding too many UTXOs cannot construct transactions
-  - Fix a issue that changing wallet/account name sometimes does not take effect
-  - Fix a issue that N/A problem occurs because the input amount is not legal
+    - Fix display error of pagination
+    - Fix a issue that addresses holding too many UTXOs cannot construct transactions
+    - Fix a issue that changing wallet/account name sometimes does not take effect
+    - Fix a issue that N/A problem occurs because the input amount is not legal
 
 ## v1.1.15
 
 **Major changes**
 
 - BRC-20 related
-  - Add BRC-20 transfer and inscribing functions
+    - Add BRC-20 transfer and inscribing functions
 - Account related
-  - Add support for modifying account name
-  - Display both BTC balance and inscription count of different address type.
+    - Add support for modifying account name
+    - Display both BTC balance and inscription count of different address type.
 - Domain resolution related
-  - Add domain name resolution of .unisat
-  - After a domain name is resolved successfully, the corresponding inscription number will be displayed
-  - Fixed the problem that the parsing of special symbols failed
+    - Add domain name resolution of .unisat
+    - After a domain name is resolved successfully, the corresponding inscription number will be displayed
+    - Fixed the problem that the parsing of special symbols failed
 - Transaction related
-  - Optimize the display of SignPSBT page
-  - When the payment fails, a specific error message will be displayed
+    - Optimize the display of SignPSBT page
+    - When the payment fails, a specific error message will be displayed
 - Unisat Api related
-  - Add getInscriptions method
-  - Add sendInscription method
+    - Add getInscriptions method
+    - Add sendInscription method
 - Others
-  - Fixed text issue
+    - Fixed text issue
 
 ## v1.1.14
 

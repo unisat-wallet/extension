@@ -4,6 +4,7 @@ import { useLocation } from 'react-router-dom';
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { Account, Inscription, OpNetBalance } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
+import { bigIntToDecimal } from '@/shared/web3/Web3API';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
@@ -11,13 +12,12 @@ import { OutputValueBar } from '@/ui/components/OutputValueBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
+import { useBTCUnit } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
-import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
+import { currentConsensusConfig } from '@btc-vision/transaction';
+import { getAddressUtxoDust } from '@btc-vision/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../MainRoute';
-import { bigIntToDecimal } from '@/shared/web3/Web3API';
-import { currentConsensusConfig } from '@btc-vision/transaction';
-import { useBTCUnit } from '@/ui/state/settings/hooks';
 
 interface ItemData {
     key: string;
