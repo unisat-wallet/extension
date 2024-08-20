@@ -23,71 +23,71 @@ import { i18n, sessionService } from './index';
 const version = process.env.release || '0';
 
 export interface PreferenceStore {
-  currentKeyringIndex: number;
-  currentAccount: Account | undefined | null;
-  externalLinkAck: boolean;
-  balanceMap: {
-    [address: string]: BitcoinBalance;
-  };
-  historyMap: {
-    [address: string]: TxHistoryItem[];
-  };
-  locale: string;
-  watchAddressPreference: Record<string, number>;
-  walletSavedList: [];
-  alianNames?: Record<string, string>;
-  initAlianNames: boolean;
-  currentVersion: string;
-  firstOpen: boolean;
-  currency: string;
-  addressType: AddressType;
-  networkType: NetworkType;
-  chainType: ChainType;
-  keyringAlianNames: {
-    [key: string]: string;
-  };
-  accountAlianNames: {
-    [key: string]: string;
-  };
-  editingKeyringIndex: number;
-  editingAccount: Account | undefined | null;
-  uiCachedData: {
-    [address: string]: {
-      allInscriptionList: {
-        currentPage: number;
-        pageSize: number;
-        total: number;
-        list: Inscription[];
-      }[];
-      brc20List: {
-        currentPage: number;
-        pageSize: number;
-        total: number;
-        list: TokenBalance[];
-      }[];
-      brc20Summary: {
-        [ticker: string]: AddressTokenSummary;
-      };
-      brc20TransferableList: {
-        [ticker: string]: {
-          currentPage: number;
-          pageSize: number;
-          total: number;
-          list: TokenTransfer[];
-        }[];
-      };
+    currentKeyringIndex: number;
+    currentAccount: Account | undefined | null;
+    externalLinkAck: boolean;
+    balanceMap: {
+        [address: string]: BitcoinBalance;
     };
-  };
-  skippedVersion: string;
-  appTab: {
-    summary: AppSummary;
-    readTabTime: number;
-    readAppTime: { [key: string]: number };
-  };
-  showSafeNotice: boolean;
-  addressFlags: { [key: string]: number };
-  enableSignData: boolean;
-  autoLockTimeId: number;
+    historyMap: {
+        [address: string]: TxHistoryItem[];
+    };
+    locale: string;
+    watchAddressPreference: Record<string, number>;
+    walletSavedList: [];
+    alianNames?: Record<string, string>;
+    initAlianNames: boolean;
+    currentVersion: string;
+    firstOpen: boolean;
+    currency: string;
+    addressType: AddressType;
+    networkType: NetworkType;
+    chainType: ChainType;
+    keyringAlianNames: {
+        [key: string]: string;
+    };
+    accountAlianNames: {
+        [key: string]: string;
+    };
+    editingKeyringIndex: number;
+    editingAccount: Account | undefined | null;
+    uiCachedData: {
+        [address: string]: {
+            allInscriptionList: {
+                currentPage: number;
+                pageSize: number;
+                total: number;
+                list: Inscription[];
+            }[];
+            brc20List: {
+                currentPage: number;
+                pageSize: number;
+                total: number;
+                list: TokenBalance[];
+            }[];
+            brc20Summary: {
+                [ticker: string]: AddressTokenSummary;
+            };
+            brc20TransferableList: {
+                [ticker: string]: {
+                    currentPage: number;
+                    pageSize: number;
+                    total: number;
+                    list: TokenTransfer[];
+                }[];
+            };
+        };
+    };
+    skippedVersion: string;
+    appTab: {
+        summary: AppSummary;
+        readTabTime: number;
+        readAppTime: { [key: string]: number };
+    };
+    showSafeNotice: boolean;
+    addressFlags: { [key: string]: number };
+    enableSignData: boolean;
+    autoLockTimeId: number;
 }
 
 const SUPPORT_LOCALES = ['en'];
@@ -97,48 +97,48 @@ class PreferenceService {
     popupOpen = false;
     hasOtherProvider = false;
 
-  init = async () => {
-    const defaultLang = 'en';
-    this.store = await createPersistStore<PreferenceStore>({
-      name: 'preference',
-      template: {
-        currentKeyringIndex: 0,
-        currentAccount: undefined,
-        editingKeyringIndex: 0,
-        editingAccount: undefined,
-        externalLinkAck: false,
-        balanceMap: {},
-        historyMap: {},
-        locale: defaultLang,
-        watchAddressPreference: {},
-        walletSavedList: [],
-        alianNames: {},
-        initAlianNames: false,
-        currentVersion: '0',
-        firstOpen: false,
-        currency: 'USD',
-        addressType: AddressType.P2WPKH,
-        networkType: NetworkType.MAINNET,
-        chainType: ChainType.BITCOIN_MAINNET,
-        keyringAlianNames: {},
-        accountAlianNames: {},
-        uiCachedData: {},
-        skippedVersion: '',
-        appTab: {
-          summary: { apps: [] },
-          readAppTime: {},
-          readTabTime: 1
-        },
-        showSafeNotice: true,
-        addressFlags: {},
-        enableSignData: false,
-        autoLockTimeId: DEFAULT_LOCKTIME_ID
-      }
-    });
-    if (!this.store.locale || this.store.locale !== defaultLang) {
-      this.store.locale = defaultLang;
-    }
-    void i18n.changeLanguage(this.store.locale);
+    init = async () => {
+        const defaultLang = 'en';
+        this.store = await createPersistStore<PreferenceStore>({
+            name: 'preference',
+            template: {
+                currentKeyringIndex: 0,
+                currentAccount: undefined,
+                editingKeyringIndex: 0,
+                editingAccount: undefined,
+                externalLinkAck: false,
+                balanceMap: {},
+                historyMap: {},
+                locale: defaultLang,
+                watchAddressPreference: {},
+                walletSavedList: [],
+                alianNames: {},
+                initAlianNames: false,
+                currentVersion: '0',
+                firstOpen: false,
+                currency: 'USD',
+                addressType: AddressType.P2WPKH,
+                networkType: NetworkType.MAINNET,
+                chainType: ChainType.BITCOIN_MAINNET,
+                keyringAlianNames: {},
+                accountAlianNames: {},
+                uiCachedData: {},
+                skippedVersion: '',
+                appTab: {
+                    summary: { apps: [] },
+                    readAppTime: {},
+                    readTabTime: 1
+                },
+                showSafeNotice: true,
+                addressFlags: {},
+                enableSignData: false,
+                autoLockTimeId: DEFAULT_LOCKTIME_ID
+            }
+        });
+        if (!this.store.locale || this.store.locale !== defaultLang) {
+            this.store.locale = defaultLang;
+        }
+        void i18n.changeLanguage(this.store.locale);
 
         if (!this.store.currency) {
             this.store.currency = 'USD';
@@ -213,18 +213,18 @@ class PreferenceService {
             this.store.enableSignData = false;
         }
 
-    if (!this.store.chainType) {
-      if (this.store.networkType === NetworkType.MAINNET) {
-        this.store.chainType = ChainType.BITCOIN_MAINNET;
-      } else {
-        this.store.chainType = ChainType.BITCOIN_TESTNET;
-      }
-    }
+        if (!this.store.chainType) {
+            if (this.store.networkType === NetworkType.MAINNET) {
+                this.store.chainType = ChainType.BITCOIN_MAINNET;
+            } else {
+                this.store.chainType = ChainType.BITCOIN_TESTNET;
+            }
+        }
 
-    if (typeof this.store.autoLockTimeId !== 'number') {
-      this.store.autoLockTimeId = DEFAULT_LOCKTIME_ID;
-    }
-  };
+        if (typeof this.store.autoLockTimeId !== 'number') {
+            this.store.autoLockTimeId = DEFAULT_LOCKTIME_ID;
+        }
+    };
 
     getAcceptLanguages = async () => {
         let langs = await browser.i18n.getAcceptLanguages();
@@ -529,17 +529,17 @@ class PreferenceService {
         return this.store.enableSignData;
     };
 
-  setEnableSignData = (enableSignData: boolean) => {
-    this.store.enableSignData = enableSignData;
-  };
+    setEnableSignData = (enableSignData: boolean) => {
+        this.store.enableSignData = enableSignData;
+    };
 
-  getAutoLockTimeId = () => {
-    return this.store.autoLockTimeId;
-  };
+    getAutoLockTimeId = () => {
+        return this.store.autoLockTimeId;
+    };
 
-  setAutoLockTimeId = (id: number) => {
-    this.store.autoLockTimeId = id;
-  };
+    setAutoLockTimeId = (id: number) => {
+        this.store.autoLockTimeId = id;
+    };
 }
 
 export default new PreferenceService();

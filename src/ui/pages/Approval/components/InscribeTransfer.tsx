@@ -553,9 +553,9 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
 }
 
 function InscribeSignStep({
-                              contextData,
-                              updateContextData
-                          }: {
+    contextData,
+    updateContextData
+}: {
     contextData: ContextData;
     updateContextData: (params: UpdateContextDataParams) => void;
 }) {
@@ -603,9 +603,9 @@ function InscribeSignStep({
 }
 
 function InscribeResultStep({
-                                contextData,
-                                updateContextData
-                            }: {
+    contextData,
+    updateContextData
+}: {
     contextData: ContextData;
     updateContextData: (params: UpdateContextDataParams) => void;
 }) {

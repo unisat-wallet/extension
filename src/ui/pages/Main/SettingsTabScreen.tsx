@@ -107,17 +107,17 @@ export default function SettingsTabScreen() {
 
     const [connected, setConnected] = useState(false);
 
-  const currentKeyring = useCurrentKeyring();
-  const currentAccount = useCurrentAccount();
-  const versionInfo = useVersionInfo();
-  const wallet = useWallet();
+    const currentKeyring = useCurrentKeyring();
+    const currentAccount = useCurrentAccount();
+    const versionInfo = useVersionInfo();
+    const wallet = useWallet();
 
-  const [switchChainModalVisible, setSwitchChainModalVisible] = useState(false);
+    const [switchChainModalVisible, setSwitchChainModalVisible] = useState(false);
 
-  useEffect(() => {
-    const run = async () => {
-      const res = await getCurrentTab();
-      if (!res || !res.url) return;
+    useEffect(() => {
+        const run = async () => {
+            const res = await getCurrentTab();
+            if (!res || !res.url) return;
 
             const origin = new URL(res.url).origin;
 
@@ -126,13 +126,13 @@ export default function SettingsTabScreen() {
             } else {
                 const sites = await wallet.getConnectedSites();
 
-        if (sites.find((i) => i.origin === origin)) {
-          setConnected(true);
-        }
-      }
-    };
-    void run();
-  }, []);
+                if (sites.find((i) => i.origin === origin)) {
+                    setConnected(true);
+                }
+            }
+        };
+        void run();
+    }, []);
 
     const isCustomHdPath = useMemo(() => {
         const item = ADDRESS_TYPES[currentKeyring.addressType];
@@ -174,57 +174,57 @@ export default function SettingsTabScreen() {
     const tools = useTools();
     const openExtensionInTab = useOpenExtensionInTab();
 
-  return (
-    <Layout>
-      <Header />
-      <Content>
-        <Column>
-          <div>
-            {toRenderSettings.map((item) => {
-              const onClick = () => {
-                if (item.action == 'expand-view') {
-                  openExtensionInTab();
-                  return;
-                }
-                if (item.action == 'lock-wallet') {
-                  wallet.lockWallet();
-                  navigate('/account/unlock');
-                  return;
-                }
+    return (
+        <Layout>
+            <Header />
+            <Content>
+                <Column>
+                    <div>
+                        {toRenderSettings.map((item) => {
+                            const onClick = () => {
+                                if (item.action == 'expand-view') {
+                                    openExtensionInTab();
+                                    return;
+                                }
+                                if (item.action == 'lock-wallet') {
+                                    wallet.lockWallet();
+                                    navigate('/account/unlock');
+                                    return;
+                                }
 
-                if (item.action == 'networkType') {
-                  setSwitchChainModalVisible(true);
-                  return;
-                }
-                if (item.action == 'addressType') {
-                  if (isCustomHdPath) {
-                    tools.showTip(
-                      'The wallet currently uses a custom HD path and does not support switching address types.'
-                    );
-                    return;
-                  }
-                  navigate('/settings/address-type');
-                  return;
-                }
-                navigate(item.route);
-              };
-              if (!item.label) {
-                return (
-                  <Button
-                    key={item.action}
-                    style={{ marginTop: spacing.small, height: 50 }}
-                    text={item.desc}
-                    onClick={onClick}
-                  />
-                );
-              }
-              return (
-                <Card key={item.action} mt="lg" onClick={onClick}>
-                  <Row full justifyBetween>
-                    <Column justifyCenter>
-                      <Text text={item.label || item.desc} preset="regular-bold" />
-                      <Text text={item.value} preset="sub" />
-                    </Column>
+                                if (item.action == 'networkType') {
+                                    setSwitchChainModalVisible(true);
+                                    return;
+                                }
+                                if (item.action == 'addressType') {
+                                    if (isCustomHdPath) {
+                                        tools.showTip(
+                                            'The wallet currently uses a custom HD path and does not support switching address types.'
+                                        );
+                                        return;
+                                    }
+                                    navigate('/settings/address-type');
+                                    return;
+                                }
+                                navigate(item.route);
+                            };
+                            if (!item.label) {
+                                return (
+                                    <Button
+                                        key={item.action}
+                                        style={{ marginTop: spacing.small, height: 50 }}
+                                        text={item.desc}
+                                        onClick={onClick}
+                                    />
+                                );
+                            }
+                            return (
+                                <Card key={item.action} mt="lg" onClick={onClick}>
+                                    <Row full justifyBetween>
+                                        <Column justifyCenter>
+                                            <Text text={item.label || item.desc} preset="regular-bold" />
+                                            <Text text={item.value} preset="sub" />
+                                        </Column>
 
                                         <Column justifyCenter>
                                             {item.right && (
@@ -264,40 +264,40 @@ export default function SettingsTabScreen() {
                             }}
                         />
 
-            <Icon
-              icon="telegram"
-              size={fontSizes.iconMiddle}
-              color="textDim"
-              onClick={() => {
-                window.open(TELEGRAM_URL);
-              }}
-            />
-          </Row>
-          <Text text={`Version: ${versionInfo.currentVesion}`} preset="sub" textCenter />
-          {versionInfo.latestVersion && (
-            <Text
-              text={`Latest Version: ${versionInfo.latestVersion}`}
-              preset="link"
-              color="red"
-              textCenter
-              onClick={() => {
-                window.open('https://opnet.org/wallet');
-              }}
-            />
-          )}
-        </Column>
+                        <Icon
+                            icon="telegram"
+                            size={fontSizes.iconMiddle}
+                            color="textDim"
+                            onClick={() => {
+                                window.open(TELEGRAM_URL);
+                            }}
+                        />
+                    </Row>
+                    <Text text={`Version: ${versionInfo.currentVesion}`} preset="sub" textCenter />
+                    {versionInfo.latestVersion && (
+                        <Text
+                            text={`Latest Version: ${versionInfo.latestVersion}`}
+                            preset="link"
+                            color="red"
+                            textCenter
+                            onClick={() => {
+                                window.open('https://opnet.org/wallet');
+                            }}
+                        />
+                    )}
+                </Column>
 
-        {switchChainModalVisible && (
-          <SwitchChainModal
-            onClose={() => {
-              setSwitchChainModalVisible(false);
-            }}
-          />
-        )}
-      </Content>
-      <Footer px="zero" py="zero">
-        <NavTabBar tab="settings" />
-      </Footer>
-    </Layout>
-  );
+                {switchChainModalVisible && (
+                    <SwitchChainModal
+                        onClose={() => {
+                            setSwitchChainModalVisible(false);
+                        }}
+                    />
+                )}
+            </Content>
+            <Footer px="zero" py="zero">
+                <NavTabBar tab="settings" />
+            </Footer>
+        </Layout>
+    );
 }

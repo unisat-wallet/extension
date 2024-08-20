@@ -5,65 +5,65 @@ import { createSlice } from '@reduxjs/toolkit';
 import { updateVersion } from '../global/actions';
 
 export interface SettingsState {
-  locale: string;
-  addressType: AddressType;
-  networkType: NetworkType;
-  chainType: ChainType;
-  walletConfig: WalletConfig;
-  skippedVersion: string;
-  autoLockTimeId: number;
+    locale: string;
+    addressType: AddressType;
+    networkType: NetworkType;
+    chainType: ChainType;
+    walletConfig: WalletConfig;
+    skippedVersion: string;
+    autoLockTimeId: number;
 }
 
 export const initialState: SettingsState = {
-  locale: 'English',
-  addressType: AddressType.P2TR,
-  networkType: NetworkType.MAINNET,
-  chainType: ChainType.BITCOIN_MAINNET,
-  walletConfig: {
-    version: '',
-    moonPayEnabled: true,
-    statusMessage: '',
-    endpoint: '',
-    chainTip: ''
-  },
-  skippedVersion: '',
-  autoLockTimeId: DEFAULT_LOCKTIME_ID
+    locale: 'English',
+    addressType: AddressType.P2TR,
+    networkType: NetworkType.MAINNET,
+    chainType: ChainType.BITCOIN_MAINNET,
+    walletConfig: {
+        version: '',
+        moonPayEnabled: true,
+        statusMessage: '',
+        endpoint: '',
+        chainTip: ''
+    },
+    skippedVersion: '',
+    autoLockTimeId: DEFAULT_LOCKTIME_ID
 };
 
 const slice = createSlice({
-  name: 'settings',
-  initialState,
-  reducers: {
-    reset() {
-      return initialState;
+    name: 'settings',
+    initialState,
+    reducers: {
+        reset() {
+            return initialState;
+        },
+        updateSettings(
+            state,
+            action: {
+                payload: {
+                    locale?: string;
+                    addressType?: AddressType;
+                    networkType?: NetworkType;
+                    walletConfig?: WalletConfig;
+                    skippedVersion?: string;
+                    chainType?: ChainType;
+                    autoLockTimeId?: number;
+                };
+            }
+        ) {
+            const { payload } = action;
+            state = Object.assign({}, state, payload);
+            return state;
+        }
     },
-    updateSettings(
-      state,
-      action: {
-        payload: {
-          locale?: string;
-          addressType?: AddressType;
-          networkType?: NetworkType;
-          walletConfig?: WalletConfig;
-          skippedVersion?: string;
-          chainType?: ChainType;
-          autoLockTimeId?: number;
-        };
-      }
-    ) {
-      const { payload } = action;
-      state = Object.assign({}, state, payload);
-      return state;
+    extraReducers: (builder) => {
+        builder.addCase(updateVersion, (state) => {
+            // todo
+            if (!state.networkType) {
+                state.networkType = NetworkType.MAINNET;
+            }
+        });
     }
-  },
-  extraReducers: (builder) => {
-    builder.addCase(updateVersion, (state) => {
-      // todo
-      if (!state.networkType) {
-        state.networkType = NetworkType.MAINNET;
-      }
-    });
-  }
 });
 
 export const settingsActions = slice.actions;

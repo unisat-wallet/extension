@@ -45,7 +45,7 @@ function ToastContainer({ handler }: { handler: ContextType }) {
     const selfRef = useRef<{ toasts: { key: string; props: ToastProps }[] }>({
         toasts: []
     });
-    
+
     const self = selfRef.current;
     const basicToast = useCallback(
         (content: string, preset?: ToastPresets) => {

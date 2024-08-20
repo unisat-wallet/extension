@@ -121,10 +121,10 @@ function Step2({ onBack, onNext }) {
 }
 
 function Step3({
-                   onBack,
-                   contextData,
-                   updateContextData
-               }: {
+    onBack,
+    contextData,
+    updateContextData
+}: {
     contextData: ContextData;
     updateContextData: (data: ContextData) => void;
     onBack: () => void;

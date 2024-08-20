@@ -1,4 +1,7 @@
+import BigNumber from 'bignumber.js';
+
 import { OpNetBalance } from '@/shared/types';
+import { bigIntToDecimal } from '@/shared/web3/Web3API';
 import { fontSizes } from '@/ui/theme/font';
 
 import { Card } from '../Card';
@@ -7,8 +10,6 @@ import { Image } from '../Image';
 import { Row } from '../Row';
 import { RunesTicker } from '../RunesTicker';
 import { Text } from '../Text';
-import { bigIntToDecimal } from '@/shared/web3/Web3API';
-import BigNumber from 'bignumber.js';
 
 export interface OpNetBalanceCardProps {
     tokenBalance: OpNetBalance;

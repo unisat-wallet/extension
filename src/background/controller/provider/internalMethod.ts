@@ -12,24 +12,24 @@ const tabCheckin = ({
 };
 
 const getProviderState = async (req) => {
-  const {
-    session: { origin }
-  } = req;
+    const {
+        session: { origin }
+    } = req;
 
-  const isUnlocked = keyringService.memStore.getState().isUnlocked;
-  const accounts: string[] = [];
-  if (isUnlocked) {
-    const currentAccount = await wallet.getCurrentAccount();
-    if (currentAccount) {
-      accounts.push(currentAccount.address);
+    const isUnlocked = keyringService.memStore.getState().isUnlocked;
+    const accounts: string[] = [];
+    if (isUnlocked) {
+        const currentAccount = await wallet.getCurrentAccount();
+        if (currentAccount) {
+            accounts.push(currentAccount.address);
+        }
     }
-  }
-  return {
-    network: wallet.getLegacyNetworkName(),
-      chain: wallet.getChainType(),
-    isUnlocked,
-    accounts
-  };
+    return {
+        network: wallet.getLegacyNetworkName(),
+        chain: wallet.getChainType(),
+        isUnlocked,
+        accounts
+    };
 };
 
 const keepAlive = () => {

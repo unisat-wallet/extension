@@ -14,7 +14,7 @@ const $rowStyle = {
 } as CSSProperties;
 
 export function Row(props: RowProps) {
-  const { clickable, style: $styleOverride, ...rest } = props;
-  const $style = Object.assign({}, $rowStyle, $styleOverride);
-  return <BaseView style={$style} {...rest} classname={`row-container ${clickable ? 'clickable' : ''}`} />;
+    const { clickable, style: $styleOverride, ...rest } = props;
+    const $style = Object.assign({}, $rowStyle, $styleOverride);
+    return <BaseView style={$style} {...rest} classname={`row-container ${clickable ? 'clickable' : ''}`} />;
 }

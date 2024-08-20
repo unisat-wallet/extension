@@ -1,6 +1,7 @@
 import { getContract, IWBTCContract, WBTC_ABI } from 'opnet';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
+
 import { Account, Inscription, OpNetBalance } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
 import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
@@ -126,10 +127,9 @@ export default function UnWrapBitcoinOpnet() {
                 <Row itemsCenter fullX justifyCenter>
                     {OpNetBalance.logo && <Image src={OpNetBalance.logo} size={fontSizes.tiny} />}
                     <Text
-                        text={`${bigIntToDecimal(
-                            OpNetBalance.amount,
-                            OpNetBalance.divisibility
-                        )} ${OpNetBalance.symbol} `}
+                        text={`${bigIntToDecimal(OpNetBalance.amount, OpNetBalance.divisibility)} ${
+                            OpNetBalance.symbol
+                        } `}
                         preset="bold"
                         textCenter
                         size="xxl"
@@ -143,10 +143,7 @@ export default function UnWrapBitcoinOpnet() {
                             itemsCenter
                             onClick={() => {
                                 setInputAmount(
-                                    bigIntToDecimal(
-                                        OpNetBalance.amount + availableBalance,
-                                        OpNetBalance.divisibility
-                                    )
+                                    bigIntToDecimal(OpNetBalance.amount + availableBalance, OpNetBalance.divisibility)
                                 );
                             }}>
                             <Text text="MAX" preset="sub" style={{ color: colors.white_muted }} />
@@ -166,20 +163,13 @@ export default function UnWrapBitcoinOpnet() {
                         <Row
                             itemsCenter
                             onClick={() => {
-                                setInputAmount(
-                                    bigIntToDecimal(
-                                        OpNetBalance.amount,
-                                        OpNetBalance.divisibility
-                                    )
-                                );
+                                setInputAmount(bigIntToDecimal(OpNetBalance.amount, OpNetBalance.divisibility));
                             }}>
                             <Text
-                                text={`${
-                                    bigIntToDecimal(
-                                        OpNetBalance.amount + availableBalance,
-                                        OpNetBalance.divisibility
-                                    )
-                                } `}
+                                text={`${bigIntToDecimal(
+                                    OpNetBalance.amount + availableBalance,
+                                    OpNetBalance.divisibility
+                                )} `}
                                 preset="bold"
                                 size="sm"
                                 wrap

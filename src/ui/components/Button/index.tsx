@@ -57,43 +57,43 @@ export interface ButtonProps {
 }
 
 const $baseViewStyle: CSSProperties = {
-  display: 'flex',
-  minHeight: 36,
-  borderRadius: 8,
-  justifyContent: 'center',
-  alignItems: 'center',
-  flexDirection: 'row',
-  // paddingVertical: spacing.small,
-  // paddingHorizontal: spacing.small,
-  overflow: 'hidden',
-  cursor: 'pointer',
-  alignSelf: 'stretch',
-  paddingLeft: spacing.small,
-  paddingRight: spacing.small
+    display: 'flex',
+    minHeight: 36,
+    borderRadius: 8,
+    justifyContent: 'center',
+    alignItems: 'center',
+    flexDirection: 'row',
+    // paddingVertical: spacing.small,
+    // paddingHorizontal: spacing.small,
+    overflow: 'hidden',
+    cursor: 'pointer',
+    alignSelf: 'stretch',
+    paddingLeft: spacing.small,
+    paddingRight: spacing.small
 };
 
 const $viewPresets = {
-  default: Object.assign({}, $baseViewStyle, {
-    borderWidth: 1,
-    minHeight: 50,
-    borderColor: colors.white_muted,
-    borderRadius: 12
-  }) as CSSProperties,
+    default: Object.assign({}, $baseViewStyle, {
+        borderWidth: 1,
+        minHeight: 50,
+        borderColor: colors.white_muted,
+        borderRadius: 12
+    }) as CSSProperties,
 
-  primary: Object.assign({}, $baseViewStyle, {
-    background: 'linear-gradient(103.92deg, #EBB94C 0%, #E97E00 100%)',
-    height: '48px'
-  } as CSSProperties),
+    primary: Object.assign({}, $baseViewStyle, {
+        background: 'linear-gradient(103.92deg, #EBB94C 0%, #E97E00 100%)',
+        height: '48px'
+    } as CSSProperties),
 
-  danger: Object.assign({}, $baseViewStyle, {
-    backgroundColor: colors.red,
-    height: '48px'
-  } as CSSProperties),
+    danger: Object.assign({}, $baseViewStyle, {
+        backgroundColor: colors.red,
+        height: '48px'
+    } as CSSProperties),
 
-  approval: Object.assign({}, $baseViewStyle, {
-    backgroundColor: colors.orange,
-    height: '48px'
-  } as CSSProperties),
+    approval: Object.assign({}, $baseViewStyle, {
+        backgroundColor: colors.orange,
+        height: '48px'
+    } as CSSProperties),
 
     bar: Object.assign({}, $baseViewStyle, {
         backgroundColor: colors.black_dark,
@@ -111,49 +111,49 @@ const $viewPresets = {
         borderRadius: 12
     } as CSSProperties),
 
-  primaryV2: Object.assign({}, $baseViewStyle, {
-    background: 'linear-gradient(103.92deg, #EBB94C 0%, #E97E00 100%)',
-    minHeight: 50,
-    borderRadius: 12
-  } as CSSProperties),
+    primaryV2: Object.assign({}, $baseViewStyle, {
+        background: 'linear-gradient(103.92deg, #EBB94C 0%, #E97E00 100%)',
+        minHeight: 50,
+        borderRadius: 12
+    } as CSSProperties),
 
-  home: Object.assign({}, $baseViewStyle, {
-    backgroundColor: colors.black_dark,
-    minWidth: 64,
-    minHeight: 64,
-    flexDirection: 'column',
-    borderRadius: 16,
-    borderWidth: 1,
-    borderColor: '#FFFFFF4D',
-    padding: 5,
-    marginRight: 5,
-    marginLeft: 5
-  }) as CSSProperties
+    home: Object.assign({}, $baseViewStyle, {
+        backgroundColor: colors.black_dark,
+        minWidth: 64,
+        minHeight: 64,
+        flexDirection: 'column',
+        borderRadius: 16,
+        borderWidth: 1,
+        borderColor: '#FFFFFF4D',
+        padding: 5,
+        marginRight: 5,
+        marginLeft: 5
+    }) as CSSProperties
 };
 
 const $hoverViewPresets: Record<Presets, CSSProperties> = {
-  default: {
-    backgroundColor: '#383535'
-  },
-  primary: {
-    backgroundColor: colors.yellow_dark
-  },
-  approval: {
-    backgroundColor: colors.orange_dark
-  },
-  danger: {
-    backgroundColor: colors.red_dark
-  },
-  bar: {
-    backgroundColor: '#383535'
-  },
-  defaultV2: {},
-  primaryV2: {
-    backgroundColor: colors.yellow_dark
-  },
-  home: {
-    backgroundColor: '#383535'
-  }
+    default: {
+        backgroundColor: '#383535'
+    },
+    primary: {
+        backgroundColor: colors.yellow_dark
+    },
+    approval: {
+        backgroundColor: colors.orange_dark
+    },
+    danger: {
+        backgroundColor: colors.red_dark
+    },
+    bar: {
+        backgroundColor: '#383535'
+    },
+    defaultV2: {},
+    primaryV2: {
+        backgroundColor: colors.yellow_dark
+    },
+    home: {
+        backgroundColor: '#383535'
+    }
 };
 
 const $baseTextStyle: CSSProperties = {
@@ -177,23 +177,23 @@ const $textPresets: Record<Presets, CSSProperties> = {
     bar: Object.assign({}, $baseTextStyle, { textAlign: 'left', fontWeight: 'bold' } as CSSProperties),
     fontsmall: Object.assign({}, $baseTextStyle, { fontSize: '10px', color: colors.black }),
 
-  defaultV2: Object.assign({}, $baseTextStyle, {}),
-  primaryV2: Object.assign({}, $baseTextStyle, { color: colors.black }),
-  home: Object.assign({}, $baseTextStyle, {
-    color: colors.textDim,
-    fontSize: 12
-  })
+    defaultV2: Object.assign({}, $baseTextStyle, {}),
+    primaryV2: Object.assign({}, $baseTextStyle, { color: colors.black }),
+    home: Object.assign({}, $baseTextStyle, {
+        color: colors.textDim,
+        fontSize: 12
+    })
 };
 
 const $pressedTextPresets: Record<Presets, CSSProperties> = {
-  default: { opacity: 0.9 },
-  primary: { opacity: 0.9 },
-  danger: { opacity: 0.9 },
-  approval: { opacity: 0.9 },
-  bar: { opacity: 0.9 },
-  defaultV2: { opacity: 0.9 },
-  primaryV2: { opacity: 0.9 },
-  home: { opacity: 0.9 }
+    default: { opacity: 0.9 },
+    primary: { opacity: 0.9 },
+    danger: { opacity: 0.9 },
+    approval: { opacity: 0.9 },
+    bar: { opacity: 0.9 },
+    defaultV2: { opacity: 0.9 },
+    primaryV2: { opacity: 0.9 },
+    home: { opacity: 0.9 }
 };
 
 const $rightAccessoryStyle: CSSProperties = { marginLeft: spacing.extraSmall, zIndex: 1 };
@@ -259,23 +259,23 @@ export function Button(props: ButtonProps) {
                     {children}
                 </Row>
 
-        {RightAccessory && <div style={$rightAccessoryStyle}>{RightAccessory}</div>}
-      </div>
-    );
-  }
+                {RightAccessory && <div style={$rightAccessoryStyle}>{RightAccessory}</div>}
+            </div>
+        );
+    }
 
-  if (preset === 'home') {
-    return (
-      <div
-        style={$viewStyle}
-        onClick={disabled ? undefined : onClick}
-        onMouseEnter={() => setHover(true)}
-        onMouseLeave={() => setHover(false)}>
-        {icon && <Icon icon={icon} style={{ marginRight: spacing.tiny, backgroundColor: colors.white }} />}
-        {text && <Text style={$textStyle} text={text} preset="regular" mt="sm" />}
-      </div>
-    );
-  }
+    if (preset === 'home') {
+        return (
+            <div
+                style={$viewStyle}
+                onClick={disabled ? undefined : onClick}
+                onMouseEnter={() => setHover(true)}
+                onMouseLeave={() => setHover(false)}>
+                {icon && <Icon icon={icon} style={{ marginRight: spacing.tiny, backgroundColor: colors.white }} />}
+                {text && <Text style={$textStyle} text={text} preset="regular" mt="sm" />}
+            </div>
+        );
+    }
 
     return (
         <div

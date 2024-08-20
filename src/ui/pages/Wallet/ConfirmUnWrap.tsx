@@ -21,10 +21,10 @@ function PaymentItem(props: { channelType: PaymentChannelType; onClick }) {
 }
 
 export const ConfirmUnWrap = ({
-                                  acceptWrapMessage,
-                                  onClose,
-                                  setAcceptWrap
-                              }: {
+    acceptWrapMessage,
+    onClose,
+    setAcceptWrap
+}: {
     acceptWrapMessage: string;
     onClose: () => void;
     setAcceptWrap: (value: boolean) => void;

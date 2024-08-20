@@ -3,7 +3,6 @@
 /* constants pool */
 import { AddressType, NetworkType, RestoreWalletType } from '../types';
 
-
 export enum CHAINS_ENUM {
     BTC = 'BTC'
 }
@@ -181,13 +180,13 @@ export const RESTORE_WALLETS: { value: RestoreWalletType; name: string; addressT
 ];
 
 export enum ChainType {
-  BITCOIN_MAINNET = 'BITCOIN_MAINNET',
-  BITCOIN_TESTNET = 'BITCOIN_TESTNET',
-  BITCOIN_TESTNET4 = 'BITCOIN_TESTNET4',
-  BITCOIN_REGTEST = 'BITCOIN_REGTEST',
-  BITCOIN_SIGNET = 'BITCOIN_SIGNET',
-  FRACTAL_BITCOIN_MAINNET = 'FRACTAL_BITCOIN_MAINNET',
-  FRACTAL_BITCOIN_TESTNET = 'FRACTAL_BITCOIN_TESTNET'
+    BITCOIN_MAINNET = 'BITCOIN_MAINNET',
+    BITCOIN_TESTNET = 'BITCOIN_TESTNET',
+    BITCOIN_TESTNET4 = 'BITCOIN_TESTNET4',
+    BITCOIN_REGTEST = 'BITCOIN_REGTEST',
+    BITCOIN_SIGNET = 'BITCOIN_SIGNET',
+    FRACTAL_BITCOIN_MAINNET = 'FRACTAL_BITCOIN_MAINNET',
+    FRACTAL_BITCOIN_TESTNET = 'FRACTAL_BITCOIN_TESTNET'
 }
 
 export const NETWORK_TYPES = [
@@ -323,36 +322,36 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
 export const CHAINS = Object.values(CHAINS_MAP);
 
 export type TypeChainGroup = {
-  type: 'single' | 'list';
-  chain?: TypeChain<ChainType>;
-  label?: string;
-  icon?: string;
-  items?: TypeChain<ChainType>[];
+    type: 'single' | 'list';
+    chain?: TypeChain<ChainType>;
+    label?: string;
+    icon?: string;
+    items?: TypeChain<ChainType>[];
 };
 
 export const CHAIN_GROUPS: TypeChainGroup[] = [
-  {
-    type: 'single',
-    chain: CHAINS_MAP[ChainType.BITCOIN_MAINNET]
-  },
-  {
-    type: 'list',
-    label: 'Bitcoin Testnet',
-    icon: './images/artifacts/bitcoin-testnet-all.svg',
-    items: [
-      CHAINS_MAP[ChainType.BITCOIN_TESTNET],
-      CHAINS_MAP[ChainType.BITCOIN_TESTNET4],
-      CHAINS_MAP[ChainType.BITCOIN_SIGNET]
-    ]
-  },
-  {
-    type: 'single',
-    chain: CHAINS_MAP[ChainType.FRACTAL_BITCOIN_MAINNET]
-  },
-  {
-    type: 'single',
-    chain: CHAINS_MAP[ChainType.FRACTAL_BITCOIN_TESTNET]
-  }
+    {
+        type: 'single',
+        chain: CHAINS_MAP[ChainType.BITCOIN_MAINNET]
+    },
+    {
+        type: 'list',
+        label: 'Bitcoin Testnet',
+        icon: './images/artifacts/bitcoin-testnet-all.svg',
+        items: [
+            CHAINS_MAP[ChainType.BITCOIN_TESTNET],
+            CHAINS_MAP[ChainType.BITCOIN_TESTNET4],
+            CHAINS_MAP[ChainType.BITCOIN_SIGNET]
+        ]
+    },
+    {
+        type: 'single',
+        chain: CHAINS_MAP[ChainType.FRACTAL_BITCOIN_MAINNET]
+    },
+    {
+        type: 'single',
+        chain: CHAINS_MAP[ChainType.FRACTAL_BITCOIN_TESTNET]
+    }
 ];
 
 export const MINIMUM_GAS_LIMIT = 21000;
@@ -473,14 +472,14 @@ export const HARDWARE_WALLETS = {
 };
 
 export const AUTO_LOCKTIMES = [
-  { id: 0, time: 30000, label: '30 Seconds' },
-  { id: 1, time: 60000, label: '1 Minute' },
-  { id: 2, time: 180000, label: '3 Minutes' },
-  { id: 3, time: 300000, label: '5 Minutes' },
-  { id: 4, time: 600000, label: '10 Minutes' },
-  { id: 5, time: 1800000, label: '30 Minutes' },
-  { id: 6, time: 3600000, label: '1 Hour' },
-  { id: 7, time: 14400000, label: '4 Hours' }
+    { id: 0, time: 30000, label: '30 Seconds' },
+    { id: 1, time: 60000, label: '1 Minute' },
+    { id: 2, time: 180000, label: '3 Minutes' },
+    { id: 3, time: 300000, label: '5 Minutes' },
+    { id: 4, time: 600000, label: '10 Minutes' },
+    { id: 5, time: 1800000, label: '30 Minutes' },
+    { id: 6, time: 3600000, label: '1 Hour' },
+    { id: 7, time: 14400000, label: '4 Hours' }
 ];
 
 export const DEFAULT_LOCKTIME_ID = 5;

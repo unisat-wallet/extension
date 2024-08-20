@@ -11,33 +11,33 @@ export interface LayoutProps {
 }
 
 export function Layout(props: LayoutProps) {
-  const isBooted = useBooted();
-  const isUnlocked = useIsUnlocked();
+    const isBooted = useBooted();
+    const isUnlocked = useIsUnlocked();
 
-  useEffect(() => {
-    if (isBooted && !isUnlocked && !location.href.includes(routes.UnlockScreen.path)) {
-      const basePath = location.href.split('#')[0];
-      location.href = `${basePath}#${routes.UnlockScreen.path}`;
-      return;
-    }
-  }, [isBooted, isUnlocked]);
+    useEffect(() => {
+        if (isBooted && !isUnlocked && !location.href.includes(routes.UnlockScreen.path)) {
+            const basePath = location.href.split('#')[0];
+            location.href = `${basePath}#${routes.UnlockScreen.path}`;
+            return;
+        }
+    }, [isBooted, isUnlocked]);
 
-  const { children, style: $styleBase } = props;
-  return (
-    <div
-      className="layout"
-      style={Object.assign(
-        {
-          display: 'flex',
-          flexDirection: 'column',
-          width: '100vw',
-          height: '100vh',
-          overflowY: 'auto',
-          overflowX: 'hidden'
-        },
-        $styleBase
-      )}>
-      {children}
-    </div>
-  );
+    const { children, style: $styleBase } = props;
+    return (
+        <div
+            className="layout"
+            style={Object.assign(
+                {
+                    display: 'flex',
+                    flexDirection: 'column',
+                    width: '100vw',
+                    height: '100vh',
+                    overflowY: 'auto',
+                    overflowX: 'hidden'
+                },
+                $styleBase
+            )}>
+            {children}
+        </div>
+    );
 }

@@ -57,27 +57,27 @@ export default function AccountUpdater() {
         });
     }, [fetchBalance, wallet, isUnlocked, self]);
 
-  useEffect(() => {
-    const accountChangeHandler = (account: Account) => {
-      if (account && account.address) {
-        dispatch(accountActions.setCurrent(account));
-      }
-    };
-    eventBus.addEventListener('accountsChanged', accountChangeHandler);
-    return () => {
-      eventBus.removeEventListener('accountsChanged', accountChangeHandler);
-    };
-  }, [dispatch]);
+    useEffect(() => {
+        const accountChangeHandler = (account: Account) => {
+            if (account && account.address) {
+                dispatch(accountActions.setCurrent(account));
+            }
+        };
+        eventBus.addEventListener('accountsChanged', accountChangeHandler);
+        return () => {
+            eventBus.removeEventListener('accountsChanged', accountChangeHandler);
+        };
+    }, [dispatch]);
 
-  useEffect(() => {
-    const lockHandler = () => {
-      dispatch(globalActions.update({ isUnlocked: false }));
-    };
-    eventBus.addEventListener('lock', lockHandler);
-    return () => {
-      eventBus.removeEventListener('lock', lockHandler);
-    };
-  }, [dispatch]);
+    useEffect(() => {
+        const lockHandler = () => {
+            dispatch(globalActions.update({ isUnlocked: false }));
+        };
+        eventBus.addEventListener('lock', lockHandler);
+        return () => {
+            eventBus.removeEventListener('lock', lockHandler);
+        };
+    }, [dispatch]);
 
     return null;
 }

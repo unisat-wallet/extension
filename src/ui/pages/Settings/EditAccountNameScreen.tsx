@@ -33,39 +33,39 @@ export default function EditAccountNameScreen() {
         }
     };
 
-  const validName = useMemo(() => {
-    if (alianName.length == 0) {
-      return false;
-    }
-    return true;
-  }, [alianName]);
-  return (
-    <Layout>
-      <Header
-        onBack={() => {
-          window.history.go(-1);
-        }}
-        title={account.alianName}
-      />
-      <Content>
-        <Input
-          placeholder={account.alianName}
-          defaultValue={account.alianName}
-          onChange={(e) => {
-            setAlianName(e.target.value);
-          }}
-          onKeyUp={(e) => handleOnKeyUp(e)}
-          autoFocus={true}
-        />
-        <Button
-          disabled={!validName}
-          text="Change Account Name"
-          preset="primary"
-          onClick={(e) => {
-            handleOnClick();
-          }}
-        />
-      </Content>
-    </Layout>
-  );
+    const validName = useMemo(() => {
+        if (alianName.length == 0) {
+            return false;
+        }
+        return true;
+    }, [alianName]);
+    return (
+        <Layout>
+            <Header
+                onBack={() => {
+                    window.history.go(-1);
+                }}
+                title={account.alianName}
+            />
+            <Content>
+                <Input
+                    placeholder={account.alianName}
+                    defaultValue={account.alianName}
+                    onChange={(e) => {
+                        setAlianName(e.target.value);
+                    }}
+                    onKeyUp={(e) => handleOnKeyUp(e)}
+                    autoFocus={true}
+                />
+                <Button
+                    disabled={!validName}
+                    text="Change Account Name"
+                    preset="primary"
+                    onClick={(e) => {
+                        handleOnClick();
+                    }}
+                />
+            </Content>
+        </Layout>
+    );
 }

@@ -1,6 +1,6 @@
 import { Inscription } from '@/shared/types';
-import { createSlice } from '@reduxjs/toolkit';
 import { UnspentOutput } from '@btc-vision/wallet-sdk';
+import { createSlice } from '@reduxjs/toolkit';
 
 import { updateVersion } from '../global/actions';
 

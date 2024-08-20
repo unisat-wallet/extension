@@ -20,21 +20,28 @@ const $tickerPresets: { sm: { textSize: any }; md: { textSize: any }; lg: { text
 type Presets = keyof typeof $tickerPresets;
 
 export function BRC20Ticker({ tick, preset }: { tick: string | undefined; preset?: Presets }) {
-  const style = $tickerPresets[preset || 'md'];
-  return useMemo(() => {
-    if (!tick) return <></>;
-    if (regex.test(tick)) {
-      return (
-        <Row gap="zero" itemsCenter>
-          {tick.split('').map((char, index) => {
-            if (regex.test(char)) {
-              return <Text key={index} text={encodeURIComponent(char)} color="textDim" size={style.textSize} />;
-            }
-            return <Text key={index} text={char} size={style.textSize} wrap color="ticker_color" />;
-          })}
-        </Row>
-      );
-    }
-    return <Text text={tick} size={style.textSize} wrap color="ticker_color" />;
-  }, [tick]);
+    const style = $tickerPresets[preset || 'md'];
+    return useMemo(() => {
+        if (!tick) return <></>;
+        if (regex.test(tick)) {
+            return (
+                <Row gap="zero" itemsCenter>
+                    {tick.split('').map((char, index) => {
+                        if (regex.test(char)) {
+                            return (
+                                <Text
+                                    key={index}
+                                    text={encodeURIComponent(char)}
+                                    color="textDim"
+                                    size={style.textSize}
+                                />
+                            );
+                        }
+                        return <Text key={index} text={char} size={style.textSize} wrap color="ticker_color" />;
+                    })}
+                </Row>
+            );
+        }
+        return <Text text={tick} size={style.textSize} wrap color="ticker_color" />;
+    }, [tick]);
 }

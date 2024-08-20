@@ -51,26 +51,26 @@ export interface AddressAssets {
 }
 
 export interface TxHistoryInOutItem {
-  address: string;
-  value: number;
-  inscriptions: { inscriptionId: string }[];
-  runes: { spacedRune: string; symbol: string; divisibility: number; amount: string }[];
-  brc20: { ticker: string; amount: string }[];
+    address: string;
+    value: number;
+    inscriptions: { inscriptionId: string }[];
+    runes: { spacedRune: string; symbol: string; divisibility: number; amount: string }[];
+    brc20: { ticker: string; amount: string }[];
 }
 
 export interface TxHistoryItem {
-  txid: string;
-  confirmations: number;
-  height: number;
-  timestamp: number;
-  size: number;
-  feeRate: number;
-  fee: number;
-  outputValue: number;
-  vin: TxHistoryInOutItem[];
-  vout: TxHistoryInOutItem[];
-  types: string[];
-  methods: string[];
+    txid: string;
+    confirmations: number;
+    height: number;
+    timestamp: number;
+    size: number;
+    feeRate: number;
+    fee: number;
+    outputValue: number;
+    vin: TxHistoryInOutItem[];
+    vout: TxHistoryInOutItem[];
+    types: string[];
+    methods: string[];
 }
 
 export interface Inscription {
@@ -268,13 +268,13 @@ export interface InscribeOrder {
 }
 
 export interface TokenBalance {
-  availableBalance: string;
-  overallBalance: string;
-  ticker: string;
-  transferableBalance: string;
-  availableBalanceSafe: string;
-  availableBalanceUnSafe: string;
-  selfMint: boolean;
+    availableBalance: string;
+    overallBalance: string;
+    ticker: string;
+    transferableBalance: string;
+    availableBalanceSafe: string;
+    availableBalanceUnSafe: string;
+    selfMint: boolean;
 }
 
 export interface Arc20Balance {
@@ -285,12 +285,12 @@ export interface Arc20Balance {
 }
 
 export interface TokenInfo {
-  totalSupply: string;
-  totalMinted: string;
-  decimal: number;
-  holder: string;
-  inscriptionId: string;
-  selfMint?: boolean;
+    totalSupply: string;
+    totalMinted: string;
+    decimal: number;
+    holder: string;
+    inscriptionId: string;
+    selfMint?: boolean;
 }
 
 export enum TokenInscriptionType {
@@ -504,6 +504,6 @@ export interface BtcChannelItem {
 }
 
 export type TickPriceItem = {
-  curPrice: number;
-  changePercent: number;
+    curPrice: number;
+    changePercent: number;
 };

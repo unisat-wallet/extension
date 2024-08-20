@@ -45,15 +45,15 @@ export function useAddressType() {
 }
 
 export function useNetworkType() {
-  const accountsState = useSettingsState();
-  const chain = CHAINS_MAP[accountsState.chainType];
-  if (chain) {
-    return chain.networkType;
-  } else if (accountsState.chainType === ChainType.BITCOIN_REGTEST) {
-      return NetworkType.REGTEST;
-  } else {
-    return NetworkType.TESTNET;
-  }
+    const accountsState = useSettingsState();
+    const chain = CHAINS_MAP[accountsState.chainType];
+    if (chain) {
+        return chain.networkType;
+    } else if (accountsState.chainType === ChainType.BITCOIN_REGTEST) {
+        return NetworkType.REGTEST;
+    } else {
+        return NetworkType.TESTNET;
+    }
 }
 
 export function useChangeNetworkTypeCallback() {
@@ -188,6 +188,6 @@ export function useSkipVersionCallback() {
 }
 
 export function useAutoLockTimeId() {
-  const state = useSettingsState();
-  return state.autoLockTimeId;
+    const state = useSettingsState();
+    return state.autoLockTimeId;
 }

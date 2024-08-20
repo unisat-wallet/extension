@@ -20,100 +20,100 @@ export default function ChangePasswordScreen() {
     const wallet = useWallet();
     const tools = useTools();
 
-  const strongText = useMemo(() => {
-    if (!newPassword) {
-      return;
-    }
-    const { text, color, tip } = getPasswordStrengthWord(newPassword);
+    const strongText = useMemo(() => {
+        if (!newPassword) {
+            return;
+        }
+        const { text, color, tip } = getPasswordStrengthWord(newPassword);
 
+        return (
+            <Column>
+                <Row>
+                    <Text size="xs" text={'Password strength: '} />
+                    <Text size="xs" text={text} style={{ color: color }} />
+                </Row>
+                {tip ? <Text size="xs" preset="sub" text={tip} /> : null}
+            </Column>
+        );
+    }, [newPassword]);
+
+    const matchText = useMemo(() => {
+        if (!confirmPassword) {
+            return;
+        }
+
+        if (newPassword !== confirmPassword) {
+            return (
+                <Row>
+                    <Text size="xs" text={`Passwords don't match`} color="red" />
+                </Row>
+            );
+        } else {
+            return;
+        }
+    }, [newPassword, confirmPassword]);
+
+    useEffect(() => {
+        if (originPassword.length > 0 && newPassword.length >= MIN_PASSWORD_LENGTH && newPassword === confirmPassword) {
+            setDisabled(false);
+        } else {
+            setDisabled(true);
+        }
+    }, [originPassword, newPassword, confirmPassword]);
+
+    const verify = async () => {
+        try {
+            await wallet.changePassword(originPassword, newPassword);
+            tools.toastSuccess('Success');
+            navigate('MainScreen');
+        } catch (err) {
+            tools.toastError((err as any).message);
+        }
+    };
     return (
-      <Column>
-        <Row>
-          <Text size="xs" text={'Password strength: '} />
-          <Text size="xs" text={text} style={{ color: color }} />
-        </Row>
-        {tip ? <Text size="xs" preset="sub" text={tip} /> : null}
-      </Column>
+        <Layout>
+            <Header
+                onBack={() => {
+                    window.history.go(-1);
+                }}
+                title="Change Password"
+            />
+            <Content>
+                <Column gap="lg">
+                    <Input
+                        preset="password"
+                        placeholder="Current Password"
+                        onChange={(e) => {
+                            setOriginPassword(e.target.value);
+                        }}
+                        autoFocus={true}
+                    />
+                    <Input
+                        preset="password"
+                        placeholder="New Password"
+                        onChange={(e) => {
+                            setNewPassword(e.target.value);
+                        }}
+                    />
+                    {strongText}
+                    <Input
+                        preset="password"
+                        placeholder="Confirm Password"
+                        onChange={(e) => {
+                            setConfirmPassword(e.target.value);
+                        }}
+                    />
+                    {matchText}
+                    <Button
+                        disabled={disabled}
+                        text="Change Password"
+                        preset="primary"
+                        onClick={() => {
+                            verify();
+                        }}
+                    />
+                </Column>
+            </Content>
+        </Layout>
     );
-  }, [newPassword]);
-
-  const matchText = useMemo(() => {
-    if (!confirmPassword) {
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      return (
-        <Row>
-          <Text size="xs" text={`Passwords don't match`} color="red" />
-        </Row>
-      );
-    } else {
-      return;
-    }
-  }, [newPassword, confirmPassword]);
-
-  useEffect(() => {
-    if (originPassword.length > 0 && newPassword.length >= MIN_PASSWORD_LENGTH && newPassword === confirmPassword) {
-      setDisabled(false);
-    } else {
-      setDisabled(true);
-    }
-  }, [originPassword, newPassword, confirmPassword]);
-
-  const verify = async () => {
-    try {
-      await wallet.changePassword(originPassword, newPassword);
-      tools.toastSuccess('Success');
-      navigate('MainScreen');
-    } catch (err) {
-      tools.toastError((err as any).message);
-    }
-  };
-  return (
-    <Layout>
-      <Header
-        onBack={() => {
-          window.history.go(-1);
-        }}
-        title="Change Password"
-      />
-      <Content>
-        <Column gap="lg">
-          <Input
-            preset="password"
-            placeholder="Current Password"
-            onChange={(e) => {
-              setOriginPassword(e.target.value);
-            }}
-            autoFocus={true}
-          />
-          <Input
-            preset="password"
-            placeholder="New Password"
-            onChange={(e) => {
-              setNewPassword(e.target.value);
-            }}
-          />
-          {strongText}
-          <Input
-            preset="password"
-            placeholder="Confirm Password"
-            onChange={(e) => {
-              setConfirmPassword(e.target.value);
-            }}
-          />
-          {matchText}
-          <Button
-            disabled={disabled}
-            text="Change Password"
-            preset="primary"
-            onClick={() => {
-              verify();
-            }}
-          />
-        </Column>
-      </Content>
-    </Layout>
-  );
 }

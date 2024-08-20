@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import { getContract, IWBTCContract, WBTC_ABI } from 'opnet';
 import { CSSProperties, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
@@ -10,10 +11,8 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { useWallet } from '@/ui/utils';
-import { wBTC } from '@btc-vision/transaction';
 
 import { useNavigate } from '../MainRoute';
-import BigNumber from 'bignumber.js';
 
 interface ItemData {
     key: string;
@@ -158,7 +157,9 @@ export default function UnWrapBitcoinOpnet() {
                                 rawTxInfo: {
                                     items: items,
                                     account: account,
-                                    inputAmount: new BigNumber(bigIntToDecimal(stakedReward, OpNetBalance.divisibility)).toNumber(), // replace with actual inputAmount
+                                    inputAmount: new BigNumber(
+                                        bigIntToDecimal(stakedReward, OpNetBalance.divisibility)
+                                    ).toNumber(), // replace with actual inputAmount
                                     address: Web3API.WBTC, // replace with actual address
                                     feeRate: feeRate, // replace with actual feeRate
                                     priorityFee: BigInt(OpnetRateInputVal), // replace with actual OpnetRateInputVal
@@ -193,7 +194,9 @@ export default function UnWrapBitcoinOpnet() {
                                 rawTxInfo: {
                                     items: items,
                                     account: account,
-                                    inputAmount: new BigNumber(bigIntToDecimal(stakedAmount, OpNetBalance.divisibility)).toNumber(), // replace with actual inputAmount
+                                    inputAmount: new BigNumber(
+                                        bigIntToDecimal(stakedAmount, OpNetBalance.divisibility)
+                                    ).toNumber(), // replace with actual inputAmount
                                     address: Web3API.WBTC, // replace with actual address
                                     feeRate: feeRate, // replace with actual feeRate
                                     priorityFee: BigInt(OpnetRateInputVal), // replace with actual OpnetRateInputVal

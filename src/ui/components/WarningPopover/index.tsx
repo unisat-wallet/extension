@@ -13,9 +13,9 @@ const riskColor: { [key: string]: ColorTypes } = {
 };
 
 export const WarningPopover = ({
-                                   risks,
-                                   onClose
-                               }: {
+    risks,
+    onClose
+}: {
     risks: { level: 'high' | 'low'; color?: ColorTypes; desc: string }[];
     onClose: () => void;
 }) => {

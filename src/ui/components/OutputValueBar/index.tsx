@@ -22,37 +22,37 @@ export function OutputValueBar({
     minValue: number;
     onChange: (val: number) => void;
 }) {
-  const options = [
-    {
-      title: 'Current',
-      value: defaultValue
-    },
-    {
-      title: 'Custom'
-    }
-  ];
-  const [optionIndex, setOptionIndex] = useState(FeeRateType.CURRENT);
-  const [inputVal, setInputVal] = useState('');
-  const [currentValue, setCurrentValue] = useState(defaultValue);
+    const options = [
+        {
+            title: 'Current',
+            value: defaultValue
+        },
+        {
+            title: 'Custom'
+        }
+    ];
+    const [optionIndex, setOptionIndex] = useState(FeeRateType.CURRENT);
+    const [inputVal, setInputVal] = useState('');
+    const [currentValue, setCurrentValue] = useState(defaultValue);
 
-  useEffect(() => {
-    let val: any = defaultValue;
-    if (optionIndex === FeeRateType.CUSTOM) {
-      if (!inputVal) {
-        onChange(0);
-        setCurrentValue(0);
-        return;
-      }
-      val = parseInt(inputVal);
-    } else if (options.length > 0) {
-      val = options[optionIndex].value;
-    }
-    // if (val + '' != inputVal) {
-    //   setInputVal(val);
-    // }
-    onChange(val);
-    setCurrentValue(val);
-  }, [optionIndex, inputVal]);
+    useEffect(() => {
+        let val: any = defaultValue;
+        if (optionIndex === FeeRateType.CUSTOM) {
+            if (!inputVal) {
+                onChange(0);
+                setCurrentValue(0);
+                return;
+            }
+            val = parseInt(inputVal);
+        } else if (options.length > 0) {
+            val = options[optionIndex].value;
+        }
+        // if (val + '' != inputVal) {
+        //   setInputVal(val);
+        // }
+        onChange(val);
+        setCurrentValue(val);
+    }, [optionIndex, inputVal]);
 
     useEffect(() => {
         if (minValue && currentValue < minValue) {

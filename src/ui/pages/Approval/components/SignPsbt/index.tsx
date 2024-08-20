@@ -45,9 +45,9 @@ interface Props {
         data: {
             type: TxType;
 
-      psbtHex: string;
-      options?: SignPsbtOptions;
-      rawTxInfo?: RawTxInfo;
+            psbtHex: string;
+            options?: SignPsbtOptions;
+            rawTxInfo?: RawTxInfo;
 
             sendBitcoinParams?: {
                 toAddress: string;
@@ -214,20 +214,20 @@ function SignTxDetails({
     const inscriptionArray = Object.values(txInfo.decodedPsbt.inscriptions);
     const arc20Array = Object.keys(arc20Map).map((v) => ({ ticker: v, amt: arc20Map[v] }));
 
-  const brc20Array: { tick: string; amt: string; inscriptionNumber: number; preview: string }[] = [];
-  txInfo.decodedPsbt.inputInfos.forEach((v) => {
-    v.inscriptions.forEach((w) => {
-      const inscriptionInfo = txInfo.decodedPsbt.inscriptions[w.inscriptionId];
-      if (inscriptionInfo.brc20 && inscriptionInfo.brc20.op == 'transfer') {
-        brc20Array.push({
-          tick: inscriptionInfo.brc20.tick,
-          amt: inscriptionInfo.brc20.amt,
-          inscriptionNumber: w.inscriptionNumber,
-          preview: inscriptionInfo.preview
+    const brc20Array: { tick: string; amt: string; inscriptionNumber: number; preview: string }[] = [];
+    txInfo.decodedPsbt.inputInfos.forEach((v) => {
+        v.inscriptions.forEach((w) => {
+            const inscriptionInfo = txInfo.decodedPsbt.inscriptions[w.inscriptionId];
+            if (inscriptionInfo.brc20 && inscriptionInfo.brc20.op == 'transfer') {
+                brc20Array.push({
+                    tick: inscriptionInfo.brc20.tick,
+                    amt: inscriptionInfo.brc20.amt,
+                    inscriptionNumber: w.inscriptionNumber,
+                    preview: inscriptionInfo.preview
+                });
+            }
         });
-      }
     });
-  });
 
     const runesArray: RuneBalance[] = [];
     txInfo.decodedPsbt.inputInfos.forEach((v) => {
@@ -375,120 +375,147 @@ function SignTxDetails({
         );
     }, []);
 
-  if (type === TxType.SIGN_TX) {
-    return (
-      <Column gap="lg">
-        <Row itemsCenter justifyCenter fullX py={'sm'}>
-          <Text text="Sign Transaction" preset="title-bold" textCenter />
-        </Row>
-        <Row justifyCenter fullX>
-          <Card style={{ backgroundColor: '#272626', flex: '1' }}>
-            <Column fullX itemsCenter>
-              <Row itemsCenter>
-                <Image src={chain.icon} size={24} />
-                <Text text={chain.label} />
-              </Row>
-              <Row
-                style={{ borderTopWidth: 1, borderColor: colors.border, borderStyle: 'dashed', alignSelf: 'stretch' }}
-                my="md"
-              />
-              <Column justifyCenter>
-                <Row itemsCenter>
-                  <Text
-                    text={(receivingSatoshis > sendingSatoshis ? '+' : '') + balanceChangedAmount}
-                    color={receivingSatoshis > sendingSatoshis ? 'white' : 'white'}
-                    preset="bold"
-                    textCenter
-                    size="xxl"
-                  />
-                  <Text text={btcUnit} color="textDim" />
-                  <BtcUsd sats={Math.abs(receivingSatoshis - sendingSatoshis)} bracket />
+    if (type === TxType.SIGN_TX) {
+        return (
+            <Column gap="lg">
+                <Row itemsCenter justifyCenter fullX py={'sm'}>
+                    <Text text="Sign Transaction" preset="title-bold" textCenter />
                 </Row>
-              </Column>
-            </Column>
-          </Card>
-        </Row>
-        <div />
+                <Row justifyCenter fullX>
+                    <Card style={{ backgroundColor: '#272626', flex: '1' }}>
+                        <Column fullX itemsCenter>
+                            <Row itemsCenter>
+                                <Image src={chain.icon} size={24} />
+                                <Text text={chain.label} />
+                            </Row>
+                            <Row
+                                style={{
+                                    borderTopWidth: 1,
+                                    borderColor: colors.border,
+                                    borderStyle: 'dashed',
+                                    alignSelf: 'stretch'
+                                }}
+                                my="md"
+                            />
+                            <Column justifyCenter>
+                                <Row itemsCenter>
+                                    <Text
+                                        text={(receivingSatoshis > sendingSatoshis ? '+' : '') + balanceChangedAmount}
+                                        color={receivingSatoshis > sendingSatoshis ? 'white' : 'white'}
+                                        preset="bold"
+                                        textCenter
+                                        size="xxl"
+                                    />
+                                    <Text text={btcUnit} color="textDim" />
+                                    <BtcUsd sats={Math.abs(receivingSatoshis - sendingSatoshis)} bracket />
+                                </Row>
+                            </Column>
+                        </Column>
+                    </Card>
+                </Row>
+                <div />
 
                 {involvedAssets}
             </Column>
         );
     }
 
-  return (
-    <Column gap="lg" style={{ position: 'relative' }}>
-      <Row itemsCenter justifyCenter fullX py={'sm'}>
-        <Text text="Sign Transaction" preset="title-bold" textCenter />
-      </Row>
-      <Row justifyCenter>
-        <Card style={{ backgroundColor: '#272626', flex: '1' }}>
-          <Column fullX itemsCenter>
-            <Row itemsCenter justifyCenter>
-              <Image src={chain.icon} size={24} />
-              <Text text={chain.label} />
+    return (
+        <Column gap="lg" style={{ position: 'relative' }}>
+            <Row itemsCenter justifyCenter fullX py={'sm'}>
+                <Text text="Sign Transaction" preset="title-bold" textCenter />
             </Row>
-            <Row
-              style={{ borderTopWidth: 1, borderColor: colors.border, borderStyle: 'dashed', alignSelf: 'stretch' }}
-              my="md"
-            />
-            {rawTxInfo && (
-              <Column>
-                <Text text={'Send to'} textCenter color="textDim" />
-                <Row justifyCenter>
-                  <AddressText addressInfo={rawTxInfo.toAddressInfo} textCenter />
-                </Row>
-              </Column>
-            )}
-            {rawTxInfo && (
-              <Row
-                style={{ borderTopWidth: 1, borderColor: colors.border, borderStyle: 'dashed', alignSelf: 'stretch' }}
-                my="md"
-              />
-            )}
+            <Row justifyCenter>
+                <Card style={{ backgroundColor: '#272626', flex: '1' }}>
+                    <Column fullX itemsCenter>
+                        <Row itemsCenter justifyCenter>
+                            <Image src={chain.icon} size={24} />
+                            <Text text={chain.label} />
+                        </Row>
+                        <Row
+                            style={{
+                                borderTopWidth: 1,
+                                borderColor: colors.border,
+                                borderStyle: 'dashed',
+                                alignSelf: 'stretch'
+                            }}
+                            my="md"
+                        />
+                        {rawTxInfo && (
+                            <Column>
+                                <Text text={'Send to'} textCenter color="textDim" />
+                                <Row justifyCenter>
+                                    <AddressText addressInfo={rawTxInfo.toAddressInfo} textCenter />
+                                </Row>
+                            </Column>
+                        )}
+                        {rawTxInfo && (
+                            <Row
+                                style={{
+                                    borderTopWidth: 1,
+                                    borderColor: colors.border,
+                                    borderStyle: 'dashed',
+                                    alignSelf: 'stretch'
+                                }}
+                                my="md"
+                            />
+                        )}
 
-            {sendingInscriptions.length > 0 && (
-              <Column justifyCenter>
-                <Text
-                  text={
-                    sendingInscriptions.length === 1
-                      ? 'Spend Inscription'
-                      : `Spend Inscription (${sendingInscriptions.length})`
-                  }
-                  textCenter
-                  color="textDim"
-                />
-                <Row overflowX gap="lg" justifyCenter style={{ width: 280 }} pb="lg">
-                  {sendingInscriptions.map((v) => (
-                    <InscriptionPreview key={v.inscriptionId} data={v} preset="small" />
-                  ))}
-                </Row>
-              </Column>
-            )}
-            {sendingInscriptions.length > 0 && (
-              <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
-            )}
+                        {sendingInscriptions.length > 0 && (
+                            <Column justifyCenter>
+                                <Text
+                                    text={
+                                        sendingInscriptions.length === 1
+                                            ? 'Spend Inscription'
+                                            : `Spend Inscription (${sendingInscriptions.length})`
+                                    }
+                                    textCenter
+                                    color="textDim"
+                                />
+                                <Row overflowX gap="lg" justifyCenter style={{ width: 280 }} pb="lg">
+                                    {sendingInscriptions.map((v) => (
+                                        <InscriptionPreview key={v.inscriptionId} data={v} preset="small" />
+                                    ))}
+                                </Row>
+                            </Column>
+                        )}
+                        {sendingInscriptions.length > 0 && (
+                            <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
+                        )}
 
-            <Column>
-              <Text text={'Spend Amount'} textCenter color="textDim" />
+                        <Column>
+                            <Text text={'Spend Amount'} textCenter color="textDim" />
 
-              <Column justifyCenter>
-                <Row itemsCenter>
-                  <Text text={spendAmount + ' ' + btcUnit} color="white" preset="bold" textCenter size="xxl" />
-                </Row>
-                <BtcUsd sats={spendSatoshis} textCenter bracket style={{ marginTop: -8 }} />
+                            <Column justifyCenter>
+                                <Row itemsCenter>
+                                    <Text
+                                        text={spendAmount + ' ' + btcUnit}
+                                        color="white"
+                                        preset="bold"
+                                        textCenter
+                                        size="xxl"
+                                    />
+                                </Row>
+                                <BtcUsd sats={spendSatoshis} textCenter bracket style={{ marginTop: -8 }} />
 
-                {sendingInscriptionSaotoshis > 0 && (
-                  <Text text={`${sendingInscriptionAmount} (in inscriptions)`} preset="sub" textCenter />
-                )}
-                {isCurrentToPayFee && <Text text={`${feeAmount} ${btcUnit} (network fee)`} preset="sub" textCenter />}
-              </Column>
-            </Column>
-          </Column>
-        </Card>
-      </Row>
-      {involvedAssets}
-    </Column>
-  );
+                                {sendingInscriptionSaotoshis > 0 && (
+                                    <Text
+                                        text={`${sendingInscriptionAmount} (in inscriptions)`}
+                                        preset="sub"
+                                        textCenter
+                                    />
+                                )}
+                                {isCurrentToPayFee && (
+                                    <Text text={`${feeAmount} ${btcUnit} (network fee)`} preset="sub" textCenter />
+                                )}
+                            </Column>
+                        </Column>
+                    </Column>
+                </Card>
+            </Row>
+            {involvedAssets}
+        </Column>
+    );
 }
 
 function Section({ title, children, extra }: { title: string; children?: React.ReactNode; extra?: React.ReactNode }) {
@@ -609,74 +636,74 @@ export default function SignPsbt({
         }
     }, [txInfo]);
 
-  const init = async () => {
-    let txError = '';
-    if (type === TxType.SIGN_TX) {
-      if (psbtHex && currentAccount.type === KEYRING_TYPE.KeystoneKeyring) {
-        try {
-          const toSignInputs = await wallet.formatOptionsToSignInputs(psbtHex, options);
-          psbtHex = await wallet.signPsbtWithHex(psbtHex, toSignInputs, false);
-        } catch (e) {
-          console.error(e);
-          txError = (e as any).message;
-          tools.toastError(txError);
+    const init = async () => {
+        let txError = '';
+        if (type === TxType.SIGN_TX) {
+            if (psbtHex && currentAccount.type === KEYRING_TYPE.KeystoneKeyring) {
+                try {
+                    const toSignInputs = await wallet.formatOptionsToSignInputs(psbtHex, options);
+                    psbtHex = await wallet.signPsbtWithHex(psbtHex, toSignInputs, false);
+                } catch (e) {
+                    console.error(e);
+                    txError = (e as any).message;
+                    tools.toastError(txError);
+                }
+            }
+        } else if (type === TxType.SEND_BITCOIN) {
+            if (sendBitcoinParams) {
+                try {
+                    const rawTxInfo = await prepareSendBTC({
+                        toAddressInfo: { address: sendBitcoinParams.toAddress, domain: '' },
+                        toAmount: sendBitcoinParams.satoshis,
+                        feeRate: sendBitcoinParams.feeRate,
+                        enableRBF: false,
+                        memo: sendBitcoinParams.memo,
+                        memos: sendBitcoinParams.memos,
+                        disableAutoAdjust: true
+                    });
+                    psbtHex = rawTxInfo.psbtHex;
+                } catch (e) {
+                    console.log(e);
+                    txError = (e as any).message;
+                    tools.toastError(txError);
+                }
+            }
+        } else if (type === TxType.SEND_ORDINALS_INSCRIPTION) {
+            if (sendInscriptionParams) {
+                try {
+                    const rawTxInfo = await prepareSendOrdinalsInscription({
+                        toAddressInfo: { address: sendInscriptionParams.toAddress, domain: '' },
+                        inscriptionId: sendInscriptionParams.inscriptionId,
+                        feeRate: sendInscriptionParams.feeRate,
+                        enableRBF: false
+                    });
+                    psbtHex = rawTxInfo.psbtHex;
+                } catch (e) {
+                    console.log(e);
+                    txError = (e as any).message;
+                    tools.toastError(txError);
+                }
+            }
+        } else if (type === TxType.SEND_RUNES) {
+            if (sendRunesParams) {
+                try {
+                    const rawTxInfo = await prepareSendRunes({
+                        toAddressInfo: { address: sendRunesParams.toAddress, domain: '' },
+                        runeid: sendRunesParams.runeid,
+                        runeAmount: sendRunesParams.amount,
+                        feeRate: sendRunesParams.feeRate,
+                        enableRBF: false
+                    });
+                    psbtHex = rawTxInfo.psbtHex;
+                } catch (e) {
+                    console.log(e);
+                    txError = (e as any).message;
+                    tools.toastError(txError);
+                }
+            }
+        } else if (type === TxType.SEND_ATOMICALS_INSCRIPTION) {
+            // not support
         }
-      }
-    } else if (type === TxType.SEND_BITCOIN) {
-      if (sendBitcoinParams) {
-        try {
-          const rawTxInfo = await prepareSendBTC({
-            toAddressInfo: { address: sendBitcoinParams.toAddress, domain: '' },
-            toAmount: sendBitcoinParams.satoshis,
-            feeRate: sendBitcoinParams.feeRate,
-            enableRBF: false,
-            memo: sendBitcoinParams.memo,
-            memos: sendBitcoinParams.memos,
-            disableAutoAdjust: true
-          });
-          psbtHex = rawTxInfo.psbtHex;
-        } catch (e) {
-          console.log(e);
-          txError = (e as any).message;
-          tools.toastError(txError);
-        }
-      }
-    } else if (type === TxType.SEND_ORDINALS_INSCRIPTION) {
-      if (sendInscriptionParams) {
-        try {
-          const rawTxInfo = await prepareSendOrdinalsInscription({
-            toAddressInfo: { address: sendInscriptionParams.toAddress, domain: '' },
-            inscriptionId: sendInscriptionParams.inscriptionId,
-            feeRate: sendInscriptionParams.feeRate,
-            enableRBF: false
-          });
-          psbtHex = rawTxInfo.psbtHex;
-        } catch (e) {
-          console.log(e);
-          txError = (e as any).message;
-          tools.toastError(txError);
-        }
-      }
-    } else if (type === TxType.SEND_RUNES) {
-      if (sendRunesParams) {
-        try {
-          const rawTxInfo = await prepareSendRunes({
-            toAddressInfo: { address: sendRunesParams.toAddress, domain: '' },
-            runeid: sendRunesParams.runeid,
-            runeAmount: sendRunesParams.amount,
-            feeRate: sendRunesParams.feeRate,
-            enableRBF: false
-          });
-          psbtHex = rawTxInfo.psbtHex;
-        } catch (e) {
-          console.log(e);
-          txError = (e as any).message;
-          tools.toastError(txError);
-        }
-      }
-    } else if (type === TxType.SEND_ATOMICALS_INSCRIPTION) {
-      // not support
-    }
 
         if (!psbtHex) {
             setLoading(false);
@@ -850,20 +877,20 @@ export default function SignPsbt({
         );
     }
 
-  return (
-    <Layout>
-      {header}
-      <Content>
-        <Column gap="xl">
-          {detailsComponent}
-          {/*this div is used to double gap*/}
-          <div />
-          {canChanged == false && (
-            <Section title="Network Fee:" extra={<BtcUsd sats={amountToSatoshis(networkFee)} />}>
-              <Text text={networkFee} />
-              <Text text={btcUnit} color="textDim" />
-            </Section>
-          )}
+    return (
+        <Layout>
+            {header}
+            <Content>
+                <Column gap="xl">
+                    {detailsComponent}
+                    {/*this div is used to double gap*/}
+                    <div />
+                    {canChanged == false && (
+                        <Section title="Network Fee:" extra={<BtcUsd sats={amountToSatoshis(networkFee)} />}>
+                            <Text text={networkFee} />
+                            <Text text={btcUnit} color="textDim" />
+                        </Section>
+                    )}
 
                     {canChanged == false && (
                         <Section title="Network Fee Rate:">
@@ -892,19 +919,28 @@ export default function SignPsbt({
                         </Section>
                     )}
 
-          <Section title="Features:">
-            <Row>
-              {txInfo.decodedPsbt.features.rbf ? (
-                <Text text="RBF" color="white" style={{ backgroundColor: 'green', padding: 5, borderRadius: 5 }} />
-              ) : (
-                <Text
-                  text="RBF"
-                  color="white"
-                  style={{ backgroundColor: '#F55454', padding: 5, borderRadius: 5, textDecoration: 'line-through' }}
-                />
-              )}
-            </Row>
-          </Section>
+                    <Section title="Features:">
+                        <Row>
+                            {txInfo.decodedPsbt.features.rbf ? (
+                                <Text
+                                    text="RBF"
+                                    color="white"
+                                    style={{ backgroundColor: 'green', padding: 5, borderRadius: 5 }}
+                                />
+                            ) : (
+                                <Text
+                                    text="RBF"
+                                    color="white"
+                                    style={{
+                                        backgroundColor: '#F55454',
+                                        padding: 5,
+                                        borderRadius: 5,
+                                        textDecoration: 'line-through'
+                                    }}
+                                />
+                            )}
+                        </Row>
+                    </Section>
 
                     {isValidData && (
                         <Column gap="xl">

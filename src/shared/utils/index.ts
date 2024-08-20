@@ -57,6 +57,7 @@ export function bigintToDecimal(n: bigint, decimals: number | string): number {
     const quotient = Number(n) / Number(divisor);
     return quotient;
 }
+
 export function addressShortner(address: string) {
     const str = address.slice(0, 4) + '...' + address.slice(address.length - 4, address.length);
     return str;
