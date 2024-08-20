@@ -1,6 +1,7 @@
 import en from 'antd/es/locale/en_US';
 import message from 'antd/lib/message';
 import ReactDOM from 'react-dom/client';
+import { IdleTimerProvider } from 'react-idle-timer';
 import { Provider } from 'react-redux';
 
 import browser from '@/background/webapi/browser';
@@ -47,10 +48,10 @@ if (
     window.screenLeft > window.screen.width ||
     window.screenTop > window.screen.height
 ) {
-    browser.runtime.getPlatformInfo(function (info) {
-        if (info.os === 'mac') {
-            const fontFaceSheet = new CSSStyleSheet();
-            fontFaceSheet.insertRule(`
+  browser.runtime.getPlatformInfo(function (info) {
+    if (info.os === 'mac') {
+      const fontFaceSheet = new CSSStyleSheet();
+      fontFaceSheet.insertRule(`
         @keyframes redraw {
           0% {
             opacity: 1;
@@ -77,40 +78,41 @@ const portMessageChannel = new PortMessage();
 portMessageChannel.connect('popup');
 
 const wallet: Record<string, any> = new Proxy(
-    {},
-    {
-        get(_, key) {
-            switch (key) {
-                case 'openapi':
-                    return new Proxy(
-                        {},
-                        {
-                            get(_, key) {
-                                if (typeof key !== 'string') throw new Error('Invalid key');
+  {},
+  {
+    get(_, key) {
+      switch (key) {
+        case 'openapi':
+          return new Proxy(
+            {},
+            {
+              get(_, key) {
+                  if (typeof key !== 'string') throw new Error('Invalid key');
 
-                                return function (...params: any) {
-                                    return portMessageChannel.request({
-                                        type: 'openapi',
-                                        method: key,
-                                        params
-                                    });
-                                };
-                            }
-                        }
-                    );
-                default:
-                    return function (...params: any) {
-                        if (typeof key !== 'string') throw new Error('Invalid key');
 
-                        return portMessageChannel.request({
-                            type: 'controller',
-                            method: key,
-                            params
-                        });
-                    };
+                  return function (...params: any) {
+                  return portMessageChannel.request({
+                    type: 'openapi',
+                    method: key,
+                    params
+                  });
+                };
+              }
             }
-        }
+          );
+        default:
+          return function (...params: any) {
+              if (typeof key !== 'string') throw new Error('Invalid key');
+
+              return portMessageChannel.request({
+              type: 'controller',
+              method: key,
+              params
+            });
+          };
+      }
     }
+  }
 );
 
 portMessageChannel.listen(async (data) => {
@@ -155,16 +157,21 @@ function Updaters() {
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(
-    <Provider store={store}>
-        <WalletProvider {...antdConfig} wallet={wallet as any}>
-            <ActionComponentProvider>
-                <AppDimensions>
-                    <PriceProvider>
-                        <Updaters />
-                        <AsyncMainRoute />
-                    </PriceProvider>
-                </AppDimensions>
-            </ActionComponentProvider>
-        </WalletProvider>
-    </Provider>
+  <Provider store={store}>
+    <WalletProvider {...antdConfig} wallet={wallet as any}>
+      <ActionComponentProvider>
+        <AppDimensions>
+          <PriceProvider>
+            <IdleTimerProvider
+              onAction={() => {
+                wallet.setLastActiveTime();
+              }}>
+              <Updaters />
+              <AsyncMainRoute />
+            </IdleTimerProvider>
+          </PriceProvider>
+        </AppDimensions>
+      </ActionComponentProvider>
+    </WalletProvider>
+  </Provider>
 );

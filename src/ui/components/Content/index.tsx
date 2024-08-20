@@ -12,12 +12,12 @@ export interface ContentProps extends BaseViewProps {
 }
 
 const $contentStyle = {
-    backgroundColor: '#1C1919',
-    display: 'flex',
-    flex: 1,
-    flexDirection: 'column',
-    justifyItems: 'center',
-    gap: spacingGap.lg,
+  backgroundColor: '#070606',
+  display: 'flex',
+  flex: 1,
+  flexDirection: 'column',
+  justifyItems: 'center',
+  gap: spacingGap.lg,
 
     alignSelf: 'stretch',
     overflowY: 'auto',

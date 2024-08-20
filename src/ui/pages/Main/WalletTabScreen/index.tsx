@@ -1,12 +1,10 @@
 import { Tabs, Tooltip } from 'antd';
-import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
+import React, { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 
-import { AddressFlagType, ChainType, KEYRING_TYPE } from '@/shared/constant';
+import { AddressFlagType, ChainType } from '@/shared/constant';
 import { checkAddressFlag } from '@/shared/utils';
-import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
-import { Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
+import { AddressBar, Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
-import { AddressBar } from '@/ui/components/AddressBar';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { Button } from '@/ui/components/Button';
 import { DisableUnconfirmedsPopover } from '@/ui/components/DisableUnconfirmedPopover';
@@ -19,13 +17,13 @@ import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import {
-    useBlockstreamUrl,
-    useBTCUnit,
-    useChain,
-    useChainType,
-    useSkipVersionCallback,
-    useVersionInfo,
-    useWalletConfig
+  useBlockstreamUrl,
+  useBTCUnit,
+  useChain,
+  useChainType,
+  useSkipVersionCallback,
+  useVersionInfo,
+  useWalletConfig
 } from '@/ui/state/settings/hooks';
 import { useFetchUtxosCallback, useSafeBalance } from '@/ui/state/transactions/hooks';
 import { useAssetTabKey, useResetUiTxCreateScreen } from '@/ui/state/ui/hooks';
@@ -41,6 +39,7 @@ import { OPNetList } from './OPNetList';
 import { OrdinalsTab } from './OrdinalsTab';
 import { RunesList } from './RunesList';
 import BigNumber from 'bignumber.js';
+import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
 
 const $noBreakStyle: CSSProperties = {
     whiteSpace: 'nowrap',
@@ -142,28 +141,51 @@ export default function WalletTabScreen() {
         void run();
     }, []);
 
-    const tabItems = [
-        {
-            key: AssetTabKey.OP_NET,
-            label: 'OP_NET',
-            children: <OPNetList />
-        },
-        {
-            key: AssetTabKey.ORDINALS,
-            label: 'Ordinals',
-            children: <OrdinalsTab />
-        },
-        {
-            key: AssetTabKey.ATOMICALS,
-            label: 'Atomicals',
-            children: <AtomicalsTab />
-        },
-        {
-            key: AssetTabKey.RUNES,
-            label: 'Runes',
-            children: <RunesList />
-        }
+  let tabItems = [
+      {
+          key: AssetTabKey.OP_NET,
+          label: 'OP_NET',
+          children: <OPNetList />
+      },
+    {
+      key: AssetTabKey.ORDINALS,
+      label: 'Ordinals',
+      children: <OrdinalsTab />
+    },
+    {
+      key: AssetTabKey.ATOMICALS,
+      label: 'Atomicals',
+      children: <AtomicalsTab />
+    },
+    {
+      key: AssetTabKey.RUNES,
+      label: 'Runes',
+      children: <RunesList />
+    }
+  ];
+
+  if (chainType !== ChainType.BITCOIN_MAINNET) {
+    tabItems = [
+      {
+        key: AssetTabKey.ORDINALS,
+        label: 'Ordinals',
+        children: <OrdinalsTab />
+      },
+      {
+        key: AssetTabKey.RUNES,
+        label: 'Runes',
+        children: <RunesList />
+      }
     ];
+  }
+
+  const finalAssetTabKey = useMemo(() => {
+    if (chainType !== ChainType.BITCOIN_MAINNET && assetTabKey === AssetTabKey.ATOMICALS) {
+      return AssetTabKey.ORDINALS;
+    } else {
+      return assetTabKey;
+    }
+  }, [assetTabKey, chainType]);
 
     const blockstreamUrl = useBlockstreamUrl();
     const resetUiTxCreateScreen = useResetUiTxCreateScreen();
@@ -214,150 +236,152 @@ export default function WalletTabScreen() {
                 }
             />
 
-            <Content>
-                <Column gap="xl">
-                    {currentKeyring.type === KEYRING_TYPE.HdKeyring && <AccountSelect />}
-                    {currentKeyring.type === KEYRING_TYPE.KeystoneKeyring && <AccountSelect />}
-                    {walletConfig.chainTip && <Text text={walletConfig.chainTip} color="danger" textCenter />}
+      <Content>
+        <AccountSelect />
 
-                    {walletConfig.statusMessage && <Text text={walletConfig.statusMessage} color="danger" textCenter />}
+        <Column gap="lg2" mt="md">
+          {(walletConfig.chainTip || walletConfig.statusMessage) && (
+            <Column
+              py={'lg'}
+              px={'md'}
+              gap={'lg'}
+              style={{
+                borderRadius: 12,
+                border: '1px solid rgba(245, 84, 84, 0.35)',
+                background: 'rgba(245, 84, 84, 0.08)'
+              }}>
+              {walletConfig.chainTip && <Text text={walletConfig.chainTip} color="text" textCenter />}
+              {walletConfig.statusMessage && <Text text={walletConfig.statusMessage} color="danger" textCenter />}
+            </Column>
+          )}
 
-                    <Tooltip
-                        placement={'bottom'}
-                        title={
-                            !loadingFetch ? (
-                                <>
-                                    <Row justifyBetween>
-                                        <span style={$noBreakStyle}>{'Available '}</span>
-                                        <span style={$noBreakStyle}>{` ${availableAmount} ${btcUnit}`}</span>
-                                    </Row>
-                                    <Row justifyBetween>
-                                        <span style={$noBreakStyle}>{'Unavailable '}</span>
-                                        <span style={$noBreakStyle}>{` ${unavailableAmount} ${btcUnit}`}</span>
-                                    </Row>
-                                    <Row justifyBetween>
-                                        <span style={$noBreakStyle}>{'Total '}</span>
-                                        <span style={$noBreakStyle}>{` ${totalAmount} ${btcUnit}`}</span>
-                                    </Row>
-                                </>
-                            ) : (
-                                <>
-                                    <Row justifyBetween>
-                                        <span style={$noBreakStyle}>{'Available '}</span>
-                                        <span style={$noBreakStyle}>{'loading...'}</span>
-                                    </Row>
-                                    <Row justifyBetween>
-                                        <span style={$noBreakStyle}>{'Unavailable '}</span>
-                                        <span style={$noBreakStyle}>{'loading...'}</span>
-                                    </Row>
-                                    <Row justifyBetween>
-                                        <span style={$noBreakStyle}>{'Total '}</span>
-                                        <span style={$noBreakStyle}>{` ${totalAmount} ${btcUnit}`}</span>
-                                    </Row>
-                                </>
-                            )
-                        }
-                        onOpenChange={() => {
-                            if (!ref.current.fetchedUtxo[currentAccount.address]) {
-                                ref.current.fetchedUtxo[currentAccount.address] = { loading: true };
-                                setLoadingFetch(true);
-                                fetchUtxos().finally(() => {
-                                    ref.current.fetchedUtxo[currentAccount.address].loading = false;
-                                    setLoadingFetch(false);
-                                });
-                            }
-                        }}
-                        overlayStyle={{
-                            fontSize: fontSizes.xs
-                        }}>
-                        <div>
-                            <Text
-                                text={
-                                    `${balanceValue}  ${btcUnit}`
-                                }
-                                preset="title-bold"
-                                textCenter
-                                size="xxxl"
-                            />
-                        </div>
-                    </Tooltip>
-                    <BtcUsd
-                        sats={amountToSatoshis(balanceValue)}
-                        textCenter
-                        size={'md'}
-                        style={{
-                            marginTop: -16,
-                            marginBottom: -8
-                        }}
-                    />
+          <Tooltip
+            placement={'bottom'}
+            title={
+              !loadingFetch ? (
+                <>
+                  <Row justifyBetween>
+                    <span style={$noBreakStyle}>{'Available '}</span>
+                    <span style={$noBreakStyle}>{` ${availableAmount} ${btcUnit}`}</span>
+                  </Row>
+                  <Row justifyBetween>
+                    <span style={$noBreakStyle}>{'Unavailable '}</span>
+                    <span style={$noBreakStyle}>{` ${unavailableAmount} ${btcUnit}`}</span>
+                  </Row>
+                  <Row justifyBetween>
+                    <span style={$noBreakStyle}>{'Total '}</span>
+                    <span style={$noBreakStyle}>{` ${totalAmount} ${btcUnit}`}</span>
+                  </Row>
+                </>
+              ) : (
+                <>
+                  <Row justifyBetween>
+                    <span style={$noBreakStyle}>{'Available '}</span>
+                    <span style={$noBreakStyle}>{'loading...'}</span>
+                  </Row>
+                  <Row justifyBetween>
+                    <span style={$noBreakStyle}>{'Unavailable '}</span>
+                    <span style={$noBreakStyle}>{'loading...'}</span>
+                  </Row>
+                  <Row justifyBetween>
+                    <span style={$noBreakStyle}>{'Total '}</span>
+                    <span style={$noBreakStyle}>{` ${totalAmount} ${btcUnit}`}</span>
+                  </Row>
+                </>
+              )
+            }
+            onOpenChange={(v) => {
+              if (!ref.current.fetchedUtxo[currentAccount.address]) {
+                ref.current.fetchedUtxo[currentAccount.address] = { loading: true };
+                setLoadingFetch(true);
+                fetchUtxos().finally(() => {
+                  ref.current.fetchedUtxo[currentAccount.address].loading = false;
+                  setLoadingFetch(false);
+                });
+              }
+            }}
+            overlayStyle={{
+              fontSize: fontSizes.xs
+            }}>
+            <div>
+              <Text text={'TOTAL BALANCE'} textCenter color="textDim" />
+              <Text text={balanceValue + ' ' + btcUnit} preset="title-bold" textCenter size="xxxl" my="sm" />
+            </div>
+          </Tooltip>
+          <BtcUsd
+            sats={amountToSatoshis(balanceValue)}
+            textCenter
+            size={'md'}
+            style={{
+              marginTop: -16,
+              marginBottom: -8
+            }}
+          />
 
-                    <Row itemsCenter justifyCenter>
-                        <AddressBar />
-                        <Row
-                            style={{ marginLeft: 8 }}
-                            itemsCenter
-                            onClick={() => {
-                                window.open(`${blockstreamUrl}/address/${currentAccount.address}`);
-                            }}>
-                            <Text text={'View History'} size="xs" />
-                            <Icon icon="link" size={fontSizes.xs} />
-                        </Row>
-                    </Row>
+        <Row itemsCenter justifyCenter>
+            <AddressBar />
+            <Row
+                style={{ marginLeft: 8 }}
+                itemsCenter
+                onClick={() => {
+                    window.open(`${blockstreamUrl}/address/${currentAccount.address}`);
+                }}>
+                <Text text={'View History'} size="xs" />
+                <Icon icon="link" size={fontSizes.xs} />
+            </Row>
+        </Row>
 
-                    <Row justifyBetween>
-                        <Button
-                            text="Receive"
-                            preset="default"
-                            icon="receive"
-                            onClick={(e) => {
-                                navigate('ReceiveScreen');
-                            }}
-                            full
-                        />
+          <Row justifyCenter mt="md">
+            <Button
+              text="Receive"
+              preset="home"
+              icon="receive"
+              onClick={(e) => {
+                navigate('ReceiveScreen');
+              }}
+            />
 
-                        <Button
-                            text="Send"
-                            preset="default"
-                            icon="send"
-                            onClick={(e) => {
-                                resetUiTxCreateScreen();
-                                navigate('TxCreateScreen');
-                            }}
-                            full
-                        />
-                        {chain.enum == 'BITCOIN_REGTEST' && (
-                            <Button
-                                text="Faucet"
-                                preset="default"
-                                icon="faucet"
-                                onClick={(e) => {
-                                    window.open('https://faucet.opnet.org/', '_blank');
-                                }}
-                                full
-                            />
-                        )}
-                        {chainType === ChainType.BITCOIN_MAINNET && (
-                            <Button
-                                text="Buy"
-                                preset="default"
-                                icon="bitcoin"
-                                onClick={(e) => {
-                                    setBuyBtcModalVisible(true);
-                                }}
-                                full
-                            />
-                        )}
-                    </Row>
+            <Button
+              text="Send"
+              preset="home"
+              icon="send"
+              onClick={(e) => {
+                resetUiTxCreateScreen();
+                navigate('TxCreateScreen');
+              }}
+              full
+            />
 
-                    <Tabs
-                        size={'small'}
-                        defaultActiveKey={assetTabKey as unknown as string}
-                        activeKey={assetTabKey as unknown as string}
-                        items={tabItems as unknown as any[]}
-                        onTabClick={(key) => {
-                            dispatch(uiActions.updateAssetTabScreen({ assetTabKey: key as unknown as AssetTabKey }));
-                        }}
-                    />
+                  <Button
+                      text="Faucet"
+                      preset="default"
+                      icon="faucet"
+                      onClick={() => {
+                          window.open('https://faucet.opnet.org/', '_blank');
+                      }}
+                      full
+                      disabled={chain.enum !== ChainType.BITCOIN_REGTEST}
+                  />
+            <Button
+              text="Buy"
+              preset="home"
+              icon="bitcoin"
+              onClick={(e) => {
+                setBuyBtcModalVisible(true);
+              }}
+              disabled={chainType !== ChainType.BITCOIN_MAINNET}
+            />
+          </Row>
+
+          <Tabs
+            size={'small'}
+            defaultActiveKey={finalAssetTabKey as unknown as string}
+            activeKey={finalAssetTabKey as unknown as string}
+            items={tabItems as unknown as any[]}
+            onTabClick={(key) => {
+              dispatch(uiActions.updateAssetTabScreen({ assetTabKey: key as unknown as AssetTabKey }));
+            }}
+          />
 
                     {/*{tabItems[assetTabKey].children}*/}
                 </Column>

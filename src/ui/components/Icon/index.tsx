@@ -8,11 +8,11 @@ export const svgRegistry = {
     send: './images/icons/arrow-left-right.svg',
     receive: './images/icons/qrcode.svg',
 
-    right: './images/icons/arrow-right.svg',
-    left: './images/icons/arrow-left.svg',
-    down: './images/icons/down.svg',
-    up: './images/icons/up.svg',
-    link: './images/icons/arrow-up-right.svg',
+  right: './images/icons/right.svg',
+  left: './images/icons/arrow-left.svg',
+  down: './images/icons/down.svg',
+  up: './images/icons/up.svg',
+  link: './images/icons/arrow-up-right.svg',
 
     discord: './images/icons/discord.svg',
     twitter: './images/icons/twitter.svg',
@@ -36,21 +36,23 @@ export const svgRegistry = {
     copy: './images/icons/copy-solid.svg',
     close: './images/icons/xmark.svg',
 
-    'circle-check': '/images/icons/circle-check.svg',
-    pencil: '/images/icons/pencil.svg',
-    'circle-info': '/images/icons/circle-info.svg',
-    bitcoin: './images/icons/bitcoin.svg',
-    'circle-question': '/images/icons/circle-question.svg',
-    split: '/images/icons/scissors.svg',
-    ordinals: '/images/icons/ordinals.svg',
-    atomicals: '/images/icons/atomicals.svg',
-    info: '/images/icons/info.svg',
-    warning: '/images/icons/warning.svg',
-    alert: '/images/icons/alert.svg',
-    burn: ' /images/icons/burn.svg',
-    risk: '/images/icons/risk.svg',
+  'circle-check': '/images/icons/circle-check.svg',
+  pencil: '/images/icons/pencil.svg',
+  'circle-info': '/images/icons/circle-info.svg',
+  bitcoin: './images/icons/bitcoin.svg',
+  'circle-question': '/images/icons/circle-question.svg',
+  split: '/images/icons/scissors.svg',
+  ordinals: '/images/icons/ordinals.svg',
+  atomicals: '/images/icons/atomicals.svg',
+  info: '/images/icons/info.svg',
+  warning: '/images/icons/warning.svg',
+  alert: '/images/icons/alert.svg',
+  burn: ' /images/icons/burn.svg',
+  risk: '/images/icons/risk.svg',
     swap: '/images/icons/swap.svg',
-    faucet: '/images/icons/faucet.svg'
+    faucet: '/images/icons/faucet.svg',
+
+  overview: '/images/icons/overview.svg'
 };
 
 const iconImgList: Array<IconTypes> = ['success', 'delete', 'btc'];

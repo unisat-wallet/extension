@@ -45,17 +45,15 @@ export function useAddressType() {
 }
 
 export function useNetworkType() {
-    const accountsState = useSettingsState();
-    if (
-        accountsState.chainType === ChainType.BITCOIN_MAINNET ||
-        accountsState.chainType === ChainType.FRACTAL_BITCOIN_MAINNET
-    ) {
-        return NetworkType.MAINNET;
-    } else if (accountsState.chainType === ChainType.BITCOIN_REGTEST) {
-        return NetworkType.REGTEST;
-    } else {
-        return NetworkType.TESTNET;
-    }
+  const accountsState = useSettingsState();
+  const chain = CHAINS_MAP[accountsState.chainType];
+  if (chain) {
+    return chain.networkType;
+  } else if (accountsState.chainType === ChainType.BITCOIN_REGTEST) {
+      return NetworkType.REGTEST;
+  } else {
+    return NetworkType.TESTNET;
+  }
 }
 
 export function useChangeNetworkTypeCallback() {
@@ -113,6 +111,7 @@ export function useBlockstreamUrl() {
     const chainType = useChainType();
     return CHAINS_MAP[chainType].mempoolSpaceUrl;
 }
+
 export function useBTCUnit() {
     const chainType = useChainType();
     return CHAINS_MAP[chainType].unit;
@@ -186,4 +185,9 @@ export function useSkipVersionCallback() {
             dispatch(settingsActions.updateSettings({ skippedVersion: version }));
         });
     }, []);
+}
+
+export function useAutoLockTimeId() {
+  const state = useSettingsState();
+  return state.autoLockTimeId;
 }

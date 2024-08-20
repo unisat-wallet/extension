@@ -96,6 +96,7 @@
         "koa-compose": "^4.1.0",
         "lodash-es": "^4.17.21",
         "loglevel": "^1.8.0",
+        "react-idle-timer": "^5.7.2",
         "mini-css-extract-plugin": "^2.4.5",
         "opnet": "1.0.48",
         "postcss": "^8.4.39",
@@ -146,7 +147,8 @@
         "webpack-dev-server": "^4.6.0",
         "webpack-extension-reloader": "^1.1.4",
         "webpack-manifest-plugin": "^4.0.2",
-        "workbox-webpack-plugin": "^6.4.1"
+        "workbox-webpack-plugin": "^6.4.1",
+        "zxcvbn": "^4.4.2"
     },
     "browserslist": {
         "production": [

@@ -43,56 +43,51 @@ const flowContext = flow
             }
         }
 
-        return next();
-    })
-    .use(async (ctx, next) => {
-        // check connect
-        const {
-            request: {
-                session: { origin, name, icon }
-            },
-            mapMethod
-        } = ctx;
-        if (!Reflect.getMetadata('SAFE', providerController, mapMethod)) {
-            if (!permissionService.hasPermission(origin)) {
-                ctx.request.requestedApproval = true;
-                await notificationService.requestApproval(
-                    {
-                        params: {
-                            method: 'connect',
-                            data: {},
-                            session: { origin, name, icon }
-                        },
-                        approvalComponent: 'Connect'
-                    },
-                    { height: windowHeight }
-                );
-                permissionService.addConnectedSite(origin, name, icon, CHAINS_ENUM.BTC);
-            }
-        } else {
-            if (!permissionService.hasPermission(origin)) {
-                //   connect wallet first
-                if (['getAccounts'].includes(mapMethod)) {
-                    return [];
-                } else {
-                    throw ethErrors.provider.unauthorized();
-                }
-            }
+    return next();
+  })
+  .use(async (ctx, next) => {
+    // check connect
+    const {
+      request: {
+        session: { origin, name, icon }
+      },
+      mapMethod
+    } = ctx;
+    // if (!Reflect.getMetadata('SAFE', providerController, mapMethod)) {
+    if(!['getNetwork','switchNetwork','getChain','switchChain'].includes(mapMethod)){
+      if (!permissionService.hasPermission(origin)) {
+        if (['getAccounts'].includes(mapMethod)) {
+          return [];
         }
-
-        return next();
-    })
-    .use(async (ctx, next) => {
-        // check need approval
-        const {
-            request: {
-                data: { params, method },
-                session: { origin, name, icon }
+        ctx.request.requestedApproval = true;
+        await notificationService.requestApproval(
+          {
+            params: {
+              method: 'connect',
+              data: {},
+              session: { origin, name, icon }
             },
-            mapMethod
-        } = ctx;
-        const [approvalType, condition, options = {}] =
-            Reflect.getMetadata('APPROVAL', providerController, mapMethod) || [];
+            approvalComponent: 'Connect'
+          },
+          { height: windowHeight }
+        );
+        permissionService.addConnectedSite(origin, name, icon, CHAINS_ENUM.BTC);
+      }
+    }
+
+    return next();
+  })
+  .use(async (ctx, next) => {
+    // check need approval
+    const {
+      request: {
+        data: { params, method },
+        session: { origin, name, icon }
+      },
+      mapMethod
+    } = ctx;
+    const [approvalType, condition, options = {}] =
+    Reflect.getMetadata('APPROVAL', providerController, mapMethod) || [];
 
         if (approvalType && (!condition || !condition(ctx.request))) {
             ctx.request.requestedApproval = true;
@@ -133,50 +128,50 @@ const flowContext = flow
             })
         );
 
-        requestDefer
-            .then((result) => {
-                if (isSignApproval(approvalType)) {
-                    eventBus.emit(EVENTS.broadcastToUI, {
-                        method: EVENTS.SIGN_FINISHED,
-                        params: {
-                            success: true,
-                            data: result
-                        }
-                    });
-                }
-                return result;
-            })
-            .catch((e: any) => {
-                if (isSignApproval(approvalType)) {
-                    eventBus.emit(EVENTS.broadcastToUI, {
-                        method: EVENTS.SIGN_FINISHED,
-                        params: {
-                            success: false,
-                            errorMsg: JSON.stringify(e)
-                        }
-                    });
-                }
-            });
-
-        async function requestApprovalLoop({ uiRequestComponent, ...rest }) {
-            ctx.request.requestedApproval = true;
-            const res = await notificationService.requestApproval({
-                approvalComponent: uiRequestComponent,
-                params: rest,
-                origin,
-                approvalType
-            });
-            if (res.uiRequestComponent) {
-                return await requestApprovalLoop(res);
-            } else {
-                return res;
+    requestDefer
+      .then((result) => {
+        if (isSignApproval(approvalType)) {
+          eventBus.emit(EVENTS.broadcastToUI, {
+            method: EVENTS.SIGN_FINISHED,
+            params: {
+              success: true,
+              data: result
             }
+          });
         }
+        return result;
+      })
+      .catch((e: any) => {
+        if (isSignApproval(approvalType)) {
+          eventBus.emit(EVENTS.broadcastToUI, {
+            method: EVENTS.SIGN_FINISHED,
+            params: {
+              success: false,
+              errorMsg: JSON.stringify(e)
+            }
+          });
+        }
+      });
 
-        if (uiRequestComponent) {
-            ctx.request.requestedApproval = true;
-            return await requestApprovalLoop({ uiRequestComponent, ...rest });
-        }
+    async function requestApprovalLoop({ uiRequestComponent, ...rest }) {
+      ctx.request.requestedApproval = true;
+      const res = await notificationService.requestApproval({
+        approvalComponent: uiRequestComponent,
+        params: rest,
+        origin,
+        approvalType
+      });
+      if (res.uiRequestComponent) {
+        return await requestApprovalLoop(res);
+      } else {
+        return res;
+      }
+    }
+
+    if (uiRequestComponent) {
+      ctx.request.requestedApproval = true;
+      return await requestApprovalLoop({ uiRequestComponent, ...rest });
+    }
 
         return requestDefer;
     })

@@ -2,7 +2,8 @@ import { Row } from '../Row';
 import { Text } from '../Text';
 
 export interface AssetTagProps {
-    type: 'BRC20' | 'ARC20' | 'Inscription' | 'Unconfirmed' | 'RUNES';
+  type: 'BRC20' | 'ARC20' | 'Inscription' | 'Unconfirmed' | 'RUNES';
+  small?: boolean;
 }
 
 const colors = {
@@ -14,10 +15,10 @@ const colors = {
 };
 
 export default function AssetTag(props: AssetTagProps) {
-    const { type } = props;
-    return (
-        <Row style={{ backgroundColor: colors[type], borderRadius: 5 }} px="md" py="xs">
-            <Text text={type} size="xs" />
-        </Row>
-    );
+  const { type, small } = props;
+  return (
+    <Row style={{ backgroundColor: colors[type], borderRadius: small ? 4 : 5 }} px={small?'sm': 'md'} py={small?'zero': 'xs'} itemsCenter>
+      <Text text={type} size={small ? 'xxs' : 'xs'} />
+    </Row>
+  );
 }

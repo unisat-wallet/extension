@@ -1,3 +1,4 @@
+
 import { permissionService, sessionService } from '@/background/service';
 import { CHAINS, CHAINS_MAP, NETWORK_TYPES, VERSION } from '@/shared/constant';
 
@@ -42,7 +43,7 @@ class ProviderController extends BaseController {
         sessionService.broadcastEvent('accountsChanged', account);
         const connectSite = permissionService.getConnectedSite(origin);
         if (connectSite) {
-            const network = wallet.getNetworkName();
+            const network = wallet.getLegacyNetworkName();
             sessionService.broadcastEvent(
                 'networkChanged',
                 {
@@ -55,22 +56,25 @@ class ProviderController extends BaseController {
         return account;
     };
 
-    @Reflect.metadata('SAFE', true)
-    getAccounts = async ({ session: { origin } }) => {
-        if (!permissionService.hasPermission(origin)) {
-            return [];
-        }
+  disconnect = async ({ session: { origin } }) => {
+    wallet.removeConnectedSite(origin)
+  };
+
+  @Reflect.metadata('SAFE', true)
+  getAccounts = async ({ session: { origin } }) => {
+    if (!permissionService.hasPermission(origin)) {
+      return [];
+    }
 
         const _account = await wallet.getCurrentAccount();
         const account = _account ? [_account.address] : [];
         return account;
     };
 
-    @Reflect.metadata('SAFE', true)
-    getNetwork = async () => {
-        const networkType = wallet.getNetworkType();
-        return NETWORK_TYPES[networkType].name;
-    };
+  @Reflect.metadata('SAFE', true)
+  getNetwork = async () => {
+    return wallet.getLegacyNetworkName()
+  };
 
     @Reflect.metadata('APPROVAL', ['SwitchNetwork', (req) => {
         const network = req.data.params.network;

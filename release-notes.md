@@ -1,5 +1,27 @@
 # UniSat Wallet Release Notes
 
+## v1.4.2
+
+- Support Testnet4
+- Support Signet
+- Fixed the issue of the app crashing when transferring Runes with multiple UTXOs
+- Fixed the issue with the display of the available balance of partially-colored funds during an ARC20 transfer
+- Fixed the issue with the incorrect display of HdPath in Keystone
+- Audit fix: Removed private methods from the browser plugin object to enhance security
+- Audit fix: Methods such as getPublicKey, getNetwork, switchNetwork are now only accessible after authorization for improved security.
+
+## v1.4.1
+
+- Support for setting transfer fees with one decimal place
+- Added display of USD prices for BTC、BRC20 and Runes
+- Real-time fee displays for various buy BTC options
+- Fix unisat.sendRunes
+- Fix unisat.multiSginPsbt
+
+## v1.4.0
+
+- Support fractalbitcoin
+
 ## v1.3.4
 
 - Compatible with partial token coloring for ARC20

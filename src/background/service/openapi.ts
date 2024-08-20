@@ -3,26 +3,26 @@ import randomstring from 'randomstring';
 import { createPersistStore } from '@/background/utils';
 import { CHAINS_MAP, CHANNEL, VERSION } from '@/shared/constant';
 import {
-    AddressRunesTokenSummary,
-    AddressSummary,
-    AddressTokenSummary,
-    AppSummary,
-    Arc20Balance,
-    BitcoinBalance,
-    BtcPrice,
-    DecodedPsbt,
-    FeeSummary,
-    InscribeOrder,
-    Inscription,
-    InscriptionSummary,
-    RuneBalance,
-    TickPriceItem,
-    TokenBalance,
-    TokenTransfer,
-    UTXO,
-    UTXO_Detail,
-    VersionDetail,
-    WalletConfig
+  AddressRunesTokenSummary,
+  AddressSummary,
+  AddressTokenSummary,
+  AppSummary,
+  Arc20Balance,
+  BitcoinBalance,
+  BtcPrice,
+  DecodedPsbt,
+  FeeSummary,
+  InscribeOrder,
+  Inscription,
+  InscriptionSummary,
+  RuneBalance,
+  TickPriceItem,
+  TokenBalance,
+  TokenTransfer,
+  UTXO,
+  UTXO_Detail,
+  VersionDetail,
+  WalletConfig
 } from '@/shared/types';
 import Web3API from '@/shared/web3/Web3API';
 
@@ -76,17 +76,16 @@ export class OpenApiService {
             this.store.deviceId = randomstring.generate(12);
         }
 
-        try {
-            const config = await this.getWalletConfig();
-            this.config = config;
-            if (config.endpoint && config.endpoint !== this.endpoint) {
-                this.endpoint = config.endpoint;
-            }
-            console.log('OpenApiService init success', config);
-        } catch (e) {
-            console.error(e);
-        }
-    };
+    try {
+      const config = await this.getWalletConfig();
+      this.config = config;
+      if (config.endpoint && config.endpoint !== this.endpoint) {
+        this.endpoint = config.endpoint;
+      }
+    } catch (e) {
+      console.error(e);
+    }
+  };
 
     setClientAddress = (token: string, flag: number) => {
         this.clientAddress = token;
@@ -276,16 +275,16 @@ export class OpenApiService {
             this.btcPriceCache = result.price;
             this.btcPriceUpdateTime = Date.now();
 
-            return result.price;
-        } finally {
-            this.isRefreshingBtcPrice = false;
-        }
+      return result.price;
+    } finally {
+      this.isRefreshingBtcPrice = false;
     }
+  }
 
-    async getBtcPrice(): Promise<number> {
-        while (this.isRefreshingBtcPrice) {
-            await new Promise((resolve) => setTimeout(resolve, 100));
-        }
+  async getBtcPrice(): Promise<number> {
+    while (this.isRefreshingBtcPrice) {
+      await new Promise((resolve) => setTimeout(resolve, 100));
+    }
 
         //   30s cache
         if (this.btcPriceCache && Date.now() - this.btcPriceUpdateTime < 30 * 1000) {
@@ -300,18 +299,18 @@ export class OpenApiService {
         return this.refreshBtcPrice();
     }
 
-    async getBrc20sPrice(ticks: string[]) {
-        if (ticks.length < 0) {
-            return {};
-        }
-        const tickLine = ticks.join('');
-        if (!tickLine) return {};
+  async getBrc20sPrice(ticks: string[]) {
+    if (ticks.length < 0) {
+      return {};
+    }
+    const tickLine = ticks.join('');
+    if (!tickLine) return {};
 
-        try {
-            while (this.currentRequestBrc20[tickLine]) {
-                await new Promise((resolve) => setTimeout(resolve, 100));
-            }
-            this.currentRequestBrc20[tickLine] = true;
+    try {
+      while (this.currentRequestBrc20[tickLine]) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      this.currentRequestBrc20[tickLine] = true;
 
             const result = {} as { [key: string]: TickPriceItem };
 
@@ -345,20 +344,20 @@ export class OpenApiService {
         }
     }
 
-    async getRunesPrice(ticks: string[]) {
-        if (ticks.length < 0) {
-            return {};
-        }
-        const tickLine = ticks.join('');
-        if (!tickLine) return {};
+  async getRunesPrice(ticks: string[]) {
+    if (ticks.length < 0) {
+      return {};
+    }
+    const tickLine = ticks.join('');
+    if (!tickLine) return {};
 
-        try {
-            while (this.currentRequestRune[tickLine]) {
-                await new Promise((resolve) => setTimeout(resolve, 100));
-            }
-            this.currentRequestRune[tickLine] = true;
+    try {
+      while (this.currentRequestRune[tickLine]) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      this.currentRequestRune[tickLine] = true;
 
-            const result = {} as { [key: string]: TickPriceItem };
+      const result = {} as { [key: string]: TickPriceItem };
 
             for (let i = 0; i < ticks.length; i += 1) {
                 const tick = ticks[i];
@@ -523,9 +522,13 @@ export class OpenApiService {
         });
     }
 
-    async getAddressRunesTokenSummary(address: string, runeid: string): Promise<AddressRunesTokenSummary> {
-        return this.httpGet(`/v5/runes/token-summary?address=${address}&runeid=${runeid}`, {});
-    }
+  async getAddressRunesTokenSummary(address: string, runeid: string): Promise<AddressRunesTokenSummary> {
+    return this.httpGet(`/v5/runes/token-summary?address=${address}&runeid=${runeid}`, {});
+  }
+
+  async getAddressRecentHistory(params: { address: string, start: number, limit: number }) {
+    return this.httpGet('/v5/address/history', params);
+  }
 }
 
 export default new OpenApiService();

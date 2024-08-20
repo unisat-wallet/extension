@@ -1,9 +1,9 @@
-import { useCallback, useEffect, useRef } from 'react';
+import React, { useCallback, useEffect, useRef } from 'react';
 import { HashRouter, Route, Routes, useNavigate as useNavigateOrigin } from 'react-router-dom';
 
 import { LoadingOutlined } from '@ant-design/icons';
 
-import { Content, Icon, Layout } from '../components';
+import { Content, Icon } from '../components';
 import { accountActions } from '../state/accounts/reducer';
 import { useIsReady, useIsUnlocked } from '../state/global/hooks';
 import { globalActions } from '../state/global/reducer';
@@ -69,55 +69,55 @@ import TxSuccessScreen from './Wallet/TxSuccessScreen';
 import UnavailableUtxoScreen from './Wallet/UnavailableUtxoScreen';
 import './index.module.less';
 
-const routes = {
-    BoostScreen: {
-        path: '/',
-        element: <BoostScreen />
-    },
-    WelcomeScreen: {
-        path: '/welcome',
-        element: <WelcomeScreen />
-    },
-    MainScreen: {
-        path: '/main',
-        element: <WalletTabScreen />
-    },
-    DiscoverTabScreen: {
-        path: '/discover',
-        element: <DiscoverTabScreen />
-    },
-    AppTabScrren: {
-        path: '/app',
-        element: <AppTabScrren />
-    },
-    SettingsTabScreen: {
-        path: '/settings',
-        element: <SettingsTabScreen />
-    },
-    CreateHDWalletScreen: {
-        path: '/account/create-hd-wallet',
-        element: <CreateHDWalletScreen />
-    },
-    CreateAccountScreen: {
-        path: '/account/create',
-        element: <CreateAccountScreen />
-    },
-    CreatePasswordScreen: {
-        path: '/account/create-password',
-        element: <CreatePasswordScreen />
-    },
-    UnlockScreen: {
-        path: '/account/unlock',
-        element: <UnlockScreen />
-    },
-    SwitchAccountScreen: {
-        path: '/account/switch-account',
-        element: <SwitchAccountScreen />
-    },
-    ReceiveScreen: {
-        path: '/wallet/receive',
-        element: <ReceiveScreen />
-    },
+export const routes = {
+  BoostScreen: {
+    path: '/',
+    element: <BoostScreen />
+  },
+  WelcomeScreen: {
+    path: '/welcome',
+    element: <WelcomeScreen />
+  },
+  MainScreen: {
+    path: '/main',
+    element: <WalletTabScreen />
+  },
+  DiscoverTabScreen: {
+    path: '/discover',
+    element: <DiscoverTabScreen />
+  },
+  AppTabScrren: {
+    path: '/app',
+    element: <AppTabScrren />
+  },
+  SettingsTabScreen: {
+    path: '/settings',
+    element: <SettingsTabScreen />
+  },
+  CreateHDWalletScreen: {
+    path: '/account/create-hd-wallet',
+    element: <CreateHDWalletScreen />
+  },
+  CreateAccountScreen: {
+    path: '/account/create',
+    element: <CreateAccountScreen />
+  },
+  CreatePasswordScreen: {
+    path: '/account/create-password',
+    element: <CreatePasswordScreen />
+  },
+  UnlockScreen: {
+    path: '/account/unlock',
+    element: <UnlockScreen />
+  },
+  SwitchAccountScreen: {
+    path: '/account/switch-account',
+    element: <SwitchAccountScreen />
+  },
+  ReceiveScreen: {
+    path: '/wallet/receive',
+    element: <ReceiveScreen />
+  },
 
     TxCreateScreen: {
         path: '/wallet/tx/create',
@@ -380,14 +380,18 @@ const Main = () => {
             if (!self.configLoaded) {
                 self.configLoaded = true;
 
-                // already load when reloadAccounts
-                // wallet.getWalletConfig().then((data) => {
-                //   dispatch(settingsActions.updateSettings({ walletConfig: data }));
-                // });
-                wallet.getSkippedVersion().then((data) => {
-                    dispatch(settingsActions.updateSettings({ skippedVersion: data }));
-                });
-            }
+        // already load when reloadAccounts
+        // wallet.getWalletConfig().then((data) => {
+        //   dispatch(settingsActions.updateSettings({ walletConfig: data }));
+        // });
+        wallet.getSkippedVersion().then((data) => {
+          dispatch(settingsActions.updateSettings({ skippedVersion: data }));
+        });
+
+        wallet.getAutoLockTimeId().then((data) => {
+          dispatch(settingsActions.updateSettings({ autoLockTimeId: data }));
+        });
+      }
 
             dispatch(globalActions.update({ isReady: true }));
         } catch (e) {
@@ -395,46 +399,52 @@ const Main = () => {
         }
     }, [wallet, dispatch, isReady, isUnlocked]);
 
-    useEffect(() => {
-        wallet.hasVault().then((val) => {
-            if (val) {
-                wallet.isUnlocked().then((isUnlocked) => {
-                    dispatch(globalActions.update({ isUnlocked }));
-                    if (!isUnlocked && location.href.includes(routes.UnlockScreen.path) === false) {
-                        const basePath = location.href.split('#')[0];
-                        location.href = `${basePath}#${routes.UnlockScreen.path}`;
-                    }
-                });
-            }
+  useEffect(() => {
+    wallet.hasVault().then((val) => {
+      if (val) {
+        dispatch(globalActions.update({ isBooted: true }));
+        wallet.isUnlocked().then((isUnlocked) => {
+          dispatch(globalActions.update({ isUnlocked }));
         });
-    }, []);
+      }
+    });
+  }, []);
 
     useEffect(() => {
         init();
     }, [init]);
 
-    if (!isReady) {
-        return (
-            <Layout>
-                <Content justifyCenter itemsCenter>
-                    <Icon>
-                        <LoadingOutlined />
-                    </Icon>
-                </Content>
-            </Layout>
-        );
-    }
+  if (!isReady) {
     return (
-        <HashRouter>
-            <Routes>
-                {Object.keys(routes)
-                    .map((v) => routes[v])
-                    .map((v) => (
-                        <Route key={v.path} path={v.path} element={v.element} />
-                    ))}
-            </Routes>
-        </HashRouter>
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: '100vw',
+          height: '100vh',
+          overflowY: 'auto',
+          overflowX: 'hidden'
+        }}>
+        <Content justifyCenter itemsCenter>
+          <Icon>
+            <LoadingOutlined />
+          </Icon>
+        </Content>
+      </div>
     );
+  }
+
+  return (
+    <HashRouter>
+      <Routes>
+        {Object.keys(routes)
+          .map((v) => routes[v])
+          .map((v) => (
+            <Route key={v.path} path={v.path} element={v.element} />
+          ))}
+      </Routes>
+    </HashRouter>
+  );
 };
 
 export default Main;

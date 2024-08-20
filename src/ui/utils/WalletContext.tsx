@@ -6,31 +6,31 @@ import { ToSignInput } from '@/background/service/keyring';
 import { ConnectedSite } from '@/background/service/permission';
 import { AddressFlagType, ChainType } from '@/shared/constant';
 import {
-    Account,
-    AddressRunesTokenSummary,
-    AddressSummary,
-    AddressTokenSummary,
-    AppSummary,
-    Arc20Balance,
-    BitcoinBalance,
-    BtcChannelItem,
-    DecodedPsbt,
-    FeeSummary,
-    InscribeOrder,
-    Inscription,
-    InscriptionSummary,
-    NetworkType,
-    RuneBalance,
-    SignPsbtOptions,
-    TickPriceItem,
-    TokenBalance,
-    TokenTransfer,
-    TxHistoryItem,
-    UTXO,
-    UTXO_Detail,
-    VersionDetail,
-    WalletConfig,
-    WalletKeyring
+  Account,
+  AddressRunesTokenSummary,
+  AddressSummary,
+  AddressTokenSummary,
+  AppSummary,
+  Arc20Balance,
+  BitcoinBalance,
+  BtcChannelItem,
+  DecodedPsbt,
+  FeeSummary,
+  InscribeOrder,
+  Inscription,
+  InscriptionSummary,
+  NetworkType,
+  RuneBalance,
+  SignPsbtOptions,
+  TickPriceItem,
+  TokenBalance,
+  TokenTransfer,
+  TxHistoryItem,
+  UTXO,
+  UTXO_Detail,
+  VersionDetail,
+  WalletConfig,
+  WalletKeyring
 } from '@/shared/types';
 import { AddressType, UnspentOutput } from '@btc-vision/wallet-sdk';
 import { bitcoin } from '@btc-vision/wallet-sdk/lib/bitcoin-core';
@@ -88,9 +88,17 @@ export interface WalletController {
         size: number
     ): Promise<{ list: Inscription[]; total: number }>;
 
-    getLocale(): Promise<string>;
+  getAddressHistory: (params: {
+    address: string;
+    start: number;
+    limit: number;
+  }) => Promise<{ start: number; total: number; detail: TxHistoryItem[] }>;
+  getAddressCacheHistory: (address: string) => Promise<TxHistoryItem[]>;
 
-    setLocale(locale: string): Promise<void>;
+  listChainAssets: (address: string) => Promise<AccountAsset[]>;
+
+  getLocale(): Promise<string>;
+  setLocale(locale: string): Promise<void>;
 
     getCurrency(): Promise<string>;
 
@@ -251,15 +259,11 @@ export interface WalletController {
 
     changeAddressType(addressType: AddressType): Promise<void>;
 
-    setAccountAlianName(account: Account, name: string): Promise<Account>;
-
-    getFeeSummary(): Promise<FeeSummary>;
-
-    getBtcPrice(): Promise<number>;
-
-    getBrc20sPrice(ticks: string[]): Promise<{ [tick: string]: TickPriceItem }>;
-
-    getRunesPrice(ticks: string[]): Promise<{ [tick: string]: TickPriceItem }>;
+  setAccountAlianName(account: Account, name: string): Promise<Account>;
+  getFeeSummary(): Promise<FeeSummary>;
+  getBtcPrice(): Promise<number>;
+  getBrc20sPrice(ticks: string[]): Promise<{ [tick: string]: TickPriceItem }>;
+  getRunesPrice(ticks: string[]): Promise<{ [tick: string]: TickPriceItem }>;
 
     setEditingKeyring(keyringIndex: number): Promise<void>;
 
@@ -342,7 +346,7 @@ export interface WalletController {
 
     readApp(appid: number): Promise<void>;
 
-    formatOptionsToSignInputs(psbtHex: string, options: SignPsbtOptions): Promise<ToSignInput[]>;
+  formatOptionsToSignInputs(psbtHex: string, options?: SignPsbtOptions): Promise<ToSignInput[]>;
 
     getArc20BalanceList(
         address: string,
@@ -425,9 +429,10 @@ export interface WalletController {
         outputValue?: number;
     }): Promise<string>;
 
-    getOPNetBalance(address: string): Promise<string>;
+  getBuyBtcChannelList(): Promise<BtcChannelItem[]>;
 
-    getBuyBtcChannelList(): Promise<BtcChannelItem[]>;
+  setAutoLockTimeId(timeId: number): Promise<void>;
+  getAutoLockTimeId(): Promise<number>;
 }
 
 const WalletContext = createContext<{

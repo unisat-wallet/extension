@@ -1,4 +1,7 @@
-import React, { CSSProperties } from 'react';
+import React, { CSSProperties, useEffect } from 'react';
+
+import { routes } from '@/ui/pages/MainRoute';
+import { useBooted, useIsUnlocked } from '@/ui/state/global/hooks';
 
 import './index.less';
 
@@ -8,22 +11,33 @@ export interface LayoutProps {
 }
 
 export function Layout(props: LayoutProps) {
-    const { children, style: $styleBase } = props;
-    return (
-        <div
-            className="layout"
-            style={Object.assign(
-                {
-                    display: 'flex',
-                    flexDirection: 'column',
-                    width: '100vw',
-                    height: '100vh',
-                    overflowY: 'auto',
-                    overflowX: 'hidden'
-                },
-                $styleBase
-            )}>
-            {children}
-        </div>
-    );
+  const isBooted = useBooted();
+  const isUnlocked = useIsUnlocked();
+
+  useEffect(() => {
+    if (isBooted && !isUnlocked && !location.href.includes(routes.UnlockScreen.path)) {
+      const basePath = location.href.split('#')[0];
+      location.href = `${basePath}#${routes.UnlockScreen.path}`;
+      return;
+    }
+  }, [isBooted, isUnlocked]);
+
+  const { children, style: $styleBase } = props;
+  return (
+    <div
+      className="layout"
+      style={Object.assign(
+        {
+          display: 'flex',
+          flexDirection: 'column',
+          width: '100vw',
+          height: '100vh',
+          overflowY: 'auto',
+          overflowX: 'hidden'
+        },
+        $styleBase
+      )}>
+      {children}
+    </div>
+  );
 }

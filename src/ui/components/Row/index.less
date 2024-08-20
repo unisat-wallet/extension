@@ -17,3 +17,13 @@
 .row-container::-webkit-scrollbar-corner {
   background: transparent;
 }
+
+
+.row-container{
+  &.clickable{
+    cursor: pointer;
+    &:hover {
+      background-color: rgba(255, 255, 255,.06);
+    }
+  }
+}

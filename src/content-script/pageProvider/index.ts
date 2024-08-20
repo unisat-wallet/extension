@@ -171,11 +171,17 @@ export class UnisatProvider extends EventEmitter {
     //   return this._request(data);
     // };
 
-    getNetwork = async () => {
-        return this._request({
-            method: 'getNetwork'
-        });
-    };
+  disconnect = async () => {
+    return this._request({
+      method: 'disconnect'
+    });
+  };
+
+  getNetwork = async () => {
+    return this._request({
+      method: 'getNetwork'
+    });
+  };
 
     switchNetwork = async (network: string) => {
         return this._request({

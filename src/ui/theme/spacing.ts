@@ -14,13 +14,14 @@ export const spacing = {
 } as const;
 
 export const spacingGap = {
-    xxl: 40,
-    xl: 20,
-    lg: 12,
-    md: 8,
-    sm: 4,
-    xs: 2,
-    zero: 0
+  xxl: 40,
+  xl: 20,
+  lg2: 15,
+  lg: 12,
+  md: 8,
+  sm: 4,
+  xs: 2,
+  zero: 0
 };
 
 export const sizes = {

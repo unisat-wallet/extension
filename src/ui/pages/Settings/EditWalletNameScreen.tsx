@@ -35,34 +35,35 @@ export default function EditWalletNameScreen() {
         return true;
     }, [alianName]);
 
-    return (
-        <Layout>
-            <Header
-                onBack={() => {
-                    window.history.go(-1);
-                }}
-                title={keyring.alianName}
-            />
-            <Content>
-                <Column gap="lg">
-                    <Input
-                        placeholder={keyring.alianName}
-                        onChange={(e) => {
-                            setAlianName(e.target.value);
-                        }}
-                        onKeyUp={(e) => handleOnKeyUp(e)}
-                        autoFocus={true}
-                    />
-                    <Button
-                        disabled={!isValidName}
-                        text="Change Wallet Name"
-                        preset="primary"
-                        onClick={(e) => {
-                            handleOnClick();
-                        }}
-                    />
-                </Column>
-            </Content>
-        </Layout>
-    );
+  return (
+    <Layout>
+      <Header
+        onBack={() => {
+          window.history.go(-1);
+        }}
+        title={keyring.alianName}
+      />
+      <Content>
+        <Column gap="lg">
+          <Input
+            placeholder={keyring.alianName}
+            onChange={(e) => {
+              setAlianName(e.target.value);
+            }}
+            defaultValue={keyring.alianName}
+            onKeyUp={(e) => handleOnKeyUp(e)}
+            autoFocus={true}
+          />
+          <Button
+            disabled={!isValidName}
+            text="Change Wallet Name"
+            preset="primary"
+            onClick={(e) => {
+              handleOnClick();
+            }}
+          />
+        </Column>
+      </Content>
+    </Layout>
+  );
 }

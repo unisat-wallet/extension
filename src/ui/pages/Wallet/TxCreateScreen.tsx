@@ -7,7 +7,7 @@ import { ChainType, COIN_DUST } from '@/shared/constant';
 import { Account, RawTxInfo } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
 import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
-import { Button, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
+import { Button, Column, Content, Header, Icon, Input, Layout, Row, Text, Image } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
@@ -112,6 +112,7 @@ export default function TxCreateScreen() {
     const wallet = useWallet();
     const account = useCurrentAccount();
     const chain = useChain();
+    const unspendUnavailableAmount = satoshisToAmount(unavailableSatoshis - spendUnavailableSatoshis);
 
     useEffect(() => {
         const fetchBalance = async () => {
@@ -132,7 +133,7 @@ export default function TxCreateScreen() {
 
         void fetchBalance();
     }, [chain.enum, account.address]);
-    const unspendUnavailableAmount = satoshisToAmount(unavailableSatoshis - spendUnavailableSatoshis);
+
     useEffect(() => {
         const setWallet = async () => {
             Web3API.setNetwork(await wallet.getChainType());
@@ -198,18 +199,18 @@ export default function TxCreateScreen() {
         void runTransfer();
     }, [toInfo, inputAmount, feeRate, enableRBF]);
 
-    return (
-        <Layout>
-            <Header
-                onBack={() => {
-                    window.history.go(-1);
-                }}
-                title={`Send ${btcUnit}`}
-            />
-            <Content style={{ padding: '0px 16px 24px' }}>
-                <Row justifyCenter>
-                    <Icon icon="btc" size={50} />
-                </Row>
+  return (
+    <Layout>
+      <Header
+        onBack={() => {
+          window.history.go(-1);
+        }}
+        title={`Send ${btcUnit}`}
+      />
+      <Content style={{ padding: '0px 16px 24px' }}>
+        <Row justifyCenter>
+          <Image src={chain.icon} size={50} />
+        </Row>
 
                 <Column mt="lg">
                     <Text text="Recipient" preset="regular" color="textDim" />
