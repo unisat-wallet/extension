@@ -24,7 +24,7 @@ import { $, domReadyCall } from './utils';
 
 declare global {
     interface Window {
-        opnet?: Unisat;
+        opnet: Unisat;
     }
 }
 
@@ -500,12 +500,6 @@ export class OpnetProvider extends EventEmitter {
         }, 1000);
     };
 }
-
-declare global {
-    interface Window {
-      opnet: OpnetProvider;
-    }
-  }
 
 const provider = new OpnetProvider();
 
