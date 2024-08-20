@@ -1,5 +1,13 @@
 # UniSat Wallet Release Notes
 
+## v1.4.5
+
+- Add Fractal Bitcoin Testnet
+- Add password strength detection.
+- Add automatic lock time in Advanced
+- Fix `networkChanged` for issue#211
+- Add `unisat.disconnect` for issue#204
+
 ## v1.4.2
 
 - Support Testnet4
