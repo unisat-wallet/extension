@@ -11,7 +11,11 @@ const tabCheckin = ({
     session.setProp({ origin, name, icon });
 };
 
-const getProviderState = async () => {
+const getProviderState = async (req) => {
+    const {
+        session: { origin }
+    } = req;
+
     const isUnlocked = keyringService.memStore.getState().isUnlocked;
     const accounts: string[] = [];
     if (isUnlocked) {
@@ -21,7 +25,7 @@ const getProviderState = async () => {
         }
     }
     return {
-        network: wallet.getNetworkName(),
+        network: wallet.getLegacyNetworkName(),
         chain: wallet.getChainType(),
         isUnlocked,
         accounts

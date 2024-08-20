@@ -32,7 +32,7 @@
         "@babel/core": "^7.16.0",
         "@btc-vision/bsi-binary": "1.0.37",
         "@btc-vision/passworder": "1.0.0",
-        "@btc-vision/transaction": "1.0.90",
+        "@btc-vision/transaction": "1.0.92",
         "@btc-vision/wallet-sdk": "1.0.0",
         "@fortawesome/fontawesome-svg-core": "^6.6.0",
         "@fortawesome/free-regular-svg-icons": "^6.6.0",
@@ -116,6 +116,7 @@
         "react-dom": "^18.1.0",
         "react-hooks-global-state": "^2.0.0-rc.0",
         "react-i18next": "^11.16.9",
+        "react-idle-timer": "^5.7.2",
         "react-modal": "^3.15.1",
         "react-redux": "^8.0.1",
         "react-refresh": "^0.11.0",
@@ -146,7 +147,8 @@
         "webpack-dev-server": "^4.6.0",
         "webpack-extension-reloader": "^1.1.4",
         "webpack-manifest-plugin": "^4.0.2",
-        "workbox-webpack-plugin": "^6.4.1"
+        "workbox-webpack-plugin": "^6.4.1",
+        "zxcvbn": "^4.4.2"
     },
     "browserslist": {
         "production": [

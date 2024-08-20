@@ -30,7 +30,7 @@ const openIndexPage = (route = ''): Promise<number | undefined> => {
     return createTab(url);
 };
 
-const queryCurrentActiveTab = async function() {
+const queryCurrentActiveTab = async function () {
     return new Promise((resolve) => {
         chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
             if (!tabs) return resolve({});

@@ -2,6 +2,7 @@ import QRCode from 'qrcode.react';
 
 import { AddressBar, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { useChain } from '@/ui/state/settings/hooks';
 import { sizes } from '@/ui/theme/spacing';
 
 import './index.less';
@@ -9,6 +10,7 @@ import './index.less';
 export default function ReceiveScreen() {
     const currentAccount = useCurrentAccount();
     const address = useAccountAddress();
+    const chain = useChain();
 
     return (
         <Layout>
@@ -24,7 +26,17 @@ export default function ReceiveScreen() {
                         justifyCenter
                         rounded
                         style={{ backgroundColor: 'white', alignSelf: 'center', alignItems: 'center', padding: 10 }}>
-                        <QRCode value={address || ''} renderAs="svg" size={sizes.qrcode}></QRCode>
+                        <QRCode
+                            value={address || ''}
+                            renderAs="svg"
+                            size={sizes.qrcode}
+                            imageRendering={chain.icon}
+                            imageSettings={{
+                                src: chain.icon,
+                                width: 50,
+                                height: 50,
+                                excavate: true
+                            }}></QRCode>
                     </Column>
 
                     <Row justifyCenter>

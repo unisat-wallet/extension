@@ -11,6 +11,7 @@ import { Card } from '../Card';
 import { Column } from '../Column';
 import { Icon } from '../Icon';
 import { Row } from '../Row';
+import Tag from '../Tag';
 import { Text } from '../Text';
 
 export interface BRC20BalanceCard2Props {
@@ -30,7 +31,8 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
             transferableBalance,
             availableBalance,
             availableBalanceSafe,
-            availableBalanceUnSafe
+            availableBalanceUnSafe,
+            selfMint
         },
         onClick
     } = props;
@@ -73,9 +75,9 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
     return (
         <Card
             style={{
-                backgroundColor: '#141414',
+                backgroundColor: '#1E1F24',
                 borderColor: 'rgba(255,255,255,0.1)',
-                borderWidth: 1
+                borderRadius: 12
             }}
             fullX
             onClick={() => {
@@ -84,7 +86,10 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
             <Column full py="zero" gap="zero">
                 <Row fullY justifyBetween justifyCenter>
                     <Column fullY justifyCenter>
-                        <BRC20Ticker tick={ticker} />
+                        <Row>
+                            <BRC20Ticker tick={ticker} />
+                            {selfMint ? <Tag type="self-issuance" /> : null}
+                        </Row>
                     </Column>
 
                     <Row itemsCenter fullY gap="zero">
@@ -147,8 +152,8 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
                                                 v === 'Transfer'
                                                     ? 'brc20_transfer'
                                                     : v === 'Deploy'
-                                                        ? 'brc20_deploy'
-                                                        : 'brc20_other'
+                                                    ? 'brc20_deploy'
+                                                    : 'brc20_other'
                                             }>
                                             <Column gap="zero">
                                                 <Text

@@ -5,7 +5,7 @@ import { spacingGap } from '@/ui/theme/spacing';
 import { BaseView, BaseViewProps } from '../BaseView';
 import './index.less';
 
-export type RowProps = BaseViewProps;
+export type RowProps = BaseViewProps & { clickable?: boolean };
 
 const $rowStyle = {
     display: 'flex',
@@ -14,15 +14,7 @@ const $rowStyle = {
 } as CSSProperties;
 
 export function Row(props: RowProps) {
-    const { style: $styleOverride, itemsCenter, fullX, justifyCenter, ...rest } = props;
-
-    const $style: CSSProperties = {
-        ...$rowStyle,
-        ...(itemsCenter && { alignItems: 'center' }),
-        ...(fullX && { width: '100%' }),
-        ...(justifyCenter && { justifyContent: 'center' }),
-        ...$styleOverride
-    };
-
-    return <BaseView style={$style} {...rest} classname="row-container" />;
+    const { clickable, style: $styleOverride, ...rest } = props;
+    const $style = Object.assign({}, $rowStyle, $styleOverride);
+    return <BaseView style={$style} {...rest} classname={`row-container ${clickable ? 'clickable' : ''}`} />;
 }

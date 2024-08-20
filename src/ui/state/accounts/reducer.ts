@@ -216,8 +216,6 @@ const slice = createSlice({
             // todo
             if (!state.addressSummary) {
                 state.addressSummary = {
-                    runesCount: 0,
-                    address: '',
                     totalSatoshis: 0,
                     btcSatoshis: 0,
                     assetSatoshis: 0,
@@ -225,7 +223,9 @@ const slice = createSlice({
                     atomicalsCount: 0,
                     brc20Count: 0,
                     brc20Count5Byte: 0,
-                    arc20Count: 0
+                    arc20Count: 0,
+                    address: '',
+                    runesCount: 0
                 };
             }
         });

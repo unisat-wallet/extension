@@ -8,7 +8,7 @@ export const svgRegistry = {
     send: './images/icons/arrow-left-right.svg',
     receive: './images/icons/qrcode.svg',
 
-    right: './images/icons/arrow-right.svg',
+    right: './images/icons/right.svg',
     left: './images/icons/arrow-left.svg',
     down: './images/icons/down.svg',
     up: './images/icons/up.svg',
@@ -50,7 +50,9 @@ export const svgRegistry = {
     burn: ' /images/icons/burn.svg',
     risk: '/images/icons/risk.svg',
     swap: '/images/icons/swap.svg',
-    faucet: '/images/icons/faucet.svg'
+    faucet: '/images/icons/faucet.svg',
+
+    overview: '/images/icons/overview.svg'
 };
 
 const iconImgList: Array<IconTypes> = ['success', 'delete', 'btc'];

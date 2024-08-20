@@ -5,6 +5,7 @@ import { Account } from '@/shared/types';
 import { useWallet } from '@/ui/utils';
 
 import { useIsUnlocked } from '../global/hooks';
+import { globalActions } from '../global/reducer';
 import { useAppDispatch } from '../hooks';
 import { useAccountBalance, useCurrentAccount, useFetchBalanceCallback, useReloadAccounts } from './hooks';
 import { accountActions } from './reducer';
@@ -65,6 +66,16 @@ export default function AccountUpdater() {
         eventBus.addEventListener('accountsChanged', accountChangeHandler);
         return () => {
             eventBus.removeEventListener('accountsChanged', accountChangeHandler);
+        };
+    }, [dispatch]);
+
+    useEffect(() => {
+        const lockHandler = () => {
+            dispatch(globalActions.update({ isUnlocked: false }));
+        };
+        eventBus.addEventListener('lock', lockHandler);
+        return () => {
+            eventBus.removeEventListener('lock', lockHandler);
         };
     }, [dispatch]);
 

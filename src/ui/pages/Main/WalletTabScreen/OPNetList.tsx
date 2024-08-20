@@ -1,6 +1,8 @@
+import BigNumber from 'bignumber.js';
 import { getContract, IOP_20Contract, JSONRpcProvider, OP_20_ABI } from 'opnet';
 import { CSSProperties, useEffect, useState } from 'react';
 
+import { ChainType } from '@/shared/constant';
 import { NetworkType, OpNetBalance } from '@/shared/types';
 import Web3API, { getOPNetChainType, getOPNetNetwork } from '@/shared/web3/Web3API';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
@@ -11,13 +13,11 @@ import OpNetBalanceCard from '@/ui/components/OpNetBalanceCard';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
+import { Address } from '@btc-vision/bsi-binary';
 import { OPNetMetadata } from '@btc-vision/transaction';
 
 import { useNavigate } from '../../MainRoute';
 import { AddOpNetToken } from '../../Wallet/AddOpNetToken';
-import { ChainType } from '@/shared/constant';
-import { Address } from '@btc-vision/bsi-binary';
-import BigNumber from 'bignumber.js';
 
 BigNumber.config({ EXPONENTIAL_AT: 256 });
 
@@ -199,18 +199,21 @@ export function OPNetList() {
                 <Row>
                     <Button
                         style={$btnStyle}
-                        text="Import Tokens"
+                        text="Import Token"
                         preset="fontsmall"
+                        icon={'eye'}
                         onClick={() => setImportTokenBool(true)}></Button>
 
                     <Button
                         style={$btnStyle}
                         text="Refresh List"
                         preset="fontsmall"
+                        icon={'history'}
                         onClick={() => fetchData()}></Button>
                     <Button
                         style={$btnStyle}
                         text="Deploy"
+                        icon={'pencil'}
                         preset="fontsmall"
                         onClick={() => navigate('DeployContract', {})}></Button>
                 </Row>

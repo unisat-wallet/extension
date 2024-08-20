@@ -40,13 +40,18 @@ export interface WalletController {
         [key: string]: (...params: any) => Promise<any>;
     };
     changePassword: (password: string, newPassword: string) => Promise<void>;
-    getAddressHistory: (address: string) => Promise<TxHistoryItem[]>;
-    getAddressCacheHistory: (address: string) => Promise<TxHistoryItem[]>;
-    listChainAssets: (address: string) => Promise<AccountAsset[]>;
     getAllAlianName: () => (ContactBookItem | undefined)[];
     getContactsByMap: () => ContactBookStore;
     updateAlianName: (pubkey: string, name: string) => Promise<void>;
     getNextAlianName: (keyring: WalletKeyring) => Promise<string>;
+    getAddressHistory: (params: {
+        address: string;
+        start: number;
+        limit: number;
+    }) => Promise<{ start: number; total: number; detail: TxHistoryItem[] }>;
+
+    getAddressCacheHistory: (address: string) => Promise<TxHistoryItem[]>;
+    listChainAssets: (address: string) => Promise<AccountAsset[]>;
 
     boot(password: string): Promise<void>;
 
@@ -342,7 +347,7 @@ export interface WalletController {
 
     readApp(appid: number): Promise<void>;
 
-    formatOptionsToSignInputs(psbtHex: string, options: SignPsbtOptions): Promise<ToSignInput[]>;
+    formatOptionsToSignInputs(psbtHex: string, options?: SignPsbtOptions): Promise<ToSignInput[]>;
 
     getArc20BalanceList(
         address: string,
@@ -425,9 +430,11 @@ export interface WalletController {
         outputValue?: number;
     }): Promise<string>;
 
-    getOPNetBalance(address: string): Promise<string>;
-
     getBuyBtcChannelList(): Promise<BtcChannelItem[]>;
+
+    setAutoLockTimeId(timeId: number): Promise<void>;
+
+    getAutoLockTimeId(): Promise<number>;
 }
 
 const WalletContext = createContext<{

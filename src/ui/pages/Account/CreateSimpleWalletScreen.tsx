@@ -1,26 +1,26 @@
+import { ECPairFactory } from 'ecpair';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ADDRESS_TYPES } from '@/shared/constant';
 import { AddressType } from '@/shared/types';
+import { getBitcoinLibJSNetwork } from '@/shared/web3/Web3API';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressTypeCard } from '@/ui/components/AddressTypeCard';
 import { FooterButtonContainer } from '@/ui/components/FooterButtonContainer';
 import { TabBar } from '@/ui/components/TabBar';
 import { satoshisToAmount, useWallet } from '@/ui/utils';
+import * as ecc from '@bitcoinerlab/secp256k1';
+import { EcKeyPair, Wallet } from '@btc-vision/transaction';
 
 import { useNavigate } from '../MainRoute';
-import { getBitcoinLibJSNetwork } from '@/shared/web3/Web3API';
-import * as ecc from '@bitcoinerlab/secp256k1';
-import { ECPairFactory } from 'ecpair';
-import { EcKeyPair, Wallet } from '@btc-vision/transaction';
 
 const ECPair = ECPairFactory(ecc);
 
 function Step1({
-                   contextData,
-                   updateContextData
-               }: {
+    contextData,
+    updateContextData
+}: {
     contextData: ContextData;
     updateContextData: (params: UpdateContextDataParams) => void;
 }) {
@@ -94,9 +94,9 @@ function Step1({
 }
 
 function Step2({
-                   contextData,
-                   updateContextData
-               }: {
+    contextData,
+    updateContextData
+}: {
     contextData: ContextData;
     updateContextData: (params: UpdateContextDataParams) => void;
 }) {
@@ -155,7 +155,9 @@ function Step2({
             } else if (options.addressType == AddressType.P2WPKH) {
                 addresses.push(address.p2wpkh);
             } else {
-                addresses.push(EcKeyPair.getLegacyAddress(ECPair.fromWIF(contextData.wif, bitcoinNetwork), bitcoinNetwork));
+                addresses.push(
+                    EcKeyPair.getLegacyAddress(ECPair.fromWIF(contextData.wif, bitcoinNetwork), bitcoinNetwork)
+                );
             }
         }
 

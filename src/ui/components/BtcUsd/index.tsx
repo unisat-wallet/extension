@@ -6,7 +6,7 @@ import { ChainType } from '@/shared/constant';
 import { Text } from '@/ui/components';
 import { Sizes, TextProps } from '@/ui/components/Text';
 import { usePrice } from '@/ui/provider/PriceProvider';
-import { useChainType } from '@/ui/state/settings/hooks';
+import { useChain, useChainType } from '@/ui/state/settings/hooks';
 import type { ColorTypes } from '@/ui/theme/colors';
 
 export function BtcUsd(
@@ -21,6 +21,7 @@ export function BtcUsd(
 
     const { btcPrice, refreshBtcPrice, isLoadingBtcPrice } = usePrice();
     const chainType = useChainType();
+    const chain = useChain();
 
     const [shown, setShown] = useState(false);
     const [showNoValue, setShowNoValue] = useState(false);
@@ -56,6 +57,10 @@ export function BtcUsd(
 
         return result.toFixed(2);
     }, [btcPrice, sats]);
+
+    if (!chain.showPrice) {
+        return <></>;
+    }
 
     if (showNoValue) {
         if (bracket) {

@@ -1,15 +1,14 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { Account, Inscription, OpNetBalance, RawTxInfo } from '@/shared/types';
-import { Button, Content, Header, Layout, Text } from '@/ui/components';
+import { Account, OpNetBalance } from '@/shared/types';
+import { Button, Column, Content, Header, Layout, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { useRunesTx } from '@/ui/state/transactions/hooks';
-import { getAddressUtxoDust } from '@btc-vision/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../MainRoute';
+import { FeeRateBar } from '@/ui/components/FeeRateBar';
 
 interface ItemData {
     key: string;
@@ -25,47 +24,17 @@ export default function WrapBitcoinOpnet() {
     const account = useCurrentAccount();
 
     const navigate = useNavigate();
-    const runesTx = useRunesTx();
     const [inputAmount, setInputAmount] = useState('');
     const [disabled, setDisabled] = useState(true);
     const [OpnetRateInputVal, adjustFeeRateInput] = useState('5000');
     const [getFile, setFile] = useState<File | null>(null);
 
-    const [toInfo, setToInfo] = useState<{
-        address: string;
-        domain: string;
-        inscription?: Inscription;
-    }>({
-        address: runesTx.toAddress,
-        domain: runesTx.toDomain,
-        inscription: undefined
-    });
-
-    //const [availableBalance, setAvailableBalance] = useState('0');
     const [error, setError] = useState('');
-
-    const defaultOutputValue = 546;
-
-    const [outputValue, setOutputValue] = useState(defaultOutputValue);
-    const minOutputValue = useMemo(() => {
-        if (toInfo.address) {
-            return getAddressUtxoDust(toInfo.address);
-        } else {
-            return 0;
-        }
-    }, [toInfo.address]);
-
-    //const fetchUtxos = useFetchUtxosCallback();
-
-    //const fetchAssetUtxosRunes = useFetchAssetUtxosRunesCallback();
     const tools = useTools();
 
-    //const prepareSendRunes = usePrepareSendRunesCallback();
     const [file, ç] = useState<File | null>(null);
 
     const [feeRate, setFeeRate] = useState(5);
-    const [enableRBF, setEnableRBF] = useState(false);
-    const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
     const keyring = useCurrentKeyring();
     const items = useMemo(() => {
         const _items: ItemData[] = keyring.accounts.map((v) => {
@@ -98,6 +67,15 @@ export default function WrapBitcoinOpnet() {
             <Content>
                 <Text text="Upload Contract" color="textDim" />
                 <Text text={getFile?.name} />
+
+                <Column>
+                    <Text text="Fee Rate" color="textDim" />
+                    <FeeRateBar
+                        onChange={(val) => {
+                            setFeeRate(val);
+                        }}
+                    />
+                </Column>
 
                 <div
                     style={{
@@ -155,7 +133,7 @@ export default function WrapBitcoinOpnet() {
                                 items: items,
                                 account: account, // replace with actual account
                                 inputAmount: inputAmount, // replace with actual inputAmount
-                                address: toInfo.address, // replace with actual address
+                                address: '', // replace with actual address
                                 feeRate: feeRate, // replace with actual feeRate
                                 priorityFee: BigInt(OpnetRateInputVal), // replace with actual OpnetRateInputVal
                                 header: 'Deploy Contract', // replace with actual header

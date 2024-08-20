@@ -30,7 +30,7 @@ export const addResourceBundle = async (locale: string) => {
 
 addResourceBundle('en');
 
-i18n.on('languageChanged', function(lng) {
+i18n.on('languageChanged', function (lng) {
     addResourceBundle(lng);
 });
 

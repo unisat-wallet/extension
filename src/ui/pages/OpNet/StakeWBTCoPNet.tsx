@@ -1,9 +1,11 @@
+import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { Account, Inscription, OpNetBalance } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
+import { bigIntToDecimal } from '@/shared/web3/Web3API';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
@@ -16,8 +18,6 @@ import { colors } from '@/ui/theme/colors';
 import { getAddressUtxoDust } from '@btc-vision/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../MainRoute';
-import { bigIntToDecimal } from '@/shared/web3/Web3API';
-import BigNumber from 'bignumber.js';
 
 interface ItemData {
     key: string;
