@@ -1,16 +1,16 @@
-var webpack = require('webpack');
-var webpackConfigFunc = require('./webpack.config');
-var gulp = require('gulp');
-var zip = require('gulp-zip');
-var clean = require('gulp-clean');
-var jsoncombine = require('gulp-jsoncombine');
-var minimist = require('minimist');
-var packageConfig = require('./package.json');
+const webpack = require('webpack');
+const webpackConfigFunc = require('./webpack.config');
+const gulp = require('gulp');
+const zip = require('gulp-zip');
+const clean = require('gulp-clean');
+const jsoncombine = require('gulp-jsoncombine');
+const minimist = require('minimist');
+const packageConfig = require('./package.json');
 const { exit } = require('process');
 const uglify = require('gulp-uglify');
 
-//parse arguments
-var knownOptions = {
+// Parse arguments
+const knownOptions = {
   string: ['env', 'browser', 'manifest', 'channel'],
   default: {
     env: 'dev',
@@ -20,65 +20,59 @@ var knownOptions = {
   }
 };
 
-var supported_envs = ['dev', 'pro'];
-var supported_browsers = ['chrome', 'firefox', 'edge', 'brave'];
-var supported_mvs = ['mv2', 'mv3'];
-var brandName = 'unisat';
-var version = packageConfig.version;
-var validVersion = version.split('-beta')[0];
-var options = {
-  env: knownOptions.default.env,
-  browser: knownOptions.default.browser,
-  manifest: knownOptions.default.manifest
-};
-options = minimist(process.argv.slice(2), knownOptions);
-if (!supported_envs.includes(options.env)) {
-  console.error(`not supported env: [${options.env}]. It should be one of ${supported_envs.join(', ')}.`);
-  exit(0);
+const supportedEnvs = ['dev', 'pro'];
+const supportedBrowsers = ['chrome', 'firefox', 'edge', 'brave'];
+const supportedMvs = ['mv2', 'mv3'];
+const brandName = 'unisat';
+const version = packageConfig.version;
+const validVersion = version.split('-beta')[0];
+
+let options = minimist(process.argv.slice(2), knownOptions);
+
+// Validation
+if (!supportedEnvs.includes(options.env)) {
+  console.error(`Unsupported environment: [${options.env}]. Must be one of ${supportedEnvs.join(', ')}.`);
+  exit(1);
 }
-if (!supported_browsers.includes(options.browser)) {
-  console.error(`not supported browser: [${options.browser}]. It should be one of ${supported_browsers.join(', ')}.`);
-  exit(0);
+if (!supportedBrowsers.includes(options.browser)) {
+  console.error(`Unsupported browser: [${options.browser}]. Must be one of ${supportedBrowsers.join(', ')}.`);
+  exit(1);
 }
-if (!supported_mvs.includes(options.manifest)) {
-  console.error(`not supported browser: [${options.manifest}]. It should be one of ${supported_mvs.join(', ')}.`);
-  exit(0);
+if (!supportedMvs.includes(options.manifest)) {
+  console.error(`Unsupported manifest: [${options.manifest}]. Must be one of ${supportedMvs.join(', ')}.`);
+  exit(1);
 }
 
-//tasks...
-function task_clean() {
-  return gulp.src(`dist/${options.browser}/*`, { read: false }).pipe(clean());
+// Task Definitions
+function cleanTask() {
+  return gulp.src(`dist/${options.browser}/*`, { read: false, allowEmpty: true }).pipe(clean());
 }
 
-function task_prepare() {
+function prepareTask() {
   return gulp.src('build/_raw/**/*').pipe(gulp.dest(`dist/${options.browser}`));
 }
 
-function task_merge_manifest() {
-  let baseFile = '_base_v3';
-  if (options.manifest == 'mv2') {
-    baseFile = '_base_v2';
-  }
+function mergeManifestTask() {
+  const baseFile = options.manifest === 'mv2' ? '_base_v2' : '_base_v3';
   return gulp
     .src([
       `dist/${options.browser}/manifest/${baseFile}.json`,
       `dist/${options.browser}/manifest/${options.browser}.json`
     ])
     .pipe(
-      jsoncombine('manifest.json', (data, meta) => {
-        const result = Object.assign({}, data[baseFile], data[options.browser]);
-        result.version = validVersion;
+      jsoncombine('manifest.json', (data) => {
+        const result = { ...data[baseFile], ...data[options.browser], version: validVersion };
         return Buffer.from(JSON.stringify(result));
       })
     )
     .pipe(gulp.dest(`dist/${options.browser}`));
 }
 
-function task_clean_tmps() {
-  return gulp.src(`dist/${options.browser}/manifest`, { read: false }).pipe(clean());
+function cleanTmpTask() {
+  return gulp.src(`dist/${options.browser}/manifest`, { read: false, allowEmpty: true }).pipe(clean());
 }
 
-function task_webpack(cb) {
+function webpackTask(cb) {
   webpack(
     webpackConfigFunc({
       version: validVersion,
@@ -91,8 +85,8 @@ function task_webpack(cb) {
   );
 }
 
-function task_uglify(cb) {
-  if (options.env == 'pro') {
+function uglifyTask(cb) {
+  if (options.env === 'pro') {
     return gulp
       .src(`dist/${options.browser}/**/*.js`)
       .pipe(uglify())
@@ -101,29 +95,24 @@ function task_uglify(cb) {
   cb();
 }
 
-function task_package(cb) {
-  if (options.env == 'pro') {
-    if (options.browser == 'firefox') {
-      return gulp
-        .src(`dist/${options.browser}/**/*`)
-        .pipe(zip(`${brandName}-${options.browser}-${options.manifest}-v${version}.xpi`))
-        .pipe(gulp.dest('./dist'));
-    } else {
-      return gulp
-        .src(`dist/${options.browser}/**/*`)
-        .pipe(zip(`${brandName}-${options.browser}-${options.manifest}-v${version}.zip`))
-        .pipe(gulp.dest('./dist'));
-    }
+function packageTask(cb) {
+  if (options.env === 'pro') {
+    const fileType = options.browser === 'firefox' ? 'xpi' : 'zip';
+    return gulp
+      .src(`dist/${options.browser}/**/*`)
+      .pipe(zip(`${brandName}-${options.browser}-${options.manifest}-v${version}.${fileType}`))
+      .pipe(gulp.dest('./dist'));
   }
   cb();
 }
 
+// Build Sequence
 exports.build = gulp.series(
-  task_clean,
-  task_prepare,
-  task_merge_manifest,
-  task_clean_tmps,
-  task_webpack,
-  task_uglify,
-  task_package
+  cleanTask,
+  prepareTask,
+  mergeManifestTask,
+  cleanTmpTask,
+  webpackTask,
+  uglifyTask,
+  packageTask
 );
