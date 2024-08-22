@@ -1,4 +1,4 @@
-import React, { useCallback, useEffect, useRef } from 'react';
+import { useCallback, useEffect, useRef } from 'react';
 import { HashRouter, Route, Routes, useNavigate as useNavigateOrigin } from 'react-router-dom';
 
 import { LoadingOutlined } from '@ant-design/icons';
@@ -38,6 +38,7 @@ import DeployContract from './OpNet/DeployContract';
 import Mint from './OpNet/Mint';
 import OpNetTokenScreen from './OpNet/OpNetTokenScreen';
 import SendOpNetScreen from './OpNet/SendOpNetScreen';
+import SplitUtxoScreen from './OpNet/SplitUtxoScreen';
 import StakeWBTCoPNet from './OpNet/StakeWBTCoPNet';
 import Swap from './OpNet/SwapToken';
 import UnStakeWBTCoPNet from './OpNet/UnStakeWBTCoPNet';
@@ -306,6 +307,10 @@ export const routes = {
     Airdrop: {
         path: '/opnet/airdrop',
         element: <Airdrop />
+    },
+    SplitUtxoScreen: {
+        path: '/opnet/split-utxo',
+        element: <SplitUtxoScreen />
     }
 };
 

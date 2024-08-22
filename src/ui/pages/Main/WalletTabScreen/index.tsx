@@ -1,6 +1,6 @@
 import { Tabs, Tooltip } from 'antd';
 import BigNumber from 'bignumber.js';
-import React, { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
+import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 
 import { AddressFlagType, ChainType } from '@/shared/constant';
 import { checkAddressFlag } from '@/shared/utils';
@@ -19,8 +19,8 @@ import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import {
-    useBlockstreamUrl,
     useBTCUnit,
+    useBlockstreamUrl,
     useChain,
     useChainType,
     useSkipVersionCallback,
@@ -52,7 +52,7 @@ export default function WalletTabScreen() {
     const accountBalance = useAccountBalance();
     const chain = useChain();
     const chainType = useChainType();
-    
+
     const currentKeyring = useCurrentKeyring();
     const currentAccount = useCurrentAccount();
     const balanceValue = useMemo(() => {
@@ -365,11 +365,21 @@ export default function WalletTabScreen() {
                             }}
                         />
 
-                        {
-                            (chainType === ChainType.BITCOIN_REGTEST || chainType === ChainType.FRACTAL_BITCOIN_TESTNET) && (
+                        {(chainType === ChainType.BITCOIN_REGTEST ||
+                            chainType === ChainType.FRACTAL_BITCOIN_TESTNET) && (
+                            <>
+                                {' '}
+                                <Button
+                                    text="Split Utxo"
+                                    preset="home"
+                                    icon="receive"
+                                    onClick={() => {
+                                        navigate('SplitUtxoScreen');
+                                    }}
+                                />
                                 <Button
                                     text="Faucet"
-                                    preset="default"
+                                    preset="home"
                                     icon="faucet"
                                     onClick={() => {
                                         let url = 'https://faucet.opnet.org/';
@@ -379,23 +389,20 @@ export default function WalletTabScreen() {
 
                                         window.open(url, '_blank');
                                     }}
-                                    full
                                 />
-                            )
-                        }
+                            </>
+                        )}
 
-                        {
-                            chainType === ChainType.BITCOIN_MAINNET && (
-                                <Button
-                                    text="Buy"
-                                    preset="home"
-                                    icon="bitcoin"
-                                    onClick={() => {
-                                        setBuyBtcModalVisible(true);
-                                    }}
-                                />
-                            )
-                        }
+                        {chainType === ChainType.BITCOIN_MAINNET && (
+                            <Button
+                                text="Buy"
+                                preset="home"
+                                icon="bitcoin"
+                                onClick={() => {
+                                    setBuyBtcModalVisible(true);
+                                }}
+                            />
+                        )}
                     </Row>
 
                     <Tabs
