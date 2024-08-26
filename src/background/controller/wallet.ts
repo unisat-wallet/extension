@@ -168,11 +168,11 @@ export class WalletController extends BaseController {
         let data: BitcoinBalance;
 
         try {
-            if (address.startsWith('bcrt1')) {
-                data = await this.getOpNetBalance(address);
-            } else {
-                data = await openapiService.getAddressBalance(address);
-            }
+            //if (address.startsWith('bcrt1')) {
+            data = await this.getOpNetBalance(address);
+            //} else {
+            //    data = await openapiService.getAddressBalance(address);
+            //}
         } catch (e) {
             data = await this.getOpNetBalance(address);
         }
