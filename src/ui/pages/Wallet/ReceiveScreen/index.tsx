@@ -33,8 +33,8 @@ export default function ReceiveScreen() {
               imageRendering={chain.icon}
               imageSettings={{
                 src: chain.icon,
-                width: 50,
-                height: 50,
+                width: 30,
+                height: 30,
                 excavate: true
               }}></QRCode>
           </Column>
