@@ -2,6 +2,8 @@ import { BroadcastedTransaction } from 'opnet';
 
 import { OpnetProvider } from '@/content-script/pageProvider/index.js';
 import {
+    DeploymentResult,
+    IDeploymentParameters,
     IInteractionParameters,
     IUnwrapParameters,
     IWrapParameters,
@@ -13,6 +15,7 @@ import {
 export type InteractionParametersWithoutSigner = Omit<IInteractionParameters, 'signer'>;
 export type IWrapParametersWithoutSigner = Omit<IWrapParameters, 'signer'>;
 export type IUnwrapParametersSigner = Omit<IUnwrapParameters, 'signer'>;
+export type IDeploymentParametersWithoutSigner = Omit<IDeploymentParameters, 'signer' | 'network'>;
 
 export interface BroadcastTransactionOptions {
     raw: string;
@@ -44,6 +47,10 @@ export class Web3Provider {
         }
 
         return this.provider.signInteraction(interactionParameters);
+    }
+
+    public async deployContract(params: IDeploymentParametersWithoutSigner): Promise<DeploymentResult> {
+        return this.provider.deployContract(params);
     }
 
     public async broadcast(transactions: BroadcastTransactionOptions[]): Promise<BroadcastedTransaction[]> {

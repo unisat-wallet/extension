@@ -3,6 +3,7 @@
 /* constants pool */
 import { AddressType, NetworkType, RestoreWalletType } from '../types';
 
+
 export enum CHAINS_ENUM {
     BTC = 'BTC'
 }
@@ -77,7 +78,7 @@ export const ADDRESS_TYPES: {
         value: AddressType.P2PKH,
         label: 'P2PKH',
         name: 'Legacy (P2PKH)',
-        hdPath: 'm/44\'/0\'/0\'/0',
+        hdPath: "m/44'/0'/0'/0",
         displayIndex: 3,
         isUnisatLegacy: false
     },
@@ -85,7 +86,7 @@ export const ADDRESS_TYPES: {
         value: AddressType.P2WPKH,
         label: 'P2WPKH',
         name: 'Native Segwit (P2WPKH)',
-        hdPath: 'm/84\'/0\'/0\'/0',
+        hdPath: "m/84'/0'/0'/0",
         displayIndex: 0,
         isUnisatLegacy: false
     },
@@ -93,7 +94,7 @@ export const ADDRESS_TYPES: {
         value: AddressType.P2TR,
         label: 'P2TR',
         name: 'Taproot (P2TR)',
-        hdPath: 'm/86\'/0\'/0\'/0',
+        hdPath: "m/86'/0'/0'/0",
         displayIndex: 2,
         isUnisatLegacy: false
     },
@@ -101,7 +102,7 @@ export const ADDRESS_TYPES: {
         value: AddressType.P2SH_P2WPKH,
         label: 'P2SH-P2WPKH',
         name: 'Nested Segwit (P2SH-P2WPKH)',
-        hdPath: 'm/49\'/0\'/0\'/0',
+        hdPath: "m/49'/0'/0'/0",
         displayIndex: 1,
         isUnisatLegacy: false
     },
@@ -109,7 +110,7 @@ export const ADDRESS_TYPES: {
         value: AddressType.M44_P2WPKH,
         label: 'P2WPKH',
         name: 'Native SegWit (P2WPKH)',
-        hdPath: 'm/44\'/0\'/0\'/0',
+        hdPath: "m/44'/0'/0'/0",
         displayIndex: 4,
         isUnisatLegacy: true
     },
@@ -117,13 +118,13 @@ export const ADDRESS_TYPES: {
         value: AddressType.M44_P2TR,
         label: 'P2TR',
         name: 'Taproot (P2TR)',
-        hdPath: 'm/44\'/0\'/0\'/0',
+        hdPath: "m/44'/0'/0'/0",
         displayIndex: 5,
         isUnisatLegacy: true
     }
 ];
 
-export const OW_HD_PATH = 'm/86\'/0\'/0\'';
+export const OW_HD_PATH = "m/86'/0'/0'";
 
 export const RESTORE_WALLETS: { value: RestoreWalletType; name: string; addressTypes: AddressType[] }[] = [
     {
@@ -291,7 +292,7 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         unit: 'FB',
         networkType: NetworkType.MAINNET,
         endpoints: ['https://wallet-api-fractal.unisat.io'],
-        mempoolSpaceUrl: 'https://mempool.fractalbitcoin.io',
+        mempoolSpaceUrl: 'https://fractal-mempool.opnet.org',
         unisatUrl: 'https://fractal.unisat.io',
         ordinalsUrl: 'https://ordinals.fractalbitcoin.io',
         unisatExplorerUrl: 'https://explorer.fractalbitcoin.io',
@@ -308,12 +309,12 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         unit: 'tFB',
         networkType: NetworkType.MAINNET,
         endpoints: ['https://wallet-api-fractal-testnet.unisat.io'],
-        mempoolSpaceUrl: 'https://mempool-testnet.fractalbitcoin.io',
+        mempoolSpaceUrl: 'https://fractal-mempool.opnet.org',
         unisatUrl: 'https://fractal-testnet.unisat.io',
         ordinalsUrl: 'https://ordinals-testnet.fractalbitcoin.io',
         unisatExplorerUrl: 'https://explorer-testnet.fractalbitcoin.io',
         okxExplorerUrl: '',
-        isViewTxHistoryInternally: false,
+        isViewTxHistoryInternally: true,
         isFractal: true,
         showPrice: false
     }
@@ -349,10 +350,7 @@ export const CHAIN_GROUPS: TypeChainGroup[] = [
         type: 'list',
         label: 'Fractal',
         icon: './images/artifacts/fractal-mainnet.svg',
-        items: [
-            CHAINS_MAP[ChainType.FRACTAL_BITCOIN_MAINNET],
-            CHAINS_MAP[ChainType.FRACTAL_BITCOIN_TESTNET]
-        ]
+        items: [CHAINS_MAP[ChainType.FRACTAL_BITCOIN_MAINNET], CHAINS_MAP[ChainType.FRACTAL_BITCOIN_TESTNET]]
     }
 ];
 

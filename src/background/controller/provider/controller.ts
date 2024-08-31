@@ -13,6 +13,7 @@ import { toPsbtNetwork } from '@btc-vision/wallet-sdk/lib/network';
 import { ethErrors } from 'eth-rpc-errors';
 import BaseController from '../base';
 import wallet from '../wallet';
+import { IDeploymentParametersWithoutSigner } from '@/content-script/pageProvider/Web3Provider';
 
 function formatPsbtHex(psbtHex: string) {
     let formatData = '';
@@ -204,6 +205,40 @@ class ProviderController extends BaseController {
         data: { params: DetailedInteractionParameters }
     }) => {
         return wallet.signInteraction(request.data.params.interactionParameters);
+    };
+
+    @Reflect.metadata('APPROVAL', ['SignDeployment', (_req: RequestData) => {
+        const interactionParams = _req.data.params as IDeploymentParametersWithoutSigner;
+        if (!interactionParams.bytecode) {
+            throw new Error('Invalid bytecode');
+        }
+
+        if (!interactionParams.utxos || !interactionParams.utxos.length) {
+            throw new Error('No utxos');
+        }
+
+        if (!interactionParams.feeRate) {
+            throw new Error('No feeRate');
+        }
+
+        // @ts-ignore
+        interactionParams.priorityFee = BigInt(interactionParams.priorityFee);
+    }])
+    deployContract = async (request: {
+        approvalRes: boolean,
+        data: { params: IDeploymentParametersWithoutSigner }
+    }) => {
+        const feeRate = await wallet.getFeeSummary();
+        const rate = feeRate.list[2] || feeRate.list[1] || feeRate.list[0];
+
+        if (Number(request.data.params.feeRate) < Number(rate.feeRate)) {
+            // @ts-ignore
+            request.data.params.feeRate = Number(rate.feeRate);
+
+            console.warn('The fee rate is too low, the system will automatically adjust the fee rate to the minimum value');
+        }
+
+        return wallet.deployContract(request.data.params);
     };
 
     @Reflect.metadata('APPROVAL', ['SignText', () => {

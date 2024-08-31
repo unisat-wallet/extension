@@ -8,16 +8,16 @@ import { RequestParams } from '@/shared/types/Request.js';
 import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
 import Web3API from '@/shared/web3/Web3API';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
-import { Unisat, UnwrapResult, UTXO, WrapResult } from '@btc-vision/transaction';
+import { DeploymentResult, Unisat, UnwrapResult, UTXO, WrapResult } from '@btc-vision/transaction';
 
 import {
     BroadcastTransactionOptions,
+    IDeploymentParametersWithoutSigner,
     InteractionParametersWithoutSigner,
     IUnwrapParametersSigner,
     IWrapParametersWithoutSigner,
     Web3Provider
 } from './Web3Provider';
-
 import PushEventHandlers from './pushEventHandlers';
 import ReadyPromise from './readyPromise';
 import { $, domReadyCall } from './utils';
@@ -294,6 +294,13 @@ export class OpnetProvider extends EventEmitter {
         })) as Promise<string>;
     };
 
+    deployContract = async (params: IDeploymentParametersWithoutSigner): Promise<DeploymentResult> => {
+        return (await this._request({
+            method: 'deployContract',
+            params: params
+        })) as Promise<DeploymentResult>;
+    };
+
     signInteraction = async (
         interactionParameters: InteractionParametersWithoutSigner
     ): Promise<[string, string, UTXO[]]> => {
@@ -503,20 +510,23 @@ export class OpnetProvider extends EventEmitter {
 
 const provider = new OpnetProvider();
 
-if (!window.unisat) {
-    window.unisat = new Proxy(provider, {
-        deleteProperty: () => true
-    }) as any;
-
-    Object.defineProperty(window, 'unisat', {
-        value: new Proxy(provider, {
+// Allow website that support unisat to support OP_NET.
+setTimeout(() => {
+    if (!window.unisat) {
+        window.unisat = new Proxy(provider, {
             deleteProperty: () => true
-        }),
-        writable: true
-    });
+        }) as any;
 
-    window.dispatchEvent(new Event('unisat#initialized'));
-}
+        Object.defineProperty(window, 'unisat', {
+            value: new Proxy(provider, {
+                deleteProperty: () => true
+            }),
+            writable: true
+        });
+
+        window.dispatchEvent(new Event('unisat#initialized'));
+    }
+}, 2000);
 
 // force opnet.
 
@@ -532,4 +542,3 @@ Object.defineProperty(window, 'opnet', {
 });
 
 window.dispatchEvent(new Event('opnet#initialized'));
-
