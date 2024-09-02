@@ -24,7 +24,8 @@ import { $, domReadyCall } from './utils';
 
 declare global {
     interface Window {
-        opnet: Unisat;
+        opnet?: Unisat;
+        unisat?: Unisat;
     }
 }
 

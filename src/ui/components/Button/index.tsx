@@ -8,6 +8,7 @@ import { Icon, IconTypes } from '../Icon';
 import { Row } from '../Row';
 import { Text } from '../Text';
 
+
 type Presets = keyof typeof $viewPresets;
 
 export interface ButtonProps {
@@ -108,7 +109,8 @@ const $viewPresets = {
         borderWidth: 1,
         minHeight: 50,
         borderColor: colors.white_muted,
-        borderRadius: 12
+        borderRadius: 12,
+        backgroundColor: colors.black_dark
     } as CSSProperties),
 
     fontsmall: Object.assign({}, $baseViewStyle, {
@@ -157,7 +159,9 @@ const $hoverViewPresets: Record<Presets, CSSProperties> = {
     fontsmall: {
         backgroundColor: '#383535'
     },
-    defaultV2: {},
+    defaultV2: {
+        backgroundColor: '#383535'
+    },
     primaryV2: {
         backgroundColor: colors.yellow_dark
     },
@@ -177,7 +181,6 @@ const $baseTextStyle: CSSProperties = {
     color: colors.white,
     paddingLeft: spacing.tiny,
     paddingRight: spacing.tiny
-
 };
 
 const $textPresets: Record<Presets, CSSProperties> = {

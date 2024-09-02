@@ -9,6 +9,7 @@ import { Input } from '../Input';
 import { Row } from '../Row';
 import { Text } from '../Text';
 
+
 enum FeeRateType {
     SLOW,
     AVG,
@@ -31,11 +32,18 @@ export function FeeRateBar({ readonly, onChange }: { readonly?: boolean; onChang
                 setFeeOptions([...feeArray, { title: 'Custom', feeRate: 0 }]);
             } else {
                 wallet.getFeeSummary().then((v) => {
-                    if (readonly) {
-                        setFeeOptions(v.list);
-                    } else {
-                        setFeeOptions([...v.list, { title: 'Custom', feeRate: 0 }]);
-                    }
+                    const list = readonly ? v.list : [...v.list, { title: 'Custom', feeRate: 0 }];
+
+                    list.forEach((v) => {
+                        v.feeRate = v.feeRate < 5 ? (v.feeRate = 5) : v.feeRate;
+                        v.feeRate += 10;
+
+                        return v;
+                    });
+
+                    console.log('set fee', list);
+
+                    setFeeOptions(list);
                 });
             }
         };

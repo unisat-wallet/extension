@@ -24,6 +24,7 @@ import { useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 import { ABIDataTypes, Address, BinaryWriter } from '@btc-vision/bsi-binary';
 import {
+    AddressVerificator,
     currentConsensusConfig,
     DeploymentResult,
     IDeploymentParameters,
@@ -74,7 +75,11 @@ export interface AirdropInterface extends IOP_20Contract {
     airdrop(to: Map<Address, bigint>): Promise<BaseContractProperty>;
 }
 
-const waitForTransaction = async (txHash: string, setOpenLoading: Dispatch<SetStateAction<boolean>>, tools: ContextType) => {
+const waitForTransaction = async (
+    txHash: string,
+    setOpenLoading: Dispatch<SetStateAction<boolean>>,
+    tools: ContextType
+) => {
     let attempts = 0;
     const maxAttempts = 360; // 10 minutes max wait time
     setOpenLoading(true);
@@ -111,6 +116,7 @@ export default function TxOpnetConfirmScreen() {
     const handleCancel = () => {
         window.history.go(-1);
     };
+
     const [routerAddress, setRouterAddress] = useState<string>('');
     useEffect(() => {
         const setWallet = async () => {
@@ -121,6 +127,7 @@ export default function TxOpnetConfirmScreen() {
 
         void setWallet();
     });
+
     useEffect(() => {
         if (acceptWrap && finalUnwrapTx) {
             const completeUnwrap = async () => {
@@ -152,10 +159,17 @@ export default function TxOpnetConfirmScreen() {
             void completeUnwrap();
         }
     }, [acceptWrap]);
+
     const wallet = useWallet();
     const tools = useTools();
 
     const handleConfirm = async () => {
+        const currentWalletAddress = await wallet.getCurrentAccount();
+        if (!AddressVerificator.isValidP2TRAddress(currentWalletAddress.address, Web3API.network)) {
+            tools.toastError('Please use a taproot wallet.');
+            return;
+        }
+
         const foundObject = rawTxInfo.items.find(
             (obj) => obj.account && obj.account.address === rawTxInfo.account.address
         );
@@ -234,6 +248,13 @@ export default function TxOpnetConfirmScreen() {
     }
 
     const handleWrapConfirm = async () => {
+        const currentWalletAddress = await wallet.getCurrentAccount();
+        const walletAddress = currentWalletAddress.address;
+        if (!AddressVerificator.isValidP2TRAddress(walletAddress, Web3API.network)) {
+            tools.toastError('Please use a taproot wallet to wrap.');
+            return;
+        }
+
         const foundObject = rawTxInfo.items.find(
             (obj) => obj.account && obj.account.address === rawTxInfo.account.address
         );
@@ -244,16 +265,16 @@ export default function TxOpnetConfirmScreen() {
         const wrapAmount = expandToDecimals(rawTxInfo.inputAmount, 8);
         let utxos: UTXO[];
 
-        const amountRequired = (wrapAmount + currentConsensusConfig.UNWRAP_CONSOLIDATION_PREPAID_FEES) + 50_000n; // add fee
+        const amountRequired = wrapAmount + currentConsensusConfig.UNWRAP_CONSOLIDATION_PREPAID_FEES + 50_000n; // add fee
         if (!useNextUTXO) {
             utxos = await Web3API.getUTXOs(walletGet.addresses, amountRequired + 1_000_000n);
         } else {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                    ...utxo,
-                    value: BigInt(utxo.value)
-                }))
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
                 : [];
         }
 
@@ -279,7 +300,7 @@ export default function TxOpnetConfirmScreen() {
 
         const getChain = await wallet.getChainType();
         const wrapParameters: IWrapParameters = {
-            from: walletGet.p2tr,
+            from: walletAddress,
             to: Web3API.WBTC,
             chainId: getOPNetChainType(getChain),
             utxos: utxos,
@@ -324,6 +345,13 @@ export default function TxOpnetConfirmScreen() {
 
     const handleUnWrapConfirm = async () => {
         try {
+            const currentWalletAddress = await wallet.getCurrentAccount();
+            const walletAddress = currentWalletAddress.address;
+            if (!AddressVerificator.isValidP2TRAddress(walletAddress, Web3API.network)) {
+                tools.toastError('Please use a taproot wallet to unwrap.');
+                return;
+            }
+
             const foundObject = rawTxInfo.items.find(
                 (obj) => obj.account && obj.account.address === rawTxInfo.account.address
             );
@@ -339,9 +367,9 @@ export default function TxOpnetConfirmScreen() {
                 const storedUTXO = localStorage.getItem('nextUTXO');
                 utxos = storedUTXO
                     ? JSON.parse(storedUTXO).map((utxo) => ({
-                        ...utxo,
-                        value: BigInt(utxo.value)
-                    }))
+                          ...utxo,
+                          value: BigInt(utxo.value)
+                      }))
                     : [];
             }
 
@@ -349,7 +377,7 @@ export default function TxOpnetConfirmScreen() {
                 Web3API.WBTC,
                 WBTC_ABI,
                 Web3API.provider,
-                walletGet.p2tr
+                walletAddress
             );
 
             const wbtcBalanceSimulation = await contract.balanceOf(walletGet.p2tr);
@@ -392,14 +420,14 @@ export default function TxOpnetConfirmScreen() {
 
                 const getChain = await wallet.getChainType();
                 const interactionParameters: IInteractionParameters = {
-                    from: walletGet.p2tr,
+                    from: walletAddress,
                     to: contract.address.toString(),
                     chainId: getOPNetChainType(getChain),
                     utxos: utxos,
                     signer: walletGet.keypair,
                     network: Web3API.network,
                     feeRate: rawTxInfo.feeRate,
-                    priorityFee: rawTxInfo.priorityFee,
+                    priorityFee: rawTxInfo.priorityFee > 1000n ? rawTxInfo.priorityFee : 1000n,
                     calldata: withdrawalRequest.calldata as Buffer
                 };
 
@@ -448,7 +476,7 @@ export default function TxOpnetConfirmScreen() {
 
             // TODO: Verify that the UTXOs have enough money in them to process to the transaction, if not, we have to fetch more UTXOs.
             const unwrapParameters: IUnwrapParameters = {
-                from: walletGet.p2tr, // Address to unwrap
+                from: walletAddress, // Address to unwrap
                 utxos: utxosForUnwrap, // Use the UTXO generated from the withdrawal request
                 chainId: chainId,
                 unwrapUTXOs: unwrapUtxos.vaultUTXOs, // Vault UTXOs to unwrap
@@ -509,9 +537,9 @@ export default function TxOpnetConfirmScreen() {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                    ...utxo,
-                    value: BigInt(utxo.value)
-                }))
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
                 : [];
         }
 
@@ -579,9 +607,9 @@ export default function TxOpnetConfirmScreen() {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                    ...utxo,
-                    value: BigInt(utxo.value)
-                }))
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
                 : [];
         }
 
@@ -781,9 +809,9 @@ export default function TxOpnetConfirmScreen() {
             const storedUTXO = localStorage.getItem('nextUTXO');
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                    ...utxo,
-                    value: BigInt(utxo.value)
-                }))
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
                 : [];
         }
         const interactionParameters: IInteractionParameters = {
@@ -849,9 +877,9 @@ export default function TxOpnetConfirmScreen() {
         } else {
             utxos = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                    ...utxo,
-                    value: BigInt(utxo.value)
-                }))
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
                 : [];
         }
         const getData = await approveToken(inputAmountBigInt, walletGet, rawTxInfo.contractAddress[0], utxos);
@@ -981,9 +1009,9 @@ export default function TxOpnetConfirmScreen() {
             const storedUTXO = localStorage.getItem('nextUTXO');
             let utxos: UTXO[] = storedUTXO
                 ? JSON.parse(storedUTXO).map((utxo) => ({
-                    ...utxo,
-                    value: BigInt(utxo.value)
-                }))
+                      ...utxo,
+                      value: BigInt(utxo.value)
+                  }))
                 : [];
 
             if (!utxos || (utxos && utxos.length === 0) || useNextUTXO) {
@@ -1045,9 +1073,9 @@ export default function TxOpnetConfirmScreen() {
                 const storedUTXO = localStorage.getItem('nextUTXO');
                 utxos = storedUTXO
                     ? JSON.parse(storedUTXO).map((utxo) => ({
-                        ...utxo,
-                        value: BigInt(utxo.value)
-                    }))
+                          ...utxo,
+                          value: BigInt(utxo.value)
+                      }))
                     : [];
             }
 
@@ -1129,9 +1157,9 @@ export default function TxOpnetConfirmScreen() {
                 const storedUTXO = localStorage.getItem('nextUTXO');
                 utxos = storedUTXO
                     ? JSON.parse(storedUTXO).map((utxo) => ({
-                        ...utxo,
-                        value: BigInt(utxo.value)
-                    }))
+                          ...utxo,
+                          value: BigInt(utxo.value)
+                      }))
                     : [];
             }
             const contract = getContract<IOP_20Contract>(
