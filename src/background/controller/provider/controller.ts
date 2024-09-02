@@ -30,6 +30,17 @@ function formatPsbtHex(psbtHex: string) {
     return formatData;
 }
 
+function objToBuffer(obj: object): Uint8Array {
+    const keys = Object.keys(obj);
+    const values = Object.values(obj);
+
+    const buffer = new Uint8Array(keys.length);
+    for (let i = 0; i < keys.length; i++) {
+        buffer[i] = values[i];
+    }
+
+    return buffer;
+}
 
 class ProviderController extends BaseController {
 
@@ -223,6 +234,9 @@ class ProviderController extends BaseController {
 
         // @ts-ignore
         interactionParams.priorityFee = BigInt(interactionParams.priorityFee);
+
+        // @ts-ignore
+        interactionParams.bytecode = objToBuffer(interactionParams.bytecode);
     }])
     deployContract = async (request: {
         approvalRes: boolean,
@@ -237,6 +251,14 @@ class ProviderController extends BaseController {
 
             console.warn('The fee rate is too low, the system will automatically adjust the fee rate to the minimum value');
         }
+
+        // @ts-ignore
+        request.data.params.bytecode = objToBuffer(request.data.params.bytecode);
+
+        // @ts-ignore
+        request.data.params.priorityFee = BigInt(request.data.params.priorityFee);
+
+        console.log('deployContract', request.data.params);
 
         return wallet.deployContract(request.data.params);
     };

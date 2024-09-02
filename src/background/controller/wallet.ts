@@ -758,9 +758,20 @@ export class WalletController extends BaseController {
         } as Account);
         if (!wifWallet) throw new Error('no current account');
 
+        const utxos = params.utxos.map((utxo) => {
+            return {
+                ...utxo,
+                value:
+                    (typeof utxo.value as unknown as string | bigint) === 'bigint'
+                        ? utxo.value
+                        : BigInt(utxo.value as unknown as string)
+            };
+        });
+
         const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
         const deployContractParameters: IDeploymentParameters = {
             ...params,
+            utxos: utxos,
             signer: walletGet.keypair,
             network: Web3API.network,
             feeRate: Number(params.feeRate.toString()),

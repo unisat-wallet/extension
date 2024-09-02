@@ -16,6 +16,22 @@ interface Props {
     };
 }
 
+function toHex(buffer: Uint8Array | Buffer | Array<number>) {
+    return Array.prototype.map.call(buffer, (x) => ('00' + x.toString(16)).slice(-2)).join('');
+}
+
+function objToBuffer(obj: object): Uint8Array {
+    const keys = Object.keys(obj);
+    const values = Object.values(obj);
+
+    const buffer = new Uint8Array(keys.length);
+    for (let i = 0; i < keys.length; i++) {
+        buffer[i] = values[i];
+    }
+
+    return buffer;
+}
+
 export default function SignDeployment(props: Props) {
     const {
         params: { data, session }
@@ -30,7 +46,7 @@ export default function SignDeployment(props: Props) {
         await resolveApproval();
     };
 
-    const bytecode = typeof data.bytecode === 'string' ? data.bytecode : Buffer.from(data.bytecode).toString('hex');
+    const bytecode: string = typeof data.bytecode === 'string' ? data.bytecode : toHex(objToBuffer(data.bytecode));
 
     return (
         <Layout>
