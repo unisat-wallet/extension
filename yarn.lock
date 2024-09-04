@@ -1268,10 +1268,10 @@
     "@noble/hashes" "^1.1.5"
     "@noble/secp256k1" "^1.7.1"
 
-"@btc-vision/bsi-binary@1.0.37", "@btc-vision/bsi-binary@^1.0.37":
-  version "1.0.37"
-  resolved "https://registry.yarnpkg.com/@btc-vision/bsi-binary/-/bsi-binary-1.0.37.tgz#876ef7fb9a1ae738107d2f4b537a871bb80694aa"
-  integrity sha512-5FwzHnBOYJb8ByvnYfzw1CdCsESnqSexlUMdtPengRY9kfvnm1pJmJMSbHNwYtfQqG6vG59cqCqKZgGhhu7hIw==
+"@btc-vision/bsi-binary@1.0.38", "@btc-vision/bsi-binary@^1.0.38":
+  version "1.0.38"
+  resolved "https://registry.yarnpkg.com/@btc-vision/bsi-binary/-/bsi-binary-1.0.38.tgz#d7a428319e774ab77aee714a4a04b36378d2be24"
+  integrity sha512-RoswJblqI1biegHGtCv2m8chCV+Z2J7xdjvq0yOad9w41L5rR1vgru4JjZMpGGFiz6ikxBpG448jihFmwztouQ==
   dependencies:
     gulp "^4.0.2"
     gulp-cached "^1.1.1"
@@ -1280,12 +1280,12 @@
     sha.js "^2.4.11"
     ts-node "^10.9.2"
 
-"@btc-vision/bsi-bitcoin-rpc@^1.0.22":
-  version "1.0.22"
-  resolved "https://registry.yarnpkg.com/@btc-vision/bsi-bitcoin-rpc/-/bsi-bitcoin-rpc-1.0.22.tgz#7b6dc9aa6429b3472a41f80439a6c3e70dedd9cb"
-  integrity sha512-kw86ZtEVaQOi95VJv0lq84ekM/4WlGqPYrs6SgdpFLXadHLamgqnmLvFUdwkhkzR4g4bnf/e5u7voELe9veHaQ==
+"@btc-vision/bsi-bitcoin-rpc@^1.0.25":
+  version "1.0.26"
+  resolved "https://registry.yarnpkg.com/@btc-vision/bsi-bitcoin-rpc/-/bsi-bitcoin-rpc-1.0.26.tgz#a4c60616611db01e56fc1ead4542e8b7cc477b3d"
+  integrity sha512-fgLelSSUCCQk+H104K17gVunqNPbjc8bsYXQDOlTcOQK5ssv6KQ3vsJgM6TQVoosXCoCSTf2p7I976nE21JT7Q==
   dependencies:
-    "@btc-vision/bsi-common" "^1.0.14"
+    "@btc-vision/bsi-common" "^1.0.20"
     gulp "^4.0.2"
     gulp-cached "^1.1.1"
     gulp-logger "^0.0.2"
@@ -1295,12 +1295,12 @@
     ts-node "^10.9.2"
     undici "^6.19.2"
 
-"@btc-vision/bsi-common@^1.0.14", "@btc-vision/bsi-common@^1.0.16":
-  version "1.0.16"
-  resolved "https://registry.yarnpkg.com/@btc-vision/bsi-common/-/bsi-common-1.0.16.tgz#1846cb6466b2a86167591e9197453cc8fb3a63b2"
-  integrity sha512-lFCWjDUiOg4JIRqBJtBqWmZrrQgNpFly8u/3euXhnplqbkd/2kDarrUprR7HmtTG6m76lpBXuBPWAYLC0H3qMQ==
+"@btc-vision/bsi-common@^1.0.20":
+  version "1.0.20"
+  resolved "https://registry.yarnpkg.com/@btc-vision/bsi-common/-/bsi-common-1.0.20.tgz#2e8283224a7dc1aea1b94b93eaad72975d534b5d"
+  integrity sha512-D8LY6j23kYyalYoVwAjN1svwV0J876gKjUrroGuCJh7RKHBPVDGnHyir5xM4hJxWiNeFjgU7Z/QneibTsiHNtA==
   dependencies:
-    "@btc-vision/logger" "^1.0.2"
+    "@btc-vision/logger" "^1.0.4"
     "@jest/types" "^29.6.3"
     "@types/cors" "^2.8.17"
     "@types/debug" "^4.1.12"
@@ -1317,10 +1317,10 @@
     ts-jest "^29.1.2"
     ts-node "^10.9.2"
 
-"@btc-vision/logger@^1.0.2":
-  version "1.0.2"
-  resolved "https://registry.yarnpkg.com/@btc-vision/logger/-/logger-1.0.2.tgz#cc313aca97012ac559e82dde9f723040b4b29400"
-  integrity sha512-ijrSBsaV00qTI2sQDiLpPbjr5c2Om0k2JCq6sm8sFoRk5095vaHQqOVlB+SyM/ndmvWaoObBgryj80K0sx6tCA==
+"@btc-vision/logger@^1.0.3", "@btc-vision/logger@^1.0.4":
+  version "1.0.4"
+  resolved "https://registry.yarnpkg.com/@btc-vision/logger/-/logger-1.0.4.tgz#7930c8d5556ff462ae2bb78bc193ea76cc5a7152"
+  integrity sha512-smk451VbAkrh1Jh9mpLr5Aiae/pLP7r5oi0HGwnQNqcxbCiR6+kyyUNVey9nlK0faOt4X6XV2N8r7n8oR5PvzQ==
   dependencies:
     "@jest/types" "^29.6.3"
     "@types/jest" "^29.5.12"
@@ -1347,49 +1347,16 @@
   dependencies:
     "@metamask/utils" "^9.0.0"
 
-"@btc-vision/transaction@^1.0.82":
-  version "1.0.90"
-  resolved "https://registry.yarnpkg.com/@btc-vision/transaction/-/transaction-1.0.90.tgz#8b7afc2835adeccaf036fcf7d7bb0da1e5ea935d"
-  integrity sha512-9R/YRp61gvs5y1K0bhgrcZ7PoX7eyY3UNFCv3v5qYZwHOaRgBgKz9vDot295TZYRsPh994WLLj03AMQL0+2SnQ==
+"@btc-vision/transaction@^1.0.97":
+  version "1.0.97"
+  resolved "https://registry.yarnpkg.com/@btc-vision/transaction/-/transaction-1.0.97.tgz#f0034590be3e1554ce76173065464d2ce061fc2d"
+  integrity sha512-oJkjWYSDF+DlBaT5CSusfWso71Qr9r46x+BJNhQKRJn2ckFypY2jnEh/I+SiZwLgd7rjNMpYnD3W0QKjhLqWbQ==
   dependencies:
     "@babel/plugin-proposal-object-rest-spread" "^7.20.7"
     "@bitcoinerlab/secp256k1" "^1.1.1"
-    "@btc-vision/bsi-binary" "^1.0.37"
-    "@btc-vision/bsi-bitcoin-rpc" "^1.0.22"
-    "@btc-vision/bsi-common" "^1.0.16"
-    "@btc-vision/logger" "^1.0.2"
-    assert "^2.1.0"
-    babel-loader "^9.1.3"
-    babel-plugin-transform-import-meta "^2.2.1"
-    babel-preset-react "^6.24.1"
-    babelify "^10.0.0"
-    bech32 "^2.0.0"
-    bignumber.js "^9.1.2"
-    bip32 "^4.0.0"
-    bitcoinjs-lib "github:btc-vision/bitcoinjs-lib"
-    browserify-zlib "^0.2.0"
-    buffer "^6.0.3"
-    ecpair "^2.1.0"
-    gulp "^4.0.2"
-    gulp-cached "^1.1.1"
-    gulp-logger "^0.0.2"
-    gulp-typescript "^6.0.0-alpha.1"
-    gulplog "^2.2.0"
-    process "^0.11.10"
-    ts-loader "^9.5.1"
-    ts-node "^10.9.2"
-
-"@btc-vision/transaction@^1.0.94":
-  version "1.0.94"
-  resolved "https://registry.yarnpkg.com/@btc-vision/transaction/-/transaction-1.0.94.tgz#9e7b7efa1aa7ef7d8a17a83a8c9a563e8f0bccf0"
-  integrity sha512-AKk55TaTOkx/GaDETS7wi5+K9KlKsmHWX+hfGxMk3eh+eA1rP4EVxHoQYx0yrr4FtIZdNyrLLcJ3oq5MQbaPIQ==
-  dependencies:
-    "@babel/plugin-proposal-object-rest-spread" "^7.20.7"
-    "@bitcoinerlab/secp256k1" "^1.1.1"
-    "@btc-vision/bsi-binary" "^1.0.37"
-    "@btc-vision/bsi-bitcoin-rpc" "^1.0.22"
-    "@btc-vision/bsi-common" "^1.0.16"
-    "@btc-vision/logger" "^1.0.2"
+    "@btc-vision/bsi-binary" "^1.0.38"
+    "@btc-vision/bsi-bitcoin-rpc" "^1.0.25"
+    "@btc-vision/logger" "^1.0.3"
     assert "^2.1.0"
     babel-loader "^9.1.3"
     babel-plugin-transform-import-meta "^2.2.1"
@@ -11340,16 +11307,15 @@ open@^8.0.9, open@^8.4.0:
     is-docker "^2.1.1"
     is-wsl "^2.2.0"
 
-opnet@1.0.48:
-  version "1.0.48"
-  resolved "https://registry.yarnpkg.com/opnet/-/opnet-1.0.48.tgz#96e40cf3fd34a554ab0041106d17b334e65d2e9d"
-  integrity sha512-SyLCB73RFWBhRVvzdWuk+JHa8VvTF0jjwS7zQ0eL9wlawLmMPkL1xuFZDwDnSGMzjaI8zNngG7uOHPJqJXGuvQ==
+opnet@1.0.49:
+  version "1.0.49"
+  resolved "https://registry.yarnpkg.com/opnet/-/opnet-1.0.49.tgz#9984fb87087f19f66519ff42de87c00e468b89c5"
+  integrity sha512-LKCwOG3Upz6Wda6jRTGVrAbs9O7qboPuZ3X3Q3qLpy3l5y9WMNRNoZ7eD45InccH4tlj0tTSAtJtxzb1bQKQHQ==
   dependencies:
     "@babel/plugin-proposal-object-rest-spread" "^7.20.7"
     "@bitcoinerlab/secp256k1" "^1.1.1"
-    "@btc-vision/bsi-binary" "^1.0.37"
-    "@btc-vision/bsi-common" "^1.0.16"
-    "@btc-vision/transaction" "^1.0.82"
+    "@btc-vision/bsi-binary" "^1.0.38"
+    "@btc-vision/transaction" "^1.0.97"
     "@noble/hashes" "^1.4.0"
     babel-loader "^9.1.3"
     babel-plugin-transform-import-meta "^2.2.1"
@@ -12465,7 +12431,7 @@ process-nextick-args@^2.0.0, process-nextick-args@~2.0.0:
   resolved "https://registry.yarnpkg.com/process-nextick-args/-/process-nextick-args-2.0.1.tgz#7820d9b16120cc55ca9ae7792680ae7dba6d7fe2"
   integrity sha512-3ouUOpQhtgrbOa17J7+uxOTpITYWaGP7/AhoR3+A+/1e9skrzelGi/dXzEYyvbxubEF6Wn2ypscTKiKJFFn1ag==
 
-process@0.11.10, process@^0.11.10, process@~0.11.0:
+process@0.11.10, process@~0.11.0:
   version "0.11.10"
   resolved "https://registry.yarnpkg.com/process/-/process-0.11.10.tgz#7332300e840161bda3e69a1d1d91a7d4bc16f182"
   integrity sha512-cdGef/drWFoydD1JsMzuFf8100nZl+GT+yacc2bEced5f9Rjk4z+WtFUTBu9PhOi9j/jfmBPu0mMEY4wIdAF8A==
