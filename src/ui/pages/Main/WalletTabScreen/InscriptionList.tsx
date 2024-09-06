@@ -25,6 +25,7 @@ export function InscriptionList() {
   const tools = useTools();
 
   const fetchData = async () => {
+    if (!currentAccount.address) return;
     try {
       // tools.showLoading(true);
       const { list, total } = await wallet.getOrdinalsInscriptions(
