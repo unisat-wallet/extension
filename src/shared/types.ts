@@ -332,7 +332,7 @@ export enum RiskType {
 
 export interface Risk {
   type: RiskType;
-  level: 'danger' | 'warning';
+  level: 'danger' | 'warning' | 'critical';
   title: string;
   desc: string;
 }

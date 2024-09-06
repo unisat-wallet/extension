@@ -9,7 +9,7 @@ export const Popover = ({ children, onClose }: { children: React.ReactNode; onCl
     <div
       className="popover-container"
       style={{
-        backgroundColor: 'rgba(255,255,255,0.1)'
+        backgroundColor: 'rgba(0,0,0,0.8)'
       }}>
       <div style={{ backgroundColor: '#181A1F', width: 340, padding: 20, borderRadius: 15, position: 'relative' }}>
         {onClose && (
