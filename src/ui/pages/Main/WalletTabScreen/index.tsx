@@ -17,7 +17,7 @@ import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import {
-  useBlockstreamUrl,
+  useAddressExplorerUrl,
   useBTCUnit,
   useChain,
   useChainType,
@@ -164,7 +164,7 @@ export default function WalletTabScreen() {
     }
   }, [assetTabKey, chainType]);
 
-  const blockstreamUrl = useBlockstreamUrl();
+  const addressExplorerUrl = useAddressExplorerUrl(currentAccount.address);
   const resetUiTxCreateScreen = useResetUiTxCreateScreen();
   const btcUnit = useBTCUnit();
 
@@ -322,7 +322,7 @@ export default function WalletTabScreen() {
                 if (chain.isViewTxHistoryInternally) {
                   navigate('HistoryScreen');
                 } else {
-                  window.open(`${blockstreamUrl}/address/${currentAccount.address}`);
+                  window.open(addressExplorerUrl);
                 }
               }}
             />

@@ -236,6 +236,7 @@ type TypeChain = {
   disable?: boolean;
   isFractal?: boolean;
   showPrice: boolean;
+  defaultExplorer: 'mempool-space' | 'unisat-explorer';
 };
 
 export const CHAINS_MAP: { [key: string]: TypeChain } = {
@@ -251,7 +252,8 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     ordinalsUrl: 'https://ordinals.com',
     unisatExplorerUrl: '',
     okxExplorerUrl: '',
-    showPrice: true
+    showPrice: true,
+    defaultExplorer: 'mempool-space'
   },
   [ChainType.BITCOIN_TESTNET]: {
     enum: ChainType.BITCOIN_TESTNET,
@@ -265,7 +267,8 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     ordinalsUrl: 'https://testnet.ordinals.com',
     unisatExplorerUrl: '',
     okxExplorerUrl: '',
-    showPrice: false
+    showPrice: false,
+    defaultExplorer: 'mempool-space'
   },
   [ChainType.BITCOIN_TESTNET4]: {
     enum: ChainType.BITCOIN_TESTNET4,
@@ -279,7 +282,8 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     ordinalsUrl: 'https://testnet4.ordinals.com',
     unisatExplorerUrl: '',
     okxExplorerUrl: '',
-    showPrice: false
+    showPrice: false,
+    defaultExplorer: 'mempool-space'
   },
   [ChainType.BITCOIN_SIGNET]: {
     enum: ChainType.BITCOIN_SIGNET,
@@ -293,7 +297,8 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     ordinalsUrl: 'https://signet.ordinals.com',
     unisatExplorerUrl: '',
     okxExplorerUrl: '',
-    showPrice: false
+    showPrice: false,
+    defaultExplorer: 'mempool-space'
   },
   [ChainType.FRACTAL_BITCOIN_MAINNET]: {
     enum: ChainType.FRACTAL_BITCOIN_MAINNET,
@@ -310,7 +315,8 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     isViewTxHistoryInternally: false,
     disable: false,
     isFractal: true,
-    showPrice: true
+    showPrice: true,
+    defaultExplorer: 'unisat-explorer'
   },
   [ChainType.FRACTAL_BITCOIN_TESTNET]: {
     enum: ChainType.FRACTAL_BITCOIN_TESTNET,
@@ -326,7 +332,8 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     okxExplorerUrl: '',
     isViewTxHistoryInternally: false,
     isFractal: true,
-    showPrice: false
+    showPrice: false,
+    defaultExplorer: 'unisat-explorer'
   }
 };
 

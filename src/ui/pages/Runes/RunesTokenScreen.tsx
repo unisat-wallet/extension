@@ -6,15 +6,15 @@ import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/c
 import { useTools } from '@/ui/components/ActionComponent';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
+import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useBlockstreamUrl, useOrdinalsWebsite, useUnisatWebsite } from '@/ui/state/settings/hooks';
+import { useOrdinalsWebsite, useTxExplorerUrl, useUnisatWebsite } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { copyToClipboard, showLongNumber, useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
-import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
 
 interface LocationState {
   runeid: string;
@@ -95,7 +95,8 @@ export default function RunesTokenScreen() {
 
   const ordinalsWebsite = useOrdinalsWebsite();
 
-  const mempoolWebsite = useBlockstreamUrl();
+  const txExplorerUrl = useTxExplorerUrl(tokenSummary.runeInfo.etching);
+
   if (loading) {
     return (
       <Layout>
@@ -132,10 +133,15 @@ export default function RunesTokenScreen() {
               <BRC20Ticker tick={tokenSummary.runeBalance.symbol} preset="lg" />
             </Row>
             <Row justifyCenter fullX>
-              <TickUsdWithoutPrice tick={tokenSummary.runeInfo.spacedRune} balance={runesUtils.toDecimalAmount(
-                tokenSummary.runeBalance.amount,
-                tokenSummary.runeBalance.divisibility
-              )} type={'runes'} size={'md'}/>
+              <TickUsdWithoutPrice
+                tick={tokenSummary.runeInfo.spacedRune}
+                balance={runesUtils.toDecimalAmount(
+                  tokenSummary.runeBalance.amount,
+                  tokenSummary.runeBalance.divisibility
+                )}
+                type={'runes'}
+                size={'md'}
+              />
             </Row>
 
             <Row justifyBetween mt="lg">
@@ -216,11 +222,7 @@ export default function RunesTokenScreen() {
 
             <Section title="transactions" value={showLongNumber(tokenSummary.runeInfo.transactions)} />
 
-            <Section
-              title="etching"
-              value={tokenSummary.runeInfo.etching}
-              link={`${mempoolWebsite}/tx/${tokenSummary.runeInfo.etching}`}
-            />
+            <Section title="etching" value={tokenSummary.runeInfo.etching} link={txExplorerUrl} />
 
             {tokenSummary.runeInfo.parent ? (
               <Section
