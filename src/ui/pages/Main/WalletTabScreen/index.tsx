@@ -19,13 +19,13 @@ import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import {
-    useBTCUnit,
-    useBlockstreamUrl,
-    useChain,
-    useChainType,
-    useSkipVersionCallback,
-    useVersionInfo,
-    useWalletConfig
+  useAddressExplorerUrl,
+  useBTCUnit,
+  useChain,
+  useChainType,
+  useSkipVersionCallback,
+  useVersionInfo,
+  useWalletConfig
 } from '@/ui/state/settings/hooks';
 import { useFetchUtxosCallback, useSafeBalance } from '@/ui/state/transactions/hooks';
 import { useAssetTabKey, useResetUiTxCreateScreen } from '@/ui/state/ui/hooks';
@@ -193,9 +193,9 @@ export default function WalletTabScreen() {
         }
     }, [assetTabKey, chainType]);
 
-    const blockstreamUrl = useBlockstreamUrl();
-    const resetUiTxCreateScreen = useResetUiTxCreateScreen();
-    const btcUnit = useBTCUnit();
+  const addressExplorerUrl = useAddressExplorerUrl(currentAccount.address);
+  const resetUiTxCreateScreen = useResetUiTxCreateScreen();
+  const btcUnit = useBTCUnit();
 
     const [buyBtcModalVisible, setBuyBtcModalVisible] = useState(false);
 
@@ -338,7 +338,11 @@ export default function WalletTabScreen() {
                             style={{ marginLeft: 8 }}
                             itemsCenter
                             onClick={() => {
-                                window.open(`${blockstreamUrl}/address/${currentAccount.address}`);
+                                if (chain.isViewTxHistoryInternally) {
+                                    navigate('HistoryScreen');
+                                } else {
+                                    window.open(addressExplorerUrl);
+                                }
                             }}>
                             <Text text={'View History'} size="xs" />
                             <Icon icon="link" size={fontSizes.xs} />
@@ -392,17 +396,15 @@ export default function WalletTabScreen() {
                                 />
                             </>
                         )}
-
-                        {chainType === ChainType.BITCOIN_MAINNET && (
-                            <Button
-                                text="Buy"
-                                preset="home"
-                                icon="bitcoin"
-                                onClick={() => {
-                                    setBuyBtcModalVisible(true);
-                                }}
-                            />
-                        )}
+                        <Button
+                            text="Buy"
+                            preset="home"
+                            icon="bitcoin"
+                            onClick={() => {
+                                setBuyBtcModalVisible(true);
+                            }}
+                            disabled={chainType !== ChainType.BITCOIN_MAINNET}
+                        />
                     </Row>
 
                     <Tabs

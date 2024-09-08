@@ -107,20 +107,27 @@ export function useChangeChainTypeCallback() {
     );
 }
 
-export function useBlockstreamUrl() {
-    const chainType = useChainType();
-    return CHAINS_MAP[chainType].mempoolSpaceUrl;
-}
-
 export function useBTCUnit() {
     const chainType = useChainType();
     return CHAINS_MAP[chainType].unit;
 }
 
-export function useTxIdUrl(txid: string) {
-    const chainType = useChainType();
-    const mempoolSpaceUrl = CHAINS_MAP[chainType].mempoolSpaceUrl;
-    return `${mempoolSpaceUrl}/tx/${txid}`;
+export function useTxExplorerUrl(txid: string) {
+  const chain = useChain();
+  if (chain.defaultExplorer === 'mempool-space') {
+    return `${chain.mempoolSpaceUrl}/tx/${txid}`;
+  } else {
+    return `${chain.unisatExplorerUrl}/tx/${txid}`;
+  }
+}
+
+export function useAddressExplorerUrl(address: string) {
+  const chain = useChain();
+  if (chain.defaultExplorer === 'mempool-space') {
+    return `${chain.mempoolSpaceUrl}/address/${address}`;
+  } else {
+    return `${chain.unisatExplorerUrl}/address/${address}`;
+  }
 }
 
 export function useUnisatWebsite() {

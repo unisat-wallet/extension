@@ -8,7 +8,7 @@ import Arc20PreviewCard from '@/ui/components/Arc20PreviewCard';
 import AssetTag from '@/ui/components/AssetTag';
 import { Empty } from '@/ui/components/Empty';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
-import { useBlockstreamUrl, useBTCUnit, useOrdinalsWebsite } from '@/ui/state/settings/hooks';
+import { useBTCUnit, useOrdinalsWebsite } from '@/ui/state/settings/hooks';
 import { useSetSpendUnavailableUtxosCallback } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
@@ -35,9 +35,7 @@ export default function UnavailableUtxoScreen() {
         });
     }, []);
 
-    const blockstreamUrl = useBlockstreamUrl();
-
-    const setSpendUnavailableUtxos = useSetSpendUnavailableUtxosCallback();
+  const setSpendUnavailableUtxos = useSetSpendUnavailableUtxosCallback();
 
     const selectedCount = useMemo(() => {
         return Object.keys(selectedUtxoIds).filter((key) => selectedUtxoIds[key]).length;
@@ -77,9 +75,9 @@ export default function UnavailableUtxoScreen() {
                                                         color: '#65D5F0'
                                                     }}
                                                     onClick={() => {
-                                                        window.open(
-                                                            `${blockstreamUrl}/tx/${item.txid}#vout=${item.vout}`
-                                                        );
+                                                        //window.open(
+                                                        //    `${blockstreamUrl}/tx/${item.txid}#vout=${item.vout}`
+                                                        //);
                                                     }}
                                                 />
                                             </Row>

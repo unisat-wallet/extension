@@ -7,7 +7,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useAppDispatch } from '@/ui/state/hooks';
-import { useTxIdUrl } from '@/ui/state/settings/hooks';
+import { useTxExplorerUrl } from '@/ui/state/settings/hooks';
 import { transactionsActions } from '@/ui/state/transactions/reducer';
 import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
 
@@ -25,7 +25,7 @@ export default function AtomicalsNFTScreen() {
     const isUnconfirmed = inscription.timestamp == 0;
     const date = moment(inscription.timestamp * 1000).format('YYYY-MM-DD hh:mm:ss');
 
-    const genesisTxUrl = useTxIdUrl(inscription.genesisTransaction);
+  const genesisTxUrl = useTxExplorerUrl(inscription.genesisTransaction);
 
     const [isMultiStuck, setIsMultiStuck] = useState(false);
     const [splitReason, setSplitReason] = useState('');
