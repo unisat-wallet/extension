@@ -76,7 +76,7 @@ class Web3API {
     public readonly abiCoder: ABICoder = new ABICoder();
     private nextUTXOs: UTXO[] = [];
 
-    private oldChain?: ChainType;
+    private currentChain?: ChainType;
 
     constructor() {
         this.setProviderFromUrl('https://api.opnet.org');
@@ -148,10 +148,10 @@ class Web3API {
                 break;
         }
 
-        if (chainType !== this.oldChain) {
+        if (chainType !== this.currentChain) {
             const chainId = getOPNetChainType(chainType);
-            
-            this.oldChain = chainType;
+
+            this.currentChain = chainType;
             this.chainId = chainId;
 
             try {
