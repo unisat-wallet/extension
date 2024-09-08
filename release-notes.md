@@ -1,5 +1,10 @@
 # UniSat Wallet Release Notes
 
+## v1.4.6
+
+- Enable Fractal Bitcoin Mainnet
+- Fix Address QRCode
+
 ## v1.4.5
 
 - Add Fractal Bitcoin Testnet
