@@ -203,15 +203,18 @@ type TypeChain<T extends ChainType> = {
     unit: string;
     networkType: NetworkType;
     endpoints: string[];
+    opnetUrl: string;
     mempoolSpaceUrl: string;
     unisatUrl: string;
     ordinalsUrl: string;
     unisatExplorerUrl: string;
+    faucetUrl: string;
     okxExplorerUrl: string;
     isViewTxHistoryInternally?: boolean;
     disable?: boolean;
     isFractal?: boolean;
     showPrice: boolean;
+    defaultExplorer: 'mempool-space' | 'unisat-explorer';
 };
 
 export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
@@ -221,13 +224,16 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         unit: 'BTC',
         icon: './images/artifacts/bitcoin-mainnet.png',
         networkType: NetworkType.MAINNET,
+        opnetUrl: 'https://api.opnet.org',
         endpoints: ['https://wallet-api.unisat.io'],
         mempoolSpaceUrl: 'https://mempool.space',
         unisatUrl: 'https://unisat.io',
         ordinalsUrl: 'https://ordinals.com',
+        faucetUrl: '',
         unisatExplorerUrl: '',
         okxExplorerUrl: '',
-        showPrice: true
+        showPrice: true,
+        defaultExplorer: 'mempool-space'
     },
     [ChainType.BITCOIN_TESTNET]: {
         enum: ChainType.BITCOIN_TESTNET,
@@ -235,13 +241,16 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         unit: 'tBTC',
         icon: './images/artifacts/bitcoin-testnet.svg',
         networkType: NetworkType.TESTNET,
+        opnetUrl: 'https://testnet.opnet.org',
         endpoints: ['https://wallet-api-testnet.unisat.space'],
         mempoolSpaceUrl: 'https://mempool.space/testnet',
         unisatUrl: 'https://testnet.unisat.io',
         ordinalsUrl: 'https://testnet.ordinals.com',
+        faucetUrl: '',
         unisatExplorerUrl: '',
         okxExplorerUrl: '',
-        showPrice: false
+        showPrice: false,
+        defaultExplorer: 'mempool-space'
     },
     [ChainType.BITCOIN_TESTNET4]: {
         enum: ChainType.BITCOIN_TESTNET4,
@@ -249,13 +258,16 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         icon: './images/artifacts/bitcoin-testnet.svg',
         unit: 'tBTC',
         networkType: NetworkType.TESTNET,
+        opnetUrl: 'https://testnet4.opnet.org',
         endpoints: ['https://wallet-api-testnet4.unisat.io'],
         mempoolSpaceUrl: 'https://mempool.space/testnet4',
         unisatUrl: 'https://testnet4.unisat.io',
         ordinalsUrl: 'https://testnet4.ordinals.com',
+        faucetUrl: '',
         unisatExplorerUrl: '',
         okxExplorerUrl: '',
-        showPrice: false
+        showPrice: false,
+        defaultExplorer: 'mempool-space'
     },
     [ChainType.BITCOIN_REGTEST]: {
         enum: ChainType.BITCOIN_REGTEST,
@@ -263,13 +275,16 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         unit: 'rBTC',
         icon: './images/artifacts/bitcoin-testnet.svg',
         networkType: NetworkType.REGTEST,
+        opnetUrl: 'https://regtest.opnet.org',
         endpoints: ['https://wallet-api-testnet.unisat.space'],
         mempoolSpaceUrl: 'https://mempool.opnet.org',
         unisatUrl: 'https://unisat.io',
         ordinalsUrl: 'https://ordinals.com',
+        faucetUrl: 'https://faucet.opnet.org/',
         unisatExplorerUrl: '',
         okxExplorerUrl: '',
-        showPrice: false
+        showPrice: false,
+        defaultExplorer: 'mempool-space'
     },
     [ChainType.BITCOIN_SIGNET]: {
         enum: ChainType.BITCOIN_SIGNET,
@@ -277,30 +292,36 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         icon: './images/artifacts/bitcoin-signet.svg',
         unit: 'sBTC',
         networkType: NetworkType.TESTNET,
+        opnetUrl: 'https://signet.opnet.org',
         endpoints: ['https://wallet-api-signet.unisat.io'],
         mempoolSpaceUrl: 'https://mempool.space/signet',
         unisatUrl: 'https://signet.unisat.io',
         ordinalsUrl: 'https://signet.ordinals.com',
+        faucetUrl: '',
         unisatExplorerUrl: '',
         okxExplorerUrl: '',
-        showPrice: false
+        showPrice: false,
+        defaultExplorer: 'mempool-space'
     },
     [ChainType.FRACTAL_BITCOIN_MAINNET]: {
         enum: ChainType.FRACTAL_BITCOIN_MAINNET,
-        label: 'Fractal Bitcoin Mainnet (Not Ready)',
+        label: 'Fractal Bitcoin Mainnet',
         icon: './images/artifacts/fractal-mainnet.svg',
         unit: 'FB',
         networkType: NetworkType.MAINNET,
+        opnetUrl: 'https://fractal.opnet.org',
         endpoints: ['https://wallet-api-fractal.unisat.io'],
-        mempoolSpaceUrl: 'https://fractal-mempool.opnet.org',
+        mempoolSpaceUrl: 'https://mempool.fractalbitcoin.io',
         unisatUrl: 'https://fractal.unisat.io',
         ordinalsUrl: 'https://ordinals.fractalbitcoin.io',
-        unisatExplorerUrl: 'https://explorer.fractalbitcoin.io',
+        unisatExplorerUrl: 'https://explorer.unisat.io/fractal-mainnet',
+        faucetUrl: '',
         okxExplorerUrl: '',
         isViewTxHistoryInternally: false,
-        disable: true,
+        disable: false,
         isFractal: true,
-        showPrice: true
+        showPrice: true,
+        defaultExplorer: 'mempool-space'
     },
     [ChainType.FRACTAL_BITCOIN_TESTNET]: {
         enum: ChainType.FRACTAL_BITCOIN_TESTNET,
@@ -308,15 +329,18 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         icon: './images/artifacts/fractal-testnet.svg',
         unit: 'tFB',
         networkType: NetworkType.MAINNET,
+        opnetUrl: 'https://fractal-testnet.opnet.org',
         endpoints: ['https://wallet-api-fractal-testnet.unisat.io'],
         mempoolSpaceUrl: 'https://fractal-mempool.opnet.org',
         unisatUrl: 'https://fractal-testnet.unisat.io',
         ordinalsUrl: 'https://ordinals-testnet.fractalbitcoin.io',
-        unisatExplorerUrl: 'https://explorer-testnet.fractalbitcoin.io',
+        unisatExplorerUrl: 'https://explorer.unisat.io/fractal-testnet',
+        faucetUrl: 'https://fractal-faucet.opnet.org/',
         okxExplorerUrl: '',
         isViewTxHistoryInternally: true,
         isFractal: true,
-        showPrice: false
+        showPrice: false,
+        defaultExplorer: 'mempool-space'
     }
 };
 

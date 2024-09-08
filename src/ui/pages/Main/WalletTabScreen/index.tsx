@@ -19,10 +19,11 @@ import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import {
+    useAddressExplorerUrl,
     useBTCUnit,
-    useBlockstreamUrl,
     useChain,
     useChainType,
+    useFaucetUrl,
     useSkipVersionCallback,
     useVersionInfo,
     useWalletConfig
@@ -193,7 +194,8 @@ export default function WalletTabScreen() {
         }
     }, [assetTabKey, chainType]);
 
-    const blockstreamUrl = useBlockstreamUrl();
+    const addressExplorerUrl = useAddressExplorerUrl(currentAccount.address);
+    const faucetUrl = useFaucetUrl();
     const resetUiTxCreateScreen = useResetUiTxCreateScreen();
     const btcUnit = useBTCUnit();
 
@@ -338,7 +340,11 @@ export default function WalletTabScreen() {
                             style={{ marginLeft: 8 }}
                             itemsCenter
                             onClick={() => {
-                                window.open(`${blockstreamUrl}/address/${currentAccount.address}`);
+                                if (chain.isViewTxHistoryInternally) {
+                                    navigate('HistoryScreen');
+                                } else {
+                                    window.open(addressExplorerUrl);
+                                }
                             }}>
                             <Text text={'View History'} size="xs" />
                             <Icon icon="link" size={fontSizes.xs} />
@@ -365,34 +371,27 @@ export default function WalletTabScreen() {
                             }}
                         />
 
-                        {(chainType === ChainType.BITCOIN_REGTEST ||
-                            chainType === ChainType.FRACTAL_BITCOIN_TESTNET) && (
+                        {faucetUrl && (
                             <>
                                 {' '}
-                                <Button
+                                {/*<Button
                                     text="Split Utxo"
                                     preset="home"
                                     icon="receive"
                                     onClick={() => {
                                         navigate('SplitUtxoScreen');
                                     }}
-                                />
+                                />*/}
                                 <Button
                                     text="Faucet"
                                     preset="home"
                                     icon="faucet"
                                     onClick={() => {
-                                        let url = 'https://faucet.opnet.org/';
-                                        if (chainType === ChainType.FRACTAL_BITCOIN_TESTNET) {
-                                            url = 'https://fractal-faucet.opnet.org/';
-                                        }
-
-                                        window.open(url, '_blank');
+                                        window.open(faucetUrl, '_blank');
                                     }}
                                 />
                             </>
                         )}
-
                         {chainType === ChainType.BITCOIN_MAINNET && (
                             <Button
                                 text="Buy"

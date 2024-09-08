@@ -24,22 +24,23 @@ export function InscriptionList() {
 
     const tools = useTools();
 
-    const fetchData = async () => {
-        try {
-            // tools.showLoading(true);
-            const { list, total } = await wallet.getOrdinalsInscriptions(
-                currentAccount.address,
-                pagination.currentPage,
-                pagination.pageSize
-            );
-            setInscriptions(list);
-            setTotal(total);
-        } catch (e) {
-            tools.toastError((e as Error).message);
-        } finally {
-            // tools.showLoading(false);
-        }
-    };
+  const fetchData = async () => {
+    if (!currentAccount.address) return;
+    try {
+      // tools.showLoading(true);
+      const { list, total } = await wallet.getOrdinalsInscriptions(
+        currentAccount.address,
+        pagination.currentPage,
+        pagination.pageSize
+      );
+      setInscriptions(list);
+      setTotal(total);
+    } catch (e) {
+      tools.toastError((e as Error).message);
+    } finally {
+      // tools.showLoading(false);
+    }
+  };
 
     useEffect(() => {
         fetchData();

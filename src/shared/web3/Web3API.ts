@@ -3,7 +3,7 @@ import { networks } from 'bitcoinjs-lib';
 import { Network } from 'bitcoinjs-lib/src/networks.js';
 import { getContract, IOP_20Contract, JSONRpcProvider, OP_20_ABI } from 'opnet';
 
-import { ChainType } from '@/shared/constant';
+import { CHAINS_MAP, ChainType } from '@/shared/constant';
 import { NetworkType } from '@/shared/types';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { ContractLogo } from '@/shared/web3/metadata/ContractLogo';
@@ -76,6 +76,8 @@ class Web3API {
     public readonly abiCoder: ABICoder = new ABICoder();
     private nextUTXOs: UTXO[] = [];
 
+    private oldChain?: ChainType;
+
     constructor() {
         this.setProviderFromUrl('https://api.opnet.org');
     }
@@ -125,7 +127,6 @@ class Web3API {
     }
 
     public setNetwork(chainType: ChainType): void {
-        const oldNetwork = this.network;
         switch (chainType) {
             case ChainType.BITCOIN_MAINNET:
                 this.network = networks.bitcoin;
@@ -147,8 +148,10 @@ class Web3API {
                 break;
         }
 
-        const chainId = getOPNetChainType(chainType);
-        if (oldNetwork !== this.network || chainId !== this.chainId) {
+        if (chainType !== this.oldChain) {
+            const chainId = getOPNetChainType(chainType);
+            
+            this.oldChain = chainType;
             this.chainId = chainId;
 
             try {
@@ -268,26 +271,13 @@ class Web3API {
         return ContractNames[address] ?? 'Generic Contract';
     }
 
-    private setProvider(network: ChainType): void {
-        switch (this.network) {
-            case networks.bitcoin:
-                if (network === ChainType.FRACTAL_BITCOIN_TESTNET) {
-                    this.setProviderFromUrl('https://fractal.opnet.org');
-                } else {
-                    this.setProviderFromUrl('https://api.opnet.org');
-                }
-                break;
-            case networks.testnet:
-                this.setProviderFromUrl('https://testnet.opnet.org');
-                break;
-            case networks.regtest:
-                this.setProviderFromUrl('https://regtest.opnet.org');
-                break;
-            default:
-                console.warn('Invalid network', this.network);
-                this._provider = undefined;
-                break;
+    private setProvider(chainType: ChainType): void {
+        const chainMetadata = CHAINS_MAP[chainType];
+        if (!chainMetadata.opnetUrl) {
+            throw new Error('OPNet RPC URL not set');
         }
+
+        this.setProviderFromUrl(chainMetadata.opnetUrl);
     }
 }
 
