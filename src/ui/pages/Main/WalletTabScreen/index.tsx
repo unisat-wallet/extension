@@ -19,13 +19,14 @@ import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import {
-  useAddressExplorerUrl,
-  useBTCUnit,
-  useChain,
-  useChainType,
-  useSkipVersionCallback,
-  useVersionInfo,
-  useWalletConfig
+    useAddressExplorerUrl,
+    useBTCUnit,
+    useChain,
+    useChainType,
+    useFaucetUrl,
+    useSkipVersionCallback,
+    useVersionInfo,
+    useWalletConfig
 } from '@/ui/state/settings/hooks';
 import { useFetchUtxosCallback, useSafeBalance } from '@/ui/state/transactions/hooks';
 import { useAssetTabKey, useResetUiTxCreateScreen } from '@/ui/state/ui/hooks';
@@ -193,9 +194,10 @@ export default function WalletTabScreen() {
         }
     }, [assetTabKey, chainType]);
 
-  const addressExplorerUrl = useAddressExplorerUrl(currentAccount.address);
-  const resetUiTxCreateScreen = useResetUiTxCreateScreen();
-  const btcUnit = useBTCUnit();
+    const addressExplorerUrl = useAddressExplorerUrl(currentAccount.address);
+    const faucetUrl = useFaucetUrl();
+    const resetUiTxCreateScreen = useResetUiTxCreateScreen();
+    const btcUnit = useBTCUnit();
 
     const [buyBtcModalVisible, setBuyBtcModalVisible] = useState(false);
 
@@ -369,42 +371,37 @@ export default function WalletTabScreen() {
                             }}
                         />
 
-                        {(chainType === ChainType.BITCOIN_REGTEST ||
-                            chainType === ChainType.FRACTAL_BITCOIN_TESTNET) && (
+                        {faucetUrl && (
                             <>
                                 {' '}
-                                <Button
+                                {/*<Button
                                     text="Split Utxo"
                                     preset="home"
                                     icon="receive"
                                     onClick={() => {
                                         navigate('SplitUtxoScreen');
                                     }}
-                                />
+                                />*/}
                                 <Button
                                     text="Faucet"
                                     preset="home"
                                     icon="faucet"
                                     onClick={() => {
-                                        let url = 'https://faucet.opnet.org/';
-                                        if (chainType === ChainType.FRACTAL_BITCOIN_TESTNET) {
-                                            url = 'https://fractal-faucet.opnet.org/';
-                                        }
-
-                                        window.open(url, '_blank');
+                                        window.open(faucetUrl, '_blank');
                                     }}
                                 />
                             </>
                         )}
-                        <Button
-                            text="Buy"
-                            preset="home"
-                            icon="bitcoin"
-                            onClick={() => {
-                                setBuyBtcModalVisible(true);
-                            }}
-                            disabled={chainType !== ChainType.BITCOIN_MAINNET}
-                        />
+                        {chainType === ChainType.BITCOIN_MAINNET && (
+                            <Button
+                                text="Buy"
+                                preset="home"
+                                icon="bitcoin"
+                                onClick={() => {
+                                    setBuyBtcModalVisible(true);
+                                }}
+                            />
+                        )}
                     </Row>
 
                     <Tabs

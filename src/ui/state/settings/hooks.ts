@@ -113,21 +113,27 @@ export function useBTCUnit() {
 }
 
 export function useTxExplorerUrl(txid: string) {
-  const chain = useChain();
-  if (chain.defaultExplorer === 'mempool-space') {
-    return `${chain.mempoolSpaceUrl}/tx/${txid}`;
-  } else {
-    return `${chain.unisatExplorerUrl}/tx/${txid}`;
-  }
+    const chain = useChain();
+    if (chain.defaultExplorer === 'mempool-space') {
+        return `${chain.mempoolSpaceUrl}/tx/${txid}`;
+    } else {
+        return `${chain.unisatExplorerUrl}/tx/${txid}`;
+    }
 }
 
 export function useAddressExplorerUrl(address: string) {
-  const chain = useChain();
-  if (chain.defaultExplorer === 'mempool-space') {
-    return `${chain.mempoolSpaceUrl}/address/${address}`;
-  } else {
-    return `${chain.unisatExplorerUrl}/address/${address}`;
-  }
+    const chain = useChain();
+    if (chain.defaultExplorer === 'mempool-space') {
+        return `${chain.mempoolSpaceUrl}/address/${address}`;
+    } else {
+        return `${chain.unisatExplorerUrl}/address/${address}`;
+    }
+}
+
+export function useFaucetUrl() {
+    const chain = useChain();
+
+    return chain.faucetUrl;
 }
 
 export function useUnisatWebsite() {
