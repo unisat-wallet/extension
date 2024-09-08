@@ -25,10 +25,9 @@ export default function AtomicalsNFTScreen() {
     const isUnconfirmed = inscription.timestamp == 0;
     const date = moment(inscription.timestamp * 1000).format('YYYY-MM-DD hh:mm:ss');
 
-  const genesisTxUrl = useTxExplorerUrl(inscription.genesisTransaction);
+    const genesisTxUrl = useTxExplorerUrl(inscription.genesisTransaction);
 
     const [isMultiStuck, setIsMultiStuck] = useState(false);
-    const [splitReason, setSplitReason] = useState('');
     const wallet = useWallet();
     // detect multiple inscriptions
     useEffect(() => {
