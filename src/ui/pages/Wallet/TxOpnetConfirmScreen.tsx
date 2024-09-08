@@ -996,6 +996,8 @@ export default function TxOpnetConfirmScreen() {
 
     const sendBTC = async () => {
         try {
+            const account = await wallet.getCurrentAccount();
+
             const currentNetwork = await wallet.getChainType();
             Web3API.setNetwork(currentNetwork);
 
@@ -1015,10 +1017,7 @@ export default function TxOpnetConfirmScreen() {
                 : [];
 
             if (!utxos || (utxos && utxos.length === 0) || useNextUTXO) {
-                utxos = await Web3API.getUTXOs(
-                    [walletGet.p2tr, walletGet.p2wpkh],
-                    expandToDecimals(rawTxInfo.inputAmount, 8) * 2n
-                );
+                utxos = await Web3API.getUTXOs([account.address], expandToDecimals(rawTxInfo.inputAmount, 8) * 2n);
             }
 
             const IFundingTransactionParameters: IFundingTransactionParameters = {
@@ -1051,6 +1050,8 @@ export default function TxOpnetConfirmScreen() {
 
             setUseNextUTXO(false);
         } catch (e) {
+            localStorage.removeItem('nextUTXO');
+
             tools.toastError(`Error: ${e}`);
             setUseNextUTXO(true);
             setDisabled(false);

@@ -23,6 +23,20 @@ import {
 
 BigNumber.config({ EXPONENTIAL_AT: 256 });
 
+export function shuffle<T>(array: T[]): void {
+    let currentIndex = array.length;
+
+    // While there remain elements to shuffle...
+    while (currentIndex != 0) {
+        // Pick a remaining element...
+        const randomIndex = Math.floor(Math.random() * currentIndex);
+        currentIndex--;
+
+        // And swap it with the current element.
+        [array[currentIndex], array[randomIndex]] = [array[randomIndex], array[currentIndex]];
+    }
+}
+
 export function getOPNetChainType(chain: ChainType): ChainId {
     switch (chain) {
         case ChainType.FRACTAL_BITCOIN_MAINNET: {
@@ -196,6 +210,9 @@ class Web3API {
         } else {
             utxos = await this.limitedProvider.fetchUTXOMultiAddr(utxoSetting);
         }
+
+        shuffle(utxos);
+
         if (!utxos.length) {
             throw new Error('No UTXOs found');
         }

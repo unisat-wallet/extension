@@ -132,7 +132,7 @@ export default function SignData({ params: { data, session } }: Props) {
                     <Row
                         itemsCenter
                         gap="sm"
-                        onClick={(e) => {
+                        onClick={() => {
                             copyToClipboard(AGREEMENT_TEXT).then(() => {
                                 tools.toastSuccess('Copied');
                             });

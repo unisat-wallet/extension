@@ -5,7 +5,6 @@ import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import InteractionHeader from '@/ui/pages/Approval/components/Headers/InteractionHeader';
 import { DecodedCalldata } from '@/ui/pages/OpNet/decoded/DecodedCalldata';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useApproval } from '@/ui/utils/hooks';
 
 interface Props {
@@ -26,7 +25,6 @@ export default function SignText(props: Props) {
 
     const to: string = data.interactionParameters.to;
     const [_, resolveApproval, rejectApproval] = useApproval();
-    const account = useCurrentAccount();
 
     const handleCancel = async () => {
         await rejectApproval('User rejected the request.');
