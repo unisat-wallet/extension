@@ -37,6 +37,7 @@ import { SwitchChainModal } from '../../Settings/SwitchChainModal';
 import { AtomicalsTab } from './AtomicalsTab';
 import { OrdinalsTab } from './OrdinalsTab';
 import { RunesList } from './RunesList';
+import { BtcDisplay } from '@/ui/pages/Main/WalletTabScreen/components/BtcDisplay';
 
 const $noBreakStyle: CSSProperties = {
   whiteSpace: 'nowrap',
@@ -282,7 +283,7 @@ export default function WalletTabScreen() {
             }}>
             <div>
               <Text text={'TOTAL BALANCE'} textCenter color="textDim" />
-              <Text text={balanceValue + ' ' + btcUnit} preset="title-bold" textCenter size="xxxl" my="sm" />
+             <BtcDisplay balance={balanceValue} />
             </div>
           </Tooltip>
           <BtcUsd
