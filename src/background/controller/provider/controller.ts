@@ -156,7 +156,7 @@ class ProviderController extends BaseController {
   }])
   sendBitcoin = async ({ approvalRes: { psbtHex } }) => {
     const psbt = bitcoin.Psbt.fromHex(psbtHex);
-    const tx = psbt.extractTransaction();
+    const tx = psbt.extractTransaction(true);
     const rawtx = tx.toHex()
     return await wallet.pushTx(rawtx)
   }
@@ -166,7 +166,7 @@ class ProviderController extends BaseController {
   }])
   sendInscription = async ({ approvalRes: { psbtHex } }) => {
     const psbt = bitcoin.Psbt.fromHex(psbtHex);
-    const tx = psbt.extractTransaction();
+    const tx = psbt.extractTransaction(true);
     const rawtx = tx.toHex()
     return await wallet.pushTx(rawtx)
   }
@@ -176,7 +176,7 @@ class ProviderController extends BaseController {
   }])
   sendRunes = async ({ approvalRes: { psbtHex } }) => {
     const psbt = bitcoin.Psbt.fromHex(psbtHex);
-    const tx = psbt.extractTransaction();
+    const tx = psbt.extractTransaction(true);
     const rawtx = tx.toHex()
     return await wallet.pushTx(rawtx)
   }
@@ -256,7 +256,7 @@ class ProviderController extends BaseController {
   pushPsbt = async ({ data: { params: { psbtHex } } }) => {
     const hexData = formatPsbtHex(psbtHex);
     const psbt = bitcoin.Psbt.fromHex(hexData);
-    const tx = psbt.extractTransaction();
+    const tx = psbt.extractTransaction(true);
     const rawtx = tx.toHex()
     return await wallet.pushTx(rawtx)
   }

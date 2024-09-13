@@ -3,6 +3,7 @@ import { useCallback, useMemo } from 'react';
 import { KEYRING_TYPE } from '@/shared/constant';
 import { RawTxInfo, ToAddressInfo } from '@/shared/types';
 import { useTools } from '@/ui/components/ActionComponent';
+import { useBTCUnit } from '@/ui/state/settings/hooks';
 import { satoshisToAmount, satoshisToBTC, sleep, useWallet } from '@/ui/utils';
 import { UnspentOutput } from '@unisat/wallet-sdk';
 import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
@@ -12,7 +13,6 @@ import { useAccountAddress, useCurrentAccount } from '../accounts/hooks';
 import { accountActions } from '../accounts/reducer';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { transactionsActions } from './reducer';
-import { useBTCUnit } from '@/ui/state/settings/hooks';
 
 export function useTransactionsState(): AppState['transactions'] {
   return useAppSelector((state) => state.transactions);
@@ -93,7 +93,7 @@ export function usePrepareSendBTCCallback() {
       }
 
       const psbt = bitcoin.Psbt.fromHex(psbtHex);
-      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction().toHex();
+      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction(true).toHex();
       const fee = account.type === KEYRING_TYPE.KeystoneKeyring ? 0 : psbt.getFee();
       dispatch(
         transactionsActions.updateBitcoinTx({
@@ -199,7 +199,7 @@ export function usePrepareSendOrdinalsInscriptionCallback() {
         btcUtxos
       });
       const psbt = bitcoin.Psbt.fromHex(psbtHex);
-      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction().toHex();
+      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction(true).toHex();
       dispatch(
         transactionsActions.updateOrdinalsTx({
           rawtx,
@@ -258,7 +258,7 @@ export function usePrepareSendOrdinalsInscriptionsCallback() {
         btcUtxos
       });
       const psbt = bitcoin.Psbt.fromHex(psbtHex);
-      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction().toHex();
+      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction(true).toHex();
       dispatch(
         transactionsActions.updateOrdinalsTx({
           rawtx,
@@ -311,7 +311,7 @@ export function useCreateSplitTxCallback() {
         btcUtxos
       });
       const psbt = bitcoin.Psbt.fromHex(psbtHex);
-      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction().toHex();
+      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction(true).toHex();
       dispatch(
         transactionsActions.updateOrdinalsTx({
           rawtx,
@@ -466,7 +466,7 @@ export function usePrepareSendAtomicalsNFTCallback() {
         btcUtxos
       });
       const psbt = bitcoin.Psbt.fromHex(psbtHex);
-      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction().toHex();
+      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction(true).toHex();
       dispatch(
         transactionsActions.updateAtomicalsTx({
           rawtx,
@@ -577,7 +577,7 @@ export function usePrepareSendArc20Callback() {
         assetUtxos
       });
       const psbt = bitcoin.Psbt.fromHex(psbtHex);
-      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction().toHex();
+      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction(true).toHex();
       dispatch(
         transactionsActions.updateAtomicalsTx({
           rawtx,
@@ -675,7 +675,7 @@ export function usePrepareSendRunesCallback() {
       });
       const psbt = bitcoin.Psbt.fromHex(psbtHex);
 
-      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction().toHex();
+      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction(true).toHex();
       dispatch(
         transactionsActions.updateRunesTx({
           rawtx,
