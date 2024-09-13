@@ -1,5 +1,9 @@
 # UniSat Wallet Release Notes
 
+## v1.4.7
+
+- Remove the maximum fee rate limit
+
 ## v1.4.6
 
 - Enable Fractal Bitcoin Mainnet
