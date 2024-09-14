@@ -168,7 +168,7 @@ class PreferenceService {
         }
 
         if (!this.store.networkType) {
-            this.store.networkType = NetworkType.MAINNET;
+            this.store.networkType = NetworkType.REGTEST; // default to regtest
         }
 
         if (this.store.currentAccount) {
@@ -214,8 +214,8 @@ class PreferenceService {
         }
 
         if (!this.store.chainType) {
-            if (this.store.networkType === NetworkType.MAINNET) {
-                this.store.chainType = ChainType.BITCOIN_MAINNET;
+            if (this.store.networkType === NetworkType.REGTEST) {
+                this.store.chainType = ChainType.BITCOIN_REGTEST;
             } else {
                 this.store.chainType = ChainType.BITCOIN_TESTNET;
             }
@@ -382,8 +382,9 @@ class PreferenceService {
         }
 
         if (!CHAINS.find((chain) => chain.enum === this.store.chainType)) {
-            this.store.chainType = ChainType.BITCOIN_MAINNET;
+            this.store.chainType = ChainType.BITCOIN_REGTEST;
         }
+
         return this.store.chainType;
     };
 

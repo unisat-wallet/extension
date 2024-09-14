@@ -232,6 +232,7 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         faucetUrl: '',
         unisatExplorerUrl: '',
         okxExplorerUrl: '',
+        disable: true,
         showPrice: true,
         defaultExplorer: 'mempool-space'
     },
@@ -249,6 +250,7 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         faucetUrl: '',
         unisatExplorerUrl: '',
         okxExplorerUrl: '',
+        disable: true,
         showPrice: false,
         defaultExplorer: 'mempool-space'
     },
@@ -266,6 +268,7 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         faucetUrl: '',
         unisatExplorerUrl: '',
         okxExplorerUrl: '',
+        disable: true,
         showPrice: false,
         defaultExplorer: 'mempool-space'
     },
@@ -300,6 +303,7 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         faucetUrl: '',
         unisatExplorerUrl: '',
         okxExplorerUrl: '',
+        disable: true,
         showPrice: false,
         defaultExplorer: 'mempool-space'
     },
@@ -318,7 +322,7 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         faucetUrl: '',
         okxExplorerUrl: '',
         isViewTxHistoryInternally: false,
-        disable: false,
+        disable: true,
         isFractal: true,
         showPrice: true,
         defaultExplorer: 'mempool-space'

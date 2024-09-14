@@ -102,11 +102,12 @@ export default function OpNetTokenScreen() {
             const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(address);
 
             const balance = await contract.balanceOf(account.address);
-            const getOwner = await contract.isAddressOwner(account.address);
+            const getOwner = await contract.owner();
 
             if (!('error' in getOwner)) {
-                setIsOwner(getOwner.decoded[0] as boolean);
+                setIsOwner(getOwner.decoded[0] === account.address);
             }
+
             setBtcBalance({
                 address: '',
                 amount: btcBalance,
