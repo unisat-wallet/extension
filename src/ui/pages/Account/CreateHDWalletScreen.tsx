@@ -108,14 +108,6 @@ export default function CreateHDWalletScreen() {
         return item?.children;
     }, [items, contextData.tabType]);
 
-    const activeTabIndex = useMemo(() => {
-        const index = items.findIndex((v) => v.key === contextData.tabType);
-        if (index === -1) {
-            return 0;
-        } else {
-            return index;
-        }
-    }, [items, contextData.tabType]);
     return (
         <Layout>
             <Header

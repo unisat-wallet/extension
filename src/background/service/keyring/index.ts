@@ -39,14 +39,6 @@ export const KEYRING_SDK_TYPES = {
     KeystoneKeyring
 };
 
-type KeyringType = SimpleKeyring | HdKeyring | KeystoneKeyring;
-
-export const KEYRING_CLASS = {
-    PRIVATE_KEY: SimpleKeyring.type,
-    MNEMONIC: HdKeyring.type,
-    KEYSTORE: KeystoneKeyring.type
-};
-
 interface MemStoreState {
     isUnlocked: boolean;
     keyringTypes: any[];

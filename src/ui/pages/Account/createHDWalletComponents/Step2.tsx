@@ -175,6 +175,7 @@ export function Step2({
         setPathError('');
         setPathText(text);
         if (text !== '') {
+            // @ts-ignore
             const isValid = bitcore.HDPrivateKey.isValidPath(text);
             if (!isValid) {
                 setPathError('Invalid derivation path.');
