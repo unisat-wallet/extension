@@ -142,11 +142,13 @@
         "typescript-transform-paths": "^3.3.1",
         "url": "^0.11.0",
         "varuint-bitcoin": "^1.1.2",
+        "vm-browserify": "^1.1.2",
         "web-vitals": "^2.1.4",
         "webpack": "5.76.0",
         "webpack-dev-server": "^4.6.0",
         "webpack-extension-reloader": "^1.1.4",
         "webpack-manifest-plugin": "^4.0.2",
+        "webpack-merge": "^6.0.1",
         "workbox-webpack-plugin": "^6.4.1",
         "zxcvbn": "^4.4.2"
     },
@@ -162,6 +164,9 @@
             "last 1 firefox version",
             "last 1 safari version"
         ]
+    },
+    "browser": {
+        "vm": false
     },
     "jest": {
         "roots": [
