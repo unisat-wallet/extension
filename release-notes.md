@@ -1,5 +1,9 @@
 # UniSat Wallet Release Notes
 
+## v1.4.8
+
+- Allow passing in tapLeafHashToSign when calling signPsbt
+
 ## v1.4.7
 
 - Remove the maximum fee rate limit
