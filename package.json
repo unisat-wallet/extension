@@ -25,6 +25,7 @@
     "_prettier": "prettier --write .",
     "fix:modules": "node scripts/fix-modules.js",
     "format": "prettier --write \"src/**/*.{js,jsx,json,md,ts,tsx}\" --plugin-search-dir=./node_modules/ --plugin=./node_modules/@trivago/prettier-plugin-sort-imports/ ",
+    "postinstall": "patch-package",
     "prepare": "npm run fix:modules"
   },
   "dependencies": {
@@ -52,7 +53,7 @@
     "@types/react": "^18.0.9",
     "@types/react-cache": "^2.0.1",
     "@types/react-dom": "^18.0.4",
-    "@unisat/wallet-sdk": "1.7.1",
+    "@unisat/wallet-sdk": "1.7.3",
     "antd": "^4.20.4",
     "antd-dayjs-webpack-plugin": "1.0.6",
     "assert": "^2.0.0",
@@ -248,6 +249,8 @@
     "less": "^4.1.2",
     "less-loader": "^11.0.0",
     "minimist": "^1.2.6",
+    "patch-package": "^8.0.0",
+    "postinstall": "^0.11.0",
     "prettier": "^2.6.2",
     "sass-loader": "^12.6.0",
     "stylus": "^0.57.0",

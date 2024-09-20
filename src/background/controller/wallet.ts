@@ -487,11 +487,20 @@ export class WalletController extends BaseController {
         const sighashTypes = input.sighashTypes?.map(Number);
         if (sighashTypes?.some(isNaN)) throw new Error('invalid sighash type in toSignInput');
 
+        let tapLeafHashToSign: Buffer | undefined;
+        if (input.tapLeafHashToSign) {
+          if (typeof input.tapLeafHashToSign === 'string') {
+            tapLeafHashToSign = Buffer.from(input.tapLeafHashToSign, 'hex');
+          } else {
+            tapLeafHashToSign = input.tapLeafHashToSign;
+          }
+        }
         return {
           index,
           publicKey: account.pubkey,
           sighashTypes,
-          disableTweakSigner: input.disableTweakSigner
+          disableTweakSigner: input.disableTweakSigner,
+          tapLeafHashToSign
         };
       });
     } else {

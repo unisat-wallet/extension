@@ -209,6 +209,7 @@ interface BaseUserToSignInput {
   index: number;
   sighashTypes: number[] | undefined;
   disableTweakSigner?: boolean;
+  tapLeafHashToSign?: string;
 }
 
 export interface AddressUserToSignInput extends BaseUserToSignInput {
@@ -230,6 +231,7 @@ export interface ToSignInput {
   index: number;
   publicKey: string;
   sighashTypes?: number[];
+  tapLeafHashToSign?: Buffer;
 }
 
 export type WalletKeyring = {
