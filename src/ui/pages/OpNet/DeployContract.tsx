@@ -4,18 +4,18 @@ import { useLocation } from 'react-router-dom';
 import { Account, OpNetBalance } from '@/shared/types';
 import { Button, Column, Content, Header, Layout, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
+import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 
 import { useNavigate } from '../MainRoute';
-import { FeeRateBar } from '@/ui/components/FeeRateBar';
 
 interface ItemData {
     key: string;
     account?: Account;
 }
 
-export default function WrapBitcoinOpnet() {
+export default function DeployContractOpnet() {
     const { state } = useLocation();
     const props = state as {
         OpNetBalance: OpNetBalance;
@@ -62,7 +62,7 @@ export default function WrapBitcoinOpnet() {
                 onBack={() => {
                     window.history.go(-1);
                 }}
-                title={'deploy Contract'}
+                title={'Deploy Contract'}
             />
             <Content>
                 <Text text="Upload Contract" color="textDim" />
