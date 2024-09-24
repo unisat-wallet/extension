@@ -19,7 +19,11 @@ export interface OpNetBalanceCardProps {
 export default function OpNetBalanceCard(props: OpNetBalanceCardProps) {
     const { tokenBalance, onClick } = props;
     const balance = new BigNumber(bigIntToDecimal(tokenBalance.amount, tokenBalance.divisibility)); //runesUtils.toDecimalNumber(tokenBalance.amount, tokenBalance.divisibility);
-    const str = balance.toPrecision();
+    const truncatedBalance = Math.floor(Number(balance) * 1e5) / 1e5;
+    const str =
+        Number(balance) > 0
+            ? truncatedBalance.toLocaleString('en-US', { minimumFractionDigits: 5, maximumFractionDigits: 5 })
+            : '0';
 
     return (
         <Card

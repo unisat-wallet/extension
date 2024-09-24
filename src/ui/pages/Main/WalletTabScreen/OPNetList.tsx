@@ -215,7 +215,11 @@ export function OPNetList() {
                         text="Deploy"
                         icon={'pencil'}
                         preset="fontsmall"
-                        onClick={() => navigate('DeployContract', {})}></Button>
+                        onClick={() => {
+                            chrome.tabs.create({
+                                url: chrome.runtime.getURL('/index.html#/opnet/deploy-contract')
+                            });
+                        }}></Button>
                 </Row>
             </BaseView>
             {importTokenBool && (

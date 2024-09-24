@@ -328,7 +328,7 @@ export default function Swap() {
                                         symbol: selectedOption?.symbol
                                     },
                                     {
-                                        amount: expandToDecimals(outputAmount, selectedOption?.divisibility ?? 8),
+                                        amount: expandToDecimals(outputAmount, selectedOptionOutput?.divisibility ?? 8),
                                         divisibility: selectedOptionOutput?.divisibility,
                                         spacedRune: selectedOptionOutput?.name,
                                         symbol: selectedOptionOutput?.symbol

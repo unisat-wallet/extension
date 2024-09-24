@@ -57,7 +57,7 @@ export default function WalletTabScreen() {
     const currentKeyring = useCurrentKeyring();
     const currentAccount = useCurrentAccount();
     const balanceValue = useMemo(() => {
-        return accountBalance.amount;
+        return Math.floor(Number(accountBalance.amount) * 1e5) / 1e5;
     }, [accountBalance.amount]);
 
     const wallet = useWallet();

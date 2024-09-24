@@ -20,6 +20,7 @@ import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from
 import { ContextType, useTools } from '@/ui/components/ActionComponent';
 import { BottomModal } from '@/ui/components/BottomModal';
 import RunesPreviewCard from '@/ui/components/RunesPreviewCard';
+import { useBTCUnit } from '@/ui/state/settings/hooks';
 import { useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 import { ABIDataTypes, Address, BinaryWriter } from '@btc-vision/bsi-binary';
@@ -113,6 +114,8 @@ export default function TxOpnetConfirmScreen() {
     const [_unwrapUseAmount, setUnWrapAmount] = useState<bigint>(0n);
     const { rawTxInfo } = useLocationState<LocationState>();
 
+    const btcUnit = useBTCUnit();
+
     const handleCancel = () => {
         window.history.go(-1);
     };
@@ -153,7 +156,7 @@ export default function TxOpnetConfirmScreen() {
 
                 const nextUTXO = finalUnwrapTx.utxos;
                 localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
-                tools.toastSuccess('"You have successfully un-wrapped your Bitcoin"');
+                tools.toastSuccess(`You have successfully un-wrapped your wBTC`);
                 navigate('TxSuccessScreen', { txid: unwrapTransaction.result });
             };
             void completeUnwrap();
@@ -222,7 +225,7 @@ export default function TxOpnetConfirmScreen() {
                 tools.toastError('Could not broadcast second transaction');
             }
 
-            tools.toastSuccess(`"You have successfully transferred ${amountToSend} Bitcoin"`);
+            tools.toastSuccess(`You have successfully transferred ${amountToSend} ${btcUnit}`);
             // Store the next UTXO in localStorage
             const nextUTXO = finalTx[2];
             localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
@@ -333,7 +336,7 @@ export default function TxOpnetConfirmScreen() {
             const nextUTXO = finalTx.utxos;
             localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
             const wrappedAmount = bigIntToDecimal(wrapAmount, 8).toString();
-            tools.toastSuccess(`"You have successfully wrapped ${wrappedAmount} Bitcoin"`);
+            tools.toastSuccess(`You have successfully wrapped ${wrappedAmount} ${btcUnit}`);
             navigate('TxSuccessScreen', { txid: secondTxBroadcast.result });
         } catch (e) {
             const msg = getErrorMessage(e as Error);
@@ -573,7 +576,7 @@ export default function TxOpnetConfirmScreen() {
         }
 
         const stakeAmount = bigIntToDecimal(amountToSend, 8).toString();
-        tools.toastSuccess(`You have successfully staked ${stakeAmount} WBTC`);
+        tools.toastSuccess(`You have successfully staked ${stakeAmount} wBTC`);
         const nextUTXO = sendTransact[2];
         localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
         navigate('TxSuccessScreen', { txid: secondTransaction.result });
@@ -643,7 +646,7 @@ export default function TxOpnetConfirmScreen() {
         }
 
         const unstakeAmount = bigIntToDecimal(amountToSend, 8).toString();
-        tools.toastSuccess(`You have successfully un-staked ${unstakeAmount} WBTC`);
+        tools.toastSuccess(`You have successfully un-staked ${unstakeAmount} wBTC`);
 
         const nextUTXO = sendTransact[2];
         localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
@@ -846,7 +849,7 @@ export default function TxOpnetConfirmScreen() {
 
         const claimAmount = bigIntToDecimal(amountToSend, 8).toString();
 
-        tools.toastSuccess(`You have successfully claimed ${claimAmount} WBTC`);
+        tools.toastSuccess(`You have successfully claimed ${claimAmount} wBTC`);
         const nextUTXO = sendTransact[2];
         localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
         navigate('TxSuccessScreen', { txid: seconfTransaction.result });
@@ -930,10 +933,10 @@ export default function TxOpnetConfirmScreen() {
             tools.toastError('Could not broadcast first transaction');
             return;
         } else {
-            const amountA = bigIntToDecimal(rawTxInfo.inputAmount[0], rawTxInfo.opneTokens[0].divisibility).toString();
-            const amountB = bigIntToDecimal(rawTxInfo.inputAmount[1], rawTxInfo.opneTokens[1].divisibility).toString();
+            const amountA = Number(rawTxInfo.inputAmount[0]).toLocaleString();
+            const amountB = Number(rawTxInfo.inputAmount[1]).toLocaleString();
             tools.toastSuccess(
-                `"You have successfully swapped ${amountA} ${rawTxInfo.opneTokens[0].symbol} for ${amountB}  ${rawTxInfo.opneTokens[1].symbol}"`
+                `You have successfully swapped ${amountA} ${rawTxInfo.opneTokens[0].symbol} for ${amountB}  ${rawTxInfo.opneTokens[1].symbol}`
             );
             const nextUTXO = sendTransact[2];
             localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
@@ -1040,10 +1043,8 @@ export default function TxOpnetConfirmScreen() {
                 return;
             }
 
-            const amountA = bigIntToDecimal(rawTxInfo.inputAmount, rawTxInfo.opneTokens[0].divisibility).toString();
-            tools.toastSuccess(
-                `"You have successfully transferred ${amountA} ${rawTxInfo.opneTokens[0].symbol} to ${rawTxInfo.address}}"`
-            );
+            const amountA = Number(rawTxInfo.inputAmount).toLocaleString();
+            tools.toastSuccess(`You have successfully transferred ${amountA} ${rawTxInfo.opneTokens[0].symbol}`);
 
             localStorage.setItem('nextUTXO', JSON.stringify(sendTransact.nextUTXOs));
             navigate('TxSuccessScreen', { txid: firstTransaction.result });

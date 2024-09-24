@@ -117,7 +117,8 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
                     <Column
                         style={{
                             backgroundColor: colors.black,
-                            width: 180,
+                            width: 250,
+                            top: 32,
                             position: 'absolute',
                             right: 0,
                             padding: 5,
