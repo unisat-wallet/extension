@@ -41,6 +41,7 @@ import { AtomicalsTab } from './AtomicalsTab';
 import { OPNetList } from './OPNetList';
 import { OrdinalsTab } from './OrdinalsTab';
 import { RunesList } from './RunesList';
+import { BtcDisplay } from '@/ui/pages/Main/WalletTabScreen/components/BtcDisplay';
 
 const $noBreakStyle: CSSProperties = {
     whiteSpace: 'nowrap',
@@ -265,74 +266,68 @@ export default function WalletTabScreen() {
                         </Column>
                     )}
 
-                    <Tooltip
-                        placement={'bottom'}
-                        title={
-                            !loadingFetch ? (
-                                <>
-                                    <Row justifyBetween>
-                                        <span style={$noBreakStyle}>{'Available '}</span>
-                                        <span style={$noBreakStyle}>{` ${availableAmount} ${btcUnit}`}</span>
-                                    </Row>
-                                    <Row justifyBetween>
-                                        <span style={$noBreakStyle}>{'Unavailable '}</span>
-                                        <span style={$noBreakStyle}>{` ${unavailableAmount} ${btcUnit}`}</span>
-                                    </Row>
-                                    <Row justifyBetween>
-                                        <span style={$noBreakStyle}>{'Total '}</span>
-                                        <span style={$noBreakStyle}>{` ${totalAmount} ${btcUnit}`}</span>
-                                    </Row>
-                                </>
-                            ) : (
-                                <>
-                                    <Row justifyBetween>
-                                        <span style={$noBreakStyle}>{'Available '}</span>
-                                        <span style={$noBreakStyle}>{'loading...'}</span>
-                                    </Row>
-                                    <Row justifyBetween>
-                                        <span style={$noBreakStyle}>{'Unavailable '}</span>
-                                        <span style={$noBreakStyle}>{'loading...'}</span>
-                                    </Row>
-                                    <Row justifyBetween>
-                                        <span style={$noBreakStyle}>{'Total '}</span>
-                                        <span style={$noBreakStyle}>{` ${totalAmount} ${btcUnit}`}</span>
-                                    </Row>
-                                </>
-                            )
-                        }
-                        onOpenChange={(v) => {
-                            if (!ref.current.fetchedUtxo[currentAccount.address]) {
-                                ref.current.fetchedUtxo[currentAccount.address] = { loading: true };
-                                setLoadingFetch(true);
-                                fetchUtxos().finally(() => {
-                                    ref.current.fetchedUtxo[currentAccount.address].loading = false;
-                                    setLoadingFetch(false);
-                                });
-                            }
-                        }}
-                        overlayStyle={{
-                            fontSize: fontSizes.xs
-                        }}>
-                        <div>
-                            <Text text={'TOTAL BALANCE'} textCenter color="textDim" />
-                            <Text
-                                text={balanceValue + ' ' + btcUnit}
-                                preset="title-bold"
-                                textCenter
-                                size="xxxl"
-                                my="sm"
-                            />
-                        </div>
-                    </Tooltip>
-                    <BtcUsd
-                        sats={amountToSatoshis(balanceValue)}
-                        textCenter
-                        size={'md'}
-                        style={{
-                            marginTop: -16,
-                            marginBottom: -8
-                        }}
-                    />
+          <Tooltip
+            placement={'bottom'}
+            title={
+              !loadingFetch ? (
+                <>
+                  <Row justifyBetween>
+                    <span style={$noBreakStyle}>{'Available '}</span>
+                    <span style={$noBreakStyle}>{` ${availableAmount} ${btcUnit}`}</span>
+                  </Row>
+                  <Row justifyBetween>
+                    <span style={$noBreakStyle}>{'Unavailable '}</span>
+                    <span style={$noBreakStyle}>{` ${unavailableAmount} ${btcUnit}`}</span>
+                  </Row>
+                  <Row justifyBetween>
+                    <span style={$noBreakStyle}>{'Total '}</span>
+                    <span style={$noBreakStyle}>{` ${totalAmount} ${btcUnit}`}</span>
+                  </Row>
+                </>
+              ) : (
+                <>
+                  <Row justifyBetween>
+                    <span style={$noBreakStyle}>{'Available '}</span>
+                    <span style={$noBreakStyle}>{'loading...'}</span>
+                  </Row>
+                  <Row justifyBetween>
+                    <span style={$noBreakStyle}>{'Unavailable '}</span>
+                    <span style={$noBreakStyle}>{'loading...'}</span>
+                  </Row>
+                  <Row justifyBetween>
+                    <span style={$noBreakStyle}>{'Total '}</span>
+                    <span style={$noBreakStyle}>{` ${totalAmount} ${btcUnit}`}</span>
+                  </Row>
+                </>
+              )
+            }
+            onOpenChange={(v) => {
+              if (!ref.current.fetchedUtxo[currentAccount.address]) {
+                ref.current.fetchedUtxo[currentAccount.address] = { loading: true };
+                setLoadingFetch(true);
+                fetchUtxos().finally(() => {
+                  ref.current.fetchedUtxo[currentAccount.address].loading = false;
+                  setLoadingFetch(false);
+                });
+              }
+            }}
+            overlayStyle={{
+              fontSize: fontSizes.xs
+            }}>
+              <div>
+                  <Text text={'TOTAL BALANCE'} textCenter color="textDim" />
+                  <BtcDisplay balance={balanceValue} />
+              </div>
+          </Tooltip>
+          <BtcUsd
+            sats={amountToSatoshis(balanceValue)}
+            textCenter
+            size={'md'}
+            style={{
+              marginTop: -16,
+              marginBottom: -8
+            }}
+          />
 
                     <Row itemsCenter justifyCenter>
                         <AddressBar />
