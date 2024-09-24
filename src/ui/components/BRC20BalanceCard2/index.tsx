@@ -6,7 +6,7 @@ import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
-import { BRC20Ticker } from '../BRC20Ticker';
+import { BRC20Ticker, isBoolBridgeTick } from '../BRC20Ticker';
 import { Card } from '../Card';
 import { Column } from '../Column';
 import { Icon } from '../Icon';
@@ -72,25 +72,25 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
     }
     _names = _names.splice(0, 4);
 
-    return (
-        <Card
-            style={{
-                backgroundColor: '#1E1F24',
-                borderColor: 'rgba(255,255,255,0.1)',
-                borderRadius: 12
-            }}
-            fullX
-            onClick={() => {
-                onClick && onClick();
-            }}>
-            <Column full py="zero" gap="zero">
-                <Row fullY justifyBetween justifyCenter>
-                    <Column fullY justifyCenter>
-                        <Row>
-                            <BRC20Ticker tick={ticker} />
-                            {selfMint ? <Tag type="self-issuance" /> : null}
-                        </Row>
-                    </Column>
+  return (
+    <Card
+      style={{
+        backgroundColor: '#1E1F24',
+        borderColor: 'rgba(255,255,255,0.1)',
+        borderRadius: 12
+      }}
+      fullX
+      onClick={() => {
+        onClick && onClick();
+      }}>
+      <Column full py="zero" gap="zero">
+        <Row fullY justifyBetween justifyCenter>
+          <Column fullY justifyCenter>
+            <Row>
+              <BRC20Ticker tick={ticker} />
+              {isBoolBridgeTick(ticker) ? <Tag type="bool-bridge" /> : selfMint ? <Tag type="self-issuance" /> : null}
+            </Row>
+          </Column>
 
                     <Row itemsCenter fullY gap="zero">
                         <Text text={overallBalance} size="xs" digital />
