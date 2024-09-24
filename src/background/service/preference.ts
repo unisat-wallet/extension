@@ -214,11 +214,7 @@ class PreferenceService {
         }
 
         if (!this.store.chainType) {
-            if (this.store.networkType === NetworkType.REGTEST) {
-                this.store.chainType = ChainType.BITCOIN_REGTEST;
-            } else {
-                this.store.chainType = ChainType.BITCOIN_TESTNET;
-            }
+            this.store.chainType = ChainType.BITCOIN_REGTEST;
         }
 
         if (typeof this.store.autoLockTimeId !== 'number') {
