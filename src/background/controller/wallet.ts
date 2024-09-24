@@ -1073,7 +1073,8 @@ export class WalletController extends BaseController {
 
         const network = this.getLegacyNetworkName();
         sessionService.broadcastEvent('networkChanged', {
-            network
+            network,
+            chainType
         });
     };
 
@@ -1581,11 +1582,7 @@ export class WalletController extends BaseController {
                 if (w.time) {
                     if (Date.now() > w.time + 1000 * 60 * 60 * 24 * 7) {
                         w.new = false;
-                    } else if (readAppTime && readAppTime > w.time) {
-                        w.new = false;
-                    } else {
-                        w.new = true;
-                    }
+                    } else w.new = !(readAppTime && readAppTime > w.time);
                 } else {
                     w.new = false;
                 }
@@ -1644,10 +1641,12 @@ export class WalletController extends BaseController {
         permissionService.setSite(data);
         if (data.isConnected) {
             const network = this.getLegacyNetworkName();
+            const chainType = this.getChainType();
             sessionService.broadcastEvent(
                 'networkChanged',
                 {
-                    network
+                    network,
+                    chainType
                 },
                 data.origin
             );
@@ -1656,10 +1655,12 @@ export class WalletController extends BaseController {
     updateConnectSite = (origin: string, data: ConnectedSite) => {
         permissionService.updateConnectSite(origin, data);
         const network = this.getLegacyNetworkName();
+        const chainType = this.getChainType();
         sessionService.broadcastEvent(
             'networkChanged',
             {
-                network
+                network,
+                chainType
             },
             data.origin
         );

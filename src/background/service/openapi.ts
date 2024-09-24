@@ -1,32 +1,16 @@
 import randomstring from 'randomstring';
 
+
+
 import { createPersistStore } from '@/background/utils';
 import { CHAINS_MAP, CHANNEL, VERSION } from '@/shared/constant';
-import {
-    AddressRunesTokenSummary,
-    AddressSummary,
-    AddressTokenSummary,
-    AppSummary,
-    Arc20Balance,
-    BitcoinBalance,
-    BtcPrice,
-    DecodedPsbt,
-    FeeSummary,
-    InscribeOrder,
-    Inscription,
-    InscriptionSummary,
-    RuneBalance,
-    TickPriceItem,
-    TokenBalance,
-    TokenTransfer,
-    UTXO,
-    UTXO_Detail,
-    VersionDetail,
-    WalletConfig
-} from '@/shared/types';
+import { AddressRunesTokenSummary, AddressSummary, AddressTokenSummary, AppSummary, Arc20Balance, BitcoinBalance, BtcPrice, DecodedPsbt, FeeSummary, InscribeOrder, Inscription, InscriptionSummary, RuneBalance, TickPriceItem, TokenBalance, TokenTransfer, UTXO, UTXO_Detail, VersionDetail, WalletConfig } from '@/shared/types';
 import Web3API from '@/shared/web3/Web3API';
 
+
+
 import { preferenceService } from '.';
+
 
 interface OpenApiStore {
     deviceId: string;

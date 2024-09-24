@@ -290,6 +290,10 @@ class Web3API {
 
     private setProvider(chainType: ChainType): void {
         const chainMetadata = CHAINS_MAP[chainType];
+        if (!chainMetadata) {
+            throw new Error(`Chain metadata not found for ${chainType}`);
+        }
+
         if (!chainMetadata.opnetUrl) {
             throw new Error('OPNet RPC URL not set');
         }
