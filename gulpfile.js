@@ -97,7 +97,6 @@ function task_uglify(cb) {
             .src(`dist/${options.browser}/**/*.js`)
             .pipe(
                 uglify({
-                    compact: true,
                     identifierNamesGenerator: 'mangled-shuffled'
                 })
             )
