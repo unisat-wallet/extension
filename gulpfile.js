@@ -95,11 +95,7 @@ function task_uglify(cb) {
     if (options.env == 'pro') {
         return gulp
             .src(`dist/${options.browser}/**/*.js`)
-            .pipe(
-                uglify({
-                    identifierNamesGenerator: 'mangled-shuffled'
-                })
-            )
+            .pipe(uglify({}))
             .pipe(gulp.dest(`dist/${options.browser}`));
     }
     cb();
