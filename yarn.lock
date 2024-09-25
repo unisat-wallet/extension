@@ -1350,7 +1350,7 @@
   dependencies:
     "@metamask/utils" "^9.0.0"
 
-"@btc-vision/transaction@1.0.105", "@btc-vision/transaction@^1.0.105":
+"@btc-vision/transaction@^1.0.105":
   version "1.0.105"
   resolved "https://registry.yarnpkg.com/@btc-vision/transaction/-/transaction-1.0.105.tgz#ee7ba572322831ad8ae84e5c63054169bdd73856"
   integrity sha512-B+pRcay+mGza3PbuoP2RHbJccjtRyM98efDjCK+Y1yDXP21jmd2No2jsQl2PIkK9hAujW4bGYNkFea3oTYxh2A==
