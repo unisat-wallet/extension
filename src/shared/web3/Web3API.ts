@@ -1,7 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { networks } from 'bitcoinjs-lib';
 import { Network } from 'bitcoinjs-lib/src/networks.js';
-import { getContract, IOP_20Contract, JSONRpcProvider, OP_20_ABI } from 'opnet';
+import { getContract, IOP_20Contract, JSONRpcProvider, OP_20_ABI, UTXOs } from 'opnet';
 
 import { CHAINS_MAP, ChainType } from '@/shared/constant';
 import { NetworkType } from '@/shared/types';
@@ -195,23 +195,6 @@ class Web3API {
         this._limitedProvider = new OPNetLimitedProvider(url);
     }
 
-    public async getUTXOs(addresses: string[], requiredAmount: bigint): Promise<UTXO[]> {
-        let utxos: UTXO[];
-        if (this.nextUTXOs.length > 0) {
-            utxos = this.nextUTXOs;
-        } else {
-            utxos = await this.getUTXOsForAddresses(addresses, requiredAmount);
-        }
-
-        shuffle(utxos);
-
-        if (!utxos.length) {
-            throw new Error('No UTXOs found');
-        }
-
-        return utxos;
-    }
-
     public async getBalance(address: Address, filterOrdinals: boolean): Promise<bigint> {
         return await this.provider.getBalance(address, filterOrdinals);
     }
@@ -269,24 +252,47 @@ class Web3API {
         }
     }
 
-    private async getUTXOsForAddresses(addresses: string[], _requiredAmount: bigint): Promise<UTXO[]> {
-        const promises = addresses.map(async (address) => {
+    public async getUTXOs(addresses: string[], requiredAmount?: bigint): Promise<UTXO[]> {
+        console.log('1');
+        let utxos: UTXO[];
+        if (this.nextUTXOs.length > 0) {
+            utxos = this.nextUTXOs;
+        } else {
+            requiredAmount
+                ? (utxos = await this.getUTXOsForAddresses(addresses, requiredAmount))
+                : (utxos = await this.getUTXOsForAddresses(addresses));
+        }
+
+        shuffle(utxos);
+
+        if (!utxos.length) {
+            throw new Error('No UTXOs found');
+        }
+
+        return utxos;
+    }
+
+    private async getUTXOsForAddresses(addresses: string[], _requiredAmount?: bigint): Promise<UTXO[]> {
+        let utxos: UTXOs = [];
+
+        for (const address of addresses) {
             try {
-                return this.provider.utxoManager.getUTXOs({
-                    address: address,
-                    //amount: requiredAmount,
-                    optimize: false
-                });
+                if (!_requiredAmount) {
+                    utxos = await this.provider.utxoManager.getUTXOs({ address, optimize: false });
+                } else {
+                    utxos = await this.provider.utxoManager.getUTXOsForAmount({
+                        address,
+                        amount: _requiredAmount,
+                        optimize: false
+                    });
+                }
             } catch (e) {
-                return [];
+                continue;
             }
-        });
 
-        const results = await Promise.all(promises);
-        const utxos: UTXO[] = [];
-
-        for (const result of results) {
-            utxos.push(...result);
+            if (utxos.length) {
+                break;
+            }
         }
 
         return utxos;

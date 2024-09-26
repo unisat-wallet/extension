@@ -1,6 +1,7 @@
 import { permissionService, sessionService } from '@/background/service';
 import { CHAINS, CHAINS_MAP, NETWORK_TYPES, VERSION } from '@/shared/constant';
 
+import { IDeploymentParametersWithoutSigner } from '@/content-script/pageProvider/Web3Provider';
 import { NetworkType } from '@/shared/types';
 import { RequestData } from '@/shared/types/Request.js';
 import { getChainInfo } from '@/shared/utils';
@@ -13,7 +14,6 @@ import { toPsbtNetwork } from '@btc-vision/wallet-sdk/lib/network';
 import { ethErrors } from 'eth-rpc-errors';
 import BaseController from '../base';
 import wallet from '../wallet';
-import { IDeploymentParametersWithoutSigner } from '@/content-script/pageProvider/Web3Provider';
 
 function formatPsbtHex(psbtHex: string) {
     let formatData = '';
@@ -365,7 +365,7 @@ class ProviderController extends BaseController {
     getBitcoinUtxos = async () => {
         const account = await wallet.getCurrentAccount();
         if (!account) return [];
-        const utxos = await wallet.getBTCUtxos();
+        const utxos = await Web3API.getUTXOs([account.address]);
         return utxos;
     };
 }

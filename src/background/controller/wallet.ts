@@ -1,4 +1,4 @@
-import { BroadcastedTransaction } from 'opnet';
+import { BroadcastedTransaction, UTXOs } from 'opnet';
 
 import {
     contactBookService,
@@ -1082,47 +1082,6 @@ export class WalletController extends BaseController {
         return preferenceService.getChainType();
     };
 
-    getBTCUtxos = async () => {
-        // getBTCAccount
-        const account = preferenceService.getCurrentAccount();
-        if (!account) throw new Error('no current account');
-
-        /*let utxos = await openapiService.getBTCUtxos(account.address);
-
-        if (checkAddressFlag(openapiService.addressFlag, AddressFlagType.CONFIRMED_UTXO_MODE)) {
-            utxos = utxos.filter((v) => (v as any).height !== UNCONFIRMED_HEIGHT);
-        }
-
-        const btcUtxos = utxos.map((v) => {
-            return {
-                txid: v.txid,
-                vout: v.vout,
-                satoshis: v.satoshis,
-                scriptPk: v.scriptPk,
-                addressType: v.addressType,
-                pubkey: account.pubkey,
-                inscriptions: v.inscriptions,
-                atomicals: v.atomicals
-            };
-        });*/
-
-        const utxos = await Web3API.getUTXOs([account.address], 1000000000000000n);
-
-        return utxos.map((utxoOpnet) => {
-            return {
-                runes: [],
-                txid: utxoOpnet.transactionId,
-                vout: utxoOpnet.outputIndex,
-                satoshis: Number(utxoOpnet.value),
-                scriptPk: utxoOpnet.scriptPubKey.hex,
-                addressType: AddressType.P2PKH,
-                pubkey: account.pubkey,
-                inscriptions: [],
-                atomicals: []
-            };
-        });
-    };
-
     getUnavailableUtxos = async () => {
         /*const account = preferenceService.getCurrentAccount();
         if (!account) throw new Error('no current account');
@@ -1169,7 +1128,7 @@ export class WalletController extends BaseController {
         amount: number;
         feeRate: number;
         enableRBF: boolean;
-        btcUtxos?: UnspentOutput[];
+        btcUtxos?: UTXOs;
         memo?: string;
         memos?: string[];
     }) => {
@@ -1179,7 +1138,7 @@ export class WalletController extends BaseController {
         const networkType = this.getNetworkType();
 
         if (!btcUtxos) {
-            btcUtxos = await this.getBTCUtxos();
+            btcUtxos = await Web3API.getUTXOs([account.address], BigInt(amount));
         }
 
         if (btcUtxos.length == 0) {
@@ -1191,7 +1150,7 @@ export class WalletController extends BaseController {
         }
 
         const { psbt, toSignInputs } = await txHelpers.sendBTC({
-            btcUtxos: btcUtxos,
+            btcUtxos,
             tos: [{ address: to, satoshis: amount }],
             networkType,
             changeAddress: account.address,
@@ -1216,7 +1175,7 @@ export class WalletController extends BaseController {
         to: string;
         feeRate: number;
         enableRBF: boolean;
-        btcUtxos?: UnspentOutput[];
+        btcUtxos?: UTXOs;
     }) => {
         const account = preferenceService.getCurrentAccount();
         if (!account) throw new Error('no current account');
@@ -1224,7 +1183,7 @@ export class WalletController extends BaseController {
         const networkType = this.getNetworkType();
 
         if (!btcUtxos) {
-            btcUtxos = await this.getBTCUtxos();
+            btcUtxos = await Web3API.getUTXOs([account.address]);
         }
 
         if (btcUtxos.length == 0) {
@@ -1258,7 +1217,7 @@ export class WalletController extends BaseController {
         feeRate: number;
         outputValue?: number;
         enableRBF: boolean;
-        btcUtxos?: UnspentOutput[];
+        btcUtxos?: UTXOs;
     }) => {
         const account = preferenceService.getCurrentAccount();
         if (!account) throw new Error('no current account');
@@ -1277,7 +1236,7 @@ export class WalletController extends BaseController {
         const assetUtxo = Object.assign(utxo, { pubkey: account.pubkey });
 
         if (!btcUtxos) {
-            btcUtxos = await this.getBTCUtxos();
+            btcUtxos = await Web3API.getUTXOs([account.address]);
         }
 
         if (btcUtxos.length == 0) {
@@ -1314,7 +1273,7 @@ export class WalletController extends BaseController {
         utxos: UTXO[];
         feeRate: number;
         enableRBF: boolean;
-        btcUtxos?: UnspentOutput[];
+        btcUtxos?: UTXOs;
     }) => {
         const account = preferenceService.getCurrentAccount();
         if (!account) throw new Error('no current account');
@@ -1343,7 +1302,7 @@ export class WalletController extends BaseController {
         });
 
         if (!btcUtxos) {
-            btcUtxos = await this.getBTCUtxos();
+            btcUtxos = await Web3API.getUTXOs([account.address]);
         }
 
         if (btcUtxos.length == 0) {
@@ -1379,7 +1338,7 @@ export class WalletController extends BaseController {
         feeRate: number;
         outputValue: number;
         enableRBF: boolean;
-        btcUtxos?: UnspentOutput[];
+        btcUtxos?: UTXOs;
     }) => {
         const account = preferenceService.getCurrentAccount();
         if (!account) throw new Error('no current account');
@@ -1394,7 +1353,7 @@ export class WalletController extends BaseController {
         const assetUtxo = Object.assign(utxo, { pubkey: account.pubkey });
 
         if (!btcUtxos) {
-            btcUtxos = await this.getBTCUtxos();
+            btcUtxos = await Web3API.getUTXOs([account.address]);
         }
 
         const { psbt, toSignInputs, splitedCount } = await txHelpers.splitInscriptionUtxo({
@@ -1605,7 +1564,7 @@ export class WalletController extends BaseController {
     };
 
     getAddressUtxo = async (address: string) => {
-        return await openapiService.getBTCUtxos(address);
+        return await Web3API.getUTXOs([address]);
     };
 
     setRecentConnectedSites = (sites: ConnectedSite[]) => {
@@ -1926,7 +1885,7 @@ export class WalletController extends BaseController {
         atomicalId: string;
         feeRate: number;
         enableRBF: boolean;
-        btcUtxos?: UnspentOutput[];
+        btcUtxos?: UTXOs;
     }) => {
         const account = preferenceService.getCurrentAccount();
         if (!account) throw new Error('no current account');
@@ -1945,7 +1904,7 @@ export class WalletController extends BaseController {
         const assetUtxo = Object.assign(utxo, { pubkey: account.pubkey });
 
         if (!btcUtxos) {
-            btcUtxos = await this.getBTCUtxos();
+            btcUtxos = await Web3API.getUTXOs([account.address]);
         }
 
         if (btcUtxos.length == 0) {
@@ -1982,7 +1941,7 @@ export class WalletController extends BaseController {
         amount: number;
         feeRate: number;
         enableRBF: boolean;
-        btcUtxos?: UnspentOutput[];
+        btcUtxos?: UTXOs;
         assetUtxos?: UnspentOutput[];
     }) => {
         const account = preferenceService.getCurrentAccount();
@@ -1995,7 +1954,7 @@ export class WalletController extends BaseController {
         }
 
         if (!btcUtxos) {
-            btcUtxos = await this.getBTCUtxos();
+            btcUtxos = await Web3API.getUTXOs([account.address]);
         }
 
         const changeDust = getAddressUtxoDust(account.address);
@@ -2195,7 +2154,7 @@ export class WalletController extends BaseController {
         runeAmount: string;
         feeRate: number;
         enableRBF: boolean;
-        btcUtxos?: UnspentOutput[];
+        btcUtxos?: UTXOs;
         assetUtxos?: UnspentOutput[];
         outputValue?: number;
     }) => {
@@ -2254,7 +2213,7 @@ export class WalletController extends BaseController {
         assetUtxos = _assetUtxos;
 
         if (!btcUtxos) {
-            btcUtxos = await this.getBTCUtxos();
+            btcUtxos = await Web3API.getUTXOs([account.address]);
         }
 
         const { psbt, toSignInputs } = await txHelpers.sendRunes({
