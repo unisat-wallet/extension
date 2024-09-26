@@ -12,7 +12,6 @@ import { ABICoder, Address } from '@btc-vision/bsi-binary';
 import {
     AddressVerificator,
     ChainId,
-    FetchUTXOParamsMultiAddress,
     OPNetLimitedProvider,
     OPNetMetadata,
     OPNetNetwork,
@@ -197,18 +196,11 @@ class Web3API {
     }
 
     public async getUTXOs(addresses: string[], requiredAmount: bigint): Promise<UTXO[]> {
-        const utxoSetting: FetchUTXOParamsMultiAddress = {
-            addresses,
-            minAmount: 20_000n, // we ensure we are not using Ordinals UTXOs
-            requestedAmount: requiredAmount,
-            optimized: true
-        };
-
         let utxos: UTXO[];
         if (this.nextUTXOs.length > 0) {
             utxos = this.nextUTXOs;
         } else {
-            utxos = await this.limitedProvider.fetchUTXOMultiAddr(utxoSetting);
+            utxos = await this.getUTXOsForAddresses(addresses, requiredAmount);
         }
 
         shuffle(utxos);
@@ -273,11 +265,31 @@ class Web3API {
                 logo
             };
         } catch (e) {
-            /*const error = e as Error;
-            console.log(error.message);*/
-
             return;
         }
+    }
+
+    private async getUTXOsForAddresses(addresses: string[], _requiredAmount: bigint): Promise<UTXO[]> {
+        const promises = addresses.map(async (address) => {
+            try {
+                return this.provider.utxoManager.getUTXOs({
+                    address: address,
+                    //amount: requiredAmount,
+                    optimize: false
+                });
+            } catch (e) {
+                return [];
+            }
+        });
+
+        const results = await Promise.all(promises);
+        const utxos: UTXO[] = [];
+
+        for (const result of results) {
+            utxos.push(...result);
+        }
+
+        return utxos;
     }
 
     private getContractLogo(address: string): string | undefined {
