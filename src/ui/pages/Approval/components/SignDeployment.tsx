@@ -1,13 +1,16 @@
-import React from 'react';
-
-import { IDeploymentParametersWithoutSigner } from '@/content-script/pageProvider/Web3Provider';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
+import { AddressText } from '@/ui/components/AddressText';
 import WebsiteBar from '@/ui/components/WebsiteBar';
+import { useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { useBTCUnit } from '@/ui/state/settings/hooks';
+import { colors } from '@/ui/theme/colors';
+import { satoshisToAmount } from '@/ui/utils';
 import { useApproval } from '@/ui/utils/hooks';
+import { IDeploymentParameters, PsbtOutputExtended } from '@btc-vision/transaction';
 
 interface Props {
     params: {
-        data: IDeploymentParametersWithoutSigner;
+        data: IDeploymentParameters;
         session: {
             origin: string;
             icon: string;
@@ -47,6 +50,16 @@ export default function SignDeployment(props: Props) {
     };
 
     const bytecode: string = typeof data.bytecode === 'string' ? data.bytecode : toHex(objToBuffer(data.bytecode));
+    const optionalOutputs: {
+        address: string;
+        value: number;
+    }[] = (data.optionalOutputs || []).map((output: PsbtOutputExtended) => ({
+        address: 'address' in output ? output.address : '',
+        value: output.value
+    }));
+
+    const btcUnit = useBTCUnit();
+    const currentAccount = useCurrentAccount();
 
     return (
         <Layout>
@@ -87,6 +100,49 @@ export default function SignDeployment(props: Props) {
                         mt="lg"
                     />
                 </Column>
+
+                {optionalOutputs.length > 0 && (
+                    <Column>
+                        <Text text={`Outputs: (${optionalOutputs.length})`} preset="bold" />
+                        <Card>
+                            <Column full justifyCenter gap="lg">
+                                {optionalOutputs.map((v, index) => {
+                                    const isMyAddress = v.address == currentAccount.address;
+
+                                    return (
+                                        <Column
+                                            key={'output_' + index}
+                                            style={
+                                                index === 0
+                                                    ? {}
+                                                    : {
+                                                          borderColor: colors.border,
+                                                          borderTopWidth: 1,
+                                                          paddingTop: 10
+                                                      }
+                                            }>
+                                            <Column>
+                                                <Row justifyBetween>
+                                                    <AddressText
+                                                        address={v.address}
+                                                        color={isMyAddress ? 'white' : 'textDim'}
+                                                    />
+                                                    <Row>
+                                                        <Text
+                                                            text={`${satoshisToAmount(v.value)}`}
+                                                            color={isMyAddress ? 'white' : 'textDim'}
+                                                        />
+                                                        <Text text={btcUnit} color="textDim" />
+                                                    </Row>
+                                                </Row>
+                                            </Column>
+                                        </Column>
+                                    );
+                                })}
+                            </Column>
+                        </Card>
+                    </Column>
+                )}
             </Content>
 
             <Footer>
