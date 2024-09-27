@@ -1279,10 +1279,14 @@ export default function SignPsbt({
                     <Button preset="default" text="Reject" onClick={handleCancel} full />
                     <Button
                         preset="primary"
-                        icon={txInfo.decodedPsbt.risks.length > 0 ? 'risk' : undefined}
+                        icon={
+                            txInfo.decodedPsbt.risks.length > 0 && txInfo.decodedPsbt.risks[0].type !== 2
+                                ? 'risk'
+                                : undefined
+                        }
                         text={type == TxType.SIGN_TX ? 'Sign' : 'Sign & Pay'}
                         onClick={() => {
-                            if (txInfo.decodedPsbt.risks.length > 0) {
+                            if (txInfo.decodedPsbt.risks.length > 0 && txInfo.decodedPsbt.risks[0].type !== 2) {
                                 setIsPsbtRiskPopoverVisible(true);
                                 return;
                             }
