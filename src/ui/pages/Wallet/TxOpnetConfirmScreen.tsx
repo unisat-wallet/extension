@@ -208,21 +208,21 @@ export default function TxOpnetConfirmScreen() {
             };
 
             const finalTx = await Web3API.transactionFactory.signInteraction(interactionParameters);
-            const firstTxBroadcast = await Web3API.provider.sendRawTransaction(finalTx[0], false);
-            console.log(`First transaction broadcasted: ${firstTxBroadcast.result}`);
+            const firstTransaction = await Web3API.provider.sendRawTransaction(finalTx[0], false);
+            console.log(`First transaction broadcasted: ${firstTransaction.result}`);
 
-            if (!firstTxBroadcast.success) {
+            if (!firstTransaction.success) {
                 tools.toastError('Error,Please Try again');
                 setUseNextUTXO(true);
                 setDisabled(false);
-                tools.toastError('Could not broadcast first transaction');
+                tools.toastError(firstTransaction.error || 'Could not broadcast first transaction');
             }
 
             const secondTxBroadcast = await Web3API.provider.sendRawTransaction(finalTx[1], false);
             console.log(`Second transaction broadcasted: ${secondTxBroadcast.result}`);
 
             if (!secondTxBroadcast.success) {
-                tools.toastError('Could not broadcast second transaction');
+                tools.toastError(secondTxBroadcast.error || 'Could not broadcast second transaction');
             }
 
             tools.toastSuccess(`You have successfully transferred ${amountToSend} ${btcUnit}`);
@@ -317,20 +317,20 @@ export default function TxOpnetConfirmScreen() {
 
         try {
             const finalTx = await Web3API.transactionFactory.wrap(wrapParameters);
-            const firstTxBroadcast = await Web3API.provider.sendRawTransaction(finalTx.transaction[0], false);
+            const firstTransaction = await Web3API.provider.sendRawTransaction(finalTx.transaction[0], false);
 
-            if (!firstTxBroadcast.success) {
+            if (!firstTransaction.success) {
                 tools.toastError('Error,Please Try again');
                 setUseNextUTXO(true);
                 setDisabled(false);
-                tools.toastError('Could not broadcast first transaction');
+                tools.toastError(firstTransaction.error || 'Could not broadcast first transaction');
             }
 
             const secondTxBroadcast = await Web3API.provider.sendRawTransaction(finalTx.transaction[1], false);
             if (!secondTxBroadcast.success) {
                 tools.toastError('Error,Please Try again');
                 setDisabled(false);
-                tools.toastError('Could not broadcast first transaction');
+                tools.toastError(secondTxBroadcast.error || 'Could not broadcast second transaction');
             }
 
             const nextUTXO = finalTx.utxos;
@@ -923,14 +923,14 @@ export default function TxOpnetConfirmScreen() {
             setUseNextUTXO(true);
             setDisabled(false);
             console.log(firstTransaction);
-            tools.toastError('Could not broadcast first transaction');
+            tools.toastError(firstTransaction.error || 'Could not broadcast first transaction');
         }
 
         // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
         const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransact[1], false);
         if (!secondTransaction || !secondTransaction.success) {
             // tools.toastError('Error,Please Try again');
-            tools.toastError('Could not broadcast first transaction');
+            tools.toastError(secondTransaction.error || 'Could not broadcast second transaction');
             return;
         } else {
             const amountA = Number(rawTxInfo.inputAmount[0]).toLocaleString();
@@ -978,14 +978,14 @@ export default function TxOpnetConfirmScreen() {
             if (!firstTransaction || !firstTransaction.success) {
                 // tools.toastError('Error,Please Try again');
                 console.log(firstTransaction);
-                tools.toastError('Could not broadcast first transaction');
+                tools.toastError(firstTransaction.error || 'Could not broadcast first transaction');
             }
 
             // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
             const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransact[1], false);
             if (!secondTransaction || !secondTransaction.success) {
                 // tools.toastError('Error,Please Try again');
-                tools.toastError('Could not broadcast first transaction');
+                tools.toastError(secondTransaction.error || 'Could not broadcast second transaction');
             } else {
                 console.log(secondTransaction);
             }
@@ -1102,7 +1102,7 @@ export default function TxOpnetConfirmScreen() {
             if (!firstTransaction || !firstTransaction.success || firstTransaction.error) {
                 setUseNextUTXO(true);
                 setDisabled(false);
-                tools.toastError('Could not broadcast first transaction');
+                tools.toastError(firstTransaction.error || 'Could not broadcast first transaction');
 
                 return;
             }
@@ -1195,14 +1195,14 @@ export default function TxOpnetConfirmScreen() {
                 tools.toastError('Error,Please Try again');
                 setUseNextUTXO(true);
                 setDisabled(false);
-                tools.toastError('Could not broadcast first transaction');
+                tools.toastError(firstTransaction.error || 'Could not broadcast first transaction');
             }
 
             // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
             const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransact[1], false);
             if (!secondTransaction || !secondTransaction.success) {
                 // tools.toastError('Error,Please Try again');
-                tools.toastError('Could not broadcast first transaction');
+                tools.toastError(secondTransaction.error || 'Could not broadcast second transaction');
             }
 
             tools.toastSuccess(`You have successfully minted ${rawTxInfo.inputAmount} `);
