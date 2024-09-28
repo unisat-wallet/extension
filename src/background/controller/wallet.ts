@@ -1109,10 +1109,9 @@ export class WalletController extends BaseController {
         let arc20_utxos = await openapiService.getArc20Utxos(account.address, ticker);
         arc20_utxos = arc20_utxos.filter((v) => (v as any).spent == false);
 
-        const assetUtxos = arc20_utxos.map((v) => {
+        return arc20_utxos.map((v) => {
             return Object.assign(v, { pubkey: account.pubkey });
         });
-        return assetUtxos;
     };
 
     sendBTC = async ({
