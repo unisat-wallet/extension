@@ -4800,7 +4800,7 @@ bitcoinjs-lib@^6.1.6:
 
 "bitcoinjs-lib@https://github.com/btc-vision/bitcoinjs-lib.git":
   version "6.2.0"
-  resolved "https://github.com/btc-vision/bitcoinjs-lib.git#09c90f6a58eef6cb20e8e59103b10dfcf0f6c2f0"
+  resolved "https://github.com/btc-vision/bitcoinjs-lib.git#065046c6a33c381b7703b3491b8cf451c0eed764"
   dependencies:
     "@noble/hashes" "^1.2.0"
     bech32 "^2.0.0"
