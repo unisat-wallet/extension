@@ -239,15 +239,7 @@ class Web3API {
     }
 
     public async getUTXOs(addresses: string[], requiredAmount?: bigint): Promise<UTXO[]> {
-        let utxos: UTXO[];
-        if (this.nextUTXOs.length > 0) {
-            utxos = this.nextUTXOs;
-        } else {
-            requiredAmount
-                ? (utxos = await this.getUTXOsForAddresses(addresses, requiredAmount))
-                : (utxos = await this.getUTXOsForAddresses(addresses));
-        }
-
+        const utxos: UTXO[] = await this.getUTXOsForAddresses(addresses, requiredAmount);
         if (!utxos.length) {
             throw new Error('No UTXOs found');
         }
@@ -261,12 +253,14 @@ class Web3API {
         for (const address of addresses) {
             try {
                 if (!requiredAmount) {
-                    utxos = await this.provider.utxoManager.getUTXOs({ address, optimize: false });
+                    utxos = await this.provider.utxoManager.getUTXOs({ address, optimize: true });
                 } else {
                     utxos = await this.provider.utxoManager.getUTXOsForAmount({
                         address,
                         amount: requiredAmount,
-                        optimize: false
+                        optimize: true,
+                        mergePendingUTXOs: true,
+                        filterSpentUTXOs: true
                     });
                 }
             } catch (e) {
