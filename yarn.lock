@@ -1350,7 +1350,37 @@
   dependencies:
     "@metamask/utils" "^9.0.0"
 
-"@btc-vision/transaction@1.0.106", "@btc-vision/transaction@^1.0.106":
+"@btc-vision/transaction@1.0.107":
+  version "1.0.107"
+  resolved "https://registry.yarnpkg.com/@btc-vision/transaction/-/transaction-1.0.107.tgz#1497d50ad23e0a672a16d0e6ad967583663bbb96"
+  integrity sha512-qDRdXmqJD+Ibo8/rhYYQj/Ng/Ov9OQsVfhoo+abpZnt6IRWITeEL/IRHI1cFtzJqBjos7ugfOb5RY9fJFaDalg==
+  dependencies:
+    "@babel/plugin-proposal-object-rest-spread" "^7.20.7"
+    "@bitcoinerlab/secp256k1" "^1.1.1"
+    "@btc-vision/bsi-binary" "^1.0.42"
+    "@btc-vision/bsi-bitcoin-rpc" "^1.0.29"
+    "@btc-vision/logger" "^1.0.6"
+    "@eslint/js" "^9.10.0"
+    assert "^2.1.0"
+    babel-loader "^9.1.3"
+    babel-plugin-transform-import-meta "^2.2.1"
+    babel-preset-react "^6.24.1"
+    babelify "^10.0.0"
+    bech32 "^2.0.0"
+    bignumber.js "^9.1.2"
+    bip32 "^4.0.0"
+    bitcoinjs-lib "github:btc-vision/bitcoinjs-lib"
+    browserify-zlib "^0.2.0"
+    buffer "^6.0.3"
+    ecpair "^2.1.0"
+    gulp-clean "^0.4.0"
+    gulp-eslint-new "^2.3.0"
+    process "^0.11.10"
+    ts-loader "^9.5.1"
+    ts-node "^10.9.2"
+    typescript "^5.6.2"
+
+"@btc-vision/transaction@^1.0.106":
   version "1.0.106"
   resolved "https://registry.yarnpkg.com/@btc-vision/transaction/-/transaction-1.0.106.tgz#c4502d50efe53a2c9620fbda5fa0431c44a89011"
   integrity sha512-cOOb0DNXwV0LJW4p0+raMMu9j0hR53xi5Jso7ursr2zTHZqcG85tTFt/ttBhSz+7mkfD5muMhA0FQP4An86fdQ==
@@ -4760,6 +4790,17 @@ bitcoinjs-lib@^6.1.6:
 "bitcoinjs-lib@github:btc-vision/bitcoinjs-lib":
   version "6.1.8"
   resolved "https://codeload.github.com/btc-vision/bitcoinjs-lib/tar.gz/ced434c20d05794b9315cf54a538fb9533edba9d"
+  dependencies:
+    "@noble/hashes" "^1.2.0"
+    bech32 "^2.0.0"
+    bip174 "^2.1.1"
+    bs58check "^3.0.1"
+    typeforce "^1.11.3"
+    varuint-bitcoin "^1.1.2"
+
+"bitcoinjs-lib@https://github.com/btc-vision/bitcoinjs-lib.git":
+  version "6.2.0"
+  resolved "https://github.com/btc-vision/bitcoinjs-lib.git#09c90f6a58eef6cb20e8e59103b10dfcf0f6c2f0"
   dependencies:
     "@noble/hashes" "^1.2.0"
     bech32 "^2.0.0"
@@ -11482,10 +11523,10 @@ open@^8.0.9, open@^8.4.0:
     is-docker "^2.1.1"
     is-wsl "^2.2.0"
 
-opnet@1.0.55:
-  version "1.0.55"
-  resolved "https://registry.yarnpkg.com/opnet/-/opnet-1.0.55.tgz#877a21c4bf4a42da5c2aacbaa7f573c2413b622e"
-  integrity sha512-LW4HRMkSyEviG7xvsljcGfT7ApzmBFB1u9PaomfFkM0SpDy/qevgzVJadgpKLqgNh5oVd/IgjQUj312GNHwpaQ==
+opnet@1.0.56:
+  version "1.0.56"
+  resolved "https://registry.yarnpkg.com/opnet/-/opnet-1.0.56.tgz#be539087f9ea698747e011acaa03eef768e2e250"
+  integrity sha512-1n1U4W4m1UyhR9uKpmXfYUsQoef6bz63xy9Hg+JiFEdFHRHWCJ2N9GmwOroBDi2YcRfEUQuDlW5qlyPwsHT7rw==
   dependencies:
     "@babel/plugin-proposal-object-rest-spread" "^7.20.7"
     "@bitcoinerlab/secp256k1" "^1.1.1"
