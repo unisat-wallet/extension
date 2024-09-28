@@ -22,7 +22,7 @@ export const NoticePopover = ({ onClose }: { onClose: () => void }) => {
         if (coolDown > 0) {
             setTimeout(() => {
                 setCoolDown(coolDown - 1);
-            }, 1000);
+            }, 3000);
         } else {
             setEnable(true);
         }
@@ -66,7 +66,7 @@ export const NoticePopover = ({ onClose }: { onClose: () => void }) => {
                         preset="primary"
                         disabled={!checked1 || !checked2}
                         full
-                        onClick={(e) => {
+                        onClick={() => {
                             if (!enable) return;
                             if (onClose) {
                                 onClose();
