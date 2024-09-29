@@ -51,11 +51,11 @@ class PortMessage extends Message {
     send = (type: string, data: RequestData) => {
         if (!this.port) return;
 
-        //try {
-        this.port.postMessage({ _type_: `${this._EVENT_PRE}${type}`, data });
-        //} catch (e) {
-        // DO NOTHING BUT CATCH THIS ERROR
-        //}
+        try {
+            this.port.postMessage({ _type_: `${this._EVENT_PRE}${type}`, data });
+        } catch (e) {
+            //
+        }
     };
 
     dispose = () => {

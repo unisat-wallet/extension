@@ -365,7 +365,7 @@ class ProviderController extends BaseController {
     getBitcoinUtxos = async () => {
         const account = await wallet.getCurrentAccount();
         if (!account) return [];
-        const utxos = await Web3API.getUTXOs([account.address]);
+        const utxos = await wallet.getBTCUtxos();
         return utxos;
     };
 }

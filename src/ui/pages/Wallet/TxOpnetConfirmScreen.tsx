@@ -1062,7 +1062,7 @@ export default function TxOpnetConfirmScreen() {
     const deployContract = async () => {
         try {
             const foundObject = rawTxInfo.items.find(
-                (obj) => obj.account && obj.account.address === rawTxInfo.account.address
+                (obj: { account: Account }) => obj.account && obj.account.address === rawTxInfo.account.address
             );
 
             const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
@@ -1070,7 +1070,7 @@ export default function TxOpnetConfirmScreen() {
 
             let utxos: UTXO[] = [];
             if (!useNextUTXO) {
-                utxos = await Web3API.getUTXOs(walletGet.addresses, expandToDecimals(0.08, 8));
+                utxos = await Web3API.getUTXOs(walletGet.addresses, expandToDecimals(0.008, 8));
             } else {
                 const storedUTXO = localStorage.getItem('nextUTXO');
                 utxos = storedUTXO
@@ -1140,6 +1140,7 @@ export default function TxOpnetConfirmScreen() {
             }
         } catch (e) {
             console.log(e);
+            tools.toastError(`Error: ${e}`);
             setDisabled(false);
             setDisabled(false);
         }
