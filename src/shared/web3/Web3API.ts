@@ -251,16 +251,18 @@ class Web3API {
         let utxos: UTXOs = [];
 
         for (const address of addresses) {
-            if (!requiredAmount) {
-                utxos = await this.provider.utxoManager.getUTXOs({ address, optimize: false });
-            } else {
-                utxos = await this.provider.utxoManager.getUTXOsForAmount({
-                    address,
-                    amount: requiredAmount,
-                    optimize: false,
-                    mergePendingUTXOs: true,
-                    filterSpentUTXOs: true
-                });
+            try {
+                if (!requiredAmount) {
+                    utxos = await this.provider.utxoManager.getUTXOs({ address, optimize: false });
+                } else {
+                    utxos = await this.provider.utxoManager.getUTXOsForAmount({
+                        address,
+                        amount: requiredAmount,
+                        optimize: false
+                    });
+                }
+            } catch (e) {
+                //
             }
 
             if (utxos.length) {
