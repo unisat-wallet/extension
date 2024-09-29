@@ -1106,7 +1106,7 @@ export class WalletController extends BaseController {
             };
         });*/
 
-        const utxos = await Web3API.getUTXOs([account.address], 1000000000000000n);
+        const utxos = await Web3API.getUTXOs([account.address]);
 
         return utxos.map((utxoOpnet) => {
             return {
