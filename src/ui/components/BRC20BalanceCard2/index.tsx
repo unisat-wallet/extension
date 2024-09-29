@@ -6,7 +6,7 @@ import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
-import { BRC20Ticker } from '../BRC20Ticker';
+import { BRC20Ticker, isBoolBridgeTick } from '../BRC20Ticker';
 import { Card } from '../Card';
 import { Column } from '../Column';
 import { Icon } from '../Icon';
@@ -88,7 +88,7 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
           <Column fullY justifyCenter>
             <Row>
               <BRC20Ticker tick={ticker} />
-              {selfMint ? <Tag type="self-issuance" /> : null}
+              {isBoolBridgeTick(ticker) ? <Tag type="bool-bridge" /> : selfMint ? <Tag type="self-issuance" /> : null}
             </Row>
           </Column>
 
