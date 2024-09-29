@@ -59,8 +59,6 @@ export function Header(props: HeaderProps) {
                 <Icon>
                   <FontAwesomeIcon icon={faArrowLeft} />
                 </Icon>
-
-                <Text text="Back" preset="regular-bold" />
               </Row>
             )}
           </Column>

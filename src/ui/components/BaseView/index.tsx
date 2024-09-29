@@ -12,6 +12,7 @@ export interface BaseViewProps {
   justifyBetween?: boolean;
   justifyEnd?: boolean;
   itemsCenter?: boolean;
+  itemsEnd?: boolean;
   selfItemsCenter?: boolean;
   gap?: Gap;
   onClick?: ReactEventHandler<HTMLDivElement>;
@@ -46,6 +47,7 @@ export function BaseView(props: BaseViewProps) {
     justifyBetween,
     justifyEnd,
     itemsCenter,
+    itemsEnd,
     selfItemsCenter,
     gap,
     px,
@@ -77,6 +79,7 @@ export function BaseView(props: BaseViewProps) {
     justifyBetween ? { justifyContent: 'space-between' } : {},
     justifyEnd ? { justifyContent: 'end' } : {},
     itemsCenter ? { alignItems: 'center' } : {},
+    itemsEnd ? { alignItems: 'end' } : {},
     selfItemsCenter ? { alignSelf: 'center' } : {},
     gap ? { gap: spacingGap[gap] } : {},
     px ? { paddingLeft: spacingGap[px], paddingRight: spacingGap[px] } : {},

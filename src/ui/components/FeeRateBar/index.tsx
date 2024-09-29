@@ -15,6 +15,8 @@ enum FeeRateType {
   CUSTOM
 }
 
+const MAX_FEE_RATE = 10000;
+
 export function FeeRateBar({ readonly, onChange }: { readonly?: boolean; onChange?: (val: number) => void }) {
   const wallet = useWallet();
   const [feeOptions, setFeeOptions] = useState<{ title: string; desc?: string; feeRate: number }[]>([]);
@@ -55,8 +57,11 @@ export function FeeRateBar({ readonly, onChange }: { readonly?: boolean; onChang
     const defaultVal = defaultOption ? defaultOption.feeRate : 1;
     if (val <= 0) {
       setFeeRateInputVal(defaultVal.toString());
+    } else if (val > MAX_FEE_RATE) {
+      setFeeRateInputVal(MAX_FEE_RATE.toString());
+    } else {
+      setFeeRateInputVal(inputVal);
     }
-    setFeeRateInputVal(inputVal);
   };
 
   return (
