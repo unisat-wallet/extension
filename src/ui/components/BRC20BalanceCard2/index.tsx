@@ -88,7 +88,6 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
           <Column fullY justifyCenter>
             <Row>
               <BRC20Ticker tick={ticker} />
-              {isBoolBridgeTick(ticker) ? <Tag type="bool-bridge" /> : selfMint ? <Tag type="self-issuance" /> : null}
             </Row>
           </Column>
 
@@ -128,6 +127,13 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
             <TickUsd price={price} balance={overallBalance} />
           </Row>
         )}
+        {
+          (isBoolBridgeTick(ticker) || selfMint) && <Row  mt={'sm'}>
+            {isBoolBridgeTick(ticker) && <Tag type="bool-bridge" />}
+            {selfMint && <Tag type="self-issuance" />}
+          </Row>
+        }
+
         {detailVisible ? (
           loading ? (
             <Column style={{ minHeight: 130 }} itemsCenter justifyCenter>
