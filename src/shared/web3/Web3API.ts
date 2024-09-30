@@ -248,12 +248,19 @@ class Web3API {
     }
 
     private async getUTXOsForAddresses(addresses: string[], requiredAmount?: bigint): Promise<UTXO[]> {
-        let utxos: UTXOs = [];
+        let finalUTXOs: UTXOs = [];
 
         for (const address of addresses) {
+            let utxos: UTXOs = [];
+
             try {
                 if (!requiredAmount) {
-                    utxos = await this.provider.utxoManager.getUTXOs({ address, optimize: false });
+                    utxos = await this.provider.utxoManager.getUTXOs({
+                        address,
+                        optimize: false,
+                        mergePendingUTXOs: true,
+                        filterSpentUTXOs: true
+                    });
                 } else {
                     utxos = await this.provider.utxoManager.getUTXOsForAmount({
                         address,
@@ -261,16 +268,14 @@ class Web3API {
                         optimize: false
                     });
                 }
-            } catch (e) {
+            } catch {
                 //
             }
 
-            if (utxos.length) {
-                break;
-            }
+            finalUTXOs = finalUTXOs.concat(utxos);
         }
 
-        return utxos;
+        return finalUTXOs;
     }
 
     private getContractLogo(address: string): string | undefined {
