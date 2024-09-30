@@ -1872,10 +1872,10 @@
     bs58check "^2.1.2"
     tslib "^2.3.0"
 
-"@keystonehq/hw-app-base@0.1.5":
-  version "0.1.5"
-  resolved "https://registry.npmmirror.com/@keystonehq/hw-app-base/-/hw-app-base-0.1.5.tgz#0f77d61ab480e45d15f0932f5a4d71ead058091d"
-  integrity sha512-10bR48KkdGTkCZnduWVn4GC6N0kSQT+HfFs5WMvI2/6s16m4BbB2SkqGZGp4ejQY/3KGe3xW7QJkLkIbC7mj+g==
+"@keystonehq/hw-app-base@0.1.6":
+  version "0.1.6"
+  resolved "https://registry.npmmirror.com/@keystonehq/hw-app-base/-/hw-app-base-0.1.6.tgz#2953d243a3176772fb700cd38e440f07c5428f83"
+  integrity sha512-wue+fOfDJOyzSsTwhXiE5Pnd/qZViVwKyCDIR2TaRK89doKHDi2fyajIzZQfpyJ5VUErKHqiMldMYxv1wNkdng==
   dependencies:
     "@keystonehq/bc-ur-registry" "0.7.0"
     "@keystonehq/hw-transport-error" "^0.0.2"
@@ -1888,7 +1888,15 @@
   resolved "https://registry.npmmirror.com/@keystonehq/hw-transport-error/-/hw-transport-error-0.0.2.tgz#10a3f69b8a80e4d3fec514b4abcdae6f595770ae"
   integrity sha512-j6rOJU277Cmq9oBiFjtVHJhUZ/gELGYGZMUXBlAom1WyK8pNrD3+I8kCVGp5Ss5oB+Zqo7Az5xCx/z+0i+Y40A==
 
-"@keystonehq/hw-transport-webusb@0.4.0", "@keystonehq/hw-transport-webusb@^0.4.0":
+"@keystonehq/hw-transport-webusb@0.4.0-beta.0":
+  version "0.4.0-beta.0"
+  resolved "https://registry.npmmirror.com/@keystonehq/hw-transport-webusb/-/hw-transport-webusb-0.4.0-beta.0.tgz#46d634084c5df18dde6a624e08d27c0d607544fc"
+  integrity sha512-/fAsx3s1oIBAgjqIH0f8UJMK78j2gTlzQZ1ZbUFQKVt7sGO3sALqCJ4cQH0/WWSIR6oUrCz0j4i4OCkjdIRSyQ==
+  dependencies:
+    "@keystonehq/hw-transport-error" "^0.0.2"
+    buffer "^6.0.3"
+
+"@keystonehq/hw-transport-webusb@^0.4.0":
   version "0.4.0"
   resolved "https://registry.npmmirror.com/@keystonehq/hw-transport-webusb/-/hw-transport-webusb-0.4.0.tgz#9a566b149f01e0f1880a891d42bcef5f8eac4ab0"
   integrity sha512-fICp9ptKbOpWHY2AJaJgVH86Tw6GHFsrEgcQt6tmwmtvW63EpQYnJC0lIRBkjfbRqF/EPpVvUsxnAENvHu6new==

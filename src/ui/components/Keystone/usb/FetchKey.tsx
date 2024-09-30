@@ -1,13 +1,8 @@
-import { Progress } from 'antd';
-import { divide } from 'lodash';
-import { useCallback, useState } from 'react';
-
 import { Button, Text } from '@/ui/components';
 import { colors } from '@/ui/theme/colors';
-import { CameraOutlined } from '@ant-design/icons';
-import Base, { convertMulitAccountToCryptoAccount } from '@keystonehq/hw-app-base';
+import Base, { convertMulitAccountToCryptoAccount, CryptoMultiAccounts } from '@keystonehq/hw-app-base';
 import { Curve, DerivationAlgorithm } from '@keystonehq/keystone-sdk';
-
+import { useCallback, useState } from 'react';
 import { createKeystoneTransport } from './utils';
 
 const EXPECTED_HD_PATH = ["m/44'/0'/0'", "m/49'/0'/0'", "m/84'/0'/0'", "m/86'/0'/0'"];
@@ -31,15 +26,17 @@ export default function KeystoneFetchKey({
   const onClick = useCallback(async () => {
     try {
       const transport = await createKeystoneTransport();
-      const base = new Base(transport);
-
-      const accounts = await Promise.all(
-        EXPECTED_HD_PATH.map(async (path) => {
-          return await base.getURAccount(path, Curve.secp256k1, DerivationAlgorithm.slip10);
-        })
+      const base = new Base(transport as any);
+      const accounts: CryptoMultiAccounts[]  = [];
+      for (const path of EXPECTED_HD_PATH) {
+        const res = await base.getURAccount(
+        path,
+        Curve.secp256k1,
+        DerivationAlgorithm.slip10
       );
-
-      let urCryptoAccount = convertMulitAccountToCryptoAccount(accounts);
+        accounts.push(res);
+      }
+      const urCryptoAccount = convertMulitAccountToCryptoAccount(accounts);
       console.log({ type: urCryptoAccount.getRegistryType().getType(), cbor: urCryptoAccount.toCBOR() });
       onSucceed({ type: urCryptoAccount.getRegistryType().getType(), cbor: urCryptoAccount.toCBOR() });
     } catch (e) {
@@ -61,7 +58,6 @@ export default function KeystoneFetchKey({
           background: colors.bg4
         }}
       >
-        {!isError && <div>Fetching Key now</div>}
       </div>
       <Button preset="defaultV2" style={{ color: colors.white, marginTop: '2px' }} onClick={onClick}>
         <Text text="Click to fetch keys" color="white" />

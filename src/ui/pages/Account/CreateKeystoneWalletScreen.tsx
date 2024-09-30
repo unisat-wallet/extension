@@ -155,7 +155,7 @@ function StepTwoUSB({ onBack, onNext }) {
   );
   return (
     <Layout>
-      <Header title="Scan the QR Code" onBack={onBack} />
+      <Header title="Connect Keystone via USB" onBack={onBack} />
       <Content>
         <Column justifyCenter itemsCenter gap="xxl">
           <KeystoneLogoWithText width={160} />
@@ -478,9 +478,22 @@ export default function CreateKeystoneWalletScreen() {
   const [isUSB, setIsUSB] = useState(true);
 
   if (step === 1) {
-    return <Step1 onNext={() => setStep(2)} />;
+    return <Step1 onNext={() => setStep(2)} setIsUSB={setIsUSB} />;
   }
   if (step === 2) {
+    if (isUSB) {
+      return <StepTwoUSB onBack={() => setStep(1)} onNext={({ type, cbor }) => {
+          setStep(3);
+          updateContextData({
+            ur: {
+              type,
+              cbor
+            },
+            passphrase: '',
+            customHdPath: ''
+          });
+        }} />;
+    }
     return (
       <Step2
         onBack={() => setStep(1)}
