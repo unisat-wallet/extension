@@ -194,7 +194,8 @@ class KeyringService extends EventEmitter {
    * Import Keychain using Private key
    *
    * @emits KeyringController#unlock
-   * @param  privateKey - The privateKey to generate address
+   * @param privateKey - The privateKey to generate address
+   * @param addressType - The type of address
    * @returns  A Promise that resolves to the state.
    */
   importPrivateKey = async (privateKey: string, addressType: AddressType) => {

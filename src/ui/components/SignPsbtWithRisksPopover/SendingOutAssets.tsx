@@ -97,11 +97,7 @@ export const SendingOutAssets = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
       return inscriptionMap[id];
     })
     .filter((v) => {
-      if (v.from === currentAccount.address && v.to !== currentAccount.address) {
-        return true;
-      } else {
-        return false;
-      }
+      return v.from === currentAccount.address && v.to !== currentAccount.address;
     });
 
   const arc20BalanceChanged: { [key: string]: number } = {};

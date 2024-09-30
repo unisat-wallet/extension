@@ -269,10 +269,8 @@ export default function MultiSignPsbt({
   }, [decodedPsbt]);
 
   const isValidData = useMemo(() => {
-    if (psbtHex === '') {
-      return false;
-    }
-    return true;
+    return psbtHex !== '';
+
   }, [psbtHex]);
 
   const isValid = useMemo(() => {

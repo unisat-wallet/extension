@@ -105,11 +105,7 @@ export class WalletController extends BaseController {
   };
 
   isReady = () => {
-    if (contactBookService.store) {
-      return true;
-    } else {
-      return false;
-    }
+    return !!contactBookService.store;
   };
 
   unlock = async (password: string) => {

@@ -55,7 +55,7 @@ function Step2(props: Props) {
 
   const onSucceed = async ({ type, cbor }) => {
     if (props.type === 'psbt') {
-      const res = await wallet.parseSignPsbtUr(type, cbor, props.isFinalize === false ? false : true);
+      const res = await wallet.parseSignPsbtUr(type, cbor, !!props.isFinalize);
       if (props.onSuccess) {
         props.onSuccess(res);
       } else {

@@ -34,10 +34,8 @@ export default function EditAccountNameScreen() {
   };
 
   const validName = useMemo(() => {
-    if (alianName.length == 0) {
-      return false;
-    }
-    return true;
+    return alianName.length != 0;
+
   }, [alianName]);
   return (
     <Layout>

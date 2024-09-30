@@ -52,12 +52,8 @@ export default function BoostScreen() {
 
     if (!currentAccount) {
       navigate('WelcomeScreen');
-      return;
-    } else if (approval) {
-      navigate('ApprovalScreen');
     } else {
-      navigate('MainScreen');
-      return;
+      navigate(approval ? 'ApprovalScreen' : 'MainScreen');
     }
   };
 

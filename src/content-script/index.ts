@@ -8,7 +8,6 @@ const channelName = nanoid();
 /**
  * Injects a script tag into the current document
  *
- * @param {string} content - Code to be executed in the current document
  */
 function injectScript() {
   try {
@@ -106,12 +105,7 @@ function blockedDomainCheck() {
 }
 
 function iframeCheck() {
-  const isInIframe = self != top;
-  if (isInIframe) {
-    return true;
-  } else {
-    return false;
-  }
+  return self != top;
 }
 
 /**
