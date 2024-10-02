@@ -4,7 +4,6 @@ import { KEYRING_TYPE } from '@/shared/constant';
 import { DecodedPsbt, Inscription, SignPsbtOptions, ToSignInput, TxType } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
-import { Empty } from '@/ui/components/Empty';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import KeystoneSignScreen from '@/ui/pages/Wallet/KeystoneSignScreen';
@@ -147,16 +146,12 @@ enum SignState {
 interface TxInfo {
   psbtHexs: string[];
   txError: string;
-  decodedPsbts: DecodedPsbt[];
-  toSignInputsArray: ToSignInput[][];
   currentIndex: number;
 }
 
 const initTxInfo: TxInfo = {
   psbtHexs: [],
   txError: '',
-  decodedPsbts: [],
-  toSignInputsArray: [],
   currentIndex: 0
 };
 
@@ -183,35 +178,18 @@ export default function MultiSignPsbt({
   const [isWarningVisible, setIsWarningVisible] = useState(false);
   const [signIndex, setSignIndex] = useState(0);
 
+  const psbtDetalRef = React.useRef<
+    {
+      decodedPsbt: DecodedPsbt;
+      toSignInputs: ToSignInput[];
+    }[]
+  >([]);
+
   const init = async () => {
     // keystone
-    let txError = '';
-    const decodedPsbts: DecodedPsbt[] = [];
-    for (let i = 0; i < psbtHexs.length; i++) {
-      const psbtHex = psbtHexs[i];
-      const decodedPsbt = await wallet.decodePsbt(psbtHex, session?.origin || '');
-      decodedPsbts.push(decodedPsbt);
-      if (decodedPsbt.risks.length > 0) {
-        setIsWarningVisible(true);
-      }
-    }
-    const toSignInputsArray: ToSignInput[][] = [];
-    try {
-      for (let i = 0; i < psbtHexs.length; i++) {
-        const toSignInputs = await wallet.formatOptionsToSignInputs(psbtHexs[i], options[i]);
-        toSignInputsArray.push(toSignInputs);
-      }
-    } catch (e) {
-      console.error(e);
-      txError = (e as Error).message;
-      tools.toastError(txError);
-    }
-
     setTxInfo({
-      decodedPsbts,
       psbtHexs,
-      toSignInputsArray,
-      txError,
+      txError: '',
       currentIndex: 0
     });
     setLoading(false);
@@ -255,36 +233,6 @@ export default function MultiSignPsbt({
     };
   }
 
-  const decodedPsbt = useMemo(() => txInfo.decodedPsbts[txInfo.currentIndex], [txInfo]);
-  const psbtHex = useMemo(() => txInfo.psbtHexs[txInfo.currentIndex], [txInfo]);
-  const toSignInputs = useMemo(() => txInfo.toSignInputsArray[txInfo.currentIndex], [txInfo]);
-
-  const networkFee = useMemo(() => (decodedPsbt ? satoshisToAmount(decodedPsbt.fee) : 0), [decodedPsbt]);
-  const detailsComponent = useMemo(() => {
-    if (decodedPsbt) {
-      return <SignTxDetails decodedPsbt={decodedPsbt} />;
-    } else {
-      return <Empty />;
-    }
-  }, [decodedPsbt]);
-
-  const isValidData = useMemo(() => {
-    if (psbtHex === '') {
-      return false;
-    }
-    return true;
-  }, [psbtHex]);
-
-  const isValid = useMemo(() => {
-    if (decodedPsbt && decodedPsbt.inputInfos.length == 0) {
-      return false;
-    }
-    if (!toSignInputs || toSignInputs.length == 0) {
-      return false;
-    }
-    return true;
-  }, [decodedPsbt, toSignInputs]);
-
   if (loading) {
     return (
       <Layout>
@@ -295,10 +243,6 @@ export default function MultiSignPsbt({
         </Content>
       </Layout>
     );
-  }
-
-  if (!decodedPsbt) {
-    return <Empty />;
   }
 
   if (!header && session) {
@@ -313,11 +257,13 @@ export default function MultiSignPsbt({
     return (
       <>
         <SignPsbt
-          header={<Header
-            onBack={() => {
-              setViewingPsbtIndex(-1);
-            }}
-          />}
+          header={
+            <Header
+              onBack={() => {
+                setViewingPsbtIndex(-1);
+              }}
+            />
+          }
           params={{
             data: {
               psbtHex: txInfo.psbtHexs[viewingPsbtIndex],
@@ -352,7 +298,6 @@ export default function MultiSignPsbt({
       key: i
     });
   }
-  const tabItems = arr;
 
   if (isKeystoneSigning) {
     return (
