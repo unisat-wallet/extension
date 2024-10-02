@@ -118,7 +118,7 @@ export default function BRC20TokenScreen() {
           <Column py="xl">
             <Column itemsCenter fullX justifyCenter>
               <Text text={`${balance}`} preset="bold" textCenter size="xxl" wrap digital />
-              <BRC20Ticker tick={ticker} preset="lg" showOrigin/>
+              <BRC20Ticker tick={ticker} displayName={tokenSummary.tokenBalance.displayName} preset="lg" showOrigin />
             </Column>
             <Row justifyCenter fullX>
               <TickUsdWithoutPrice tick={ticker} balance={balance} type={'brc20'} size={'md'} />
@@ -168,7 +168,7 @@ export default function BRC20TokenScreen() {
               <Text text="Transferable" preset="bold" size="md" />
               <Row itemsCenter>
                 <Text text={`${tokenSummary.tokenBalance.transferableBalance}`} size="md" wrap digital />
-                <BRC20Ticker tick={ticker} />
+                <BRC20Ticker tick={ticker} displayName={tokenSummary.tokenBalance.displayName} />
               </Row>
             </Column>
             <Row style={{ borderTopWidth: 1, borderColor: '#FFFFFF1F', alignSelf: 'stretch' }} my="md" />

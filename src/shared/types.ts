@@ -275,6 +275,8 @@ export interface TokenBalance {
   availableBalanceSafe: string;
   availableBalanceUnSafe: string;
   selfMint: boolean;
+  displayName?: string;
+  tag?: string;
 }
 
 export interface Arc20Balance {

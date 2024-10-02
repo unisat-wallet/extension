@@ -19,20 +19,16 @@ const $tickerPresets: { sm: { textSize: any }; md: { textSize: any }; lg: { text
 
 type Presets = keyof typeof $tickerPresets;
 
-export const tickMod: { [key: string]: string } = {
-  'bBTC___': 'bBTC',
-  'bSATS_': 'bSATS',
-  'bORDI_': 'bORDI'
-};
-
-export function isBoolBridgeTick(tick: string) {
-  return !!tickMod[tick];
-}
-
-export function BRC20Ticker({ tick, preset, showOrigin=false }: {
-  tick: string | undefined,
-  preset?: Presets,
-  showOrigin?: boolean
+export function BRC20Ticker({
+  tick,
+  displayName,
+  preset,
+  showOrigin = false
+}: {
+  tick: string | undefined;
+  displayName?: string;
+  preset?: Presets;
+  showOrigin?: boolean;
 }) {
   const style = $tickerPresets[preset || 'md'];
   return useMemo(() => {
@@ -49,13 +45,15 @@ export function BRC20Ticker({ tick, preset, showOrigin=false }: {
         </Row>
       );
     }
-    if(showOrigin && tickMod[tick]) {
-      return <Row gap="sm" itemsCenter>
-        <Text text={tickMod[tick] || tick} size={style.textSize} wrap color="ticker_color" />
-        <Text text={`(ticker: ${tick})`} size={style.textSize} wrap color="textDim" />
-      </Row>
+    if (showOrigin && displayName) {
+      return (
+        <Row gap="sm" itemsCenter>
+          <Text text={displayName || tick} size={style.textSize} wrap color="ticker_color" />
+          <Text text={`(ticker: ${tick})`} size={style.textSize} wrap color="textDim" />
+        </Row>
+      );
     }
 
-    return <Text text={tickMod[tick] || tick} size={style.textSize} wrap color="ticker_color" />;
+    return <Text text={displayName || tick} size={style.textSize} wrap color="ticker_color" />;
   }, [tick]);
 }

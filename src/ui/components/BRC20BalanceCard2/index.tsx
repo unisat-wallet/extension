@@ -6,7 +6,7 @@ import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
-import { BRC20Ticker, isBoolBridgeTick } from '../BRC20Ticker';
+import { BRC20Ticker } from '../BRC20Ticker';
 import { Card } from '../Card';
 import { Column } from '../Column';
 import { Icon } from '../Icon';
@@ -32,7 +32,9 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
       availableBalance,
       availableBalanceSafe,
       availableBalanceUnSafe,
-      selfMint
+      selfMint,
+      displayName,
+      tag
     },
     onClick
   } = props;
@@ -87,7 +89,7 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
         <Row fullY justifyBetween justifyCenter>
           <Column fullY justifyCenter>
             <Row>
-              <BRC20Ticker tick={ticker} />
+              <BRC20Ticker tick={ticker} displayName={displayName} />
             </Row>
           </Column>
 
@@ -121,18 +123,18 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
             </Row>
           </Row>
         </Row>
-        {showPrice && (
+        {showPrice && price?.curPrice !== 0 && (
           <Row justifyBetween mt={'xs'}>
             <TickPriceChange price={price} />
             <TickUsd price={price} balance={overallBalance} />
           </Row>
         )}
-        {
-          (isBoolBridgeTick(ticker) || selfMint) && <Row  mt={'sm'}>
-            {isBoolBridgeTick(ticker) && <Tag type="bool-bridge" />}
+        {(tag || selfMint) && (
+          <Row mt={'sm'}>
+            {tag && <Tag type={tag} />}
             {selfMint && <Tag type="self-issuance" />}
           </Row>
-        }
+        )}
 
         {detailVisible ? (
           loading ? (

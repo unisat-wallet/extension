@@ -7,11 +7,13 @@ import { Button, Card, Column, Content, Footer, Header, Icon, Input, Layout, Row
 import { useTools } from '@/ui/components/ActionComponent';
 import { Loading } from '@/ui/components/ActionComponent/Loading';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
+import { BtcUsd } from '@/ui/components/BtcUsd';
 import { Empty } from '@/ui/components/Empty';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { OutputValueBar } from '@/ui/components/OutputValueBar';
 import { RBFBar } from '@/ui/components/RBFBar';
+import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useBTCUnit, useNetworkType } from '@/ui/state/settings/hooks';
@@ -27,8 +29,6 @@ import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../../MainRoute';
 import SignPsbt from './SignPsbt';
-import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
-import { BtcUsd } from '@/ui/components/BtcUsd';
 
 interface Props {
   params: {
@@ -318,7 +318,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
                           </div>
                         </Tooltip>
 
-                        <BRC20Ticker tick={tokenBalance.ticker} preset="sm" />
+                        <BRC20Ticker tick={tokenBalance.ticker} displayName={tokenBalance.displayName} preset="sm" />
                       </Row>
                     ) : (
                       <Row
@@ -328,7 +328,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
                         }}>
                         <Text text={`${tokenBalance.availableBalanceSafe}`} digital textCenter size="xs" />
 
-                        <BRC20Ticker tick={tokenBalance.ticker} preset="sm" />
+                        <BRC20Ticker tick={tokenBalance.ticker} displayName={tokenBalance.displayName} preset="sm" />
                       </Row>
                     )}
                   </Column>
@@ -440,7 +440,7 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
             <Column justifyCenter style={{ height: 250 }}>
               <Row itemsCenter justifyCenter>
                 <Text text={`${amount}`} preset="title-bold" size="xxl" textCenter wrap digital />
-                <BRC20Ticker tick={tokenBalance.ticker} preset="lg" />
+                <BRC20Ticker tick={tokenBalance.ticker} displayName={tokenBalance.displayName} preset="lg" />
               </Row>
               <Row itemsCenter justifyCenter>
                 <TickUsdWithoutPrice tick={tokenBalance.ticker} balance={amount + ''} type={'brc20'} />
@@ -548,9 +548,9 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
 }
 
 function InscribeSignStep({
-                            contextData,
-                            updateContextData
-                          }: {
+  contextData,
+  updateContextData
+}: {
   contextData: ContextData;
   updateContextData: (params: UpdateContextDataParams) => void;
 }) {
@@ -598,9 +598,9 @@ function InscribeSignStep({
 }
 
 function InscribeResultStep({
-                              contextData,
-                              updateContextData
-                            }: {
+  contextData,
+  updateContextData
+}: {
   contextData: ContextData;
   updateContextData: (params: UpdateContextDataParams) => void;
 }) {

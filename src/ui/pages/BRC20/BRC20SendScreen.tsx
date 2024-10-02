@@ -12,6 +12,7 @@ import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import { RefreshButton } from '@/ui/components/RefreshButton';
 import { TabBar } from '@/ui/components/TabBar';
+import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import {
   useFetchUtxosCallback,
@@ -26,7 +27,6 @@ import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 import { SignPsbt } from '../Approval/components';
 import { useNavigate } from '../MainRoute';
-import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
 
 function Step1({
   contextData,
@@ -84,15 +84,21 @@ function Step1({
                   {tokenBalance.availableBalanceUnSafe != '0' ? (
                     <Row justifyCenter>
                       <Text text={'Available '} textCenter color="textDim" size="xs" />
-                      <Text text={`${tokenBalance.availableBalanceSafe}  `} textCenter size="xs" digital/>
-                      <Text text={` + ${tokenBalance.availableBalanceUnSafe}`} textCenter color="textDim" size="xs" digital/>
-                      <BRC20Ticker tick={tokenBalance.ticker} />
+                      <Text text={`${tokenBalance.availableBalanceSafe}  `} textCenter size="xs" digital />
+                      <Text
+                        text={` + ${tokenBalance.availableBalanceUnSafe}`}
+                        textCenter
+                        color="textDim"
+                        size="xs"
+                        digital
+                      />
+                      <BRC20Ticker tick={tokenBalance.ticker} displayName={tokenBalance.displayName} />
                     </Row>
                   ) : (
                     <Row justifyCenter>
                       <Text text={'Available '} textCenter color="textDim" size="xs" />
-                      <Text text={`${tokenBalance.availableBalanceSafe}  `} textCenter size="xs" digital/>
-                      <BRC20Ticker tick={tokenBalance.ticker} preset="sm" />
+                      <Text text={`${tokenBalance.availableBalanceSafe}  `} textCenter size="xs" digital />
+                      <BRC20Ticker tick={tokenBalance.ticker} displayName={tokenBalance.displayName} preset="sm" />
                     </Row>
                   )}
                 </Column>
@@ -175,11 +181,16 @@ function TransferableList({
       <Column>
         <Text text={'Transfer Amount'} color="textDim" />
         <Row justifyCenter itemsCenter>
-          <Text text={`${contextData.transferAmount}`} size="xxl" textCenter my="lg" digital/>
-          <BRC20Ticker tick={contextData.tokenBalance.ticker} />
+          <Text text={`${contextData.transferAmount}`} size="xxl" textCenter my="lg" digital />
+          <BRC20Ticker tick={contextData.tokenBalance.ticker} displayName={contextData.tokenBalance.displayName} />
         </Row>
-        <Row justifyCenter itemsCenter style={{marginTop:-12}}>
-          <TickUsdWithoutPrice tick={contextData.tokenBalance.ticker} balance={contextData.transferAmount} type={'brc20'} size={'md'}/>
+        <Row justifyCenter itemsCenter style={{ marginTop: -12 }}>
+          <TickUsdWithoutPrice
+            tick={contextData.tokenBalance.ticker}
+            balance={contextData.transferAmount}
+            type={'brc20'}
+            size={'md'}
+          />
         </Row>
       </Column>
 
@@ -357,9 +368,18 @@ function Step2({
         <Column>
           <Row justifyBetween>
             <Text text="Send" color="textDim" />
-            <TickUsdWithoutPrice tick={contextData.tokenBalance.ticker} balance={contextData.transferAmount} type={'brc20'} size={'sm'}/>
+            <TickUsdWithoutPrice
+              tick={contextData.tokenBalance.ticker}
+              balance={contextData.transferAmount}
+              type={'brc20'}
+              size={'sm'}
+            />
           </Row>
-          <Input preset="text" value={`${showLongNumber(contextData.transferAmount)} ${contextData.tokenBalance.ticker}`} disabled />
+          <Input
+            preset="text"
+            value={`${showLongNumber(contextData.transferAmount)} ${contextData.tokenBalance.ticker}`}
+            disabled
+          />
         </Column>
 
         <Column>

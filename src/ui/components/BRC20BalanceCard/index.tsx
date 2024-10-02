@@ -24,7 +24,8 @@ export default function BRC20BalanceCard(props: BRC20BalanceCardProps) {
       transferableBalance,
       availableBalance,
       availableBalanceSafe,
-      availableBalanceUnSafe
+      availableBalanceUnSafe,
+      displayName
     },
     onClick
   } = props;
@@ -40,7 +41,7 @@ export default function BRC20BalanceCard(props: BRC20BalanceCardProps) {
       onClick={onClick}>
       <Column full>
         <Row justifyBetween itemsCenter>
-          <BRC20Ticker tick={ticker} />
+          <BRC20Ticker tick={ticker} displayName={displayName} />
           <Tooltip
             title="The transferable amount is the balance that has been inscribed into transfer inscriptions but has not yet been sent."
             overlayStyle={{
