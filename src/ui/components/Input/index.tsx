@@ -2,9 +2,10 @@ import bitcore from 'bitcore-lib';
 import { isNull } from 'lodash';
 import React, { CSSProperties, useEffect, useState } from 'react';
 
-import { SAFE_DOMAIN_CONFIRMATION, SUPPORTED_DOMAINS } from '@/shared/constant';
+import { SAFE_DOMAIN_CONFIRMATION } from '@/shared/constant';
 import { getSatsName } from '@/shared/lib/satsname-utils';
 import { Inscription } from '@/shared/types';
+import { useChain } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { spacing } from '@/ui/theme/spacing';
 import { useWallet } from '@/ui/utils';
@@ -110,8 +111,8 @@ function AmountInput(props: InputProps) {
   if (!onAmountInputChange) {
     return <div />;
   }
-  const [inputValue, setInputValue] = useState(props.value||'');
-  const [validAmount, setValidAmount] = useState(props.value||'');
+  const [inputValue, setInputValue] = useState(props.value || '');
+  const [validAmount, setValidAmount] = useState(props.value || '');
   useEffect(() => {
     onAmountInputChange(validAmount);
   }, [validAmount]);
@@ -184,6 +185,16 @@ export const AddressInput = (props: InputProps) => {
   const [inscription, setInscription] = useState<Inscription>();
   const [parseName, setParseName] = useState('');
   const wallet = useWallet();
+
+  const chain = useChain();
+
+  let SUPPORTED_DOMAINS = ['sats', 'unisat', 'x', 'btc'];
+  let addressPlaceholder = 'Address or name (sats, unisat, ...) ';
+  if (chain.isFractal) {
+    SUPPORTED_DOMAINS = ['fb'];
+    addressPlaceholder = 'Address or name (fb) ';
+  }
+
   const tools = useTools();
   useEffect(() => {
     onAddressInputChange({
@@ -285,7 +296,7 @@ export const AddressInput = (props: InputProps) => {
     <div style={{ alignSelf: 'stretch' }}>
       <div style={Object.assign({}, $baseContainerStyle, { flexDirection: 'column', minHeight: '56.5px' })}>
         <input
-          placeholder={'Address or name (sats, unisat, ...) '}
+          placeholder={addressPlaceholder}
           type={'text'}
           style={Object.assign({}, $baseInputStyle, $inputStyleOverride)}
           onChange={async (e) => {

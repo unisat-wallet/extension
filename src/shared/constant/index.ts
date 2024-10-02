@@ -426,7 +426,6 @@ export const TO_LOCALE_STRING_CONFIG = {
   minimumFractionDigits: 8
 };
 
-export const SUPPORTED_DOMAINS = ['sats', 'unisat', 'x', 'btc'];
 export const SAFE_DOMAIN_CONFIRMATION = 3;
 
 export const GITHUB_URL = 'https://github.com/unisat-wallet/extension';

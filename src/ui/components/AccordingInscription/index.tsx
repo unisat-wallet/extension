@@ -1,8 +1,10 @@
 import { Inscription } from '@/shared/types';
+import { useOrdinalsWebsite } from '@/ui/state/settings/hooks';
 
 import { Text } from '../Text';
 
 export function AccordingInscription({ inscription }: { inscription: Inscription }) {
+  const ordinalsWebsite = useOrdinalsWebsite();
   return (
     <Text
       text={`By inscription #${inscription.inscriptionNumber} ${
@@ -10,7 +12,7 @@ export function AccordingInscription({ inscription }: { inscription: Inscription
       }`}
       preset="link"
       onClick={() => {
-        window.open(`https://ordinals.com/inscription/${inscription.inscriptionId}`);
+        window.open(`${ordinalsWebsite}/inscription/${inscription.inscriptionId}`);
       }}
     />
   );
