@@ -21,7 +21,8 @@ const config = (env) => {
             fallback: {
                 vm: require.resolve('vm-browserify')
             }
-        }
+        },
+        ignoreWarnings: [/./]
     };
 
     if (env.config) {

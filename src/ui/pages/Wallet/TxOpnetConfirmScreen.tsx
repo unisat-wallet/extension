@@ -266,26 +266,14 @@ export default function TxOpnetConfirmScreen() {
         const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
 
         const wrapAmount = expandToDecimals(rawTxInfo.inputAmount, 8);
-        let utxos: UTXO[];
+        const amountRequired = wrapAmount + currentConsensusConfig.UNWRAP_CONSOLIDATION_PREPAID_FEES;
 
-        const amountRequired = wrapAmount + currentConsensusConfig.UNWRAP_CONSOLIDATION_PREPAID_FEES + 50_000n; // add fee
-        if (!useNextUTXO) {
-            utxos = await Web3API.getUTXOs(walletGet.addresses, amountRequired + 1_000_000n);
-        } else {
-            const storedUTXO = localStorage.getItem('nextUTXO');
-            utxos = storedUTXO
-                ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
-                : [];
-        }
+        const account = await wallet.getCurrentAccount();
+        const utxos: UTXO[] = await Web3API.getUTXOs([account.address], amountRequired + 100_000n);
 
         if (utxos.length !== 0) {
             // verify if have enough
-
             const totalAmount = utxos.reduce((acc, utxo) => acc + utxo.value, 0n);
-            console.log('amount', totalAmount, amountRequired, utxos);
             if (totalAmount < amountRequired) {
                 tools.toastError(`Not enough funds to wrap. You need at least ${amountRequired} sat.`);
                 return;
@@ -363,18 +351,8 @@ export default function TxOpnetConfirmScreen() {
             const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
             const unwrapAmount = expandToDecimals(rawTxInfo.inputAmount, 8); // Minimum amount to unwrap
 
-            let utxos: UTXO[] = [];
-            if (!useNextUTXO) {
-                utxos = await Web3API.getUTXOs(walletGet.addresses, unwrapAmount);
-            } else {
-                const storedUTXO = localStorage.getItem('nextUTXO');
-                utxos = storedUTXO
-                    ? JSON.parse(storedUTXO).map((utxo) => ({
-                          ...utxo,
-                          value: BigInt(utxo.value)
-                      }))
-                    : [];
-            }
+            const account = await wallet.getCurrentAccount();
+            const utxos: UTXO[] = await Web3API.getUTXOs([account.address], unwrapAmount + 100_000n);
 
             const contract: IWBTCContract = getContract<IWBTCContract>(
                 Web3API.WBTC,
@@ -533,18 +511,9 @@ export default function TxOpnetConfirmScreen() {
             tools.toastError('Invalid calldata in stakeData');
             return;
         }
-        let utxos: UTXO[];
-        if (!useNextUTXO) {
-            utxos = await Web3API.getUTXOs(walletGet.addresses, amountToSend);
-        } else {
-            const storedUTXO = localStorage.getItem('nextUTXO');
-            utxos = storedUTXO
-                ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
-                : [];
-        }
+
+        const account = await wallet.getCurrentAccount();
+        const utxos: UTXO[] = await Web3API.getUTXOs([account.address], amountToSend + 100_000n);
 
         const interactionParameters: IInteractionParameters = {
             from: walletGet.p2tr,
@@ -603,18 +572,8 @@ export default function TxOpnetConfirmScreen() {
             return;
         }
 
-        let utxos: UTXO[] = [];
-        if (!useNextUTXO) {
-            utxos = await Web3API.getUTXOs(walletGet.addresses, amountToSend);
-        } else {
-            const storedUTXO = localStorage.getItem('nextUTXO');
-            utxos = storedUTXO
-                ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
-                : [];
-        }
+        const account = await wallet.getCurrentAccount();
+        const utxos: UTXO[] = await Web3API.getUTXOs([account.address], amountToSend + 100_000n);
 
         const interactionParameters: IInteractionParameters = {
             from: walletGet.p2tr,
@@ -805,18 +764,9 @@ export default function TxOpnetConfirmScreen() {
             return;
         }
 
-        let utxos: UTXO[];
-        if (!useNextUTXO) {
-            utxos = await Web3API.getUTXOs(walletGet.addresses, amountToSend);
-        } else {
-            const storedUTXO = localStorage.getItem('nextUTXO');
-            utxos = storedUTXO
-                ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
-                : [];
-        }
+        const account = await wallet.getCurrentAccount();
+        const utxos: UTXO[] = await Web3API.getUTXOs([account.address], amountToSend + 100_000n);
+
         const interactionParameters: IInteractionParameters = {
             from: walletGet.p2tr,
             to: contract.address.toString(),
@@ -869,22 +819,11 @@ export default function TxOpnetConfirmScreen() {
             walletGet.p2tr
         );
 
-        const maxUint256 = BigInt('0xffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffffff');
         const inputAmountBigInt = expandToDecimals(rawTxInfo.inputAmount[0], rawTxInfo.opneTokens[0].divisibility);
-        const storedUTXO = localStorage.getItem('nextUTXO');
-        let utxos: UTXO[] = [];
 
-        if (!useNextUTXO) {
-            utxos = await Web3API.getUTXOs(walletGet.addresses, maxUint256);
-            console.log(utxos);
-        } else {
-            utxos = storedUTXO
-                ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
-                : [];
-        }
+        const account = await wallet.getCurrentAccount();
+        const utxos: UTXO[] = await Web3API.getUTXOs([account.address], 1_000_000n);
+
         const getData = await approveToken(inputAmountBigInt, walletGet, rawTxInfo.contractAddress[0], utxos);
         const getnextUtxo = await approveToken(inputAmountBigInt, walletGet, rawTxInfo.contractAddress[1], getData);
         const sliipageAmount = Number(rawTxInfo.inputAmount[1]) * Number(rawTxInfo.slippageTolerance / 100);
@@ -913,6 +852,7 @@ export default function TxOpnetConfirmScreen() {
             priorityFee: rawTxInfo.priorityFee,
             calldata: contractResult as Buffer
         };
+
         const sendTransact = await Web3API.transactionFactory.signInteraction(interactionParameters);
 
         // If this transaction is missing, opnet will deny the unwrapping request.
@@ -922,7 +862,6 @@ export default function TxOpnetConfirmScreen() {
             tools.toastError('Error,Please Try again');
             setUseNextUTXO(true);
             setDisabled(false);
-            console.log(firstTransaction);
             tools.toastError(firstTransaction.error || 'Could not broadcast first transaction');
         }
 
@@ -938,6 +877,7 @@ export default function TxOpnetConfirmScreen() {
             tools.toastSuccess(
                 `You have successfully swapped ${amountA} ${rawTxInfo.opneTokens[0].symbol} for ${amountB}  ${rawTxInfo.opneTokens[1].symbol}`
             );
+
             const nextUTXO = sendTransact[2];
             localStorage.setItem('nextUTXO', JSON.stringify(nextUTXO));
             navigate('TxSuccessScreen', { txid: secondTransaction.result });
@@ -999,8 +939,6 @@ export default function TxOpnetConfirmScreen() {
 
     const sendBTC = async () => {
         try {
-            const account = await wallet.getCurrentAccount();
-
             const currentNetwork = await wallet.getChainType();
             Web3API.setNetwork(currentNetwork);
 
@@ -1011,17 +949,11 @@ export default function TxOpnetConfirmScreen() {
             const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
             const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
 
-            const storedUTXO = localStorage.getItem('nextUTXO');
-            let utxos: UTXO[] = storedUTXO
-                ? JSON.parse(storedUTXO).map((utxo) => ({
-                      ...utxo,
-                      value: BigInt(utxo.value)
-                  }))
-                : [];
-
-            if (!utxos || (utxos && utxos.length === 0) || useNextUTXO) {
-                utxos = await Web3API.getUTXOs([account.address], expandToDecimals(rawTxInfo.inputAmount, 8) * 2n);
-            }
+            const account = await wallet.getCurrentAccount();
+            const utxos: UTXO[] = await Web3API.getUTXOs(
+                [account.address],
+                expandToDecimals(rawTxInfo.inputAmount, 8) * 2n
+            );
 
             const IFundingTransactionParameters: IFundingTransactionParameters = {
                 amount: expandToDecimals(rawTxInfo.inputAmount, 8) - 330n,
@@ -1068,18 +1000,8 @@ export default function TxOpnetConfirmScreen() {
             const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
             const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
 
-            let utxos: UTXO[] = [];
-            if (!useNextUTXO) {
-                utxos = await Web3API.getUTXOs(walletGet.addresses, expandToDecimals(0.008, 8));
-            } else {
-                const storedUTXO = localStorage.getItem('nextUTXO');
-                utxos = storedUTXO
-                    ? JSON.parse(storedUTXO).map((utxo) => ({
-                          ...utxo,
-                          value: BigInt(utxo.value)
-                      }))
-                    : [];
-            }
+            const account = await wallet.getCurrentAccount();
+            const utxos: UTXO[] = await Web3API.getUTXOs([account.address], 1_000_000n); // maximum fee a contract can pay
 
             const arrayBuffer = await rawTxInfo.file.arrayBuffer();
             const uint8Array = new Uint8Array(arrayBuffer);
@@ -1150,33 +1072,27 @@ export default function TxOpnetConfirmScreen() {
             const foundObject = rawTxInfo.items.find(
                 (obj) => obj.account && obj.account.address === rawTxInfo.account.address
             );
+
             const wifWallet = await wallet.getInternalPrivateKey(foundObject?.account as Account);
             const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
 
-            let utxos: UTXO[] = [];
-            if (!useNextUTXO) {
-                utxos = await Web3API.getUTXOs(walletGet.addresses, expandToDecimals(0.08, 8));
-            } else {
-                const storedUTXO = localStorage.getItem('nextUTXO');
-                utxos = storedUTXO
-                    ? JSON.parse(storedUTXO).map((utxo) => ({
-                          ...utxo,
-                          value: BigInt(utxo.value)
-                      }))
-                    : [];
-            }
+            const account = await wallet.getCurrentAccount();
+            const utxos: UTXO[] = await Web3API.getUTXOs([account.address], expandToDecimals(0.005, 8));
+
             const contract = getContract<IOP_20Contract>(
                 rawTxInfo.contractAddress,
                 OP_20_ABI,
                 Web3API.provider,
                 walletGet.p2tr
             );
+
             const mintData = await contract.mint(walletGet.p2tr, rawTxInfo.inputAmount);
             if ('error' in mintData) {
                 console.log(mintData);
                 tools.toastError('Error');
                 return;
             }
+
             const interactionParameters: IInteractionParameters = {
                 from: walletGet.p2tr,
                 to: contract.address.toString(),
