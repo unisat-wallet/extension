@@ -55,5 +55,5 @@ export function BRC20Ticker({
     }
 
     return <Text text={displayName || tick} size={style.textSize} wrap color="ticker_color" />;
-  }, [tick]);
+  }, [tick, displayName]);
 }
