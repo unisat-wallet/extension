@@ -1,5 +1,5 @@
-import VirtualList from 'rc-virtual-list';
-import { forwardRef, useMemo, useState } from 'react';
+import VirtualList, { ListRef } from 'rc-virtual-list';
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 
 import { KEYRING_CLASS, KEYRING_TYPE } from '@/shared/constant';
 import { Account } from '@/shared/types';
@@ -153,7 +153,22 @@ export default function SwitchAccountScreen() {
     });
     return _items;
   }, []);
+  const currentAccount = useCurrentAccount();
+  const currentIndex = keyring.accounts.findIndex((v) => v.pubkey == currentAccount.pubkey);
+
   const ForwardMyItem = forwardRef(MyItem);
+  const refList = useRef<ListRef>(null);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (refList.current && currentIndex >= 0) {
+        refList.current?.scrollTo({ index: currentIndex });
+      }
+    });
+
+    return () => clearTimeout(timeoutId);
+  }, []);
+
   return (
     <Layout>
       <Header
@@ -173,7 +188,7 @@ export default function SwitchAccountScreen() {
         }
       />
       <Content>
-        <VirtualList data={items} data-id="list" itemHeight={20} itemKey={(item) => item.key}>
+        <VirtualList data={items} data-id="list" itemHeight={20} itemKey={(item) => item.key} ref={refList}>
           {(item, index) => <ForwardMyItem account={item.account} autoNav={true} />}
         </VirtualList>
       </Content>
