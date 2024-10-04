@@ -1,5 +1,12 @@
 # UniSat Wallet Release Notes
 
+## v1.4.9
+
+- Display short names for bool bridge and simple bridge ticks
+- Support for .fb domain on fractal
+- Fix the issue where batch signing PSBT can get stuck when there are too many transactions
+- Fix fractal browser link.
+
 ## v1.4.8
 
 - Allow passing in tapLeafHashToSign when calling signPsbt
