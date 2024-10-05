@@ -118,8 +118,8 @@ class PreferenceService {
                 firstOpen: false,
                 currency: 'USD',
                 addressType: AddressType.P2WPKH,
-                networkType: NetworkType.MAINNET,
-                chainType: ChainType.BITCOIN_MAINNET,
+                networkType: NetworkType.REGTEST, // TODO: To change to mainnet when mainnet is ready
+                chainType: ChainType.BITCOIN_REGTEST, // TODO: To change to mainnet when mainnet is ready
                 keyringAlianNames: {},
                 accountAlianNames: {},
                 uiCachedData: {},

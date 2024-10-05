@@ -26,6 +26,7 @@ export default function AdvancedScreen() {
     const [unconfirmedPopoverVisible, setUnconfirmedPopoverVisible] = useState(false);
 
     const [lockTimePopoverVisible, setLockTimePopoverVisible] = useState(false);
+    const [isOPNETonly, setIsOPNETonly] = useState(localStorage.getItem('selectionUser') === 'opnet-only');
     const autoLockTimeId = useAutoLockTimeId();
     const lockTimeConfig = AUTO_LOCKTIMES[autoLockTimeId] || AUTO_LOCKTIMES[DEFAULT_LOCKTIME_ID];
 
@@ -150,6 +151,42 @@ export default function AdvancedScreen() {
                         </Column>
                     </Card>
                 </Column>
+
+                <Column>
+                    <Card style={{ borderRadius: 10 }}>
+                        <Column>
+                            <Text text={'Setup Preferences'} preset="bold" size="sm" />
+                            <Row>
+                                <Text
+                                    preset="sub"
+                                    size="sm"
+                                    text={
+                                        'If you enable this setting, you will only be able to use OP_NET. This means you will not be able to use other standards such as Ordinals, Atomicals, or Runes.'
+                                    }
+                                />
+                            </Row>
+
+                            <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
+
+                            <Row justifyBetween>
+                                <Text text={'OP_NET only'} size="xs" />
+
+                                <Switch
+                                    onChange={() => {
+                                        if (isOPNETonly) {
+                                            localStorage.setItem('selectionUser', 'opnet-with-standards');
+                                            setIsOPNETonly(false);
+                                        } else {
+                                            localStorage.setItem('selectionUser', 'opnet-only');
+                                            setIsOPNETonly(true);
+                                        }
+                                    }}
+                                    checked={isOPNETonly}></Switch>
+                            </Row>
+                        </Column>
+                    </Card>
+                </Column>
+
                 <Column>
                     <Card style={{ borderRadius: 10 }}>
                         <Row

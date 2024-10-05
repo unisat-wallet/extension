@@ -8,7 +8,7 @@ import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
 import { useCurrentAccount, useReloadAccounts } from '@/ui/state/accounts/hooks';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { satoshisToAmount, useWallet } from '@/ui/utils';
+import { useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
 
@@ -40,18 +40,19 @@ export default function AddressTypeScreen() {
 
         const _res = await wallet.getAllAddresses(currentKeyring, account.index || 0);
         setAddresses(_res);
-        const balances = await wallet.getMultiAddressAssets(_res.join(','));
-        for (let i = 0; i < _res.length; i++) {
-            const address = _res[i];
-            const balance = balances[i];
-            const satoshis = balance.totalSatoshis;
-            self.addressAssets[address] = {
-                total_btc: satoshisToAmount(balance.totalSatoshis),
-                satoshis,
-                total_inscription: balance.inscriptionCount
-            };
-        }
-        setAddressAssets(self.addressAssets);
+        // TODO: Fix this error (Error: address invalid)
+        // const balances = await wallet.getMultiAddressAssets(_res.join(','));
+        // for (let i = 0; i < _res.length; i++) {
+        //     const address = _res[i];
+        //     const balance = balances[i];
+        //     const satoshis = balance.totalSatoshis;
+        //     self.addressAssets[address] = {
+        //         total_btc: satoshisToAmount(balance.totalSatoshis),
+        //         satoshis,
+        //         total_inscription: balance.inscriptionCount
+        //     };
+        // }
+        // setAddressAssets(self.addressAssets);
 
         tools.showLoading(false);
     };
