@@ -14,6 +14,7 @@ import { NavTabBar } from '@/ui/components/NavTabBar';
 import { NoticePopover } from '@/ui/components/NoticePopover';
 import { UpgradePopover } from '@/ui/components/UpgradePopover';
 import { getCurrentTab } from '@/ui/features/browser/tabs';
+import { BtcDisplay } from '@/ui/pages/Main/WalletTabScreen/components/BtcDisplay';
 import { useAccountBalance, useAddressSummary, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
@@ -41,7 +42,6 @@ import { AtomicalsTab } from './AtomicalsTab';
 import { OPNetList } from './OPNetList';
 import { OrdinalsTab } from './OrdinalsTab';
 import { RunesList } from './RunesList';
-import { BtcDisplay } from '@/ui/pages/Main/WalletTabScreen/components/BtcDisplay';
 
 const $noBreakStyle: CSSProperties = {
     whiteSpace: 'nowrap',
@@ -143,6 +143,8 @@ export default function WalletTabScreen() {
         };
         void run();
     }, []);
+
+    const isOPNETonly = localStorage.getItem('selectionUser') === 'opnet-only';
 
     let tabItems = [
         {
@@ -266,68 +268,68 @@ export default function WalletTabScreen() {
                         </Column>
                     )}
 
-          <Tooltip
-            placement={'bottom'}
-            title={
-              !loadingFetch ? (
-                <>
-                  <Row justifyBetween>
-                    <span style={$noBreakStyle}>{'Available '}</span>
-                    <span style={$noBreakStyle}>{` ${availableAmount} ${btcUnit}`}</span>
-                  </Row>
-                  <Row justifyBetween>
-                    <span style={$noBreakStyle}>{'Unavailable '}</span>
-                    <span style={$noBreakStyle}>{` ${unavailableAmount} ${btcUnit}`}</span>
-                  </Row>
-                  <Row justifyBetween>
-                    <span style={$noBreakStyle}>{'Total '}</span>
-                    <span style={$noBreakStyle}>{` ${totalAmount} ${btcUnit}`}</span>
-                  </Row>
-                </>
-              ) : (
-                <>
-                  <Row justifyBetween>
-                    <span style={$noBreakStyle}>{'Available '}</span>
-                    <span style={$noBreakStyle}>{'loading...'}</span>
-                  </Row>
-                  <Row justifyBetween>
-                    <span style={$noBreakStyle}>{'Unavailable '}</span>
-                    <span style={$noBreakStyle}>{'loading...'}</span>
-                  </Row>
-                  <Row justifyBetween>
-                    <span style={$noBreakStyle}>{'Total '}</span>
-                    <span style={$noBreakStyle}>{` ${totalAmount} ${btcUnit}`}</span>
-                  </Row>
-                </>
-              )
-            }
-            onOpenChange={(v) => {
-              if (!ref.current.fetchedUtxo[currentAccount.address]) {
-                ref.current.fetchedUtxo[currentAccount.address] = { loading: true };
-                setLoadingFetch(true);
-                fetchUtxos().finally(() => {
-                  ref.current.fetchedUtxo[currentAccount.address].loading = false;
-                  setLoadingFetch(false);
-                });
-              }
-            }}
-            overlayStyle={{
-              fontSize: fontSizes.xs
-            }}>
-              <div>
-                  <Text text={'TOTAL BALANCE'} textCenter color="textDim" />
-                  <BtcDisplay balance={balanceValue} />
-              </div>
-          </Tooltip>
-          <BtcUsd
-            sats={amountToSatoshis(balanceValue)}
-            textCenter
-            size={'md'}
-            style={{
-              marginTop: -16,
-              marginBottom: -8
-            }}
-          />
+                    <Tooltip
+                        placement={'bottom'}
+                        title={
+                            !loadingFetch ? (
+                                <>
+                                    <Row justifyBetween>
+                                        <span style={$noBreakStyle}>{'Available '}</span>
+                                        <span style={$noBreakStyle}>{` ${availableAmount} ${btcUnit}`}</span>
+                                    </Row>
+                                    <Row justifyBetween>
+                                        <span style={$noBreakStyle}>{'Unavailable '}</span>
+                                        <span style={$noBreakStyle}>{` ${unavailableAmount} ${btcUnit}`}</span>
+                                    </Row>
+                                    <Row justifyBetween>
+                                        <span style={$noBreakStyle}>{'Total '}</span>
+                                        <span style={$noBreakStyle}>{` ${totalAmount} ${btcUnit}`}</span>
+                                    </Row>
+                                </>
+                            ) : (
+                                <>
+                                    <Row justifyBetween>
+                                        <span style={$noBreakStyle}>{'Available '}</span>
+                                        <span style={$noBreakStyle}>{'loading...'}</span>
+                                    </Row>
+                                    <Row justifyBetween>
+                                        <span style={$noBreakStyle}>{'Unavailable '}</span>
+                                        <span style={$noBreakStyle}>{'loading...'}</span>
+                                    </Row>
+                                    <Row justifyBetween>
+                                        <span style={$noBreakStyle}>{'Total '}</span>
+                                        <span style={$noBreakStyle}>{` ${totalAmount} ${btcUnit}`}</span>
+                                    </Row>
+                                </>
+                            )
+                        }
+                        onOpenChange={(v) => {
+                            if (!ref.current.fetchedUtxo[currentAccount.address]) {
+                                ref.current.fetchedUtxo[currentAccount.address] = { loading: true };
+                                setLoadingFetch(true);
+                                fetchUtxos().finally(() => {
+                                    ref.current.fetchedUtxo[currentAccount.address].loading = false;
+                                    setLoadingFetch(false);
+                                });
+                            }
+                        }}
+                        overlayStyle={{
+                            fontSize: fontSizes.xs
+                        }}>
+                        <div>
+                            <Text text={'TOTAL BALANCE'} textCenter color="textDim" />
+                            <BtcDisplay balance={balanceValue} />
+                        </div>
+                    </Tooltip>
+                    <BtcUsd
+                        sats={amountToSatoshis(balanceValue)}
+                        textCenter
+                        size={'md'}
+                        style={{
+                            marginTop: -16,
+                            marginBottom: -8
+                        }}
+                    />
 
                     <Row itemsCenter justifyCenter>
                         <AddressBar />
@@ -399,23 +401,28 @@ export default function WalletTabScreen() {
                         )}
                     </Row>
 
-                    <Tabs
-                        size={'small'}
-                        defaultActiveKey={finalAssetTabKey as unknown as string}
-                        activeKey={finalAssetTabKey as unknown as string}
-                        items={tabItems as unknown as any[]}
-                        onTabClick={(key) => {
-                            dispatch(uiActions.updateAssetTabScreen({ assetTabKey: key as unknown as AssetTabKey }));
-                        }}
-                    />
-
-                    {/*{tabItems[assetTabKey].children}*/}
+                    {isOPNETonly ? (
+                        <>{tabItems[assetTabKey].children}</>
+                    ) : (
+                        <Tabs
+                            size={'small'}
+                            defaultActiveKey={finalAssetTabKey as unknown as string}
+                            activeKey={finalAssetTabKey as unknown as string}
+                            items={tabItems as unknown as any[]}
+                            onTabClick={(key) => {
+                                dispatch(
+                                    uiActions.updateAssetTabScreen({ assetTabKey: key as unknown as AssetTabKey })
+                                );
+                            }}
+                        />
+                    )}
                 </Column>
                 {showSafeNotice && (
                     <NoticePopover
-                        onClose={() => {
+                        onClose={(selection) => {
                             wallet.setShowSafeNotice(false);
                             setShowSafeNotice(false);
+                            localStorage.setItem('selectionUser', selection);
                         }}
                     />
                 )}

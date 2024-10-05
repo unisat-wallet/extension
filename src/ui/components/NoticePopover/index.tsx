@@ -11,18 +11,17 @@ import { Popover } from '../Popover';
 import { Row } from '../Row';
 import { Text } from '../Text';
 
-export const NoticePopover = ({ onClose }: { onClose: () => void }) => {
-    const [checked1, setChecked1] = useState(false);
-    const [checked2, setChecked2] = useState(false);
-
-    const [enable, setEnable] = useState(false);
+export const NoticePopover = ({ onClose }: { onClose: (mode: 'opnet-only' | 'opnet-with-standards') => void }) => {
+    const [opNetOnly, setOpNetOnly] = useState(true);
     const [coolDown, setCoolDown] = useState(3);
+    const [enable, setEnable] = useState(false);
 
     useEffect(() => {
         if (coolDown > 0) {
-            setTimeout(() => {
-                setCoolDown(coolDown - 1);
-            }, 3000);
+            const timer = setTimeout(() => {
+                setCoolDown((prev) => prev - 1);
+            }, 1000);
+            return () => clearTimeout(timer);
         } else {
             setEnable(true);
         }
@@ -31,45 +30,58 @@ export const NoticePopover = ({ onClose }: { onClose: () => void }) => {
     return (
         <Popover>
             <Column justifyCenter itemsCenter>
-                <Text text="Compatibility Tips" preset="title-bold" />
-                <Icon icon={'info'} color={'icon_yellow'} size={57} />
+                <Text text="Setup Preferences" preset="title-bold" />
+                <Icon
+                    icon={'settings'}
+                    color={'icon_yellow'}
+                    size={35}
+                    style={{
+                        marginBottom: 12
+                    }}
+                />
 
-                <Column gap="zero">
-                    <Text text={'Please be aware that:'} preset={'bold'} />
+                <Column
+                    gap="zero"
+                    style={{
+                        marginBottom: 20
+                    }}>
+                    <Text text={'Choose your setup:'} preset={'bold'} />
                     <div style={{ marginTop: 8 }}>
-                        <Checkbox
-                            checked={checked1}
-                            onChange={(e) => {
-                                setChecked1(e.target.checked);
-                            }}>
+                        <Checkbox checked={opNetOnly} onChange={(e) => setOpNetOnly(true)}>
                             <div style={{ fontSize: fontSizes.sm }}>
-                                for Ordinals assets, <span style={{ color: '#EBB94C' }}>Rare sats </span>are not
-                                supported.
+                                Use <span style={{ color: '#EBB94C' }}>OP_NET only</span>, without support for other
+                                standards such as Ordinals, Atomicals or Runes.
                             </div>
                         </Checkbox>
                     </div>
                     <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
 
                     <div>
-                        <Checkbox checked={checked2} onChange={(e) => setChecked2(e.target.checked)}>
+                        <Checkbox checked={!opNetOnly} onChange={(e) => setOpNetOnly(false)}>
                             <div style={{ fontSize: fontSizes.sm }}>
-                                for Atomicals assets, <span style={{ color: '#EBB94C' }}>Non-ARC20</span> are not
-                                supported yet.
+                                Enable support for additional standards (e.g.,{' '}
+                                <span style={{ color: '#EBB94C' }}>Ordinals, Atomicals, Runes</span>) along with OP_NET.
                             </div>
                         </Checkbox>
                     </div>
                 </Column>
 
+                <Text
+                    text="You can change this setting later in the preferences if needed."
+                    preset="default"
+                    style={{ marginBottom: 12, textAlign: 'center' }}
+                />
+
                 <Row full>
                     <Button
                         text={coolDown > 0 ? `OK (${coolDown}s)` : 'OK'}
                         preset="primary"
-                        disabled={!checked1 || !checked2}
+                        disabled={!enable}
                         full
                         onClick={() => {
                             if (!enable) return;
                             if (onClose) {
-                                onClose();
+                                onClose(opNetOnly ? 'opnet-only' : 'opnet-with-standards');
                             }
                         }}
                     />

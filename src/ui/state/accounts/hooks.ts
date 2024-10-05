@@ -174,11 +174,15 @@ export function useFetchHistoryCallback() {
     const wallet = useWallet();
     const address = useAccountAddress();
     return useCallback(async () => {
-        const _accountHistory = await wallet.getAddressHistory(address);
+        const _accountHistory = await wallet.getAddressHistory({
+            address: address,
+            start: 1,
+            limit: 10
+        });
         dispatch(
             accountActions.setHistory({
                 address: address,
-                list: _accountHistory
+                list: _accountHistory.detail
             })
         );
     }, [dispatch, wallet, address]);

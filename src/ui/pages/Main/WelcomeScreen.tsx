@@ -25,7 +25,7 @@ export default function WelcomeScreen() {
                     <Column gap="xl" mt="xxl">
                         <Text
                             text={
-                                "Inscribe and store your inscriptions in the world's first Open Source Chrome wallet for Ordinals!"
+                                'A browser-based extension that allows you to manage your tokens and interact with applications built on the OP_NET metaprotocol.'
                             }
                             preset="sub"
                             textCenter

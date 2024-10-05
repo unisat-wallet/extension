@@ -9,10 +9,12 @@ import { Grid } from '../Grid';
 import { Icon, IconTypes } from '../Icon';
 
 export function NavTabBar({ tab }: { tab: TabOption }) {
+    const isOPNETonly = localStorage.getItem('selectionUser') === 'opnet-only';
+
     return (
-        <Grid columns={4} style={{ width: '100%', height: '67.5px', backgroundColor: colors.bg2 }}>
+        <Grid columns={isOPNETonly ? 3 : 4} style={{ width: '100%', height: '67.5px', backgroundColor: colors.bg2 }}>
             <TabButton tabName="home" icon="wallet" isActive={tab === 'home'} />
-            <TabButton tabName="mint" icon="compass" isActive={tab === 'mint'} />
+            {!isOPNETonly && <TabButton tabName="mint" icon="compass" isActive={tab === 'mint'} />}
             <TabButton tabName="app" icon="grid" isActive={tab === 'app'} />
             <TabButton tabName="settings" icon="settings" isActive={tab === 'settings'} />
         </Grid>
