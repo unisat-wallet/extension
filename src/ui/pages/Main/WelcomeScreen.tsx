@@ -25,7 +25,7 @@ export default function WelcomeScreen() {
                     <Column gap="xl" mt="xxl">
                         <Text
                             text={
-                                'A browser-based extension that allows you to manage your tokens and interact with applications built on the OP_NET metaprotocol.'
+                                'A browser-based extension that allows you to manage your tokens and interact with applications built on the OP_NET Bitcoin Layer 1 Metaprotocol.'
                             }
                             preset="sub"
                             textCenter
