@@ -1,3 +1,4 @@
+import Base, { generateURString } from '@keystonehq/hw-app-base';
 import { useEffect, useState } from 'react';
 
 import { Button, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
@@ -5,6 +6,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import KeystoneDisplay from '@/ui/components/Keystone/Display';
 import KeystoneLogoWithText from '@/ui/components/Keystone/LogoWithText';
 import KeystoneScan from '@/ui/components/Keystone/Scan';
+import { createKeystoneTransport } from '@/ui/components/Keystone/usb/utils';
 import { $textPresets } from '@/ui/components/Text';
 import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
@@ -84,36 +86,93 @@ function Step2(props: Props) {
   );
 }
 
-export default function KeystoneSignScreen(props: Props) {
-  const [step, setStep] = useState(1);
 
+function USBStep(props: Props) {
+  const wallet = useWallet();
   useEffect(() => {
-    setStep(1);
+    async function usbSign() {
+      try {
+        const p = props.type === 'psbt' ? wallet.genSignPsbtUr(props.data) : wallet.genSignMsgUr(props.data, props.type);
+        const ur = await p;
+        const transport = await createKeystoneTransport();
+        const base = new Base(transport as any);
+        console.log(ur)
+        const urString = generateURString(ur.cbor, ur.type)
+        console.log('-----------------', urString)
+        const res = await base.sendURRequest(urString);
+        const type = res.type;
+        const cborhex = res.cbor.toString('hex');
+        const result = props.type === 'psbt' ? await wallet.parseSignPsbtUr(type, cborhex, props.isFinalize === false ? false : true) : await wallet.parseSignMsgUr(type, cborhex, props.type);
+        if (props.onSuccess) {
+          props.onSuccess(result);
+        } else {
+          throw new Error('onSuccess Not implemented');
+        }
+
+      } catch (error) {
+        console.error(error);
+      }
+    }
+    usbSign();
   }, [props.id]);
 
   return (
-    <Layout>
-      <Header
-        onBack={() => {
-          if (step === 1) {
-            window.history.go(-1);
-          } else {
-            setStep(1);
-          }
-        }}
-      />
-      <Content itemsCenter>
-        {step === 1 && <Step1 {...props} />}
-        {step === 2 && <Step2 {...props} />}
-      </Content>
-      {step === 1 && (
-        <Footer>
-          <Row full>
-            <Button preset="default" full text="Reject" onClick={props.onBack} />
-            <Button preset="primary" full text={props.signatureText ?? 'Get Signature'} onClick={() => setStep(2)} />
-          </Row>
-        </Footer>
-      )}
-    </Layout>
+    <Column itemsCenter gap="xl" style={{ maxWidth: 306 }}>
+      <KeystoneLogoWithText width={160} height={38} />
+      <Text text="Please sign in your keystone device" preset="title" textCenter />
+    </Column>
   );
+
+}
+
+export default function KeystoneSignScreen(props: Props) {
+  const [step, setStep] = useState(1);
+  const [connectionType, setConnectionType] = useState<'USB' | 'QR' | undefined>(undefined);
+  const wallet = useWallet();
+
+  useEffect(() => {
+    setStep(1);
+    wallet.getKeystoneConnectionType().then((type) => {
+      setConnectionType(type);
+    });
+  }, [props.id]);
+
+  if (connectionType === 'QR') {
+    return (
+      <Layout>
+        <Header
+          onBack={() => {
+            if (step === 1) {
+              window.history.go(-1);
+            } else {
+              setStep(1);
+            }
+          }}
+        />
+        <Content itemsCenter>
+          {step === 1 && <Step1 {...props} />}
+          {step === 2 && <Step2 {...props} />}
+        </Content>
+        {step === 1 && (
+          <Footer>
+            <Row full>
+              <Button preset="default" full text="Reject" onClick={props.onBack} />
+              <Button preset="primary" full text={props.signatureText ?? 'Get Signature'} onClick={() => setStep(2)} />
+            </Row>
+          </Footer>
+        )}
+      </Layout>
+    );
+  } else if (connectionType === 'USB') {
+    return (
+      <Layout>
+        <Header />
+        <Content itemsCenter>
+          <USBStep {...props} />
+        </Content>
+      </Layout>
+    )
+  } else {
+    return <></>;
+  }
 }

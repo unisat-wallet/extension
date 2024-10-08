@@ -25,6 +25,7 @@ interface ContextData {
     type: string;
     cbor: string;
   };
+  connectionType: 'USB' | 'QR';
   passphrase: string;
   customHdPath: string;
 }
@@ -211,11 +212,12 @@ function Step3({
           addressType,
           accountCount,
           contextData.customHdPath,
-          filteredPubkeys
+          filteredPubkeys,
+          contextData.connectionType
         );
       } else {
         await wallet.getKeyrings();
-        await importAccounts(contextData.ur.type, contextData.ur.cbor, addressType, 1, contextData.customHdPath);
+        await importAccounts(contextData.ur.type, contextData.ur.cbor, addressType, 1, contextData.customHdPath, undefined, contextData.connectionType);
       }
     } catch (e) {
       setError((e as any).message);
@@ -464,7 +466,8 @@ export default function CreateKeystoneWalletScreen() {
       cbor: ''
     },
     passphrase: '',
-    customHdPath: ''
+    customHdPath: '',
+    connectionType: 'QR'
   });
 
   const updateContextData = (data: ContextData) => {
@@ -490,7 +493,8 @@ export default function CreateKeystoneWalletScreen() {
               cbor
             },
             passphrase: '',
-            customHdPath: ''
+            customHdPath: '',
+            connectionType: 'USB'
           });
         }} />;
     }
@@ -505,7 +509,8 @@ export default function CreateKeystoneWalletScreen() {
               cbor
             },
             passphrase: '',
-            customHdPath: ''
+            customHdPath: '',
+            connectionType: 'QR'
           });
         }}
       />
