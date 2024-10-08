@@ -2,7 +2,7 @@
 
 ## How to build
 
-- Install [Node.js](https://nodejs.org) version 16
+- Install [Node.js](https://nodejs.org) version >= 18.x
 - Install [Yarn](https://yarnpkg.com/en/docs/install)
 - Install dependencies: `yarn`
 - Build the project to the `./dist/` folder with `npm run build:chrome:mv3` and then `npm run build:chrome:mv3:dev`
