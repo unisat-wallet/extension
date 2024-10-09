@@ -1,5 +1,5 @@
 import bitcore from 'bitcore-lib';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { ADDRESS_TYPES } from '@/shared/constant';
@@ -13,9 +13,10 @@ import KeystoneScan from '@/ui/components/Keystone/Scan';
 import KeystoneProductImg from '@/ui/components/Keystone/imgs/keystone-product.png';
 import KeystoneFetchKey from '@/ui/components/Keystone/usb/FetchKey';
 import { useImportAccountsFromKeystoneCallback } from '@/ui/state/global/hooks';
+
 import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
-import { ScanOutlined } from '@ant-design/icons';
+import { ScanOutlined, UsbOutlined } from '@ant-design/icons';
 import { AddressType } from '@unisat/wallet-sdk';
 
 import { useNavigate } from '../MainRoute';
@@ -41,7 +42,6 @@ function Step1({ onNext, setIsUSB }) {
     window.history.go(-1);
   }, []);
 
-  console.log('Page loaded -- Keystone');
   return (
     <Layout>
       <Header title="Connect Keystone" onBack={window.history.length === 1 ? undefined : onBack} />
@@ -102,8 +102,8 @@ function Step1({ onNext, setIsUSB }) {
             onNext();
           }}
         >
-          {/* <ScanOutlined style={{ marginRight: '8px' }} /> */}
-          <Text text="Connect by USB" color="black" />
+          <UsbOutlined style={{ marginRight: '8px' }} />
+          <Text text="Connect via USB" color="black" />
         </Button>
         <Button
           preset="defaultV2"
@@ -124,8 +124,6 @@ function Step1({ onNext, setIsUSB }) {
 function Step2({ onBack, onNext }) {
   const onSucceed = useCallback(
     async ({ type, cbor }) => {
-      console.log('type', type);
-      console.log('cbor', cbor);
       onNext({ type, cbor });
     },
     [onNext]
@@ -146,23 +144,29 @@ function Step2({ onBack, onNext }) {
 }
 
 function StepTwoUSB({ onBack, onNext }) {
+  const isCancelledRef = useRef(false);
+  const setIsCancelled = useCallback((value: boolean) => {
+    isCancelledRef.current = value;
+  }, []);
+
   const onSucceed = useCallback(
     async ({ type, cbor }) => {
-      console.log('type', type);
-      console.log('cbor', cbor);
       onNext({ type, cbor });
     },
     [onNext]
   );
   return (
     <Layout>
-      <Header title="Connect Keystone via USB" onBack={onBack} />
+      <Header title="Connect Keystone via USB" onBack={() => {
+        setIsCancelled(true);
+        console.log('-----called here', )
+        onBack();
+      }} />
       <Content>
-        <Column justifyCenter itemsCenter gap="xxl">
+        <Column justifyCenter itemsCenter>
           <KeystoneLogoWithText width={160} />
-          <Text text="Please connect your Keystone device to your computer" />
-          <KeystoneFetchKey onSucceed={onSucceed} size={360} />
-          <Text text="You need to allow usb access to use this feature." preset="sub" />
+          <Text text="Connect and unlock your Keystone" />
+          <KeystoneFetchKey onSucceed={onSucceed} isCancelledRef={isCancelledRef} size={180} />
         </Column>
       </Content>
     </Layout>
@@ -486,17 +490,17 @@ export default function CreateKeystoneWalletScreen() {
   if (step === 2) {
     if (isUSB) {
       return <StepTwoUSB onBack={() => setStep(1)} onNext={({ type, cbor }) => {
-          setStep(3);
-          updateContextData({
-            ur: {
-              type,
-              cbor
-            },
-            passphrase: '',
-            customHdPath: '',
-            connectionType: 'USB'
-          });
-        }} />;
+        setStep(3);
+        updateContextData({
+          ur: {
+            type,
+            cbor
+          },
+          passphrase: '',
+          customHdPath: '',
+          connectionType: 'USB'
+        });
+      }} />;
     }
     return (
       <Step2
