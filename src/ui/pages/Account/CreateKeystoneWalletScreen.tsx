@@ -159,7 +159,6 @@ function StepTwoUSB({ onBack, onNext }) {
     <Layout>
       <Header title="Connect Keystone via USB" onBack={() => {
         setIsCancelled(true);
-        console.log('-----called here', )
         onBack();
       }} />
       <Content>

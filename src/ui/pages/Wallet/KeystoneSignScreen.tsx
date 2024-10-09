@@ -1,15 +1,18 @@
 import Base, { generateURString } from '@keystonehq/hw-app-base';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Button, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import KeystoneDisplay from '@/ui/components/Keystone/Display';
 import KeystoneLogoWithText from '@/ui/components/Keystone/LogoWithText';
+import KeystonePopover from '@/ui/components/Keystone/Popover';
 import KeystoneScan from '@/ui/components/Keystone/Scan';
-import { createKeystoneTransport } from '@/ui/components/Keystone/usb/utils';
+import { createKeystoneTransport, handleKeystoneUSBError } from '@/ui/components/Keystone/usb/utils';
 import { $textPresets } from '@/ui/components/Text';
 import { colors } from '@/ui/theme/colors';
+import { fontSizes } from '@/ui/theme/font';
 import { useWallet } from '@/ui/utils';
+import { LoadingOutlined } from '@ant-design/icons';
 
 interface Props {
   type: 'msg' | 'psbt' | 'bip322-simple';
@@ -89,16 +92,24 @@ function Step2(props: Props) {
 
 function USBStep(props: Props) {
   const wallet = useWallet();
+  const [loading, setLoading] = useState(false);
+  const [isError, setIsError] = useState(false);
+  const [error, setError] = useState('');
+
+  const onCloseError = useCallback(() => {
+    setIsError(false);
+    setError('');
+  }, [])
+
   useEffect(() => {
     async function usbSign() {
       try {
+        setLoading(true)
         const p = props.type === 'psbt' ? wallet.genSignPsbtUr(props.data) : wallet.genSignMsgUr(props.data, props.type);
         const ur = await p;
         const transport = await createKeystoneTransport();
         const base = new Base(transport as any);
-        console.log(ur)
         const urString = generateURString(ur.cbor, ur.type)
-        console.log('-----------------', urString)
         const res = await base.sendURRequest(urString);
         const type = res.type;
         const cborhex = res.cbor.toString('hex');
@@ -110,7 +121,11 @@ function USBStep(props: Props) {
         }
 
       } catch (error) {
+        setIsError(true);
+        setError(handleKeystoneUSBError(error));
         console.error(error);
+      } finally {
+        setLoading(false);
       }
     }
     usbSign();
@@ -119,7 +134,23 @@ function USBStep(props: Props) {
   return (
     <Column itemsCenter gap="xl" style={{ maxWidth: 306 }}>
       <KeystoneLogoWithText width={160} height={38} />
-      <Text text="Please sign in your keystone device" preset="title" textCenter />
+      <Text text="Approve on your Keystone Device" preset="title" textCenter />
+      <Column style={{ minHeight: 240 }} itemsCenter justifyCenter>
+        {loading && <LoadingOutlined style={{
+          fontSize: fontSizes.xxxl,
+          color: colors.blue
+        }} />}
+      </Column>
+      {isError && <KeystonePopover
+        msg={error}
+        onClose={onCloseError}
+        onConfirm={onCloseError}
+      />}
+      <Text
+        text="Ensure your Keystone 3 Pro is on the homepage"
+        textCenter
+        preset="sub"
+      />
     </Column>
   );
 
