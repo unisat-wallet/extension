@@ -1,5 +1,9 @@
 # UniSat Wallet Release Notes
 
+## v1.4.10
+
+- Add address tips. (It is not recommended to use legacy addresses on Fractal.)
+
 ## v1.4.9
 
 - Display short names for bool bridge and simple bridge ticks
