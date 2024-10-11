@@ -12,12 +12,14 @@ import { NavTabBar } from '@/ui/components/NavTabBar';
 import { NoticePopover } from '@/ui/components/NoticePopover';
 import { UpgradePopover } from '@/ui/components/UpgradePopover';
 import { getCurrentTab } from '@/ui/features/browser/tabs';
+import { BtcDisplay } from '@/ui/pages/Main/WalletTabScreen/components/BtcDisplay';
 import { useAccountBalance, useAddressSummary, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import {
   useAddressExplorerUrl,
+  useAddressTips,
   useBTCUnit,
   useChain,
   useChainType,
@@ -37,7 +39,6 @@ import { SwitchChainModal } from '../../Settings/SwitchChainModal';
 import { AtomicalsTab } from './AtomicalsTab';
 import { OrdinalsTab } from './OrdinalsTab';
 import { RunesList } from './RunesList';
-import { BtcDisplay } from '@/ui/pages/Main/WalletTabScreen/components/BtcDisplay';
 
 const $noBreakStyle: CSSProperties = {
   whiteSpace: 'nowrap',
@@ -50,6 +51,7 @@ export default function WalletTabScreen() {
   const accountBalance = useAccountBalance();
   const chain = useChain();
   const chainType = useChainType();
+  const addressTips = useAddressTips();
 
   const currentKeyring = useCurrentKeyring();
   const currentAccount = useCurrentAccount();
@@ -218,7 +220,7 @@ export default function WalletTabScreen() {
         <AccountSelect />
 
         <Column gap="lg2" mt="md">
-          {(walletConfig.chainTip || walletConfig.statusMessage) && (
+          {(walletConfig.chainTip || walletConfig.statusMessage || addressTips.homeTip) && (
             <Column
               py={'lg'}
               px={'md'}
@@ -230,6 +232,7 @@ export default function WalletTabScreen() {
               }}>
               {walletConfig.chainTip && <Text text={walletConfig.chainTip} color="text" textCenter />}
               {walletConfig.statusMessage && <Text text={walletConfig.statusMessage} color="danger" textCenter />}
+              {addressTips.homeTip && <Text text={addressTips.homeTip} color="warning" textCenter />}
             </Column>
           )}
 
@@ -283,7 +286,7 @@ export default function WalletTabScreen() {
             }}>
             <div>
               <Text text={'TOTAL BALANCE'} textCenter color="textDim" />
-             <BtcDisplay balance={balanceValue} />
+              <BtcDisplay balance={balanceValue} />
             </div>
           </Tooltip>
           <BtcUsd
