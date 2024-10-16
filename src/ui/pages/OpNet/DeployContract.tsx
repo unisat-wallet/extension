@@ -77,6 +77,25 @@ export default function DeployContractOpnet() {
                     />
                 </Column>
 
+                <div>
+                    <Text text="Priority Fee" color="textDim" />
+                    <input
+                        type="number"
+                        value={OpnetRateInputVal}
+                        onChange={(e) => {
+                            adjustFeeRateInput(e.target.value);
+                        }}
+                        style={{
+                            marginTop: '10px',
+                            backgroundColor: 'transparent',
+                            borderRadius: 5,
+                            borderWidth: 1,
+                            borderColor: 'rgba(255,255,255,0.3)',
+                            padding: 4
+                        }}
+                    />
+                </div>
+
                 <div
                     style={{
                         border: '2px dashed #ccc',
