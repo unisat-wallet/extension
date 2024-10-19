@@ -76,8 +76,8 @@ class PushEventHandlers {
     networkChanged = ({ network, chain }) => {
         this.connect({});
 
-        if (network !== this._unisatProviderPrivate._network && chain) {
-            Web3API.setNetwork(chain);
+        if (network !== this._unisatProviderPrivate._network) {
+            if (chain) Web3API.setNetwork(chain);
 
             this._unisatProviderPrivate._network = network;
             this._emit('networkChanged', network);

@@ -1865,9 +1865,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@btc-vision/transaction@file:../transaction::locator=opwallet%40workspace%3A.":
+"@btc-vision/transaction@npm:1.0.114":
   version: 1.0.114
-  resolution: "@btc-vision/transaction@file:../transaction#../transaction::hash=bf22f8&locator=opwallet%40workspace%3A."
+  resolution: "@btc-vision/transaction@npm:1.0.114"
   dependencies:
     "@babel/plugin-proposal-object-rest-spread": "npm:^7.20.7"
     "@bitcoinerlab/secp256k1": "npm:^1.1.1"
@@ -1894,7 +1894,7 @@ __metadata:
     ts-loader: "npm:^9.5.1"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.6.2"
-  checksum: 10c0/531cac6164cd54ecb4546b42429e83199ea7b31e378e7a37f2d48be1255f25373837f4b47f1c11a2d5865ac2bfd32e9cb16497c8f228f3fad3ec92edc892e1f6
+  checksum: 10c0/9ebdbd926cd87f2eee83389581084c318b44ab7d3d90b484db780901f1cb7835bfd32bfd48cb605b2ef70b0fe436e2ab8cb4dbcf2f20a77eec5df04e2bf9fc04
   languageName: node
   linkType: hard
 
@@ -15855,7 +15855,7 @@ __metadata:
     "@babel/plugin-proposal-private-property-in-object": "npm:^7.21.11"
     "@btc-vision/bsi-binary": "npm:1.0.42"
     "@btc-vision/passworder": "npm:1.0.0"
-    "@btc-vision/transaction": ../transaction
+    "@btc-vision/transaction": "npm:1.0.114"
     "@btc-vision/wallet-sdk": "npm:1.0.0"
     "@fortawesome/fontawesome-svg-core": "npm:^6.6.0"
     "@fortawesome/free-regular-svg-icons": "npm:^6.6.0"
