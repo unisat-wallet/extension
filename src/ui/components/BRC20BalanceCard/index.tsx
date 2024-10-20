@@ -37,7 +37,8 @@ export default function BRC20BalanceCard(props: BRC20BalanceCardProps) {
                 minHeight: 120
             }}
             fullX
-            onClick={onClick}>
+            onClick={onClick}
+        >
             <Column full>
                 <Row justifyBetween itemsCenter>
                     <BRC20Ticker tick={ticker} />
@@ -45,7 +46,8 @@ export default function BRC20BalanceCard(props: BRC20BalanceCardProps) {
                         title="The transferable amount is the balance that has been inscribed into transfer inscriptions but has not yet been sent."
                         overlayStyle={{
                             fontSize: fontSizes.xs
-                        }}>
+                        }}
+                    >
                         <InfoCircleOutlined
                             style={{
                                 fontSize: fontSizes.xs,

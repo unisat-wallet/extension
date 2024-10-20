@@ -4,16 +4,16 @@ import { Decoded, InteractionType } from '@/shared/web3/decoder/CalldataDecoder'
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { Card, Column, Image, Row, Text } from '@/ui/components';
 import { fontSizes } from '@/ui/theme/font';
-import { BinaryReader } from '@btc-vision/bsi-binary';
+import { Address, BinaryReader } from '@btc-vision/transaction';
 
 export interface DecodedApprove extends Decoded {
     readonly amount: bigint;
-    readonly spender: string;
+    readonly spender: Address;
 }
 
 export function decodeApprove(selector: string, reader: BinaryReader): DecodedApprove {
     let amount = 0n;
-    let spender = '';
+    let spender = Address.dead();
     switch (selector) {
         case InteractionType.Approve: {
             spender = reader.readAddress();
@@ -31,7 +31,7 @@ export function decodeApprove(selector: string, reader: BinaryReader): DecodedAp
 
 export interface DecodedTransfer extends Decoded {
     readonly amount: bigint;
-    readonly to: string;
+    readonly to: Address;
 }
 
 interface DecodedApproveProps {

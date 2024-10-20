@@ -34,7 +34,7 @@ if (
     window.screenLeft > window.screen.width ||
     window.screenTop > window.screen.height
 ) {
-    browser.runtime.getPlatformInfo(function(info) {
+    browser.runtime.getPlatformInfo(function (info) {
         if (info.os === 'mac') {
             const fontFaceSheet = new CSSStyleSheet();
             fontFaceSheet.insertRule(`
@@ -75,7 +75,7 @@ const wallet: Record<string, any> = new Proxy(
                             get(_, key) {
                                 if (typeof key !== 'string') throw new Error('Invalid key');
 
-                                return function(...params: any) {
+                                return function (...params: any) {
                                     return portMessageChannel.request({
                                         type: 'openapi',
                                         method: key,
@@ -86,7 +86,7 @@ const wallet: Record<string, any> = new Proxy(
                         }
                     );
                 default:
-                    return function(...params: any) {
+                    return function (...params: any) {
                         if (typeof key !== 'string') throw new Error('Invalid key');
 
                         return portMessageChannel.request({
@@ -150,7 +150,8 @@ root.render(
                         <IdleTimerProvider
                             onAction={() => {
                                 wallet.setLastActiveTime();
-                            }}>
+                            }}
+                        >
                             <Updaters />
                             <AsyncMainRoute />
                         </IdleTimerProvider>

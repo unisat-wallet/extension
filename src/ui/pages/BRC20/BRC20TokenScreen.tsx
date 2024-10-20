@@ -105,24 +105,24 @@ export default function BRC20TokenScreen() {
         return enable;
     }, [tokenSummary]);
 
-  const tools = useTools();
-  return (
-    <Layout>
-      <Header
-        onBack={() => {
-          window.history.go(-1);
-        }}
-      />
-      {tokenSummary && (
-        <Content>
-          <Column py="xl">
-            <Column itemsCenter fullX justifyCenter>
-              <Text text={`${balance}`} preset="bold" textCenter size="xxl" wrap digital />
-              <BRC20Ticker tick={ticker} preset="lg" showOrigin/>
-            </Column>
-            <Row justifyCenter fullX>
-              <TickUsdWithoutPrice tick={ticker} balance={balance} type={'brc20'} size={'md'} />
-            </Row>
+    const tools = useTools();
+    return (
+        <Layout>
+            <Header
+                onBack={() => {
+                    window.history.go(-1);
+                }}
+            />
+            {tokenSummary && (
+                <Content>
+                    <Column py="xl">
+                        <Column itemsCenter fullX justifyCenter>
+                            <Text text={`${balance}`} preset="bold" textCenter size="xxl" wrap digital />
+                            <BRC20Ticker tick={ticker} preset="lg" showOrigin />
+                        </Column>
+                        <Row justifyCenter fullX>
+                            <TickUsdWithoutPrice tick={ticker} balance={balance} type={'brc20'} size={'md'} />
+                        </Row>
 
                         <Row justifyBetween mt="lg">
                             <Button

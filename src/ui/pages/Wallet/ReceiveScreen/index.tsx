@@ -12,32 +12,34 @@ export default function ReceiveScreen() {
     const address = useAccountAddress();
     const chain = useChain();
 
-  return (
-    <Layout>
-      <Header
-        onBack={() => {
-          window.history.go(-1);
-        }}
-        title="Address"
-      />
-      <Content>
-        <Column gap="xl" mt="lg">
-          <Column
-            justifyCenter
-            rounded
-            style={{ backgroundColor: 'white', alignSelf: 'center', alignItems: 'center', padding: 10 }}>
-            <QRCode
-              value={address || ''}
-              renderAs="svg"
-              size={sizes.qrcode}
-              imageRendering={chain.icon}
-              imageSettings={{
-                src: chain.icon,
-                width: 30,
-                height: 30,
-                excavate: true
-              }}></QRCode>
-          </Column>
+    return (
+        <Layout>
+            <Header
+                onBack={() => {
+                    window.history.go(-1);
+                }}
+                title="Address"
+            />
+            <Content>
+                <Column gap="xl" mt="lg">
+                    <Column
+                        justifyCenter
+                        rounded
+                        style={{ backgroundColor: 'white', alignSelf: 'center', alignItems: 'center', padding: 10 }}
+                    >
+                        <QRCode
+                            value={address || ''}
+                            renderAs="svg"
+                            size={sizes.qrcode}
+                            imageRendering={chain.icon}
+                            imageSettings={{
+                                src: chain.icon,
+                                width: 30,
+                                height: 30,
+                                excavate: true
+                            }}
+                        ></QRCode>
+                    </Column>
 
                     <Row justifyCenter>
                         <Icon icon="user" />

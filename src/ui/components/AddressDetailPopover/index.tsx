@@ -10,39 +10,41 @@ import { Row } from '../Row';
 import { Text } from '../Text';
 
 export const AddressDetailPopover = ({ address, onClose }: { address: string; onClose: () => void }) => {
-  const tools = useTools();
-  const addressExplorerUrl = useAddressExplorerUrl(address);
-  return (
-    <Popover onClose={onClose}>
-      <Column>
-        <Text text={shortAddress(address)} textCenter />
-        <Card
-          preset="style2"
-          onClick={(e) => {
-            copyToClipboard(address).then(() => {
-              tools.toastSuccess('Copied');
-            });
-          }}>
-          <Row itemsCenter>
-            <Text
-              text={address}
-              style={{
-                overflowWrap: 'anywhere'
-              }}
-            />
-            <Icon icon="copy" />
-          </Row>
-        </Card>
+    const tools = useTools();
+    const addressExplorerUrl = useAddressExplorerUrl(address);
+    return (
+        <Popover onClose={onClose}>
+            <Column>
+                <Text text={shortAddress(address)} textCenter />
+                <Card
+                    preset="style2"
+                    onClick={(e) => {
+                        copyToClipboard(address).then(() => {
+                            tools.toastSuccess('Copied');
+                        });
+                    }}
+                >
+                    <Row itemsCenter>
+                        <Text
+                            text={address}
+                            style={{
+                                overflowWrap: 'anywhere'
+                            }}
+                        />
+                        <Icon icon="copy" />
+                    </Row>
+                </Card>
 
-        <Row
-          justifyCenter
-          onClick={() => {
-            window.open(addressExplorerUrl);
-          }}>
-          <Icon icon="eye" color="textDim" />
-          <Text preset="regular-bold" text="View on Block Explorer" color="textDim" />
-        </Row>
-      </Column>
-    </Popover>
-  );
+                <Row
+                    justifyCenter
+                    onClick={() => {
+                        window.open(addressExplorerUrl);
+                    }}
+                >
+                    <Icon icon="eye" color="textDim" />
+                    <Text preset="regular-bold" text="View on Block Explorer" color="textDim" />
+                </Row>
+            </Column>
+        </Popover>
+    );
 };

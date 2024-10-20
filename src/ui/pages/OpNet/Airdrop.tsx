@@ -166,7 +166,8 @@ export default function WrapBitcoinOpnet() {
                         } else {
                             tools.toastError('Please drop a .wasm file');
                         }
-                    }}>
+                    }}
+                >
                     <input
                         type="file"
                         accept=".csv"
@@ -215,7 +216,8 @@ export default function WrapBitcoinOpnet() {
                                 action: 'airdrop'
                             }
                         });
-                    }}></Button>
+                    }}
+                ></Button>
             </Content>
         </Layout>
     );

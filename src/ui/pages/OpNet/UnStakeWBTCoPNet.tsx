@@ -11,6 +11,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { useWallet } from '@/ui/utils';
+import { Address } from '@btc-vision/transaction';
 
 import { useNavigate } from '../MainRoute';
 
@@ -49,34 +50,46 @@ export default function UnWrapBitcoinOpnet() {
     useEffect(() => {
         const setWallet = async () => {
             Web3API.setNetwork(await wallet.getChainType());
+
+            if (!Web3API.WBTC) {
+                tools.toastError('Error in getting WBTC contract');
+                return;
+            }
+
+            const walletAddressPub = Address.fromString(account.pubkey);
+
             const contract: IWBTCContract = getContract<IWBTCContract>(
                 Web3API.WBTC,
                 WBTC_ABI,
                 Web3API.provider,
-                account.address
+                Web3API.network,
+                walletAddressPub
             );
 
-            const getRewards = (await contract.stakedReward(account.address)) as unknown as { decoded: bigint[] };
-            const getStakedAmount = (await contract.stakedAmount(account.address)) as unknown as { decoded: bigint[] };
+            try {
+                const getRewards = (await contract.stakedReward(walletAddressPub)) as unknown as { decoded: bigint[] };
+                const getStakedAmount = (await contract.stakedAmount(walletAddressPub)) as unknown as {
+                    decoded: bigint[];
+                };
 
-            if ('error' in getRewards || 'error' in getStakedAmount) {
+                setStakeReward(getRewards.decoded[0]);
+                setStakedAmount(getStakedAmount.decoded[0]);
+            } catch (e) {
                 tools.toastError('Error in getting Stake Rewards');
                 return;
             }
 
-            setStakeReward(getRewards.decoded[0]);
-            setStakedAmount(getStakedAmount.decoded[0]);
+            try {
+                const rewardPool = (await contract.rewardPool()) as unknown as { decoded: bigint[] };
+                const totalStaked = (await contract.totalStaked()) as unknown as { decoded: bigint[] };
+                //const timeStaked = (await contract.unstake()) as unknown as { decoded: any };
 
-            const rewardPool = (await contract.rewardPool()) as unknown as { decoded: bigint[] };
-            const totalStaked = (await contract.totalStaked()) as unknown as { decoded: bigint[] };
-            //const timeStaked = (await contract.unstake()) as unknown as { decoded: any };
-
-            if ('error' in rewardPool || 'error' in totalStaked) {
+                setRewardPool(rewardPool.decoded[0]);
+                setTotalStaked(totalStaked.decoded[0]);
+            } catch (e) {
                 tools.toastError('Can not get reward pool or total staked');
+                return;
             }
-
-            setRewardPool(rewardPool.decoded[0]);
-            setTotalStaked(totalStaked.decoded[0]);
         };
         void setWallet();
 

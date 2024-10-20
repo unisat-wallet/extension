@@ -120,7 +120,8 @@ export default function DeployContractOpnet() {
                         } else {
                             tools.toastError('Please drop a .wasm file');
                         }
-                    }}>
+                    }}
+                >
                     <input
                         type="file"
                         accept=".wasm"
@@ -168,7 +169,8 @@ export default function DeployContractOpnet() {
                                 action: 'deploy' // replace with actual opneTokens
                             }
                         });
-                    }}></Button>
+                    }}
+                ></Button>
             </Content>
         </Layout>
     );

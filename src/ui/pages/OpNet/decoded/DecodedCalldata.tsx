@@ -1,5 +1,3 @@
-import React from 'react';
-
 import { Decoded, InteractionType } from '@/shared/web3/decoder/CalldataDecoder';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { AddLiquidityDecoded, AddLiquidityDecodedInfo } from '@/ui/pages/OpNet/decoded/AddLiquidityDecodedInfo';

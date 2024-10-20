@@ -23,7 +23,8 @@ export default function Arc20BalanceCard(props: Arc2020BalanceCardProps) {
                 borderWidth: 1
             }}
             fullX
-            onClick={onClick}>
+            onClick={onClick}
+        >
             <Column full py="zero" gap="zero">
                 <Row fullY justifyBetween justifyCenter>
                     <Column fullY justifyCenter>

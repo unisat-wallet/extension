@@ -35,6 +35,7 @@ function TestSignPsbtWithRisksPopover() {
 
 const tokenBalance: TokenBalance = {
     ticker: 'MEME',
+    selfMint: true,
     availableBalance: '40',
     transferableBalance: '60',
     overallBalance: '100',

@@ -13,8 +13,7 @@ import OpNetBalanceCard from '@/ui/components/OpNetBalanceCard';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Address } from '@btc-vision/bsi-binary';
-import { OPNetMetadata } from '@btc-vision/transaction';
+import { Address, OPNetMetadata } from '@btc-vision/transaction';
 
 import { useNavigate } from '../../MainRoute';
 import { AddOpNetToken } from '../../Wallet/AddOpNetToken';
@@ -60,7 +59,7 @@ export function OPNetList() {
             Web3API.setNetwork(getChain);
 
             const tokensImported = localStorage.getItem('tokensImported_' + getChain);
-            let parsedTokens: string[] = [];
+            let parsedTokens: Address[] = [];
             if (tokensImported) {
                 parsedTokens = JSON.parse(tokensImported);
             }
@@ -78,9 +77,15 @@ export function OPNetList() {
                     const tokenAddress = parsedTokens[i];
                     const provider: JSONRpcProvider = Web3API.provider;
 
-                    const contract: IOP_20Contract = getContract<IOP_20Contract>(tokenAddress, OP_20_ABI, provider);
+                    const contract: IOP_20Contract = getContract<IOP_20Contract>(
+                        tokenAddress,
+                        OP_20_ABI,
+                        provider,
+                        Web3API.network
+                    );
+
                     const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(
-                        tokenAddress
+                        tokenAddress.p2tr(Web3API.network)
                     );
 
                     if (contractInfo?.name === 'Generic Contract') {
@@ -91,17 +96,15 @@ export function OPNetList() {
                         continue;
                     }
 
-                    const balance = await contract.balanceOf(currentAccount.address);
-                    if (!('error' in balance)) {
-                        tokenBalances.push({
-                            address: tokenAddress,
-                            name: contractInfo?.name || '',
-                            amount: BigInt(balance.decoded[0].toString()),
-                            divisibility: contractInfo?.decimals || 8,
-                            symbol: contractInfo?.symbol,
-                            logo: contractInfo?.logo
-                        });
-                    }
+                    const balance = await contract.balanceOf(Address.fromString(currentAccount.pubkey));
+                    tokenBalances.push({
+                        address: tokenAddress.p2tr(Web3API.network),
+                        name: contractInfo?.name || '',
+                        amount: BigInt(balance.decoded[0].toString()),
+                        divisibility: contractInfo?.decimals || 8,
+                        symbol: contractInfo?.symbol,
+                        logo: contractInfo?.logo
+                    });
                 } catch (e) {
                     console.log(`Error processing token at index ${i}:`, e, parsedTokens[i]);
                     parsedTokens.splice(i, 1);

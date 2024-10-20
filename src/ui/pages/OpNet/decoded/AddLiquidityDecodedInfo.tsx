@@ -1,7 +1,7 @@
 import { Decoded } from '@/shared/web3/decoder/CalldataDecoder';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { Card, Column, Text } from '@/ui/components';
-import { Address, BinaryReader } from '@btc-vision/bsi-binary';
+import { Address, BinaryReader } from '@btc-vision/transaction';
 
 export function decodeAddLiquidity(selector: string, reader: BinaryReader): AddLiquidityDecoded {
     const tokenA: Address = reader.readAddress();

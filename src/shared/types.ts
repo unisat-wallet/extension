@@ -333,10 +333,10 @@ export enum RiskType {
 }
 
 export interface Risk {
-  type: RiskType;
-  level: 'danger' | 'warning' | 'critical';
-  title: string;
-  desc: string;
+    type: RiskType;
+    level: 'danger' | 'warning' | 'critical';
+    title: string;
+    desc: string;
 }
 
 export interface DecodedPsbt {

@@ -138,7 +138,8 @@ export default function WrapBitcoinOpnet() {
                                         OpNetBalance.divisibility
                                     )
                                 );
-                            }}>
+                            }}
+                        >
                             <Text text="MAX" preset="sub" style={{ color: colors.white_muted }} />
                             <Text
                                 text={`${runesUtils.toDecimalAmount(
@@ -240,7 +241,8 @@ export default function WrapBitcoinOpnet() {
                                 action: 'wrap' // replace with actual opneTokens
                             }
                         });
-                    }}></Button>
+                    }}
+                ></Button>
             </Content>
         </Layout>
     );

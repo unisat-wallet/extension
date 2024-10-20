@@ -150,7 +150,8 @@ export default function SendOpNetScreen() {
                                         OpNetBalance.divisibility
                                     )
                                 );
-                            }}>
+                            }}
+                        >
                             <Text text="MAX" preset="sub" style={{ color: colors.white_muted }} />
                             <Text
                                 text={`${Number(
@@ -255,7 +256,8 @@ export default function SendOpNetScreen() {
                                 action: 'send' // replace with actual opneTokens
                             }
                         });
-                    }}></Button>
+                    }}
+                ></Button>
             </Content>
         </Layout>
     );

@@ -85,20 +85,23 @@ export default function BRC20Preview({
                 borderColor: colors.primary
             }}
             gap="zero"
-            onClick={onClick}>
+            onClick={onClick}
+        >
             <Row
                 bg={bg}
                 style={{
                     borderTopLeftRadius: 5,
                     borderTopRightRadius: 5
-                }}>
+                }}
+            >
                 <Row
                     style={{
                         backgroundColor: 'rgba(255,255,255,0.2)',
                         borderBottomRightRadius: 5,
                         borderTopLeftRadius: 5
                     }}
-                    px="sm">
+                    px="sm"
+                >
                     <BRC20Ticker tick={tick} preset={tickerPreset} />
                 </Row>
             </Row>
@@ -109,7 +112,8 @@ export default function BRC20Preview({
                 justifyCenter
                 itemsCenter
                 gap={'xs'}
-                bg={bg}>
+                bg={bg}
+            >
                 <Text text={balance} size={balanceSize as any} textCenter wrap digital />
                 {type === 'TRANSFER' && priceInProps ? (
                     <TickUsd price={price} balance={balance} />

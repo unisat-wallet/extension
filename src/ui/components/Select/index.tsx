@@ -11,6 +11,7 @@ import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
+import { Address } from '@btc-vision/transaction';
 
 import { BaseView, BaseViewProps } from '../BaseView';
 import { RunesTicker } from '../RunesTicker';
@@ -139,18 +140,19 @@ export function Select(props: SelectProps) {
                     const contract: IOP_20Contract = getContract<IOP_20Contract>(
                         searchTerm,
                         OP_20_ABI,
-                        Web3API.provider
+                        Web3API.provider,
+                        Web3API.network
                     );
                     const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(
                         searchTerm
                     );
 
-                    const balance = await contract.balanceOf(account.address);
-                    if (balance == undefined) {
-                        setFilteredOptions([]);
-                        setLoading(false);
-                    }
-                    if (!('error' in balance)) {
+                    try {
+                        const balance = await contract.balanceOf(Address.fromString(account.pubkey));
+                        if (balance == undefined) {
+                            setFilteredOptions([]);
+                            setLoading(false);
+                        }
                         const opNetBalance: OpNetBalance = {
                             address: searchTerm,
                             name: contractInfo?.name || '',
@@ -161,7 +163,7 @@ export function Select(props: SelectProps) {
                         };
                         setFilteredOptions([opNetBalance]);
                         setLoading(false);
-                    } else {
+                    } catch (e) {
                         setFilteredOptions([]);
                         setLoading(false);
                     }

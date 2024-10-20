@@ -63,7 +63,8 @@ export const ChangingInscription = ({ decodedPsbt, onClose }: { decodedPsbt: Dec
                                 borderRadius: 10,
                                 borderWidth: 1,
                                 borderColor: '#442326'
-                            }}>
+                            }}
+                        >
                             <InscriptionPreview
                                 key={'inscription_sending_' + index}
                                 data={inscription.data}

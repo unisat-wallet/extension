@@ -262,7 +262,8 @@ export default function TxCreateScreen() {
                             }
                             overlayStyle={{
                                 fontSize: fontSizes.xs
-                            }}>
+                            }}
+                        >
                             <div style={{ display: 'flex', alignItems: 'center' }}>
                                 <Row itemsCenter>
                                     <Text
@@ -373,7 +374,8 @@ export default function TxCreateScreen() {
                             }
                         });
                         // }
-                    }}></Button>
+                    }}
+                ></Button>
             </Content>
         </Layout>
     );
