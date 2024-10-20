@@ -1,12 +1,17 @@
 /* eslint-disable quotes */
 import { useState } from 'react';
 
+
+
 import { Button, Column, Content, Layout, Logo, Row, Text } from '@/ui/components';
 import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
 import { useWallet } from '@/ui/utils';
 
+
+
 import { useNavigate } from '../MainRoute';
 import { ConnectHardwareModal } from './ConnectHardwareModal';
+
 
 export default function WelcomeScreen() {
     const navigate = useNavigate();
@@ -58,7 +63,7 @@ export default function WelcomeScreen() {
                         <Button
                             text="Connect to Hardware Wallet"
                             preset="default"
-                            onClick={async () => {
+                            onClick={() => {
                                 setConnectHardwareModalVisible(true);
                             }}
                         />

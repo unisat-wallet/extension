@@ -1,26 +1,10 @@
-import { useEffect, useState } from 'react';
+import { Dispatch, SetStateAction, useState } from 'react';
 
-import { PAYMENT_CHANNELS, PaymentChannelType } from '@/shared/constant';
-import { Button, Card, Column, Image, Input, Row, Text } from '@/ui/components';
+import { Button, Column, Input, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BottomModal } from '@/ui/components/BottomModal';
 import { useWallet } from '@/ui/utils';
 import { CloseOutlined } from '@ant-design/icons';
-
-function PaymentItem(props: { channelType: PaymentChannelType; onClick }) {
-    const channelInfo = PAYMENT_CHANNELS[props.channelType];
-
-    return (
-        <Card style={{ backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 10 }} mt="lg" onClick={props.onClick}>
-            <Row fullX>
-                <Row itemsCenter>
-                    <Image src={channelInfo.img} size={30} />
-                    <Text text={channelInfo.name} />
-                </Row>
-            </Row>
-        </Card>
-    );
-}
 
 export const AddOpNetToken = ({
     onClose,
@@ -28,43 +12,33 @@ export const AddOpNetToken = ({
     fetchData
 }: {
     onClose: () => void;
-    setImportTokenBool: (value: boolean) => void;
-    fetchData: () => void;
+    setImportTokenBool: Dispatch<SetStateAction<boolean>>;
+    fetchData: () => Promise<void>;
 }) => {
     const [tokenState, setTokenState] = useState<string>('');
-    const [channels, setChannels] = useState<string[]>([]);
     const wallet = useWallet();
     const tools = useTools();
 
     const saveToLocalStorage = async () => {
         const getChain = await wallet.getChainType();
-        const tokensImported = localStorage.getItem('tokensImported_' + getChain);
+        const tokensImported = localStorage.getItem('opnetTokens_' + getChain);
         let parsedTokens: string[] = [];
         if (tokensImported) {
             parsedTokens = JSON.parse(tokensImported);
-            if (!parsedTokens.includes(tokenState)) {
-                parsedTokens.push(tokenState);
-                fetchData();
-                setImportTokenBool(false);
+
+            if (parsedTokens.includes(tokenState)) {
+                tools.toastError('Token already imported.');
+
+                return;
             }
-        } else {
-            parsedTokens = [tokenState];
-            tools.toastError('Token Exists');
         }
-        localStorage.setItem('tokensImported_' + getChain, JSON.stringify(parsedTokens));
-        tools.toastSuccess('Added token');
+
+        parsedTokens.push(tokenState);
+        localStorage.setItem('opnetTokens_' + getChain, JSON.stringify(parsedTokens));
+
+        await fetchData();
+        setImportTokenBool(false);
     };
-    useEffect(() => {
-        tools.showLoading(true);
-        wallet
-            .getBuyBtcChannelList()
-            .then((list) => {
-                setChannels(list.map((v) => v.channel));
-            })
-            .finally(() => {
-                tools.showLoading(false);
-            });
-    }, []);
 
     return (
         <BottomModal onClose={onClose}>
@@ -75,8 +49,7 @@ export const AddOpNetToken = ({
                     <Row
                         onClick={() => {
                             onClose();
-                        }}
-                    >
+                        }}>
                         <CloseOutlined />
                     </Row>
                 </Row>
@@ -98,8 +71,7 @@ export const AddOpNetToken = ({
                 text="Next"
                 onClick={() => {
                     void saveToLocalStorage();
-                }}
-            ></Button>
+                }}></Button>
         </BottomModal>
     );
 };

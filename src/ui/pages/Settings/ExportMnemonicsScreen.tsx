@@ -131,8 +131,7 @@ export default function ExportMnemonicsScreen() {
                             justifyCenter
                             onClick={(e) => {
                                 copy(mnemonic);
-                            }}
-                        >
+                            }}>
                             <Icon icon="copy" color="textDim" />
                             <Text text="Copy to clipboard" color="textDim" />
                         </Row>

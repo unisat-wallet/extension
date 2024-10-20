@@ -106,6 +106,11 @@ export function useAccountAddress() {
     return currentAccount.address;
 }
 
+export function useAccountPublicKey() {
+    const currentAccount = useCurrentAccount();
+    return currentAccount.pubkey;
+}
+
 export function useSetCurrentAccountCallback() {
     const dispatch = useAppDispatch();
     return useCallback(
@@ -210,7 +215,6 @@ export function useFetchBalanceCallback() {
         );
 
         if (cachedBalance.amount !== _accountBalance.amount) {
-            await wallet.expireUICachedData(currentAccount.address);
             dispatch(accountActions.expireHistory());
         }
 
@@ -239,8 +243,7 @@ export function useReloadAccounts() {
         dispatch(accountActions.expireBalance());
         dispatch(accountActions.expireInscriptions());
 
-        wallet.getWalletConfig().then((data) => {
-            dispatch(settingsActions.updateSettings({ walletConfig: data }));
-        });
+        const configs = await wallet.getWalletConfig();
+        dispatch(settingsActions.updateSettings({ walletConfig: configs }));
     }, [dispatch, wallet]);
 }

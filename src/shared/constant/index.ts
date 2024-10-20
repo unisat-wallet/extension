@@ -3,6 +3,7 @@
 /* constants pool */
 import { AddressType, NetworkType, RestoreWalletType } from '../types';
 
+
 export enum CHAINS_ENUM {
     BTC = 'BTC'
 }
@@ -35,13 +36,14 @@ export const BRAND_ALIAN_TYPE_TEXT = {
     [KEYRING_TYPE.KeystoneKeyring]: 'Account'
 };
 
-export const KEYRING_TYPES: {
-    [key: string]: {
+export const KEYRING_TYPES: Record<
+    string,
+    {
         name: string;
         tag: string;
         alianName: string;
-    };
-} = {
+    }
+> = {
     'HD Key Tree': {
         name: 'HD Key Tree',
         tag: 'HD',
@@ -195,7 +197,7 @@ export const NETWORK_TYPES = [
     { value: NetworkType.REGTEST, label: 'REGTEST', name: 'regtest', validNames: ['regtest'] }
 ];
 
-type TypeChain<T extends ChainType> = {
+interface TypeChain<T extends ChainType> {
     enum: T;
     label: string;
     icon: string;
@@ -214,7 +216,7 @@ type TypeChain<T extends ChainType> = {
     isFractal?: boolean;
     showPrice: boolean;
     defaultExplorer: 'mempool-space' | 'unisat-explorer';
-};
+}
 
 export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
     [ChainType.BITCOIN_MAINNET]: {
@@ -349,13 +351,13 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
 
 export const CHAINS = Object.values(CHAINS_MAP);
 
-export type TypeChainGroup = {
+export interface TypeChainGroup {
     type: 'single' | 'list';
     chain?: TypeChain<ChainType>;
     label?: string;
     icon?: string;
     items?: TypeChain<ChainType>[];
-};
+}
 
 export const CHAIN_GROUPS: TypeChainGroup[] = [
     {
@@ -435,7 +437,6 @@ export const TO_LOCALE_STRING_CONFIG = {
     minimumFractionDigits: 8
 };
 
-export const SUPPORTED_DOMAINS = ['sats', 'unisat', 'x', 'btc'];
 export const SAFE_DOMAIN_CONFIRMATION = 3;
 
 export const GITHUB_URL = 'https://github.com/btc-vision/opwallet';

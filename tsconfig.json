@@ -1,29 +1,50 @@
 {
-  "compilerOptions": {
-    "target": "ES2020",
-    "lib": ["dom", "dom.iterable", "esnext"],
-    "baseUrl": "./",
-    "paths": {
-      "@/*": ["./src/*"]
+    "compilerOptions": {
+        "target": "ESNext",
+        "lib": [
+            "dom",
+            "dom.iterable",
+            "esnext"
+        ],
+        "baseUrl": "./",
+        "paths": {
+            "@/*": [
+                "./src/*"
+            ]
+        },
+        "noImplicitAny": false,
+        "downlevelIteration": true,
+        "types": [
+            "chrome",
+            "node",
+            "react",
+            "react-dom"
+        ],
+        "allowJs": true,
+        "skipLibCheck": true,
+        "esModuleInterop": true,
+        "allowSyntheticDefaultImports": true,
+        "strict": true,
+        "forceConsistentCasingInFileNames": true,
+        "noFallthroughCasesInSwitch": true,
+        "module": "esnext",
+        "moduleResolution": "node",
+        "resolveJsonModule": true,
+        "isolatedModules": false,
+        "jsx": "react-jsx",
+        "plugins": [
+            {
+                "transform": "typescript-transform-paths",
+                "afterDeclarations": true
+            }
+        ]
     },
-    "noImplicitAny": false,
-    "downlevelIteration": true,
-    "types": ["chrome", "node", "react", "react-dom"],
-    "allowJs": true,
-    "skipLibCheck": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
-    "strict": true,
-    "forceConsistentCasingInFileNames": true,
-    "noFallthroughCasesInSwitch": true,
-    "module": "esnext",
-    "moduleResolution": "node",
-    "resolveJsonModule": true,
-    "isolatedModules": false,
-    "jsx": "react-jsx",
-    "plugins": [{ "transform": "typescript-transform-paths", "afterDeclarations": true }],
-    "experimentalDecorators": true
-  },
-  "exclude": ["./node_modules"],
-  "include": ["src", "src/ui/pages/OpNet/.tsx"]
+    "exclude": [
+        "./node_modules"
+    ],
+    "include": [
+        "src"
+    ]
 }
+
+

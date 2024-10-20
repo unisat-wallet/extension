@@ -7,7 +7,7 @@ const configs = {
 };
 
 const config = (env) => {
-    if (env.config == 'dev') {
+    if (env.config === 'dev') {
         process.env.NODE_ENV = 'development';
         process.env.BABEL_ENV = 'development';
     } else {
@@ -21,15 +21,32 @@ const config = (env) => {
             fallback: {
                 vm: require.resolve('vm-browserify')
             }
-        },
-        ignoreWarnings: [/./]
+        }
+        //ignoreWarnings: [/./]
     };
 
-    if (env.config) {
-        return webpackMerge.merge(commonConfig(env), configs[env.config], toAdd);
-    }
+    let finalConfigs = env.config
+        ? webpackMerge.merge(commonConfig(env), configs[env.config], toAdd)
+        : webpackMerge.merge(commonConfig(env), toAdd);
 
-    return webpackMerge.merge(commonConfig(env), toAdd);
+    const addedConfigs = {
+        experiments: {
+            outputModule: true,
+            asyncWebAssembly: false,
+            syncWebAssembly: true
+        },
+        node: {
+            __dirname: false
+        },
+        optimization: {
+            usedExports: true
+        },
+        target: 'web'
+    };
+
+    finalConfigs = webpackMerge.merge(finalConfigs, addedConfigs);
+
+    return finalConfigs;
 };
 
 module.exports = config;

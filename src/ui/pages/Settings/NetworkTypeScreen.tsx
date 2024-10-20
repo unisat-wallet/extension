@@ -37,8 +37,7 @@ export default function NetworkTypeScreen() {
                                     reloadAccounts();
                                     navigate('MainScreen');
                                     tools.toastSuccess(`Changed to ${item.label}`);
-                                }}
-                            >
+                                }}>
                                 <Row full justifyBetween itemsCenter>
                                     <Row itemsCenter>
                                         <Image src={item.icon} size={30} style={{ opacity: item.disable ? 0.7 : 1 }} />

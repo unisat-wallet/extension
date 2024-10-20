@@ -7,7 +7,7 @@ import { Popover } from '../Popover';
 import { Row } from '../Row';
 import { Text } from '../Text';
 
-const riskColor: { [key: string]: ColorTypes } = {
+const riskColor: Record<string, ColorTypes> = {
     high: 'danger',
     low: 'orange'
 };
@@ -31,8 +31,7 @@ export const WarningPopover = ({
                                 <Card
                                     preset="style2"
                                     bg={risk.color || riskColor[risk.level]}
-                                    style={{ width: 60, height: 60 }}
-                                >
+                                    style={{ width: 60, height: 60 }}>
                                     <Text text={risk.level} size="lg" />
                                 </Card>
                                 <Text text={risk.desc} />

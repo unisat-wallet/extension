@@ -1,7 +1,9 @@
+import BigNumber from 'bignumber.js';
 import { getContract, IOP_20Contract, IWBTCContract, OP_20_ABI, WBTC_ABI } from 'opnet';
 import { useEffect, useMemo, useState } from 'react';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
+import { OPTokenInfo } from '@/shared/types';
 import { addressShortner } from '@/shared/utils';
 import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
@@ -13,9 +15,9 @@ import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Address } from '@btc-vision/transaction';
+import { Wallet } from '@btc-vision/transaction';
 
-import { useNavigate } from '../MainRoute';
+import { RouteTypes, useNavigate } from '../MainRoute';
 
 interface LocationState {
     address: string;
@@ -24,28 +26,39 @@ interface LocationState {
 export default function OpNetTokenScreen() {
     const navigate = useNavigate();
 
-    const { address } = useLocationState<LocationState>();
-    const [tokenSummary, setTokenSummary] = useState<any>({
-        opNetBalance: {
-            address: '',
-            name: '',
-            symbol: '',
-            amount: '',
-            divisibility: 0
-        }
+    const params = useLocationState<LocationState>();
+    const [tokenSummary, setTokenSummary] = useState<OPTokenInfo>({
+        address: '',
+        name: '',
+        symbol: '',
+        logo: '',
+        amount: 0n,
+        divisibility: 0
     });
 
-    const [btcBalance, setBtcBalance] = useState<any>({
-        opNetBalance: {
-            address: '',
-            name: '',
-            symbol: '',
-            amount: '',
-            divisibility: 0
-        }
+    const [btcBalance, setBtcBalance] = useState<OPTokenInfo>({
+        address: '',
+        name: '',
+        symbol: '',
+        logo: '',
+        amount: 0n,
+        divisibility: 0
     });
+
+    const getWallet = async () => {
+        const currentWalletAddress = await wallet.getCurrentAccount();
+        const pubkey = currentWalletAddress.pubkey;
+
+        const wifWallet = await wallet.getInternalPrivateKey({
+            pubkey: pubkey,
+            type: currentWalletAddress.type
+        });
+
+        return Wallet.fromWif(wifWallet.wif, Web3API.network);
+    };
 
     const account = useCurrentAccount();
+
     const [loading, setLoading] = useState(true);
     const [isOwner, setIsOwner] = useState(false);
 
@@ -55,35 +68,33 @@ export default function OpNetTokenScreen() {
     const [rewardPool, setRewardPool] = useState<bigint>(0n);
 
     const wallet = useWallet();
+    const isWBTC = !!(Web3API.WBTC && tokenSummary.address === Web3API.WBTC.p2tr(Web3API.network));
 
     useEffect(() => {
         const setWallet = async () => {
-            Web3API.setNetwork(await wallet.getChainType());
-
-            if (!Web3API.WBTC) {
-                tools.toastError('WBTC not found');
+            if (!isWBTC || !Web3API.WBTC) {
                 return;
             }
 
-            const walletAddressPub = Address.fromString(account.pubkey);
+            Web3API.setNetwork(await wallet.getChainType());
 
+            const myWallet = await getWallet();
             const contract: IWBTCContract = getContract<IWBTCContract>(
                 Web3API.WBTC,
                 WBTC_ABI,
                 Web3API.provider,
                 Web3API.network,
-                walletAddressPub
+                myWallet.address
             );
 
             try {
-                const getRewards = (await contract.stakedReward(walletAddressPub)) as unknown as { decoded: bigint[] };
-                const getStakedAmount = (await contract.stakedAmount(walletAddressPub)) as unknown as {
-                    decoded: bigint[];
-                };
+                const getRewards = await contract.stakedReward(myWallet.address);
+                const getStakedAmount = await contract.stakedAmount(myWallet.address);
 
-                setStakeReward(getRewards.decoded[0]);
-                setStakedAmount(getStakedAmount.decoded[0]);
+                setStakeReward(getRewards.properties.amount);
+                setStakedAmount(getStakedAmount.properties.amount);
             } catch (e) {
+                console.error(e);
                 tools.toastError('Error in getting Stake Rewards');
                 return;
             }
@@ -92,8 +103,6 @@ export default function OpNetTokenScreen() {
                 const rewardPool = (await contract.rewardPool()) as unknown as { decoded: bigint[] };
                 const totalStaked = (await contract.totalStaked()) as unknown as { decoded: bigint[] };
 
-                //const timeStaked = (await contract.unstake()) as unknown as { decoded: any };
-
                 setRewardPool(rewardPool.decoded[0]);
                 setTotalStaked(totalStaked.decoded[0]);
             } catch (e) {
@@ -101,50 +110,54 @@ export default function OpNetTokenScreen() {
                 return;
             }
         };
+
         void setWallet();
 
         tools.showLoading(false);
-    }, []);
+    }, [tokenSummary.address]);
 
     const unitBtc = useBTCUnit();
     useEffect(() => {
         const getAddress = async () => {
             Web3API.setNetwork(await wallet.getChainType());
 
+            const myWallet = await getWallet();
             const btcBalance = await Web3API.getBalance(account.address, true);
-
-            const walletAddressPub = Address.fromString(account.pubkey);
+            setBtcBalance({
+                address: '',
+                amount: btcBalance,
+                divisibility: 8,
+                symbol: unitBtc,
+                name: 'Bitcoin',
+                logo: ''
+            });
 
             const contract: IOP_20Contract = getContract<IOP_20Contract>(
-                address,
+                params.address,
                 OP_20_ABI,
                 Web3API.provider,
-                Web3API.network
+                Web3API.network,
+                myWallet.address
             );
-            const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(address);
+
+            const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(
+                params.address
+            );
+            if (!contractInfo) {
+                throw new Error('Contract information not found');
+            }
 
             try {
-                const balance = await contract.balanceOf(walletAddressPub);
-
-                setBtcBalance({
-                    address: '',
-                    amount: btcBalance,
-                    divisibility: 8,
-                    symbol: unitBtc,
-                    name: 'Bitcoin',
-                    logo: ''
-                });
-
+                const balance = await contract.balanceOf(myWallet.address);
                 const newSummaryData = {
-                    opNetBalance: {
-                        address: address,
-                        name: contractInfo?.name || '',
-                        amount: BigInt(balance.decoded[0].toString()),
-                        divisibility: contractInfo?.decimals || 8,
-                        symbol: contractInfo?.symbol,
-                        logo: contractInfo?.logo
-                    }
+                    address: params.address,
+                    name: contractInfo.name ?? '',
+                    amount: balance.properties.balance,
+                    divisibility: contractInfo.decimals ?? 8,
+                    symbol: contractInfo.symbol,
+                    logo: contractInfo.logo
                 };
+
                 setTokenSummary(newSummaryData);
             } catch (e) {
                 tools.toastError('Error in getting balance');
@@ -153,7 +166,7 @@ export default function OpNetTokenScreen() {
 
             try {
                 const getOwner = await contract.owner();
-                setIsOwner(getOwner.decoded[0] === account.address);
+                setIsOwner(myWallet.address.equals(getOwner.properties.owner));
             } catch (e) {
                 tools.toastError('Error in getting owner');
                 return;
@@ -161,31 +174,38 @@ export default function OpNetTokenScreen() {
 
             setLoading(false);
         };
+
         void getAddress();
     }, [account.address, unitBtc]);
 
     const enableTransfer = useMemo(() => {
         let enable = false;
-        if (tokenSummary.opNetBalance.amount !== '0') {
+        if (tokenSummary.amount) {
             enable = true;
         }
+
         return enable;
     }, [tokenSummary]);
-    const copy = (data) => {
-        copyToClipboard(data);
-        tools.toastSuccess('Copied' + data);
+
+    const copy = async (data: string) => {
+        await copyToClipboard(data);
+        tools.toastSuccess(`Copied!`);
     };
+
     const deleteToken = async () => {
         const getChain = await wallet.getChainType();
-        const tokensImported = localStorage.getItem('tokensImported_' + getChain);
+        const tokensImported = localStorage.getItem('opnetTokens_' + getChain);
+
         if (tokensImported) {
-            let updatedTokens = JSON.parse(tokensImported);
-            updatedTokens = updatedTokens.filter((address) => address !== tokenSummary.opNetBalance.address);
-            localStorage.setItem('tokensImported_' + getChain, JSON.stringify(updatedTokens));
+            let updatedTokens: string[] = JSON.parse(tokensImported);
+            updatedTokens = updatedTokens.filter((address) => address !== tokenSummary.address);
+            localStorage.setItem('opnetTokens_' + getChain, JSON.stringify(updatedTokens));
         }
+
         tools.toastSuccess('Token removed from imported list');
         window.history.go(-1);
     };
+
     const tools = useTools();
     if (loading) {
         return (
@@ -198,6 +218,7 @@ export default function OpNetTokenScreen() {
             </Layout>
         );
     }
+
     return (
         <Layout>
             <Header
@@ -209,12 +230,12 @@ export default function OpNetTokenScreen() {
                 <Content>
                     <Column py="xl" style={{ borderBottomWidth: 1, borderColor: colors.white_muted }}>
                         <Row itemsCenter fullX justifyCenter>
-                            <Image src={tokenSummary.opNetBalance.logo} size={fontSizes.tiny} />
+                            <Image src={tokenSummary.logo} size={fontSizes.tiny} />
                             <Text
                                 text={`${runesUtils.toDecimalAmount(
-                                    tokenSummary.opNetBalance.amount,
-                                    tokenSummary.opNetBalance.divisibility
-                                )} ${tokenSummary.opNetBalance.symbol}`}
+                                    new BigNumber(tokenSummary.amount.toString()),
+                                    tokenSummary.divisibility
+                                )} ${tokenSummary.symbol}`}
                                 preset="bold"
                                 textCenter
                                 size="xxl"
@@ -227,11 +248,11 @@ export default function OpNetTokenScreen() {
                             fullX
                             justifyCenter
                             onClick={(e) => {
-                                copy(tokenSummary.opNetBalance.address);
+                                copy(tokenSummary.address);
                             }}>
                             <Icon icon="copy" color="textDim" />
                             <Text
-                                text={addressShortner(tokenSummary.opNetBalance.address)}
+                                text={addressShortner(tokenSummary.address)}
                                 color="textDim"
                                 style={{
                                     overflowWrap: 'anywhere'
@@ -240,16 +261,14 @@ export default function OpNetTokenScreen() {
                         </Row>
 
                         <Row justifyBetween mt="lg">
-                            {tokenSummary.opNetBalance.address === Web3API.WBTC && btcBalance.divisibility == 8 ? (
+                            {isWBTC && btcBalance.divisibility == 8 ? (
                                 <>
                                     <Button
                                         text="Wrap Bitcoin"
                                         preset="primary"
                                         icon="wallet"
                                         onClick={() => {
-                                            navigate('WrapBitcoinOpnet', {
-                                                OpNetBalance: btcBalance
-                                            });
+                                            navigate(RouteTypes.WrapBitcoinOpnet, btcBalance);
                                         }}
                                         full
                                     />
@@ -258,9 +277,7 @@ export default function OpNetTokenScreen() {
                                         preset="primary"
                                         icon="wallet"
                                         onClick={() => {
-                                            navigate('UnWrapBitcoinOpnet', {
-                                                OpNetBalance: tokenSummary.opNetBalance
-                                            });
+                                            navigate(RouteTypes.UnWrapBitcoinOpnet, tokenSummary);
                                         }}
                                         full
                                     />
@@ -276,24 +293,20 @@ export default function OpNetTokenScreen() {
                                 style={!enableTransfer ? { backgroundColor: 'grey' } : {}}
                                 disabled={!enableTransfer}
                                 onClick={(e) => {
-                                    navigate('SendOpNetScreen', {
-                                        OpNetBalance: tokenSummary.opNetBalance
-                                    });
+                                    navigate(RouteTypes.SendOpNetScreen, tokenSummary);
                                 }}
                                 full
                             />
                         </Row>
                         <Row justifyBetween mt="lg">
-                            {tokenSummary.opNetBalance.address === Web3API.WBTC && btcBalance.divisibility == 8 ? (
+                            {isWBTC && btcBalance.divisibility == 8 ? (
                                 <>
                                     <Button
                                         text="Stake WBTC"
                                         preset="primary"
                                         icon="down"
                                         onClick={(e) => {
-                                            navigate('StakeWBTCoPNet', {
-                                                OpNetBalance: tokenSummary.opNetBalance
-                                            });
+                                            navigate(RouteTypes.StakeWBTCoPNet, tokenSummary);
                                         }}
                                         full
                                     />
@@ -302,9 +315,7 @@ export default function OpNetTokenScreen() {
                                         preset="primary"
                                         icon="up"
                                         onClick={(e) => {
-                                            navigate('UnStakeWBTCoPNet', {
-                                                OpNetBalance: tokenSummary.opNetBalance
-                                            });
+                                            navigate(RouteTypes.UnStakeWBTCoPNet, tokenSummary);
                                         }}
                                         full
                                     />
@@ -314,49 +325,33 @@ export default function OpNetTokenScreen() {
                             )}
                         </Row>
 
-                        {tokenSummary.opNetBalance.address === Web3API.WBTC && btcBalance.divisibility == 8 ? (
+                        {isWBTC && btcBalance.divisibility == 8 ? (
                             <>
                                 <Row itemsCenter fullX justifyBetween>
                                     <Text text={'Active Stake'} color="textDim" size="md" />
                                     <Text
-                                        text={
-                                            bigIntToDecimal(stakedAmount, 8).toString() +
-                                            ' ' +
-                                            tokenSummary.opNetBalance.symbol
-                                        }
+                                        text={bigIntToDecimal(stakedAmount, 8).toString() + ' ' + tokenSummary.symbol}
                                         size="md"
                                     />
                                 </Row>
                                 <Row itemsCenter fullX justifyBetween>
                                     <Text text={'Reward'} color="textDim" size="md" />
                                     <Text
-                                        text={
-                                            bigIntToDecimal(stakedReward, 8).toString() +
-                                            ' ' +
-                                            tokenSummary.opNetBalance.symbol
-                                        }
+                                        text={bigIntToDecimal(stakedReward, 8).toString() + ' ' + tokenSummary.symbol}
                                         size="md"
                                     />
                                 </Row>
                                 <Row itemsCenter fullX justifyBetween>
                                     <Text text={'Total Staked'} color="textDim" size="md" />
                                     <Text
-                                        text={
-                                            bigIntToDecimal(totalStaked, 8).toString() +
-                                            ' ' +
-                                            tokenSummary.opNetBalance.symbol
-                                        }
+                                        text={bigIntToDecimal(totalStaked, 8).toString() + ' ' + tokenSummary.symbol}
                                         size="md"
                                     />
                                 </Row>
                                 <Row itemsCenter fullX justifyBetween>
                                     <Text text={'Reward Pool'} color="textDim" size="md" />
                                     <Text
-                                        text={
-                                            bigIntToDecimal(rewardPool, 8).toString() +
-                                            ' ' +
-                                            tokenSummary.opNetBalance.symbol
-                                        }
+                                        text={bigIntToDecimal(rewardPool, 8).toString() + ' ' + tokenSummary.symbol}
                                         size="md"
                                     />
                                 </Row>
@@ -367,10 +362,10 @@ export default function OpNetTokenScreen() {
                     </Column>
 
                     <Text
-                        text={tokenSummary.opNetBalance.name}
+                        text={tokenSummary.name}
                         preset="title-bold"
                         onClick={() => {
-                            copyToClipboard(tokenSummary.opNetBalance.name).then(() => {
+                            copyToClipboard(tokenSummary.name).then(() => {
                                 tools.toastSuccess('Copied');
                             });
                         }}></Text>
@@ -382,9 +377,7 @@ export default function OpNetTokenScreen() {
                                     preset="primary"
                                     icon="pencil"
                                     onClick={(e) => {
-                                        navigate('Mint', {
-                                            OpNetBalance: tokenSummary.opNetBalance
-                                        });
+                                        navigate(RouteTypes.Mint, tokenSummary);
                                     }}
                                     full
                                 />
@@ -412,9 +405,7 @@ export default function OpNetTokenScreen() {
                             style={!enableTransfer ? { backgroundColor: 'grey' } : {}}
                             disabled={!enableTransfer}
                             onClick={(e) => {
-                                navigate('Swap', {
-                                    OpNetBalance: tokenSummary.opNetBalance
-                                });
+                                navigate(RouteTypes.Swap, tokenSummary);
                             }}
                             full
                         />
@@ -424,9 +415,9 @@ export default function OpNetTokenScreen() {
                             icon="close"
                             style={!enableTransfer ? { backgroundColor: 'grey' } : {}}
                             disabled={!enableTransfer}
-                            onClick={(e) => {
+                            onClick={async () => {
                                 // Remove the token address from tokensImported in localStorage
-                                deleteToken();
+                                await deleteToken();
                             }}
                             full
                         />
@@ -434,29 +425,5 @@ export default function OpNetTokenScreen() {
                 </Content>
             )}
         </Layout>
-    );
-}
-
-function Section({ value, title, link }: { value: string | number; title: string; link?: string }) {
-    const tools = useTools();
-    return (
-        <Column>
-            <Text text={title} preset="sub" />
-            <Text
-                text={value}
-                preset={link ? 'link' : 'regular'}
-                size="xs"
-                wrap
-                onClick={() => {
-                    if (link) {
-                        window.open(link);
-                    } else {
-                        copyToClipboard(value).then(() => {
-                            tools.toastSuccess('Copied');
-                        });
-                    }
-                }}
-            />
-        </Column>
     );
 }

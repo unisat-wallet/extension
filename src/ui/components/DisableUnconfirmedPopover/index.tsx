@@ -17,15 +17,14 @@ export const DisableUnconfirmedsPopover = ({ onClose }: { onClose: () => void })
                 <Column gap="zero" mt="sm">
                     <Text
                         size="sm"
-                        text={`This message serves as a notice that if Runes (or ARC-20) assets are detected in your address, your
-          unconfirmed balances will not be spendable. You don't need to do anything.`}
+                        text={`This message is here to remind you that OP_NET spend all UTXOs that are bigger than 10,000. All UTXOs under 10,000 sat won't be spendable by OP_NET. This means that your Ordinals /Runes/BRC20 are safe.`}
                     />
 
                     <Text
                         mt="md"
                         preset="sub"
                         size="sm"
-                        text="To enable spending of unconfirmed balances, please visit the advanced options in settings."
+                        text="Please be aware that this is a security measure to protect the network and your assets."
                     />
                 </Column>
 
@@ -34,7 +33,7 @@ export const DisableUnconfirmedsPopover = ({ onClose }: { onClose: () => void })
                         text="I understand"
                         full
                         preset="defaultV2"
-                        onClick={(e) => {
+                        onClick={() => {
                             if (onClose) {
                                 onClose();
                             }

@@ -40,8 +40,7 @@ export const ConfirmUnWrap = ({
                     <Row
                         onClick={() => {
                             onClose();
-                        }}
-                    >
+                        }}>
                         <CloseOutlined />
                     </Row>
                 </Row>
@@ -59,8 +58,7 @@ export const ConfirmUnWrap = ({
                     onClick={(e) => {
                         setAcceptWrap(true);
                     }}
-                    full
-                ></Button>
+                    full></Button>
             </Row>
         </BottomModal>
     );

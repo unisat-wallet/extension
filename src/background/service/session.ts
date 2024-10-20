@@ -1,53 +1,50 @@
 import { permissionService } from '@/background/service';
+import { SessionEvent, SessionEventPayload } from '@/shared/interfaces/SessionEvent';
 
 export class Session {
-    origin = '';
+    public origin: string = '';
+    public icon: string = '';
+    public name: string = '';
 
-    icon = '';
+    public key: number = 0;
 
-    name = '';
-
-    constructor(data) {
-        if (data) {
-            this.setProp(data);
-        }
+    setProp(params: { origin: string; icon: string; name: string }) {
+        this.origin = params.origin;
+        this.icon = params.icon;
+        this.name = params.name;
     }
 
-    setProp({ origin, icon, name }) {
-        this.origin = origin;
-        this.icon = icon;
-        this.name = name;
-    }
+    pushMessage<T extends SessionEvent>(_ev: T, _data?: SessionEventPayload<T>, _origin?: string) {}
 }
 
 // for each tab
 const sessionMap = new Map();
 
-const getSession = (id) => {
+const getSession = (id: number) => {
     return sessionMap.get(id);
 };
 
-const getOrCreateSession = (id) => {
+const getOrCreateSession = (id: number) => {
     if (sessionMap.has(id)) {
         return getSession(id);
     }
 
-    return createSession(id, null);
+    return createSession(id);
 };
 
-const createSession = (id, data) => {
-    const session = new Session(data);
+const createSession = (id: number) => {
+    const session = new Session();
     sessionMap.set(id, session);
 
     return session;
 };
 
-const deleteSession = (id) => {
+const deleteSession = (id: number) => {
     sessionMap.delete(id);
 };
 
-const broadcastEvent = (ev, data?, origin?) => {
-    let sessions: any[] = [];
+function broadcastEvent<T extends SessionEvent>(ev: T, data?: SessionEventPayload<T>, origin?: string) {
+    let sessions: Session[] = [];
     sessionMap.forEach((session, key) => {
         if (permissionService.hasPermission(session.origin)) {
             sessions.push({
@@ -64,14 +61,14 @@ const broadcastEvent = (ev, data?, origin?) => {
 
     sessions.forEach((session) => {
         try {
-            session.pushMessage?.(ev, data);
+            session.pushMessage(ev, data);
         } catch (e) {
             if (sessionMap.has(session.key)) {
                 deleteSession(session.key);
             }
         }
     });
-};
+}
 
 export default {
     getSession,

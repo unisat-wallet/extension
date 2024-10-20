@@ -117,8 +117,7 @@ export default function SplitUtxoScreen() {
                     text="Next"
                     onClick={(e) => {
                         console.log(e);
-                    }}
-                ></Button>
+                    }}></Button>
             </Content>
         </Layout>
     );

@@ -100,7 +100,7 @@ function Step1({ onNext }) {
 
 function Step2({ onBack, onNext }) {
     const onSucceed = useCallback(
-        async ({ type, cbor }) => {
+        ({ type, cbor }) => {
             onNext({ type, cbor });
         },
         [onNext]

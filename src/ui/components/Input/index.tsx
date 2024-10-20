@@ -1,17 +1,13 @@
-import bitcore from 'bitcore-lib';
 import { isNull } from 'lodash';
 import React, { CSSProperties, useEffect, useState } from 'react';
 
-import { SAFE_DOMAIN_CONFIRMATION, SUPPORTED_DOMAINS } from '@/shared/constant';
-import { getSatsName } from '@/shared/lib/satsname-utils';
-import { Inscription } from '@/shared/types';
+import Web3API from '@/shared/web3/Web3API';
 import { colors } from '@/ui/theme/colors';
 import { spacing } from '@/ui/theme/spacing';
 import { useWallet } from '@/ui/utils';
+import { AddressVerificator } from '@btc-vision/transaction';
 
-import { AccordingInscription } from '../AccordingInscription';
 import { useTools } from '../ActionComponent';
-import { CopyableAddress } from '../CopyableAddress';
 import { Icon } from '../Icon';
 import { Row } from '../Row';
 import { $textPresets, Text } from '../Text';
@@ -32,7 +28,7 @@ export interface InputProps {
     style?: CSSProperties;
     containerStyle?: CSSProperties;
     addressInputData?: { address: string; domain: string };
-    onAddressInputChange?: (params: { address: string; domain: string; inscription?: Inscription }) => void;
+    onAddressInputChange?: (params: { address: string; domain: string }) => void;
     onAmountInputChange?: (amount: string) => void;
     disabled?: boolean;
     disableDecimal?: boolean;
@@ -188,15 +184,13 @@ export const AddressInput = (props: InputProps) => {
 
     const [inputVal, setInputVal] = useState(addressInputData.domain || addressInputData.address);
 
-    const [inscription, setInscription] = useState<Inscription>();
     const [parseName, setParseName] = useState('');
     const wallet = useWallet();
     const tools = useTools();
     useEffect(() => {
         onAddressInputChange({
             address: validAddress,
-            domain: parseAddress ? inputVal : '',
-            inscription
+            domain: parseAddress ? inputVal : ''
         });
     }, [validAddress]);
 
@@ -217,9 +211,6 @@ export const AddressInput = (props: InputProps) => {
             setValidAddress('');
         }
 
-        if (inscription) {
-            setInscription(undefined);
-        }
         setParseName('');
     };
 
@@ -229,64 +220,13 @@ export const AddressInput = (props: InputProps) => {
 
         resetState();
 
-        const teststr = inputAddress.toLowerCase();
-        const satsname = getSatsName(teststr);
-        if (satsname) {
-            if (SUPPORTED_DOMAINS.includes(satsname.suffix)) {
-                setSearching(true);
-                wallet
-                    .queryDomainInfo(encodeURIComponent(inputAddress))
-                    .then((inscription) => {
-                        resetState();
-                        if (!inscription) {
-                            setParseError(`${inputAddress} does not exist`);
-                            return;
-                        }
-                        setInscription(inscription);
-                        if (inscription.utxoConfirmation < SAFE_DOMAIN_CONFIRMATION) {
-                            setParseError(
-                                `This domain has been transferred or inscribed recently. Please wait for block confirmations (${inscription.utxoConfirmation}/3).`
-                            );
-                            return;
-                        }
-
-                        const address = inscription.address || '';
-                        setParseAddress(address);
-                        setValidAddress(address);
-                        setParseName(satsname.suffix);
-                    })
-                    .catch((err: Error) => {
-                        const errMsg = err.message + ' for ' + inputAddress;
-                        setFormatError(errMsg);
-                    })
-                    .finally(() => {
-                        setSearching(false);
-                    });
-            } else {
-                const names = SUPPORTED_DOMAINS.map((v) => `.${v}`);
-                let str = '';
-                for (let i = 0; i < names.length; i++) {
-                    if (i == 0) {
-                        // empty
-                    } else if (i < names.length - 1) {
-                        str += ', ';
-                    } else {
-                        str += ' and ';
-                    }
-                    str += `${names[i]}`;
-                }
-                setFormatError(`Currently only ${str} are supported.`);
-                return;
-            }
-        } else {
-            // @ts-ignore
-            const isValid = bitcore.Address.isValid(inputAddress);
-            if (!isValid) {
-                setFormatError('Recipient address is invalid');
-                return;
-            }
-            setValidAddress(inputAddress);
+        const isValid = AddressVerificator.validateBitcoinAddress(inputAddress, Web3API.network);
+        if (!isValid) {
+            setFormatError('Recipient address is invalid');
+            return;
         }
+
+        setValidAddress(inputAddress);
     };
 
     return (
@@ -296,7 +236,7 @@ export const AddressInput = (props: InputProps) => {
                     placeholder={'Address or name (sats, unisat, ...) '}
                     type={'text'}
                     style={Object.assign({}, $baseInputStyle, $inputStyleOverride)}
-                    onChange={async (e) => {
+                    onChange={(e) => {
                         handleInputAddress(e);
                     }}
                     defaultValue={inputVal}
@@ -306,12 +246,6 @@ export const AddressInput = (props: InputProps) => {
                 {searching && (
                     <Row full mt="sm">
                         <Text preset="sub" text={'Loading...'} />
-                    </Row>
-                )}
-                {inscription && (
-                    <Row full itemsCenter mt="sm">
-                        <CopyableAddress address={parseAddress} />
-                        <AccordingInscription inscription={inscription} />
                     </Row>
                 )}
             </div>

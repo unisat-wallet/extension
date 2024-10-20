@@ -15,6 +15,7 @@ import { EcKeyPair, Wallet } from '@btc-vision/transaction';
 
 import { useNavigate } from '../MainRoute';
 
+
 const ECPair = ECPairFactory(ecc);
 
 function Step1({
@@ -126,9 +127,16 @@ function Step2({
 
     const [previewAddresses, setPreviewAddresses] = useState<string[]>(hdPathOptions.map((v) => ''));
 
-    const [addressAssets, setAddressAssets] = useState<{
-        [key: string]: { total_btc: string; satoshis: number; total_inscription: number };
-    }>({});
+    const [addressAssets, setAddressAssets] = useState<
+        Record<
+            string,
+            {
+                total_btc: string;
+                satoshis: number;
+                total_inscription: number;
+            }
+        >
+    >({});
 
     const selfRef = useRef({
         maxSatoshis: 0,

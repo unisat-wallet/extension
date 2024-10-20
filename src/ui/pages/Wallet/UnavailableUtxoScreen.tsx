@@ -4,11 +4,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { UNCONFIRMED_HEIGHT } from '@/shared/constant';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { Loading } from '@/ui/components/ActionComponent/Loading';
-import Arc20PreviewCard from '@/ui/components/Arc20PreviewCard';
 import AssetTag from '@/ui/components/AssetTag';
 import { Empty } from '@/ui/components/Empty';
-import InscriptionPreview from '@/ui/components/InscriptionPreview';
-import { useBTCUnit, useOrdinalsWebsite } from '@/ui/state/settings/hooks';
+import { useBTCUnit } from '@/ui/state/settings/hooks';
 import { useSetSpendUnavailableUtxosCallback } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
@@ -23,10 +21,9 @@ export default function UnavailableUtxoScreen() {
     const unitBtc = useBTCUnit();
 
     const [utxos, setUtxos] = useState<UnavailableUnspentOutput[]>([]);
-
     const [selectedUtxoIds, setSelectedUtxoIds] = useState({});
-
     const [loading, setLoading] = useState(false);
+
     useEffect(() => {
         setLoading(true);
         wallet.getUnavailableUtxos().then((res) => {
@@ -36,12 +33,10 @@ export default function UnavailableUtxoScreen() {
     }, []);
 
     const setSpendUnavailableUtxos = useSetSpendUnavailableUtxosCallback();
-
     const selectedCount = useMemo(() => {
         return Object.keys(selectedUtxoIds).filter((key) => selectedUtxoIds[key]).length;
     }, [selectedUtxoIds]);
 
-    const ordinalsWebsite = useOrdinalsWebsite();
     return (
         <Layout>
             <Header
@@ -56,17 +51,18 @@ export default function UnavailableUtxoScreen() {
                 ) : (
                     <Column>
                         {utxos.length > 0 ? (
-                            utxos.map((item, index) => {
-                                const selected = selectedUtxoIds[item.txid + '' + item.vout];
+                            utxos.map((item) => {
+                                const key = `${item.txid}${item.vout}`;
+
+                                const selected = selectedUtxoIds[key];
                                 return (
                                     <Card
-                                        key={item.txid + '' + item.vout}
+                                        key={key}
                                         style={{
                                             flexDirection: 'column',
                                             borderColor: selected ? 'gold' : 'transparent',
                                             borderWidth: 1
-                                        }}
-                                    >
+                                        }}>
                                         <Row full justifyBetween itemsCenter>
                                             <Row itemsCenter>
                                                 <Text
@@ -93,47 +89,6 @@ export default function UnavailableUtxoScreen() {
                                         </Row>
                                         <Row full style={{ borderBottomWidth: 1, borderColor: colors.border }}></Row>
 
-                                        {item.inscriptions.length > 0 ? (
-                                            <Row overflowX fullX>
-                                                {item.inscriptions.map((w) => (
-                                                    <InscriptionPreview
-                                                        key={w.inscriptionId}
-                                                        data={w as any}
-                                                        preset="small"
-                                                        onClick={() => {
-                                                            window.open(
-                                                                `${ordinalsWebsite}/inscription/${w.inscriptionId}`
-                                                            );
-                                                        }}
-                                                    />
-                                                ))}
-                                            </Row>
-                                        ) : null}
-                                        {item.inscriptions.length > 0 ? (
-                                            <Row
-                                                full
-                                                style={{ borderBottomWidth: 1, borderColor: colors.border }}
-                                            ></Row>
-                                        ) : null}
-
-                                        {item.atomicals.length > 0 ? (
-                                            <Row overflowX fullX>
-                                                {item.atomicals.map((w) => (
-                                                    <Arc20PreviewCard
-                                                        key={w.ticker}
-                                                        ticker={w.ticker || ''}
-                                                        amt={item.satoshis}
-                                                    />
-                                                ))}
-                                            </Row>
-                                        ) : null}
-                                        {item.atomicals.length > 0 ? (
-                                            <Row
-                                                full
-                                                style={{ borderBottomWidth: 1, borderColor: colors.border }}
-                                            ></Row>
-                                        ) : null}
-
                                         <Row full justifyBetween>
                                             <Row itemsCenter>
                                                 <Text text={satoshisToAmount(item.satoshis)} preset="bold" />
@@ -144,11 +99,10 @@ export default function UnavailableUtxoScreen() {
 
                                                 <Checkbox
                                                     onChange={(e) => {
-                                                        selectedUtxoIds[item.txid + '' + item.vout] = e.target.checked;
+                                                        selectedUtxoIds[key] = e.target.checked;
                                                         setSelectedUtxoIds(Object.assign({}, selectedUtxoIds));
                                                     }}
-                                                    style={{ fontSize: fontSizes.sm }}
-                                                ></Checkbox>
+                                                    style={{ fontSize: fontSizes.sm }}></Checkbox>
                                             </Row>
                                         </Row>
                                     </Card>
@@ -169,7 +123,7 @@ export default function UnavailableUtxoScreen() {
                             preset="primary"
                             onClick={() => {
                                 setSpendUnavailableUtxos(
-                                    utxos.filter((item) => selectedUtxoIds[item.txid + '' + item.vout])
+                                    utxos.filter((item) => selectedUtxoIds[`${item.txid}${item.vout}`])
                                 );
                                 window.history.go(-1);
                             }}

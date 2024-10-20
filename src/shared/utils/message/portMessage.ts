@@ -3,6 +3,7 @@ import { ListenCallback, RequestData } from '@/shared/types/Request.js';
 
 import Message from './index';
 
+
 // Make bigint serializable
 BigInt.prototype.toJSON = function () {
     return this.toString();
@@ -10,8 +11,7 @@ BigInt.prototype.toJSON = function () {
 
 class PortMessage extends Message {
     port: chrome.runtime.Port | null = null;
-    listenCallback?: ListenCallback;
-
+    
     constructor(port?: chrome.runtime.Port) {
         super();
 
@@ -22,14 +22,14 @@ class PortMessage extends Message {
 
     connect = (name?: string) => {
         this.port = browserRuntimeConnect(undefined, name ? { name } : undefined);
-        this.port.onMessage.addListener(async ({ _type_, data }): Promise<void> => {
+        this.port.onMessage.addListener(({ _type_, data }): void => {
             if (_type_ === `${this._EVENT_PRE}message`) {
                 this.emit('message', data);
                 return;
             }
 
             if (_type_ === `${this._EVENT_PRE}response`) {
-                await this.onResponse(data);
+                this.onResponse(data);
             }
         });
 

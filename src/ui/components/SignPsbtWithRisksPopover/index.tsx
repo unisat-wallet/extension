@@ -10,27 +10,13 @@ import { Input } from '../Input';
 import { Popover } from '../Popover';
 import { Row } from '../Row';
 import { Text } from '../Text';
-import { Arc20BurningList } from './Arc20BurningList';
 import { BadFeeRate } from './BadFeeRate';
-import { ChangingInscription } from './ChangingInscription';
-import { InscriptionBurning } from './InscriptionBurning';
-import { RunesBurningList } from './RunesBurningList';
-import { SendingOutAssets } from './SendingOutAssets';
+
 
 const AGREEMENT_TEXT = 'CONFIRM';
 
-const visibleRiskDetailTypes = [
-    RiskType.MULTIPLE_ASSETS,
-    RiskType.INSCRIPTION_BURNING,
-    RiskType.ATOMICALS_FT_BURNING,
-    RiskType.ATOMICALS_NFT_BURNING,
-    RiskType.LOW_FEE_RATE,
-    RiskType.HIGH_FEE_RATE,
-    //   RiskType.SPLITTING_INSCRIPTIONS,
-    //   RiskType.MERGING_INSCRIPTIONS,
-    RiskType.CHANGING_INSCRIPTION,
-    RiskType.RUNES_BURNING
-];
+const visibleRiskDetailTypes = [RiskType.LOW_FEE_RATE, RiskType.HIGH_FEE_RATE];
+
 export const SignPsbtWithRisksPopover = ({
     decodedPsbt,
     onConfirm,
@@ -52,28 +38,14 @@ export const SignPsbtWithRisksPopover = ({
 
     const [detailRisk, setDetailRisk] = useState<Risk | null>();
     if (detailRisk) {
-        if (detailRisk.type === RiskType.ATOMICALS_FT_BURNING) {
-            return <Arc20BurningList decodedPsbt={decodedPsbt} onClose={() => setDetailRisk(null)} />;
-        } else if (detailRisk.type === RiskType.INSCRIPTION_BURNING) {
-            return <InscriptionBurning decodedPsbt={decodedPsbt} onClose={() => setDetailRisk(null)} />;
-        } else if (detailRisk.type === RiskType.MULTIPLE_ASSETS) {
-            return <SendingOutAssets decodedPsbt={decodedPsbt} onClose={() => setDetailRisk(null)} />;
-        } else if (detailRisk.type === RiskType.LOW_FEE_RATE || detailRisk.type === RiskType.HIGH_FEE_RATE) {
+        if (detailRisk.type === RiskType.LOW_FEE_RATE || detailRisk.type === RiskType.HIGH_FEE_RATE) {
             return <BadFeeRate decodedPsbt={decodedPsbt} risk={detailRisk} onClose={() => setDetailRisk(null)} />;
-        } else if (detailRisk.type === RiskType.CHANGING_INSCRIPTION) {
-            return <ChangingInscription decodedPsbt={decodedPsbt} onClose={() => setDetailRisk(null)} />;
-        } else if (detailRisk.type === RiskType.RUNES_BURNING) {
-            return <RunesBurningList decodedPsbt={decodedPsbt} onClose={() => setDetailRisk(null)} />;
         }
     }
 
     const confirmable = useMemo(() => {
         const foundCriticalRisk = decodedPsbt.risks.find((v) => v.level === 'critical');
-        if (foundCriticalRisk) {
-            return false;
-        } else {
-            return true;
-        }
+        return !foundCriticalRisk;
     }, [decodedPsbt]);
 
     return (
@@ -87,11 +59,10 @@ export const SignPsbtWithRisksPopover = ({
                     {decodedPsbt.risks.map((risk, index) => {
                         return (
                             <Column
-                                key={'risk_' + index}
+                                key={`risk_${index}`}
                                 style={{ borderWidth: 1, borderColor: colors.border, borderRadius: 10 }}
                                 px="md"
-                                py="sm"
-                            >
+                                py="sm">
                                 <Row justifyBetween justifyCenter mt="sm">
                                     <Text text={risk.title} color={risk.level === 'warning' ? 'warning' : 'danger'} />
                                     {visibleRiskDetailTypes.includes(risk.type) ? (

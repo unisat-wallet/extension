@@ -1,6 +1,10 @@
 import { CSSProperties, memo, useMemo } from 'react';
 
-export type IframeProps = { preview: string; style?: CSSProperties; ref: any };
+export interface IframeProps {
+    preview: string;
+    style?: CSSProperties;
+    ref: any;
+}
 
 const Iframe = ({ preview, style, ref }: IframeProps) => {
     return useMemo(
@@ -12,8 +16,7 @@ const Iframe = ({ preview, style, ref }: IframeProps) => {
                 src={preview}
                 sandbox="allow-scripts"
                 scrolling="no"
-                loading="lazy"
-            ></iframe>
+                loading="lazy"></iframe>
         ),
         [preview]
     );

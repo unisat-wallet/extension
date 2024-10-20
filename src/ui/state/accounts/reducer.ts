@@ -7,28 +7,31 @@ export interface AccountsState {
     accounts: Account[];
     current: Account;
     loading: boolean;
-    balanceMap: {
-        [key: string]: {
+    balanceMap: Record<
+        string,
+        {
             amount: string;
             btc_amount: string;
             confirm_btc_amount: string;
             pending_btc_amount: string;
             inscription_amount: string;
             expired: boolean;
-        };
-    };
-    historyMap: {
-        [key: string]: {
+        }
+    >;
+    historyMap: Record<
+        string,
+        {
             list: TxHistoryItem[];
             expired: boolean;
-        };
-    };
-    inscriptionsMap: {
-        [key: string]: {
+        }
+    >;
+    inscriptionsMap: Record<
+        string,
+        {
             list: Inscription[];
             expired: boolean;
-        };
-    };
+        }
+    >;
     appSummary: AppSummary;
     inscriptionSummary: InscriptionSummary;
     addressSummary: AddressSummary;

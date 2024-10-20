@@ -8,6 +8,7 @@ import { Icon, IconTypes } from '../Icon';
 import { Row } from '../Row';
 import { Text } from '../Text';
 
+
 type Presets = keyof typeof $viewPresets;
 
 export interface ButtonProps {
@@ -63,8 +64,6 @@ const $baseViewStyle: CSSProperties = {
     justifyContent: 'center',
     alignItems: 'center',
     flexDirection: 'row',
-    // paddingVertical: spacing.small,
-    // paddingHorizontal: spacing.small,
     overflow: 'hidden',
     cursor: 'pointer',
     alignSelf: 'stretch',
@@ -81,11 +80,13 @@ const $viewPresets = {
     }) as CSSProperties,
 
     primary: Object.assign({}, $baseViewStyle, {
-        background: 'linear-gradient(103.92deg, #EBB94C 0%, #E97E00 100%)',
+        // Use specific properties instead of 'background'
+        backgroundImage: 'linear-gradient(103.92deg, #EBB94C 0%, #E97E00 100%)',
         height: '48px'
     } as CSSProperties),
 
     danger: Object.assign({}, $baseViewStyle, {
+        // If 'backgroundColor' is used, avoid shorthand 'background'
         backgroundColor: colors.red,
         height: '48px'
     } as CSSProperties),
@@ -120,7 +121,8 @@ const $viewPresets = {
     }) as CSSProperties,
 
     primaryV2: Object.assign({}, $baseViewStyle, {
-        background: 'linear-gradient(103.92deg, #EBB94C 0%, #E97E00 100%)',
+        // Use specific properties instead of 'background'
+        backgroundImage: 'linear-gradient(103.92deg, #EBB94C 0%, #E97E00 100%)',
         minHeight: 50,
         borderRadius: 12
     } as CSSProperties),
@@ -170,9 +172,6 @@ const $hoverViewPresets: Record<Presets, CSSProperties> = {
 };
 
 const $baseTextStyle: CSSProperties = {
-    // fontSize: 16,
-    // lineHeight: 20,
-    // fontFamily: typography.primary.medium,
     textAlign: 'center',
     flexShrink: 1,
     flexGrow: 0,
@@ -208,44 +207,40 @@ export function Button(props: ButtonProps) {
         text,
         subText,
         style: $viewStyleOverride,
-        pressedStyle: $pressedViewStyleOverride,
         textStyle: $textStyleOverride,
-        pressedTextStyle: $pressedTextStyleOverride,
         children,
         RightAccessory,
         LeftAccessory,
         onClick,
         icon,
         disabled,
-        full,
-        ...rest
+        full
     } = props;
 
-    const preset: Presets = props.preset || 'default';
+    const preset: Presets = props.preset ?? 'default';
     const [hover, setHover] = useState(false);
-    const $viewStyle = Object.assign(
-        {},
-        $viewPresets[preset],
-        $viewStyleOverride,
-        hover && !disabled ? $hoverViewPresets[preset] : {},
-        disabled ? $baseDisabledViewStyle : {},
-        full ? { flex: 1 } : {}
-    );
-    const $textStyle = Object.assign({}, $textPresets[preset], $textStyleOverride);
+    const $viewStyle: CSSProperties = {
+        ...$viewPresets[preset],
+        ...$viewStyleOverride,
+        ...(hover && !disabled ? $hoverViewPresets[preset] : {}),
+        ...(disabled ? $baseDisabledViewStyle : {}),
+        ...(full ? { flex: 1 } : {})
+    };
 
+    const $textStyle = Object.assign({}, $textPresets[preset], $textStyleOverride);
     const $subTextStyle = Object.assign({}, $textPresets[preset], {
         color: colors.white_muted,
         marginTop: 5,
         fontWeight: 'normal'
     } as CSSProperties);
+
     if (preset === 'bar') {
         return (
             <div
                 style={$viewStyle}
                 onMouseEnter={() => setHover(true)}
                 onMouseLeave={() => setHover(false)}
-                onClick={disabled ? undefined : onClick}
-            >
+                onClick={disabled ? undefined : onClick}>
                 <Row>
                     {LeftAccessory && <div style={$leftAccessoryStyle}>{LeftAccessory}</div>}
                     {icon && (
@@ -274,8 +269,7 @@ export function Button(props: ButtonProps) {
                 style={$viewStyle}
                 onClick={disabled ? undefined : onClick}
                 onMouseEnter={() => setHover(true)}
-                onMouseLeave={() => setHover(false)}
-            >
+                onMouseLeave={() => setHover(false)}>
                 {icon && <Icon icon={icon} style={{ marginRight: spacing.tiny, backgroundColor: colors.white }} />}
                 {text && <Text style={$textStyle} text={text} preset="regular" mt="sm" />}
             </div>
@@ -287,8 +281,7 @@ export function Button(props: ButtonProps) {
             style={$viewStyle}
             onClick={disabled ? undefined : onClick}
             onMouseEnter={() => setHover(true)}
-            onMouseLeave={() => setHover(false)}
-        >
+            onMouseLeave={() => setHover(false)}>
             {LeftAccessory && <div style={$leftAccessoryStyle}>{LeftAccessory}</div>}
             {icon && <Icon icon={icon} style={{ marginRight: spacing.tiny, backgroundColor: $textStyle.color }} />}
             {text && <Text style={$textStyle} text={text} preset="regular-bold" />}

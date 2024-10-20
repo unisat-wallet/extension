@@ -1,4 +1,4 @@
-import { CHAINS_ENUM, PaymentChannelType } from './constant';
+import { PaymentChannelType } from './constant';
 
 export enum AddressType {
     P2PKH,
@@ -24,13 +24,6 @@ export enum RestoreWalletType {
     OTHERS
 }
 
-export interface Chain {
-    name: string;
-    logo: string;
-    enum: CHAINS_ENUM;
-    network: string;
-}
-
 export interface BitcoinBalance {
     confirm_amount: string;
     pending_amount: string;
@@ -53,9 +46,6 @@ export interface AddressAssets {
 export interface TxHistoryInOutItem {
     address: string;
     value: number;
-    inscriptions: { inscriptionId: string }[];
-    runes: { spacedRune: string; symbol: string; divisibility: number; amount: string }[];
-    brc20: { ticker: string; amount: string }[];
 }
 
 export interface TxHistoryItem {
@@ -71,66 +61,6 @@ export interface TxHistoryItem {
     vout: TxHistoryInOutItem[];
     types: string[];
     methods: string[];
-}
-
-export interface Inscription {
-    inscriptionId: string;
-    inscriptionNumber: number;
-    address: string;
-    outputValue: number;
-    preview: string;
-    content: string;
-    contentType: string;
-    contentLength: number;
-    timestamp: number;
-    genesisTransaction: string;
-    location: string;
-    output: string;
-    offset: number;
-    contentBody: string;
-    utxoHeight: number;
-    utxoConfirmation: number;
-    brc20?: {
-        op: string;
-        tick: string;
-        lim: string;
-        amt: string;
-        decimal: string;
-    };
-}
-
-export interface Atomical {
-    atomicalId: string;
-    atomicalNumber: number;
-    type: 'FT' | 'NFT';
-    ticker?: string;
-    atomicalValue: number;
-
-    // mint info
-    address: string;
-    outputValue: number;
-    preview: string;
-    content: string;
-    contentType: string;
-    contentLength: number;
-    timestamp: number;
-    genesisTransaction: string;
-    location: string;
-    output: string;
-    offset: number;
-    contentBody: string;
-    utxoHeight: number;
-    utxoConfirmation: number;
-}
-
-export interface InscriptionMintedItem {
-    title: string;
-    desc: string;
-    inscriptions: Inscription[];
-}
-
-export interface InscriptionSummary {
-    mintedList: InscriptionMintedItem[];
 }
 
 export interface AppInfo {
@@ -170,24 +100,6 @@ export interface UTXO {
     satoshis: number;
     scriptPk: string;
     addressType: AddressType;
-    inscriptions: {
-        inscriptionId: string;
-        inscriptionNumber?: number;
-        offset: number;
-    }[];
-    atomicals: {
-        atomicalId: string;
-        atomicalNumber: number;
-        type: 'NFT' | 'FT';
-        ticker?: string;
-        atomicalValue?: number;
-    }[];
-
-    runes: {
-        runeid: string;
-        rune: string;
-        amount: string;
-    }[];
 }
 
 export interface UTXO_Detail {
@@ -196,15 +108,11 @@ export interface UTXO_Detail {
     satoshis: number;
     scriptPk: string;
     addressType: AddressType;
-    inscriptions: Inscription[];
 }
 
 export enum TxType {
     SIGN_TX,
-    SEND_BITCOIN,
-    SEND_ORDINALS_INSCRIPTION,
-    SEND_ATOMICALS_INSCRIPTION,
-    SEND_RUNES
+    SEND_BITCOIN
 }
 
 interface BaseUserToSignInput {
@@ -234,7 +142,7 @@ export interface ToSignInput {
     sighashTypes?: number[];
 }
 
-export type WalletKeyring = {
+export interface WalletKeyring {
     key: string;
     index: number;
     type: string;
@@ -242,7 +150,7 @@ export type WalletKeyring = {
     accounts: Account[];
     alianName: string;
     hdPath: string;
-};
+}
 
 export interface Account {
     type: string;
@@ -257,16 +165,6 @@ export interface Account {
     flag: number;
 }
 
-export interface InscribeOrder {
-    orderId: string;
-    payAddress: string;
-    totalFee: number;
-    minerFee: number;
-    originServiceFee: number;
-    serviceFee: number;
-    outputValue: number;
-}
-
 export interface TokenBalance {
     availableBalance: string;
     overallBalance: string;
@@ -277,13 +175,6 @@ export interface TokenBalance {
     selfMint: boolean;
 }
 
-export interface Arc20Balance {
-    ticker: string;
-    balance: number;
-    confirmedBalance: number;
-    unconfirmedBalance: number;
-}
-
 export interface TokenInfo {
     totalSupply: string;
     totalMinted: string;
@@ -291,11 +182,6 @@ export interface TokenInfo {
     holder: string;
     inscriptionId: string;
     selfMint?: boolean;
-}
-
-export enum TokenInscriptionType {
-    INSCRIBE_TRANSFER,
-    INSCRIBE_MINT
 }
 
 export interface TokenTransfer {
@@ -316,20 +202,8 @@ export interface AddressTokenSummary {
 }
 
 export enum RiskType {
-    SIGHASH_NONE,
-    SCAMMER_ADDRESS,
-    UNCONFIRMED_UTXO,
-    INSCRIPTION_BURNING,
-    ATOMICALS_DISABLE,
-    ATOMICALS_NFT_BURNING,
-    ATOMICALS_FT_BURNING,
-    MULTIPLE_ASSETS,
     LOW_FEE_RATE,
-    HIGH_FEE_RATE,
-    SPLITTING_INSCRIPTIONS,
-    MERGING_INSCRIPTIONS,
-    CHANGING_INSCRIPTION,
-    RUNES_BURNING
+    HIGH_FEE_RATE
 }
 
 export interface Risk {
@@ -345,19 +219,12 @@ export interface DecodedPsbt {
         vout: number;
         address: string;
         value: number;
-        inscriptions: Inscription[];
-        atomicals: Atomical[];
         sighashType: number;
-        runes: RuneBalance[];
     }[];
     outputInfos: {
         address: string;
         value: number;
-        inscriptions: Inscription[];
-        atomicals: Atomical[];
-        runes: RuneBalance[];
     }[];
-    inscriptions: { [key: string]: Inscription };
     feeRate: number;
     fee: number;
     features: {
@@ -372,7 +239,6 @@ export interface DecodedPsbt {
 export interface ToAddressInfo {
     address: string;
     domain?: string;
-    inscription?: Inscription;
 }
 
 export interface RawTxInfo {
@@ -401,12 +267,6 @@ export interface AddressSummary {
     totalSatoshis: number;
     btcSatoshis: number;
     assetSatoshis: number;
-    inscriptionCount: number;
-    atomicalsCount: number;
-    brc20Count: number;
-    brc20Count5Byte: number;
-    arc20Count: number;
-    runesCount: number;
     loading?: boolean;
 }
 
@@ -416,85 +276,13 @@ export interface VersionDetail {
     changelogs: string[];
 }
 
-export interface RuneBalance {
-    amount: string;
-    runeid: string;
-    rune: string;
-    spacedRune: string;
-    symbol: string;
-    divisibility: number;
-}
-
-export interface OpNetBalance {
+export interface OPTokenInfo {
     name: string;
     amount: bigint;
     address: string;
-    symbol?: string;
+    symbol: string;
     divisibility: number;
     logo?: string;
-}
-
-export interface RuneInfo {
-    runeid: string;
-    rune: string;
-    spacedRune: string;
-    number: number;
-    height: number;
-    txidx: number;
-    timestamp: number;
-    divisibility: number;
-    symbol: string;
-    etching: string;
-    premine: string;
-    terms: {
-        amount: string;
-        cap: string;
-        heightStart: number;
-        heightEnd: number;
-        offsetStart: number;
-        offsetEnd: number;
-    };
-    mints: string;
-    burned: string;
-    holders: number;
-    transactions: number;
-    mintable: boolean;
-    remaining: string;
-    start: number;
-    end: number;
-    supply: string;
-    parent?: string;
-}
-
-export interface AddressRunesTokenSummary {
-    runeInfo: RuneInfo;
-    runeBalance: RuneBalance;
-    runeLogo?: Inscription;
-}
-
-export interface OpneToken {
-    amount: number;
-    divisibility: number;
-    spacedRune: string;
-    symbol: string;
-}
-
-export interface RawTxInfoOpnet {
-    items: any[];
-    account: Account; // Replace 'Account' with the actual type of 'account'
-    inputAmount: number;
-    address: string;
-    feeRate: number;
-    OpnetRateInputVal: number;
-    header: string;
-    networkFee: number;
-    features: {
-        rbf: boolean;
-    };
-    inputInfos: any[]; // Replace 'any' with the actual type of 'inputInfos'
-    isToSign: boolean;
-    opneTokens: OpneToken[];
-    action: string;
 }
 
 export interface BtcChannelItem {
@@ -503,7 +291,7 @@ export interface BtcChannelItem {
     payType: string[];
 }
 
-export type TickPriceItem = {
+export interface TickPriceItem {
     curPrice: number;
     changePercent: number;
-};
+}

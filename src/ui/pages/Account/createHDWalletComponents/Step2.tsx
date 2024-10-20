@@ -3,12 +3,13 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { ADDRESS_TYPES, RESTORE_WALLETS } from '@/shared/constant';
 import { AddressType } from '@/shared/types';
+import Web3API from '@/shared/web3/Web3API';
 import { Button, Column, Icon, Input, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressTypeCard2 } from '@/ui/components/AddressTypeCard';
 import { FooterButtonContainer } from '@/ui/components/FooterButtonContainer';
 import { ContextData, UpdateContextDataParams } from '@/ui/pages/Account/createHDWalletComponents/types';
-import { useNavigate } from '@/ui/pages/MainRoute';
+import { RouteTypes, useNavigate } from '@/ui/pages/MainRoute';
 import { useCreateAccountCallback } from '@/ui/state/global/hooks';
 import { satoshisToAmount, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -37,11 +38,7 @@ export function Step2({
                 return false;
             }
 
-            if (contextData.customHdPath && v.isUnisatLegacy) {
-                return false;
-            }
-
-            return true;
+            return !(contextData.customHdPath && v.isUnisatLegacy);
         })
             .sort((a, b) => a.displayIndex - b.displayIndex)
             .map((v) => {
@@ -73,9 +70,15 @@ export function Step2({
         { type: AddressType; address_arr: string[]; satoshis_arr: number[] }[]
     >([]);
 
-    const [addressAssets, setAddressAssets] = useState<{
-        [key: string]: { total_btc: string; satoshis: number; total_inscription: number };
-    }>({});
+    const [addressAssets, setAddressAssets] = useState<
+        Record<
+            string,
+            {
+                total_btc: string;
+                satoshis: number;
+            }
+        >
+    >({});
 
     const [error, setError] = useState('');
     const [pathError, setPathError] = useState('');
@@ -110,14 +113,11 @@ export function Step2({
                     contextData.passphrase,
                     options.addressType
                 );
-                // const address = keyring.accounts[0].address;
-                // addresses.push(address);
                 keyring.accounts.forEach((v) => {
                     addresses.push(v.address);
                 });
             } catch (e) {
-                console.log(e);
-                setError((e as any).message);
+                setError((e as Error).message);
                 return;
             }
         }
@@ -127,48 +127,58 @@ export function Step2({
     const [scanned, setScanned] = useState(false);
 
     useEffect(() => {
-        generateAddress();
+        void generateAddress();
         setScanned(false);
     }, [contextData.passphrase, contextData.customHdPath]);
 
     const fetchAddressesBalance = async () => {
-        if (!contextData.isRestore) {
-            return;
-        }
+        try {
+            Web3API.setNetwork(await wallet.getChainType());
 
-        const addresses = previewAddresses;
-        if (!addresses[0]) return;
-
-        setLoading(true);
-        const balances = await wallet.getMultiAddressAssets(addresses.join(','));
-        setLoading(false);
-
-        const addressAssets: { [key: string]: { total_btc: string; satoshis: number; total_inscription: number } } = {};
-        let maxSatoshis = 0;
-        let recommended = 0;
-        for (let i = 0; i < addresses.length; i++) {
-            const address = addresses[i];
-            const balance = balances[i];
-            const satoshis = balance.totalSatoshis;
-            addressAssets[address] = {
-                total_btc: satoshisToAmount(balance.totalSatoshis),
-                satoshis,
-                total_inscription: balance.inscriptionCount
-            };
-            if (satoshis > maxSatoshis) {
-                maxSatoshis = satoshis;
-                recommended = i;
+            if (!contextData.isRestore) {
+                return;
             }
-        }
-        if (maxSatoshis > 0) {
-            setRecommendedTypeIndex(recommended);
-        }
 
-        setAddressAssets(addressAssets);
+            const addresses = previewAddresses;
+            if (!addresses[0]) return;
+
+            setLoading(true);
+
+            let maxSatoshis = 0;
+            let recommended = 0;
+
+            const addressAssets: Record<string, { total_btc: string; satoshis: number }> = {};
+            for (let i = 0; i < addresses.length; i++) {
+                try {
+                    const address = addresses[i];
+                    const balance = await Web3API.getBalance(address, true);
+                    const balanceInSatoshi = Number(balance);
+
+                    const final = satoshisToAmount(balanceInSatoshi);
+                    addressAssets[address] = {
+                        total_btc: final,
+                        satoshis: Number(balance)
+                    };
+
+                    if (balanceInSatoshi > maxSatoshis) {
+                        maxSatoshis = balanceInSatoshi;
+                        recommended = i;
+                    }
+                } catch {}
+            }
+
+            setLoading(false);
+
+            if (maxSatoshis > 0) {
+                setRecommendedTypeIndex(recommended);
+            }
+
+            setAddressAssets(addressAssets);
+        } catch (e) {}
     };
 
     useEffect(() => {
-        fetchAddressesBalance();
+        void fetchAddressesBalance();
     }, [previewAddresses]);
 
     const submitCustomHdPath = (text: string) => {
@@ -192,11 +202,7 @@ export function Step2({
     };
 
     const disabled = useMemo(() => {
-        if (!error && !pathError) {
-            return false;
-        } else {
-            return true;
-        }
+        return !(!error && !pathError);
     }, [error, pathError]);
 
     const onNext = async () => {
@@ -218,9 +224,9 @@ export function Step2({
                 const hdPath = contextData.customHdPath || option.hdPath;
                 await createAccount(contextData.mnemonics, hdPath, contextData.passphrase, contextData.addressType, 1);
             }
-            navigate('MainScreen');
+            navigate(RouteTypes.MainScreen);
         } catch (e) {
-            tools.toastError((e as any).message);
+            tools.toastError((e as Error).message);
         }
     };
 
@@ -234,10 +240,12 @@ export function Step2({
                 satoshis_arr: number[];
                 pubkey_arr: string[];
             }[] = [];
+
             for (let i = 0; i < allHdPathOptions.length; i++) {
                 const options = allHdPathOptions[i];
                 const address_arr: string[] = [];
                 const satoshis_arr: number[] = [];
+
                 try {
                     const keyring = await wallet.createTmpKeyringWithMnemonics(
                         contextData.mnemonics,
@@ -246,12 +254,12 @@ export function Step2({
                         options.addressType,
                         10
                     );
+
                     keyring.accounts.forEach((v, j) => {
                         address_arr.push(v.address);
                     });
                 } catch (e) {
-                    console.log(e);
-                    setError((e as any).message);
+                    setError((e as Error).message);
                     return;
                 }
 
@@ -270,7 +278,7 @@ export function Step2({
                 tools.showTip('Unable to find any addresses with assets');
             }
         } catch (e) {
-            setError((e as any).message);
+            setError((e as Error).message);
         } finally {
             tools.showLoading(false);
         }
@@ -278,14 +286,14 @@ export function Step2({
 
     return (
         <Column>
-            {contextData.isRestore && scanned == false ? (
+            {contextData.isRestore && !scanned ? (
                 <Row justifyBetween>
                     <Text text="Address Type" preset="bold" />
                     <Text
                         text="Scan in more addresses..."
                         preset="link"
-                        onClick={() => {
-                            scanVaultAddress();
+                        onClick={async () => {
+                            await scanVaultAddress();
                         }}
                     />
                 </Row>
@@ -309,7 +317,7 @@ export function Step2({
                             items={item.address_arr.map((v, index) => ({
                                 address: v,
                                 satoshis: item.satoshis_arr[index],
-                                path: (contextData.customHdPath || options.hdPath) + '/' + index
+                                path: `${contextData.customHdPath || options.hdPath}/${index}`
                             }))}
                             checked={index == contextData.addressTypeIndex}
                             onClick={() => {
@@ -376,7 +384,7 @@ export function Step2({
             <Input
                 placeholder={'Passphrase'}
                 defaultValue={contextData.passphrase}
-                onChange={async (e) => {
+                onChange={(e) => {
                     updateContextData({
                         passphrase: e.target.value
                     });

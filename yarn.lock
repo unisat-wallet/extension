@@ -1773,7 +1773,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@btc-vision/bsi-bitcoin-rpc@npm:^1.0.29":
+"@btc-vision/bsi-bitcoin-rpc@npm:>=1.0.29, @btc-vision/bsi-bitcoin-rpc@npm:^1.0.29":
   version: 1.0.29
   resolution: "@btc-vision/bsi-bitcoin-rpc@npm:1.0.29"
   dependencies:
@@ -1849,7 +1849,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@btc-vision/transaction@npm:^1.0.117":
+"@btc-vision/transaction@npm:>=1.0.117":
   version: 1.0.117
   resolution: "@btc-vision/transaction@npm:1.0.117"
   dependencies:
@@ -4192,6 +4192,15 @@ __metadata:
   version: 4.17.9
   resolution: "@types/lodash@npm:4.17.9"
   checksum: 10c0/54de935e835508b5f835a5dfaedd2b9a299685a21d11e9c5cd2dde57331d03bc2f98b71d2424ca8460f447ecd55a673e45ccdb70e58f9f72745710f6b91abc60
+  languageName: node
+  linkType: hard
+
+"@types/lru-cache@npm:^7.10.10":
+  version: 7.10.10
+  resolution: "@types/lru-cache@npm:7.10.10"
+  dependencies:
+    lru-cache: "npm:*"
+  checksum: 10c0/ab85558867cb059bebd42074c1cd517eb41efb1db22b9d26dfdc58df01c83ff9c212a562b4ec3d5936418ffb03e626a0f30463026aa5fb5ced41e3b4b4af057f
   languageName: node
   linkType: hard
 
@@ -14545,6 +14554,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"lru-cache@npm:*":
+  version: 11.0.1
+  resolution: "lru-cache@npm:11.0.1"
+  checksum: 10c0/8bad6603dc67eb5b03520fba05bce5df6473dbba58ac4c6067ed088d29225a0a04416bb1462acd8c1f819d1fbf37920446a1c36bafd9c384bcc54cee0d3b697a
+  languageName: node
+  linkType: hard
+
 "lru-cache@npm:4.1.x":
   version: 4.1.5
   resolution: "lru-cache@npm:4.1.5"
@@ -14555,7 +14571,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"lru-cache@npm:6.0.0, lru-cache@npm:^6.0.0":
+"lru-cache@npm:=6.0.0, lru-cache@npm:^6.0.0":
   version: 6.0.0
   resolution: "lru-cache@npm:6.0.0"
   dependencies:
@@ -15741,14 +15757,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"opnet@npm:1.1.2":
-  version: 1.1.2
-  resolution: "opnet@npm:1.1.2"
+"opnet@npm:1.1.8":
+  version: 1.1.8
+  resolution: "opnet@npm:1.1.8"
   dependencies:
     "@babel/plugin-proposal-object-rest-spread": "npm:^7.20.7"
     "@bitcoinerlab/secp256k1": "npm:^1.1.1"
-    "@btc-vision/bsi-bitcoin-rpc": "npm:^1.0.29"
-    "@btc-vision/transaction": "npm:^1.0.117"
+    "@btc-vision/bsi-bitcoin-rpc": "npm:>=1.0.29"
+    "@btc-vision/transaction": "npm:>=1.0.117"
     "@eslint/js": "npm:^9.10.0"
     "@noble/hashes": "npm:^1.4.0"
     babel-loader: "npm:^9.1.3"
@@ -15767,7 +15783,7 @@ __metadata:
     ts-loader: "npm:^9.5.1"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.6.2"
-  checksum: 10c0/ef45075ccf7dac24acdd7ca218336467b04be95f10a326990efdf8747a2e9eab6db8378fb440c5e69835340df8a4c29c3c70315147bf496dad881104ea788bd6
+  checksum: 10c0/118ec0ea6b781850f083f28ee41ca077c51431601e860be04ebf376aa3d54453777a78b8cc0c049ca20ff8f29679a0a44a3b0d47671703efbfa88cd48279e3e1
   languageName: node
   linkType: hard
 
@@ -15831,6 +15847,7 @@ __metadata:
     "@types/jest": "npm:^27.5.1"
     "@types/less": "npm:^3.0.3"
     "@types/lodash": "npm:^4.14.182"
+    "@types/lru-cache": "npm:^7.10.10"
     "@types/node": "npm:22.5.5"
     "@types/node-sass": "npm:^4.11.2"
     "@types/react": "npm:^18.0.9"
@@ -15897,10 +15914,10 @@ __metadata:
     less-loader: "npm:^11.0.0"
     lodash-es: "npm:^4.17.21"
     loglevel: "npm:^1.8.0"
-    lru-cache: "npm:6.0.0"
+    lru-cache: "npm:=6.0.0"
     mini-css-extract-plugin: "npm:^2.4.5"
     minimist: "npm:^1.2.6"
-    opnet: "npm:1.1.2"
+    opnet: "npm:1.1.8"
     postcss: "npm:^8.4.39"
     postcss-flexbugs-fixes: "npm:^5.0.2"
     postcss-loader: "npm:^6.2.1"

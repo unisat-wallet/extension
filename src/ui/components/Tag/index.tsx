@@ -27,8 +27,7 @@ export default function Tag(props: AssetTagProps) {
             style={{ borderColor: colors[type], borderWidth: 1, borderRadius: small ? 4 : 5 }}
             px={small ? 'sm' : 'md'}
             py={small ? 'zero' : 'xs'}
-            itemsCenter
-        >
+            itemsCenter>
             <Text text={type} size={small ? 'xxs' : 'xs'} style={{ color: colors[type] }} />
         </Row>
     );

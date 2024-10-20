@@ -1,14 +1,14 @@
 import { BigNumber } from 'bignumber.js';
 
+
 // Max 38 decimal places
-function toDecimalAmount(amount: string, divisibility: number) {
+function toDecimalAmount(amount: string | number | BigNumber, divisibility: string | number | BigNumber) {
     const decimalAmount = new BigNumber(amount).dividedBy(new BigNumber(10).pow(divisibility));
     return decimalAmount.toString();
 }
 
-function toDecimalNumber(amount, divisibility) {
-    const decimalAmount = new BigNumber(amount).dividedBy(new BigNumber(10).pow(divisibility));
-    return decimalAmount;
+function toDecimalNumber(amount: string | number | BigNumber, divisibility: string | number | BigNumber) {
+    return new BigNumber(amount).dividedBy(new BigNumber(10).pow(divisibility));
 }
 
 function fromDecimalAmount(decimalAmount: string, divisibility: number) {

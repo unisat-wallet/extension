@@ -45,8 +45,7 @@ function ChainItem(props: { chainType: ChainType; inGroup?: boolean; onClose: ()
                 props.onClose();
                 void reloadAccounts();
                 tools.toastSuccess(`Changed to ${chain.label}`);
-            }}
-        >
+            }}>
             <Row fullX justifyBetween itemsCenter>
                 <Row itemsCenter>
                     <Image src={chain.icon} size={30} style={{ opacity: chain.disable ? 0.7 : 1 }} />
@@ -88,8 +87,7 @@ function ChainGroup(props: { group: TypeChainGroup; onClose: () => void }) {
                     mt="lg"
                     onClick={() => {
                         setFolded(!folded);
-                    }}
-                >
+                    }}>
                     <Column fullX gap="zero">
                         <Row fullX justifyBetween itemsCenter>
                             <Row itemsCenter>
@@ -134,8 +132,7 @@ export const SwitchChainModal = ({ onClose }: { onClose: () => void }) => {
                     <Row
                         onClick={() => {
                             onClose();
-                        }}
-                    >
+                        }}>
                         <CloseOutlined />
                     </Row>
                 </Row>

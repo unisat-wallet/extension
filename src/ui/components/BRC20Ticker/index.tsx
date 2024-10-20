@@ -3,6 +3,7 @@ import { useMemo } from 'react';
 import { Row } from '../Row';
 import { Text } from '../Text';
 
+
 // eslint-disable-next-line no-control-regex
 const regex = /[\u0000-\u001F\u007F-\u009F\s]/;
 const $tickerPresets: { sm: { textSize: any }; md: { textSize: any }; lg: { textSize: any } } = {

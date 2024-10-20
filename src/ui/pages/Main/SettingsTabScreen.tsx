@@ -136,7 +136,13 @@ export default function SettingsTabScreen() {
 
     const isCustomHdPath = useMemo(() => {
         const item = ADDRESS_TYPES[currentKeyring.addressType];
-        return currentKeyring.hdPath !== '' && item.hdPath !== currentKeyring.hdPath;
+        return (
+            currentKeyring.hdPath !== '' &&
+            item.hdPath !== currentKeyring.hdPath &&
+
+            // TODO: IMPORTANT, ADD A SETTING TO DISABLE THIS. (keyring-mnemonic)
+            currentKeyring.type !== KEYRING_TYPE.HdKeyring
+        );
     }, [currentKeyring]);
 
     const toRenderSettings = SettingList.filter((v) => {
@@ -183,11 +189,12 @@ export default function SettingsTabScreen() {
                         {toRenderSettings.map((item) => {
                             const onClick = () => {
                                 if (item.action == 'expand-view') {
-                                    openExtensionInTab();
+                                    void openExtensionInTab();
                                     return;
                                 }
+
                                 if (item.action == 'lock-wallet') {
-                                    wallet.lockWallet();
+                                    void wallet.lockWallet();
                                     navigate('/account/unlock');
                                     return;
                                 }
@@ -196,6 +203,7 @@ export default function SettingsTabScreen() {
                                     setSwitchChainModalVisible(true);
                                     return;
                                 }
+
                                 if (item.action == 'addressType') {
                                     if (isCustomHdPath) {
                                         tools.showTip(
@@ -208,6 +216,7 @@ export default function SettingsTabScreen() {
                                 }
                                 navigate(item.route);
                             };
+
                             if (!item.label) {
                                 return (
                                     <Button

@@ -53,8 +53,7 @@ export default function SignText(props: Props) {
                         <DecodedCalldata
                             decoded={decoded}
                             contractInfo={contractInfo}
-                            interactionType={interactionType}
-                        ></DecodedCalldata>
+                            interactionType={interactionType}></DecodedCalldata>
                     ) : (
                         <Card>
                             <Text
@@ -81,8 +80,7 @@ export default function SignText(props: Props) {
                                 wordBreak: 'break-word',
                                 flexWrap: 'wrap',
                                 fontSize: 12
-                            }}
-                        >
+                            }}>
                             {`0x${data.interactionParameters.calldata}`}
                         </div>
                     </Card>

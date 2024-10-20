@@ -1,43 +1,24 @@
-import { Tooltip } from 'antd';
 import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
 
-import { COIN_DUST } from '@/shared/constant';
-import { Account, RawTxInfo } from '@/shared/types';
-import { expandToDecimals } from '@/shared/utils';
+import { ChainType, COIN_DUST } from '@/shared/constant';
+import { Action, Features, SendBitcoinParameters } from '@/shared/interfaces/RawTxParameters';
 import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
-import { Button, Column, Content, Header, Icon, Image, Input, Layout, Row, Text } from '@/ui/components';
+import { Button, Column, Content, Header, Image, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { RBFBar } from '@/ui/components/RBFBar';
-import { useNavigate } from '@/ui/pages/MainRoute';
-import { useAccountBalance, useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
+import { RouteTypes, useNavigate } from '@/ui/pages/MainRoute';
+import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useBTCUnit, useChain } from '@/ui/state/settings/hooks';
-import {
-    useBitcoinTx,
-    useFetchUtxosCallback,
-    usePrepareSendBTCCallback,
-    useSafeBalance,
-    useSpendUnavailableUtxos
-} from '@/ui/state/transactions/hooks';
 import { useUiTxCreateScreen, useUpdateUiTxCreateScreen } from '@/ui/state/ui/hooks';
-import { fontSizes } from '@/ui/theme/font';
 import { amountToSatoshis, isValidAddress, satoshisToAmount, useWallet } from '@/ui/utils';
 
 BigNumber.config({ EXPONENTIAL_AT: 256 });
 
 export default function TxCreateScreen() {
-    interface ItemData {
-        key: string;
-        account?: Account;
-    }
-
-    const accountBalance = useAccountBalance();
-    const safeBalance = useSafeBalance();
     const navigate = useNavigate();
-    const bitcoinTx = useBitcoinTx();
     const btcUnit = useBTCUnit();
 
     const [disabled, setDisabled] = useState(true);
@@ -50,37 +31,24 @@ export default function TxCreateScreen() {
     const enableRBF = uiState.enableRBF;
     const feeRate = uiState.feeRate;
 
-    const prepareSendBTC = usePrepareSendBTCCallback();
-
-    const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
     const [error, setError] = useState('');
     const [totalAvailableAmount, setBalanceValue] = useState<number>(0);
     const [OpnetRateInputVal, setOpnetRateInputVal] = useState<string>('0');
     const [autoAdjust, setAutoAdjust] = useState(false);
-    const fetchUtxos = useFetchUtxosCallback();
+
+    const account = useCurrentAccount();
+    const _currentBalance = Web3API.getBalance(account.address, true);
+    const [currentBalance, setCurrentBalance] = useState(0n);
 
     const tools = useTools();
     useEffect(() => {
         tools.showLoading(true);
-        fetchUtxos().finally(() => {
+        void _currentBalance.then((balance: bigint) => {
             tools.showLoading(false);
+
+            setCurrentBalance(balance);
         });
     }, []);
-
-    const keyring = useCurrentKeyring();
-    const items = useMemo(() => {
-        const _items: ItemData[] = keyring.accounts.map((v) => {
-            return {
-                key: v.address,
-                account: v
-            };
-        });
-        return _items;
-    }, []);
-
-    const avaiableSatoshis = useMemo(() => {
-        return amountToSatoshis(safeBalance);
-    }, [safeBalance]);
 
     const toSatoshis = useMemo(() => {
         if (!inputAmount) return 0;
@@ -88,23 +56,9 @@ export default function TxCreateScreen() {
     }, [inputAmount]);
 
     const dustAmount = useMemo(() => satoshisToAmount(COIN_DUST), [COIN_DUST]);
-    const spendUnavailableUtxos = useSpendUnavailableUtxos();
-    const spendUnavailableSatoshis = useMemo(() => {
-        return spendUnavailableUtxos.reduce((acc, cur) => {
-            return acc + cur.satoshis;
-        }, 0);
-    }, [spendUnavailableUtxos]);
 
-    const totalSatoshis = amountToSatoshis(accountBalance.amount);
-    const unavailableSatoshis = totalSatoshis - avaiableSatoshis;
-
-    const currentBalance = safeBalance;
-    const unavailableAmount = satoshisToAmount(unavailableSatoshis);
     const wallet = useWallet();
-    const account = useCurrentAccount();
     const chain = useChain();
-
-    const unspendUnavailableAmount = satoshisToAmount(unavailableSatoshis - spendUnavailableSatoshis);
 
     useEffect(() => {
         const fetchBalance = async () => {
@@ -121,6 +75,7 @@ export default function TxCreateScreen() {
         };
         void setWallet();
     });
+
     useEffect(() => {
         setError('');
         setDisabled(true);
@@ -146,36 +101,8 @@ export default function TxCreateScreen() {
         if (feeRate <= 0) {
             return;
         }
-        const runTransfer = async () => {
-            if (
-                toInfo.address == bitcoinTx.toAddress &&
-                toSatoshis == bitcoinTx.toSatoshis &&
-                feeRate == bitcoinTx.feeRate &&
-                enableRBF == bitcoinTx.enableRBF
-            ) {
-                //Prevent repeated triggering caused by setAmount
-                setDisabled(false);
-                return;
-            }
-            if (!((await wallet.getNetworkType()) == 2)) {
-                prepareSendBTC({ toAddressInfo: toInfo, toAmount: toSatoshis, feeRate, enableRBF })
-                    .then((data) => {
-                        // if (data.fee < data.estimateFee) {
-                        //   setError(`Network fee must be at leat ${data.estimateFee}`);
-                        //   return;
-                        // }
-                        setRawTxInfo(data);
-                        setDisabled(false);
-                    })
-                    .catch((e) => {
-                        console.log(e);
-                        setError(e.message);
-                    });
-            } else {
-                setDisabled(false);
-            }
-        };
-        void runTransfer();
+
+        setDisabled(false);
     }, [toInfo, inputAmount, feeRate, enableRBF]);
 
     return (
@@ -229,7 +156,7 @@ export default function TxCreateScreen() {
 
                     <Row justifyBetween>
                         <Text text="Available" color="gold" />
-                        {chain.enum == 'BITCOIN_REGTEST' ? (
+                        {chain.enum === ChainType.BITCOIN_REGTEST ? (
                             <>
                                 {' '}
                                 <Row>
@@ -240,56 +167,16 @@ export default function TxCreateScreen() {
                         ) : (
                             <>
                                 {' '}
-                                {spendUnavailableSatoshis > 0 && (
-                                    <Row>
-                                        <Text text={`${totalAvailableAmount}`} size="sm" style={{ color: '#65D5F0' }} />
-                                        <Text text={btcUnit} size="sm" color="textDim" />
-                                        <Text text={'+'} size="sm" color="textDim" />
-                                    </Row>
-                                )}
+                                <Row>
+                                    <Text text={`${totalAvailableAmount}`} size="sm" style={{ color: '#65D5F0' }} />
+                                    <Text text={btcUnit} size="sm" color="textDim" />
+                                    <Text text={'+'} size="sm" color="textDim" />
+                                </Row>
                                 <Row>
                                     <Text text={`${currentBalance}`} size="sm" color="gold" />
                                     <Text text={btcUnit} size="sm" color="textDim" />
                                 </Row>
                             </>
-                        )}
-                    </Row>
-
-                    <Row justifyBetween>
-                        <Tooltip
-                            title={
-                                'Includes Inscriptions, ARC20, Runes, and unconfirmed UTXO assets. Future versions will support spending these assets.'
-                            }
-                            overlayStyle={{
-                                fontSize: fontSizes.xs
-                            }}
-                        >
-                            <div style={{ display: 'flex', alignItems: 'center' }}>
-                                <Row itemsCenter>
-                                    <Text
-                                        text="Unavailable"
-                                        // text="Unavailable >"
-                                        color="textDim"
-                                        // onClick={() => {
-                                        //   navigate('UnavailableUtxoScreen');
-                                        // }}
-                                    />
-
-                                    <Icon icon="circle-question" color="textDim" />
-                                </Row>
-                            </div>
-                        </Tooltip>
-
-                        {spendUnavailableSatoshis > 0 ? (
-                            <Row>
-                                <Text text={`${unspendUnavailableAmount}`} size="sm" color="textDim" />
-                                <Text text={btcUnit} size="sm" color="textDim" />
-                            </Row>
-                        ) : (
-                            <Row>
-                                <Text text={`${unavailableAmount}`} size="sm" color="textDim" />
-                                <Text text={btcUnit} size="sm" color="textDim" />
-                            </Row>
                         )}
                     </Row>
 
@@ -320,10 +207,6 @@ export default function TxCreateScreen() {
                     onAmountInputChange={(amount) => {
                         setOpnetRateInputVal(amount);
                     }}
-                    // onBlur={() => {
-                    //   const val = parseInt(feeRateInputVal) + '';
-                    //   setFeeRateInputVal(val);
-                    // }}
                     autoFocus={true}
                 />
 
@@ -343,39 +226,24 @@ export default function TxCreateScreen() {
                     preset="primary"
                     text="Next"
                     onClick={() => {
-                        //if (!(chain.enum == 'BITCOIN_REGTEST')) {
-                        //navigate('TxConfirmScreen', { rawTxInfo });
-                        //} else {
-                        navigate('TxOpnetConfirmScreen', {
-                            rawTxInfo: {
-                                items: items,
-                                contractAddress: 'BTC',
-                                account: account,
-                                inputAmount: inputAmount,
-                                address: toInfo.address,
-                                feeRate: feeRate, // replace with actual feeRate
-                                priorityFee: BigInt(OpnetRateInputVal), // replace with actual OpnetRateInputVal
-                                header: `Send ${btcUnit}`, // replace with actual header
-                                networkFee: feeRate, // replace with actual networkFee
-                                features: {
-                                    rbf: true // replace with actual rbf value
-                                },
-                                inputInfos: [], // replace with actual inputInfos
-                                isToSign: false, // replace with actual isToSign value
-                                opneTokens: [
-                                    {
-                                        amount: expandToDecimals(inputAmount, 8),
-                                        divisibility: 8,
-                                        spacedRune: 'Bitcoin',
-                                        symbol: btcUnit
-                                    }
-                                ],
-                                action: 'sendBTC' // replace with actual opneTokens
-                            }
+                        const event: SendBitcoinParameters = {
+                            to: toInfo.address,
+                            inputAmount: parseFloat(inputAmount),
+
+                            feeRate: feeRate,
+                            features: {
+                                [Features.rbf]: true
+                            },
+                            priorityFee: 0n,
+                            header: `Send ${btcUnit}`,
+                            tokens: [],
+                            action: Action.SendBitcoin
+                        };
+
+                        navigate(RouteTypes.TxOpnetConfirmScreen, {
+                            rawTxInfo: event
                         });
-                        // }
-                    }}
-                ></Button>
+                    }}></Button>
             </Content>
         </Layout>
     );

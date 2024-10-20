@@ -21,7 +21,7 @@ interface Props {
     };
 }
 
-function toHex(buffer: Uint8Array | Buffer | Array<number>) {
+function toHex(buffer: Uint8Array | Buffer | number[]) {
     return Array.prototype.map.call(buffer, (x) => ('00' + x.toString(16)).slice(-2)).join('');
 }
 

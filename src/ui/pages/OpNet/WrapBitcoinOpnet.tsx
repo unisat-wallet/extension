@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
-import { Account, Inscription, OpNetBalance } from '@/shared/types';
+import { Account, Inscription, OPTokenInfo } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
 import { bigIntToDecimal } from '@/shared/web3/Web3API';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
@@ -27,7 +27,7 @@ interface ItemData {
 export default function WrapBitcoinOpnet() {
     const { state } = useLocation();
     const props = state as {
-        OpNetBalance: OpNetBalance;
+        OpNetBalance: OPTokenInfo;
     };
 
     const OpNetBalance = props.OpNetBalance;
@@ -138,8 +138,7 @@ export default function WrapBitcoinOpnet() {
                                         OpNetBalance.divisibility
                                     )
                                 );
-                            }}
-                        >
+                            }}>
                             <Text text="MAX" preset="sub" style={{ color: colors.white_muted }} />
                             <Text
                                 text={`${runesUtils.toDecimalAmount(
@@ -241,8 +240,7 @@ export default function WrapBitcoinOpnet() {
                                 action: 'wrap' // replace with actual opneTokens
                             }
                         });
-                    }}
-                ></Button>
+                    }}></Button>
             </Content>
         </Layout>
     );

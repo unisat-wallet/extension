@@ -44,8 +44,7 @@ export const NoticePopover = ({ onClose }: { onClose: (mode: 'opnet-only' | 'opn
                     gap="zero"
                     style={{
                         marginBottom: 20
-                    }}
-                >
+                    }}>
                     <Text text={'Choose your setup:'} preset={'bold'} />
                     <div style={{ marginTop: 8 }}>
                         <Checkbox checked={opNetOnly} onChange={(e) => setOpNetOnly(true)}>

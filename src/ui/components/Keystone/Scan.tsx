@@ -41,8 +41,7 @@ export default function KeystoneScan({
                     height: size,
                     position: 'relative',
                     background: colors.bg4
-                }}
-            >
+                }}>
                 <CameraOutlined
                     style={{
                         fontSize: 32,

@@ -3,19 +3,13 @@ import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
-import { Account, Inscription, OpNetBalance } from '@/shared/types';
-import { expandToDecimals } from '@/shared/utils';
-import { bigIntToDecimal } from '@/shared/web3/Web3API';
+import { Account, OPTokenInfo } from '@/shared/types';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
-import { OutputValueBar } from '@/ui/components/OutputValueBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { useFetchUtxosCallback, useRunesTx } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
-import { getAddressUtxoDust } from '@btc-vision/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../MainRoute';
 
@@ -29,51 +23,18 @@ BigNumber.config({ EXPONENTIAL_AT: 256 });
 export default function UnWrapBitcoinOpnet() {
     const { state } = useLocation();
     const props = state as {
-        OpNetBalance: OpNetBalance;
+        OpNetBalance: OPTokenInfo;
     };
 
     const OpNetBalance = props.OpNetBalance;
     const account = useCurrentAccount();
 
     const navigate = useNavigate();
-    const runesTx = useRunesTx();
     const [inputAmount, setInputAmount] = useState('');
     const [disabled, setDisabled] = useState(true);
     const [OpnetRateInputVal, adjustFeeRateInput] = useState('5000');
-    const [toInfo, setToInfo] = useState<{
-        address: string;
-        domain: string;
-        inscription?: Inscription;
-    }>({
-        address: runesTx.toAddress,
-        domain: runesTx.toDomain,
-        inscription: undefined
-    });
 
-    const [availableBalance, setAvailableBalance] = useState('0');
     const [error, setError] = useState('');
-
-    const defaultOutputValue = 546;
-
-    const [outputValue, setOutputValue] = useState(defaultOutputValue);
-    const minOutputValue = useMemo(() => {
-        if (toInfo.address) {
-            return getAddressUtxoDust(toInfo.address);
-        } else {
-            return 0;
-        }
-    }, [toInfo.address]);
-
-    const fetchUtxos = useFetchUtxosCallback();
-
-    const tools = useTools();
-    useEffect(() => {
-        void fetchUtxos();
-
-        const balance = bigIntToDecimal(OpNetBalance.amount, OpNetBalance.divisibility);
-        setAvailableBalance(balance.toString());
-        tools.showLoading(false);
-    }, []);
 
     const [feeRate, setFeeRate] = useState(5);
     const [enableRBF, setEnableRBF] = useState(false);
@@ -95,15 +56,6 @@ export default function UnWrapBitcoinOpnet() {
         if (!inputAmount) {
             return;
         }
-
-        // if (outputValue < minOutputValue) {
-        //   setError(`OutputValue must be at least ${minOutputValue}`);
-        //   return;
-        // }
-
-        // if (!outputValue) {
-        //   return;
-        // }
 
         if (inputAmount != '') {
             //Prevent repeated triggering caused by setAmount
@@ -145,8 +97,7 @@ export default function UnWrapBitcoinOpnet() {
                                         OpNetBalance.divisibility
                                     )
                                 );
-                            }}
-                        >
+                            }}>
                             <Text text="MAX" preset="sub" style={{ color: colors.white_muted }} />
                             <Text
                                 text={`${runesUtils.toDecimalAmount(
@@ -169,20 +120,6 @@ export default function UnWrapBitcoinOpnet() {
                         runesDecimal={OpNetBalance.divisibility}
                     />
                 </Column>
-
-                {toInfo.address ? (
-                    <Column mt="lg">
-                        <Text text="OutputValue" color="textDim" />
-
-                        <OutputValueBar
-                            defaultValue={defaultOutputValue}
-                            minValue={minOutputValue}
-                            onChange={(val) => {
-                                setOutputValue(val);
-                            }}
-                        />
-                    </Column>
-                ) : null}
 
                 <Column mt="lg">
                     <Text text="Fee" color="textDim" />
@@ -221,8 +158,8 @@ export default function UnWrapBitcoinOpnet() {
                     disabled={disabled}
                     preset="primary"
                     text="Next"
-                    onClick={(e) => {
-                        navigate('TxOpnetConfirmScreen', {
+                    onClick={() => {
+                        /*navigate('TxOpnetConfirmScreen', {
                             rawTxInfo: {
                                 items: items,
                                 account: account,
@@ -247,9 +184,8 @@ export default function UnWrapBitcoinOpnet() {
                                 ],
                                 action: 'stake' // replace with actual opneTokens
                             }
-                        });
-                    }}
-                ></Button>
+                        });*/
+                    }}></Button>
             </Content>
         </Layout>
     );

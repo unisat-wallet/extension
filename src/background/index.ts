@@ -49,14 +49,30 @@ browserRuntimeOnConnect((port: chrome.runtime.Port) => {
                         eventBus.emit(data.method, data.params);
                         break;
                     case 'openapi':
-                        if (walletController.openapi[data.method]) {
-                            return walletController.openapi[data.method].apply(null, data.params);
+                        if (data.method in walletController.openapi) {
+                            const method = walletController.openapi[data.method];
+                            if (!method) {
+                                console.error(`Method ${data.method} not found in openapi`);
+
+                                return Promise.reject(`Method ${data.method} not found in openapi`);
+                            } else {
+                                // @ts-ignore
+                                return method.apply(null, data.params);
+                            }
                         }
                         break;
                     case 'controller':
                     default:
                         if (data.method) {
-                            return walletController[data.method].apply(null, data.params);
+                            const method = walletController[data.method];
+                            if (!method) {
+                                console.error(`Method ${data.method} not found in controller`);
+
+                                return Promise.reject(`Method ${data.method} not found in controller`);
+                            } else {
+                                // @ts-ignore
+                                return method.apply(null, data.params);
+                            }
                         }
                 }
             }
@@ -91,10 +107,15 @@ browserRuntimeOnConnect((port: chrome.runtime.Port) => {
         if (!appStoreLoaded) {
             // todo
         }
-        const sessionId = port.sender?.tab?.id;
-        const session = sessionService.getOrCreateSession(sessionId);
 
+        const sessionId = port.sender?.tab?.id;
+        if (sessionId == null) {
+            throw new Error('Invalid session id');
+        }
+
+        const session = sessionService.getOrCreateSession(sessionId);
         const req = { data, session };
+
         // for background push to respective page
         req.session.pushMessage = (event: string, data: RequestParams) => {
             pm.send('message', { event, data });
@@ -114,8 +135,8 @@ const addAppInstalledEvent = async () => {
         await openExtensionInTab();
         return;
     }
-    setTimeout(() => {
-        addAppInstalledEvent();
+    setTimeout(async () => {
+        await addAppInstalledEvent();
     }, 1000);
 };
 

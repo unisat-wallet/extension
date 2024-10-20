@@ -64,8 +64,7 @@ export function Step1_Create({
                 justifyCenter
                 onClick={(e) => {
                     copy(contextData.mnemonics);
-                }}
-            >
+                }}>
                 <Icon icon="copy" color="textDim" />
                 <Text text="Copy to clipboard" color="textDim" />
             </Row>

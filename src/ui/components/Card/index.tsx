@@ -26,7 +26,7 @@ const $viewPresets = {
         paddingLeft: spacingGap.lg,
         paddingRight: spacingGap.lg,
         minHeight: 50
-    } as CSSProperties) as CSSProperties,
+    } as CSSProperties),
     style1: Object.assign({}, $baseViewStyle, {
         height: '75px',
         paddingTop: spacingGap.sm,

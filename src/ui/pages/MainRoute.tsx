@@ -1,6 +1,8 @@
-import { useCallback, useEffect, useRef } from 'react';
+import React, { ReactElement, useCallback, useEffect, useRef } from 'react';
 import { HashRouter, Route, Routes, useNavigate as useNavigateOrigin } from 'react-router-dom';
 
+import { RawTxInfo } from '@/shared/interfaces/RawTxParameters';
+import TxCreateScreen from '@/ui/pages/Wallet/TxCreateScreen';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { Content, Icon } from '../components';
@@ -21,15 +23,8 @@ import SwitchKeyringScreen from './Account/SwitchKeyringScreen';
 import UnlockScreen from './Account/UnlockScreen';
 import ApprovalScreen from './Approval/ApprovalScreen';
 import ConnectedSitesScreen from './Approval/ConnectedSitesScreen';
-import { InscribeTransferScreen } from './Approval/components/InscribeTransfer';
-import AtomicalsNFTScreen from './Atomicals/AtomicalsNFTScreen';
-import SendArc20Screen from './Atomicals/SendArc20Screen';
-import SendAtomicalsInscriptionScreen from './Atomicals/SendAtomicalsNFTScreen';
-import BRC20SendScreen from './BRC20/BRC20SendScreen';
-import BRC20TokenScreen from './BRC20/BRC20TokenScreen';
 import AppTabScrren from './Main/AppTabScreen';
 import BoostScreen from './Main/BoostScreen';
-import DiscoverTabScreen from './Main/DiscoverTabScreen';
 import SettingsTabScreen from './Main/SettingsTabScreen';
 import WalletTabScreen from './Main/WalletTabScreen';
 import WelcomeScreen from './Main/WelcomeScreen';
@@ -44,12 +39,6 @@ import Swap from './OpNet/SwapToken';
 import UnStakeWBTCoPNet from './OpNet/UnStakeWBTCoPNet';
 import UnWrapBitcoinOpnet from './OpNet/UnWrapBitcoinOpnet';
 import WrapBitcoinOpnet from './OpNet/WrapBitcoinOpnet';
-import OrdinalsInscriptionScreen from './Ordinals/OrdinalsInscriptionScreen';
-import SendOrdinalsInscriptionScreen from './Ordinals/SendOrdinalsInscriptionScreen';
-import SignOrdinalsTransactionScreen from './Ordinals/SignOrdinalsTransactionScreen';
-import SplitOrdinalsInscriptionScreen from './Ordinals/SplitOrdinalsInscriptionScreen';
-import RunesTokenScreen from './Runes/RunesTokenScreen';
-import SendRunesScreen from './Runes/SendRunesScreen';
 import AddressTypeScreen from './Settings/AddressTypeScreen';
 import AdvancedScreen from './Settings/AdvancedScreen';
 import ChangePasswordScreen from './Settings/ChangePasswordScreen';
@@ -59,18 +48,70 @@ import ExportMnemonicsScreen from './Settings/ExportMnemonicsScreen';
 import ExportPrivateKeyScreen from './Settings/ExportPrivateKeyScreen';
 import NetworkTypeScreen from './Settings/NetworkTypeScreen';
 import UpgradeNoticeScreen from './Settings/UpgradeNoticeScreen';
-import TestScreen from './Test/TestScreen';
 import HistoryScreen from './Wallet/HistoryScreen';
 import ReceiveScreen from './Wallet/ReceiveScreen';
 import TxConfirmScreen from './Wallet/TxConfirmScreen';
-import TxCreateScreen from './Wallet/TxCreateScreen';
 import TxFailScreen from './Wallet/TxFailScreen';
 import TxOpnetConfirmScreen from './Wallet/TxOpnetConfirmScreen';
-import TxSuccessScreen from './Wallet/TxSuccessScreen';
+import TxSuccessScreen, { ExpectedSuccessScreenParameters } from './Wallet/TxSuccessScreen';
 import UnavailableUtxoScreen from './Wallet/UnavailableUtxoScreen';
 import './index.module.less';
 
-export const routes = {
+export enum RouteTypes {
+    BoostScreen = 'BoostScreen',
+    WelcomeScreen = 'WelcomeScreen',
+    MainScreen = 'MainScreen',
+    AppTabScrren = 'AppTabScrren',
+    SettingsTabScreen = 'SettingsTabScreen',
+    CreateHDWalletScreen = 'CreateHDWalletScreen',
+    CreateAccountScreen = 'CreateAccountScreen',
+    CreatePasswordScreen = 'CreatePasswordScreen',
+    UnlockScreen = 'UnlockScreen',
+    SwitchAccountScreen = 'SwitchAccountScreen',
+    ReceiveScreen = 'ReceiveScreen',
+    TxConfirmScreen = 'TxConfirmScreen',
+    TxOpnetConfirmScreen = 'TxOpnetConfirmScreen',
+    TxSuccessScreen = 'TxSuccessScreen',
+    TxFailScreen = 'TxFailScreen',
+    NetworkTypeScreen = 'NetworkTypeScreen',
+    ChangePasswordScreen = 'ChangePasswordScreen',
+    ExportMnemonicsScreen = 'ExportMnemonicsScreen',
+    ExportPrivateKeyScreen = 'ExportPrivateKeyScreen',
+    AdvancedScreen = 'AdvancedScreen',
+    HistoryScreen = 'HistoryScreen',
+    ApprovalScreen = 'ApprovalScreen',
+    ConnectedSitesScreen = 'ConnectedSitesScreen',
+    SwitchKeyringScreen = 'SwitchKeyringScreen',
+    AddKeyringScreen = 'AddKeyringScreen',
+    EditWalletNameScreen = 'EditWalletNameScreen',
+    CreateSimpleWalletScreen = 'CreateSimpleWalletScreen',
+    CreateKeystoneWalletScreen = 'CreateKeystoneWalletScreen',
+    UpgradeNoticeScreen = 'UpgradeNoticeScreen',
+    AddressTypeScreen = 'AddressTypeScreen',
+    EditAccountNameScreen = 'EditAccountNameScreen',
+    UnavailableUtxoScreen = 'UnavailableUtxoScreen',
+    OpNetTokenScreen = 'OpNetTokenScreen',
+    SendOpNetScreen = 'SendOpNetScreen',
+    WrapBitcoinOpnet = 'WrapBitcoinOpnet',
+    TxCreateScreen = 'TxCreateScreen',
+    UnWrapBitcoinOpnet = 'UnWrapBitcoinOpnet',
+    StakeWBTCoPNet = 'StakeWBTCoPNet',
+    UnStakeWBTCoPNet = 'UnStakeWBTCoPNet',
+    Swap = 'Swap',
+    DeployContract = 'DeployContract',
+    Mint = 'Mint',
+    Airdrop = 'Airdrop',
+    SplitUtxoScreen = 'SplitUtxoScreen'
+}
+
+type Routes = {
+    [key in RouteTypes]: {
+        path: string;
+        element: ReactElement;
+    };
+};
+
+export const routes: Routes = {
     BoostScreen: {
         path: '/',
         element: <BoostScreen />
@@ -83,10 +124,6 @@ export const routes = {
         path: '/main',
         element: <WalletTabScreen />
     },
-    DiscoverTabScreen: {
-        path: '/discover',
-        element: <DiscoverTabScreen />
-    },
     AppTabScrren: {
         path: '/app',
         element: <AppTabScrren />
@@ -98,6 +135,10 @@ export const routes = {
     CreateHDWalletScreen: {
         path: '/account/create-hd-wallet',
         element: <CreateHDWalletScreen />
+    },
+    TxCreateScreen: {
+        path: '/wallet/tx/create',
+        element: <TxCreateScreen />
     },
     CreateAccountScreen: {
         path: '/account/create',
@@ -119,11 +160,6 @@ export const routes = {
         path: '/wallet/receive',
         element: <ReceiveScreen />
     },
-
-    TxCreateScreen: {
-        path: '/wallet/tx/create',
-        element: <TxCreateScreen />
-    },
     TxConfirmScreen: {
         path: '/wallet/tx/confirm',
         element: <TxConfirmScreen />
@@ -140,37 +176,6 @@ export const routes = {
         path: '/wallet/tx/fail',
         element: <TxFailScreen />
     },
-
-    OrdinalsInscriptionScreen: {
-        path: '/ordinals/inscription-detail',
-        element: <OrdinalsInscriptionScreen />
-    },
-
-    SendOrdinalsInscriptionScreen: {
-        path: '/wallet/ordinals-tx/create',
-        element: <SendOrdinalsInscriptionScreen />
-    },
-
-    SignOrdinalsTransactionScreen: {
-        path: '/wallet/ordinals-tx/confirm',
-        element: <SignOrdinalsTransactionScreen />
-    },
-
-    AtomicalsInscriptionScreen: {
-        path: '/atomicals/inscription-detail',
-        element: <AtomicalsNFTScreen />
-    },
-
-    SendAtomicalsInscriptionScreen: {
-        path: '/atomicals/send-inscription',
-        element: <SendAtomicalsInscriptionScreen />
-    },
-
-    SendArc20Screen: {
-        path: '/atomicals/send-arc20',
-        element: <SendArc20Screen />
-    },
-
     NetworkTypeScreen: {
         path: '/settings/network-type',
         element: <NetworkTypeScreen />
@@ -235,38 +240,9 @@ export const routes = {
         path: '/settings/edit-account-name',
         element: <EditAccountNameScreen />
     },
-    InscribeTransferScreen: {
-        path: '/inscribe/transfer',
-        element: <InscribeTransferScreen />
-    },
-    BRC20SendScreen: {
-        path: '/brc20/send',
-        element: <BRC20SendScreen />
-    },
-    BRC20TokenScreen: {
-        path: '/brc20/token',
-        element: <BRC20TokenScreen />
-    },
-    TestScreen: {
-        path: '/test',
-        element: <TestScreen />
-    },
-    SplitOrdinalsInscriptionScreen: {
-        path: '/wallet/split-tx/create',
-        element: <SplitOrdinalsInscriptionScreen />
-    },
     UnavailableUtxoScreen: {
         path: '/wallet/unavailable-utxo',
         element: <UnavailableUtxoScreen />
-    },
-
-    SendRunesScreen: {
-        path: '/runes/send-runes',
-        element: <SendRunesScreen />
-    },
-    RunesTokenScreen: {
-        path: '/runes/token',
-        element: <RunesTokenScreen />
     },
     OpNetTokenScreen: {
         path: '/opnet/token',
@@ -314,18 +290,33 @@ export const routes = {
     }
 };
 
-type RouteTypes = keyof typeof routes;
+export type StateForKey<T extends RouteTypes> = T extends RouteTypes.TxOpnetConfirmScreen
+    ? {
+          rawTxInfo: RawTxInfo;
+      }
+    : T extends RouteTypes.OpNetTokenScreen
+    ? {
+          address: string;
+      }
+    : T extends RouteTypes.TxSuccessScreen
+    ? ExpectedSuccessScreenParameters
+    : T extends RouteTypes.TxFailScreen
+    ? {
+          error: string;
+      }
+    : never;
 
-export function useNavigate() {
+export type UseNavigate<T extends RouteTypes> = (routKey: T, state?: StateForKey<T>) => void;
+
+export function useNavigate<T extends RouteTypes>(): UseNavigate<T> {
     const navigate = useNavigateOrigin();
 
     return useCallback(
-        (routKey: RouteTypes, state?: any) => {
+        (routKey: T, state?: StateForKey<T>) => {
             navigate(routes[routKey].path, { state });
-            console.log(routes[routKey].path, { state });
         },
         [useNavigateOrigin]
-    );
+    ) as UseNavigate<T>;
 }
 
 const Main = () => {
@@ -372,30 +363,20 @@ const Main = () => {
             }
 
             if (!self.summaryLoaded) {
-                wallet.getInscriptionSummary().then((data) => {
-                    dispatch(accountActions.setInscriptionSummary(data));
-                });
+                const appSummary = await wallet.getAppSummary();
+                dispatch(accountActions.setAppSummary(appSummary));
 
-                wallet.getAppSummary().then((data) => {
-                    dispatch(accountActions.setAppSummary(data));
-                });
                 self.summaryLoaded = true;
             }
 
             if (!self.configLoaded) {
                 self.configLoaded = true;
 
-                // already load when reloadAccounts
-                // wallet.getWalletConfig().then((data) => {
-                //   dispatch(settingsActions.updateSettings({ walletConfig: data }));
-                // });
-                wallet.getSkippedVersion().then((data) => {
-                    dispatch(settingsActions.updateSettings({ skippedVersion: data }));
-                });
+                const v = await wallet.getSkippedVersion();
+                dispatch(settingsActions.updateSettings({ skippedVersion: v }));
 
-                wallet.getAutoLockTimeId().then((data) => {
-                    dispatch(settingsActions.updateSettings({ autoLockTimeId: data }));
-                });
+                const a = await wallet.getAutoLockTimeId();
+                dispatch(settingsActions.updateSettings({ autoLockTimeId: a }));
             }
 
             dispatch(globalActions.update({ isReady: true }));
@@ -405,18 +386,20 @@ const Main = () => {
     }, [wallet, dispatch, isReady, isUnlocked]);
 
     useEffect(() => {
-        wallet.hasVault().then((val) => {
+        void (async () => {
+            const val = await wallet.hasVault();
+
             if (val) {
                 dispatch(globalActions.update({ isBooted: true }));
-                wallet.isUnlocked().then((isUnlocked) => {
-                    dispatch(globalActions.update({ isUnlocked }));
-                });
+
+                const isUnlock = await wallet.isUnlocked();
+                dispatch(globalActions.update({ isUnlocked: isUnlock }));
             }
-        });
+        })();
     }, []);
 
     useEffect(() => {
-        init();
+        void init();
     }, [init]);
 
     if (!isReady) {
@@ -429,8 +412,7 @@ const Main = () => {
                     height: '100vh',
                     overflowY: 'auto',
                     overflowX: 'hidden'
-                }}
-            >
+                }}>
                 <Content justifyCenter itemsCenter>
                     <Icon>
                         <LoadingOutlined />

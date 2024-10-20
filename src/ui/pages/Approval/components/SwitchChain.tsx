@@ -24,12 +24,12 @@ export default function SwitchChain({ params: { data, session } }: Props) {
 
     const [getApproval, resolveApproval, rejectApproval] = useApproval();
 
-    const handleCancel = () => {
-        rejectApproval('User rejected the request.');
+    const handleCancel = async () => {
+        await rejectApproval('User rejected the request.');
     };
 
     const handleConnect = async () => {
-        resolveApproval();
+        await resolveApproval();
     };
 
     return (
@@ -47,8 +47,7 @@ export default function SwitchChain({ params: { data, session } }: Props) {
                                 backgroundColor: 'rgba(255,255,255,0.1)',
                                 borderRadius: 10
                             }}
-                            mt="lg"
-                        >
+                            mt="lg">
                             <Row fullX>
                                 <Row itemsCenter>
                                     <Image src={from.icon} size={30} />
@@ -63,8 +62,7 @@ export default function SwitchChain({ params: { data, session } }: Props) {
                                 backgroundColor: 'rgba(255,255,255,0.1)',
                                 borderRadius: 10
                             }}
-                            mt="lg"
-                        >
+                            mt="lg">
                             <Row fullX>
                                 <Row itemsCenter>
                                     <Image src={to.icon} size={30} />

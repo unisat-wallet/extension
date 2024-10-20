@@ -21,8 +21,7 @@ export default function AssetTag(props: AssetTagProps) {
             style={{ backgroundColor: colors[type], borderRadius: small ? 4 : 5 }}
             px={small ? 'sm' : 'md'}
             py={small ? 'zero' : 'xs'}
-            itemsCenter
-        >
+            itemsCenter>
             <Text text={type} size={small ? 'xxs' : 'xs'} />
         </Row>
     );

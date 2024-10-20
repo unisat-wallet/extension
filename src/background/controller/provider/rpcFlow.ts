@@ -8,6 +8,7 @@ import eventBus from '@/shared/eventBus';
 
 import providerController from './controller';
 
+
 const isSignApproval = (type: string) => {
     const SIGN_APPROVALS = ['SignText', 'SignPsbt', 'SignTx', 'SignData', 'SignInteraction'];
     return SIGN_APPROVALS.includes(type);
@@ -15,7 +16,7 @@ const isSignApproval = (type: string) => {
 const windowHeight = 600;
 const flow = new PromiseFlow();
 const flowContext = flow
-    .use(async (ctx, next) => {
+    .use((ctx, next) => {
         // check method
         const {
             data: { method }

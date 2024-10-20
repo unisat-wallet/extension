@@ -4,11 +4,8 @@ import { ToAddressInfo } from '@/shared/types';
 import { ColorTypes } from '@/ui/theme/colors';
 import { shortAddress } from '@/ui/utils';
 
-import { AccordingInscription } from '../AccordingInscription';
 import { AddressDetailPopover } from '../AddressDetailPopover';
 import { Column } from '../Column';
-import { CopyableAddress } from '../CopyableAddress';
-import { Row } from '../Row';
 import { Text } from '../Text';
 
 export const AddressText = (props: {
@@ -28,32 +25,14 @@ export const AddressText = (props: {
         return '';
     }, []);
     const domain = props.addressInfo?.domain;
-    const inscription = props.addressInfo?.inscription;
     return (
         <Column>
-            {inscription ? (
-                <Column
-                    onClick={() => {
-                        setPopoverVisible(true);
-                    }}
-                >
-                    {domain && <Text text={domain} textCenter={props.textCenter} />}
-                    {inscription && (
-                        <Row full itemsCenter mt="sm">
-                            <CopyableAddress address={inscription.address || ''} />
-                            <AccordingInscription inscription={inscription} />
-                        </Row>
-                    )}
-                </Column>
-            ) : (
-                <Column
-                    onClick={() => {
-                        setPopoverVisible(true);
-                    }}
-                >
-                    <Text text={shortAddress(address)} color={props.color || 'white'} />
-                </Column>
-            )}
+            <Column
+                onClick={() => {
+                    setPopoverVisible(true);
+                }}>
+                <Text text={shortAddress(address)} color={props.color || 'white'} />
+            </Column>
             {popoverVisible && (
                 <AddressDetailPopover
                     address={address}

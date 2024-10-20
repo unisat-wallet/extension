@@ -1,38 +1,34 @@
-import { useEffect, useMemo, useRef, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
 import { ADDRESS_TYPES, KEYRING_TYPE } from '@/shared/constant';
-import { Column, Content, Header, Layout, Text } from '@/ui/components';
+import { Column, Content, Header, Layout } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressTypeCard } from '@/ui/components/AddressTypeCard';
-import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
 import { useCurrentAccount, useReloadAccounts } from '@/ui/state/accounts/hooks';
-import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { useWallet } from '@/ui/utils';
 
-import { useNavigate } from '../MainRoute';
+import { RouteTypes, useNavigate } from '../MainRoute';
 
 export default function AddressTypeScreen() {
-    const isInTab = useExtensionIsInTab();
-
     const wallet = useWallet();
-    const currentKeyring = useCurrentKeyring();
     const account = useCurrentAccount();
 
     const navigate = useNavigate();
-    const dispatch = useAppDispatch();
     const reloadAccounts = useReloadAccounts();
     const [addresses, setAddresses] = useState<string[]>([]);
-    const [addressAssets, setAddressAssets] = useState<{
-        [key: string]: { total_btc: string; satoshis: number; total_inscription: number };
-    }>({});
+    const [addressAssets, setAddressAssets] = useState<
+        Record<
+            string,
+            {
+                total_btc: string;
+                satoshis: number;
+                total_inscription: number;
+            }
+        >
+    >({});
 
-    const selfRef = useRef<{
-        addressAssets: { [key: string]: { total_btc: string; satoshis: number; total_inscription: number } };
-    }>({
-        addressAssets: {}
-    });
-    const self = selfRef.current;
+    const currentKeyring = useCurrentKeyring();
 
     const tools = useTools();
     const loadAddresses = async () => {
@@ -40,6 +36,7 @@ export default function AddressTypeScreen() {
 
         const _res = await wallet.getAllAddresses(currentKeyring, account.index || 0);
         setAddresses(_res);
+
         // TODO: Fix this error (Error: address invalid)
         // const balances = await wallet.getMultiAddressAssets(_res.join(','));
         // for (let i = 0; i < _res.length; i++) {
@@ -58,7 +55,7 @@ export default function AddressTypeScreen() {
     };
 
     useEffect(() => {
-        loadAddresses();
+        void loadAddresses();
     }, []);
 
     const addressTypes = useMemo(() => {
@@ -82,6 +79,7 @@ export default function AddressTypeScreen() {
             );
         }
     }, [currentKeyring.type, addressAssets, addresses]);
+
     return (
         <Layout>
             <Header
@@ -91,7 +89,6 @@ export default function AddressTypeScreen() {
                 title="Address Type"
             />
             <Content>
-                <Text text="OP_NET is currently only compatible with Taproot (P2TR) addresses." color="red" />
                 <Column>
                     {addressTypes.map((item, index) => {
                         const address = addresses[item.value];
@@ -100,10 +97,12 @@ export default function AddressTypeScreen() {
                             satoshis: 0,
                             total_inscription: 0
                         };
+
                         let name = `${item.name} (${item.hdPath}/${account.index})`;
                         if (currentKeyring.type === KEYRING_TYPE.SimpleKeyring) {
                             name = `${item.name}`;
                         }
+
                         return (
                             <AddressTypeCard
                                 key={index}
@@ -116,8 +115,8 @@ export default function AddressTypeScreen() {
                                         return;
                                     }
                                     await wallet.changeAddressType(item.value);
-                                    reloadAccounts();
-                                    navigate('MainScreen');
+                                    await reloadAccounts();
+                                    navigate(RouteTypes.MainScreen);
                                     tools.toastSuccess('Address type changed');
                                 }}
                             />

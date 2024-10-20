@@ -9,19 +9,22 @@ const UI_TYPE = {
     Notification: 'notification'
 };
 
-type UiTypeCheck = {
+interface UiTypeCheck {
     isTab: boolean;
     isNotification: boolean;
     isPop: boolean;
-};
+}
 
 export const getUiType = (): UiTypeCheck => {
     const { pathname } = window.location;
-    return Object.entries(UI_TYPE).reduce((m, [key, value]) => {
-        m[`is${key}`] = pathname === `/${value}.html`;
+    return Object.entries(UI_TYPE).reduce<UiTypeCheck>(
+        (m, [key, value]) => {
+            m[`is${key}`] = pathname === `/${value}.html`;
 
-        return m;
-    }, {} as UiTypeCheck);
+            return m;
+        },
+        { isNotification: false, isPop: false, isTab: false }
+    );
 };
 
 export const hex2Text = (hex: string) => {
@@ -100,8 +103,8 @@ export function shortDesc(desc?: string, len = 50) {
     return desc.slice(0, len) + '...';
 }
 
-export function shortUtxo(txid: string, vout: number) {
-    return txid.slice(0, 8) + '...:' + vout;
+export function shortUtxo(txid: string, vout: number): string {
+    return `${txid.slice(0, 8)}...:${vout}}`;
 }
 
 export async function sleep(timeSec: number) {
@@ -159,15 +162,13 @@ export function satoshisToAmount(val: number) {
     return num.dividedBy(100000000).toFixed(8);
 }
 
-export function amountToSatoshis(val: any) {
+export function amountToSatoshis(val: string | number) {
     const num = new BigNumber(val);
     return num.multipliedBy(100000000).toNumber();
 }
 
 export function useLocationState<T>() {
-    const getData = useLocation();
     const { state } = useLocation();
-    console.log(getData);
     return state as T;
 }
 

@@ -111,8 +111,7 @@ export default function AdvancedScreen() {
                                             setUnconfirmedPopoverVisible(true);
                                         }
                                     }}
-                                    checked={enableUnconfirmed}
-                                ></Switch>
+                                    checked={enableUnconfirmed}></Switch>
                             </Row>
                         </Column>
                     </Card>
@@ -147,8 +146,7 @@ export default function AdvancedScreen() {
                                             setEnableSignDataPopoverVisible(true);
                                         }
                                     }}
-                                    checked={enableSignData}
-                                ></Switch>
+                                    checked={enableSignData}></Switch>
                             </Row>
                         </Column>
                     </Card>
@@ -183,8 +181,7 @@ export default function AdvancedScreen() {
                                             setIsOPNETonly(true);
                                         }
                                     }}
-                                    checked={isOPNETonly}
-                                ></Switch>
+                                    checked={isOPNETonly}></Switch>
                             </Row>
                         </Column>
                     </Card>
@@ -198,8 +195,7 @@ export default function AdvancedScreen() {
                             }}
                             justifyCenter
                             itemsCenter
-                            full
-                        >
+                            full>
                             <Column>
                                 <Icon size={16} icon="overview"></Icon>
                             </Column>
@@ -263,7 +259,7 @@ export default function AdvancedScreen() {
     );
 }
 
-const riskColor: { [key: string]: ColorTypes } = {
+const riskColor: Record<string, ColorTypes> = {
     high: 'danger',
     low: 'orange'
 };
@@ -302,8 +298,7 @@ export const EnableSignDataPopover = ({ onNext, onCancel }: { onNext: () => void
                                     onChange={() => {
                                         setUnderstand(!understand);
                                     }}
-                                    checked={understand}
-                                ></Checkbox>
+                                    checked={understand}></Checkbox>
                                 <Text
                                     text={
                                         'I understand that I can lose all of my funds and NFTs if I enable signData requests.'
@@ -365,8 +360,7 @@ export const LockTimePopover = ({ onNext, onCancel }: { onNext: () => void; onCa
                                 backgroundColor: 'rgba(255,255,255,0.01)',
                                 borderBottomColor: colors.transparent,
                                 borderBottomWidth: 0.2
-                            }}
-                        >
+                            }}>
                             <Row
                                 onClick={async () => {
                                     const lockTimeId = v.id;
@@ -376,8 +370,7 @@ export const LockTimePopover = ({ onNext, onCancel }: { onNext: () => void; onCa
                                     onNext();
                                 }}
                                 itemsCenter
-                                full
-                            >
+                                full>
                                 <Column>
                                     <Text color={check ? 'white' : 'textDim'} size="sm" text={v.label}></Text>
                                 </Column>

@@ -21,15 +21,14 @@ export default function UpgradeNoticeScreen() {
                                 whiteSpace: 'pre-wrap',
                                 wordBreak: 'break-word',
                                 flexWrap: 'wrap'
-                            }}
-                        >
+                            }}>
                             {UPGRADE_NOTICE}
                         </div>
                     </Card>
                     <Button
                         text="OK"
                         preset="danger"
-                        onClick={async () => {
+                        onClick={() => {
                             window.history.go(-1);
                         }}
                     />

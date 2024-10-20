@@ -1,9 +1,10 @@
 import BigNumber from 'bignumber.js';
 import { getContract, IMotoswapRouterContract, IOP_20Contract, MOTOSWAP_ROUTER_ABI, OP_20_ABI } from 'opnet';
+import { AddressesInfo } from 'opnet/src/providers/interfaces/PublicKeyInfo';
 import { CSSProperties, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { Account, OpNetBalance } from '@/shared/types';
+import { Account, OPTokenInfo } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
 import Web3API from '@/shared/web3/Web3API';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
@@ -26,18 +27,21 @@ interface ItemData {
     account?: Account;
 }
 
+BigNumber.config({ EXPONENTIAL_AT: 256 });
+
 export default function Swap() {
     const { state } = useLocation();
     const props = state as {
-        OpNetBalance: OpNetBalance;
+        OpNetBalance: OPTokenInfo;
     };
+
     const OpNetBalance = props.OpNetBalance;
 
     const [loading, setLoading] = useState(true);
-    const [switchOptions, setSwitchOptions] = useState<OpNetBalance[]>([]);
-    const [selectedOption, setSelectedOption] = useState<OpNetBalance | null>(null);
-    const [selectedOptionOutput, setSelectedOptioOutput] = useState<OpNetBalance | null>(null);
-    BigNumber.config({ EXPONENTIAL_AT: 256 });
+    const [switchOptions, setSwitchOptions] = useState<OPTokenInfo[]>([]);
+    const [selectedOption, setSelectedOption] = useState<OPTokenInfo | null>(null);
+    const [selectedOptionOutput, setSelectedOptioOutput] = useState<OPTokenInfo | null>(null);
+
     const [OpnetRateInputVal, adjustFeeRateInput] = useState<string>('8600');
     const [slippageTolerance, setSlippageTolerance] = useState<string>('5');
     const navigate = useNavigate();
@@ -60,39 +64,47 @@ export default function Swap() {
         return _items;
     }, []);
 
-    const handleSelect = (option: OpNetBalance) => {
+    const handleSelect = async (option: OPTokenInfo) => {
         if (option.address == selectedOptionOutput?.address) {
-            tools.toastError("Error,You can't set input to output");
+            tools.toastError("Token In and Token Out can't be the same");
             return;
         }
-        handleInputChange(inputAmount);
+        await handleInputChange(inputAmount);
         setSelectedOption(option);
     };
-    const handleSelectOutput = (option: OpNetBalance) => {
+
+    const handleSelectOutput = async (option: OPTokenInfo) => {
         if (option.address == selectedOption?.address) {
-            tools.toastError("Error,You can't set input to output");
+            tools.toastError("Token In and Token Out can't be the same");
             return;
         }
-        void handleInputChange(inputAmount);
+
+        await handleInputChange(inputAmount);
         setSelectedOptioOutput(option);
     };
+
     const setMax = () => {
         if (selectedOption) {
-            const maxBalance = Number(selectedOption.amount) / Math.pow(10, selectedOption.divisibility);
+            const maxBalance = new BigNumber(selectedOption.amount.toString()).dividedBy(
+                new BigNumber(10).pow(selectedOption.divisibility)
+            );
             setInputAmount(maxBalance.toString());
         }
     };
+
     const handleInputChange = async (value: string) => {
         // Allow empty input, numbers, and one decimal point
         if (value === '' || /^\d*\.?\d*$/.test(value)) {
             if (selectedOption && selectedOptionOutput) {
-                const maxBalance = Number(selectedOption.amount) / Math.pow(10, selectedOption.divisibility);
+                const maxBalance = new BigNumber(selectedOption.amount.toString()).dividedBy(
+                    new BigNumber(10).pow(selectedOption.divisibility)
+                );
+
                 // If the input is not empty and is a valid number
                 if (value !== '' && value !== '.') {
-                    const numericValue = parseFloat(value);
-
-                    if (numericValue <= maxBalance) {
-                        setInputAmount(value);
+                    const numericValue = new BigNumber(value);
+                    if (numericValue.lt(maxBalance)) {
+                        setInputAmount(value.toString());
                     } else {
                         setInputAmount(maxBalance.toString());
                     }
@@ -110,22 +122,17 @@ export default function Swap() {
                     );
 
                     try {
-                        const pubKeyInfoSelectedOption = await Web3API.provider.getPublicKeyInfo(
+                        const pubKeyInfoSelectedOption: AddressesInfo = await Web3API.provider.getPublicKeysInfo([
                             selectedOption.address,
-                            Web3API.network
-                        );
+                            selectedOptionOutput.address
+                        ]);
 
-                        const pubKeyInfoSelectedOptionOutput = await Web3API.provider.getPublicKeyInfo(
-                            selectedOptionOutput.address,
-                            Web3API.network
-                        );
+                        const originalPubKeyInput: Address = pubKeyInfoSelectedOption[selectedOption.address];
+                        const originalPubKeyOutput: Address = pubKeyInfoSelectedOption[selectedOptionOutput.address];
 
                         const getData = await getQuote.getAmountsOut(
                             BigInt(Number(numericValue) * Math.pow(10, selectedOption.divisibility)),
-                            [
-                                Address.fromString(pubKeyInfoSelectedOption[selectedOption].originalPubKey),
-                                Address.fromString(pubKeyInfoSelectedOptionOutput[selectedOptionOutput].originalPubKey)
-                            ]
+                            [originalPubKeyInput, originalPubKeyOutput]
                         );
 
                         setOutPutAmount(
@@ -148,6 +155,7 @@ export default function Swap() {
             }
         }
     };
+
     const $searchInputStyle = {
         width: '40%',
         padding: 8,
@@ -160,6 +168,7 @@ export default function Swap() {
 
         // color: colors.text
     } as CSSProperties;
+
     const $styleBox = {
         width: '100%',
         maxWidth: '350px',
@@ -170,28 +179,32 @@ export default function Swap() {
         border: 'solid 1px white',
         padding: '20px'
     } as CSSProperties;
+
     const $columnstyle = {
         padding: '20px'
     } as CSSProperties;
+
     const $styleButton = {
         width: '100%',
         maxWidth: '350px',
         marginRight: 'auto',
         marginLeft: 'auto'
     } as CSSProperties;
+
     const $style = Object.assign({}, $styleBox);
 
     useState(() => {
         const getData = async () => {
             Web3API.setNetwork(await wallet.getChainType());
+
             const getChain = await wallet.getChainType();
-            let parsedTokens: Address[] = [];
-            const tokensImported = localStorage.getItem('tokensImported_' + getChain);
-            parsedTokens = tokensImported ? JSON.parse(tokensImported) : [];
+            const tokensImported = localStorage.getItem('opnetTokens_' + getChain);
+            const parsedTokens: string[] = tokensImported ? JSON.parse(tokensImported) : [];
             if (OpNetBalance?.address) {
                 setSelectedOption(OpNetBalance);
             }
-            const tokenBalances: OpNetBalance[] = [];
+
+            const tokenBalances: OPTokenInfo[] = [];
             for (let i = 0; i < parsedTokens.length; i++) {
                 try {
                     const tokenAddress = parsedTokens[i];
@@ -202,15 +215,16 @@ export default function Swap() {
                         provider,
                         Web3API.network
                     );
+
                     const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(
-                        tokenAddress.p2tr(Web3API.network)
+                        tokenAddress
                     );
 
                     const walletAddressPub = Address.fromString(currentAccount.pubkey);
 
                     const balance = await contract.balanceOf(walletAddressPub);
                     tokenBalances.push({
-                        address: tokenAddress.p2tr(Web3API.network),
+                        address: tokenAddress,
                         name: contractInfo?.name || '',
                         amount: BigInt(balance.decoded[0].toString()),
                         divisibility: contractInfo?.decimals || 8,

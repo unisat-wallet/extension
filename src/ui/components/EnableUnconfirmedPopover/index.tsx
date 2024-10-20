@@ -15,9 +15,8 @@ export const EnableUnconfirmedPopover = ({ onClose, onConfirm }: { onClose: () =
                 <Text text="Enable Unconfirmed Balance" preset="title-bold" />
                 <Column gap="zero">
                     <div style={{ fontSize: fontSizes.sm, color: '#ddd', marginTop: 20 }}>
-                        If Runes (or ARC20) assets are detected in the given address, the unconfirmed UTXOs are
-                        explicitly not allowed to be spent until it's confirmed. Forcely spending these unconfirmed
-                        assets will incur the risks of losing assets.
+                        OP_NET filters out ordinals and runes based UTXOs by skipping all UTXOs that are bellow 10,000
+                        sat.
                     </div>
                 </Column>
 

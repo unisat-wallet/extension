@@ -44,8 +44,8 @@ function Step1(props: Props) {
             <Text text="Scan the QR code via your Keystone device" preset="title" textCenter />
             <KeystoneDisplay type={ur.type} cbor={ur.cbor} />
             <div style={{ ...$textPresets.sub, textAlign: 'center' }}>
-                Click on the <span style={{ color: colors.primary }}>'Get Signature'</span> button after signing the
-                transaction with your Keystone device.
+                Click on the <span style={{ color: colors.primary }}>&#39;Get Signature&#39;</span> button after signing
+                the transaction with your Keystone device.
             </div>
         </Column>
     );

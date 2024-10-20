@@ -4,37 +4,26 @@ import cloneDeep from 'lodash/cloneDeep';
 import { createPersistStore } from '@/background/utils';
 import { AddressFlagType, CHAINS, ChainType, DEFAULT_LOCKTIME_ID, EVENTS } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
-import {
-    Account,
-    AddressTokenSummary,
-    AddressType,
-    AppSummary,
-    BitcoinBalance,
-    Inscription,
-    NetworkType,
-    TokenBalance,
-    TokenTransfer,
-    TxHistoryItem
-} from '@/shared/types';
+import { SessionEvent } from '@/shared/interfaces/SessionEvent';
+import { Account, AddressType, AppSummary, BitcoinBalance, NetworkType, TxHistoryItem } from '@/shared/types';
 
 import browser from '../webapi/browser';
 import { i18n, sessionService } from './index';
 
-const version = process.env.release || '0';
+
+const version = process.env.release ?? '0';
+
+export type WalletSaveList = [];
 
 export interface PreferenceStore {
     currentKeyringIndex: number;
     currentAccount: Account | undefined | null;
     externalLinkAck: boolean;
-    balanceMap: {
-        [address: string]: BitcoinBalance;
-    };
-    historyMap: {
-        [address: string]: TxHistoryItem[];
-    };
+    balanceMap: Record<string, BitcoinBalance>;
+    historyMap: Record<string, TxHistoryItem[]>;
     locale: string;
     watchAddressPreference: Record<string, number>;
-    walletSavedList: [];
+    walletSavedList: WalletSaveList;
     alianNames?: Record<string, string>;
     initAlianNames: boolean;
     currentVersion: string;
@@ -43,49 +32,18 @@ export interface PreferenceStore {
     addressType: AddressType;
     networkType: NetworkType;
     chainType: ChainType;
-    keyringAlianNames: {
-        [key: string]: string;
-    };
-    accountAlianNames: {
-        [key: string]: string;
-    };
+    keyringAlianNames: Record<string, string>;
+    accountAlianNames: Record<string, string>;
     editingKeyringIndex: number;
     editingAccount: Account | undefined | null;
-    uiCachedData: {
-        [address: string]: {
-            allInscriptionList: {
-                currentPage: number;
-                pageSize: number;
-                total: number;
-                list: Inscription[];
-            }[];
-            brc20List: {
-                currentPage: number;
-                pageSize: number;
-                total: number;
-                list: TokenBalance[];
-            }[];
-            brc20Summary: {
-                [ticker: string]: AddressTokenSummary;
-            };
-            brc20TransferableList: {
-                [ticker: string]: {
-                    currentPage: number;
-                    pageSize: number;
-                    total: number;
-                    list: TokenTransfer[];
-                }[];
-            };
-        };
-    };
     skippedVersion: string;
     appTab: {
         summary: AppSummary;
         readTabTime: number;
-        readAppTime: { [key: string]: number };
+        readAppTime: Record<string, number>;
     };
     showSafeNotice: boolean;
-    addressFlags: { [key: string]: number };
+    addressFlags: Record<string, number>;
     enableSignData: boolean;
     autoLockTimeId: number;
 }
@@ -122,7 +80,6 @@ class PreferenceService {
                 chainType: ChainType.BITCOIN_REGTEST, // TODO: To change to mainnet when mainnet is ready
                 keyringAlianNames: {},
                 accountAlianNames: {},
-                uiCachedData: {},
                 skippedVersion: '',
                 appTab: {
                     summary: { apps: [] },
@@ -186,10 +143,6 @@ class PreferenceService {
             this.store.accountAlianNames = {};
         }
 
-        if (!this.store.uiCachedData) {
-            this.store.uiCachedData = {};
-        }
-
         if (!this.store.skippedVersion) {
             this.store.skippedVersion = '';
         }
@@ -225,7 +178,9 @@ class PreferenceService {
     getAcceptLanguages = async () => {
         let langs = await browser.i18n.getAcceptLanguages();
         if (!langs) langs = [];
-        return langs.map((lang) => lang.replace(/-/g, '_')).filter((lang) => SUPPORT_LOCALES.includes(lang));
+        return langs
+            .map((lang: string) => lang.replace(/-/g, '_'))
+            .filter((lang: string) => SUPPORT_LOCALES.includes(lang));
     };
 
     getCurrentAccount = () => {
@@ -235,7 +190,7 @@ class PreferenceService {
     setCurrentAccount = (account?: Account | null) => {
         this.store.currentAccount = account;
         if (account) {
-            sessionService.broadcastEvent('accountsChanged', [account.address]);
+            sessionService.broadcastEvent(SessionEvent.accountChanged, [account.address]);
             eventBus.emit(EVENTS.broadcastToUI, {
                 method: 'accountsChanged',
                 params: account
@@ -303,7 +258,7 @@ class PreferenceService {
         return this.store.externalLinkAck;
     };
 
-    setExternalLinkAck = (ack = false) => {
+    setExternalLinkAck = (ack: boolean = false) => {
         this.store.externalLinkAck = ack;
     };
 
@@ -312,9 +267,9 @@ class PreferenceService {
         return this.store.locale;
     };
 
-    setLocale = (locale: string) => {
+    setLocale = async (locale: string) => {
         this.store.locale = locale;
-        i18n.changeLanguage(locale);
+        await i18n.changeLanguage(locale);
     };
 
     // currency
@@ -461,34 +416,6 @@ class PreferenceService {
 
     setEditingAccount = (account?: Account | null) => {
         this.store.editingAccount = account;
-    };
-
-    getUICachedData = (address: string) => {
-        this.store.uiCachedData[address] = {
-            allInscriptionList: [],
-            brc20List: [],
-            brc20Summary: {},
-            brc20TransferableList: {}
-        };
-
-        // if (!this.store.uiCachedData[address]) {
-        //   this.store.uiCachedData[address] = {
-        //     allInscriptionList: [],
-        //     brc20List: [],
-        //     brc20Summary: {},
-        //     brc20TransferableList: {}
-        //   };
-        // }
-        return this.store.uiCachedData[address];
-    };
-
-    expireUICachedData = (address: string) => {
-        this.store.uiCachedData[address] = {
-            allInscriptionList: [],
-            brc20List: [],
-            brc20Summary: {},
-            brc20TransferableList: {}
-        };
     };
 
     getSkippedVersion = () => {

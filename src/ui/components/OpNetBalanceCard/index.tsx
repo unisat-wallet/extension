@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 
-import { OpNetBalance } from '@/shared/types';
+import { OPTokenInfo } from '@/shared/types';
 import { bigIntToDecimal } from '@/shared/web3/Web3API';
 import { fontSizes } from '@/ui/theme/font';
 
@@ -12,7 +12,7 @@ import { RunesTicker } from '../RunesTicker';
 import { Text } from '../Text';
 
 export interface OpNetBalanceCardProps {
-    tokenBalance: OpNetBalance;
+    tokenBalance: OPTokenInfo;
     onClick?: () => void;
 }
 
@@ -30,13 +30,13 @@ export default function OpNetBalanceCard(props: OpNetBalanceCardProps) {
             style={{
                 backgroundColor: '#141414',
                 borderColor: 'rgba(255,255,255,0.1)',
-                borderWidth: 1
+                borderWidth: 1,
+                marginBottom: 10
             }}
             fullX
             onClick={() => {
                 onClick && onClick();
-            }}
-        >
+            }}>
             <Column full py="zero" gap="zero">
                 <Row itemsCenter fullX justifyBetween>
                     <Row itemsCenter fullX>

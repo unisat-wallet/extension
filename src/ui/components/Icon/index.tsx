@@ -55,7 +55,7 @@ export const svgRegistry = {
     overview: '/images/icons/overview.svg'
 };
 
-const iconImgList: Array<IconTypes> = ['success', 'delete', 'btc'];
+const iconImgList: IconTypes[] = ['success', 'delete', 'btc'];
 
 export type IconTypes = keyof typeof svgRegistry;
 
@@ -116,13 +116,12 @@ export function Icon(props: IconProps) {
                     $containerStyleOverride,
                     $imageStyleOverride || {},
                     onClick ? { cursor: 'pointer' } : {}
-                )}
-            >
+                )}>
                 {children}
             </div>
         );
     }
-    const iconPath = svgRegistry[icon as IconTypes];
+    const iconPath = svgRegistry[icon];
     if (iconImgList.includes(icon)) {
         return (
             <img

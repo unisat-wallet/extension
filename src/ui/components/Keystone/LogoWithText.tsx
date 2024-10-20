@@ -5,8 +5,7 @@ export default function KeystoneLogoWithText({ width, height }: { width?: number
             height={height || 77}
             viewBox="0 0 320 77"
             fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-        >
+            xmlns="http://www.w3.org/2000/svg">
             <path d="M14.4224 12.0193H43.2686L24.0378 52.8847H9.61475L14.4224 12.0193Z" fill="white" />
             <path
                 d="M62.4994 64.9038L33.6533 64.9038L52.8841 24.0384L67.3071 24.0384L62.4994 64.9038Z"

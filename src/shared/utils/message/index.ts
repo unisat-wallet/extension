@@ -8,8 +8,9 @@ import { ListenCallback, RequestParams } from '@/shared/types/Request.js';
 
 abstract class Message extends EventEmitter {
     // available id list
-    protected _EVENT_PRE = 'UNISAT_WALLET_';
+    protected _EVENT_PRE = 'OPNET_WALLET_';
     protected listenCallback?: ListenCallback;
+
     // max concurrent request limit
     private _requestIdPool = [...Array(500).keys()];
     private _waitingMap = new Map<
@@ -45,7 +46,7 @@ abstract class Message extends EventEmitter {
         });
     };
 
-    onResponse = async ({ ident, res, err }: any = {}) => {
+    onResponse = ({ ident, res, err }: any = {}) => {
         // the url may update
         if (!this._waitingMap.has(ident)) {
             return;

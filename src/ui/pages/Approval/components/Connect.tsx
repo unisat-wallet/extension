@@ -56,12 +56,12 @@ interface Props {
 export default function Connect({ params: { session } }: Props) {
     const [getApproval, resolveApproval, rejectApproval] = useApproval();
 
-    const handleCancel = () => {
-        rejectApproval('User rejected the request.');
+    const handleCancel = async () => {
+        await rejectApproval('User rejected the request.');
     };
 
     const handleConnect = async () => {
-        resolveApproval();
+        await resolveApproval();
     };
 
     const keyrings = useKeyrings();
@@ -175,7 +175,7 @@ export default function Connect({ params: { session } }: Props) {
                                         currentKeyring.key === keyring.key && currentAccount.address === account.address
                                     }
                                     onClick={async () => {
-                                        const accountIndex = account.index || 0;
+                                        const accountIndex = account.index ?? 0;
                                         await wallet.changeKeyring(keyring, accountIndex);
                                         dispatch(keyringsActions.setCurrent(keyring));
                                         const _currentAccount = await wallet.getCurrentAccount();

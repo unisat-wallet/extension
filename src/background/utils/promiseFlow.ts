@@ -5,7 +5,7 @@ export default class PromiseFlow {
     requestedApproval = false;
     private _tasks: ((args: any) => void)[] = [];
 
-    use(fn): PromiseFlow {
+    use(fn): this {
         if (typeof fn !== 'function') {
             throw new Error('promise need function to handle');
         }

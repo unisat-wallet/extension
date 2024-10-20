@@ -39,8 +39,7 @@ const InteractionHeader = (props: Props) => {
                             whiteSpace: 'nowrap',
                             flexWrap: 'wrap',
                             fontSize: 16
-                        }}
-                    >
+                        }}>
                         {contract}
                     </div>
                 </Row>

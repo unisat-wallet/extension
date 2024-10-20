@@ -2,7 +2,7 @@ import { getContract, IWBTCContract, WBTC_ABI } from 'opnet';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { Account, Inscription, OpNetBalance } from '@/shared/types';
+import { Account, Inscription, OPTokenInfo } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
 import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
 import { Button, Column, Content, Header, Image, Input, Layout, Row, Text } from '@/ui/components';
@@ -28,7 +28,7 @@ interface ItemData {
 export default function UnWrapBitcoinOpnet() {
     const { state } = useLocation();
     const props = state as {
-        OpNetBalance: OpNetBalance;
+        OpNetBalance: OPTokenInfo;
     };
 
     const OpNetBalance = props.OpNetBalance;

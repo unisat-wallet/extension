@@ -22,8 +22,7 @@ export const AddressDetailPopover = ({ address, onClose }: { address: string; on
                         copyToClipboard(address).then(() => {
                             tools.toastSuccess('Copied');
                         });
-                    }}
-                >
+                    }}>
                     <Row itemsCenter>
                         <Text
                             text={address}
@@ -39,8 +38,7 @@ export const AddressDetailPopover = ({ address, onClose }: { address: string; on
                     justifyCenter
                     onClick={() => {
                         window.open(addressExplorerUrl);
-                    }}
-                >
+                    }}>
                     <Icon icon="eye" color="textDim" />
                     <Text preset="regular-bold" text="View on Block Explorer" color="textDim" />
                 </Row>

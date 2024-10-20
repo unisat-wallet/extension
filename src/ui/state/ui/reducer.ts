@@ -5,8 +5,6 @@ import { updateVersion } from '../global/actions';
 
 export interface UIState {
     assetTabKey: AssetTabKey;
-    ordinalsAssetTabKey: OrdinalsAssetTabKey;
-    atomicalsAssetTabKey: AtomicalsAssetTabKey;
     uiTxCreateScreen: {
         toInfo: {
             address: string;
@@ -20,28 +18,11 @@ export interface UIState {
 }
 
 export enum AssetTabKey {
-    OP_NET,
-    ORDINALS,
-    ATOMICALS,
-    RUNES
-}
-
-export enum OrdinalsAssetTabKey {
-    ALL,
-    BRC20,
-    BRC20_5BYTE
-}
-
-export enum AtomicalsAssetTabKey {
-    ALL,
-    ARC20,
-    OTHERS
+    OP_NET = 'opnet'
 }
 
 export const initialState: UIState = {
     assetTabKey: AssetTabKey.OP_NET,
-    ordinalsAssetTabKey: OrdinalsAssetTabKey.ALL,
-    atomicalsAssetTabKey: AtomicalsAssetTabKey.ARC20,
     uiTxCreateScreen: {
         toInfo: {
             address: '',
@@ -66,20 +47,12 @@ const slice = createSlice({
             action: {
                 payload: {
                     assetTabKey?: AssetTabKey;
-                    ordinalsAssetTabKey?: OrdinalsAssetTabKey;
-                    atomicalsAssetTabKey?: AtomicalsAssetTabKey;
                 };
             }
         ) {
             const { payload } = action;
             if (payload.assetTabKey !== undefined) {
                 state.assetTabKey = payload.assetTabKey;
-            }
-            if (payload.ordinalsAssetTabKey !== undefined) {
-                state.ordinalsAssetTabKey = payload.ordinalsAssetTabKey;
-            }
-            if (payload.atomicalsAssetTabKey !== undefined) {
-                state.atomicalsAssetTabKey = payload.atomicalsAssetTabKey;
             }
             return state;
         },
@@ -120,12 +93,6 @@ const slice = createSlice({
             // todo
             if (!state.assetTabKey) {
                 state.assetTabKey = AssetTabKey.OP_NET;
-            }
-            if (!state.ordinalsAssetTabKey) {
-                state.ordinalsAssetTabKey = OrdinalsAssetTabKey.ALL;
-            }
-            if (!state.atomicalsAssetTabKey) {
-                state.atomicalsAssetTabKey = AtomicalsAssetTabKey.ARC20;
             }
             if (!state.uiTxCreateScreen) {
                 state.uiTxCreateScreen = initialState.uiTxCreateScreen;

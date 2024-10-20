@@ -93,8 +93,7 @@ export function OutputValueBar({
                                     cursor: 'pointer'
                                 } as CSSProperties,
                                 selected ? { backgroundColor: colors.primary } : {}
-                            )}
-                        >
+                            )}>
                             <Text text={v.title} color={selected ? 'black' : 'white'} textCenter />
                             {v.value && (
                                 <Text

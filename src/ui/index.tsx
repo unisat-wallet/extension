@@ -100,10 +100,12 @@ const wallet: Record<string, any> = new Proxy(
     }
 );
 
-portMessageChannel.listen(async (data) => {
+portMessageChannel.listen((data) => {
     if (data.type === 'broadcast') {
         eventBus.emit(data.method, data.params);
     }
+
+    return Promise.resolve();
 });
 
 eventBus.addEventListener(EVENTS.broadcastToBackground, async (data) => {
@@ -140,7 +142,7 @@ function Updaters() {
 //   });
 // });
 
-const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
+const root = ReactDOM.createRoot(document.getElementById('root')!);
 root.render(
     <Provider store={store}>
         <WalletProvider {...antdConfig} wallet={wallet as any}>
@@ -150,8 +152,7 @@ root.render(
                         <IdleTimerProvider
                             onAction={() => {
                                 wallet.setLastActiveTime();
-                            }}
-                        >
+                            }}>
                             <Updaters />
                             <AsyncMainRoute />
                         </IdleTimerProvider>

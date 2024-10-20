@@ -2,7 +2,7 @@ import { getContract, IOP_20Contract, OP_20_ABI } from 'opnet';
 import { CSSProperties, useEffect, useState } from 'react';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
-import { OpNetBalance } from '@/shared/types';
+import { OPTokenInfo } from '@/shared/types';
 import Web3API from '@/shared/web3/Web3API';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { Column, Icon, Image, Row, Text } from '@/ui/components';
@@ -24,10 +24,10 @@ export interface SelectOption {
 export interface SelectProps extends BaseViewProps {
     setMax?: () => void;
     selectIndex: number;
-    options: OpNetBalance[];
-    onSelect: (option: OpNetBalance) => void;
+    options: OPTokenInfo[];
+    onSelect: (option: OPTokenInfo) => void;
     placeholder?: string;
-    selectedoptionuse?: OpNetBalance | null;
+    selectedoptionuse?: OPTokenInfo | null;
 }
 
 const $selectStyle = {
@@ -97,7 +97,7 @@ export function Select(props: SelectProps) {
         ...rest
     } = props;
     const [isOpen, setIsOpen] = useState(false);
-    const [selectedOption, setSelectedOption] = useState<OpNetBalance | null>(null);
+    const [selectedOption, setSelectedOption] = useState<OPTokenInfo | null>(null);
     const [searchTerm, setSearchTerm] = useState('');
     const [filteredOptions, setFilteredOptions] = useState(options);
     const account = useCurrentAccount();
@@ -153,7 +153,7 @@ export function Select(props: SelectProps) {
                             setFilteredOptions([]);
                             setLoading(false);
                         }
-                        const opNetBalance: OpNetBalance = {
+                        const opNetBalance: OPTokenInfo = {
                             address: searchTerm,
                             name: contractInfo?.name || '',
                             amount: BigInt(balance.decoded[0].toString()),
@@ -176,7 +176,7 @@ export function Select(props: SelectProps) {
         checkOption();
     }, [searchTerm, options]);
 
-    const handleSelect = (option: OpNetBalance) => {
+    const handleSelect = (option: OPTokenInfo) => {
         setSelectedOption(option);
         onSelect(option);
         setIsOpen(false);

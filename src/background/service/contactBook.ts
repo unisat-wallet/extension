@@ -92,7 +92,7 @@ class ContactBook {
         const key = address.toLowerCase();
         if (!this.store[key]) return;
         if (this.store[key]!.isContact) {
-            this.store[key]! = Object.assign({}, this.store[key], {
+            this.store[key] = Object.assign({}, this.store[key], {
                 isAlias: false
             });
         } else {

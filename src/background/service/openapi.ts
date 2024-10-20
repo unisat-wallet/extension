@@ -3,24 +3,13 @@ import randomstring from 'randomstring';
 import { createPersistStore } from '@/background/utils';
 import { CHAINS_MAP, CHANNEL, VERSION } from '@/shared/constant';
 import {
-    AddressRunesTokenSummary,
     AddressSummary,
-    AddressTokenSummary,
     AppSummary,
-    Arc20Balance,
     BitcoinBalance,
     BtcPrice,
     DecodedPsbt,
     FeeSummary,
-    InscribeOrder,
-    Inscription,
-    InscriptionSummary,
-    RuneBalance,
-    TickPriceItem,
-    TokenBalance,
-    TokenTransfer,
     UTXO,
-    UTXO_Detail,
     VersionDetail,
     WalletConfig
 } from '@/shared/types';
@@ -33,11 +22,6 @@ interface OpenApiStore {
     config?: WalletConfig;
 }
 
-//enum API_STATUS {
-//FAILED = -1,
-//SUCCESS = 0
-//}
-
 export class OpenApiService {
     store!: OpenApiStore;
     clientAddress = '';
@@ -45,13 +29,10 @@ export class OpenApiService {
     endpoints: string[] = [];
     endpoint = '';
     config: WalletConfig | null = null;
+
     private btcPriceCache: number | null = null;
     private btcPriceUpdateTime = 0;
     private isRefreshingBtcPrice = false;
-    private brc20PriceCache: { [key: string]: { cacheTime: number; data: TickPriceItem } } = {};
-    private currentRequestBrc20 = {};
-    private runesPriceCache: { [key: string]: { cacheTime: number; data: TickPriceItem } } = {};
-    private currentRequestRune = {};
 
     setEndpoints = async (endpoints: string[]) => {
         this.endpoints = endpoints;
@@ -96,7 +77,7 @@ export class OpenApiService {
         let jsonRes: { code: number; msg: string; data: any };
 
         if (!res) throw new Error('Network error, no response');
-        if (res.status !== 200) throw new Error('Network error with status: ' + res.status);
+        if (res.status !== 200) throw new Error(`Network error with status: ${res.status}`);
         try {
             jsonRes = await res.json();
         } catch (e) {
@@ -129,7 +110,7 @@ export class OpenApiService {
         headers.append('X-Client', 'OP_WALLET');
         headers.append('X-Version', VERSION);
         headers.append('x-address', this.clientAddress);
-        headers.append('x-flag', this.addressFlag + '');
+        headers.append('x-flag', `${this.addressFlag}`);
         headers.append('x-channel', CHANNEL);
         headers.append('x-udid', this.store.deviceId);
         let res: Response;
@@ -137,7 +118,7 @@ export class OpenApiService {
             res = await fetch(new Request(url), { method: 'GET', headers, mode: 'cors', cache: 'default' });
         } catch (err: unknown) {
             const e: Error = err as Error;
-            throw new Error('Network error: ' + e && e.message);
+            throw new Error(`Network error: ${e.message}`);
         }
 
         return this.getRespData(res);
@@ -149,7 +130,7 @@ export class OpenApiService {
         headers.append('X-Client', 'OP_WALLET');
         headers.append('X-Version', VERSION);
         headers.append('x-address', this.clientAddress);
-        headers.append('x-flag', this.addressFlag + '');
+        headers.append('x-flag', `${this.addressFlag}`);
         headers.append('x-channel', CHANNEL);
         headers.append('x-udid', this.store.deviceId);
         headers.append('Content-Type', 'application/json;charset=utf-8');
@@ -162,8 +143,8 @@ export class OpenApiService {
                 cache: 'default',
                 body: JSON.stringify(params)
             });
-        } catch (e: any) {
-            throw new Error('Network error: ' + e && e.message);
+        } catch (e) {
+            throw new Error(`Network error: ${(e as Error).message}`);
         }
 
         return this.getRespData(res);
@@ -199,56 +180,10 @@ export class OpenApiService {
         });
     }
 
-    async getUnavailableUtxos(address: string): Promise<UTXO[]> {
-        return this.httpGet('/v5/address/unavailable-utxo', {
-            address
-        });
-    }
-
     async getBTCUtxos(address: string): Promise<UTXO[]> {
         return this.httpGet('/v5/address/btc-utxo', {
             address
         });
-    }
-
-    async getInscriptionUtxo(inscriptionId: string): Promise<UTXO> {
-        return this.httpGet('/v5/inscription/utxo', {
-            inscriptionId
-        });
-    }
-
-    async getInscriptionUtxoDetail(inscriptionId: string): Promise<UTXO_Detail> {
-        return this.httpGet('/v5/inscription/utxo-detail', {
-            inscriptionId
-        });
-    }
-
-    async getInscriptionUtxos(inscriptionIds: string[]): Promise<UTXO[]> {
-        return this.httpPost('/v5/inscription/utxos', {
-            inscriptionIds
-        });
-    }
-
-    async getInscriptionInfo(inscriptionId: string): Promise<Inscription> {
-        return this.httpGet('/v5/inscription/info', {
-            inscriptionId
-        });
-    }
-
-    async getAddressInscriptions(
-        address: string,
-        cursor: number,
-        size: number
-    ): Promise<{ list: Inscription[]; total: number }> {
-        return this.httpGet('/v5/address/inscriptions', {
-            address,
-            cursor,
-            size
-        });
-    }
-
-    async getInscriptionSummary(): Promise<InscriptionSummary> {
-        return this.httpGet('/v5/default/inscription-summary', {});
     }
 
     async getAppSummary(): Promise<AppSummary> {
@@ -299,151 +234,6 @@ export class OpenApiService {
         return this.refreshBtcPrice();
     }
 
-    async getBrc20sPrice(ticks: string[]) {
-        if (ticks.length < 0) {
-            return {};
-        }
-        const tickLine = ticks.join('');
-        if (!tickLine) return {};
-
-        try {
-            while (this.currentRequestBrc20[tickLine]) {
-                await new Promise((resolve) => setTimeout(resolve, 100));
-            }
-            this.currentRequestBrc20[tickLine] = true;
-
-            const result = {} as { [key: string]: TickPriceItem };
-
-            for (let i = 0; i < ticks.length; i += 1) {
-                const tick = ticks[i];
-                const cache = this.brc20PriceCache[tick];
-                if (!cache) {
-                    break;
-                }
-                if (cache.cacheTime + 5 * 60 * 1000 > Date.now()) {
-                    result[tick] = cache.data;
-                }
-            }
-
-            if (Object.keys(result).length === ticks.length) {
-                return result;
-            }
-
-            const resp: { [ticker: string]: TickPriceItem } = await this.httpPost('/v5/market/brc20/price', {
-                ticks,
-                nftType: 'brc20'
-            });
-
-            for (let i = 0; i < ticks.length; i += 1) {
-                const tick = ticks[i];
-                this.brc20PriceCache[tick] = { cacheTime: Date.now(), data: resp[tick] };
-            }
-            return resp;
-        } finally {
-            this.currentRequestBrc20[tickLine] = false;
-        }
-    }
-
-    async getRunesPrice(ticks: string[]) {
-        if (ticks.length < 0) {
-            return {};
-        }
-        const tickLine = ticks.join('');
-        if (!tickLine) return {};
-
-        try {
-            while (this.currentRequestRune[tickLine]) {
-                await new Promise((resolve) => setTimeout(resolve, 100));
-            }
-            this.currentRequestRune[tickLine] = true;
-
-            const result = {} as { [key: string]: TickPriceItem };
-
-            for (let i = 0; i < ticks.length; i += 1) {
-                const tick = ticks[i];
-                const cache = this.runesPriceCache[tick];
-                if (!cache) {
-                    break;
-                }
-                if (cache.cacheTime + 5 * 60 * 1000 > Date.now()) {
-                    result[tick] = cache.data;
-                }
-            }
-
-            if (Object.keys(result).length === ticks.length) {
-                return result;
-            }
-
-            const resp: { [ticker: string]: TickPriceItem } = await this.httpPost('/v5/market/runes/price', {
-                ticks,
-                nftType: 'runes'
-            });
-
-            for (let i = 0; i < ticks.length; i += 1) {
-                const tick = ticks[i];
-                this.runesPriceCache[tick] = { cacheTime: Date.now(), data: resp[tick] };
-            }
-            return resp;
-        } finally {
-            this.currentRequestRune[tickLine] = false;
-        }
-    }
-
-    async getDomainInfo(domain: string): Promise<Inscription> {
-        return this.httpGet('/v5/address/search', { domain });
-    }
-
-    async inscribeBRC20Transfer(
-        address: string,
-        tick: string,
-        amount: string,
-        feeRate: number,
-        outputValue: number
-    ): Promise<InscribeOrder> {
-        return this.httpPost('/v5/brc20/inscribe-transfer', { address, tick, amount, feeRate, outputValue });
-    }
-
-    async getInscribeResult(orderId: string): Promise<TokenTransfer> {
-        return this.httpGet('/v5/brc20/order-result', { orderId });
-    }
-
-    async getBRC20List(
-        address: string,
-        cursor: number,
-        size: number
-    ): Promise<{
-        list: TokenBalance[];
-        total: number;
-    }> {
-        return this.httpGet('/v5/brc20/list', { address, cursor, size });
-    }
-
-    async getBRC20List5Byte(
-        address: string,
-        cursor: number,
-        size: number
-    ): Promise<{ list: TokenBalance[]; total: number }> {
-        return this.httpGet('/v5/brc20/5byte-list', { address, cursor, size, type: 5 });
-    }
-
-    async getAddressTokenSummary(address: string, ticker: string): Promise<AddressTokenSummary> {
-        return this.httpGet('/v5/brc20/token-summary', { address, ticker: encodeURIComponent(ticker) });
-    }
-
-    async getTokenTransferableList(
-        address: string,
-        ticker: string,
-        cursor: number,
-        size: number
-    ): Promise<{ list: TokenTransfer[]; total: number }> {
-        return this.httpGet('/v5/brc20/transferable-list', {
-            address,
-            ticker: encodeURIComponent(ticker),
-            cursor,
-            size
-        });
-    }
-
     async decodePsbt(psbtHex: string, website: string): Promise<DecodedPsbt> {
         return this.httpPost('/v5/tx/decode2', { psbtHex, website });
     }
@@ -460,70 +250,10 @@ export class OpenApiService {
         return this.httpPost('/v5/default/check-website', { website });
     }
 
-    async getOrdinalsInscriptions(
-        address: string,
-        cursor: number,
-        size: number
-    ): Promise<{ list: Inscription[]; total: number }> {
-        return this.httpGet('/v5/ordinals/inscriptions', {
-            address,
-            cursor,
-            size
-        });
-    }
-
-    async getAtomicalsNFT(
-        address: string,
-        cursor: number,
-        size: number
-    ): Promise<{ list: Inscription[]; total: number }> {
-        return this.httpGet('/v5/atomicals/nft', {
-            address,
-            cursor,
-            size
-        });
-    }
-
-    async getAtomicalsUtxo(atomicalId: string): Promise<UTXO> {
-        return this.httpGet('/v5/atomicals/utxo', {
-            atomicalId
-        });
-    }
-
-    async getArc20BalanceList(
-        address: string,
-        cursor: number,
-        size: number
-    ): Promise<{ list: Arc20Balance[]; total: number }> {
-        return this.httpGet('/v5/arc20/balance-list', { address, cursor, size });
-    }
-
-    async getArc20Utxos(address: string, ticker: string): Promise<UTXO[]> {
-        return this.httpGet('/v5/arc20/utxos', {
-            address,
-            ticker
-        });
-    }
-
     async getVersionDetail(version: string): Promise<VersionDetail> {
         return this.httpGet('/v5/version/detail', {
             version
         });
-    }
-
-    async getRunesList(address: string, cursor: number, size: number): Promise<{ list: RuneBalance[]; total: number }> {
-        return this.httpGet('/v5/runes/list', { address, cursor, size });
-    }
-
-    async getRunesUtxos(address: string, runeid: string): Promise<UTXO[]> {
-        return this.httpGet('/v5/runes/utxos', {
-            address,
-            runeid
-        });
-    }
-
-    async getAddressRunesTokenSummary(address: string, runeid: string): Promise<AddressRunesTokenSummary> {
-        return this.httpGet(`/v5/runes/token-summary?address=${address}&runeid=${runeid}`, {});
     }
 
     async getAddressRecentHistory(params: { address: string; start: number; limit: number }) {

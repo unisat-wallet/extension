@@ -1,15 +1,15 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { Account, Inscription, OpNetBalance, RawTxInfo } from '@/shared/types';
+import { Action, AirdropParameters, Features } from '@/shared/interfaces/RawTxParameters';
+import { Account, OPTokenInfo } from '@/shared/types';
 import { Button, Content, Header, Layout, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { useRunesTx } from '@/ui/state/transactions/hooks';
-import { getAddressUtxoDust } from '@btc-vision/wallet-sdk/lib/transaction';
+import { Address, AddressMap } from '@btc-vision/transaction';
 
-import { useNavigate } from '../MainRoute';
+import { RouteTypes, useNavigate } from '../MainRoute';
 
 interface ItemData {
     key: string;
@@ -19,55 +19,21 @@ interface ItemData {
 export default function WrapBitcoinOpnet() {
     const { state } = useLocation();
     const props = state as {
-        OpNetBalance: OpNetBalance;
+        OpNetBalance: OPTokenInfo;
     };
 
     const account = useCurrentAccount();
     const OpNetBalance = props.OpNetBalance;
 
     const navigate = useNavigate();
-    const runesTx = useRunesTx();
-    const [inputAmount, setInputAmount] = useState('');
     const [disabled, setDisabled] = useState(true);
-    const [OpnetRateInputVal, adjustFeeRateInput] = useState('5000');
     const [getFile, setFile] = useState<File | null>(null);
 
-    const [toInfo, setToInfo] = useState<{
-        address: string;
-        domain: string;
-        inscription?: Inscription;
-    }>({
-        address: runesTx.toAddress,
-        domain: runesTx.toDomain,
-        inscription: undefined
-    });
-
-    //const [availableBalance, setAvailableBalance] = useState('0');
     const [error, setError] = useState('');
-
-    const defaultOutputValue = 546;
-
-    const [outputValue, setOutputValue] = useState(defaultOutputValue);
-    const [amounts, SetAmounts] = useState<Map<string, bigint>>();
-    const minOutputValue = useMemo(() => {
-        if (toInfo.address) {
-            return getAddressUtxoDust(toInfo.address);
-        } else {
-            return 0;
-        }
-    }, [toInfo.address]);
-
-    //const fetchUtxos = useFetchUtxosCallback();
-
-    //const fetchAssetUtxosRunes = useFetchAssetUtxosRunesCallback();
+    const [amounts, SetAmounts] = useState<AddressMap<bigint>>();
     const tools = useTools();
 
-    //const prepareSendRunes = usePrepareSendRunesCallback();
-    const [file, ç] = useState<File | null>(null);
-
     const [feeRate, setFeeRate] = useState(5);
-    const [enableRBF, setEnableRBF] = useState(false);
-    const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
     const keyring = useCurrentKeyring();
     const items = useMemo(() => {
         const _items: ItemData[] = keyring.accounts.map((v) => {
@@ -88,7 +54,7 @@ export default function WrapBitcoinOpnet() {
                 const content = event.target?.result as string;
                 const lines = content.split('\n');
 
-                const amounts: Map<string, bigint> = new Map();
+                const amounts = new AddressMap<bigint>();
 
                 for (let i = 1; i < lines.length; i++) {
                     // Start from 1 to skip header
@@ -96,17 +62,19 @@ export default function WrapBitcoinOpnet() {
                     if (address && amount) {
                         const trimmedAddress = address.trim();
                         const trimmedAmount = amount.trim();
-                        if (/^0x[a-fA-F0-9]{40}$/.test(trimmedAddress) && /^\d+$/.test(trimmedAmount)) {
-                            amounts.set(trimmedAddress, BigInt(trimmedAmount));
+
+                        // verify if address is 0x
+                        if (/^0x[a-fA-F0-9]$/.test(trimmedAddress) && /^\d+$/.test(trimmedAmount)) {
+                            amounts.set(Address.fromString(trimmedAddress), BigInt(trimmedAmount));
                         } else {
-                            setError('Invalid data format in CSV. Please check your file.');
+                            setError('Invalid data found in CSV file.');
                             setDisabled(true);
                             break;
                         }
                     }
                 }
 
-                if (amounts.size > 0) {
+                if (amounts && amounts.size > 0) {
                     console.log('Parsed amounts:', amounts);
                     SetAmounts(amounts);
                     // You can use the amounts map here or store it in state for later use
@@ -166,8 +134,7 @@ export default function WrapBitcoinOpnet() {
                         } else {
                             tools.toastError('Please drop a .wasm file');
                         }
-                    }}
-                >
+                    }}>
                     <input
                         type="file"
                         accept=".csv"
@@ -193,31 +160,29 @@ export default function WrapBitcoinOpnet() {
                     disabled={disabled}
                     preset="primary"
                     text="Airdrop"
-                    onClick={(e) => {
-                        navigate('TxOpnetConfirmScreen', {
-                            rawTxInfo: {
-                                items: items,
-                                account: account,
-                                inputAmount: inputAmount,
-                                contractAddress: OpNetBalance.address,
-                                amounts: amounts,
-                                address: toInfo.address,
-                                feeRate: feeRate,
-                                priorityFee: BigInt(OpnetRateInputVal),
-                                header: 'Airdrop ',
-                                networkFee: feeRate,
-                                features: {
-                                    rbf: false
-                                },
-                                file: getFile,
-                                inputInfos: [],
-                                isToSign: false,
-                                opneTokens: [],
-                                action: 'airdrop'
+                    onClick={() => {
+                        if (!amounts) {
+                            tools.toastError('Please upload a valid CSV file');
+                            return;
+                        }
+
+                        const event: AirdropParameters = {
+                            action: Action.Airdrop,
+                            contractAddress: OpNetBalance.address,
+                            tokens: [OpNetBalance],
+                            feeRate: feeRate,
+                            priorityFee: BigInt(5000),
+                            amounts: amounts,
+                            header: 'Airdrop ' + OpNetBalance.name,
+                            features: {
+                                [Features.rbf]: true
                             }
+                        };
+
+                        navigate(RouteTypes.TxOpnetConfirmScreen, {
+                            rawTxInfo: event
                         });
-                    }}
-                ></Button>
+                    }}></Button>
             </Content>
         </Layout>
     );

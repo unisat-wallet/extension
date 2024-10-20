@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { Account, OpNetBalance } from '@/shared/types';
+import { Account, OPTokenInfo } from '@/shared/types';
 import { Button, Column, Content, Header, Layout, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
@@ -18,7 +18,7 @@ interface ItemData {
 export default function DeployContractOpnet() {
     const { state } = useLocation();
     const props = state as {
-        OpNetBalance: OpNetBalance;
+        OpNetBalance: OPTokenInfo;
     };
 
     const account = useCurrentAccount();
@@ -120,8 +120,7 @@ export default function DeployContractOpnet() {
                         } else {
                             tools.toastError('Please drop a .wasm file');
                         }
-                    }}
-                >
+                    }}>
                     <input
                         type="file"
                         accept=".wasm"
@@ -147,7 +146,7 @@ export default function DeployContractOpnet() {
                     disabled={disabled}
                     preset="primary"
                     text="Deploy"
-                    onClick={(e) => {
+                    onClick={() => {
                         navigate('TxOpnetConfirmScreen', {
                             rawTxInfo: {
                                 items: items,
@@ -169,8 +168,7 @@ export default function DeployContractOpnet() {
                                 action: 'deploy' // replace with actual opneTokens
                             }
                         });
-                    }}
-                ></Button>
+                    }}></Button>
             </Content>
         </Layout>
     );

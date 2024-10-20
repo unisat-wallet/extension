@@ -1,6 +1,6 @@
 {
     "name": "opwallet",
-    "version": "1.0.21",
+    "version": "1.0.22",
     "private": true,
     "homepage": "https://github.com/unisat-wallet/extension#readme",
     "bugs": {
@@ -51,6 +51,7 @@
         "@types/bitcore-lib": "^0.15.6",
         "@types/chrome": "^0.0.188",
         "@types/jest": "^27.5.1",
+        "@types/lru-cache": "^7.10.10",
         "@types/node": "22.5.5",
         "@types/react": "^18.0.9",
         "@types/react-cache": "^2.0.1",
@@ -95,9 +96,9 @@
         "koa-compose": "^4.1.0",
         "lodash-es": "^4.17.21",
         "loglevel": "^1.8.0",
-        "lru-cache": "6.0.0",
+        "lru-cache": "=6.0.0",
         "mini-css-extract-plugin": "^2.4.5",
-        "opnet": "1.1.2",
+        "opnet": "1.1.8",
         "postcss": "^8.4.39",
         "postcss-flexbugs-fixes": "^5.0.2",
         "postcss-loader": "^6.2.1",

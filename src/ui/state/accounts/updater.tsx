@@ -30,15 +30,15 @@ export default function AccountUpdater() {
 
             // setLoading(true);
 
-            reloadAccounts();
+            await reloadAccounts();
 
             // setLoading(false);
         }
     }, [dispatch, currentAccount, wallet, isUnlocked]);
 
     useEffect(() => {
-        onCurrentChange();
-    }, [currentAccount && currentAccount.key, isUnlocked]);
+        void onCurrentChange();
+    }, [currentAccount?.key, isUnlocked]);
 
     const fetchBalance = useFetchBalanceCallback();
     useEffect(() => {
@@ -59,7 +59,7 @@ export default function AccountUpdater() {
 
     useEffect(() => {
         const accountChangeHandler = (account: Account) => {
-            if (account && account.address) {
+            if (account?.address) {
                 dispatch(accountActions.setCurrent(account));
             }
         };

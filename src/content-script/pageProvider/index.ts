@@ -98,15 +98,15 @@ export class OpnetProvider extends EventEmitter {
         document.addEventListener('visibilitychange', this._requestPromiseCheckVisibility);
 
         _opnetPrividerPrivate._bcm.connect().on('message', this._handleBackgroundMessage);
-        domReadyCall(() => {
+        domReadyCall(async () => {
             const origin = window.top?.location.origin;
-            const icon =
-                ($('head > link[rel~="icon"]') as HTMLLinkElement)?.href ||
-                ($('head > meta[itemprop="image"]') as HTMLMetaElement)?.content;
+            // @ts-ignore
+            const icon = $('head > link[rel~="icon"]')?.href || $('head > meta[itemprop="image"]')?.content;
 
-            const name = document.title || ($('head > meta[name="title"]') as HTMLMetaElement)?.content || origin;
+            // @ts-ignore
+            const name = document.title || $('head > meta[name="title"]')?.content || origin;
 
-            _opnetPrividerPrivate._bcm.request({
+            await _opnetPrividerPrivate._bcm.request({
                 method: 'tabCheckin',
                 params: { icon, name, origin }
             });
@@ -361,35 +361,6 @@ export class OpnetProvider extends EventEmitter {
         })) as Promise<UnwrapResult>;
     };
 
-    sendInscription = async (toAddress: string, inscriptionId: string, options?: { feeRate: number }) => {
-        return this._request({
-            method: 'sendInscription',
-            params: {
-                sendInscriptionParams: {
-                    toAddress,
-                    inscriptionId,
-                    feeRate: options?.feeRate
-                },
-                type: TxType.SEND_ORDINALS_INSCRIPTION
-            }
-        });
-    };
-
-    sendRunes = async (toAddress: string, runeid: string, amount: string, options?: { feeRate: number }) => {
-        return this._request({
-            method: 'sendRunes',
-            params: {
-                sendRunesParams: {
-                    toAddress,
-                    runeid,
-                    amount,
-                    feeRate: options?.feeRate
-                },
-                type: TxType.SEND_RUNES
-            }
-        });
-    };
-
     /**
      * push transaction
      */
@@ -432,34 +403,9 @@ export class OpnetProvider extends EventEmitter {
         });
     };
 
-    inscribeTransfer = async (ticker: string, amount: string) => {
-        return this._request({
-            method: 'inscribeTransfer',
-            params: {
-                ticker,
-                amount
-            }
-        });
-    };
-
-    // signTx = async (rawtx: string) => {
-    //   return this._request({
-    //     method: 'signTx',
-    //     params: {
-    //       rawtx
-    //     }
-    //   });
-    // };
-
     getVersion = async () => {
         return this._request({
             method: 'getVersion'
-        });
-    };
-
-    isAtomicalsEnabled = async () => {
-        return this._request({
-            method: 'isAtomicalsEnabled'
         });
     };
 
@@ -481,13 +427,16 @@ export class OpnetProvider extends EventEmitter {
         }
     };
 
-    private _handleBackgroundMessage = ({ event, data }) => {
-        log('[push event]', event, data);
-        if (_opnetPrividerPrivate._pushEventHandlers?.[event]) {
-            return _opnetPrividerPrivate._pushEventHandlers[event](data);
+    private _handleBackgroundMessage = (params: { event: string; data: unknown }) => {
+        log('[push event]', params.event, params.data);
+
+        // @ts-ignore
+        if (_opnetPrividerPrivate._pushEventHandlers?.[params.event]) {
+            // @ts-ignore
+            return _opnetPrividerPrivate._pushEventHandlers[params.event](params.data);
         }
 
-        this.emit(event, data);
+        this.emit(params.event, params.data);
     };
 
     /**
@@ -503,8 +452,8 @@ export class OpnetProvider extends EventEmitter {
             log('[keepAlive: error]', serializeError(e));
         }
 
-        setTimeout(() => {
-            this.keepAlive();
+        setTimeout(async () => {
+            await this.keepAlive();
         }, 1000);
     };
 }
@@ -516,7 +465,7 @@ setTimeout(() => {
     if (!window.unisat) {
         window.unisat = new Proxy(provider, {
             deleteProperty: () => true
-        }) as any;
+        }) as unknown as Unisat;
 
         Object.defineProperty(window, 'unisat', {
             value: new Proxy(provider, {
@@ -533,7 +482,7 @@ setTimeout(() => {
 
 window.opnet = new Proxy(provider, {
     deleteProperty: () => true
-}) as any;
+}) as unknown as Unisat;
 
 Object.defineProperty(window, 'opnet', {
     value: new Proxy(provider, {

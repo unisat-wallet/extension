@@ -1,15 +1,14 @@
 import BigNumber from 'bignumber.js';
 import { networks } from 'bitcoinjs-lib';
 import { Network } from 'bitcoinjs-lib/src/networks.js';
-import { getContract, IOP_20Contract, JSONRpcProvider, OP_20_ABI, UTXOs } from 'opnet';
+import { CallResult, getContract, IOP_20Contract, JSONRpcProvider, OP_20_ABI, UTXOs } from 'opnet';
 
 import { CHAINS_MAP, ChainType } from '@/shared/constant';
 import { NetworkType } from '@/shared/types';
+import { contractLogoManager } from '@/shared/web3/contracts-logo/ContractLogoManager';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
-import { ContractLogo } from '@/shared/web3/metadata/ContractLogo';
 import { ContractNames } from '@/shared/web3/metadata/ContractNames';
 import {
-    ABICoder,
     Address,
     AddressVerificator,
     ChainId,
@@ -73,8 +72,6 @@ class Web3API {
     public chainId: ChainId = ChainId.Bitcoin;
 
     public transactionFactory: TransactionFactory = new TransactionFactory();
-    public readonly abiCoder: ABICoder = new ABICoder();
-    private nextUTXOs: UTXO[] = [];
 
     private currentChain?: ChainType;
 
@@ -169,12 +166,12 @@ class Web3API {
             case networks.regtest:
                 return OPNetNetwork.Regtest;
             default:
-                throw new Error(`Invalid network ${this.network}`);
+                throw new Error(`Invalid network ${this.network.bech32}`);
         }
     }
 
     public setProviderFromUrl(url: string): void {
-        this._provider = new JSONRpcProvider(url, 6000);
+        this._provider = new JSONRpcProvider(url, this.network, 6000);
         this._limitedProvider = new OPNetLimitedProvider(url);
     }
 
@@ -187,15 +184,7 @@ class Web3API {
             throw new Error('Network not set');
         }
 
-        return AddressVerificator.validateBitcoinAddress(address, this.network) ? true : false;
-    }
-
-    public isValidP2TRAddress(address: string): boolean {
-        if (!this.network) {
-            throw new Error('Network not set');
-        }
-
-        return AddressVerificator.isValidP2TRAddress(address, this.network);
+        return !!AddressVerificator.validateBitcoinAddress(address, this.network);
     }
 
     public async queryContractInformation(address: string): Promise<ContractInformation | undefined> {
@@ -207,13 +196,30 @@ class Web3API {
         );
 
         try {
-            const name = (await genericContract.name()).properties.name;
-            const symbol = (await genericContract.symbol()).properties.symbol;
-            const decimals = (await genericContract.decimals()).properties.decimals;
+            const promises: [
+                Promise<CallResult<{ name: string }>>,
+                Promise<
+                    CallResult<{
+                        symbol: string;
+                    }>
+                >,
+                Promise<CallResult<{ decimals: number }>>,
+                Promise<string>
+            ] = [
+                genericContract.name(),
+                genericContract.symbol(),
+                genericContract.decimals(),
+                contractLogoManager.getContractLogo(address)
+            ];
 
-            const logo = this.getContractLogo(address);
+            const results = await Promise.all(promises);
+            const name = results[0].properties.name ?? this.getContractName(address);
+            const symbol = results[1].properties.symbol;
+            const decimals = results[2].properties.decimals;
+
+            const logo = results[3];
             return {
-                name: name ?? this.getContractName(address),
+                name,
                 symbol,
                 decimals,
                 logo
@@ -261,10 +267,6 @@ class Web3API {
         }
 
         return finalUTXOs;
-    }
-
-    private getContractLogo(address: string): string | undefined {
-        return ContractLogo[address] ?? 'https://raw.githubusercontent.com/Cryptofonts/cryptoicons/master/128/btc.png';
     }
 
     private getContractName(address: string): string | undefined {

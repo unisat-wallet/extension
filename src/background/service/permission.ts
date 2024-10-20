@@ -1,4 +1,5 @@
 import { max } from 'lodash';
+// @ts-ignore
 import LRU from 'lru-cache';
 
 import { createPersistStore } from '@/background/utils';
@@ -16,9 +17,9 @@ export interface ConnectedSite {
     isConnected: boolean;
 }
 
-export type PermissionStore = {
-    dumpCache: ReadonlyArray<LRU.Entry<string, ConnectedSite>>;
-};
+export interface PermissionStore {
+    dumpCache: readonly LRU.Entry<string, ConnectedSite>[];
+}
 
 class PermissionService {
     store: PermissionStore = {
@@ -33,7 +34,7 @@ class PermissionService {
         this.store = storage || this.store;
 
         this.lruCache = new LRU();
-        const cache: ReadonlyArray<LRU.Entry<string, ConnectedSite>> = (this.store.dumpCache || []).map((item) => ({
+        const cache: readonly LRU.Entry<string, ConnectedSite>[] = (this.store.dumpCache || []).map((item) => ({
             k: item.k,
             v: item.v,
             e: 0
@@ -77,7 +78,7 @@ class PermissionService {
         this.sync();
     };
 
-    touchConnectedSite = (origin) => {
+    touchConnectedSite = (origin: string) => {
         if (!this.lruCache) return;
         if (origin === INTERNAL_REQUEST_ORIGIN) return;
         this.lruCache.get(origin);
@@ -98,12 +99,12 @@ class PermissionService {
         this.sync();
     };
 
-    hasPermission = (origin) => {
+    hasPermission = (origin: string) => {
         if (!this.lruCache) return;
         if (origin === INTERNAL_REQUEST_ORIGIN) return true;
 
         const site = this.lruCache.get(origin);
-        return site && site.isConnected;
+        return site?.isConnected;
     };
 
     setRecentConnectedSites = (sites: ConnectedSite[]) => {
@@ -116,8 +117,8 @@ class PermissionService {
                 }))
                 .concat(
                     (this.lruCache?.values() || [])
-                        .filter((item) => !item.isConnected)
-                        .map((item) => ({
+                        .filter((item: ConnectedSite) => !item.isConnected)
+                        .map((item: ConnectedSite) => ({
                             e: 0,
                             k: item.origin,
                             v: item
@@ -128,14 +129,16 @@ class PermissionService {
     };
 
     getRecentConnectedSites = () => {
-        const sites = (this.lruCache?.values() || []).filter((item) => item.isConnected);
-        const pinnedSites = sites.filter((item) => item?.isTop).sort((a, b) => (a.order || 0) - (b.order || 0));
-        const recentSites = sites.filter((item) => !item.isTop);
+        const sites = (this.lruCache?.values() || []).filter((item: ConnectedSite) => item.isConnected);
+        const pinnedSites = sites
+            .filter((item: ConnectedSite) => item?.isTop)
+            .sort((a: ConnectedSite, b: ConnectedSite) => (a.order ?? 0) - (b.order ?? 0));
+        const recentSites = sites.filter((item: ConnectedSite) => !item.isTop);
         return [...pinnedSites, ...recentSites];
     };
 
     getConnectedSites = () => {
-        return (this.lruCache?.values() || []).filter((item) => item.isConnected);
+        return (this.lruCache?.values() || []).filter((item: ConnectedSite) => item.isConnected);
     };
 
     getConnectedSite = (key: string) => {
@@ -148,7 +151,7 @@ class PermissionService {
     topConnectedSite = (origin: string, order?: number) => {
         const site = this.getConnectedSite(origin);
         if (!site || !this.lruCache) return;
-        order = order ?? (max(this.getRecentConnectedSites().map((item) => item.order)) || 0) + 1;
+        order = order ?? (max(this.getRecentConnectedSites().map((item: ConnectedSite) => item.order)) || 0) + 1;
         this.updateConnectSite(origin, {
             ...site,
             order,
@@ -180,7 +183,7 @@ class PermissionService {
 
     getSitesByDefaultChain = (chain: CHAINS_ENUM) => {
         if (!this.lruCache) return [];
-        return this.lruCache.values().filter((item) => item.chain === chain);
+        return this.lruCache.values().filter((item: ConnectedSite) => item.chain === chain);
     };
 
     isInternalOrigin = (origin: string) => {

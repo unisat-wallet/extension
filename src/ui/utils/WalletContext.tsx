@@ -7,27 +7,16 @@ import { ConnectedSite } from '@/background/service/permission';
 import { AddressFlagType, ChainType } from '@/shared/constant';
 import {
     Account,
-    AddressRunesTokenSummary,
     AddressSummary,
-    AddressTokenSummary,
     AppSummary,
-    Arc20Balance,
     BitcoinBalance,
     BtcChannelItem,
     DecodedPsbt,
     FeeSummary,
-    InscribeOrder,
-    Inscription,
-    InscriptionSummary,
     NetworkType,
-    RuneBalance,
     SignPsbtOptions,
     TickPriceItem,
-    TokenBalance,
-    TokenTransfer,
     TxHistoryItem,
-    UTXO,
-    UTXO_Detail,
     VersionDetail,
     WalletConfig,
     WalletKeyring
@@ -36,9 +25,7 @@ import { AddressType, UnspentOutput } from '@btc-vision/wallet-sdk';
 import { bitcoin } from '@btc-vision/wallet-sdk/lib/bitcoin-core';
 
 export interface WalletController {
-    openapi: {
-        [key: string]: (...params: any) => Promise<any>;
-    };
+    openapi: Record<string, (...params: any) => Promise<any>>;
     changePassword: (password: string, newPassword: string) => Promise<void>;
     getAllAlianName: () => (ContactBookItem | undefined)[];
     getContactsByMap: () => ContactBookStore;
@@ -87,12 +74,6 @@ export interface WalletController {
         groups: { type: number; address_arr: string[]; pubkey_arr: string[] }[]
     ): Promise<{ type: number; address_arr: string[]; pubkey_arr: string[]; satoshis_arr: number[] }[]>;
 
-    getAddressInscriptions(
-        address: string,
-        cursor: number,
-        size: number
-    ): Promise<{ list: Inscription[]; total: number }>;
-
     getLocale(): Promise<string>;
 
     setLocale(locale: string): Promise<void>;
@@ -105,7 +86,7 @@ export interface WalletController {
 
     getPrivateKey(password: string, account: { address: string; type: string }): Promise<{ hex: string; wif: string }>;
 
-    getInternalPrivateKey(account: { address: string; type: string }): Promise<{ hex: string; wif: string }>;
+    getInternalPrivateKey(account: { pubkey: string; type: string }): Promise<{ hex: string; wif: string }>;
 
     getMnemonics(
         password: string,
@@ -187,48 +168,13 @@ export interface WalletController {
 
     sendAllBTC(data: { to: string; btcUtxos: UnspentOutput[]; feeRate: number; enableRBF: boolean }): Promise<string>;
 
-    sendOrdinalsInscription(data: {
-        to: string;
-        inscriptionId: string;
-        feeRate: number;
-        outputValue?: number;
-        enableRBF: boolean;
-        btcUtxos: UnspentOutput[];
-    }): Promise<string>;
-
-    sendOrdinalsInscriptions(data: {
-        to: string;
-        inscriptionIds: string[];
-        feeRate: number;
-        enableRBF: boolean;
-        btcUtxos: UnspentOutput[];
-    }): Promise<string>;
-
-    splitOrdinalsInscription(data: {
-        inscriptionId: string;
-        feeRate: number;
-        outputValue: number;
-        enableRBF: boolean;
-        btcUtxos: UnspentOutput[];
-    }): Promise<{ psbtHex: string; splitedCount: number }>;
-
     pushTx(rawtx: string): Promise<string>;
-
-    queryDomainInfo(domain: string): Promise<Inscription>;
-
-    getInscriptionSummary(): Promise<InscriptionSummary>;
 
     getAppSummary(): Promise<AppSummary>;
 
     getBTCUtxos(): Promise<UnspentOutput[]>;
 
     getUnavailableUtxos(): Promise<UnspentOutput[]>;
-
-    getAssetUtxosAtomicalsFT(ticker: string): Promise<UnspentOutput[]>;
-
-    getAssetUtxosAtomicalsNFT(atomicalId: string): Promise<UnspentOutput[]>;
-
-    getAssetUtxosInscriptions(inscriptionId: string): Promise<UnspentOutput[]>;
 
     getNetworkType(): Promise<NetworkType>;
 
@@ -262,9 +208,9 @@ export interface WalletController {
 
     getBtcPrice(): Promise<number>;
 
-    getBrc20sPrice(ticks: string[]): Promise<{ [tick: string]: TickPriceItem }>;
+    getBrc20sPrice(ticks: string[]): Promise<Record<string, TickPriceItem>>;
 
-    getRunesPrice(ticks: string[]): Promise<{ [tick: string]: TickPriceItem }>;
+    getRunesPrice(ticks: string[]): Promise<Record<string, TickPriceItem>>;
 
     setEditingKeyring(keyringIndex: number): Promise<void>;
 
@@ -274,58 +220,7 @@ export interface WalletController {
 
     getEditingAccount(): Promise<Account>;
 
-    inscribeBRC20Transfer(
-        address: string,
-        tick: string,
-        amount: string,
-        feeRate: number,
-        outputValue: number
-    ): Promise<InscribeOrder>;
-
-    getInscribeResult(orderId: string): Promise<TokenTransfer>;
-
     decodePsbt(psbtHex: string, website: string): Promise<DecodedPsbt>;
-
-    getAllInscriptionList(
-        address: string,
-        currentPage: number,
-        pageSize: number
-    ): Promise<{ currentPage: number; pageSize: number; total: number; list: Inscription[] }>;
-
-    getBRC20List(
-        address: string,
-        currentPage: number,
-        pageSize: number
-    ): Promise<{ currentPage: number; pageSize: number; total: number; list: TokenBalance[] }>;
-
-    getBRC20List5Byte(
-        address: string,
-        currentPage: number,
-        pageSize: number
-    ): Promise<{ currentPage: number; pageSize: number; total: number; list: TokenBalance[] }>;
-
-    getBRC20TransferableList(
-        address: string,
-        ticker: string,
-        currentPage: number,
-        pageSize: number
-    ): Promise<{ currentPage: number; pageSize: number; total: number; list: TokenTransfer[] }>;
-
-    getOrdinalsInscriptions(
-        address: string,
-        currentPage: number,
-        pageSize: number
-    ): Promise<{ currentPage: number; pageSize: number; total: number; list: Inscription[] }>;
-
-    getAtomicalsNFTs(
-        address: string,
-        currentPage: number,
-        pageSize: number
-    ): Promise<{ currentPage: number; pageSize: number; total: number; list: Inscription[] }>;
-
-    getBRC20Summary(address: string, ticker: string): Promise<AddressTokenSummary>;
-
-    expireUICachedData(address: string): Promise<void>;
 
     createPaymentUrl(address: string, channel: string): Promise<string>;
 
@@ -335,12 +230,6 @@ export interface WalletController {
 
     setSkippedVersion(version: string): Promise<void>;
 
-    getInscriptionUtxoDetail(inscriptionId: string): Promise<UTXO_Detail>;
-
-    getUtxoByInscriptionId(inscriptionId: string): Promise<UTXO>;
-
-    getInscriptionInfo(inscriptionId: string): Promise<Inscription>;
-
     checkWebsite(website: string): Promise<{ isScammer: boolean; warning: string }>;
 
     readTab(tabName: string): Promise<void>;
@@ -348,30 +237,6 @@ export interface WalletController {
     readApp(appid: number): Promise<void>;
 
     formatOptionsToSignInputs(psbtHex: string, options?: SignPsbtOptions): Promise<ToSignInput[]>;
-
-    getArc20BalanceList(
-        address: string,
-        currentPage: number,
-        pageSize: number
-    ): Promise<{ currentPage: number; pageSize: number; total: number; list: Arc20Balance[] }>;
-
-    sendAtomicalsNFT(data: {
-        to: string;
-        atomicalId: string;
-        feeRate: number;
-        enableRBF: boolean;
-        btcUtxos: UnspentOutput[];
-    }): Promise<string>;
-
-    sendAtomicalsFT(data: {
-        to: string;
-        ticker: string;
-        amount: number;
-        feeRate: number;
-        enableRBF: boolean;
-        btcUtxos: UnspentOutput[];
-        assetUtxos: UnspentOutput[];
-    }): Promise<string>;
 
     getAddressSummary(address: string): Promise<AddressSummary>;
 
@@ -408,27 +273,6 @@ export interface WalletController {
     getEnableSignData(): Promise<boolean>;
 
     setEnableSignData(enable: boolean): Promise<void>;
-
-    getRunesList(
-        address: string,
-        currentPage: number,
-        pageSize: number
-    ): Promise<{ currentPage: number; pageSize: number; total: number; list: RuneBalance[] }>;
-
-    getAssetUtxosRunes(rune: string): Promise<UnspentOutput[]>;
-
-    getAddressRunesTokenSummary(address: string, runeid: string): Promise<AddressRunesTokenSummary>;
-
-    sendRunes(data: {
-        to: string;
-        runeid: string;
-        runeAmount: string;
-        feeRate: number;
-        enableRBF: boolean;
-        btcUtxos?: UnspentOutput[];
-        assetUtxos?: UnspentOutput[];
-        outputValue?: number;
-    }): Promise<string>;
 
     getBuyBtcChannelList(): Promise<BtcChannelItem[]>;
 

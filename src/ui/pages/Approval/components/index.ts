@@ -1,6 +1,4 @@
 export { default as Connect } from './Connect';
-export { default as InscribeTransfer } from './InscribeTransfer';
-export { default as MultiSignPsbt } from './MultiSignPsbt';
 export { default as SignData } from './SignData';
 export { default as SignInteraction } from './SignInteraction';
 export { default as SignPsbt } from './SignPsbt';

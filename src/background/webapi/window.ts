@@ -34,10 +34,10 @@ const create = async ({ url, ...rest }): Promise<number | undefined> => {
         width
     } = await browserWindowsGetCurrent({
         windowTypes: ['normal']
-    } as any);
+    });
 
-    const top = cTop! + BROWSER_HEADER;
-    const left = cLeft! + width! - WINDOW_SIZE.width;
+    const top = cTop + BROWSER_HEADER;
+    const left = cLeft + width - WINDOW_SIZE.width;
 
     const currentWindow = await browserWindowsGetCurrent();
     let win;

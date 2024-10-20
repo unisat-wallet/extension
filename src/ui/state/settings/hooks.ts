@@ -141,11 +141,6 @@ export function useUnisatWebsite() {
     return CHAINS_MAP[chainType].unisatUrl;
 }
 
-export function useOrdinalsWebsite() {
-    const chainType = useChainType();
-    return CHAINS_MAP[chainType].ordinalsUrl;
-}
-
 export function useWalletConfig() {
     const accountsState = useSettingsState();
     return accountsState.walletConfig;

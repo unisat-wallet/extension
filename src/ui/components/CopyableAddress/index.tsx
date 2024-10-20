@@ -15,8 +15,7 @@ export function CopyableAddress({ address }: { address: string }) {
                 copyToClipboard(address).then(() => {
                     tools.toastSuccess('Copied');
                 });
-            }}
-        >
+            }}>
             <Icon icon="copy" color="textDim" />
             <Text text={shortAddress(address)} color="textDim" />
         </Row>

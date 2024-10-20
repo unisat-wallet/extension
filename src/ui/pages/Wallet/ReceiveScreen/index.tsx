@@ -25,8 +25,7 @@ export default function ReceiveScreen() {
                     <Column
                         justifyCenter
                         rounded
-                        style={{ backgroundColor: 'white', alignSelf: 'center', alignItems: 'center', padding: 10 }}
-                    >
+                        style={{ backgroundColor: 'white', alignSelf: 'center', alignItems: 'center', padding: 10 }}>
                         <QRCode
                             value={address || ''}
                             renderAs="svg"
@@ -37,8 +36,7 @@ export default function ReceiveScreen() {
                                 width: 30,
                                 height: 30,
                                 excavate: true
-                            }}
-                        ></QRCode>
+                            }}></QRCode>
                     </Column>
 
                     <Row justifyCenter>

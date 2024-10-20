@@ -68,8 +68,7 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
                             dispatch(accountActions.setCurrent(_currentAccount));
                         }
                         if (autoNav) navigate('MainScreen');
-                    }}
-                >
+                    }}>
                     <Text text={account.alianName} />
                     <Text text={`${shortAddress(account.address)}${path}`} preset="sub" />
                 </Column>
@@ -85,20 +84,18 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
                             top: 0,
                             bottom: 0
                         }}
-                        onTouchStart={(e) => {
+                        onTouchStart={() => {
                             setOptionsVisible(false);
                         }}
-                        onMouseDown={(e) => {
+                        onMouseDown={() => {
                             setOptionsVisible(false);
-                        }}
-                    ></div>
+                        }}></div>
                 )}
 
                 <Icon
-                    onClick={async (e) => {
+                    onClick={() => {
                         setOptionsVisible(!optionsVisible);
-                    }}
-                >
+                    }}>
                     <EllipsisOutlined />
                 </Icon>
 
@@ -111,23 +108,20 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
                             right: 0,
                             padding: 5,
                             zIndex: 10
-                        }}
-                    >
+                        }}>
                         <Row
                             onClick={() => {
                                 navigate('EditAccountNameScreen', { account });
-                            }}
-                        >
+                            }}>
                             <EditOutlined />
                             <Text text="Edit Name" size="sm" />
                         </Row>
                         <Row
-                            onClick={() => {
-                                copyToClipboard(account.address);
+                            onClick={async () => {
+                                await copyToClipboard(account.address);
                                 tools.toastSuccess('copied');
                                 setOptionsVisible(false);
-                            }}
-                        >
+                            }}>
                             <CopyOutlined />
                             <Text text="Copy address" size="sm" />
                         </Row>
@@ -135,8 +129,7 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
                             <Row
                                 onClick={() => {
                                     navigate('ExportPrivateKeyScreen', { account });
-                                }}
-                            >
+                                }}>
                                 <KeyOutlined />
                                 <Text text="Export Private Key" size="sm" />
                             </Row>
@@ -174,8 +167,7 @@ export default function SwitchAccountScreen() {
                         <Icon
                             onClick={() => {
                                 navigate('CreateAccountScreen');
-                            }}
-                        >
+                            }}>
                             <PlusCircleOutlined />
                         </Icon>
                     )

@@ -1,5 +1,5 @@
 import { permissionService, sessionService } from '@/background/service';
-import { CHAINS, CHAINS_MAP, NETWORK_TYPES, VERSION } from '@/shared/constant';
+import { CHAINS, CHAINS_MAP, ChainType, NETWORK_TYPES, VERSION } from '@/shared/constant';
 
 import { IDeploymentParametersWithoutSigner } from '@/content-script/pageProvider/Web3Provider';
 import { NetworkType } from '@/shared/types';
@@ -14,6 +14,8 @@ import { toPsbtNetwork } from '@btc-vision/wallet-sdk/lib/network';
 import { ethErrors } from 'eth-rpc-errors';
 import BaseController from '../base';
 import wallet from '../wallet';
+import { SessionEvent } from '@/shared/interfaces/SessionEvent';
+import { Session } from '@/background/service/session';
 
 function formatPsbtHex(psbtHex: string) {
     let formatData = '';
@@ -43,23 +45,24 @@ function objToBuffer(obj: object): Uint8Array {
 }
 
 class ProviderController extends BaseController {
-
-    requestAccounts = async ({ session: { origin } }) => {
+    requestAccounts = async (params: { session: Session }) => {
+        const origin = params.session.origin;
         if (!permissionService.hasPermission(origin)) {
             throw ethErrors.provider.unauthorized();
         }
 
         const _account = await wallet.getCurrentAccount();
         const account = _account ? [_account.address] : [];
-        sessionService.broadcastEvent('accountsChanged', account);
+        sessionService.broadcastEvent(SessionEvent.accountChanged, account);
+
         const connectSite = permissionService.getConnectedSite(origin);
         if (connectSite) {
             const network = wallet.getLegacyNetworkName();
             sessionService.broadcastEvent(
-                'networkChanged',
+                SessionEvent.networkChanged,
                 {
                     network,
-                    chain: wallet.getChainType()
+                    chainType: wallet.getChainType()
                 },
                 origin
             );
@@ -67,26 +70,30 @@ class ProviderController extends BaseController {
         return account;
     };
 
-    disconnect = async ({ session: { origin } }) => {
+    disconnect = () => {
         wallet.removeConnectedSite(origin);
     };
 
+    // @ts-ignore
     @Reflect.metadata('SAFE', true)
-    getAccounts = async ({ session: { origin } }) => {
+    getAccounts = async ({ session: { origin } }: {
+        session: { origin: string }
+    }) => {
         if (!permissionService.hasPermission(origin)) {
             return [];
         }
 
         const _account = await wallet.getCurrentAccount();
-        const account = _account ? [_account.address] : [];
-        return account;
+        return _account ? [_account.address] : [];
     };
 
+    // @ts-ignore
     @Reflect.metadata('SAFE', true)
-    getNetwork = async () => {
+    getNetwork = () => {
         return wallet.getLegacyNetworkName();
     };
 
+    // @ts-ignore
     @Reflect.metadata('APPROVAL', ['SwitchNetwork', (req) => {
         const network = req.data.params.network;
         if (NETWORK_TYPES[NetworkType.MAINNET].validNames.includes(network)) {
@@ -104,20 +111,36 @@ class ProviderController extends BaseController {
             return true;
         }
     }])
-    switchNetwork = async (req) => {
-        const { data: { params: { networkType } } } = req;
+
+    switchNetwork = async (req: {
+        data: {
+            params: {
+                networkType: NetworkType
+            }
+        }
+    }) => {
+        const { data: { params: { networkType } } }: {
+            data: {
+                params: {
+                    networkType: NetworkType
+                }
+            }
+        } = req;
+
         await wallet.setNetworkType(networkType);
         return NETWORK_TYPES[networkType].name;
     };
 
+    // @ts-ignore
     @Reflect.metadata('SAFE', true)
-    getChain = async () => {
+    getChain = () => {
         const chainType = wallet.getChainType();
         return getChainInfo(chainType);
     };
 
+    // @ts-ignore
     @Reflect.metadata('APPROVAL', ['SwitchChain', (req) => {
-        const chainType = req.data.params.chain;
+        const chainType: ChainType = req.data.params.chain as ChainType;
         if (!CHAINS_MAP[chainType]) {
             throw new Error(`the chain is invalid, supported chains: ${CHAINS.map(v => v.enum).join(',')}`);
         }
@@ -127,12 +150,27 @@ class ProviderController extends BaseController {
             return true;
         }
     }])
-    switchChain = async (req) => {
-        const { data: { params: { chain } } } = req;
-        await wallet.setChainType(chain);
-        return getChainInfo(chain);
+
+    switchChain = async (req: {
+        data: {
+            params: {
+                chain: string
+            }
+        }
+    }) => {
+        const { data: { params: { chain } } }: {
+            data: {
+                params: {
+                    chain: string
+                }
+            }
+        } = req;
+
+        await wallet.setChainType(chain as ChainType);
+        return getChainInfo(chain as ChainType);
     };
 
+    // @ts-ignore
     @Reflect.metadata('SAFE', true)
     getPublicKey = async () => {
         const account = await wallet.getCurrentAccount();
@@ -140,15 +178,7 @@ class ProviderController extends BaseController {
         return account.pubkey;
     };
 
-    @Reflect.metadata('SAFE', true)
-    getInscriptions = async (req) => {
-        const { data: { params: { cursor, size } } } = req;
-        const account = await wallet.getCurrentAccount();
-        if (!account) return '';
-        const { list, total } = await wallet.openapi.getAddressInscriptions(account.address, cursor, size);
-        return { list, total };
-    };
-
+    // @ts-ignore
     @Reflect.metadata('SAFE', true)
     getBalance = async () => {
         const account = await wallet.getCurrentAccount();
@@ -162,32 +192,49 @@ class ProviderController extends BaseController {
         };
     };
 
+    // @ts-ignore
     @Reflect.metadata('SAFE', true)
-    verifyMessageOfBIP322Simple = async (req) => {
+    verifyMessageOfBIP322Simple = (req: {
+        data: {
+            params: {
+                address: string,
+                message: string,
+                signature: string,
+                network: NetworkType | undefined
+            }
+        }
+    }) => {
         const { data: { params } } = req;
         return verifyMessageOfBIP322Simple(params.address, params.message, params.signature, params.network) ? 1 : 0;
     };
 
+    // @ts-ignore
     @Reflect.metadata('APPROVAL', ['SignPsbt', (_req: RequestData) => {
         //const { data: { params: { toAddress, satoshis } } } = req;
     }])
-    sendBitcoin = async ({ approvalRes: { psbtHex } }) => {
+    sendBitcoin = async ({ approvalRes: { psbtHex } }: {
+        approvalRes: { psbtHex: string }
+    }) => {
         const psbt = bitcoin.Psbt.fromHex(psbtHex);
         const tx = psbt.extractTransaction();
         const rawtx = tx.toHex();
         return await wallet.pushTx(rawtx);
     };
 
+    // @ts-ignore
     @Reflect.metadata('APPROVAL', ['SignPsbt', (_req: RequestData) => {
         //const { data: { params: { toAddress, satoshis } } } = req;
     }])
-    sendInscription = async ({ approvalRes: { psbtHex } }) => {
+    sendInscription = async ({ approvalRes: { psbtHex } }: {
+        approvalRes: { psbtHex: string }
+    }) => {
         const psbt = bitcoin.Psbt.fromHex(psbtHex);
         const tx = psbt.extractTransaction();
         const rawtx = tx.toHex();
         return await wallet.pushTx(rawtx);
     };
 
+    // @ts-ignore
     @Reflect.metadata('APPROVAL', ['SignInteraction', (_req: RequestData) => {
         const interactionParams = _req.data.params as DetailedInteractionParameters;
         if (!Web3API.isValidAddress(interactionParams.interactionParameters.to)) {
@@ -203,6 +250,7 @@ class ProviderController extends BaseController {
         return wallet.signAndBroadcastInteraction(request.data.params.interactionParameters);
     };
 
+    // @ts-ignore
     @Reflect.metadata('APPROVAL', ['SignInteraction', (_req: RequestData) => {
         const interactionParams = _req.data.params as DetailedInteractionParameters;
         if (!Web3API.isValidAddress(interactionParams.interactionParameters.to)) {
@@ -211,6 +259,7 @@ class ProviderController extends BaseController {
 
         interactionParams.network = wallet.getChainType();
     }])
+
     signInteraction = async (request: {
         approvalRes: boolean,
         data: { params: DetailedInteractionParameters }
@@ -218,6 +267,7 @@ class ProviderController extends BaseController {
         return wallet.signInteraction(request.data.params.interactionParameters);
     };
 
+    // @ts-ignore
     @Reflect.metadata('APPROVAL', ['SignDeployment', (_req: RequestData) => {
         const interactionParams = _req.data.params as IDeploymentParametersWithoutSigner;
         if (!interactionParams.bytecode) {
@@ -238,6 +288,7 @@ class ProviderController extends BaseController {
         // @ts-ignore
         interactionParams.bytecode = objToBuffer(interactionParams.bytecode);
     }])
+
     deployContract = async (request: {
         approvalRes: boolean,
         data: { params: IDeploymentParametersWithoutSigner }
@@ -263,10 +314,14 @@ class ProviderController extends BaseController {
         return wallet.deployContract(request.data.params);
     };
 
+    // @ts-ignore
     @Reflect.metadata('APPROVAL', ['SignText', () => {
         // todo check text
     }])
-    signMessage = async ({ data: { params: { text, type } }, approvalRes }) => {
+    signMessage = async ({ data: { params: { text, type } }, approvalRes }: {
+        data: { params: { text: string, type: 'bip322-simple' | 'ecdsa' | 'schnorr' } },
+        approvalRes: { signature: string }
+    }) => {
         if (approvalRes?.signature) {
             return approvalRes.signature;
         }
@@ -277,55 +332,79 @@ class ProviderController extends BaseController {
         }
     };
 
+    // @ts-ignore
     @Reflect.metadata('APPROVAL', ['SignData', () => {
         // todo check text
     }])
-    signData = async ({ data: { params: { data, type } } }) => {
+    signData = ({ data: { params: { data, type } } }: {
+        data: { params: { data: string, type: 'ecdsa' | 'schnorr' } }
+    }) => {
         return wallet.signData(data, type);
     };
 
-    // @Reflect.metadata('APPROVAL', ['SignTx', () => {
-    //   // todo check
-    // }])
-    //   signTx = async () => {
-    //     // todo
-    //   }
-
+    // @ts-ignore
     @Reflect.metadata('SAFE', true)
-    pushTx = async ({ data: { params: { rawtx } } }) => {
+    pushTx = async ({ data: { params: { rawtx } } }: {
+        data: { params: { rawtx: string } }
+    }) => {
         return await wallet.pushTx(rawtx);
     };
 
+    // @ts-ignore
     @Reflect.metadata('APPROVAL', ['SignPsbt', (req) => {
         const { data: { params: { psbtHex } } } = req;
         req.data.params.psbtHex = formatPsbtHex(psbtHex);
     }])
-    signPsbt = async ({ data: { params: { psbtHex, options } }, approvalRes }) => {
+    signPsbt = async ({ data: { params: { psbtHex, options } }, approvalRes }: {
+        data: {
+            params: {
+                psbtHex: string,
+                options: { autoFinalized: boolean }
+            },
+        },
+        approvalRes: { signed: boolean, psbtHex: string }
+    }) => {
         if (approvalRes && approvalRes.signed == true) {
             return approvalRes.psbtHex;
         }
         const networkType = wallet.getNetworkType();
         const psbtNetwork = toPsbtNetwork(networkType);
         const psbt = bitcoin.Psbt.fromHex(psbtHex, { network: psbtNetwork });
-        const autoFinalized = (options && options.autoFinalized == false) ? false : true;
+        const autoFinalized = !(options && !options.autoFinalized);
         const toSignInputs = await wallet.formatOptionsToSignInputs(psbtHex, options);
         await wallet.signPsbt(psbt, toSignInputs, autoFinalized);
         return psbt.toHex();
     };
 
+    // @ts-ignore
     @Reflect.metadata('APPROVAL', ['MultiSignPsbt', (req) => {
-        const { data: { params: { psbtHexs, options } } } = req;
+        const { data: { params: { psbtHexs } } }: {
+            data: {
+                params: {
+                    psbtHexs: string[],
+                    options: { autoFinalized: boolean }[]
+                }
+            }
+        } = req;
+
         req.data.params.psbtHexs = psbtHexs.map(psbtHex => formatPsbtHex(psbtHex));
     }])
-    multiSignPsbt = async ({ data: { params: { psbtHexs, options } } }) => {
+    multiSignPsbt = async ({ data: { params: { psbtHexs, options } } }: {
+        data: {
+            params: {
+                psbtHexs: string[],
+                options: { autoFinalized: boolean }[]
+            }
+        }
+    }) => {
         const account = await wallet.getCurrentAccount();
-        if (!account) throw null;
+        if (!account) throw new Error('No account');
         const networkType = wallet.getNetworkType();
         const psbtNetwork = toPsbtNetwork(networkType);
         const result: string[] = [];
         for (let i = 0; i < psbtHexs.length; i++) {
             const psbt = bitcoin.Psbt.fromHex(psbtHexs[i], { network: psbtNetwork });
-            const autoFinalized = (options && options[i] && options[i].autoFinalized == false) ? false : true;
+            const autoFinalized = (!(options && options[i] && options[i].autoFinalized == false));
             const toSignInputs = await wallet.formatOptionsToSignInputs(psbtHexs[i], options[i]);
             await wallet.signPsbt(psbt, toSignInputs, autoFinalized);
             result.push(psbt.toHex());
@@ -333,9 +412,11 @@ class ProviderController extends BaseController {
         return result;
     };
 
-
+    // @ts-ignore
     @Reflect.metadata('SAFE', true)
-    pushPsbt = async ({ data: { params: { psbtHex } } }) => {
+    pushPsbt = async ({ data: { params: { psbtHex } } }: {
+        data: { params: { psbtHex: string } }
+    }) => {
         const hexData = formatPsbtHex(psbtHex);
         const psbt = bitcoin.Psbt.fromHex(hexData);
         const tx = psbt.extractTransaction();
@@ -343,24 +424,13 @@ class ProviderController extends BaseController {
         return await wallet.pushTx(rawtx);
     };
 
-    @Reflect.metadata('APPROVAL', ['InscribeTransfer', (req) => {
-        const { data: { params: { ticker } } } = req;
-        // todo
-    }])
-    inscribeTransfer = async ({ approvalRes }) => {
-        return approvalRes;
-    };
-
+    // @ts-ignore
     @Reflect.metadata('SAFE', true)
-    getVersion = async () => {
+    getVersion = () => {
         return VERSION;
     };
 
-    @Reflect.metadata('SAFE', true)
-    isAtomicalsEnabled = async () => {
-        return await wallet.isAtomicalsEnabled();
-    };
-
+    // @ts-ignore
     @Reflect.metadata('SAFE', true)
     getBitcoinUtxos = async () => {
         try {

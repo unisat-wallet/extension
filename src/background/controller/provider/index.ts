@@ -7,14 +7,17 @@ import { RequestData } from '@/shared/types/Request.js';
 import internalMethod from './internalMethod';
 import rpcFlow from './rpcFlow';
 
+
 tab.on('tabRemove', (id) => {
     sessionService.deleteSession(id);
 });
 
-export default async (req: RequestData): Promise<unknown> => {
+export default (req: RequestData): Promise<unknown> => {
     const method = req.data.method;
 
+    // @ts-ignore
     if (internalMethod[method]) {
+        // @ts-ignore
         return internalMethod[method](req);
     }
 

@@ -49,7 +49,7 @@ export function Step1_Import({
         }
     }, [contextData]);
 
-    const [keys, setKeys] = useState<Array<string>>(new Array(wordsItems[contextData.wordsType].count).fill(''));
+    const [keys, setKeys] = useState<string[]>(new Array(wordsItems[contextData.wordsType].count).fill(''));
 
     const handleEventPaste = (event, index: number) => {
         const copyText = event.clipboardData?.getData('text/plain');
@@ -132,8 +132,7 @@ export function Step1_Import({
                             updateContextData({ wordsType });
                             setKeys(new Array(wordsItems[wordsType].count).fill(''));
                         }}
-                        value={contextData.wordsType}
-                    >
+                        value={contextData.wordsType}>
                         {wordsItems.map((v) => (
                             <Radio key={v.key} value={v.key}>
                                 {v.label}

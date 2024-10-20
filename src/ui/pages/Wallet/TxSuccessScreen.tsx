@@ -1,21 +1,25 @@
 import Web3API from '@/shared/web3/Web3API';
 import { Button, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
-import { useNavigate } from '@/ui/pages/MainRoute';
+import { RouteTypes, useNavigate } from '@/ui/pages/MainRoute';
 import { useAddressExplorerUrl, useTxExplorerUrl } from '@/ui/state/settings/hooks';
 import { spacing } from '@/ui/theme/spacing';
 import { useLocationState } from '@/ui/utils';
 import { Address } from '@btc-vision/transaction';
 
-interface LocationState {
-    txid: string;
-    contractAddress?: Address;
+export interface ExpectedSuccessScreenParameters {
+    txid: string | undefined;
+    contractAddress?: Address | string;
 }
 
 export default function TxSuccessScreen() {
-    const { txid, contractAddress } = useLocationState<LocationState>();
+    const { txid, contractAddress } = useLocationState<ExpectedSuccessScreenParameters>();
     const navigate = useNavigate();
-    const txidUrl = useTxExplorerUrl(txid);
-    const addressUrl = contractAddress ? useAddressExplorerUrl(contractAddress.p2tr(Web3API.network)) : '';
+    const txidUrl = txid ? useTxExplorerUrl(txid) : '';
+    const addressUrl = contractAddress
+        ? useAddressExplorerUrl(
+              typeof contractAddress === 'string' ? contractAddress : contractAddress.p2tr(Web3API.network)
+          )
+        : '';
 
     return (
         <Layout>
@@ -30,15 +34,20 @@ export default function TxSuccessScreen() {
                     <Text preset="title" text="Payment Sent" textCenter />
                     <Text preset="sub" text="Your transaction has been successfully sent" color="textDim" textCenter />
 
-                    <Row
-                        justifyCenter
-                        onClick={() => {
-                            window.open(`${txidUrl}`);
-                        }}>
-                        <Icon icon="eye" color="textDim" />
-                        <Text preset="regular-bold" text="View on Block Explorer" color="textDim" />
-                    </Row>
-                    {contractAddress !== undefined ? (
+                    {txid ? (
+                        <Row
+                            justifyCenter
+                            onClick={() => {
+                                window.open(`${txidUrl}`);
+                            }}>
+                            <Icon icon="eye" color="textDim" />
+                            <Text preset="regular-bold" text="View on Block Explorer" color="textDim" />
+                        </Row>
+                    ) : (
+                        <></>
+                    )}
+
+                    {contractAddress ? (
                         <Row
                             justifyCenter
                             onClick={() => {
@@ -49,7 +58,9 @@ export default function TxSuccessScreen() {
                                 text={`Contract Address: ${contractAddress}`}
                                 color="textDim"></Text>
                         </Row>
-                    ) : null}
+                    ) : (
+                        <></>
+                    )}
                 </Column>
             </Content>
             <Footer>
@@ -57,7 +68,7 @@ export default function TxSuccessScreen() {
                     full
                     text="Done"
                     onClick={() => {
-                        navigate('MainScreen');
+                        navigate(RouteTypes.MainScreen);
                     }}
                 />
             </Footer>
