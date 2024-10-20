@@ -209,7 +209,7 @@ class Web3API {
         try {
             const name = (await genericContract.name()).properties.name;
             const symbol = (await genericContract.symbol()).properties.symbol;
-            const decimals = Number((await genericContract.decimals()).properties.decimals);
+            const decimals = (await genericContract.decimals()).properties.decimals;
 
             const logo = this.getContractLogo(address);
             return {
