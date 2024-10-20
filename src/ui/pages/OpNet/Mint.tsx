@@ -102,16 +102,18 @@ export default function Mint() {
             const contract: IOP_20ContractWithMaxSupply = getContract<IOP_20ContractWithMaxSupply>(
                 OpNetBalance.address,
                 OP_20_ABI,
-                Web3API.provider
+                Web3API.provider,
+                Web3API.network
             );
-            const maxSupply = await contract.maximumSupply();
-            const totalSupply = await contract.totalSupply();
+            try {
+                const maxSupply = await contract.maximumSupply();
+                const totalSupply = await contract.totalSupply();
 
-            if ('error' in maxSupply || 'error' in totalSupply) {
-                tools.toastError('Error fetching supply: ' + (maxSupply.error || totalSupply || 'Unknown error'));
+                setMaxSupply(BigInt((maxSupply.decoded[0] as bigint) - (totalSupply.decoded[0] as bigint)));
+            } catch (e) {
+                tools.toastError('Error fetching supply: ' + e);
                 return;
             }
-            setMaxSupply(BigInt((maxSupply.decoded[0] as bigint) - (totalSupply.decoded[0] as bigint)));
         };
         setWallet();
 

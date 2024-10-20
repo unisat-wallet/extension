@@ -29,7 +29,8 @@ export default function AtomicalsFeatureButton() {
                     onClick={() => {
                         disableAtomicals();
                         setIsShowAlert(false);
-                    }}>
+                    }}
+                >
                     <Icon icon={'atomicals'} />
                     <Text text={'Disable Atomicals'} mx={'md'} />
                 </Button>
@@ -42,7 +43,8 @@ export default function AtomicalsFeatureButton() {
                     style={{ paddingTop: 12, paddingBottom: 12 }}
                     onClick={() => {
                         setIsShowAlert(true);
-                    }}>
+                    }}
+                >
                     <Icon icon={'atomicals'} />
                     <Text text={'Enable Atomicals'} mx={'md'} />
                 </Button>

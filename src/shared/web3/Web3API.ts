@@ -8,8 +8,9 @@ import { NetworkType } from '@/shared/types';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { ContractLogo } from '@/shared/web3/metadata/ContractLogo';
 import { ContractNames } from '@/shared/web3/metadata/ContractNames';
-import { ABICoder, Address } from '@btc-vision/bsi-binary';
 import {
+    ABICoder,
+    Address,
     AddressVerificator,
     ChainId,
     OPNetLimitedProvider,
@@ -101,26 +102,22 @@ class Web3API {
         return this._provider;
     }
 
-    public get WBTC(): string {
+    public get WBTC(): Address | null {
+        if (!this.metadata) return null;
+
         return this.metadata.wbtc;
     }
 
-    public get ROUTER_ADDRESS(): Address {
+    public get ROUTER_ADDRESS(): Address | null {
+        if (!this.metadata) return null;
+
         return this.metadata.router;
     }
 
     private _metadata?: OPNetTokenMetadata;
 
-    private get metadata(): OPNetTokenMetadata {
-        if (!this._metadata) {
-            return {
-                wbtc: '',
-                router: '',
-                factory: '',
-                moto: '',
-                pool: ''
-            };
-        }
+    private get metadata(): OPNetTokenMetadata | null {
+        if (!this._metadata) return null;
 
         return this._metadata;
     }
@@ -181,16 +178,16 @@ class Web3API {
         this._limitedProvider = new OPNetLimitedProvider(url);
     }
 
-    public async getBalance(address: Address, filterOrdinals: boolean): Promise<bigint> {
+    public async getBalance(address: string, filterOrdinals: boolean): Promise<bigint> {
         return await this.provider.getBalance(address, filterOrdinals);
     }
 
-    public isValidPKHAddress(address: string): boolean {
+    public isValidAddress(address: string): boolean {
         if (!this.network) {
             throw new Error('Network not set');
         }
 
-        return AddressVerificator.validatePKHAddress(address, this.network);
+        return AddressVerificator.validateBitcoinAddress(address, this.network) ? true : false;
     }
 
     public isValidP2TRAddress(address: string): boolean {
@@ -201,30 +198,18 @@ class Web3API {
         return AddressVerificator.isValidP2TRAddress(address, this.network);
     }
 
-    public async queryContractInformation(address: string, wallet?: string): Promise<ContractInformation | undefined> {
-        const genericContract: IOP_20Contract = getContract<IOP_20Contract>(address, OP_20_ABI, this.provider, wallet);
+    public async queryContractInformation(address: string): Promise<ContractInformation | undefined> {
+        const genericContract: IOP_20Contract = getContract<IOP_20Contract>(
+            address,
+            OP_20_ABI,
+            this.provider,
+            this.network
+        );
 
         try {
-            const [_name, _symbol, _decimals] = await Promise.all([
-                genericContract.name().catch(),
-                genericContract.symbol().catch(),
-                genericContract.decimals().catch()
-            ]);
-
-            let name: string | undefined;
-            if (!('error' in _name)) {
-                name = (_name.properties as { name: string }).name;
-            }
-
-            let decimals: number | undefined;
-            if (!('error' in _decimals)) {
-                decimals = (_decimals.properties as { decimals: number }).decimals;
-            }
-
-            let symbol: string | undefined;
-            if (!('error' in _symbol)) {
-                symbol = (_symbol.properties as { symbol: string }).symbol;
-            }
+            const name = (await genericContract.name()).properties.name;
+            const symbol = (await genericContract.symbol()).properties.symbol;
+            const decimals = (await genericContract.decimals()).properties.decimals;
 
             const logo = this.getContractLogo(address);
             return {

@@ -35,7 +35,7 @@ export default function UnavailableUtxoScreen() {
         });
     }, []);
 
-  const setSpendUnavailableUtxos = useSetSpendUnavailableUtxosCallback();
+    const setSpendUnavailableUtxos = useSetSpendUnavailableUtxosCallback();
 
     const selectedCount = useMemo(() => {
         return Object.keys(selectedUtxoIds).filter((key) => selectedUtxoIds[key]).length;
@@ -65,7 +65,8 @@ export default function UnavailableUtxoScreen() {
                                             flexDirection: 'column',
                                             borderColor: selected ? 'gold' : 'transparent',
                                             borderWidth: 1
-                                        }}>
+                                        }}
+                                    >
                                         <Row full justifyBetween itemsCenter>
                                             <Row itemsCenter>
                                                 <Text
@@ -111,7 +112,8 @@ export default function UnavailableUtxoScreen() {
                                         {item.inscriptions.length > 0 ? (
                                             <Row
                                                 full
-                                                style={{ borderBottomWidth: 1, borderColor: colors.border }}></Row>
+                                                style={{ borderBottomWidth: 1, borderColor: colors.border }}
+                                            ></Row>
                                         ) : null}
 
                                         {item.atomicals.length > 0 ? (
@@ -128,7 +130,8 @@ export default function UnavailableUtxoScreen() {
                                         {item.atomicals.length > 0 ? (
                                             <Row
                                                 full
-                                                style={{ borderBottomWidth: 1, borderColor: colors.border }}></Row>
+                                                style={{ borderBottomWidth: 1, borderColor: colors.border }}
+                                            ></Row>
                                         ) : null}
 
                                         <Row full justifyBetween>
@@ -144,7 +147,8 @@ export default function UnavailableUtxoScreen() {
                                                         selectedUtxoIds[item.txid + '' + item.vout] = e.target.checked;
                                                         setSelectedUtxoIds(Object.assign({}, selectedUtxoIds));
                                                     }}
-                                                    style={{ fontSize: fontSizes.sm }}></Checkbox>
+                                                    style={{ fontSize: fontSizes.sm }}
+                                                ></Checkbox>
                                             </Row>
                                         </Row>
                                     </Card>

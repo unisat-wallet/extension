@@ -72,25 +72,30 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
     }
     _names = _names.splice(0, 4);
 
-  return (
-    <Card
-      style={{
-        backgroundColor: '#1E1F24',
-        borderColor: 'rgba(255,255,255,0.1)',
-        borderRadius: 12
-      }}
-      fullX
-      onClick={() => {
-        onClick && onClick();
-      }}>
-      <Column full py="zero" gap="zero">
-        <Row fullY justifyBetween justifyCenter>
-          <Column fullY justifyCenter>
-            <Row>
-              <BRC20Ticker tick={ticker} />
-              {isBoolBridgeTick(ticker) ? <Tag type="bool-bridge" /> : selfMint ? <Tag type="self-issuance" /> : null}
-            </Row>
-          </Column>
+    return (
+        <Card
+            style={{
+                backgroundColor: '#1E1F24',
+                borderColor: 'rgba(255,255,255,0.1)',
+                borderRadius: 12
+            }}
+            fullX
+            onClick={() => {
+                onClick && onClick();
+            }}
+        >
+            <Column full py="zero" gap="zero">
+                <Row fullY justifyBetween justifyCenter>
+                    <Column fullY justifyCenter>
+                        <Row>
+                            <BRC20Ticker tick={ticker} />
+                            {isBoolBridgeTick(ticker) ? (
+                                <Tag type="bool-bridge" />
+                            ) : selfMint ? (
+                                <Tag type="self-issuance" />
+                            ) : null}
+                        </Row>
+                    </Column>
 
                     <Row itemsCenter fullY gap="zero">
                         <Text text={overallBalance} size="xs" digital />
@@ -118,7 +123,8 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
                                     }
                                 }}
                                 size={10}
-                                color="textDim"></Icon>
+                                color="textDim"
+                            ></Icon>
                         </Row>
                     </Row>
                 </Row>
@@ -154,7 +160,8 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
                                                     : v === 'Deploy'
                                                     ? 'brc20_deploy'
                                                     : 'brc20_other'
-                                            }>
+                                            }
+                                        >
                                             <Column gap="zero">
                                                 <Text
                                                     text={v}

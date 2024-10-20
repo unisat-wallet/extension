@@ -8,7 +8,6 @@ import { Icon, IconTypes } from '../Icon';
 import { Row } from '../Row';
 import { Text } from '../Text';
 
-
 type Presets = keyof typeof $viewPresets;
 
 export interface ButtonProps {
@@ -245,7 +244,8 @@ export function Button(props: ButtonProps) {
                 style={$viewStyle}
                 onMouseEnter={() => setHover(true)}
                 onMouseLeave={() => setHover(false)}
-                onClick={disabled ? undefined : onClick}>
+                onClick={disabled ? undefined : onClick}
+            >
                 <Row>
                     {LeftAccessory && <div style={$leftAccessoryStyle}>{LeftAccessory}</div>}
                     {icon && (
@@ -274,7 +274,8 @@ export function Button(props: ButtonProps) {
                 style={$viewStyle}
                 onClick={disabled ? undefined : onClick}
                 onMouseEnter={() => setHover(true)}
-                onMouseLeave={() => setHover(false)}>
+                onMouseLeave={() => setHover(false)}
+            >
                 {icon && <Icon icon={icon} style={{ marginRight: spacing.tiny, backgroundColor: colors.white }} />}
                 {text && <Text style={$textStyle} text={text} preset="regular" mt="sm" />}
             </div>
@@ -286,7 +287,8 @@ export function Button(props: ButtonProps) {
             style={$viewStyle}
             onClick={disabled ? undefined : onClick}
             onMouseEnter={() => setHover(true)}
-            onMouseLeave={() => setHover(false)}>
+            onMouseLeave={() => setHover(false)}
+        >
             {LeftAccessory && <div style={$leftAccessoryStyle}>{LeftAccessory}</div>}
             {icon && <Icon icon={icon} style={{ marginRight: spacing.tiny, backgroundColor: $textStyle.color }} />}
             {text && <Text style={$textStyle} text={text} preset="regular-bold" />}

@@ -209,7 +209,8 @@ export default function SendRunesScreen() {
                             itemsCenter
                             onClick={() => {
                                 setInputAmount(runesUtils.toDecimalAmount(availableBalance, runeBalance.divisibility));
-                            }}>
+                            }}
+                        >
                             <Text text="MAX" preset="sub" style={{ color: colors.white_muted }} />
                             <Text
                                 text={`${showLongNumber(
@@ -272,7 +273,8 @@ export default function SendRunesScreen() {
                     text="Next"
                     onClick={(e) => {
                         navigate('TxConfirmScreen', { rawTxInfo });
-                    }}></Button>
+                    }}
+                ></Button>
             </Content>
         </Layout>
     );

@@ -13,7 +13,8 @@ function AppItem({ info }: { info: AppInfo }) {
             onClick={() => {
                 if (info.url) window.open(info.url);
                 readApp(info.id);
-            }}>
+            }}
+        >
             <Row full>
                 <Column justifyCenter>
                     <Image src={info.logo} size={fontSizes.logo} />

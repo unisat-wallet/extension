@@ -12,7 +12,8 @@ export default function Arc20PreviewCard({ ticker, amt, onClick }: Arc20PreviewC
     return (
         <Column
             style={{ backgroundColor: '#1C2852', width: 80, height: 90, borderRadius: 5, padding: 5 }}
-            onClick={onClick}>
+            onClick={onClick}
+        >
             <Row>
                 <Text text={ticker} color="white_muted" size="lg" />
             </Row>

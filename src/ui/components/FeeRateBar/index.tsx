@@ -9,7 +9,6 @@ import { Input } from '../Input';
 import { Row } from '../Row';
 import { Text } from '../Text';
 
-
 enum FeeRateType {
     SLOW,
     AVG,
@@ -117,7 +116,8 @@ export function FeeRateBar({ readonly, onChange }: { readonly?: boolean; onChang
                                     cursor: 'pointer'
                                 } as CSSProperties,
                                 selected ? { backgroundColor: colors.primary } : {}
-                            )}>
+                            )}
+                        >
                             <Text text={v.title} textCenter style={{ color: selected ? colors.black : colors.white }} />
                             {v.title !== 'Custom' && (
                                 <Text

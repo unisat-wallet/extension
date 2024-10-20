@@ -257,7 +257,8 @@ function SignTxDetails({
                                 borderRadius: 10,
                                 borderWidth: 1,
                                 borderColor: colors.border
-                            }}>
+                            }}
+                        >
                             <Row>
                                 <AssetTag type="Inscription" />
                             </Row>
@@ -290,7 +291,8 @@ function SignTxDetails({
                                 borderRadius: 10,
                                 borderWidth: 1,
                                 borderColor: colors.border
-                            }}>
+                            }}
+                        >
                             <Row>
                                 <AssetTag type="ARC20" />
                             </Row>
@@ -314,7 +316,8 @@ function SignTxDetails({
                                 borderRadius: 10,
                                 borderWidth: 1,
                                 borderColor: colors.border
-                            }}>
+                            }}
+                        >
                             <Row>
                                 <AssetTag type="BRC20" />
                             </Row>
@@ -352,7 +355,8 @@ function SignTxDetails({
                                 borderRadius: 10,
                                 borderWidth: 1,
                                 borderColor: colors.border
-                            }}>
+                            }}
+                        >
                             <Row>
                                 <AssetTag type="RUNES" />
                             </Row>
@@ -903,7 +907,8 @@ export default function SignPsbt({
                                     }
                                     overlayStyle={{
                                         fontSize: fontSizes.xs
-                                    }}>
+                                    }}
+                                >
                                     <div>
                                         <Row>
                                             <Text text={txInfo.decodedPsbt.feeRate.toString()} />
@@ -966,7 +971,8 @@ export default function SignPsbt({
                                                                   paddingTop: 10
                                                               }
                                                     }
-                                                    itemsCenter>
+                                                    itemsCenter
+                                                >
                                                     <Column fullX>
                                                         <Row fullX justifyBetween>
                                                             <Column>
@@ -982,7 +988,8 @@ export default function SignPsbt({
                                                                                 borderColor: 'gold',
                                                                                 borderRadius: 5,
                                                                                 padding: 2
-                                                                            }}>
+                                                                            }}
+                                                                        >
                                                                             <Text
                                                                                 text="to sign"
                                                                                 color="gold"
@@ -1012,7 +1019,8 @@ export default function SignPsbt({
                                                                         overflowX
                                                                         gap="lg"
                                                                         style={{ width: 280 }}
-                                                                        pb="lg">
+                                                                        pb="lg"
+                                                                    >
                                                                         {inscriptions.map((w) => (
                                                                             <InscriptionPreview
                                                                                 key={w.inscriptionId}
@@ -1047,7 +1055,8 @@ export default function SignPsbt({
                                                                         overflowX
                                                                         gap="lg"
                                                                         style={{ width: 280 }}
-                                                                        pb="lg">
+                                                                        pb="lg"
+                                                                    >
                                                                         {atomicals_nft.map((w) => (
                                                                             <AtomicalsNFTPreview
                                                                                 key={w.atomicalId}
@@ -1074,7 +1083,8 @@ export default function SignPsbt({
                                                                         overflowX
                                                                         gap="lg"
                                                                         style={{ width: 280 }}
-                                                                        pb="lg">
+                                                                        pb="lg"
+                                                                    >
                                                                         {atomicals_ft.map((w) => (
                                                                             <Arc20PreviewCard
                                                                                 key={w.ticker}
@@ -1098,7 +1108,8 @@ export default function SignPsbt({
                                                                         overflowX
                                                                         gap="lg"
                                                                         style={{ width: 280 }}
-                                                                        pb="lg">
+                                                                        pb="lg"
+                                                                    >
                                                                         {runes.map((w) => (
                                                                             <RunesPreviewCard
                                                                                 key={w.runeid}
@@ -1139,7 +1150,8 @@ export default function SignPsbt({
                                                                   borderTopWidth: 1,
                                                                   paddingTop: 10
                                                               }
-                                                    }>
+                                                    }
+                                                >
                                                     <Column>
                                                         <Row justifyBetween>
                                                             <AddressText
@@ -1266,7 +1278,8 @@ export default function SignPsbt({
                                 copyToClipboard(txInfo.psbtHex).then(() => {
                                     tools.toastSuccess('Copied');
                                 });
-                            }}>
+                            }}
+                        >
                             <Text text={`${txInfo.psbtHex.length / 2} bytes`} color="textDim" />
                             <Icon icon="copy" color="textDim" />
                         </Row>

@@ -322,7 +322,7 @@ function Step3({
         setPathError('');
         setPathText(text);
         if (text !== '') {
-            const isValid = bitcore.HDPrivateKey.isValidPath(text);
+            const isValid = new bitcore.HDPrivateKey(text);
             if (!isValid) {
                 setPathError('Invalid derivation path.');
                 return;

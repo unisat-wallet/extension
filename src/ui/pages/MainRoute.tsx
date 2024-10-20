@@ -429,7 +429,8 @@ const Main = () => {
                     height: '100vh',
                     overflowY: 'auto',
                     overflowX: 'hidden'
-                }}>
+                }}
+            >
                 <Content justifyCenter itemsCenter>
                     <Icon>
                         <LoadingOutlined />

@@ -1,7 +1,7 @@
 import { decodeAddLiquidity } from '@/ui/pages/OpNet/decoded/AddLiquidityDecodedInfo';
 import { decodeApprove } from '@/ui/pages/OpNet/decoded/ApproveDecodedInfo';
 import { decodeTransfer } from '@/ui/pages/OpNet/decoded/TransferDecodedInfo';
-import { BinaryReader } from '@btc-vision/bsi-binary';
+import { BinaryReader } from '@btc-vision/transaction';
 
 export enum InteractionType {
     Transfer = '27f576ca',

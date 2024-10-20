@@ -84,7 +84,7 @@ export default function CreatePasswordScreen() {
         if (newPassword !== confirmPassword) {
             return (
                 <Row>
-                    <Text size="xs" text={`Passwords don't match`} color="red" />
+                    <Text size="xs" text={"Passwords don't match"} color="red" />
                 </Row>
             );
         } else {

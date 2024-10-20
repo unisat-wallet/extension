@@ -17,6 +17,7 @@ import { fontSizes } from '@/ui/theme/font';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 import '@btc-vision/transaction';
+import { Address } from '@btc-vision/transaction';
 
 import { useNavigate } from '../MainRoute';
 
@@ -95,26 +96,47 @@ export default function Swap() {
                     } else {
                         setInputAmount(maxBalance.toString());
                     }
+
+                    if (!Web3API.ROUTER_ADDRESS) {
+                        tools.toastError('Router address not found');
+                        return;
+                    }
+
                     const getQuote: IMotoswapRouterContract = getContract<IMotoswapRouterContract>(
                         Web3API.ROUTER_ADDRESS,
                         MOTOSWAP_ROUTER_ABI,
-                        Web3API.provider
+                        Web3API.provider,
+                        Web3API.network
                     );
 
-                    const getData = await getQuote.getAmountsOut(
-                        BigInt(Number(numericValue) * Math.pow(10, selectedOption.divisibility)),
-                        [selectedOption.address, selectedOptionOutput.address]
-                    );
-                    if ('error' in getData) {
-                        console.log(getData);
-                        return;
-                    } else {
+                    try {
+                        const pubKeyInfoSelectedOption = await Web3API.provider.getPublicKeyInfo(
+                            selectedOption.address,
+                            Web3API.network
+                        );
+
+                        const pubKeyInfoSelectedOptionOutput = await Web3API.provider.getPublicKeyInfo(
+                            selectedOptionOutput.address,
+                            Web3API.network
+                        );
+
+                        const getData = await getQuote.getAmountsOut(
+                            BigInt(Number(numericValue) * Math.pow(10, selectedOption.divisibility)),
+                            [
+                                Address.fromString(pubKeyInfoSelectedOption[selectedOption].originalPubKey),
+                                Address.fromString(pubKeyInfoSelectedOptionOutput[selectedOptionOutput].originalPubKey)
+                            ]
+                        );
+
                         setOutPutAmount(
                             (
                                 parseInt(getData.decoded[0][1].toString()) /
                                 Math.pow(10, selectedOptionOutput.divisibility)
                             ).toString()
                         );
+                    } catch (e) {
+                        console.log('Error fetching data:', e);
+                        return;
                     }
                 } else {
                     // Allow empty input or just a decimal point
@@ -163,7 +185,7 @@ export default function Swap() {
         const getData = async () => {
             Web3API.setNetwork(await wallet.getChainType());
             const getChain = await wallet.getChainType();
-            let parsedTokens: string[] = [];
+            let parsedTokens: Address[] = [];
             const tokensImported = localStorage.getItem('tokensImported_' + getChain);
             parsedTokens = tokensImported ? JSON.parse(tokensImported) : [];
             if (OpNetBalance?.address) {
@@ -174,22 +196,27 @@ export default function Swap() {
                 try {
                     const tokenAddress = parsedTokens[i];
                     const provider = Web3API.provider;
-                    const contract: IOP_20Contract = getContract<IOP_20Contract>(tokenAddress, OP_20_ABI, provider);
+                    const contract: IOP_20Contract = getContract<IOP_20Contract>(
+                        tokenAddress,
+                        OP_20_ABI,
+                        provider,
+                        Web3API.network
+                    );
                     const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(
-                        tokenAddress
+                        tokenAddress.p2tr(Web3API.network)
                     );
 
-                    const balance = await contract.balanceOf(currentAccount.address);
-                    if (!('error' in balance)) {
-                        tokenBalances.push({
-                            address: tokenAddress,
-                            name: contractInfo?.name || '',
-                            amount: BigInt(balance.decoded[0].toString()),
-                            divisibility: contractInfo?.decimals || 8,
-                            symbol: contractInfo?.symbol,
-                            logo: contractInfo?.logo
-                        });
-                    }
+                    const walletAddressPub = Address.fromString(currentAccount.pubkey);
+
+                    const balance = await contract.balanceOf(walletAddressPub);
+                    tokenBalances.push({
+                        address: tokenAddress.p2tr(Web3API.network),
+                        name: contractInfo?.name || '',
+                        amount: BigInt(balance.decoded[0].toString()),
+                        divisibility: contractInfo?.decimals || 8,
+                        symbol: contractInfo?.symbol,
+                        logo: contractInfo?.logo
+                    });
                 } catch (e) {
                     console.log(`Error processing token at index ${i}:`, e);
                 }

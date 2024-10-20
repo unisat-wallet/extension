@@ -190,7 +190,7 @@ class ProviderController extends BaseController {
 
     @Reflect.metadata('APPROVAL', ['SignInteraction', (_req: RequestData) => {
         const interactionParams = _req.data.params as DetailedInteractionParameters;
-        if (!Web3API.isValidPKHAddress(interactionParams.interactionParameters.to)) {
+        if (!Web3API.isValidAddress(interactionParams.interactionParameters.to)) {
             throw new Error('Invalid contract address. Are you on the right network / are you using segwit?');
         }
 
@@ -205,7 +205,7 @@ class ProviderController extends BaseController {
 
     @Reflect.metadata('APPROVAL', ['SignInteraction', (_req: RequestData) => {
         const interactionParams = _req.data.params as DetailedInteractionParameters;
-        if (!Web3API.isValidPKHAddress(interactionParams.interactionParameters.to)) {
+        if (!Web3API.isValidAddress(interactionParams.interactionParameters.to)) {
             throw new Error('Invalid contract address. Are you on the right network / are you using segwit?');
         }
 

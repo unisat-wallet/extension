@@ -22,7 +22,8 @@ export function HistoryDetail({ detail, close }: HistoryDetailProps) {
                 top: 0,
                 left: 0,
                 backgroundColor: 'black'
-            }}>
+            }}
+        >
             <Header onBack={close} title="Transaction Details" />
             <Content>
                 <Card style={{ justifyContent: 'stretch' }} mt={'lg'}>
@@ -85,7 +86,8 @@ export function HistoryDetail({ detail, close }: HistoryDetailProps) {
                                     <Text
                                         text={`${Number(Math.abs(satoshisToBTC(detail.fee))).toLocaleString('en', {
                                             minimumFractionDigits: 8
-                                        })}`}></Text>
+                                        })}`}
+                                    ></Text>
                                     <Text text={'BTC'} color={'textDim'} />
                                 </Row>
                             </Row>

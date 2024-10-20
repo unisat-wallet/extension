@@ -17,7 +17,8 @@ export function AddressBar() {
                 copyToClipboard(address).then(() => {
                     tools.toastSuccess('Copied');
                 });
-            }}>
+            }}
+        >
             <Text text={shortAddress(address)} color="textDim" />
             {/*<Icon icon="copy" color="textDim" />*/}
             <CopyOutlined style={{ color: '#888', fontSize: 14 }} />

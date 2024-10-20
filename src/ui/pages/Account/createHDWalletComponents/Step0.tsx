@@ -18,7 +18,8 @@ export function Step0({
                         preset="default"
                         onClick={() => {
                             updateContextData({ tabType: TabType.STEP2, restoreWalletType: item.value });
-                        }}>
+                        }}
+                    >
                         <Text text={item.name} />
                     </Button>
                 );

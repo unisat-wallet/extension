@@ -8,8 +8,6 @@ import { getPasswordStrengthWord, MIN_PASSWORD_LENGTH } from '@/ui/utils/passwor
 
 import { useNavigate } from '../MainRoute';
 
-type Status = '' | 'error' | 'warning' | undefined;
-
 export default function ChangePasswordScreen() {
     const { t } = useTranslation();
     const navigate = useNavigate();
@@ -45,7 +43,7 @@ export default function ChangePasswordScreen() {
         if (newPassword !== confirmPassword) {
             return (
                 <Row>
-                    <Text size="xs" text={`Passwords don't match`} color="red" />
+                    <Text size="xs" text={"Passwords don't match"} color="red" />
                 </Row>
             );
         } else {

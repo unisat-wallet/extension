@@ -1,3 +1,5 @@
+import { PsbtTxOutput } from 'bitcoinjs-lib';
+
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { AddressText } from '@/ui/components/AddressText';
 import WebsiteBar from '@/ui/components/WebsiteBar';
@@ -6,7 +8,7 @@ import { useBTCUnit } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { satoshisToAmount } from '@/ui/utils';
 import { useApproval } from '@/ui/utils/hooks';
-import { IDeploymentParameters, PsbtOutputExtended } from '@btc-vision/transaction';
+import { IDeploymentParameters } from '@btc-vision/transaction';
 
 interface Props {
     params: {
@@ -53,8 +55,8 @@ export default function SignDeployment(props: Props) {
     const optionalOutputs: {
         address: string;
         value: number;
-    }[] = (data.optionalOutputs || []).map((output: PsbtOutputExtended) => ({
-        address: 'address' in output ? output.address : '',
+    }[] = (data.optionalOutputs || []).map((output: PsbtTxOutput) => ({
+        address: 'address' in output && output.address ? output.address : '',
         value: output.value
     }));
 

@@ -35,7 +35,8 @@ export default function RunesBalanceCard(props: RunesBalanceCardProps) {
             fullX
             onClick={() => {
                 onClick && onClick();
-            }}>
+            }}
+        >
             <Column full py="zero" gap="zero">
                 <Row fullY justifyBetween justifyCenter>
                     <Column fullY justifyCenter>

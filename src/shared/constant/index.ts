@@ -3,7 +3,6 @@
 /* constants pool */
 import { AddressType, NetworkType, RestoreWalletType } from '../types';
 
-
 export enum CHAINS_ENUM {
     BTC = 'BTC'
 }

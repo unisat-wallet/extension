@@ -67,64 +67,68 @@ export const SignPsbtWithRisksPopover = ({
         }
     }
 
-  const confirmable = useMemo(() => {
-    const foundCriticalRisk = decodedPsbt.risks.find((v) => v.level === 'critical');
-    if (foundCriticalRisk) {
-      return false;
-    } else {
-      return true;
-    }
-  }, [decodedPsbt]);
+    const confirmable = useMemo(() => {
+        const foundCriticalRisk = decodedPsbt.risks.find((v) => v.level === 'critical');
+        if (foundCriticalRisk) {
+            return false;
+        } else {
+            return true;
+        }
+    }, [decodedPsbt]);
 
-  return (
-    <Popover>
-      <Column justifyCenter itemsCenter>
-        <Icon icon={'alert'} color={'red'} size={20} />
-        <Text text="Use at your own risk" preset="title-bold" />
-        <Text text={'Please be aware that sending the following assets involves risk:'} preset="sub" />
+    return (
+        <Popover>
+            <Column justifyCenter itemsCenter>
+                <Icon icon={'alert'} color={'red'} size={20} />
+                <Text text="Use at your own risk" preset="title-bold" />
+                <Text text={'Please be aware that sending the following assets involves risk:'} preset="sub" />
 
-        <Column gap="md" fullX mb="md">
-          {decodedPsbt.risks.map((risk, index) => {
-            return (
-              <Column
-                key={'risk_' + index}
-                style={{ borderWidth: 1, borderColor: colors.border, borderRadius: 10 }}
-                px="md"
-                py="sm">
-                <Row justifyBetween justifyCenter mt="sm">
-                  <Text text={risk.title} color={risk.level === 'warning' ? 'warning' : 'danger'} />
-                  {visibleRiskDetailTypes.includes(risk.type) ? (
-                    <Text
-                      text={'View>'}
-                      onClick={() => {
-                        setDetailRisk(risk);
-                      }}
-                    />
-                  ) : null}
-                </Row>
-                <Row style={{ borderBottomWidth: 1, color: colors.border }}></Row>
-                <Text text={risk.desc} preset="sub" />
-              </Column>
-            );
-          })}
+                <Column gap="md" fullX mb="md">
+                    {decodedPsbt.risks.map((risk, index) => {
+                        return (
+                            <Column
+                                key={'risk_' + index}
+                                style={{ borderWidth: 1, borderColor: colors.border, borderRadius: 10 }}
+                                px="md"
+                                py="sm"
+                            >
+                                <Row justifyBetween justifyCenter mt="sm">
+                                    <Text text={risk.title} color={risk.level === 'warning' ? 'warning' : 'danger'} />
+                                    {visibleRiskDetailTypes.includes(risk.type) ? (
+                                        <Text
+                                            text={'View>'}
+                                            onClick={() => {
+                                                setDetailRisk(risk);
+                                            }}
+                                        />
+                                    ) : null}
+                                </Row>
+                                <Row style={{ borderBottomWidth: 1, color: colors.border }}></Row>
+                                <Text text={risk.desc} preset="sub" />
+                            </Column>
+                        );
+                    })}
 
-          {confirmable && (
-            <Column>
-              <Text text={'I understand and accept the risks associated with this transaction.'} preset="sub" />
+                    {confirmable && (
+                        <Column>
+                            <Text
+                                text={'I understand and accept the risks associated with this transaction.'}
+                                preset="sub"
+                            />
 
-              <Row itemsCenter gap="sm" mb="md">
-                <Text text={`Enter “${AGREEMENT_TEXT}” to proceed`} preset="bold" />
-              </Row>
-              <Input
-                preset="text"
-                autoFocus={true}
-                onChange={(e) => {
-                  setInputValue(e.target.value);
-                }}
-              />
-            </Column>
-          )}
-        </Column>
+                            <Row itemsCenter gap="sm" mb="md">
+                                <Text text={`Enter “${AGREEMENT_TEXT}” to proceed`} preset="bold" />
+                            </Row>
+                            <Input
+                                preset="text"
+                                autoFocus={true}
+                                onChange={(e) => {
+                                    setInputValue(e.target.value);
+                                }}
+                            />
+                        </Column>
+                    )}
+                </Column>
 
                 <Row full>
                     <Button
@@ -138,21 +142,21 @@ export const SignPsbtWithRisksPopover = ({
                         }}
                     />
 
-          {confirmable && (
-            <Button
-              text={'Confirm'}
-              preset="danger"
-              disabled={!understand}
-              full
-              onClick={() => {
-                if (onConfirm) {
-                  onConfirm();
-                }
-              }}
-            />
-          )}
-        </Row>
-      </Column>
-    </Popover>
-  );
+                    {confirmable && (
+                        <Button
+                            text={'Confirm'}
+                            preset="danger"
+                            disabled={!understand}
+                            full
+                            onClick={() => {
+                                if (onConfirm) {
+                                    onConfirm();
+                                }
+                            }}
+                        />
+                    )}
+                </Row>
+            </Column>
+        </Popover>
+    );
 };

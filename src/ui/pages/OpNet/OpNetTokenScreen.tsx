@@ -13,6 +13,7 @@ import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
+import { Address } from '@btc-vision/transaction';
 
 import { useNavigate } from '../MainRoute';
 
@@ -58,34 +59,47 @@ export default function OpNetTokenScreen() {
     useEffect(() => {
         const setWallet = async () => {
             Web3API.setNetwork(await wallet.getChainType());
+
+            if (!Web3API.WBTC) {
+                tools.toastError('WBTC not found');
+                return;
+            }
+
+            const walletAddressPub = Address.fromString(account.pubkey);
+
             const contract: IWBTCContract = getContract<IWBTCContract>(
                 Web3API.WBTC,
                 WBTC_ABI,
                 Web3API.provider,
-                account.address
+                Web3API.network,
+                walletAddressPub
             );
 
-            const getRewards = (await contract.stakedReward(account.address)) as unknown as { decoded: bigint[] };
-            const getStakedAmount = (await contract.stakedAmount(account.address)) as unknown as { decoded: bigint[] };
+            try {
+                const getRewards = (await contract.stakedReward(walletAddressPub)) as unknown as { decoded: bigint[] };
+                const getStakedAmount = (await contract.stakedAmount(walletAddressPub)) as unknown as {
+                    decoded: bigint[];
+                };
 
-            if ('error' in getRewards || 'error' in getStakedAmount) {
+                setStakeReward(getRewards.decoded[0]);
+                setStakedAmount(getStakedAmount.decoded[0]);
+            } catch (e) {
                 tools.toastError('Error in getting Stake Rewards');
                 return;
             }
 
-            setStakeReward(getRewards.decoded[0]);
-            setStakedAmount(getStakedAmount.decoded[0]);
+            try {
+                const rewardPool = (await contract.rewardPool()) as unknown as { decoded: bigint[] };
+                const totalStaked = (await contract.totalStaked()) as unknown as { decoded: bigint[] };
 
-            const rewardPool = (await contract.rewardPool()) as unknown as { decoded: bigint[] };
-            const totalStaked = (await contract.totalStaked()) as unknown as { decoded: bigint[] };
-            //const timeStaked = (await contract.unstake()) as unknown as { decoded: any };
+                //const timeStaked = (await contract.unstake()) as unknown as { decoded: any };
 
-            if ('error' in rewardPool || 'error' in totalStaked) {
-                tools.toastError('Can not get reward pool or total staked');
+                setRewardPool(rewardPool.decoded[0]);
+                setTotalStaked(totalStaked.decoded[0]);
+            } catch (e) {
+                tools.toastError('Error in getting Reward Pool or Total Staked');
+                return;
             }
-
-            setRewardPool(rewardPool.decoded[0]);
-            setTotalStaked(totalStaked.decoded[0]);
         };
         void setWallet();
 
@@ -98,25 +112,29 @@ export default function OpNetTokenScreen() {
             Web3API.setNetwork(await wallet.getChainType());
 
             const btcBalance = await Web3API.getBalance(account.address, true);
-            const contract: IOP_20Contract = getContract<IOP_20Contract>(address, OP_20_ABI, Web3API.provider);
+
+            const walletAddressPub = Address.fromString(account.pubkey);
+
+            const contract: IOP_20Contract = getContract<IOP_20Contract>(
+                address,
+                OP_20_ABI,
+                Web3API.provider,
+                Web3API.network
+            );
             const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(address);
 
-            const balance = await contract.balanceOf(account.address);
-            const getOwner = await contract.owner();
+            try {
+                const balance = await contract.balanceOf(walletAddressPub);
 
-            if (!('error' in getOwner)) {
-                setIsOwner(getOwner.decoded[0] === account.address);
-            }
+                setBtcBalance({
+                    address: '',
+                    amount: btcBalance,
+                    divisibility: 8,
+                    symbol: unitBtc,
+                    name: 'Bitcoin',
+                    logo: ''
+                });
 
-            setBtcBalance({
-                address: '',
-                amount: btcBalance,
-                divisibility: 8,
-                symbol: unitBtc,
-                name: 'Bitcoin',
-                logo: ''
-            });
-            if (!('error' in balance)) {
                 const newSummaryData = {
                     opNetBalance: {
                         address: address,
@@ -128,6 +146,17 @@ export default function OpNetTokenScreen() {
                     }
                 };
                 setTokenSummary(newSummaryData);
+            } catch (e) {
+                tools.toastError('Error in getting balance');
+                return;
+            }
+
+            try {
+                const getOwner = await contract.owner();
+                setIsOwner(getOwner.decoded[0] === account.address);
+            } catch (e) {
+                tools.toastError('Error in getting owner');
+                return;
             }
 
             setLoading(false);

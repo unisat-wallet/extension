@@ -36,7 +36,8 @@ export function Layout(props: LayoutProps) {
                     overflowX: 'hidden'
                 },
                 $styleBase
-            )}>
+            )}
+        >
             {children}
         </div>
     );

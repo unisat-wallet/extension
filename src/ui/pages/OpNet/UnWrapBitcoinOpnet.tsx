@@ -15,6 +15,7 @@ import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { useWallet } from '@/ui/utils';
+import { Address } from '@btc-vision/transaction';
 import { getAddressUtxoDust } from '@btc-vision/wallet-sdk/lib/transaction';
 
 import { useNavigate } from '../MainRoute';
@@ -66,21 +67,31 @@ export default function UnWrapBitcoinOpnet() {
         const checkAvailableBalance = async () => {
             Web3API.setNetwork(await wallet.getChainType());
 
+            if (!Web3API.WBTC) {
+                tools.toastError('Error getting WBTC');
+                return;
+            }
+
+            const walletAddressPub = Address.fromString(account.pubkey);
+
             const contract: IWBTCContract = getContract<IWBTCContract>(
                 Web3API.WBTC,
                 WBTC_ABI,
                 Web3API.provider,
-                account.address
+                Web3API.network,
+                walletAddressPub
             );
 
-            const checkWithdrawalRequest = await contract.withdrawableBalanceOf(account.address);
-            if ('error' in checkWithdrawalRequest) {
+            try {
+                const checkWithdrawalRequest = await contract.withdrawableBalanceOf(account.address);
+
+                setAvailableBalance(checkWithdrawalRequest.decoded[0] as bigint);
+            } catch {
                 tools.toastError('Error getting WBTC');
                 return;
             }
 
             //const balance = bigIntToDecimal(checkWithdrawalRequest.decoded[0] as bigint, 8);
-            setAvailableBalance(checkWithdrawalRequest.decoded[0] as bigint);
             tools.showLoading(false);
         };
         void checkAvailableBalance();

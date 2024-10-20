@@ -26,7 +26,7 @@ export default function OrdinalsInscriptionScreen() {
     const isUnconfirmed = inscription.timestamp == 0;
     const date = moment(inscription.timestamp * 1000).format('YYYY-MM-DD hh:mm:ss');
 
-  const genesisTxUrl = useTxExplorerUrl(inscription.genesisTransaction);
+    const genesisTxUrl = useTxExplorerUrl(inscription.genesisTransaction);
 
     const [isNeedToSplit, setIsNeedToSplit] = useState(false);
     const [isMultiStuck, setIsMultiStuck] = useState(false);

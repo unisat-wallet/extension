@@ -132,7 +132,8 @@ export function Step1_Import({
                             updateContextData({ wordsType });
                             setKeys(new Array(wordsItems[wordsType].count).fill(''));
                         }}
-                        value={contextData.wordsType}>
+                        value={contextData.wordsType}
+                    >
                         {wordsItems.map((v) => (
                             <Radio key={v.key} value={v.key}>
                                 {v.label}

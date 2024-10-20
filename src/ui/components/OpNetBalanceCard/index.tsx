@@ -35,7 +35,8 @@ export default function OpNetBalanceCard(props: OpNetBalanceCardProps) {
             fullX
             onClick={() => {
                 onClick && onClick();
-            }}>
+            }}
+        >
             <Column full py="zero" gap="zero">
                 <Row itemsCenter fullX justifyBetween>
                     <Row itemsCenter fullX>

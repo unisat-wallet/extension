@@ -71,7 +71,8 @@ export const Arc20BurningList = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
                                 borderRadius: 10,
                                 borderWidth: 1,
                                 borderColor: '#442326'
-                            }}>
+                            }}
+                        >
                             <Row>
                                 <Icon icon="burn" color="red" />
                                 <Text text={burn.ticker} />

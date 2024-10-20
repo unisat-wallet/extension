@@ -157,7 +157,8 @@ export const SendingOutAssets = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
                                 borderWidth: 1,
                                 borderColor: '#442326'
                             }}
-                            overflowX>
+                            overflowX
+                        >
                             {inscriptions.map((inscription, index) => {
                                 return (
                                     <InscriptionPreview
@@ -187,7 +188,8 @@ export const SendingOutAssets = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
                                         borderRadius: 10,
                                         borderWidth: 1,
                                         borderColor: '#442326'
-                                    }}>
+                                    }}
+                                >
                                     <Row>
                                         <Text text={burn.ticker} />
                                     </Row>
@@ -215,7 +217,8 @@ export const SendingOutAssets = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
                                         borderRadius: 10,
                                         borderWidth: 1,
                                         borderColor: '#442326'
-                                    }}>
+                                    }}
+                                >
                                     <Row>
                                         <Text text={burn.ticker} />
                                     </Row>

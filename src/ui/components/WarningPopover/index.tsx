@@ -31,7 +31,8 @@ export const WarningPopover = ({
                                 <Card
                                     preset="style2"
                                     bg={risk.color || riskColor[risk.level]}
-                                    style={{ width: 60, height: 60 }}>
+                                    style={{ width: 60, height: 60 }}
+                                >
                                     <Text text={risk.level} size="lg" />
                                 </Card>
                                 <Text text={risk.desc} />

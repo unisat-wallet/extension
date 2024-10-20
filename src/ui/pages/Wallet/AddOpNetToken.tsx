@@ -75,7 +75,8 @@ export const AddOpNetToken = ({
                     <Row
                         onClick={() => {
                             onClose();
-                        }}>
+                        }}
+                    >
                         <CloseOutlined />
                     </Row>
                 </Row>
@@ -97,7 +98,8 @@ export const AddOpNetToken = ({
                 text="Next"
                 onClick={() => {
                     void saveToLocalStorage();
-                }}></Button>
+                }}
+            ></Button>
         </BottomModal>
     );
 };

@@ -78,7 +78,8 @@ export function AmountItem({ item, inDetail }: { item: ExtraItem; inDetail?: boo
                         title={item.ticker}
                         overlayStyle={{
                             fontSize: fontSizes.xs
-                        }}>
+                        }}
+                    >
                         <Text
                             text={runesUtils.toDecimalAmount(item.value.abs().toString(), item.div)}
                             ellipsis
@@ -125,7 +126,8 @@ function MyItem({ group, index, onItemClick }: MyItemProps) {
                             }}
                             onClick={() => {
                                 onItemClick(item);
-                            }}>
+                            }}
+                        >
                             <Row itemsCenter>
                                 {isReceived ? (
                                     <svg
@@ -133,7 +135,8 @@ function MyItem({ group, index, onItemClick }: MyItemProps) {
                                         width="36"
                                         height="36"
                                         viewBox="0 0 36 36"
-                                        fill="none">
+                                        fill="none"
+                                    >
                                         <rect
                                             width="36"
                                             height="36"
@@ -152,7 +155,8 @@ function MyItem({ group, index, onItemClick }: MyItemProps) {
                                                 y1="2.625"
                                                 x2="3"
                                                 y2="31.125"
-                                                gradientUnits="userSpaceOnUse">
+                                                gradientUnits="userSpaceOnUse"
+                                            >
                                                 <stop stopColor="#77EBCF" />
                                                 <stop offset="1" stopColor="#60F9C6" />
                                             </linearGradient>
@@ -164,7 +168,8 @@ function MyItem({ group, index, onItemClick }: MyItemProps) {
                                         height="36"
                                         viewBox="0 0 36 36"
                                         fill="none"
-                                        xmlns="http://www.w3.org/2000/svg">
+                                        xmlns="http://www.w3.org/2000/svg"
+                                    >
                                         <rect
                                             width="36"
                                             height="36"
@@ -183,7 +188,8 @@ function MyItem({ group, index, onItemClick }: MyItemProps) {
                                                 y1="2.625"
                                                 x2="3"
                                                 y2="31.125"
-                                                gradientUnits="userSpaceOnUse">
+                                                gradientUnits="userSpaceOnUse"
+                                            >
                                                 <stop stopColor="#FF7665" />
                                                 <stop offset="1" stopColor="#FFA082" />
                                             </linearGradient>

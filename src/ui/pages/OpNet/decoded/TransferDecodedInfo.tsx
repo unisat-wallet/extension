@@ -4,11 +4,11 @@ import { Decoded, InteractionType } from '@/shared/web3/decoder/CalldataDecoder'
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { Card, Column, Image, Row, Text } from '@/ui/components';
 import { fontSizes } from '@/ui/theme/font';
-import { BinaryReader } from '@btc-vision/bsi-binary';
+import { Address, BinaryReader } from '@btc-vision/transaction';
 
 export function decodeTransfer(selector: string, reader: BinaryReader): DecodedTransfer {
     let amount = 0n;
-    let to = '';
+    let to = Address.dead();
     switch (selector) {
         case InteractionType.Transfer: {
             to = reader.readAddress();
@@ -26,7 +26,7 @@ export function decodeTransfer(selector: string, reader: BinaryReader): DecodedT
 
 export interface DecodedTransfer extends Decoded {
     readonly amount: bigint;
-    readonly to: string;
+    readonly to: Address;
 }
 
 interface DecodedTransferProps {

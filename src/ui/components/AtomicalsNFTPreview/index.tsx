@@ -109,7 +109,8 @@ export default function AtomicalsNFTPreview({ data, onClick, preset }: Atomicals
                             title={`The UTXO containing this inscription has ${data.outputValue} sats`}
                             overlayStyle={{
                                 fontSize: fontSizes.xs
-                            }}>
+                            }}
+                        >
                             <div>
                                 <Text
                                     text={`${data.outputValue} sats`}

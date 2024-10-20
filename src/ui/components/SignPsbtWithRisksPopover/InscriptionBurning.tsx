@@ -55,7 +55,8 @@ export const InscriptionBurning = ({ decodedPsbt, onClose }: { decodedPsbt: Deco
                         borderWidth: 1,
                         borderColor: '#442326'
                     }}
-                    overflowX>
+                    overflowX
+                >
                     {burnList.map((burn, index) => {
                         return (
                             <InscriptionPreview
