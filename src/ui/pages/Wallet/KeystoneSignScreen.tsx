@@ -99,6 +99,7 @@ function USBStep(props: Props) {
   const onCloseError = useCallback(() => {
     setIsError(false);
     setError('');
+    props.onBack();
   }, [])
 
   useEffect(() => {
@@ -197,7 +198,13 @@ export default function KeystoneSignScreen(props: Props) {
   } else if (connectionType === 'USB') {
     return (
       <Layout>
-        <Header />
+        <Header onBack={() => {
+            if (step === 1) {
+              window.history.go(-1);
+            } else {
+              setStep(1);
+            }
+          }}/>
         <Content itemsCenter>
           <USBStep {...props} />
         </Content>
