@@ -12,7 +12,7 @@
                 "./src/*"
             ]
         },
-        "noImplicitAny": false,
+        "noImplicitAny": true,
         "downlevelIteration": true,
         "types": [
             "chrome",
