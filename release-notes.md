@@ -1,5 +1,9 @@
 # UniSat Wallet Release Notes
 
+## v1.5.0
+
+- Support CAT20
+
 ## v1.4.10
 
 - Add address tips. (It is not recommended to use legacy addresses on Fractal.)
