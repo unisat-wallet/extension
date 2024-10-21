@@ -27,6 +27,10 @@ import SendArc20Screen from './Atomicals/SendArc20Screen';
 import SendAtomicalsInscriptionScreen from './Atomicals/SendAtomicalsNFTScreen';
 import BRC20SendScreen from './BRC20/BRC20SendScreen';
 import BRC20TokenScreen from './BRC20/BRC20TokenScreen';
+import CAT20TokenScreen from './CAT20/CAT20TokenScreen';
+import MergeCAT20HistoryScreen from './CAT20/MergeCAT20HistoryScreen';
+import MergeCAT20Screen from './CAT20/MergeCAT20Screen';
+import SendCAT20Screen from './CAT20/SendCAT20Screen';
 import AppTabScrren from './Main/AppTabScreen';
 import BoostScreen from './Main/BoostScreen';
 import DiscoverTabScreen from './Main/DiscoverTabScreen';
@@ -251,6 +255,23 @@ export const routes = {
   RunesTokenScreen: {
     path: '/runes/token',
     element: <RunesTokenScreen />
+  },
+
+  CAT20TokenScreen: {
+    path: '/cat20/token',
+    element: <CAT20TokenScreen />
+  },
+  SendCAT20Screen: {
+    path: '/cat20/send-cat20',
+    element: <SendCAT20Screen />
+  },
+  MergeCAT20Screen: {
+    path: '/cat20/merge-cat20',
+    element: <MergeCAT20Screen />
+  },
+  MergeCAT20HistoryScreen: {
+    path: '/cat20/merge-history',
+    element: <MergeCAT20HistoryScreen />
   }
 };
 

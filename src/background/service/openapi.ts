@@ -10,6 +10,7 @@ import {
   Arc20Balance,
   BitcoinBalance,
   BtcPrice,
+  CAT20Balance,
   DecodedPsbt,
   FeeSummary,
   InscribeOrder,
@@ -183,6 +184,13 @@ export class OpenApiService {
   ): Promise<{ type: number; address_arr: string[]; satoshis_arr: number[] }[]> {
     return this.httpPost('/v5/address/find-group-assets', {
       groups
+    });
+  }
+
+  async getAvailableUtxos(address: string): Promise<UTXO[]> {
+    return this.httpGet('/v5/address/available-utxo', {
+      address,
+      ignoreAssets: true
     });
   }
 
@@ -516,8 +524,67 @@ export class OpenApiService {
     return this.httpGet(`/v5/runes/token-summary?address=${address}&runeid=${runeid}`, {});
   }
 
-  async getAddressRecentHistory(params: { address: string, start: number, limit: number }) {
+  async getAddressRecentHistory(params: { address: string; start: number; limit: number }) {
     return this.httpGet('/v5/address/history', params);
+  }
+
+  async getCAT20List(address: string, cursor: number, size: number): Promise<{ list: CAT20Balance[]; total: number }> {
+    return this.httpGet('/v5/cat20/list', { address, cursor, size });
+  }
+
+  async getAddressCAT20TokenSummary(address: string, tokenId: string) {
+    return this.httpGet(`/v5/cat20/token-summary?address=${address}&tokenId=${tokenId}`, {});
+  }
+
+  async getAddressCAT20UtxoSummary(address: string, tokenId: string) {
+    return this.httpGet(`/v5/cat20/utxo-summary?address=${address}&tokenId=${tokenId}`, {});
+  }
+
+  async transferCAT20Step1(address: string, pubkey: string, to: string, tokenId: string, amount: string, feeRate) {
+    return this.httpPost(`/v5/cat20/transfer-token-step1`, {
+      address,
+      pubkey,
+      to,
+      tokenId,
+      amount,
+      feeRate
+    });
+  }
+
+  async transferCAT20Step2(transferId: string, signedPsbt: string) {
+    return this.httpPost(`/v5/cat20/transfer-token-step2`, {
+      id: transferId,
+      psbt: signedPsbt
+    });
+  }
+
+  async transferCAT20Step3(transferId: string, signedPsbt: string) {
+    return this.httpPost(`/v5/cat20/transfer-token-step3`, {
+      id: transferId,
+      psbt: signedPsbt
+    });
+  }
+
+  async transferCAT20Step1ByMerge(mergeId: string) {
+    return this.httpPost(`/v5/cat20/transfer-token-step1-by-merge`, {
+      mergeId
+    });
+  }
+
+  async mergeCAT20Prepare(address: string, pubkey: string, tokenId: string, utxoCount: number, feeRate: number) {
+    return this.httpPost(`/v5/cat20/merge-token-prepare`, {
+      address,
+      pubkey,
+      tokenId,
+      utxoCount,
+      feeRate
+    });
+  }
+
+  async getMergeCAT20Status(mergeId: string) {
+    return this.httpPost(`/v5/cat20/merge-token-status`, {
+      id: mergeId
+    });
   }
 }
 

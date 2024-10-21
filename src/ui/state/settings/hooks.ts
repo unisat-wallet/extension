@@ -125,6 +125,11 @@ export function useAddressExplorerUrl(address: string) {
   }
 }
 
+export function useCAT20TokenInfoExplorerUrl(tokenId: string) {
+  const chain = useChain();
+  return `${chain.unisatExplorerUrl}/cat20/${tokenId}`;
+}
+
 export function useUnisatWebsite() {
   const chainType = useChainType();
   return CHAINS_MAP[chainType].unisatUrl;

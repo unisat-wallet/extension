@@ -23,6 +23,7 @@ import {
   useBTCUnit,
   useChain,
   useChainType,
+  useNetworkType,
   useSkipVersionCallback,
   useVersionInfo,
   useWalletConfig
@@ -32,11 +33,14 @@ import { useAssetTabKey, useResetUiTxCreateScreen } from '@/ui/state/ui/hooks';
 import { AssetTabKey, uiActions } from '@/ui/state/ui/reducer';
 import { fontSizes } from '@/ui/theme/font';
 import { amountToSatoshis, satoshisToAmount, useWallet } from '@/ui/utils';
+import { AddressType } from '@unisat/wallet-sdk';
+import { getAddressType } from '@unisat/wallet-sdk/lib/address';
 
 import { BuyBTCModal } from '../../BuyBTC/BuyBTCModal';
 import { useNavigate } from '../../MainRoute';
 import { SwitchChainModal } from '../../Settings/SwitchChainModal';
 import { AtomicalsTab } from './AtomicalsTab';
+import { CAT20List } from './CAT20List';
 import { OrdinalsTab } from './OrdinalsTab';
 import { RunesList } from './RunesList';
 
@@ -126,46 +130,66 @@ export default function WalletTabScreen() {
     run();
   }, []);
 
-  let tabItems = [
+  const networkType = useNetworkType();
+
+  const shouldShowCAT20 = useMemo(() => {
+    const addressType = getAddressType(currentAccount.address, networkType);
+    if (chain.isFractal && (addressType == AddressType.P2TR || addressType == AddressType.P2WPKH)) {
+      return true;
+    } else {
+      return false;
+    }
+  }, [currentAccount.address, networkType, chain]);
+
+  const shouldShowAtomicals = useMemo(() => {
+    if (chain.enum === ChainType.BITCOIN_MAINNET) {
+      return true;
+    } else {
+      return false;
+    }
+  }, [chain]);
+
+  const tabItems = [
     {
       key: AssetTabKey.ORDINALS,
       label: 'Ordinals',
       children: <OrdinalsTab />
-    },
-    {
-      key: AssetTabKey.ATOMICALS,
-      label: 'Atomicals',
-      children: <AtomicalsTab />
-    },
-    {
-      key: AssetTabKey.RUNES,
-      label: 'Runes',
-      children: <RunesList />
     }
   ];
 
-  if (chainType !== ChainType.BITCOIN_MAINNET) {
-    tabItems = [
-      {
-        key: AssetTabKey.ORDINALS,
-        label: 'Ordinals',
-        children: <OrdinalsTab />
-      },
-      {
-        key: AssetTabKey.RUNES,
-        label: 'Runes',
-        children: <RunesList />
-      }
-    ];
+  if (shouldShowAtomicals) {
+    tabItems.push({
+      key: AssetTabKey.ATOMICALS,
+      label: 'Atomicals',
+      children: <AtomicalsTab />
+    });
+  }
+
+  tabItems.push({
+    key: AssetTabKey.RUNES,
+    label: 'Runes',
+    children: <RunesList />
+  });
+
+  if (shouldShowCAT20) {
+    tabItems.push({
+      key: AssetTabKey.CAT20,
+      label: 'CAT20',
+      children: <CAT20List />
+    });
   }
 
   const finalAssetTabKey = useMemo(() => {
-    if (chainType !== ChainType.BITCOIN_MAINNET && assetTabKey === AssetTabKey.ATOMICALS) {
+    if (!shouldShowAtomicals && assetTabKey === AssetTabKey.ATOMICALS) {
       return AssetTabKey.ORDINALS;
-    } else {
-      return assetTabKey;
     }
-  }, [assetTabKey, chainType]);
+
+    if (!shouldShowCAT20 && assetTabKey === AssetTabKey.CAT20) {
+      return AssetTabKey.ORDINALS;
+    }
+
+    return assetTabKey;
+  }, [assetTabKey, shouldShowAtomicals, shouldShowCAT20]);
 
   const addressExplorerUrl = useAddressExplorerUrl(currentAccount.address);
   const resetUiTxCreateScreen = useResetUiTxCreateScreen();

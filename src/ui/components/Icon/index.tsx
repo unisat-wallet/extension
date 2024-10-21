@@ -5,7 +5,7 @@ import { fontSizes } from '@/ui/theme/font';
 
 export const svgRegistry = {
   history: './images/icons/clock-solid.svg',
-  send: './images/icons/arrow-left-right.svg',
+  send: './images/icons/send.svg',
   receive: './images/icons/qrcode.svg',
 
   right: './images/icons/right.svg',
@@ -50,7 +50,9 @@ export const svgRegistry = {
   burn: ' /images/icons/burn.svg',
   risk: '/images/icons/risk.svg',
 
-  overview: '/images/icons/overview.svg'
+  overview: '/images/icons/overview.svg',
+  merge: '/images/icons/merge.svg',
+  paused: '/images/icons/paused.svg'
 };
 
 const iconImgList: Array<IconTypes> = ['success', 'delete', 'btc'];

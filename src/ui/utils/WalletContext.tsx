@@ -7,6 +7,8 @@ import { ConnectedSite } from '@/background/service/permission';
 import { AddressFlagType, ChainType } from '@/shared/constant';
 import {
   Account,
+  AddressCAT20TokenSummary,
+  AddressCAT20UtxoSummary,
   AddressRunesTokenSummary,
   AddressSummary,
   AddressTokenSummary,
@@ -14,6 +16,8 @@ import {
   Arc20Balance,
   BitcoinBalance,
   BtcChannelItem,
+  CAT20Balance,
+  CAT20MergeOrder,
   DecodedPsbt,
   FeeSummary,
   InscribeOrder,
@@ -26,6 +30,7 @@ import {
   TokenBalance,
   TokenTransfer,
   TxHistoryItem,
+  UserToSignInput,
   UTXO,
   UTXO_Detail,
   VersionDetail,
@@ -376,6 +381,35 @@ export interface WalletController {
 
   setAutoLockTimeId(timeId: number): Promise<void>;
   getAutoLockTimeId(): Promise<number>;
+
+  getCAT20List(
+    address: string,
+    currentPage: number,
+    pageSize: number
+  ): Promise<{ currentPage: number; pageSize: number; total: number; list: CAT20Balance[] }>;
+
+  getAddressCAT20TokenSummary(address: string, tokenId: string): Promise<AddressCAT20TokenSummary>;
+
+  getAddressCAT20UtxoSummary(address: string, tokenId: string): Promise<AddressCAT20UtxoSummary>;
+
+  transferCAT20Step1(
+    to: string,
+    tokenId: string,
+    tokenAmount: string,
+    feeRate: number
+  ): Promise<{ id: string; commitTx: string; toSignInputs: UserToSignInput[]; feeRate: number }>;
+  transferCAT20Step2(
+    transferId: string,
+    commitTx: string,
+    toSignInputs: UserToSignInput[]
+  ): Promise<{ revealTx: string; toSignInputs: UserToSignInput[] }>;
+  transferCAT20Step3(transferId: string, revealTx: string, toSignInputs: UserToSignInput[]): Promise<{ txid: string }>;
+
+  mergeCAT20Prepare(tokenId: string, utxoCount: number, feeRate: number): Promise<CAT20MergeOrder>;
+  transferCAT20Step1ByMerge(
+    mergeId: string
+  ): Promise<{ id: string; commitTx: string; toSignInputs: UserToSignInput[]; feeRate: number }>;
+  getMergeCAT20Status(mergeId: string): Promise<any>;
 }
 
 const WalletContext = createContext<{

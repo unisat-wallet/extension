@@ -2015,6 +2015,89 @@ export class WalletController extends BaseController {
       this.lockWallet();
     }, timeConfig.time);
   };
+
+  getCAT20List = async (address: string, currentPage: number, pageSize: number) => {
+    const cursor = (currentPage - 1) * pageSize;
+    const size = pageSize;
+    const { total, list } = await openapiService.getCAT20List(address, cursor, size);
+
+    return {
+      currentPage,
+      pageSize,
+      total,
+      list
+    };
+  };
+
+  getAddressCAT20TokenSummary = async (address: string, tokenId: string) => {
+    const tokenSummary = await openapiService.getAddressCAT20TokenSummary(address, tokenId);
+    return tokenSummary;
+  };
+
+  getAddressCAT20UtxoSummary = async (address: string, tokenId: string) => {
+    const tokenSummary = await openapiService.getAddressCAT20UtxoSummary(address, tokenId);
+    return tokenSummary;
+  };
+
+  transferCAT20Step1ByMerge = async (mergeId: string) => {
+    return await openapiService.transferCAT20Step1ByMerge(mergeId);
+  };
+
+  transferCAT20Step1 = async (to: string, tokenId: string, tokenAmount: string, feeRate: number) => {
+    const currentAccount = await this.getCurrentAccount();
+    if (!currentAccount) {
+      return;
+    }
+
+    const _res = await openapiService.transferCAT20Step1(
+      currentAccount.address,
+      currentAccount.pubkey,
+      to,
+      tokenId,
+      tokenAmount,
+      feeRate
+    );
+    return _res;
+  };
+
+  transferCAT20Step2 = async (transferId: string, commitTx: string, toSignInputs: ToSignInput[]) => {
+    const networkType = this.getNetworkType();
+    const psbtNetwork = toPsbtNetwork(networkType);
+    const psbt = bitcoin.Psbt.fromBase64(commitTx, { network: psbtNetwork });
+    await this.signPsbt(psbt, toSignInputs, true);
+    const _res = await openapiService.transferCAT20Step2(transferId, psbt.toBase64());
+    return _res;
+  };
+
+  transferCAT20Step3 = async (transferId: string, revealTx: string, toSignInputs: ToSignInput[]) => {
+    const networkType = this.getNetworkType();
+    const psbtNetwork = toPsbtNetwork(networkType);
+    const psbt = bitcoin.Psbt.fromBase64(revealTx, { network: psbtNetwork });
+    await this.signPsbt(psbt, toSignInputs, false);
+    const _res = await openapiService.transferCAT20Step3(transferId, psbt.toBase64());
+    return _res;
+  };
+
+  mergeCAT20Prepare = async (tokenId: string, utxoCount: number, feeRate: number) => {
+    const currentAccount = await this.getCurrentAccount();
+    if (!currentAccount) {
+      return;
+    }
+
+    const _res = await openapiService.mergeCAT20Prepare(
+      currentAccount.address,
+      currentAccount.pubkey,
+      tokenId,
+      utxoCount,
+      feeRate
+    );
+    return _res;
+  };
+
+  getMergeCAT20Status = async (mergeId: string) => {
+    const _res = await openapiService.getMergeCAT20Status(mergeId);
+    return _res;
+  };
 }
 
 export default new WalletController();

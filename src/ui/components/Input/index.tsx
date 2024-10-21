@@ -102,6 +102,7 @@ function AmountInput(props: InputProps) {
     style: $inputStyleOverride,
     disableDecimal,
     enableBrc20Decimal,
+    containerStyle,
     runesDecimal,
     enableMax,
     onMaxClick,
@@ -146,9 +147,9 @@ function AmountInput(props: InputProps) {
     }
   };
   return (
-    <div style={$baseContainerStyle}>
+    <div style={Object.assign({}, $baseContainerStyle, containerStyle)}>
       <input
-        placeholder={placeholder || 'Amount'}
+        placeholder={placeholder || ''}
         type={'text'}
         value={inputValue}
         onChange={handleInputAmount}
