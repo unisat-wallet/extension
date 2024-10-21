@@ -11422,21 +11422,16 @@ __metadata:
   languageName: node
   linkType: hard
 
-"gulp-uglify@npm:^3.0.2":
-  version: 3.0.2
-  resolution: "gulp-uglify@npm:3.0.2"
+"gulp-uglify-es@npm:^3.0.0":
+  version: 3.0.0
+  resolution: "gulp-uglify-es@npm:3.0.0"
   dependencies:
-    array-each: "npm:^1.0.1"
-    extend-shallow: "npm:^3.0.2"
-    gulplog: "npm:^1.0.0"
-    has-gulplog: "npm:^0.1.0"
-    isobject: "npm:^3.0.1"
-    make-error-cause: "npm:^1.1.1"
-    safe-buffer: "npm:^5.1.2"
-    through2: "npm:^2.0.0"
-    uglify-js: "npm:^3.0.5"
-    vinyl-sourcemaps-apply: "npm:^0.2.0"
-  checksum: 10c0/a3b8f2f873198040c900d7855432cbf92a4edaf2b1e87b63bfa795629a9240f7b56bbac5885e1f02a4f63f91afebf5364234f1d3cd5bd52fab577be25dd5817a
+    o-stream: "npm:^0.3.0"
+    plugin-error: "npm:^1.0.1"
+    terser: "npm:^5.7.1"
+    vinyl: "npm:^2.2.1"
+    vinyl-sourcemaps-apply: "npm:^0.2.1"
+  checksum: 10c0/6441eed7147f1d25c6f2f99485b59396c56d0532fb3f94af10b3f8ba1aed531b9eaa978d89e0d06464662fdac9be3c6a35e88b08058ca37dd38ea08c39be7b0b
   languageName: node
   linkType: hard
 
@@ -14642,16 +14637,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"make-error-cause@npm:^1.1.1":
-  version: 1.2.2
-  resolution: "make-error-cause@npm:1.2.2"
-  dependencies:
-    make-error: "npm:^1.2.0"
-  checksum: 10c0/bb4530131ce3b7cb6924de77e907637eaf6e727d70dcc16810451d6a52b10f1ad1ac50c9c879d8b506186eb28692598d19742cc4fb271f054b389e4f0fcc9e56
-  languageName: node
-  linkType: hard
-
-"make-error@npm:^1.1.1, make-error@npm:^1.2.0":
+"make-error@npm:^1.1.1":
   version: 1.3.6
   resolution: "make-error@npm:1.3.6"
   checksum: 10c0/171e458d86854c6b3fc46610cfacf0b45149ba043782558c6875d9f42f222124384ad0b468c92e996d815a8a2003817a710c0a160e49c1c394626f76fa45396f
@@ -15520,6 +15506,13 @@ __metadata:
   languageName: node
   linkType: hard
 
+"o-stream@npm:^0.3.0":
+  version: 0.3.0
+  resolution: "o-stream@npm:0.3.0"
+  checksum: 10c0/c6f721683ada66ad468cc3f480ef4323c0a786099fb2baf1dca349265dcd2ffc4ad8643eacccab40a0f0d1a3417f1e2d1d5ac2586e9bfcf264b945033e5d5a8f
+  languageName: node
+  linkType: hard
+
 "oauth-sign@npm:~0.9.0":
   version: 0.9.0
   resolution: "oauth-sign@npm:0.9.0"
@@ -15901,7 +15894,7 @@ __metadata:
     gulp: "npm:^4.0.2"
     gulp-clean: "npm:^0.4.0"
     gulp-jsoncombine: "npm:^1.0.4"
-    gulp-uglify: "npm:^3.0.2"
+    gulp-uglify-es: "npm:^3.0.0"
     gulp-zip: "npm:^5.1.0"
     html-webpack-plugin: "npm:^5.5.0"
     i18next: "npm:^21.8.1"
@@ -21067,6 +21060,20 @@ __metadata:
   languageName: node
   linkType: hard
 
+"terser@npm:^5.7.1":
+  version: 5.36.0
+  resolution: "terser@npm:5.36.0"
+  dependencies:
+    "@jridgewell/source-map": "npm:^0.3.3"
+    acorn: "npm:^8.8.2"
+    commander: "npm:^2.20.0"
+    source-map-support: "npm:~0.5.20"
+  bin:
+    terser: bin/terser
+  checksum: 10c0/f4ed2bead19f64789ddcfb85b7cef78f3942f967b8890c54f57d1e35bc7d547d551c6a4c32210bce6ba45b1c738314bbfac6acbc6c762a45cd171777d0c120d9
+  languageName: node
+  linkType: hard
+
 "test-exclude@npm:^6.0.0":
   version: 6.0.0
   resolution: "test-exclude@npm:6.0.0"
@@ -21755,15 +21762,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"uglify-js@npm:^3.0.5":
-  version: 3.19.3
-  resolution: "uglify-js@npm:3.19.3"
-  bin:
-    uglifyjs: bin/uglifyjs
-  checksum: 10c0/83b0a90eca35f778e07cad9622b80c448b6aad457c9ff8e568afed978212b42930a95f9e1be943a1ffa4258a3340fbb899f41461131c05bb1d0a9c303aed8479
-  languageName: node
-  linkType: hard
-
 "uint8array-tools@npm:0.0.7":
   version: 0.0.7
   resolution: "uint8array-tools@npm:0.0.7"
@@ -22342,7 +22340,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"vinyl-sourcemaps-apply@npm:^0.2.0":
+"vinyl-sourcemaps-apply@npm:^0.2.1":
   version: 0.2.1
   resolution: "vinyl-sourcemaps-apply@npm:0.2.1"
   dependencies:

@@ -192,12 +192,17 @@ class EmptyKeyring extends IKeyringBase<{ network: Network }> {
     }
 }
 
+export interface StoredData {
+    booted: string;
+    vault: string;
+}
+
 class KeyringService extends EventEmitter {
     //
     // PUBLIC METHODS
     //
     keyringTypes: (typeof IKeyringBase)[];
-    store!: ObservableStore<{ booted: string; vault: string }>;
+    store!: ObservableStore<StoredData>;
     memStore: ObservableStore<MemStoreState>;
     keyrings: Keyring[];
     addressTypes: AddressType[];
@@ -220,13 +225,15 @@ class KeyringService extends EventEmitter {
         this.addressTypes = [];
     }
 
-    loadStore = (initState) => {
+    loadStore = (initState: StoredData) => {
         this.store = new ObservableStore(initState);
     };
 
     boot = async (password: string) => {
         this.password = password;
+
         const encryptBooted = await this.encryptor.encrypt(password, 'true');
+
         this.store.updateState({ booted: encryptBooted });
         this.memStore.updateState({ isUnlocked: true });
     };
@@ -259,7 +266,6 @@ class KeyringService extends EventEmitter {
     /**
      * Import Keychain using Private key
      *
-     * @emits KeyringController#unlock
      * @returns  A Promise that resolves to the state.
      */
     importPrivateKey = async (
@@ -267,6 +273,8 @@ class KeyringService extends EventEmitter {
         addressType: AddressType,
         network: networks.Network = networks.bitcoin
     ) => {
+        privateKey = privateKey.replace('0x', '');
+
         await this.persistAllKeyrings();
 
         const keyring = await this.addNewKeyring(

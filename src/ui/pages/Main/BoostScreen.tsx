@@ -49,7 +49,6 @@ export default function BoostScreen() {
         }
 
         const currentAccount = await wallet.getCurrentAccount();
-
         if (!currentAccount) {
             navigate(RouteTypes.WelcomeScreen);
             return;
@@ -65,7 +64,7 @@ export default function BoostScreen() {
         const ready = await wallet.isReady();
 
         if (ready) {
-            loadView();
+            await loadView();
         } else {
             setTimeout(() => {
                 init();
@@ -74,7 +73,7 @@ export default function BoostScreen() {
     };
 
     useEffect(() => {
-        init();
+        void init();
     }, []);
 
     return <div></div>;

@@ -35,14 +35,13 @@ export default function UnlockScreen() {
                 }
             }
         } catch (e) {
-            console.log(e);
-            tools.toastError('PASSWORD ERROR');
+            tools.toastError(`Wrong password entered, please try again.`);
         }
     };
 
-    const handleOnKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+    const handleOnKeyUp = async (e: React.KeyboardEvent<HTMLInputElement>) => {
         if (!disabled && 'Enter' == e.key) {
-            btnClick();
+            await btnClick();
         }
     };
 

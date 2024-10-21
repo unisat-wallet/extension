@@ -14,7 +14,7 @@ import { useAppDispatch } from '@/ui/state/hooks';
 import { useAutoLockTimeId } from '@/ui/state/settings/hooks';
 import { settingsActions } from '@/ui/state/settings/reducer';
 import { colors, ColorTypes } from '@/ui/theme/colors';
-import { shortAddress, useWallet } from '@/ui/utils';
+import { useWallet } from '@/ui/utils';
 
 export default function AdvancedScreen() {
     const wallet = useWallet();
@@ -68,56 +68,6 @@ export default function AdvancedScreen() {
             <Content>
                 <Column>
                     <Card style={{ borderRadius: 10 }}>
-                        <Column fullX>
-                            <Text text={'Unconfirmed Balance Not Spendable'} preset="bold" size="sm" />
-                            <Row>
-                                <Text
-                                    preset="sub"
-                                    size="sm"
-                                    text={
-                                        'To protect your assets, only confirmed balances are spendable when holding Runes (or ARC-20) assets. This is to prevent accidental asset burning.'
-                                    }
-                                />
-                            </Row>
-                            <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
-
-                            <Row justifyBetween>
-                                <Column fullX gap="zero">
-                                    {enableUnconfirmed ? (
-                                        <Text text={'Mandatory use of unconfirmed balance '} size="xs" />
-                                    ) : (
-                                        <Text text={'Mandatory use of unconfirmed balance'} size="xs" />
-                                    )}
-                                    <Text
-                                        text={`Only applies to current address (${shortAddress(
-                                            currentAccount.address
-                                        )})`}
-                                        preset="sub"
-                                    />
-                                </Column>
-
-                                <Switch
-                                    onChange={async () => {
-                                        if (enableUnconfirmed) {
-                                            let _currentAccount = currentAccount;
-                                            _currentAccount = await wallet.addAddressFlag(
-                                                _currentAccount,
-                                                AddressFlagType.CONFIRMED_UTXO_MODE
-                                            );
-                                            dispatch(accountActions.setCurrent(_currentAccount));
-                                            setEnableUnconfirmed(false);
-                                        } else {
-                                            setUnconfirmedPopoverVisible(true);
-                                        }
-                                    }}
-                                    checked={enableUnconfirmed}></Switch>
-                            </Row>
-                        </Column>
-                    </Card>
-                </Column>
-
-                <Column>
-                    <Card style={{ borderRadius: 10 }}>
                         <Column>
                             <Text text={'signData requests'} preset="bold" size="sm" />
                             <Row>
@@ -136,11 +86,10 @@ export default function AdvancedScreen() {
                                 <Text text={'Allow signData requests'} size="xs" />
 
                                 <Switch
-                                    onChange={() => {
+                                    onChange={async () => {
                                         if (enableSignData) {
-                                            wallet.setEnableSignData(false).then(() => {
-                                                setEnableSignData(false);
-                                            });
+                                            await wallet.setEnableSignData(false);
+                                            setEnableSignData(false);
                                         } else {
                                             setEnableSignDataPopoverVisible(true);
                                         }

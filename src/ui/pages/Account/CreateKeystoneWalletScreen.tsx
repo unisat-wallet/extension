@@ -356,8 +356,6 @@ function Step3({
                     </Row>
                 )}
 
-                <Text text="OP_NET is currently only compatible with Taproot (P2TR) addresses." color="red" />
-
                 <Column>
                     {addressTypes.map((item, index) => {
                         //  if item.value is not find in groups, then return null

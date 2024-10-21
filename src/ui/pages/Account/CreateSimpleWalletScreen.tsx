@@ -15,10 +15,20 @@ import { EcKeyPair, Wallet } from '@btc-vision/transaction';
 
 import { RouteTypes, useNavigate } from '../MainRoute';
 
+
 const ECPair = ECPairFactory(ecc);
 
+/*const _res = await wallet.createTmpKeyringWithPrivateKey(wif, AddressType.P2TR);
+if (_res.accounts.length == 0) {
+    throw new Error('Invalid PrivateKey');
+}*/
+
+/*const address = Wallet.fromWif(contextData.wif, bitcoinNetwork); //keyring.accounts[0].address;
+if (!address.p2tr) {
+    throw new Error('Invalid PrivateKey');
+}*/
+
 function Step1({
-    contextData,
     updateContextData
 }: {
     contextData: ContextData;
@@ -49,23 +59,23 @@ function Step1({
         const network = await wallet.getNetworkType();
         const bitcoinNetwork = getBitcoinLibJSNetwork(network);
 
+        let validWIF: boolean = false;
+        let validPrivateKey: boolean = false;
         try {
-            /*const _res = await wallet.createTmpKeyringWithPrivateKey(wif, AddressType.P2TR);
-            if (_res.accounts.length == 0) {
-                throw new Error('Invalid PrivateKey');
-            }*/
-
             ECPair.fromWIF(wif, bitcoinNetwork);
+            validWIF = true;
+        } catch {}
 
-            /*const address = Wallet.fromWif(contextData.wif, bitcoinNetwork); //keyring.accounts[0].address;
-            if (!address.p2tr) {
-                throw new Error('Invalid PrivateKey');
-            }*/
-        } catch (e) {
-            console.log(e);
-            tools.toastError(`${(e as Error).message} (Are you on the right network?)`);
+        try {
+            ECPair.fromPrivateKey(Buffer.from(wif.replace('0x', ''), 'hex'), { network: bitcoinNetwork });
+            validPrivateKey = true;
+        } catch {}
+
+        if (!validWIF && !validPrivateKey) {
+            tools.toastError(`Invalid wif/private key (Are you on the right network?)`);
             return;
         }
+
         updateContextData({
             wif,
             tabType: TabType.STEP2
@@ -108,10 +118,7 @@ function Step2({
             if (v.displayIndex < 0) {
                 return false;
             }
-            if (v.isUnisatLegacy) {
-                return false;
-            }
-            return true;
+            return !v.isUnisatLegacy;
         })
             .sort((a, b) => a.displayIndex - b.displayIndex)
             .map((v) => {
@@ -152,19 +159,29 @@ function Step2({
 
         for (let i = 0; i < hdPathOptions.length; i++) {
             const options = hdPathOptions[i];
-            //const keyring = await wallet.createTmpKeyringWithPrivateKey(contextData.wif, options.addressType);
-            const address = Wallet.fromWif(contextData.wif, bitcoinNetwork); //keyring.accounts[0].address; //
-            //console.log(address);
-            //addresses.push(address.p2tr);
+            const address = Wallet.fromWif(contextData.wif, bitcoinNetwork);
 
             if (options.addressType == AddressType.P2TR) {
                 addresses.push(address.p2tr);
             } else if (options.addressType == AddressType.P2WPKH) {
                 addresses.push(address.p2wpkh);
             } else {
-                addresses.push(
-                    EcKeyPair.getLegacyAddress(ECPair.fromWIF(contextData.wif, bitcoinNetwork), bitcoinNetwork)
-                );
+                try {
+                    addresses.push(
+                        EcKeyPair.getLegacyAddress(ECPair.fromWIF(contextData.wif, bitcoinNetwork), bitcoinNetwork)
+                    );
+                } catch {}
+
+                try {
+                    addresses.push(
+                        EcKeyPair.getLegacyAddress(
+                            ECPair.fromPrivateKey(Buffer.from(contextData.wif.replace('0x', ''), 'hex'), {
+                                network: bitcoinNetwork
+                            }),
+                            bitcoinNetwork
+                        )
+                    );
+                } catch {}
             }
         }
 
@@ -209,8 +226,6 @@ function Step2({
     return (
         <Column gap="lg">
             <Text text="Address Type" preset="bold" />
-
-            <Text text="OP_NET is currently only compatible with Taproot (P2TR) addresses." color="red" />
 
             {hdPathOptions.map((item, index) => {
                 const address = previewAddresses[index];
