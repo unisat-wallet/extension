@@ -12,7 +12,8 @@ export const fetchLocale = async (locale) => {
     }, {});
 };
 
-i18n.use(initReactI18next) // passes i18n down to react-i18next
+await i18n
+    .use(initReactI18next) // passes i18n down to react-i18next
     .init({
         fallbackLng: 'en',
         defaultNS: 'translations',
@@ -30,10 +31,10 @@ export const addResourceBundle = async (locale: string) => {
     i18n.addResourceBundle(locale, 'translations', bundle);
 };
 
-addResourceBundle('en');
+await addResourceBundle('en');
 
-i18n.on('languageChanged', function (lng: string) {
-    addResourceBundle(lng);
+i18n.on('languageChanged', async function (lng: string) {
+    await addResourceBundle(lng);
 });
 
 export default i18n;

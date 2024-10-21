@@ -2,7 +2,7 @@ import { useEffect } from 'react';
 
 import { getUiType, useApproval, useWallet } from '@/ui/utils';
 
-import { useNavigate } from '../MainRoute';
+import { RouteTypes, useNavigate } from '../MainRoute';
 
 export default function BoostScreen() {
     const navigate = useNavigate();
@@ -29,34 +29,34 @@ export default function BoostScreen() {
         const isUnlocked = await wallet.isUnlocked();
 
         if (!isBooted) {
-            navigate('WelcomeScreen');
+            navigate(RouteTypes.WelcomeScreen);
             return;
         }
 
         if (!isUnlocked) {
-            navigate('UnlockScreen');
+            navigate(RouteTypes.UnlockScreen);
             return;
         }
 
         if (!hasVault) {
-            navigate('WelcomeScreen');
+            navigate(RouteTypes.WelcomeScreen);
             return;
         }
 
         if (!isInNotification && !isInTab) {
-            navigate('CreateHDWalletScreen', { isImport: false });
+            navigate(RouteTypes.CreateHDWalletScreen, { isImport: false });
             return;
         }
 
         const currentAccount = await wallet.getCurrentAccount();
 
         if (!currentAccount) {
-            navigate('WelcomeScreen');
+            navigate(RouteTypes.WelcomeScreen);
             return;
         } else if (approval) {
-            navigate('ApprovalScreen');
+            navigate(RouteTypes.ApprovalScreen);
         } else {
-            navigate('MainScreen');
+            navigate(RouteTypes.MainScreen);
             return;
         }
     };

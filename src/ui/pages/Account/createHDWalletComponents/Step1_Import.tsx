@@ -13,7 +13,7 @@ import {
     UpdateContextDataParams,
     WordsType
 } from '@/ui/pages/Account/createHDWalletComponents/types';
-import { useNavigate } from '@/ui/pages/MainRoute';
+import { RouteTypes, useNavigate } from '@/ui/pages/MainRoute';
 import { useCreateAccountCallback } from '@/ui/state/global/hooks';
 
 const WORDS_12_ITEM = {
@@ -105,7 +105,7 @@ export function Step1_Import({
             const mnemonics = keys.join(' ');
             if (contextData.restoreWalletType === RestoreWalletType.OW) {
                 await createAccount(mnemonics, OW_HD_PATH, '', AddressType.P2TR, 1);
-                navigate('MainScreen');
+                navigate(RouteTypes.MainScreen);
             } else {
                 updateContextData({ mnemonics, tabType: TabType.STEP3 });
             }

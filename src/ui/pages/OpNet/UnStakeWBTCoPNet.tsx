@@ -13,7 +13,7 @@ import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { useWallet } from '@/ui/utils';
 import { Address } from '@btc-vision/transaction';
 
-import { useNavigate } from '../MainRoute';
+import { RouteTypes, useNavigate } from '../MainRoute';
 
 interface ItemData {
     key: string;
@@ -166,7 +166,7 @@ export default function UnWrapBitcoinOpnet() {
                         text="Claim"
                         full
                         onClick={() => {
-                            navigate('TxOpnetConfirmScreen', {
+                            navigate(RouteTypes.TxOpnetConfirmScreen, {
                                 rawTxInfo: {
                                     items: items,
                                     account: account,
@@ -203,7 +203,7 @@ export default function UnWrapBitcoinOpnet() {
                         preset="primary"
                         text="Unstake"
                         onClick={() => {
-                            navigate('TxOpnetConfirmScreen', {
+                            navigate(RouteTypes.TxOpnetConfirmScreen, {
                                 rawTxInfo: {
                                     items: items,
                                     account: account,

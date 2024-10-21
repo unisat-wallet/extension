@@ -7,7 +7,7 @@ import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
 import { CloseOutlined } from '@ant-design/icons';
 
-import { useNavigate } from '../MainRoute';
+import { RouteTypes, useNavigate } from '../MainRoute';
 
 function WalletItem(props: { walletType: HardwareWalletType; onClick?: () => void; disabled?: boolean }) {
     const walletInfo = HARDWARE_WALLETS[props.walletType];
@@ -78,9 +78,9 @@ export const ConnectHardwareModal = ({ onClose }: { onClose: () => void }) => {
                                 return;
                             }
                             if (isBooted) {
-                                navigate('CreateKeystoneWalletScreen');
+                                navigate(RouteTypes.CreateKeystoneWalletScreen);
                             } else {
-                                navigate('CreatePasswordScreen', { isKeystone: true });
+                                navigate(RouteTypes.CreatePasswordScreen, { isKeystone: true });
                             }
                         }}
                     />

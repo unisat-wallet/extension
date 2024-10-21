@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
 import { WalletKeyring } from '@/shared/types';
-import { useNavigate } from '@/ui/pages/MainRoute';
+import { RouteTypes, useNavigate } from '@/ui/pages/MainRoute';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { keyringsActions } from '@/ui/state/keyrings/reducer';
@@ -85,7 +85,7 @@ export const RemoveWalletPopover = ({ keyring, onClose }: { keyring: WalletKeyri
                                 return;
                             }
 
-                            navigate('WelcomeScreen');
+                            navigate(RouteTypes.WelcomeScreen);
                         }}
                     />
                 </Row>

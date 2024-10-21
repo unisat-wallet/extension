@@ -1,4 +1,4 @@
-import { Account, AddressSummary, AppSummary, Inscription, InscriptionSummary, TxHistoryItem } from '@/shared/types';
+import { Account, AddressSummary, AppSummary, TxHistoryItem } from '@/shared/types';
 import { createSlice } from '@reduxjs/toolkit';
 
 import { updateVersion } from '../global/actions';
@@ -28,12 +28,10 @@ export interface AccountsState {
     inscriptionsMap: Record<
         string,
         {
-            list: Inscription[];
             expired: boolean;
         }
     >;
     appSummary: AppSummary;
-    inscriptionSummary: InscriptionSummary;
     addressSummary: AddressSummary;
 }
 
@@ -60,20 +58,11 @@ export const initialState: AccountsState = {
     appSummary: {
         apps: []
     },
-    inscriptionSummary: {
-        mintedList: []
-    },
     addressSummary: {
         address: '',
-        runesCount: 0,
         totalSatoshis: 0,
         btcSatoshis: 0,
         assetSatoshis: 0,
-        inscriptionCount: 0,
-        atomicalsCount: 0,
-        brc20Count: 0,
-        brc20Count5Byte: 0,
-        arc20Count: 0,
         loading: true
     }
 };
@@ -150,15 +139,14 @@ const slice = createSlice({
                 history.expired = true;
             }
         },
-        setInscriptions(state, action: { payload: { address: string; list: Inscription[] } }) {
+        setInscriptions(state, action: { payload: { address: string } }) {
             const {
-                payload: { address, list }
+                payload: { address }
             } = action;
             state.inscriptionsMap[address] = state.inscriptionsMap[address] || {
                 list: [],
                 expired: true
             };
-            state.inscriptionsMap[address].list = list;
             state.inscriptionsMap[address].expired = false;
         },
         expireInscriptions(state) {
@@ -182,10 +170,6 @@ const slice = createSlice({
             if (account) {
                 account.flag = payload;
             }
-        },
-        setInscriptionSummary(state, action: { payload: InscriptionSummary }) {
-            const { payload } = action;
-            state.inscriptionSummary = payload;
         },
         setAppSummary(state, action: { payload: AppSummary }) {
             const { payload } = action;
@@ -222,13 +206,7 @@ const slice = createSlice({
                     totalSatoshis: 0,
                     btcSatoshis: 0,
                     assetSatoshis: 0,
-                    inscriptionCount: 0,
-                    atomicalsCount: 0,
-                    brc20Count: 0,
-                    brc20Count5Byte: 0,
-                    arc20Count: 0,
-                    address: '',
-                    runesCount: 0
+                    address: ''
                 };
             }
         });

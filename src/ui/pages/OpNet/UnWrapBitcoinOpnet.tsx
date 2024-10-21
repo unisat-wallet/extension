@@ -2,7 +2,7 @@ import { getContract, IWBTCContract, WBTC_ABI } from 'opnet';
 import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { Account, Inscription, OPTokenInfo } from '@/shared/types';
+import { Account, OPTokenInfo } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
 import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
 import { Button, Column, Content, Header, Image, Input, Layout, Row, Text } from '@/ui/components';
@@ -18,7 +18,7 @@ import { useWallet } from '@/ui/utils';
 import { Address } from '@btc-vision/transaction';
 import { getAddressUtxoDust } from '@btc-vision/wallet-sdk/lib/transaction';
 
-import { useNavigate } from '../MainRoute';
+import { RouteTypes, useNavigate } from '../MainRoute';
 
 interface ItemData {
     key: string;
@@ -41,11 +41,9 @@ export default function UnWrapBitcoinOpnet() {
     const [toInfo, setToInfo] = useState<{
         address: string;
         domain: string;
-        inscription?: Inscription;
     }>({
         address: '',
-        domain: '',
-        inscription: undefined
+        domain: ''
     });
 
     const [availableBalance, setAvailableBalance] = useState(0n);
@@ -83,7 +81,7 @@ export default function UnWrapBitcoinOpnet() {
             );
 
             try {
-                const checkWithdrawalRequest = await contract.withdrawableBalanceOf(account.address);
+                const checkWithdrawalRequest = await contract.withdrawableBalanceOf(walletAddressPub);
 
                 setAvailableBalance(checkWithdrawalRequest.decoded[0] as bigint);
             } catch {
@@ -250,7 +248,7 @@ export default function UnWrapBitcoinOpnet() {
                     preset="primary"
                     text="Next"
                     onClick={() => {
-                        navigate('TxOpnetConfirmScreen', {
+                        navigate(RouteTypes.TxOpnetConfirmScreen, {
                             rawTxInfo: {
                                 items: items,
                                 account: account, // replace with actual account

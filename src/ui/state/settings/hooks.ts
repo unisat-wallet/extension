@@ -26,7 +26,7 @@ export function useChangeLocaleCallback() {
         async (locale: string) => {
             await wallet.setLocale(locale);
             await addResourceBundle(locale);
-            i18n.changeLanguage(locale);
+            await i18n.changeLanguage(locale);
             dispatch(
                 settingsActions.updateSettings({
                     locale
@@ -188,8 +188,8 @@ export function useVersionInfo() {
 export function useSkipVersionCallback() {
     const wallet = useWallet();
     const dispatch = useAppDispatch();
-    return useCallback((version: string) => {
-        wallet.setSkippedVersion(version).then((v) => {
+    return useCallback(async (version: string) => {
+        await wallet.setSkippedVersion(version).then((v) => {
             dispatch(settingsActions.updateSettings({ skippedVersion: version }));
         });
     }, []);

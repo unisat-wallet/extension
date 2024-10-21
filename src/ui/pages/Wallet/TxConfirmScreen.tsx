@@ -4,7 +4,7 @@ import { usePushBitcoinTxCallback } from '@/ui/state/transactions/hooks';
 import { useLocationState } from '@/ui/utils';
 
 import { SignPsbt } from '../Approval/components';
-import { useNavigate } from '../MainRoute';
+import { RouteTypes, useNavigate } from '../MainRoute';
 
 interface LocationState {
     rawTxInfo: RawTxInfo;
@@ -28,13 +28,18 @@ export default function TxConfirmScreen() {
                 window.history.go(-1);
             }}
             handleConfirm={(res) => {
-                pushBitcoinTx((res ?? rawTxInfo).rawtx).then(({ success, txid, error }) => {
-                    if (success) {
-                        navigate('TxSuccessScreen', { txid });
-                    } else {
-                        navigate('TxFailScreen', { error });
-                    }
-                });
+                pushBitcoinTx((res ?? rawTxInfo).rawtx)
+                    .then(({ success, txid, error }) => {
+                        if (success) {
+                            navigate(RouteTypes.TxSuccessScreen, { txid });
+                        } else {
+                            navigate(RouteTypes.TxFailScreen, { error });
+                        }
+                    })
+                    .catch((err) => {
+                        console.error(err);
+                        navigate(RouteTypes.TxFailScreen, { error: err.message });
+                    });
             }}
         />
     );

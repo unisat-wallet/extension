@@ -20,7 +20,7 @@ import {
     PlusCircleOutlined
 } from '@ant-design/icons';
 
-import { useNavigate } from '../MainRoute';
+import { RouteTypes, useNavigate } from '../MainRoute';
 
 export interface ItemData {
     key: string;
@@ -67,7 +67,7 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
                             const _currentAccount = await wallet.getCurrentAccount();
                             dispatch(accountActions.setCurrent(_currentAccount));
                         }
-                        if (autoNav) navigate('MainScreen');
+                        if (autoNav) navigate(RouteTypes.MainScreen);
                     }}>
                     <Text text={account.alianName} />
                     <Text text={`${shortAddress(account.address)}${path}`} preset="sub" />
@@ -111,7 +111,7 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
                         }}>
                         <Row
                             onClick={() => {
-                                navigate('EditAccountNameScreen', { account });
+                                navigate(RouteTypes.EditAccountNameScreen, { account });
                             }}>
                             <EditOutlined />
                             <Text text="Edit Name" size="sm" />
@@ -128,7 +128,7 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
                         {account.type !== KEYRING_TYPE.KeystoneKeyring && (
                             <Row
                                 onClick={() => {
-                                    navigate('ExportPrivateKeyScreen', { account });
+                                    navigate(RouteTypes.ExportPrivateKeyScreen, { account });
                                 }}>
                                 <KeyOutlined />
                                 <Text text="Export Private Key" size="sm" />
@@ -166,7 +166,7 @@ export default function SwitchAccountScreen() {
                     keyring.type == KEYRING_CLASS.PRIVATE_KEY ? null : (
                         <Icon
                             onClick={() => {
-                                navigate('CreateAccountScreen');
+                                navigate(RouteTypes.CreateAccountScreen);
                             }}>
                             <PlusCircleOutlined />
                         </Icon>
