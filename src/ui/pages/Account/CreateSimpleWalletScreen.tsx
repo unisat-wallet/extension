@@ -159,30 +159,39 @@ function Step2({
 
         for (let i = 0; i < hdPathOptions.length; i++) {
             const options = hdPathOptions[i];
-            const address = Wallet.fromWif(contextData.wif, bitcoinNetwork);
 
-            if (options.addressType == AddressType.P2TR) {
-                addresses.push(address.p2tr);
-            } else if (options.addressType == AddressType.P2WPKH) {
-                addresses.push(address.p2wpkh);
-            } else {
-                try {
-                    addresses.push(
-                        EcKeyPair.getLegacyAddress(ECPair.fromWIF(contextData.wif, bitcoinNetwork), bitcoinNetwork)
-                    );
-                } catch {}
+            try {
+                const address = Wallet.fromWif(contextData.wif, bitcoinNetwork);
 
-                try {
-                    addresses.push(
-                        EcKeyPair.getLegacyAddress(
-                            ECPair.fromPrivateKey(Buffer.from(contextData.wif.replace('0x', ''), 'hex'), {
-                                network: bitcoinNetwork
-                            }),
-                            bitcoinNetwork
-                        )
-                    );
-                } catch {}
-            }
+                if (options.addressType == AddressType.P2TR) {
+                    addresses.push(address.p2tr);
+                } else if (options.addressType == AddressType.P2SH_P2WPKH) {
+                    addresses.push(address.segwitLegacy);
+                } else if (options.addressType == AddressType.P2WPKH) {
+                    addresses.push(address.p2wpkh);
+                } else {
+                    try {
+                        addresses.push(
+                            EcKeyPair.getLegacyAddress(ECPair.fromWIF(contextData.wif, bitcoinNetwork), bitcoinNetwork)
+                        );
+                    } catch {}
+                }
+            } catch {}
+
+            try {
+                const bufferPrivateKey = Buffer.from(contextData.wif.replace('0x', ''), 'hex');
+                const keypair = EcKeyPair.fromPrivateKey(bufferPrivateKey, bitcoinNetwork);
+
+                if (options.addressType == AddressType.P2TR) {
+                    addresses.push(EcKeyPair.getTaprootAddress(keypair, bitcoinNetwork));
+                } else if (options.addressType == AddressType.P2SH_P2WPKH) {
+                    addresses.push(EcKeyPair.getLegacySegwitAddress(keypair, bitcoinNetwork));
+                } else if (options.addressType == AddressType.P2WPKH) {
+                    addresses.push(EcKeyPair.getP2WPKHAddress(keypair, bitcoinNetwork));
+                } else {
+                    addresses.push(EcKeyPair.getLegacyAddress(keypair, bitcoinNetwork));
+                }
+            } catch {}
         }
 
         const balances = await wallet.getMultiAddressAssets(addresses.join(','));
