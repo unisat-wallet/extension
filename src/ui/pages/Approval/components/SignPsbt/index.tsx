@@ -269,6 +269,7 @@ function SignTxDetails({
                       key={'inscription_' + index}
                       data={inscription}
                       preset="small"
+                      hideValue
                       onClick={() => {
                         window.open(inscription.preview);
                       }}
@@ -453,7 +454,7 @@ function SignTxDetails({
                 />
                 <Row overflowX gap="lg" justifyCenter style={{ width: 280 }} pb="lg">
                   {sendingInscriptions.map((v) => (
-                    <InscriptionPreview key={v.inscriptionId} data={v} preset="small" />
+                    <InscriptionPreview key={v.inscriptionId} data={v} preset="small" hideValue />
                   ))}
                 </Row>
               </Column>
@@ -945,6 +946,7 @@ export default function SignPsbt({
                                         key={w.inscriptionId}
                                         data={txInfo.decodedPsbt.inscriptions[w.inscriptionId]}
                                         preset="small"
+                                        hideValue
                                         onClick={() => {
                                           window.open(txInfo.decodedPsbt.inscriptions[w.inscriptionId]?.preview);
                                         }}
@@ -1052,6 +1054,7 @@ export default function SignPsbt({
                                       key={w.inscriptionId}
                                       data={txInfo.decodedPsbt.inscriptions[w.inscriptionId]}
                                       preset="small"
+                                      hideValue
                                       onClick={() => {
                                         window.open(txInfo.decodedPsbt.inscriptions[w.inscriptionId]?.preview);
                                       }}

@@ -29,8 +29,6 @@ export default function AdvancedScreen() {
   const autoLockTimeId = useAutoLockTimeId();
   const lockTimeConfig = AUTO_LOCKTIMES[autoLockTimeId] || AUTO_LOCKTIMES[DEFAULT_LOCKTIME_ID];
 
-  console.log('autoLockTimeId', autoLockTimeId);
-
   const currentAccount = useCurrentAccount();
 
   const dispatch = useAppDispatch();

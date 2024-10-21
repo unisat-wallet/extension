@@ -71,7 +71,6 @@ export const SignPsbtWithRisksPopover = ({
     } else if (detailRisk.type === RiskType.LOW_FEE_RATE || detailRisk.type === RiskType.HIGH_FEE_RATE) {
       return <BadFeeRate decodedPsbt={decodedPsbt} risk={detailRisk} onClose={() => setDetailRisk(null)} />;
     } else if (detailRisk.type === RiskType.CHANGING_INSCRIPTION) {
-      console.log('ChangingInscription2', decodedPsbt);
       return <ChangingInscription decodedPsbt={decodedPsbt} onClose={() => setDetailRisk(null)} />;
     } else if (detailRisk.type === RiskType.RUNES_BURNING) {
       return <RunesBurningList decodedPsbt={decodedPsbt} onClose={() => setDetailRisk(null)} />;

@@ -92,9 +92,10 @@ export interface InscriptionProps {
   onClick?: (data: any) => void;
   preset: Presets;
   asLogo?: boolean;
+  hideValue?: boolean;
 }
 
-export default function InscriptionPreview({ data, onClick, preset, asLogo }: InscriptionProps) {
+export default function InscriptionPreview({ data, onClick, preset, asLogo, hideValue }: InscriptionProps) {
   const date = new Date(data.timestamp * 1000);
   const time = getDateShowdate(date);
   const isUnconfirmed = date.getTime() < 100;
@@ -108,10 +109,13 @@ export default function InscriptionPreview({ data, onClick, preset, asLogo }: In
   if (asLogo) {
     return <Iframe preview={preview} style={$iframePresets[preset]} />;
   }
+
+  const valueText = `${data.outputValue} sats`;
+
   return (
     <Column gap="zero" onClick={onClick} style={Object.assign({ position: 'relative' }, $containerPresets[preset])}>
       <Iframe preview={preview} style={$iframePresets[preset]} />
-      {data.outputValue ? (
+      {data.outputValue && !hideValue ? (
         <div style={Object.assign({ position: 'absolute', zIndex: 10 }, $iframePresets[preset])}>
           <Column fullY>
             <Row style={{ flex: 1 }} />
@@ -123,7 +127,7 @@ export default function InscriptionPreview({ data, onClick, preset, asLogo }: In
                 }}>
                 <div>
                   <Text
-                    text={`${data.outputValue} sats`}
+                    text={valueText}
                     size="xs"
                     style={{
                       backgroundColor: 'rgba(255,255,255,0.2)',

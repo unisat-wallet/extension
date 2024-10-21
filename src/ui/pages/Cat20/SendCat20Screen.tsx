@@ -183,7 +183,6 @@ export default function SendCAT20Screen() {
           setStep(0);
         }}
         handleConfirm={async () => {
-          console.log('step2');
           try {
             tools.showLoading(true);
             const step2 = await wallet.transferCAT20Step2(
