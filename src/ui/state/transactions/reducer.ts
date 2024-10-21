@@ -1,4 +1,3 @@
-import { Inscription } from '@/shared/types';
 import { UnspentOutput } from '@btc-vision/wallet-sdk';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -24,7 +23,6 @@ export interface BitcoinTx {
 export interface OrdinalsTx {
     fromAddress: string;
     toAddress: string;
-    inscription: Inscription;
     rawtx: string;
     txid: string;
     fee: number;
@@ -41,7 +39,6 @@ export interface OrdinalsTx {
 export interface AtomicalsTx {
     fromAddress: string;
     toAddress: string;
-    inscription: Inscription;
     rawtx: string;
     txid: string;
     fee: number;
@@ -107,10 +104,6 @@ export const initialState: TransactionsState = {
     ordinalsTx: {
         fromAddress: '',
         toAddress: '',
-        inscription: {
-            inscriptionId: '',
-            inscriptionNumber: 0
-        },
         rawtx: '',
         txid: '',
         fee: 0,
@@ -126,10 +119,6 @@ export const initialState: TransactionsState = {
     atomicalsTx: {
         fromAddress: '',
         toAddress: '',
-        inscription: {
-            inscriptionId: '',
-            inscriptionNumber: 0
-        },
         rawtx: '',
         txid: '',
         fee: 0,
@@ -199,7 +188,6 @@ const slice = createSlice({
                 payload: {
                     fromAddress?: string;
                     toAddress?: string;
-                    inscription?: Inscription;
                     changeSatoshis?: number;
                     rawtx?: string;
                     txid?: string;
@@ -223,7 +211,6 @@ const slice = createSlice({
                 payload: {
                     fromAddress?: string;
                     toAddress?: string;
-                    inscription?: Inscription;
                     changeSatoshis?: number;
                     rawtx?: string;
                     txid?: string;

@@ -1,7 +1,6 @@
-import React, { ReactElement, useCallback, useEffect, useRef } from 'react';
+import { ReactElement, useCallback, useEffect, useRef } from 'react';
 import { HashRouter, Route, Routes, useNavigate as useNavigateOrigin } from 'react-router-dom';
 
-import { RawTxInfo } from '@/shared/interfaces/RawTxParameters';
 import TxCreateScreen from '@/ui/pages/Wallet/TxCreateScreen';
 import { LoadingOutlined } from '@ant-design/icons';
 
@@ -53,7 +52,7 @@ import ReceiveScreen from './Wallet/ReceiveScreen';
 import TxConfirmScreen from './Wallet/TxConfirmScreen';
 import TxFailScreen from './Wallet/TxFailScreen';
 import TxOpnetConfirmScreen from './Wallet/TxOpnetConfirmScreen';
-import TxSuccessScreen, { ExpectedSuccessScreenParameters } from './Wallet/TxSuccessScreen';
+import TxSuccessScreen from './Wallet/TxSuccessScreen';
 import UnavailableUtxoScreen from './Wallet/UnavailableUtxoScreen';
 import './index.module.less';
 
@@ -290,29 +289,13 @@ export const routes: Routes = {
     }
 };
 
-export type StateForKey<T extends RouteTypes> = T extends RouteTypes.TxOpnetConfirmScreen
-    ? {
-          rawTxInfo: RawTxInfo;
-      }
-    : T extends RouteTypes.OpNetTokenScreen
-    ? {
-          address: string;
-      }
-    : T extends RouteTypes.TxSuccessScreen
-    ? ExpectedSuccessScreenParameters
-    : T extends RouteTypes.TxFailScreen
-    ? {
-          error: string;
-      }
-    : never;
-
-export type UseNavigate<T extends RouteTypes> = (routKey: T, state?: StateForKey<T>) => void;
+export type UseNavigate<T extends RouteTypes> = (routKey: T, state?: any) => void;
 
 export function useNavigate<T extends RouteTypes>(): UseNavigate<T> {
     const navigate = useNavigateOrigin();
 
     return useCallback(
-        (routKey: T, state?: StateForKey<T>) => {
+        (routKey: T, state?: any) => {
             navigate(routes[routKey].path, { state });
         },
         [useNavigateOrigin]

@@ -1,6 +1,6 @@
 import { Tabs, Tooltip } from 'antd';
 import BigNumber from 'bignumber.js';
-import React, { CSSProperties, ReactElement, useEffect, useMemo, useState } from 'react';
+import { CSSProperties, ReactElement, useEffect, useMemo, useState } from 'react';
 
 import { AddressFlagType } from '@/shared/constant';
 import { checkAddressFlag } from '@/shared/utils';
@@ -11,7 +11,6 @@ import { BtcUsd } from '@/ui/components/BtcUsd';
 import { Button } from '@/ui/components/Button';
 import { DisableUnconfirmedsPopover } from '@/ui/components/DisableUnconfirmedPopover';
 import { NavTabBar } from '@/ui/components/NavTabBar';
-import { NoticePopover } from '@/ui/components/NoticePopover';
 import { UpgradePopover } from '@/ui/components/UpgradePopover';
 import { BtcDisplay } from '@/ui/pages/Main/WalletTabScreen/components/BtcDisplay';
 import { useAccountBalance, useAddressSummary, useCurrentAccount } from '@/ui/state/accounts/hooks';
@@ -62,7 +61,7 @@ export default function WalletTabScreen() {
     const walletConfig = useWalletConfig();
     const versionInfo = useVersionInfo();
 
-    const [showSafeNotice, setShowSafeNotice] = useState(false);
+    // const [showSafeNotice, setShowSafeNotice] = useState(false);
     const [showDisableUnconfirmedUtxoNotice, setShowDisableUnconfirmedUtxoNotice] = useState(false);
 
     const availableSatoshis =
@@ -116,7 +115,6 @@ export default function WalletTabScreen() {
         })();
     }, [addressSummary, currentAccount]);
 
-    // TODO: Do something with this..?
     /*useEffect(() => {
         const run = async () => {
             const show = await wallet.getShowSafeNotice();
@@ -302,7 +300,7 @@ export default function WalletTabScreen() {
                         }}
                     />
                 </Column>
-                {showSafeNotice && (
+                {/* {showSafeNotice && (
                     <NoticePopover
                         onClose={async (selection) => {
                             await wallet.setShowSafeNotice(false);
@@ -310,7 +308,7 @@ export default function WalletTabScreen() {
                             localStorage.setItem('selectionUser', selection);
                         }}
                     />
-                )}
+                )} */}
                 {!versionInfo.skipped && (
                     <UpgradePopover
                         onClose={() => {

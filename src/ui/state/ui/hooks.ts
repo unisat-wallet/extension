@@ -1,5 +1,3 @@
-import { Inscription } from '@/shared/types';
-
 import { AppState } from '..';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { uiActions } from './reducer';
@@ -11,16 +9,6 @@ export function useUIState(): AppState['ui'] {
 export function useAssetTabKey() {
     const uiState = useUIState();
     return uiState.assetTabKey;
-}
-
-export function useOrdinalsAssetTabKey() {
-    const uiState = useUIState();
-    return uiState.ordinalsAssetTabKey;
-}
-
-export function useAtomicalsAssetTabKey() {
-    const uiState = useUIState();
-    return uiState.atomicalsAssetTabKey;
 }
 
 export function useUiTxCreateScreen() {
@@ -36,7 +24,7 @@ export function useUpdateUiTxCreateScreen() {
         enableRBF,
         feeRate
     }: {
-        toInfo?: { address: string; domain: string; inscription?: Inscription };
+        toInfo?: { address: string; domain: string };
         inputAmount?: string;
         enableRBF?: boolean;
         feeRate?: number;

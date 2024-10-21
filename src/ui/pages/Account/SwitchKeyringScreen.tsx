@@ -21,7 +21,7 @@ import {
     SettingOutlined
 } from '@ant-design/icons';
 
-import { useNavigate } from '../MainRoute';
+import { RouteTypes, useNavigate } from '../MainRoute';
 
 export interface ItemData {
     key: string;
@@ -71,7 +71,7 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
                         const _currentAccount = await wallet.getCurrentAccount();
                         dispatch(accountActions.setCurrent(_currentAccount));
                     }
-                    if (autoNav) navigate('MainScreen');
+                    if (autoNav) navigate(RouteTypes.MainScreen);
                 }}>
                 <Column style={{ width: 20 }} selfItemsCenter>
                     {selected && (
@@ -127,7 +127,7 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
                         <Column>
                             <Row
                                 onClick={() => {
-                                    navigate('EditWalletNameScreen', { keyring });
+                                    navigate(RouteTypes.EditWalletNameScreen, { keyring });
                                 }}>
                                 <EditOutlined />
                                 <Text text="Edit Name" size="sm" />
@@ -136,7 +136,7 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
                             {keyring.type === KEYRING_TYPE.HdKeyring && (
                                 <Row
                                     onClick={() => {
-                                        navigate('ExportMnemonicsScreen', { keyring });
+                                        navigate(RouteTypes.ExportMnemonicsScreen, { keyring });
                                     }}>
                                     <KeyOutlined />
                                     <Text text="Show Secret Recovery Phrase" size="sm" />
@@ -146,7 +146,9 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
                                 keyring.type !== KEYRING_TYPE.KeystoneKeyring && (
                                     <Row
                                         onClick={() => {
-                                            navigate('ExportPrivateKeyScreen', { account: keyring.accounts[0] });
+                                            navigate(RouteTypes.ExportPrivateKeyScreen, {
+                                                account: keyring.accounts[0]
+                                            });
                                         }}>
                                         <KeyOutlined />
                                         <Text text="Export Private Key" size="sm" />
@@ -212,7 +214,7 @@ export default function SwitchKeyringScreen() {
                 RightComponent={
                     <Icon
                         onClick={() => {
-                            navigate('AddKeyringScreen');
+                            navigate(RouteTypes.AddKeyringScreen);
                         }}>
                         <PlusCircleOutlined />
                     </Icon>

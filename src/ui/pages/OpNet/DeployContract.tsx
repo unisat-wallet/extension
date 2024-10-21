@@ -8,7 +8,7 @@ import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 
-import { useNavigate } from '../MainRoute';
+import { RouteTypes, useNavigate } from '../MainRoute';
 
 interface ItemData {
     key: string;
@@ -147,7 +147,7 @@ export default function DeployContractOpnet() {
                     preset="primary"
                     text="Deploy"
                     onClick={() => {
-                        navigate('TxOpnetConfirmScreen', {
+                        navigate(RouteTypes.TxOpnetConfirmScreen, {
                             rawTxInfo: {
                                 items: items,
                                 account: account, // replace with actual account

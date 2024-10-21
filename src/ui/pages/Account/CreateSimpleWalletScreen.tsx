@@ -13,8 +13,7 @@ import { satoshisToAmount, useWallet } from '@/ui/utils';
 import * as ecc from '@bitcoinerlab/secp256k1';
 import { EcKeyPair, Wallet } from '@btc-vision/transaction';
 
-import { useNavigate } from '../MainRoute';
-
+import { RouteTypes, useNavigate } from '../MainRoute';
 
 const ECPair = ECPairFactory(ecc);
 
@@ -177,8 +176,7 @@ function Step2({
             const satoshis = balance.totalSatoshis;
             self.addressBalances[address] = {
                 total_btc: satoshisToAmount(balance.totalSatoshis),
-                satoshis,
-                total_inscription: balance.inscriptionCount
+                satoshis
             };
             if (satoshis > self.maxSatoshis) {
                 self.maxSatoshis = satoshis;
@@ -203,7 +201,7 @@ function Step2({
     const onNext = async () => {
         try {
             await wallet.createKeyringWithPrivateKey(contextData.wif, contextData.addressType);
-            navigate('MainScreen');
+            navigate(RouteTypes.MainScreen);
         } catch (e) {
             tools.toastError((e as any).message);
         }

@@ -17,7 +17,7 @@ import { useWallet } from '@/ui/utils';
 import { ScanOutlined } from '@ant-design/icons';
 import { AddressType } from '@btc-vision/wallet-sdk';
 
-import { useNavigate } from '../MainRoute';
+import { RouteTypes, useNavigate } from '../MainRoute';
 
 interface ContextData {
     ur: {
@@ -34,7 +34,7 @@ function Step1({ onNext }) {
 
     const onBack = useCallback(() => {
         if (state && state.fromUnlock) {
-            return navigate('WelcomeScreen');
+            return navigate(RouteTypes.WelcomeScreen);
         }
         window.history.go(-1);
     }, []);
@@ -180,7 +180,7 @@ function Step3({
             return;
         }
         wallet.setShowSafeNotice(true);
-        navigate('MainScreen');
+        navigate(RouteTypes.MainScreen);
     };
 
     useEffect(() => {

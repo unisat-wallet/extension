@@ -1,7 +1,7 @@
 import { Card, Column, Content, Header, Layout, Text } from '@/ui/components';
 import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
 
-import { useNavigate } from '../MainRoute';
+import { RouteTypes, useNavigate } from '../MainRoute';
 
 export default function AddKeyringScreen() {
     const navigate = useNavigate();
@@ -22,7 +22,7 @@ export default function AddKeyringScreen() {
                     <Card
                         justifyCenter
                         onClick={(e) => {
-                            navigate('CreateHDWalletScreen', { isImport: false });
+                            navigate(RouteTypes.CreateHDWalletScreen, { isImport: false });
                         }}>
                         <Column full justifyCenter>
                             <Text text="Create with mnemonics (12-words)" size="sm" />
@@ -34,7 +34,7 @@ export default function AddKeyringScreen() {
                     <Card
                         justifyCenter
                         onClick={(e) => {
-                            navigate('CreateHDWalletScreen', { isImport: true });
+                            navigate(RouteTypes.CreateHDWalletScreen, { isImport: true });
                         }}>
                         <Column full justifyCenter>
                             <Text text="Restore from mnemonics (12-words、24-words)" size="sm" />
@@ -44,7 +44,7 @@ export default function AddKeyringScreen() {
                     <Card
                         justifyCenter
                         onClick={(e) => {
-                            navigate('CreateSimpleWalletScreen');
+                            navigate(RouteTypes.CreateSimpleWalletScreen);
                         }}>
                         <Column full justifyCenter>
                             <Text text="Restore from single private key" size="sm" />
@@ -57,7 +57,7 @@ export default function AddKeyringScreen() {
                         justifyCenter
                         onClick={() => {
                             if (isInTab) {
-                                navigate('CreateKeystoneWalletScreen');
+                                navigate(RouteTypes.CreateKeystoneWalletScreen);
                             } else {
                                 window.open('#/account/create-keystone-wallet');
                             }

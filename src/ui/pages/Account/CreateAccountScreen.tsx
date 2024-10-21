@@ -6,7 +6,7 @@ import { useSetCurrentAccountCallback } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { useWallet } from '@/ui/utils';
 
-import { useNavigate } from '../MainRoute';
+import { RouteTypes, useNavigate } from '../MainRoute';
 
 export default function CreateAccountScreen() {
     const navigate = useNavigate();
@@ -21,7 +21,7 @@ export default function CreateAccountScreen() {
         tools.toastSuccess('Success');
         const currentAccount = await wallet.getCurrentAccount();
         setCurrentAccount(currentAccount);
-        navigate('MainScreen');
+        navigate(RouteTypes.MainScreen);
     };
 
     const handleOnKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {

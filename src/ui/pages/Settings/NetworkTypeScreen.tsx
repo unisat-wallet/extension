@@ -4,7 +4,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { useReloadAccounts } from '@/ui/state/accounts/hooks';
 import { useChainType, useChangeChainTypeCallback } from '@/ui/state/settings/hooks';
 
-import { useNavigate } from '../MainRoute';
+import { RouteTypes, useNavigate } from '../MainRoute';
 
 export default function NetworkTypeScreen() {
     const chainType = useChainType();
@@ -34,8 +34,8 @@ export default function NetworkTypeScreen() {
                                         return;
                                     }
                                     await changeChainType(item.enum);
-                                    reloadAccounts();
-                                    navigate('MainScreen');
+                                    await reloadAccounts();
+                                    navigate(RouteTypes.MainScreen);
                                     tools.toastSuccess(`Changed to ${item.label}`);
                                 }}>
                                 <Row full justifyBetween itemsCenter>

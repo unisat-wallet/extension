@@ -26,10 +26,16 @@ export default function UnavailableUtxoScreen() {
 
     useEffect(() => {
         setLoading(true);
-        wallet.getUnavailableUtxos().then((res) => {
-            setUtxos(res);
-            setLoading(false);
-        });
+        wallet
+            .getUnavailableUtxos()
+            .then((res) => {
+                setUtxos(res);
+                setLoading(false);
+            })
+            .catch((err) => {
+                console.error(err);
+                setLoading(false);
+            });
     }, []);
 
     const setSpendUnavailableUtxos = useSetSpendUnavailableUtxosCallback();

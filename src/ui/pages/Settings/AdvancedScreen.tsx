@@ -26,7 +26,6 @@ export default function AdvancedScreen() {
     const [unconfirmedPopoverVisible, setUnconfirmedPopoverVisible] = useState(false);
 
     const [lockTimePopoverVisible, setLockTimePopoverVisible] = useState(false);
-    const [isOPNETonly, setIsOPNETonly] = useState(localStorage.getItem('selectionUser') === 'opnet-only');
     const autoLockTimeId = useAutoLockTimeId();
     const lockTimeConfig = AUTO_LOCKTIMES[autoLockTimeId] || AUTO_LOCKTIMES[DEFAULT_LOCKTIME_ID];
 
@@ -167,22 +166,6 @@ export default function AdvancedScreen() {
                             </Row>
 
                             <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
-
-                            <Row justifyBetween>
-                                <Text text={'OP_NET only'} size="xs" />
-
-                                <Switch
-                                    onChange={() => {
-                                        if (isOPNETonly) {
-                                            localStorage.setItem('selectionUser', 'opnet-with-standards');
-                                            setIsOPNETonly(false);
-                                        } else {
-                                            localStorage.setItem('selectionUser', 'opnet-only');
-                                            setIsOPNETonly(true);
-                                        }
-                                    }}
-                                    checked={isOPNETonly}></Switch>
-                            </Row>
                         </Column>
                     </Card>
                 </Column>

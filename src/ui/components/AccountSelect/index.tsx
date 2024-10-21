@@ -1,4 +1,4 @@
-import { useNavigate } from '@/ui/pages/MainRoute';
+import { RouteTypes, useNavigate } from '@/ui/pages/MainRoute';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useAddressExplorerUrl, useChain } from '@/ui/state/settings/hooks';
 import { fontSizes } from '@/ui/theme/font';
@@ -50,7 +50,7 @@ const AccountSelect = () => {
                         size="xs"
                         onClick={() => {
                             if (chain.isViewTxHistoryInternally) {
-                                navigate('HistoryScreen');
+                                navigate(RouteTypes.HistoryScreen);
                             } else {
                                 window.open(addressExplorerUrl);
                             }
@@ -61,7 +61,7 @@ const AccountSelect = () => {
                         size={fontSizes.xs}
                         onClick={() => {
                             if (chain.isViewTxHistoryInternally) {
-                                navigate('HistoryScreen');
+                                navigate(RouteTypes.HistoryScreen);
                             } else {
                                 window.open(addressExplorerUrl);
                             }
@@ -76,7 +76,7 @@ const AccountSelect = () => {
                 justifyEnd
                 itemsCenter
                 onClick={() => {
-                    navigate('SwitchAccountScreen');
+                    navigate(RouteTypes.SwitchAccountScreen);
                 }}>
                 <Icon icon="right" />
             </Row>

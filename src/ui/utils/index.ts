@@ -1,8 +1,8 @@
 import BigNumber from 'bignumber.js';
 import { useLocation } from 'react-router-dom';
 
-export * from './WalletContext';
 export * from './hooks';
+export * from './WalletContext';
 const UI_TYPE = {
     Tab: 'index',
     Pop: 'popup',
@@ -60,9 +60,9 @@ export const getOriginName = (origin: string) => {
 export const hashCode = (str: string) => {
     if (!str) return 0;
     let hash = 0,
-        i,
-        chr,
-        len;
+        i: number,
+        chr: number,
+        len: number;
     if (str.length === 0) return hash;
     for (i = 0, len = str.length; i < len; i++) {
         chr = str.charCodeAt(i);
