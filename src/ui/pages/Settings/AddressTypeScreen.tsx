@@ -1,12 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { ADDRESS_TYPES, KEYRING_TYPE } from '@/shared/constant';
+import { AddressAssets } from '@/shared/types';
 import { Column, Content, Header, Layout } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressTypeCard } from '@/ui/components/AddressTypeCard';
 import { useCurrentAccount, useReloadAccounts } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { useWallet } from '@/ui/utils';
+import { satoshisToAmount, useWallet } from '@/ui/utils';
 
 import { RouteTypes, useNavigate } from '../MainRoute';
 
@@ -17,16 +18,7 @@ export default function AddressTypeScreen() {
     const navigate = useNavigate();
     const reloadAccounts = useReloadAccounts();
     const [addresses, setAddresses] = useState<string[]>([]);
-    const [addressAssets, setAddressAssets] = useState<
-        Record<
-            string,
-            {
-                total_btc: string;
-                satoshis: number;
-                total_inscription: number;
-            }
-        >
-    >({});
+    const [addressAssets, setAddressAssets] = useState<Record<string, AddressAssets>>({});
 
     const currentKeyring = useCurrentKeyring();
 
@@ -34,22 +26,23 @@ export default function AddressTypeScreen() {
     const loadAddresses = async () => {
         tools.showLoading(true);
 
-        const _res = await wallet.getAllAddresses(currentKeyring, account.index || 0);
+        const _res = await wallet.getAllAddresses(currentKeyring, account.index ?? 0);
         setAddresses(_res);
 
-        // TODO: Fix this error (Error: address invalid)
-        // const balances = await wallet.getMultiAddressAssets(_res.join(','));
-        // for (let i = 0; i < _res.length; i++) {
-        //     const address = _res[i];
-        //     const balance = balances[i];
-        //     const satoshis = balance.totalSatoshis;
-        //     self.addressAssets[address] = {
-        //         total_btc: satoshisToAmount(balance.totalSatoshis),
-        //         satoshis,
-        //         total_inscription: balance.inscriptionCount
-        //     };
-        // }
-        // setAddressAssets(self.addressAssets);
+        const balances = await wallet.getMultiAddressAssets(_res.join(','));
+        const addressAssets: Record<string, AddressAssets> = {};
+
+        for (let i = 0; i < _res.length; i++) {
+            const address = _res[i];
+            const balance = balances[i];
+            const satoshis = balance.totalSatoshis;
+            addressAssets[address] = {
+                total_btc: satoshisToAmount(balance.totalSatoshis),
+                satoshis
+            };
+        }
+
+        setAddressAssets(addressAssets);
 
         tools.showLoading(false);
     };

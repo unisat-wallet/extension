@@ -2,7 +2,7 @@ import { ECPairFactory } from 'ecpair';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ADDRESS_TYPES } from '@/shared/constant';
-import { AddressType } from '@/shared/types';
+import { AddressAssets, AddressType } from '@/shared/types';
 import { getBitcoinLibJSNetwork } from '@/shared/web3/Web3API';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -132,17 +132,7 @@ function Step2({
     }, [contextData]);
 
     const [previewAddresses, setPreviewAddresses] = useState<string[]>(hdPathOptions.map((v) => ''));
-
-    const [addressAssets, setAddressAssets] = useState<
-        Record<
-            string,
-            {
-                total_btc: string;
-                satoshis: number;
-                total_inscription: number;
-            }
-        >
-    >({});
+    const [addressAssets, setAddressAssets] = useState<Record<string, AddressAssets>>({});
 
     const selfRef = useRef({
         maxSatoshis: 0,
@@ -170,13 +160,11 @@ function Step2({
                 } else if (options.addressType == AddressType.P2WPKH) {
                     addresses.push(address.p2wpkh);
                 } else {
-                    try {
-                        addresses.push(
-                            EcKeyPair.getLegacyAddress(ECPair.fromWIF(contextData.wif, bitcoinNetwork), bitcoinNetwork)
-                        );
-                    } catch {}
+                    addresses.push(
+                        EcKeyPair.getLegacyAddress(ECPair.fromWIF(contextData.wif, bitcoinNetwork), bitcoinNetwork)
+                    );
                 }
-            } catch {}
+            } catch (e) {}
 
             try {
                 const bufferPrivateKey = Buffer.from(contextData.wif.replace('0x', ''), 'hex');
@@ -191,7 +179,7 @@ function Step2({
                 } else {
                     addresses.push(EcKeyPair.getLegacyAddress(keypair, bitcoinNetwork));
                 }
-            } catch {}
+            } catch (e) {}
         }
 
         const balances = await wallet.getMultiAddressAssets(addresses.join(','));
@@ -204,16 +192,24 @@ function Step2({
                 total_btc: satoshisToAmount(balance.totalSatoshis),
                 satoshis
             };
+
             if (satoshis > self.maxSatoshis) {
                 self.maxSatoshis = satoshis;
                 self.recommended = i;
             }
-
-            updateContextData({ addressType: hdPathOptions[self.recommended].addressType });
-            setAddressAssets(self.addressBalances);
         }
+
+        let recommended: AddressType = hdPathOptions[self.recommended].addressType;
+        if (self.maxSatoshis == 0) {
+            recommended = AddressType.P2TR;
+        }
+
+        updateContextData({ addressType: recommended });
+
+        setAddressAssets(self.addressBalances);
         setPreviewAddresses(addresses);
     };
+
     useEffect(() => {
         void run();
     }, [contextData.wif]);
@@ -229,7 +225,7 @@ function Step2({
             await wallet.createKeyringWithPrivateKey(contextData.wif, contextData.addressType);
             navigate(RouteTypes.MainScreen);
         } catch (e) {
-            tools.toastError((e as any).message);
+            tools.toastError((e as Error).message);
         }
     };
     return (
@@ -240,9 +236,9 @@ function Step2({
                 const address = previewAddresses[index];
                 const assets = addressAssets[address] || {
                     total_btc: '--',
-                    satoshis: 0,
-                    total_inscription: 0
+                    satoshis: 0
                 };
+
                 const hasVault = assets.satoshis > 0;
                 if (item.isUnisatLegacy && !hasVault) {
                     return null;

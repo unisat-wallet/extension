@@ -42,11 +42,6 @@ export function AddressTypeCard(props: AddressTypeCardProps) {
                             <Icon icon="btc" size={fontSizes.iconMiddle} />
                             <Text text={`${assets.total_btc} ${btcUnit}`} color="yellow" />
                         </Row>
-                        <Row>
-                            {assets.total_inscription > 0 && (
-                                <Text text={`${assets.total_inscription} INSCRIPTIONS`} color="gold" preset="bold" />
-                            )}
-                        </Row>
                     </Row>
                 )}
             </Column>

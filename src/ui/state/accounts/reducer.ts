@@ -61,8 +61,6 @@ export const initialState: AccountsState = {
     addressSummary: {
         address: '',
         totalSatoshis: 0,
-        btcSatoshis: 0,
-        assetSatoshis: 0,
         loading: true
     }
 };
@@ -204,8 +202,6 @@ const slice = createSlice({
             if (!state.addressSummary) {
                 state.addressSummary = {
                     totalSatoshis: 0,
-                    btcSatoshis: 0,
-                    assetSatoshis: 0,
                     address: ''
                 };
             }

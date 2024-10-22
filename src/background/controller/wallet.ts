@@ -38,6 +38,7 @@ import eventBus from '@/shared/eventBus';
 import { SessionEvent } from '@/shared/interfaces/SessionEvent';
 import {
     Account,
+    AddressSummary,
     AddressType,
     AddressUserToSignInput,
     BitcoinBalance,
@@ -182,8 +183,24 @@ export class WalletController extends BaseController {
         return data;
     };
 
-    getMultiAddressAssets = async (addresses: string) => {
-        return openapiService.getMultiAddressAssets(addresses);
+    getMultiAddressAssets = async (addresses: string): Promise<AddressSummary[]> => {
+        const network = this.getChainType();
+        Web3API.setNetwork(network);
+
+        const addressList = addresses.split(',');
+        const summaries: AddressSummary[] = [];
+        for (const address of addressList) {
+            const balance = await Web3API.getBalance(address, true);
+            const summary: AddressSummary = {
+                address: address,
+                totalSatoshis: Number(balance),
+                loading: false
+            };
+
+            summaries.push(summary);
+        }
+
+        return summaries;
     };
 
     findGroupAssets = (groups: { type: number; address_arr: string[]; pubkey_arr: string[] }[]) => {

@@ -166,12 +166,6 @@ export class OpenApiService {
         });
     }
 
-    async getMultiAddressAssets(addresses: string): Promise<AddressSummary[]> {
-        return this.httpGet('/v5/address/multi-assets', {
-            addresses
-        });
-    }
-
     async findGroupAssets(
         groups: { type: number; address_arr: string[] }[]
     ): Promise<{ type: number; address_arr: string[]; satoshis_arr: number[] }[]> {
