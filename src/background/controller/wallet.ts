@@ -166,18 +166,7 @@ export class WalletController extends BaseController {
     };
 
     getAddressBalance = async (address: string) => {
-        let data: BitcoinBalance;
-
-        try {
-            //if (address.startsWith('bcrt1')) {
-            data = await this.getOpNetBalance(address);
-            //} else {
-            //    data = await openapiService.getAddressBalance(address);
-            //}
-        } catch (e) {
-            data = await this.getOpNetBalance(address);
-        }
-
+        const data: BitcoinBalance = await this.getOpNetBalance(address);
         preferenceService.updateAddressBalance(address, data);
 
         return data;
