@@ -301,8 +301,6 @@ export function Step2({
                 <Text text="Address Type" preset="bold" />
             )}
 
-            <Text text="OP_NET is currently only compatible with Taproot (P2TR) addresses." color="red" />
-
             {scannedGroups.length > 0 &&
                 scannedGroups.map((item, index) => {
                     const options = allHdPathOptions[index];

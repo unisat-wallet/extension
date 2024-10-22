@@ -4,9 +4,6 @@ on:
   push:
     tags:
       - v*
-  pull_request:
-    tags:
-      - v*
 
 jobs:
   build:
@@ -27,8 +24,7 @@ jobs:
 
       - name: Build Chrome
         run: |
-          webpack --progress --env browser=chrome manifest=mv3 config=pro channel=github version=${{steps.get-version.outputs.result}}
-          yarn build:chrome:mv3
+          yarn build:chrome
 
       - name: Create Release
         id: create_release

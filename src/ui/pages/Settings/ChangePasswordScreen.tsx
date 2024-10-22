@@ -6,7 +6,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { useWallet } from '@/ui/utils';
 import { getPasswordStrengthWord, MIN_PASSWORD_LENGTH } from '@/ui/utils/password-utils';
 
-import { useNavigate } from '../MainRoute';
+import { RouteTypes, useNavigate } from '../MainRoute';
 
 export default function ChangePasswordScreen() {
     const { t } = useTranslation();
@@ -63,7 +63,7 @@ export default function ChangePasswordScreen() {
         try {
             await wallet.changePassword(originPassword, newPassword);
             tools.toastSuccess('Success');
-            navigate('MainScreen');
+            navigate(RouteTypes.MainScreen);
         } catch (err) {
             tools.toastError((err as any).message);
         }

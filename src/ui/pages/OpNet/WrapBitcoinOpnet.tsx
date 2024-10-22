@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
-import { Account, Inscription, OPTokenInfo } from '@/shared/types';
+import { Account, OPTokenInfo } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
 import { bigIntToDecimal } from '@/shared/web3/Web3API';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
@@ -17,7 +17,7 @@ import { colors } from '@/ui/theme/colors';
 import { currentConsensusConfig } from '@btc-vision/transaction';
 import { getAddressUtxoDust } from '@btc-vision/wallet-sdk/lib/transaction';
 
-import { useNavigate } from '../MainRoute';
+import { RouteTypes, useNavigate } from '../MainRoute';
 
 interface ItemData {
     key: string;
@@ -40,11 +40,9 @@ export default function WrapBitcoinOpnet() {
     const [toInfo, setToInfo] = useState<{
         address: string;
         domain: string;
-        inscription?: Inscription;
     }>({
         address: '',
-        domain: '',
-        inscription: undefined
+        domain: ''
     });
 
     const [availableBalance, setAvailableBalance] = useState('0');
@@ -214,7 +212,7 @@ export default function WrapBitcoinOpnet() {
                     preset="primary"
                     text="Next"
                     onClick={() => {
-                        navigate('TxOpnetConfirmScreen', {
+                        navigate(RouteTypes.TxOpnetConfirmScreen, {
                             rawTxInfo: {
                                 items: items,
                                 account: account, // replace with actual account

@@ -2,7 +2,7 @@ import { ECPairFactory } from 'ecpair';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
 import { ADDRESS_TYPES } from '@/shared/constant';
-import { AddressType } from '@/shared/types';
+import { AddressAssets, AddressType } from '@/shared/types';
 import { getBitcoinLibJSNetwork } from '@/shared/web3/Web3API';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -13,13 +13,22 @@ import { satoshisToAmount, useWallet } from '@/ui/utils';
 import * as ecc from '@bitcoinerlab/secp256k1';
 import { EcKeyPair, Wallet } from '@btc-vision/transaction';
 
-import { useNavigate } from '../MainRoute';
+import { RouteTypes, useNavigate } from '../MainRoute';
 
 
 const ECPair = ECPairFactory(ecc);
 
+/*const _res = await wallet.createTmpKeyringWithPrivateKey(wif, AddressType.P2TR);
+if (_res.accounts.length == 0) {
+    throw new Error('Invalid PrivateKey');
+}*/
+
+/*const address = Wallet.fromWif(contextData.wif, bitcoinNetwork); //keyring.accounts[0].address;
+if (!address.p2tr) {
+    throw new Error('Invalid PrivateKey');
+}*/
+
 function Step1({
-    contextData,
     updateContextData
 }: {
     contextData: ContextData;
@@ -50,23 +59,23 @@ function Step1({
         const network = await wallet.getNetworkType();
         const bitcoinNetwork = getBitcoinLibJSNetwork(network);
 
+        let validWIF: boolean = false;
+        let validPrivateKey: boolean = false;
         try {
-            /*const _res = await wallet.createTmpKeyringWithPrivateKey(wif, AddressType.P2TR);
-            if (_res.accounts.length == 0) {
-                throw new Error('Invalid PrivateKey');
-            }*/
-
             ECPair.fromWIF(wif, bitcoinNetwork);
+            validWIF = true;
+        } catch {}
 
-            /*const address = Wallet.fromWif(contextData.wif, bitcoinNetwork); //keyring.accounts[0].address;
-            if (!address.p2tr) {
-                throw new Error('Invalid PrivateKey');
-            }*/
-        } catch (e) {
-            console.log(e);
-            tools.toastError(`${(e as Error).message} (Are you on the right network?)`);
+        try {
+            ECPair.fromPrivateKey(Buffer.from(wif.replace('0x', ''), 'hex'), { network: bitcoinNetwork });
+            validPrivateKey = true;
+        } catch {}
+
+        if (!validWIF && !validPrivateKey) {
+            tools.toastError(`Invalid wif/private key (Are you on the right network?)`);
             return;
         }
+
         updateContextData({
             wif,
             tabType: TabType.STEP2
@@ -109,10 +118,7 @@ function Step2({
             if (v.displayIndex < 0) {
                 return false;
             }
-            if (v.isUnisatLegacy) {
-                return false;
-            }
-            return true;
+            return !v.isUnisatLegacy;
         })
             .sort((a, b) => a.displayIndex - b.displayIndex)
             .map((v) => {
@@ -126,17 +132,7 @@ function Step2({
     }, [contextData]);
 
     const [previewAddresses, setPreviewAddresses] = useState<string[]>(hdPathOptions.map((v) => ''));
-
-    const [addressAssets, setAddressAssets] = useState<
-        Record<
-            string,
-            {
-                total_btc: string;
-                satoshis: number;
-                total_inscription: number;
-            }
-        >
-    >({});
+    const [addressAssets, setAddressAssets] = useState<Record<string, AddressAssets>>({});
 
     const selfRef = useRef({
         maxSatoshis: 0,
@@ -153,20 +149,37 @@ function Step2({
 
         for (let i = 0; i < hdPathOptions.length; i++) {
             const options = hdPathOptions[i];
-            //const keyring = await wallet.createTmpKeyringWithPrivateKey(contextData.wif, options.addressType);
-            const address = Wallet.fromWif(contextData.wif, bitcoinNetwork); //keyring.accounts[0].address; //
-            //console.log(address);
-            //addresses.push(address.p2tr);
 
-            if (options.addressType == AddressType.P2TR) {
-                addresses.push(address.p2tr);
-            } else if (options.addressType == AddressType.P2WPKH) {
-                addresses.push(address.p2wpkh);
-            } else {
-                addresses.push(
-                    EcKeyPair.getLegacyAddress(ECPair.fromWIF(contextData.wif, bitcoinNetwork), bitcoinNetwork)
-                );
-            }
+            try {
+                const address = Wallet.fromWif(contextData.wif, bitcoinNetwork);
+
+                if (options.addressType == AddressType.P2TR) {
+                    addresses.push(address.p2tr);
+                } else if (options.addressType == AddressType.P2SH_P2WPKH) {
+                    addresses.push(address.segwitLegacy);
+                } else if (options.addressType == AddressType.P2WPKH) {
+                    addresses.push(address.p2wpkh);
+                } else {
+                    addresses.push(
+                        EcKeyPair.getLegacyAddress(ECPair.fromWIF(contextData.wif, bitcoinNetwork), bitcoinNetwork)
+                    );
+                }
+            } catch (e) {}
+
+            try {
+                const bufferPrivateKey = Buffer.from(contextData.wif.replace('0x', ''), 'hex');
+                const keypair = EcKeyPair.fromPrivateKey(bufferPrivateKey, bitcoinNetwork);
+
+                if (options.addressType == AddressType.P2TR) {
+                    addresses.push(EcKeyPair.getTaprootAddress(keypair, bitcoinNetwork));
+                } else if (options.addressType == AddressType.P2SH_P2WPKH) {
+                    addresses.push(EcKeyPair.getLegacySegwitAddress(keypair, bitcoinNetwork));
+                } else if (options.addressType == AddressType.P2WPKH) {
+                    addresses.push(EcKeyPair.getP2WPKHAddress(keypair, bitcoinNetwork));
+                } else {
+                    addresses.push(EcKeyPair.getLegacyAddress(keypair, bitcoinNetwork));
+                }
+            } catch (e) {}
         }
 
         const balances = await wallet.getMultiAddressAssets(addresses.join(','));
@@ -177,19 +190,26 @@ function Step2({
             const satoshis = balance.totalSatoshis;
             self.addressBalances[address] = {
                 total_btc: satoshisToAmount(balance.totalSatoshis),
-                satoshis,
-                total_inscription: balance.inscriptionCount
+                satoshis
             };
+
             if (satoshis > self.maxSatoshis) {
                 self.maxSatoshis = satoshis;
                 self.recommended = i;
             }
-
-            updateContextData({ addressType: hdPathOptions[self.recommended].addressType });
-            setAddressAssets(self.addressBalances);
         }
+
+        let recommended: AddressType = hdPathOptions[self.recommended].addressType;
+        if (self.maxSatoshis == 0) {
+            recommended = AddressType.P2TR;
+        }
+
+        updateContextData({ addressType: recommended });
+
+        setAddressAssets(self.addressBalances);
         setPreviewAddresses(addresses);
     };
+
     useEffect(() => {
         void run();
     }, [contextData.wif]);
@@ -203,24 +223,22 @@ function Step2({
     const onNext = async () => {
         try {
             await wallet.createKeyringWithPrivateKey(contextData.wif, contextData.addressType);
-            navigate('MainScreen');
+            navigate(RouteTypes.MainScreen);
         } catch (e) {
-            tools.toastError((e as any).message);
+            tools.toastError((e as Error).message);
         }
     };
     return (
         <Column gap="lg">
             <Text text="Address Type" preset="bold" />
 
-            <Text text="OP_NET is currently only compatible with Taproot (P2TR) addresses." color="red" />
-
             {hdPathOptions.map((item, index) => {
                 const address = previewAddresses[index];
                 const assets = addressAssets[address] || {
                     total_btc: '--',
-                    satoshis: 0,
-                    total_inscription: 0
+                    satoshis: 0
                 };
+
                 const hasVault = assets.satoshis > 0;
                 if (item.isUnisatLegacy && !hasVault) {
                     return null;

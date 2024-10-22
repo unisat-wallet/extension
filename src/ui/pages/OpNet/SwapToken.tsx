@@ -20,7 +20,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import '@btc-vision/transaction';
 import { Address } from '@btc-vision/transaction';
 
-import { useNavigate } from '../MainRoute';
+import { RouteTypes, useNavigate } from '../MainRoute';
 
 interface ItemData {
     key: string;
@@ -228,7 +228,7 @@ export default function Swap() {
                         name: contractInfo?.name || '',
                         amount: BigInt(balance.decoded[0].toString()),
                         divisibility: contractInfo?.decimals || 8,
-                        symbol: contractInfo?.symbol,
+                        symbol: contractInfo?.symbol || '',
                         logo: contractInfo?.logo
                     });
                 } catch (e) {
@@ -344,7 +344,7 @@ export default function Swap() {
                     icon="swap"
                     style={$styleButton}
                     onClick={() => {
-                        navigate('TxOpnetConfirmScreen', {
+                        navigate(RouteTypes.TxOpnetConfirmScreen, {
                             rawTxInfo: {
                                 items: items,
                                 contractAddress: [selectedOption?.address, selectedOptionOutput?.address],

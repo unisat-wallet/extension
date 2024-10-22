@@ -5,7 +5,7 @@
 - Install [Node.js](https://nodejs.org) version >= 18.x
 - Install [Yarn](https://yarnpkg.com/en/docs/install)
 - Install dependencies: `yarn`
-- Build the project to the `./dist/` folder with `npm run build:chrome:mv3` and then `npm run build:chrome:mv3:dev`
+- Build the project to the `./dist/` folder with `npm run build:chrome` and then `npm run build:chrome:dev`
 
 # Installing the OP_WALLET Chrome Extension
 

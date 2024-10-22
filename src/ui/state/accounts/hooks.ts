@@ -49,11 +49,6 @@ export function useAccountInscriptions() {
     return accountsState.inscriptionsMap[currentAccount.address] || { list: [], expired: true };
 }
 
-export function useInscriptionSummary() {
-    const accountsState = useAccountsState();
-    return accountsState.inscriptionSummary;
-}
-
 export function useAppSummary() {
     const accountsState = useAccountsState();
     return accountsState.appSummary;

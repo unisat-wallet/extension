@@ -1,4 +1,3 @@
-import { Inscription } from '@/shared/types';
 import { createSlice } from '@reduxjs/toolkit';
 
 import { updateVersion } from '../global/actions';
@@ -9,7 +8,6 @@ export interface UIState {
         toInfo: {
             address: string;
             domain: string;
-            inscription?: Inscription;
         };
         inputAmount: string;
         enableRBF: boolean;
@@ -26,8 +24,7 @@ export const initialState: UIState = {
     uiTxCreateScreen: {
         toInfo: {
             address: '',
-            domain: '',
-            inscription: undefined
+            domain: ''
         },
         inputAmount: '',
         enableRBF: false,
@@ -63,7 +60,6 @@ const slice = createSlice({
                     toInfo?: {
                         address: string;
                         domain: string;
-                        inscription?: Inscription;
                     };
                     inputAmount?: string;
                     enableRBF?: boolean;

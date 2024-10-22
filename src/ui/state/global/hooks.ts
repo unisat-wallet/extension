@@ -53,7 +53,7 @@ export function useUnlockCallback() {
         async (password: string) => {
             await wallet.unlock(password);
             dispatch(globalActions.update({ isUnlocked: true }));
-            resolveApproval();
+            await resolveApproval();
         },
         [dispatch, wallet]
     );

@@ -6,7 +6,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { useWallet, useWalletRequest } from '@/ui/utils';
 import { getPasswordStrengthWord, MIN_PASSWORD_LENGTH } from '@/ui/utils/password-utils';
 
-import { useNavigate } from '../MainRoute';
+import { RouteTypes, useNavigate } from '../MainRoute';
 
 export default function CreatePasswordScreen() {
     const navigate = useNavigate();
@@ -34,11 +34,11 @@ export default function CreatePasswordScreen() {
     const [run, _] = useWalletRequest(wallet.boot, {
         onSuccess() {
             if (isKeystone) {
-                navigate('CreateKeystoneWalletScreen', { fromUnlock: true });
+                navigate(RouteTypes.CreateKeystoneWalletScreen, { fromUnlock: true });
             } else if (isNewAccount) {
-                navigate('CreateHDWalletScreen', { isImport: false, fromUnlock: true });
+                navigate(RouteTypes.CreateHDWalletScreen, { isImport: false, fromUnlock: true });
             } else {
-                navigate('CreateHDWalletScreen', { isImport: true, fromUnlock: true });
+                navigate(RouteTypes.CreateHDWalletScreen, { isImport: true, fromUnlock: true });
             }
         },
         onError(err) {

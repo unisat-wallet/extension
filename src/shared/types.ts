@@ -39,8 +39,7 @@ export interface BitcoinBalance {
 
 export interface AddressAssets {
     total_btc: string;
-    satoshis?: number;
-    total_inscription: number;
+    satoshis: number;
 }
 
 export interface TxHistoryInOutItem {
@@ -265,8 +264,6 @@ export enum WebsiteState {
 export interface AddressSummary {
     address: string;
     totalSatoshis: number;
-    btcSatoshis: number;
-    assetSatoshis: number;
     loading?: boolean;
 }
 

@@ -1,4 +1,4 @@
-import { useNavigate } from '@/ui/pages/MainRoute';
+import { RouteTypes, useNavigate } from '@/ui/pages/MainRoute';
 import { useReadTab, useUnreadAppSummary } from '@/ui/state/accounts/hooks';
 import { TabOption } from '@/ui/state/global/reducer';
 import { colors } from '@/ui/theme/colors';
@@ -9,12 +9,9 @@ import { Grid } from '../Grid';
 import { Icon, IconTypes } from '../Icon';
 
 export function NavTabBar({ tab }: { tab: TabOption }) {
-    const isOPNETonly = localStorage.getItem('selectionUser') === 'opnet-only';
-
     return (
-        <Grid columns={isOPNETonly ? 3 : 4} style={{ width: '100%', height: '67.5px', backgroundColor: colors.bg2 }}>
+        <Grid columns={3} style={{ width: '100%', height: '67.5px', backgroundColor: colors.bg2 }}>
             <TabButton tabName="home" icon="wallet" isActive={tab === 'home'} />
-            {!isOPNETonly && <TabButton tabName="mint" icon="compass" isActive={tab === 'mint'} />}
             <TabButton tabName="app" icon="grid" isActive={tab === 'app'} />
             <TabButton tabName="settings" icon="settings" isActive={tab === 'settings'} />
         </Grid>
@@ -31,14 +28,14 @@ function TabButton({ tabName, icon, isActive }: { tabName: TabOption; icon: Icon
             itemsCenter
             onClick={(e) => {
                 if (tabName === 'home') {
-                    navigate('MainScreen');
+                    navigate(RouteTypes.MainScreen);
                 } else if (tabName === 'mint') {
-                    navigate('DiscoverTabScreen');
+                    navigate(RouteTypes.Mint);
                 } else if (tabName === 'app') {
-                    navigate('AppTabScrren');
+                    navigate(RouteTypes.AppTabScrren);
                     readTab('app');
                 } else if (tabName === 'settings') {
-                    navigate('SettingsTabScreen');
+                    navigate(RouteTypes.SettingsTabScreen);
                 }
             }}>
             <Icon icon={icon} color={isActive ? 'white' : 'white_muted'} />

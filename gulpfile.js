@@ -1,16 +1,16 @@
-var webpack = require('webpack');
-var webpackConfigFunc = require('./webpack.config');
-var gulp = require('gulp');
-var zip = require('gulp-zip');
-var clean = require('gulp-clean');
-var jsoncombine = require('gulp-jsoncombine');
-var minimist = require('minimist');
-var packageConfig = require('./package.json');
+const webpack = require('webpack');
+const webpackConfigFunc = require('./webpack.config');
+const gulp = require('gulp');
+const zip = require('gulp-zip');
+const clean = require('gulp-clean');
+const jsoncombine = require('gulp-jsoncombine');
+const minimist = require('minimist');
+const packageConfig = require('./package.json');
 const { exit } = require('process');
-const uglify = require('gulp-uglify');
+const uglify = require('gulp-uglify-es').default;
 
 //parse arguments
-var knownOptions = {
+let knownOptions = {
     string: ['env', 'browser', 'manifest', 'channel'],
     default: {
         env: 'dev',
@@ -20,13 +20,13 @@ var knownOptions = {
     }
 };
 
-var supported_envs = ['dev', 'pro'];
-var supported_browsers = ['chrome', 'firefox', 'edge', 'brave'];
-var supported_mvs = ['mv2', 'mv3'];
-var brandName = 'opwallet';
-var version = packageConfig.version;
-var validVersion = version.split('-beta')[0];
-var options = {
+let supported_envs = ['dev', 'pro'];
+let supported_browsers = ['chrome', 'firefox', 'edge', 'brave'];
+let supported_mvs = ['mv2', 'mv3'];
+let brandName = 'opwallet';
+let version = packageConfig.version;
+let validVersion = version.split('-beta')[0];
+let options = {
     env: knownOptions.default.env,
     browser: knownOptions.default.browser,
     manifest: knownOptions.default.manifest
@@ -65,7 +65,7 @@ function task_merge_manifest() {
             `dist/${options.browser}/manifest/${options.browser}.json`
         ])
         .pipe(
-            jsoncombine('manifest.json', (data, meta) => {
+            jsoncombine('manifest.json', (data) => {
                 const result = Object.assign({}, data[baseFile], data[options.browser]);
                 result.version = validVersion;
                 return Buffer.from(JSON.stringify(result));
@@ -95,7 +95,15 @@ function task_uglify(cb) {
     if (options.env == 'pro') {
         return gulp
             .src(`dist/${options.browser}/**/*.js`)
-            .pipe(uglify({}))
+            .pipe(
+                uglify({
+                    compress: true,
+                    mangle: {
+                        toplevel: true
+                    },
+                    ecma: 2023
+                })
+            )
             .pipe(gulp.dest(`dist/${options.browser}`));
     }
     cb();
@@ -121,9 +129,11 @@ function task_package(cb) {
 exports.build = gulp.series(
     task_clean,
     task_prepare,
+    task_webpack,
     task_merge_manifest,
     task_clean_tmps,
-    task_webpack,
     task_uglify,
     task_package
 );
+
+exports.uglify = task_uglify;

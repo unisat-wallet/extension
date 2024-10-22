@@ -15,7 +15,7 @@ import {
     WordsType
 } from '@/ui/pages/Account/createHDWalletComponents/types';
 
-import { useNavigate } from '../MainRoute';
+import { RouteTypes, useNavigate } from '../MainRoute';
 
 export default function CreateHDWalletScreen() {
     const navigate = useNavigate();
@@ -113,7 +113,7 @@ export default function CreateHDWalletScreen() {
             <Header
                 onBack={() => {
                     if (fromUnlock) {
-                        navigate('WelcomeScreen');
+                        navigate(RouteTypes.WelcomeScreen);
                     } else {
                         window.history.go(-1);
                     }

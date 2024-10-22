@@ -1,22 +1,15 @@
 /* eslint-disable quotes */
 import { useState } from 'react';
 
-
-
 import { Button, Column, Content, Layout, Logo, Row, Text } from '@/ui/components';
-import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
 import { useWallet } from '@/ui/utils';
 
-
-
-import { useNavigate } from '../MainRoute';
+import { RouteTypes, useNavigate } from '../MainRoute';
 import { ConnectHardwareModal } from './ConnectHardwareModal';
-
 
 export default function WelcomeScreen() {
     const navigate = useNavigate();
     const wallet = useWallet();
-    const isInTab = useExtensionIsInTab();
 
     const [connectHardwareModalVisible, setConnectHardwareModalVisible] = useState(false);
 
@@ -42,9 +35,9 @@ export default function WelcomeScreen() {
                             onClick={async () => {
                                 const isBooted = await wallet.isBooted();
                                 if (isBooted) {
-                                    navigate('CreateHDWalletScreen', { isImport: false });
+                                    navigate(RouteTypes.CreateHDWalletScreen, { isImport: false });
                                 } else {
-                                    navigate('CreatePasswordScreen', { isNewAccount: true });
+                                    navigate(RouteTypes.CreatePasswordScreen, { isNewAccount: true });
                                 }
                             }}
                         />
@@ -54,9 +47,9 @@ export default function WelcomeScreen() {
                             onClick={async () => {
                                 const isBooted = await wallet.isBooted();
                                 if (isBooted) {
-                                    navigate('CreateHDWalletScreen', { isImport: true });
+                                    navigate(RouteTypes.CreateHDWalletScreen, { isImport: true });
                                 } else {
-                                    navigate('CreatePasswordScreen', { isNewAccount: false });
+                                    navigate(RouteTypes.CreatePasswordScreen, { isNewAccount: false });
                                 }
                             }}
                         />
