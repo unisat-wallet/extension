@@ -19,7 +19,7 @@ export function AddressBar() {
                         tools.toastSuccess('Copied');
                     });
                 }}>
-                <Text text={`Public Key: ${shortAddress(publicKey)}`} color="textDim" />
+                <Text text={`Token Deposit Address: ${shortAddress(publicKey)}`} color="textDim" />
                 <CopyOutlined style={{ color: '#888', fontSize: 14 }} />
             </Row>
         </>

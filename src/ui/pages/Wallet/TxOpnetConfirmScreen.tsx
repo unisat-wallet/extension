@@ -259,11 +259,14 @@ export default function TxOpnetConfirmScreen() {
             // Store the next UTXO in localStorage
             navigate(RouteTypes.TxSuccessScreen, { txid: sendTransaction.transactionId });
         } catch (e) {
-            console.log(e);
-
-            setDisabled(false);
-
-            navigate(RouteTypes.TxFailScreen, { error: (e as Error).message });
+            const error = e as Error;
+            if (error.message.toLowerCase().includes('public key')) {
+                setDisabled(false);
+                navigate(RouteTypes.TxFailScreen, { error: Web3API.INVALID_PUBKEY_ERROR });
+            } else {
+                setDisabled(false);
+                navigate(RouteTypes.TxFailScreen, { error: (e as Error).message });
+            }
         }
     };
 
