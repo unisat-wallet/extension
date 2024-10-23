@@ -18,7 +18,22 @@ export default function TxFailScreen() {
                     </Row>
 
                     <Text preset="title" text="Payment Failed" textCenter />
-                    <Text preset="sub" style={{ color: colors.red }} text={error} textCenter />
+                    {error.split('\n').map((line, index) => {
+                        return (
+                            <Text
+                                key={index}
+                                preset="regular-bold"
+                                style={{
+                                    color: colors.red,
+                                    backgroundColor: 'rgba(225, 45, 53, 0.1)',
+                                    padding: 5,
+                                    borderRadius: 7
+                                }}
+                                text={line}
+                                textCenter
+                            />
+                        );
+                    })}
                 </Column>
             </Content>
         </Layout>

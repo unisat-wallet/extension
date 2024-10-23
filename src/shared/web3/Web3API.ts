@@ -69,7 +69,7 @@ export function bigIntToDecimal(amount: bigint, decimal: number): string {
 
 class Web3API {
     public readonly INVALID_PUBKEY_ERROR: string =
-        'Please use the recipient token deposit address (which represent his "public key"). OP_NET was unable to automatically find the public key associated with the address you are trying to send to because this address never spent an UTXO before.';
+        'Please use the recipient token deposit address (aka "public key").\nOP_NET was unable to automatically find the public key associated with the address you are trying to send to because this address never spent an UTXO before.';
 
     public network: Network = networks.bitcoin;
     public chainId: ChainId = ChainId.Bitcoin;
