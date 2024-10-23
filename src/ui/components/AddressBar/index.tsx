@@ -14,13 +14,22 @@ export function AddressBar() {
             <Row
                 selfItemsCenter
                 itemsCenter
-                onClick={() => {
-                    copyToClipboard(publicKey).then(() => {
+                style={{
+                    padding: 5,
+                    borderRadius: 7,
+                    backgroundColor: 'rgba(240, 129, 51, 0.15)'
+                }}
+                onClick={async () => {
+                    await copyToClipboard(publicKey).then(() => {
                         tools.toastSuccess('Copied');
                     });
                 }}>
-                <Text text={`Token Deposit Address: ${shortAddress(publicKey)}`} color="textDim" />
-                <CopyOutlined style={{ color: '#888', fontSize: 14 }} />
+                <Text
+                    text={`Token Deposit Address: ${shortAddress(publicKey)}`}
+                    style={{ color: '#f08133' }}
+                    preset="regular"
+                />
+                <CopyOutlined style={{ color: '#f08133', fontSize: 14 }} />
             </Row>
         </>
     );

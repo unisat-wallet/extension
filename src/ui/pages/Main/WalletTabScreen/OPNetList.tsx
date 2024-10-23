@@ -220,20 +220,6 @@ export function OPNetList() {
                 </BaseView>
             )}
 
-            <Row justifyBetween mt="lg">
-                <>
-                    <Button
-                        text="SWAP"
-                        preset="primary"
-                        icon="send"
-                        onClick={() => {
-                            navigate(RouteTypes.Swap);
-                        }}
-                        full
-                    />
-                </>
-            </Row>
-
             {importTokenBool && (
                 <AddOpNetToken
                     setImportTokenBool={setImportTokenBool}
