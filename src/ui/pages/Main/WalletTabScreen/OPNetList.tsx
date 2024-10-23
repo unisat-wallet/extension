@@ -74,8 +74,6 @@ export function OPNetList() {
                 try {
                     const tokenAddress = parsedTokens[i];
                     if (tokenAddress === deadAddress || !tokenAddress) {
-                        parsedTokens.splice(i, 1);
-                        i--;
                         continue;
                     }
 
@@ -88,8 +86,8 @@ export function OPNetList() {
                     }
 
                     if (contractInfo.name === 'Generic Contract') {
-                        parsedTokens.splice(i, 1);
-                        i--;
+                        //parsedTokens.splice(i, 1);
+                        //i--;
                         continue;
                     }
 
@@ -111,8 +109,6 @@ export function OPNetList() {
                     });
                 } catch (e) {
                     console.log(`Error processing token at index ${i}:`, e, parsedTokens[i]);
-                    parsedTokens.splice(i, 1);
-                    i--;
                 }
             }
 
