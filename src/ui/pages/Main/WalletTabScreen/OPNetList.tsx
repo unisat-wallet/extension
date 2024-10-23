@@ -121,6 +121,8 @@ export function OPNetList() {
         } finally {
             tools.showLoading(false);
         }
+
+        setRetried(true);
     };
 
     useEffect(() => {
@@ -131,15 +133,13 @@ export function OPNetList() {
         setTimeout(() => {
             if (tokens.length === 0) {
                 void fetchData();
-
-                setRetried(true);
             }
-        }, 1000);
-    }, [tokens]);
+        }, 100);
+    }, [tokens, currentAccount, importTokenBool, wallet]);
 
-    useEffect(() => {
-        void fetchData();
-    }, [currentAccount, importTokenBool, wallet]);
+    //useEffect(() => {
+    //    void fetchData();
+    //}, [currentAccount, importTokenBool, wallet]);
 
     useEffect(() => {}, [total]);
 
