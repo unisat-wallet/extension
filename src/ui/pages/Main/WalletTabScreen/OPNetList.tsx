@@ -43,6 +43,7 @@ export function OPNetList() {
 
     const [tokens, setTokens] = useState<OPTokenInfo[]>([]);
     const [total, setTotal] = useState(-1);
+    const [retried, setRetried] = useState(false);
     const [importTokenBool, setImportTokenBool] = useState(false);
 
     const tools = useTools();
@@ -125,6 +126,20 @@ export function OPNetList() {
             tools.showLoading(false);
         }
     };
+
+    useEffect(() => {
+        if (tokens.length !== 0 || retried) {
+            return;
+        }
+
+        setTimeout(() => {
+            if (tokens.length === 0) {
+                void fetchData();
+
+                setRetried(true);
+            }
+        }, 1000);
+    }, [tokens]);
 
     useEffect(() => {
         void fetchData();
