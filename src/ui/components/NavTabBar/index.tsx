@@ -1,5 +1,5 @@
 import { RouteTypes, useNavigate } from '@/ui/pages/MainRoute';
-import { useReadTab, useUnreadAppSummary } from '@/ui/state/accounts/hooks';
+import { useUnreadAppSummary } from '@/ui/state/accounts/hooks';
 import { TabOption } from '@/ui/state/global/reducer';
 import { colors } from '@/ui/theme/colors';
 
@@ -20,7 +20,7 @@ export function NavTabBar({ tab }: { tab: TabOption }) {
 function TabButton({ tabName, icon, isActive }: { tabName: TabOption; icon: IconTypes; isActive: boolean }) {
     const navigate = useNavigate();
     const unreadApp = useUnreadAppSummary();
-    const readTab = useReadTab();
+    //const readTab = useReadTab();
     return (
         <Column
             justifyCenter
