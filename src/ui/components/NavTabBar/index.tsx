@@ -10,7 +10,7 @@ import { Icon, IconTypes } from '../Icon';
 
 export function NavTabBar({ tab }: { tab: TabOption }) {
     return (
-        <Grid columns={3} style={{ width: '100%', height: '67.5px', backgroundColor: colors.bg2 }}>
+        <Grid columns={2} style={{ width: '100%', height: '67.5px', backgroundColor: colors.bg2 }}>
             <TabButton tabName="home" icon="wallet" isActive={tab === 'home'} />
             <TabButton tabName="settings" icon="settings" isActive={tab === 'settings'} />
         </Grid>
