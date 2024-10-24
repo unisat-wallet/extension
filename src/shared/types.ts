@@ -208,6 +208,7 @@ export enum TxType {
 interface BaseUserToSignInput {
   index: number;
   sighashTypes: number[] | undefined;
+  useTweakedSigner?: boolean;
   disableTweakSigner?: boolean;
   tapLeafHashToSign?: string;
 }
