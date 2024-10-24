@@ -1,5 +1,5 @@
-import VirtualList from 'rc-virtual-list';
-import { forwardRef, useMemo, useState } from 'react';
+import VirtualList, { ListRef } from 'rc-virtual-list';
+import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 
 import { KEYRING_TYPE } from '@/shared/constant';
 import { WalletKeyring } from '@/shared/types';
@@ -25,13 +25,15 @@ import { useNavigate } from '../MainRoute';
 
 export interface ItemData {
   key: string;
-  keyring: WalletKeyring;
+  keyring?: WalletKeyring;
 }
 
 interface MyItemProps {
-  keyring: WalletKeyring;
+  keyring?: WalletKeyring;
   autoNav?: boolean;
 }
+
+const ITEM_HEIGHT = 64;
 
 export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
   const navigate = useNavigate();
@@ -45,6 +47,10 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
 
   const tools = useTools();
 
+  if (!keyring) {
+    return <div style={{ height: ITEM_HEIGHT }} />;
+  }
+
   const displayAddress = useMemo(() => {
     if (!keyring.accounts[0]) {
       return 'Invalid';
@@ -57,7 +63,7 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
   const [removeVisible, setRemoveVisible] = useState(false);
 
   return (
-    <Card justifyBetween mt="md">
+    <Card justifyBetween style={{ height: ITEM_HEIGHT - 8, marginTop: 8 }}>
       <Row
         full
         onClick={async (e) => {
@@ -187,6 +193,9 @@ export default function SwitchKeyringScreen() {
 
   const keyrings = useKeyrings();
 
+  const ForwardMyItem = forwardRef(MyItem);
+  const refList = useRef<ListRef>(null);
+
   const items = useMemo(() => {
     const _items: ItemData[] = keyrings.map((v) => {
       return {
@@ -194,12 +203,31 @@ export default function SwitchKeyringScreen() {
         keyring: v
       };
     });
-    // _items.push({
-    //   key: 'add'
-    // });
+
+    for (let i = 0; i < 2; i++) {
+      _items.push({
+        key: 'dummy_' + i,
+        keyring: undefined
+      });
+    }
     return _items;
   }, [keyrings]);
-  const ForwardMyItem = forwardRef(MyItem);
+
+  const currentKeyring = useCurrentKeyring();
+  const currentIndex = keyrings.findIndex((v) => v.key == currentKeyring.key);
+
+  useEffect(() => {
+    const timeoutId = setTimeout(() => {
+      if (refList.current && currentIndex >= 0) {
+        refList.current?.scrollTo({ index: currentIndex, align: 'top' });
+      }
+    });
+
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  const layoutHeight = Math.ceil((window.innerHeight - 64) / ITEM_HEIGHT) * ITEM_HEIGHT;
+
   return (
     <Layout>
       <Header
@@ -218,17 +246,15 @@ export default function SwitchKeyringScreen() {
       />
       <Content>
         <VirtualList
+          ref={refList}
           data={items}
           data-id="list"
-          itemHeight={30}
+          height={layoutHeight}
+          itemHeight={ITEM_HEIGHT}
           itemKey={(item) => item.key}
-          // disabled={animating}
           style={{
             boxSizing: 'border-box'
-          }}
-        // onSkipRender={onAppear}
-        // onItemRemove={onAppear}
-        >
+          }}>
           {(item, index) => <ForwardMyItem keyring={item.keyring} autoNav={true} />}
         </VirtualList>
       </Content>

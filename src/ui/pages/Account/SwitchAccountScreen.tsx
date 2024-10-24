@@ -31,6 +31,7 @@ interface MyItemProps {
   account?: Account;
   autoNav?: boolean;
 }
+const ITEM_HEIGHT = 64;
 
 export function MyItem({ account, autoNav }: MyItemProps, ref) {
   const navigate = useNavigate();
@@ -40,7 +41,7 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
   const dispatch = useAppDispatch();
   const keyring = useCurrentKeyring();
   if (!account) {
-    return <div />;
+    return <div style={{ height: ITEM_HEIGHT }} />;
   }
   const [optionsVisible, setOptionsVisible] = useState(false);
   let path = '';
@@ -51,7 +52,7 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
   const tools = useTools();
 
   return (
-    <Card justifyBetween mt="md">
+    <Card justifyBetween style={{ height: ITEM_HEIGHT - 8, marginTop: 8 }}>
       <Row>
         <Column style={{ width: 20 }} selfItemsCenter>
           {selected && (
@@ -151,8 +152,16 @@ export default function SwitchAccountScreen() {
         account: v
       };
     });
+    for (let i = 0; i < 2; i++) {
+      _items.push({
+        key: 'dummy_' + i,
+        account: undefined
+      });
+    }
+
     return _items;
   }, []);
+
   const currentAccount = useCurrentAccount();
   const currentIndex = keyring.accounts.findIndex((v) => v.pubkey == currentAccount.pubkey);
 
@@ -162,12 +171,14 @@ export default function SwitchAccountScreen() {
   useEffect(() => {
     const timeoutId = setTimeout(() => {
       if (refList.current && currentIndex >= 0) {
-        refList.current?.scrollTo({ index: currentIndex });
+        refList.current?.scrollTo({ index: currentIndex, align: 'top' });
       }
     });
 
     return () => clearTimeout(timeoutId);
   }, []);
+
+  const layoutHeight = Math.ceil((window.innerHeight - 64) / ITEM_HEIGHT) * ITEM_HEIGHT;
 
   return (
     <Layout>
@@ -187,8 +198,14 @@ export default function SwitchAccountScreen() {
           )
         }
       />
-      <Content>
-        <VirtualList data={items} data-id="list" itemHeight={20} itemKey={(item) => item.key} ref={refList}>
+      <Content style={{ height: layoutHeight }}>
+        <VirtualList
+          data={items}
+          data-id="list"
+          height={layoutHeight}
+          itemHeight={ITEM_HEIGHT}
+          itemKey={(item) => item.key}
+          ref={refList}>
           {(item, index) => <ForwardMyItem account={item.account} autoNav={true} />}
         </VirtualList>
       </Content>
