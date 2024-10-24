@@ -3,11 +3,9 @@ import { useEffect, useState } from 'react';
 import { Account, WebsiteState } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import WebsiteBar from '@/ui/components/WebsiteBar';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { accountActions } from '@/ui/state/accounts/reducer';
+import { useAccountBalance, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring, useKeyrings } from '@/ui/state/keyrings/hooks';
-import { keyringsActions } from '@/ui/state/keyrings/reducer';
 import { fontSizes } from '@/ui/theme/font';
 import { shortAddress, useApproval, useWallet } from '@/ui/utils';
 import { CheckCircleFilled, LoadingOutlined } from '@ant-design/icons';
@@ -16,6 +14,11 @@ interface MyItemProps {
   account?: Account;
   selected?: boolean;
   onClick?: () => void;
+}
+
+export interface ItemData {
+  key: string;
+  account?: Account;
 }
 
 export function MyItem({ account, selected, onClick }: MyItemProps, ref) {
@@ -35,7 +38,7 @@ export function MyItem({ account, selected, onClick }: MyItemProps, ref) {
         </Column>
         <Column>
           <Text text={account.alianName} />
-          <Text text={`${shortAddress(account.address)}`} preset="sub" />
+          <Text text={`${shortAddress(account.address, 20)}`} preset="sub" />
         </Column>
       </Row>
       <Column relative></Column>
@@ -74,6 +77,9 @@ export default function Connect({ params: { session } }: Props) {
 
   const [checkState, setCheckState] = useState(WebsiteState.CHECKING);
   const [warning, setWarning] = useState('');
+
+  const balance = useAccountBalance();
+
   useEffect(() => {
     wallet.checkWebsite(session.origin).then((v) => {
       if (v.isScammer) {
@@ -150,6 +156,7 @@ export default function Connect({ params: { session } }: Props) {
       </Layout>
     );
   }
+
   return (
     <Layout>
       <Header>
@@ -161,25 +168,8 @@ export default function Connect({ params: { session } }: Props) {
           <Text text="Select the account to use on this site" textCenter mt="md" />
           <Text text="Only connect with sites you trust." preset="sub" textCenter mt="md" />
 
-          {keyrings.map((keyring) => (
-            <Column mt="lg" key={keyring.key}>
-              <Text text={keyring.alianName} preset="sub" />
-              {keyring.accounts.map((account) => (
-                <MyItem
-                  key={account.key}
-                  account={account}
-                  selected={currentKeyring.key === keyring.key && currentAccount.address === account.address}
-                  onClick={async () => {
-                    const accountIndex = account.index || 0;
-                    await wallet.changeKeyring(keyring, accountIndex);
-                    dispatch(keyringsActions.setCurrent(keyring));
-                    const _currentAccount = await wallet.getCurrentAccount();
-                    dispatch(accountActions.setCurrent(_currentAccount));
-                  }}
-                />
-              ))}
-            </Column>
-          ))}
+          <Text text={currentKeyring.alianName} preset="sub" />
+          <MyItem account={currentAccount} />
         </Column>
       </Content>
 
