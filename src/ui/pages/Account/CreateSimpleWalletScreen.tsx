@@ -196,7 +196,7 @@ function Step2({
       })}
 
       <FooterButtonContainer>
-        <Button text="Coninue" preset="primary" onClick={onNext} />
+        <Button text="Continue" preset="primary" onClick={onNext} />
       </FooterButtonContainer>
     </Column>
   );
