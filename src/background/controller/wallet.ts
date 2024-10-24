@@ -501,6 +501,7 @@ export class WalletController extends BaseController {
           index,
           publicKey: account.pubkey,
           sighashTypes,
+          useTweakedSigner: input.useTweakedSigner,
           disableTweakSigner: input.disableTweakSigner,
           tapLeafHashToSign
         };

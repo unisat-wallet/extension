@@ -9,7 +9,9 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { OutputValueBar } from '@/ui/components/OutputValueBar';
 import { RBFBar } from '@/ui/components/RBFBar';
+import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
 import { useNavigate } from '@/ui/pages/MainRoute';
+import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import {
   useFetchAssetUtxosRunesCallback,
   useFetchUtxosCallback,
@@ -19,7 +21,6 @@ import {
 import { colors } from '@/ui/theme/colors';
 import { isValidAddress, showLongNumber } from '@/ui/utils';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
-import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
 
 export default function SendRunesScreen() {
   const { state } = useLocation();
@@ -51,14 +52,17 @@ export default function SendRunesScreen() {
 
   const defaultOutputValue = 546;
 
+  const currentAccount = useCurrentAccount();
   const [outputValue, setOutputValue] = useState(defaultOutputValue);
   const minOutputValue = useMemo(() => {
     if (toInfo.address) {
-      return getAddressUtxoDust(toInfo.address);
+      const dust1 = getAddressUtxoDust(currentAccount.address);
+      const dust2 = getAddressUtxoDust(toInfo.address);
+      return Math.max(dust1, dust2);
     } else {
       return 0;
     }
-  }, [toInfo.address]);
+  }, [toInfo.address, currentAccount.address]);
 
   const fetchUtxos = useFetchUtxosCallback();
 
@@ -171,15 +175,22 @@ export default function SendRunesScreen() {
       <Content>
         <Row justifyCenter>
           <Text
-            text={`${showLongNumber(runesUtils.toDecimalAmount(runeBalance.amount, runeBalance.divisibility))} ${runeInfo.symbol}`}
+            text={`${showLongNumber(runesUtils.toDecimalAmount(runeBalance.amount, runeBalance.divisibility))} ${
+              runeInfo.symbol
+            }`}
             preset="bold"
             textCenter
             size="xxl"
             wrap
           />
         </Row>
-        <Row justifyCenter fullX  style={{marginTop:-12,marginBottom:-12}}>
-          <TickUsdWithoutPrice tick={runeInfo.spacedRune} balance={runesUtils.toDecimalAmount(runeBalance.amount, runeBalance.divisibility)} type={'runes'} size={'md'}/>
+        <Row justifyCenter fullX style={{ marginTop: -12, marginBottom: -12 }}>
+          <TickUsdWithoutPrice
+            tick={runeInfo.spacedRune}
+            balance={runesUtils.toDecimalAmount(runeBalance.amount, runeBalance.divisibility)}
+            type={'runes'}
+            size={'md'}
+          />
         </Row>
 
         <Column mt="lg">
@@ -197,7 +208,7 @@ export default function SendRunesScreen() {
         <Column mt="lg">
           <Row justifyBetween>
             <Text text="Balance" color="textDim" />
-            <TickUsdWithoutPrice tick={runeInfo.spacedRune} balance={inputAmount} type={'runes'}/>
+            <TickUsdWithoutPrice tick={runeInfo.spacedRune} balance={inputAmount} type={'runes'} />
             <Row
               itemsCenter
               onClick={() => {
@@ -205,7 +216,9 @@ export default function SendRunesScreen() {
               }}>
               <Text text="MAX" preset="sub" style={{ color: colors.white_muted }} />
               <Text
-                text={`${showLongNumber(runesUtils.toDecimalAmount(availableBalance, runeBalance.divisibility))} ${runeInfo.symbol}`}
+                text={`${showLongNumber(runesUtils.toDecimalAmount(availableBalance, runeBalance.divisibility))} ${
+                  runeInfo.symbol
+                }`}
                 preset="bold"
                 size="sm"
                 wrap

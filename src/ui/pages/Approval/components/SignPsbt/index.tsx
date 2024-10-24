@@ -22,6 +22,7 @@ import AtomicalsNFTPreview from '@/ui/components/AtomicalsNFTPreview';
 import BRC20Preview from '@/ui/components/BRC20Preview';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
+import { PhishingDetection } from '@/ui/components/PhishingDetection';
 import RunesPreviewCard from '@/ui/components/RunesPreviewCard';
 import { SignPsbtWithRisksPopover } from '@/ui/components/SignPsbtWithRisksPopover';
 import WebsiteBar from '@/ui/components/WebsiteBar';
@@ -807,23 +808,7 @@ export default function SignPsbt({
   }
 
   if (txInfo.decodedPsbt.isScammer) {
-    return (
-      <Layout>
-        <Content>
-          <Column>
-            <Text text="Phishing Detection" preset="title-bold" textCenter mt="xxl" />
-            <Text text="Malicious behavior and suspicious activity have been detected." mt="md" />
-            <Text text="Your access to this page has been restricted by UniSat Wallet as it might be unsafe." mt="md" />
-          </Column>
-        </Content>
-
-        <Footer>
-          <Row full>
-            <Button text="Reject (blocked by UniSat Wallet)" preset="danger" onClick={handleCancel} full />
-          </Row>
-        </Footer>
-      </Layout>
-    );
+    return <PhishingDetection handleCancel={handleCancel} />;
   }
 
   if (isKeystoneSigning) {

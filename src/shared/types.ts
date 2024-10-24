@@ -208,6 +208,7 @@ export enum TxType {
 interface BaseUserToSignInput {
   index: number;
   sighashTypes: number[] | undefined;
+  useTweakedSigner?: boolean;
   disableTweakSigner?: boolean;
   tapLeafHashToSign?: string;
 }
@@ -509,4 +510,10 @@ export interface CAT20MergeOrder {
   batchIndex: number;
   batchCount: number;
   ct: number;
+}
+
+export interface WebsiteResult {
+  isScammer: boolean;
+  warning: string;
+  allowQuickMultiSign: boolean;
 }

@@ -1,19 +1,19 @@
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import React, { useCallback, useEffect, useState } from 'react';
 
 import { KEYRING_TYPE } from '@/shared/constant';
-import { DecodedPsbt, Inscription, SignPsbtOptions, ToSignInput, TxType } from '@/shared/types';
+import { SignPsbtOptions, TxType, WebsiteResult } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
-import InscriptionPreview from '@/ui/components/InscriptionPreview';
+import { PhishingDetection } from '@/ui/components/PhishingDetection';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import KeystoneSignScreen from '@/ui/pages/Wallet/KeystoneSignScreen';
-import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { colors } from '@/ui/theme/colors';
+import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { fontSizes } from '@/ui/theme/font';
-import { satoshisToAmount, shortAddress, useApproval, useWallet } from '@/ui/utils';
+import { shortAddress, useApproval, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import SignPsbt from '../SignPsbt';
+import MultiSignDisclaimerModal from './MultiSignDisclaimerModal';
 
 interface Props {
   header?: React.ReactNode;
@@ -30,110 +30,6 @@ interface Props {
   };
   handleCancel?: () => void;
   handleConfirm?: () => void;
-}
-interface InputInfo {
-  txid: string;
-  vout: number;
-  address: string;
-  value: number;
-  inscrip;
-}
-
-interface OutputInfo {
-  address: string;
-  value: number;
-}
-
-enum TabState {
-  DETAILS,
-  DATA,
-  HEX
-}
-
-interface InscriptioinInfo {
-  id: string;
-  isSent: boolean;
-}
-
-function SignTxDetails({ decodedPsbt }: { decodedPsbt: DecodedPsbt }) {
-  const inscriptions = useMemo(() => {
-    return decodedPsbt.inputInfos.reduce<Inscription[]>((pre, cur) => cur.inscriptions.concat(pre), []);
-  }, [decodedPsbt]);
-
-  const address = useAccountAddress();
-
-  const spendSatoshis = useMemo(() => {
-    const inValue = decodedPsbt.inputInfos
-      .filter((v) => v.address === address)
-      .reduce((pre, cur) => cur.value + pre, 0);
-    const outValue = decodedPsbt.outputInfos
-      .filter((v) => v.address === address)
-      .reduce((pre, cur) => cur.value + pre, 0);
-    const spend = inValue - outValue;
-    return spend;
-  }, [decodedPsbt]);
-
-  const spendAmount = useMemo(() => satoshisToAmount(spendSatoshis), [spendSatoshis]);
-
-  const outputValueSaotoshis = useMemo(
-    () => inscriptions.reduce((pre, cur) => pre + cur.outputValue, 0),
-    [inscriptions]
-  );
-  const outputValueAmount = useMemo(() => satoshisToAmount(outputValueSaotoshis), [outputValueSaotoshis]);
-  return (
-    <Column gap="lg">
-      <Text text="Sign Transaction" preset="title-bold" textCenter mt="lg" />
-      <Row justifyCenter>
-        <Card style={{ backgroundColor: '#272626', maxWidth: 320, width: 320 }}>
-          <Column gap="lg">
-            <Column>
-              {inscriptions.length > 0 && (
-                <Column justifyCenter>
-                  <Text
-                    text={
-                      inscriptions.length === 1 ? 'Spend Inscription' : `Spend Inscription (${inscriptions.length})`
-                    }
-                    textCenter
-                    color="textDim"
-                  />
-                  <Row overflowX gap="lg" justifyCenter style={{ width: 280 }} pb="lg">
-                    {inscriptions.map((v) => (
-                      <InscriptionPreview key={v.inscriptionId} data={v} preset="small" />
-                    ))}
-                  </Row>
-                </Column>
-              )}
-              {inscriptions.length > 0 && <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />}
-
-              <Column>
-                <Text text={'Spend Amount'} textCenter color="textDim" />
-
-                <Column justifyCenter>
-                  <Text text={spendAmount} color="white" preset="bold" textCenter size="xxl" />
-                  {outputValueSaotoshis > 0 && (
-                    <Text text={`${outputValueAmount} (in inscriptions)`} preset="sub" textCenter />
-                  )}
-                </Column>
-              </Column>
-            </Column>
-          </Column>
-        </Card>
-      </Row>
-    </Column>
-  );
-}
-
-function Section({ title, children }: { title: string; children?: React.ReactNode }) {
-  return (
-    <Column>
-      <Text text={title} preset="bold" />
-      <Card>
-        <Row full justifyBetween itemsCenter>
-          {children}
-        </Row>
-      </Card>
-    </Column>
-  );
 }
 
 enum SignState {
@@ -175,15 +71,15 @@ export default function MultiSignPsbt({
   const tools = useTools();
   const currentAccount = useCurrentAccount();
   const [isKeystoneSigning, setIsKeystoneSigning] = useState(false);
-  const [isWarningVisible, setIsWarningVisible] = useState(false);
   const [signIndex, setSignIndex] = useState(0);
 
-  const psbtDetalRef = React.useRef<
-    {
-      decodedPsbt: DecodedPsbt;
-      toSignInputs: ToSignInput[];
-    }[]
-  >([]);
+  const [websiteResult, setWebsiteResult] = useState<WebsiteResult>({
+    isScammer: false,
+    warning: '',
+    allowQuickMultiSign: false
+  });
+
+  const [disclaimerVisible, setDisclaimerVisible] = useState(false);
 
   const init = async () => {
     // keystone
@@ -192,6 +88,13 @@ export default function MultiSignPsbt({
       txError: '',
       currentIndex: 0
     });
+
+    const website = session?.origin;
+    if (website) {
+      const result = await wallet.checkWebsite(website);
+      setWebsiteResult(result);
+    }
+
     setLoading(false);
   };
 
@@ -251,6 +154,10 @@ export default function MultiSignPsbt({
         <WebsiteBar session={session} />
       </Header>
     );
+  }
+
+  if (websiteResult.isScammer) {
+    return <PhishingDetection handleCancel={handleCancel} />;
   }
 
   if (viewingPsbtIndex >= 0 && txInfo.psbtHexs) {
@@ -377,15 +284,42 @@ export default function MultiSignPsbt({
       <Footer>
         <Row full>
           <Button preset="default" text={'Reject All'} onClick={handleCancel} full />
-          <Button
-            preset="primary"
-            text={isAllSigned ? 'Submit' : `(${signedCount}/${txInfo.psbtHexs.length}) Signed`}
-            onClick={handleConfirm}
-            full
-            disabled={isAllSigned == false}
-          />
+
+          {websiteResult.allowQuickMultiSign ? (
+            <Button
+              preset="primary"
+              text={isAllSigned ? 'Submit' : `(${signedCount}/${txInfo.psbtHexs.length}) Signed`}
+              icon={isAllSigned ? undefined : 'alert'}
+              onClick={() => {
+                if (isAllSigned) {
+                  handleConfirm();
+                } else {
+                  setDisclaimerVisible(true);
+                }
+              }}
+              full
+            />
+          ) : (
+            <Button
+              preset="primary"
+              text={isAllSigned ? 'Submit' : `(${signedCount}/${txInfo.psbtHexs.length}) Signed`}
+              onClick={handleConfirm}
+              full
+              disabled={isAllSigned == false}
+            />
+          )}
         </Row>
       </Footer>
+      {disclaimerVisible && (
+        <MultiSignDisclaimerModal
+          onContinue={() => {
+            handleConfirm();
+          }}
+          onClose={() => {
+            setDisclaimerVisible(false);
+          }}
+        />
+      )}
     </Layout>
   );
 }
