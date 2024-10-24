@@ -1,5 +1,5 @@
 import { RouteTypes, useNavigate } from '@/ui/pages/MainRoute';
-import { useReadTab, useUnreadAppSummary } from '@/ui/state/accounts/hooks';
+import { useUnreadAppSummary } from '@/ui/state/accounts/hooks';
 import { TabOption } from '@/ui/state/global/reducer';
 import { colors } from '@/ui/theme/colors';
 
@@ -10,9 +10,8 @@ import { Icon, IconTypes } from '../Icon';
 
 export function NavTabBar({ tab }: { tab: TabOption }) {
     return (
-        <Grid columns={3} style={{ width: '100%', height: '67.5px', backgroundColor: colors.bg2 }}>
+        <Grid columns={2} style={{ width: '100%', height: '67.5px', backgroundColor: colors.bg2 }}>
             <TabButton tabName="home" icon="wallet" isActive={tab === 'home'} />
-            <TabButton tabName="app" icon="grid" isActive={tab === 'app'} />
             <TabButton tabName="settings" icon="settings" isActive={tab === 'settings'} />
         </Grid>
     );
@@ -21,7 +20,7 @@ export function NavTabBar({ tab }: { tab: TabOption }) {
 function TabButton({ tabName, icon, isActive }: { tabName: TabOption; icon: IconTypes; isActive: boolean }) {
     const navigate = useNavigate();
     const unreadApp = useUnreadAppSummary();
-    const readTab = useReadTab();
+    //const readTab = useReadTab();
     return (
         <Column
             justifyCenter
@@ -29,12 +28,10 @@ function TabButton({ tabName, icon, isActive }: { tabName: TabOption; icon: Icon
             onClick={(e) => {
                 if (tabName === 'home') {
                     navigate(RouteTypes.MainScreen);
-                } else if (tabName === 'mint') {
-                    navigate(RouteTypes.Mint);
-                } else if (tabName === 'app') {
+                } /*else if (tabName === 'app') {
                     navigate(RouteTypes.AppTabScrren);
                     readTab('app');
-                } else if (tabName === 'settings') {
+                }*/ else if (tabName === 'settings') {
                     navigate(RouteTypes.SettingsTabScreen);
                 }
             }}>

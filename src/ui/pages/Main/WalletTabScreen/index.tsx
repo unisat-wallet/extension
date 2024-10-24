@@ -234,7 +234,6 @@ export default function WalletTabScreen() {
                             <BtcDisplay balance={balanceValue} />
                         </div>
                     </Tooltip>
-
                     <BtcUsd
                         sats={amountToSatoshis(balanceValue)}
                         textCenter
@@ -264,6 +263,15 @@ export default function WalletTabScreen() {
                             onClick={() => {
                                 resetUiTxCreateScreen();
                                 navigate(RouteTypes.TxCreateScreen);
+                            }}
+                        />
+
+                        <Button
+                            text="Swap"
+                            preset="home"
+                            icon="swap"
+                            onClick={() => {
+                                navigate(RouteTypes.Swap);
                             }}
                         />
 
@@ -300,19 +308,11 @@ export default function WalletTabScreen() {
                         }}
                     />
                 </Column>
-                {/* {showSafeNotice && (
-                    <NoticePopover
-                        onClose={async (selection) => {
-                            await wallet.setShowSafeNotice(false);
-                            setShowSafeNotice(false);
-                            localStorage.setItem('selectionUser', selection);
-                        }}
-                    />
-                )} */}
+
                 {!versionInfo.skipped && (
                     <UpgradePopover
-                        onClose={() => {
-                            skipVersion(versionInfo.newVersion);
+                        onClose={async () => {
+                            await skipVersion(versionInfo.newVersion);
                         }}
                     />
                 )}
@@ -320,6 +320,7 @@ export default function WalletTabScreen() {
                 {showDisableUnconfirmedUtxoNotice && (
                     <DisableUnconfirmedsPopover onClose={() => setShowDisableUnconfirmedUtxoNotice(false)} />
                 )}
+
                 {switchChainModalVisible && (
                     <SwitchChainModal
                         onClose={() => {

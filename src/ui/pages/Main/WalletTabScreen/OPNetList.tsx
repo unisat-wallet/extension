@@ -43,6 +43,7 @@ export function OPNetList() {
 
     const [tokens, setTokens] = useState<OPTokenInfo[]>([]);
     const [total, setTotal] = useState(-1);
+    const [retried, setRetried] = useState(false);
     const [importTokenBool, setImportTokenBool] = useState(false);
 
     const tools = useTools();
@@ -73,8 +74,6 @@ export function OPNetList() {
                 try {
                     const tokenAddress = parsedTokens[i];
                     if (tokenAddress === deadAddress || !tokenAddress) {
-                        parsedTokens.splice(i, 1);
-                        i--;
                         continue;
                     }
 
@@ -87,8 +86,8 @@ export function OPNetList() {
                     }
 
                     if (contractInfo.name === 'Generic Contract') {
-                        parsedTokens.splice(i, 1);
-                        i--;
+                        //parsedTokens.splice(i, 1);
+                        //i--;
                         continue;
                     }
 
@@ -110,8 +109,6 @@ export function OPNetList() {
                     });
                 } catch (e) {
                     console.log(`Error processing token at index ${i}:`, e, parsedTokens[i]);
-                    parsedTokens.splice(i, 1);
-                    i--;
                 }
             }
 
@@ -124,11 +121,25 @@ export function OPNetList() {
         } finally {
             tools.showLoading(false);
         }
+
+        setRetried(true);
     };
 
     useEffect(() => {
-        void fetchData();
-    }, [currentAccount, importTokenBool, wallet]);
+        if (tokens.length !== 0 || retried) {
+            return;
+        }
+
+        setTimeout(() => {
+            if (tokens.length === 0) {
+                void fetchData();
+            }
+        }, 100);
+    }, [tokens, currentAccount, importTokenBool, wallet]);
+
+    //useEffect(() => {
+    //    void fetchData();
+    //}, [currentAccount, importTokenBool, wallet]);
 
     useEffect(() => {}, [total]);
 
@@ -208,20 +219,6 @@ export function OPNetList() {
                     })}
                 </BaseView>
             )}
-
-            <Row justifyBetween mt="lg">
-                <>
-                    <Button
-                        text="SWAP"
-                        preset="primary"
-                        icon="send"
-                        onClick={() => {
-                            navigate(RouteTypes.Swap);
-                        }}
-                        full
-                    />
-                </>
-            </Row>
 
             {importTokenBool && (
                 <AddOpNetToken

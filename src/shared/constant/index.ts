@@ -275,7 +275,7 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
     },
     [ChainType.BITCOIN_REGTEST]: {
         enum: ChainType.BITCOIN_REGTEST,
-        label: 'Bitcoin OP_NET Regtest',
+        label: 'Bitcoin Regtest',
         unit: 'rBTC',
         icon: './images/artifacts/bitcoin-testnet.svg',
         networkType: NetworkType.REGTEST,
