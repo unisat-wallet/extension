@@ -510,3 +510,9 @@ export interface CAT20MergeOrder {
   batchCount: number;
   ct: number;
 }
+
+export interface WebsiteResult {
+  isScammer: boolean;
+  warning: string;
+  allowQuickMultiSign: boolean;
+}

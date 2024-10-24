@@ -35,7 +35,8 @@ import {
   UTXO_Detail,
   VersionDetail,
   WalletConfig,
-  WalletKeyring
+  WalletKeyring,
+  WebsiteResult
 } from '@/shared/types';
 import { AddressType, UnspentOutput } from '@unisat/wallet-sdk';
 import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
@@ -296,7 +297,7 @@ export interface WalletController {
   getUtxoByInscriptionId(inscriptionId: string): Promise<UTXO>;
   getInscriptionInfo(inscriptionId: string): Promise<Inscription>;
 
-  checkWebsite(website: string): Promise<{ isScammer: boolean; warning: string }>;
+  checkWebsite(website: string): Promise<WebsiteResult>;
 
   readTab(tabName: string): Promise<void>;
   readApp(appid: number): Promise<void>;
