@@ -353,14 +353,16 @@ export class WalletController extends BaseController {
     addressType: AddressType,
     hdPath: string,
     accountCount = 1,
-    filterPubkey: string[] = []
+    filterPubkey: string[] = [],
+    connectionType: 'USB' | 'QR' = 'USB'
   ) => {
     const originKeyring = await keyringService.createKeyringWithKeystone(
       urType,
       urCbor,
       addressType,
       hdPath,
-      accountCount
+      accountCount,
+      connectionType
     );
 
     if (filterPubkey !== null && filterPubkey !== undefined && filterPubkey.length > 0) {
@@ -1792,6 +1794,8 @@ export class WalletController extends BaseController {
     return { account, keyring };
   };
 
+  // Keystone related functions
+  // genSignPsbtUr, parseSignPsbtUr, genSignMsgUr, parseSignMsgUr, getKeystoneConnectionType
   genSignPsbtUr = async (psbtHex: string) => {
     const { keyring } = await this.checkKeyringMethod('genSignPsbtUr');
     return await keyring.genSignPsbtUr!(psbtHex);
@@ -1838,6 +1842,11 @@ export class WalletController extends BaseController {
     const sig = await keyring.parseSignMsgUr!(type, cbor);
     sig.signature = Buffer.from(sig.signature, 'hex').toString('base64');
     return sig;
+  };
+
+  getKeystoneConnectionType = async () => {
+    const { keyring } = await this.checkKeyringMethod('getConnectionType');
+    return keyring.getConnectionType!();
   };
 
   getEnableSignData = async () => {

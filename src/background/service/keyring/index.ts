@@ -84,6 +84,7 @@ export interface Keyring {
   parseSignPsbtUr?(type: string, cbor: string): Promise<string>;
   genSignMsgUr?(publicKey: string, text: string): Promise<{ type: string; cbor: string; requestId: string }>;
   parseSignMsgUr?(type: string, cbor: string): Promise<{ requestId: string; publicKey: string; signature: string }>;
+  getConnectionType?(): 'USB' | 'QR';
 }
 
 class EmptyKeyring implements Keyring {
@@ -297,14 +298,15 @@ class KeyringService extends EventEmitter {
     urCbor: string,
     addressType: AddressType,
     hdPath: string,
-    accountCount: number
+    accountCount: number,
+    connectionType: 'USB' | 'QR' = 'USB'
   ) => {
     if (accountCount < 1) {
       throw new Error(i18n.t('account count must be greater than 0'));
     }
     await this.persistAllKeyrings();
     const tmpKeyring = new KeystoneKeyring();
-    await tmpKeyring.initFromUR(urType, urCbor);
+    await tmpKeyring.initFromUR(urType, urCbor, connectionType);
     if (hdPath.length >= 13) {
       tmpKeyring.changeChangeAddressHdPath(hdPath);
       tmpKeyring.addAccounts(accountCount);

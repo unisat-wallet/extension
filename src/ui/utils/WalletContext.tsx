@@ -119,7 +119,8 @@ export interface WalletController {
     addressType: AddressType,
     hdPath: string,
     accountCount: number,
-    filterPubkey?: string[]
+    filterPubkey?: string[],
+    connectionType?: 'USB' | 'QR'
   ): Promise<{ address: string; type: string }[]>;
   createTmpKeyringWithPrivateKey(privateKey: string, addressType: AddressType): Promise<WalletKeyring>;
   createTmpKeyringWithKeystone(
@@ -352,6 +353,7 @@ export interface WalletController {
     cbor: string,
     msgType?: string
   ): Promise<{ requestId: string; publicKey: string; signature: string }>;
+  getKeystoneConnectionType(): Promise<'USB' | 'QR'>;
 
   getEnableSignData(): Promise<boolean>;
   setEnableSignData(enable: boolean): Promise<void>;

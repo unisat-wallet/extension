@@ -1,5 +1,5 @@
 import bitcore from 'bitcore-lib';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { ADDRESS_TYPES } from '@/shared/constant';
@@ -11,10 +11,12 @@ import KeystoneLogoWithText from '@/ui/components/Keystone/LogoWithText';
 import KeystonePopover from '@/ui/components/Keystone/Popover';
 import KeystoneScan from '@/ui/components/Keystone/Scan';
 import KeystoneProductImg from '@/ui/components/Keystone/imgs/keystone-product.png';
+import KeystoneFetchKey from '@/ui/components/Keystone/usb/FetchKey';
 import { useImportAccountsFromKeystoneCallback } from '@/ui/state/global/hooks';
+
 import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
-import { ScanOutlined } from '@ant-design/icons';
+import { ScanOutlined, UsbOutlined } from '@ant-design/icons';
 import { AddressType } from '@unisat/wallet-sdk';
 
 import { useNavigate } from '../MainRoute';
@@ -24,11 +26,12 @@ interface ContextData {
     type: string;
     cbor: string;
   };
+  connectionType: 'USB' | 'QR';
   passphrase: string;
   customHdPath: string;
 }
 
-function Step1({ onNext }) {
+function Step1({ onNext, setIsUSB }) {
   const { state } = useLocation();
   const navigate = useNavigate();
 
@@ -48,7 +51,8 @@ function Step1({ onNext }) {
             background: 'linear-gradient(270deg, rgba(4, 5, 7, 0.00) 0.06%, #040507 8.94%)',
             position: 'relative',
             overflow: 'hidden'
-          }}>
+          }}
+        >
           <img
             src={KeystoneProductImg}
             style={{
@@ -69,7 +73,8 @@ function Step1({ onNext }) {
               position: 'relative',
               zIndex: 2,
               width: '50%'
-            }}>
+            }}
+          >
             <KeystoneLogo width={64} height={64} />
             <Text text="Keystone hardware wallet" preset="title" />
             <Text
@@ -89,9 +94,27 @@ function Step1({ onNext }) {
             </Row>
           </Column>
         </Column>
-        <Button preset="primary" style={{ color: colors.black, marginTop: '24px' }} onClick={onNext}>
+        <Button
+          preset="primary"
+          style={{ color: colors.black, marginTop: '24px' }}
+          onClick={() => {
+            setIsUSB(true);
+            onNext();
+          }}
+        >
+          <UsbOutlined style={{ marginRight: '8px' }} />
+          <Text text="Connect via USB" color="black" />
+        </Button>
+        <Button
+          preset="defaultV2"
+          style={{ color: colors.white, marginTop: '2px' }}
+          onClick={() => {
+            setIsUSB(false);
+            onNext();
+          }}
+        >
           <ScanOutlined style={{ marginRight: '8px' }} />
-          <Text text="Scan to connect" color="black" />
+          <Text text="Scan to connect" color="white" />
         </Button>
       </Content>
     </Layout>
@@ -114,6 +137,35 @@ function Step2({ onBack, onNext }) {
           <Text text="Scan the QR code displayed on your Keystone device" />
           <KeystoneScan onSucceed={onSucceed} size={360} />
           <Text text="You need to allow camera access to use this feature." preset="sub" />
+        </Column>
+      </Content>
+    </Layout>
+  );
+}
+
+function StepTwoUSB({ onBack, onNext }) {
+  const isCancelledRef = useRef(false);
+  const setIsCancelled = useCallback((value: boolean) => {
+    isCancelledRef.current = value;
+  }, []);
+
+  const onSucceed = useCallback(
+    async ({ type, cbor }) => {
+      onNext({ type, cbor });
+    },
+    [onNext]
+  );
+  return (
+    <Layout>
+      <Header title="Connect Keystone via USB" onBack={() => {
+        setIsCancelled(true);
+        onBack();
+      }} />
+      <Content>
+        <Column justifyCenter itemsCenter>
+          <KeystoneLogoWithText width={160} />
+          <Text text="Connect and unlock your Keystone" />
+          <KeystoneFetchKey onSucceed={onSucceed} isCancelledRef={isCancelledRef} size={180} />
         </Column>
       </Content>
     </Layout>
@@ -163,11 +215,12 @@ function Step3({
           addressType,
           accountCount,
           contextData.customHdPath,
-          filteredPubkeys
+          filteredPubkeys,
+          contextData.connectionType
         );
       } else {
         await wallet.getKeyrings();
-        await importAccounts(contextData.ur.type, contextData.ur.cbor, addressType, 1, contextData.customHdPath);
+        await importAccounts(contextData.ur.type, contextData.ur.cbor, addressType, 1, contextData.customHdPath, undefined, contextData.connectionType);
       }
     } catch (e) {
       setError((e as any).message);
@@ -416,7 +469,8 @@ export default function CreateKeystoneWalletScreen() {
       cbor: ''
     },
     passphrase: '',
-    customHdPath: ''
+    customHdPath: '',
+    connectionType: 'QR'
   });
 
   const updateContextData = (data: ContextData) => {
@@ -427,10 +481,26 @@ export default function CreateKeystoneWalletScreen() {
   };
 
   const [step, setStep] = useState(1);
+  const [isUSB, setIsUSB] = useState(true);
+
   if (step === 1) {
-    return <Step1 onNext={() => setStep(2)} />;
+    return <Step1 onNext={() => setStep(2)} setIsUSB={setIsUSB} />;
   }
   if (step === 2) {
+    if (isUSB) {
+      return <StepTwoUSB onBack={() => setStep(1)} onNext={({ type, cbor }) => {
+        setStep(3);
+        updateContextData({
+          ur: {
+            type,
+            cbor
+          },
+          passphrase: '',
+          customHdPath: '',
+          connectionType: 'USB'
+        });
+      }} />;
+    }
     return (
       <Step2
         onBack={() => setStep(1)}
@@ -442,7 +512,8 @@ export default function CreateKeystoneWalletScreen() {
               cbor
             },
             passphrase: '',
-            customHdPath: ''
+            customHdPath: '',
+            connectionType: 'QR'
           });
         }}
       />
