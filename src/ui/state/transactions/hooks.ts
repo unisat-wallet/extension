@@ -1,6 +1,6 @@
 import { useCallback, useMemo } from 'react';
 
-import { KEYRING_TYPE } from '@/shared/constant';
+import { CHAINS_MAP, ChainType, KEYRING_TYPE } from '@/shared/constant';
 import { RawTxInfo, ToAddressInfo } from '@/shared/types';
 import { useTools } from '@/ui/components/ActionComponent';
 import { useBTCUnit } from '@/ui/state/settings/hooks';
@@ -13,6 +13,12 @@ import { useAccountAddress, useCurrentAccount } from '../accounts/hooks';
 import { accountActions } from '../accounts/reducer';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { transactionsActions } from './reducer';
+
+
+function isFBByUnit (btcUnit: string ) {
+  return btcUnit === CHAINS_MAP[ChainType.FRACTAL_BITCOIN_MAINNET].unit || btcUnit === CHAINS_MAP[ChainType.FRACTAL_BITCOIN_TESTNET].unit
+}
+
 
 export function useTransactionsState(): AppState['transactions'] {
   return useAppSelector((state) => state.transactions);
@@ -93,8 +99,18 @@ export function usePrepareSendBTCCallback() {
       }
 
       const psbt = bitcoin.Psbt.fromHex(psbtHex);
+      // use the unknown keyValue to indicate FB tx in psbt for keystone 
+      if(isFBByUnit(btcUnit) && account.type === KEYRING_TYPE.KeystoneKeyring) {
+        const keysString = "chain";
+        // use ff as the keyType in the psbt global unknown
+        const key = Buffer.concat([Buffer.from('ff', 'hex'), Buffer.from(keysString)])
+        psbt.addUnknownKeyValToGlobal({key, value: Buffer.from(btcUnit.toLowerCase())})
+        psbtHex  = psbt.toHex();
+      }
+
       const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction(true).toHex();
       const fee = account.type === KEYRING_TYPE.KeystoneKeyring ? 0 : psbt.getFee();
+      
       dispatch(
         transactionsActions.updateBitcoinTx({
           rawtx,
