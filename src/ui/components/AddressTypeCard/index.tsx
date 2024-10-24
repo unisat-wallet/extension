@@ -1,6 +1,7 @@
 import { ReactEventHandler } from 'react';
 
 import { AddressAssets } from '@/shared/types';
+import { useBTCUnit, useChain } from '@/ui/state/settings/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { satoshisToBTC } from '@/ui/utils';
 
@@ -8,9 +9,9 @@ import { Card } from '../Card';
 import { Column } from '../Column';
 import { CopyableAddress } from '../CopyableAddress';
 import { Icon } from '../Icon';
+import { Image } from '../Image';
 import { Row } from '../Row';
 import { Text } from '../Text';
-import { useBTCUnit } from '@/ui/state/settings/hooks';
 
 interface AddressTypeCardProps {
   label: string;
@@ -23,6 +24,8 @@ export function AddressTypeCard(props: AddressTypeCardProps) {
   const btcUnit = useBTCUnit();
   const { onClick, label, address, checked, assets } = props;
   const hasVault = Boolean(assets.satoshis && assets.satoshis > 0);
+
+  const chain = useChain();
   return (
     <Card px="zero" py="zero" gap="zero" rounded onClick={onClick}>
       <Column full>
@@ -38,7 +41,7 @@ export function AddressTypeCard(props: AddressTypeCardProps) {
         {hasVault && (
           <Row justifyBetween bg="bg3" roundedBottom px="md" py="md">
             <Row justifyCenter>
-              <Icon icon="btc" size={fontSizes.iconMiddle} />
+              <Image src={chain.icon} size={fontSizes.iconMiddle} />
               <Text text={`${assets.total_btc} ${btcUnit}`} color="yellow" />
             </Row>
             <Row>
