@@ -1,28 +1,17 @@
 import { ethErrors } from 'eth-rpc-errors';
 
-import ReadyPromise from '@/content-script/pageProvider/readyPromise';
-import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
 import Web3API from '@/shared/web3/Web3API';
 
-import { OpnetProvider } from './index';
+import { OpnetProvider, OpnetProviderPrivate } from './index';
 
 class PushEventHandlers {
     provider: OpnetProvider;
 
-    _unisatProviderPrivate: any;
+    _unisatProviderPrivate: OpnetProviderPrivate;
 
     constructor(
         provider: OpnetProvider,
-        _opnetProviderPrivate: {
-            _selectedAddress: string | null;
-            _network: string | null;
-            _isConnected: boolean;
-            _initialized: boolean;
-            _isUnlocked: boolean;
-            _pushEventHandlers: PushEventHandlers | null;
-            _requestPromise: ReadyPromise;
-            _bcm: BroadcastChannelMessage;
-        }
+        _opnetProviderPrivate: OpnetProviderPrivate
     ) {
         this.provider = provider;
         this._unisatProviderPrivate = _opnetProviderPrivate;

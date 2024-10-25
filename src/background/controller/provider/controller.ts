@@ -3,7 +3,7 @@ import { CHAINS, CHAINS_MAP, ChainType, NETWORK_TYPES, VERSION } from '@/shared/
 
 import { IDeploymentParametersWithoutSigner } from '@/content-script/pageProvider/Web3Provider';
 import { NetworkType } from '@/shared/types';
-import { RequestData } from '@/shared/types/Request.js';
+import { ProviderControllerRequest } from '@/shared/types/Request.js';
 import { getChainInfo } from '@/shared/utils';
 import Web3API from '@/shared/web3/Web3API';
 import { DetailedInteractionParameters } from '@/shared/web3/interfaces/DetailedInteractionParameters';
@@ -209,7 +209,7 @@ class ProviderController extends BaseController {
     };
 
     // @ts-ignore
-    @Reflect.metadata('APPROVAL', ['SignPsbt', (_req: RequestData) => {
+    @Reflect.metadata('APPROVAL', ['SignPsbt', (_req: ProviderControllerRequest) => {
         //const { data: { params: { toAddress, satoshis } } } = req;
     }])
     sendBitcoin = async ({ approvalRes: { psbtHex } }: {
@@ -222,7 +222,7 @@ class ProviderController extends BaseController {
     };
 
     // @ts-ignore
-    @Reflect.metadata('APPROVAL', ['SignPsbt', (_req: RequestData) => {
+    @Reflect.metadata('APPROVAL', ['SignPsbt', (_req: ProviderControllerRequest) => {
         //const { data: { params: { toAddress, satoshis } } } = req;
     }])
     sendInscription = async ({ approvalRes: { psbtHex } }: {
@@ -235,7 +235,7 @@ class ProviderController extends BaseController {
     };
 
     // @ts-ignore
-    @Reflect.metadata('APPROVAL', ['SignInteraction', (_req: RequestData) => {
+    @Reflect.metadata('APPROVAL', ['SignInteraction', (_req: ProviderControllerRequest) => {
         const interactionParams = _req.data.params as DetailedInteractionParameters;
         if (!Web3API.isValidAddress(interactionParams.interactionParameters.to)) {
             throw new Error('Invalid contract address. Are you on the right network / are you using segwit?');
@@ -251,7 +251,7 @@ class ProviderController extends BaseController {
     };
 
     // @ts-ignore
-    @Reflect.metadata('APPROVAL', ['SignInteraction', (_req: RequestData) => {
+    @Reflect.metadata('APPROVAL', ['SignInteraction', (_req: ProviderControllerRequest) => {
         const interactionParams = _req.data.params as DetailedInteractionParameters;
         if (!Web3API.isValidAddress(interactionParams.interactionParameters.to)) {
             throw new Error('Invalid contract address. Are you on the right network / are you using segwit?');
@@ -268,7 +268,7 @@ class ProviderController extends BaseController {
     };
 
     // @ts-ignore
-    @Reflect.metadata('APPROVAL', ['SignDeployment', (_req: RequestData) => {
+    @Reflect.metadata('APPROVAL', ['SignDeployment', (_req: ProviderControllerRequest) => {
         const interactionParams = _req.data.params as IDeploymentParametersWithoutSigner;
         if (!interactionParams.bytecode) {
             throw new Error('Invalid bytecode');

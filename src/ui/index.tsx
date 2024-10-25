@@ -52,7 +52,7 @@ if (
           animation: redraw 1s linear infinite;
         }
       `);
-            (document as any).adoptedStyleSheets = [...(document as any).adoptedStyleSheets, fontFaceSheet];
+            (document).adoptedStyleSheets = [...(document).adoptedStyleSheets, fontFaceSheet];
         }
     });
 }
@@ -63,39 +63,21 @@ const portMessageChannel = new PortMessage();
 
 portMessageChannel.connect('popup');
 
+// TODO (typing): Since the functions passed into the proxy are determined at runtime,
+// it may not worth to define union of types here. (Check using generics)
 const wallet: Record<string, any> = new Proxy(
     {},
     {
         get(_, key) {
-            switch (key) {
-                case 'openapi':
-                    return new Proxy(
-                        {},
-                        {
-                            get(_, key) {
-                                if (typeof key !== 'string') throw new Error('Invalid key');
+            return function (...params: any) {
+                if (typeof key !== 'string') throw new Error('Invalid key');
 
-                                return function (...params: any) {
-                                    return portMessageChannel.request({
-                                        type: 'openapi',
-                                        method: key,
-                                        params
-                                    });
-                                };
-                            }
-                        }
-                    );
-                default:
-                    return function (...params: any) {
-                        if (typeof key !== 'string') throw new Error('Invalid key');
-
-                        return portMessageChannel.request({
-                            type: 'controller',
-                            method: key,
-                            params
-                        });
-                    };
-            }
+                return portMessageChannel.request({
+                    type: 'controller',
+                    method: key,
+                    params
+                });
+            };
         }
     }
 );

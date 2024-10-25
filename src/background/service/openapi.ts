@@ -3,12 +3,15 @@ import randomstring from 'randomstring';
 import { createPersistStore } from '@/background/utils';
 import { CHAINS_MAP, CHANNEL, VERSION } from '@/shared/constant';
 import {
+    AddressRecentHistory,
     AddressSummary,
     AppSummary,
     BitcoinBalance,
     BtcPrice,
+    BuyBtcChannel,
     DecodedPsbt,
     FeeSummary,
+    GroupAsset,
     UTXO,
     VersionDetail,
     WalletConfig
@@ -16,6 +19,12 @@ import {
 import Web3API from '@/shared/web3/Web3API';
 
 import { preferenceService } from '.';
+
+interface ApiResponse<T> {
+    code: number;
+    msg: string;
+    data: T;
+}
 
 interface OpenApiStore {
     deviceId: string;
@@ -73,8 +82,8 @@ export class OpenApiService {
         this.addressFlag = flag;
     };
 
-    getRespData = async (res: any) => {
-        let jsonRes: { code: number; msg: string; data: any };
+    getRespData = async <T>(res: Response): Promise<T> => {
+        let jsonRes: ApiResponse<T>;
 
         if (!res) throw new Error('Network error, no response');
         if (res.status !== 200) throw new Error(`Network error with status: ${res.status}`);
@@ -91,7 +100,7 @@ export class OpenApiService {
         return jsonRes.data;
     };
 
-    httpGet = async (route: string, params: object, endpoint?: string) => {
+    httpGet = async <T>(route: string, params: object, endpoint?: string): Promise<T> => {
         if (!endpoint) {
             endpoint = this.endpoint;
         }
@@ -121,10 +130,10 @@ export class OpenApiService {
             throw new Error(`Network error: ${e.message}`);
         }
 
-        return this.getRespData(res);
+        return this.getRespData<T>(res);
     };
 
-    httpPost = async (route: string, params: object) => {
+    httpPost = async <T>(route: string, params: object): Promise<T> => {
         const url = this.endpoint + route;
         const headers = new Headers();
         headers.append('X-Client', 'OP_WALLET');
@@ -147,57 +156,57 @@ export class OpenApiService {
             throw new Error(`Network error: ${(e as Error).message}`);
         }
 
-        return this.getRespData(res);
+        return this.getRespData<T>(res);
     };
 
     async getWalletConfig(): Promise<WalletConfig> {
-        return this.httpGet('/v5/default/config', {}, 'https://wallet-api.opnet.org');
+        return this.httpGet<WalletConfig>('/v5/default/config', {}, 'https://wallet-api.opnet.org');
     }
 
     async getAddressSummary(address: string): Promise<AddressSummary> {
-        return this.httpGet('/v5/address/summary', {
+        return this.httpGet<AddressSummary>('/v5/address/summary', {
             address
         });
     }
 
     async getAddressBalance(address: string): Promise<BitcoinBalance> {
-        return this.httpGet('/v5/address/balance', {
+        return this.httpGet<BitcoinBalance>('/v5/address/balance', {
             address
         });
     }
 
     async findGroupAssets(
         groups: { type: number; address_arr: string[] }[]
-    ): Promise<{ type: number; address_arr: string[]; satoshis_arr: number[] }[]> {
-        return this.httpPost('/v5/address/find-group-assets', {
+    ): Promise<GroupAsset[]> {
+        return this.httpPost<GroupAsset[]>('/v5/address/find-group-assets', {
             groups
         });
     }
 
     async getBTCUtxos(address: string): Promise<UTXO[]> {
-        return this.httpGet('/v5/address/btc-utxo', {
+        return this.httpGet<UTXO[]>('/v5/address/btc-utxo', {
             address
         });
     }
 
     async getAppSummary(): Promise<AppSummary> {
-        return this.httpGet('/v5/default/app-summary-v2', {});
+        return this.httpGet<AppSummary>('/v5/default/app-summary-v2', {});
     }
 
     async pushTx(rawtx: string): Promise<string> {
-        return this.httpPost('/v5/tx/broadcast', {
+        return this.httpPost<string>('/v5/tx/broadcast', {
             rawtx
         });
     }
 
     async getFeeSummary(): Promise<FeeSummary> {
-        return this.httpGet('/v5/default/fee-summary', {});
+        return this.httpGet<FeeSummary>('/v5/default/fee-summary', {});
     }
 
     async refreshBtcPrice() {
         try {
             this.isRefreshingBtcPrice = true;
-            const result: BtcPrice = await this.httpGet('/v5/default/btc-price', {});
+            const result: BtcPrice = await this.httpGet<BtcPrice>('/v5/default/btc-price', {});
             // test
             // const result: BtcPrice = await Promise.resolve({ price: 58145.19716040577, updateTime: 1634160000000 });
 
@@ -229,29 +238,29 @@ export class OpenApiService {
     }
 
     async decodePsbt(psbtHex: string, website: string): Promise<DecodedPsbt> {
-        return this.httpPost('/v5/tx/decode2', { psbtHex, website });
+        return this.httpPost<DecodedPsbt>('/v5/tx/decode2', { psbtHex, website });
     }
 
-    async getBuyBtcChannelList(): Promise<{ channel: string }[]> {
-        return this.httpGet('/v5/buy-btc/channel-list', {});
+    async getBuyBtcChannelList(): Promise<BuyBtcChannel[]> {
+        return this.httpGet<BuyBtcChannel[]>('/v5/buy-btc/channel-list', {});
     }
 
     async createPaymentUrl(address: string, channel: string): Promise<string> {
-        return this.httpPost('/v5/buy-btc/create', { address, channel });
+        return this.httpPost<string>('/v5/buy-btc/create', { address, channel });
     }
 
     async checkWebsite(website: string): Promise<{ isScammer: boolean; warning: string }> {
-        return this.httpPost('/v5/default/check-website', { website });
+        return this.httpPost<{ isScammer: boolean; warning: string }>('/v5/default/check-website', { website });
     }
 
     async getVersionDetail(version: string): Promise<VersionDetail> {
-        return this.httpGet('/v5/version/detail', {
+        return this.httpGet<VersionDetail>('/v5/version/detail', {
             version
         });
     }
 
-    async getAddressRecentHistory(params: { address: string; start: number; limit: number }) {
-        return this.httpGet('/v5/address/history', params);
+    async getAddressRecentHistory(params: { address: string; start: number; limit: number }): Promise<AddressRecentHistory> {
+        return this.httpGet<AddressRecentHistory>('/v5/address/history', params);
     }
 }
 

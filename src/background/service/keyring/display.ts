@@ -5,11 +5,13 @@ class DisplayKeyring {
     type = '';
     hdPath = '';
 
+    // TODO (typing): Check if it's possible to add the fields indicated with @ts-ignore into the Keyring in wallet-sdk.
     constructor(keyring: Keyring) {
         // @ts-ignore
         this.accounts = keyring.accounts || [];
         this.type = keyring.type;
-        this.hdPath = (keyring as any).hdPath;
+        // @ts-ignore
+        this.hdPath = (keyring).hdPath;
     }
 
     unlock = async (): Promise<void> => {

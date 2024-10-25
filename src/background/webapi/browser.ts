@@ -1,5 +1,16 @@
 import { MANIFEST_VERSION } from '@/shared/constant';
 
+export interface WindowProps {
+    focused?: boolean;
+    url?: string;
+    type?: 'normal' | 'popup' | 'panel' | 'app' | 'devtools';
+    width?: number;
+    height?: number;
+    left?: number;
+    top?: number;
+    state?: 'normal' | 'minimized' | 'maximized' | 'fullscreen' | 'docked';
+}
+
 function getBrowser() {
     if (typeof globalThis.browser === 'undefined') {
         return chrome;
@@ -10,7 +21,7 @@ function getBrowser() {
 
 const browser = getBrowser();
 
-export async function browserWindowsGetCurrent(params?: any) {
+export async function browserWindowsGetCurrent(params?: {windowTypes?: string[];}) {
     if (MANIFEST_VERSION === 'mv2') {
         return new Promise((resolve, reject) => {
             browser.windows.getCurrent(params, (val) => {
@@ -22,7 +33,7 @@ export async function browserWindowsGetCurrent(params?: any) {
     }
 }
 
-export async function browserWindowsCreate(params?: any) {
+export async function browserWindowsCreate(params?: WindowProps) {
     if (MANIFEST_VERSION === 'mv2') {
         return new Promise((resolve, reject) => {
             browser.windows.create(params, (val) => {
@@ -34,7 +45,7 @@ export async function browserWindowsCreate(params?: any) {
     }
 }
 
-export async function browserWindowsUpdate(windowId: number, updateInfo: any) {
+export async function browserWindowsUpdate(windowId: number, updateInfo: WindowProps) {
     if (MANIFEST_VERSION == 'mv2') {
         return new Promise((resolve, reject) => {
             browser.windows.update(windowId, updateInfo, (val) => {
@@ -58,7 +69,7 @@ export async function browserWindowsRemove(windowId: number) {
     }
 }
 
-export async function browserStorageLocalGet(val: any) {
+export async function browserStorageLocalGet(val?: string | string[] | Record<string, unknown> | null) {
     if (MANIFEST_VERSION === 'mv2') {
         return new Promise((resolve, reject) => {
             browser.storage.local.get(val, (res) => {
@@ -70,7 +81,7 @@ export async function browserStorageLocalGet(val: any) {
     }
 }
 
-export async function browserStorageLocalSet(val: any) {
+export async function browserStorageLocalSet(val: Record<string, string | number | boolean | null | unknown[] | Record<string, unknown>>) {
     if (MANIFEST_VERSION === 'mv2') {
         return new Promise((resolve, reject) => {
             browser.storage.local.set(val, (res) => {
@@ -94,7 +105,7 @@ export async function browserTabsGetCurrent() {
     }
 }
 
-export async function browserTabsQuery(params: any) {
+export async function browserTabsQuery(params: {active?: boolean; currentWindow?: boolean;}) {
     if (MANIFEST_VERSION === 'mv2') {
         return new Promise((resolve, reject) => {
             browser.tabs.query(params, (val) => {
@@ -106,7 +117,7 @@ export async function browserTabsQuery(params: any) {
     }
 }
 
-export async function browserTabsCreate(params: any) {
+export async function browserTabsCreate(params: {active: boolean; url: string;}) {
     if (MANIFEST_VERSION === 'mv2') {
         return new Promise((resolve, reject) => {
             browser.tabs.create(params, (val) => {
@@ -118,7 +129,7 @@ export async function browserTabsCreate(params: any) {
     }
 }
 
-export async function browserTabsUpdate(tabId: number, params: any) {
+export async function browserTabsUpdate(tabId: number, params: {active: boolean;}) {
     if (MANIFEST_VERSION === 'mv2') {
         return new Promise((resolve, reject) => {
             browser.tabs.update(tabId, params, (val) => {

@@ -1,6 +1,6 @@
 import { EVENTS, MANIFEST_VERSION } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
-import { RequestParams } from '@/shared/types/Request.js';
+import { ProviderControllerRequest, RequestParams } from '@/shared/types/Request.js';
 import { Message } from '@/shared/utils';
 import { openExtensionInTab } from '@/ui/features/browser/tabs';
 
@@ -114,10 +114,14 @@ browserRuntimeOnConnect((port: chrome.runtime.Port) => {
         }
 
         const session = sessionService.getOrCreateSession(sessionId);
-        const req = { data, session };
+        const req: ProviderControllerRequest = { data, session: {
+            origin: session.origin,
+            name: session.name,
+            icon: session.icon
+        }};
 
         // for background push to respective page
-        req.session.pushMessage = (event: string, data: RequestParams) => {
+        session.pushMessage = (event: string, data: RequestParams) => {
             pm.send('message', { event, data });
         };
 

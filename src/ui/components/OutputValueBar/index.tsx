@@ -36,7 +36,7 @@ export function OutputValueBar({
     const [currentValue, setCurrentValue] = useState(defaultValue);
 
     useEffect(() => {
-        let val: any = defaultValue;
+        let val = defaultValue;
         if (optionIndex === FeeRateType.CUSTOM) {
             if (!inputVal) {
                 onChange(0);
@@ -44,7 +44,7 @@ export function OutputValueBar({
                 return;
             }
             val = parseInt(inputVal);
-        } else if (options.length > 0) {
+        } else if ((options.length) > 0 && (options[optionIndex].value)) {
             val = options[optionIndex].value;
         }
         // if (val + '' != inputVal) {

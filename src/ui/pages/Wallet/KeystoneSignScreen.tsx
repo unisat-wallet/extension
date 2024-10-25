@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { ParsedSignMsgUr, ParsedSignPsbtUr } from '@/shared/types';
 import { Button, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import KeystoneDisplay from '@/ui/components/Keystone/Display';
@@ -15,7 +16,7 @@ interface Props {
     isFinalize?: boolean;
     signatureText?: string;
     id?: number;
-    onSuccess?: (data: { psbtHex?: string; rawtx?: string; signature?: string }) => void;
+    onSuccess?: (data: ParsedSignPsbtUr | ParsedSignMsgUr) => void;
     onBack: () => void;
 }
 

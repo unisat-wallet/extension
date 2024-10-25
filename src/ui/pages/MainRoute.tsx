@@ -289,6 +289,8 @@ export const routes: Routes = {
     }
 };
 
+// TODO (typing): Check again but it looks like that we need to have a map between 
+// RouteTypes and their data while calling navigate function 
 export type UseNavigate<T extends RouteTypes> = (routKey: T, state?: any) => void;
 
 export function useNavigate<T extends RouteTypes>(): UseNavigate<T> {

@@ -68,7 +68,7 @@ export function Step1_Import({
         event.preventDefault();
     };
 
-    const onChange = (e: any, index: any) => {
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const newKeys = [...keys];
         newKeys.splice(index, 1, e.target.value);
         setKeys(newKeys);

@@ -6,23 +6,20 @@ import * as oldEncryptor from 'browser-passworder';
 import { EventEmitter } from 'events';
 import log from 'loglevel';
 
-import {
-    InteractionParametersWithoutSigner,
-    IWrapParametersWithoutSigner
-} from '@/content-script/pageProvider/Web3Provider.js';
 import { ADDRESS_TYPES, KEYRING_TYPE } from '@/shared/constant';
 import { AddressType } from '@/shared/types';
 import * as encryptor from '@btc-vision/passworder';
-import { HdKeyring, IKeyringBase, KeystoneKeyring, SimpleKeyring } from '@btc-vision/wallet-sdk';
+import { DeserializeOption, DeserializeOptionKeystone, HdKeyring, IKeyringBase, KeyringOptions, KeystoneKeyring, SimpleKeyring, SimpleKeyringOptions } from '@btc-vision/wallet-sdk';
 import { bitcoin } from '@btc-vision/wallet-sdk/lib/bitcoin-core';
 import { ObservableStore } from '@metamask/obs-store';
 
-import {
-    DeserializeOption,
-    DeserializeOptionKeystone,
-    KeyringOptions,
-    SimpleKeyringOptions
-} from '../../../../../wallet-sdk/src';
+// TODO (typing): The below was the original version, how does this work although these files do not exist.
+// import {
+//     DeserializeOption,
+//     DeserializeOptionKeystone,
+//     KeyringOptions,
+//     SimpleKeyringOptions
+// } from '../../../../../wallet-sdk/src';
 import i18n from '../i18n';
 import preference from '../preference';
 import DisplayKeyring from './display';
@@ -41,8 +38,8 @@ export const KEYRING_SDK_TYPES = {
 
 interface MemStoreState {
     isUnlocked: boolean;
-    keyringTypes: any[];
-    keyrings: any[];
+    keyringTypes: string[];
+    keyrings: DisplayedKeyring[];
     preMnemonics: string;
 }
 
@@ -131,6 +128,9 @@ export type Keyring =
     parseSignMsgUr?(type: string, cbor: string): Promise<{ requestId: string; publicKey: string; signature: string }>;
 }*/
 
+// TODO (typing): signInteraction, wrap and signAndBroadcastInteraction functions of EmptyKeyring and KeyringService are not used explicity.
+// For now, removed those functions from both EmptyKeyring and KeyringService classes.
+// If there is any reason for keeping them we should undo removing.
 class EmptyKeyring extends IKeyringBase<{ network: Network }> {
     static type = KEYRING_TYPE.Empty;
     type = KEYRING_TYPE.Empty;
@@ -148,18 +148,6 @@ class EmptyKeyring extends IKeyringBase<{ network: Network }> {
     }
 
     signTransaction(psbt: bitcoin.Psbt, inputs: ToSignInput[]): bitcoin.Psbt {
-        throw new Error('Method not implemented.');
-    }
-
-    signInteraction(interactionParameters: InteractionParametersWithoutSigner): Promise<any> {
-        throw new Error('Method not implemented.');
-    }
-
-    wrap(IWrapParameters: IWrapParametersWithoutSigner): Promise<any> {
-        throw new Error('Method not implemented.');
-    }
-
-    signAndBroadcastInteraction(interactionParameters: InteractionParametersWithoutSigner): Promise<any> {
         throw new Error('Method not implemented.');
     }
 
@@ -685,24 +673,6 @@ class KeyringService extends EventEmitter {
     // SIGNING METHODS
     //
 
-    signInteraction = (
-        address: string,
-        keyringType: string,
-        interactionParameters: InteractionParametersWithoutSigner
-    ) => {
-        console.log(true);
-        return true;
-    };
-
-    signAndBroadcastInteraction = (
-        address: string,
-        keyringType: string,
-        interactionParameters: InteractionParametersWithoutSigner
-    ) => {
-        console.log(true);
-        return true;
-    };
-
     /**
      * Sign Message
      *
@@ -823,7 +793,7 @@ class KeyringService extends EventEmitter {
      * @param {Object} serialized - The serialized keyring.
      * @returns {Promise<Keyring>} The deserialized keyring.
      */
-    restoreKeyring = async (serialized: any): Promise<Keyring> => {
+    restoreKeyring = async (serialized: SavedVault): Promise<Keyring> => {
         const { keyring } = this._restoreKeyring(serialized);
         await this._updateMemStoreKeyrings();
         return keyring;

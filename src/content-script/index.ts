@@ -3,6 +3,7 @@ import { nanoid } from 'nanoid';
 
 import { RequestParams } from '@/shared/types/Request.js';
 import { Message } from '@/shared/utils';
+import { SendMessagePayload } from '@/shared/types/Message';
 
 const channelName = nanoid();
 
@@ -27,7 +28,7 @@ function injectScript() {
         });
 
         // background notification
-        pm.on('message', (data) => {
+        pm.on('message', (data: SendMessagePayload) => {
             bcm.send('message', data);
         });
 

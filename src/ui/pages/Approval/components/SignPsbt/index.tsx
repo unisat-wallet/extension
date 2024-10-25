@@ -2,7 +2,7 @@ import { Tooltip } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { KEYRING_TYPE } from '@/shared/constant';
-import { DecodedPsbt, RawTxInfo, SignPsbtOptions, TickPriceItem, ToSignInput, TxType } from '@/shared/types';
+import { DecodedPsbt, ParsedSignPsbtUr, RawTxInfo, SignPsbtOptions, TickPriceItem, ToSignInput, TxType } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressText } from '@/ui/components/AddressText';
@@ -490,8 +490,8 @@ export default function SignPsbt({
                 type="psbt"
                 data={txInfo.psbtHex}
                 isFinalize={type !== TxType.SIGN_TX}
-                onSuccess={(data) => {
-                    originalHandleConfirm(data as any);
+                onSuccess={(data: ParsedSignPsbtUr) => {
+                    originalHandleConfirm(data);
                 }}
                 onBack={() => {
                     setIsKeystoneSigning(false);

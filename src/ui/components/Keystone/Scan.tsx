@@ -18,7 +18,7 @@ export default function KeystoneScan({
     const [progress, setProgress] = useState(0);
     const { AnimatedQRScanner, setIsDone, isDone } = useAnimatedQRScanner();
 
-    const onError = useCallback((e: any) => {
+    const onError = useCallback((e: string) => {
         console.error(e);
         setIsError(true);
         setProgress(0);

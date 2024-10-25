@@ -1,6 +1,7 @@
 import { browserRuntimeConnect } from '@/background/webapi/browser';
-import { ListenCallback, RequestData } from '@/shared/types/Request.js';
+import { ListenCallback } from '@/shared/types/Request.js';
 
+import { SendPayload } from '../../types/Message';
 import Message from './index';
 
 
@@ -48,7 +49,7 @@ class PortMessage extends Message {
         return this;
     };
 
-    send = (type: string, data: RequestData) => {
+    send = (type: string, data: SendPayload) => {
         if (!this.port) return;
 
         try {

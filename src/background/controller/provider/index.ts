@@ -2,8 +2,8 @@ import { ethErrors } from 'eth-rpc-errors';
 
 import { keyringService, sessionService } from '@/background/service';
 import { tab } from '@/background/webapi';
-import { RequestData } from '@/shared/types/Request.js';
 
+import { ProviderControllerRequest } from '@/shared/types/Request';
 import internalMethod from './internalMethod';
 import rpcFlow from './rpcFlow';
 
@@ -12,7 +12,7 @@ tab.on('tabRemove', (id) => {
     sessionService.deleteSession(id);
 });
 
-export default (req: RequestData): Promise<unknown> => {
+export default (req: ProviderControllerRequest): Promise<unknown> => {
     const method = req.data.method;
 
     // @ts-ignore

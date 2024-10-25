@@ -52,7 +52,7 @@ module.exports = {
         '@typescript-eslint/no-inferrable-types': 'off',
         '@typescript-eslint/no-empty-function': 'off',
         '@typescript-eslint/ban-types': 'off',
-        'react/react-in-jsx-scope': 'error',
+        'react/react-in-jsx-scope': 'off',
         '@typescript-eslint/no-floating-promises': 'error',
         '@typescript-eslint/restrict-plus-operands': 'error'
     },

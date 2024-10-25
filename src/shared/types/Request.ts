@@ -4,9 +4,15 @@ export interface RequestParams {
     readonly params?: object;
 }
 
-export interface RequestData {
+export interface ProviderControllerRequest {
     data: RequestParams;
-    event?: string;
+    session: Session;
+}
+
+export interface Session {
+    origin: string;
+    name: string;
+    icon: string;
 }
 
 export type ListenCallback = ((data: RequestParams) => Promise<unknown>) | undefined;

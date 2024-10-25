@@ -4,21 +4,8 @@ import Events from 'events';
 
 import { winMgr } from '@/background/webapi';
 import { IS_CHROME, IS_LINUX } from '@/shared/constant';
-
-interface Approval {
-    data: {
-        state: number;
-        params?: any;
-        origin?: string;
-        approvalComponent: string;
-        requestDefer?: Promise<any>;
-        approvalType: string;
-    };
-
-    resolve(params?: any): void;
-
-    reject(err: EthereumProviderError<any>): void;
-}
+import { Approval, ApprovalData, ApprovalResponse } from '@/shared/types/Approval';
+import { WindowProps } from '../webapi/browser';
 
 // something need user approval in window
 // should only open one window, unfocus will close the current notification
@@ -50,7 +37,7 @@ class NotificationService extends Events {
 
     getApproval = () => this.approval?.data;
 
-    resolveApproval = (data?: any, forceReject = false) => {
+    resolveApproval = (data?: ApprovalResponse, forceReject = false) => {
         if (forceReject) {
             this.approval?.reject(new EthereumProviderError(4001, 'User Cancel'));
         } else {
@@ -65,7 +52,7 @@ class NotificationService extends Events {
         if (isInternal) {
             this.approval?.reject(ethErrors.rpc.internal(err));
         } else {
-            this.approval?.reject(ethErrors.provider.userRejectedRequest<any>(err));
+            this.approval?.reject(ethErrors.provider.userRejectedRequest(err));
         }
 
         await this.clear(stay);
@@ -73,12 +60,7 @@ class NotificationService extends Events {
     };
 
     // currently it only support one approval at the same time
-    requestApproval = async (data, winProps?): Promise<any> => {
-        // if (preferenceService.getPopupOpen()) {
-        //   this.approval = null;
-        //   throw ethErrors.provider.userRejectedRequest('please request after user close current popup');
-        // }
-
+    requestApproval = async (data: ApprovalData, winProps: WindowProps): Promise<ApprovalResponse | undefined> => {
         // We will just override the existing open approval with the new one coming in
         return new Promise((resolve, reject) => {
             this.approval = {
@@ -107,7 +89,7 @@ class NotificationService extends Events {
         this.isLocked = true;
     };
 
-    openNotification = (winProps) => {
+    openNotification = (winProps: WindowProps) => {
         // if (this.isLocked) return;
         // this.lock();
         if (this.notifiWindowId) {

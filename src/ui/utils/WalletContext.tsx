@@ -14,6 +14,8 @@ import {
     DecodedPsbt,
     FeeSummary,
     NetworkType,
+    ParsedSignMsgUr,
+    ParsedSignPsbtUr,
     SignPsbtOptions,
     TickPriceItem,
     TxHistoryItem,
@@ -21,11 +23,12 @@ import {
     WalletConfig,
     WalletKeyring
 } from '@/shared/types';
+import { ApprovalData, ApprovalResponse } from '@/shared/types/Approval';
 import { AddressType, UnspentOutput } from '@btc-vision/wallet-sdk';
 import { bitcoin } from '@btc-vision/wallet-sdk/lib/bitcoin-core';
+import { SavedVault } from '../../background/service/keyring';
 
 export interface WalletController {
-    openapi: Record<string, (...params: any) => Promise<any>>;
     changePassword: (password: string, newPassword: string) => Promise<void>;
     getAllAlianName: () => (ContactBookItem | undefined)[];
     getContactsByMap: () => ContactBookStore;
@@ -44,11 +47,11 @@ export interface WalletController {
 
     isBooted(): Promise<boolean>;
 
-    getApproval(): Promise<any>;
+    getApproval(): Promise<ApprovalData | undefined>;
 
-    resolveApproval(data?: any, data2?: any): Promise<void>;
+    resolveApproval(data?: ApprovalResponse, forceReject?: boolean): Promise<void>;
 
-    rejectApproval(data?: any, data2?: any, data3?: any): Promise<void>;
+    rejectApproval(err?: string, stay?: boolean, isInternal?: boolean): Promise<void>;
 
     hasVault(): Promise<boolean>;
 
@@ -99,7 +102,7 @@ export interface WalletController {
 
     createKeyringWithPrivateKey(data: string, addressType: AddressType, alianName?: string): Promise<Account[]>;
 
-    getPreMnemonics(): Promise<any>;
+    getPreMnemonics(): Promise<SavedVault[] | null>;
 
     generatePreMnemonic(): Promise<string>;
 
@@ -257,10 +260,7 @@ export interface WalletController {
         type: string,
         cbor: string,
         isFinalize?: boolean
-    ): Promise<{
-        psbtHex: string;
-        rawTx: string;
-    }>;
+    ): Promise<ParsedSignPsbtUr>;
 
     genSignMsgUr(text: string, msgType?: string): Promise<{ type: string; cbor: string; requestId: string }>;
 
@@ -268,7 +268,7 @@ export interface WalletController {
         type: string,
         cbor: string,
         msgType?: string
-    ): Promise<{ requestId: string; publicKey: string; signature: string }>;
+    ): Promise<ParsedSignMsgUr>;
 
     getEnableSignData(): Promise<boolean>;
 

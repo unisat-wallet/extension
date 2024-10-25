@@ -3,7 +3,7 @@ import { ethErrors, serializeError } from 'eth-rpc-errors';
 import { EventEmitter } from 'events';
 import { BroadcastedTransaction } from 'opnet';
 
-import { TxType } from '@/shared/types';
+import { SignPsbtOptions, TxType } from '@/shared/types';
 import { RequestParams } from '@/shared/types/Request.js';
 import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
 import Web3API from '@/shared/web3/Web3API';
@@ -21,6 +21,7 @@ import {
 import PushEventHandlers from './pushEventHandlers';
 import ReadyPromise from './readyPromise';
 import { $, domReadyCall } from './utils';
+import { ProviderState } from '@/shared/types/Provider';
 
 declare global {
     interface Window {
@@ -52,7 +53,7 @@ interface StateProvider {
     isPermanentlyDisconnected: boolean;
 }
 
-const _opnetPrividerPrivate: {
+export interface OpnetProviderPrivate {
     _selectedAddress: string | null;
     _network: string | null;
     _isConnected: boolean;
@@ -64,7 +65,9 @@ const _opnetPrividerPrivate: {
     _pushEventHandlers: PushEventHandlers | null;
     _requestPromise: ReadyPromise;
     _bcm: BroadcastChannelMessage;
-} = {
+}
+
+const _opnetPrividerPrivate: OpnetProviderPrivate = {
     _selectedAddress: null,
     _network: null,
     _isConnected: false,
@@ -116,9 +119,9 @@ export class OpnetProvider extends EventEmitter {
         });
 
         try {
-            const { network, chain, accounts, isUnlocked }: any = await this._request({
+            const { network, chain, accounts, isUnlocked }: ProviderState = await this._request({
                 method: 'getProviderState'
-            });
+            }) as ProviderState;
 
             if (isUnlocked) {
                 _opnetPrividerPrivate._isUnlocked = true;
@@ -373,7 +376,7 @@ export class OpnetProvider extends EventEmitter {
         });
     };
 
-    signPsbt = async (psbtHex: string, options?: any) => {
+    signPsbt = async (psbtHex: string, options?: SignPsbtOptions) => {
         return this._request({
             method: 'signPsbt',
             params: {
@@ -384,7 +387,7 @@ export class OpnetProvider extends EventEmitter {
         });
     };
 
-    signPsbts = async (psbtHexs: string[], options?: any[]) => {
+    signPsbts = async (psbtHexs: string[], options?: SignPsbtOptions[]) => {
         return this._request({
             method: 'multiSignPsbt',
             params: {

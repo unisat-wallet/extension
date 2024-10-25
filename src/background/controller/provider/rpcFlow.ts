@@ -6,6 +6,8 @@ import { PromiseFlow, underline2Camelcase } from '@/background/utils';
 import { CHAINS_ENUM, EVENTS } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 
+import { ApprovalContext } from '@/shared/types/Approval';
+import { ProviderControllerRequest } from '@/shared/types/Request';
 import providerController from './controller';
 
 
@@ -14,7 +16,7 @@ const isSignApproval = (type: string) => {
     return SIGN_APPROVALS.includes(type);
 };
 const windowHeight = 600;
-const flow = new PromiseFlow();
+const flow = new PromiseFlow<ApprovalContext>();
 const flowContext = flow
     .use((ctx, next) => {
         // check method
@@ -97,7 +99,7 @@ const flowContext = flow
                     approvalComponent: approvalType,
                     params: {
                         method,
-                        data: params,
+                        data: params || {},
                         session: { origin, name, icon }
                     },
                     origin
@@ -118,10 +120,6 @@ const flowContext = flow
         // process request
         const [approvalType] = Reflect.getMetadata('APPROVAL', providerController, mapMethod) || [];
 
-        const { uiRequestComponent, ...rest } = approvalRes || {};
-        const {
-            session: { origin }
-        } = request;
         const requestDefer = Promise.resolve(
             providerController[mapMethod]({
                 ...request,
@@ -154,32 +152,14 @@ const flowContext = flow
                 }
             });
 
-        async function requestApprovalLoop({ uiRequestComponent, ...rest }) {
-            ctx.request.requestedApproval = true;
-            const res = await notificationService.requestApproval({
-                approvalComponent: uiRequestComponent,
-                params: rest,
-                origin,
-                approvalType
-            });
-            if (res.uiRequestComponent) {
-                return await requestApprovalLoop(res);
-            } else {
-                return res;
-            }
-        }
-
-        if (uiRequestComponent) {
-            ctx.request.requestedApproval = true;
-            return await requestApprovalLoop({ uiRequestComponent, ...rest });
-        }
+            // TODO (typing): If a multi-step approval is needed, re-implement recursive requestApprovalLoop function here  
 
         return requestDefer;
     })
     .callback();
 
-export default (request) => {
-    const ctx: any = { request: { ...request, requestedApproval: false } };
+export default (request: ProviderControllerRequest) => {
+    const ctx: ApprovalContext = { request: { ...request, requestedApproval: false }, mapMethod: ''};
     return flowContext(ctx).finally(() => {
         if (ctx.request.requestedApproval) {
             flow.requestedApproval = false;

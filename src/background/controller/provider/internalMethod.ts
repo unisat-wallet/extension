@@ -1,5 +1,6 @@
 import { keyringService } from '@/background/service';
 
+import { ProviderState } from '@/shared/types/Provider';
 import wallet from '../wallet';
 
 const tabCheckin = ({
@@ -11,7 +12,7 @@ const tabCheckin = ({
     session.setProp({ origin, name, icon });
 };
 
-const getProviderState = async (req) => {
+const getProviderState = async (req): Promise<ProviderState> => {
     const {
         session: { origin }
     } = req;

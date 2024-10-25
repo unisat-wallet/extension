@@ -5,7 +5,11 @@ import { ethErrors } from 'eth-rpc-errors';
 import { EventEmitter } from 'events';
 
 import { ListenCallback, RequestParams } from '@/shared/types/Request.js';
+import { SendPayload, SendRequestPayload, SendResponsePayload } from '../../types/Message';
 
+// TODO (typing): Check how to get rid of 'any' types in resolve and reject function
+// Responses are changing based on each method call in requests. It may not worth to define types for all of them
+// and also it will make utils message class to be tightly coupled to the background functions' response types
 abstract class Message extends EventEmitter {
     // available id list
     protected _EVENT_PRE = 'OPNET_WALLET_';
@@ -16,13 +20,13 @@ abstract class Message extends EventEmitter {
     private _waitingMap = new Map<
         number,
         {
-            data: any;
+            data: RequestParams;
             resolve: (arg: any) => any;
             reject: (arg: any) => any;
         }
     >();
 
-    abstract send(type: string, data: any): void;
+    abstract send(type: string, data: SendPayload): void;
 
     request = (data: RequestParams) => {
         if (!this._requestIdPool.length) {
@@ -46,7 +50,7 @@ abstract class Message extends EventEmitter {
         });
     };
 
-    onResponse = ({ ident, res, err }: any = {}) => {
+    onResponse = ({ ident, res, err }: SendResponsePayload) => {
         // the url may update
         if (!this._waitingMap.has(ident)) {
             return;
@@ -59,7 +63,7 @@ abstract class Message extends EventEmitter {
         err ? reject(err) : resolve(res);
     };
 
-    onRequest = async ({ ident, data }) => {
+    onRequest = async ({ ident, data }: SendRequestPayload) => {
         if (this.listenCallback) {
             let res, err;
 

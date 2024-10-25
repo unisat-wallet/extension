@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApprovalResponse } from '@/shared/types/Approval';
 import { getUiType } from '.';
 import { useWallet } from './WalletContext';
 
@@ -9,7 +10,7 @@ export const useApproval = () => {
     const navigate = useNavigate();
     const getApproval = wallet.getApproval;
 
-    const resolveApproval = async (data?: unknown, stay = false, forceReject = false) => {
+    const resolveApproval = async (data?: ApprovalResponse, stay = false, forceReject = false) => {
         const approval = await getApproval();
 
         if (approval) {
@@ -25,7 +26,7 @@ export const useApproval = () => {
         });
     };
 
-    const rejectApproval = async (err?: unknown, stay = false, isInternal = false) => {
+    const rejectApproval = async (err?: string, stay = false, isInternal = false) => {
         const approval = await getApproval();
         if (approval) {
             await wallet.rejectApproval(err, stay, isInternal);
@@ -35,13 +36,17 @@ export const useApproval = () => {
         }
     };
 
+    const handleBeforeUnload = () => {
+        rejectApproval('beforeUnload event occurred', false, false);
+    };
+
     useEffect(() => {
         if (!getUiType().isNotification) {
             return;
         }
-        window.addEventListener('beforeunload', rejectApproval);
+        window.addEventListener('beforeunload', handleBeforeUnload);
 
-        return () => window.removeEventListener('beforeunload', rejectApproval);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
     }, []);
 
     return [getApproval, resolveApproval, rejectApproval] as const;
@@ -107,14 +112,14 @@ export const useSelectOption = <T>({
     return [idxs.map((o) => options[o]), handleRemove, handleChoose, handleToggle, handleClear, idxs] as const;
 };
 
-export const useWalletRequest = (
-    requestFn,
+export const useWalletRequest = <TArgs extends unknown[], TResult>(
+    requestFn: (...args: TArgs) => Promise<TResult>,
     {
         onSuccess,
         onError
     }: {
-        onSuccess?(arg: any): void;
-        onError?(arg: any): void;
+        onSuccess?(result: TResult): void;
+        onError?(error: any): void;
     }
 ) => {
     const mounted = useRef(false);
@@ -126,10 +131,10 @@ export const useWalletRequest = (
         };
     }, []);
     const [loading, setLoading] = useState<boolean>(false);
-    const [res, setRes] = useState<any>();
+    const [res, setRes] = useState<TResult | undefined>(undefined);
     const [err, setErr] = useState<any>();
 
-    const run = async (...args) => {
+    const run = async (...args: TArgs) => {
         setLoading(true);
         try {
             const _res = await Promise.resolve(requestFn(...args));
