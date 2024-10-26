@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { CAT20Balance, TickPriceItem } from '@/shared/types';
+import { CAT20Balance } from '@/shared/types';
 import { Column, Row } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { CAT20BalanceCard } from '@/ui/components/Cat20BalanceCard';
@@ -8,6 +8,7 @@ import { Empty } from '@/ui/components/Empty';
 import { Pagination } from '@/ui/components/Pagination';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useChainType } from '@/ui/state/settings/hooks';
+import { useSupportedAssets } from '@/ui/state/ui/hooks';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
@@ -22,28 +23,35 @@ export function CAT20List() {
   const [tokens, setTokens] = useState<CAT20Balance[]>([]);
   const [total, setTotal] = useState(-1);
   const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 100 });
-  const [priceMap, setPriceMap] = useState<{ [key: string]: TickPriceItem }>();
 
   const tools = useTools();
-  const fetchData = async () => {
-    try {
-      const { list, total } = await wallet.getCAT20List(
-        currentAccount.address,
-        pagination.currentPage,
-        pagination.pageSize
-      );
-      setTokens(list);
-      setTotal(total);
-    } catch (e) {
-      tools.toastError((e as Error).message);
-    } finally {
-      // tools.showLoading(false);
-    }
-  };
+
+  const supportedAssets = useSupportedAssets();
 
   useEffect(() => {
+    const fetchData = async () => {
+      if (supportedAssets.assets.CAT20 == false) {
+        setTokens([]);
+        setTotal(0);
+        return;
+      }
+      try {
+        const { list, total } = await wallet.getCAT20List(
+          currentAccount.address,
+          pagination.currentPage,
+          pagination.pageSize
+        );
+        setTokens(list);
+        setTotal(total);
+      } catch (e) {
+        tools.toastError((e as Error).message);
+      } finally {
+        // tools.showLoading(false);
+      }
+    };
+
     fetchData();
-  }, [pagination, currentAccount.address, chainType]);
+  }, [pagination, currentAccount.address, chainType, supportedAssets.key]);
 
   if (total === -1) {
     return (
@@ -68,7 +76,6 @@ export function CAT20List() {
           <CAT20BalanceCard
             key={index}
             tokenBalance={data}
-            showPrice={priceMap !== undefined}
             onClick={() => {
               navigate('CAT20TokenScreen', {
                 tokenId: data.tokenId

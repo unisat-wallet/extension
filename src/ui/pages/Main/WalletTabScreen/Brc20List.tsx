@@ -70,7 +70,7 @@ export function BRC20List() {
       <Column gap="md">
         {tokens.map((data, index) => (
           <BRC20BalanceCard2
-            key={index}
+            key={'brc20-' + index + data.ticker}
             tokenBalance={data}
             showPrice={chain.showPrice && priceMap !== undefined}
             price={priceMap?.[data.ticker]}

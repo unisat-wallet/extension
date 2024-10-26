@@ -19,6 +19,11 @@ export function useCurrentAccount() {
   return accountsState.current;
 }
 
+export function useCurrentAddress() {
+  const accountsState = useAccountsState();
+  return accountsState.current.address;
+}
+
 export function useAccounts() {
   const accountsState = useAccountsState();
   return accountsState.accounts;
@@ -169,20 +174,20 @@ export function useChangeAddressFlagCallback() {
   );
 }
 
-export function useFetchHistoryCallback() {
-  const dispatch = useAppDispatch();
-  const wallet = useWallet();
-  const address = useAccountAddress();
-  return useCallback(async () => {
-    const _accountHistory = await wallet.getAddressHistory(address);
-    dispatch(
-      accountActions.setHistory({
-        address: address,
-        list: _accountHistory
-      })
-    );
-  }, [dispatch, wallet, address]);
-}
+// export function useFetchHistoryCallback() {
+//   const dispatch = useAppDispatch();
+//   const wallet = useWallet();
+//   const address = useAccountAddress();
+//   return useCallback(async () => {
+//     const _accountHistory = await wallet.getAddressHistory(address);
+//     dispatch(
+//       accountActions.setHistory({
+//         address: address,
+//         list: _accountHistory
+//       })
+//     );
+//   }, [dispatch, wallet, address]);
+// }
 
 export function useFetchBalanceCallback() {
   const dispatch = useAppDispatch();

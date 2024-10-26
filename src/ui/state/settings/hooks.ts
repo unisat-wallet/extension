@@ -91,12 +91,12 @@ export function useChangeChainTypeCallback() {
   const wallet = useWallet();
   return useCallback(
     async (type: ChainType) => {
-      await wallet.setChainType(type);
       dispatch(
         settingsActions.updateSettings({
           chainType: type
         })
       );
+      await wallet.setChainType(type);
     },
     [dispatch]
   );

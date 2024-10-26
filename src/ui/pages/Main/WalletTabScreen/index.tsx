@@ -23,18 +23,15 @@ import {
   useBTCUnit,
   useChain,
   useChainType,
-  useNetworkType,
   useSkipVersionCallback,
   useVersionInfo,
   useWalletConfig
 } from '@/ui/state/settings/hooks';
 import { useFetchUtxosCallback, useSafeBalance } from '@/ui/state/transactions/hooks';
-import { useAssetTabKey, useResetUiTxCreateScreen } from '@/ui/state/ui/hooks';
+import { useAssetTabKey, useResetUiTxCreateScreen, useSupportedAssets } from '@/ui/state/ui/hooks';
 import { AssetTabKey, uiActions } from '@/ui/state/ui/reducer';
 import { fontSizes } from '@/ui/theme/font';
 import { amountToSatoshis, satoshisToAmount, useWallet } from '@/ui/utils';
-import { AddressType } from '@unisat/wallet-sdk';
-import { getAddressType } from '@unisat/wallet-sdk/lib/address';
 
 import { BuyBTCModal } from '../../BuyBTC/BuyBTCModal';
 import { useNavigate } from '../../MainRoute';
@@ -130,66 +127,51 @@ export default function WalletTabScreen() {
     run();
   }, []);
 
-  const networkType = useNetworkType();
+  const supportedAssets = useSupportedAssets();
 
-  const shouldShowCAT20 = useMemo(() => {
-    const addressType = getAddressType(currentAccount.address, networkType);
-    if (chain.isFractal && (addressType == AddressType.P2TR || addressType == AddressType.P2WPKH)) {
-      return true;
-    } else {
-      return false;
+  const tabItems = useMemo(() => {
+    const items: {
+      key: AssetTabKey;
+      label: string;
+      children: JSX.Element;
+    }[] = [];
+    if (supportedAssets.assets.ordinals) {
+      items.push({
+        key: AssetTabKey.ORDINALS,
+        label: 'Ordinals',
+        children: <OrdinalsTab />
+      });
     }
-  }, [currentAccount.address, networkType, chain]);
-
-  const shouldShowAtomicals = useMemo(() => {
-    if (chain.enum === ChainType.BITCOIN_MAINNET) {
-      return true;
-    } else {
-      return false;
+    if (supportedAssets.assets.atomicals) {
+      items.push({
+        key: AssetTabKey.ATOMICALS,
+        label: 'Atomicals',
+        children: <AtomicalsTab />
+      });
     }
-  }, [chain]);
-
-  const tabItems = [
-    {
-      key: AssetTabKey.ORDINALS,
-      label: 'Ordinals',
-      children: <OrdinalsTab />
+    if (supportedAssets.assets.runes) {
+      items.push({
+        key: AssetTabKey.RUNES,
+        label: 'Runes',
+        children: <RunesList />
+      });
     }
-  ];
-
-  if (shouldShowAtomicals) {
-    tabItems.push({
-      key: AssetTabKey.ATOMICALS,
-      label: 'Atomicals',
-      children: <AtomicalsTab />
-    });
-  }
-
-  tabItems.push({
-    key: AssetTabKey.RUNES,
-    label: 'Runes',
-    children: <RunesList />
-  });
-
-  if (shouldShowCAT20) {
-    tabItems.push({
-      key: AssetTabKey.CAT20,
-      label: 'CAT20',
-      children: <CAT20List />
-    });
-  }
+    if (supportedAssets.assets.CAT20) {
+      items.push({
+        key: AssetTabKey.CAT20,
+        label: 'CAT20',
+        children: <CAT20List />
+      });
+    }
+    return items;
+  }, [supportedAssets.key]);
 
   const finalAssetTabKey = useMemo(() => {
-    if (!shouldShowAtomicals && assetTabKey === AssetTabKey.ATOMICALS) {
+    if (!supportedAssets.tabKeys.includes(assetTabKey)) {
       return AssetTabKey.ORDINALS;
     }
-
-    if (!shouldShowCAT20 && assetTabKey === AssetTabKey.CAT20) {
-      return AssetTabKey.ORDINALS;
-    }
-
     return assetTabKey;
-  }, [assetTabKey, shouldShowAtomicals, shouldShowCAT20]);
+  }, [assetTabKey, supportedAssets.key]);
 
   const addressExplorerUrl = useAddressExplorerUrl(currentAccount.address);
   const resetUiTxCreateScreen = useResetUiTxCreateScreen();

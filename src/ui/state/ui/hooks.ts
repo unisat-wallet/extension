@@ -1,8 +1,12 @@
-import { Inscription } from '@/shared/types';
+import { ChainType } from '@/shared/constant';
+import { AddressType, Inscription } from '@/shared/types';
+import { getAddressType } from '@unisat/wallet-sdk/lib/address';
 
 import { AppState } from '..';
+import { useCurrentAddress } from '../accounts/hooks';
 import { useAppDispatch, useAppSelector } from '../hooks';
-import { uiActions } from './reducer';
+import { useChainType, useNetworkType } from '../settings/hooks';
+import { AssetTabKey, uiActions } from './reducer';
 
 export function useUIState(): AppState['ui'] {
   return useAppSelector((state) => state.ui);
@@ -49,5 +53,44 @@ export function useResetUiTxCreateScreen() {
   const dispatch = useAppDispatch();
   return () => {
     dispatch(uiActions.resetTxCreateScreen());
+  };
+}
+
+export function useSupportedAssets() {
+  const chainType = useChainType();
+  const currentAddress = useCurrentAddress();
+  const networkType = useNetworkType();
+
+  const assetTabKeys: AssetTabKey[] = [];
+  const assets = {
+    ordinals: false,
+    atomicals: false,
+    runes: false,
+    CAT20: false
+  };
+
+  assets.ordinals = true;
+  assetTabKeys.push(AssetTabKey.ORDINALS);
+
+  if (chainType === ChainType.BITCOIN_MAINNET) {
+    assets.atomicals = true;
+    assetTabKeys.push(AssetTabKey.ATOMICALS);
+  }
+
+  assets.runes = true;
+  assetTabKeys.push(AssetTabKey.RUNES);
+
+  if (chainType === ChainType.FRACTAL_BITCOIN_MAINNET || chainType === ChainType.FRACTAL_BITCOIN_TESTNET) {
+    const addressType = getAddressType(currentAddress, networkType);
+    if (addressType == AddressType.P2TR || addressType == AddressType.P2WPKH) {
+      assets.CAT20 = true;
+      assetTabKeys.push(AssetTabKey.CAT20);
+    }
+  }
+
+  return {
+    tabKeys: assetTabKeys,
+    assets,
+    key: assetTabKeys.join(',')
   };
 }

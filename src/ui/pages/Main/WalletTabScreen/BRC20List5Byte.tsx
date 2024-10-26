@@ -22,7 +22,7 @@ export function BRC20List5Byte() {
   const [tokens, setTokens] = useState<TokenBalance[]>([]);
   const [total, setTotal] = useState(-1);
   const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 100 });
-  const [priceMap, setPriceMap] = useState<{[key:string]:TickPriceItem}>();
+  const [priceMap, setPriceMap] = useState<{ [key: string]: TickPriceItem }>();
 
   const tools = useTools();
   const fetchData = async () => {
@@ -34,8 +34,8 @@ export function BRC20List5Byte() {
       );
       setTokens(list);
       setTotal(total);
-      if(list.length>0) {
-        wallet.getBrc20sPrice(list.map(item=>item.ticker)).then(setPriceMap)
+      if (list.length > 0) {
+        wallet.getBrc20sPrice(list.map((item) => item.ticker)).then(setPriceMap);
       }
     } catch (e) {
       tools.toastError((e as Error).message);
@@ -69,9 +69,9 @@ export function BRC20List5Byte() {
       <Row style={{ flexWrap: 'wrap' }} gap="sm">
         {tokens.map((data, index) => (
           <BRC20BalanceCard2
-            key={index}
+            key={'brc20-' + index + data.ticker}
             tokenBalance={data}
-            showPrice={priceMap!==undefined}
+            showPrice={priceMap !== undefined}
             price={priceMap?.[data.ticker]}
             onClick={() => {
               navigate('BRC20TokenScreen', { tokenBalance: data, ticker: data.ticker });
