@@ -1,4 +1,5 @@
 import { fontSizes } from '@/ui/theme/font';
+import { formatSessionIcon } from '@/ui/utils';
 
 import { Card } from '../Card';
 import { Image } from '../Image';
@@ -9,7 +10,7 @@ const WebsiteBar = ({ session }: { session: { origin: string; icon: string; name
   return (
     <Card preset="style2" selfItemsCenter>
       <Row itemsCenter>
-        <Image src={session.icon} size={fontSizes.logo} />
+        <Image src={formatSessionIcon(session)} size={fontSizes.logo} />
         <Text text={session.origin} />
       </Row>
     </Card>

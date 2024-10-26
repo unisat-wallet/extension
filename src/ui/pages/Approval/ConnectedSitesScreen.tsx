@@ -1,10 +1,10 @@
 import { useEffect, useState } from 'react';
 
 import { ConnectedSite } from '@/background/service/permission';
-import { Icon, Layout, Header, Content, Column, Card, Row, Text, Image } from '@/ui/components';
+import { Card, Column, Content, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import { Empty } from '@/ui/components/Empty';
 import { fontSizes } from '@/ui/theme/font';
-import { useWallet } from '@/ui/utils';
+import { formatSessionIcon, useWallet } from '@/ui/utils';
 
 export default function ConnectedSitesScreen() {
   const wallet = useWallet();
@@ -13,7 +13,7 @@ export default function ConnectedSitesScreen() {
 
   const getSites = async () => {
     const sites = await wallet.getConnectedSites();
-    setSites(sites);
+    setSites(sites.filter((v) => v.origin));
   };
 
   useEffect(() => {
@@ -40,7 +40,7 @@ export default function ConnectedSitesScreen() {
                 <Card key={item.origin}>
                   <Row full justifyBetween itemsCenter>
                     <Row itemsCenter>
-                      <Image src={item.icon} size={fontSizes.logo} />
+                      <Image src={formatSessionIcon(item)} size={fontSizes.logo} />
                       <Text text={item.origin} preset="sub" />
                     </Row>
                     <Column justifyCenter>

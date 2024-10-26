@@ -68,6 +68,8 @@ const _unisatPrividerPrivate: {
   _bcm: new BroadcastChannelMessage(channelName)
 };
 
+let cache_origin = '';
+
 export class UnisatProvider extends EventEmitter {
   constructor({ maxListeners = 100 } = {}) {
     super();
@@ -76,25 +78,30 @@ export class UnisatProvider extends EventEmitter {
     _unisatPrividerPrivate._pushEventHandlers = new PushEventHandlers(this, _unisatPrividerPrivate);
   }
 
-  initialize = async () => {
-    document.addEventListener('visibilitychange', this._requestPromiseCheckVisibility);
-
-    _unisatPrividerPrivate._bcm.connect().on('message', this._handleBackgroundMessage);
-    domReadyCall(() => {
-      const origin = window.top?.location.origin;
+  tryDetectTab = async () => {
+    const origin = window.top?.location.origin;
+    if (origin && cache_origin !== origin) {
+      cache_origin = origin;
       const icon =
         ($('head > link[rel~="icon"]') as HTMLLinkElement)?.href ||
         ($('head > meta[itemprop="image"]') as HTMLMetaElement)?.content;
 
       const name = document.title || ($('head > meta[name="title"]') as HTMLMetaElement)?.content || origin;
-
       _unisatPrividerPrivate._bcm.request({
         method: 'tabCheckin',
         params: { icon, name, origin }
       });
+    }
+  };
 
-      // Do not force to tabCheckin
-      // this._requestPromise.check(2);
+  initialize = async () => {
+    document.addEventListener('visibilitychange', this._requestPromiseCheckVisibility);
+
+    _unisatPrividerPrivate._bcm.connect().on('message', this._handleBackgroundMessage);
+
+    this.tryDetectTab();
+    domReadyCall(() => {
+      this.tryDetectTab();
     });
 
     try {
