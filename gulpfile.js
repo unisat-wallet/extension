@@ -9,33 +9,19 @@ const packageConfig = require('./package.json');
 const { exit } = require('process');
 const uglify = require('gulp-uglify-es').default;
 
-//parse arguments
-let knownOptions = {
-    string: ['env', 'browser', 'manifest', 'channel'],
-    default: {
-        env: 'dev',
-        browser: 'chrome',
-        manifest: 'mv3',
-        channel: 'store'
-    }
+// Parse options
+const knownOptions = {
+    string: ['browser', 'manifest']
 };
 
-let supported_envs = ['dev', 'pro'];
-let supported_browsers = ['chrome', 'firefox', 'edge', 'brave'];
-let supported_mvs = ['mv2', 'mv3'];
-let brandName = 'opwallet';
-let version = packageConfig.version;
-let validVersion = version.split('-beta')[0];
-let options = {
-    env: knownOptions.default.env,
-    browser: knownOptions.default.browser,
-    manifest: knownOptions.default.manifest
-};
-options = minimist(process.argv.slice(2), knownOptions);
-if (!supported_envs.includes(options.env)) {
-    console.error(`not supported env: [${options.env}]. It should be one of ${supported_envs.join(', ')}.`);
-    exit(0);
-}
+const supported_browsers = ['chrome', 'firefox', 'edge', 'brave', 'opera'];
+const supported_mvs = ['mv2', 'mv3'];
+const brandName = 'opwallet';
+const version = packageConfig.version;
+const validVersion = version.split('-beta')[0];
+
+const options = minimist(process.argv.slice(2), knownOptions);
+
 if (!supported_browsers.includes(options.browser)) {
     console.error(`not supported browser: [${options.browser}]. It should be one of ${supported_browsers.join(', ')}.`);
     exit(0);
@@ -45,7 +31,6 @@ if (!supported_mvs.includes(options.manifest)) {
     exit(0);
 }
 
-//tasks...
 function task_clean() {
     return gulp.src(`dist/${options.browser}/*`, { read: false }).pipe(clean());
 }
@@ -82,48 +67,34 @@ function task_webpack(cb) {
     webpack(
         webpackConfigFunc({
             version: validVersion,
-            config: options.env,
+            config: 'pro',
             browser: options.browser,
-            manifest: options.manifest,
-            channel: options.channel
+            manifest: options.manifest
         }),
         cb
     );
 }
 
-function task_uglify(cb) {
-    if (options.env == 'pro') {
-        return gulp
-            .src(`dist/${options.browser}/**/*.js`)
-            .pipe(
-                uglify({
-                    compress: true,
-                    mangle: {
-                        toplevel: true
-                    },
-                    ecma: 2023
-                })
-            )
-            .pipe(gulp.dest(`dist/${options.browser}`));
-    }
-    cb();
+function task_uglify() {
+    return gulp
+        .src(`dist/${options.browser}/**/*.js`)
+        .pipe(
+            uglify({
+                compress: true,
+                mangle: {
+                    toplevel: true
+                },
+                ecma: 2023
+            })
+        )
+        .pipe(gulp.dest(`dist/${options.browser}`));
 }
 
-function task_package(cb) {
-    if (options.env == 'pro') {
-        if (options.browser == 'firefox') {
-            return gulp
-                .src(`dist/${options.browser}/**/*`)
-                .pipe(zip(`${brandName}-${options.browser}-${options.manifest}-v${version}.xpi`))
-                .pipe(gulp.dest('./dist'));
-        } else {
-            return gulp
-                .src(`dist/${options.browser}/**/*`)
-                .pipe(zip(`${brandName}-${options.browser}-${options.manifest}-v${version}.zip`))
-                .pipe(gulp.dest('./dist'));
-        }
-    }
-    cb();
+function task_package() {
+    return gulp
+        .src(`dist/${options.browser}/**/*`)
+        .pipe(zip(`${brandName}-${options.browser}-v${version}.zip`))
+        .pipe(gulp.dest('./dist'));
 }
 
 exports.build = gulp.series(
