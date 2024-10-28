@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ApprovalResponse } from '@/shared/types/Approval';
+import { AppError } from '@/shared/types/Error';
 import { getUiType } from '.';
 import { useWallet } from './WalletContext';
 
@@ -119,7 +120,7 @@ export const useWalletRequest = <TArgs extends unknown[], TResult>(
         onError
     }: {
         onSuccess?(result: TResult): void;
-        onError?(error: any): void;
+        onError?(error: AppError): void;
     }
 ) => {
     const mounted = useRef(false);
@@ -132,7 +133,7 @@ export const useWalletRequest = <TArgs extends unknown[], TResult>(
     }, []);
     const [loading, setLoading] = useState<boolean>(false);
     const [res, setRes] = useState<TResult | undefined>(undefined);
-    const [err, setErr] = useState<any>();
+    const [err, setErr] = useState<AppError>();
 
     const run = async (...args: TArgs) => {
         setLoading(true);

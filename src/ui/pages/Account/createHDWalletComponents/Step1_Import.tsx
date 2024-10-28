@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { OW_HD_PATH } from '@/shared/constant';
 import { AddressType, RestoreWalletType } from '@/shared/types';
+import { AppError } from '@/shared/types/Error';
 import { Button, Card, Column, Grid, Input, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { FooterButtonContainer } from '@/ui/components/FooterButtonContainer';
@@ -110,7 +111,7 @@ export function Step1_Import({
                 updateContextData({ mnemonics, tabType: TabType.STEP3 });
             }
         } catch (e) {
-            tools.toastError((e as any).message);
+            tools.toastError((e as AppError).message);
         }
     };
     const handleOnKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {

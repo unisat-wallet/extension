@@ -3,6 +3,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 
 import { KEYRING_TYPE } from '@/shared/constant';
 import { DecodedPsbt, ParsedSignPsbtUr, RawTxInfo, SignPsbtOptions, TickPriceItem, ToSignInput, TxType } from '@/shared/types';
+import { AppError } from '@/shared/types/Error';
 import { Button, Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressText } from '@/ui/components/AddressText';
@@ -340,7 +341,7 @@ export default function SignPsbt({
                     psbtHex = await wallet.signPsbtWithHex(psbtHex, toSignInputs, false);
                 } catch (e) {
                     console.error(e);
-                    txError = (e as any).message;
+                    txError = (e as AppError).message;
                     tools.toastError(txError);
                 }
             }

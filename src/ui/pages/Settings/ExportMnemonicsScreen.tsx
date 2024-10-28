@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { ADDRESS_TYPES } from '@/shared/constant';
 import { WalletKeyring } from '@/shared/types';
+import { AppError } from '@/shared/types/Error';
 import { Button, Card, Column, Content, Grid, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
@@ -32,7 +33,7 @@ export default function ExportMnemonicsScreen() {
             setPassphrase(passphrase);
         } catch (e) {
             setStatus('error');
-            setError((e as any).message);
+            setError((e as AppError).message);
         }
     };
 

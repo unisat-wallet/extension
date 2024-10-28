@@ -4,6 +4,7 @@
 import { ethErrors } from 'eth-rpc-errors';
 import { EventEmitter } from 'events';
 
+import { AppError } from '@/shared/types/Error';
 import { ListenCallback, RequestParams } from '@/shared/types/Request.js';
 import { SendPayload, SendRequestPayload, SendResponsePayload } from '../../types/Message';
 
@@ -21,8 +22,8 @@ abstract class Message extends EventEmitter {
         number,
         {
             data: RequestParams;
-            resolve: (arg: any) => any;
-            reject: (arg: any) => any;
+            resolve: (arg: any) => void;
+            reject: (arg: AppError) => void;
         }
     >();
 

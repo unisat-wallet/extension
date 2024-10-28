@@ -60,7 +60,7 @@ class NotificationService extends Events {
     };
 
     // currently it only support one approval at the same time
-    requestApproval = async (data: ApprovalData, winProps: WindowProps): Promise<ApprovalResponse | undefined> => {
+    requestApproval = async (data: ApprovalData, winProps?: WindowProps): Promise<ApprovalResponse | undefined> => {
         // We will just override the existing open approval with the new one coming in
         return new Promise((resolve, reject) => {
             this.approval = {
@@ -89,7 +89,7 @@ class NotificationService extends Events {
         this.isLocked = true;
     };
 
-    openNotification = (winProps: WindowProps) => {
+    openNotification = (winProps?: WindowProps) => {
         // if (this.isLocked) return;
         // this.lock();
         if (this.notifiWindowId) {

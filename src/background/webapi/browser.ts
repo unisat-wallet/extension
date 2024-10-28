@@ -9,6 +9,7 @@ export interface WindowProps {
     left?: number;
     top?: number;
     state?: 'normal' | 'minimized' | 'maximized' | 'fullscreen' | 'docked';
+    route?: string;
 }
 
 function getBrowser() {

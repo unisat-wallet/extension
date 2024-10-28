@@ -7,6 +7,7 @@ import { CHAINS_ENUM, EVENTS } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 
 import { ApprovalContext } from '@/shared/types/Approval';
+import { AppError } from '@/shared/types/Error';
 import { ProviderControllerRequest } from '@/shared/types/Request';
 import providerController from './controller';
 
@@ -140,13 +141,13 @@ const flowContext = flow
                 }
                 return result;
             })
-            .catch((e: any) => {
+            .catch((e: AppError) => {
                 if (isSignApproval(approvalType)) {
                     eventBus.emit(EVENTS.broadcastToUI, {
                         method: EVENTS.SIGN_FINISHED,
                         params: {
                             success: false,
-                            errorMsg: JSON.stringify(e)
+                            errorMsg: e.message
                         }
                     });
                 }
