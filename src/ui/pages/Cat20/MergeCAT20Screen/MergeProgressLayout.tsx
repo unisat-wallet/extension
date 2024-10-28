@@ -60,7 +60,7 @@ export function MergeProgressLayout({
             preset="defaultV2"
             text="Quit Merging Process"
             onClick={(e) => {
-              onContinue();
+              window.history.go(-1);
             }}></Button>
         )}
 

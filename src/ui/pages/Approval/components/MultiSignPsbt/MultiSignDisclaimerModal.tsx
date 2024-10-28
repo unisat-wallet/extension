@@ -1,16 +1,19 @@
-import { Checkbox } from 'antd';
-import { useState } from 'react';
-
 import { Button, Column, Row, Text } from '@/ui/components';
 import { BottomModal } from '@/ui/components/BottomModal';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { CloseOutlined } from '@ant-design/icons';
 
-const disclaimStr = `You can sign all transactions at once, but please be aware that UniSat Wallet will skip checking these transactions during when signing at once. Please only use this feature on familiar and trusted websites.`;
-export default function MultiSignDisclaimerModal({ onClose, onContinue }: { onClose: any; onContinue: any }) {
-  const [understand, setUnderstand] = useState(false);
-
+const disclaimStr = `You have the option to sign all transactions at once, but please note that UniSat Wallet will not verify each transaction individually. We strongly recommend using it only on trusted and familiar websites to minimize the risk of potential losses.`;
+export default function MultiSignDisclaimerModal({
+  txCount,
+  onClose,
+  onContinue
+}: {
+  txCount: number;
+  onClose: any;
+  onContinue: any;
+}) {
   return (
     <BottomModal onClose={onClose}>
       <Column>
@@ -33,24 +36,12 @@ export default function MultiSignDisclaimerModal({ onClose, onContinue }: { onCl
           <Text
             mt="lg"
             style={{ fontSize: fontSizes.sm, lineHeight: 2 }}
-            text={'Before proceeding, please carefully read and accept the disclaimer.'}></Text>
+            text={`By proceeding, you confirm that you’ve read and accepted this disclaimer.`}></Text>
         </Column>
 
-        <Row justifyCenter>
-          <Checkbox
-            onChange={() => {
-              setUnderstand(!understand);
-            }}
-            checked={understand}
-            style={{ fontSize: fontSizes.sm }}>
-            <Text text="" />
-          </Checkbox>
-        </Row>
-
         <Button
-          text={`Continue to sign all at once`}
+          text={`Sign all ${txCount} transactions at once`}
           preset="primaryV2"
-          disabled={!understand}
           onClick={() => {
             onContinue();
           }}

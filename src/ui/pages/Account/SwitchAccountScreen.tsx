@@ -11,14 +11,7 @@ import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { copyToClipboard, shortAddress, useWallet } from '@/ui/utils';
-import {
-  CheckCircleFilled,
-  CopyOutlined,
-  EditOutlined,
-  EllipsisOutlined,
-  KeyOutlined,
-  PlusCircleOutlined
-} from '@ant-design/icons';
+import { CopyOutlined, EditOutlined, EllipsisOutlined, KeyOutlined, PlusCircleOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
 
@@ -52,14 +45,20 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
   const tools = useTools();
 
   return (
-    <Card justifyBetween style={{ height: ITEM_HEIGHT - 8, marginTop: 8 }}>
+    <Card
+      justifyBetween
+      style={{
+        height: ITEM_HEIGHT - 8,
+        marginTop: 8,
+        borderColor: 'rgba(244,182,44,0.5)',
+        borderWidth: selected ? 1 : 0,
+        backgroundColor: selected ? 'rgba(244,182,44,0.1)' : colors.black_dark,
+        marginLeft: 10,
+        marginRight: 10
+      }}>
       <Row>
         <Column style={{ width: 20 }} selfItemsCenter>
-          {selected && (
-            <Icon>
-              <CheckCircleFilled />
-            </Icon>
-          )}
+          {selected ? <Icon icon="circle-check" color="gold" /> : <Icon icon="circle-check" color="white_muted2" />}
         </Column>
         <Column
           onClick={async (e) => {
@@ -198,7 +197,7 @@ export default function SwitchAccountScreen() {
           )
         }
       />
-      <Content style={{ height: layoutHeight }}>
+      <Content style={{ padding: 5 }}>
         <VirtualList
           data={items}
           data-id="list"

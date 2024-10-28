@@ -1,11 +1,13 @@
 import { useEffect, useMemo, useState } from 'react';
 
+import { KEYRING_TYPE } from '@/shared/constant';
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { AddressCAT20TokenSummary } from '@/shared/types';
 import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { useCAT20TokenInfoExplorerUrl } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
@@ -41,6 +43,9 @@ export default function CAT20TokenScreen() {
   const wallet = useWallet();
 
   const account = useCurrentAccount();
+
+  const keyring = useCurrentKeyring();
+  const tools = useTools();
 
   const [loading, setLoading] = useState(true);
 
@@ -122,6 +127,10 @@ export default function CAT20TokenScreen() {
                 preset="defaultV2"
                 icon="merge"
                 onClick={(e) => {
+                  if (keyring.type === KEYRING_TYPE.KeystoneKeyring) {
+                    tools.toastError('Merge UTXOs is not supported for Keystone yet');
+                    return;
+                  }
                   navigate('MergeCAT20Screen', {
                     cat20Balance: tokenSummary.cat20Balance,
                     cat20Info: tokenSummary.cat20Info
@@ -137,6 +146,10 @@ export default function CAT20TokenScreen() {
                 style={!enableTransfer ? { backgroundColor: 'grey' } : {}}
                 disabled={!enableTransfer}
                 onClick={(e) => {
+                  if (keyring.type === KEYRING_TYPE.KeystoneKeyring) {
+                    tools.toastError('Send CAT20 is not supported for Keystone yet');
+                    return;
+                  }
                   navigate('SendCAT20Screen', {
                     cat20Balance: tokenSummary.cat20Balance,
                     cat20Info: tokenSummary.cat20Info

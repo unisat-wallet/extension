@@ -3,7 +3,7 @@ import { useEffect, useState } from 'react';
 import { CAT20Balance } from '@/shared/types';
 import { Column, Row } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
-import { CAT20BalanceCard } from '@/ui/components/Cat20BalanceCard';
+import { CAT20BalanceCard } from '@/ui/components/CAT20BalanceCard';
 import { Empty } from '@/ui/components/Empty';
 import { Pagination } from '@/ui/components/Pagination';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';

@@ -1,7 +1,25 @@
 diff --git a/node_modules/bitcoinjs-lib/src/psbt.js b/node_modules/bitcoinjs-lib/src/psbt.js
-index b071f37..1eded75 100644
+index b071f37..14b235a 100644
 --- a/node_modules/bitcoinjs-lib/src/psbt.js
 +++ b/node_modules/bitcoinjs-lib/src/psbt.js
+@@ -444,7 +444,7 @@ class Psbt {
+       sighashCache = sig.hashType;
+       hashCache = hash;
+       scriptCache = script;
+-      checkScriptForPubkey(pSig.pubkey, script, 'verify');
++      // checkScriptForPubkey(pSig.pubkey, script, 'verify');
+       results.push(validator(pSig.pubkey, hash, sig.signature));
+     }
+     return results.every(res => res === true);
+@@ -1194,7 +1194,7 @@ function getHashAndSighashType(
+     false,
+     sighashTypes,
+   );
+-  checkScriptForPubkey(pubkey, script, 'sign');
++  // checkScriptForPubkey(pubkey, script, 'sign');
+   return {
+     hash,
+     sighashType,
 @@ -1342,7 +1342,7 @@ function getTaprootHashesForSig(
      }
    }

@@ -192,10 +192,10 @@ export const AddressInput = (props: InputProps) => {
   const chain = useChain();
 
   let SUPPORTED_DOMAINS = ['sats', 'unisat', 'x', 'btc'];
-  let addressPlaceholder = 'Address or name (sats, unisat, ...) ';
+  let addressPlaceholder = 'Address or name (.sats, .unisat, ...) ';
   if (chain.isFractal) {
     SUPPORTED_DOMAINS = ['fb'];
-    addressPlaceholder = 'Address or name (fb) ';
+    addressPlaceholder = 'Address or name (.fb) ';
   }
 
   const tools = useTools();
@@ -210,6 +210,8 @@ export const AddressInput = (props: InputProps) => {
     const addressTips = getAddressTips(validAddress, chain.enum);
     if (addressTips.sendTip) {
       setAddressTip(addressTips.sendTip);
+    } else {
+      setAddressTip('');
     }
   }, [validAddress]);
 

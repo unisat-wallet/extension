@@ -312,6 +312,7 @@ export default function MultiSignPsbt({
       </Footer>
       {disclaimerVisible && (
         <MultiSignDisclaimerModal
+          txCount={txInfo.psbtHexs.length}
           onContinue={() => {
             handleConfirm();
           }}

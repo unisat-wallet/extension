@@ -113,15 +113,6 @@ export default function SendRunesScreen() {
       return;
     }
 
-    let dustUtxo = 546;
-    try {
-      dustUtxo = getAddressUtxoDust(toInfo.address);
-    } catch (e) {
-      // console.log(e);
-    }
-
-    const minOutputValue = dustUtxo;
-
     if (outputValue < minOutputValue) {
       setError(`OutputValue must be at least ${minOutputValue}`);
       return;
@@ -163,7 +154,7 @@ export default function SendRunesScreen() {
         console.log(e);
         setError(e.message);
       });
-  }, [toInfo, inputAmount, feeRate, enableRBF, outputValue]);
+  }, [toInfo, inputAmount, feeRate, enableRBF, outputValue, minOutputValue]);
   return (
     <Layout>
       <Header
