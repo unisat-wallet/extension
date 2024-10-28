@@ -1,5 +1,12 @@
 # UniSat Wallet Release Notes
 
+## v1.5.1
+
+- During batch signing, for whitelisted websites, one-click signing is allowed.
+- Merged keystone's PR, supports USB mode.
+- Added the optional parameter useTweakedSigner to the methods signPsbt/signPsbts. This allows for the use of a tweaked signer to sign non-Taproot addresses, which is required for CAT721's lock to mint.
+- When switching wallets and switching accounts, it will automatically scroll to the corresponding row and display the scrollbar.
+
 ## v1.5.0
 
 - Support CAT20
