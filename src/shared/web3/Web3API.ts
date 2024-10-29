@@ -187,7 +187,7 @@ class Web3API {
             throw new Error('Network not set');
         }
 
-        return !!AddressVerificator.validateBitcoinAddress(address, this.network);
+        return !!AddressVerificator.detectAddressType(address, this.network);
     }
 
     public async queryContractInformation(address: string): Promise<ContractInformation | undefined> {

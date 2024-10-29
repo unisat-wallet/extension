@@ -1849,9 +1849,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@btc-vision/transaction@npm:>=1.0.117":
-  version: 1.0.117
-  resolution: "@btc-vision/transaction@npm:1.0.117"
+"@btc-vision/transaction@npm:1.0.119, @btc-vision/transaction@npm:>=1.0.119":
+  version: 1.0.119
+  resolution: "@btc-vision/transaction@npm:1.0.119"
   dependencies:
     "@babel/plugin-proposal-object-rest-spread": "npm:^7.20.7"
     "@bitcoinerlab/secp256k1": "npm:^1.1.1"
@@ -1878,7 +1878,7 @@ __metadata:
     ts-loader: "npm:^9.5.1"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.6.2"
-  checksum: 10c0/eee606de99d0278a8d6fb032c40c335cf6303c443cb40da2fd2d22d01e2edf22d012cff711f18c6a5ac2962504813810bd1deb789bacfb5ca654c9ace91fda48
+  checksum: 10c0/36aa6da97be3ee21206d86fb97cf437e1420e6cc687f6448ce7bc7eb4bfe0a63a2153369bd2c40c43af9f69c25a81c88f34f3983adc037cc968314dd07f75b35
   languageName: node
   linkType: hard
 
@@ -15750,14 +15750,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"opnet@npm:1.1.8":
-  version: 1.1.8
-  resolution: "opnet@npm:1.1.8"
+"opnet@npm:1.1.10":
+  version: 1.1.10
+  resolution: "opnet@npm:1.1.10"
   dependencies:
     "@babel/plugin-proposal-object-rest-spread": "npm:^7.20.7"
     "@bitcoinerlab/secp256k1": "npm:^1.1.1"
     "@btc-vision/bsi-bitcoin-rpc": "npm:>=1.0.29"
-    "@btc-vision/transaction": "npm:>=1.0.117"
+    "@btc-vision/transaction": "npm:>=1.0.119"
     "@eslint/js": "npm:^9.10.0"
     "@noble/hashes": "npm:^1.4.0"
     babel-loader: "npm:^9.1.3"
@@ -15776,7 +15776,7 @@ __metadata:
     ts-loader: "npm:^9.5.1"
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.6.2"
-  checksum: 10c0/118ec0ea6b781850f083f28ee41ca077c51431601e860be04ebf376aa3d54453777a78b8cc0c049ca20ff8f29679a0a44a3b0d47671703efbfa88cd48279e3e1
+  checksum: 10c0/6faebb59c79131d43c7ec45f28bd54f51107cf0951a7a1785ef54f8d0962e5f212f840a1ba61954f620418b1de7f391528571c0fc4cabef7b72111bb3ce3c247
   languageName: node
   linkType: hard
 
@@ -15816,6 +15816,7 @@ __metadata:
     "@babel/core": "npm:^7.16.0"
     "@babel/plugin-proposal-private-property-in-object": "npm:^7.21.11"
     "@btc-vision/passworder": "npm:1.0.0"
+    "@btc-vision/transaction": "npm:1.0.119"
     "@btc-vision/wallet-sdk": "npm:1.0.0"
     "@fortawesome/fontawesome-svg-core": "npm:^6.6.0"
     "@fortawesome/free-regular-svg-icons": "npm:^6.6.0"
@@ -15910,7 +15911,7 @@ __metadata:
     lru-cache: "npm:=6.0.0"
     mini-css-extract-plugin: "npm:^2.4.5"
     minimist: "npm:^1.2.6"
-    opnet: "npm:1.1.8"
+    opnet: "npm:1.1.10"
     postcss: "npm:^8.4.39"
     postcss-flexbugs-fixes: "npm:^5.0.2"
     postcss-loader: "npm:^6.2.1"
