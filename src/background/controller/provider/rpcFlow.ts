@@ -93,14 +93,14 @@ const flowContext = flow
         const [approvalType, condition, options = {}] =
             Reflect.getMetadata('APPROVAL', providerController, mapMethod) || [];
 
-        if (approvalType && (!condition || !condition(ctx.request))) {
+        if (approvalType && !condition?.(ctx.request)) {
             ctx.request.requestedApproval = true;
             ctx.approvalRes = await notificationService.requestApproval(
                 {
                     approvalComponent: approvalType,
                     params: {
                         method,
-                        data: params || {},
+                        data: params ?? {},
                         session: { origin, name, icon }
                     },
                     origin

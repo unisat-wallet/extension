@@ -89,7 +89,7 @@ export function Text(props: TextProps) {
         style: $styleOverride,
         ...rest
     } = props;
-    const preset: Presets = props.preset || 'regular';
+    const preset: Presets = props.preset ?? 'regular';
     const $textStyle = Object.assign(
         {},
         $presets[preset],

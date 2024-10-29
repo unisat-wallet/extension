@@ -117,7 +117,7 @@ export default function SettingsTabScreen() {
     useEffect(() => {
         const run = async () => {
             const res = await getCurrentTab();
-            if (!res || !res.url) return;
+            if (!res?.url) return;
 
             const origin = new URL(res.url).origin;
 

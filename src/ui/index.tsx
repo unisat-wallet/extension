@@ -124,23 +124,28 @@ function Updaters() {
 //   });
 // });
 
-const root = ReactDOM.createRoot(document.getElementById('root')!);
-root.render(
-    <Provider store={store}>
-        <WalletProvider {...antdConfig} wallet={wallet as any}>
-            <ActionComponentProvider>
-                <AppDimensions>
-                    <PriceProvider>
-                        <IdleTimerProvider
-                            onAction={() => {
-                                wallet.setLastActiveTime();
-                            }}>
-                            <Updaters />
-                            <AsyncMainRoute />
-                        </IdleTimerProvider>
-                    </PriceProvider>
-                </AppDimensions>
-            </ActionComponentProvider>
-        </WalletProvider>
-    </Provider>
-);
+const rootElement = document.getElementById('root');
+if (rootElement) {
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(
+        <Provider store={store}>
+            <WalletProvider {...antdConfig} wallet={wallet as any}>
+                <ActionComponentProvider>
+                    <AppDimensions>
+                        <PriceProvider>
+                            <IdleTimerProvider
+                                onAction={() => {
+                                    wallet.setLastActiveTime();
+                                }}>
+                                <Updaters />
+                                <AsyncMainRoute />
+                            </IdleTimerProvider>
+                        </PriceProvider>
+                    </AppDimensions>
+                </ActionComponentProvider>
+            </WalletProvider>
+        </Provider>
+    );
+} else {
+    console.error("Root element not found.");
+}

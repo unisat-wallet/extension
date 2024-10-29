@@ -43,7 +43,7 @@ const log = (event: string, ...args: unknown[]) => {
 //declare const window: any
 
 const script = document.currentScript;
-const channelName = script?.getAttribute('channel') || 'OPNET';
+const channelName = script?.getAttribute('channel') ?? 'OPNET';
 
 interface StateProvider {
     accounts: string[] | null;

@@ -135,6 +135,7 @@ class EmptyKeyring extends IKeyringBase<{ network: Network }> {
     static type = KEYRING_TYPE.Empty;
     type = KEYRING_TYPE.Empty;
 
+    // eslint-disable-next-line @typescript-eslint/no-useless-constructor
     constructor() {
         super();
     }
@@ -648,6 +649,12 @@ class KeyringService extends EventEmitter {
     };
 
     removeKeyring = async (keyringIndex: number): Promise<void> => {
+        if (!this.keyrings[keyringIndex]) {
+            return;
+        }
+
+        // Since we're already checking if the key exists, we can disable this eslint error
+        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
         delete this.keyrings[keyringIndex];
         this.keyrings[keyringIndex] = new EmptyKeyring();
 
@@ -761,18 +768,17 @@ class KeyringService extends EventEmitter {
         const vault = oldMethod
             ? ((await oldEncryptor.decrypt(password, encryptedVault)) as SavedVault[])
             : ((await this.encryptor.decrypt(password, encryptedVault)) as SavedVault[]);
-        for (let i = 0; i < vault.length; i++) {
-            const key = vault[i];
-
+        for (const key of vault) {
             try {
                 const { keyring, addressType } = this._restoreKeyring(key);
-
+        
                 this.keyrings.push(keyring);
                 this.addressTypes.push(addressType);
             } catch (e) {
                 // can not load.
             }
         }
+            
 
         await this._updateMemStoreKeyrings();
 
@@ -875,11 +881,10 @@ class KeyringService extends EventEmitter {
     getAccounts = (): string[] => {
         const keyrings = this.keyrings || [];
         let addrs: string[] = [];
-        for (let i = 0; i < keyrings.length; i++) {
-            const keyring = keyrings[i];
+        for (const keyring of keyrings) {
             const accounts = keyring.getAccounts();
             addrs = addrs.concat(accounts);
-        }
+        }        
         return addrs;
     };
 
@@ -901,8 +906,7 @@ class KeyringService extends EventEmitter {
     ): Keyring => {
         log.debug(`KeyringController - getKeyringForAccount: ${pubkey}`);
         const keyrings = type ? this.keyrings.filter((keyring) => keyring.type === type) : this.keyrings;
-        for (let i = 0; i < keyrings.length; i++) {
-            const keyring = keyrings[i];
+        for (const keyring of keyrings) {
             const accounts = keyring.getAccounts();
             if (accounts.includes(pubkey)) {
                 return keyring;
@@ -922,13 +926,12 @@ class KeyringService extends EventEmitter {
     displayForKeyring = (keyring: Keyring, addressType: AddressType, index: number): DisplayedKeyring => {
         const accounts = keyring.getAccounts();
         const all_accounts: { pubkey: string; brandName: string }[] = [];
-        for (let i = 0; i < accounts.length; i++) {
-            const pubkey = accounts[i];
+        for (const pubkey of accounts) {
             all_accounts.push({
                 pubkey,
                 brandName: keyring.type
             });
-        }
+        }        
         return {
             type: keyring.type,
             accounts: all_accounts,

@@ -104,8 +104,7 @@ export function Step2({
 
     const generateAddress = async () => {
         const addresses: string[] = [];
-        for (let i = 0; i < hdPathOptions.length; i++) {
-            const options = hdPathOptions[i];
+        for (const options of hdPathOptions) {
             try {
                 const keyring = await wallet.createTmpKeyringWithMnemonics(
                     contextData.mnemonics,
@@ -241,8 +240,7 @@ export function Step2({
                 pubkey_arr: string[];
             }[] = [];
 
-            for (let i = 0; i < allHdPathOptions.length; i++) {
-                const options = allHdPathOptions[i];
+            for (const options of allHdPathOptions) {
                 const address_arr: string[] = [];
                 const satoshis_arr: number[] = [];
 

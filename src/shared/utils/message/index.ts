@@ -28,10 +28,10 @@ abstract class Message extends EventEmitter {
     abstract send(type: string, data: SendPayload): void;
 
     request = (data: RequestParams) => {
-        if (!this._requestIdPool.length) {
+        const ident = this._requestIdPool.shift();
+        if (ident === undefined) {
             throw rpcErrors.limitExceeded();
         }
-        const ident = this._requestIdPool.shift()!;
 
         return new Promise((resolve, reject) => {
             this._waitingMap.set(ident, {
@@ -52,11 +52,12 @@ abstract class Message extends EventEmitter {
 
     onResponse = ({ ident, res, err }: SendResponsePayload) => {
         // the url may update
-        if (!this._waitingMap.has(ident)) {
+        const waitingRequest = this._waitingMap.get(ident);
+        if (!waitingRequest) {
             return;
         }
 
-        const { resolve, reject } = this._waitingMap.get(ident)!;
+        const { reject, resolve } = waitingRequest;
 
         this._requestIdPool.push(ident);
         this._waitingMap.delete(ident);

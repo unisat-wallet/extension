@@ -220,6 +220,8 @@ class PreferenceService {
         const key = address;
         if (key in this.store.balanceMap) {
             const map = this.store.balanceMap;
+            // Since we're already checking if the key exists, we can disable this eslint error
+            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
             delete map[key];
             this.store.balanceMap = map;
         }
@@ -243,6 +245,8 @@ class PreferenceService {
         const key = address;
         if (key in this.store.historyMap) {
             const map = this.store.historyMap;
+            // Since we're already checking if the key exists, we can disable this eslint error
+            // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
             delete map[key];
             this.store.historyMap = map;
         }

@@ -64,7 +64,7 @@ export default function ExportMnemonicsScreen() {
 
     const words = mnemonic.split(' ');
 
-    const pathName = ADDRESS_TYPES.find((v) => v.hdPath === keyring.hdPath)?.name || 'custom';
+    const pathName = ADDRESS_TYPES.find((v) => v.hdPath === keyring.hdPath)?.name ?? 'custom';
     return (
         <Layout>
             <Header

@@ -210,7 +210,7 @@ export class WalletController extends BaseController {
             inscription_amount: '0'
         };
         if (!address) return defaultBalance;
-        return preferenceService.getAddressBalance(address) || defaultBalance;
+        return preferenceService.getAddressBalance(address) ?? defaultBalance;
     };
 
     getAddressHistory = async (params: { address: string; start: number; limit: number }) => {
@@ -589,7 +589,7 @@ export class WalletController extends BaseController {
                     script = output.script;
                     value = output.value;
                 }
-                const isSigned = v.finalScriptSig || v.finalScriptWitness;
+                const isSigned = v.finalScriptSig ?? v.finalScriptWitness;
                 if (script && !isSigned) {
                     const address = scriptPkToAddress(script, networkType);
                     if (account.address === address) {
@@ -622,7 +622,7 @@ export class WalletController extends BaseController {
             if (autoFinalized) autoFinalized = true;
         }
         psbt.data.inputs.forEach((v) => {
-            const isNotSigned = !(v.finalScriptSig || v.finalScriptWitness);
+            const isNotSigned = !(v.finalScriptSig ?? v.finalScriptWitness);
             const isP2TR = keyring.addressType === AddressType.P2TR || keyring.addressType === AddressType.M44_P2TR;
             const lostInternalPubkey = !v.tapInternalKey;
             // Special measures taken for compatibility with certain applications.

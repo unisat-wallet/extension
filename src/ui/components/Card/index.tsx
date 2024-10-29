@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import { CSSProperties } from 'react';
 
 import { colors } from '@/ui/theme/colors';
 import { spacingGap } from '@/ui/theme/spacing';
@@ -52,6 +52,6 @@ type Presets = keyof typeof $viewPresets;
 
 export function Card(props: CardProps) {
     const { style: $styleOverride, preset, ...rest } = props;
-    const $style = Object.assign({}, $viewPresets[preset || 'auto'], $styleOverride);
+    const $style = Object.assign({}, $viewPresets[preset ?? 'auto'], $styleOverride);
     return <BaseView style={$style} {...rest} />;
 }

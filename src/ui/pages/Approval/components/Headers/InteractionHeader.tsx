@@ -1,4 +1,3 @@
-import React from 'react';
 
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { Card, Column, Image, Row, Text } from '@/ui/components';
@@ -25,7 +24,7 @@ const InteractionHeader = (props: Props) => {
             />
             <Card preset="style2" selfItemsCenter>
                 <Row itemsCenter>
-                    {contractInfo && contractInfo.logo ? (
+                    {contractInfo?.logo ? (
                         <Image src={contractInfo.logo} size={fontSizes.logo} />
                     ) : undefined}
 

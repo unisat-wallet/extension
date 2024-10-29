@@ -8,7 +8,8 @@ import {
     browserWindowsOnFocusChanged,
     browserWindowsOnRemoved,
     browserWindowsRemove,
-    browserWindowsUpdate
+    browserWindowsUpdate,
+    WindowProps
 } from './browser';
 
 const event = new EventEmitter();
@@ -27,14 +28,14 @@ const WINDOW_SIZE = {
     height: 600
 };
 
-const create = async ({ url, ...rest }): Promise<number | undefined> => {
+const create = async ({ url, ...rest }: WindowProps): Promise<number | undefined> => {
     const {
         top: cTop,
         left: cLeft,
         width
     } = await browserWindowsGetCurrent({
         windowTypes: ['normal']
-    });
+    }) as { top: number, left: number, width: number };
 
     const top = cTop + BROWSER_HEADER;
     const left = cLeft + width - WINDOW_SIZE.width;
@@ -66,9 +67,13 @@ const create = async ({ url, ...rest }): Promise<number | undefined> => {
         });
     }
 
+    if (win?.id === undefined) {
+        throw new Error('Failed to create window or retrieve window id');
+    }
+
     // shim firefox
     if (win.left !== left) {
-        await browserWindowsUpdate(win.id!, { left, top });
+        await browserWindowsUpdate(win.id, { left, top });
     }
 
     return win.id;
@@ -78,7 +83,7 @@ const remove = async (winId) => {
     return browserWindowsRemove(winId);
 };
 
-const openNotification = ({ route = '', ...rest } = {}): Promise<number | undefined> => {
+const openNotification = ({ route = '', ...rest }: WindowProps = {}): Promise<number | undefined> => {
     const url = `notification.html${route && `#${route}`}`;
 
     return create({ url, ...rest });

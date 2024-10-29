@@ -443,9 +443,9 @@ export const GITHUB_URL = 'https://github.com/btc-vision/opwallet';
 export const TWITTER_URL = 'https://x.com/opnetbtc';
 export const TELEGRAM_URL = 'https://t.me/opnetbtc ';
 
-export const CHANNEL = process.env.channel!;
-export const VERSION = process.env.release!;
-export const MANIFEST_VERSION = process.env.manifest!;
+export const CHANNEL = process.env.channel ?? 'github';
+export const VERSION = process.env.release ?? '0.0.0';
+export const MANIFEST_VERSION = process.env.manifest ?? 'mv3';
 
 export enum AddressFlagType {
     Is_Enable_Atomicals = 0b1,

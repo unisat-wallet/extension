@@ -31,7 +31,7 @@ export default function CreatePasswordScreen() {
     const [disabled, setDisabled] = useState(true);
 
     const tools = useTools();
-    const [run, _] = useWalletRequest(wallet.boot, {
+    const [run, _] = useWalletRequest(wallet.boot.bind(wallet), {
         onSuccess() {
             if (isKeystone) {
                 navigate(RouteTypes.CreateKeystoneWalletScreen, { fromUnlock: true });

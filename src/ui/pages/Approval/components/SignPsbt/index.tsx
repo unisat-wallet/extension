@@ -359,7 +359,7 @@ export default function SignPsbt({
             return;
         }
 
-        const decodedPsbt = await wallet.decodePsbt(psbtHex, session?.origin || '');
+        const decodedPsbt = await wallet.decodePsbt(psbtHex, session?.origin ?? '');
 
         let toSignInputs: ToSignInput[] = [];
         // @ts-ignore

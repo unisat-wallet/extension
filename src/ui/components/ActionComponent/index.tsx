@@ -49,11 +49,11 @@ function ToastContainer({ handler }: { handler: ContextType }) {
     const self = selfRef.current;
     const basicToast = useCallback(
         (content: string, preset?: ToastPresets) => {
-            const key = 'Toast_' + Math.random();
+            const key = `Toast_${Math.random()}`;
             self.toasts.push({
                 key,
                 props: {
-                    preset: preset || 'info',
+                    preset: preset ?? 'info',
                     content,
                     onClose: () => {
                         self.toasts = self.toasts.filter((v) => v.key !== key);

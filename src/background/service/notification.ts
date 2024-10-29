@@ -96,7 +96,7 @@ class NotificationService extends Events {
             this.notifiWindowId = 0;
         }
         winMgr.openNotification(winProps).then((winId) => {
-            this.notifiWindowId = winId!;
+            this.notifiWindowId = winId;
         });
     };
 }

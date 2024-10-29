@@ -10,7 +10,7 @@ import { useWallet } from './WalletContext';
 export const useApproval = () => {
     const wallet = useWallet();
     const navigate = useNavigate();
-    const getApproval = wallet.getApproval;
+    const getApproval = wallet.getApproval.bind(wallet);
 
     const resolveApproval = async (data?: ApprovalResponse, stay = false, forceReject = false) => {
         const approval = await getApproval();
@@ -66,8 +66,9 @@ export const useSelectOption = <T>({
     value?: T[];
 }) => {
     const isControlled = useRef(typeof value !== 'undefined').current;
-    const [idxs, setChoosedIdxs] = useState((isControlled ? value! : defaultValue).map((x) => options.indexOf(x)));
-
+    const [idxs, setChoosedIdxs] = useState(
+        (isControlled ? (value ?? defaultValue) : defaultValue).map((x) => options.indexOf(x))
+    );
     useEffect(() => {
         if (!isControlled) {
             return;
@@ -81,7 +82,7 @@ export const useSelectOption = <T>({
 
     const changeValue = (idxs: number[]) => {
         setChoosedIdxs([...idxs]);
-        onChange && onChange(idxs.map((o) => options[o]));
+        onChange?.(idxs.map((o) => options[o]));
     };
 
     const handleRemove = (i: number) => {
@@ -144,7 +145,7 @@ export const useWalletRequest = <TArgs extends unknown[], TResult>(
                 return;
             }
             setRes(_res);
-            onSuccess && onSuccess(_res);
+            onSuccess?.(_res);
         } catch (err) {
             if (!mounted.current) {
                 return;

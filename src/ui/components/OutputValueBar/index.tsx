@@ -66,7 +66,7 @@ export function OutputValueBar({
         <Column>
             <Row justifyCenter>
                 {options.map((v, index) => {
-                    const selected = index === optionIndex;
+                    const selected = index === optionIndex as number;
                     return (
                         <div
                             key={v.title}
@@ -118,7 +118,7 @@ export function OutputValueBar({
                     }}
                     onBlur={() => {
                         if (inputVal) {
-                            const val = parseInt(inputVal || '0') + '';
+                            const val = parseInt(inputVal || '0').toString();
                             setInputVal(val);
                         }
                     }}

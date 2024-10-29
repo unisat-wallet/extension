@@ -21,7 +21,7 @@ export default function ApprovalScreen() {
             return null;
         }
         setApprovalData(approval);
-        const documentTitle = approval.origin || approval.params.session?.origin
+        const documentTitle = approval.origin ?? approval.params.session?.origin
         if (documentTitle) {
             document.title = documentTitle;
         }

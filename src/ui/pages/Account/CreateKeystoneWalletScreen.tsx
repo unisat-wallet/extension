@@ -34,7 +34,7 @@ function Step1({ onNext }) {
     const navigate = useNavigate();
 
     const onBack = useCallback(() => {
-        if (state && state.fromUnlock) {
+        if (state?.fromUnlock) {
             return navigate(RouteTypes.WelcomeScreen);
         }
         window.history.go(-1);
@@ -207,21 +207,21 @@ function Step3({
                 [];
             let groups2: { type: AddressType; address_arr: string[]; pubkey_arr: string[]; satoshis_arr: number[] }[] =
                 [];
-            for (let i = 0; i < addressTypes.length; i++) {
+            for (const addressType of addressTypes) {
                 const keyring = await wallet.createTmpKeyringWithKeystone(
                     contextData.ur.type,
                     contextData.ur.cbor,
-                    addressTypes[i].value,
+                    addressType.value,
                     contextData.customHdPath,
                     accountCount
                 );
                 groups.push({
-                    type: addressTypes[i].value,
+                    type: addressType.value,
                     address_arr: keyring.accounts.map((item) => item.address),
                     pubkey_arr: keyring.accounts.map((item) => item.pubkey),
                     satoshis_arr: keyring.accounts.map(() => 0)
                 });
-            }
+            }                
             groups2 = groups;
             const res = await wallet.findGroupAssets(groups);
             res.forEach((item, index) => {
@@ -259,27 +259,28 @@ function Step3({
                 const saveAddressType = contextData.customHdPath.split('/')[1];
                 // find address type index by hdpath contains the saveAddressType
                 const saveAddressTypeIndex = addressTypes.findIndex((v) => v.hdPath.includes(saveAddressType));
+                const saveAddressTypeEnum = AddressType[saveAddressTypeIndex] as unknown as AddressType;
                 // remove the groups which is not equal to saveAddressType
-                groups = groups.filter((v) => v.type === saveAddressTypeIndex);
+                groups = groups.filter((v) => v.type === saveAddressTypeEnum);
             }
 
             // if res is empty and groups is empty, then only show the first wallet
             if (res.length === 0 && groups.length === 0 && isScanned) {
-                for (let i = 0; i < addressTypes.length; i++) {
+                for (const addressType of addressTypes) {
                     const keyring = await wallet.createTmpKeyringWithKeystone(
                         contextData.ur.type,
                         contextData.ur.cbor,
-                        addressTypes[i].value,
+                        addressType.value,
                         contextData.customHdPath,
                         1
                     );
                     groups.push({
-                        type: addressTypes[i].value,
+                        type: addressType.value,
                         address_arr: keyring.accounts.map((item) => item.address),
                         pubkey_arr: keyring.accounts.map((item) => item.pubkey),
                         satoshis_arr: keyring.accounts.map(() => 0)
                     });
-                }
+                }                
             }
             setGroups(groups);
         } catch (e) {

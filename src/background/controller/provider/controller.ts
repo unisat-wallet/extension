@@ -274,7 +274,7 @@ class ProviderController extends BaseController {
             throw new Error('Invalid bytecode');
         }
 
-        if (!interactionParams.utxos || !interactionParams.utxos.length) {
+        if (!interactionParams.utxos?.length) {
             throw new Error('No utxos');
         }
 
@@ -364,7 +364,7 @@ class ProviderController extends BaseController {
         },
         approvalRes: { signed: boolean, psbtHex: string }
     }) => {
-        if (approvalRes && approvalRes.signed) {
+        if (approvalRes?.signed) {
             return approvalRes.psbtHex;
         }
         const networkType = wallet.getNetworkType();

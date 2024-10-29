@@ -20,8 +20,8 @@ export function Image(props: ImageProps) {
             src={src}
             alt=""
             style={Object.assign({}, $imageStyleOverride, {
-                width: width || size || fontSizes.icon,
-                height: height || size || fontSizes.icon
+                width: width ?? size ?? fontSizes.icon,
+                height: height ?? size ?? fontSizes.icon
             })}
         />
     );

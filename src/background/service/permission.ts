@@ -86,7 +86,7 @@ class PermissionService {
     };
 
     updateConnectSite = (origin: string, value: Partial<ConnectedSite>, partialUpdate?: boolean) => {
-        if (!this.lruCache || !this.lruCache.has(origin)) return;
+        if (!this.lruCache?.has(origin)) return;
         if (origin === INTERNAL_REQUEST_ORIGIN) return;
 
         if (partialUpdate) {
@@ -143,7 +143,7 @@ class PermissionService {
 
     getConnectedSite = (key: string) => {
         const site = this.lruCache?.get(key);
-        if (site && site.isConnected) {
+        if (site?.isConnected) {
             return site;
         }
     };
@@ -151,7 +151,7 @@ class PermissionService {
     topConnectedSite = (origin: string, order?: number) => {
         const site = this.getConnectedSite(origin);
         if (!site || !this.lruCache) return;
-        order = order ?? (max(this.getRecentConnectedSites().map((item: ConnectedSite) => item.order)) || 0) + 1;
+        order = order ?? (max(this.getRecentConnectedSites().map((item: ConnectedSite) => item.order)) ?? 0) + 1;
         this.updateConnectSite(origin, {
             ...site,
             order,

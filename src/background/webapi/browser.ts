@@ -22,7 +22,7 @@ function getBrowser() {
 
 const browser = getBrowser();
 
-export async function browserWindowsGetCurrent(params?: {windowTypes?: string[];}) {
+export async function browserWindowsGetCurrent(params?: {windowTypes?: string[]}) {
     if (MANIFEST_VERSION === 'mv2') {
         return new Promise((resolve, reject) => {
             browser.windows.getCurrent(params, (val) => {

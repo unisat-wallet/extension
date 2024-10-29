@@ -147,9 +147,7 @@ function Step2({
         const network = await wallet.getNetworkType();
         const bitcoinNetwork = getBitcoinLibJSNetwork(network);
 
-        for (let i = 0; i < hdPathOptions.length; i++) {
-            const options = hdPathOptions[i];
-
+        for (const options of hdPathOptions) {
             try {
                 const address = Wallet.fromWif(contextData.wif, bitcoinNetwork);
 

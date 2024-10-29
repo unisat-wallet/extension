@@ -65,15 +65,15 @@ function ChainGroup(props: { group: TypeChainGroup; onClose: () => void }) {
     useEffect(() => {
         if (group.type === 'list') {
             let defaultFolded = true;
-            if (group.items && group.items.find((v) => v.enum == currentChain.enum)) {
+            if (group.items?.find((v) => v.enum == currentChain.enum)) {
                 defaultFolded = false;
             }
             setFolded(defaultFolded);
         }
     }, [currentChain]);
 
-    if (group.type === 'single') {
-        return <ChainItem chainType={group.chain!.enum} onClose={props.onClose} />;
+    if (group.type === 'single' && group.chain) {
+        return <ChainItem chainType={group.chain.enum} onClose={props.onClose} />;
     } else {
         return (
             <Column>
@@ -110,10 +110,7 @@ function ChainGroup(props: { group: TypeChainGroup; onClose: () => void }) {
 
                         {!folded ? (
                             <Column gap="zero">
-                                {group.items &&
-                                    group.items.map((v) => (
-                                        <ChainItem key={v.enum} inGroup chainType={v.enum} onClose={props.onClose} />
-                                    ))}
+                                {group.items?.map((v) => (<ChainItem key={v.enum} inGroup chainType={v.enum} onClose={props.onClose} />))}
                             </Column>
                         ) : null}
                     </Column>
@@ -141,7 +138,7 @@ export const SwitchChainModal = ({ onClose }: { onClose: () => void }) => {
 
                 <Column gap="zero" mt="sm" mb="lg" fullX>
                     {CHAIN_GROUPS.map((v, index) => (
-                        <ChainGroup key={'chain_group_' + index} group={v} onClose={onClose} />
+                        <ChainGroup key={`chain_group_${index}`} group={v} onClose={onClose} />
                     ))}
                 </Column>
             </Column>

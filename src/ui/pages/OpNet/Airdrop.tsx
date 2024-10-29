@@ -84,8 +84,8 @@ export default function WrapBitcoinOpnet() {
                 }
             };
 
-            reader.onerror = (error) => {
-                setError('Error reading file: ' + error);
+            reader.onerror = (event) => {
+                setError('Error reading file: ' + (event.target?.error?.message ?? 'unknown error'));
                 setDisabled(true);
             };
 

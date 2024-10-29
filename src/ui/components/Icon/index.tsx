@@ -110,11 +110,11 @@ export function Icon(props: IconProps) {
                     {},
                     {
                         color: color ? colors[color] : '#FFF',
-                        fontSizes: size || fontSizes.icon,
+                        fontSizes: size ?? fontSizes.icon,
                         display: 'flex'
                     } as CSSProperties,
                     $containerStyleOverride,
-                    $imageStyleOverride || {},
+                    $imageStyleOverride ?? {},
                     onClick ? { cursor: 'pointer' } : {}
                 )}>
                 {children}
@@ -128,8 +128,8 @@ export function Icon(props: IconProps) {
                 src={iconPath}
                 alt=""
                 style={Object.assign({}, $containerStyleOverride, {
-                    width: size || fontSizes.icon,
-                    height: size || fontSizes.icon
+                    width: size ?? fontSizes.icon,
+                    height: size ?? fontSizes.icon
                 })}
             />
         );
@@ -143,8 +143,8 @@ export function Icon(props: IconProps) {
                         {},
                         {
                             color: color ? colors[color] : '#FFF',
-                            width: size || fontSizes.icon,
-                            height: size || fontSizes.icon,
+                            width: size ?? fontSizes.icon,
+                            height: size ?? fontSizes.icon,
                             backgroundColor: color ? colors[color] : '#FFF',
                             maskImage: `url(${iconPath})`,
                             maskSize: 'cover',
@@ -155,7 +155,7 @@ export function Icon(props: IconProps) {
                             WebkitMaskRepeat: 'no-repeat',
                             WebkitMaskPosition: 'center'
                         },
-                        $imageStyleOverride || {},
+                        $imageStyleOverride ?? {},
                         onClick ? { cursor: 'pointer' } : {}
                     )}
                 />

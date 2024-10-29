@@ -22,7 +22,7 @@ interface Props {
 }
 
 function toHex(buffer: Uint8Array | Buffer | number[]) {
-    return Array.prototype.map.call(buffer, (x) => ('00' + x.toString(16)).slice(-2)).join('');
+    return Array.prototype.map.call(buffer, (x: number) => ('00' + x.toString(16)).slice(-2)).join('');
 }
 
 function objToBuffer(obj: object): Uint8Array {
@@ -55,7 +55,7 @@ export default function SignDeployment(props: Props) {
     const optionalOutputs: {
         address: string;
         value: number;
-    }[] = (data.optionalOutputs || []).map((output: PsbtTxOutput) => ({
+    }[] = (data.optionalOutputs ?? []).map((output: PsbtTxOutput) => ({
         address: 'address' in output && output.address ? output.address : '',
         value: output.value
     }));
@@ -113,7 +113,7 @@ export default function SignDeployment(props: Props) {
 
                                     return (
                                         <Column
-                                            key={'output_' + index}
+                                            key={`output_${index}`}
                                             style={
                                                 index === 0
                                                     ? {}

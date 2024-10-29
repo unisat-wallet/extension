@@ -225,10 +225,14 @@ export default function Swap() {
                     const balance = await contract.balanceOf(walletAddressPub);
                     tokenBalances.push({
                         address: tokenAddress,
-                        name: contractInfo?.name || '',
+                        name: contractInfo?.name ?? '',
+                        // TODO (typing): Based on the current usage, it looks like that balance.decoded[0] is string, bigint or number
+                        // if there is a possibility that it can be other types included in DecodedCallResult, then we need to have a better
+                        // handling and remove the eslint-disable.
+                        // eslint-disable-next-line @typescript-eslint/no-base-to-string
                         amount: BigInt(balance.decoded[0].toString()),
-                        divisibility: contractInfo?.decimals || 8,
-                        symbol: contractInfo?.symbol || '',
+                        divisibility: contractInfo?.decimals ?? 8,
+                        symbol: contractInfo?.symbol ?? '',
                         logo: contractInfo?.logo
                     });
                 } catch (e) {
