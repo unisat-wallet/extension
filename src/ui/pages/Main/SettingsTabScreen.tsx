@@ -14,7 +14,6 @@ import { useChain, useVersionInfo } from '@/ui/state/settings/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { spacing } from '@/ui/theme/spacing';
 import { useWallet } from '@/ui/utils';
-import { RightOutlined } from '@ant-design/icons';
 
 import { SwitchChainModal } from '../Settings/SwitchChainModal';
 
@@ -227,7 +226,7 @@ export default function SettingsTabScreen() {
                     </Column>
 
                     <Column justifyCenter>
-                      {item.right && <RightOutlined style={{ transform: 'scale(1.2)', color: '#AAA' }} />}
+                      {item.right && <Icon icon="right" size={fontSizes.lg} color="textDim" />}
                     </Column>
                   </Row>
                 </Card>
