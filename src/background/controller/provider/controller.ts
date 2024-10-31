@@ -1,7 +1,10 @@
 import { permissionService, sessionService } from '@/background/service';
 import { CHAINS, CHAINS_MAP, ChainType, NETWORK_TYPES, VERSION } from '@/shared/constant';
 
+import { Session } from '@/background/service/session';
 import { IDeploymentParametersWithoutSigner } from '@/content-script/pageProvider/Web3Provider';
+import { SessionEvent } from '@/shared/interfaces/SessionEvent';
+import { providerErrors } from '@/shared/lib/bitcoin-rpc-errors/errors';
 import { NetworkType } from '@/shared/types';
 import { ProviderControllerRequest } from '@/shared/types/Request.js';
 import { getChainInfo } from '@/shared/utils';
@@ -11,11 +14,8 @@ import { amountToSatoshis } from '@/ui/utils';
 import { bitcoin } from '@btc-vision/wallet-sdk/lib/bitcoin-core';
 import { verifyMessageOfBIP322Simple } from '@btc-vision/wallet-sdk/lib/message';
 import { toPsbtNetwork } from '@btc-vision/wallet-sdk/lib/network';
-import { ethErrors } from 'eth-rpc-errors';
 import BaseController from '../base';
 import wallet from '../wallet';
-import { SessionEvent } from '@/shared/interfaces/SessionEvent';
-import { Session } from '@/background/service/session';
 
 function formatPsbtHex(psbtHex: string) {
     let formatData = '';
@@ -48,7 +48,7 @@ class ProviderController extends BaseController {
     requestAccounts = async (params: { session: Session }) => {
         const origin = params.session.origin;
         if (!permissionService.hasPermission(origin)) {
-            throw ethErrors.provider.unauthorized();
+            throw providerErrors.unauthorized();
         }
 
         const _account = await wallet.getCurrentAccount();
@@ -364,7 +364,7 @@ class ProviderController extends BaseController {
         },
         approvalRes: { signed: boolean, psbtHex: string }
     }) => {
-        if (approvalRes && approvalRes.signed == true) {
+        if (approvalRes && approvalRes.signed) {
             return approvalRes.psbtHex;
         }
         const networkType = wallet.getNetworkType();
@@ -404,7 +404,7 @@ class ProviderController extends BaseController {
         const result: string[] = [];
         for (let i = 0; i < psbtHexs.length; i++) {
             const psbt = bitcoin.Psbt.fromHex(psbtHexs[i], { network: psbtNetwork });
-            const autoFinalized = (!(options && options[i] && options[i].autoFinalized == false));
+            const autoFinalized = (!(options && options[i] && !options[i].autoFinalized));
             const toSignInputs = await wallet.formatOptionsToSignInputs(psbtHexs[i], options[i]);
             await wallet.signPsbt(psbt, toSignInputs, autoFinalized);
             result.push(psbt.toHex());

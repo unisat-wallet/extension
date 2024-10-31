@@ -1,9 +1,8 @@
-import { ethErrors } from 'eth-rpc-errors';
-import { EthereumProviderError } from 'eth-rpc-errors/dist/classes';
 import Events from 'events';
 
 import { winMgr } from '@/background/webapi';
 import { IS_CHROME, IS_LINUX } from '@/shared/constant';
+import { providerErrors, rpcErrors } from '@/shared/lib/bitcoin-rpc-errors/errors';
 import { Approval, ApprovalData, ApprovalResponse } from '@/shared/types/Approval';
 import { WindowProps } from '../webapi/browser';
 
@@ -39,7 +38,7 @@ class NotificationService extends Events {
 
     resolveApproval = (data?: ApprovalResponse, forceReject = false) => {
         if (forceReject) {
-            this.approval?.reject(new EthereumProviderError(4001, 'User Cancel'));
+            this.approval?.reject(providerErrors.userRejectedRequest());
         } else {
             this.approval?.resolve(data);
         }
@@ -50,9 +49,9 @@ class NotificationService extends Events {
     rejectApproval = async (err?: string, stay = false, isInternal = false) => {
         if (!this.approval) return;
         if (isInternal) {
-            this.approval?.reject(ethErrors.rpc.internal(err));
+            this.approval?.reject(rpcErrors.internal({message: err}));
         } else {
-            this.approval?.reject(ethErrors.provider.userRejectedRequest(err));
+            this.approval?.reject(providerErrors.userRejectedRequest({message: err}));
         }
 
         await this.clear(stay);

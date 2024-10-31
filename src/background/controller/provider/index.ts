@@ -1,8 +1,8 @@
-import { ethErrors } from 'eth-rpc-errors';
 
 import { keyringService, sessionService } from '@/background/service';
 import { tab } from '@/background/webapi';
 
+import { providerErrors } from '@/shared/lib/bitcoin-rpc-errors/errors';
 import { ProviderControllerRequest } from '@/shared/types/Request';
 import internalMethod from './internalMethod';
 import rpcFlow from './rpcFlow';
@@ -23,7 +23,7 @@ export default (req: ProviderControllerRequest): Promise<unknown> => {
 
     const hasVault = keyringService.hasVault();
     if (!hasVault) {
-        throw ethErrors.provider.userRejectedRequest({
+        throw providerErrors.userRejectedRequest({
             message: 'wallet must has at least one account'
         });
     }

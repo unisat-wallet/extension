@@ -1,8 +1,8 @@
 import { IDeploymentParameters } from '@btc-vision/transaction';
-import { EthereumProviderError, EthereumRpcError } from 'eth-rpc-errors';
 import { ChainType } from '../constant';
 import { NetworkType, RawTxInfo, SignPsbtOptions, TxType } from '../types';
 import { DetailedInteractionParameters } from '../web3/interfaces/DetailedInteractionParameters';
+import { WalletError } from './Error';
 import { ProviderControllerRequest, Session } from './Request';
 
 // APPROVAL CONTEXT
@@ -20,7 +20,7 @@ export interface Approval {
 
     resolve(params?: ApprovalResponse): void;
 
-    reject(err: EthereumProviderError<void> | EthereumRpcError<void>): void;
+    reject(err: WalletError): void;
 }
 
 // UNION OF APPROVAL DATA

@@ -1,5 +1,4 @@
 // this script is injected into webpage's context
-import { ethErrors, serializeError } from 'eth-rpc-errors';
 import { EventEmitter } from 'events';
 import { BroadcastedTransaction } from 'opnet';
 
@@ -10,6 +9,8 @@ import Web3API from '@/shared/web3/Web3API';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { DeploymentResult, Unisat, UnwrapResult, UTXO, WrapResult } from '@btc-vision/transaction';
 
+import { rpcErrors } from '@/shared/lib/bitcoin-rpc-errors/errors';
+import { ProviderState } from '@/shared/types/Provider';
 import {
     BroadcastTransactionOptions,
     IDeploymentParametersWithoutSigner,
@@ -21,7 +22,6 @@ import {
 import PushEventHandlers from './pushEventHandlers';
 import ReadyPromise from './readyPromise';
 import { $, domReadyCall } from './utils';
-import { ProviderState } from '@/shared/types/Provider';
 
 declare global {
     interface Window {
@@ -147,7 +147,7 @@ export class OpnetProvider extends EventEmitter {
 
     _request = async (data: RequestParams) => {
         if (!data) {
-            throw ethErrors.rpc.invalidRequest();
+            throw rpcErrors.invalidRequest();
         }
 
         this._requestPromiseCheckVisibility();
@@ -157,8 +157,9 @@ export class OpnetProvider extends EventEmitter {
                 log('[request]', JSON.stringify(data, null, 2));
 
                 const res = await _opnetPrividerPrivate._bcm.request(data).catch((err) => {
-                    log('[request: error]', data.method, serializeError(err));
-                    throw serializeError(err);
+                    // TODO (typing): Check if sending error without serialization cause any issues on the dApp side.
+                    log('[request: error]', data.method, err);
+                    throw err;
                 });
 
                 log('[request: success]', data.method, res);
@@ -452,7 +453,7 @@ export class OpnetProvider extends EventEmitter {
                 params: {}
             });
         } catch (e) {
-            log('[keepAlive: error]', serializeError(e));
+            log('[keepAlive: error]', e);
         }
 
         setTimeout(async () => {

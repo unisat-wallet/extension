@@ -3,7 +3,7 @@ import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
 import { Account } from '@/shared/types';
-import { AppError } from '@/shared/types/Error';
+import { isWalletError } from '@/shared/utils/errors';
 import { Button, Card, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { copyToClipboard, useWallet } from '@/ui/utils';
@@ -33,7 +33,12 @@ export default function ExportPrivateKeyScreen() {
             setPrivateKey(_res);
         } catch (e) {
             setStatus('error');
-            setError((e as AppError).message);
+            if (isWalletError(e)) {
+                setError(e.message);
+            } else {
+                setError("An unexpected error occurred.");
+                console.error("Non-WalletError caught: ", e);
+            }
         }
     };
 

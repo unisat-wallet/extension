@@ -3,13 +3,13 @@ import { useCallback } from 'react';
 import { Account, AddressType } from '@/shared/types';
 import { useWallet } from '@/ui/utils';
 
+import { isWalletError } from '@/shared/utils/errors';
 import { AppState } from '..';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { useCurrentKeyring } from '../keyrings/hooks';
 import { keyringsActions } from '../keyrings/reducer';
 import { settingsActions } from '../settings/reducer';
 import { accountActions } from './reducer';
-import { AppError } from '@/shared/types/Error';
 
 export function useAccountsState(): AppState['accounts'] {
     return useAppSelector((state) => state.accounts);
@@ -134,7 +134,12 @@ export function useImportAccountCallback() {
                 success = true;
             } catch (e) {
                 console.log(e);
-                error = (e as AppError).message;
+                if (isWalletError(e)) {
+                    error = e.message;
+                } else {
+                    error = "An unexpected error occurred.";
+                    console.error("Non-WalletError caught: ", e);
+                }
             }
             return { success, error };
         },

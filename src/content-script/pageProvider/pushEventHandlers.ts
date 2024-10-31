@@ -1,7 +1,7 @@
-import { ethErrors } from 'eth-rpc-errors';
 
 import Web3API from '@/shared/web3/Web3API';
 
+import { providerErrors } from '@/shared/lib/bitcoin-rpc-errors/errors';
 import { OpnetProvider, OpnetProviderPrivate } from './index';
 
 class PushEventHandlers {
@@ -45,7 +45,7 @@ class PushEventHandlers {
         this._unisatProviderPrivate._state.isConnected = false;
         this._unisatProviderPrivate._state.accounts = null;
         this._unisatProviderPrivate._selectedAddress = null;
-        const disconnectError = ethErrors.provider.disconnected();
+        const disconnectError = providerErrors.disconnected();
 
         this._emit('accountsChanged', []);
         this._emit('disconnect', disconnectError);

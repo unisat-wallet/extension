@@ -1,3 +1,4 @@
+import { SerializedWalletError } from "./Error";
 import { RequestParams } from "./Request";
 
 export type SendPayload = SendMessagePayload | SendRequestPayload | SendResponsePayload;
@@ -15,5 +16,5 @@ export interface SendRequestPayload {
 export interface SendResponsePayload {
     ident: number;
     res: any;
-    err: any;
+    err?: SerializedWalletError;
 }

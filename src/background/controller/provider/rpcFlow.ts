@@ -1,4 +1,3 @@
-import { ethErrors } from 'eth-rpc-errors';
 import 'reflect-metadata';
 
 import { keyringService, notificationService, permissionService } from '@/background/service';
@@ -6,8 +5,9 @@ import { PromiseFlow, underline2Camelcase } from '@/background/utils';
 import { CHAINS_ENUM, EVENTS } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 
+import { rpcErrors } from '@/shared/lib/bitcoin-rpc-errors/errors';
 import { ApprovalContext } from '@/shared/types/Approval';
-import { AppError } from '@/shared/types/Error';
+import { WalletError } from '@/shared/types/Error';
 import { ProviderControllerRequest } from '@/shared/types/Request';
 import providerController from './controller';
 
@@ -27,7 +27,7 @@ const flowContext = flow
         ctx.mapMethod = underline2Camelcase(method);
 
         if (!providerController[ctx.mapMethod]) {
-            throw ethErrors.rpc.methodNotFound({
+            throw rpcErrors.methodNotFound({
                 message: `method [${method}] doesn't has corresponding handler`,
                 data: ctx.request.data
             });
@@ -141,7 +141,7 @@ const flowContext = flow
                 }
                 return result;
             })
-            .catch((e: AppError) => {
+            .catch((e: WalletError) => {
                 if (isSignApproval(approvalType)) {
                     eventBus.emit(EVENTS.broadcastToUI, {
                         method: EVENTS.SIGN_FINISHED,

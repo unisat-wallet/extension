@@ -2,7 +2,8 @@ import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ApprovalResponse } from '@/shared/types/Approval';
-import { AppError } from '@/shared/types/Error';
+import { WalletError } from '@/shared/types/Error';
+import { isWalletError } from '@/shared/utils/errors';
 import { getUiType } from '.';
 import { useWallet } from './WalletContext';
 
@@ -120,7 +121,7 @@ export const useWalletRequest = <TArgs extends unknown[], TResult>(
         onError
     }: {
         onSuccess?(result: TResult): void;
-        onError?(error: AppError): void;
+        onError?(error: WalletError): void;
     }
 ) => {
     const mounted = useRef(false);
@@ -133,7 +134,7 @@ export const useWalletRequest = <TArgs extends unknown[], TResult>(
     }, []);
     const [loading, setLoading] = useState<boolean>(false);
     const [res, setRes] = useState<TResult | undefined>(undefined);
-    const [err, setErr] = useState<AppError>();
+    const [err, setErr] = useState<WalletError>();
 
     const run = async (...args: TArgs) => {
         setLoading(true);
@@ -148,8 +149,12 @@ export const useWalletRequest = <TArgs extends unknown[], TResult>(
             if (!mounted.current) {
                 return;
             }
-            setErr(err);
-            onError && onError(err);
+            if (isWalletError(err)) {
+                setErr(err);
+                onError && onError(err);
+            } else {
+                console.error("Non-WalletError caught: ", err);
+            }
         } finally {
             if (mounted.current) {
                 setLoading(false);
