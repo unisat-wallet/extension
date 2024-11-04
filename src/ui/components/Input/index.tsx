@@ -220,7 +220,7 @@ export const AddressInput = (props: InputProps) => {
 
         resetState();
 
-        const isValid = AddressVerificator.validateBitcoinAddress(inputAddress, Web3API.network);
+        const isValid = AddressVerificator.detectAddressType(inputAddress, Web3API.network);
         if (!isValid) {
             setFormatError('Recipient address is invalid');
             return;
