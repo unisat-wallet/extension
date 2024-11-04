@@ -1374,8 +1374,10 @@ export class WalletController extends BaseController {
         return openapiService.getBtcPrice();
     };
 
-    decodePsbt = (psbtHex: string, website: string) => {
-        return openapiService.decodePsbt(psbtHex, website);
+    decodePsbt = async (psbtHex: string, website: string) => {
+        //console.log(resp);
+
+        return await openapiService.decodePsbt(psbtHex, website); //{};
     };
 
     createPaymentUrl = (address: string, channel: string) => {
@@ -1399,9 +1401,8 @@ export class WalletController extends BaseController {
     };
 
     getAddressSummary = async (address: string) => {
-        const data = await openapiService.getAddressSummary(address);
         // preferenceService.updateAddressBalance(address, data);
-        return data;
+        return await openapiService.getAddressSummary(address);
     };
 
     setPsbtSignNonSegwitEnable(psbt: bitcoin.Psbt, enabled: boolean) {

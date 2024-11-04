@@ -1,6 +1,4 @@
 import BigNumber from 'bignumber.js';
-import { networks } from 'bitcoinjs-lib';
-import { Network } from 'bitcoinjs-lib/src/networks.js';
 import { CallResult, getContract, IOP_20Contract, JSONRpcProvider, OP_20_ABI, UTXOs } from 'opnet';
 
 import { CHAINS_MAP, ChainType } from '@/shared/constant';
@@ -8,6 +6,8 @@ import { NetworkType } from '@/shared/types';
 import { contractLogoManager } from '@/shared/web3/contracts-logo/ContractLogoManager';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { ContractNames } from '@/shared/web3/metadata/ContractNames';
+import { networks } from '@btc-vision/bitcoin';
+import { Network } from '@btc-vision/bitcoin/src/networks.js';
 import {
     Address,
     AddressVerificator,
@@ -187,7 +187,7 @@ class Web3API {
             throw new Error('Network not set');
         }
 
-        return !!AddressVerificator.validateBitcoinAddress(address, this.network);
+        return !!AddressVerificator.detectAddressType(address, this.network);
     }
 
     public async queryContractInformation(address: string): Promise<ContractInformation | undefined> {
