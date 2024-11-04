@@ -39,7 +39,7 @@ const fixWindowError2 = () => {
 };
 
 const fixWindowError3 = () => {
-    const file = './node_modules/bitcoinjs-lib/src/payments/p2tr.js';
+    const file = './node_modules/@btc-vision/bitcoin/src/payments/p2tr.js';
     let fileData = fs.readFileSync(file).toString();
     fileData = fileData.replace(
         'signature: types_1.typeforce.maybe(types_1.typeforce.BufferN(64))',
@@ -94,7 +94,7 @@ const fixBufferError = () => {
   Object.defineProperty(exports, "__esModule", { value: true });
   exports.ecc = exports.bitcoin = exports.ECPair = void 0;
 
-  const bitcoin = require("bitcoinjs-lib");
+  const bitcoin = require("@btc-vision/bitcoin");
   const ecpair = require("ecpair");
 
   let eccPromise;

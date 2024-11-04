@@ -359,12 +359,12 @@ export default function SignPsbt({
             return;
         }
 
-        const decodedPsbt = await wallet.decodePsbt(psbtHex, session?.origin || '');
+        const decodedPsbt = await wallet.decodePsbt(psbtHex, session?.origin ?? '');
 
         let toSignInputs: ToSignInput[] = [];
         // @ts-ignore
         if (type === TxType.SEND_BITCOIN) {
-            toSignInputs = decodedPsbt.inputInfos.map((v, index) => ({
+            toSignInputs = decodedPsbt.inputInfos.map((_, index) => ({
                 index,
                 publicKey: currentAccount.pubkey
             }));
@@ -678,10 +678,9 @@ export default function SignPsbt({
                         <Text text={shortAddress(txInfo.psbtHex, 10)} />
                         <Row
                             itemsCenter
-                            onClick={(e) => {
-                                copyToClipboard(txInfo.psbtHex).then(() => {
-                                    tools.toastSuccess('Copied');
-                                });
+                            onClick={async () => {
+                                await copyToClipboard(txInfo.psbtHex);
+                                tools.toastSuccess('Copied');
                             }}>
                             <Text text={`${txInfo.psbtHex.length / 2} bytes`} color="textDim" />
                             <Icon icon="copy" color="textDim" />

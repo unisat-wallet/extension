@@ -1,49 +1,97 @@
 name: Create Release
 
 on:
-  push:
-    tags:
-      - v*
+    push:
+        tags:
+            - v*
 
 jobs:
-  build:
-    runs-on: ubuntu-latest
-    steps:
-      - name: Checkout the code
-        uses: actions/checkout@v2
-      - uses: ./.github/actions/setup
+    build:
+        runs-on: ubuntu-latest
+        steps:
+            - name: Checkout the code
+              uses: actions/checkout@v2
+            - uses: ./.github/actions/setup
 
-      - name: Get Version Name
-        uses: actions/github-script@v3
-        id: get-version
-        with:
-          script: |
-            const str=process.env.GITHUB_REF;
-            return str.substring(str.indexOf("v") + 1);
-          result-encoding: string
+            - name: Get Version Name
+              uses: actions/github-script@v3
+              id: get-version
+              with:
+                  script: |
+                      const str=process.env.GITHUB_REF;
+                      return str.substring(str.indexOf("v") + 1);
+                  result-encoding: string
 
-      - name: Build Chrome
-        run: |
-          yarn build:chrome
+            - name: Build Extension
+              run: |
+                  yarn build:firefox
+                  yarn build:brave
+                  yarn build:edge
+                  yarn build:opera
+                  yarn build:chrome
 
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: ${{ github.ref }}
-          draft: false
-          prerelease: false
+            - name: Create Release
+              id: create_release
+              uses: actions/create-release@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  tag_name: ${{ github.ref }}
+                  release_name: ${{ github.ref }}
+                  draft: false
+                  prerelease: false
 
-      - name: Upload Asset
-        id: upload-asset
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/opwallet-chrome-mv3-v${{steps.get-version.outputs.result}}.zip
-          asset_name: opwallet-chrome-mv3-v${{steps.get-version.outputs.result}}.zip
-          asset_content_type: application/zip
+            - name: Upload Firefox Asset
+              id: upload_firefox
+              uses: actions/upload-release-asset@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  upload_url: ${{ steps.create_release.outputs.upload_url }}
+                  asset_path: dist/opwallet-firefox-v${{steps.get-version.outputs.result}}.zip
+                  asset_name: opwallet-firefox-v${{steps.get-version.outputs.result}}.zip
+                  asset_content_type: application/zip
+
+            - name: Upload Brave Asset
+              id: upload_brave
+              uses: actions/upload-release-asset@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  upload_url: ${{ steps.create_release.outputs.upload_url }}
+                  asset_path: dist/opwallet-brave-v${{steps.get-version.outputs.result}}.zip
+                  asset_name: opwallet-brave-v${{steps.get-version.outputs.result}}.zip
+                  asset_content_type: application/zip
+
+            - name: Upload Edge Asset
+              id: upload_edge
+              uses: actions/upload-release-asset@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  upload_url: ${{ steps.create_release.outputs.upload_url }}
+                  asset_path: dist/opwallet-edge-v${{steps.get-version.outputs.result}}.zip
+                  asset_name: opwallet-edge-v${{steps.get-version.outputs.result}}.zip
+                  asset_content_type: application/zip
+
+            - name: Upload Opera Asset
+              id: upload_opera
+              uses: actions/upload-release-asset@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  upload_url: ${{ steps.create_release.outputs.upload_url }}
+                  asset_path: dist/opwallet-opera-v${{steps.get-version.outputs.result}}.zip
+                  asset_name: opwallet-opera-v${{steps.get-version.outputs.result}}.zip
+                  asset_content_type: application/zip
+
+            - name: Upload Chrome Asset
+              id: upload_chrome
+              uses: actions/upload-release-asset@v1
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              with:
+                  upload_url: ${{ steps.create_release.outputs.upload_url }}
+                  asset_path: dist/opwallet-chrome-v${{steps.get-version.outputs.result}}.zip
+                  asset_name: opwallet-chrome-v${{steps.get-version.outputs.result}}.zip
+                  asset_content_type: application/zip
