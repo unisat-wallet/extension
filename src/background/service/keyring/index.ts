@@ -1,7 +1,5 @@
 /// fork from https://github.com/MetaMask/KeyringController/blob/master/index.js
 import * as bip39 from 'bip39';
-import { networks } from 'bitcoinjs-lib';
-import { Network } from 'bitcoinjs-lib/src/networks.js';
 import * as oldEncryptor from 'browser-passworder';
 import { EventEmitter } from 'events';
 import log from 'loglevel';
@@ -12,6 +10,8 @@ import {
 } from '@/content-script/pageProvider/Web3Provider.js';
 import { ADDRESS_TYPES, KEYRING_TYPE } from '@/shared/constant';
 import { AddressType } from '@/shared/types';
+import { networks } from '@btc-vision/bitcoin';
+import { Network } from '@btc-vision/bitcoin/src/networks.js';
 import * as encryptor from '@btc-vision/passworder';
 import { HdKeyring, IKeyringBase, KeystoneKeyring, SimpleKeyring } from '@btc-vision/wallet-sdk';
 import { bitcoin } from '@btc-vision/wallet-sdk/lib/bitcoin-core';
