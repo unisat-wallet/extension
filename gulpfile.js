@@ -73,6 +73,10 @@ export async function task_prepare() {
     const sourceDir = path.resolve('build/_raw'); // Adjust to your source path
     const destDir = path.resolve(`dist/${options.browser}`); // Adjust to your destination path
 
+    try {
+        fs.mkdirSync(destDir, { recursive: true });
+    } catch {}
+
     copyFiles(sourceDir, destDir);
 
     return Promise.resolve();
