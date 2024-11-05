@@ -1,6 +1,12 @@
 import { permissionService } from '@/background/service';
 import { SessionEvent, SessionEventPayload } from '@/shared/interfaces/SessionEvent';
 
+export interface SessionInfo {
+    origin: string;
+    icon: string;
+    name: string;
+}
+
 export class Session {
     public origin: string = '';
     public icon: string = '';
@@ -8,7 +14,7 @@ export class Session {
 
     public key: number = 0;
 
-    setProp(params: { origin: string; icon: string; name: string }) {
+    setProp(params: SessionInfo) {
         this.origin = params.origin;
         this.icon = params.icon;
         this.name = params.name;

@@ -114,11 +114,7 @@ browserRuntimeOnConnect((port: chrome.runtime.Port) => {
         }
 
         const session = sessionService.getOrCreateSession(sessionId);
-        const req: ProviderControllerRequest = { data, session: {
-            origin: session.origin,
-            name: session.name,
-            icon: session.icon
-        }};
+        const req: ProviderControllerRequest = { data, session };
 
         // for background push to respective page
         session.pushMessage = (event: string, data: RequestParams) => {
