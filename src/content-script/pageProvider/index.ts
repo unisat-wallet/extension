@@ -103,10 +103,10 @@ export class OpnetProvider extends EventEmitter {
         _opnetPrividerPrivate._bcm.connect().on('message', this._handleBackgroundMessage);
         domReadyCall(async () => {
             const origin = window.top?.location.origin;
-            // @ts-ignore
+            // @ts-expect-error
             const icon = $('head > link[rel~="icon"]')?.href || $('head > meta[itemprop="image"]')?.content;
 
-            // @ts-ignore
+            // @ts-expect-error
             const name = document.title || $('head > meta[name="title"]')?.content || origin;
 
             await _opnetPrividerPrivate._bcm.request({
@@ -434,9 +434,9 @@ export class OpnetProvider extends EventEmitter {
     private _handleBackgroundMessage = (params: { event: string; data: unknown }) => {
         log('[push event]', params.event, params.data);
 
-        // @ts-ignore
+        // @ts-expect-error
         if (_opnetPrividerPrivate._pushEventHandlers?.[params.event]) {
-            // @ts-ignore
+            // @ts-expect-error
             return _opnetPrividerPrivate._pushEventHandlers[params.event](params.data);
         }
 

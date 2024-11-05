@@ -162,7 +162,7 @@ export default function SettingsTabScreen() {
             const item = ADDRESS_TYPES[currentKeyring.addressType];
             const hdPath = currentKeyring.hdPath || item.hdPath;
             if (currentKeyring.type === KEYRING_TYPE.SimpleKeyring) {
-                v.value = `${item.name}`;
+                v.value = item.name;
             } else {
                 v.value = `${item.name} (${hdPath}/${currentAccount.index})`;
             }

@@ -1,4 +1,4 @@
-/* eslint-disable quotes */
+ 
 import { useState } from 'react';
 
 import { Button, Column, Content, Layout, Logo, Row, Text } from '@/ui/components';

@@ -7,24 +7,24 @@ class DisplayKeyring {
 
     // TODO (typing): Check if it's possible to add the fields indicated with @ts-ignore into the Keyring in wallet-sdk.
     constructor(keyring: Keyring) {
-        // @ts-ignore
+        // @ts-expect-error
         this.accounts = keyring.accounts || [];
         this.type = keyring.type;
-        // @ts-ignore
+        // @ts-expect-error
         this.hdPath = (keyring).hdPath;
     }
 
     unlock = async (): Promise<void> => {
         const keyring = KeyringService.getKeyringForAccount(this.accounts[0], this.type);
-        // @ts-ignore
+        // @ts-expect-error
         if (keyring.unlock) await keyring.unlock();
     };
 
     getFirstPage = async () => {
         const keyring = KeyringService.getKeyringForAccount(this.accounts[0], this.type);
-        // @ts-ignore
+        // @ts-expect-error
         if (keyring.getFirstPage) {
-            // @ts-ignore
+            // @ts-expect-error
             return await keyring.getFirstPage();
         } else {
             return [];
@@ -33,9 +33,9 @@ class DisplayKeyring {
 
     getNextPage = async () => {
         const keyring = KeyringService.getKeyringForAccount(this.accounts[0], this.type);
-        // @ts-ignore
+        // @ts-expect-error
         if (keyring.getNextPage) {
-            // @ts-ignore
+            // @ts-expect-error
             return await keyring.getNextPage();
         } else {
             return [];
@@ -49,9 +49,9 @@ class DisplayKeyring {
 
     activeAccounts = (indexes: number[]): string[] => {
         const keyring = KeyringService.getKeyringForAccount(this.accounts[0], this.type);
-        // @ts-ignore
+        // @ts-expect-error
         if (keyring.activeAccounts) {
-            // @ts-ignore
+            // @ts-expect-error
             return keyring.activeAccounts(indexes);
         } else {
             return [];

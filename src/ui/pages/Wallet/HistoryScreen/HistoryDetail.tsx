@@ -83,9 +83,9 @@ export function HistoryDetail({ detail, close }: HistoryDetailProps) {
                                 <Text text={'Network fee'} color={'textDim'} />
                                 <Row>
                                     <Text
-                                        text={`${Number(Math.abs(satoshisToBTC(detail.fee))).toLocaleString('en', {
+                                        text={Number(Math.abs(satoshisToBTC(detail.fee))).toLocaleString('en', {
                                             minimumFractionDigits: 8
-                                        })}`}></Text>
+                                        })}></Text>
                                     <Text text={'BTC'} color={'textDim'} />
                                 </Row>
                             </Row>

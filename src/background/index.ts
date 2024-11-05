@@ -56,7 +56,7 @@ browserRuntimeOnConnect((port: chrome.runtime.Port) => {
 
                                 return Promise.reject(`Method ${data.method} not found in openapi`);
                             } else {
-                                // @ts-ignore
+                                // @ts-expect-error
                                 return method.apply(null, data.params);
                             }
                         }
@@ -70,7 +70,7 @@ browserRuntimeOnConnect((port: chrome.runtime.Port) => {
 
                                 return Promise.reject(`Method ${data.method} not found in controller`);
                             } else {
-                                // @ts-ignore
+                                // @ts-expect-error
                                 return method.apply(null, data.params);
                             }
                         }

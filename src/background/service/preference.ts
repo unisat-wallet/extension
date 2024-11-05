@@ -262,7 +262,7 @@ class PreferenceService {
         return this.store.externalLinkAck;
     };
 
-    setExternalLinkAck = (ack: boolean = false) => {
+    setExternalLinkAck = (ack = false) => {
         this.store.externalLinkAck = ack;
     };
 

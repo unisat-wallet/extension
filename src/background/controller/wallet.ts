@@ -942,9 +942,9 @@ export class WalletController extends BaseController {
             }
         }
 
-        // @ts-ignore
+        // @ts-expect-error
         if (keyring[methodName]) {
-            // @ts-ignore
+            // @ts-expect-error
             return keyring[methodName].call(keyring, ...params);
         }
     };
@@ -1406,8 +1406,8 @@ export class WalletController extends BaseController {
     };
 
     setPsbtSignNonSegwitEnable(psbt: bitcoin.Psbt, enabled: boolean) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore
+         
+        //@ts-expect-error
         psbt.__CACHE.__UNSAFE_SIGN_NONSEGWIT = enabled;
     }
 
@@ -1432,7 +1432,7 @@ export class WalletController extends BaseController {
             throw new Error('keyring does not exist');
         }
 
-        // @ts-ignore
+        // @ts-expect-error
         if (!keyring[method]) {
             throw new Error(`keyring does not have ${method} method`);
         }

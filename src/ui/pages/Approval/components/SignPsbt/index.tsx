@@ -345,7 +345,7 @@ export default function SignPsbt({
         const decodedPsbt = await wallet.decodePsbt(psbtHex, session?.origin ?? '');
 
         let toSignInputs: ToSignInput[] = [];
-        // @ts-ignore
+        // @ts-expect-error
         if (type === TxType.SEND_BITCOIN) {
             toSignInputs = decodedPsbt.inputInfos.map((_, index) => ({
                 index,
@@ -608,7 +608,7 @@ export default function SignPsbt({
                                                             </Column>
                                                             <Row>
                                                                 <Text
-                                                                    text={`${satoshisToAmount(v.value)}`}
+                                                                    text={satoshisToAmount(v.value)}
                                                                     color={isToSign ? 'white' : 'textDim'}
                                                                 />
                                                                 <Text text={btcUnit} color="textDim" />
@@ -648,7 +648,7 @@ export default function SignPsbt({
                                                             />
                                                             <Row>
                                                                 <Text
-                                                                    text={`${satoshisToAmount(v.value)}`}
+                                                                    text={satoshisToAmount(v.value)}
                                                                     color={isMyAddress ? 'white' : 'textDim'}
                                                                 />
                                                                 <Text text={btcUnit} color="textDim" />

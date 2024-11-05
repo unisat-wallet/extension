@@ -8,11 +8,11 @@ export interface SessionInfo {
 }
 
 export class Session {
-    public origin: string = '';
-    public icon: string = '';
-    public name: string = '';
+    public origin = '';
+    public icon = '';
+    public name = '';
 
-    public key: number = 0;
+    public key = 0;
 
     setProp(params: SessionInfo) {
         this.origin = params.origin;

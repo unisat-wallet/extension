@@ -184,7 +184,7 @@ export function Step2({
         setPathError('');
         setPathText(text);
         if (text !== '') {
-            // @ts-ignore
+            // @ts-expect-error
             const isValid = bitcore.HDPrivateKey.isValidPath(text);
             if (!isValid) {
                 setPathError('Invalid derivation path.');
@@ -309,7 +309,7 @@ export function Step2({
                     return (
                         <AddressTypeCard2
                             key={index}
-                            label={`${options.label}`}
+                            label={options.label}
                             items={item.address_arr.map((v, index) => ({
                                 address: v,
                                 satoshis: item.satoshis_arr[index],
@@ -342,7 +342,7 @@ export function Step2({
                     return (
                         <AddressTypeCard2
                             key={index}
-                            label={`${item.label}`}
+                            label={item.label}
                             items={[
                                 {
                                     address,

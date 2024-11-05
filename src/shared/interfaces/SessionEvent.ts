@@ -24,11 +24,11 @@ export interface ChainChangedEventData extends BaseSessionEventPayload {
     enum: ChainType;
 }
 
-export interface WalletErrorEventData extends BaseSessionEventPayload {}
+export type WalletErrorEventData = BaseSessionEventPayload
 
-export interface WalletConnectedEventData extends BaseSessionEventPayload {}
+export type WalletConnectedEventData = BaseSessionEventPayload
 
-export interface WalletDisconnectedEventData extends BaseSessionEventPayload {}
+export type WalletDisconnectedEventData = BaseSessionEventPayload
 
 export type SessionEventPayload<T extends SessionEvent> = T extends SessionEvent.networkChanged
     ? NetworkChangedEventData

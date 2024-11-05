@@ -1,5 +1,5 @@
 import { max } from 'lodash';
-// @ts-ignore
+// @ts-expect-error
 import LRU from 'lru-cache';
 
 import { createPersistStore } from '@/background/utils';

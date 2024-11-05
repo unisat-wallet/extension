@@ -26,7 +26,7 @@ export default class BroadcastChannelMessage extends Message {
         return this;
     };
 
-    // eslint-disable-next-line no-unused-vars
+     
     listen = (listenCallback: (_: RequestParams) => Promise<unknown>) => {
         this.listenCallback = listenCallback;
 

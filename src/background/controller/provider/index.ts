@@ -15,9 +15,9 @@ tab.on('tabRemove', (id) => {
 export default (req: ProviderControllerRequest): Promise<unknown> => {
     const method = req.data.method;
 
-    // @ts-ignore
+    // @ts-expect-error
     if (internalMethod[method]) {
-        // @ts-ignore
+        // @ts-expect-error
         return internalMethod[method](req);
     }
 

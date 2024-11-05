@@ -131,7 +131,7 @@ export default function SignDeployment(props: Props) {
                                                     />
                                                     <Row>
                                                         <Text
-                                                            text={`${satoshisToAmount(v.value)}`}
+                                                            text={satoshisToAmount(v.value)}
                                                             color={isMyAddress ? 'white' : 'textDim'}
                                                         />
                                                         <Text text={btcUnit} color="textDim" />

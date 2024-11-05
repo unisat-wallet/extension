@@ -81,9 +81,9 @@ export interface UnwrapParameters extends BaseRawTxInfo<Action.Unwrap> {
     readonly inputAmount: number;
 }
 
-export interface UnstakeParameters extends BaseRawTxInfo<Action.Unstake> {}
+export type UnstakeParameters = BaseRawTxInfo<Action.Unstake>
 
-export interface ClaimParameters extends BaseRawTxInfo<Action.Claim> {}
+export type ClaimParameters = BaseRawTxInfo<Action.Claim>
 
 export type RawTxInfo =
     | TransferParameters

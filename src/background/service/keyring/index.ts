@@ -978,7 +978,7 @@ class KeyringService extends EventEmitter {
         return !!addresses.find((item) => item.pubkey === pubkey);
     };
 
-    /* eslint-disable require-await */
+     
     clearKeyrings = (): void => {
         // clear keyrings from memory
         this.keyrings = [];

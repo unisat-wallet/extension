@@ -35,7 +35,7 @@ export function MyItem({ account, selected, onClick }: MyItemProps, ref) {
                 </Column>
                 <Column>
                     <Text text={account.alianName} />
-                    <Text text={`${shortAddress(account.address)}`} preset="sub" />
+                    <Text text={shortAddress(account.address)} preset="sub" />
                 </Column>
             </Row>
             <Column relative></Column>

@@ -57,7 +57,7 @@ export function AmountItem({ item, inDetail }: { item: ExtraItem; inDetail?: boo
             <Text text={isReceived ? '+' : '-'} color={isReceived ? 'green' : 'red'} />
             {item.type === 'BTC' && (
                 <Text
-                    text={`${Number(item.value.abs().toNumber()).toLocaleString('en', { minimumFractionDigits: 8 })}`}
+                    text={Number(item.value.abs().toNumber()).toLocaleString('en', { minimumFractionDigits: 8 })}
                     ellipsis
                     size={inDetail ? 'xl' : 'xs'}
                 />
