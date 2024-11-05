@@ -87,7 +87,7 @@
     "This__is__an__imported__account": { "message": "This is an imported account" },
     "Password_must_contain_at_least_5_characters": { "message": "Password must contain at least 5 characters" },
     "appDescription": {
-        "message": "A browser-based extension that allows you to manage your tokens and interact with applications built on the OP_NET Bitcoin Layer 1 Metaprotocol."
+        "message": "A browser extension for managing tokens and interacting with apps on the OP_NET Bitcoin Layer 1 Metaprotocol."
     },
     "If__you__ever__change__browsers__or__move__computers": {
         "message": "If you ever change browsers or move computers"
