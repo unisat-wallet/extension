@@ -1,9 +1,10 @@
+import { SessionInfo as Session } from '@/background/service/session';
 import { IDeploymentParameters } from '@btc-vision/transaction';
 import { ChainType } from '../constant';
 import { NetworkType, RawTxInfo, SignPsbtOptions, TxType } from '../types';
 import { DetailedInteractionParameters } from '../web3/interfaces/DetailedInteractionParameters';
 import { WalletError } from './Error';
-import { ProviderControllerRequest, Session } from './Request';
+import { ProviderControllerRequest } from './Request';
 
 // APPROVAL CONTEXT
 export interface ApprovalContext {
