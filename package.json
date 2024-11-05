@@ -247,6 +247,7 @@
         "@types/stylus": "^0.48.43",
         "@typescript-eslint/eslint-plugin": "^8.13.0",
         "@typescript-eslint/parser": "^8.13.0",
+        "archiver": "^7.0.1",
         "autoprefixer": "^10.4.20",
         "babel-plugin-import": "^1.13.8",
         "eslint": "^9.14.0",
