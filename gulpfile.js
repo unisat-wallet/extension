@@ -40,6 +40,12 @@ const version = packageConfig.version;
 const validVersion = version.split('-beta')[0];
 
 export function task_clean() {
+    const destDir = path.resolve(`dist/${options.browser}`); // Adjust to your destination path
+    
+    try {
+        fs.mkdirSync(destDir, { recursive: true });
+    } catch {}
+
     return gulp.src(`dist/${options.browser}/*`, { read: false }).pipe(gulpClean());
 }
 
