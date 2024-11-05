@@ -404,7 +404,7 @@ class ProviderController extends BaseController {
         const result: string[] = [];
         for (let i = 0; i < psbtHexs.length; i++) {
             const psbt = bitcoin.Psbt.fromHex(psbtHexs[i], { network: psbtNetwork });
-            const autoFinalized = (!(options && options[i] && !options[i].autoFinalized));
+            const autoFinalized = options?.[i]?.autoFinalized ?? true;
             const toSignInputs = await wallet.formatOptionsToSignInputs(psbtHexs[i], options[i]);
             await wallet.signPsbt(psbt, toSignInputs, autoFinalized);
             result.push(psbt.toHex());

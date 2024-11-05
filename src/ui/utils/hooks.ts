@@ -152,7 +152,7 @@ export const useWalletRequest = <TArgs extends unknown[], TResult>(
             }
             if (isWalletError(err)) {
                 setErr(err);
-                onError && onError(err);
+                onError?.(err);
             } else {
                 console.error("Non-WalletError caught: ", err);
             }
