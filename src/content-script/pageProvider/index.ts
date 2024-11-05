@@ -166,7 +166,7 @@ export class OpnetProvider extends EventEmitter {
 
                 return res;
             })
-            .catch((err) => {
+            .catch((err: unknown) => {
                 console.log(err);
                 throw err;
             });

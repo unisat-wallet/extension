@@ -1,9 +1,14 @@
-const webpackMerge = require('webpack-merge');
-const commonConfig = require('./build/webpack.common.config');
+import webpackMerge from 'webpack-merge';
+
+import commonConfig from './build/webpack.common.config.cjs';
+import debugConfig from './build/webpack.debug.config.cjs';
+import devConfig from './build/webpack.dev.config.cjs';
+import proConfig from './build/webpack.pro.config.cjs';
+
 const configs = {
-    dev: require('./build/webpack.dev.config'),
-    pro: require('./build/webpack.pro.config'),
-    debug: require('./build/webpack.debug.config')
+    dev: devConfig,
+    pro: proConfig,
+    debug: debugConfig
 };
 
 const config = (env) => {
@@ -19,10 +24,10 @@ const config = (env) => {
     const toAdd = {
         resolve: {
             fallback: {
-                vm: require.resolve('vm-browserify')
+                //vm: resolvePath('vm-browserify')
             }
         }
-        //ignoreWarnings: [/./]
+        // ignoreWarnings: [/./]
     };
 
     let finalConfigs = env.config
@@ -32,7 +37,7 @@ const config = (env) => {
     const addedConfigs = {
         experiments: {
             outputModule: true,
-            asyncWebAssembly: false,
+            asyncWebAssembly: true,
             syncWebAssembly: true
         },
         node: {
@@ -49,4 +54,4 @@ const config = (env) => {
     return finalConfigs;
 };
 
-module.exports = config;
+export default config;

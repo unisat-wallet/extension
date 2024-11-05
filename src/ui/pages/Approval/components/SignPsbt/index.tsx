@@ -15,7 +15,7 @@ import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks'
 import { useBTCUnit, useChain } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
-import { amountToSatoshis, copyToClipboard, satoshisToAmount, shortAddress, useWallet } from '@/ui/utils';
+import { amountToSatoshis, copyToClipboard, satoshisToAmount, shortAddress, useApproval, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 interface Props {
@@ -55,25 +55,6 @@ interface Props {
     };
     handleCancel?: () => void;
     handleConfirm?: (rawTxInfo?: RawTxInfo) => void;
-}
-
-interface InputInfo {
-    txid: string;
-    vout: number;
-    address: string;
-    value: number;
-    inscrip;
-}
-
-interface OutputInfo {
-    address: string;
-    value: number;
-}
-
-enum TabState {
-    DETAILS,
-    DATA,
-    HEX
 }
 
 interface InscriptioinInfo {
@@ -297,6 +278,8 @@ export default function SignPsbt({
 }: Props) {
     const [txInfo, setTxInfo] = useState<TxInfo>(initTxInfo);
 
+    const [getApproval, resolveApproval, rejectApproval] = useApproval();
+
     const btcUnit = useBTCUnit();
 
     const wallet = useWallet();
@@ -396,13 +379,20 @@ export default function SignPsbt({
 
     if (!handleCancel) {
         handleCancel = () => {
-            throw new Error('Not implemented: cancel');
+            rejectApproval();
         };
     }
 
     if (!handleConfirm) {
         handleConfirm = (res) => {
-            throw new Error('Not implemented: confirm');
+            let signed = true;
+            if (type === TxType.SIGN_TX && currentAccount.type !== KEYRING_TYPE.KeystoneKeyring) {
+                signed = false;
+            }
+            resolveApproval({
+                psbtHex: (res ?? txInfo).psbtHex,
+                signed
+            });
         };
     }
 

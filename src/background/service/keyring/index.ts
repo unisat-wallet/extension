@@ -649,13 +649,7 @@ class KeyringService extends EventEmitter {
     };
 
     removeKeyring = async (keyringIndex: number): Promise<void> => {
-        if (!this.keyrings[keyringIndex]) {
-            return;
-        }
-
-        // Since we're already checking if the key exists, we can disable this eslint error
-        // eslint-disable-next-line @typescript-eslint/no-dynamic-delete
-        delete this.keyrings[keyringIndex];
+        this.keyrings.splice(keyringIndex, 1);
         this.keyrings[keyringIndex] = new EmptyKeyring();
 
         await this.persistAllKeyrings();
