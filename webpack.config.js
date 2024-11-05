@@ -37,7 +37,7 @@ const config = (env) => {
     const addedConfigs = {
         experiments: {
             outputModule: true,
-            asyncWebAssembly: false,
+            asyncWebAssembly: true,
             syncWebAssembly: true
         },
         node: {
@@ -50,7 +50,7 @@ const config = (env) => {
     };
 
     finalConfigs = webpackMerge.merge(finalConfigs, addedConfigs);
-    
+
     return finalConfigs;
 };
 

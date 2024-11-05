@@ -167,7 +167,8 @@ const config = (env) => {
             path: paths.dist,
             filename: '[name].js',
             publicPath: '/',
-            globalObject: 'this'
+            globalObject: 'this', // Ensures compatibility with Webpack modules in non-ESM
+            environment: { module: true, dynamicImport: false } // Use ES module syntax for output (for Manifest V3 support)
         },
         module: {
             rules: [
@@ -536,8 +537,12 @@ const config = (env) => {
         //   },
         // },
         experiments: {
-            asyncWebAssembly: true
-        }
+            asyncWebAssembly: true,
+            topLevelAwait: true,
+            outputModule: true
+        },
+
+        target: 'web'
     };
     config.module.rules = config.module.rules.map((rule) => {
         if (rule.oneOf instanceof Array) {

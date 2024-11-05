@@ -153,7 +153,7 @@ export class OpnetProvider extends EventEmitter {
             .call(async () => {
                 log('[request]', JSON.stringify(data, null, 2));
 
-                const res = await _opnetPrividerPrivate._bcm.request(data).catch((err) => {
+                const res = await _opnetPrividerPrivate._bcm.request(data).catch((err: unknown) => {
                     log('[request: error]', data.method, serializeError(err));
                     throw serializeError(err);
                 });
@@ -162,7 +162,7 @@ export class OpnetProvider extends EventEmitter {
 
                 return res;
             })
-            .catch((err) => {
+            .catch((err: unknown) => {
                 console.log(err);
                 throw err;
             });

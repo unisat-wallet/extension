@@ -1,14 +1,18 @@
+import fs from 'fs';
 import gulp from 'gulp';
 import gulpClean from 'gulp-clean';
 import gulpJsoncombine from 'gulp-jsoncombine';
 import gulpUglify from 'gulp-uglify-es';
 import gulpZip from 'gulp-zip';
 import minimist from 'minimist';
+import path from 'path';
 import { exit } from 'process';
 import webpack from 'webpack';
 
-import packageConfig from './package.json';
-import webpackConfigFunc from './webpack.config';
+import webpackConfigFunc from './webpack.config.js';
+
+const packageJsonPath = path.resolve(process.cwd(), 'package.json');
+const packageConfig = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
 
 const { default: uglify } = gulpUglify;
 
@@ -19,27 +23,59 @@ const knownOptions = {
 
 const supported_browsers = ['chrome', 'firefox', 'edge', 'brave', 'opera'];
 const supported_mvs = ['mv2', 'mv3'];
-const brandName = 'opwallet';
-const version = packageConfig.version;
-const validVersion = version.split('-beta')[0];
 
 const options = minimist(process.argv.slice(2), knownOptions);
-
 if (!supported_browsers.includes(options.browser)) {
     console.error(`not supported browser: [${options.browser}]. It should be one of ${supported_browsers.join(', ')}.`);
     exit(0);
 }
+
 if (!supported_mvs.includes(options.manifest)) {
     console.error(`not supported browser: [${options.manifest}]. It should be one of ${supported_mvs.join(', ')}.`);
     exit(0);
 }
 
+const brandName = 'opwallet';
+const version = packageConfig.version;
+const validVersion = version.split('-beta')[0];
+
 export function task_clean() {
     return gulp.src(`dist/${options.browser}/*`, { read: false }).pipe(gulpClean());
 }
 
-export function task_prepare() {
-    return gulp.src('build/_raw/**/*').pipe(gulp.dest(`dist/${options.browser}`));
+function copyFiles(src, dest) {
+    // Ensure the destination directory exists
+    if (!fs.existsSync(dest)) {
+        fs.mkdirSync(dest, { recursive: true });
+    }
+
+    // Read all items in the source directory
+    const items = fs.readdirSync(src);
+
+    items.forEach((item) => {
+        const srcPath = path.join(src, item);
+        const destPath = path.join(dest, item);
+
+        const stats = fs.statSync(srcPath);
+
+        if (stats.isDirectory()) {
+            // If the item is a directory, call copyFiles recursively
+            copyFiles(srcPath, destPath);
+        } else {
+            // If the item is a file, copy it to the destination
+            fs.copyFileSync(srcPath, destPath);
+            console.log(`Copied ${srcPath} to ${destPath}`);
+        }
+    });
+}
+
+export async function task_prepare() {
+    const sourceDir = path.resolve('build/_raw'); // Adjust to your source path
+    const destDir = path.resolve(`dist/${options.browser}`); // Adjust to your destination path
+
+    copyFiles(sourceDir, destDir);
+
+    return Promise.resolve();
 }
 
 export function task_merge_manifest() {
