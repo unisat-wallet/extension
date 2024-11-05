@@ -1,13 +1,16 @@
-const webpack = require('webpack');
-const webpackConfigFunc = require('./webpack.config');
-const gulp = require('gulp');
-const zip = require('gulp-zip');
-const clean = require('gulp-clean');
-const jsoncombine = require('gulp-jsoncombine');
-const minimist = require('minimist');
-const packageConfig = require('./package.json');
-const { exit } = require('process');
-const uglify = require('gulp-uglify-es').default;
+import gulp from 'gulp';
+import gulpClean from 'gulp-clean';
+import gulpJsoncombine from 'gulp-jsoncombine';
+import gulpUglify from 'gulp-uglify-es';
+import gulpZip from 'gulp-zip';
+import minimist from 'minimist';
+import { exit } from 'process';
+import webpack from 'webpack';
+
+import packageConfig from './package.json';
+import webpackConfigFunc from './webpack.config';
+
+const { default: uglify } = gulpUglify;
 
 // Parse options
 const knownOptions = {
@@ -31,17 +34,17 @@ if (!supported_mvs.includes(options.manifest)) {
     exit(0);
 }
 
-function task_clean() {
-    return gulp.src(`dist/${options.browser}/*`, { read: false }).pipe(clean());
+export function task_clean() {
+    return gulp.src(`dist/${options.browser}/*`, { read: false }).pipe(gulpClean());
 }
 
-function task_prepare() {
+export function task_prepare() {
     return gulp.src('build/_raw/**/*').pipe(gulp.dest(`dist/${options.browser}`));
 }
 
-function task_merge_manifest() {
+export function task_merge_manifest() {
     let baseFile = '_base_v3';
-    if (options.manifest == 'mv2') {
+    if (options.manifest === 'mv2') {
         baseFile = '_base_v2';
     }
     return gulp
@@ -50,8 +53,8 @@ function task_merge_manifest() {
             `dist/${options.browser}/manifest/${options.browser}.json`
         ])
         .pipe(
-            jsoncombine('manifest.json', (data) => {
-                const result = Object.assign({}, data[baseFile], data[options.browser]);
+            gulpJsoncombine('manifest.json', (data) => {
+                const result = { ...data[baseFile], ...data[options.browser] };
                 result.version = validVersion;
                 return Buffer.from(JSON.stringify(result));
             })
@@ -59,11 +62,11 @@ function task_merge_manifest() {
         .pipe(gulp.dest(`dist/${options.browser}`));
 }
 
-function task_clean_tmps() {
-    return gulp.src(`dist/${options.browser}/manifest`, { read: false }).pipe(clean());
+export function task_clean_tmps() {
+    return gulp.src(`dist/${options.browser}/manifest`, { read: false }).pipe(gulpClean());
 }
 
-function task_webpack(cb) {
+export function task_webpack(cb) {
     webpack(
         webpackConfigFunc({
             version: validVersion,
@@ -75,7 +78,7 @@ function task_webpack(cb) {
     );
 }
 
-function task_uglify() {
+export function task_uglify() {
     return gulp
         .src(`dist/${options.browser}/**/*.js`)
         .pipe(
@@ -90,14 +93,14 @@ function task_uglify() {
         .pipe(gulp.dest(`dist/${options.browser}`));
 }
 
-function task_package() {
+export function task_package() {
     return gulp
         .src(`dist/${options.browser}/**/*`)
-        .pipe(zip(`${brandName}-${options.browser}-v${version}.zip`))
+        .pipe(gulpZip(`${brandName}-${options.browser}-v${version}.zip`))
         .pipe(gulp.dest('./dist'));
 }
 
-exports.build = gulp.series(
+export const build = gulp.series(
     task_clean,
     task_prepare,
     task_webpack,
@@ -107,4 +110,4 @@ exports.build = gulp.series(
     task_package
 );
 
-exports.uglify = task_uglify;
+export const uglifyTask = task_uglify;
