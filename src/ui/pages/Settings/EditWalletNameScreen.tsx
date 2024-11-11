@@ -1,17 +1,17 @@
 import { useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import { WalletKeyring } from '@/shared/types';
 import { Button, Column, Content, Header, Input, Layout } from '@/ui/components';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { keyringsActions } from '@/ui/state/keyrings/reducer';
-import { useWallet } from '@/ui/utils';
+import { useLocationState, useWallet } from '@/ui/utils';
+
+interface LocationState {
+    keyring: WalletKeyring;
+}
 
 export default function EditWalletNameScreen() {
-    const { state } = useLocation();
-    const { keyring } = state as {
-        keyring: WalletKeyring;
-    };
+    const { keyring } = useLocationState<LocationState>();
 
     const wallet = useWallet();
     const [alianName, setAlianName] = useState('');

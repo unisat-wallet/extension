@@ -1,6 +1,5 @@
 import BigNumber from 'bignumber.js';
 import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import { Action, TransferParameters } from '@/shared/interfaces/RawTxParameters';
 import { runesUtils } from '@/shared/lib/runes-utils';
@@ -13,13 +12,13 @@ import { RBFBar } from '@/ui/components/RBFBar';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 
+import { useLocationState } from '@/ui/utils';
 import { RouteTypes, useNavigate } from '../MainRoute';
 
 BigNumber.config({ EXPONENTIAL_AT: 256 });
 
 export default function SendOpNetScreen() {
-    const { state } = useLocation();
-    const props = state as OPTokenInfo;
+    const props = useLocationState<OPTokenInfo>();
 
     const navigate = useNavigate();
     const [inputAmount, setInputAmount] = useState('');

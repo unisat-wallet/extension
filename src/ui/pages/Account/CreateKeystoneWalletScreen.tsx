@@ -1,6 +1,5 @@
 import bitcore from 'bitcore-lib';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import { ADDRESS_TYPES } from '@/shared/constant';
 import { Button, Card, Column, Content, Footer, Header, Input, Layout, Row, Text } from '@/ui/components';
@@ -13,7 +12,7 @@ import KeystoneScan from '@/ui/components/Keystone/Scan';
 import KeystoneProductImg from '@/ui/components/Keystone/imgs/keystone-product.png';
 import { useImportAccountsFromKeystoneCallback } from '@/ui/state/global/hooks';
 import { colors } from '@/ui/theme/colors';
-import { useWallet } from '@/ui/utils';
+import { useLocationState, useWallet } from '@/ui/utils';
 import { ScanOutlined } from '@ant-design/icons';
 import { AddressType } from '@btc-vision/wallet-sdk';
 
@@ -29,8 +28,12 @@ interface ContextData {
     customHdPath: string;
 }
 
-function Step1({ onNext }) {
-    const { state } = useLocation();
+interface LocationState {
+    fromUnlock?: boolean;
+}
+
+function Step1({ onNext }: { onNext: () => void }) {
+    const state = useLocationState<LocationState | undefined>();
     const navigate = useNavigate();
 
     const onBack = useCallback(() => {
@@ -99,9 +102,15 @@ function Step1({ onNext }) {
     );
 }
 
-function Step2({ onBack, onNext }) {
+function Step2({
+    onBack,
+    onNext
+}: {
+    onBack: () => void;
+    onNext: (data: { type: string; cbor: string }) => void;
+}) {
     const onSucceed = useCallback(
-        ({ type, cbor }) => {
+        ({ type, cbor }: { type: string; cbor: string }) => {
             onNext({ type, cbor });
         },
         [onNext]
@@ -119,6 +128,13 @@ function Step2({ onBack, onNext }) {
             </Content>
         </Layout>
     );
+}
+
+interface Group {
+    type: AddressType;
+    address_arr: string[];
+    pubkey_arr: string[];
+    satoshis_arr: number[];
 }
 
 function Step3({
@@ -139,9 +155,7 @@ function Step3({
         return ADDRESS_TYPES.filter((item) => item.displayIndex < 4).sort((a, b) => a.displayIndex - b.displayIndex);
     }, []);
 
-    const [groups, setGroups] = useState<
-        { type: AddressType; address_arr: string[]; pubkey_arr: string[]; satoshis_arr: number[] }[]
-    >([]);
+    const [groups, setGroups] = useState<Group[]>([]);
     const [isScanned, setScanned] = useState(false);
     const [error, setError] = useState('');
     const [pathText, setPathText] = useState(contextData.customHdPath);
@@ -203,10 +217,8 @@ function Step3({
         tools.showLoading(true);
         setGroups([]);
         try {
-            let groups: { type: AddressType; address_arr: string[]; pubkey_arr: string[]; satoshis_arr: number[] }[] =
-                [];
-            let groups2: { type: AddressType; address_arr: string[]; pubkey_arr: string[]; satoshis_arr: number[] }[] =
-                [];
+            let groups: Group[] = [];
+            let groups2: Group[] = [];
             for (const addressType of addressTypes) {
                 const keyring = await wallet.createTmpKeyringWithKeystone(
                     contextData.ur.type,
@@ -289,12 +301,16 @@ function Step3({
         tools.showLoading(false);
     };
 
-    const getItems = (groups, addressType) => {
+    const getItems = (groups: Group[], addressType: AddressType) => {
         // if (!groups[addressType]) {
         //   return [];
         // }
         // const group = groups[addressType];
         const group = groups.find((v) => v.type === addressType);
+        if (!group) {
+            return [];
+        }
+        
         if (
             contextData.customHdPath !== null &&
             contextData.customHdPath !== '' &&

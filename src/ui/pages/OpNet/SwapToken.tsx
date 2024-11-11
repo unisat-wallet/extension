@@ -1,8 +1,6 @@
 import BigNumber from 'bignumber.js';
 import { getContract, IMotoswapRouterContract, IOP_20Contract, MOTOSWAP_ROUTER_ABI, OP_20_ABI } from 'opnet';
-import { AddressesInfo } from 'opnet/src/providers/interfaces/PublicKeyInfo';
 import { CSSProperties, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import { Account, OPTokenInfo } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
@@ -15,11 +13,12 @@ import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { fontSizes } from '@/ui/theme/font';
-import { useWallet } from '@/ui/utils';
+import { useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 import '@btc-vision/transaction';
 import { Address } from '@btc-vision/transaction';
 
+import { AddressesInfo } from 'opnet/src/providers/interfaces/PublicKeyInfo';
 import { RouteTypes, useNavigate } from '../MainRoute';
 
 interface ItemData {
@@ -30,12 +29,9 @@ interface ItemData {
 BigNumber.config({ EXPONENTIAL_AT: 256 });
 
 export default function Swap() {
-    const { state } = useLocation();
-    const props = state as {
-        OpNetBalance: OPTokenInfo;
-    };
+    const OPTokenInfoState = useLocationState<OPTokenInfo>();
 
-    const OpNetBalance = props.OpNetBalance;
+    const OpNetBalance = OPTokenInfoState;
 
     const [loading, setLoading] = useState(true);
     const [switchOptions, setSwitchOptions] = useState<OPTokenInfo[]>([]);
@@ -122,10 +118,10 @@ export default function Swap() {
                     );
 
                     try {
-                        const pubKeyInfoSelectedOption: AddressesInfo = await Web3API.provider.getPublicKeysInfo([
+                        const pubKeyInfoSelectedOption = await Web3API.provider.getPublicKeysInfo([
                             selectedOption.address,
                             selectedOptionOutput.address
-                        ]);
+                        ]) as AddressesInfo;
 
                         const originalPubKeyInput: Address = pubKeyInfoSelectedOption[selectedOption.address];
                         const originalPubKeyOutput: Address = pubKeyInfoSelectedOption[selectedOptionOutput.address];
@@ -199,7 +195,7 @@ export default function Swap() {
 
             const getChain = await wallet.getChainType();
             const tokensImported = localStorage.getItem('opnetTokens_' + getChain);
-            const parsedTokens: string[] = tokensImported ? JSON.parse(tokensImported) : [];
+            const parsedTokens: string[] = tokensImported ? JSON.parse(tokensImported) as string[] : [];
             if (OpNetBalance?.address) {
                 setSelectedOption(OpNetBalance);
             }

@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js';
 import { getContract, IWBTCContract, WBTC_ABI } from 'opnet';
 import { CSSProperties, useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import { Account, OPTokenInfo } from '@/shared/types';
 import { addressShortner } from '@/shared/utils';
@@ -10,7 +9,7 @@ import { Button, Content, Header, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { useWallet } from '@/ui/utils';
+import { useLocationState, useWallet } from '@/ui/utils';
 import { Address } from '@btc-vision/transaction';
 
 import { RouteTypes, useNavigate } from '../MainRoute';
@@ -21,12 +20,9 @@ interface ItemData {
 }
 
 export default function UnWrapBitcoinOpnet() {
-    const { state } = useLocation();
-    const props = state as {
-        OpNetBalance: OPTokenInfo;
-    };
+    const OpNetBalanceState = useLocationState<OPTokenInfo>();
 
-    const OpNetBalance = props.OpNetBalance;
+    const OpNetBalance = OpNetBalanceState;
     const account = useCurrentAccount();
 
     const navigate = useNavigate();

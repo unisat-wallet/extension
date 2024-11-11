@@ -291,13 +291,13 @@ export const routes: Routes = {
 
 // TODO (typing): Check again but it looks like that we need to have a map between 
 // RouteTypes and their data while calling navigate function 
-export type UseNavigate<T extends RouteTypes> = (routKey: T, state?: any) => void;
+export type UseNavigate<T extends RouteTypes> = (routKey: T, state?: unknown) => void;
 
 export function useNavigate<T extends RouteTypes>(): UseNavigate<T> {
     const navigate = useNavigateOrigin();
 
     return useCallback(
-        (routKey: T, state?: any) => {
+        (routKey: T, state?: unknown) => {
             navigate(routes[routKey].path, { state });
         },
         [useNavigateOrigin]
@@ -410,11 +410,9 @@ const Main = () => {
     return (
         <HashRouter>
             <Routes>
-                {Object.keys(routes)
-                    .map((v) => routes[v])
-                    .map((v) => (
-                        <Route key={v.path} path={v.path} element={v.element} />
-                    ))}
+                {Object.entries(routes).map(([_, value]) => (
+                    <Route key={value.path} path={value.path} element={value.element} />
+                ))}
             </Routes>
         </HashRouter>
     );

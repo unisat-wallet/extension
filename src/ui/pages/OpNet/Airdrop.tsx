@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import { Action, AirdropParameters, Features } from '@/shared/interfaces/RawTxParameters';
 import { Account, OPTokenInfo } from '@/shared/types';
@@ -9,6 +8,7 @@ import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { Address, AddressMap } from '@btc-vision/transaction';
 
+import { useLocationState } from '@/ui/utils';
 import { RouteTypes, useNavigate } from '../MainRoute';
 
 interface ItemData {
@@ -17,13 +17,10 @@ interface ItemData {
 }
 
 export default function WrapBitcoinOpnet() {
-    const { state } = useLocation();
-    const props = state as {
-        OpNetBalance: OPTokenInfo;
-    };
+    const OpNetBalanceState = useLocationState<OPTokenInfo>();
 
     const account = useCurrentAccount();
-    const OpNetBalance = props.OpNetBalance;
+    const OpNetBalance = OpNetBalanceState;
 
     const navigate = useNavigate();
     const [disabled, setDisabled] = useState(true);

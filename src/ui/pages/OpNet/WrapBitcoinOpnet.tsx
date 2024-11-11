@@ -1,5 +1,4 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { Account, OPTokenInfo } from '@/shared/types';
@@ -17,6 +16,7 @@ import { colors } from '@/ui/theme/colors';
 import { currentConsensusConfig } from '@btc-vision/transaction';
 import { getAddressUtxoDust } from '@btc-vision/wallet-sdk/lib/transaction';
 
+import { useLocationState } from '@/ui/utils';
 import { RouteTypes, useNavigate } from '../MainRoute';
 
 interface ItemData {
@@ -25,12 +25,9 @@ interface ItemData {
 }
 
 export default function WrapBitcoinOpnet() {
-    const { state } = useLocation();
-    const props = state as {
-        OpNetBalance: OPTokenInfo;
-    };
+    const OpNetBalanceState = useLocationState<OPTokenInfo>();
 
-    const OpNetBalance = props.OpNetBalance;
+    const OpNetBalance = OpNetBalanceState;
     const account = useCurrentAccount();
 
     const navigate = useNavigate();

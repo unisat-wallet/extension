@@ -8,24 +8,29 @@ import { getPasswordStrengthWord, MIN_PASSWORD_LENGTH } from '@/ui/utils/passwor
 
 import { RouteTypes, useNavigate } from '../MainRoute';
 
+interface LocationState {
+    isNewAccount?: boolean;
+    isKeystone?: boolean;
+}
+
 export default function CreatePasswordScreen() {
     const navigate = useNavigate();
     const wallet = useWallet();
     const loc = useLocation();
     const params = new URLSearchParams(loc.search);
 
-    let state = {};
+    let state: LocationState = {};
     if (loc.state) {
-        state = loc.state;
+        state = loc.state as LocationState;
     }
 
     if (Array.from(params).length > 0) {
         params.forEach((value, key) => {
-            state[key] = value;
+            state[key as keyof LocationState] = (value === 'true');
         });
     }
 
-    const { isNewAccount, isKeystone } = state as { isNewAccount: boolean; isKeystone: boolean };
+    const { isNewAccount, isKeystone } = state;
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
     const [disabled, setDisabled] = useState(true);

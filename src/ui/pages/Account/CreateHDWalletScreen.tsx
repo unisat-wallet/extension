@@ -1,5 +1,4 @@
 import { useCallback, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import { AddressType, RestoreWalletType } from '@/shared/types';
 import { Content, Header, Layout, Row } from '@/ui/components';
@@ -15,16 +14,18 @@ import {
     WordsType
 } from '@/ui/pages/Account/createHDWalletComponents/types';
 
+import { useLocationState } from '@/ui/utils';
 import { RouteTypes, useNavigate } from '../MainRoute';
+
+interface LocationState {
+    isImport: boolean;
+    fromUnlock?: boolean;
+}
 
 export default function CreateHDWalletScreen() {
     const navigate = useNavigate();
 
-    const { state } = useLocation();
-    const { isImport, fromUnlock } = state as {
-        isImport: boolean;
-        fromUnlock: boolean;
-    };
+    const { isImport, fromUnlock } = useLocationState<LocationState>();
 
     const [contextData, setContextData] = useState<ContextData>({
         mnemonics: '',

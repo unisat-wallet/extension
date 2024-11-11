@@ -168,8 +168,8 @@ export function amountToSatoshis(val: string | number) {
 }
 
 export function useLocationState<T>() {
-    const { state } = useLocation();
-    return state as T;
+    const location = useLocation();
+    return location.state as T;
 }
 
 export function numberWithCommas(value: string, maxFixed: number, isFixed = false) {

@@ -1,22 +1,22 @@
 import { useEffect, useState } from 'react';
 import { useTranslation } from 'react-i18next';
-import { useLocation } from 'react-router-dom';
 
 import { Account } from '@/shared/types';
 import { isWalletError } from '@/shared/utils/errors';
 import { Button, Card, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
-import { copyToClipboard, useWallet } from '@/ui/utils';
+import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
 
 type Status = '' | 'error' | 'warning' | undefined;
+
+interface LocationState {
+    account: Account;
+}
 
 export default function ExportPrivateKeyScreen() {
     const { t } = useTranslation();
 
-    const { state } = useLocation();
-    const { account } = state as {
-        account: Account;
-    };
+    const { account } = useLocationState<LocationState>();
 
     const [password, setPassword] = useState('');
     const [disabled, setDisabled] = useState(true);

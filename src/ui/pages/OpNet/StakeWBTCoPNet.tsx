@@ -1,6 +1,5 @@
 import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { Account, OPTokenInfo } from '@/shared/types';
@@ -11,6 +10,7 @@ import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { colors } from '@/ui/theme/colors';
 
+import { useLocationState } from '@/ui/utils';
 import { useNavigate } from '../MainRoute';
 
 interface ItemData {
@@ -21,12 +21,9 @@ interface ItemData {
 BigNumber.config({ EXPONENTIAL_AT: 256 });
 
 export default function UnWrapBitcoinOpnet() {
-    const { state } = useLocation();
-    const props = state as {
-        OpNetBalance: OPTokenInfo;
-    };
+    const OpNetBalanceState = useLocationState<OPTokenInfo>();
 
-    const OpNetBalance = props.OpNetBalance;
+    const OpNetBalance = OpNetBalanceState;
     const account = useCurrentAccount();
 
     const navigate = useNavigate();

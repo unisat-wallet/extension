@@ -1,6 +1,5 @@
 import { getContract, IWBTCContract, WBTC_ABI } from 'opnet';
 import { useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import { Account, OPTokenInfo } from '@/shared/types';
 import { expandToDecimals } from '@/shared/utils';
@@ -14,7 +13,7 @@ import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
-import { useWallet } from '@/ui/utils';
+import { useLocationState, useWallet } from '@/ui/utils';
 import { Address } from '@btc-vision/transaction';
 import { getAddressUtxoDust } from '@btc-vision/wallet-sdk/lib/transaction';
 
@@ -26,12 +25,9 @@ interface ItemData {
 }
 
 export default function UnWrapBitcoinOpnet() {
-    const { state } = useLocation();
-    const props = state as {
-        OpNetBalance: OPTokenInfo;
-    };
+    const OpNetBalanceState = useLocationState<OPTokenInfo>();
 
-    const OpNetBalance = props.OpNetBalance;
+    const OpNetBalance = OpNetBalanceState;
     const account = useCurrentAccount();
     const wallet = useWallet();
     const navigate = useNavigate();
