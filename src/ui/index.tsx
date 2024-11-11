@@ -4,13 +4,13 @@ import ReactDOM from 'react-dom/client';
 import { IdleTimerProvider } from 'react-idle-timer';
 import { Provider } from 'react-redux';
 
-import browser from '@/background/webapi/browser';
 import { EVENTS } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 import { Message } from '@/shared/utils';
 import { PriceProvider } from '@/ui/provider/PriceProvider';
 import AccountUpdater from '@/ui/state/accounts/updater';
 import '@/ui/styles/global.less';
+import browser from 'webextension-polyfill';
 
 import { ActionComponentProvider } from './components/ActionComponent';
 import { AppDimensions } from './components/Responsive';
@@ -34,25 +34,25 @@ if (
     window.screenLeft > window.screen.width ||
     window.screenTop > window.screen.height
 ) {
-    browser.runtime.getPlatformInfo(function (info) {
+    browser.runtime.getPlatformInfo().then((info) => {
         if (info.os === 'mac') {
             const fontFaceSheet = new CSSStyleSheet();
             fontFaceSheet.insertRule(`
-        @keyframes redraw {
-          0% {
-            opacity: 1;
-          }
-          100% {
-            opacity: .99;
-          }
-        }
-      `);
+                @keyframes redraw {
+                    0% {
+                        opacity: 1;
+                    }
+                    100% {
+                        opacity: .99;
+                    }
+                }
+            `);
             fontFaceSheet.insertRule(`
-        html {
-          animation: redraw 1s linear infinite;
-        }
-      `);
-            (document).adoptedStyleSheets = [...(document).adoptedStyleSheets, fontFaceSheet];
+                html {
+                    animation: redraw 1s linear infinite;
+                }
+            `);
+            document.adoptedStyleSheets = [...document.adoptedStyleSheets, fontFaceSheet];
         }
     });
 }

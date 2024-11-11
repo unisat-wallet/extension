@@ -1,5 +1,6 @@
 import { RequestParams } from '@/shared/types/Request.js';
 
+import { SendMessagePayload, SendRequestPayload, SendResponsePayload } from '@/shared/types/Message';
 import Message from './index';
 
 export default class BroadcastChannelMessage extends Message {
@@ -17,9 +18,9 @@ export default class BroadcastChannelMessage extends Message {
     connect = () => {
         this._channel.onmessage = ({ data: { type, data } }) => {
             if (type === 'message') {
-                this.emit('message', data);
+                this.emit('message', data as SendMessagePayload);
             } else if (type === 'response') {
-                this.onResponse(data);
+                this.onResponse(data as SendResponsePayload);
             }
         };
 
@@ -32,7 +33,7 @@ export default class BroadcastChannelMessage extends Message {
 
         this._channel.onmessage = async ({ data: { type, data } }) => {
             if (type === 'request') {
-                await this.onRequest(data);
+                await this.onRequest(data as SendRequestPayload);
             }
         };
 

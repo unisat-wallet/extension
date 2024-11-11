@@ -1,5 +1,5 @@
-import extension from 'extensionizer';
 import { nanoid } from 'nanoid';
+import browser from 'webextension-polyfill';
 
 import { SendMessagePayload } from '@/shared/types/Message';
 import { RequestParams } from '@/shared/types/Request.js';
@@ -16,7 +16,7 @@ function injectScript() {
         const scriptTag = document.createElement('script');
         scriptTag.setAttribute('async', 'false');
         scriptTag.setAttribute('channel', channelName);
-        scriptTag.src = extension.runtime.getURL('pageProvider.js');
+        scriptTag.src = browser.runtime.getURL('pageProvider.js');
         container.insertBefore(scriptTag, container.children[0]);
         container.removeChild(scriptTag);
 

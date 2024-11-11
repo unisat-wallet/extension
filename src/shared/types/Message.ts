@@ -1,6 +1,11 @@
 import { SerializedWalletError } from "./Error";
 import { RequestParams } from "./Request";
 
+export interface MessageDetails {
+    _type_: string;
+    data: SendPayload;
+}
+
 export type SendPayload = SendMessagePayload | SendRequestPayload | SendResponsePayload;
 
 export interface SendMessagePayload {

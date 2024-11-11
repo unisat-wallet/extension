@@ -4,7 +4,9 @@ import { ProviderControllerRequest, RequestParams } from '@/shared/types/Request
 import { Message } from '@/shared/utils';
 import { openExtensionInTab } from '@/ui/features/browser/tabs';
 
+import { Runtime } from 'webextension-polyfill';
 import { providerController, walletController } from './controller';
+import { WalletController } from './controller/wallet';
 import {
     contactBookService,
     keyringService,
@@ -13,8 +15,9 @@ import {
     preferenceService,
     sessionService
 } from './service';
+import { OpenApiService } from './service/openapi';
 import { storage } from './webapi';
-import { browserRuntimeOnConnect, browserRuntimeOnInstalled } from './webapi/browser';
+import browser, { browserRuntimeOnConnect, browserRuntimeOnInstalled } from './webapi/browser';
 
 const { PortMessage } = Message;
 
@@ -39,7 +42,7 @@ async function restoreAppState() {
 void restoreAppState();
 
 // for page provider
-browserRuntimeOnConnect((port: chrome.runtime.Port) => {
+browserRuntimeOnConnect((port: Runtime.Port) => {
     if (port.name === 'popup' || port.name === 'notification' || port.name === 'tab') {
         const pm = new PortMessage(port);
         pm.listen((data: RequestParams) => {
@@ -50,11 +53,12 @@ browserRuntimeOnConnect((port: chrome.runtime.Port) => {
                         break;
                     case 'openapi':
                         if (data.method in walletController.openapi) {
-                            const method = walletController.openapi[data.method];
+                            const method = walletController.openapi[data.method as keyof OpenApiService];
                             if (!method) {
-                                console.error(`Method ${data.method} not found in openapi`);
+                                const errorMsg = `Method ${data.method} not found in openapi`;
+                                console.error(errorMsg);
 
-                                return Promise.reject(`Method ${data.method} not found in openapi`);
+                                return Promise.reject(new Error(errorMsg));
                             } else {
                                 // @ts-expect-error
                                 return method.apply(null, data.params);
@@ -63,15 +67,25 @@ browserRuntimeOnConnect((port: chrome.runtime.Port) => {
                         break;
                     case 'controller':
                     default:
+                        // TODO (typing): check the logic again but it looks like the logic can be 
+                        // simplifed more if we are allowed to return smth in any case.
                         if (data.method) {
-                            const method = walletController[data.method];
-                            if (!method) {
-                                console.error(`Method ${data.method} not found in controller`);
-
-                                return Promise.reject(`Method ${data.method} not found in controller`);
+                            if (data.method in walletController) {
+                                const method = walletController[data.method as keyof WalletController];
+                                if (!method) {
+                                    const errorMsg = `Method ${data.method} not found in controller`;
+                                    console.error(errorMsg);
+    
+                                    return Promise.reject(new Error(errorMsg));
+                                } else {
+                                    // @ts-expect-error
+                                    return method.apply(null, data.params);
+                                }
                             } else {
-                                // @ts-expect-error
-                                return method.apply(null, data.params);
+                                const errorMsg = `Method ${data.method} not found in controller`;
+                                console.error(errorMsg);
+
+                                return Promise.reject(new Error(errorMsg));
                             }
                         }
                 }
@@ -141,7 +155,7 @@ const addAppInstalledEvent = async () => {
 };
 
 browserRuntimeOnInstalled(async (details) => {
-    if (details.reason === chrome.runtime.OnInstalledReason.INSTALL) {
+    if (details.reason === 'install' ) {
         await addAppInstalledEvent();
     }
 });
@@ -149,15 +163,15 @@ browserRuntimeOnInstalled(async (details) => {
 if (MANIFEST_VERSION === 'mv3') {
     // Keep alive for MV3
     const INTERNAL_STAYALIVE_PORT = 'CT_Internal_port_alive';
-    let alivePort: chrome.runtime.Port | null = null;
+    let alivePort: Runtime.Port | null = null;
 
     setInterval(() => {
         // console.log('Highlander', Date.now());
         if (alivePort == null) {
-            alivePort = chrome.runtime.connect({ name: INTERNAL_STAYALIVE_PORT });
+            alivePort = browser.runtime.connect({ name: INTERNAL_STAYALIVE_PORT });
 
             alivePort.onDisconnect.addListener((p) => {
-                if (chrome.runtime.lastError) {
+                if (browser.runtime.lastError) {
                     // console.log('(DEBUG Highlander) Expected disconnect (on error). SW should be still running.');
                 } else {
                     // console.log('(DEBUG Highlander): port disconnected');
@@ -170,8 +184,8 @@ if (MANIFEST_VERSION === 'mv3') {
         if (alivePort) {
             alivePort.postMessage({ content: 'keep alive~' });
 
-            if (chrome.runtime.lastError) {
-                // console.log(`(DEBUG Highlander): postMessage error: ${chrome.runtime.lastError.message}`);
+            if (browser.runtime.lastError) {
+                // console.log(`(DEBUG Highlander): postMessage error: ${browser.runtime.lastError.message}`);
             } else {
                 // console.log(`(DEBUG Highlander): sent through ${alivePort.name} port`);
             }

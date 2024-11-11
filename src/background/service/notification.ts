@@ -4,7 +4,7 @@ import { winMgr } from '@/background/webapi';
 import { IS_CHROME, IS_LINUX } from '@/shared/constant';
 import { providerErrors, rpcErrors } from '@/shared/lib/bitcoin-rpc-errors/errors';
 import { Approval, ApprovalData, ApprovalResponse } from '@/shared/types/Approval';
-import { WindowProps } from '../webapi/browser';
+import browser, { WindowProps } from '../webapi/browser';
 
 // something need user approval in window
 // should only open one window, unfocus will close the current notification
@@ -25,7 +25,7 @@ class NotificationService extends Events {
 
         winMgr.event.on('windowFocusChange', (winId: number) => {
             if (this.notifiWindowId && winId !== this.notifiWindowId) {
-                if (IS_CHROME && winId === chrome.windows.WINDOW_ID_NONE && IS_LINUX) {
+                if (IS_CHROME && winId === browser.windows.WINDOW_ID_NONE && IS_LINUX) {
                     // Wired issue: When notification popuped, will focus to -1 first then focus on notification
                     return;
                 }
