@@ -1276,7 +1276,7 @@ export class WalletController extends BaseController {
         return permissionService.getRecentConnectedSites();
     };
     getCurrentSite = (tabId: number): ConnectedSite | null => {
-        const { origin, name, icon } = sessionService.getSession(tabId) || {};
+        const { origin = '', name = '', icon = '' } = sessionService.getSession(tabId) || {};
         if (!origin) {
             return null;
         }

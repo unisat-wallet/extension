@@ -102,12 +102,16 @@ export class OpnetProvider extends EventEmitter {
 
         _opnetPrividerPrivate._bcm.connect().on('message', this._handleBackgroundMessage);
         domReadyCall(async () => {
-            const origin = window.top?.location.origin;
-            // @ts-expect-error
-            const icon = $('head > link[rel~="icon"]')?.href || $('head > meta[itemprop="image"]')?.content;
+            const origin = window.top?.location.origin || '';
 
-            // @ts-expect-error
-            const name = document.title || $('head > meta[name="title"]')?.content || origin;
+            const iconElement = $('head > link[rel~="icon"]');
+            let icon = (iconElement instanceof HTMLLinkElement) ? iconElement.href : '';
+            const metaImageElement = $('head > meta[itemprop="image"]');
+            const iconFallback = (metaImageElement instanceof HTMLMetaElement) ? metaImageElement.content : '';
+            icon = icon || iconFallback;
+            
+            const metaTitleElement = $('head > meta[name="title"]');
+            const name = document.title || ((metaTitleElement instanceof HTMLMetaElement) ? metaTitleElement.content : origin);
 
             await _opnetPrividerPrivate._bcm.request({
                 method: 'tabCheckin',

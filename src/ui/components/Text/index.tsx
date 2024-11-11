@@ -105,7 +105,7 @@ export function Text(props: TextProps) {
                   overflow: 'hidden'
               }
             : {}
-    );
+    ) as CSSProperties;
     const $style = Object.assign({}, $textStyle, $styleOverride);
     const textUse = props.digital ? showLongNumber(text) : text;
     return (

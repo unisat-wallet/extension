@@ -15,7 +15,7 @@ browserTabsOnRemoved((tabId) => {
     tabEvent.emit('tabRemove', tabId);
 });
 
-const createTab = async (url): Promise<number | undefined> => {
+const createTab = async (url: string): Promise<number | undefined> => {
     const tab = await browserTabsCreate({
         active: true,
         url

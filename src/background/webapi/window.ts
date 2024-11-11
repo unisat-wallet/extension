@@ -33,9 +33,7 @@ const create = async ({ url, ...rest }: WindowProps): Promise<number | undefined
         top: cTop,
         left: cLeft,
         width
-    } = await browserWindowsGetCurrent({
-        windowTypes: ['normal']
-    }) as { top: number, left: number, width: number };
+    } = await browserWindowsGetCurrent() as { top: number, left: number, width: number };
 
     const top = cTop + BROWSER_HEADER;
     const left = cLeft + width - WINDOW_SIZE.width;
@@ -79,7 +77,7 @@ const create = async ({ url, ...rest }: WindowProps): Promise<number | undefined
     return win.id;
 };
 
-const remove = async (winId) => {
+const remove = async (winId: number) => {
     return browserWindowsRemove(winId);
 };
 

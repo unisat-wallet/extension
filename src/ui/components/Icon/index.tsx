@@ -116,7 +116,7 @@ export function Icon(props: IconProps) {
                     $containerStyleOverride,
                     $imageStyleOverride ?? {},
                     onClick ? { cursor: 'pointer' } : {}
-                )}>
+                ) as CSSProperties}>
                 {children}
             </div>
         );

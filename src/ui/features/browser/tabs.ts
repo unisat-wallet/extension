@@ -1,4 +1,3 @@
-import { isNumber } from 'lodash-es';
 import { useCallback, useEffect, useState } from 'react';
 
 import browser, {
@@ -20,7 +19,7 @@ export const extensionIsInTab = async () => {
 
 export const focusExtensionTab = async () => {
     const tab = await browserTabsGetCurrent();
-    if (tab && isNumber(tab?.id) && tab?.id !== browser.tabs.TAB_ID_NONE) {
+    if (tab && tab.id && tab?.id !== browser.tabs.TAB_ID_NONE) {
         browserTabsUpdate(tab.id, { active: true });
     }
 };

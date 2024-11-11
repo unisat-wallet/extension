@@ -51,7 +51,6 @@
         "@types/bitcore-lib": "^0.15.6",
         "@types/chrome": "^0.0.280",
         "@types/jest": "^29.5.14",
-        "@types/lru-cache": "^7.10.10",
         "@types/node": "22.9.0",
         "@types/react": "^18.3.12",
         "@types/react-cache": "^2.0.4",
@@ -97,7 +96,7 @@
         "koa-compose": "^4.1.0",
         "lodash-es": "^4.17.21",
         "loglevel": "^1.8.0",
-        "lru-cache": "=6.0.0",
+        "lru-cache": "6.0.0",
         "mini-css-extract-plugin": "^2.4.5",
         "opnet": "1.1.16",
         "postcss": "^8.4.39",
@@ -122,7 +121,7 @@
         "react-modal": "^3.15.1",
         "react-redux": "^8.0.1",
         "react-refresh": "^0.11.0",
-        "react-router-dom": "^6.3.0",
+        "react-router-dom": "^6.28.0",
         "redux": "^4.2.0",
         "redux-devtools": "^3.7.0",
         "redux-localstorage-simple": "^2.5.1",
@@ -147,6 +146,7 @@
         "varuint-bitcoin": "^1.1.2",
         "vm-browserify": "^1.1.2",
         "web-vitals": "^2.1.4",
+        "webextension-polyfill": "^0.12.0",
         "webpack": "5.96.1",
         "webpack-dev-server": "^5.1.0",
         "webpack-extension-reloader": "^1.1.4",
@@ -240,11 +240,15 @@
         "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
         "@notionhq/client": "^2.2.15",
         "@trivago/prettier-plugin-sort-imports": "^4.3.0",
+        "@types/debounce": "^1.2.4",
         "@types/less": "^3.0.6",
         "@types/lodash": "^4.17.13",
+        "@types/lru-cache": "5.1.0",
         "@types/node-sass": "^4.11.8",
         "@types/sass-loader": "^8.0.9",
         "@types/stylus": "^0.48.43",
+        "@types/webextension-polyfill": "^0.12.1",
+        "@types/zxcvbn": "^4.4.5",
         "@typescript-eslint/eslint-plugin": "^8.13.0",
         "@typescript-eslint/parser": "^8.13.0",
         "autoprefixer": "^10.4.20",
@@ -281,5 +285,6 @@
         "*.json": [
             "prettier --write"
         ]
-    }
+    },
+    "packageManager": "yarn@4.5.0+sha512.837566d24eec14ec0f5f1411adb544e892b3454255e61fdef8fd05f3429480102806bac7446bc9daff3896b01ae4b62d00096c7e989f1596f2af10b927532f39"
 }

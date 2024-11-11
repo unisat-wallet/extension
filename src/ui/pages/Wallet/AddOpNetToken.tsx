@@ -24,7 +24,7 @@ export const AddOpNetToken = ({
         const tokensImported = localStorage.getItem('opnetTokens_' + getChain);
         let parsedTokens: string[] = [];
         if (tokensImported) {
-            parsedTokens = JSON.parse(tokensImported);
+            parsedTokens = JSON.parse(tokensImported) as string[];
 
             if (parsedTokens.includes(tokenState)) {
                 tools.toastError('Token already imported.');

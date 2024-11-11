@@ -32,12 +32,15 @@ function formatPsbtHex(psbtHex: string) {
     return formatData;
 }
 
+// TODO (typing): check if we really need this function. We are passing buffer parameter and trying to return Uint8Array
+// For now, the lint error is fixed by disabling it. If we no longer need this function, we can remove it completely.
 function objToBuffer(obj: object): Uint8Array {
     const keys = Object.keys(obj);
     const values = Object.values(obj);
 
     const buffer = new Uint8Array(keys.length);
     for (let i = 0; i < keys.length; i++) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         buffer[i] = values[i];
     }
 
@@ -94,7 +97,7 @@ class ProviderController extends BaseController {
     };
 
     // @ts-expect-error
-    @Reflect.metadata('APPROVAL', ['SwitchNetwork', (req) => {
+    @Reflect.metadata('APPROVAL', ['SwitchNetwork', (req: {data: {params: {network: string; networkType?: NetworkType}}}) => {
         const network = req.data.params.network;
         if (NETWORK_TYPES[NetworkType.MAINNET].validNames.includes(network)) {
             req.data.params.networkType = NetworkType.MAINNET;
@@ -139,8 +142,8 @@ class ProviderController extends BaseController {
     };
 
     // @ts-expect-error
-    @Reflect.metadata('APPROVAL', ['SwitchChain', (req) => {
-        const chainType: ChainType = req.data.params.chain as ChainType;
+    @Reflect.metadata('APPROVAL', ['SwitchChain', (req: {data: {params: {chain: ChainType}}}) => {
+        const chainType = req.data.params.chain;
         if (!CHAINS_MAP[chainType]) {
             throw new Error(`the chain is invalid, supported chains: ${CHAINS.map(v => v.enum).join(',')}`);
         }
@@ -351,7 +354,7 @@ class ProviderController extends BaseController {
     };
 
     // @ts-expect-error
-    @Reflect.metadata('APPROVAL', ['SignPsbt', (req) => {
+    @Reflect.metadata('APPROVAL', ['SignPsbt', (req: {data: {params: {psbtHex: string}}}) => {
         const { data: { params: { psbtHex } } } = req;
         req.data.params.psbtHex = formatPsbtHex(psbtHex);
     }])
@@ -377,15 +380,8 @@ class ProviderController extends BaseController {
     };
 
     // @ts-expect-error
-    @Reflect.metadata('APPROVAL', ['MultiSignPsbt', (req) => {
-        const { data: { params: { psbtHexs } } }: {
-            data: {
-                params: {
-                    psbtHexs: string[],
-                    options: { autoFinalized: boolean }[]
-                }
-            }
-        } = req;
+    @Reflect.metadata('APPROVAL', ['MultiSignPsbt', (req: {data: {params: {psbtHexs: string[]}}}) => {
+        const { data: { params: { psbtHexs } } } = req;
 
         req.data.params.psbtHexs = psbtHexs.map(psbtHex => formatPsbtHex(psbtHex));
     }])

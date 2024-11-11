@@ -52,7 +52,7 @@ export function Step1_Import({
 
     const [keys, setKeys] = useState<string[]>(new Array(wordsItems[contextData.wordsType].count).fill(''));
 
-    const handleEventPaste = (event, index: number) => {
+    const handleEventPaste = (event: React.ClipboardEvent<HTMLInputElement>, index: number) => {
         const copyText = event.clipboardData?.getData('text/plain');
         const textArr = copyText.trim().split(' ');
         const newKeys = [...keys];
@@ -134,7 +134,7 @@ export function Step1_Import({
                 <Row justifyCenter>
                     <Radio.Group
                         onChange={(e) => {
-                            const wordsType = e.target.value;
+                            const wordsType = e.target.value as WordsType;
                             updateContextData({ wordsType });
                             setKeys(new Array(wordsItems[wordsType].count).fill(''));
                         }}

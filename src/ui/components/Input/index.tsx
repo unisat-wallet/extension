@@ -119,7 +119,7 @@ function AmountInput(props: InputProps) {
         onAmountInputChange(validAmount);
     }, [validAmount]);
 
-    const handleInputAmount = (e) => {
+    const handleInputAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         if (disableDecimal) {
             if (/^[1-9]\d*$/.test(value) || value === '') {
@@ -214,7 +214,7 @@ export const AddressInput = (props: InputProps) => {
         setParseName('');
     };
 
-    const handleInputAddress = (e) => {
+    const handleInputAddress = (e: React.ChangeEvent<HTMLInputElement>) => {
         const inputAddress = e.target.value.trim();
         setInputVal(inputAddress);
 

@@ -47,10 +47,10 @@ function Step1({
         setDisabled(false);
     }, [wif]);
 
-    const onChange = (e) => {
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
         setWif(val);
-        updateContextData({ step1Completed: val });
+        updateContextData({ step1Completed: !!val });
     };
 
     const tools = useTools();

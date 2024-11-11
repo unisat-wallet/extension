@@ -25,12 +25,15 @@ function toHex(buffer: Uint8Array | Buffer | number[]) {
     return Array.prototype.map.call(buffer, (x: number) => ('00' + x.toString(16)).slice(-2)).join('');
 }
 
+// TODO (typing): check if we really need this function. We are passing buffer parameter and trying to return Uint8Array
+// For now, the lint error is fixed by disabling it. If we no longer need this function, we can remove it completely.
 function objToBuffer(obj: object): Uint8Array {
     const keys = Object.keys(obj);
     const values = Object.values(obj);
 
     const buffer = new Uint8Array(keys.length);
     for (let i = 0; i < keys.length; i++) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         buffer[i] = values[i];
     }
 

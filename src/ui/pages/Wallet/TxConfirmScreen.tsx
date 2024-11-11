@@ -3,6 +3,7 @@ import { Header } from '@/ui/components';
 import { usePushBitcoinTxCallback } from '@/ui/state/transactions/hooks';
 import { useLocationState } from '@/ui/utils';
 
+import { isWalletError } from '@/shared/utils/errors';
 import { SignPsbt } from '../Approval/components';
 import { RouteTypes, useNavigate } from '../MainRoute';
 
@@ -36,9 +37,10 @@ export default function TxConfirmScreen() {
                             navigate(RouteTypes.TxFailScreen, { error });
                         }
                     })
-                    .catch((err) => {
+                    .catch((err: unknown) => {
                         console.error(err);
-                        navigate(RouteTypes.TxFailScreen, { error: err.message });
+                        const errorMessage = isWalletError(err) ? err.message : 'Unknown error occurred';
+                        navigate(RouteTypes.TxFailScreen, { error: errorMessage });
                     });
             }}
         />

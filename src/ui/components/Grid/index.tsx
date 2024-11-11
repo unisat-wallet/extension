@@ -26,6 +26,6 @@ export function Grid(props: GridProps) {
         gap ? { gap: spacingGap[gap] } : {},
         columns ? { gridTemplateColumns: `repeat(${columns}, minmax(0, 1fr))` } : {},
         onClick ? { cursor: 'pointer' } : {}
-    );
+    ) as CSSProperties;
     return <div style={$style}>{children}</div>;
 }

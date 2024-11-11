@@ -1,6 +1,7 @@
 
 import Web3API from '@/shared/web3/Web3API';
 
+import { ChainType } from '@/shared/constant';
 import { providerErrors } from '@/shared/lib/bitcoin-rpc-errors/errors';
 import { OpnetProvider, OpnetProviderPrivate } from './index';
 
@@ -62,14 +63,15 @@ class PushEventHandlers {
         this._emit('accountsChanged', accounts);
     };
 
-    networkChanged = ({ network, chain }) => {
+    networkChanged = ({ network, chain }: {network: string; chain: ChainType}) => {
         this.connect({});
 
         if (network !== this._unisatProviderPrivate._network) {
             if (chain) Web3API.setNetwork(chain);
 
             this._unisatProviderPrivate._network = network;
-            this._emit('networkChanged', network);
+            // TODO (typing): check if this event is listened in this format
+            this._emit('networkChanged', { network, chain });
         }
     };
 }

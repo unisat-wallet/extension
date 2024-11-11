@@ -1,6 +1,8 @@
 import { keyringService } from '@/background/service';
 
+import { SessionInfo } from '@/background/service/session';
 import { ProviderState } from '@/shared/types/Provider';
+import { ProviderControllerRequest } from '@/shared/types/Request';
 import wallet from '../wallet';
 
 const tabCheckin = ({
@@ -8,15 +10,11 @@ const tabCheckin = ({
         params: { origin, name, icon }
     },
     session
-}) => {
+}: ProviderControllerRequest & { data: { params: SessionInfo } }) => {
     session.setProp({ origin, name, icon });
 };
 
-const getProviderState = async (req): Promise<ProviderState> => {
-    const {
-        session: { origin }
-    } = req;
-
+const getProviderState = async (_req: ProviderControllerRequest): Promise<ProviderState> => {
     const isUnlocked = keyringService.memStore.getState().isUnlocked;
     const accounts: string[] = [];
     if (isUnlocked) {
@@ -33,7 +31,7 @@ const getProviderState = async (req): Promise<ProviderState> => {
     };
 };
 
-const keepAlive = () => {
+const keepAlive = (_req: ProviderControllerRequest) => {
     return 'ACK_KEEP_ALIVE_MESSAGE';
 };
 

@@ -58,7 +58,7 @@ export function OPNetList() {
             const tokensImported = localStorage.getItem('opnetTokens_' + getChain);
             let parsedTokens: string[] = [];
             if (tokensImported) {
-                parsedTokens = JSON.parse(tokensImported);
+                parsedTokens = JSON.parse(tokensImported) as string[];
             }
 
             const currentNetwork = await wallet.getNetworkType();

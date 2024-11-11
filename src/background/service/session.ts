@@ -24,7 +24,7 @@ export class Session {
 }
 
 // for each tab
-const sessionMap = new Map();
+const sessionMap: Map<number, Session> = new Map();
 
 const getSession = (id: number) => {
     return sessionMap.get(id);

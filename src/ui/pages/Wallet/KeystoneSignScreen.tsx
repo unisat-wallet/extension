@@ -10,15 +10,25 @@ import { $textPresets } from '@/ui/components/Text';
 import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
 
-interface Props {
-    type: 'msg' | 'psbt' | 'bip322-simple';
+interface BaseProps {
     data: string;
     isFinalize?: boolean;
     signatureText?: string;
     id?: number;
-    onSuccess?: (data: ParsedSignPsbtUr | ParsedSignMsgUr) => void;
     onBack: () => void;
 }
+
+interface MsgProps extends BaseProps {
+    type: 'msg' | 'bip322-simple';
+    onSuccess?: (data: ParsedSignMsgUr) => void;
+}
+
+interface PsbtProps extends BaseProps {
+    type: 'psbt';
+    onSuccess?: (data: ParsedSignPsbtUr) => void;
+}
+
+type Props = MsgProps | PsbtProps;
 
 function Step1(props: Props) {
     const wallet = useWallet();
