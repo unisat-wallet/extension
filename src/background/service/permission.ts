@@ -1,6 +1,5 @@
 import { max } from 'lodash';
-// @ts-expect-error
-import LRU from 'lru-cache';
+import LRUCache from 'lru-cache';
 
 import { createPersistStore } from '@/background/utils';
 import { CHAINS_ENUM, INTERNAL_REQUEST_ORIGIN } from '@/shared/constant';
@@ -18,14 +17,14 @@ export interface ConnectedSite {
 }
 
 export interface PermissionStore {
-    dumpCache: readonly LRU.Entry<string, ConnectedSite>[];
+    dumpCache: readonly LRUCache.Entry<string, ConnectedSite>[];
 }
 
 class PermissionService {
     store: PermissionStore = {
         dumpCache: []
     };
-    lruCache: LRU<string, ConnectedSite> | undefined;
+    lruCache: LRUCache<string, ConnectedSite> | undefined;
 
     init = async () => {
         const storage = await createPersistStore<PermissionStore>({
@@ -33,8 +32,8 @@ class PermissionService {
         });
         this.store = storage || this.store;
 
-        this.lruCache = new LRU();
-        const cache: readonly LRU.Entry<string, ConnectedSite>[] = (this.store.dumpCache || []).map((item) => ({
+        this.lruCache = new LRUCache<string, ConnectedSite>()
+        const cache: readonly LRUCache.Entry<string, ConnectedSite>[] = (this.store.dumpCache || []).map((item) => ({
             k: item.k,
             v: item.v,
             e: 0
