@@ -4,6 +4,7 @@ import { ProviderControllerRequest, RequestParams } from '@/shared/types/Request
 import { Message } from '@/shared/utils';
 import { openExtensionInTab } from '@/ui/features/browser/tabs';
 
+import { SessionEvent, SessionEventPayload } from '@/shared/interfaces/SessionEvent';
 import { Runtime } from 'webextension-polyfill';
 import { providerController, walletController } from './controller';
 import { WalletController } from './controller/wallet';
@@ -15,6 +16,7 @@ import {
     preferenceService,
     sessionService
 } from './service';
+import { StoredData } from './service/keyring';
 import { OpenApiService } from './service/openapi';
 import { storage } from './webapi';
 import browser, { browserRuntimeOnConnect, browserRuntimeOnInstalled } from './webapi/browser';
@@ -24,7 +26,10 @@ const { PortMessage } = Message;
 let appStoreLoaded = false;
 
 async function restoreAppState() {
-    const keyringState = await storage.get('keyringState');
+    const keyringState = await storage.get<StoredData>('keyringState');
+    if (!keyringState) {
+        throw new Error('Keyring state does not exist');
+    }
     keyringService.loadStore(keyringState);
     keyringService.store.subscribe((value) => storage.set('keyringState', value));
 
@@ -131,7 +136,7 @@ browserRuntimeOnConnect((port: Runtime.Port) => {
         const req: ProviderControllerRequest = { data, session };
 
         // for background push to respective page
-        session.pushMessage = (event: string, data: RequestParams) => {
+        session.pushMessage = <T extends SessionEvent>(event: T, data?: SessionEventPayload<T>) => {
             pm.send('message', { event, data });
         };
 

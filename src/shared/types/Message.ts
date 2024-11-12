@@ -1,3 +1,4 @@
+import { SessionEvent, SessionEventPayload } from "../interfaces/SessionEvent";
 import { SerializedWalletError } from "./Error";
 import { RequestParams } from "./Request";
 
@@ -8,9 +9,9 @@ export interface MessageDetails {
 
 export type SendPayload = SendMessagePayload | SendRequestPayload | SendResponsePayload;
 
-export interface SendMessagePayload {
-    event: string;
-    data: RequestParams;
+export interface SendMessagePayload<T extends SessionEvent = SessionEvent> {
+    event: T;
+    data?: SessionEventPayload<T>;
 }
 
 export interface SendRequestPayload {

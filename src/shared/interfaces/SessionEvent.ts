@@ -11,6 +11,7 @@ export enum SessionEvent {
     chainChanged = 'chainChanged'
 }
 
+// eslint-disable-next-line @typescript-eslint/no-empty-interface
 export interface BaseSessionEventPayload {}
 
 export interface NetworkChangedEventData extends BaseSessionEventPayload {

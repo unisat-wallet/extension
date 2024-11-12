@@ -1,24 +1,31 @@
 import { browserStorageLocalGet, browserStorageLocalSet } from './browser';
 
-let cacheMap;
+let cacheMap: Map<string, unknown> | null = null;
 
-const get = async (prop?) => {
-    if (cacheMap) {
-        return cacheMap.get(prop);
+const initializeCacheMap = async () => {
+    if (!cacheMap) {
+        const storageData = await browserStorageLocalGet(null);
+        cacheMap = new Map(Object.entries(storageData));
     }
-
-    const result = await browserStorageLocalGet(null);
-    cacheMap = new Map(Object.entries(result).map(([k, v]) => [k, v]));
-
-    return prop ? result[prop] : result;
 };
 
-const set = async (prop, value): Promise<void> => {
+const get = async <T>(prop: string): Promise<T | undefined> => {
+    await initializeCacheMap();
+    return cacheMap?.get(prop) as T | undefined;
+};
+
+const set = async <T>(prop: string, value: T): Promise<void> => {
+    await initializeCacheMap();
+    cacheMap?.set(prop, value);
     await browserStorageLocalSet({ [prop]: value });
-    cacheMap.set(prop, value);
+};
+
+const clearCache = () => {
+    cacheMap = null;
 };
 
 export default {
     get,
-    set
+    set,
+    clearCache
 };

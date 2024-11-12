@@ -31,11 +31,7 @@ const getSession = (id: number) => {
 };
 
 const getOrCreateSession = (id: number) => {
-    if (sessionMap.has(id)) {
-        return getSession(id);
-    }
-
-    return createSession(id);
+    return getSession(id) ?? createSession(id);
 };
 
 const createSession = (id: number) => {
