@@ -142,7 +142,7 @@ export function OPNetList() {
     //    void fetchData();
     //}, [currentAccount, importTokenBool, wallet]);
 
-    useEffect(() => {}, [total]);
+    // useEffect(() => {}, [total]);
 
     if (total === -1) {
         return (

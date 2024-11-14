@@ -20,7 +20,9 @@ export class Session {
         this.name = params.name;
     }
 
-    pushMessage<T extends SessionEvent>(_ev: T, _data?: SessionEventPayload<T>, _origin?: string) {}
+    pushMessage<T extends SessionEvent>(_ev: T, _data?: SessionEventPayload<T>, _origin?: string) {
+        // Method intentionally left blank as it will be assigned in another part.
+    }
 }
 
 // for each tab

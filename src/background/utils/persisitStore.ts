@@ -30,10 +30,10 @@ const createPersistStore = async <T extends object>({
     const createProxy = <A extends object>(obj: A): A =>
         new Proxy(obj, {
             set(target, prop, value) {
-                target[prop] = value;
-
+                // TODO (typing): Check this again if there is any ideal solution but casting like
+                // below should be fine for now as all of the obj passed into createPersistStore have string keys
+                (target as Record<string, unknown>)[prop as string] = value;
                 persistStorage(name, target);
-
                 return true;
             },
 

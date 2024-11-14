@@ -11,7 +11,7 @@ export interface DecodedApprove extends Decoded {
     readonly spender: Address;
 }
 
-export function decodeApprove(selector: string, reader: BinaryReader): DecodedApprove {
+export function decodeApprove(selector: InteractionType, reader: BinaryReader): DecodedApprove {
     let amount = 0n;
     let spender = Address.dead();
     switch (selector) {

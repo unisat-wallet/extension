@@ -16,13 +16,13 @@ declare global {
     const langLocales: Record<string, Record<'message', string>>;
 }
 
-const t = (name) => browser.i18n.getMessage(name);
+const t = (name: string) => browser.i18n.getMessage(name);
 
-const format = (str, ...args) => {
-    return args.reduce((m, n) => m.replace('_s_', n), str);
+const format = (str: string, ...args: (string | number)[]): string => {
+    return args.reduce((result: string, replacement) => result.replace('_s_', String(replacement)), str);
 };
 
-export { Message, format, t };
+export { format, Message, t };
 
 const chainsDict = keyBy(CHAINS, 'serverId');
 export const getChain = (chainId?: string) => {

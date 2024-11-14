@@ -24,7 +24,7 @@ export default function KeystoneScan({
         setProgress(0);
     }, []);
 
-    const onProgress = useCallback((progress) => {
+    const onProgress = useCallback((progress: number) => {
         setProgress(progress);
     }, []);
 

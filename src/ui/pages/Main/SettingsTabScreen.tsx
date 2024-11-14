@@ -17,6 +17,7 @@ import { useWallet } from '@/ui/utils';
 import { RightOutlined } from '@ant-design/icons';
 
 import { SwitchChainModal } from '../Settings/SwitchChainModal';
+import { Tabs } from 'webextension-polyfill';
 
 interface Setting {
     label?: string;
@@ -116,7 +117,9 @@ export default function SettingsTabScreen() {
 
     useEffect(() => {
         const run = async () => {
-            const res = await getCurrentTab();
+            // TODO (typing): ideally ts should already know the return type but it's giving
+            // unsafe any error here and we need to cast it explicitly here
+            const res = await getCurrentTab() as Tabs.Tab | undefined;
             if (!res?.url) return;
 
             const origin = new URL(res.url).origin;

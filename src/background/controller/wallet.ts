@@ -59,7 +59,6 @@ import {
     Wallet,
     WrapResult
 } from '@btc-vision/transaction';
-import { SimpleKeyring } from '@btc-vision/wallet-sdk';
 import { publicKeyToAddress, scriptPkToAddress } from '@btc-vision/wallet-sdk/lib/address';
 import { bitcoin, ECPair } from '@btc-vision/wallet-sdk/lib/bitcoin-core';
 import { KeystoneKeyring } from '@btc-vision/wallet-sdk/lib/keyring';
@@ -412,7 +411,9 @@ export class WalletController extends BaseController {
             tmpKeyring.addAccounts(accountCount);
         } else {
             tmpKeyring.changeHdPath(ADDRESS_TYPES[addressType].hdPath);
-            accountCount && tmpKeyring.addAccounts(accountCount);
+            if (accountCount) {
+                tmpKeyring.addAccounts(accountCount);
+            }
         }
 
         const opts = tmpKeyring.serialize();
@@ -928,26 +929,28 @@ export class WalletController extends BaseController {
         return keyringService.signData(account.pubkey, data, type);
     };
 
-    requestKeyring = (type: string, methodName: string, keyringId: number | null, ...params: unknown[]) => {
-        let keyring;
-        if (keyringId !== null && keyringId !== undefined) {
-            keyring = stashKeyrings[keyringId];
-        } else {
-            try {
-                keyring = this._getKeyringByType(type);
-            } catch {
-                const Keyring = keyringService.getKeyringClassForType(type) as typeof SimpleKeyring | undefined;
-                if (!Keyring) throw new Error('no keyring');
-                keyring = new Keyring();
-            }
-        }
+    // TODO (typing): As this function is not used anywhere for now and there is no mapping interface for Keyring that we can use
+    // to validate dynamically called functions, commented out this function for now.
+    // requestKeyring = (type: string, methodName: string, keyringId: number | null, ...params: unknown[]) => {
+    //     let keyring;
+    //     if (keyringId !== null && keyringId !== undefined) {
+    //         keyring = stashKeyrings[keyringId];
+    //     } else {
+    //         try {
+    //             keyring = this._getKeyringByType(type);
+    //         } catch {
+    //             const Keyring = keyringService.getKeyringClassForType(type) as typeof SimpleKeyring | undefined;
+    //             if (!Keyring) throw new Error('no keyring');
+    //             keyring = new Keyring();
+    //         }
+    //     }
 
-        // @ts-expect-error
-        if (keyring[methodName]) {
-            // @ts-expect-error
-            return keyring[methodName].call(keyring, ...params);
-        }
-    };
+    //     // @ts-expect-error
+    //     if (keyring[methodName]) {
+    //         // @ts-expect-error
+    //         return keyring[methodName].call(keyring, ...params);
+    //     }
+    // };
 
     addContact = (data: ContactBookItem) => {
         contactBookService.addContact(data);
@@ -1405,11 +1408,13 @@ export class WalletController extends BaseController {
         return await openapiService.getAddressSummary(address);
     };
 
-    setPsbtSignNonSegwitEnable(psbt: bitcoin.Psbt, enabled: boolean) {
+    // TODO (typing): Since the __CACHE's type is not specified, the ts was giving error. As this function
+    // is not used in any part, just commented out for not to suppress the error.
+    // setPsbtSignNonSegwitEnable(psbt: bitcoin.Psbt, enabled: boolean) {
          
-        //@ts-expect-error
-        psbt.__CACHE.__UNSAFE_SIGN_NONSEGWIT = enabled;
-    }
+    //     //@ts-expect-error
+    //     psbt.__CACHE.__UNSAFE_SIGN_NONSEGWIT = enabled;
+    // }
 
     getShowSafeNotice = () => {
         return preferenceService.getShowSafeNotice();
@@ -1451,7 +1456,9 @@ export class WalletController extends BaseController {
 
         const psbtHex = await (keyring as KeystoneKeyring).parseSignPsbtUr(type, cbor);
         const psbt = bitcoin.Psbt.fromHex(psbtHex);
-        isFinalize && psbt.finalizeAllInputs();
+        if (isFinalize) {
+            psbt.finalizeAllInputs();
+        }
         return {
             psbtHex: psbt.toHex(),
             rawtx: isFinalize ? psbt.extractTransaction().toHex() : undefined

@@ -133,7 +133,7 @@ export default function Swap() {
 
                         setOutPutAmount(
                             (
-                                parseInt(getData.decoded[0][1].toString()) /
+                                parseInt((getData.decoded[0] as bigint[])[1].toString()) /
                                 Math.pow(10, selectedOptionOutput.divisibility)
                             ).toString()
                         );

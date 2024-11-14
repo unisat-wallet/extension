@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { ParsedSignMsgUr, ParsedSignPsbtUr } from '@/shared/types';
+import { isWalletError } from '@/shared/utils/errors';
 import { Button, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import KeystoneDisplay from '@/ui/components/Keystone/Display';
@@ -43,9 +44,13 @@ function Step1(props: Props) {
             props.type === 'psbt' ? wallet.genSignPsbtUr(props.data) : wallet.genSignMsgUr(props.data, props.type);
         p.then((ur) => {
             setUr(ur);
-        }).catch((err) => {
+        }).catch((err: unknown) => {
             console.error(err);
-            tools.toastError(err.message);
+            if (isWalletError(err)){
+                tools.toastError(err.message);
+            } else {
+                tools.toastError("An unexpected error occurred.");
+            }
         });
     }, [props]);
 
@@ -65,7 +70,7 @@ function Step1(props: Props) {
 function Step2(props: Props) {
     const wallet = useWallet();
 
-    const onSucceed = async ({ type, cbor }) => {
+    const onSucceed = async ({ type, cbor }: {type: string; cbor: string}) => {
         if (props.type === 'psbt') {
             const res = await wallet.parseSignPsbtUr(type, cbor, props.isFinalize === false ? false : true);
             if (props.onSuccess) {

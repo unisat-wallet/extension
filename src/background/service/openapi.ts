@@ -88,7 +88,7 @@ export class OpenApiService {
         if (!res) throw new Error('Network error, no response');
         if (res.status !== 200) throw new Error(`Network error with status: ${res.status}`);
         try {
-            jsonRes = await res.json();
+            jsonRes = await res.json() as ApiResponse<T>;
         } catch (e) {
             throw new Error('Network error, json parse error');
         }
