@@ -303,13 +303,13 @@ export default function SignPsbt({
                 wallet
                     .getRunesPrice(Object.keys(runesMap))
                     .then(setRunesPriceMap)
-                    .catch((e) => tools.toastError((e as Error).message));
+                    .catch((e: unknown) => tools.toastError((e as Error).message));
             }
             if (Object.keys(brc20Map).length > 0) {
                 wallet
                     .getBrc20sPrice(Object.keys(brc20Map))
                     .then(setBrc20PriceMap)
-                    .catch((e) => tools.toastError((e as Error).message));
+                    .catch((e: unknown) => tools.toastError((e as Error).message));
             }
         }
     }, [txInfo]);
@@ -321,7 +321,7 @@ export default function SignPsbt({
                 try {
                     const toSignInputs = await wallet.formatOptionsToSignInputs(psbtHex, options);
                     psbtHex = await wallet.signPsbtWithHex(psbtHex, toSignInputs, false);
-                } catch (e) {
+                } catch (e: unknown) {
                     console.error(e);
                     txError = (e as any).message;
                     tools.toastError(txError);
@@ -603,7 +603,7 @@ export default function SignPsbt({
                                                             </Column>
                                                             <Row>
                                                                 <Text
-                                                                    text={`${satoshisToAmount(v.value)}`}
+                                                                    text={satoshisToAmount(v.value)}
                                                                     color={isToSign ? 'white' : 'textDim'}
                                                                 />
                                                                 <Text text={btcUnit} color="textDim" />
@@ -643,7 +643,7 @@ export default function SignPsbt({
                                                             />
                                                             <Row>
                                                                 <Text
-                                                                    text={`${satoshisToAmount(v.value)}`}
+                                                                    text={satoshisToAmount(v.value)}
                                                                     color={isMyAddress ? 'white' : 'textDim'}
                                                                 />
                                                                 <Text text={btcUnit} color="textDim" />
