@@ -21,7 +21,7 @@ import {
 } from './Web3Provider';
 import PushEventHandlers from './pushEventHandlers';
 import ReadyPromise from './readyPromise';
-import { $, domReadyCall } from './utils';
+import { $, domReadyCall, isPushEventHandlerMethod } from './utils';
 
 declare global {
     interface Window {
@@ -438,10 +438,11 @@ export class OpnetProvider extends EventEmitter {
     private _handleBackgroundMessage = (params: { event: string; data: unknown }) => {
         log('[push event]', params.event, params.data);
 
-        // @ts-expect-error
-        if (_opnetPrividerPrivate._pushEventHandlers?.[params.event]) {
-            // @ts-expect-error
-            return _opnetPrividerPrivate._pushEventHandlers[params.event](params.data);
+        // TODO (typing): Ideally this is not the type-safe solution but in the _handleBackgroundMessage
+        // function, we are directly passing the data as unknown and all of the pushEventHandler's methods
+        // have either one argument or none. So, it should be safe to cast it as below. 
+        if (_opnetPrividerPrivate._pushEventHandlers && isPushEventHandlerMethod(params.event)) {
+            return (_opnetPrividerPrivate._pushEventHandlers[params.event] as (data: unknown) => unknown)(params.data);
         }
 
         this.emit(params.event, params.data);
