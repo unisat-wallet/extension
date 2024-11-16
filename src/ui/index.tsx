@@ -12,11 +12,12 @@ import AccountUpdater from '@/ui/state/accounts/updater';
 import '@/ui/styles/global.less';
 import browser from 'webextension-polyfill';
 
+import { RequestParams } from '@/shared/types/Request';
 import { ActionComponentProvider } from './components/ActionComponent';
 import { AppDimensions } from './components/Responsive';
 import AsyncMainRoute from './pages/MainRoute';
 import store from './state';
-import { WalletProvider } from './utils';
+import { WalletController, WalletProvider } from './utils';
 
 message.config({
     maxCount: 1
@@ -63,24 +64,20 @@ const portMessageChannel = new PortMessage();
 
 portMessageChannel.connect('popup');
 
-// TODO (typing): Since the functions passed into the proxy are determined at runtime,
-// it may not worth to define union of types here. (Check using generics)
-const wallet: Record<string, any> = new Proxy(
-    {},
-    {
-        get(_, key) {
-            return function (...params: any) {
-                if (typeof key !== 'string') throw new Error('Invalid key');
+const wallet = new Proxy<WalletController>({} as WalletController, {
+    get(_, key: keyof WalletController) {
+        return function (...params: Parameters<WalletController[typeof key]>) {
+            if (typeof key !== 'string') throw new Error('Invalid key');
 
-                return portMessageChannel.request({
-                    type: 'controller',
-                    method: key,
-                    params
-                });
-            };
-        }
+            return portMessageChannel.request({
+                type: 'controller',
+                method: key,
+                params
+            });
+        };
     }
-);
+});
+
 
 portMessageChannel.listen((data) => {
     if (data.type === 'broadcast') {
@@ -90,11 +87,14 @@ portMessageChannel.listen((data) => {
     return Promise.resolve();
 });
 
-eventBus.addEventListener(EVENTS.broadcastToBackground, async (data) => {
+// TODO (typing): As it passes data to request function, assumed that the data is RequestParams type
+// but broadcastToBackground event is not emitted anywhere. So, check it again when there is a real usage
+eventBus.addEventListener(EVENTS.broadcastToBackground, async (params: unknown) => {
+    const data = params as RequestParams;
     await portMessageChannel.request({
         type: 'broadcast',
         method: data.method,
-        params: data.data
+        params: data.params
     });
 });
 
@@ -129,7 +129,7 @@ if (rootElement) {
     const root = ReactDOM.createRoot(rootElement);
     root.render(
         <Provider store={store}>
-            <WalletProvider {...antdConfig} wallet={wallet as any}>
+            <WalletProvider {...antdConfig} wallet={wallet}>
                 <ActionComponentProvider>
                     <AppDimensions>
                         <PriceProvider>

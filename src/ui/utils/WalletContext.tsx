@@ -279,6 +279,8 @@ export interface WalletController {
     setAutoLockTimeId(timeId: number): Promise<void>;
 
     getAutoLockTimeId(): Promise<number>;
+
+    setLastActiveTime(): void;
 }
 
 const WalletContext = createContext<{
