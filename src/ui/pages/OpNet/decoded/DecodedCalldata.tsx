@@ -1,4 +1,4 @@
-import { Decoded, InteractionType } from '@/shared/web3/decoder/CalldataDecoder';
+import { Decoded, InteractionType, isInteractionType } from '@/shared/web3/decoder/CalldataDecoder';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { AddLiquidityDecoded, AddLiquidityDecodedInfo } from '@/ui/pages/OpNet/decoded/AddLiquidityDecodedInfo';
 import { ApproveDecodedInfo, DecodedApprove, DecodedTransfer } from '@/ui/pages/OpNet/decoded/ApproveDecodedInfo';
@@ -14,6 +14,10 @@ export function DecodedCalldata(props: DecodedProps): JSX.Element {
     const contractInfo = props.contractInfo;
     const decoded = props.decoded;
     const interactionType = props.interactionType;
+
+    if(!isInteractionType(decoded.selector)) {
+        return <></>;
+    }
 
     switch (decoded.selector) {
         case InteractionType.Transfer: {

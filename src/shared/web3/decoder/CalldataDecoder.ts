@@ -10,9 +10,17 @@ export enum InteractionType {
     AddLiquidity = 'eb686505'
 }
 
+export function isInteractionType(selector: string): selector is InteractionType {
+    return Object.values(InteractionType).includes(selector as InteractionType);
+}
+
 export function selectorToString(calldata: string): string {
     const data = Buffer.from(calldata, 'hex');
     const selector = data.slice(0, 4).toString('hex');
+
+    if (!isInteractionType(selector)) {
+        return `Unknown Interaction : 0x${selector}`;
+    }
 
     switch (selector) {
         case InteractionType.Transfer:
@@ -38,6 +46,10 @@ export function decodeCallData(calldata: string): Decoded | null {
     reader.setOffset(4);
 
     const selector = data.slice(0, 4).toString('hex');
+
+    if (!isInteractionType(selector)) {
+        return null;
+    }
 
     switch (selector) {
         case InteractionType.Transfer:
