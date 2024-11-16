@@ -5,13 +5,9 @@ import { ProviderState } from '@/shared/types/Provider';
 import { ProviderControllerRequest } from '@/shared/types/Request';
 import wallet from '../wallet';
 
-const tabCheckin = ({
-    data: {
-        params: { origin, name, icon }
-    },
-    session
-}: ProviderControllerRequest & { data: { params: SessionInfo } }) => {
-    session.setProp({ origin, name, icon });
+const tabCheckin = (req: ProviderControllerRequest) => {
+    const {origin, name, icon} = req.data.params as SessionInfo;
+    req.session.setProp({ origin, name, icon });
 };
 
 const getProviderState = async (_req: ProviderControllerRequest): Promise<ProviderState> => {
@@ -35,8 +31,17 @@ const keepAlive = (_req: ProviderControllerRequest) => {
     return 'ACK_KEEP_ALIVE_MESSAGE';
 };
 
-export default {
+export interface InternalMethod {
+    tabCheckin: (req: ProviderControllerRequest) => void;
+    getProviderState: (req: ProviderControllerRequest) => Promise<ProviderState>;
+    keepAlive: (req: ProviderControllerRequest) => string;
+};
+
+const internalMethod: InternalMethod = {
     tabCheckin,
     getProviderState,
-    keepAlive
-};
+    keepAlive,
+}
+
+export default internalMethod;
+

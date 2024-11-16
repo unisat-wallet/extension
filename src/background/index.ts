@@ -7,7 +7,6 @@ import { openExtensionInTab } from '@/ui/features/browser/tabs';
 import { SessionEvent, SessionEventPayload } from '@/shared/interfaces/SessionEvent';
 import { Runtime } from 'webextension-polyfill';
 import { providerController, walletController } from './controller';
-import { WalletController } from './controller/wallet';
 import {
     contactBookService,
     keyringService,
@@ -17,7 +16,7 @@ import {
     sessionService
 } from './service';
 import { StoredData } from './service/keyring';
-import { OpenApiService } from './service/openapi';
+import { isOpenapiServiceMethod, isWalletControllerMethod } from './utils/controller';
 import { storage } from './webapi';
 import browser, { browserRuntimeOnConnect, browserRuntimeOnInstalled } from './webapi/browser';
 
@@ -55,49 +54,44 @@ browserRuntimeOnConnect((port: Runtime.Port) => {
                 switch (data.type) {
                     case 'broadcast':
                         eventBus.emit(data.method, data.params);
-                        break;
+                        return Promise.resolve();
                     case 'openapi':
-                        if (data.method in walletController.openapi) {
-                            const method = walletController.openapi[data.method as keyof OpenApiService];
-                            if (!method) {
-                                const errorMsg = `Method ${data.method} not found in openapi`;
-                                console.error(errorMsg);
-
-                                return Promise.reject(new Error(errorMsg));
-                            } else {
-                                // @ts-expect-error
-                                return method.apply(null, data.params);
-                            }
+                        // TODO (typing): Check this again as it's not the most ideal solution. 
+                        // However, the problem is that we have a general type like RequestParams for 
+                        // incoming request data as we have different handlers. So, we assumed that 
+                        // the params are passed correctly for each method for now  
+                        if (isOpenapiServiceMethod(data.method)) {
+                            const method = walletController.openapi[data.method];
+                            const params = Array.isArray(data.params) ? data.params : [];
+                            return Promise.resolve((method as (...args: unknown[]) => unknown).apply(walletController.openapi, params));
+                        } else {
+                            const errorMsg = `Method ${data.method} not found in openapi`;
+                            console.error(errorMsg);
+                            return Promise.reject(new Error(errorMsg));
                         }
-                        break;
                     case 'controller':
                     default:
-                        // TODO (typing): check the logic again but it looks like the logic can be 
-                        // simplifed more if we are allowed to return smth in any case.
-                        if (data.method) {
-                            if (data.method in walletController) {
-                                const method = walletController[data.method as keyof WalletController];
-                                if (!method) {
-                                    const errorMsg = `Method ${data.method} not found in controller`;
-                                    console.error(errorMsg);
-    
-                                    return Promise.reject(new Error(errorMsg));
-                                } else {
-                                    // @ts-expect-error
-                                    return method.apply(null, data.params);
-                                }
-                            } else {
-                                const errorMsg = `Method ${data.method} not found in controller`;
-                                console.error(errorMsg);
-
-                                return Promise.reject(new Error(errorMsg));
-                            }
+                        // TODO (typing): Check this again as it's not the most ideal solution. 
+                        // However, the problem is that we have a general type like RequestParams for 
+                        // incoming request data as we have different handlers. So, we assumed that 
+                        // the params are passed correctly for each method for now 
+                        if (isWalletControllerMethod(data.method)) {
+                            const method = walletController[data.method];
+                            const params = Array.isArray(data.params) ? data.params : [];
+                            return Promise.resolve((method as (...args: unknown[]) => unknown).apply(walletController, params));
+                        } else {
+                            const errorMsg = `Method ${data.method} not found in controller`;
+                            console.error(errorMsg);
+                            return Promise.reject(new Error(errorMsg));
                         }
                 }
+            } else {
+                return Promise.reject(new Error('Missing data in the received message'));
             }
         });
 
-        const boardcastCallback = async (data: RequestParams) => {
+        const boardcastCallback = async (params: unknown) => {
+            const data = params as RequestParams;
             await pm.request({
                 type: 'broadcast',
                 method: data.method,

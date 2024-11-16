@@ -47,7 +47,7 @@ function objToBuffer(obj: object): Uint8Array {
     return buffer;
 }
 
-class ProviderController extends BaseController {
+export class ProviderController extends BaseController {
     requestAccounts = async (params: { session: Session }) => {
         const origin = params.session.origin;
         if (!permissionService.hasPermission(origin)) {
