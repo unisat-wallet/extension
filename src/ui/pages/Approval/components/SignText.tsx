@@ -7,20 +7,11 @@ import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useApproval } from '@/ui/utils';
 
 import { ParsedSignMsgUr } from '@/shared/types';
+import { SignTextApprovalParams } from '@/shared/types/Approval';
 import KeystoneSignScreen from '../../Wallet/KeystoneSignScreen';
 
-interface Props {
-    params: {
-        data: {
-            text: string;
-            type: string;
-        };
-        session: {
-            origin: string;
-            icon: string;
-            name: string;
-        };
-    };
+export interface Props {
+    params: SignTextApprovalParams;
 }
 
 export default function SignText({ params: { data, session } }: Props) {

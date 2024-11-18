@@ -1,20 +1,12 @@
-import { CHAINS_MAP, ChainType } from '@/shared/constant';
+import { CHAINS_MAP } from '@/shared/constant';
+import { SwitchChainApprovalParams } from '@/shared/types/Approval';
 import { Button, Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useChainType } from '@/ui/state/settings/hooks';
 import { useApproval } from '@/ui/utils';
 
-interface Props {
-    params: {
-        data: {
-            chain: ChainType;
-        };
-        session: {
-            origin: string;
-            icon: string;
-            name: string;
-        };
-    };
+export interface Props {
+    params: SwitchChainApprovalParams;
 }
 
 export default function SwitchChain({ params: { data, session } }: Props) {

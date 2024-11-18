@@ -3,8 +3,8 @@ import { useNavigate } from 'react-router-dom';
 
 import { useApproval, useWallet } from '@/ui/utils';
 
-import { StandardApprovalData } from '@/shared/types/Approval';
-import * as ApprovalComponent from './components';
+import { ApprovalComponentParams, StandardApprovalData } from '@/shared/types/Approval';
+import { ApprovalComponents } from './components';
 
 export default function ApprovalScreen() {
     const wallet = useWallet();
@@ -38,6 +38,9 @@ export default function ApprovalScreen() {
 
     if (!approvalData) return <></>;
     const { approvalComponent, params, origin } = approvalData;
-    const CurrentApprovalComponent = ApprovalComponent[approvalComponent];
+    const CurrentApprovalComponent = ApprovalComponents[approvalComponent] as React.ComponentType<{
+        params: ApprovalComponentParams<typeof approvalComponent>;
+        origin?: string;
+    }>;    
     return <CurrentApprovalComponent params={params} origin={origin} />;
 }

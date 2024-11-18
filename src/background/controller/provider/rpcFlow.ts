@@ -5,11 +5,16 @@ import { PromiseFlow, underline2Camelcase } from '@/background/utils';
 import { CHAINS_ENUM, EVENTS } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 
+import { isProviderControllerMethod } from '@/background/utils/controller';
 import { rpcErrors } from '@/shared/lib/bitcoin-rpc-errors/errors';
-import { ApprovalContext } from '@/shared/types/Approval';
-import { WalletError } from '@/shared/types/Error';
+import { ApprovalContext, ApprovalType } from '@/shared/types/Approval';
 import { ProviderControllerRequest } from '@/shared/types/Request';
-import providerController from './controller';
+import { isWalletError } from '@/shared/utils/errors';
+import providerController, { ProviderController } from './controller';
+
+
+// This is used for type safety while returning approval metadata
+type ApprovalMetadata = [ApprovalType, (req: ProviderControllerRequest) => boolean, object?];
 
 
 const isSignApproval = (type: string) => {
@@ -26,7 +31,7 @@ const flowContext = flow
         } = ctx.request;
         ctx.mapMethod = underline2Camelcase(method);
 
-        if (!providerController[ctx.mapMethod]) {
+        if (!isProviderControllerMethod(ctx.mapMethod)) {
             throw rpcErrors.methodNotFound({
                 message: `method [${method}] doesn't has corresponding handler`,
                 data: ctx.request.data
@@ -71,7 +76,7 @@ const flowContext = flow
                             data: {},
                             session: { origin, name, icon }
                         },
-                        approvalComponent: 'Connect'
+                        approvalComponent: ApprovalType.Connect
                     },
                     { height: windowHeight }
                 );
@@ -90,8 +95,9 @@ const flowContext = flow
             },
             mapMethod
         } = ctx;
-        const [approvalType, condition, options = {}] =
-            Reflect.getMetadata('APPROVAL', providerController, mapMethod) || [];
+        const approvalMetadata = Reflect.getMetadata('APPROVAL', providerController, mapMethod) as ApprovalMetadata | undefined;
+        const [approvalType, condition, options = {}] = approvalMetadata || [];
+        
 
         if (approvalType && !condition?.(ctx.request)) {
             ctx.request.requestedApproval = true;
@@ -119,13 +125,16 @@ const flowContext = flow
     .use(async (ctx) => {
         const { approvalRes, mapMethod, request } = ctx;
         // process request
-        const [approvalType] = Reflect.getMetadata('APPROVAL', providerController, mapMethod) || [];
+        const approvalMetadata = Reflect.getMetadata('APPROVAL', providerController, mapMethod) as ApprovalMetadata | undefined;
+        const [approvalType = ''] = approvalMetadata || [];
 
+        const method = providerController[mapMethod as keyof ProviderController];
+        // TODO (typing): Check this again as it's not the most ideal solution. 
+        // However, the problem is that we have a general type like RequestParams for 
+        // incoming request data as we have different handlers. So, we assumed that 
+        // the params are passed correctly for each method for now.
         const requestDefer = Promise.resolve(
-            providerController[mapMethod]({
-                ...request,
-                approvalRes
-            })
+            (method as (args?: object) => unknown).call(providerController, { ...request, approvalRes })
         );
 
         requestDefer
@@ -141,13 +150,13 @@ const flowContext = flow
                 }
                 return result;
             })
-            .catch((e: WalletError) => {
+            .catch((e: unknown) => {
                 if (isSignApproval(approvalType)) {
                     eventBus.emit(EVENTS.broadcastToUI, {
                         method: EVENTS.SIGN_FINISHED,
                         params: {
                             success: false,
-                            errorMsg: e.message
+                            errorMsg: isWalletError(e) ? e.message : 'Unknown error occurred'
                         }
                     });
                 }

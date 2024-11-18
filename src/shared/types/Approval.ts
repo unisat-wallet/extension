@@ -33,27 +33,36 @@ export interface LockApprovalData {
 }
 
 // STANDARD APPROVAL DATA
-export interface StandardApprovalData {
-    // TODO (typing): check if the state will be needed
-    // state: number;
-    params: StandardApprovalParams;
-    approvalComponent: string;
+export type StandardApprovalData<T extends ApprovalType = ApprovalType> = {
+    approvalComponent: T;
+    params: ApprovalComponentParams<T>;
     origin?: string;
-    // TODO (typing): check if the requestDefer will be needed
-    // requestDefer?: Promise<any>;
     approvalType?: string;
 }
 
-// UNION OF APPROVAL PARAMS
-type StandardApprovalParams =
-    | ConnectApprovalParams
-    | SwitchNetworkApprovalParams
-    | SwitchChainApprovalParams
-    | SignPsbtApprovalParams
-    | SignInteractionApprovalParams
-    | SignDeploymentApprovalParams
-    | SignTextApprovalParams
-    | SignDataApprovalParams;
+// APPROVAL COMPONENTS(TYPES) ENUM
+export enum ApprovalType {
+    Connect = 'Connect',
+    SignData = 'SignData',
+    SignInteraction = 'SignInteraction',
+    SignPsbt = 'SignPsbt',
+    SignText = 'SignText',
+    SwitchChain = 'SwitchChain',
+    SwitchNetwork = 'SwitchNetwork',
+    SignDeployment = 'SignDeployment',
+}
+
+// APPROVAL COMPONENT PARAMS MAPPING
+export type ApprovalComponentParams<T extends ApprovalType> = 
+    T extends ApprovalType.Connect ? ConnectApprovalParams :
+    T extends ApprovalType.SignData ? SignDataApprovalParams :
+    T extends ApprovalType.SignInteraction ? SignInteractionApprovalParams :
+    T extends ApprovalType.SignPsbt ? SignPsbtApprovalParams :
+    T extends ApprovalType.SignText ? SignTextApprovalParams :
+    T extends ApprovalType.SwitchChain ? SwitchChainApprovalParams :
+    T extends ApprovalType.SwitchNetwork ? SwitchNetworkApprovalParams :
+    T extends ApprovalType.SignDeployment ? SignDeploymentApprovalParams :
+    never;
 
 // UNION OF APPROVAL RESPONSES
 export type ApprovalResponse =

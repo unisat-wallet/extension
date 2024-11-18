@@ -1,21 +1,12 @@
 import { NETWORK_TYPES } from '@/shared/constant';
-import { NetworkType } from '@/shared/types';
+import { SwitchNetworkApprovalParams } from '@/shared/types/Approval';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useNetworkType } from '@/ui/state/settings/hooks';
 import { useApproval } from '@/ui/utils';
 
-interface Props {
-    params: {
-        data: {
-            networkType: NetworkType;
-        };
-        session: {
-            origin: string;
-            icon: string;
-            name: string;
-        };
-    };
+export interface Props {
+    params: SwitchNetworkApprovalParams;
 }
 
 export default function SwitchNetwork({ params: { data, session } }: Props) {

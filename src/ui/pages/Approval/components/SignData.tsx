@@ -1,22 +1,14 @@
 import { useEffect, useState } from 'react';
 
+import { SignDataApprovalParams } from '@/shared/types/Approval';
 import { Button, Card, Column, Content, Footer, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { Loading } from '@/ui/components/ActionComponent/Loading';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { copyToClipboard, useApproval, useWallet } from '@/ui/utils';
 
-interface Props {
-    params: {
-        data: {
-            data: string;
-        };
-        session: {
-            origin: string;
-            icon: string;
-            name: string;
-        };
-    };
+export interface Props {
+    params: SignDataApprovalParams;
 }
 
 const AGREEMENT_TEXT = 'I only sign what I understand';

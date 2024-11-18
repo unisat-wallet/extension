@@ -1,3 +1,4 @@
+import { SignDeploymentApprovalParams } from '@/shared/types/Approval';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { AddressText } from '@/ui/components/AddressText';
 import WebsiteBar from '@/ui/components/WebsiteBar';
@@ -7,18 +8,10 @@ import { colors } from '@/ui/theme/colors';
 import { satoshisToAmount } from '@/ui/utils';
 import { useApproval } from '@/ui/utils/hooks';
 import { PsbtTxOutput } from '@btc-vision/bitcoin';
-import { IDeploymentParameters } from '@btc-vision/transaction';
 
 
-interface Props {
-    params: {
-        data: IDeploymentParameters;
-        session: {
-            origin: string;
-            icon: string;
-            name: string;
-        };
-    };
+export interface Props {
+    params: SignDeploymentApprovalParams;
 }
 
 function toHex(buffer: Uint8Array | Buffer | number[]) {

@@ -2,7 +2,8 @@ import { Tooltip } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { KEYRING_TYPE } from '@/shared/constant';
-import { DecodedPsbt, ParsedSignPsbtUr, RawTxInfo, SignPsbtOptions, TickPriceItem, ToSignInput, TxType } from '@/shared/types';
+import { DecodedPsbt, ParsedSignPsbtUr, RawTxInfo, TickPriceItem, ToSignInput, TxType } from '@/shared/types';
+import { SignPsbtApprovalParams } from '@/shared/types/Approval';
 import { isWalletError } from '@/shared/utils/errors';
 import { Button, Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -18,41 +19,9 @@ import { fontSizes } from '@/ui/theme/font';
 import { amountToSatoshis, copyToClipboard, satoshisToAmount, shortAddress, useApproval, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
-interface Props {
+export interface Props {
     header?: React.ReactNode;
-    params: {
-        data: {
-            type: TxType;
-
-            psbtHex: string;
-            options?: SignPsbtOptions;
-            rawTxInfo?: RawTxInfo;
-
-            sendBitcoinParams?: {
-                toAddress: string;
-                satoshis: number;
-                memo: string;
-                memos: string[];
-                feeRate: number;
-            };
-            sendInscriptionParams?: {
-                toAddress: string;
-                inscriptionId: string;
-                feeRate: number;
-            };
-            sendRunesParams?: {
-                toAddress: string;
-                runeid: string;
-                amount: string;
-                feeRate: number;
-            };
-        };
-        session?: {
-            origin: string;
-            icon: string;
-            name: string;
-        };
-    };
+    params: SignPsbtApprovalParams;
     handleCancel?: () => void;
     handleConfirm?: (rawTxInfo?: RawTxInfo) => void;
 }

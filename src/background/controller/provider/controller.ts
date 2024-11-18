@@ -1,11 +1,13 @@
 import { permissionService, sessionService } from '@/background/service';
 import { CHAINS, CHAINS_MAP, ChainType, NETWORK_TYPES, VERSION } from '@/shared/constant';
+import 'reflect-metadata';
 
 import { Session } from '@/background/service/session';
 import { IDeploymentParametersWithoutSigner } from '@/content-script/pageProvider/Web3Provider';
 import { SessionEvent } from '@/shared/interfaces/SessionEvent';
 import { providerErrors } from '@/shared/lib/bitcoin-rpc-errors/errors';
 import { NetworkType } from '@/shared/types';
+import { ApprovalType } from '@/shared/types/Approval';
 import { ProviderControllerRequest } from '@/shared/types/Request.js';
 import { getChainInfo } from '@/shared/utils';
 import Web3API from '@/shared/web3/Web3API';
@@ -77,7 +79,6 @@ export class ProviderController extends BaseController {
         wallet.removeConnectedSite(origin);
     };
 
-    // @ts-expect-error
     @Reflect.metadata('SAFE', true)
     getAccounts = async ({ session: { origin } }: {
         session: { origin: string }
@@ -90,14 +91,12 @@ export class ProviderController extends BaseController {
         return _account ? [_account.address] : [];
     };
 
-    // @ts-expect-error
     @Reflect.metadata('SAFE', true)
     getNetwork = () => {
         return wallet.getLegacyNetworkName();
     };
 
-    // @ts-expect-error
-    @Reflect.metadata('APPROVAL', ['SwitchNetwork', (req: {data: {params: {network: string; networkType?: NetworkType}}}) => {
+    @Reflect.metadata('APPROVAL', [ApprovalType.SwitchNetwork, (req: {data: {params: {network: string; networkType?: NetworkType}}}) => {
         const network = req.data.params.network;
         if (NETWORK_TYPES[NetworkType.MAINNET].validNames.includes(network)) {
             req.data.params.networkType = NetworkType.MAINNET;
@@ -134,15 +133,13 @@ export class ProviderController extends BaseController {
         return NETWORK_TYPES[networkType].name;
     };
 
-    // @ts-expect-error
     @Reflect.metadata('SAFE', true)
     getChain = () => {
         const chainType = wallet.getChainType();
         return getChainInfo(chainType);
     };
 
-    // @ts-expect-error
-    @Reflect.metadata('APPROVAL', ['SwitchChain', (req: {data: {params: {chain: ChainType}}}) => {
+    @Reflect.metadata('APPROVAL', [ApprovalType.SwitchChain, (req: {data: {params: {chain: ChainType}}}) => {
         const chainType = req.data.params.chain;
         if (!CHAINS_MAP[chainType]) {
             throw new Error(`the chain is invalid, supported chains: ${CHAINS.map(v => v.enum).join(',')}`);
@@ -173,7 +170,6 @@ export class ProviderController extends BaseController {
         return getChainInfo(chain as ChainType);
     };
 
-    // @ts-expect-error
     @Reflect.metadata('SAFE', true)
     getPublicKey = async () => {
         const account = await wallet.getCurrentAccount();
@@ -181,7 +177,6 @@ export class ProviderController extends BaseController {
         return account.pubkey;
     };
 
-    // @ts-expect-error
     @Reflect.metadata('SAFE', true)
     getBalance = async () => {
         const account = await wallet.getCurrentAccount();
@@ -195,7 +190,6 @@ export class ProviderController extends BaseController {
         };
     };
 
-    // @ts-expect-error
     @Reflect.metadata('SAFE', true)
     verifyMessageOfBIP322Simple = (req: {
         data: {
@@ -211,8 +205,7 @@ export class ProviderController extends BaseController {
         return verifyMessageOfBIP322Simple(params.address, params.message, params.signature, params.network) ? 1 : 0;
     };
 
-    // @ts-expect-error
-    @Reflect.metadata('APPROVAL', ['SignPsbt', (_req: ProviderControllerRequest) => {
+    @Reflect.metadata('APPROVAL', [ApprovalType.SignPsbt, (_req: ProviderControllerRequest) => {
         //const { data: { params: { toAddress, satoshis } } } = req;
     }])
     sendBitcoin = async ({ approvalRes: { psbtHex } }: {
@@ -224,8 +217,7 @@ export class ProviderController extends BaseController {
         return await wallet.pushTx(rawtx);
     };
 
-    // @ts-expect-error
-    @Reflect.metadata('APPROVAL', ['SignPsbt', (_req: ProviderControllerRequest) => {
+    @Reflect.metadata('APPROVAL', [ApprovalType.SignPsbt, (_req: ProviderControllerRequest) => {
         //const { data: { params: { toAddress, satoshis } } } = req;
     }])
     sendInscription = async ({ approvalRes: { psbtHex } }: {
@@ -237,8 +229,7 @@ export class ProviderController extends BaseController {
         return await wallet.pushTx(rawtx);
     };
 
-    // @ts-expect-error
-    @Reflect.metadata('APPROVAL', ['SignInteraction', (_req: ProviderControllerRequest) => {
+    @Reflect.metadata('APPROVAL', [ApprovalType.SignInteraction, (_req: ProviderControllerRequest) => {
         const interactionParams = _req.data.params as DetailedInteractionParameters;
         if (!Web3API.isValidAddress(interactionParams.interactionParameters.to)) {
             throw new Error('Invalid contract address. Are you on the right network / are you using segwit?');
@@ -253,8 +244,7 @@ export class ProviderController extends BaseController {
         return wallet.signAndBroadcastInteraction(request.data.params.interactionParameters);
     };
 
-    // @ts-expect-error
-    @Reflect.metadata('APPROVAL', ['SignInteraction', (_req: ProviderControllerRequest) => {
+    @Reflect.metadata('APPROVAL', [ApprovalType.SignInteraction, (_req: ProviderControllerRequest) => {
         const interactionParams = _req.data.params as DetailedInteractionParameters;
         if (!Web3API.isValidAddress(interactionParams.interactionParameters.to)) {
             throw new Error('Invalid contract address. Are you on the right network / are you using segwit?');
@@ -270,8 +260,7 @@ export class ProviderController extends BaseController {
         return wallet.signInteraction(request.data.params.interactionParameters);
     };
 
-    // @ts-expect-error
-    @Reflect.metadata('APPROVAL', ['SignDeployment', (_req: ProviderControllerRequest) => {
+    @Reflect.metadata('APPROVAL', [ApprovalType.SignDeployment, (_req: ProviderControllerRequest) => {
         const interactionParams = _req.data.params as IDeploymentParametersWithoutSigner;
         if (!interactionParams.bytecode) {
             throw new Error('Invalid bytecode');
@@ -317,8 +306,7 @@ export class ProviderController extends BaseController {
         return wallet.deployContract(request.data.params);
     };
 
-    // @ts-expect-error
-    @Reflect.metadata('APPROVAL', ['SignText', () => {
+    @Reflect.metadata('APPROVAL', [ApprovalType.SignText, () => {
         // todo check text
     }])
     signMessage = async ({ data: { params: { text, type } }, approvalRes }: {
@@ -335,8 +323,7 @@ export class ProviderController extends BaseController {
         }
     };
 
-    // @ts-expect-error
-    @Reflect.metadata('APPROVAL', ['SignData', () => {
+    @Reflect.metadata('APPROVAL', [ApprovalType.SignData, () => {
         // todo check text
     }])
     signData = ({ data: { params: { data, type } } }: {
@@ -345,7 +332,6 @@ export class ProviderController extends BaseController {
         return wallet.signData(data, type);
     };
 
-    // @ts-expect-error
     @Reflect.metadata('SAFE', true)
     pushTx = async ({ data: { params: { rawtx } } }: {
         data: { params: { rawtx: string } }
@@ -353,8 +339,7 @@ export class ProviderController extends BaseController {
         return await wallet.pushTx(rawtx);
     };
 
-    // @ts-expect-error
-    @Reflect.metadata('APPROVAL', ['SignPsbt', (req: {data: {params: {psbtHex: string}}}) => {
+    @Reflect.metadata('APPROVAL', [ApprovalType.SignPsbt, (req: {data: {params: {psbtHex: string}}}) => {
         const { data: { params: { psbtHex } } } = req;
         req.data.params.psbtHex = formatPsbtHex(psbtHex);
     }])
@@ -379,36 +364,35 @@ export class ProviderController extends BaseController {
         return psbt.toHex();
     };
 
-    // @ts-expect-error
-    @Reflect.metadata('APPROVAL', ['MultiSignPsbt', (req: {data: {params: {psbtHexs: string[]}}}) => {
-        const { data: { params: { psbtHexs } } } = req;
+    // The below handler is commented as it's not used for now and breaks the matching between approval types and approval components
+    // @Reflect.metadata('APPROVAL', ['MultiSignPsbt', (req: {data: {params: {psbtHexs: string[]}}}) => {
+    //     const { data: { params: { psbtHexs } } } = req;
 
-        req.data.params.psbtHexs = psbtHexs.map(psbtHex => formatPsbtHex(psbtHex));
-    }])
-    multiSignPsbt = async ({ data: { params: { psbtHexs, options } } }: {
-        data: {
-            params: {
-                psbtHexs: string[],
-                options: { autoFinalized: boolean }[]
-            }
-        }
-    }) => {
-        const account = await wallet.getCurrentAccount();
-        if (!account) throw new Error('No account');
-        const networkType = wallet.getNetworkType();
-        const psbtNetwork = toPsbtNetwork(networkType);
-        const result: string[] = [];
-        for (let i = 0; i < psbtHexs.length; i++) {
-            const psbt = bitcoin.Psbt.fromHex(psbtHexs[i], { network: psbtNetwork });
-            const autoFinalized = options?.[i]?.autoFinalized ?? true;
-            const toSignInputs = await wallet.formatOptionsToSignInputs(psbtHexs[i], options[i]);
-            await wallet.signPsbt(psbt, toSignInputs, autoFinalized);
-            result.push(psbt.toHex());
-        }
-        return result;
-    };
+    //     req.data.params.psbtHexs = psbtHexs.map(psbtHex => formatPsbtHex(psbtHex));
+    // }])
+    // multiSignPsbt = async ({ data: { params: { psbtHexs, options } } }: {
+    //     data: {
+    //         params: {
+    //             psbtHexs: string[],
+    //             options: { autoFinalized: boolean }[]
+    //         }
+    //     }
+    // }) => {
+    //     const account = await wallet.getCurrentAccount();
+    //     if (!account) throw new Error('No account');
+    //     const networkType = wallet.getNetworkType();
+    //     const psbtNetwork = toPsbtNetwork(networkType);
+    //     const result: string[] = [];
+    //     for (let i = 0; i < psbtHexs.length; i++) {
+    //         const psbt = bitcoin.Psbt.fromHex(psbtHexs[i], { network: psbtNetwork });
+    //         const autoFinalized = options?.[i]?.autoFinalized ?? true;
+    //         const toSignInputs = await wallet.formatOptionsToSignInputs(psbtHexs[i], options[i]);
+    //         await wallet.signPsbt(psbt, toSignInputs, autoFinalized);
+    //         result.push(psbt.toHex());
+    //     }
+    //     return result;
+    // };
 
-    // @ts-expect-error
     @Reflect.metadata('SAFE', true)
     pushPsbt = async ({ data: { params: { psbtHex } } }: {
         data: { params: { psbtHex: string } }
@@ -420,13 +404,11 @@ export class ProviderController extends BaseController {
         return await wallet.pushTx(rawtx);
     };
 
-    // @ts-expect-error
     @Reflect.metadata('SAFE', true)
     getVersion = () => {
         return VERSION;
     };
 
-    // @ts-expect-error
     @Reflect.metadata('SAFE', true)
     getBitcoinUtxos = async () => {
         try {

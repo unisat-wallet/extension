@@ -20,7 +20,7 @@ abstract class Message extends EventEmitter {
         number,
         {
             data: RequestParams;
-            resolve: (arg: any) => void;
+            resolve: (arg: unknown) => void;
             reject: (arg: WalletError) => void;
         }
     >();
@@ -61,7 +61,11 @@ abstract class Message extends EventEmitter {
 
         this._requestIdPool.push(ident);
         this._waitingMap.delete(ident);
-        err ? reject(deserializeError(err)) : resolve(res);
+        if (err) {
+            reject(deserializeError(err));
+        } else {
+            resolve(res);
+        }
     };
 
     onRequest = async ({ ident, data }: SendRequestPayload) => {
