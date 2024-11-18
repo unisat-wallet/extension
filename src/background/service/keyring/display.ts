@@ -1,3 +1,5 @@
+// TODO (typing): For now the eslint is disabled because we need to update IKeyringBase class fields first.
+/* eslint-disable */
 import KeyringService, { Keyring } from './index';
 
 class DisplayKeyring {

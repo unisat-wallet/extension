@@ -1,3 +1,5 @@
+// As the HistoryScreen is not used now, the eslint is disabled.
+/* eslint-disable */
 import { Tooltip } from 'antd';
 import BigNumber from 'bignumber.js';
 import { useEffect, useState } from 'react';
