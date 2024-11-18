@@ -26,10 +26,7 @@ let appStoreLoaded = false;
 
 async function restoreAppState() {
     const keyringState = await storage.get<StoredData>('keyringState');
-    if (!keyringState) {
-        throw new Error('Keyring state does not exist');
-    }
-    keyringService.loadStore(keyringState);
+    keyringService.loadStore(keyringState ?? {booted: '', vault: ''});
     keyringService.store.subscribe((value) => storage.set('keyringState', value));
 
     await preferenceService.init();

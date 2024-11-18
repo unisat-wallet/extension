@@ -118,7 +118,9 @@ export const useSelectOption = <T>({
 export const useWalletRequest = <TArgs extends unknown[], TResult>(
     requestFn: (...args: TArgs) => Promise<TResult>,
     {
+        // eslint-disable-next-line @typescript-eslint/unbound-method
         onSuccess,
+        // eslint-disable-next-line @typescript-eslint/unbound-method
         onError
     }: {
         onSuccess?(result: TResult): void;
