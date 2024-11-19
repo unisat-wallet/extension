@@ -47,7 +47,6 @@ import ExportMnemonicsScreen from './Settings/ExportMnemonicsScreen';
 import ExportPrivateKeyScreen from './Settings/ExportPrivateKeyScreen';
 import NetworkTypeScreen from './Settings/NetworkTypeScreen';
 import UpgradeNoticeScreen from './Settings/UpgradeNoticeScreen';
-import HistoryScreen from './Wallet/HistoryScreen';
 import ReceiveScreen from './Wallet/ReceiveScreen';
 import TxConfirmScreen from './Wallet/TxConfirmScreen';
 import TxFailScreen from './Wallet/TxFailScreen';
@@ -77,7 +76,6 @@ export enum RouteTypes {
     ExportMnemonicsScreen = 'ExportMnemonicsScreen',
     ExportPrivateKeyScreen = 'ExportPrivateKeyScreen',
     AdvancedScreen = 'AdvancedScreen',
-    HistoryScreen = 'HistoryScreen',
     ApprovalScreen = 'ApprovalScreen',
     ConnectedSitesScreen = 'ConnectedSitesScreen',
     SwitchKeyringScreen = 'SwitchKeyringScreen',
@@ -194,10 +192,6 @@ export const routes: Routes = {
     AdvancedScreen: {
         path: '/settings/advanced',
         element: <AdvancedScreen />
-    },
-    HistoryScreen: {
-        path: '/wallet/history',
-        element: <HistoryScreen />
     },
     ApprovalScreen: {
         path: '/approval',
