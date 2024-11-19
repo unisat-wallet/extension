@@ -1,7 +1,9 @@
 import { permissionService, sessionService } from '@/background/service';
 import { CHAINS, CHAINS_MAP, ChainType, NETWORK_TYPES, VERSION } from '@/shared/constant';
 
+import { Session } from '@/background/service/session';
 import { IDeploymentParametersWithoutSigner } from '@/content-script/pageProvider/Web3Provider';
+import { SessionEvent } from '@/shared/interfaces/SessionEvent';
 import { NetworkType } from '@/shared/types';
 import { RequestData } from '@/shared/types/Request.js';
 import { getChainInfo } from '@/shared/utils';
@@ -14,8 +16,6 @@ import { toPsbtNetwork } from '@btc-vision/wallet-sdk/lib/network';
 import { ethErrors } from 'eth-rpc-errors';
 import BaseController from '../base';
 import wallet from '../wallet';
-import { SessionEvent } from '@/shared/interfaces/SessionEvent';
-import { Session } from '@/background/service/session';
 
 function formatPsbtHex(psbtHex: string) {
     let formatData = '';
@@ -53,7 +53,7 @@ class ProviderController extends BaseController {
 
         const _account = await wallet.getCurrentAccount();
         const account = _account ? [_account.address] : [];
-        sessionService.broadcastEvent(SessionEvent.accountChanged, account);
+        sessionService.broadcastEvent(SessionEvent.accountsChanged, account);
 
         const connectSite = permissionService.getConnectedSite(origin);
         if (connectSite) {
@@ -74,7 +74,7 @@ class ProviderController extends BaseController {
         wallet.removeConnectedSite(origin);
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     @Reflect.metadata('SAFE', true)
     getAccounts = async ({ session: { origin } }: { session: { origin: string } }) => {
         if (!permissionService.hasPermission(origin)) {
@@ -85,13 +85,13 @@ class ProviderController extends BaseController {
         return _account ? [_account.address] : [];
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     @Reflect.metadata('SAFE', true)
     getNetwork = () => {
         return wallet.getLegacyNetworkName();
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     @Reflect.metadata('APPROVAL', [
         'SwitchNetwork',
         (req) => {
@@ -137,14 +137,14 @@ class ProviderController extends BaseController {
         return NETWORK_TYPES[networkType].name;
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     @Reflect.metadata('SAFE', true)
     getChain = () => {
         const chainType = wallet.getChainType();
         return getChainInfo(chainType);
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     @Reflect.metadata('APPROVAL', [
         'SwitchChain',
         (req) => {
@@ -182,7 +182,7 @@ class ProviderController extends BaseController {
         return getChainInfo(chain as ChainType);
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     @Reflect.metadata('SAFE', true)
     getPublicKey = async () => {
         const account = await wallet.getCurrentAccount();
@@ -190,7 +190,7 @@ class ProviderController extends BaseController {
         return account.pubkey;
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     @Reflect.metadata('SAFE', true)
     getBalance = async () => {
         const account = await wallet.getCurrentAccount();
@@ -204,7 +204,7 @@ class ProviderController extends BaseController {
         };
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     @Reflect.metadata('SAFE', true)
     verifyMessageOfBIP322Simple = (req: {
         data: {
@@ -222,7 +222,7 @@ class ProviderController extends BaseController {
         return verifyMessageOfBIP322Simple(params.address, params.message, params.signature, params.network) ? 1 : 0;
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     @Reflect.metadata('APPROVAL', [
         'SignPsbt',
         (_req: RequestData) => {
@@ -236,7 +236,7 @@ class ProviderController extends BaseController {
         return await wallet.pushTx(rawtx);
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     @Reflect.metadata('APPROVAL', [
         'SignPsbt',
         (_req: RequestData) => {
@@ -250,7 +250,7 @@ class ProviderController extends BaseController {
         return await wallet.pushTx(rawtx);
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     @Reflect.metadata('APPROVAL', [
         'SignInteraction',
         (_req: RequestData) => {
@@ -269,7 +269,7 @@ class ProviderController extends BaseController {
         return wallet.signAndBroadcastInteraction(request.data.params.interactionParameters);
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     @Reflect.metadata('APPROVAL', [
         'SignInteraction',
         (_req: RequestData) => {
@@ -285,7 +285,7 @@ class ProviderController extends BaseController {
         return wallet.signInteraction(request.data.params.interactionParameters);
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     @Reflect.metadata('APPROVAL', [
         'SignDeployment',
         (_req: RequestData) => {
@@ -302,10 +302,10 @@ class ProviderController extends BaseController {
                 throw new Error('No feeRate');
             }
 
-            // @ts-ignore
+            // @ts-expect-error
             interactionParams.priorityFee = BigInt(interactionParams.priorityFee);
 
-            // @ts-ignore
+            // @ts-expect-error
             interactionParams.bytecode = objToBuffer(interactionParams.bytecode);
         }
     ])
@@ -317,7 +317,7 @@ class ProviderController extends BaseController {
         const rate = feeRate.list[2] || feeRate.list[1] || feeRate.list[0];
 
         if (Number(request.data.params.feeRate) < Number(rate.feeRate)) {
-            // @ts-ignore
+            // @ts-expect-error
             request.data.params.feeRate = Number(rate.feeRate);
 
             console.warn(
@@ -325,10 +325,10 @@ class ProviderController extends BaseController {
             );
         }
 
-        // @ts-ignore
+        // @ts-expect-error
         request.data.params.bytecode = objToBuffer(request.data.params.bytecode);
 
-        // @ts-ignore
+        // @ts-expect-error
         request.data.params.priorityFee = BigInt(request.data.params.priorityFee);
 
         console.log('deployContract', request.data.params);
@@ -336,7 +336,7 @@ class ProviderController extends BaseController {
         return wallet.deployContract(request.data.params);
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     @Reflect.metadata('APPROVAL', [
         'SignText',
         () => {
@@ -362,7 +362,7 @@ class ProviderController extends BaseController {
         }
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     @Reflect.metadata('APPROVAL', [
         'SignData',
         () => {
@@ -379,7 +379,7 @@ class ProviderController extends BaseController {
         return wallet.signData(data, type);
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     @Reflect.metadata('SAFE', true)
     pushTx = async ({
         data: {
@@ -391,7 +391,7 @@ class ProviderController extends BaseController {
         return await wallet.pushTx(rawtx);
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     @Reflect.metadata('APPROVAL', [
         'SignPsbt',
         (req) => {
@@ -431,7 +431,7 @@ class ProviderController extends BaseController {
         return psbt.toHex();
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     @Reflect.metadata('APPROVAL', [
         'MultiSignPsbt',
         (req) => {
@@ -478,7 +478,7 @@ class ProviderController extends BaseController {
         return result;
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     @Reflect.metadata('SAFE', true)
     pushPsbt = async ({
         data: {
@@ -494,13 +494,13 @@ class ProviderController extends BaseController {
         return await wallet.pushTx(rawtx);
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     @Reflect.metadata('SAFE', true)
     getVersion = () => {
         return VERSION;
     };
 
-    // @ts-ignore
+    // @ts-expect-error
     @Reflect.metadata('SAFE', true)
     getBitcoinUtxos = async () => {
         try {
