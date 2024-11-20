@@ -143,7 +143,7 @@ export class WalletController extends BaseController {
 
     lockWallet = async () => {
         await keyringService.setLocked();
-        sessionService.broadcastEvent(SessionEvent.accountChanged, []);
+        sessionService.broadcastEvent(SessionEvent.accountsChanged, []);
         sessionService.broadcastEvent(SessionEvent.lock);
         eventBus.emit(EVENTS.broadcastToUI, {
             method: 'lock',
@@ -1259,7 +1259,7 @@ export class WalletController extends BaseController {
     };
 
     removeConnectedSite = (origin: string) => {
-        sessionService.broadcastEvent(SessionEvent.accountChanged, [], origin);
+        sessionService.broadcastEvent(SessionEvent.accountsChanged, [], origin);
         permissionService.removeConnectedSite(origin);
     };
 
