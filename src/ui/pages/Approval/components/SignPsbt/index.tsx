@@ -1,7 +1,8 @@
+import { Tooltip } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { KEYRING_TYPE } from '@/shared/constant';
-import { DecodedPsbt, RawTxInfo, SignPsbtOptions, ToSignInput, TxType } from '@/shared/types';
+import { DecodedPsbt, RawTxInfo, SignPsbtOptions, TickPriceItem, ToSignInput, TxType } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressText } from '@/ui/components/AddressText';
@@ -14,7 +15,6 @@ import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { amountToSatoshis, copyToClipboard, satoshisToAmount, shortAddress, useApproval, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Tooltip } from 'antd';
 
 interface Props {
     header?: React.ReactNode;
@@ -336,7 +336,7 @@ export default function SignPsbt({
         const decodedPsbt = await wallet.decodePsbt(psbtHex);
 
         let toSignInputs: ToSignInput[] = [];
-        // @ts-expect-error
+        // @ts-ignore
         if (type === TxType.SEND_BITCOIN) {
             toSignInputs = decodedPsbt.inputs.map((_, index) => ({
                 index,
