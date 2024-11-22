@@ -1341,6 +1341,7 @@ export class WalletController extends BaseController {
     
         const rbfEnabled = psbt.txInputs.some((input) => input.sequence && input.sequence < 0xfffffffe);
     
+        // TODO: Check if there is any way to find recommendedFeeRate
         const recommendedFeeRate = 1;
         const shouldWarnFeeRate = feeRate < recommendedFeeRate;
     
