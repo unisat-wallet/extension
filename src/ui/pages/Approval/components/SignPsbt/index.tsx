@@ -14,7 +14,6 @@ import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { amountToSatoshis, copyToClipboard, satoshisToAmount, shortAddress, useApproval, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
-import { address as bitcoinAddress, Network, networks, Psbt } from '@btc-vision/bitcoin';
 import { Tooltip } from 'antd';
 
 interface Props {
@@ -334,7 +333,7 @@ export default function SignPsbt({
             return;
         }
 
-        const decodedPsbt = decodePsbt(psbtHex, networks.regtest)
+        const decodedPsbt = await wallet.decodePsbt(psbtHex);
 
         let toSignInputs: ToSignInput[] = [];
         // @ts-expect-error
@@ -665,62 +664,3 @@ export default function SignPsbt({
         </Layout>
     );
 }
-
-
-export function decodePsbt(psbtHex: string, network: Network): DecodedPsbt {
-    const psbt = Psbt.fromHex(psbtHex, { network });
-
-    const inputs = psbt.txInputs.map((input, index) => {
-        const inputData = psbt.data.inputs[index];
-        let address = 'unknown';
-
-        if (inputData.witnessUtxo?.script) {
-            try {
-                address = bitcoinAddress
-                    .fromOutputScript(inputData.witnessUtxo.script, network)
-                    .toString();
-            } catch {
-                address = 'unknown';
-            }
-        }
-
-        return {
-            txid: Buffer.from(input.hash).reverse().toString('hex'),
-            vout: input.index,
-            address,
-            value: inputData.witnessUtxo?.value || 0,
-            sighashType: inputData.sighashType
-        };
-    });
-
-    const outputs = psbt.txOutputs.map((output) => ({
-        address: output.address || 'unknown',
-        value: output.value,
-    }));
-
-    const totalInputValue = inputs.reduce((sum, input) => sum + input.value, 0);
-    const totalOutputValue = outputs.reduce((sum, output) => sum + output.value, 0);
-
-    const fee = totalInputValue - totalOutputValue;
-
-    const transactionSize = psbt.toBuffer().length;
-    const feeRate = transactionSize > 0 ? fee / transactionSize : 0;
-
-    const rbfEnabled = psbt.txInputs.some((input) => input.sequence && input.sequence < 0xfffffffe);
-
-    const recommendedFeeRate = 1;
-    const shouldWarnFeeRate = feeRate < recommendedFeeRate;
-
-    return {
-        inputs,
-        outputs,
-        fee,
-        feeRate,
-        transactionSize,
-        rbfEnabled,
-        recommendedFeeRate,
-        shouldWarnFeeRate
-    };
-}
-
-
