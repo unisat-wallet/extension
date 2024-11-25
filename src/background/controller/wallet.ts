@@ -14,9 +14,7 @@ import { WalletSaveList } from '@/background/service/preference';
 import {
     BroadcastTransactionOptions,
     IDeploymentParametersWithoutSigner,
-    InteractionParametersWithoutSigner,
-    IUnwrapParametersSigner,
-    IWrapParametersWithoutSigner
+    InteractionParametersWithoutSigner
 } from '@/content-script/pageProvider/Web3Provider.js';
 import {
     ADDRESS_TYPES,
@@ -50,15 +48,7 @@ import {
 } from '@/shared/types';
 import { getChainInfo } from '@/shared/utils';
 import Web3API, { bigIntToDecimal, getBitcoinLibJSNetwork } from '@/shared/web3/Web3API';
-import {
-    IDeploymentParameters,
-    IInteractionParameters,
-    IUnwrapParameters,
-    IWrapParameters,
-    UnwrapResult,
-    Wallet,
-    WrapResult
-} from '@btc-vision/transaction';
+import { IDeploymentParameters, IInteractionParameters, Wallet } from '@btc-vision/transaction';
 import { SimpleKeyring } from '@btc-vision/wallet-sdk';
 import { publicKeyToAddress, scriptPkToAddress } from '@btc-vision/wallet-sdk/lib/address';
 import { bitcoin, ECPair } from '@btc-vision/wallet-sdk/lib/bitcoin-core';
@@ -153,7 +143,7 @@ export class WalletController extends BaseController {
 
     lockWallet = async () => {
         await keyringService.setLocked();
-        sessionService.broadcastEvent(SessionEvent.accountChanged, []);
+        sessionService.broadcastEvent(SessionEvent.accountsChanged, []);
         sessionService.broadcastEvent(SessionEvent.lock);
         eventBus.emit(EVENTS.broadcastToUI, {
             method: 'lock',
@@ -579,15 +569,12 @@ export class WalletController extends BaseController {
             const psbt = typeof _psbt === 'string' ? bitcoin.Psbt.fromHex(_psbt, { network: psbtNetwork }) : _psbt;
             psbt.data.inputs.forEach((v, index) => {
                 let script: Buffer | null = null;
-                let value = 0;
                 if (v.witnessUtxo) {
                     script = v.witnessUtxo.script;
-                    value = v.witnessUtxo.value;
                 } else if (v.nonWitnessUtxo) {
                     const tx = bitcoin.Transaction.fromBuffer(v.nonWitnessUtxo);
                     const output = tx.outs[psbt.txInputs[index].index];
                     script = output.script;
-                    value = output.value;
                 }
                 const isSigned = v.finalScriptSig ?? v.finalScriptWitness;
                 if (script && !isSigned) {
@@ -619,12 +606,13 @@ export class WalletController extends BaseController {
         if (!toSignInputs) {
             // Compatibility with legacy code.
             toSignInputs = await this.formatOptionsToSignInputs(psbt);
-            if (autoFinalized) autoFinalized = true;
         }
+
         psbt.data.inputs.forEach((v) => {
             const isNotSigned = !(v.finalScriptSig ?? v.finalScriptWitness);
             const isP2TR = keyring.addressType === AddressType.P2TR || keyring.addressType === AddressType.M44_P2TR;
             const lostInternalPubkey = !v.tapInternalKey;
+
             // Special measures taken for compatibility with certain applications.
             if (isNotSigned && isP2TR && lostInternalPubkey) {
                 const tapInternalKey = toXOnly(Buffer.from(account.pubkey, 'hex'));
@@ -632,6 +620,7 @@ export class WalletController extends BaseController {
                     internalPubkey: tapInternalKey,
                     network: psbtNetwork
                 });
+
                 if (v.witnessUtxo?.script.toString('hex') == output?.toString('hex')) {
                     v.tapInternalKey = tapInternalKey;
                 }
@@ -643,6 +632,7 @@ export class WalletController extends BaseController {
             if (!_keyring.mfp) {
                 throw new Error('no mfp in keyring');
             }
+
             toSignInputs.forEach((input) => {
                 const isP2TR = keyring.addressType === AddressType.P2TR || keyring.addressType === AddressType.M44_P2TR;
                 const bip32Derivation = {
@@ -650,11 +640,12 @@ export class WalletController extends BaseController {
                     path: `${keyring.hdPath}/${account.index}`,
                     pubkey: Buffer.from(account.pubkey, 'hex')
                 };
+
                 if (isP2TR) {
                     psbt.data.inputs[input.index].tapBip32Derivation = [
                         {
                             ...bip32Derivation,
-                            pubkey: bip32Derivation.pubkey.slice(1),
+                            pubkey: bip32Derivation.pubkey.subarray(1),
                             leafHashes: []
                         }
                     ];
@@ -839,77 +830,6 @@ export class WalletController extends BaseController {
         return broadcastedTransactions;
     };
 
-    wrap = async (wrapParameters: IWrapParametersWithoutSigner): Promise<WrapResult | { error: Error }> => {
-        const account = preferenceService.getCurrentAccount();
-        if (!account) throw new Error('no current account');
-
-        const wifWallet = this.getInternalPrivateKey({
-            pubkey: account.pubkey,
-            type: account.type
-        } as Account);
-
-        if (!wifWallet) throw new Error('no current account');
-        const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
-
-        const generationParameters = await Web3API.limitedProvider.fetchWrapParameters(wrapParameters.amount);
-        if (!generationParameters) {
-            throw new Error('No generation parameters found');
-        }
-
-        if (!wrapParameters.utxos) {
-            throw new Error('WRAP. No utxos found');
-        }
-
-        const IWrapParametersSubmit: IWrapParameters = {
-            from: walletGet.p2tr,
-            utxos: wrapParameters.utxos,
-            signer: walletGet.keypair,
-            network: Web3API.network,
-            feeRate: wrapParameters.feeRate,
-            priorityFee: wrapParameters.priorityFee,
-            amount: wrapParameters.amount,
-            generationParameters: generationParameters
-        };
-
-        try {
-            return await Web3API.transactionFactory.wrap(IWrapParametersSubmit);
-        } catch (e) {
-            return { error: e as Error };
-        }
-    };
-
-    unwrap = async (unwrapParameters: IUnwrapParametersSigner): Promise<UnwrapResult> => {
-        const account = preferenceService.getCurrentAccount();
-        if (!account) throw new Error('no current account');
-
-        const wifWallet = this.getInternalPrivateKey({
-            pubkey: account.pubkey,
-            type: account.type
-        } as Account);
-
-        if (!wifWallet) throw new Error('no current account');
-        const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
-
-        const generationParameters = await Web3API.limitedProvider.fetchWrapParameters(unwrapParameters.amount);
-        if (!generationParameters) {
-            throw new Error('No generation parameters found');
-        }
-
-        const unwrapParametersSubmit: IUnwrapParameters = {
-            from: walletGet.p2tr,
-            utxos: unwrapParameters.utxos,
-            signer: walletGet.keypair,
-            unwrapUTXOs: unwrapParameters.unwrapUTXOs,
-            network: Web3API.network,
-            feeRate: unwrapParameters.feeRate,
-            priorityFee: unwrapParameters.priorityFee,
-            amount: unwrapParameters.amount,
-            calldata: unwrapParameters.calldata
-        };
-
-        return await Web3API.transactionFactory.unwrap(unwrapParametersSubmit);
-    };
-
     signBIP322Simple = async (text: string) => {
         const account = preferenceService.getCurrentAccount();
         if (!account) throw new Error('no current account');
@@ -942,9 +862,9 @@ export class WalletController extends BaseController {
             }
         }
 
-        // @ts-ignore
+        // @ts-expect-error
         if (keyring[methodName]) {
-            // @ts-ignore
+            // @ts-expect-error
             return keyring[methodName].call(keyring, ...params);
         }
     };
@@ -1338,7 +1258,7 @@ export class WalletController extends BaseController {
     };
 
     removeConnectedSite = (origin: string) => {
-        sessionService.broadcastEvent(SessionEvent.accountChanged, [], origin);
+        sessionService.broadcastEvent(SessionEvent.accountsChanged, [], origin);
         permissionService.removeConnectedSite(origin);
     };
 
@@ -1406,8 +1326,8 @@ export class WalletController extends BaseController {
     };
 
     setPsbtSignNonSegwitEnable(psbt: bitcoin.Psbt, enabled: boolean) {
-        // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-        //@ts-ignore
+         
+        //@ts-expect-error
         psbt.__CACHE.__UNSAFE_SIGN_NONSEGWIT = enabled;
     }
 
@@ -1432,7 +1352,7 @@ export class WalletController extends BaseController {
             throw new Error('keyring does not exist');
         }
 
-        // @ts-ignore
+        // @ts-expect-error
         if (!keyring[method]) {
             throw new Error(`keyring does not have ${method} method`);
         }

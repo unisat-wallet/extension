@@ -102,12 +102,6 @@ class Web3API {
         return this._provider;
     }
 
-    public get WBTC(): Address | null {
-        if (!this.metadata) return null;
-
-        return this.metadata.wbtc;
-    }
-
     public get ROUTER_ADDRESS(): Address | null {
         if (!this.metadata) return null;
 
