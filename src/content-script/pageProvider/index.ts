@@ -8,14 +8,12 @@ import { RequestParams } from '@/shared/types/Request.js';
 import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
 import Web3API from '@/shared/web3/Web3API';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
-import { DeploymentResult, Unisat, UnwrapResult, UTXO, WrapResult } from '@btc-vision/transaction';
+import { DeploymentResult, Unisat, UTXO } from '@btc-vision/transaction';
 
 import {
     BroadcastTransactionOptions,
     IDeploymentParametersWithoutSigner,
     InteractionParametersWithoutSigner,
-    IUnwrapParametersSigner,
-    IWrapParametersWithoutSigner,
     Web3Provider
 } from './Web3Provider';
 import PushEventHandlers from './pushEventHandlers';
@@ -153,7 +151,7 @@ export class OpnetProvider extends EventEmitter {
             .call(async () => {
                 log('[request]', JSON.stringify(data, null, 2));
 
-                const res = await _opnetPrividerPrivate._bcm.request(data).catch((err) => {
+                const res = await _opnetPrividerPrivate._bcm.request(data).catch((err: unknown) => {
                     log('[request: error]', data.method, serializeError(err));
                     throw serializeError(err);
                 });
@@ -162,7 +160,7 @@ export class OpnetProvider extends EventEmitter {
 
                 return res;
             })
-            .catch((err) => {
+            .catch((err: unknown) => {
                 console.log(err);
                 throw err;
             });
@@ -345,20 +343,6 @@ export class OpnetProvider extends EventEmitter {
             method: 'broadcast',
             params: transactions
         })) as Promise<[BroadcastedTransaction, BroadcastedTransaction]>;
-    };
-
-    wrap = async (wrapParameters: IWrapParametersWithoutSigner): Promise<WrapResult> => {
-        return (await this._request({
-            method: 'wrap',
-            params: wrapParameters
-        })) as Promise<WrapResult>;
-    };
-
-    unwrap = async (unWrapParameters: IUnwrapParametersSigner): Promise<UnwrapResult> => {
-        return (await this._request({
-            method: 'unwrap',
-            params: unWrapParameters
-        })) as Promise<UnwrapResult>;
     };
 
     /**

@@ -190,7 +190,7 @@ class PreferenceService {
     setCurrentAccount = (account?: Account | null) => {
         this.store.currentAccount = account;
         if (account) {
-            sessionService.broadcastEvent(SessionEvent.accountChanged, [account.address]);
+            sessionService.broadcastEvent(SessionEvent.accountsChanged, [account.address]);
             eventBus.emit(EVENTS.broadcastToUI, {
                 method: 'accountsChanged',
                 params: account
@@ -258,7 +258,7 @@ class PreferenceService {
         return this.store.externalLinkAck;
     };
 
-    setExternalLinkAck = (ack: boolean = false) => {
+    setExternalLinkAck = (ack = false) => {
         this.store.externalLinkAck = ack;
     };
 

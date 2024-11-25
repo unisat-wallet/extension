@@ -14,7 +14,7 @@ import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks'
 import { useBTCUnit, useChain } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
-import { amountToSatoshis, copyToClipboard, satoshisToAmount, shortAddress, useWallet } from '@/ui/utils';
+import { amountToSatoshis, copyToClipboard, satoshisToAmount, shortAddress, useApproval, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 interface Props {
@@ -54,25 +54,6 @@ interface Props {
     };
     handleCancel?: () => void;
     handleConfirm?: (rawTxInfo?: RawTxInfo) => void;
-}
-
-interface InputInfo {
-    txid: string;
-    vout: number;
-    address: string;
-    value: number;
-    inscrip;
-}
-
-interface OutputInfo {
-    address: string;
-    value: number;
-}
-
-enum TabState {
-    DETAILS,
-    DATA,
-    HEX
 }
 
 interface InscriptioinInfo {
@@ -296,6 +277,8 @@ export default function SignPsbt({
 }: Props) {
     const [txInfo, setTxInfo] = useState<TxInfo>(initTxInfo);
 
+    const [getApproval, resolveApproval, rejectApproval] = useApproval();
+
     const btcUnit = useBTCUnit();
 
     const wallet = useWallet();
@@ -320,13 +303,13 @@ export default function SignPsbt({
                 wallet
                     .getRunesPrice(Object.keys(runesMap))
                     .then(setRunesPriceMap)
-                    .catch((e) => tools.toastError((e as Error).message));
+                    .catch((e: unknown) => tools.toastError((e as Error).message));
             }
             if (Object.keys(brc20Map).length > 0) {
                 wallet
                     .getBrc20sPrice(Object.keys(brc20Map))
                     .then(setBrc20PriceMap)
-                    .catch((e) => tools.toastError((e as Error).message));
+                    .catch((e: unknown) => tools.toastError((e as Error).message));
             }
         }
     }, [txInfo]);
@@ -338,7 +321,7 @@ export default function SignPsbt({
                 try {
                     const toSignInputs = await wallet.formatOptionsToSignInputs(psbtHex, options);
                     psbtHex = await wallet.signPsbtWithHex(psbtHex, toSignInputs, false);
-                } catch (e) {
+                } catch (e: unknown) {
                     console.error(e);
                     txError = (e as any).message;
                     tools.toastError(txError);
@@ -391,13 +374,20 @@ export default function SignPsbt({
 
     if (!handleCancel) {
         handleCancel = () => {
-            throw new Error('Not implemented: cancel');
+            rejectApproval();
         };
     }
 
     if (!handleConfirm) {
         handleConfirm = (res) => {
-            throw new Error('Not implemented: confirm');
+            let signed = true;
+            if (type === TxType.SIGN_TX && currentAccount.type !== KEYRING_TYPE.KeystoneKeyring) {
+                signed = false;
+            }
+            resolveApproval({
+                psbtHex: (res ?? txInfo).psbtHex,
+                signed
+            });
         };
     }
 
@@ -613,7 +603,7 @@ export default function SignPsbt({
                                                             </Column>
                                                             <Row>
                                                                 <Text
-                                                                    text={`${satoshisToAmount(v.value)}`}
+                                                                    text={satoshisToAmount(v.value)}
                                                                     color={isToSign ? 'white' : 'textDim'}
                                                                 />
                                                                 <Text text={btcUnit} color="textDim" />
@@ -653,7 +643,7 @@ export default function SignPsbt({
                                                             />
                                                             <Row>
                                                                 <Text
-                                                                    text={`${satoshisToAmount(v.value)}`}
+                                                                    text={satoshisToAmount(v.value)}
                                                                     color={isMyAddress ? 'white' : 'textDim'}
                                                                 />
                                                                 <Text text={btcUnit} color="textDim" />

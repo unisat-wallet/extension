@@ -1,20 +1,9 @@
 import { BroadcastedTransaction } from 'opnet';
 
 import { OpnetProvider } from '@/content-script/pageProvider/index.js';
-import {
-    DeploymentResult,
-    IDeploymentParameters,
-    IInteractionParameters,
-    IUnwrapParameters,
-    IWrapParameters,
-    UnwrapResult,
-    UTXO,
-    WrapResult
-} from '@btc-vision/transaction';
+import { DeploymentResult, IDeploymentParameters, IInteractionParameters, UTXO } from '@btc-vision/transaction';
 
 export type InteractionParametersWithoutSigner = Omit<IInteractionParameters, 'signer'>;
-export type IWrapParametersWithoutSigner = Omit<IWrapParameters, 'signer'>;
-export type IUnwrapParametersSigner = Omit<IUnwrapParameters, 'signer'>;
 export type IDeploymentParametersWithoutSigner = Omit<IDeploymentParameters, 'signer' | 'network'>;
 
 export interface BroadcastTransactionOptions {
@@ -55,13 +44,5 @@ export class Web3Provider {
 
     public async broadcast(transactions: BroadcastTransactionOptions[]): Promise<BroadcastedTransaction[]> {
         return this.provider.broadcast(transactions);
-    }
-
-    public async wrap(wrapParameters: IWrapParametersWithoutSigner): Promise<WrapResult> {
-        return this.provider.wrap(wrapParameters);
-    }
-
-    public async unwrap(unWrapParameters: IUnwrapParametersSigner): Promise<UnwrapResult> {
-        return this.provider.unwrap(unWrapParameters);
     }
 }
