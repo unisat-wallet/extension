@@ -143,7 +143,8 @@ export default function Swap() {
 
                         setOutPutAmount(
                             BitcoinUtils.formatUnits(
-                                getData.properties.amountsOut[0][1],
+                                // TODO (typing): Check this again if accessing the first index is correct. 
+                                getData.properties.amountsOut[1],
                                 selectedOptionOutput.divisibility
                             )
                         );
@@ -205,7 +206,7 @@ export default function Swap() {
 
             const getChain = await wallet.getChainType();
             const tokensImported = localStorage.getItem('opnetTokens_' + getChain);
-            const parsedTokens: string[] = tokensImported ? JSON.parse(tokensImported) : [];
+            const parsedTokens = tokensImported ? JSON.parse(tokensImported) as string[] : [];
             //if (OpNetBalance?.address) {
             //    setSelectedOption(OpNetBalance);
             //}

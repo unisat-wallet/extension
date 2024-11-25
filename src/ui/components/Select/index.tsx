@@ -156,11 +156,7 @@ export function Select(props: SelectProps) {
                         const opNetBalance: OPTokenInfo = {
                             address: searchTerm,
                             name: contractInfo?.name ?? '',
-                            // TODO (typing): Based on the current usage, it looks like that balance.decoded[0] is string, bigint or number
-                            // if there is a possibility that it can be other types included in DecodedCallResult, then we need to have a better
-                            // handling and remove the eslint-disable.
-                            // eslint-disable-next-line @typescript-eslint/no-base-to-string
-                            amount: BigInt(balance.decoded[0].toString()),
+                            amount: balance.properties.balance,
                             divisibility: contractInfo?.decimals ?? 8,
                             symbol: contractInfo?.symbol ?? '',
                             logo: contractInfo?.logo
