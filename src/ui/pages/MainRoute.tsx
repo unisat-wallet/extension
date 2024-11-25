@@ -33,11 +33,7 @@ import Mint from './OpNet/Mint';
 import OpNetTokenScreen from './OpNet/OpNetTokenScreen';
 import SendOpNetScreen from './OpNet/SendOpNetScreen';
 import SplitUtxoScreen from './OpNet/SplitUtxoScreen';
-import StakeWBTCoPNet from './OpNet/StakeWBTCoPNet';
 import Swap from './OpNet/SwapToken';
-import UnStakeWBTCoPNet from './OpNet/UnStakeWBTCoPNet';
-import UnWrapBitcoinOpnet from './OpNet/UnWrapBitcoinOpnet';
-import WrapBitcoinOpnet from './OpNet/WrapBitcoinOpnet';
 import AddressTypeScreen from './Settings/AddressTypeScreen';
 import AdvancedScreen from './Settings/AdvancedScreen';
 import ChangePasswordScreen from './Settings/ChangePasswordScreen';
@@ -89,11 +85,7 @@ export enum RouteTypes {
     UnavailableUtxoScreen = 'UnavailableUtxoScreen',
     OpNetTokenScreen = 'OpNetTokenScreen',
     SendOpNetScreen = 'SendOpNetScreen',
-    WrapBitcoinOpnet = 'WrapBitcoinOpnet',
     TxCreateScreen = 'TxCreateScreen',
-    UnWrapBitcoinOpnet = 'UnWrapBitcoinOpnet',
-    StakeWBTCoPNet = 'StakeWBTCoPNet',
-    UnStakeWBTCoPNet = 'UnStakeWBTCoPNet',
     Swap = 'Swap',
     DeployContract = 'DeployContract',
     Mint = 'Mint',
@@ -244,22 +236,6 @@ export const routes: Routes = {
     SendOpNetScreen: {
         path: '/opnet/send-opnet',
         element: <SendOpNetScreen />
-    },
-    WrapBitcoinOpnet: {
-        path: '/opnet/wrap-opnet',
-        element: <WrapBitcoinOpnet />
-    },
-    UnWrapBitcoinOpnet: {
-        path: '/opnet/unwrap-opnet',
-        element: <UnWrapBitcoinOpnet />
-    },
-    StakeWBTCoPNet: {
-        path: '/opnet/stake-wbtc',
-        element: <StakeWBTCoPNet />
-    },
-    UnStakeWBTCoPNet: {
-        path: '/opnet/unstake-wbtc',
-        element: <UnStakeWBTCoPNet />
     },
     Swap: {
         path: '/opnet/swap',

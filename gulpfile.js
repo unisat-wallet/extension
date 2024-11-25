@@ -1,12 +1,11 @@
+import archiver from 'archiver';
 import fs from 'fs';
 import gulp from 'gulp';
 import gulpClean from 'gulp-clean';
 import gulpJsoncombine from 'gulp-jsoncombine';
 import gulpUglify from 'gulp-uglify-es';
-import gulpZip from 'gulp-zip';
 import minimist from 'minimist';
 import path from 'path';
-import { exit } from 'process';
 import webpack from 'webpack';
 
 import webpackConfigFunc from './webpack.config.js';
@@ -41,7 +40,7 @@ const validVersion = version.split('-beta')[0];
 
 export function task_clean() {
     const destDir = path.resolve(`dist/${options.browser}`); // Adjust to your destination path
-    
+
     try {
         fs.mkdirSync(destDir, { recursive: true });
     } catch {}
@@ -139,11 +138,26 @@ export function task_uglify() {
         .pipe(gulp.dest(`dist/${options.browser}`));
 }
 
-export function task_package() {
-    return gulp
-        .src(`dist/${options.browser}/**/*`)
-        .pipe(gulpZip(`${brandName}-${options.browser}-v${version}.zip`))
-        .pipe(gulp.dest('./dist'));
+export function task_package(done) {
+    const outputFile = `./dist/${brandName}-${options.browser}-v${version}.zip`;
+    const output = fs.createWriteStream(outputFile);
+    const archive = archiver('zip', {
+        zlib: { level: 9 }
+    });
+
+    output.on('close', () => {
+        console.log(`Zip created: ${outputFile}`);
+        done();
+    });
+
+    archive.on('error', (err) => {
+        console.error(`Error while zipping: ${err}`);
+        done(err);
+    });
+
+    archive.pipe(output);
+    archive.directory(`dist/${options.browser}/`, false);
+    archive.finalize();
 }
 
 export const build = gulp.series(

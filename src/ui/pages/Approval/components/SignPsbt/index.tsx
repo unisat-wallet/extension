@@ -273,13 +273,13 @@ export default function SignPsbt({
                 wallet
                     .getRunesPrice(Object.keys(runesMap))
                     .then(setRunesPriceMap)
-                    .catch((e) => tools.toastError((e as Error).message));
+                    .catch((e: unknown) => tools.toastError((e as Error).message));
             }
             if (Object.keys(brc20Map).length > 0) {
                 wallet
                     .getBrc20sPrice(Object.keys(brc20Map))
                     .then(setBrc20PriceMap)
-                    .catch((e) => tools.toastError((e as Error).message));
+                    .catch((e: unknown) => tools.toastError((e as Error).message));
             }
         }
     }, [txInfo]);
@@ -291,7 +291,7 @@ export default function SignPsbt({
                 try {
                     const toSignInputs = await wallet.formatOptionsToSignInputs(psbtHex, options);
                     psbtHex = await wallet.signPsbtWithHex(psbtHex, toSignInputs, false);
-                } catch (e) {
+                } catch (e: unknown) {
                     console.error(e);
                     if (isWalletError(e)) {
                         tools.toastError(txError);

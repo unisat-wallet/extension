@@ -1,11 +1,11 @@
 import BigNumber from 'bignumber.js';
-import { getContract, IOP_20Contract, IWBTCContract, OP_20_ABI, WBTC_ABI } from 'opnet';
+import { getContract, IOP_20Contract, OP_20_ABI } from 'opnet';
 import { useEffect, useMemo, useState } from 'react';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { OPTokenInfo } from '@/shared/types';
 import { addressShortner } from '@/shared/utils';
-import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
+import Web3API from '@/shared/web3/Web3API';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { Button, Column, Content, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -59,62 +59,10 @@ export default function OpNetTokenScreen() {
 
     const account = useCurrentAccount();
 
-    const [loading, setLoading] = useState(true);
+    const [loading, setLoading] = useState(false);
     const [isOwner, setIsOwner] = useState(false);
 
-    const [stakedReward, setStakeReward] = useState<bigint>(0n);
-    const [stakedAmount, setStakedAmount] = useState<bigint>(0n);
-    const [totalStaked, setTotalStaked] = useState<bigint>(0n);
-    const [rewardPool, setRewardPool] = useState<bigint>(0n);
-
     const wallet = useWallet();
-    const isWBTC = !!(Web3API.WBTC && tokenSummary.address === Web3API.WBTC.p2tr(Web3API.network));
-
-    useEffect(() => {
-        const setWallet = async () => {
-            if (!isWBTC || !Web3API.WBTC) {
-                return;
-            }
-
-            Web3API.setNetwork(await wallet.getChainType());
-
-            const myWallet = await getWallet();
-            const contract: IWBTCContract = getContract<IWBTCContract>(
-                Web3API.WBTC,
-                WBTC_ABI,
-                Web3API.provider,
-                Web3API.network,
-                myWallet.address
-            );
-
-            try {
-                const getRewards = await contract.stakedReward(myWallet.address);
-                const getStakedAmount = await contract.stakedAmount(myWallet.address);
-
-                setStakeReward(getRewards.properties.amount);
-                setStakedAmount(getStakedAmount.properties.amount);
-            } catch (e) {
-                console.error(e);
-                tools.toastError('Error in getting Stake Rewards');
-                return;
-            }
-
-            try {
-                const rewardPool = (await contract.rewardPool()) as unknown as { decoded: bigint[] };
-                const totalStaked = (await contract.totalStaked()) as unknown as { decoded: bigint[] };
-
-                setRewardPool(rewardPool.decoded[0]);
-                setTotalStaked(totalStaked.decoded[0]);
-            } catch (e) {
-                tools.toastError('Error in getting Reward Pool or Total Staked');
-                return;
-            }
-        };
-
-        void setWallet();
-
-        tools.showLoading(false);
-    }, [tokenSummary.address]);
 
     const unitBtc = useBTCUnit();
     useEffect(() => {
@@ -261,31 +209,6 @@ export default function OpNetTokenScreen() {
                         </Row>
 
                         <Row justifyBetween mt="lg">
-                            {isWBTC && btcBalance.divisibility == 8 ? (
-                                <>
-                                    <Button
-                                        text="Wrap Bitcoin"
-                                        preset="primary"
-                                        icon="wallet"
-                                        onClick={() => {
-                                            navigate(RouteTypes.WrapBitcoinOpnet, btcBalance);
-                                        }}
-                                        full
-                                    />
-                                    <Button
-                                        text="Unwrap Bitcoin"
-                                        preset="primary"
-                                        icon="wallet"
-                                        onClick={() => {
-                                            navigate(RouteTypes.UnWrapBitcoinOpnet, tokenSummary);
-                                        }}
-                                        full
-                                    />
-                                </>
-                            ) : (
-                                <></>
-                            )}
-
                             <Button
                                 text="Send"
                                 preset="primary"
@@ -299,7 +222,7 @@ export default function OpNetTokenScreen() {
                             />
                         </Row>
                         <Row justifyBetween mt="lg">
-                            {isWBTC && btcBalance.divisibility == 8 ? (
+                            {/*btcBalance.divisibility == 8 ? (
                                 <>
                                     <Button
                                         text="Stake WBTC"
@@ -322,10 +245,10 @@ export default function OpNetTokenScreen() {
                                 </>
                             ) : (
                                 <></>
-                            )}
+                            )*/}
                         </Row>
 
-                        {isWBTC && btcBalance.divisibility == 8 ? (
+                        {/*btcBalance.divisibility == 8 ? (
                             <>
                                 <Row itemsCenter fullX justifyBetween>
                                     <Text text={'Active Stake'} color="textDim" size="md" />
@@ -358,7 +281,7 @@ export default function OpNetTokenScreen() {
                             </>
                         ) : (
                             <></>
-                        )}
+                        )*/}
                     </Column>
 
                     <Text
@@ -381,18 +304,6 @@ export default function OpNetTokenScreen() {
                                     }}
                                     full
                                 />
-
-                                {/* <Button
-                text="Airdrop"
-                preset="primary"
-                icon="pencil"
-                onClick={(e) => {
-                  navigate('Airdrop', {
-                    OpNetBalance: tokenSummary.opNetBalance
-                  });
-                }}
-                full
-              /> */}
                             </>
                         ) : (
                             <></>

@@ -1,5 +1,13 @@
 import BigNumber from 'bignumber.js';
-import { getContract, IMotoswapRouterContract, IOP_20Contract, MOTOSWAP_ROUTER_ABI, OP_20_ABI } from 'opnet';
+import {
+    BitcoinUtils,
+    getContract,
+    IMotoswapRouterContract,
+    IOP_20Contract,
+    MOTOSWAP_ROUTER_ABI,
+    OP_20_ABI
+} from 'opnet';
+import { AddressesInfo } from 'opnet/src/providers/interfaces/PublicKeyInfo';
 import { CSSProperties, useMemo, useState } from 'react';
 
 import { Account, OPTokenInfo } from '@/shared/types';
@@ -13,12 +21,11 @@ import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { fontSizes } from '@/ui/theme/font';
-import { useLocationState, useWallet } from '@/ui/utils';
+import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 import '@btc-vision/transaction';
 import { Address } from '@btc-vision/transaction';
 
-import { AddressesInfo } from 'opnet/src/providers/interfaces/PublicKeyInfo';
 import { RouteTypes, useNavigate } from '../MainRoute';
 
 interface ItemData {
@@ -29,9 +36,12 @@ interface ItemData {
 BigNumber.config({ EXPONENTIAL_AT: 256 });
 
 export default function Swap() {
-    const OPTokenInfoState = useLocationState<OPTokenInfo>();
+    //const { state } = useLocation();
+    //const props = state satisfies {
+    //     OpNetBalance: OPTokenInfo;
+    //};
 
-    const OpNetBalance = OPTokenInfoState;
+    //const OpNetBalance = props.OpNetBalance;
 
     const [loading, setLoading] = useState(true);
     const [switchOptions, setSwitchOptions] = useState<OPTokenInfo[]>([]);
@@ -132,10 +142,10 @@ export default function Swap() {
                         );
 
                         setOutPutAmount(
-                            (
-                                parseInt((getData.decoded[0] as bigint[])[1].toString()) /
-                                Math.pow(10, selectedOptionOutput.divisibility)
-                            ).toString()
+                            BitcoinUtils.formatUnits(
+                                getData.properties.amountsOut[0][1],
+                                selectedOptionOutput.divisibility
+                            )
                         );
                     } catch (e) {
                         console.log('Error fetching data:', e);
@@ -195,10 +205,10 @@ export default function Swap() {
 
             const getChain = await wallet.getChainType();
             const tokensImported = localStorage.getItem('opnetTokens_' + getChain);
-            const parsedTokens: string[] = tokensImported ? JSON.parse(tokensImported) as string[] : [];
-            if (OpNetBalance?.address) {
-                setSelectedOption(OpNetBalance);
-            }
+            const parsedTokens: string[] = tokensImported ? JSON.parse(tokensImported) : [];
+            //if (OpNetBalance?.address) {
+            //    setSelectedOption(OpNetBalance);
+            //}
 
             const tokenBalances: OPTokenInfo[] = [];
             for (let i = 0; i < parsedTokens.length; i++) {
@@ -212,9 +222,8 @@ export default function Swap() {
                         Web3API.network
                     );
 
-                    const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(
-                        tokenAddress
-                    );
+                    const contractInfo: ContractInformation | undefined =
+                        await Web3API.queryContractInformation(tokenAddress);
 
                     const walletAddressPub = Address.fromString(currentAccount.pubkey);
 
@@ -222,11 +231,7 @@ export default function Swap() {
                     tokenBalances.push({
                         address: tokenAddress,
                         name: contractInfo?.name ?? '',
-                        // TODO (typing): Based on the current usage, it looks like that balance.decoded[0] is string, bigint or number
-                        // if there is a possibility that it can be other types included in DecodedCallResult, then we need to have a better
-                        // handling and remove the eslint-disable.
-                        // eslint-disable-next-line @typescript-eslint/no-base-to-string
-                        amount: BigInt(balance.decoded[0].toString()),
+                        amount: balance.properties.balance,
                         divisibility: contractInfo?.decimals ?? 8,
                         symbol: contractInfo?.symbol ?? '',
                         logo: contractInfo?.logo
