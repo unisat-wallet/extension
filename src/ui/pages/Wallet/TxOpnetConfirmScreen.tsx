@@ -3,15 +3,12 @@ import {
     Airdrop,
     BitcoinAbiTypes,
     BitcoinInterfaceAbi,
-    CallResult,
     getContract,
     IMotoswapRouterContract,
     IOP_20Contract,
-    IWBTCContract,
     MOTOSWAP_ROUTER_ABI,
     OP_20_ABI,
-    TransactionParameters,
-    WBTC_ABI
+    TransactionParameters
 } from 'opnet';
 import { AddressesInfo } from 'opnet/src/providers/interfaces/PublicKeyInfo';
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
@@ -19,20 +16,15 @@ import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import {
     Action,
     AirdropParameters,
-    ClaimParameters,
     DeployContractParameters,
     MintParameters,
     RawTxInfo,
     SendBitcoinParameters,
-    StakeParameters,
     SwapParameters,
-    TransferParameters,
-    UnstakeParameters,
-    UnwrapParameters,
-    WrapParameters
+    TransferParameters
 } from '@/shared/interfaces/RawTxParameters';
 import { expandToDecimals } from '@/shared/utils';
-import Web3API, { bigIntToDecimal, getOPNetChainType } from '@/shared/web3/Web3API';
+import Web3API from '@/shared/web3/Web3API';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { ContextType, useTools } from '@/ui/components/ActionComponent';
 import { BottomModal } from '@/ui/components/BottomModal';
@@ -43,13 +35,9 @@ import {
     ABIDataTypes,
     Address,
     AddressMap,
-    currentConsensusConfig,
     DeploymentResult,
     IDeploymentParameters,
     IFundingTransactionParameters,
-    IUnwrapParameters,
-    IWrapParameters,
-    UnwrapResult,
     UTXO,
     Wallet
 } from '@btc-vision/transaction';
@@ -120,7 +108,6 @@ const waitForTransaction = async (
 
 export default function TxOpnetConfirmScreen() {
     const navigate = useNavigate();
-    const [finalUnwrapTx, setFinalUnwrapTx] = useState<UnwrapResult>();
     const [acceptWrap, setAcceptWrap] = useState<boolean>(false);
     const [acceptWrapMessage, setAcceptWrapMessage] = useState<string>('');
     const [openAcceptbar, setAcceptBar] = useState<boolean>(false);
@@ -145,54 +132,6 @@ export default function TxOpnetConfirmScreen() {
 
         void setWallet();
     });
-
-    useEffect(() => {
-        if (acceptWrap && finalUnwrapTx) {
-            const completeUnwrap = async () => {
-                setAcceptBar(false);
-                // If this transaction is missing, opnet will deny the unwrapping request.
-                const fundingTransaction = await Web3API.provider.sendRawTransaction(
-                    finalUnwrapTx.fundingTransaction,
-                    false
-                );
-
-                if (!fundingTransaction?.success) {
-                    tools.toastError(
-                        `Something went wrong while broadcasting the funding transaction. Please try again later. ${
-                            fundingTransaction.error ?? ''
-                        }`
-                    );
-                    return;
-                }
-
-                // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
-                const unwrapTransaction = await Web3API.provider.sendRawTransaction(finalUnwrapTx.psbt, true);
-                if (!unwrapTransaction?.success) {
-                    tools.toastError(
-                        `Something went wrong while broadcasting the unwrap transaction. Please try again later. ${
-                            unwrapTransaction.error ?? ''
-                        }`
-                    );
-                    return;
-                }
-
-                if (!('inputAmount' in rawTxInfo)) {
-                    throw new Error('Input amount not found');
-                }
-
-                if (!unwrapTransaction.result) {
-                    tools.toastError(`Something went wrong ${unwrapTransaction.error}`);
-                    setDisabled(false);
-                    return;
-                }
-
-                tools.toastSuccess(`You have successfully unwrapped ${rawTxInfo.inputAmount} ${btcUnit}`);
-                navigate(RouteTypes.TxSuccessScreen, { txid: unwrapTransaction.result });
-            };
-
-            void completeUnwrap();
-        }
-    }, [acceptWrap]);
 
     const wallet = useWallet();
     const tools = useTools();
@@ -270,281 +209,6 @@ export default function TxOpnetConfirmScreen() {
         }
     };
 
-    function getErrorMessage(err: Error): string {
-        let message = `Something went wrong: ${err.message}`;
-        if (err.message.includes('Outputs are spending')) {
-            message = 'Not enough funds to send transaction including bitcoin mining fee.';
-        } else if (err.message.includes('Not finalized')) {
-            message = 'Please use a taproot wallet.';
-        }
-
-        return message;
-    }
-
-    const handleWrapConfirm = async (parameters: WrapParameters) => {
-        const currentWalletAddress = await wallet.getCurrentAccount();
-        const walletAddress = currentWalletAddress.address;
-
-        const userWallet = await getWallet();
-
-        const wrapAmount = expandToDecimals(parameters.inputAmount, 8);
-        const amountRequired = wrapAmount + currentConsensusConfig.UNWRAP_CONSOLIDATION_PREPAID_FEES;
-
-        const account = await wallet.getCurrentAccount();
-        const utxos: UTXO[] = await Web3API.getUTXOs([account.address], amountRequired + 100_000n);
-
-        if (utxos.length !== 0) {
-            // verify if have enough
-            const totalAmount = utxos.reduce((acc, utxo) => acc + utxo.value, 0n);
-            if (totalAmount < amountRequired) {
-                tools.toastError(`Not enough funds to wrap. You need at least ${amountRequired} sat.`);
-                return;
-            }
-        } else {
-            tools.toastError('No UTXOs found');
-            return;
-        }
-
-        const generationParameters = await Web3API.limitedProvider.fetchWrapParameters(wrapAmount);
-        if (!generationParameters) {
-            tools.toastError('No generation parameters found');
-            return;
-        }
-
-        const getChain = await wallet.getChainType();
-
-        if (!Web3API.WBTC) {
-            tools.toastError('WBTC contract not found');
-            return;
-        }
-
-        const wrapParameters: IWrapParameters = {
-            from: walletAddress,
-            to: Web3API.WBTC.p2tr(Web3API.network),
-            chainId: getOPNetChainType(getChain),
-            utxos: utxos,
-            signer: userWallet.keypair,
-            network: Web3API.network,
-            feeRate: parameters.feeRate,
-            priorityFee: parameters.priorityFee,
-            amount: wrapAmount,
-            generationParameters: generationParameters
-        };
-
-        try {
-            const finalTx = await Web3API.transactionFactory.wrap(wrapParameters);
-            const firstTransaction = await Web3API.provider.sendRawTransaction(finalTx.transaction[0], false);
-
-            if (!firstTransaction.success) {
-                tools.toastError('Error,Please Try again');
-                setDisabled(false);
-                tools.toastError(firstTransaction.error ?? 'Could not broadcast first transaction');
-            }
-
-            const secondTxBroadcast = await Web3API.provider.sendRawTransaction(finalTx.transaction[1], false);
-            if (!secondTxBroadcast.success || !secondTxBroadcast.result) {
-                tools.toastError('Error,Please Try again');
-                setDisabled(false);
-                tools.toastError(secondTxBroadcast.error ?? 'Could not broadcast second transaction');
-            }
-
-            const wrappedAmount = bigIntToDecimal(wrapAmount, 8).toString();
-            tools.toastSuccess(`You have successfully wrapped ${wrappedAmount} ${btcUnit}`);
-            navigate(RouteTypes.TxSuccessScreen, { txid: secondTxBroadcast.result });
-        } catch (e) {
-            const msg = getErrorMessage(e as Error);
-            console.warn(e);
-
-            tools.toastWarning(msg);
-        }
-    };
-
-    const handleUnWrapConfirm = async (parameters: UnwrapParameters) => {
-        if (!Web3API.WBTC) {
-            tools.toastError('WBTC contract not found');
-            return;
-        }
-
-        try {
-            const currentWalletAddress = await wallet.getCurrentAccount();
-            const userWallet = await getWallet();
-            const contract: IWBTCContract = getContract<IWBTCContract>(
-                Web3API.WBTC,
-                WBTC_ABI,
-                Web3API.provider,
-                Web3API.network,
-                userWallet.address
-            );
-
-            const wbtcBalanceSimulation = await contract.balanceOf(userWallet.address);
-            const wbtcBalance = wbtcBalanceSimulation.properties.balance;
-
-            const checkWithdrawalRequest = await contract.withdrawableBalanceOf(userWallet.address);
-            const alreadyWithdrawal = checkWithdrawalRequest.properties.balance;
-            const unwrapAmount = expandToDecimals(parameters.inputAmount, 8); // Minimum amount to unwrap
-
-            const totalUserWBTC = wbtcBalance + alreadyWithdrawal;
-            if (totalUserWBTC < unwrapAmount) {
-                const humanReadableAmount = bigIntToDecimal(totalUserWBTC, 8);
-
-                tools.toastError(`You can only withdraw a maximum of ${humanReadableAmount} WBTC`);
-                return;
-            }
-
-            const requiredAmountDifference: bigint = alreadyWithdrawal - unwrapAmount;
-            if (requiredAmountDifference < 0n) {
-                const diff = absBigInt(requiredAmountDifference);
-
-                const withdrawalRequest = await contract.requestWithdrawal(diff);
-
-                const interactionParameters: TransactionParameters = {
-                    signer: userWallet.keypair, // The keypair that will sign the transaction
-                    refundTo: currentWalletAddress.address, // Refund the rest of the funds to this address
-                    maximumAllowedSatToSpend: parameters.priorityFee, // The maximum we want to allocate to this transaction in satoshis
-                    feeRate: parameters.feeRate, // We need to provide a fee rate
-                    network: Web3API.network // The network we are operating on
-                };
-
-                const sendTransaction = await withdrawalRequest.sendTransaction(interactionParameters);
-
-                tools.showLoading(true, 'Waiting for transaction confirmation...');
-                await waitForTransaction(sendTransaction.transactionId, setOpenLoading, tools);
-
-                tools.showLoading(false);
-            }
-
-            const unwrapUtxos = await Web3API.limitedProvider.fetchUnWrapParameters(unwrapAmount, userWallet.address);
-            if (!unwrapUtxos) {
-                tools.toastError('Could not fetch unwrap parameters. Please try again later.');
-                return;
-            }
-
-            const chainId = getOPNetChainType(await wallet.getChainType());
-            const utxos = await Web3API.provider.utxoManager.getUTXOsForAmount({
-                address: currentWalletAddress.address,
-                amount: parameters.priorityFee + 100_000n, // max amount to spend
-                throwErrors: true
-            });
-
-            const unwrapParameters: IUnwrapParameters = {
-                from: currentWalletAddress.address, // Refund to this address
-                utxos: utxos,
-                chainId: chainId,
-                unwrapUTXOs: unwrapUtxos.vaultUTXOs, // Vault UTXOs to unwrap
-                signer: userWallet.keypair, // The keypair that will sign the transaction
-                network: Web3API.network, // Bitcoin network
-                feeRate: parameters.feeRate, // Fee rate in satoshis per byte (bitcoin fee)
-                priorityFee: parameters.priorityFee, // OPNet priority fee (incl gas.)
-                amount: unwrapAmount
-            };
-
-            try {
-                const finalTx = await Web3API.transactionFactory.unwrap(unwrapParameters);
-                setAcceptWrapMessage(
-                    `Due to bitcoin fees, you will only get ${
-                        unwrapAmount + finalTx.feeRefundOrLoss
-                    } satoshis by unwrapping. Do you want to proceed?`
-                );
-
-                setFinalUnwrapTx(finalTx);
-                setAcceptBar(true);
-            } catch (e) {
-                console.log('Something went wrong while building the unwrap transaction', e);
-                tools.toastError('Something went wrong while building the unwrap request. Please try again later.');
-                setDisabled(false);
-            }
-        } catch (e) {
-            const msg = getErrorMessage(e as Error);
-            console.warn(e);
-
-            tools.toastWarning(msg);
-        }
-    };
-
-    const stake = async (parameters: StakeParameters) => {
-        if (!Web3API.WBTC) {
-            tools.toastError('WBTC contract not found');
-            return;
-        }
-
-        const currentWalletAddress = await wallet.getCurrentAccount();
-        const userWallet = await getWallet();
-        const amountToSend = expandToDecimals(parameters.inputAmount, parameters.tokens[0].divisibility);
-
-        const contract: IWBTCContract = getContract<IWBTCContract>(
-            Web3API.WBTC,
-            WBTC_ABI,
-            Web3API.provider,
-            Web3API.network,
-            userWallet.address
-        );
-
-        const stakeData = (await contract.stake(amountToSend)) as unknown as CallResult;
-
-        const interactionParameters: TransactionParameters = {
-            signer: userWallet.keypair, // The keypair that will sign the transaction
-            refundTo: currentWalletAddress.address, // Refund the rest of the funds to this address
-            maximumAllowedSatToSpend: parameters.priorityFee, // The maximum we want to allocate to this transaction in satoshis
-            feeRate: parameters.feeRate, // We need to provide a fee rate
-            network: Web3API.network // The network we are operating on
-        };
-
-        const sendTransaction = await stakeData.sendTransaction(interactionParameters);
-
-        if (!sendTransaction?.transactionId) {
-            setOpenLoading(false);
-            setDisabled(false);
-
-            tools.toastError(`Could not send transaction`);
-            return;
-        }
-
-        const stakeAmount = bigIntToDecimal(amountToSend, 8).toString();
-        tools.toastSuccess(`You have successfully staked ${stakeAmount} wBTC`);
-        navigate(RouteTypes.TxSuccessScreen, { txid: sendTransaction.transactionId });
-    };
-
-    const unstake = async (parameters: UnstakeParameters) => {
-        if (!Web3API.WBTC) {
-            tools.toastError('WBTC contract not found');
-            return;
-        }
-
-        const currentWalletAddress = await wallet.getCurrentAccount();
-        const userWallet = await getWallet();
-
-        const contract: IWBTCContract = getContract<IWBTCContract>(
-            Web3API.WBTC,
-            WBTC_ABI,
-            Web3API.provider,
-            Web3API.network,
-            userWallet.address
-        );
-
-        const stakeData = await contract.unstake();
-
-        const interactionParameters: TransactionParameters = {
-            signer: userWallet.keypair, // The keypair that will sign the transaction
-            refundTo: currentWalletAddress.address, // Refund the rest of the funds to this address
-            maximumAllowedSatToSpend: parameters.priorityFee, // The maximum we want to allocate to this transaction in satoshis
-            feeRate: parameters.feeRate, // We need to provide a fee rate
-            network: Web3API.network // The network we are operating on
-        };
-
-        const sendTransaction = await stakeData.sendTransaction(interactionParameters);
-        if (!sendTransaction?.transactionId) {
-            setOpenLoading(false);
-            setDisabled(false);
-
-            tools.toastError(`Could not send transaction`);
-            return;
-        }
-
-        tools.toastSuccess(`You have successfully un-staked WBTC`);
-
-        navigate(RouteTypes.TxSuccessScreen, { txid: sendTransaction.transactionId });
-    };
-
     const airdrop = async (parameters: AirdropParameters) => {
         const contractAddress = parameters.contractAddress;
         const currentWalletAddress = await wallet.getCurrentAccount();
@@ -583,51 +247,6 @@ export default function TxOpnetConfirmScreen() {
 
         tools.toastSuccess(`You have successfully deployed ${contractAddress}`);
         navigate(RouteTypes.TxSuccessScreen, { txid: sendTransaction.transactionId, contractAddress: contractAddress });
-    };
-
-    const claim = async (parameters: ClaimParameters) => {
-        if (!Web3API.WBTC) {
-            tools.toastError('WBTC contract not found');
-            return;
-        }
-
-        try {
-            const currentWalletAddress = await wallet.getCurrentAccount();
-            const userWallet = await getWallet();
-            const contract: IWBTCContract = getContract<IWBTCContract>(
-                Web3API.WBTC,
-                WBTC_ABI,
-                Web3API.provider,
-                Web3API.network,
-                userWallet.address
-            );
-
-            const stakeData = (await contract.claim()) as unknown as CallResult;
-
-            const interactionParameters: TransactionParameters = {
-                signer: userWallet.keypair, // The keypair that will sign the transaction
-                refundTo: currentWalletAddress.address, // Refund the rest of the funds to this address
-                maximumAllowedSatToSpend: parameters.priorityFee, // The maximum we want to allocate to this transaction in satoshis
-                feeRate: parameters.feeRate, // We need to provide a fee rate
-                network: Web3API.network // The network we are operating on
-            };
-
-            const sendTransaction = await stakeData.sendTransaction(interactionParameters);
-            if (!sendTransaction?.transactionId) {
-                setOpenLoading(false);
-                setDisabled(false);
-
-                tools.toastError(`Could not send transaction`);
-                return;
-            }
-
-            tools.toastSuccess(`You have successfully claimed WBTC`);
-            navigate(RouteTypes.TxSuccessScreen, { txid: sendTransaction.transactionId });
-        } catch (e) {
-            tools.toastError(`Can not claim WBTC: ${e}`);
-
-            navigate(RouteTypes.TxFailScreen, { error: `${e}` });
-        }
     };
 
     const swap = async (swapParameters: SwapParameters) => {
@@ -800,9 +419,8 @@ export default function TxOpnetConfirmScreen() {
                 bytecode: Buffer.from(uint8Array)
             };
 
-            const sendTransact: DeploymentResult = await Web3API.transactionFactory.signDeployment(
-                deploymentParameters
-            );
+            const sendTransact: DeploymentResult =
+                await Web3API.transactionFactory.signDeployment(deploymentParameters);
 
             const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact.transaction[0], false);
             if (!firstTransaction?.success || firstTransaction.error) {
@@ -970,21 +588,6 @@ export default function TxOpnetConfirmScreen() {
                         onClick={async () => {
                             setDisabled(true);
                             switch (rawTxInfo.action) {
-                                case Action.Wrap:
-                                    await handleWrapConfirm(rawTxInfo);
-                                    break;
-                                case Action.Unwrap:
-                                    await handleUnWrapConfirm(rawTxInfo);
-                                    break;
-                                case Action.Stake:
-                                    await stake(rawTxInfo);
-                                    break;
-                                case Action.Unstake:
-                                    await unstake(rawTxInfo);
-                                    break;
-                                case Action.Claim:
-                                    await claim(rawTxInfo);
-                                    break;
                                 case Action.Swap:
                                     if (!('amountIn' in rawTxInfo)) {
                                         throw new Error('Invalid swap parameters');

@@ -648,7 +648,7 @@ class KeyringService extends EventEmitter {
     };
 
     removeKeyring = async (keyringIndex: number): Promise<void> => {
-        delete this.keyrings[keyringIndex];
+        this.keyrings.splice(keyringIndex, 1);
         this.keyrings[keyringIndex] = new EmptyKeyring();
 
         await this.persistAllKeyrings();

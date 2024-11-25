@@ -2,7 +2,7 @@ import { ChainType } from '@/shared/constant';
 
 export enum SessionEvent {
     networkChanged = 'networkChanged',
-    accountChanged = 'accountChanged',
+    accountsChanged = 'accountsChanged',
     walletDisconnected = 'walletDisconnected',
     walletConnected = 'walletConnected',
     walletError = 'walletError',
@@ -24,15 +24,15 @@ export interface ChainChangedEventData extends BaseSessionEventPayload {
     enum: ChainType;
 }
 
-export interface WalletErrorEventData extends BaseSessionEventPayload {}
+export type WalletErrorEventData = BaseSessionEventPayload
 
-export interface WalletConnectedEventData extends BaseSessionEventPayload {}
+export type WalletConnectedEventData = BaseSessionEventPayload
 
-export interface WalletDisconnectedEventData extends BaseSessionEventPayload {}
+export type WalletDisconnectedEventData = BaseSessionEventPayload
 
 export type SessionEventPayload<T extends SessionEvent> = T extends SessionEvent.networkChanged
     ? NetworkChangedEventData
-    : T extends SessionEvent.accountChanged
+    : T extends SessionEvent.accountsChanged
     ? string[]
     : T extends SessionEvent.walletDisconnected
     ? WalletDisconnectedEventData

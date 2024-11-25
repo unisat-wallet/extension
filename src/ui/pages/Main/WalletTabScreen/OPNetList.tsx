@@ -29,10 +29,6 @@ function pushDefaultTokens(tokens: string[], chain: ChainType, network: NetworkT
         if (!tokens.includes(metadata.moto.p2tr(Web3API.network))) {
             tokens.push(metadata.moto.p2tr(Web3API.network));
         }
-
-        if (!tokens.includes(metadata.wbtc.p2tr(Web3API.network))) {
-            tokens.push(metadata.wbtc.p2tr(Web3API.network));
-        }
     } catch (e) {}
 }
 
@@ -77,9 +73,8 @@ export function OPNetList() {
                         continue;
                     }
 
-                    const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(
-                        tokenAddress
-                    );
+                    const contractInfo: ContractInformation | undefined =
+                        await Web3API.queryContractInformation(tokenAddress);
 
                     if (!contractInfo) {
                         continue;
