@@ -213,24 +213,21 @@ export interface Risk {
 }
 
 export interface DecodedPsbt {
-    inputInfos: {
+    inputs: {
         txid: string;
         vout: number;
         address: string;
         value: number;
-        sighashType: number;
+        sighashType?: number;
     }[];
-    outputInfos: {
+    outputs: {
         address: string;
         value: number;
     }[];
-    feeRate: number;
     fee: number;
-    features: {
-        rbf: boolean;
-    };
-    risks: Risk[];
-    isScammer: boolean;
+    feeRate: number;
+    transactionSize: number;
+    rbfEnabled: boolean;
     recommendedFeeRate: number;
     shouldWarnFeeRate: boolean;
 }

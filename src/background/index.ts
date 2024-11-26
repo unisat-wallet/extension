@@ -71,7 +71,7 @@ browserRuntimeOnConnect((port: chrome.runtime.Port) => {
                                 return Promise.reject(`Method ${data.method} not found in controller`);
                             } else {
                                 // @ts-ignore
-                                return method.apply(null, data.params);
+                                return method.apply(walletController, data.params);
                             }
                         }
                 }

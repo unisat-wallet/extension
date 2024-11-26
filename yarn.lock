@@ -1847,9 +1847,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@btc-vision/transaction@npm:1.1.5, @btc-vision/transaction@npm:^1.1.5":
-  version: 1.1.5
-  resolution: "@btc-vision/transaction@npm:1.1.5"
+"@btc-vision/transaction@npm:1.1.10, @btc-vision/transaction@npm:^1.1.10":
+  version: 1.1.10
+  resolution: "@btc-vision/transaction@npm:1.1.10"
   dependencies:
     "@babel/plugin-proposal-object-rest-spread": "npm:^7.20.7"
     "@bitcoinerlab/secp256k1": "npm:^1.1.1"
@@ -1878,7 +1878,7 @@ __metadata:
     typescript: "npm:^5.6.3"
   peerDependencies:
     "@btc-vision/bitcoin": ^6.3.0
-  checksum: 10c0/99dda24e25b66d22da70faa9a82027b901b4f2b209e694744fbb0850cd4d036864c4a9b0aebc40bf6a3e69daa4ebca4df020c88cafb47c5c1b037275156dcddf
+  checksum: 10c0/37fd2006676545c0a58c5281f966ee5a2cb4940e789a8caf118a5c5e2c3fe23267389db7456f6dbbeb2e4115980847846970882f523820623b0e5de04d38e654
   languageName: node
   linkType: hard
 
@@ -3324,13 +3324,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@remix-run/router@npm:1.21.0":
-  version: 1.21.0
-  resolution: "@remix-run/router@npm:1.21.0"
-  checksum: 10c0/570792211c083a1c7146613b79cbb8e0d1e14f34e974052e060e7f9dcad38c800d80fe0a18bf42811bc278ab12c0e8fd62cfce649e905046c4e55bd5a09eafdc
-  languageName: node
-  linkType: hard
-
 "@rollup/plugin-babel@npm:^5.2.0":
   version: 5.3.1
   resolution: "@rollup/plugin-babel@npm:5.3.1"
@@ -3868,6 +3861,13 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: 10c0/2e1cdba2c410f25649e77856505cd60223250fa12dff7a503e492208dbfdd25f62859918f28aba95315251fd1f5e1ffbfca1e25e73037189ab85dd3f8d0a148c
+  languageName: node
+  linkType: hard
+
+"@types/cookie@npm:^0.6.0":
+  version: 0.6.0
+  resolution: "@types/cookie@npm:0.6.0"
+  checksum: 10c0/5b326bd0188120fb32c0be086b141b1481fec9941b76ad537f9110e10d61ee2636beac145463319c71e4be67a17e85b81ca9e13ceb6e3bb63b93d16824d6c149
   languageName: node
   linkType: hard
 
@@ -7324,6 +7324,13 @@ __metadata:
   version: 0.7.1
   resolution: "cookie@npm:0.7.1"
   checksum: 10c0/5de60c67a410e7c8dc8a46a4b72eb0fe925871d057c9a5d2c0e8145c4270a4f81076de83410c4d397179744b478e33cd80ccbcc457abf40a9409ad27dcd21dde
+  languageName: node
+  linkType: hard
+
+"cookie@npm:^1.0.1":
+  version: 1.0.2
+  resolution: "cookie@npm:1.0.2"
+  checksum: 10c0/fd25fe79e8fbcfcaf6aa61cd081c55d144eeeba755206c058682257cb38c4bd6795c6620de3f064c740695bb65b7949ebb1db7a95e4636efb8357a335ad3f54b
   languageName: node
   linkType: hard
 
@@ -14363,14 +14370,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"opnet@npm:1.1.21":
-  version: 1.1.21
-  resolution: "opnet@npm:1.1.21"
+"opnet@npm:1.1.23":
+  version: 1.1.23
+  resolution: "opnet@npm:1.1.23"
   dependencies:
     "@bitcoinerlab/secp256k1": "npm:^1.1.1"
     "@btc-vision/bitcoin": "npm:^6.3.0"
     "@btc-vision/bsi-bitcoin-rpc": "npm:>=1.0.29"
-    "@btc-vision/transaction": "npm:^1.1.5"
+    "@btc-vision/transaction": "npm:^1.1.10"
     "@noble/hashes": "npm:^1.5.0"
     bignumber.js: "npm:^9.1.2"
     buffer: "npm:^6.0.3"
@@ -14378,7 +14385,7 @@ __metadata:
     tiny-secp256k1: "npm:^2.2.3"
   peerDependencies:
     "@btc-vision/bitcoin": ^6.3.0
-  checksum: 10c0/1409004b067e4544f43a3c72790762a11c47fe3ce7e3ec2ee9c5d794976a4a9163a8849ffa3e983ad7ef6e5ef0cec59713aad8b9d18c94661b076a67d6eb58e5
+  checksum: 10c0/f33b6170f556a9ed6d04d922c5eae1bf931756438fe9a6d99555bc27a61b7392f91178c22bf7a6df2be28d4262c915848fa2dd574076caf6296553f7e1477ac7
   languageName: node
   linkType: hard
 
@@ -14405,7 +14412,7 @@ __metadata:
     "@babel/plugin-proposal-private-property-in-object": "npm:^7.21.11"
     "@btc-vision/bitcoin": "npm:^6.3.0"
     "@btc-vision/passworder": "npm:1.0.0"
-    "@btc-vision/transaction": "npm:1.1.5"
+    "@btc-vision/transaction": "npm:1.1.10"
     "@btc-vision/wallet-sdk": "npm:1.0.0"
     "@eslint/js": "npm:^9.14.0"
     "@fortawesome/fontawesome-svg-core": "npm:^6.6.0"
@@ -14499,7 +14506,7 @@ __metadata:
     lru-cache: "npm:=6.0.0"
     mini-css-extract-plugin: "npm:^2.4.5"
     minimist: "npm:^1.2.8"
-    opnet: "npm:1.1.21"
+    opnet: "npm:1.1.23"
     postcss: "npm:^8.4.39"
     postcss-flexbugs-fixes: "npm:^5.0.2"
     postcss-loader: "npm:^6.2.1"
@@ -14523,7 +14530,7 @@ __metadata:
     react-modal: "npm:^3.15.1"
     react-redux: "npm:^8.0.1"
     react-refresh: "npm:^0.11.0"
-    react-router-dom: "npm:^6.3.0"
+    react-router-dom: "npm:^7.0.1"
     redux: "npm:^4.2.0"
     redux-devtools: "npm:^3.7.0"
     redux-localstorage-simple: "npm:^2.5.1"
@@ -17072,27 +17079,33 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-router-dom@npm:^6.3.0":
-  version: 6.28.0
-  resolution: "react-router-dom@npm:6.28.0"
+"react-router-dom@npm:^7.0.1":
+  version: 7.0.1
+  resolution: "react-router-dom@npm:7.0.1"
   dependencies:
-    "@remix-run/router": "npm:1.21.0"
-    react-router: "npm:6.28.0"
+    react-router: "npm:7.0.1"
   peerDependencies:
-    react: ">=16.8"
-    react-dom: ">=16.8"
-  checksum: 10c0/e2930cf83e8c843a932b008c7ce11059fd83390502a433f0e41f192e3cb80081a621d069eeda7af3cf4bf74d7f8029f0141cdce741bca3f0af82d4bbbc7f7f10
+    react: ">=18"
+    react-dom: ">=18"
+  checksum: 10c0/aebc0af4ea4ac4e9482b0501c06f3af42adc68b4064c556b00954dcb7a6ec233d41f3eac86e388b9a8068e8ba5d44b854b7e29c806af9ed6a8798682d6984b46
   languageName: node
   linkType: hard
 
-"react-router@npm:6.28.0":
-  version: 6.28.0
-  resolution: "react-router@npm:6.28.0"
+"react-router@npm:7.0.1":
+  version: 7.0.1
+  resolution: "react-router@npm:7.0.1"
   dependencies:
-    "@remix-run/router": "npm:1.21.0"
+    "@types/cookie": "npm:^0.6.0"
+    cookie: "npm:^1.0.1"
+    set-cookie-parser: "npm:^2.6.0"
+    turbo-stream: "npm:2.4.0"
   peerDependencies:
-    react: ">=16.8"
-  checksum: 10c0/b435510de78fd882bf6ca9800a73cd90cee418bd1d19efd91b8dcaebde36929bbb589e25d9f7eec24ceb84255e8d538bc1fe54e6ddb5c43c32798e2b720fa76d
+    react: ">=18"
+    react-dom: ">=18"
+  peerDependenciesMeta:
+    react-dom:
+      optional: true
+  checksum: 10c0/aac4c9989ae6b9cf989b5ddcda88f505ba0704a4e4b37ae04c819c2bd02f080361f9eb1793695e3ecf41080d91b79aee454c3163b586d1b19ceca13f6eacec0e
   languageName: node
   linkType: hard
 
@@ -18124,6 +18137,13 @@ __metadata:
   version: 2.0.0
   resolution: "set-blocking@npm:2.0.0"
   checksum: 10c0/9f8c1b2d800800d0b589de1477c753492de5c1548d4ade52f57f1d1f5e04af5481554d75ce5e5c43d4004b80a3eb714398d6907027dc0534177b7539119f4454
+  languageName: node
+  linkType: hard
+
+"set-cookie-parser@npm:^2.6.0":
+  version: 2.7.1
+  resolution: "set-cookie-parser@npm:2.7.1"
+  checksum: 10c0/060c198c4c92547ac15988256f445eae523f57f2ceefeccf52d30d75dedf6bff22b9c26f756bd44e8e560d44ff4ab2130b178bd2e52ef5571bf7be3bd7632d9a
   languageName: node
   linkType: hard
 
@@ -19741,6 +19761,13 @@ __metadata:
   dependencies:
     safe-buffer: "npm:^5.0.1"
   checksum: 10c0/4c7a1b813e7beae66fdbf567a65ec6d46313643753d0beefb3c7973d66fcec3a1e7f39759f0a0b4465883499c6dc8b0750ab8b287399af2e583823e40410a17a
+  languageName: node
+  linkType: hard
+
+"turbo-stream@npm:2.4.0":
+  version: 2.4.0
+  resolution: "turbo-stream@npm:2.4.0"
+  checksum: 10c0/e68b2569f1f16e6e9633d090c6024b2ae9f0e97bfeacb572451ca3732e120ebbb546f3bc4afc717c46cb57b5aea6104e04ef497f9912eef6a7641e809518e98a
   languageName: node
   linkType: hard
 
