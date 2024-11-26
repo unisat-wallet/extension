@@ -8,7 +8,6 @@ import { Button, Card, Column, Content, Footer, Header, Icon, Image, Layout, Row
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressText } from '@/ui/components/AddressText';
 import { BtcUsd } from '@/ui/components/BtcUsd';
-import { SignPsbtWithRisksPopover } from '@/ui/components/SignPsbtWithRisksPopover';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import KeystoneSignScreen from '@/ui/pages/Wallet/KeystoneSignScreen';
 import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
@@ -62,24 +61,26 @@ interface InscriptioinInfo {
     isSent: boolean;
 }
 
-function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?: RawTxInfo; type: TxType }) {
+function SignTxDetails({
+    txInfo,
+    type,
+    rawTxInfo,
+}: {
+    txInfo: TxInfo;
+    rawTxInfo?: RawTxInfo;
+    type: TxType;
+}) {
     const address = useAccountAddress();
     const chain = useChain();
     const btcUnit = useBTCUnit();
 
-    const isCurrentToPayFee = useMemo(() => {
-        if (type === TxType.SIGN_TX) {
-            return false;
-        } else {
-            return true;
-        }
-    }, [type]);
+    const isCurrentToPayFee = useMemo(() => type !== TxType.SIGN_TX, [type]);
 
     const spendSatoshis = useMemo(() => {
-        const inValue = txInfo.decodedPsbt.inputInfos
+        const inValue = txInfo.decodedPsbt.inputs
             .filter((v) => v.address === address)
             .reduce((pre, cur) => cur.value + pre, 0);
-        const outValue = txInfo.decodedPsbt.outputInfos
+        const outValue = txInfo.decodedPsbt.outputs
             .filter((v) => v.address === address)
             .reduce((pre, cur) => cur.value + pre, 0);
         const spend = inValue - outValue;
@@ -87,14 +88,14 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
     }, [txInfo.decodedPsbt]);
 
     const sendingSatoshis = useMemo(() => {
-        const inValue = txInfo.decodedPsbt.inputInfos
+        const inValue = txInfo.decodedPsbt.inputs
             .filter((v) => v.address === address)
             .reduce((pre, cur) => cur.value + pre, 0);
         return inValue;
     }, [txInfo.decodedPsbt]);
 
     const receivingSatoshis = useMemo(() => {
-        const outValue = txInfo.decodedPsbt.outputInfos
+        const outValue = txInfo.decodedPsbt.outputs
             .filter((v) => v.address === address)
             .reduce((pre, cur) => cur.value + pre, 0);
         return outValue;
@@ -134,7 +135,7 @@ function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?
                                 <Row itemsCenter>
                                     <Text
                                         text={(receivingSatoshis > sendingSatoshis ? '+' : '') + balanceChangedAmount}
-                                        color={receivingSatoshis > sendingSatoshis ? 'white' : 'white'}
+                                        color="white"
                                         preset="bold"
                                         textCenter
                                         size="xxl"
@@ -253,15 +254,12 @@ const initTxInfo: TxInfo = {
     toSignInputs: [],
     txError: '',
     decodedPsbt: {
-        inputInfos: [],
-        outputInfos: [],
+        inputs: [],
+        outputs: [],
         fee: 0,
         feeRate: 0,
-        risks: [],
-        features: {
-            rbf: false
-        },
-        isScammer: false,
+        rbfEnabled: false,
+        transactionSize: 0,
         shouldWarnFeeRate: false,
         recommendedFeeRate: 1
     }
@@ -290,14 +288,13 @@ export default function SignPsbt({
     const address = useAccountAddress();
     const currentAccount = useCurrentAccount();
 
-    const [isPsbtRiskPopoverVisible, setIsPsbtRiskPopoverVisible] = useState(false);
     const [isKeystoneSigning, setIsKeystoneSigning] = useState(false);
 
     const [brc20PriceMap, setBrc20PriceMap] = useState<Record<string, TickPriceItem>>();
     const [runesPriceMap, setRunesPriceMap] = useState<Record<string, TickPriceItem>>();
 
     useEffect(() => {
-        if (txInfo?.decodedPsbt?.inputInfos) {
+        if (txInfo?.decodedPsbt?.inputs) {
             const runesMap: Record<string, boolean> = {};
             const brc20Map: Record<string, boolean> = {};
             if (Object.keys(runesMap).length > 0) {
@@ -314,7 +311,6 @@ export default function SignPsbt({
             }
         }
     }, [txInfo]);
-
     const init = async () => {
         let txError = '';
         if (type === TxType.SIGN_TX) {
@@ -342,12 +338,12 @@ export default function SignPsbt({
             return;
         }
 
-        const decodedPsbt = await wallet.decodePsbt(psbtHex, session?.origin ?? '');
+        const decodedPsbt = await wallet.decodePsbt(psbtHex);
 
         let toSignInputs: ToSignInput[] = [];
         // @ts-ignore
         if (type === TxType.SEND_BITCOIN) {
-            toSignInputs = decodedPsbt.inputInfos.map((_, index) => ({
+            toSignInputs = decodedPsbt.inputs.map((_, index) => ({
                 index,
                 publicKey: currentAccount.pubkey
             }));
@@ -420,7 +416,7 @@ export default function SignPsbt({
         if (txInfo.toSignInputs.length == 0) {
             return false;
         }
-        if (txInfo.decodedPsbt.inputInfos.length == 0) {
+        if (txInfo.decodedPsbt.inputs.length == 0) {
             return false;
         }
         return true;
@@ -428,7 +424,7 @@ export default function SignPsbt({
 
     const canChanged = useMemo(() => {
         let val = true;
-        txInfo.decodedPsbt.inputInfos.forEach((v) => {
+        txInfo.decodedPsbt.inputs.forEach((v) => {
             if (v.address == address && (!v.sighashType || v.sighashType === 1)) {
                 val = false;
             }
@@ -453,29 +449,6 @@ export default function SignPsbt({
             <Header>
                 <WebsiteBar session={session} />
             </Header>
-        );
-    }
-
-    if (txInfo.decodedPsbt.isScammer) {
-        return (
-            <Layout>
-                <Content>
-                    <Column>
-                        <Text text="Phishing Detection" preset="title-bold" textCenter mt="xxl" />
-                        <Text text="Malicious behavior and suspicious activity have been detected." mt="md" />
-                        <Text
-                            text="Your access to this page has been restricted by OP_WALLET it might be unsafe."
-                            mt="md"
-                        />
-                    </Column>
-                </Content>
-
-                <Footer>
-                    <Row full>
-                        <Button text="Reject (blocked by OP_WALLET)" preset="danger" onClick={handleCancel} full />
-                    </Row>
-                </Footer>
-            </Layout>
         );
     }
 
@@ -539,7 +512,7 @@ export default function SignPsbt({
 
                     <Section title="Features:">
                         <Row>
-                            {txInfo.decodedPsbt.features.rbf ? (
+                            {txInfo.decodedPsbt.rbfEnabled ? (
                                 <Text
                                     text="RBF"
                                     color="white"
@@ -563,10 +536,10 @@ export default function SignPsbt({
                     {isValidData && (
                         <Column gap="xl">
                             <Column>
-                                <Text text={`Inputs: (${txInfo.decodedPsbt.inputInfos.length})`} preset="bold" />
+                                <Text text={`Inputs: (${txInfo.decodedPsbt.inputs.length})`} preset="bold" />
                                 <Card>
                                     <Column full justifyCenter>
-                                        {txInfo.decodedPsbt.inputInfos.map((v, index) => {
+                                        {txInfo.decodedPsbt.inputs.map((v, index) => {
                                             const isToSign = !!txInfo.toSignInputs.find((v) => v.index === index);
                                             return (
                                                 <Row
@@ -623,10 +596,10 @@ export default function SignPsbt({
                             </Column>
 
                             <Column>
-                                <Text text={`Outputs: (${txInfo.decodedPsbt.outputInfos.length})`} preset="bold" />
+                                <Text text={`Outputs: (${txInfo.decodedPsbt.outputs.length})`} preset="bold" />
                                 <Card>
                                     <Column full justifyCenter gap="lg">
-                                        {txInfo.decodedPsbt.outputInfos.map((v, index) => {
+                                        {txInfo.decodedPsbt.outputs.map((v, index) => {
                                             const isMyAddress = v.address == currentAccount.address;
                                             return (
                                                 <Column
@@ -684,13 +657,8 @@ export default function SignPsbt({
                     <Button preset="default" text="Reject" onClick={handleCancel} full />
                     <Button
                         preset="primary"
-                        icon={txInfo.decodedPsbt.risks.length > 0 ? 'risk' : undefined}
                         text={type == TxType.SIGN_TX ? 'Sign' : 'Sign & Pay'}
                         onClick={() => {
-                            if (txInfo.decodedPsbt.risks.length > 0) {
-                                setIsPsbtRiskPopoverVisible(true);
-                                return;
-                            }
                             handleConfirm?.();
                         }}
                         disabled={!isValid}
@@ -698,18 +666,6 @@ export default function SignPsbt({
                     />
                 </Row>
             </Footer>
-            {isPsbtRiskPopoverVisible && (
-                <SignPsbtWithRisksPopover
-                    decodedPsbt={txInfo.decodedPsbt}
-                    onClose={() => {
-                        setIsPsbtRiskPopoverVisible(false);
-                    }}
-                    onConfirm={() => {
-                        setIsPsbtRiskPopoverVisible(false);
-                        handleConfirm?.();
-                    }}
-                />
-            )}
         </Layout>
     );
 }

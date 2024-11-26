@@ -40,6 +40,7 @@ import {
     AddressType,
     AddressUserToSignInput,
     BitcoinBalance,
+    DecodedPsbt,
     NetworkType,
     PublicKeyUserToSignInput,
     SignPsbtOptions,
@@ -62,6 +63,7 @@ import { toPsbtNetwork } from '@btc-vision/wallet-sdk/lib/network';
 import { toXOnly } from '@btc-vision/wallet-sdk/lib/utils';
 import { AbstractWallet } from '@btc-vision/wallet-sdk/lib/wallet';
 
+import { address as bitcoinAddress, Psbt } from '@btc-vision/bitcoin';
 import { ContactBookItem } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';
 import { ConnectedSite } from '../service/permission';
@@ -1295,11 +1297,65 @@ export class WalletController extends BaseController {
         return openapiService.getBtcPrice();
     };
 
-    decodePsbt = async (psbtHex: string, website: string) => {
-        //console.log(resp);
-
-        return await openapiService.decodePsbt(psbtHex, website); //{};
-    };
+    decodePsbt(psbtHex: string): DecodedPsbt {
+        const networkType = this.getNetworkType();
+        const network = getBitcoinLibJSNetwork(networkType);
+       
+        const psbt = Psbt.fromHex(psbtHex, { network });
+    
+        const inputs = psbt.txInputs.map((input, index) => {
+            const inputData = psbt.data.inputs[index];
+            let address = 'unknown';
+    
+            if (inputData.witnessUtxo?.script) {
+                try {
+                    address = bitcoinAddress
+                        .fromOutputScript(inputData.witnessUtxo.script, network)
+                        .toString();
+                } catch {
+                    address = 'unknown';
+                }
+            }
+    
+            return {
+                txid: Buffer.from(input.hash).reverse().toString('hex'),
+                vout: input.index,
+                address,
+                value: inputData.witnessUtxo?.value || 0,
+                sighashType: inputData.sighashType
+            };
+        });
+    
+        const outputs = psbt.txOutputs.map((output) => ({
+            address: output.address || 'unknown',
+            value: output.value,
+        }));
+    
+        const totalInputValue = inputs.reduce((sum, input) => sum + input.value, 0);
+        const totalOutputValue = outputs.reduce((sum, output) => sum + output.value, 0);
+    
+        const fee = totalInputValue - totalOutputValue;
+    
+        const transactionSize = psbt.toBuffer().length;
+        const feeRate = transactionSize > 0 ? fee / transactionSize : 0;
+    
+        const rbfEnabled = psbt.txInputs.some((input) => input.sequence && input.sequence < 0xfffffffe);
+    
+        // TODO: Check if there is any way to find recommendedFeeRate
+        const recommendedFeeRate = 1;
+        const shouldWarnFeeRate = feeRate < recommendedFeeRate;
+    
+        return {
+            inputs,
+            outputs,
+            fee,
+            feeRate,
+            transactionSize,
+            rbfEnabled,
+            recommendedFeeRate,
+            shouldWarnFeeRate
+        };
+    }
 
     createPaymentUrl = (address: string, channel: string) => {
         return openapiService.createPaymentUrl(address, channel);
