@@ -99,7 +99,7 @@
         "loglevel": "^1.8.0",
         "lru-cache": "=6.0.0",
         "mini-css-extract-plugin": "^2.4.5",
-        "opnet": "1.1.24",
+        "opnet": "1.1.25",
         "postcss": "^8.4.39",
         "postcss-flexbugs-fixes": "^5.0.2",
         "postcss-loader": "^6.2.1",

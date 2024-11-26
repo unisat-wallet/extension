@@ -14370,9 +14370,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"opnet@npm:1.1.24":
-  version: 1.1.24
-  resolution: "opnet@npm:1.1.24"
+"opnet@npm:1.1.25":
+  version: 1.1.25
+  resolution: "opnet@npm:1.1.25"
   dependencies:
     "@bitcoinerlab/secp256k1": "npm:^1.1.1"
     "@btc-vision/bitcoin": "npm:^6.3.0"
@@ -14385,7 +14385,7 @@ __metadata:
     tiny-secp256k1: "npm:^2.2.3"
   peerDependencies:
     "@btc-vision/bitcoin": ^6.3.0
-  checksum: 10c0/2f181c4f9865889d7f0da2264ab0c6ed6dfb179d308d9a34b363963bf3486e4c9cde342bdc6ca62386017eff5e1685600dbd631b53fe2804493e960c12634cbb
+  checksum: 10c0/56bc2ed510c85ae1ca9a017238fff54de2a7f291c4d9171ba4d8c91de74a55cf98edbce9d662714dc971970ab7c9e68e5013f79415fc77f66d525bf321bce048
   languageName: node
   linkType: hard
 
@@ -14506,7 +14506,7 @@ __metadata:
     lru-cache: "npm:=6.0.0"
     mini-css-extract-plugin: "npm:^2.4.5"
     minimist: "npm:^1.2.8"
-    opnet: "npm:1.1.24"
+    opnet: "npm:1.1.25"
     postcss: "npm:^8.4.39"
     postcss-flexbugs-fixes: "npm:^5.0.2"
     postcss-loader: "npm:^6.2.1"
