@@ -281,10 +281,8 @@ export class ProviderController extends BaseController {
         }
 
         // @ts-expect-error
-        // @ts-expect-error
         interactionParams.priorityFee = BigInt(interactionParams.priorityFee);
 
-        // @ts-expect-error
         // @ts-expect-error
         interactionParams.bytecode = objToBuffer(interactionParams.bytecode);
         }
@@ -298,7 +296,6 @@ export class ProviderController extends BaseController {
 
         if (Number(request.data.params.feeRate) < Number(rate.feeRate)) {
             // @ts-expect-error
-            // @ts-expect-error
             request.data.params.feeRate = Number(rate.feeRate);
 
             console.warn(
@@ -307,10 +304,8 @@ export class ProviderController extends BaseController {
         }
 
         // @ts-expect-error
-        // @ts-expect-error
         request.data.params.bytecode = objToBuffer(request.data.params.bytecode);
 
-        // @ts-expect-error
         // @ts-expect-error
         request.data.params.priorityFee = BigInt(request.data.params.priorityFee);
 

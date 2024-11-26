@@ -1,11 +1,11 @@
 import { walletController } from "../controller";
-import { ProviderController } from "../controller/provider/controller";
+import providerControllerInstance, { ProviderController } from "../controller/provider/controller";
 import internalMethod, { InternalMethod } from "../controller/provider/internalMethod";
 import { WalletController } from "../controller/wallet";
 import { OpenApiService } from "../service/openapi";
 
 export function isProviderControllerMethod(key: string): key is keyof ProviderController {
-    return key in ProviderController.prototype && typeof ProviderController.prototype[key as keyof ProviderController] === 'function';
+    return key in providerControllerInstance && typeof providerControllerInstance[key as keyof ProviderController] === 'function';
 }
 
 export function isWalletControllerMethod(key: string): key is keyof WalletController {
