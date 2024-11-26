@@ -220,7 +220,7 @@ export interface WalletController {
 
     getEditingAccount(): Promise<Account>;
 
-    decodePsbt(psbtHex: string, website: string): Promise<DecodedPsbt>;
+    decodePsbt(psbtHex: string): Promise<DecodedPsbt>;
 
     createPaymentUrl(address: string, channel: string): Promise<string>;
 
