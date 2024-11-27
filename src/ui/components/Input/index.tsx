@@ -11,7 +11,6 @@ import { useTools } from '../ActionComponent';
 import { Icon } from '../Icon';
 import { Row } from '../Row';
 import { $textPresets, Text } from '../Text';
-import './index.less';
 
 export interface InputProps {
     preset?: Presets;
