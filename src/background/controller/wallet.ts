@@ -1418,8 +1418,8 @@ export class WalletController extends BaseController {
     return openapiService.getFeeSummary();
   };
 
-  getBtcPrice = async () => {
-    return openapiService.getBtcPrice();
+  getCoinPrice = async () => {
+    return openapiService.getCoinPrice();
   };
 
   getBrc20sPrice = async (ticks: string[]) => {

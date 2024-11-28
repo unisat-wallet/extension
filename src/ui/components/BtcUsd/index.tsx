@@ -19,7 +19,7 @@ export function BtcUsd(
 ) {
   const { sats, color = 'textDim', size = 'sm', bracket = false } = props;
 
-  const { btcPrice, refreshBtcPrice, isLoadingBtcPrice } = usePrice();
+  const { coinPrice, refreshCoinPrice, isLoadingCoinPrice } = usePrice();
   const chainType = useChainType();
   const chain = useChain();
 
@@ -27,32 +27,43 @@ export function BtcUsd(
   const [showNoValue, setShowNoValue] = useState(false);
 
   useEffect(() => {
-    setShown(chainType === ChainType.BITCOIN_MAINNET);
+    setShown(
+      chainType === ChainType.BITCOIN_MAINNET ||
+        chainType === ChainType.FRACTAL_BITCOIN_MAINNET ||
+        chainType === ChainType.BITCOIN_SIGNET
+    );
     setShowNoValue(chainType === ChainType.BITCOIN_TESTNET || chainType === ChainType.BITCOIN_SIGNET);
   }, [chainType]);
 
   useEffect(() => {
-    refreshBtcPrice();
+    refreshCoinPrice();
   }, []);
 
   const usd = useMemo(() => {
+    let price = 0;
+    if (chainType === ChainType.BITCOIN_MAINNET) {
+      price = coinPrice.btc;
+    } else if (chainType === ChainType.FRACTAL_BITCOIN_MAINNET) {
+      price = coinPrice.fb;
+    }
+
     if (isNaN(sats)) {
       return '-';
     }
-    if (btcPrice <= 0) {
+    if (price <= 0) {
       return '-';
     }
     if (sats <= 0) {
       return '0.00';
     }
-    const result = new BigNumber(sats).dividedBy(1e8).multipliedBy(btcPrice);
+    const result = new BigNumber(sats).dividedBy(1e8).multipliedBy(price);
 
     if (result.isLessThan('0.01')) {
       return result.toPrecision(4);
     }
 
     return result.toFixed(2);
-  }, [btcPrice, sats]);
+  }, [chainType, coinPrice.btc, coinPrice.fb, sats]);
 
   if (!chain.showPrice) {
     return <></>;
@@ -73,7 +84,7 @@ export function BtcUsd(
     return <></>;
   }
 
-  if (isLoadingBtcPrice) {
+  if (isLoadingCoinPrice) {
     return <Spin size={'small'} />;
   }
 

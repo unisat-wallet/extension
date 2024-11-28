@@ -18,6 +18,7 @@ import {
   BtcChannelItem,
   CAT20Balance,
   CAT20MergeOrder,
+  CoinPrice,
   DecodedPsbt,
   FeeSummary,
   InscribeOrder,
@@ -224,7 +225,7 @@ export interface WalletController {
 
   setAccountAlianName(account: Account, name: string): Promise<Account>;
   getFeeSummary(): Promise<FeeSummary>;
-  getBtcPrice(): Promise<number>;
+  getCoinPrice(): Promise<CoinPrice>;
   getBrc20sPrice(ticks: string[]): Promise<{ [tick: string]: TickPriceItem }>;
   getRunesPrice(ticks: string[]): Promise<{ [tick: string]: TickPriceItem }>;
 

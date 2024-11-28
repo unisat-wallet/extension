@@ -157,9 +157,9 @@ export interface FeeSummary {
   }[];
 }
 
-export interface BtcPrice {
-  price: number;
-  updateTime: number;
+export interface CoinPrice {
+  btc: number;
+  fb: number;
 }
 
 export interface UTXO {

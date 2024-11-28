@@ -9,8 +9,8 @@ import {
   AppSummary,
   Arc20Balance,
   BitcoinBalance,
-  BtcPrice,
   CAT20Balance,
+  CoinPrice,
   DecodedPsbt,
   FeeSummary,
   InscribeOrder,
@@ -260,42 +260,40 @@ export class OpenApiService {
     return this.httpGet('/v5/default/fee-summary', {});
   }
 
-  private btcPriceCache: number | null = null;
-  private btcPriceUpdateTime = 0;
-  private isRefreshingBtcPrice = false;
+  private priceCache: CoinPrice | null = null;
+  private priceUpdateTime = 0;
+  private isRefreshingCoinPrice = false;
 
-  async refreshBtcPrice() {
+  async refreshCoinPrice() {
     try {
-      this.isRefreshingBtcPrice = true;
-      const result: BtcPrice = await this.httpGet('/v5/default/btc-price', {});
-      // test
-      // const result: BtcPrice = await Promise.resolve({ price: 58145.19716040577, updateTime: 1634160000000 });
+      this.isRefreshingCoinPrice = true;
+      const result: CoinPrice = await this.httpGet('/v5/default/price', {});
 
-      this.btcPriceCache = result.price;
-      this.btcPriceUpdateTime = Date.now();
+      this.priceCache = result;
+      this.priceUpdateTime = Date.now();
 
-      return result.price;
+      return result;
     } finally {
-      this.isRefreshingBtcPrice = false;
+      this.isRefreshingCoinPrice = false;
     }
   }
 
-  async getBtcPrice(): Promise<number> {
-    while (this.isRefreshingBtcPrice) {
+  async getCoinPrice(): Promise<CoinPrice> {
+    while (this.isRefreshingCoinPrice) {
       await new Promise((resolve) => setTimeout(resolve, 100));
     }
 
     //   30s cache
-    if (this.btcPriceCache && Date.now() - this.btcPriceUpdateTime < 30 * 1000) {
-      return this.btcPriceCache;
+    if (this.priceCache && Date.now() - this.priceUpdateTime < 30 * 1000) {
+      return this.priceCache;
     }
     // 40s return cache and refresh
-    if (this.btcPriceCache && Date.now() - this.btcPriceUpdateTime < 40 * 1000) {
-      this.refreshBtcPrice().then();
-      return this.btcPriceCache;
+    if (this.priceCache && Date.now() - this.priceUpdateTime < 40 * 1000) {
+      this.refreshCoinPrice().then();
+      return this.priceCache;
     }
 
-    return this.refreshBtcPrice();
+    return this.refreshCoinPrice();
   }
 
   private brc20PriceCache: { [key: string]: { cacheTime: number; data: TickPriceItem } } = {};

@@ -1,10 +1,12 @@
 import { createContext, ReactNode, useCallback, useContext, useEffect, useState } from 'react';
+
+import { CoinPrice } from '@/shared/types';
 import { useWallet } from '@/ui/utils';
 
 interface PriceContextType {
-  isLoadingBtcPrice: boolean;
-  btcPrice: number;
-  refreshBtcPrice: () => void;
+  isLoadingCoinPrice: boolean;
+  coinPrice: CoinPrice;
+  refreshCoinPrice: () => void;
 }
 
 const PriceContext = createContext<PriceContextType>({} as PriceContextType);
@@ -18,44 +20,52 @@ export function usePrice() {
   }
 }
 
-let isRequestingBtcPrice = false;
-let refreshBtcPriceTime = 0;
+let isRequestingCoinPrice = false;
+let refreshCoinPriceTime = 0;
 
 export function PriceProvider({ children }: { children: ReactNode }) {
   const wallet = useWallet();
-  const [isLoadingBtcPrice, setIsLoadingBtcPrice] = useState(false);
-  const [btcPrice, setBtcPrice] = useState(0);
+  const [isLoadingCoinPrice, setIsLoadingCoinPrice] = useState(false);
+  const [coinPrice, setCoinPrice] = useState<CoinPrice>({
+    btc: 0,
+    fb: 0
+  });
 
-  const refreshBtcPrice = useCallback(() => {
-    if (isRequestingBtcPrice) {
+  const refreshCoinPrice = useCallback(() => {
+    if (isRequestingCoinPrice) {
       return;
     }
     // 30s cache
-    if (Date.now() - refreshBtcPriceTime < 30 * 1000) {
+    if (Date.now() - refreshCoinPriceTime < 30 * 1000) {
       return;
     }
-    isRequestingBtcPrice = true;
-    setIsLoadingBtcPrice(true);
-    refreshBtcPriceTime = Date.now();
-    wallet.getBtcPrice().then(setBtcPrice).catch(e => {
-      setBtcPrice(0);
-    }).finally(() => {
-      setIsLoadingBtcPrice(false);
-      isRequestingBtcPrice = false;
-    });
+    isRequestingCoinPrice = true;
+    setIsLoadingCoinPrice(true);
+    refreshCoinPriceTime = Date.now();
+    wallet
+      .getCoinPrice()
+      .then(setCoinPrice)
+      .catch((e) => {
+        setCoinPrice({
+          btc: 0,
+          fb: 0
+        });
+      })
+      .finally(() => {
+        setIsLoadingCoinPrice(false);
+        isRequestingCoinPrice = false;
+      });
   }, []);
 
   useEffect(() => {
-    refreshBtcPrice();
-  }, [refreshBtcPrice]);
+    refreshCoinPrice();
+  }, [refreshCoinPrice]);
 
   const value = {
-    isLoadingBtcPrice,
-    btcPrice,
-    refreshBtcPrice
+    isLoadingCoinPrice,
+    coinPrice,
+    refreshCoinPrice
   };
 
-  return <PriceContext.Provider value={value}>
-    {children}
-  </PriceContext.Provider>;
+  return <PriceContext.Provider value={value}>{children}</PriceContext.Provider>;
 }
