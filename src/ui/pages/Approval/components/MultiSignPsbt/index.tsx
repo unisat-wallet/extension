@@ -176,7 +176,8 @@ export default function MultiSignPsbt({
               psbtHex: txInfo.psbtHexs[viewingPsbtIndex],
               type: TxType.SIGN_TX,
               options: options ? options[viewingPsbtIndex] : { autoFinalized: false }
-            }
+            },
+            session
           }}
           handleCancel={() => {
             setViewingPsbtIndex(-1);
