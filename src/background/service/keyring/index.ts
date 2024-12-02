@@ -4,10 +4,7 @@ import * as oldEncryptor from 'browser-passworder';
 import { EventEmitter } from 'events';
 import log from 'loglevel';
 
-import {
-    InteractionParametersWithoutSigner,
-    IWrapParametersWithoutSigner
-} from '@/content-script/pageProvider/Web3Provider.js';
+import { InteractionParametersWithoutSigner } from '@/content-script/pageProvider/Web3Provider.js';
 import { ADDRESS_TYPES, KEYRING_TYPE } from '@/shared/constant';
 import { AddressType } from '@/shared/types';
 import { networks } from '@btc-vision/bitcoin';
