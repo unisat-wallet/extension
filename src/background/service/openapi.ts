@@ -6,6 +6,7 @@ import {
   AddressRunesTokenSummary,
   AddressSummary,
   AddressTokenSummary,
+  AppInfo,
   AppSummary,
   Arc20Balance,
   BitcoinBalance,
@@ -165,6 +166,25 @@ export class OpenApiService {
     return this.httpGet('/v5/address/summary', {
       address
     });
+  }
+
+  async getAppList(): Promise<
+    {
+      tab: string;
+      items: AppInfo[];
+    }[]
+  > {
+    return this.httpGet('/v5/discovery/app-list', {});
+  }
+
+  async getBannerList(): Promise<
+    {
+      id: string;
+      img: string;
+      link: string;
+    }[]
+  > {
+    return this.httpGet('/v5/discovery/banner-list', {});
   }
 
   async getAddressBalance(address: string): Promise<BitcoinBalance> {

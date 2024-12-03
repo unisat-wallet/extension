@@ -17,23 +17,10 @@ interface HeaderProps {
   RightComponent?: React.ReactNode;
   children?: React.ReactNode;
   hideLogo?: boolean;
+  type?: 'style1' | 'style2';
 }
 
-export function Header(props: HeaderProps) {
-  const { hideLogo, onBack, title, LeftComponent, RightComponent, children } = props;
-
-  const CenterComponent = useMemo(() => {
-    if (hideLogo) {
-      return;
-    }
-    if (children) {
-      return children;
-    } else if (title) {
-      return <Text text={title} preset="regular-bold" />;
-    } else {
-      return <Logo preset="small" />;
-    }
-  }, [title]);
+function HeaderContainer(props: { children: React.ReactNode }) {
   return (
     <div style={{ display: 'block', backgroundColor: '#070606' }}>
       <img
@@ -48,28 +35,64 @@ export function Header(props: HeaderProps) {
           height: '67.5px',
           padding: 15
         }}>
-        <Row full>
-          <Column selfItemsCenter>
-            {LeftComponent}
-            {onBack && (
-              <Row
-                onClick={(e) => {
-                  onBack();
-                }}>
-                <Icon>
-                  <FontAwesomeIcon icon={faArrowLeft} />
-                </Icon>
-              </Row>
-            )}
-          </Column>
-        </Row>
-
-        <Row itemsCenter>{CenterComponent}</Row>
-
-        <Row full justifyEnd>
-          <Column selfItemsCenter>{RightComponent}</Column>
-        </Row>
+        {props.children}
       </Row>
     </div>
+  );
+}
+
+export function Header(props: HeaderProps) {
+  const { hideLogo, onBack, title, LeftComponent, RightComponent, children, type } = props;
+
+  const CenterComponent = useMemo(() => {
+    if (hideLogo) {
+      return;
+    }
+    if (children) {
+      return children;
+    } else if (title) {
+      return <Text text={title} preset="regular-bold" />;
+    } else {
+      return <Logo preset="small" />;
+    }
+  }, [title]);
+
+  if (type === 'style2') {
+    return (
+      <HeaderContainer>
+        <Row>
+          <Column selfItemsCenter>{LeftComponent}</Column>
+        </Row>
+        <Row>
+          <Column selfItemsCenter>{RightComponent}</Column>
+        </Row>
+      </HeaderContainer>
+    );
+  }
+
+  return (
+    <HeaderContainer>
+      <Row full>
+        <Column selfItemsCenter>
+          {LeftComponent}
+          {onBack && (
+            <Row
+              onClick={(e) => {
+                onBack();
+              }}>
+              <Icon>
+                <FontAwesomeIcon icon={faArrowLeft} />
+              </Icon>
+            </Row>
+          )}
+        </Column>
+      </Row>
+
+      <Row itemsCenter>{CenterComponent}</Row>
+
+      <Row full justifyEnd>
+        <Column selfItemsCenter>{RightComponent}</Column>
+      </Row>
+    </HeaderContainer>
   );
 }

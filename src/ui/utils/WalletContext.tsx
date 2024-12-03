@@ -12,6 +12,7 @@ import {
   AddressRunesTokenSummary,
   AddressSummary,
   AddressTokenSummary,
+  AppInfo,
   AppSummary,
   Arc20Balance,
   BitcoinBalance,
@@ -414,6 +415,9 @@ export interface WalletController {
     mergeId: string
   ): Promise<{ id: string; commitTx: string; toSignInputs: UserToSignInput[]; feeRate: number }>;
   getMergeCAT20Status(mergeId: string): Promise<any>;
+
+  getAppList(): Promise<{ tab: string; items: AppInfo[] }[]>;
+  getBannerList(): Promise<{ id: string; img: string; link: string }[]>;
 }
 
 const WalletContext = createContext<{

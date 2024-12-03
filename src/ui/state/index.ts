@@ -4,6 +4,7 @@ import { configureStore } from '@reduxjs/toolkit';
 import { setupListeners } from '@reduxjs/toolkit/query/react';
 
 import accounts from './accounts/reducer';
+import discovery from './discovery/reducer';
 import { updateVersion } from './global/actions';
 import global from './global/reducer';
 import keyrings from './keyrings/reducer';
@@ -11,7 +12,7 @@ import settings from './settings/reducer';
 import transactions from './transactions/reducer';
 import ui from './ui/reducer';
 
-const PERSISTED_KEYS: string[] = ['ui'];
+const PERSISTED_KEYS: string[] = ['ui', 'discovery'];
 const store = configureStore({
   reducer: {
     accounts,
@@ -19,7 +20,8 @@ const store = configureStore({
     settings,
     global,
     keyrings,
-    ui
+    ui,
+    discovery
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({ thunk: true }).concat(save({ states: PERSISTED_KEYS, debounce: 1000 })),

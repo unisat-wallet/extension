@@ -2108,6 +2108,16 @@ export class WalletController extends BaseController {
     const _res = await openapiService.getMergeCAT20Status(mergeId);
     return _res;
   };
+
+  getAppList = async () => {
+    const data = await openapiService.getAppList();
+    return data;
+  };
+
+  getBannerList = async () => {
+    const data = await openapiService.getBannerList();
+    return data;
+  };
 }
 
 export default new WalletController();

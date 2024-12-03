@@ -331,13 +331,21 @@ const Main = () => {
       }
 
       if (!self.summaryLoaded) {
-        wallet.getInscriptionSummary().then((data) => {
-          dispatch(accountActions.setInscriptionSummary(data));
-        });
+        // wallet.getInscriptionSummary().then((data) => {
+        //   dispatch(accountActions.setInscriptionSummary(data));
+        // });
 
-        wallet.getAppSummary().then((data) => {
-          dispatch(accountActions.setAppSummary(data));
-        });
+        // wallet.getAppSummary().then((data) => {
+        //   dispatch(accountActions.setAppSummary(data));
+        // });
+
+        // wallet.getBannerList().then((data) => {
+        //   dispatch(accountActions.setBannerList(data));
+        // });
+
+        // wallet.getAppList().then((data) => {
+        //   dispatch(accountActions.setAppList(data));
+        // });
         self.summaryLoaded = true;
       }
 

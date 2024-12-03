@@ -78,7 +78,7 @@ export function TabBar(props: TabBarProps) {
 
   if (preset == 'style1') {
     return (
-      <Row gap={'lg'}>
+      <Row gap={'lg'} style={{ borderBottomWidth: 1, paddingBottom: 0, borderColor: colors.border }}>
         {items.map((v, index) => {
           const isSelected = v.key === tabKey;
           if (progressEnabled && index > progress) {
@@ -91,8 +91,7 @@ export function TabBar(props: TabBarProps) {
             return (
               <Column
                 key={v.key}
-                style={{ padding: '8px' }}
-                classname={isSelected ? 'selected-tab' : ''}
+                itemsCenter
                 onClick={() => {
                   setTabKey(v.key);
                 }}>
@@ -100,7 +99,14 @@ export function TabBar(props: TabBarProps) {
                   text={v.label}
                   size={'md'}
                   preset={isSelected ? 'bold' : 'regular'}
-                  color={isSelected ? 'gold' : 'white'}
+                  color={isSelected ? 'gold' : 'textDim'}
+                />
+                <Row
+                  style={{
+                    width: 40,
+                    height: 2,
+                    backgroundColor: isSelected ? 'gold' : 'transparent'
+                  }}
                 />
               </Column>
             );

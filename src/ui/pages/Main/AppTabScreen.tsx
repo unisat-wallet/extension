@@ -1,6 +1,5 @@
 import { AppInfo } from '@/shared/types';
 import { Card, Column, Content, Footer, Header, Image, Layout, Row, Text } from '@/ui/components';
-import { NavTabBar } from '@/ui/components/NavTabBar';
 import { useAppSummary, useReadApp } from '@/ui/state/accounts/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { shortDesc } from '@/ui/utils';
@@ -48,7 +47,7 @@ export default function AppTabScrren() {
         </Column>
       </Content>
       <Footer px="zero" py="zero">
-        <NavTabBar tab="app" />
+        {/* <NavTabBar tab="app" /> */}
       </Footer>
     </Layout>
   );
