@@ -8,6 +8,7 @@ import AccountSelect from '@/ui/components/AccountSelect';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { Button } from '@/ui/components/Button';
 import { DisableUnconfirmedsPopover } from '@/ui/components/DisableUnconfirmedPopover';
+import { FeeRateIcon } from '@/ui/components/FeeRateIcon';
 import { NavTabBar } from '@/ui/components/NavTabBar';
 import { NoticePopover } from '@/ui/components/NoticePopover';
 import { UpgradePopover } from '@/ui/components/UpgradePopover';
@@ -180,12 +181,15 @@ export default function WalletTabScreen() {
   const [buyBtcModalVisible, setBuyBtcModalVisible] = useState(false);
 
   const [switchChainModalVisible, setSwitchChainModalVisible] = useState(false);
+
   return (
     <Layout>
       <Header
+        type="style2"
         LeftComponent={
           <Card
             preset="style2"
+            style={{ height: 28 }}
             onClick={() => {
               navigate('SwitchKeyringScreen');
             }}>
@@ -193,32 +197,41 @@ export default function WalletTabScreen() {
           </Card>
         }
         RightComponent={
-          <Card
-            preset="style2"
-            style={{
-              backgroundColor: 'transparent'
-            }}
-            onClick={() => {
-              setSwitchChainModalVisible(true);
-            }}>
-            <Image
-              src={'./images/artifacts/chain-bar.png'}
-              width={56}
-              height={28}
+          <Row>
+            <Row
               style={{
-                position: 'absolute',
-                right: 56 / 2
-              }}
-            />
-            <Image
-              src={chain.icon}
-              size={22}
+                marginRight: 50
+              }}>
+              <FeeRateIcon />
+            </Row>
+
+            <Card
+              preset="style2"
               style={{
-                position: 'absolute',
-                right: 55
+                backgroundColor: 'transparent'
               }}
-            />
-          </Card>
+              onClick={() => {
+                setSwitchChainModalVisible(true);
+              }}>
+              <Image
+                src={'./images/artifacts/chain-bar.png'}
+                width={56}
+                height={28}
+                style={{
+                  position: 'absolute',
+                  right: 56 / 2
+                }}
+              />
+              <Image
+                src={chain.icon}
+                size={22}
+                style={{
+                  position: 'absolute',
+                  right: 55
+                }}
+              />
+            </Card>
+          </Row>
         }
       />
 

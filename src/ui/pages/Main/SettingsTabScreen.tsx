@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ADDRESS_TYPES, DISCORD_URL, GITHUB_URL, KEYRING_TYPE, TELEGRAM_URL, TWITTER_URL } from '@/shared/constant';
-import { Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
+import { Card, Column, Content, Footer, Header, Image, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { Button } from '@/ui/components/Button';
 import { Icon } from '@/ui/components/Icon';
@@ -175,7 +175,42 @@ export default function SettingsTabScreen() {
 
   return (
     <Layout>
-      <Header />
+      <Header
+        type="style2"
+        LeftComponent={
+          <Row>
+            <Text preset="title-bold" text={'Settings'} />
+          </Row>
+        }
+        RightComponent={
+          <Card
+            preset="style2"
+            style={{
+              backgroundColor: 'transparent'
+            }}
+            onClick={() => {
+              setSwitchChainModalVisible(true);
+            }}>
+            <Image
+              src={'./images/artifacts/chain-bar.png'}
+              width={56}
+              height={28}
+              style={{
+                position: 'absolute',
+                right: 56 / 2
+              }}
+            />
+            <Image
+              src={chain.icon}
+              size={22}
+              style={{
+                position: 'absolute',
+                right: 55
+              }}
+            />
+          </Card>
+        }
+      />
       <Content>
         <Column>
           <div>

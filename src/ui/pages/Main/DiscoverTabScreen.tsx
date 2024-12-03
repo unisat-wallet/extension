@@ -7,7 +7,7 @@ import { Empty } from '@/ui/components/Empty';
 import { NavTabBar } from '@/ui/components/NavTabBar';
 import { TabBar } from '@/ui/components/TabBar';
 import { useReadApp } from '@/ui/state/accounts/hooks';
-import { useAppList, useBannerList } from '@/ui/state/discovery/hooks';
+import { useAppList, useBannerList, useLastFetchInfo } from '@/ui/state/discovery/hooks';
 import { discoveryActions } from '@/ui/state/discovery/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useChain, useChainType } from '@/ui/state/settings/hooks';
@@ -66,30 +66,54 @@ export default function DiscoverTabScreen() {
 
   const bannerList = useBannerList();
   const appList = useAppList();
+  const lastFetchInfo = useLastFetchInfo();
 
   const [switchChainModalVisible, setSwitchChainModalVisible] = useState(false);
 
   const wallet = useWallet();
   const dispatch = useAppDispatch();
   useEffect(() => {
+    if (lastFetchInfo.lasfFetchChainType === chainType && Date.now() - lastFetchInfo.lastFetchTime < 1000 * 60 * 1) {
+      return;
+    }
     wallet
       .getBannerList()
       .then((data) => {
-        dispatch(discoveryActions.setBannerList(data));
+        dispatch(
+          discoveryActions.setBannerList({
+            bannerList: data,
+            chainType
+          })
+        );
       })
       .catch((e) => {
-        dispatch(discoveryActions.setBannerList([]));
+        dispatch(
+          discoveryActions.setBannerList({
+            bannerList: [],
+            chainType
+          })
+        );
       });
 
     wallet
       .getAppList()
       .then((data) => {
-        dispatch(discoveryActions.setAppList(data));
+        dispatch(
+          discoveryActions.setAppList({
+            appList: data,
+            chainType
+          })
+        );
       })
       .catch((e) => {
-        dispatch(discoveryActions.setAppList([]));
+        dispatch(
+          discoveryActions.setAppList({
+            appList: [],
+            chainType
+          })
+        );
       });
-  }, [chainType]);
+  }, [chainType, lastFetchInfo]);
 
   const tabItems = appList.map((v, index) => {
     return {
@@ -150,6 +174,8 @@ export default function DiscoverTabScreen() {
               <BannerItem key={v.img} img={v.img} link={v.link} />
             ))}
           </Carousel>
+
+          <Row mt="md" />
 
           {tabItems.length == 0 ? (
             <Empty />

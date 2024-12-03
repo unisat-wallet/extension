@@ -78,7 +78,7 @@ export function TabBar(props: TabBarProps) {
 
   if (preset == 'style1') {
     return (
-      <Row gap={'lg'} style={{ borderBottomWidth: 1, paddingBottom: 0, borderColor: colors.border }}>
+      <Row gap={'xl'} style={{ borderBottomWidth: 1, paddingBottom: 0, borderColor: colors.border }}>
         {items.map((v, index) => {
           const isSelected = v.key === tabKey;
           if (progressEnabled && index > progress) {

@@ -52,7 +52,10 @@ export const svgRegistry = {
 
   overview: '/images/icons/overview.svg',
   merge: '/images/icons/merge.svg',
-  paused: '/images/icons/paused.svg'
+  paused: '/images/icons/paused.svg',
+
+  unisat: './images/icons/unisat.svg',
+  gas: './images/icons/gas.svg'
 };
 
 const iconImgList: Array<IconTypes> = ['success', 'delete', 'btc'];

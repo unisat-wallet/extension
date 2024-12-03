@@ -6,11 +6,19 @@ export function useDiscoveryState(): AppState['discovery'] {
 }
 
 export function useAppList() {
-  const accountsState = useDiscoveryState();
-  return accountsState.appList;
+  const state = useDiscoveryState();
+  return state.appList;
 }
 
 export function useBannerList() {
-  const accountsState = useDiscoveryState();
-  return accountsState.bannerList;
+  const state = useDiscoveryState();
+  return state.bannerList;
+}
+
+export function useLastFetchInfo() {
+  const state = useDiscoveryState();
+  return {
+    lastFetchTime: state.lastFetchTime,
+    lasfFetchChainType: state.lastFetchChainType
+  };
 }

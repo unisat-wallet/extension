@@ -16,9 +16,17 @@ const AccountSelect = () => {
   const tools = useTools();
   const address = currentAccount.address;
   return (
-    <Row justifyBetween px="md" py="md" bg="card" rounded itemsCenter>
+    <Row
+      justifyBetween
+      px="md"
+      py="md"
+      bg="card"
+      itemsCenter
+      style={{
+        borderRadius: 8
+      }}>
       <Row style={{ flex: 1 }}>
-        <Icon icon="user" />
+        <Icon size={15} icon="user" style={{ marginLeft: 10 }} />
       </Row>
 
       <Column
@@ -43,12 +51,13 @@ const AccountSelect = () => {
       <Row
         style={{ flex: 1 }}
         fullY
+        py="md"
         justifyEnd
         itemsCenter
         onClick={(e) => {
           navigate('SwitchAccountScreen');
         }}>
-        <Icon icon="right" />
+        <Icon size={15} icon="right" style={{ marginRight: 10 }} />
       </Row>
     </Row>
   );
