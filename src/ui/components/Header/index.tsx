@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import { spacing } from '@/ui/theme/spacing';
 import { faArrowLeft } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 
@@ -33,7 +34,8 @@ function HeaderContainer(props: { children: React.ReactNode }) {
         itemsCenter
         style={{
           height: '67.5px',
-          padding: 15
+          paddingLeft: spacing.large,
+          paddingRight: spacing.large
         }}>
         {props.children}
       </Row>

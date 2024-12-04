@@ -3,7 +3,7 @@ import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 
 import { AddressFlagType, ChainType } from '@/shared/constant';
 import { checkAddressFlag } from '@/shared/utils';
-import { Card, Column, Content, Footer, Header, Image, Layout, Row, Text } from '@/ui/components';
+import { Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { Button } from '@/ui/components/Button';
@@ -11,6 +11,7 @@ import { DisableUnconfirmedsPopover } from '@/ui/components/DisableUnconfirmedPo
 import { FeeRateIcon } from '@/ui/components/FeeRateIcon';
 import { NavTabBar } from '@/ui/components/NavTabBar';
 import { NoticePopover } from '@/ui/components/NoticePopover';
+import { SwitchNetworkBar } from '@/ui/components/SwitchNetworkBar';
 import { UpgradePopover } from '@/ui/components/UpgradePopover';
 import { getCurrentTab } from '@/ui/features/browser/tabs';
 import { BtcDisplay } from '@/ui/pages/Main/WalletTabScreen/components/BtcDisplay';
@@ -198,39 +199,8 @@ export default function WalletTabScreen() {
         }
         RightComponent={
           <Row>
-            <Row
-              style={{
-                marginRight: 50
-              }}>
-              <FeeRateIcon />
-            </Row>
-
-            <Card
-              preset="style2"
-              style={{
-                backgroundColor: 'transparent'
-              }}
-              onClick={() => {
-                setSwitchChainModalVisible(true);
-              }}>
-              <Image
-                src={'./images/artifacts/chain-bar.png'}
-                width={56}
-                height={28}
-                style={{
-                  position: 'absolute',
-                  right: 56 / 2
-                }}
-              />
-              <Image
-                src={chain.icon}
-                size={22}
-                style={{
-                  position: 'absolute',
-                  right: 55
-                }}
-              />
-            </Card>
+            <FeeRateIcon />
+            <SwitchNetworkBar />
           </Row>
         }
       />

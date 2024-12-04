@@ -1,17 +1,18 @@
-import { Carousel } from 'antd';
+import { Carousel, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 
 import { AppInfo } from '@/shared/types';
 import { Card, Column, Content, Footer, Header, Image, Layout, Row, Text } from '@/ui/components';
 import { Empty } from '@/ui/components/Empty';
 import { NavTabBar } from '@/ui/components/NavTabBar';
+import { SwitchNetworkBar } from '@/ui/components/SwitchNetworkBar';
 import { TabBar } from '@/ui/components/TabBar';
 import { useReadApp } from '@/ui/state/accounts/hooks';
 import { useAppList, useBannerList, useLastFetchInfo } from '@/ui/state/discovery/hooks';
 import { discoveryActions } from '@/ui/state/discovery/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useChain, useChainType } from '@/ui/state/settings/hooks';
-import { shortDesc, useWallet } from '@/ui/utils';
+import { useWallet } from '@/ui/utils';
 
 import { SwitchChainModal } from '../Settings/SwitchChainModal';
 
@@ -51,7 +52,16 @@ function AppItem({ info }: { info: AppInfo }) {
             {info.new && <Text text="new!" color="red" />}
           </Row>
 
-          <Text text={shortDesc(info.desc)} preset="sub" />
+          <Tooltip
+            title={info.desc}
+            overlayStyle={{
+              fontSize: '10px',
+              lineHeight: '14px'
+            }}>
+            <div>
+              <Text text={info.desc} preset="sub" max2Lines />
+            </div>
+          </Tooltip>
         </Column>
       </Row>
     </Card>
@@ -115,12 +125,18 @@ export default function DiscoverTabScreen() {
       });
   }, [chainType, lastFetchInfo]);
 
+  useEffect(() => {
+    if (tabKey > appList.length - 1) {
+      setTabKey(0);
+    }
+  }, [appList, tabKey]);
+
   const tabItems = appList.map((v, index) => {
     return {
       key: index,
       label: v.tab,
       children: (
-        <Column>
+        <Column gap="lg">
           {v.items.map((w) => (
             <AppItem key={w.id} info={w} />
           ))}
@@ -138,34 +154,7 @@ export default function DiscoverTabScreen() {
             <Text preset="title-bold" text={'Explore the Latest'} />
           </Row>
         }
-        RightComponent={
-          <Card
-            preset="style2"
-            style={{
-              backgroundColor: 'transparent'
-            }}
-            onClick={() => {
-              setSwitchChainModalVisible(true);
-            }}>
-            <Image
-              src={'./images/artifacts/chain-bar.png'}
-              width={56}
-              height={28}
-              style={{
-                position: 'absolute',
-                right: 56 / 2
-              }}
-            />
-            <Image
-              src={chain.icon}
-              size={22}
-              style={{
-                position: 'absolute',
-                right: 55
-              }}
-            />
-          </Card>
-        }
+        RightComponent={<SwitchNetworkBar />}
       />
       <Content>
         <Column justifyCenter>

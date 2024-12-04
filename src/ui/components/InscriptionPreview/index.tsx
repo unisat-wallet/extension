@@ -116,7 +116,7 @@ export default function InscriptionPreview({ data, onClick, preset, asLogo, hide
     <Column gap="zero" onClick={onClick} style={Object.assign({ position: 'relative' }, $containerPresets[preset])}>
       <Iframe preview={preview} style={$iframePresets[preset]} />
       {data.outputValue && !hideValue ? (
-        <div style={Object.assign({ position: 'absolute', zIndex: 10 }, $iframePresets[preset])}>
+        <div style={Object.assign({ position: 'absolute' }, $iframePresets[preset])}>
           <Column fullY>
             <Row style={{ flex: 1 }} />
             <Row fullX justifyEnd mb="sm">
