@@ -7,7 +7,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import BRC20Preview from '@/ui/components/BRC20Preview';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { Empty } from '@/ui/components/Empty';
-import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
+import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useUnisatWebsite } from '@/ui/state/settings/hooks';
 import { useLocationState, useWallet } from '@/ui/utils';
@@ -121,7 +121,7 @@ export default function BRC20TokenScreen() {
               <BRC20Ticker tick={ticker} displayName={tokenSummary.tokenBalance.displayName} preset="lg" showOrigin />
             </Column>
             <Row justifyCenter fullX>
-              <TickUsdWithoutPrice tick={ticker} balance={balance} type={'brc20'} size={'md'} />
+              <TickUsdWithoutPrice tick={ticker} balance={balance} type={TokenType.BRC20} size={'md'} />
             </Row>
 
             <Row justifyBetween mt="lg">

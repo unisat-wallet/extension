@@ -412,6 +412,53 @@ export class OpenApiService {
     }
   }
 
+  private cat20PriceCache: { [key: string]: { cacheTime: number; data: TickPriceItem } } = {};
+  private currentRequestCAT20 = {};
+
+  async getCAT20sPrice(tokenIds: string[]) {
+    if (tokenIds.length < 0) {
+      return {};
+    }
+    const tickLine = tokenIds.join('');
+    if (!tickLine) return {};
+
+    try {
+      while (this.currentRequestCAT20[tickLine]) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      this.currentRequestCAT20[tickLine] = true;
+
+      const result = {} as { [key: string]: TickPriceItem };
+
+      for (let i = 0; i < tokenIds.length; i += 1) {
+        const tokenId = tokenIds[i];
+        const cache = this.cat20PriceCache[tokenId];
+        if (!cache) {
+          break;
+        }
+        if (cache.cacheTime + 5 * 60 * 1000 > Date.now()) {
+          result[tokenId] = cache.data;
+        }
+      }
+
+      if (Object.keys(result).length === tokenIds.length) {
+        return result;
+      }
+
+      const resp: { [ticker: string]: TickPriceItem } = await this.httpPost('/v5/market/cat20/price', {
+        tokenIds
+      });
+
+      for (let i = 0; i < tokenIds.length; i += 1) {
+        const tokenId = tokenIds[i];
+        this.cat20PriceCache[tokenId] = { cacheTime: Date.now(), data: resp[tokenId] };
+      }
+      return resp;
+    } finally {
+      this.currentRequestCAT20[tickLine] = false;
+    }
+  }
+
   async getDomainInfo(domain: string): Promise<Inscription> {
     return this.httpGet('/v5/address/search', { domain });
   }

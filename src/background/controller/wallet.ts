@@ -1430,6 +1430,10 @@ export class WalletController extends BaseController {
     return openapiService.getRunesPrice(ticks);
   };
 
+  getCAT20sPrice = async (tokenIds: string[]) => {
+    return openapiService.getCAT20sPrice(tokenIds);
+  };
+
   inscribeBRC20Transfer = (address: string, tick: string, amount: string, feeRate: number, outputValue: number) => {
     return openapiService.inscribeBRC20Transfer(address, tick, amount, feeRate, outputValue);
   };

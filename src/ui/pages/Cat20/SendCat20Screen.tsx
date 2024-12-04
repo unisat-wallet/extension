@@ -17,6 +17,7 @@ import { Loading } from '@/ui/components/ActionComponent/Loading';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { MergeBTCPopover } from '@/ui/components/MergeBTCPopover';
+import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useNetworkType } from '@/ui/state/settings/hooks';
@@ -269,6 +270,15 @@ export default function SendCAT20Screen() {
           <BRC20Ticker tick={cat20Info.symbol} preset="lg" />
         </Row>
 
+        <Row justifyCenter fullX>
+          <TickUsdWithoutPrice
+            tick={cat20Info.tokenId}
+            balance={runesUtils.toDecimalAmount(cat20Balance.amount, cat20Balance.decimals)}
+            type={TokenType.CAT20}
+            size={'md'}
+          />
+        </Row>
+
         <Column mt="lg">
           <Text text="Recipient" preset="regular" color="textDim" />
           <Input
@@ -284,7 +294,7 @@ export default function SendCAT20Screen() {
         <Column mt="lg">
           <Row justifyBetween>
             <Text text="Balance" color="textDim" />
-            {/* <TickUsdWithoutPrice tick={runeInfo.spacedRune} balance={inputAmount} type={'runes'} /> */}
+            <TickUsdWithoutPrice tick={cat20Info.tokenId} balance={inputAmount} type={TokenType.CAT20} />
             <Row
               itemsCenter
               onClick={() => {

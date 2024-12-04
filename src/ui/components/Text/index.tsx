@@ -2,9 +2,10 @@ import { CSSProperties } from 'react';
 
 import { colors, ColorTypes } from '@/ui/theme/colors';
 import { typography } from '@/ui/theme/typography';
+import { showLongNumber } from '@/ui/utils';
 
 import { BaseView, BaseViewProps } from '../BaseView';
-import { showLongNumber } from '@/ui/utils';
+import './index.less';
 
 export type Sizes = keyof typeof $sizeStyles;
 type Presets = keyof typeof $presets;
@@ -72,6 +73,7 @@ export interface TextProps extends BaseViewProps {
   disableTranslate?: boolean;
   digital?: boolean;
   ellipsis?: boolean;
+  max2Lines?: boolean;
 }
 
 export const $textPresets = $presets;
@@ -87,6 +89,7 @@ export function Text(props: TextProps) {
     disableTranslate,
     ellipsis,
     style: $styleOverride,
+    max2Lines,
     ...rest
   } = props;
   const preset: Presets = props.preset || 'regular';
@@ -98,17 +101,25 @@ export function Text(props: TextProps) {
     textEnd ? { textAlign: 'end' } : {},
     wrap ? { overflowWrap: 'anywhere' } : {},
     selectText ? { userSelect: 'text' } : {},
-    ellipsis ? {
-      whiteSpace: 'nowrap',
-      textOverflow: 'ellipsis',
-      overflow: 'hidden'
-    } : {}
+    ellipsis
+      ? {
+          whiteSpace: 'nowrap',
+          textOverflow: 'ellipsis',
+          overflow: 'hidden'
+        }
+      : {}
   );
   const $style = Object.assign({}, $textStyle, $styleOverride);
   const textUse = props.digital ? showLongNumber(text) : text;
   return (
     <BaseView style={$style} {...rest}>
-      {disableTranslate ? <span translate="no">{textUse}</span> : textUse}
+      {disableTranslate ? (
+        <span translate="no" className="span-text">
+          {textUse}
+        </span>
+      ) : (
+        <span className={max2Lines ? 'span-max-lines-2' : ''}>{textUse}</span>
+      )}
     </BaseView>
   );
 }

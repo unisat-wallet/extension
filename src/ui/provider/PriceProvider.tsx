@@ -3,6 +3,8 @@ import { createContext, ReactNode, useCallback, useContext, useEffect, useState 
 import { CoinPrice } from '@/shared/types';
 import { useWallet } from '@/ui/utils';
 
+import { useChain, useChainType } from '../state/settings/hooks';
+
 interface PriceContextType {
   isLoadingCoinPrice: boolean;
   coinPrice: CoinPrice;
@@ -25,6 +27,8 @@ let refreshCoinPriceTime = 0;
 
 export function PriceProvider({ children }: { children: ReactNode }) {
   const wallet = useWallet();
+  const chainType = useChainType();
+  const chain = useChain();
   const [isLoadingCoinPrice, setIsLoadingCoinPrice] = useState(false);
   const [coinPrice, setCoinPrice] = useState<CoinPrice>({
     btc: 0,
@@ -32,6 +36,9 @@ export function PriceProvider({ children }: { children: ReactNode }) {
   });
 
   const refreshCoinPrice = useCallback(() => {
+    if (chain.showPrice === false) {
+      return;
+    }
     if (isRequestingCoinPrice) {
       return;
     }
@@ -55,7 +62,7 @@ export function PriceProvider({ children }: { children: ReactNode }) {
         setIsLoadingCoinPrice(false);
         isRequestingCoinPrice = false;
       });
-  }, []);
+  }, [chainType, chain]);
 
   useEffect(() => {
     refreshCoinPrice();

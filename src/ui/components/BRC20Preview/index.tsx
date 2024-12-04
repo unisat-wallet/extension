@@ -1,11 +1,11 @@
+import { TickPriceItem } from '@/shared/types';
+import { TickUsd, TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
 import { colors } from '@/ui/theme/colors';
 
 import { BRC20Ticker } from '../BRC20Ticker';
 import { Column } from '../Column';
 import { Row } from '../Row';
 import { Text } from '../Text';
-import { TickUsd, TickUsdWithoutPrice } from '@/ui/components/TickUsd';
-import { TickPriceItem } from '@/shared/types';
 
 export interface BRC20PreviewProps {
   tick: string;
@@ -23,18 +23,18 @@ export interface BRC20PreviewProps {
 }
 
 export default function BRC20Preview({
-                                       tick,
-                                       balance,
-                                       inscriptionNumber,
-                                       timestamp,
-                                       type,
-                                       selected,
-                                       onClick,
-                                       preset,
-                                       confirmations,
-                                       priceInProps, price
-                                     }: BRC20PreviewProps) {
-
+  tick,
+  balance,
+  inscriptionNumber,
+  timestamp,
+  type,
+  selected,
+  onClick,
+  preset,
+  confirmations,
+  priceInProps,
+  price
+}: BRC20PreviewProps) {
   if (!balance) {
     balance = 'Deploy';
   }
@@ -107,17 +107,20 @@ export default function BRC20Preview({
         gap={'xs'}
         bg={bg}>
         <Text text={balance} size={balanceSize as any} textCenter wrap digital />
-        {type === 'TRANSFER'
-        && priceInProps ? <TickUsd price={price} balance={balance} /> :
-          <TickUsdWithoutPrice tick={tick} balance={balance} type={'brc20'} />
-        }
-
+        {type === 'TRANSFER' && priceInProps ? (
+          <TickUsd price={price} balance={balance} />
+        ) : (
+          <TickUsdWithoutPrice tick={tick} balance={balance} type={TokenType.BRC20} />
+        )}
       </Column>
 
       <Column px="sm" pb="sm" gap="sm" py="sm">
         <Row itemsCenter justifyCenter>
-          <Text text={confirmations === 0 ? 'Unconfirmed' : `#${inscriptionNumber}`} color="primary"
-                size={numberSize} />
+          <Text
+            text={confirmations === 0 ? 'Unconfirmed' : `#${inscriptionNumber}`}
+            color="primary"
+            size={numberSize}
+          />
         </Row>
       </Column>
     </Column>

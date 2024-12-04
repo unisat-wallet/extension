@@ -19,11 +19,7 @@ export function CAT20BalanceCard(props: CAT20BalanceCardProps) {
   const { tokenBalance, onClick, showPrice, price } = props;
   const balance = runesUtils.toDecimalNumber(tokenBalance.amount, tokenBalance.decimals);
   const str = balance.toString();
-  // if (balance.lt(0.0001)) {
-  //   str = '<0.0001';
-  // } else {
-  //   str = showLongNumber(balance.toString());
-  // }
+
   return (
     <Card
       style={{
@@ -46,7 +42,7 @@ export function CAT20BalanceCard(props: CAT20BalanceCardProps) {
             <Text text={tokenBalance.symbol} size="xs" mx="sm" />
           </Row>
         </Row>
-        {showPrice && (
+        {showPrice && price?.curPrice !== 0 && (
           <Row justifyBetween mt={'xs'}>
             <TickPriceChange price={price} />
             <TickUsd price={price} balance={balance.toString()} />

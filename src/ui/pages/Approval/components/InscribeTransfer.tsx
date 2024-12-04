@@ -13,7 +13,7 @@ import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { OutputValueBar } from '@/ui/components/OutputValueBar';
 import { RBFBar } from '@/ui/components/RBFBar';
-import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
+import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useBTCUnit, useNetworkType } from '@/ui/state/settings/hooks';
@@ -285,7 +285,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
             <Column>
               <Row justifyBetween itemsCenter>
                 <Text text="Available" color="textDim" />
-                <TickUsdWithoutPrice tick={contextData.ticker} balance={inputAmount} type={'brc20'} />
+                <TickUsdWithoutPrice tick={contextData.ticker} balance={inputAmount} type={TokenType.BRC20} />
                 {tokenBalance ? (
                   <Column>
                     {tokenBalance.availableBalanceUnSafe != '0' ? (
@@ -443,7 +443,7 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
                 <BRC20Ticker tick={tokenBalance.ticker} displayName={tokenBalance.displayName} preset="lg" />
               </Row>
               <Row itemsCenter justifyCenter>
-                <TickUsdWithoutPrice tick={tokenBalance.ticker} balance={amount + ''} type={'brc20'} />
+                <TickUsdWithoutPrice tick={tokenBalance.ticker} balance={amount + ''} type={TokenType.BRC20} />
               </Row>
               <Column mt="xxl">
                 <Text text="Preview" preset="sub-bold" />

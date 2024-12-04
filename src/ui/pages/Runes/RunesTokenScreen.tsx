@@ -6,7 +6,7 @@ import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/c
 import { useTools } from '@/ui/components/ActionComponent';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
-import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
+import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useOrdinalsWebsite, useTxExplorerUrl, useUnisatWebsite } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
@@ -139,7 +139,7 @@ export default function RunesTokenScreen() {
                   tokenSummary.runeBalance.amount,
                   tokenSummary.runeBalance.divisibility
                 )}
-                type={'runes'}
+                type={TokenType.RUNES}
                 size={'md'}
               />
             </Row>

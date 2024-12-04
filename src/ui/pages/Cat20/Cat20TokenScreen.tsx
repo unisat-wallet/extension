@@ -6,6 +6,7 @@ import { AddressCAT20TokenSummary } from '@/shared/types';
 import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
+import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { useCAT20TokenInfoExplorerUrl } from '@/ui/state/settings/hooks';
@@ -119,6 +120,18 @@ export default function CAT20TokenScreen() {
                 digital
               />
               <BRC20Ticker tick={tokenSummary.cat20Info.symbol} preset="lg" />
+            </Row>
+
+            <Row justifyCenter fullX>
+              <TickUsdWithoutPrice
+                tick={tokenSummary.cat20Info.tokenId}
+                balance={runesUtils.toDecimalAmount(
+                  tokenSummary.cat20Balance.amount,
+                  tokenSummary.cat20Balance.decimals
+                )}
+                type={TokenType.CAT20}
+                size={'md'}
+              />
             </Row>
 
             <Row justifyBetween mt="lg">

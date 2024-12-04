@@ -12,7 +12,7 @@ import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import { RefreshButton } from '@/ui/components/RefreshButton';
 import { TabBar } from '@/ui/components/TabBar';
-import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
+import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import {
   useFetchUtxosCallback,
@@ -188,7 +188,7 @@ function TransferableList({
           <TickUsdWithoutPrice
             tick={contextData.tokenBalance.ticker}
             balance={contextData.transferAmount}
-            type={'brc20'}
+            type={TokenType.BRC20}
             size={'md'}
           />
         </Row>
@@ -371,7 +371,7 @@ function Step2({
             <TickUsdWithoutPrice
               tick={contextData.tokenBalance.ticker}
               balance={contextData.transferAmount}
-              type={'brc20'}
+              type={TokenType.BRC20}
               size={'sm'}
             />
           </Row>

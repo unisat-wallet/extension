@@ -9,7 +9,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { OutputValueBar } from '@/ui/components/OutputValueBar';
 import { RBFBar } from '@/ui/components/RBFBar';
-import { TickUsdWithoutPrice } from '@/ui/components/TickUsd';
+import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import {
@@ -179,7 +179,7 @@ export default function SendRunesScreen() {
           <TickUsdWithoutPrice
             tick={runeInfo.spacedRune}
             balance={runesUtils.toDecimalAmount(runeBalance.amount, runeBalance.divisibility)}
-            type={'runes'}
+            type={TokenType.RUNES}
             size={'md'}
           />
         </Row>
@@ -199,7 +199,7 @@ export default function SendRunesScreen() {
         <Column mt="lg">
           <Row justifyBetween>
             <Text text="Balance" color="textDim" />
-            <TickUsdWithoutPrice tick={runeInfo.spacedRune} balance={inputAmount} type={'runes'} />
+            <TickUsdWithoutPrice tick={runeInfo.spacedRune} balance={inputAmount} type={TokenType.RUNES} />
             <Row
               itemsCenter
               onClick={() => {

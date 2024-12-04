@@ -398,6 +398,8 @@ function SignTxDetails({
                     size="xxl"
                   />
                   <Text text={btcUnit} color="textDim" />
+                </Row>
+                <Row justifyCenter>
                   <BtcUsd sats={Math.abs(receivingSatoshis - sendingSatoshis)} bracket />
                 </Row>
               </Column>

@@ -14,7 +14,7 @@ import { MergeBTCPopover } from '@/ui/components/MergeBTCPopover';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useBTCUnit } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
-import { amountToSatoshis, satoshisToAmount, showLongNumber, sleep, useWallet } from '@/ui/utils';
+import { satoshisToAmount, showLongNumber, sleep, useWallet } from '@/ui/utils';
 
 import { MergeProgressLayout } from './MergeProgressLayout';
 import { ItemStatus, MergeItem, MergeState } from './MergingItem';
@@ -404,7 +404,7 @@ export default function MergeCAT20Screen() {
               </Row>
               <Row justifyBetween>
                 <Text />
-                <BtcUsd sats={amountToSatoshis(estimatedData.fee)} />
+                <BtcUsd sats={estimatedData.fee} />
               </Row>
             </Column>
           </Card>

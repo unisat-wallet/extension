@@ -1,14 +1,14 @@
+import { BigNumber } from 'bignumber.js';
+import { useEffect, useMemo, useState } from 'react';
+
 import { TickPriceItem } from '@/shared/types';
 import { Row, Text } from '@/ui/components';
-import type { ColorTypes } from '@/ui/theme/colors';
-import { Sizes, TextProps } from '@/ui/components/Text';
-import { useEffect, useMemo, useState } from 'react';
-import { BigNumber } from 'bignumber.js';
 import { BtcUsd } from '@/ui/components/BtcUsd';
+import { Sizes, TextProps } from '@/ui/components/Text';
+import type { ColorTypes } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
 
-function PriceChangePercent({ change, size }: { change: number, size?: Sizes; }) {
-
+function PriceChangePercent({ change, size }: { change: number; size?: Sizes }) {
   if (change === 0) {
     return <Text text={'0%'} color="textDim" size={size} />;
   }
@@ -19,32 +19,29 @@ function PriceChangePercent({ change, size }: { change: number, size?: Sizes; })
   return <Text text={`${changePercent}%`} color={color} size={size} />;
 }
 
-export function TickPriceChange(props: {
-  price: TickPriceItem | undefined,
-  color?: ColorTypes;
-  size?: Sizes;
-}) {
+export function TickPriceChange(props: { price: TickPriceItem | undefined; color?: ColorTypes; size?: Sizes }) {
   const { price, color = 'textDim', size = 'xs' } = props;
 
-
-  return <Row>
-    <BtcUsd sats={price?.curPrice || 0} color={color} size={size} {...props} />
-    <PriceChangePercent change={price?.changePercent || 0} size={size} />
-  </Row>;
+  return (
+    <Row>
+      <BtcUsd sats={price?.curPrice || 0} color={color} size={size} {...props} />
+      <PriceChangePercent change={price?.changePercent || 0} size={size} />
+    </Row>
+  );
 }
 
-export function TickUsd(props: {
-  balance: string,
-  price: TickPriceItem | undefined,
-  color?: ColorTypes;
-  size?: Sizes;
-} & TextProps) {
-
+export function TickUsd(
+  props: {
+    balance: string;
+    price: TickPriceItem | undefined;
+    color?: ColorTypes;
+    size?: Sizes;
+  } & TextProps
+) {
   const { balance, price, color = 'textDim', size = 'xs' } = props;
 
   const sats = useMemo(() => {
-    if (!price)
-      return 0;
+    if (!price) return 0;
 
     return new BigNumber(balance).multipliedBy(price.curPrice).toNumber();
   }, []);
@@ -52,13 +49,21 @@ export function TickUsd(props: {
   return <BtcUsd sats={sats} color={color} size={size} {...props} />;
 }
 
-export function TickUsdWithoutPrice(props: {
-  tick: string,
-  balance: string,
-  type: 'runes' | 'brc20',
-  color?: ColorTypes;
-  size?: Sizes;
-} & TextProps) {
+export enum TokenType {
+  BRC20 = 'brc20',
+  CAT20 = 'CAT20',
+  RUNES = 'runes'
+}
+
+export function TickUsdWithoutPrice(
+  props: {
+    tick: string;
+    balance: string;
+    type: TokenType;
+    color?: ColorTypes;
+    size?: Sizes;
+  } & TextProps
+) {
   const { tick, balance, type, color = 'textDim', size = 'xs' } = props;
 
   const wallet = useWallet();
@@ -70,26 +75,48 @@ export function TickUsdWithoutPrice(props: {
     setShown(false);
 
     if (tick) {
-      (type === 'brc20' ? wallet.getBrc20sPrice : wallet.getRunesPrice)([tick]).then(priceMap => {
-        setPrice(priceMap[tick]);
-        setShown(true);
-      }).catch(() => {
-        setShown(false);
-      });
+      if (type === TokenType.BRC20) {
+        wallet
+          .getBrc20sPrice([tick])
+          .then((priceMap) => {
+            setPrice(priceMap[tick]);
+            setShown(true);
+          })
+          .catch(() => {
+            setShown(false);
+          });
+      } else if (type === TokenType.RUNES) {
+        wallet
+          .getRunesPrice([tick])
+          .then((priceMap) => {
+            setPrice(priceMap[tick]);
+            setShown(true);
+          })
+          .catch(() => {
+            setShown(false);
+          });
+      } else if (type === TokenType.CAT20) {
+        wallet
+          .getCAT20sPrice([tick])
+          .then((priceMap) => {
+            setPrice(priceMap[tick]);
+            setShown(true);
+          })
+          .catch(() => {
+            setShown(false);
+          });
+      }
     }
   }, [tick]);
 
-
   const sats = useMemo(() => {
-    if (!price)
-      return 0;
+    if (!price) return 0;
 
     return new BigNumber(balance).multipliedBy(price.curPrice).toNumber();
   }, [price, balance]);
 
   // if api call is failed, don't show anything
-  if (!shown)
-    return <></>;
+  if (!shown) return <></>;
 
   return <BtcUsd sats={sats} color={color} size={size} {...props} />;
 }

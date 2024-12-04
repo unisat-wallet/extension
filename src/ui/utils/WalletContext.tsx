@@ -229,6 +229,7 @@ export interface WalletController {
   getCoinPrice(): Promise<CoinPrice>;
   getBrc20sPrice(ticks: string[]): Promise<{ [tick: string]: TickPriceItem }>;
   getRunesPrice(ticks: string[]): Promise<{ [tick: string]: TickPriceItem }>;
+  getCAT20sPrice(tokenIds: string[]): Promise<{ [tokenId: string]: TickPriceItem }>;
 
   setEditingKeyring(keyringIndex: number): Promise<void>;
   getEditingKeyring(): Promise<WalletKeyring>;
