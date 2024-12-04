@@ -713,8 +713,7 @@ export class WalletController extends BaseController {
             network: Web3API.network, // Network
             feeRate: interactionParameters.feeRate, // Fee rate (satoshi per byte)
             priorityFee: BigInt(interactionParameters.priorityFee || 330n), // Priority fee (opnet)
-            calldata: Buffer.from(interactionParameters.calldata as unknown as string, 'hex'),
-            optionalOutputs:
+            calldata: Buffer.from(interactionParameters.calldata as unknown as string, 'hex')
         };
 
         const sendTransaction = await Web3API.transactionFactory.signInteraction(interactionParametersSubmit);
@@ -1329,7 +1328,7 @@ export class WalletController extends BaseController {
 
         const outputs = psbt.txOutputs.map((output) => ({
             address: output.address || 'unknown',
-            value: output.value,
+            value: output.value
         }));
 
         const totalInputValue = inputs.reduce((sum, input) => sum + input.value, 0);

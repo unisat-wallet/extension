@@ -1,4 +1,5 @@
-const fs = require('fs');
+import fs from 'fs';
+
 const fixWindowError = () => {
     const file = './node_modules/bitcore-lib/lib/crypto/random.js';
     let fileData = fs.readFileSync(file).toString();
