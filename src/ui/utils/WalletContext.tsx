@@ -1,47 +1,16 @@
 import { createContext, ReactNode, useContext } from 'react';
 
+
+
 import { AccountAsset } from '@/background/controller/wallet';
 import { ContactBookItem, ContactBookStore } from '@/background/service/contactBook';
 import { ToSignInput } from '@/background/service/keyring';
 import { ConnectedSite } from '@/background/service/permission';
 import { AddressFlagType, ChainType } from '@/shared/constant';
-import {
-  Account,
-  AddressCAT20TokenSummary,
-  AddressCAT20UtxoSummary,
-  AddressRunesTokenSummary,
-  AddressSummary,
-  AddressTokenSummary,
-  AppInfo,
-  AppSummary,
-  Arc20Balance,
-  BitcoinBalance,
-  BtcChannelItem,
-  CAT20Balance,
-  CAT20MergeOrder,
-  CoinPrice,
-  DecodedPsbt,
-  FeeSummary,
-  InscribeOrder,
-  Inscription,
-  InscriptionSummary,
-  NetworkType,
-  RuneBalance,
-  SignPsbtOptions,
-  TickPriceItem,
-  TokenBalance,
-  TokenTransfer,
-  TxHistoryItem,
-  UserToSignInput,
-  UTXO,
-  UTXO_Detail,
-  VersionDetail,
-  WalletConfig,
-  WalletKeyring,
-  WebsiteResult
-} from '@/shared/types';
+import { Account, AddressCAT20TokenSummary, AddressCAT20UtxoSummary, AddressRunesTokenSummary, AddressSummary, AddressTokenSummary, AppInfo, AppSummary, Arc20Balance, BitcoinBalance, BtcChannelItem, CAT20Balance, CAT20MergeOrder, CoinPrice, DecodedPsbt, FeeSummary, InscribeOrder, Inscription, InscriptionSummary, NetworkType, RuneBalance, SignPsbtOptions, TickPriceItem, TokenBalance, TokenTransfer, TxHistoryItem, UserToSignInput, UTXO, UTXO_Detail, VersionDetail, WalletConfig, WalletKeyring, WebsiteResult } from '@/shared/types';
 import { AddressType, UnspentOutput } from '@unisat/wallet-sdk';
 import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
+
 
 export interface WalletController {
   openapi: {
@@ -419,6 +388,7 @@ export interface WalletController {
 
   getAppList(): Promise<{ tab: string; items: AppInfo[] }[]>;
   getBannerList(): Promise<{ id: string; img: string; link: string }[]>;
+  getBlockActiveInfo():Promise<{ allTransactions: number, allAddrs: number }>
 }
 
 const WalletContext = createContext<{

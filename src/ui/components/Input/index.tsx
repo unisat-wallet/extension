@@ -5,10 +5,12 @@ import React, { CSSProperties, useEffect, useState } from 'react';
 import { SAFE_DOMAIN_CONFIRMATION } from '@/shared/constant';
 import { getSatsName } from '@/shared/lib/satsname-utils';
 import { Inscription } from '@/shared/types';
+import { Button } from '@/ui/components';
 import { getAddressTips, useChain } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { spacing } from '@/ui/theme/spacing';
 import { useWallet } from '@/ui/utils';
+import { ArrowRightOutlined, SearchOutlined } from '@ant-design/icons';
 
 import { AccordingInscription } from '../AccordingInscription';
 import { useTools } from '../ActionComponent';
@@ -42,6 +44,7 @@ export interface InputProps {
   runesDecimal?: number;
   enableMax?: boolean;
   onMaxClick?: () => void;
+  onSearch?: () => void;
 }
 
 type Presets = keyof typeof $inputPresets;
@@ -49,7 +52,8 @@ const $inputPresets = {
   password: {},
   amount: {},
   address: {},
-  text: {}
+  text: {},
+  search: {}
 };
 
 const $baseContainerStyle: CSSProperties = {
@@ -364,6 +368,51 @@ export const AddressInput = (props: InputProps) => {
   );
 };
 
+function SearchInput(props: InputProps) {
+  const { placeholder, containerStyle, style: $inputStyleOverride, disabled, autoFocus,onSearch, ...rest } = props;
+  return (
+    <Row
+      style={Object.assign(
+        {},
+        $baseContainerStyle,
+        {
+          backgroundColor: '#2a2626',
+          border: '1px solid #C08F23',
+          borderRadius: 8,
+          padding:0,
+          alignSelf: 'stretch'
+        },
+        containerStyle
+      )}>
+      <Row py={'md'} px={'lg'} full itemsCenter>
+        <SearchOutlined style={{ color: '#888' }} />
+        <input
+          placeholder={placeholder}
+          type={'text'}
+          disabled={disabled}
+          autoFocus={autoFocus}
+          style={Object.assign({}, $baseInputStyle, $inputStyleOverride, disabled ? { color: colors.textDim } : {})}
+          {...rest}
+        />
+      </Row>
+      <Row
+        onClick={onSearch}
+        itemsCenter
+        justifyCenter
+        clickable
+        style={{
+          cursor:'pointer',
+          height:42.5,
+          width:42.5,
+          borderLeft:'1px solid #C08F23',
+        }}
+      >
+        <ArrowRightOutlined style={{ color: 'rgba(255,255,255,.85)' }} />
+      </Row>
+    </Row>
+  );
+}
+
 function TextInput(props: InputProps) {
   const { placeholder, containerStyle, style: $inputStyleOverride, disabled, autoFocus, ...rest } = props;
   return (
@@ -389,6 +438,8 @@ export function Input(props: InputProps) {
     return <AmountInput {...props} />;
   } else if (preset === 'address') {
     return <AddressInput {...props} />;
+  } else if (preset === 'search') {
+    return <SearchInput {...props} />;
   } else {
     return <TextInput {...props} />;
   }

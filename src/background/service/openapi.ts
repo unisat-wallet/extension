@@ -1,33 +1,15 @@
 import randomstring from 'randomstring';
 
+
+
 import { createPersistStore } from '@/background/utils';
 import { CHAINS_MAP, CHANNEL, VERSION } from '@/shared/constant';
-import {
-  AddressRunesTokenSummary,
-  AddressSummary,
-  AddressTokenSummary,
-  AppInfo,
-  AppSummary,
-  Arc20Balance,
-  BitcoinBalance,
-  CAT20Balance,
-  CoinPrice,
-  DecodedPsbt,
-  FeeSummary,
-  InscribeOrder,
-  Inscription,
-  InscriptionSummary,
-  RuneBalance,
-  TickPriceItem,
-  TokenBalance,
-  TokenTransfer,
-  UTXO,
-  UTXO_Detail,
-  VersionDetail,
-  WalletConfig
-} from '@/shared/types';
+import { AddressRunesTokenSummary, AddressSummary, AddressTokenSummary, AppInfo, AppSummary, Arc20Balance, BitcoinBalance, CAT20Balance, CoinPrice, DecodedPsbt, FeeSummary, InscribeOrder, Inscription, InscriptionSummary, RuneBalance, TickPriceItem, TokenBalance, TokenTransfer, UTXO, UTXO_Detail, VersionDetail, WalletConfig } from '@/shared/types';
+
+
 
 import { preferenceService } from '.';
+
 
 interface OpenApiStore {
   deviceId: string;
@@ -185,6 +167,10 @@ export class OpenApiService {
     }[]
   > {
     return this.httpGet('/v5/discovery/banner-list', {});
+  }
+
+  async getBlockActiveInfo(): Promise<{ allTransactions: number; allAddrs: number }> {
+    return this.httpGet('/v5/default/block-active-info', {});
   }
 
   async getAddressBalance(address: string): Promise<BitcoinBalance> {

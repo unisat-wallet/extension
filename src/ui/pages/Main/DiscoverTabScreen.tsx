@@ -1,12 +1,14 @@
 import { Carousel, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 
+import { ChainType } from '@/shared/constant';
 import { AppInfo } from '@/shared/types';
 import { Card, Column, Content, Footer, Header, Image, Layout, Row, Text } from '@/ui/components';
 import { Empty } from '@/ui/components/Empty';
 import { NavTabBar } from '@/ui/components/NavTabBar';
 import { SwitchNetworkBar } from '@/ui/components/SwitchNetworkBar';
 import { TabBar } from '@/ui/components/TabBar';
+import { SearchBar } from '@/ui/pages/Main/DiscoverTabComponents/SearchBar';
 import { useReadApp } from '@/ui/state/accounts/hooks';
 import { useAppList, useBannerList, useLastFetchInfo } from '@/ui/state/discovery/hooks';
 import { discoveryActions } from '@/ui/state/discovery/reducer';
@@ -151,13 +153,19 @@ export default function DiscoverTabScreen() {
         type="style2"
         LeftComponent={
           <Row>
-            <Text preset="title-bold" text={'Explore the Latest'} />
+            <Text preset="title-bold" text={'DApp Center'} />
           </Row>
         }
         RightComponent={<SwitchNetworkBar />}
       />
       <Content>
         <Column justifyCenter>
+          {chainType === ChainType.FRACTAL_BITCOIN_MAINNET && (
+            <>
+              <SearchBar />
+              <Row mt="md" />
+            </>
+          )}
           <Carousel autoplay>
             {bannerList.map((v) => (
               <BannerItem key={v.img} img={v.img} link={v.link} />

@@ -1,63 +1,27 @@
-import {
-  contactBookService,
-  keyringService,
-  notificationService,
-  openapiService,
-  permissionService,
-  preferenceService,
-  sessionService
-} from '@/background/service';
+import { contactBookService, keyringService, notificationService, openapiService, permissionService, preferenceService, sessionService } from '@/background/service';
 import i18n from '@/background/service/i18n';
 import { DisplayedKeyring, Keyring } from '@/background/service/keyring';
-import {
-  ADDRESS_TYPES,
-  AUTO_LOCKTIMES,
-  AddressFlagType,
-  BRAND_ALIAN_TYPE_TEXT,
-  CHAINS_ENUM,
-  CHAINS_MAP,
-  COIN_NAME,
-  COIN_SYMBOL,
-  ChainType,
-  DEFAULT_LOCKTIME_ID,
-  EVENTS,
-  KEYRING_TYPE,
-  KEYRING_TYPES,
-  NETWORK_TYPES,
-  UNCONFIRMED_HEIGHT
-} from '@/shared/constant';
+import { ADDRESS_TYPES, AddressFlagType, AUTO_LOCKTIMES, BRAND_ALIAN_TYPE_TEXT, CHAINS_ENUM, CHAINS_MAP, ChainType, COIN_NAME, COIN_SYMBOL, DEFAULT_LOCKTIME_ID, EVENTS, KEYRING_TYPE, KEYRING_TYPES, NETWORK_TYPES, UNCONFIRMED_HEIGHT } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 import { runesUtils } from '@/shared/lib/runes-utils';
-import {
-  Account,
-  AddressType,
-  AddressUserToSignInput,
-  BitcoinBalance,
-  NetworkType,
-  PublicKeyUserToSignInput,
-  SignPsbtOptions,
-  ToSignInput,
-  UTXO,
-  WalletKeyring
-} from '@/shared/types';
+import { Account, AddressType, AddressUserToSignInput, BitcoinBalance, NetworkType, PublicKeyUserToSignInput, SignPsbtOptions, ToSignInput, UTXO, WalletKeyring } from '@/shared/types';
 import { checkAddressFlag, getChainInfo } from '@/shared/utils';
-import { UTXO_DUST, UnspentOutput, txHelpers } from '@unisat/wallet-sdk';
+import { txHelpers, UnspentOutput, UTXO_DUST } from '@unisat/wallet-sdk';
 import { isValidAddress, publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
-import { ECPair, bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
+import { bitcoin, ECPair } from '@unisat/wallet-sdk/lib/bitcoin-core';
 import { KeystoneKeyring } from '@unisat/wallet-sdk/lib/keyring';
-import {
-  genPsbtOfBIP322Simple,
-  getSignatureFromPsbtOfBIP322Simple,
-  signMessageOfBIP322Simple
-} from '@unisat/wallet-sdk/lib/message';
+import { genPsbtOfBIP322Simple, getSignatureFromPsbtOfBIP322Simple, signMessageOfBIP322Simple } from '@unisat/wallet-sdk/lib/message';
 import { toPsbtNetwork } from '@unisat/wallet-sdk/lib/network';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 import { toXOnly } from '@unisat/wallet-sdk/lib/utils';
+
+
 
 import { ContactBookItem } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';
 import { ConnectedSite } from '../service/permission';
 import BaseController from './base';
+
 
 const stashKeyrings: Record<string, Keyring> = {};
 export type AccountAsset = {
@@ -2121,6 +2085,10 @@ export class WalletController extends BaseController {
   getBannerList = async () => {
     const data = await openapiService.getBannerList();
     return data;
+  };
+
+  getBlockActiveInfo = () => {
+    return openapiService.getBlockActiveInfo();
   };
 }
 
