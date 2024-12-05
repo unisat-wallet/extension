@@ -43,7 +43,6 @@ import {
 } from '@btc-vision/transaction';
 
 import { RouteTypes, useNavigate } from '../MainRoute';
-import { ConfirmUnWrap } from './ConfirmUnWrap';
 
 BigNumber.config({ EXPONENTIAL_AT: 256 });
 
@@ -108,7 +107,6 @@ const waitForTransaction = async (
 
 export default function TxOpnetConfirmScreen() {
     const navigate = useNavigate();
-    const [acceptWrap, setAcceptWrap] = useState<boolean>(false);
     const [acceptWrapMessage, setAcceptWrapMessage] = useState<string>('');
     const [openAcceptbar, setAcceptBar] = useState<boolean>(false);
     const [openLoading, setOpenLoading] = useState<boolean>(false);
@@ -589,6 +587,7 @@ export default function TxOpnetConfirmScreen() {
                             setDisabled(true);
                             switch (rawTxInfo.action) {
                                 case Action.Swap:
+                                    console.log('Swap parameters:', rawTxInfo);
                                     if (!('amountIn' in rawTxInfo)) {
                                         throw new Error('Invalid swap parameters');
                                     }
@@ -631,16 +630,6 @@ export default function TxOpnetConfirmScreen() {
                     />
                 </Row>
             </Footer>
-            {openAcceptbar && (
-                <ConfirmUnWrap
-                    onClose={() => {
-                        setDisabled(false);
-                        setAcceptBar(false);
-                    }}
-                    acceptWrapMessage={acceptWrapMessage}
-                    setAcceptWrap={setAcceptWrap}
-                />
-            )}
             {openLoading && (
                 <BottomModal
                     onClose={() => {

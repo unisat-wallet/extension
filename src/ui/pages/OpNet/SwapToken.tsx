@@ -8,10 +8,9 @@ import {
     OP_20_ABI
 } from 'opnet';
 import { AddressesInfo } from 'opnet/src/providers/interfaces/PublicKeyInfo';
-import { CSSProperties, useMemo, useState } from 'react';
+import { CSSProperties, useState } from 'react';
 
 import { Account, OPTokenInfo } from '@/shared/types';
-import { expandToDecimals } from '@/shared/utils';
 import Web3API from '@/shared/web3/Web3API';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { Button, Column, Content, Header, Icon, Input, Layout, Row, Select, Text } from '@/ui/components';
@@ -19,7 +18,6 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { BaseView } from '@/ui/components/BaseView';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -27,6 +25,7 @@ import '@btc-vision/transaction';
 import { Address } from '@btc-vision/transaction';
 
 import { RouteTypes, useNavigate } from '../MainRoute';
+import { Action, Features, SwapParameters } from '@/shared/interfaces/RawTxParameters';
 
 interface ItemData {
     key: string;
@@ -36,13 +35,6 @@ interface ItemData {
 BigNumber.config({ EXPONENTIAL_AT: 256 });
 
 export default function Swap() {
-    //const { state } = useLocation();
-    //const props = state satisfies {
-    //     OpNetBalance: OPTokenInfo;
-    //};
-
-    //const OpNetBalance = props.OpNetBalance;
-
     const [loading, setLoading] = useState(true);
     const [switchOptions, setSwitchOptions] = useState<OPTokenInfo[]>([]);
     const [selectedOption, setSelectedOption] = useState<OPTokenInfo | null>(null);
@@ -54,25 +46,14 @@ export default function Swap() {
     const [feeRate, setFeeRate] = useState(5);
     const [inputAmount, setInputAmount] = useState<string>('0');
     const [outputAmount, setOutPutAmount] = useState<string>('0');
-    const keyring = useCurrentKeyring();
 
     const wallet = useWallet();
     const currentAccount = useCurrentAccount();
     const tools = useTools();
 
-    const items = useMemo(() => {
-        const _items: ItemData[] = keyring.accounts.map((v) => {
-            return {
-                key: v.address,
-                account: v
-            };
-        });
-        return _items;
-    }, []);
-
     const handleSelect = async (option: OPTokenInfo) => {
         if (option.address == selectedOptionOutput?.address) {
-            tools.toastError("Token In and Token Out can't be the same");
+            tools.toastError('Token In and Token Out can\'t be the same');
             return;
         }
         await handleInputChange(inputAmount);
@@ -81,7 +62,7 @@ export default function Swap() {
 
     const handleSelectOutput = async (option: OPTokenInfo) => {
         if (option.address == selectedOption?.address) {
-            tools.toastError("Token In and Token Out can't be the same");
+            tools.toastError('Token In and Token Out can\'t be the same');
             return;
         }
 
@@ -143,7 +124,7 @@ export default function Swap() {
 
                         setOutPutAmount(
                             BitcoinUtils.formatUnits(
-                                getData.properties.amountsOut[0][1],
+                                getData.properties.amountsOut[1],
                                 selectedOptionOutput.divisibility
                             )
                         );
@@ -349,39 +330,31 @@ export default function Swap() {
                     icon="swap"
                     style={$styleButton}
                     onClick={() => {
+                        if (!selectedOption || !selectedOptionOutput) {
+                            tools.toastError('Please select tokens');
+                            return;
+                        }
+
+                        const event: SwapParameters = {
+                            amountIn: Number(inputAmount),
+                            amountOut: Number(outputAmount),
+                            tokenIn: selectedOption?.address || '',
+                            tokenOut: selectedOptionOutput?.address || '',
+                            slippageTolerance: Number(slippageTolerance),
+
+                            deadline: '1000000000000',
+                            tokens: [selectedOption, selectedOptionOutput],
+                            feeRate: feeRate,
+                            features: {
+                                [Features.rbf]: true
+                            },
+                            priorityFee: 0n,
+                            header: `Swap ${selectedOption?.symbol} for ${selectedOptionOutput?.symbol}`,
+                            action: Action.Swap
+                        };
+
                         navigate(RouteTypes.TxOpnetConfirmScreen, {
-                            rawTxInfo: {
-                                items: items,
-                                contractAddress: [selectedOption?.address, selectedOptionOutput?.address],
-                                account: currentAccount, // replace with actual account
-                                inputAmount: [inputAmount, outputAmount], // replace with actual inputAmount
-                                address: selectedOptionOutput?.address, // replace with actual address
-                                feeRate: feeRate,
-                                priorityFee: BigInt(OpnetRateInputVal), // replace with actual OpnetRateInputVal
-                                header: 'Swap Token', // replace with actual header
-                                networkFee: feeRate,
-                                slippageTolerance: slippageTolerance, // replace with actual networkFee
-                                features: {
-                                    rbf: false // replace with actual rbf value
-                                },
-                                inputInfos: [], // replace with actual inputInfos
-                                isToSign: false, // replace with acdetual isToSign value
-                                opneTokens: [
-                                    {
-                                        amount: expandToDecimals(inputAmount, selectedOption?.divisibility ?? 8),
-                                        divisibility: selectedOption?.divisibility,
-                                        spacedRune: selectedOption?.name,
-                                        symbol: selectedOption?.symbol
-                                    },
-                                    {
-                                        amount: expandToDecimals(outputAmount, selectedOptionOutput?.divisibility ?? 8),
-                                        divisibility: selectedOptionOutput?.divisibility,
-                                        spacedRune: selectedOptionOutput?.name,
-                                        symbol: selectedOptionOutput?.symbol
-                                    }
-                                ],
-                                action: 'swap' // replace with actual opneTokens
-                            }
+                            rawTxInfo: event
                         });
                     }}
                     full
