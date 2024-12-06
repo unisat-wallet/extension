@@ -1,5 +1,11 @@
 # UniSat Wallet Release Notes
 
+## v1.5.2
+
+- Added display of USD prices for FB, BRC20, Runes, CAT20 in fractal
+- New discovery page
+- Fix the issue where signing individually in a batch may result in a 'network not match' error.
+
 ## v1.5.1
 
 - During batch signing, for whitelisted websites, one-click signing is allowed.
