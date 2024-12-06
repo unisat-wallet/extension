@@ -1,29 +1,29 @@
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { RuneBalance, TickPriceItem } from '@/shared/types';
+import { TickPriceChange, TickUsd } from '@/ui/components/TickUsd';
+import { showLongNumber } from '@/ui/utils';
 
 import { Card } from '../Card';
 import { Column } from '../Column';
 import { Row } from '../Row';
 import { RunesTicker } from '../RunesTicker';
 import { Text } from '../Text';
-import { showLongNumber } from '@/ui/utils';
-import { TickPriceChange, TickUsd } from '@/ui/components/TickUsd';
 
 export interface RunesBalanceCardProps {
   tokenBalance: RuneBalance;
   onClick?: () => void;
-  showPrice?: boolean,
-  price?: TickPriceItem
+  showPrice?: boolean;
+  price?: TickPriceItem;
 }
 
 export default function RunesBalanceCard(props: RunesBalanceCardProps) {
-  const { tokenBalance, onClick,showPrice,price } = props;
+  const { tokenBalance, onClick, showPrice, price } = props;
   const balance = runesUtils.toDecimalNumber(tokenBalance.amount, tokenBalance.divisibility);
   let str = balance.toString();
   if (balance.lt(0.0001)) {
     str = '<0.0001';
-  }else {
-    str = showLongNumber(balance.toString())
+  } else {
+    str = showLongNumber(balance.toString());
   }
   return (
     <Card
@@ -47,12 +47,12 @@ export default function RunesBalanceCard(props: RunesBalanceCardProps) {
             <Text text={tokenBalance.symbol} size="xs" mx="sm" />
           </Row>
         </Row>
-        {
-          showPrice && <Row justifyBetween mt={'xs'}>
+        {showPrice && price?.curPrice !== 0 && (
+          <Row justifyBetween mt={'xs'}>
             <TickPriceChange price={price} />
             <TickUsd price={price} balance={balance.toString()} />
           </Row>
-        }
+        )}
       </Column>
     </Card>
   );

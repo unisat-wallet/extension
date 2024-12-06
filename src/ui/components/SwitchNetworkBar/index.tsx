@@ -7,6 +7,7 @@ import { Card } from '../Card';
 import { Icon } from '../Icon';
 import { Image } from '../Image';
 import { Row } from '../Row';
+import { Text } from '../Text';
 
 export function SwitchNetworkBar() {
   const [switchChainModalVisible, setSwitchChainModalVisible] = useState(false);
@@ -28,6 +29,7 @@ export function SwitchNetworkBar() {
           setSwitchChainModalVisible(true);
         }}>
         <Image src={chain.icon} size={22} style={{}} />
+        <Text text={chain.iconLabel} color="white" size="xs" />
         <Icon icon="down" color="textDim" size={10} />
       </Row>
       {switchChainModalVisible && (

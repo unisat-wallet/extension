@@ -28,12 +28,12 @@ export function OrdinalsTab() {
     const items = [
       {
         key: OrdinalsAssetTabKey.ALL,
-        label: `ALL (${addressSummary.inscriptionCount})`,
+        label: `All (${addressSummary.inscriptionCount})`,
         children: <InscriptionList />
       },
       {
         key: OrdinalsAssetTabKey.BRC20,
-        label: `BRC-20 (${addressSummary.brc20Count})`,
+        label: `brc-20 (${addressSummary.brc20Count})`,
         children: <BRC20List />
       }
     ];
@@ -41,7 +41,7 @@ export function OrdinalsTab() {
     if (!chain.isFractal) {
       items.push({
         key: OrdinalsAssetTabKey.BRC20_5BYTE,
-        label: `BRC-20[5-byte] (${addressSummary.brc20Count5Byte || 0})`,
+        label: `brc-20[5-byte] (${addressSummary.brc20Count5Byte || 0})`,
         children: <BRC20List5Byte />
       });
     }

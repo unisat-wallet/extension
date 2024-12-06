@@ -4,7 +4,6 @@ import { useEffect, useState } from 'react';
 import { ChainType } from '@/shared/constant';
 import { AppInfo } from '@/shared/types';
 import { Card, Column, Content, Footer, Header, Image, Layout, Row, Text } from '@/ui/components';
-import { Empty } from '@/ui/components/Empty';
 import { NavTabBar } from '@/ui/components/NavTabBar';
 import { SwitchNetworkBar } from '@/ui/components/SwitchNetworkBar';
 import { TabBar } from '@/ui/components/TabBar';
@@ -25,7 +24,14 @@ function BannerItem({ img, link }: { img: string; link: string }) {
       onClick={() => {
         window.open(link);
       }}>
-      <Image src={img} width={300} height={98} />
+      <Image
+        src={img}
+        width={'100%'}
+        height={'auto'}
+        style={{
+          maxWidth: '512px'
+        }}
+      />
     </Row>
   );
 }
@@ -88,13 +94,15 @@ export default function DiscoverTabScreen() {
     if (lastFetchInfo.lasfFetchChainType === chainType && Date.now() - lastFetchInfo.lastFetchTime < 1000 * 60 * 1) {
       return;
     }
+    const fetchTime = Date.now();
     wallet
       .getBannerList()
       .then((data) => {
         dispatch(
           discoveryActions.setBannerList({
             bannerList: data,
-            chainType
+            chainType,
+            fetchTime
           })
         );
       })
@@ -102,7 +110,8 @@ export default function DiscoverTabScreen() {
         dispatch(
           discoveryActions.setBannerList({
             bannerList: [],
-            chainType
+            chainType,
+            fetchTime
           })
         );
       });
@@ -113,7 +122,8 @@ export default function DiscoverTabScreen() {
         dispatch(
           discoveryActions.setAppList({
             appList: data,
-            chainType
+            chainType,
+            fetchTime
           })
         );
       })
@@ -121,11 +131,12 @@ export default function DiscoverTabScreen() {
         dispatch(
           discoveryActions.setAppList({
             appList: [],
-            chainType
+            chainType,
+            fetchTime
           })
         );
       });
-  }, [chainType, lastFetchInfo]);
+  }, [chainType, lastFetchInfo.lasfFetchChainType, lastFetchInfo.lastFetchTime]);
 
   useEffect(() => {
     if (tabKey > appList.length - 1) {
@@ -147,6 +158,8 @@ export default function DiscoverTabScreen() {
     };
   });
 
+  const hasBanner = bannerList && bannerList.length > 0;
+
   return (
     <Layout>
       <Header
@@ -166,17 +179,17 @@ export default function DiscoverTabScreen() {
               <Row mt="md" />
             </>
           )}
-          <Carousel autoplay>
-            {bannerList.map((v) => (
-              <BannerItem key={v.img} img={v.img} link={v.link} />
-            ))}
-          </Carousel>
+          {hasBanner ? (
+            <Carousel autoplay>
+              {bannerList.map((v) => (
+                <BannerItem key={v.img} img={v.img} link={v.link} />
+              ))}
+            </Carousel>
+          ) : null}
 
-          <Row mt="md" />
+          {hasBanner ? <Row mt="md" /> : null}
 
-          {tabItems.length == 0 ? (
-            <Empty />
-          ) : (
+          {tabItems.length > 1 ? (
             <TabBar
               defaultActiveKey={tabKey}
               activeKey={tabKey}
@@ -186,7 +199,7 @@ export default function DiscoverTabScreen() {
                 setTabKey(key);
               }}
             />
-          )}
+          ) : null}
 
           {tabItems[tabKey] ? tabItems[tabKey].children : null}
         </Column>

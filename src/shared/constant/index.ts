@@ -223,6 +223,7 @@ export const NETWORK_TYPES = [
 type TypeChain = {
   enum: ChainType;
   label: string;
+  iconLabel: string;
   icon: string;
   unit: string;
   networkType: NetworkType;
@@ -242,7 +243,8 @@ type TypeChain = {
 export const CHAINS_MAP: { [key: string]: TypeChain } = {
   [ChainType.BITCOIN_MAINNET]: {
     enum: ChainType.BITCOIN_MAINNET,
-    label: 'Bitcoin Mainnet',
+    label: 'Bitcoin',
+    iconLabel: 'Bitcoin',
     icon: './images/artifacts/bitcoin-mainnet.png',
     unit: 'BTC',
     networkType: NetworkType.MAINNET,
@@ -258,6 +260,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
   [ChainType.BITCOIN_TESTNET]: {
     enum: ChainType.BITCOIN_TESTNET,
     label: 'Bitcoin Testnet',
+    iconLabel: 'Bitcoin',
     icon: './images/artifacts/bitcoin-testnet.svg',
     unit: 'tBTC',
     networkType: NetworkType.TESTNET,
@@ -273,6 +276,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
   [ChainType.BITCOIN_TESTNET4]: {
     enum: ChainType.BITCOIN_TESTNET4,
     label: 'Bitcoin Testnet4 (Beta)',
+    iconLabel: 'Bitcoin',
     icon: './images/artifacts/bitcoin-testnet.svg',
     unit: 'tBTC',
     networkType: NetworkType.TESTNET,
@@ -288,6 +292,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
   [ChainType.BITCOIN_SIGNET]: {
     enum: ChainType.BITCOIN_SIGNET,
     label: 'Bitcoin Signet',
+    iconLabel: 'Bitcoin',
     icon: './images/artifacts/bitcoin-signet.svg',
     unit: 'sBTC',
     networkType: NetworkType.TESTNET,
@@ -302,7 +307,8 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
   },
   [ChainType.FRACTAL_BITCOIN_MAINNET]: {
     enum: ChainType.FRACTAL_BITCOIN_MAINNET,
-    label: 'Fractal Bitcoin Mainnet',
+    label: 'Fractal Bitcoin',
+    iconLabel: 'Fractal',
     icon: './images/artifacts/fractal-mainnet.svg',
     unit: 'FB',
     networkType: NetworkType.MAINNET,
@@ -321,6 +327,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
   [ChainType.FRACTAL_BITCOIN_TESTNET]: {
     enum: ChainType.FRACTAL_BITCOIN_TESTNET,
     label: 'Fractal Bitcoin Testnet',
+    iconLabel: 'Fractal',
     icon: './images/artifacts/fractal-testnet.svg',
     unit: 'tFB',
     networkType: NetworkType.MAINNET,

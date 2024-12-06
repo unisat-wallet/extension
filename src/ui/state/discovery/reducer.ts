@@ -29,13 +29,14 @@ const slice = createSlice({
         payload: {
           bannerList: { id: string; img: string; link: string }[];
           chainType: ChainType;
+          fetchTime: number;
         };
       }
     ) {
       const { payload } = action;
       state.bannerList = payload.bannerList;
       state.lastFetchChainType = payload.chainType;
-      state.lastFetchTime = Date.now();
+      state.lastFetchTime = payload.fetchTime;
     },
     setAppList(
       state,
@@ -43,13 +44,14 @@ const slice = createSlice({
         payload: {
           appList: { tab: string; items: AppInfo[] }[];
           chainType: ChainType;
+          fetchTime: number;
         };
       }
     ) {
       const { payload } = action;
       state.appList = payload.appList;
       state.lastFetchChainType = payload.chainType;
-      state.lastFetchTime = Date.now();
+      state.lastFetchTime = payload.fetchTime;
     }
   }
 });

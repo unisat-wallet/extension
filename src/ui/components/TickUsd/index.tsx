@@ -80,7 +80,9 @@ export function TickUsdWithoutPrice(
           .getBrc20sPrice([tick])
           .then((priceMap) => {
             setPrice(priceMap[tick]);
-            setShown(true);
+            if (priceMap[tick].curPrice > 0) {
+              setShown(true);
+            }
           })
           .catch(() => {
             setShown(false);
@@ -90,7 +92,9 @@ export function TickUsdWithoutPrice(
           .getRunesPrice([tick])
           .then((priceMap) => {
             setPrice(priceMap[tick]);
-            setShown(true);
+            if (priceMap[tick].curPrice > 0) {
+              setShown(true);
+            }
           })
           .catch(() => {
             setShown(false);
@@ -100,7 +104,9 @@ export function TickUsdWithoutPrice(
           .getCAT20sPrice([tick])
           .then((priceMap) => {
             setPrice(priceMap[tick]);
-            setShown(true);
+            if (priceMap[tick].curPrice > 0) {
+              setShown(true);
+            }
           })
           .catch(() => {
             setShown(false);
