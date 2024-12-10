@@ -995,6 +995,11 @@ export class WalletController extends BaseController {
 
         const chainInfo = getChainInfo(chainType);
         sessionService.broadcastEvent<SessionEvent.chainChanged>(SessionEvent.chainChanged, chainInfo);
+        eventBus.emit(EVENTS.broadcastToUI, {
+            method: 'chainChanged',
+            params: chainInfo
+        });
+        
 
         const network = this.getLegacyNetworkName();
         sessionService.broadcastEvent<SessionEvent.networkChanged>(SessionEvent.networkChanged, {
