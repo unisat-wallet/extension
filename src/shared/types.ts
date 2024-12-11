@@ -517,3 +517,24 @@ export interface WebsiteResult {
   warning: string;
   allowQuickMultiSign: boolean;
 }
+
+export interface CAT721Balance {
+  collectionId: string;
+  name: string;
+  count: number;
+  previewLocalIds: string[];
+}
+
+export interface CAT721CollectionInfo {
+  collectionId: string;
+  name: string;
+  symbol: string;
+  max: string;
+  premine: string;
+  description: string;
+}
+
+export interface AddressCAT721CollectionSummary {
+  collectionInfo: CAT721CollectionInfo;
+  localIds: string[];
+}

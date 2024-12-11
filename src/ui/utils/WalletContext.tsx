@@ -1,16 +1,49 @@
 import { createContext, ReactNode, useContext } from 'react';
 
-
-
 import { AccountAsset } from '@/background/controller/wallet';
 import { ContactBookItem, ContactBookStore } from '@/background/service/contactBook';
 import { ToSignInput } from '@/background/service/keyring';
 import { ConnectedSite } from '@/background/service/permission';
 import { AddressFlagType, ChainType } from '@/shared/constant';
-import { Account, AddressCAT20TokenSummary, AddressCAT20UtxoSummary, AddressRunesTokenSummary, AddressSummary, AddressTokenSummary, AppInfo, AppSummary, Arc20Balance, BitcoinBalance, BtcChannelItem, CAT20Balance, CAT20MergeOrder, CoinPrice, DecodedPsbt, FeeSummary, InscribeOrder, Inscription, InscriptionSummary, NetworkType, RuneBalance, SignPsbtOptions, TickPriceItem, TokenBalance, TokenTransfer, TxHistoryItem, UserToSignInput, UTXO, UTXO_Detail, VersionDetail, WalletConfig, WalletKeyring, WebsiteResult } from '@/shared/types';
+import {
+  Account,
+  AddressCAT20TokenSummary,
+  AddressCAT20UtxoSummary,
+  AddressCAT721CollectionSummary,
+  AddressRunesTokenSummary,
+  AddressSummary,
+  AddressTokenSummary,
+  AppInfo,
+  AppSummary,
+  Arc20Balance,
+  BitcoinBalance,
+  BtcChannelItem,
+  CAT20Balance,
+  CAT20MergeOrder,
+  CAT721Balance,
+  CoinPrice,
+  DecodedPsbt,
+  FeeSummary,
+  InscribeOrder,
+  Inscription,
+  InscriptionSummary,
+  NetworkType,
+  RuneBalance,
+  SignPsbtOptions,
+  TickPriceItem,
+  TokenBalance,
+  TokenTransfer,
+  TxHistoryItem,
+  UserToSignInput,
+  UTXO,
+  UTXO_Detail,
+  VersionDetail,
+  WalletConfig,
+  WalletKeyring,
+  WebsiteResult
+} from '@/shared/types';
 import { AddressType, UnspentOutput } from '@unisat/wallet-sdk';
 import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
-
 
 export interface WalletController {
   openapi: {
@@ -388,7 +421,28 @@ export interface WalletController {
 
   getAppList(): Promise<{ tab: string; items: AppInfo[] }[]>;
   getBannerList(): Promise<{ id: string; img: string; link: string }[]>;
-  getBlockActiveInfo():Promise<{ allTransactions: number, allAddrs: number }>
+  getBlockActiveInfo(): Promise<{ allTransactions: number; allAddrs: number }>;
+
+  getCAT721List(
+    address: string,
+    currentPage: number,
+    pageSize: number
+  ): Promise<{ currentPage: number; pageSize: number; total: number; list: CAT721Balance[] }>;
+
+  getAddressCAT721CollectionSummary(address: string, collectionId: string): Promise<AddressCAT721CollectionSummary>;
+
+  transferCAT721Step1(
+    to: string,
+    collectionId: string,
+    localId: string,
+    feeRate: number
+  ): Promise<{ id: string; commitTx: string; toSignInputs: UserToSignInput[]; feeRate: number }>;
+  transferCAT721Step2(
+    transferId: string,
+    commitTx: string,
+    toSignInputs: UserToSignInput[]
+  ): Promise<{ revealTx: string; toSignInputs: UserToSignInput[] }>;
+  transferCAT721Step3(transferId: string, revealTx: string, toSignInputs: UserToSignInput[]): Promise<{ txid: string }>;
 }
 
 const WalletContext = createContext<{

@@ -27,6 +27,11 @@ export function useAtomicalsAssetTabKey() {
   return uiState.atomicalsAssetTabKey;
 }
 
+export function useCATAssetTabKey() {
+  const uiState = useUIState();
+  return uiState.catAssetTabKey;
+}
+
 export function useUiTxCreateScreen() {
   const uiState = useUIState();
   return uiState.uiTxCreateScreen;
@@ -84,7 +89,7 @@ export function useSupportedAssets() {
     const addressType = getAddressType(currentAddress, networkType);
     if (addressType == AddressType.P2TR || addressType == AddressType.P2WPKH) {
       assets.CAT20 = true;
-      assetTabKeys.push(AssetTabKey.CAT20);
+      assetTabKeys.push(AssetTabKey.CAT);
     }
   }
 

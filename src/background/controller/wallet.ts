@@ -1,27 +1,63 @@
-import { contactBookService, keyringService, notificationService, openapiService, permissionService, preferenceService, sessionService } from '@/background/service';
+import {
+  contactBookService,
+  keyringService,
+  notificationService,
+  openapiService,
+  permissionService,
+  preferenceService,
+  sessionService
+} from '@/background/service';
 import i18n from '@/background/service/i18n';
 import { DisplayedKeyring, Keyring } from '@/background/service/keyring';
-import { ADDRESS_TYPES, AddressFlagType, AUTO_LOCKTIMES, BRAND_ALIAN_TYPE_TEXT, CHAINS_ENUM, CHAINS_MAP, ChainType, COIN_NAME, COIN_SYMBOL, DEFAULT_LOCKTIME_ID, EVENTS, KEYRING_TYPE, KEYRING_TYPES, NETWORK_TYPES, UNCONFIRMED_HEIGHT } from '@/shared/constant';
+import {
+  ADDRESS_TYPES,
+  AddressFlagType,
+  AUTO_LOCKTIMES,
+  BRAND_ALIAN_TYPE_TEXT,
+  CHAINS_ENUM,
+  CHAINS_MAP,
+  ChainType,
+  COIN_NAME,
+  COIN_SYMBOL,
+  DEFAULT_LOCKTIME_ID,
+  EVENTS,
+  KEYRING_TYPE,
+  KEYRING_TYPES,
+  NETWORK_TYPES,
+  UNCONFIRMED_HEIGHT
+} from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 import { runesUtils } from '@/shared/lib/runes-utils';
-import { Account, AddressType, AddressUserToSignInput, BitcoinBalance, NetworkType, PublicKeyUserToSignInput, SignPsbtOptions, ToSignInput, UTXO, WalletKeyring } from '@/shared/types';
+import {
+  Account,
+  AddressType,
+  AddressUserToSignInput,
+  BitcoinBalance,
+  NetworkType,
+  PublicKeyUserToSignInput,
+  SignPsbtOptions,
+  ToSignInput,
+  UTXO,
+  WalletKeyring
+} from '@/shared/types';
 import { checkAddressFlag, getChainInfo } from '@/shared/utils';
 import { txHelpers, UnspentOutput, UTXO_DUST } from '@unisat/wallet-sdk';
 import { isValidAddress, publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
 import { bitcoin, ECPair } from '@unisat/wallet-sdk/lib/bitcoin-core';
 import { KeystoneKeyring } from '@unisat/wallet-sdk/lib/keyring';
-import { genPsbtOfBIP322Simple, getSignatureFromPsbtOfBIP322Simple, signMessageOfBIP322Simple } from '@unisat/wallet-sdk/lib/message';
+import {
+  genPsbtOfBIP322Simple,
+  getSignatureFromPsbtOfBIP322Simple,
+  signMessageOfBIP322Simple
+} from '@unisat/wallet-sdk/lib/message';
 import { toPsbtNetwork } from '@unisat/wallet-sdk/lib/network';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 import { toXOnly } from '@unisat/wallet-sdk/lib/utils';
-
-
 
 import { ContactBookItem } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';
 import { ConnectedSite } from '../service/permission';
 import BaseController from './base';
-
 
 const stashKeyrings: Record<string, Keyring> = {};
 export type AccountAsset = {
@@ -2089,6 +2125,59 @@ export class WalletController extends BaseController {
 
   getBlockActiveInfo = () => {
     return openapiService.getBlockActiveInfo();
+  };
+
+  getCAT721List = async (address: string, currentPage: number, pageSize: number) => {
+    const cursor = (currentPage - 1) * pageSize;
+    const size = pageSize;
+    const { total, list } = await openapiService.getCAT721CollectionList(address, cursor, size);
+
+    return {
+      currentPage,
+      pageSize,
+      total,
+      list
+    };
+  };
+
+  getAddressCAT721CollectionSummary = async (address: string, collectionId: string) => {
+    const collectionSummary = await openapiService.getAddressCAT721CollectionSummary(address, collectionId);
+    return collectionSummary;
+  };
+
+  transferCAT721Step1 = async (to: string, collectionId: string, localId: string, feeRate: number) => {
+    const currentAccount = await this.getCurrentAccount();
+    if (!currentAccount) {
+      return;
+    }
+
+    const _res = await openapiService.transferCAT721Step1(
+      currentAccount.address,
+      currentAccount.pubkey,
+      to,
+      collectionId,
+      localId,
+      feeRate
+    );
+    return _res;
+  };
+
+  transferCAT721Step2 = async (transferId: string, commitTx: string, toSignInputs: ToSignInput[]) => {
+    const networkType = this.getNetworkType();
+    const psbtNetwork = toPsbtNetwork(networkType);
+    const psbt = bitcoin.Psbt.fromBase64(commitTx, { network: psbtNetwork });
+    await this.signPsbt(psbt, toSignInputs, true);
+    const _res = await openapiService.transferCAT721Step2(transferId, psbt.toBase64());
+    return _res;
+  };
+
+  transferCAT721Step3 = async (transferId: string, revealTx: string, toSignInputs: ToSignInput[]) => {
+    const networkType = this.getNetworkType();
+    const psbtNetwork = toPsbtNetwork(networkType);
+    const psbt = bitcoin.Psbt.fromBase64(revealTx, { network: psbtNetwork });
+    await this.signPsbt(psbt, toSignInputs, false);
+    const _res = await openapiService.transferCAT721Step3(transferId, psbt.toBase64());
+    return _res;
   };
 }
 

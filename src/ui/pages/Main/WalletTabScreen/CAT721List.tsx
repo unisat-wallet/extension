@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react';
 
-import { CAT20Balance, TickPriceItem } from '@/shared/types';
+import { CAT721Balance } from '@/shared/types';
 import { Column, Row } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
-import { CAT20BalanceCard } from '@/ui/components/CAT20BalanceCard';
+import { CAT721CollectionCard } from '@/ui/components/CAT721CollectionCard';
 import { Empty } from '@/ui/components/Empty';
 import { Pagination } from '@/ui/components/Pagination';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
@@ -14,14 +14,14 @@ import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../../MainRoute';
 
-export function CAT20List() {
+export function CAT721List() {
   const navigate = useNavigate();
   const wallet = useWallet();
   const currentAccount = useCurrentAccount();
   const chainType = useChainType();
   const chain = useChain();
 
-  const [tokens, setTokens] = useState<CAT20Balance[]>([]);
+  const [collections, setCollections] = useState<CAT721Balance[]>([]);
   const [total, setTotal] = useState(-1);
   const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 100 });
 
@@ -29,27 +29,23 @@ export function CAT20List() {
 
   const supportedAssets = useSupportedAssets();
 
-  const [priceMap, setPriceMap] = useState<{ [key: string]: TickPriceItem }>();
   useEffect(() => {
     const fetchData = async () => {
-      if (supportedAssets.assets.CAT20 == false) {
-        setTokens([]);
+      if (!supportedAssets.assets.CAT20) {
+        setCollections([]);
         setTotal(0);
         return;
       }
       try {
-        setPriceMap(undefined);
-        const { list, total } = await wallet.getCAT20List(
+        const { list, total } = await wallet.getCAT721List(
           currentAccount.address,
           pagination.currentPage,
           pagination.pageSize
         );
-        setTokens(list);
+        setCollections(list);
         setTotal(total);
-        if (list.length > 0) {
-          wallet.getCAT20sPrice(list.map((item) => item.tokenId)).then(setPriceMap);
-        }
       } catch (e) {
+        setCollections([]);
         tools.toastError((e as Error).message);
       } finally {
         // tools.showLoading(false);
@@ -78,15 +74,13 @@ export function CAT20List() {
   return (
     <Column>
       <Row style={{ flexWrap: 'wrap' }} gap="sm">
-        {tokens.map((data, index) => (
-          <CAT20BalanceCard
+        {collections.map((data, index) => (
+          <CAT721CollectionCard
             key={index}
-            tokenBalance={data}
-            showPrice={chain.showPrice && priceMap !== undefined}
-            price={priceMap?.[data.tokenId]}
+            cat721Balance={data}
             onClick={() => {
-              navigate('CAT20TokenScreen', {
-                tokenId: data.tokenId
+              navigate('CAT721CollectionScreen', {
+                collectionId: data.collectionId
               });
             }}
           />

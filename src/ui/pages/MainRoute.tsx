@@ -1,6 +1,10 @@
 import { useCallback, useEffect, useRef } from 'react';
 import { HashRouter, Route, Routes, useNavigate as useNavigateOrigin } from 'react-router-dom';
 
+import CAT20TokenScreen from '@/ui/pages/CAT20/CAT20TokenScreen';
+import MergeCAT20HistoryScreen from '@/ui/pages/CAT20/MergeCAT20HistoryScreen';
+import MergeCAT20Screen from '@/ui/pages/CAT20/MergeCAT20Screen';
+import SendCAT20Screen from '@/ui/pages/CAT20/SendCAT20Screen';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { Content, Icon } from '../components';
@@ -27,10 +31,9 @@ import SendArc20Screen from './Atomicals/SendArc20Screen';
 import SendAtomicalsInscriptionScreen from './Atomicals/SendAtomicalsNFTScreen';
 import BRC20SendScreen from './BRC20/BRC20SendScreen';
 import BRC20TokenScreen from './BRC20/BRC20TokenScreen';
-import CAT20TokenScreen from './CAT20/CAT20TokenScreen';
-import MergeCAT20HistoryScreen from './CAT20/MergeCAT20HistoryScreen';
-import MergeCAT20Screen from './CAT20/MergeCAT20Screen';
-import SendCAT20Screen from './CAT20/SendCAT20Screen';
+import CAT721CollectionScreen from './CAT721/CAT721CollectionScreen';
+import CAT721NFTScreen from './CAT721/CAT721NFTScreen';
+import SendCAT721Screen from './CAT721/SendCAT721Screen';
 import AppTabScrren from './Main/AppTabScreen';
 import BoostScreen from './Main/BoostScreen';
 import DiscoverTabScreen from './Main/DiscoverTabScreen';
@@ -272,6 +275,21 @@ export const routes = {
   MergeCAT20HistoryScreen: {
     path: '/cat20/merge-history',
     element: <MergeCAT20HistoryScreen />
+  },
+
+  CAT721CollectionScreen: {
+    path: '/cat721/collection',
+    element: <CAT721CollectionScreen />
+  },
+
+  CAT721NFTScreen: {
+    path: '/cat721/nft',
+    element: <CAT721NFTScreen />
+  },
+
+  SendCAT721Screen: {
+    path: '/cat721/send-cat721',
+    element: <SendCAT721Screen />
   }
 };
 

@@ -227,3 +227,14 @@ export function useAddressTips() {
   const account = useCurrentAccount();
   return getAddressTips(account.address, chain.enum);
 }
+
+export function useCAT721NFTContentBaseUrl() {
+  const chainType = useChainType();
+  if (chainType === ChainType.FRACTAL_BITCOIN_MAINNET) {
+    return 'https://tracker-fractal-mainnet.catprotocol.org';
+  } else if (chainType === ChainType.FRACTAL_BITCOIN_TESTNET) {
+    return 'https://tracker-fractal-testnet.catprotocol.org';
+  } else {
+    return '';
+  }
+}

@@ -51,6 +51,10 @@ export interface ButtonProps {
   children?: React.ReactNode;
   onClick?: React.MouseEventHandler<HTMLDivElement>;
   icon?: IconTypes;
+  iconSize?: {
+    width: number;
+    height: number;
+  };
   disabled?: boolean;
   full?: boolean;
 }
@@ -210,6 +214,7 @@ export function Button(props: ButtonProps) {
     LeftAccessory,
     onClick,
     icon,
+    iconSize,
     disabled,
     full,
     ...rest
@@ -262,7 +267,16 @@ export function Button(props: ButtonProps) {
         onClick={disabled ? undefined : onClick}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}>
-        {icon && <Icon icon={icon} style={{ marginRight: spacing.tiny, backgroundColor: colors.white }} />}
+        {icon && (
+          <Icon
+            icon={icon}
+            style={Object.assign(
+              { marginRight: spacing.tiny, backgroundColor: colors.white },
+              iconSize ? iconSize : {}
+            )}
+            containerStyle={iconSize ? iconSize : {}}
+          />
+        )}
         {text && <Text style={$textStyle} text={text} preset="regular" mt="sm" />}
       </div>
     );

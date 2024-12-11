@@ -1,4 +1,4 @@
-import React, { CSSProperties } from 'react';
+import { CSSProperties } from 'react';
 
 import { colors } from '@/ui/theme/colors';
 import { spacingGap } from '@/ui/theme/spacing';
@@ -24,8 +24,7 @@ const $viewPresets = {
     paddingTop: spacingGap.lg,
     paddingBottom: spacingGap.lg,
     paddingLeft: spacingGap.lg,
-    paddingRight: spacingGap.lg,
-    minHeight: 50
+    paddingRight: spacingGap.lg
   } as CSSProperties) as CSSProperties,
   style1: Object.assign({}, $baseViewStyle, {
     height: '75px',

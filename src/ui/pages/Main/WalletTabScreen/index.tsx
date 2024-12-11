@@ -1,4 +1,4 @@
-import { Tabs, Tooltip } from 'antd';
+import { Tooltip } from 'antd';
 import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
 
 import { AddressFlagType, ChainType } from '@/shared/constant';
@@ -12,6 +12,7 @@ import { FeeRateIcon } from '@/ui/components/FeeRateIcon';
 import { NavTabBar } from '@/ui/components/NavTabBar';
 import { NoticePopover } from '@/ui/components/NoticePopover';
 import { SwitchNetworkBar } from '@/ui/components/SwitchNetworkBar';
+import { Tabs } from '@/ui/components/Tabs';
 import { UpgradePopover } from '@/ui/components/UpgradePopover';
 import { getCurrentTab } from '@/ui/features/browser/tabs';
 import { BtcDisplay } from '@/ui/pages/Main/WalletTabScreen/components/BtcDisplay';
@@ -39,7 +40,7 @@ import { BuyBTCModal } from '../../BuyBTC/BuyBTCModal';
 import { useNavigate } from '../../MainRoute';
 import { SwitchChainModal } from '../../Settings/SwitchChainModal';
 import { AtomicalsTab } from './AtomicalsTab';
-import { CAT20List } from './CAT20List';
+import { CATTab } from './CATTab';
 import { OrdinalsTab } from './OrdinalsTab';
 import { RunesList } from './RunesList';
 
@@ -160,9 +161,9 @@ export default function WalletTabScreen() {
     }
     if (supportedAssets.assets.CAT20) {
       items.push({
-        key: AssetTabKey.CAT20,
-        label: 'CAT20',
-        children: <CAT20List />
+        key: AssetTabKey.CAT,
+        label: 'CAT',
+        children: <CATTab />
       });
     }
     return items;
@@ -278,6 +279,7 @@ export default function WalletTabScreen() {
               <BtcDisplay balance={balanceValue} />
             </div>
           </Tooltip>
+
           <BtcUsd
             sats={amountToSatoshis(balanceValue)}
             textCenter
@@ -287,6 +289,31 @@ export default function WalletTabScreen() {
               marginBottom: -8
             }}
           />
+          {/* 
+          <Column
+            py={'lg'}
+            px={'md'}
+            gap={'lg'}
+            style={{
+              borderRadius: 12,
+              border: '1px solid rgba(245, 84, 84, 0.35)',
+              background: 'rgba(245, 84, 84, 0.08)'
+            }}>
+            {
+              <Row
+                style={{
+                  borderBottomWidth: 1,
+                  color: '#FA701A'
+                }}>
+                <Text
+                  text={'1 FB is locked by inscription,\n click to go to unlock.'}
+                  color="warning"
+                  textCenter
+                  style={{}}
+                />
+              </Row>
+            }
+          </Column> */}
 
           <Row justifyCenter mt="md">
             <Button
@@ -322,7 +349,15 @@ export default function WalletTabScreen() {
             <Button
               text="Buy"
               preset="home"
-              icon="bitcoin"
+              icon={chain.isFractal ? 'fb' : 'bitcoin'}
+              iconSize={
+                chain.isFractal
+                  ? {
+                      width: 24,
+                      height: 11
+                    }
+                  : undefined
+              }
               onClick={(e) => {
                 setBuyBtcModalVisible(true);
               }}
@@ -331,7 +366,6 @@ export default function WalletTabScreen() {
           </Row>
 
           <Tabs
-            size={'small'}
             defaultActiveKey={finalAssetTabKey as unknown as string}
             activeKey={finalAssetTabKey as unknown as string}
             items={tabItems as unknown as any[]}
@@ -339,8 +373,6 @@ export default function WalletTabScreen() {
               dispatch(uiActions.updateAssetTabScreen({ assetTabKey: key as unknown as AssetTabKey }));
             }}
           />
-
-          {/*{tabItems[assetTabKey].children}*/}
         </Column>
         {showSafeNotice && (
           <NoticePopover

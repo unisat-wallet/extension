@@ -25,7 +25,7 @@ const $contentStyle = {
 const $viewPresets = {
   large: Object.assign({}, $contentStyle, {
     alignItems: 'stretch',
-    padding: spacing.large,
+    padding: spacing.medium,
     paddingTop: 0
   }),
   middle: Object.assign({}, $contentStyle, {

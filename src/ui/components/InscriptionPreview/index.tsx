@@ -145,7 +145,7 @@ export default function InscriptionPreview({ data, onClick, preset, asLogo, hide
         </div>
       ) : null}
       <Column px="md" py="sm" gap="zero" bg="bg4" full>
-        <Text text={numberStr} color="gold" size={$numberPresets[preset] as any} />
+        <Text text={numberStr} color="gold" size={$numberPresets[preset] as any} max1Lines />
         {isUnconfirmed == false && data.timestamp && (
           <Text text={time} preset="sub" size={$timePresets[preset] as any} />
         )}
