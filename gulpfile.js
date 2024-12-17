@@ -9,6 +9,7 @@ import path from 'path';
 import webpack from 'webpack';
 
 import webpackConfigFunc from './webpack.config.js';
+import { exit } from 'process';
 
 const packageJsonPath = path.resolve(process.cwd(), 'package.json');
 const packageConfig = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
@@ -138,7 +139,7 @@ export function task_uglify() {
         .pipe(gulp.dest(`dist/${options.browser}`));
 }
 
-export function task_package(done) {
+export async function task_package(done) {
     const outputFile = `./dist/${brandName}-${options.browser}-v${version}.zip`;
     const output = fs.createWriteStream(outputFile);
     const archive = archiver('zip', {
@@ -157,7 +158,7 @@ export function task_package(done) {
 
     archive.pipe(output);
     archive.directory(`dist/${options.browser}/`, false);
-    archive.finalize();
+    await archive.finalize();
 }
 
 export const build = gulp.series(

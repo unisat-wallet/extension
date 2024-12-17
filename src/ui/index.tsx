@@ -18,6 +18,7 @@ import { AppDimensions } from './components/Responsive';
 import AsyncMainRoute from './pages/MainRoute';
 import store from './state';
 import { WalletController, WalletProvider } from './utils';
+import ChainUpdater from './state/settings/updater';
 
 message.config({
     maxCount: 1
@@ -102,6 +103,7 @@ function Updaters() {
     return (
         <>
             <AccountUpdater />
+            <ChainUpdater />
         </>
     );
 }

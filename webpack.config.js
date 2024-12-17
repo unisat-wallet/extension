@@ -36,7 +36,7 @@ const config = (env) => {
 
     const addedConfigs = {
         experiments: {
-            outputModule: true,
+            outputModule: false,
             asyncWebAssembly: true,
             syncWebAssembly: true
         },

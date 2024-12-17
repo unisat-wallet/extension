@@ -105,7 +105,7 @@ class Web3API {
     public get ROUTER_ADDRESS(): Address | null {
         if (!this.metadata) return null;
 
-        return this.metadata.router;
+        return new Address(Buffer.from('mo0ejly2iijjlgVSA22IAJiavTT6Zd760g5myg6KW9k=', 'base64')); //this.metadata.router;
     }
 
     private _metadata?: OPNetTokenMetadata;

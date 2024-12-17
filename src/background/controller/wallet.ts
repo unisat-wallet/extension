@@ -714,7 +714,7 @@ export class WalletController extends BaseController {
             network: Web3API.network, // Network
             feeRate: interactionParameters.feeRate, // Fee rate (satoshi per byte)
             priorityFee: BigInt(interactionParameters.priorityFee || 330n), // Priority fee (opnet)
-            calldata: Buffer.from(interactionParameters.calldata as unknown as string, 'hex') // Calldata
+            calldata: Buffer.from(interactionParameters.calldata as unknown as string, 'hex')
         };
 
         const sendTransaction = await Web3API.transactionFactory.signInteraction(interactionParametersSubmit);
@@ -998,6 +998,11 @@ export class WalletController extends BaseController {
 
         const chainInfo = getChainInfo(chainType);
         sessionService.broadcastEvent<SessionEvent.chainChanged>(SessionEvent.chainChanged, chainInfo);
+        eventBus.emit(EVENTS.broadcastToUI, {
+            method: 'chainChanged',
+            params: chainInfo
+        });
+        
 
         const network = this.getLegacyNetworkName();
         sessionService.broadcastEvent<SessionEvent.networkChanged>(SessionEvent.networkChanged, {
@@ -1303,13 +1308,13 @@ export class WalletController extends BaseController {
     decodePsbt(psbtHex: string): DecodedPsbt {
         const networkType = this.getNetworkType();
         const network = getBitcoinLibJSNetwork(networkType);
-       
+
         const psbt = Psbt.fromHex(psbtHex, { network });
-    
+
         const inputs = psbt.txInputs.map((input, index) => {
             const inputData = psbt.data.inputs[index];
             let address = 'unknown';
-    
+
             if (inputData.witnessUtxo?.script) {
                 try {
                     address = bitcoinAddress
@@ -1319,7 +1324,7 @@ export class WalletController extends BaseController {
                     address = 'unknown';
                 }
             }
-    
+
             return {
                 txid: Buffer.from(input.hash).reverse().toString('hex'),
                 vout: input.index,
@@ -1328,26 +1333,26 @@ export class WalletController extends BaseController {
                 sighashType: inputData.sighashType
             };
         });
-    
+
         const outputs = psbt.txOutputs.map((output) => ({
             address: output.address || 'unknown',
-            value: output.value,
+            value: output.value
         }));
-    
+
         const totalInputValue = inputs.reduce((sum, input) => sum + input.value, 0);
         const totalOutputValue = outputs.reduce((sum, output) => sum + output.value, 0);
-    
+
         const fee = totalInputValue - totalOutputValue;
-    
+
         const transactionSize = psbt.toBuffer().length;
         const feeRate = transactionSize > 0 ? fee / transactionSize : 0;
-    
+
         const rbfEnabled = psbt.txInputs.some((input) => input.sequence && input.sequence < 0xfffffffe);
-    
+
         // TODO: Check if there is any way to find recommendedFeeRate
         const recommendedFeeRate = 1;
         const shouldWarnFeeRate = feeRate < recommendedFeeRate;
-    
+
         return {
             inputs,
             outputs,
