@@ -1,4 +1,4 @@
-import { ReactElement, useCallback, useEffect, useRef } from 'react';
+import { ReactElement, useCallback, useEffect, useMemo, useRef } from 'react';
 import { HashRouter, Route, Routes, useNavigate as useNavigateOrigin } from 'react-router-dom';
 
 import TxCreateScreen from '@/ui/pages/Wallet/TxCreateScreen';
@@ -361,6 +361,12 @@ const Main = () => {
         void init();
     }, [init]);
 
+    const renderedRoutes = useMemo(() => {
+        return Object.keys(routes)
+            .map((key) => routes[key])
+            .map((route) => <Route key={route.path} path={route.path} element={route.element} />);
+    }, []);
+
     if (!isReady) {
         return (
             <div
@@ -384,11 +390,7 @@ const Main = () => {
     return (
         <HashRouter>
             <Routes>
-                {Object.keys(routes)
-                    .map((v) => routes[v])
-                    .map((v) => (
-                        <Route key={v.path} path={v.path} element={v.element} />
-                    ))}
+                {renderedRoutes}
             </Routes>
         </HashRouter>
     );

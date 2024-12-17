@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 import { getContract, IOP_20Contract, OP_20_ABI } from 'opnet';
-import { CSSProperties, useEffect, useState } from 'react';
+import { CSSProperties, useCallback, useEffect, useState } from 'react';
 
 import { ChainType } from '@/shared/constant';
 import { NetworkType, OPTokenInfo } from '@/shared/types';
@@ -15,6 +15,7 @@ import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Address, OPNetMetadata } from '@btc-vision/transaction';
 
+import { useChainType } from '@/ui/state/settings/hooks';
 import { RouteTypes, useNavigate } from '../../MainRoute';
 import { AddOpNetToken } from '../../Wallet/AddOpNetToken';
 
@@ -36,6 +37,7 @@ export function OPNetList() {
     const navigate = useNavigate();
     const wallet = useWallet();
     const currentAccount = useCurrentAccount();
+    const chainType = useChainType();
 
     const [tokens, setTokens] = useState<OPTokenInfo[]>([]);
     const [total, setTotal] = useState(-1);
@@ -44,7 +46,7 @@ export function OPNetList() {
 
     const tools = useTools();
 
-    const fetchData = async () => {
+    const fetchData = useCallback(async () => {
         try {
             tools.showLoading(true);
 
@@ -118,19 +120,14 @@ export function OPNetList() {
         }
 
         setRetried(true);
-    };
+    }, [currentAccount, wallet, tools]);
+    
 
     useEffect(() => {
-        if (tokens.length !== 0 || retried) {
-            return;
-        }
-
         setTimeout(() => {
-            if (tokens.length === 0) {
-                void fetchData();
-            }
+            void fetchData();
         }, 100);
-    }, [tokens, currentAccount, importTokenBool, wallet]);
+    }, [chainType, currentAccount, importTokenBool, wallet]);
 
     //useEffect(() => {
     //    void fetchData();

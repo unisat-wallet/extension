@@ -16,6 +16,7 @@ import { ActionComponentProvider } from './components/ActionComponent';
 import { AppDimensions } from './components/Responsive';
 import AsyncMainRoute from './pages/MainRoute';
 import store from './state';
+import ChainUpdater from './state/settings/updater';
 import { WalletProvider } from './utils';
 
 message.config({
@@ -120,6 +121,7 @@ function Updaters() {
     return (
         <>
             <AccountUpdater />
+            <ChainUpdater />
         </>
     );
 }
