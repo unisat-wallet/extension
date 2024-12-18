@@ -32,7 +32,7 @@
         "@babel/core": "^7.26.0",
         "@btc-vision/bitcoin": "^6.3.0",
         "@btc-vision/passworder": "1.0.0",
-        "@btc-vision/transaction": "1.1.13",
+        "@btc-vision/transaction": "1.1.15",
         "@btc-vision/wallet-sdk": "1.0.0",
         "@eslint/js": "^9.14.0",
         "@fortawesome/fontawesome-svg-core": "^6.6.0",
@@ -99,7 +99,7 @@
         "loglevel": "^1.8.0",
         "lru-cache": "=6.0.0",
         "mini-css-extract-plugin": "^2.4.5",
-        "opnet": "1.1.30",
+        "opnet": "1.1.32",
         "postcss": "^8.4.39",
         "postcss-flexbugs-fixes": "^5.0.2",
         "postcss-loader": "^6.2.1",
@@ -289,6 +289,5 @@
         "*.json": [
             "prettier --write"
         ]
-    },
-    "packageManager": "yarn@4.5.3+sha512.3003a14012e2987072d244c720506549c1aab73ee728208f1b2580a9fd67b92d61ba6b08fe93f6dce68fd771e3af1e59a0afa28dd242dd0940d73b95fedd4e90"
+    }
 }
