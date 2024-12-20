@@ -58,8 +58,9 @@ export default function AccountUpdater() {
     }, [fetchBalance, wallet, isUnlocked, self]);
 
     useEffect(() => {
-        const accountChangeHandler = (account: Account) => {
-            if (account?.address) {
+        const accountChangeHandler = (params: unknown) => {
+            if (params) {
+                const account = params as Account;
                 dispatch(accountActions.setCurrent(account));
             }
         };

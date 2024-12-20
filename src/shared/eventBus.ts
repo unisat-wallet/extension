@@ -1,9 +1,12 @@
-type Listener = (params?: any) => void;
+type Listener = (params?: unknown) => void;
 
+// TODO (typing): It may not worth it to make EventBus generic at this point 
+// since there are some usages where we pass 'params' dynamically (i.e. rpcFlow.ts).
+// Making this generic may be more meaningful when we have a strict typing in provider controller functions.
 class EventBus {
     events: Record<string, Listener[]> = {};
 
-    emit = (type: string, params?: any) => {
+    emit = (type: string, params?: unknown) => {
         const listeners = this.events[type];
         if (listeners) {
             listeners.forEach((fn) => {
@@ -14,7 +17,7 @@ class EventBus {
 
     once = (type: string, fn: Listener) => {
         const listeners = this.events[type];
-        const func = (...params: any[]) => {
+        const func = (...params: unknown[]) => {
             fn(...params);
             this.events[type] = this.events[type].filter((item) => item !== func);
         };

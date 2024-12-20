@@ -1,6 +1,7 @@
-import extension from 'extensionizer';
 import { nanoid } from 'nanoid';
+import browser from 'webextension-polyfill';
 
+import { SendMessagePayload } from '@/shared/types/Message';
 import { RequestParams } from '@/shared/types/Request.js';
 import { Message } from '@/shared/utils';
 
@@ -15,7 +16,7 @@ function injectScript() {
         const scriptTag = document.createElement('script');
         scriptTag.setAttribute('async', 'false');
         scriptTag.setAttribute('channel', channelName);
-        scriptTag.src = extension.runtime.getURL('pageProvider.js');
+        scriptTag.src = browser.runtime.getURL('pageProvider.js');
         container.insertBefore(scriptTag, container.children[0]);
         container.removeChild(scriptTag);
 
@@ -27,7 +28,7 @@ function injectScript() {
         });
 
         // background notification
-        pm.on('message', (data) => {
+        pm.on('message', (data: SendMessagePayload) => {
             bcm.send('message', data);
         });
 
@@ -65,11 +66,11 @@ function doctypeCheck(): boolean {
 function suffixCheck(): boolean {
     const prohibitedTypes = [/\.xml$/u, /\.pdf$/u];
     const currentUrl = window.location.pathname;
-    for (let i = 0; i < prohibitedTypes.length; i++) {
-        if (prohibitedTypes[i].test(currentUrl)) {
+    for (const prohibitedType of prohibitedTypes) {
+        if (prohibitedType.test(currentUrl)) {
             return false;
         }
-    }
+    }    
     return true;
 }
 
@@ -100,13 +101,13 @@ function blockedDomainCheck(): boolean {
     const currentUrl = window.location.href;
 
     let currentRegex: RegExp;
-    for (let i = 0; i < blockedDomains.length; i++) {
-        const blockedDomain = blockedDomains[i].replace('.', '\\.');
-        currentRegex = new RegExp(`(?:https?:\\/\\/)(?:(?!${blockedDomain}).)*$`, 'u');
+    for (const blockedDomain of blockedDomains) {
+        const escapedDomain = blockedDomain.replace('.', '\\.');
+        currentRegex = new RegExp(`(?:https?:\\/\\/)(?:(?!${escapedDomain}).)*$`, 'u');
         if (!currentRegex.test(currentUrl)) {
             return true;
         }
-    }
+    }    
 
     return false;
 }

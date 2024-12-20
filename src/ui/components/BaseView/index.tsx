@@ -100,7 +100,7 @@ export function BaseView(props: BaseViewProps) {
         fixed ? { position: 'fixed' } : {},
         overflowX ? { overflowX: 'auto' } : {},
         overflowY ? { overflowY: 'auto' } : {}
-    );
+    ) as CSSProperties;
     const $style = Object.assign({}, $styleBase, $baseViewStyle);
     const $classname = [classname].join(' ').trim();
 

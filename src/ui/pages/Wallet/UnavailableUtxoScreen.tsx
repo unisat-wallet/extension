@@ -21,7 +21,7 @@ export default function UnavailableUtxoScreen() {
     const unitBtc = useBTCUnit();
 
     const [utxos, setUtxos] = useState<UnavailableUnspentOutput[]>([]);
-    const [selectedUtxoIds, setSelectedUtxoIds] = useState({});
+    const [selectedUtxoIds, setSelectedUtxoIds] = useState<Record<string, boolean>>({});
     const [loading, setLoading] = useState(false);
 
     useEffect(() => {

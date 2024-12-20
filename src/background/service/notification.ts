@@ -1,24 +1,10 @@
-import { ethErrors } from 'eth-rpc-errors';
-import { EthereumProviderError } from 'eth-rpc-errors/dist/classes';
 import Events from 'events';
 
 import { winMgr } from '@/background/webapi';
 import { IS_CHROME, IS_LINUX } from '@/shared/constant';
-
-interface Approval {
-    data: {
-        state: number;
-        params?: any;
-        origin?: string;
-        approvalComponent: string;
-        requestDefer?: Promise<any>;
-        approvalType: string;
-    };
-
-    resolve(params?: any): void;
-
-    reject(err: EthereumProviderError<any>): void;
-}
+import { providerErrors, rpcErrors } from '@/shared/lib/bitcoin-rpc-errors/errors';
+import { Approval, ApprovalData, ApprovalResponse } from '@/shared/types/Approval';
+import browser, { WindowProps } from '../webapi/browser';
 
 // something need user approval in window
 // should only open one window, unfocus will close the current notification
@@ -39,7 +25,7 @@ class NotificationService extends Events {
 
         winMgr.event.on('windowFocusChange', (winId: number) => {
             if (this.notifiWindowId && winId !== this.notifiWindowId) {
-                if (IS_CHROME && winId === chrome.windows.WINDOW_ID_NONE && IS_LINUX) {
+                if (IS_CHROME && winId === browser.windows.WINDOW_ID_NONE && IS_LINUX) {
                     // Wired issue: When notification popuped, will focus to -1 first then focus on notification
                     return;
                 }
@@ -50,9 +36,9 @@ class NotificationService extends Events {
 
     getApproval = () => this.approval?.data;
 
-    resolveApproval = (data?: any, forceReject = false) => {
+    resolveApproval = (data?: ApprovalResponse, forceReject = false) => {
         if (forceReject) {
-            this.approval?.reject(new EthereumProviderError(4001, 'User Cancel'));
+            this.approval?.reject(providerErrors.userRejectedRequest());
         } else {
             this.approval?.resolve(data);
         }
@@ -63,9 +49,9 @@ class NotificationService extends Events {
     rejectApproval = async (err?: string, stay = false, isInternal = false) => {
         if (!this.approval) return;
         if (isInternal) {
-            this.approval?.reject(ethErrors.rpc.internal(err));
+            this.approval?.reject(rpcErrors.internal({message: err}));
         } else {
-            this.approval?.reject(ethErrors.provider.userRejectedRequest<any>(err));
+            this.approval?.reject(providerErrors.userRejectedRequest({message: err}));
         }
 
         await this.clear(stay);
@@ -73,12 +59,7 @@ class NotificationService extends Events {
     };
 
     // currently it only support one approval at the same time
-    requestApproval = async (data, winProps?): Promise<any> => {
-        // if (preferenceService.getPopupOpen()) {
-        //   this.approval = null;
-        //   throw ethErrors.provider.userRejectedRequest('please request after user close current popup');
-        // }
-
+    requestApproval = async (data: ApprovalData, winProps?: WindowProps): Promise<ApprovalResponse | undefined> => {
         // We will just override the existing open approval with the new one coming in
         return new Promise((resolve, reject) => {
             this.approval = {
@@ -107,7 +88,7 @@ class NotificationService extends Events {
         this.isLocked = true;
     };
 
-    openNotification = (winProps) => {
+    openNotification = (winProps?: WindowProps) => {
         // if (this.isLocked) return;
         // this.lock();
         if (this.notifiWindowId) {
@@ -115,7 +96,7 @@ class NotificationService extends Events {
             this.notifiWindowId = 0;
         }
         winMgr.openNotification(winProps).then((winId) => {
-            this.notifiWindowId = winId!;
+            this.notifiWindowId = winId;
         });
     };
 }

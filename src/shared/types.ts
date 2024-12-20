@@ -289,3 +289,30 @@ export interface TickPriceItem {
     curPrice: number;
     changePercent: number;
 }
+
+export interface BuyBtcChannel {
+    channel: string;
+}
+
+export interface GroupAsset {
+    type: number;
+    address_arr: string[]; 
+    satoshis_arr: number[];
+}
+
+export interface AddressRecentHistory {
+    start: number; 
+    total: number; 
+    detail: TxHistoryItem[];
+}
+
+export interface ParsedSignPsbtUr {
+    psbtHex: string;
+    rawTx: string;
+}
+
+export interface ParsedSignMsgUr {
+    requestId: string;
+    publicKey: string;
+    signature: string;
+}

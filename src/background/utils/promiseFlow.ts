@@ -1,11 +1,10 @@
 import compose from 'koa-compose';
 
-export default class PromiseFlow {
-    _context: any = {};
+export default class PromiseFlow<TContext> {
     requestedApproval = false;
-    private _tasks: ((args: any) => void)[] = [];
+    private _tasks: ((ctx: TContext, next: () => Promise<void>) => void)[] = [];
 
-    use(fn): this {
+    use(fn: (ctx: TContext, next: () => Promise<void>) => void): this {
         if (typeof fn !== 'function') {
             throw new Error('promise need function to handle');
         }

@@ -47,10 +47,10 @@ function Step1({
         setDisabled(false);
     }, [wif]);
 
-    const onChange = (e) => {
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         const val = e.target.value;
         setWif(val);
-        updateContextData({ step1Completed: val });
+        updateContextData({ step1Completed: !!val });
     };
 
     const tools = useTools();
@@ -59,8 +59,8 @@ function Step1({
         const network = await wallet.getNetworkType();
         const bitcoinNetwork = getBitcoinLibJSNetwork(network);
 
-        let validWIF: boolean = false;
-        let validPrivateKey: boolean = false;
+        let validWIF = false;
+        let validPrivateKey = false;
         try {
             ECPair.fromWIF(wif, bitcoinNetwork);
             validWIF = true;
@@ -147,9 +147,7 @@ function Step2({
         const network = await wallet.getNetworkType();
         const bitcoinNetwork = getBitcoinLibJSNetwork(network);
 
-        for (let i = 0; i < hdPathOptions.length; i++) {
-            const options = hdPathOptions[i];
-
+        for (const options of hdPathOptions) {
             try {
                 const address = Wallet.fromWif(contextData.wif, bitcoinNetwork);
 
@@ -246,7 +244,7 @@ function Step2({
                 return (
                     <AddressTypeCard
                         key={index}
-                        label={`${item.label}`}
+                        label={item.label}
                         address={address}
                         assets={assets}
                         checked={index == pathIndex}

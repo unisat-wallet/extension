@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import { ParsedSignMsgUr, ParsedSignPsbtUr } from '@/shared/types';
+import { isWalletError } from '@/shared/utils/errors';
 import { Button, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import KeystoneDisplay from '@/ui/components/Keystone/Display';
@@ -9,15 +11,25 @@ import { $textPresets } from '@/ui/components/Text';
 import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
 
-interface Props {
-    type: 'msg' | 'psbt' | 'bip322-simple';
+interface BaseProps {
     data: string;
     isFinalize?: boolean;
     signatureText?: string;
     id?: number;
-    onSuccess?: (data: { psbtHex?: string; rawtx?: string; signature?: string }) => void;
     onBack: () => void;
 }
+
+interface MsgProps extends BaseProps {
+    type: 'msg' | 'bip322-simple';
+    onSuccess?: (data: ParsedSignMsgUr) => void;
+}
+
+interface PsbtProps extends BaseProps {
+    type: 'psbt';
+    onSuccess?: (data: ParsedSignPsbtUr) => void;
+}
+
+type Props = MsgProps | PsbtProps;
 
 function Step1(props: Props) {
     const wallet = useWallet();
@@ -32,9 +44,13 @@ function Step1(props: Props) {
             props.type === 'psbt' ? wallet.genSignPsbtUr(props.data) : wallet.genSignMsgUr(props.data, props.type);
         p.then((ur) => {
             setUr(ur);
-        }).catch((err) => {
+        }).catch((err: unknown) => {
             console.error(err);
-            tools.toastError(err.message);
+            if (isWalletError(err)){
+                tools.toastError(err.message);
+            } else {
+                tools.toastError("An unexpected error occurred.");
+            }
         });
     }, [props]);
 
@@ -54,7 +70,7 @@ function Step1(props: Props) {
 function Step2(props: Props) {
     const wallet = useWallet();
 
-    const onSucceed = async ({ type, cbor }) => {
+    const onSucceed = async ({ type, cbor }: {type: string; cbor: string}) => {
         if (props.type === 'psbt') {
             const res = await wallet.parseSignPsbtUr(type, cbor, props.isFinalize === false ? false : true);
             if (props.onSuccess) {

@@ -1,5 +1,6 @@
 import { useMemo } from 'react';
 
+import { ChainType } from '@/shared/constant';
 import { Row, Text } from '@/ui/components';
 import { useBTCUnit, useChainType } from '@/ui/state/settings/hooks';
 
@@ -16,7 +17,7 @@ export function BtcDisplay({ balance }: { balance: string | number }) {
         };
     }, [balance]);
 
-    if (chainType === 'FRACTAL_BITCOIN_MAINNET' || chainType === 'FRACTAL_BITCOIN_TESTNET') {
+    if (chainType === ChainType.FRACTAL_BITCOIN_MAINNET || ChainType.FRACTAL_BITCOIN_TESTNET ) {
         //   show 3 decimal places for fractal bitcoin
         return (
             <Row style={{ alignItems: 'flex-end' }} justifyCenter gap={'zero'} my="sm">
@@ -36,5 +37,5 @@ export function BtcDisplay({ balance }: { balance: string | number }) {
         );
     }
 
-    return <Text text={balance + ' ' + btcUnit} preset="title-bold" textCenter size="xxxl" my="sm" />;
+    return <Text text={`${balance} ${btcUnit}`} preset="title-bold" textCenter size="xxxl" my="sm" />;
 }

@@ -155,10 +155,10 @@ export function Select(props: SelectProps) {
                         }
                         const opNetBalance: OPTokenInfo = {
                             address: searchTerm,
-                            name: contractInfo?.name || '',
-                            amount: BigInt(balance.decoded[0].toString()),
-                            divisibility: contractInfo?.decimals || 8,
-                            symbol: contractInfo?.symbol,
+                            name: contractInfo?.name ?? '',
+                            amount: balance.properties.balance,
+                            divisibility: contractInfo?.decimals ?? 8,
+                            symbol: contractInfo?.symbol ?? '',
                             logo: contractInfo?.logo
                         };
                         setFilteredOptions([opNetBalance]);

@@ -43,7 +43,6 @@ import ExportMnemonicsScreen from './Settings/ExportMnemonicsScreen';
 import ExportPrivateKeyScreen from './Settings/ExportPrivateKeyScreen';
 import NetworkTypeScreen from './Settings/NetworkTypeScreen';
 import UpgradeNoticeScreen from './Settings/UpgradeNoticeScreen';
-import HistoryScreen from './Wallet/HistoryScreen';
 import ReceiveScreen from './Wallet/ReceiveScreen';
 import TxConfirmScreen from './Wallet/TxConfirmScreen';
 import TxFailScreen from './Wallet/TxFailScreen';
@@ -73,7 +72,6 @@ export enum RouteTypes {
     ExportMnemonicsScreen = 'ExportMnemonicsScreen',
     ExportPrivateKeyScreen = 'ExportPrivateKeyScreen',
     AdvancedScreen = 'AdvancedScreen',
-    HistoryScreen = 'HistoryScreen',
     ApprovalScreen = 'ApprovalScreen',
     ConnectedSitesScreen = 'ConnectedSitesScreen',
     SwitchKeyringScreen = 'SwitchKeyringScreen',
@@ -187,10 +185,6 @@ export const routes: Routes = {
         path: '/settings/advanced',
         element: <AdvancedScreen />
     },
-    HistoryScreen: {
-        path: '/wallet/history',
-        element: <HistoryScreen />
-    },
     ApprovalScreen: {
         path: '/approval',
         element: <ApprovalScreen />
@@ -265,13 +259,15 @@ export const routes: Routes = {
     }
 };
 
-export type UseNavigate<T extends RouteTypes> = (routKey: T, state?: any) => void;
+// TODO (typing): Check again but it looks like that we need to have a map between 
+// RouteTypes and their data while calling navigate function 
+export type UseNavigate<T extends RouteTypes> = (routKey: T, state?: unknown) => void;
 
 export function useNavigate<T extends RouteTypes>(): UseNavigate<T> {
     const navigate = useNavigateOrigin();
 
     return useCallback(
-        (routKey: T, state?: any) => {
+        (routKey: T, state?: unknown) => {
             navigate(routes[routKey].path, { state });
         },
         [useNavigateOrigin]
@@ -362,9 +358,9 @@ const Main = () => {
     }, [init]);
 
     const renderedRoutes = useMemo(() => {
-        return Object.keys(routes)
-            .map((key) => routes[key])
-            .map((route) => <Route key={route.path} path={route.path} element={route.element} />);
+        return Object.entries(routes).map(([key, route]) => (
+            <Route key={route.path} path={route.path} element={route.element} />
+        ));
     }, []);
 
     if (!isReady) {

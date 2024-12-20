@@ -6,6 +6,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { useWallet } from '@/ui/utils';
 import { getPasswordStrengthWord, MIN_PASSWORD_LENGTH } from '@/ui/utils/password-utils';
 
+import { isWalletError } from '@/shared/utils/errors';
 import { RouteTypes, useNavigate } from '../MainRoute';
 
 export default function ChangePasswordScreen() {
@@ -65,7 +66,12 @@ export default function ChangePasswordScreen() {
             tools.toastSuccess('Success');
             navigate(RouteTypes.MainScreen);
         } catch (err) {
-            tools.toastError((err as any).message);
+            if (isWalletError(err)) {
+                tools.toastError(err.message);
+            } else {
+                tools.toastError("An unexpected error occurred.");
+                console.error("Non-WalletError caught: ", err);
+            }        
         }
     };
     return (

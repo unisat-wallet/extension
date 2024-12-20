@@ -6,13 +6,15 @@
         "paths": {
             "@/*": ["./src/*"]
         },
-        "noImplicitAny": false,
+        "noImplicitAny": true,
         "downlevelIteration": true,
         "types": ["chrome", "node", "react", "react-dom"],
         "allowJs": true,
         "skipLibCheck": true,
         "esModuleInterop": true,
         "allowSyntheticDefaultImports": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
         "strict": true,
         "forceConsistentCasingInFileNames": true,
         "noFallthroughCasesInSwitch": true,

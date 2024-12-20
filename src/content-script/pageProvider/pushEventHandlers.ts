@@ -1,28 +1,18 @@
-import { ethErrors } from 'eth-rpc-errors';
 
-import ReadyPromise from '@/content-script/pageProvider/readyPromise';
-import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
 import Web3API from '@/shared/web3/Web3API';
 
-import { OpnetProvider } from './index';
+import { ChainType } from '@/shared/constant';
+import { providerErrors } from '@/shared/lib/bitcoin-rpc-errors/errors';
+import { OpnetProvider, OpnetProviderPrivate } from './index';
 
 class PushEventHandlers {
     provider: OpnetProvider;
 
-    _unisatProviderPrivate: any;
+    _unisatProviderPrivate: OpnetProviderPrivate;
 
     constructor(
         provider: OpnetProvider,
-        _opnetProviderPrivate: {
-            _selectedAddress: string | null;
-            _network: string | null;
-            _isConnected: boolean;
-            _initialized: boolean;
-            _isUnlocked: boolean;
-            _pushEventHandlers: PushEventHandlers | null;
-            _requestPromise: ReadyPromise;
-            _bcm: BroadcastChannelMessage;
-        }
+        _opnetProviderPrivate: OpnetProviderPrivate
     ) {
         this.provider = provider;
         this._unisatProviderPrivate = _opnetProviderPrivate;
@@ -56,7 +46,7 @@ class PushEventHandlers {
         this._unisatProviderPrivate._state.isConnected = false;
         this._unisatProviderPrivate._state.accounts = null;
         this._unisatProviderPrivate._selectedAddress = null;
-        const disconnectError = ethErrors.provider.disconnected();
+        const disconnectError = providerErrors.disconnected();
 
         this._emit('accountsChanged', []);
         this._emit('disconnect', disconnectError);
@@ -73,14 +63,15 @@ class PushEventHandlers {
         this._emit('accountsChanged', accounts);
     };
 
-    networkChanged = ({ network, chain }) => {
+    networkChanged = ({ network, chain }: {network: string; chain: ChainType}) => {
         this.connect({});
 
         if (network !== this._unisatProviderPrivate._network) {
             if (chain) Web3API.setNetwork(chain);
 
             this._unisatProviderPrivate._network = network;
-            this._emit('networkChanged', network);
+            // TODO (typing): check if this event is listened in this format
+            this._emit('networkChanged', { network, chain });
         }
     };
 }

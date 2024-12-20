@@ -31,7 +31,7 @@ export const AddressText = (props: {
                 onClick={() => {
                     setPopoverVisible(true);
                 }}>
-                <Text text={shortAddress(address)} color={props.color || 'white'} />
+                <Text text={shortAddress(address)} color={props.color ?? 'white'} />
             </Column>
             {popoverVisible && (
                 <AddressDetailPopover

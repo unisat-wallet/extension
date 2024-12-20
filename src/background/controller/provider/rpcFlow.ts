@@ -1,4 +1,3 @@
-import { ethErrors } from 'eth-rpc-errors';
 import 'reflect-metadata';
 
 import { keyringService, notificationService, permissionService } from '@/background/service';
@@ -6,7 +5,16 @@ import { PromiseFlow, underline2Camelcase } from '@/background/utils';
 import { CHAINS_ENUM, EVENTS } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 
-import providerController from './controller';
+import { isProviderControllerMethod } from '@/background/utils/controller';
+import { rpcErrors } from '@/shared/lib/bitcoin-rpc-errors/errors';
+import { ApprovalContext, ApprovalType } from '@/shared/types/Approval';
+import { ProviderControllerRequest } from '@/shared/types/Request';
+import { isWalletError } from '@/shared/utils/errors';
+import providerController, { ProviderController } from './controller';
+
+
+// This is used for type safety while returning approval metadata
+type ApprovalMetadata = [ApprovalType, (req: ProviderControllerRequest) => boolean, object?];
 
 
 const isSignApproval = (type: string) => {
@@ -14,7 +22,7 @@ const isSignApproval = (type: string) => {
     return SIGN_APPROVALS.includes(type);
 };
 const windowHeight = 600;
-const flow = new PromiseFlow();
+const flow = new PromiseFlow<ApprovalContext>();
 const flowContext = flow
     .use((ctx, next) => {
         // check method
@@ -23,8 +31,8 @@ const flowContext = flow
         } = ctx.request;
         ctx.mapMethod = underline2Camelcase(method);
 
-        if (!providerController[ctx.mapMethod]) {
-            throw ethErrors.rpc.methodNotFound({
+        if (!isProviderControllerMethod(ctx.mapMethod)) {
+            throw rpcErrors.methodNotFound({
                 message: `method [${method}] doesn't has corresponding handler`,
                 data: ctx.request.data
             });
@@ -68,7 +76,7 @@ const flowContext = flow
                             data: {},
                             session: { origin, name, icon }
                         },
-                        approvalComponent: 'Connect'
+                        approvalComponent: ApprovalType.Connect
                     },
                     { height: windowHeight }
                 );
@@ -87,17 +95,18 @@ const flowContext = flow
             },
             mapMethod
         } = ctx;
-        const [approvalType, condition, options = {}] =
-            Reflect.getMetadata('APPROVAL', providerController, mapMethod) || [];
+        const approvalMetadata = Reflect.getMetadata('APPROVAL', providerController, mapMethod) as ApprovalMetadata | undefined;
+        const [approvalType, condition, options = {}] = approvalMetadata || [];
+        
 
-        if (approvalType && (!condition || !condition(ctx.request))) {
+        if (approvalType && !condition?.(ctx.request)) {
             ctx.request.requestedApproval = true;
             ctx.approvalRes = await notificationService.requestApproval(
                 {
                     approvalComponent: approvalType,
                     params: {
                         method,
-                        data: params,
+                        data: params ?? {},
                         session: { origin, name, icon }
                     },
                     origin
@@ -116,17 +125,16 @@ const flowContext = flow
     .use(async (ctx) => {
         const { approvalRes, mapMethod, request } = ctx;
         // process request
-        const [approvalType] = Reflect.getMetadata('APPROVAL', providerController, mapMethod) || [];
+        const approvalMetadata = Reflect.getMetadata('APPROVAL', providerController, mapMethod) as ApprovalMetadata | undefined;
+        const [approvalType = ''] = approvalMetadata || [];
 
-        const { uiRequestComponent, ...rest } = approvalRes || {};
-        const {
-            session: { origin }
-        } = request;
+        const method = providerController[mapMethod as keyof ProviderController];
+        // TODO (typing): Check this again as it's not the most ideal solution. 
+        // However, the problem is that we have a general type like RequestParams for 
+        // incoming request data as we have different handlers. So, we assumed that 
+        // the params are passed correctly for each method for now.
         const requestDefer = Promise.resolve(
-            providerController[mapMethod]({
-                ...request,
-                approvalRes
-            })
+            (method as (args?: object) => unknown).call(providerController, { ...request, approvalRes })
         );
 
         requestDefer
@@ -142,44 +150,26 @@ const flowContext = flow
                 }
                 return result;
             })
-            .catch((e: any) => {
+            .catch((e: unknown) => {
                 if (isSignApproval(approvalType)) {
                     eventBus.emit(EVENTS.broadcastToUI, {
                         method: EVENTS.SIGN_FINISHED,
                         params: {
                             success: false,
-                            errorMsg: JSON.stringify(e)
+                            errorMsg: isWalletError(e) ? e.message : 'Unknown error occurred'
                         }
                     });
                 }
             });
 
-        async function requestApprovalLoop({ uiRequestComponent, ...rest }) {
-            ctx.request.requestedApproval = true;
-            const res = await notificationService.requestApproval({
-                approvalComponent: uiRequestComponent,
-                params: rest,
-                origin,
-                approvalType
-            });
-            if (res.uiRequestComponent) {
-                return await requestApprovalLoop(res);
-            } else {
-                return res;
-            }
-        }
-
-        if (uiRequestComponent) {
-            ctx.request.requestedApproval = true;
-            return await requestApprovalLoop({ uiRequestComponent, ...rest });
-        }
+            // TODO (typing): If a multi-step approval is needed, re-implement recursive requestApprovalLoop function here  
 
         return requestDefer;
     })
     .callback();
 
-export default (request) => {
-    const ctx: any = { request: { ...request, requestedApproval: false } };
+export default (request: ProviderControllerRequest) => {
+    const ctx: ApprovalContext = { request: { ...request, requestedApproval: false }, mapMethod: ''};
     return flowContext(ctx).finally(() => {
         if (ctx.request.requestedApproval) {
             flow.requestedApproval = false;

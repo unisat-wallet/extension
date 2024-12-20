@@ -44,8 +44,8 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
     }
     const [optionsVisible, setOptionsVisible] = useState(false);
     let path = '';
-    if (keyring.type !== KEYRING_CLASS.PRIVATE_KEY) {
-        path = ` (${keyring.hdPath + '/' + account.index})`;
+    if ((keyring.type !== KEYRING_CLASS.PRIVATE_KEY) && (account.index !== undefined)) {
+        path = ` (${keyring.hdPath + '/' + account.index.toString()})`;
     }
 
     const tools = useTools();

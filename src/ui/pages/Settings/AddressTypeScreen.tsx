@@ -93,7 +93,7 @@ export default function AddressTypeScreen() {
 
                         let name = `${item.name} (${item.hdPath}/${account.index})`;
                         if (currentKeyring.type === KEYRING_TYPE.SimpleKeyring) {
-                            name = `${item.name}`;
+                            name = item.name;
                         }
 
                         return (

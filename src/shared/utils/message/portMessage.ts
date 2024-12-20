@@ -1,6 +1,8 @@
 import { browserRuntimeConnect } from '@/background/webapi/browser';
-import { ListenCallback, RequestData } from '@/shared/types/Request.js';
+import { ListenCallback } from '@/shared/types/Request.js';
 
+import { Runtime } from 'webextension-polyfill';
+import { MessageDetails, SendMessagePayload, SendPayload, SendRequestPayload, SendResponsePayload } from '../../types/Message';
 import Message from './index';
 
 
@@ -10,9 +12,9 @@ BigInt.prototype.toJSON = function () {
 };
 
 class PortMessage extends Message {
-    port: chrome.runtime.Port | null = null;
+    port: Runtime.Port | null = null;
     
-    constructor(port?: chrome.runtime.Port) {
+    constructor(port?: Runtime.Port) {
         super();
 
         if (port) {
@@ -22,14 +24,16 @@ class PortMessage extends Message {
 
     connect = (name?: string) => {
         this.port = browserRuntimeConnect(undefined, name ? { name } : undefined);
-        this.port.onMessage.addListener(({ _type_, data }): void => {
+        this.port.onMessage.addListener((message): void => {
+            const { _type_, data } = message as MessageDetails;
+
             if (_type_ === `${this._EVENT_PRE}message`) {
-                this.emit('message', data);
+                this.emit('message', data as SendMessagePayload);
                 return;
             }
 
             if (_type_ === `${this._EVENT_PRE}response`) {
-                this.onResponse(data);
+                this.onResponse(data as SendResponsePayload);
             }
         });
 
@@ -39,20 +43,27 @@ class PortMessage extends Message {
     listen = (listenCallback: ListenCallback) => {
         if (!this.port) return;
         this.listenCallback = listenCallback;
-        this.port.onMessage.addListener(async ({ _type_, data }): Promise<void> => {
+        this.port.onMessage.addListener(async (message): Promise<void> => {
+            const { _type_, data } = message as MessageDetails;
+            
             if (_type_ === `${this._EVENT_PRE}request`) {
-                await this.onRequest(data);
+                await this.onRequest(data as SendRequestPayload);
             }
         });
 
         return this;
     };
 
-    send = (type: string, data: RequestData) => {
+    send = (type: string, data: SendPayload) => {
         if (!this.port) return;
 
+        const messageDetails: MessageDetails = {
+            _type_: `${this._EVENT_PRE}${type}`,
+            data
+        }
+
         try {
-            this.port.postMessage({ _type_: `${this._EVENT_PRE}${type}`, data });
+            this.port.postMessage(messageDetails);
         } catch (e) {
             //
         }

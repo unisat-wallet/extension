@@ -6,7 +6,7 @@ import { Card, Column, Image, Row, Text } from '@/ui/components';
 import { fontSizes } from '@/ui/theme/font';
 import { Address, BinaryReader } from '@btc-vision/transaction';
 
-export function decodeTransfer(selector: string, reader: BinaryReader): DecodedTransfer {
+export function decodeTransfer(selector: InteractionType, reader: BinaryReader): DecodedTransfer {
     let amount = 0n;
     let to = Address.dead();
     switch (selector) {

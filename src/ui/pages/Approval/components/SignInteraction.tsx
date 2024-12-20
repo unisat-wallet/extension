@@ -1,21 +1,14 @@
+import { SignInteractionApprovalParams } from '@/shared/types/Approval';
 import { decodeCallData, Decoded, selectorToString } from '@/shared/web3/decoder/CalldataDecoder';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
-import { DetailedInteractionParameters } from '@/shared/web3/interfaces/DetailedInteractionParameters';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import InteractionHeader from '@/ui/pages/Approval/components/Headers/InteractionHeader';
 import { DecodedCalldata } from '@/ui/pages/OpNet/decoded/DecodedCalldata';
 import { useApproval } from '@/ui/utils/hooks';
 
-interface Props {
-    params: {
-        data: DetailedInteractionParameters;
-        session: {
-            origin: string;
-            icon: string;
-            name: string;
-        };
-    };
+export interface Props {
+    params: SignInteractionApprovalParams;
 }
 
 export default function SignText(props: Props) {

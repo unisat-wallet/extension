@@ -1,9 +1,23 @@
-export { default as Connect } from './Connect';
-export { default as SignData } from './SignData';
-export { default as SignInteraction } from './SignInteraction';
-export { default as SignPsbt } from './SignPsbt';
-export { default as SignText } from './SignText';
-export { default as SwitchChain } from './SwitchChain';
-export { default as SwitchNetwork } from './SwitchNetwork';
-export { default as SignDeployment } from './SignDeployment';
-export { default as MultiSignPsbt } from './MultiSignPsbt';
+import { ApprovalType } from '@/shared/types/Approval';
+import Connect from './Connect';
+import SignData from './SignData';
+import SignDeployment from './SignDeployment';
+import SignInteraction from './SignInteraction';
+import SignPsbt from './SignPsbt';
+import SignText from './SignText';
+import SwitchChain from './SwitchChain';
+import SwitchNetwork from './SwitchNetwork';
+
+export { Connect, SignData, SignDeployment, SignInteraction, SignPsbt, SignText, SwitchChain, SwitchNetwork };
+
+export const ApprovalComponents = {
+    [ApprovalType.Connect]: Connect,
+    [ApprovalType.SignData]: SignData,
+    [ApprovalType.SignInteraction]: SignInteraction,
+    [ApprovalType.SignPsbt]: SignPsbt,
+    [ApprovalType.SignText]: SignText,
+    [ApprovalType.SwitchChain]: SwitchChain,
+    [ApprovalType.SwitchNetwork]: SwitchNetwork,
+    [ApprovalType.SignDeployment]: SignDeployment,
+} as const;
+

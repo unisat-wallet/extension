@@ -1,12 +1,14 @@
+import { Session } from '@/background/service/session';
+
 export interface RequestParams {
     readonly method: string;
     readonly type?: string;
     readonly params?: object;
 }
 
-export interface RequestData {
+export interface ProviderControllerRequest {
     data: RequestParams;
-    event?: string;
+    session: Session;
 }
 
 export type ListenCallback = ((data: RequestParams) => Promise<unknown>) | undefined;

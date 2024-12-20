@@ -1,15 +1,18 @@
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
+import { ApprovalResponse } from '@/shared/types/Approval';
+import { WalletError } from '@/shared/types/Error';
+import { isWalletError } from '@/shared/utils/errors';
 import { getUiType } from '.';
 import { useWallet } from './WalletContext';
 
 export const useApproval = () => {
     const wallet = useWallet();
     const navigate = useNavigate();
-    const getApproval = wallet.getApproval;
+    const getApproval = wallet.getApproval.bind(wallet);
 
-    const resolveApproval = async (data?: unknown, stay = false, forceReject = false) => {
+    const resolveApproval = async (data?: ApprovalResponse, stay = false, forceReject = false) => {
         const approval = await getApproval();
 
         if (approval) {
@@ -25,7 +28,7 @@ export const useApproval = () => {
         });
     };
 
-    const rejectApproval = async (err?: unknown, stay = false, isInternal = false) => {
+    const rejectApproval = async (err?: string, stay = false, isInternal = false) => {
         const approval = await getApproval();
         if (approval) {
             await wallet.rejectApproval(err, stay, isInternal);
@@ -35,13 +38,17 @@ export const useApproval = () => {
         }
     };
 
+    const handleBeforeUnload = () => {
+        rejectApproval('beforeUnload event occurred', false, false);
+    };
+
     useEffect(() => {
         if (!getUiType().isNotification) {
             return;
         }
-        window.addEventListener('beforeunload', rejectApproval);
+        window.addEventListener('beforeunload', handleBeforeUnload);
 
-        return () => window.removeEventListener('beforeunload', rejectApproval);
+        return () => window.removeEventListener('beforeunload', handleBeforeUnload);
     }, []);
 
     return [getApproval, resolveApproval, rejectApproval] as const;
@@ -59,8 +66,9 @@ export const useSelectOption = <T>({
     value?: T[];
 }) => {
     const isControlled = useRef(typeof value !== 'undefined').current;
-    const [idxs, setChoosedIdxs] = useState((isControlled ? value! : defaultValue).map((x) => options.indexOf(x)));
-
+    const [idxs, setChoosedIdxs] = useState(
+        (isControlled ? (value ?? defaultValue) : defaultValue).map((x) => options.indexOf(x))
+    );
     useEffect(() => {
         if (!isControlled) {
             return;
@@ -74,7 +82,7 @@ export const useSelectOption = <T>({
 
     const changeValue = (idxs: number[]) => {
         setChoosedIdxs([...idxs]);
-        onChange && onChange(idxs.map((o) => options[o]));
+        onChange?.(idxs.map((o) => options[o]));
     };
 
     const handleRemove = (i: number) => {
@@ -107,14 +115,16 @@ export const useSelectOption = <T>({
     return [idxs.map((o) => options[o]), handleRemove, handleChoose, handleToggle, handleClear, idxs] as const;
 };
 
-export const useWalletRequest = (
-    requestFn,
+export const useWalletRequest = <TArgs extends unknown[], TResult>(
+    requestFn: (...args: TArgs) => Promise<TResult>,
     {
+        // eslint-disable-next-line @typescript-eslint/unbound-method
         onSuccess,
+        // eslint-disable-next-line @typescript-eslint/unbound-method
         onError
     }: {
-        onSuccess?(arg: any): void;
-        onError?(arg: any): void;
+        onSuccess?(result: TResult): void;
+        onError?(error: WalletError): void;
     }
 ) => {
     const mounted = useRef(false);
@@ -126,10 +136,10 @@ export const useWalletRequest = (
         };
     }, []);
     const [loading, setLoading] = useState<boolean>(false);
-    const [res, setRes] = useState<any>();
-    const [err, setErr] = useState<any>();
+    const [res, setRes] = useState<TResult | undefined>(undefined);
+    const [err, setErr] = useState<WalletError>();
 
-    const run = async (...args) => {
+    const run = async (...args: TArgs) => {
         setLoading(true);
         try {
             const _res = await Promise.resolve(requestFn(...args));
@@ -137,13 +147,17 @@ export const useWalletRequest = (
                 return;
             }
             setRes(_res);
-            onSuccess && onSuccess(_res);
+            onSuccess?.(_res);
         } catch (err) {
             if (!mounted.current) {
                 return;
             }
-            setErr(err);
-            onError && onError(err);
+            if (isWalletError(err)) {
+                setErr(err);
+                onError?.(err);
+            } else {
+                console.error("Non-WalletError caught: ", err);
+            }
         } finally {
             if (mounted.current) {
                 setLoading(false);

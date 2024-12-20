@@ -4,20 +4,21 @@ import ReactDOM from 'react-dom/client';
 import { IdleTimerProvider } from 'react-idle-timer';
 import { Provider } from 'react-redux';
 
-import browser from '@/background/webapi/browser';
 import { EVENTS } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 import { Message } from '@/shared/utils';
 import { PriceProvider } from '@/ui/provider/PriceProvider';
 import AccountUpdater from '@/ui/state/accounts/updater';
 import '@/ui/styles/global.less';
+import browser from 'webextension-polyfill';
 
+import { RequestParams } from '@/shared/types/Request';
 import { ActionComponentProvider } from './components/ActionComponent';
 import { AppDimensions } from './components/Responsive';
 import AsyncMainRoute from './pages/MainRoute';
 import store from './state';
+import { WalletController, WalletProvider } from './utils';
 import ChainUpdater from './state/settings/updater';
-import { WalletProvider } from './utils';
 
 message.config({
     maxCount: 1
@@ -35,25 +36,25 @@ if (
     window.screenLeft > window.screen.width ||
     window.screenTop > window.screen.height
 ) {
-    browser.runtime.getPlatformInfo(function (info) {
+    browser.runtime.getPlatformInfo().then((info) => {
         if (info.os === 'mac') {
             const fontFaceSheet = new CSSStyleSheet();
             fontFaceSheet.insertRule(`
-        @keyframes redraw {
-          0% {
-            opacity: 1;
-          }
-          100% {
-            opacity: .99;
-          }
-        }
-      `);
+                @keyframes redraw {
+                    0% {
+                        opacity: 1;
+                    }
+                    100% {
+                        opacity: .99;
+                    }
+                }
+            `);
             fontFaceSheet.insertRule(`
-        html {
-          animation: redraw 1s linear infinite;
-        }
-      `);
-            (document as any).adoptedStyleSheets = [...(document as any).adoptedStyleSheets, fontFaceSheet];
+                html {
+                    animation: redraw 1s linear infinite;
+                }
+            `);
+            document.adoptedStyleSheets = [...document.adoptedStyleSheets, fontFaceSheet];
         }
     });
 }
@@ -64,42 +65,20 @@ const portMessageChannel = new PortMessage();
 
 portMessageChannel.connect('popup');
 
-const wallet: Record<string, any> = new Proxy(
-    {},
-    {
-        get(_, key) {
-            switch (key) {
-                case 'openapi':
-                    return new Proxy(
-                        {},
-                        {
-                            get(_, key) {
-                                if (typeof key !== 'string') throw new Error('Invalid key');
+const wallet = new Proxy<WalletController>({} as WalletController, {
+    get(_, key: keyof WalletController) {
+        return function (...params: Parameters<WalletController[typeof key]>) {
+            if (typeof key !== 'string') throw new Error('Invalid key');
 
-                                return function (...params: any) {
-                                    return portMessageChannel.request({
-                                        type: 'openapi',
-                                        method: key,
-                                        params
-                                    });
-                                };
-                            }
-                        }
-                    );
-                default:
-                    return function (...params: any) {
-                        if (typeof key !== 'string') throw new Error('Invalid key');
-
-                        return portMessageChannel.request({
-                            type: 'controller',
-                            method: key,
-                            params
-                        });
-                    };
-            }
-        }
+            return portMessageChannel.request({
+                type: 'controller',
+                method: key,
+                params
+            });
+        };
     }
-);
+});
+
 
 portMessageChannel.listen((data) => {
     if (data.type === 'broadcast') {
@@ -109,11 +88,14 @@ portMessageChannel.listen((data) => {
     return Promise.resolve();
 });
 
-eventBus.addEventListener(EVENTS.broadcastToBackground, async (data) => {
+// TODO (typing): As it passes data to request function, assumed that the data is RequestParams type
+// but broadcastToBackground event is not emitted anywhere. So, check it again when there is a real usage
+eventBus.addEventListener(EVENTS.broadcastToBackground, async (params: unknown) => {
+    const data = params as RequestParams;
     await portMessageChannel.request({
         type: 'broadcast',
         method: data.method,
-        params: data.data
+        params: data.params
     });
 });
 
@@ -144,23 +126,28 @@ function Updaters() {
 //   });
 // });
 
-const root = ReactDOM.createRoot(document.getElementById('root')!);
-root.render(
-    <Provider store={store}>
-        <WalletProvider {...antdConfig} wallet={wallet as any}>
-            <ActionComponentProvider>
-                <AppDimensions>
-                    <PriceProvider>
-                        <IdleTimerProvider
-                            onAction={() => {
-                                wallet.setLastActiveTime();
-                            }}>
-                            <Updaters />
-                            <AsyncMainRoute />
-                        </IdleTimerProvider>
-                    </PriceProvider>
-                </AppDimensions>
-            </ActionComponentProvider>
-        </WalletProvider>
-    </Provider>
-);
+const rootElement = document.getElementById('root');
+if (rootElement) {
+    const root = ReactDOM.createRoot(rootElement);
+    root.render(
+        <Provider store={store}>
+            <WalletProvider {...antdConfig} wallet={wallet}>
+                <ActionComponentProvider>
+                    <AppDimensions>
+                        <PriceProvider>
+                            <IdleTimerProvider
+                                onAction={() => {
+                                    wallet.setLastActiveTime();
+                                }}>
+                                <Updaters />
+                                <AsyncMainRoute />
+                            </IdleTimerProvider>
+                        </PriceProvider>
+                    </AppDimensions>
+                </ActionComponentProvider>
+            </WalletProvider>
+        </Provider>
+    );
+} else {
+    console.error("Root element not found.");
+}

@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
-import { Account, OPTokenInfo } from '@/shared/types';
+import { Account } from '@/shared/types';
 import { Button, Column, Content, Header, Layout, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
@@ -16,10 +15,6 @@ interface ItemData {
 }
 
 export default function DeployContractOpnet() {
-    const { state } = useLocation();
-    const props = state as {
-        OpNetBalance: OPTokenInfo;
-    };
 
     const account = useCurrentAccount();
 

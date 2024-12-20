@@ -15,6 +15,7 @@ import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 import { Address, OPNetMetadata } from '@btc-vision/transaction';
 
+import browser from 'webextension-polyfill';
 import { useChainType } from '@/ui/state/settings/hooks';
 import { RouteTypes, useNavigate } from '../../MainRoute';
 import { AddOpNetToken } from '../../Wallet/AddOpNetToken';
@@ -56,7 +57,7 @@ export function OPNetList() {
             const tokensImported = localStorage.getItem('opnetTokens_' + getChain);
             let parsedTokens: string[] = [];
             if (tokensImported) {
-                parsedTokens = JSON.parse(tokensImported);
+                parsedTokens = JSON.parse(tokensImported) as string[];
             }
 
             const currentNetwork = await wallet.getNetworkType();
@@ -133,7 +134,7 @@ export function OPNetList() {
     //    void fetchData();
     //}, [currentAccount, importTokenBool, wallet]);
 
-    useEffect(() => {}, [total]);
+    // useEffect(() => {}, [total]);
 
     if (total === -1) {
         return (
@@ -185,8 +186,8 @@ export function OPNetList() {
                         icon={'pencil'}
                         preset="fontsmall"
                         onClick={async () => {
-                            await chrome.tabs.create({
-                                url: chrome.runtime.getURL('/index.html#/opnet/deploy-contract')
+                            await browser.tabs.create({
+                                url: browser.runtime.getURL('/index.html#/opnet/deploy-contract')
                             });
                         }}></Button>
                 </Row>

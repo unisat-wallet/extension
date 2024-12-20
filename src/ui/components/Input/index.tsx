@@ -11,7 +11,6 @@ import { useTools } from '../ActionComponent';
 import { Icon } from '../Icon';
 import { Row } from '../Row';
 import { $textPresets, Text } from '../Text';
-import './index.less';
 
 export interface InputProps {
     preset?: Presets;
@@ -113,13 +112,13 @@ function AmountInput(props: InputProps) {
     if (!onAmountInputChange) {
         return <div />;
     }
-    const [inputValue, setInputValue] = useState(props.value || '');
-    const [validAmount, setValidAmount] = useState(props.value || '');
+    const [inputValue, setInputValue] = useState(props.value ?? '');
+    const [validAmount, setValidAmount] = useState(props.value ?? '');
     useEffect(() => {
         onAmountInputChange(validAmount);
     }, [validAmount]);
 
-    const handleInputAmount = (e) => {
+    const handleInputAmount = (e: React.ChangeEvent<HTMLInputElement>) => {
         const value = e.target.value;
         if (disableDecimal) {
             if (/^[1-9]\d*$/.test(value) || value === '') {
@@ -149,7 +148,7 @@ function AmountInput(props: InputProps) {
     return (
         <div style={$baseContainerStyle}>
             <input
-                placeholder={placeholder || 'Amount'}
+                placeholder={placeholder ?? 'Amount'}
                 type={'text'}
                 value={inputValue}
                 onChange={handleInputAmount}
@@ -214,7 +213,7 @@ export const AddressInput = (props: InputProps) => {
         setParseName('');
     };
 
-    const handleInputAddress = (e) => {
+    const handleInputAddress = (e: React.ChangeEvent<HTMLInputElement>) => {
         const inputAddress = e.target.value.trim();
         setInputVal(inputAddress);
 

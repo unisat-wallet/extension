@@ -8,7 +8,7 @@ import { Row } from '../Row';
 import { Text } from '../Text';
 
 export function RBFBar({ defaultValue, onChange }: { defaultValue?: boolean; onChange: (val: boolean) => void }) {
-    const [enableRBF, setEnableRBF] = useState(defaultValue || false);
+    const [enableRBF, setEnableRBF] = useState(defaultValue ?? false);
 
     useEffect(() => {
         onChange(enableRBF);

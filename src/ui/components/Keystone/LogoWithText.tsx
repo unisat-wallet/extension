@@ -1,8 +1,8 @@
 export default function KeystoneLogoWithText({ width, height }: { width?: number; height?: number }) {
     return (
         <svg
-            width={width || 320}
-            height={height || 77}
+            width={width ?? 320}
+            height={height ?? 77}
             viewBox="0 0 320 77"
             fill="none"
             xmlns="http://www.w3.org/2000/svg">

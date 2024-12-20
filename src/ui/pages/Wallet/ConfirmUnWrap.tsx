@@ -1,24 +1,8 @@
 import { useState } from 'react';
 
-import { PAYMENT_CHANNELS, PaymentChannelType } from '@/shared/constant';
-import { Button, Card, Column, Image, Row, Text } from '@/ui/components';
+import { Button, Column, Row, Text } from '@/ui/components';
 import { BottomModal } from '@/ui/components/BottomModal';
 import { CloseOutlined } from '@ant-design/icons';
-
-function PaymentItem(props: { channelType: PaymentChannelType; onClick }) {
-    const channelInfo = PAYMENT_CHANNELS[props.channelType];
-
-    return (
-        <Card style={{ backgroundColor: 'rgba(255,255,255,0.1)', borderRadius: 10 }} mt="lg" onClick={props.onClick}>
-            <Row fullX>
-                <Row itemsCenter>
-                    <Image src={channelInfo.img} size={30} />
-                    <Text text={channelInfo.name} />
-                </Row>
-            </Row>
-        </Card>
-    );
-}
 
 export const ConfirmUnWrap = ({
     acceptWrapMessage,

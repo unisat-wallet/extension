@@ -1,3 +1,4 @@
+import { SignDeploymentApprovalParams } from '@/shared/types/Approval';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { AddressText } from '@/ui/components/AddressText';
 import WebsiteBar from '@/ui/components/WebsiteBar';
@@ -7,30 +8,25 @@ import { colors } from '@/ui/theme/colors';
 import { satoshisToAmount } from '@/ui/utils';
 import { useApproval } from '@/ui/utils/hooks';
 import { PsbtTxOutput } from '@btc-vision/bitcoin';
-import { IDeploymentParameters } from '@btc-vision/transaction';
 
 
-interface Props {
-    params: {
-        data: IDeploymentParameters;
-        session: {
-            origin: string;
-            icon: string;
-            name: string;
-        };
-    };
+export interface Props {
+    params: SignDeploymentApprovalParams;
 }
 
 function toHex(buffer: Uint8Array | Buffer | number[]) {
-    return Array.prototype.map.call(buffer, (x) => ('00' + x.toString(16)).slice(-2)).join('');
+    return Array.prototype.map.call(buffer, (x: number) => ('00' + x.toString(16)).slice(-2)).join('');
 }
 
+// TODO (typing): check if we really need this function. We are passing buffer parameter and trying to return Uint8Array
+// For now, the lint error is fixed by disabling it. If we no longer need this function, we can remove it completely.
 function objToBuffer(obj: object): Uint8Array {
     const keys = Object.keys(obj);
     const values = Object.values(obj);
 
     const buffer = new Uint8Array(keys.length);
     for (let i = 0; i < keys.length; i++) {
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         buffer[i] = values[i];
     }
 
@@ -55,7 +51,7 @@ export default function SignDeployment(props: Props) {
     const optionalOutputs: {
         address: string;
         value: number;
-    }[] = (data.optionalOutputs || []).map((output: PsbtTxOutput) => ({
+    }[] = (data.optionalOutputs ?? []).map((output: PsbtTxOutput) => ({
         address: 'address' in output && output.address ? output.address : '',
         value: output.value
     }));
@@ -113,7 +109,7 @@ export default function SignDeployment(props: Props) {
 
                                     return (
                                         <Column
-                                            key={'output_' + index}
+                                            key={`output_${index}`}
                                             style={
                                                 index === 0
                                                     ? {}
@@ -131,7 +127,7 @@ export default function SignDeployment(props: Props) {
                                                     />
                                                     <Row>
                                                         <Text
-                                                            text={`${satoshisToAmount(v.value)}`}
+                                                            text={satoshisToAmount(v.value)}
                                                             color={isMyAddress ? 'white' : 'textDim'}
                                                         />
                                                         <Text text={btcUnit} color="textDim" />

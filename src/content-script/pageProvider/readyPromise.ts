@@ -1,13 +1,13 @@
 class ReadyPromise {
     private readonly _allCheck: boolean[] = [];
     private _tasks: {
-        resolve(value: unknown): void;
-        reject(reason: unknown): void;
-        fn(): Promise<unknown>;
+        resolve: (value: unknown) => void;
+        reject: (reason: unknown) => void;
+        fn: () => Promise<unknown>;
     }[] = [];
 
     constructor(count: number) {
-        this._allCheck = [...Array(count)];
+        this._allCheck = Array(count).fill(false) as boolean[];
     }
 
     check = (index: number) => {
@@ -37,7 +37,13 @@ class ReadyPromise {
         }
 
         while (this._tasks.length) {
-            const { resolve, reject, fn } = this._tasks.shift()!;
+            const task = this._tasks.shift();
+
+            if (!task) {
+                continue;
+            }
+    
+            const { resolve, reject, fn } = task;
 
             let errored = false;
             const response = await fn().catch((error) => {

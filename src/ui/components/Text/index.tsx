@@ -89,7 +89,7 @@ export function Text(props: TextProps) {
         style: $styleOverride,
         ...rest
     } = props;
-    const preset: Presets = props.preset || 'regular';
+    const preset: Presets = props.preset ?? 'regular';
     const $textStyle = Object.assign(
         {},
         $presets[preset],
@@ -105,7 +105,7 @@ export function Text(props: TextProps) {
                   overflow: 'hidden'
               }
             : {}
-    );
+    ) as CSSProperties;
     const $style = Object.assign({}, $textStyle, $styleOverride);
     const textUse = props.digital ? showLongNumber(text) : text;
     return (

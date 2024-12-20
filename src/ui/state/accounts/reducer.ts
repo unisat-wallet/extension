@@ -111,7 +111,7 @@ const slice = createSlice({
             state.balanceMap[address].pending_btc_amount = pending_btc_amount;
             state.balanceMap[address].expired = false;
         },
-        setAddressSummary(state, action: { payload: any }) {
+        setAddressSummary(state, action: { payload: AddressSummary }) {
             state.addressSummary = action.payload;
         },
         expireBalance(state) {

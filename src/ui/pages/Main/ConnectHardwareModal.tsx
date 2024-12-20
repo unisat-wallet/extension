@@ -21,7 +21,7 @@ function WalletItem(props: { walletType: HardwareWalletType; onClick?: () => voi
                 if (props.disabled) {
                     tools.toast('Coming soon');
                 } else {
-                    props.onClick && props.onClick();
+                    props.onClick?.();
                 }
             }}>
             <Row fullX>

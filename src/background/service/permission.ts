@@ -1,6 +1,5 @@
 import { max } from 'lodash';
-// @ts-ignore
-import LRU from 'lru-cache';
+import LRUCache from 'lru-cache';
 
 import { createPersistStore } from '@/background/utils';
 import { CHAINS_ENUM, INTERNAL_REQUEST_ORIGIN } from '@/shared/constant';
@@ -18,14 +17,14 @@ export interface ConnectedSite {
 }
 
 export interface PermissionStore {
-    dumpCache: readonly LRU.Entry<string, ConnectedSite>[];
+    dumpCache: readonly LRUCache.Entry<string, ConnectedSite>[];
 }
 
 class PermissionService {
     store: PermissionStore = {
         dumpCache: []
     };
-    lruCache: LRU<string, ConnectedSite> | undefined;
+    lruCache: LRUCache<string, ConnectedSite> | undefined;
 
     init = async () => {
         const storage = await createPersistStore<PermissionStore>({
@@ -33,8 +32,8 @@ class PermissionService {
         });
         this.store = storage || this.store;
 
-        this.lruCache = new LRU();
-        const cache: readonly LRU.Entry<string, ConnectedSite>[] = (this.store.dumpCache || []).map((item) => ({
+        this.lruCache = new LRUCache<string, ConnectedSite>()
+        const cache: readonly LRUCache.Entry<string, ConnectedSite>[] = (this.store.dumpCache || []).map((item) => ({
             k: item.k,
             v: item.v,
             e: 0
@@ -86,7 +85,7 @@ class PermissionService {
     };
 
     updateConnectSite = (origin: string, value: Partial<ConnectedSite>, partialUpdate?: boolean) => {
-        if (!this.lruCache || !this.lruCache.has(origin)) return;
+        if (!this.lruCache?.has(origin)) return;
         if (origin === INTERNAL_REQUEST_ORIGIN) return;
 
         if (partialUpdate) {
@@ -143,7 +142,7 @@ class PermissionService {
 
     getConnectedSite = (key: string) => {
         const site = this.lruCache?.get(key);
-        if (site && site.isConnected) {
+        if (site?.isConnected) {
             return site;
         }
     };
@@ -151,7 +150,7 @@ class PermissionService {
     topConnectedSite = (origin: string, order?: number) => {
         const site = this.getConnectedSite(origin);
         if (!site || !this.lruCache) return;
-        order = order ?? (max(this.getRecentConnectedSites().map((item: ConnectedSite) => item.order)) || 0) + 1;
+        order = order ?? (max(this.getRecentConnectedSites().map((item: ConnectedSite) => item.order)) ?? 0) + 1;
         this.updateConnectSite(origin, {
             ...site,
             order,

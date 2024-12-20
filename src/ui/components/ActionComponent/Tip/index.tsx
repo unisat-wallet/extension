@@ -13,7 +13,7 @@ export function Tip(props: TipProps) {
     return (
         <Popover
             onClose={() => {
-                onClose && onClose();
+                onClose?.();
             }}>
             <Column>
                 <Text text={text} textCenter />

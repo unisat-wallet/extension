@@ -1,15 +1,16 @@
 // this script is injected into webpage's context
-import { ethErrors, serializeError } from 'eth-rpc-errors';
 import { EventEmitter } from 'events';
 import { BroadcastedTransaction } from 'opnet';
 
-import { TxType } from '@/shared/types';
+import { SignPsbtOptions, TxType } from '@/shared/types';
 import { RequestParams } from '@/shared/types/Request.js';
 import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
 import Web3API from '@/shared/web3/Web3API';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { DeploymentResult, Unisat, UTXO } from '@btc-vision/transaction';
 
+import { rpcErrors } from '@/shared/lib/bitcoin-rpc-errors/errors';
+import { ProviderState } from '@/shared/types/Provider';
 import {
     BroadcastTransactionOptions,
     IDeploymentParametersWithoutSigner,
@@ -18,7 +19,7 @@ import {
 } from './Web3Provider';
 import PushEventHandlers from './pushEventHandlers';
 import ReadyPromise from './readyPromise';
-import { $, domReadyCall } from './utils';
+import { $, domReadyCall, isPushEventHandlerMethod } from './utils';
 
 declare global {
     interface Window {
@@ -40,7 +41,7 @@ const log = (event: string, ...args: unknown[]) => {
 //declare const window: any
 
 const script = document.currentScript;
-const channelName = script?.getAttribute('channel') || 'OPNET';
+const channelName = script?.getAttribute('channel') ?? 'OPNET';
 
 interface StateProvider {
     accounts: string[] | null;
@@ -50,7 +51,7 @@ interface StateProvider {
     isPermanentlyDisconnected: boolean;
 }
 
-const _opnetPrividerPrivate: {
+export interface OpnetProviderPrivate {
     _selectedAddress: string | null;
     _network: string | null;
     _isConnected: boolean;
@@ -62,7 +63,9 @@ const _opnetPrividerPrivate: {
     _pushEventHandlers: PushEventHandlers | null;
     _requestPromise: ReadyPromise;
     _bcm: BroadcastChannelMessage;
-} = {
+}
+
+const _opnetPrividerPrivate: OpnetProviderPrivate = {
     _selectedAddress: null,
     _network: null,
     _isConnected: false,
@@ -97,12 +100,16 @@ export class OpnetProvider extends EventEmitter {
 
         _opnetPrividerPrivate._bcm.connect().on('message', this._handleBackgroundMessage);
         domReadyCall(async () => {
-            const origin = window.top?.location.origin;
-            // @ts-ignore
-            const icon = $('head > link[rel~="icon"]')?.href || $('head > meta[itemprop="image"]')?.content;
+            const origin = window.top?.location.origin || '';
 
-            // @ts-ignore
-            const name = document.title || $('head > meta[name="title"]')?.content || origin;
+            const iconElement = $('head > link[rel~="icon"]');
+            let icon = (iconElement instanceof HTMLLinkElement) ? iconElement.href : '';
+            const metaImageElement = $('head > meta[itemprop="image"]');
+            const iconFallback = (metaImageElement instanceof HTMLMetaElement) ? metaImageElement.content : '';
+            icon = icon || iconFallback;
+            
+            const metaTitleElement = $('head > meta[name="title"]');
+            const name = document.title || ((metaTitleElement instanceof HTMLMetaElement) ? metaTitleElement.content : origin);
 
             await _opnetPrividerPrivate._bcm.request({
                 method: 'tabCheckin',
@@ -114,9 +121,9 @@ export class OpnetProvider extends EventEmitter {
         });
 
         try {
-            const { network, chain, accounts, isUnlocked }: any = await this._request({
+            const { network, chain, accounts, isUnlocked }: ProviderState = await this._request({
                 method: 'getProviderState'
-            });
+            }) as ProviderState;
 
             if (isUnlocked) {
                 _opnetPrividerPrivate._isUnlocked = true;
@@ -142,7 +149,7 @@ export class OpnetProvider extends EventEmitter {
 
     _request = async (data: RequestParams) => {
         if (!data) {
-            throw ethErrors.rpc.invalidRequest();
+            throw rpcErrors.invalidRequest();
         }
 
         this._requestPromiseCheckVisibility();
@@ -151,9 +158,10 @@ export class OpnetProvider extends EventEmitter {
             .call(async () => {
                 log('[request]', JSON.stringify(data, null, 2));
 
-                const res = await _opnetPrividerPrivate._bcm.request(data).catch((err: unknown) => {
-                    log('[request: error]', data.method, serializeError(err));
-                    throw serializeError(err);
+                const res = await _opnetPrividerPrivate._bcm.request(data).catch((err) => {
+                    // TODO (typing): Check if sending error without serialization cause any issues on the dApp side.
+                    log('[request: error]', data.method, err);
+                    throw err;
                 });
 
                 log('[request: success]', data.method, res);
@@ -357,7 +365,7 @@ export class OpnetProvider extends EventEmitter {
         });
     };
 
-    signPsbt = async (psbtHex: string, options?: any) => {
+    signPsbt = async (psbtHex: string, options?: SignPsbtOptions) => {
         return this._request({
             method: 'signPsbt',
             params: {
@@ -368,7 +376,7 @@ export class OpnetProvider extends EventEmitter {
         });
     };
 
-    signPsbts = async (psbtHexs: string[], options?: any[]) => {
+    signPsbts = async (psbtHexs: string[], options?: SignPsbtOptions[]) => {
         return this._request({
             method: 'multiSignPsbt',
             params: {
@@ -414,10 +422,11 @@ export class OpnetProvider extends EventEmitter {
     private _handleBackgroundMessage = (params: { event: string; data: unknown }) => {
         log('[push event]', params.event, params.data);
 
-        // @ts-ignore
-        if (_opnetPrividerPrivate._pushEventHandlers?.[params.event]) {
-            // @ts-ignore
-            return _opnetPrividerPrivate._pushEventHandlers[params.event](params.data);
+        // TODO (typing): Ideally this is not the type-safe solution but in the _handleBackgroundMessage
+        // function, we are directly passing the data as unknown and all of the pushEventHandler's methods
+        // have either one argument or none. So, it should be safe to cast it as below. 
+        if (_opnetPrividerPrivate._pushEventHandlers && isPushEventHandlerMethod(params.event)) {
+            return (_opnetPrividerPrivate._pushEventHandlers[params.event] as (data: unknown) => unknown)(params.data);
         }
 
         this.emit(params.event, params.data);
@@ -433,7 +442,7 @@ export class OpnetProvider extends EventEmitter {
                 params: {}
             });
         } catch (e) {
-            log('[keepAlive: error]', serializeError(e));
+            log('[keepAlive: error]', e);
         }
 
         setTimeout(async () => {

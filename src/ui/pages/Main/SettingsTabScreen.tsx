@@ -17,6 +17,7 @@ import { useWallet } from '@/ui/utils';
 import { RightOutlined } from '@ant-design/icons';
 
 import { SwitchChainModal } from '../Settings/SwitchChainModal';
+import { Tabs } from 'webextension-polyfill';
 
 interface Setting {
     label?: string;
@@ -116,8 +117,10 @@ export default function SettingsTabScreen() {
 
     useEffect(() => {
         const run = async () => {
-            const res = await getCurrentTab();
-            if (!res || !res.url) return;
+            // TODO (typing): ideally ts should already know the return type but it's giving
+            // unsafe any error here and we need to cast it explicitly here
+            const res = await getCurrentTab() as Tabs.Tab | undefined;
+            if (!res?.url) return;
 
             const origin = new URL(res.url).origin;
 
@@ -162,7 +165,7 @@ export default function SettingsTabScreen() {
             const item = ADDRESS_TYPES[currentKeyring.addressType];
             const hdPath = currentKeyring.hdPath || item.hdPath;
             if (currentKeyring.type === KEYRING_TYPE.SimpleKeyring) {
-                v.value = `${item.name}`;
+                v.value = item.name;
             } else {
                 v.value = `${item.name} (${hdPath}/${currentAccount.index})`;
             }

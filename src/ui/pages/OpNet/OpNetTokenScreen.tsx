@@ -145,7 +145,7 @@ export default function OpNetTokenScreen() {
         const tokensImported = localStorage.getItem('opnetTokens_' + getChain);
 
         if (tokensImported) {
-            let updatedTokens: string[] = JSON.parse(tokensImported);
+            let updatedTokens: string[] = JSON.parse(tokensImported) as string[];
             updatedTokens = updatedTokens.filter((address) => address !== tokenSummary.address);
             localStorage.setItem('opnetTokens_' + getChain, JSON.stringify(updatedTokens));
         }

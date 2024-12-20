@@ -11,6 +11,7 @@ import { keyringsActions } from '@/ui/state/keyrings/reducer';
 import { fontSizes } from '@/ui/theme/font';
 import { shortAddress, useApproval, useWallet } from '@/ui/utils';
 import { CheckCircleFilled, LoadingOutlined } from '@ant-design/icons';
+import { ConnectApprovalParams } from '@/shared/types/Approval';
 
 interface MyItemProps {
     account?: Account;
@@ -35,7 +36,7 @@ export function MyItem({ account, selected, onClick }: MyItemProps, ref) {
                 </Column>
                 <Column>
                     <Text text={account.alianName} />
-                    <Text text={`${shortAddress(account.address)}`} preset="sub" />
+                    <Text text={shortAddress(account.address)} preset="sub" />
                 </Column>
             </Row>
             <Column relative></Column>
@@ -43,14 +44,8 @@ export function MyItem({ account, selected, onClick }: MyItemProps, ref) {
     );
 }
 
-interface Props {
-    params: {
-        session: {
-            origin: string;
-            icon: string;
-            name: string;
-        };
-    };
+export interface Props {
+    params: ConnectApprovalParams;
 }
 
 export default function Connect({ params: { session } }: Props) {

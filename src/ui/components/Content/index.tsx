@@ -41,6 +41,6 @@ const $viewPresets = {
 export function Content(props: ContentProps) {
     const { style: $styleOverride, preset, ...rest } = props;
 
-    const $style = Object.assign({}, $viewPresets[preset || 'large'], $styleOverride);
+    const $style = Object.assign({}, $viewPresets[preset ?? 'large'], $styleOverride);
     return <BaseView style={$style} {...rest} />;
 }

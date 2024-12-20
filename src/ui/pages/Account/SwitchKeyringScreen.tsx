@@ -82,8 +82,8 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
                 </Column>
 
                 <Column justifyCenter>
-                    <Text text={`${keyring.alianName}`} />
-                    <Text text={`${displayAddress}`} preset="sub" />
+                    <Text text={keyring.alianName} />
+                    <Text text={displayAddress} preset="sub" />
                 </Column>
             </Row>
 

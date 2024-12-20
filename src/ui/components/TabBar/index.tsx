@@ -1,4 +1,4 @@
-/* eslint-disable indent */
+ 
 import { useEffect, useState } from 'react';
 
 import { colors } from '@/ui/theme/colors';

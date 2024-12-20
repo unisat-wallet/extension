@@ -6,20 +6,12 @@ import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useApproval } from '@/ui/utils';
 
+import { ParsedSignMsgUr } from '@/shared/types';
+import { SignTextApprovalParams } from '@/shared/types/Approval';
 import KeystoneSignScreen from '../../Wallet/KeystoneSignScreen';
 
-interface Props {
-    params: {
-        data: {
-            text: string;
-            type: string;
-        };
-        session: {
-            origin: string;
-            icon: string;
-            name: string;
-        };
-    };
+export interface Props {
+    params: SignTextApprovalParams;
 }
 
 export default function SignText({ params: { data, session } }: Props) {
@@ -43,8 +35,8 @@ export default function SignText({ params: { data, session } }: Props) {
             <KeystoneSignScreen
                 type={data.type === 'bip322-simple' ? 'bip322-simple' : 'msg'}
                 data={data.text}
-                onSuccess={({ signature }) => {
-                    resolveApproval({ signature });
+                onSuccess={(result: ParsedSignMsgUr) => {
+                    resolveApproval({ signature: result.signature });
                 }}
                 onBack={() => {
                     setIsKeystoneSigning(false);

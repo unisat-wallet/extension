@@ -48,24 +48,13 @@ const AccountSelect = () => {
                     <Text
                         text={'History'}
                         size="xs"
-                        onClick={() => {
-                            if (chain.isViewTxHistoryInternally) {
-                                navigate(RouteTypes.HistoryScreen);
-                            } else {
-                                window.open(addressExplorerUrl);
-                            }
-                        }}></Text>
+                        onClick={() => window.open(addressExplorerUrl)} 
+                    />
 
                     <Icon
                         icon="link"
                         size={fontSizes.xs}
-                        onClick={() => {
-                            if (chain.isViewTxHistoryInternally) {
-                                navigate(RouteTypes.HistoryScreen);
-                            } else {
-                                window.open(addressExplorerUrl);
-                            }
-                        }}
+                        onClick={() => window.open(addressExplorerUrl)}
                     />
                 </Row>
             </Column>

@@ -3,6 +3,7 @@ import { useTranslation } from 'react-i18next';
 
 import { ADDRESS_TYPES } from '@/shared/constant';
 import { WalletKeyring } from '@/shared/types';
+import { isWalletError } from '@/shared/utils/errors';
 import { Button, Card, Column, Content, Grid, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
@@ -32,7 +33,12 @@ export default function ExportMnemonicsScreen() {
             setPassphrase(passphrase);
         } catch (e) {
             setStatus('error');
-            setError((e as any).message);
+            if (isWalletError(e)) {
+                setError(e.message);
+            } else {
+                setError("An unexpected error occurred.");
+                console.error("Non-WalletError caught: ", e);
+            }
         }
     };
 
@@ -58,7 +64,7 @@ export default function ExportMnemonicsScreen() {
 
     const words = mnemonic.split(' ');
 
-    const pathName = ADDRESS_TYPES.find((v) => v.hdPath === keyring.hdPath)?.name || 'custom';
+    const pathName = ADDRESS_TYPES.find((v) => v.hdPath === keyring.hdPath)?.name ?? 'custom';
     return (
         <Layout>
             <Header

@@ -1,6 +1,6 @@
-import { Text } from '../Text';
+import { Sizes, Text } from '../Text';
 
-const $tickerPresets: { sm: { textSize: any }; md: { textSize: any }; lg: { textSize: any } } = {
+const $tickerPresets: { sm: { textSize: Sizes }; md: { textSize: Sizes }; lg: { textSize: Sizes } } = {
     sm: {
         textSize: 'xs'
     },
@@ -15,6 +15,6 @@ const $tickerPresets: { sm: { textSize: any }; md: { textSize: any }; lg: { text
 type Presets = keyof typeof $tickerPresets;
 
 export function RunesTicker({ tick, preset }: { tick: string | undefined; preset?: Presets }) {
-    const style = $tickerPresets[preset || 'md'];
+    const style = $tickerPresets[preset ?? 'md'];
     return <Text text={tick} size={style.textSize} color="gold" wrap />;
 }

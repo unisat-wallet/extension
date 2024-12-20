@@ -1,6 +1,5 @@
 import bitcore from 'bitcore-lib';
 import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import { ADDRESS_TYPES } from '@/shared/constant';
 import { Button, Card, Column, Content, Footer, Header, Input, Layout, Row, Text } from '@/ui/components';
@@ -13,10 +12,11 @@ import KeystoneScan from '@/ui/components/Keystone/Scan';
 import KeystoneProductImg from '@/ui/components/Keystone/imgs/keystone-product.png';
 import { useImportAccountsFromKeystoneCallback } from '@/ui/state/global/hooks';
 import { colors } from '@/ui/theme/colors';
-import { useWallet } from '@/ui/utils';
+import { useLocationState, useWallet } from '@/ui/utils';
 import { ScanOutlined } from '@ant-design/icons';
 import { AddressType } from '@btc-vision/wallet-sdk';
 
+import { isWalletError } from '@/shared/utils/errors';
 import { RouteTypes, useNavigate } from '../MainRoute';
 
 interface ContextData {
@@ -28,12 +28,16 @@ interface ContextData {
     customHdPath: string;
 }
 
-function Step1({ onNext }) {
-    const { state } = useLocation();
+interface LocationState {
+    fromUnlock?: boolean;
+}
+
+function Step1({ onNext }: { onNext: () => void }) {
+    const state = useLocationState<LocationState | undefined>();
     const navigate = useNavigate();
 
     const onBack = useCallback(() => {
-        if (state && state.fromUnlock) {
+        if (state?.fromUnlock) {
             return navigate(RouteTypes.WelcomeScreen);
         }
         window.history.go(-1);
@@ -98,9 +102,15 @@ function Step1({ onNext }) {
     );
 }
 
-function Step2({ onBack, onNext }) {
+function Step2({
+    onBack,
+    onNext
+}: {
+    onBack: () => void;
+    onNext: (data: { type: string; cbor: string }) => void;
+}) {
     const onSucceed = useCallback(
-        ({ type, cbor }) => {
+        ({ type, cbor }: { type: string; cbor: string }) => {
             onNext({ type, cbor });
         },
         [onNext]
@@ -118,6 +128,13 @@ function Step2({ onBack, onNext }) {
             </Content>
         </Layout>
     );
+}
+
+interface Group {
+    type: AddressType;
+    address_arr: string[];
+    pubkey_arr: string[];
+    satoshis_arr: number[];
 }
 
 function Step3({
@@ -138,9 +155,7 @@ function Step3({
         return ADDRESS_TYPES.filter((item) => item.displayIndex < 4).sort((a, b) => a.displayIndex - b.displayIndex);
     }, []);
 
-    const [groups, setGroups] = useState<
-        { type: AddressType; address_arr: string[]; pubkey_arr: string[]; satoshis_arr: number[] }[]
-    >([]);
+    const [groups, setGroups] = useState<Group[]>([]);
     const [isScanned, setScanned] = useState(false);
     const [error, setError] = useState('');
     const [pathText, setPathText] = useState(contextData.customHdPath);
@@ -176,7 +191,12 @@ function Step3({
                 );
             }
         } catch (e) {
-            setError((e as any).message);
+            if (isWalletError(e)) {
+                setError(e.message);
+            } else {
+                setError("An unexpected error occurred.");
+                console.error("Non-WalletError caught: ", e);
+            }
             return;
         }
         wallet.setShowSafeNotice(true);
@@ -197,25 +217,23 @@ function Step3({
         tools.showLoading(true);
         setGroups([]);
         try {
-            let groups: { type: AddressType; address_arr: string[]; pubkey_arr: string[]; satoshis_arr: number[] }[] =
-                [];
-            let groups2: { type: AddressType; address_arr: string[]; pubkey_arr: string[]; satoshis_arr: number[] }[] =
-                [];
-            for (let i = 0; i < addressTypes.length; i++) {
+            let groups: Group[] = [];
+            let groups2: Group[] = [];
+            for (const addressType of addressTypes) {
                 const keyring = await wallet.createTmpKeyringWithKeystone(
                     contextData.ur.type,
                     contextData.ur.cbor,
-                    addressTypes[i].value,
+                    addressType.value,
                     contextData.customHdPath,
                     accountCount
                 );
                 groups.push({
-                    type: addressTypes[i].value,
+                    type: addressType.value,
                     address_arr: keyring.accounts.map((item) => item.address),
                     pubkey_arr: keyring.accounts.map((item) => item.pubkey),
                     satoshis_arr: keyring.accounts.map(() => 0)
                 });
-            }
+            }                
             groups2 = groups;
             const res = await wallet.findGroupAssets(groups);
             res.forEach((item, index) => {
@@ -253,27 +271,28 @@ function Step3({
                 const saveAddressType = contextData.customHdPath.split('/')[1];
                 // find address type index by hdpath contains the saveAddressType
                 const saveAddressTypeIndex = addressTypes.findIndex((v) => v.hdPath.includes(saveAddressType));
+                const saveAddressTypeEnum = AddressType[saveAddressTypeIndex] as unknown as AddressType;
                 // remove the groups which is not equal to saveAddressType
-                groups = groups.filter((v) => v.type === saveAddressTypeIndex);
+                groups = groups.filter((v) => v.type === saveAddressTypeEnum);
             }
 
             // if res is empty and groups is empty, then only show the first wallet
             if (res.length === 0 && groups.length === 0 && isScanned) {
-                for (let i = 0; i < addressTypes.length; i++) {
+                for (const addressType of addressTypes) {
                     const keyring = await wallet.createTmpKeyringWithKeystone(
                         contextData.ur.type,
                         contextData.ur.cbor,
-                        addressTypes[i].value,
+                        addressType.value,
                         contextData.customHdPath,
                         1
                     );
                     groups.push({
-                        type: addressTypes[i].value,
+                        type: addressType.value,
                         address_arr: keyring.accounts.map((item) => item.address),
                         pubkey_arr: keyring.accounts.map((item) => item.pubkey),
                         satoshis_arr: keyring.accounts.map(() => 0)
                     });
-                }
+                }                
             }
             setGroups(groups);
         } catch (e) {
@@ -282,12 +301,16 @@ function Step3({
         tools.showLoading(false);
     };
 
-    const getItems = (groups, addressType) => {
+    const getItems = (groups: Group[], addressType: AddressType) => {
         // if (!groups[addressType]) {
         //   return [];
         // }
         // const group = groups[addressType];
         const group = groups.find((v) => v.type === addressType);
+        if (!group) {
+            return [];
+        }
+        
         if (
             contextData.customHdPath !== null &&
             contextData.customHdPath !== '' &&

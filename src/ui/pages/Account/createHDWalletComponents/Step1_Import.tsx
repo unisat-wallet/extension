@@ -4,6 +4,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { OW_HD_PATH } from '@/shared/constant';
 import { AddressType, RestoreWalletType } from '@/shared/types';
+import { isWalletError } from '@/shared/utils/errors';
 import { Button, Card, Column, Grid, Input, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { FooterButtonContainer } from '@/ui/components/FooterButtonContainer';
@@ -51,7 +52,7 @@ export function Step1_Import({
 
     const [keys, setKeys] = useState<string[]>(new Array(wordsItems[contextData.wordsType].count).fill(''));
 
-    const handleEventPaste = (event, index: number) => {
+    const handleEventPaste = (event: React.ClipboardEvent<HTMLInputElement>, index: number) => {
         const copyText = event.clipboardData?.getData('text/plain');
         const textArr = copyText.trim().split(' ');
         const newKeys = [...keys];
@@ -68,7 +69,7 @@ export function Step1_Import({
         event.preventDefault();
     };
 
-    const onChange = (e: any, index: any) => {
+    const onChange = (e: React.ChangeEvent<HTMLInputElement>, index: number) => {
         const newKeys = [...keys];
         newKeys.splice(index, 1, e.target.value);
         setKeys(newKeys);
@@ -110,7 +111,12 @@ export function Step1_Import({
                 updateContextData({ mnemonics, tabType: TabType.STEP3 });
             }
         } catch (e) {
-            tools.toastError((e as any).message);
+            if (isWalletError(e)) {
+                tools.toastError(e.message);
+            } else {
+                tools.toastError("An unexpected error occurred.");
+                console.error("Non-WalletError caught: ", e);
+            }
         }
     };
     const handleOnKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -128,7 +134,7 @@ export function Step1_Import({
                 <Row justifyCenter>
                     <Radio.Group
                         onChange={(e) => {
-                            const wordsType = e.target.value;
+                            const wordsType = e.target.value as WordsType;
                             updateContextData({ wordsType });
                             setKeys(new Array(wordsItems[wordsType].count).fill(''));
                         }}

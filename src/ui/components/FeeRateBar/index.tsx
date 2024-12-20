@@ -65,7 +65,7 @@ export function FeeRateBar({ readonly, onChange }: { readonly?: boolean; onChang
             }
         }
 
-        onChange && onChange(val);
+        onChange?.(val);
     }, [feeOptions, feeOptionIndex, feeRateInputVal]);
 
     const adjustFeeRateInput = (inputVal: string) => {
@@ -86,7 +86,7 @@ export function FeeRateBar({ readonly, onChange }: { readonly?: boolean; onChang
         <Column>
             <Row justifyCenter>
                 {feeOptions.map((v, index) => {
-                    let selected = index === feeOptionIndex;
+                    let selected = index === feeOptionIndex as number;
                     if (readonly) {
                         selected = false;
                     }

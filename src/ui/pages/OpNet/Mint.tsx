@@ -1,6 +1,5 @@
 import { getContract, IOP_20Contract, OP_20_ABI } from 'opnet';
-import React, { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 
 import { Action, AirdropParameters, Features } from '@/shared/interfaces/RawTxParameters';
 import { runesUtils } from '@/shared/lib/runes-utils';
@@ -13,14 +12,13 @@ import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
-import { useWallet } from '@/ui/utils';
+import { useLocationState, useWallet } from '@/ui/utils';
 import { Wallet } from '@btc-vision/transaction';
 
 import { RouteTypes, useNavigate } from '../MainRoute';
 
 export default function Mint() {
-    const { state } = useLocation();
-    const props = state as OPTokenInfo;
+    const props = useLocationState<OPTokenInfo>();
 
     const navigate = useNavigate();
     const [inputAmount, setInputAmount] = useState('');

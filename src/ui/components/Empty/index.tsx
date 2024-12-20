@@ -6,7 +6,7 @@ interface EmptyProps {
 
 export function Empty(props: EmptyProps) {
     const { text } = props;
-    const content = text || 'NO DATA';
+    const content = text ?? 'NO DATA';
     return (
         <div
             style={{

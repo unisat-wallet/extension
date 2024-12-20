@@ -1,9 +1,11 @@
 import { EVENTS, MANIFEST_VERSION } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
-import { RequestParams } from '@/shared/types/Request.js';
+import { ProviderControllerRequest, RequestParams } from '@/shared/types/Request.js';
 import { Message } from '@/shared/utils';
 import { openExtensionInTab } from '@/ui/features/browser/tabs';
 
+import { SessionEvent, SessionEventPayload } from '@/shared/interfaces/SessionEvent';
+import { Runtime } from 'webextension-polyfill';
 import { providerController, walletController } from './controller';
 import {
     contactBookService,
@@ -13,16 +15,18 @@ import {
     preferenceService,
     sessionService
 } from './service';
+import { StoredData } from './service/keyring';
+import { isOpenapiServiceMethod, isWalletControllerMethod } from './utils/controller';
 import { storage } from './webapi';
-import { browserRuntimeOnConnect, browserRuntimeOnInstalled } from './webapi/browser';
+import browser, { browserRuntimeOnConnect, browserRuntimeOnInstalled } from './webapi/browser';
 
 const { PortMessage } = Message;
 
 let appStoreLoaded = false;
 
 async function restoreAppState() {
-    const keyringState = await storage.get('keyringState');
-    keyringService.loadStore(keyringState);
+    const keyringState = await storage.get<StoredData>('keyringState');
+    keyringService.loadStore(keyringState ?? {booted: '', vault: ''});
     keyringService.store.subscribe((value) => storage.set('keyringState', value));
 
     await preferenceService.init();
@@ -39,7 +43,7 @@ async function restoreAppState() {
 void restoreAppState();
 
 // for page provider
-browserRuntimeOnConnect((port: chrome.runtime.Port) => {
+browserRuntimeOnConnect((port: Runtime.Port) => {
     if (port.name === 'popup' || port.name === 'notification' || port.name === 'tab') {
         const pm = new PortMessage(port);
         pm.listen((data: RequestParams) => {
@@ -47,38 +51,44 @@ browserRuntimeOnConnect((port: chrome.runtime.Port) => {
                 switch (data.type) {
                     case 'broadcast':
                         eventBus.emit(data.method, data.params);
-                        break;
+                        return Promise.resolve();
                     case 'openapi':
-                        if (data.method in walletController.openapi) {
+                        // TODO (typing): Check this again as it's not the most ideal solution. 
+                        // However, the problem is that we have a general type like RequestParams for 
+                        // incoming request data as we have different handlers. So, we assumed that 
+                        // the params are passed correctly for each method for now  
+                        if (isOpenapiServiceMethod(data.method)) {
                             const method = walletController.openapi[data.method];
-                            if (!method) {
-                                console.error(`Method ${data.method} not found in openapi`);
-
-                                return Promise.reject(`Method ${data.method} not found in openapi`);
-                            } else {
-                                // @ts-ignore
-                                return method.apply(null, data.params);
-                            }
+                            const params = Array.isArray(data.params) ? data.params : [];
+                            return Promise.resolve((method as (...args: unknown[]) => unknown).apply(walletController.openapi, params));
+                        } else {
+                            const errorMsg = `Method ${data.method} not found in openapi`;
+                            console.error(errorMsg);
+                            return Promise.reject(new Error(errorMsg));
                         }
-                        break;
                     case 'controller':
                     default:
-                        if (data.method) {
+                        // TODO (typing): Check this again as it's not the most ideal solution. 
+                        // However, the problem is that we have a general type like RequestParams for 
+                        // incoming request data as we have different handlers. So, we assumed that 
+                        // the params are passed correctly for each method for now 
+                        if (isWalletControllerMethod(data.method)) {
                             const method = walletController[data.method];
-                            if (!method) {
-                                console.error(`Method ${data.method} not found in controller`);
-
-                                return Promise.reject(`Method ${data.method} not found in controller`);
-                            } else {
-                                // @ts-ignore
-                                return method.apply(walletController, data.params);
-                            }
+                            const params = Array.isArray(data.params) ? data.params : [];
+                            return Promise.resolve((method as (...args: unknown[]) => unknown).apply(walletController, params));
+                        } else {
+                            const errorMsg = `Method ${data.method} not found in controller`;
+                            console.error(errorMsg);
+                            return Promise.reject(new Error(errorMsg));
                         }
                 }
+            } else {
+                return Promise.reject(new Error('Missing data in the received message'));
             }
         });
 
-        const boardcastCallback = async (data: RequestParams) => {
+        const boardcastCallback = async (params: unknown) => {
+            const data = params as RequestParams;
             await pm.request({
                 type: 'broadcast',
                 method: data.method,
@@ -114,10 +124,10 @@ browserRuntimeOnConnect((port: chrome.runtime.Port) => {
         }
 
         const session = sessionService.getOrCreateSession(sessionId);
-        const req = { data, session };
+        const req: ProviderControllerRequest = { data, session };
 
         // for background push to respective page
-        req.session.pushMessage = (event: string, data: RequestParams) => {
+        session.pushMessage = <T extends SessionEvent>(event: T, data?: SessionEventPayload<T>) => {
             pm.send('message', { event, data });
         };
 
@@ -141,7 +151,7 @@ const addAppInstalledEvent = async () => {
 };
 
 browserRuntimeOnInstalled(async (details) => {
-    if (details.reason === 'install') {
+    if (details.reason === 'install' ) {
         await addAppInstalledEvent();
     }
 });
@@ -149,15 +159,15 @@ browserRuntimeOnInstalled(async (details) => {
 if (MANIFEST_VERSION === 'mv3') {
     // Keep alive for MV3
     const INTERNAL_STAYALIVE_PORT = 'CT_Internal_port_alive';
-    let alivePort: chrome.runtime.Port | null = null;
+    let alivePort: Runtime.Port | null = null;
 
     setInterval(() => {
         // console.log('Highlander', Date.now());
         if (alivePort == null) {
-            alivePort = chrome.runtime.connect({ name: INTERNAL_STAYALIVE_PORT });
+            alivePort = browser.runtime.connect({ name: INTERNAL_STAYALIVE_PORT });
 
             alivePort.onDisconnect.addListener((p) => {
-                if (chrome.runtime.lastError) {
+                if (browser.runtime.lastError) {
                     // console.log('(DEBUG Highlander) Expected disconnect (on error). SW should be still running.');
                 } else {
                     // console.log('(DEBUG Highlander): port disconnected');
@@ -170,8 +180,8 @@ if (MANIFEST_VERSION === 'mv3') {
         if (alivePort) {
             alivePort.postMessage({ content: 'keep alive~' });
 
-            if (chrome.runtime.lastError) {
-                // console.log(`(DEBUG Highlander): postMessage error: ${chrome.runtime.lastError.message}`);
+            if (browser.runtime.lastError) {
+                // console.log(`(DEBUG Highlander): postMessage error: ${browser.runtime.lastError.message}`);
             } else {
                 // console.log(`(DEBUG Highlander): sent through ${alivePort.name} port`);
             }

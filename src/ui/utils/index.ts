@@ -134,7 +134,11 @@ export const copyToClipboard = (textToCopy: string | number) => {
         textArea.focus();
         textArea.select();
         return new Promise<void>((res, rej) => {
-            document.execCommand('copy') ? res() : rej();
+            if (document.execCommand('copy')) {
+                res();
+            } else {
+                rej(new Error('Failed to copy text to clipboard'));
+            }  
             textArea.remove();
         });
     }
@@ -151,9 +155,14 @@ export function formatDate(date: Date, fmt = 'yyyy-MM-dd hh:mm:ss') {
         S: date.getMilliseconds()
     };
     if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, `${date.getFullYear()}`.substr(4 - RegExp.$1.length));
-    for (const k in o)
-        if (new RegExp(`(${k})`).test(fmt))
-            fmt = fmt.replace(RegExp.$1, RegExp.$1.length === 1 ? o[k] : `00${o[k]}`.substr(`${o[k]}`.length));
+    Object.entries(o).forEach(([k, v]) => {
+        if (new RegExp(`(${k})`).test(fmt)) {
+            fmt = fmt.replace(
+                RegExp.$1,
+                RegExp.$1.length === 1 ? String(v) : `00${String(v)}`.substr(String(v).length)
+            );
+        }
+    });
     return fmt;
 }
 
@@ -168,8 +177,8 @@ export function amountToSatoshis(val: string | number) {
 }
 
 export function useLocationState<T>() {
-    const { state } = useLocation();
-    return state as T;
+    const location = useLocation();
+    return location.state as T;
 }
 
 export function numberWithCommas(value: string, maxFixed: number, isFixed = false) {
