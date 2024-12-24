@@ -26,6 +26,8 @@ BigNumber.config({ EXPONENTIAL_AT: 256 });
 
 const TOKENS_PER_PAGE = 3;
 
+const balanceCache = new Map<string, OPTokenInfo>();
+
 function pushDefaultTokens(tokens: string[], chain: ChainType, network: NetworkType) {
     const chainId = getOPNetChainType(chain);
     const opnetNetwork = getOPNetNetwork(network);
@@ -96,6 +98,9 @@ export function OPNetList() {
             const balances = await Promise.all(
                 currentTokens.map(async (tokenAddress) => {
                     try {
+                        if (balanceCache.has(tokenAddress)) {
+                            return balanceCache.get(tokenAddress) as OPTokenInfo;
+                        }
 
                         const contractInfo: ContractInformation | undefined =
                             await Web3API.queryContractInformation(tokenAddress);
@@ -113,14 +118,18 @@ export function OPNetList() {
 
                         const balance = await contract.balanceOf(Address.fromString(currentAccount.pubkey));
 
-                        return {
+                        const tokenDetails = {
                             address: tokenAddress,
                             name: contractInfo?.name || '',
                             amount: balance.properties.balance,
                             divisibility: contractInfo?.decimals || 8,
                             symbol: contractInfo.symbol,
                             logo: contractInfo?.logo
-                        };
+                        }
+
+                        balanceCache.set(tokenAddress, tokenDetails);
+
+                        return tokenDetails;
                     } catch (e) {
                         console.error(`Error fetching balance for token:`, e, tokenAddress);
                         return null;
@@ -129,7 +138,7 @@ export function OPNetList() {
             );
 
 
-            const validBalances = balances.filter((balance) => balance !== null) as OPTokenInfo[];
+            const validBalances = balances.filter((balance) => balance !== null);
             setTokenBalances(validBalances);
         } catch (e) {
             tools.toastError(`Something went wrong while attempting to load tokens: ${(e as Error).message}`);
@@ -141,7 +150,7 @@ export function OPNetList() {
     const handleRemoveToken = async (address: string) => {
         try {
             const getChain = await wallet.getChainType();
-            const storedTokens = JSON.parse(localStorage.getItem('opnetTokens_' + getChain) || '[]');
+            const storedTokens = JSON.parse(localStorage.getItem('opnetTokens_' + getChain) || '[]') as string[];
 
             const updatedStoredTokens = storedTokens.filter((token: string) => token !== address);
             localStorage.setItem('opnetTokens_' + getChain, JSON.stringify(updatedStoredTokens));
@@ -149,6 +158,8 @@ export function OPNetList() {
             const updatedTokens = tokens.filter((token) => token !== address);
             setTokens(updatedTokens);
             setTotal(updatedTokens.length);
+
+            balanceCache.delete(address);
 
             tools.toastSuccess('Token removed successfully!');
         } catch (error) {
