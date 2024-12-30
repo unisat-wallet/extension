@@ -15,7 +15,7 @@ export const svgRegistry = {
   link: './images/icons/arrow-up-right.svg',
 
   discord: './images/icons/discord.svg',
-  twitter: './images/icons/twitter.svg',
+  X: './images/icons/X.svg',
   github: './images/icons/github.svg',
   telegram: './images/icons/telegram.svg',
 

@@ -1,9 +1,9 @@
 # UniSat Wallet
 
-UniSat Wallet - the first open-source browser extension wallet for Ordinals on bitcoin.
+UniSat Wallet - the first open-source browser extension wallet for Ordinals on Bitcoin.
 
 - Website: https://unisat.io/
-- Twitter: https://twitter.com/unisat_wallet
+- X: https://x.com/unisat_wallet
 
 ## How to build
 
@@ -14,6 +14,6 @@ UniSat Wallet - the first open-source browser extension wallet for Ordinals on b
 - Build the project to the `./dist/` folder with `yarn build:chrome` for Chrome
 - Develop: `yarn build:chrome:dev`
 
-## Special Thanks
+## Special thanks
 
 Thanks to the MetaMask team for their contributions to the browser extension wallet community, UniSat Wallet relies heavily on their contributions.
