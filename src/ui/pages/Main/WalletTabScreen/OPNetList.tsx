@@ -37,7 +37,8 @@ function pushDefaultTokens(tokens: string[], chain: ChainType, network: NetworkT
         if (!tokens.includes(metadata.moto.p2tr(Web3API.network))) {
             tokens.push(metadata.moto.p2tr(Web3API.network));
         }
-    } catch (e) {}
+    } catch (e) {
+    }
 }
 
 export function OPNetList() {
@@ -125,7 +126,7 @@ export function OPNetList() {
                             divisibility: contractInfo?.decimals || 8,
                             symbol: contractInfo.symbol,
                             logo: contractInfo?.logo
-                        }
+                        };
 
                         balanceCache.set(tokenAddress, tokenDetails);
 
@@ -167,7 +168,7 @@ export function OPNetList() {
             console.error(error);
         }
     };
-    
+
 
     useEffect(() => {
         setTimeout(() => {
@@ -253,21 +254,32 @@ export function OPNetList() {
             {total > 0 && (
                 <BaseView style={$opnet}>
                     {tokenBalances.map((data, index) => (
-                        <Row key={index} style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', gap: '10px' }}>
+                        <Row key={index} style={{
+                            display: 'flex',
+                            alignItems: 'center',
+                            justifyContent: 'space-between',
+                            gap: '10px'
+                        }}>
                             <OpNetBalanceCard
                                 key={index}
-                                tokenBalance={data}
+                                tokenInfo={data}
                                 onClick={() => {
                                     navigate(RouteTypes.OpNetTokenScreen, {
                                         address: data.address
-                                    });                
+                                    });
                                 }}
+                                handleRemoveToken={handleRemoveToken}
                             />
-                            <FontAwesomeIcon onClick={() => handleRemoveToken(data.address)} icon={faTrashCan} style={{ height: '1rem', cursor: 'pointer', marginBottom: '10px'}} />
                         </Row>
                     ))}
 
-                    <Row style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', gap: '10px', marginTop: '20px' }}>
+                    <Row style={{
+                        display: 'flex',
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        gap: '10px',
+                        marginTop: '20px'
+                    }}>
                         <Button
                             text="Prev"
                             onClick={() => handlePageChange('prev')}
@@ -290,7 +302,7 @@ export function OPNetList() {
                                             backgroundColor: currentPage === pageNumber ? '#383535' : '#000000',
                                             fontWeight: currentPage === pageNumber ? 'bold' : 'normal',
                                             padding: '5px 10px',
-                                            cursor: 'pointer',
+                                            cursor: 'pointer'
                                         }}
                                         onClick={() => setCurrentPage(pageNumber)}
                                     />
