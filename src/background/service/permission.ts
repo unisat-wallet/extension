@@ -17,13 +17,15 @@ export interface ConnectedSite {
 }
 
 export interface PermissionStore {
-    dumpCache: readonly LRUCache.Entry<string, ConnectedSite>[];
+    // We'll store the entries as an array of { k, v }
+    dumpCache: Array<{ k: string; v: ConnectedSite }>;
 }
 
 class PermissionService {
     store: PermissionStore = {
         dumpCache: []
     };
+
     lruCache: LRUCache<string, ConnectedSite> | undefined;
 
     init = async () => {
@@ -32,23 +34,34 @@ class PermissionService {
         });
         this.store = storage || this.store;
 
-        this.lruCache = new LRUCache<string, ConnectedSite>()
-        const cache: readonly LRUCache.Entry<string, ConnectedSite>[] = (this.store.dumpCache || []).map((item) => ({
-            k: item.k,
-            v: item.v,
-            e: 0
-        }));
-        this.lruCache.load(cache);
+        // Provide at least one of `max`, `ttl`, or `maxSize` to be safe.
+        this.lruCache = new LRUCache<string, ConnectedSite>({
+            max: 500,
+            updateAgeOnGet: true // typical for an LRU
+        });
+
+        // Manually load items from store into the LRU
+        for (const entry of this.store.dumpCache || []) {
+            this.lruCache.set(entry.k, entry.v);
+        }
     };
 
     sync = () => {
         if (!this.lruCache) return;
-        this.store.dumpCache = this.lruCache.dump();
+        // Manually dump current cache into store
+        // `cache.entries()` returns an iterable of [key, value]
+        // We'll store it as { k, v } for each pair, similar to v5's dump/load approach
+        this.store.dumpCache = [...this.lruCache.entries()].map(([k, v]) => ({
+            k,
+            v
+        }));
     };
 
     getWithoutUpdate = (key: string) => {
         if (!this.lruCache) return;
-
+        // .peek() was removed in older versions but reintroduced in newer ones.
+        // If you still need to do a peek-like read without updating LRU ordering:
+        // v9+ does have `cache.peek(key)`, so it should work.
         return this.lruCache.peek(key);
     };
 
@@ -62,7 +75,13 @@ class PermissionService {
         this.sync();
     };
 
-    addConnectedSite = (origin: string, name: string, icon: string, defaultChain: CHAINS_ENUM, isSigned = false) => {
+    addConnectedSite = (
+        origin: string,
+        name: string,
+        icon: string,
+        defaultChain: CHAINS_ENUM,
+        isSigned = false
+    ) => {
         if (!this.lruCache) return;
 
         this.lruCache.set(origin, {
@@ -80,17 +99,24 @@ class PermissionService {
     touchConnectedSite = (origin: string) => {
         if (!this.lruCache) return;
         if (origin === INTERNAL_REQUEST_ORIGIN) return;
+        // get() will update recency
         this.lruCache.get(origin);
         this.sync();
     };
 
-    updateConnectSite = (origin: string, value: Partial<ConnectedSite>, partialUpdate?: boolean) => {
+    updateConnectSite = (
+        origin: string,
+        value: Partial<ConnectedSite>,
+        partialUpdate?: boolean
+    ) => {
         if (!this.lruCache?.has(origin)) return;
         if (origin === INTERNAL_REQUEST_ORIGIN) return;
 
         if (partialUpdate) {
-            const _value = this.lruCache.get(origin);
-            this.lruCache.set(origin, { ..._value, ...value } as ConnectedSite);
+            const currentSite = this.lruCache.get(origin);
+            if (!currentSite) return;
+            const updatedSite = { ...currentSite, ...value };
+            this.lruCache.set(origin, updatedSite);
         } else {
             this.lruCache.set(origin, value as ConnectedSite);
         }
@@ -99,45 +125,63 @@ class PermissionService {
     };
 
     hasPermission = (origin: string) => {
-        if (!this.lruCache) return;
+        if (!this.lruCache) return false;
         if (origin === INTERNAL_REQUEST_ORIGIN) return true;
 
         const site = this.lruCache.get(origin);
-        return site?.isConnected;
+        return !!site?.isConnected;
     };
 
     setRecentConnectedSites = (sites: ConnectedSite[]) => {
-        this.lruCache?.load(
-            sites
-                .map((item) => ({
-                    e: 0,
-                    k: item.origin,
-                    v: item
-                }))
-                .concat(
-                    (this.lruCache?.values() || [])
-                        .filter((item: ConnectedSite) => !item.isConnected)
-                        .map((item: ConnectedSite) => ({
-                            e: 0,
-                            k: item.origin,
-                            v: item
-                        }))
-                )
-        );
+        if (!this.lruCache) return;
+
+        // Clear existing LRU first
+        this.lruCache.clear();
+
+        // Add the connected sites first
+        sites.forEach((item) => {
+            if (this.lruCache) {
+                this.lruCache.set(item.origin, item);
+            }
+        });
+
+        // Now add the old or disconnected ones
+        //const oldValues = [...this.lruCache.entries()].map(([k]) => k);
+        // The above line might be optional, as we just did clear().
+
+        // Another approach: if you wanted to keep old *disconnected* sites from
+        // the *existing* cache:
+        // for (const [k, v] of oldCacheEntries) {
+        //   if (!v.isConnected) {
+        //     this.lruCache.set(k, v);
+        //   }
+        // }
+
+        // Or simply store the disconnected from the existing store:
+        const storedDisconnected = (this.store.dumpCache || [])
+            .filter(({ v }) => !v.isConnected)
+            .map(({ k, v }) => ({ k, v }));
+
+        for (const { k, v } of storedDisconnected) {
+            this.lruCache.set(k, v);
+        }
+
         this.sync();
     };
 
     getRecentConnectedSites = () => {
-        const sites = (this.lruCache?.values() || []).filter((item: ConnectedSite) => item.isConnected);
+        if (!this.lruCache) return [];
+        const sites = [...this.lruCache.values()].filter((item) => item.isConnected);
         const pinnedSites = sites
-            .filter((item: ConnectedSite) => item?.isTop)
-            .sort((a: ConnectedSite, b: ConnectedSite) => (a.order ?? 0) - (b.order ?? 0));
-        const recentSites = sites.filter((item: ConnectedSite) => !item.isTop);
+            .filter((item) => item.isTop)
+            .sort((a, b) => (a.order ?? 0) - (b.order ?? 0));
+        const recentSites = sites.filter((item) => !item.isTop);
         return [...pinnedSites, ...recentSites];
     };
 
     getConnectedSites = () => {
-        return (this.lruCache?.values() || []).filter((item: ConnectedSite) => item.isConnected);
+        if (!this.lruCache) return [];
+        return [...this.lruCache.values()].filter((item) => item.isConnected);
     };
 
     getConnectedSite = (key: string) => {
@@ -150,21 +194,17 @@ class PermissionService {
     topConnectedSite = (origin: string, order?: number) => {
         const site = this.getConnectedSite(origin);
         if (!site || !this.lruCache) return;
-        order = order ?? (max(this.getRecentConnectedSites().map((item: ConnectedSite) => item.order)) ?? 0) + 1;
-        this.updateConnectSite(origin, {
-            ...site,
-            order,
-            isTop: true
-        });
+        order =
+            order ??
+            (max(this.getRecentConnectedSites().map((item) => item.order)) ?? 0) + 1;
+
+        this.updateConnectSite(origin, { ...site, order, isTop: true });
     };
 
     unpinConnectedSite = (origin: string) => {
         const site = this.getConnectedSite(origin);
         if (!site || !this.lruCache) return;
-        this.updateConnectSite(origin, {
-            ...site,
-            isTop: false
-        });
+        this.updateConnectSite(origin, { ...site, isTop: false });
     };
 
     removeConnectedSite = (origin: string) => {
@@ -182,7 +222,7 @@ class PermissionService {
 
     getSitesByDefaultChain = (chain: CHAINS_ENUM) => {
         if (!this.lruCache) return [];
-        return this.lruCache.values().filter((item: ConnectedSite) => item.chain === chain);
+        return [...this.lruCache.values()].filter((item) => item.chain === chain);
     };
 
     isInternalOrigin = (origin: string) => {

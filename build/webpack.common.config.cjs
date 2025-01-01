@@ -6,6 +6,9 @@ const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 const fs = require('fs');
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
+const WasmModuleWebpackPlugin = require('wasm-module-webpack-plugin');
+const { getBrowserPaths } = require('./paths.cjs');
+
 // style files regexes
 const cssRegex = /\.css$/;
 const cssModuleRegex = /\.module\.css$/;
@@ -15,27 +18,32 @@ const lessRegex = /\.less$/;
 const lessModuleRegex = /\.module\.less$/;
 const stylusRegex = /\.styl$/;
 const stylusModuleRegex = /\.module\.styl$/;
-const WasmModuleWebpackPlugin = require('wasm-module-webpack-plugin');
-const { getBrowserPaths } = require('./paths.cjs');
 
 const config = (env) => {
+    // Determine dev/prod
+    const isEnvProduction = env.mode === 'production';
+    const isEnvDevelopment = !isEnvProduction;
+
     const version = env.version;
     const paths = getBrowserPaths(env.browser);
     const manifest = env.manifest;
     const channel = env.channel;
+
     // Check if Tailwind config exists
     const useTailwind = fs.existsSync(path.join(paths.appPath, 'tailwind.config.js'));
 
+    // You can tweak this if you actually want source maps in production
     const shouldUseSourceMap = false;
+
     const imageInlineSizeLimit = parseInt(process.env.IMAGE_INLINE_SIZE_LIMIT || '10000');
-    const isEnvDevelopment = true;
-    const isEnvProduction = false;
+    // You can enable React Refresh only in dev if you like:
     const shouldUseReactRefresh = false;
+
+    // Detect new JSX transform
     const hasJsxRuntime = (() => {
         if (process.env.DISABLE_NEW_JSX_TRANSFORM === 'true') {
             return false;
         }
-
         try {
             require.resolve('react/jsx-runtime');
             return true;
@@ -44,14 +52,14 @@ const config = (env) => {
         }
     })();
 
-    // common function to get style loaders
+    // Common function to set up style loaders (CSS, PostCSS, etc.),
+    // plus an optional pre-processor (less-loader, sass-loader, stylus-loader).
     const getStyleLoaders = (cssOptions, preProcessor) => {
         const loaders = [
+            // In dev, inject styles via <style> tags; in prod, extract to .css files.
             isEnvDevelopment && require.resolve('style-loader'),
             isEnvProduction && {
                 loader: MiniCssExtractPlugin.loader,
-                // css is located in `static/css`, use '../../' to locate index.html folder
-                // in production `paths.publicUrlOrPath` can be a relative path
                 options: paths.publicUrlOrPath.startsWith('.') ? { publicPath: '../../' } : {}
             },
             {
@@ -59,43 +67,42 @@ const config = (env) => {
                 options: cssOptions
             },
             {
-                // Options for PostCSS as we reference these options twice
-                // Adds vendor prefixing based on your specified browser support in
-                // package.json
                 loader: require.resolve('postcss-loader'),
                 options: {
                     postcssOptions: {
-                        // Necessary for external CSS imports to work
-                        // https://github.com/facebook/create-react-app/issues/2677
-                        ident: 'postcss',
-                        config: false,
+                        // If you have a postcss.config.js, you can reference it,
+                        // but here we configure plugins inline:
                         plugins: !useTailwind
                             ? [
-                                  'postcss-flexbugs-fixes',
-                                  ['postcss-preset-env', { autoprefixer: { flexbox: 'no-2009' }, stage: 3 }],
-                                  // Adds PostCSS Normalize as the reset css with default options,
-                                  // so that it honors browserslist config in package.json
-                                  // which in turn let's users customize the target behavior as per their needs.
-                                  'postcss-normalize'
-                              ]
+                                require('postcss-flexbugs-fixes'),
+                                require('postcss-preset-env')({
+                                    autoprefixer: { flexbox: 'no-2009' },
+                                    stage: 3
+                                }),
+                                // Adds PostCSS Normalize as the reset css with default options
+                                require('postcss-normalize')
+                            ]
                             : [
-                                  'tailwindcss',
-                                  'postcss-flexbugs-fixes',
-                                  ['postcss-preset-env', { autoprefixer: { flexbox: 'no-2009' }, stage: 3 }]
-                              ]
+                                require('tailwindcss'),
+                                require('postcss-flexbugs-fixes'),
+                                require('postcss-preset-env')({
+                                    autoprefixer: { flexbox: 'no-2009' },
+                                    stage: 3
+                                })
+                            ]
                     },
                     sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment
                 }
             }
         ].filter(Boolean);
+
         if (preProcessor) {
-            let preProcessorOptions = {
-                sourceMap: true
-            };
+            let preProcessorOptions = { sourceMap: true };
+
             if (preProcessor === 'less-loader') {
+                // Custom theme variables if needed
                 preProcessorOptions = {
                     sourceMap: true,
-                    // 自定义主题
                     lessOptions: {
                         modifyVars: {
                             'primary-color': 'rgb(234,202,68)',
@@ -113,15 +120,12 @@ const config = (env) => {
                             'border-width-base': '0',
                             'animation-duration-slow': '0.08s',
                             'animation-duration-base': '0.08s',
-                            // "checkbox-border-width": "1px",
                             'layout-header-background': '#2A2626',
                             'layout-header-padding': '0 1.875rem',
                             'layout-header-height': '5.625rem',
                             'layout-footer-padding': 'unset',
                             'border-radius-base': '0.3rem',
                             'checkbox-border-radius': '0.125rem',
-                            // 'checkbox-color': '#2A2626',
-                            // 'checkbox-check-color': '#D7721F',
                             'heading-color': '#ffffff',
                             'font-size-base': '1.125rem',
                             'line-height-base': '1.375rem',
@@ -136,6 +140,7 @@ const config = (env) => {
                     }
                 };
             }
+
             loaders.push(
                 {
                     loader: require.resolve('resolve-url-loader'),
@@ -146,17 +151,15 @@ const config = (env) => {
                 },
                 {
                     loader: require.resolve(preProcessor),
-                    // options: {
-                    //   sourceMap: true,
-                    // },
                     options: preProcessorOptions
                 }
             );
         }
+
         return loaders;
     };
 
-    const config = {
+    const finalConfig = {
         entry: {
             background: paths.rootResolve('src/background/index.ts'),
             'content-script': paths.rootResolve('src/content-script/index.ts'),
@@ -167,12 +170,14 @@ const config = (env) => {
             path: paths.dist,
             filename: '[name].js',
             publicPath: '/',
-            globalObject: 'this', // Ensures compatibility with Webpack modules in non-ESM
-            environment: { module: true, dynamicImport: false } // Use ES module syntax for output (for Manifest V3 support)
+            // Use 'self' for better cross-context compatibility
+            globalObject: 'self',
+            // ES Module output (for Manifest V3)
+            environment: { module: true, dynamicImport: false }
         },
         module: {
             rules: [
-                // Handle node_modules packages that contain sourcemaps
+                // Optionally handle node_modules packages that contain sourcemaps
                 shouldUseSourceMap && {
                     enforce: 'pre',
                     exclude: /@babel(?:\/|\\{1,2})runtime/,
@@ -180,12 +185,7 @@ const config = (env) => {
                     loader: require.resolve('source-map-loader')
                 },
                 {
-                    // "oneOf" will traverse all following loaders until one will
-                    // match the requirements. When no loader matches it will fall
-                    // back to the "file" loader at the end of the loader list.
                     oneOf: [
-                        // TODO: Merge this config once `image/avif` is in the mime-db
-                        // https://github.com/jshttp/mime-db
                         {
                             test: [/\.avif$/],
                             type: 'asset',
@@ -196,9 +196,6 @@ const config = (env) => {
                                 }
                             }
                         },
-                        // "url" loader works like "file" loader except that it embeds assets
-                        // smaller than specified limit in bytes as data URLs to avoid requests.
-                        // A missing `test` is equivalent to a match.
                         {
                             test: [/\.bmp$/, /\.gif$/, /\.jpe?g$/, /\.png$/],
                             type: 'asset',
@@ -208,34 +205,32 @@ const config = (env) => {
                                 }
                             }
                         },
+                        // Modern approach for SVG:
+                        // - Use asset/resource for the final file
+                        // - Also run @svgr/webpack for React components
                         {
                             test: /\.svg$/,
+                            type: 'asset/resource',
+                            generator: {
+                                filename: 'static/media/[name].[hash][ext]'
+                            },
+                            issuer: {
+                                and: [/\.(ts|tsx|js|jsx|md|mdx)$/]
+                            },
                             use: [
                                 {
                                     loader: require.resolve('@svgr/webpack'),
                                     options: {
                                         prettier: false,
                                         svgo: false,
-                                        svgoConfig: {
-                                            plugins: [{ removeViewBox: false }]
-                                        },
+                                        svgoConfig: { plugins: [{ removeViewBox: false }] },
                                         titleProp: true,
                                         ref: true
                                     }
-                                },
-                                {
-                                    loader: require.resolve('file-loader'),
-                                    options: {
-                                        name: 'static/media/[name].[hash].[ext]'
-                                    }
                                 }
-                            ],
-                            issuer: {
-                                and: [/\.(ts|tsx|js|jsx|md|mdx)$/]
-                            }
+                            ]
                         },
-                        // Process application JS with Babel.
-                        // The preset includes JSX, Flow, TypeScript, and some ESnext features.
+                        // Process application JS/TS with Babel
                         {
                             test: /\.(js|mjs|jsx|ts|tsx)$/,
                             include: paths.appSrc,
@@ -250,21 +245,17 @@ const config = (env) => {
                                         }
                                     ]
                                 ],
-
                                 plugins: [
-                                    isEnvDevelopment && shouldUseReactRefresh && require.resolve('react-refresh/babel')
+                                    isEnvDevelopment &&
+                                    shouldUseReactRefresh &&
+                                    require.resolve('react-refresh/babel')
                                 ].filter(Boolean),
-                                // This is a feature of `babel-loader` for webpack (not Babel itself).
-                                // It enables caching results in ./node_modules/.cache/babel-loader/
-                                // directory for faster rebuilds.
                                 cacheDirectory: true,
-                                // See #6846 for context on why cacheCompression is disabled
                                 cacheCompression: false,
                                 compact: isEnvProduction
                             }
                         },
-                        // Process any JS outside of the app with Babel.
-                        // Unlike the application JS, we only compile the standard ES features.
+                        // Process any JS outside of the app with Babel
                         {
                             test: /\.(js|mjs)$/,
                             exclude: /@babel(?:\/|\\{1,2})runtime/,
@@ -273,57 +264,46 @@ const config = (env) => {
                                 babelrc: false,
                                 configFile: false,
                                 compact: false,
-                                presets: [[require.resolve('babel-preset-react-app/dependencies'), { helpers: true }]],
+                                presets: [
+                                    [
+                                        require.resolve('babel-preset-react-app/dependencies'),
+                                        { helpers: true }
+                                    ]
+                                ],
                                 cacheDirectory: true,
-                                // See #6846 for context on why cacheCompression is disabled
                                 cacheCompression: false,
-
-                                // Babel sourcemaps are needed for debugging into node_modules
-                                // code.  Without the options below, debuggers like VSCode
-                                // show incorrect code and set breakpoints on the wrong lines.
                                 sourceMaps: shouldUseSourceMap,
                                 inputSourceMap: shouldUseSourceMap
                             }
                         },
-                        // "postcss" loader applies autoprefixer to our CSS.
-                        // "css" loader resolves paths in CSS and adds assets as dependencies.
-                        // "style" loader turns CSS into JS modules that inject <style> tags.
-                        // In production, we use MiniCSSExtractPlugin to extract that CSS
-                        // to a file, but in development "style" loader enables hot editing
-                        // of CSS.
-                        // By default we support CSS Modules with the extension .module.css
+                        // CSS (global)
                         {
                             test: cssRegex,
                             exclude: cssModuleRegex,
-                            use: getStyleLoaders({
-                                importLoaders: 1,
-                                sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment,
-                                modules: {
-                                    mode: 'icss'
+                            use: getStyleLoaders(
+                                {
+                                    importLoaders: 1,
+                                    sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment,
+                                    modules: { mode: 'icss' }
                                 }
-                            }),
-                            // Don't consider CSS imports dead code even if the
-                            // containing package claims to have no side effects.
-                            // Remove this when webpack adds a warning or an error for this.
-                            // See https://github.com/webpack/webpack/issues/6571
+                            ),
                             sideEffects: true
                         },
-                        // Adds support for CSS Modules (https://github.com/css-modules/css-modules)
-                        // using the extension .module.css
+                        // CSS Modules
                         {
                             test: cssModuleRegex,
-                            use: getStyleLoaders({
-                                importLoaders: 1,
-                                sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment,
-                                modules: {
-                                    mode: 'local',
-                                    getLocalIdent: getCSSModuleLocalIdent
+                            use: getStyleLoaders(
+                                {
+                                    importLoaders: 1,
+                                    sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment,
+                                    modules: {
+                                        mode: 'local',
+                                        getLocalIdent: getCSSModuleLocalIdent
+                                    }
                                 }
-                            })
+                            )
                         },
-                        // Opt-in support for SASS (using .scss or .sass extensions).
-                        // By default we support SASS Modules with the
-                        // extensions .module.scss or .module.sass
+                        // SASS (global)
                         {
                             test: sassRegex,
                             exclude: sassModuleRegex,
@@ -331,20 +311,13 @@ const config = (env) => {
                                 {
                                     importLoaders: 3,
                                     sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment,
-                                    modules: {
-                                        mode: 'icss'
-                                    }
+                                    modules: { mode: 'icss' }
                                 },
                                 'sass-loader'
                             ),
-                            // Don't consider CSS imports dead code even if the
-                            // containing package claims to have no side effects.
-                            // Remove this when webpack adds a warning or an error for this.
-                            // See https://github.com/webpack/webpack/issues/6571
                             sideEffects: true
                         },
-                        // Adds support for CSS Modules, but using SASS
-                        // using the extension .module.scss or .module.sass
+                        // SASS Modules
                         {
                             test: sassModuleRegex,
                             use: getStyleLoaders(
@@ -359,6 +332,7 @@ const config = (env) => {
                                 'sass-loader'
                             )
                         },
+                        // Less (global)
                         {
                             test: lessRegex,
                             exclude: lessModuleRegex,
@@ -372,6 +346,7 @@ const config = (env) => {
                             ),
                             sideEffects: true
                         },
+                        // Less Modules
                         {
                             test: lessModuleRegex,
                             use: getStyleLoaders(
@@ -386,7 +361,7 @@ const config = (env) => {
                                 'less-loader'
                             )
                         },
-                        // 支持 stylus
+                        // Stylus (global)
                         {
                             test: stylusRegex,
                             exclude: stylusModuleRegex,
@@ -394,14 +369,13 @@ const config = (env) => {
                                 {
                                     importLoaders: 3,
                                     sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment,
-                                    modules: {
-                                        mode: 'icss'
-                                    }
+                                    modules: { mode: 'icss' }
                                 },
                                 'stylus-loader'
                             ),
                             sideEffects: true
                         },
+                        // Stylus Modules
                         {
                             test: stylusModuleRegex,
                             use: getStyleLoaders(
@@ -416,21 +390,12 @@ const config = (env) => {
                                 'stylus-loader'
                             )
                         },
-                        // "file" loader makes sure those assets get served by WebpackDevServer.
-                        // When you `import` an asset, you get its (virtual) filename.
-                        // In production, they would get copied to the `build` folder.
-                        // This loader doesn't use a "test" so it will catch all modules
-                        // that fall through the other loaders.
+                        // Fallback resource loader
                         {
-                            // Exclude `js` files to keep "css" loader working as it injects
-                            // its runtime that would otherwise be processed through "file" loader.
-                            // Also exclude `html` and `json` extensions so they get processed
-                            // by webpacks internal loaders.
                             exclude: [/^$/, /\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
                             type: 'asset/resource'
                         },
-                        // ** STOP ** Are you adding a new loader?
-                        // Make sure to add the new loader(s) before the "file" loader.
+                        // WASM Babel config for specific deps
                         {
                             test: /\.m?js$/,
                             include: [path.join(paths.appNodeModules, 'tiny-secp256k1')],
@@ -440,7 +405,6 @@ const config = (env) => {
                                     presets: ['@babel/preset-env'],
                                     plugins: [
                                         '@babel/plugin-syntax-dynamic-import',
-                                        // '@babel/plugin-transform-runtime', // do not use with this plugin
                                         WasmModuleWebpackPlugin.BabelPlugin
                                     ]
                                 }
@@ -456,13 +420,6 @@ const config = (env) => {
                 context: path.resolve(__dirname, '../src'),
                 overrideConfigFile: path.resolve(__dirname, '../eslint.config.cjs')
             }),
-            // new AntdDayjsWebpackPlugin(),
-            // new HtmlWebpackPlugin({
-            //   inject: true,
-            //   template: paths.popupHtml,
-            //   chunks: ['ui'],
-            //   filename: 'popup.html',
-            // }),
             new HtmlWebpackPlugin({
                 inject: true,
                 template: paths.notificationHtml,
@@ -486,20 +443,14 @@ const config = (env) => {
                 process: 'process',
                 dayjs: 'dayjs'
             }),
-            // new AssetReplacePlugin({
-            //   '#PAGEPROVIDER#': 'pageProvider',
-            // }),
             new webpack.DefinePlugin({
                 'process.env.version': JSON.stringify(`Version: ${version}`),
                 'process.env.release': JSON.stringify(version),
                 'process.env.manifest': JSON.stringify(manifest),
                 'process.env.channel': JSON.stringify(channel)
             }),
+            // Extracts CSS in production
             new MiniCssExtractPlugin({
-                // Options similar to the same options in webpackOptions.output
-                // both options are optional
-                // filename: 'static/css/[name].[contenthash:8].css',
-                // chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
                 filename: 'static/css/[name].css',
                 chunkFilename: 'static/css/[name].chunk.css'
             }),
@@ -507,6 +458,7 @@ const config = (env) => {
         ],
         resolve: {
             alias: {
+                // Example: re-map 'moment' to 'dayjs'
                 moment: require.resolve('dayjs')
             },
             plugins: [new TSConfigPathsPlugin()],
@@ -521,39 +473,34 @@ const config = (env) => {
                 buffer: require.resolve('buffer/'),
                 vm: require.resolve('vm-browserify/')
             },
-            extensions: ['.js', 'jsx', '.ts', '.tsx']
+            extensions: ['.js', '.jsx', '.ts', '.tsx']
         },
         stats: 'minimal',
-        // optimization: {
-        //   splitChunks: {
-        //     cacheGroups: {
-        //       'webextension-polyfill': {
-        //         minSize: 0,
-        //         test: /[\\/]node_modules[\\/]webextension-polyfill/,
-        //         name: 'webextension-polyfill',
-        //         chunks: 'all',
-        //       },
-        //     },
-        //   },
-        // },
+        // If you want to re-enable code splitting, do it here:
+        // optimization: { ... }
         experiments: {
             asyncWebAssembly: true,
             topLevelAwait: true,
             outputModule: true
         },
-
         target: 'web'
     };
-    config.module.rules = config.module.rules.map((rule) => {
+
+    // Insert a "wasm" rule at the top of the oneOf array
+    finalConfig.module.rules = finalConfig.module.rules.map((rule) => {
         if (rule.oneOf instanceof Array) {
             return {
                 ...rule,
-                oneOf: [{ test: /\.wasm$/, type: 'webassembly/async' }, ...rule.oneOf]
+                oneOf: [
+                    { test: /\.wasm$/, type: 'webassembly/async' },
+                    ...rule.oneOf
+                ]
             };
         }
         return rule;
     });
-    return config;
+
+    return finalConfig;
 };
 
 module.exports = config;

@@ -1,4 +1,4 @@
-import compareVersions from 'compare-versions';
+import { compareVersions } from 'compare-versions';
 import cloneDeep from 'lodash/cloneDeep';
 
 import { createPersistStore } from '@/background/utils';

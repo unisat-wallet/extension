@@ -10,15 +10,18 @@ import { Image } from '../Image';
 import { Row } from '../Row';
 import { RunesTicker } from '../RunesTicker';
 import { Text } from '../Text';
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 
 export interface OpNetBalanceCardProps {
-    tokenBalance: OPTokenInfo;
+    tokenInfo: OPTokenInfo;
     onClick?: () => void;
+    handleRemoveToken: (address: string) => void;
 }
 
 export default function OpNetBalanceCard(props: OpNetBalanceCardProps) {
-    const { tokenBalance, onClick } = props;
-    const balance = new BigNumber(bigIntToDecimal(tokenBalance.amount, tokenBalance.divisibility)); //runesUtils.toDecimalNumber(tokenBalance.amount, tokenBalance.divisibility);
+    const { tokenInfo, handleRemoveToken, onClick } = props;
+    const balance = new BigNumber(bigIntToDecimal(tokenInfo.amount, tokenInfo.divisibility)); //runesUtils.toDecimalNumber(tokenBalance.amount, tokenBalance.divisibility);
     const truncatedBalance = Math.floor(Number(balance) * 1e5) / 1e5;
     const str =
         Number(balance) > 0
@@ -34,24 +37,30 @@ export default function OpNetBalanceCard(props: OpNetBalanceCardProps) {
                 marginBottom: 10
             }}
             fullX
-            onClick={() => {
+            onClick={(e) => {
                 onClick?.();
             }}>
             <Column full py="zero" gap="zero">
                 <Row itemsCenter fullX justifyBetween>
                     <Row itemsCenter fullX>
-                        {tokenBalance.logo && <Image src={tokenBalance.logo} size={fontSizes.tiny} />}
+                        {tokenInfo.logo && <Image src={tokenInfo.logo} size={fontSizes.tiny} />}
                         <Column fullY justifyCenter>
-                            <RunesTicker tick={tokenBalance.name} />
+                            <RunesTicker tick={tokenInfo.name} />
                         </Column>
                     </Row>
 
                     <Row itemsCenter fullY gap="zero">
                         <Text text={str} size="xs" />
-                        <Text text={tokenBalance.symbol} size="xs" mx="sm" />
+                        <Text text={tokenInfo.symbol} size="xs" mx="sm" />
                     </Row>
                 </Row>
             </Column>
+
+            <FontAwesomeIcon onClick={(e) => {
+                e.stopPropagation();
+                handleRemoveToken(tokenInfo.address);
+            }} icon={faTrashCan}
+                             style={{ height: '1rem', cursor: 'pointer', marginBottom: '10px', zIndex: '100000' }} />
         </Card>
     );
 }

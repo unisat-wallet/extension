@@ -1,4 +1,4 @@
-import compareVersions from 'compare-versions';
+import { compareVersions } from 'compare-versions';
 import { useCallback } from 'react';
 
 import { CHAINS_MAP, ChainType, VERSION } from '@/shared/constant';

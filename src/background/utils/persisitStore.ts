@@ -1,4 +1,4 @@
-import { debounce } from 'debounce';
+import debounce from 'debounce';
 
 import { storage } from '@/background/webapi';
 
@@ -13,10 +13,10 @@ interface CreatePersistStoreParams<T> {
 }
 
 const createPersistStore = async <T extends object>({
-    name,
-    template = Object.create(null) as T,
-    fromStorage = true
-}: CreatePersistStoreParams<T>): Promise<T> => {
+                                                        name,
+                                                        template = Object.create(null) as T,
+                                                        fromStorage = true
+                                                    }: CreatePersistStoreParams<T>): Promise<T> => {
     let tpl = template;
 
     if (fromStorage) {

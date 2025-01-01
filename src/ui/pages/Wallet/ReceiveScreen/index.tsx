@@ -1,4 +1,4 @@
-import QRCode from 'qrcode.react';
+import { QRCodeSVG } from 'qrcode.react';
 
 import { AddressBar, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
@@ -26,9 +26,8 @@ export default function ReceiveScreen() {
                         justifyCenter
                         rounded
                         style={{ backgroundColor: 'white', alignSelf: 'center', alignItems: 'center', padding: 10 }}>
-                        <QRCode
+                        <QRCodeSVG
                             value={address || ''}
-                            renderAs="svg"
                             size={sizes.qrcode}
                             imageRendering={chain.icon}
                             imageSettings={{
@@ -36,7 +35,7 @@ export default function ReceiveScreen() {
                                 width: 30,
                                 height: 30,
                                 excavate: true
-                            }}></QRCode>
+                            }}></QRCodeSVG>
                     </Column>
 
                     <Row justifyCenter>
