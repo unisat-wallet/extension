@@ -58,7 +58,7 @@ const fixWindowError2 = async () => {
 };
 
 const fixWindowError3 = async () => {
-    const file = './node_modules/@btc-vision/bitcoin/src/payments/p2tr.js';
+    const file = './node_modules/@btc-vision/bitcoin/build/payments/p2tr.js';
     const searchValue = 'signature: types_1.typeforce.maybe(types_1.typeforce.BufferN(64))';
     const replaceValue = 'signature: types_1.typeforce.maybe(types_1.typeforce.Buffer)';
     await patchFile(file, searchValue, replaceValue);
