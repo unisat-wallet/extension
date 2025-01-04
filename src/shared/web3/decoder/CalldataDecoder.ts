@@ -16,7 +16,7 @@ export function isInteractionType(selector: string): selector is InteractionType
 
 export function selectorToString(calldata: string): string {
     const data = Buffer.from(calldata, 'hex');
-    const selector = data.slice(0, 4).toString('hex');
+    const selector = data.subarray(0, 4).toString('hex');
 
     if (!isInteractionType(selector)) {
         return `Unknown Interaction : 0x${selector}`;
@@ -45,8 +45,7 @@ export function decodeCallData(calldata: string): Decoded | null {
     const reader = new BinaryReader(data);
     reader.setOffset(4);
 
-    const selector = data.slice(0, 4).toString('hex');
-
+    const selector = data.subarray(0, 4).toString('hex');
     if (!isInteractionType(selector)) {
         return null;
     }

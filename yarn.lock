@@ -1658,7 +1658,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@bitcoinerlab/secp256k1@npm:^1.1.1":
+"@bitcoinerlab/secp256k1@npm:^1.1.1, @bitcoinerlab/secp256k1@npm:^1.2.0":
   version: 1.2.0
   resolution: "@bitcoinerlab/secp256k1@npm:1.2.0"
   dependencies:
@@ -1667,9 +1667,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@btc-vision/bitcoin@npm:6.3.2, @btc-vision/bitcoin@npm:^6.3.2":
-  version: 6.3.2
-  resolution: "@btc-vision/bitcoin@npm:6.3.2"
+"@btc-vision/bitcoin-rpc@npm:^1.0.0":
+  version: 1.0.0
+  resolution: "@btc-vision/bitcoin-rpc@npm:1.0.0"
+  dependencies:
+    "@btc-vision/bsi-common": "npm:^1.0.23"
+    "@eslint/js": "npm:^9.17.0"
+    gulp: "npm:^5.0.0"
+    gulp-cached: "npm:^1.1.1"
+    gulp-clean: "npm:^0.4.0"
+    gulp-eslint-new: "npm:^2.4.0"
+    gulp-logger: "npm:^0.0.2"
+    gulp-typescript: "npm:^6.0.0-alpha.1"
+    rpc-request: "npm:^8.0.0"
+    ts-node: "npm:^10.9.2"
+    undici: "npm:^7.2.0"
+  checksum: 10c0/7cb8fdfda9ef2f090f70862bbaf793a38798e8866689f001901a3fd57c93ef87e55402553df0a00654591facc577200946bede52d5d8d97ee49b182da4e38447
+  languageName: node
+  linkType: hard
+
+"@btc-vision/bitcoin@npm:6.3.3, @btc-vision/bitcoin@npm:^6.3.3":
+  version: 6.3.3
+  resolution: "@btc-vision/bitcoin@npm:6.3.3"
   dependencies:
     "@babel/plugin-proposal-object-rest-spread": "npm:^7.20.7"
     "@btc-vision/logger": "npm:^1.0.6"
@@ -1692,49 +1711,30 @@ __metadata:
     process: "npm:^0.11.10"
     typeforce: "npm:^1.18.0"
     varuint-bitcoin: "npm:^1.1.2"
-  checksum: 10c0/e6b5f5bca365ec0b2988571e29134bbd26470e36550e9d4ce47e6a837cc8cdf4f4bf5e29e57ac29edfb5c815164fba66524243fef04e60ebb46d7958295cba33
+  checksum: 10c0/a3b0e9ae0ff7bd71a4ed390ad90d3458e913600b9640a12faf51d16521169b7f110b8e968b5295c3c0c74e5971fd96043c915f3cc219cc11ad10bd7e80d71512
   languageName: node
   linkType: hard
 
-"@btc-vision/bsi-bitcoin-rpc@npm:>=1.0.29, @btc-vision/bsi-bitcoin-rpc@npm:^1.0.29":
-  version: 1.0.30
-  resolution: "@btc-vision/bsi-bitcoin-rpc@npm:1.0.30"
+"@btc-vision/bsi-common@npm:^1.0.23":
+  version: 1.0.23
+  resolution: "@btc-vision/bsi-common@npm:1.0.23"
   dependencies:
-    "@btc-vision/bsi-common": "npm:^1.0.22"
+    "@btc-vision/logger": "npm:^1.0.6"
     "@eslint/js": "npm:^9.17.0"
+    "@types/cors": "npm:^2.8.17"
+    "@types/debug": "npm:^4.1.12"
+    babel-plugin-transform-import-meta: "npm:^2.3.2"
     gulp: "npm:^5.0.0"
     gulp-cached: "npm:^1.1.1"
     gulp-clean: "npm:^0.4.0"
     gulp-eslint-new: "npm:^2.4.0"
     gulp-logger: "npm:^0.0.2"
     gulp-typescript: "npm:^6.0.0-alpha.1"
-    rpc-request: "npm:^8.0.0"
-    ts-node: "npm:^10.9.2"
-    undici: "npm:^7.2.0"
-  checksum: 10c0/c72e1a8600063c0cb755b321faf100b63a5cb267c69b3758f36527e2080c9cd85b5c0f91d420b23964063bd2f2df5d9cc0a3fa2bc35a9875d759de08f94d7168
-  languageName: node
-  linkType: hard
-
-"@btc-vision/bsi-common@npm:^1.0.22":
-  version: 1.0.22
-  resolution: "@btc-vision/bsi-common@npm:1.0.22"
-  dependencies:
-    "@btc-vision/logger": "npm:^1.0.6"
-    "@eslint/js": "npm:^9.10.0"
-    "@types/cors": "npm:^2.8.17"
-    "@types/debug": "npm:^4.1.12"
-    babel-plugin-transform-import-meta: "npm:^2.2.1"
-    gulp: "npm:^5.0.0"
-    gulp-cached: "npm:^1.1.1"
-    gulp-clean: "npm:^0.4.0"
-    gulp-eslint-new: "npm:^2.3.0"
-    gulp-logger: "npm:^0.0.2"
-    gulp-typescript: "npm:^6.0.0-alpha.1"
-    mongodb: "npm:^6.5.0"
+    mongodb: "npm:^6.12.0"
     node-cache: "npm:^5.1.2"
     toml: "npm:^3.0.0"
     ts-node: "npm:^10.9.2"
-  checksum: 10c0/643889afa404f4ebd879783020e4c897bad563ece5b4371dcd6a30fec9cea0b4642fbcff0e7e714b39605c255da6fa5c357f8c16288f5d1970e9ee2c35cfe122
+  checksum: 10c0/6d913f4ab14a61ea9cd5fcf6aaf44de1ee5b7a0ea586d6d45586dfc0cfd4fdd8144831acd19e2ff937ae5e76b4199fc93d2ba89f1beda9382d72a9093559465a
   languageName: node
   linkType: hard
 
@@ -1772,14 +1772,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@btc-vision/transaction@npm:1.2.2, @btc-vision/transaction@npm:^1.2.2":
-  version: 1.2.2
-  resolution: "@btc-vision/transaction@npm:1.2.2"
+"@btc-vision/transaction@npm:1.2.3, @btc-vision/transaction@npm:^1.2.3":
+  version: 1.2.3
+  resolution: "@btc-vision/transaction@npm:1.2.3"
   dependencies:
     "@babel/plugin-proposal-object-rest-spread": "npm:^7.20.7"
     "@bitcoinerlab/secp256k1": "npm:^1.1.1"
-    "@btc-vision/bitcoin": "npm:^6.3.2"
-    "@btc-vision/bsi-bitcoin-rpc": "npm:^1.0.29"
+    "@btc-vision/bitcoin": "npm:^6.3.3"
+    "@btc-vision/bitcoin-rpc": "npm:^1.0.0"
     "@btc-vision/logger": "npm:^1.0.6"
     "@eslint/js": "npm:^9.14.0"
     "@noble/secp256k1": "npm:^2.1.0"
@@ -1803,7 +1803,7 @@ __metadata:
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.7.2"
     webpack: "npm:^5.97.1"
-  checksum: 10c0/4b9e609f604bbef8d34abd1a7be8f0ddfdf25cc728b5acaf599e2fae2c5c56ee9ce5619b8fba47b1d7bcc84cdda6706563b8d0de30883761a87f817ef4a036d1
+  checksum: 10c0/e8bdba5baabf2419ad56581b6a2701c6467967290cacbe1e5443e614a573357350adb0c4fc8280d3ac9980dff0d2f3651edaad30990d207eb8cc7a63762b9507
   languageName: node
   linkType: hard
 
@@ -3243,6 +3243,13 @@ __metadata:
   version: 1.6.1
   resolution: "@noble/hashes@npm:1.6.1"
   checksum: 10c0/27643cd8b551bc933b57cc29aa8c8763d586552fc4c3e06ecf7897f55be3463c0c9dff7f6ebacd88e5ce6d0cdb5415ca4874d0cf4359b5ea4a85be21ada03aab
+  languageName: node
+  linkType: hard
+
+"@noble/hashes@npm:^1.7.0":
+  version: 1.7.0
+  resolution: "@noble/hashes@npm:1.7.0"
+  checksum: 10c0/1ef0c985ebdb5a1bd921ea6d959c90ba826af3ae05b40b459a703e2a5e9b259f190c6e92d6220fb3800e2385521e4159e238415ad3f6b79c52f91dd615e491dc
   languageName: node
   linkType: hard
 
@@ -6084,6 +6091,18 @@ __metadata:
   peerDependencies:
     "@babel/core": ^7.10.0
   checksum: 10c0/9d8c73b767bbd13abc288f98866251e44b58d8fbcb0186aa7166d1be021db05f7bdb993342e38956ab144987255ded9558d22fed8d9a54ea1dc3df34fa8a981e
+  languageName: node
+  linkType: hard
+
+"babel-plugin-transform-import-meta@npm:^2.3.2":
+  version: 2.3.2
+  resolution: "babel-plugin-transform-import-meta@npm:2.3.2"
+  dependencies:
+    "@babel/template": "npm:^7.25.9"
+    tslib: "npm:^2.8.1"
+  peerDependencies:
+    "@babel/core": ^7.10.0
+  checksum: 10c0/f7b895b649c038ecfdb67addf1b1feb25f39919177b460a277452af2ac7ee335cfda81da6846bcc30fc5fb05ff3011d6eb21f290c69d901f9fdc50673d48ffce
   languageName: node
   linkType: hard
 
@@ -13819,7 +13838,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"mongodb@npm:^6.5.0":
+"mongodb@npm:^6.12.0":
   version: 6.12.0
   resolution: "mongodb@npm:6.12.0"
   dependencies:
@@ -14339,20 +14358,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"opnet@npm:1.2.2":
-  version: 1.2.2
-  resolution: "opnet@npm:1.2.2"
+"opnet@npm:1.2.3":
+  version: 1.2.3
+  resolution: "opnet@npm:1.2.3"
   dependencies:
-    "@bitcoinerlab/secp256k1": "npm:^1.1.1"
-    "@btc-vision/bitcoin": "npm:^6.3.2"
-    "@btc-vision/bsi-bitcoin-rpc": "npm:>=1.0.29"
-    "@btc-vision/transaction": "npm:^1.2.2"
-    "@noble/hashes": "npm:^1.6.1"
+    "@bitcoinerlab/secp256k1": "npm:^1.2.0"
+    "@btc-vision/bitcoin": "npm:^6.3.3"
+    "@btc-vision/bitcoin-rpc": "npm:^1.0.0"
+    "@btc-vision/transaction": "npm:^1.2.3"
+    "@noble/hashes": "npm:^1.7.0"
     bignumber.js: "npm:^9.1.2"
     buffer: "npm:^6.0.3"
     ecpair: "npm:^2.1.0"
     tiny-secp256k1: "npm:^2.2.3"
-  checksum: 10c0/fc38b745dbf2da884a69708a2932649aff3371526de2a5469561453d44722f1c6bf23ad10b579d272c5a659405b423621b115d3729ed52c814fadaaaa975a3f7
+  checksum: 10c0/a2dcbe1324989f814f4b3735a09af2243c1203ab8c1a8906e6448e3170b0f5a652e97238be2bc66e2ec6e7df3d1d8d8006d551eeb12289183d9ea20922ff6a60
   languageName: node
   linkType: hard
 
@@ -14377,9 +14396,9 @@ __metadata:
     "@ant-design/icons": "npm:^5.5.2"
     "@babel/core": "npm:^7.26.0"
     "@babel/plugin-proposal-private-property-in-object": "npm:^7.21.11"
-    "@btc-vision/bitcoin": "npm:6.3.2"
+    "@btc-vision/bitcoin": "npm:6.3.3"
     "@btc-vision/passworder": "npm:1.0.0"
-    "@btc-vision/transaction": "npm:1.2.2"
+    "@btc-vision/transaction": "npm:1.2.3"
     "@btc-vision/wallet-sdk": "npm:1.0.0"
     "@eslint/js": "npm:^9.17.0"
     "@fortawesome/fontawesome-svg-core": "npm:^6.7.2"
@@ -14476,7 +14495,7 @@ __metadata:
     lru-cache: "npm:7.18.3"
     mini-css-extract-plugin: "npm:2.9.2"
     minimist: "npm:^1.2.8"
-    opnet: "npm:1.2.2"
+    opnet: "npm:1.2.3"
     postcss: "npm:^8.4.49"
     postcss-flexbugs-fixes: "npm:^5.0.2"
     postcss-loader: "npm:^8.1.1"
@@ -19665,7 +19684,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"tslib@npm:^2.0.0, tslib@npm:^2.0.3, tslib@npm:^2.3.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0, tslib@npm:^2.6.2":
+"tslib@npm:^2.0.0, tslib@npm:^2.0.3, tslib@npm:^2.3.0, tslib@npm:^2.3.1, tslib@npm:^2.4.0, tslib@npm:^2.6.2, tslib@npm:^2.8.1":
   version: 2.8.1
   resolution: "tslib@npm:2.8.1"
   checksum: 10c0/9c4759110a19c53f992d9aae23aac5ced636e99887b51b9e61def52611732872ff7668757d4e4c61f19691e36f4da981cd9485e869b4a7408d689f6bf1f14e62

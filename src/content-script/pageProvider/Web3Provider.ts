@@ -30,7 +30,7 @@ export class Web3Provider {
 
     public async signInteraction(
         interactionParameters: InteractionParametersWithoutSigner
-    ): Promise<[string, string, UTXO[]]> {
+    ): Promise<[string, string, UTXO[], string]> {
         if ('signer' in interactionParameters) {
             throw new Error('signer is not allowed in interaction parameters');
         }

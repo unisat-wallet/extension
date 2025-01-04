@@ -779,7 +779,7 @@ export class WalletController extends BaseController {
 
     signInteraction = async (
         interactionParameters: InteractionParametersWithoutSigner
-    ): Promise<[string, string, import('@btc-vision/transaction').UTXO[]]> => {
+    ): Promise<[string, string, import('@btc-vision/transaction').UTXO[], string]> => {
         const account = preferenceService.getCurrentAccount();
         if (!account) throw new Error('no current account');
 
@@ -1002,7 +1002,6 @@ export class WalletController extends BaseController {
             method: 'chainChanged',
             params: chainInfo
         });
-        
 
         const network = this.getLegacyNetworkName();
         sessionService.broadcastEvent<SessionEvent.networkChanged>(SessionEvent.networkChanged, {
@@ -1228,6 +1227,10 @@ export class WalletController extends BaseController {
 
     getCurrentConnectedSite = (tabId: number) => {
         const { origin } = sessionService.getSession(tabId) || {};
+        if (!origin) {
+            return undefined;
+        }
+
         return permissionService.getWithoutUpdate(origin);
     };
 
@@ -1317,9 +1320,7 @@ export class WalletController extends BaseController {
 
             if (inputData.witnessUtxo?.script) {
                 try {
-                    address = bitcoinAddress
-                        .fromOutputScript(inputData.witnessUtxo.script, network)
-                        .toString();
+                    address = bitcoinAddress.fromOutputScript(inputData.witnessUtxo.script, network).toString();
                 } catch {
                     address = 'unknown';
                 }
@@ -1393,7 +1394,7 @@ export class WalletController extends BaseController {
     // TODO (typing): Since the __CACHE's type is not specified, the ts was giving error. As this function
     // is not used in any part, just commented out for not to suppress the error.
     // setPsbtSignNonSegwitEnable(psbt: bitcoin.Psbt, enabled: boolean) {
-         
+
     //     //@ts-expect-error
     //     psbt.__CACHE.__UNSAFE_SIGN_NONSEGWIT = enabled;
     // }

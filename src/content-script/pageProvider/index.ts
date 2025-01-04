@@ -103,13 +103,14 @@ export class OpnetProvider extends EventEmitter {
             const origin = window.top?.location.origin || '';
 
             const iconElement = $('head > link[rel~="icon"]');
-            let icon = (iconElement instanceof HTMLLinkElement) ? iconElement.href : '';
+            let icon = iconElement instanceof HTMLLinkElement ? iconElement.href : '';
             const metaImageElement = $('head > meta[itemprop="image"]');
-            const iconFallback = (metaImageElement instanceof HTMLMetaElement) ? metaImageElement.content : '';
+            const iconFallback = metaImageElement instanceof HTMLMetaElement ? metaImageElement.content : '';
             icon = icon || iconFallback;
-            
+
             const metaTitleElement = $('head > meta[name="title"]');
-            const name = document.title || ((metaTitleElement instanceof HTMLMetaElement) ? metaTitleElement.content : origin);
+            const name =
+                document.title || (metaTitleElement instanceof HTMLMetaElement ? metaTitleElement.content : origin);
 
             await _opnetPrividerPrivate._bcm.request({
                 method: 'tabCheckin',
@@ -121,9 +122,9 @@ export class OpnetProvider extends EventEmitter {
         });
 
         try {
-            const { network, chain, accounts, isUnlocked }: ProviderState = await this._request({
+            const { network, chain, accounts, isUnlocked }: ProviderState = (await this._request({
                 method: 'getProviderState'
-            }) as ProviderState;
+            })) as ProviderState;
 
             if (isUnlocked) {
                 _opnetPrividerPrivate._isUnlocked = true;
@@ -158,7 +159,7 @@ export class OpnetProvider extends EventEmitter {
             .call(async () => {
                 log('[request]', JSON.stringify(data, null, 2));
 
-                const res = await _opnetPrividerPrivate._bcm.request(data).catch((err) => {
+                const res = await _opnetPrividerPrivate._bcm.request(data).catch((err: unknown) => {
                     // TODO (typing): Check if sending error without serialization cause any issues on the dApp side.
                     log('[request: error]', data.method, err);
                     throw err;
@@ -310,7 +311,7 @@ export class OpnetProvider extends EventEmitter {
 
     signInteraction = async (
         interactionParameters: InteractionParametersWithoutSigner
-    ): Promise<[string, string, UTXO[]]> => {
+    ): Promise<[string, string, UTXO[], string]> => {
         const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(
             interactionParameters.to
         );
@@ -324,7 +325,7 @@ export class OpnetProvider extends EventEmitter {
                 },
                 contractInfo: contractInfo
             }
-        })) as Promise<[string, string, UTXO[]]>;
+        })) as Promise<[string, string, UTXO[], string]>;
     };
 
     signAndBroadcastInteraction = async (
@@ -424,7 +425,7 @@ export class OpnetProvider extends EventEmitter {
 
         // TODO (typing): Ideally this is not the type-safe solution but in the _handleBackgroundMessage
         // function, we are directly passing the data as unknown and all of the pushEventHandler's methods
-        // have either one argument or none. So, it should be safe to cast it as below. 
+        // have either one argument or none. So, it should be safe to cast it as below.
         if (_opnetPrividerPrivate._pushEventHandlers && isPushEventHandlerMethod(params.event)) {
             return (_opnetPrividerPrivate._pushEventHandlers[params.event] as (data: unknown) => unknown)(params.data);
         }
