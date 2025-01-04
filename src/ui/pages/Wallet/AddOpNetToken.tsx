@@ -22,18 +22,17 @@ export const AddOpNetToken = ({
     const saveToLocalStorage = async () => {
         const getChain = await wallet.getChainType();
         const tokensImported = localStorage.getItem('opnetTokens_' + getChain);
-        let parsedTokens: string[] = [];
+        let parsedTokens: { address: string; hidden: boolean }[] = [];
         if (tokensImported) {
-            parsedTokens = JSON.parse(tokensImported) as string[];
+            parsedTokens = JSON.parse(tokensImported) as { address: string; hidden: boolean }[];
 
-            if (parsedTokens.includes(tokenState)) {
+            if (parsedTokens.some((token) => token.address === tokenState)) {
                 tools.toastError('Token already imported.');
-
                 return;
             }
         }
 
-        parsedTokens.push(tokenState);
+        parsedTokens.push({ address: tokenState, hidden: false });
         localStorage.setItem('opnetTokens_' + getChain, JSON.stringify(parsedTokens));
 
         await fetchData();
