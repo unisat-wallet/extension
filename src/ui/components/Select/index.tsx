@@ -143,9 +143,14 @@ export function Select(props: SelectProps) {
                         Web3API.provider,
                         Web3API.network
                     );
-                    const contractInfo: ContractInformation | false | undefined = await Web3API.queryContractInformation(
-                        searchTerm
-                    );
+                    const contractInfo: ContractInformation | false | undefined =
+                        await Web3API.queryContractInformation(searchTerm);
+
+                    if (!contractInfo) {
+                        setFilteredOptions([]);
+                        setLoading(false);
+                        return;
+                    }
 
                     try {
                         const balance = await contract.balanceOf(Address.fromString(account.pubkey));
@@ -183,7 +188,7 @@ export function Select(props: SelectProps) {
         setSearchTerm('');
     };
     const calculateBalance = (amount: bigint | undefined, divisibility: number | undefined) => {
-        const balance = runesUtils.toDecimalNumber(amount, divisibility);
+        const balance = runesUtils.toDecimalNumber((amount ?? 0n).toString(), divisibility ?? 0);
         let str = balance.toFixed(8);
         if (balance.lt(0.0001)) {
             str = '0';

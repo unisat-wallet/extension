@@ -8,8 +8,8 @@ import minimist from 'minimist';
 import path from 'path';
 import webpack from 'webpack';
 
-import webpackConfigFunc from './webpack.config.js';
 import { exit } from 'process';
+import webpackConfigFunc from './webpack.config.js';
 
 const packageJsonPath = path.resolve(process.cwd(), 'package.json');
 const packageConfig = JSON.parse(fs.readFileSync(packageJsonPath, 'utf-8'));
@@ -120,7 +120,14 @@ export function task_webpack(cb) {
             browser: options.browser,
             manifest: options.manifest
         }),
-        cb
+        (err, stats) => {
+            if (err) {
+                console.error(err);
+            } else {
+                console.log(stats.toString({ colors: true, modules: false, chunkModules: false }));
+            }
+            cb();
+        }
     );
 }
 

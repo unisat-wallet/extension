@@ -24,8 +24,8 @@ import { LoadingOutlined } from '@ant-design/icons';
 import '@btc-vision/transaction';
 import { Address } from '@btc-vision/transaction';
 
-import { RouteTypes, useNavigate } from '../MainRoute';
 import { Action, Features, SwapParameters } from '@/shared/interfaces/RawTxParameters';
+import { RouteTypes, useNavigate } from '../MainRoute';
 
 interface ItemData {
     key: string;
@@ -206,6 +206,10 @@ export default function Swap() {
 
                     const contractInfo: ContractInformation | false | undefined =
                         await Web3API.queryContractInformation(tokenAddress);
+
+                    if (!contractInfo) {
+                        continue;
+                    }
 
                     const walletAddressPub = Address.fromString(currentAccount.pubkey);
 
