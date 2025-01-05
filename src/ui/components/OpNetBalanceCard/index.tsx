@@ -56,11 +56,14 @@ export default function OpNetBalanceCard(props: OpNetBalanceCardProps) {
                 </Row>
             </Column>
 
-            <FontAwesomeIcon onClick={(e) => {
-                e.stopPropagation();
-                handleRemoveToken(tokenInfo.address);
-            }} icon={faTrashCan}
-                             style={{ height: '1rem', cursor: 'pointer', marginBottom: '10px', zIndex: '100000' }} />
+            <FontAwesomeIcon
+                onClick={(e) => {
+                    e.stopPropagation();
+                    handleRemoveToken(tokenInfo.address);
+                }}
+                icon={faTrashCan}
+                style={{ height: '1rem', cursor: 'pointer', zIndex: '100000' }}
+            />
         </Card>
     );
 }

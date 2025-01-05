@@ -115,9 +115,13 @@ export default function OpNetTokenScreen() {
             try {
                 const getOwner = await contract.owner();
                 setIsOwner(myWallet.address.equals(getOwner.properties.owner));
-            } catch (e) {
-                tools.toastError('Error in getting owner');
-                return;
+            } catch {
+                try {
+                    const deployer = await contract.deployer();
+                    setIsOwner(myWallet.address.equals(deployer.properties.deployer));
+                } catch {
+                    return;
+                }
             }
 
             setLoading(false);

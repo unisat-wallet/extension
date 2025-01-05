@@ -191,6 +191,7 @@ class Web3API {
             this.provider,
             this.network
         );
+        console.log(address, genericContract.address);
 
         try {
             const promises: [

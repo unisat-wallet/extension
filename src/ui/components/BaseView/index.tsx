@@ -91,7 +91,7 @@ export function BaseView(props: BaseViewProps) {
         rounded ? ({ borderRadius: 5 } as CSSProperties) : {},
         roundedTop ? ({ borderTopLeftRadius: 5, borderTopRightRadius: 5 } as CSSProperties) : {},
         roundedBottom ? ({ borderBottomLeftRadius: 5, borderBottomRightRadius: 5 } as CSSProperties) : {},
-        full ? ({ flex: 1, alignSelf: 'stretch' } as CSSProperties) : {},
+        full ? ({ flex: 1 } as CSSProperties) : {}, //alignSelf: 'stretch'
         fullX ? ({ width: '100%' } as CSSProperties) : {},
         fullY ? ({ height: '100%' } as CSSProperties) : {},
         color ? { color: colors[color] } : {},
