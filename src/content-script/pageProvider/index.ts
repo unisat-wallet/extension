@@ -312,7 +312,7 @@ export class OpnetProvider extends EventEmitter {
     signInteraction = async (
         interactionParameters: InteractionParametersWithoutSigner
     ): Promise<[string, string, UTXO[], string]> => {
-        const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(
+        const contractInfo: ContractInformation | false | undefined = await Web3API.queryContractInformation(
             interactionParameters.to
         );
 
@@ -331,7 +331,7 @@ export class OpnetProvider extends EventEmitter {
     signAndBroadcastInteraction = async (
         interactionParameters: InteractionParametersWithoutSigner
     ): Promise<[BroadcastedTransaction, BroadcastedTransaction, UTXO[]]> => {
-        const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(
+        const contractInfo: ContractInformation | false | undefined = await Web3API.queryContractInformation(
             interactionParameters.to
         );
 

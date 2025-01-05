@@ -53,7 +53,7 @@ export default function Swap() {
 
     const handleSelect = async (option: OPTokenInfo) => {
         if (option.address == selectedOptionOutput?.address) {
-            tools.toastError('Token In and Token Out can\'t be the same');
+            tools.toastError("Token In and Token Out can't be the same");
             return;
         }
         await handleInputChange(inputAmount);
@@ -62,7 +62,7 @@ export default function Swap() {
 
     const handleSelectOutput = async (option: OPTokenInfo) => {
         if (option.address == selectedOption?.address) {
-            tools.toastError('Token In and Token Out can\'t be the same');
+            tools.toastError("Token In and Token Out can't be the same");
             return;
         }
 
@@ -109,10 +109,10 @@ export default function Swap() {
                     );
 
                     try {
-                        const pubKeyInfoSelectedOption = await Web3API.provider.getPublicKeysInfo([
+                        const pubKeyInfoSelectedOption = (await Web3API.provider.getPublicKeysInfo([
                             selectedOption.address,
                             selectedOptionOutput.address
-                        ]) as AddressesInfo;
+                        ])) as AddressesInfo;
 
                         const originalPubKeyInput: Address = pubKeyInfoSelectedOption[selectedOption.address];
                         const originalPubKeyOutput: Address = pubKeyInfoSelectedOption[selectedOptionOutput.address];
@@ -124,7 +124,7 @@ export default function Swap() {
 
                         setOutPutAmount(
                             BitcoinUtils.formatUnits(
-                                // TODO (typing): Check this again if accessing the first index is correct. 
+                                // TODO (typing): Check this again if accessing the first index is correct.
                                 getData.properties.amountsOut[1],
                                 selectedOptionOutput.divisibility
                             )
@@ -187,7 +187,7 @@ export default function Swap() {
 
             const getChain = await wallet.getChainType();
             const tokensImported = localStorage.getItem('opnetTokens_' + getChain);
-            const parsedTokens = tokensImported ? JSON.parse(tokensImported) as string[] : [];
+            const parsedTokens = tokensImported ? (JSON.parse(tokensImported) as string[]) : [];
             //if (OpNetBalance?.address) {
             //    setSelectedOption(OpNetBalance);
             //}
@@ -204,7 +204,7 @@ export default function Swap() {
                         Web3API.network
                     );
 
-                    const contractInfo: ContractInformation | undefined =
+                    const contractInfo: ContractInformation | false | undefined =
                         await Web3API.queryContractInformation(tokenAddress);
 
                     const walletAddressPub = Address.fromString(currentAccount.pubkey);

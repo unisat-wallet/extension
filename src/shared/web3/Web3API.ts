@@ -184,14 +184,13 @@ class Web3API {
         return !!AddressVerificator.detectAddressType(address, this.network);
     }
 
-    public async queryContractInformation(address: string): Promise<ContractInformation | undefined> {
+    public async queryContractInformation(address: string): Promise<ContractInformation | undefined | false> {
         const genericContract: IOP_20Contract = getContract<IOP_20Contract>(
             address,
             OP_20_ABI,
             this.provider,
             this.network
         );
-        console.log(address, genericContract.address);
 
         try {
             const promises: [
@@ -223,6 +222,9 @@ class Web3API {
                 logo
             };
         } catch (e) {
+            if((e as Error).message.includes('not found')) {
+                return false;
+            }
             return;
         }
     }

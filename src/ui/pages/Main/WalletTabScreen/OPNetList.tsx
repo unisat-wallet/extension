@@ -1,33 +1,47 @@
+import { CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
 import BigNumber from 'bignumber.js';
+import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
+import { Modal } from 'antd';
+import browser from 'webextension-polyfill';
+
 import { getContract, IOP_20Contract, OP_20_ABI } from 'opnet';
-import { CSSProperties, useCallback, useEffect, useState } from 'react';
+import Web3API, { getOPNetChainType, getOPNetNetwork } from '@/shared/web3/Web3API';
 
 import { ChainType } from '@/shared/constant';
 import { NetworkType, OPTokenInfo } from '@/shared/types';
-import Web3API, { getOPNetChainType, getOPNetNetwork } from '@/shared/web3/Web3API';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
-import { Button, Column, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
-import { BaseView } from '@/ui/components/BaseView';
-import OpNetBalanceCard from '@/ui/components/OpNetBalanceCard';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useWallet } from '@/ui/utils';
-import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Address, OPNetMetadata } from '@btc-vision/transaction';
 
+import { useTools } from '@/ui/components/ActionComponent';
+import { BaseView } from '@/ui/components/BaseView';
+import { Button, Column, Row, Text } from '@/ui/components';
+import OpNetBalanceCard from '@/ui/components/OpNetBalanceCard';
+import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useChainType } from '@/ui/state/settings/hooks';
-import { Modal } from 'antd';
-import browser from 'webextension-polyfill';
+import { useWallet } from '@/ui/utils';
+
 import { RouteTypes, useNavigate } from '../../MainRoute';
 import { AddOpNetToken } from '../../Wallet/AddOpNetToken';
 
 BigNumber.config({ EXPONENTIAL_AT: 256 });
 
+/** Number of tokens shown per page. */
 const TOKENS_PER_PAGE = 3;
 
+/** Cache to avoid re-fetching the same token balances. */
 const balanceCache = new Map<string, OPTokenInfo>();
 
-function pushDefaultTokens(tokens: { address: string; hidden: boolean }[], chain: ChainType, network: NetworkType) {
+/** Simple interface to represent tokens stored in localStorage. */
+interface StoredToken {
+    address: string;
+    hidden: boolean;
+}
+
+/**
+ * Adds a default token (Moto contract) into the token list if it is missing.
+ * Swallows any error that might occur.
+ */
+function pushDefaultTokens(tokens: (StoredToken | string)[], chain: ChainType, network: NetworkType) {
     const chainId = getOPNetChainType(chain);
     const opnetNetwork = getOPNetNetwork(network);
 
@@ -35,11 +49,16 @@ function pushDefaultTokens(tokens: { address: string; hidden: boolean }[], chain
         const metadata = OPNetMetadata.getAddresses(opnetNetwork, chainId);
         const newTokenAddress = metadata.moto.p2tr(Web3API.network);
 
-        if (!tokens.some((token) => token.address === newTokenAddress)) {
+        const alreadyExists = tokens.some((token) => {
+            if (typeof token === 'string') return token === newTokenAddress;
+            return token.address === newTokenAddress;
+        });
+
+        if (!alreadyExists) {
             tokens.push({ address: newTokenAddress, hidden: false });
         }
-    } catch (e) {
-        console.error('Failed to add default token:', e);
+    } catch (err) {
+        console.error('Failed to add default token:', err);
     }
 }
 
@@ -48,71 +67,104 @@ export function OPNetList() {
     const wallet = useWallet();
     const currentAccount = useCurrentAccount();
     const chainType = useChainType();
+    const tools = useTools();
 
+    // Main tokens + balances
     const [tokens, setTokens] = useState<string[]>([]);
     const [tokenBalances, setTokenBalances] = useState<OPTokenInfo[]>([]);
     const [total, setTotal] = useState(-1);
-    const [importTokenBool, setImportTokenBool] = useState(false);
+
+    // Pagination
     const [currentPage, setCurrentPage] = useState(1);
+
+    // For "Import Token" modal
+    const [importTokenBool, setImportTokenBool] = useState(false);
+
+    // For the normal "Remove/Hide" token modal
     const [showModal, setShowModal] = useState(false);
     const [modalToken, setModalToken] = useState<string | null>(null);
 
-    const tools = useTools();
+    // For tokens that fail to load
+    const [failedTokens, setFailedTokens] = useState<string[]>([]);
+    const [currentFailedToken, setCurrentFailedToken] = useState<string | null>(null);
+    const [showFailedModal, setShowFailedModal] = useState(false);
 
+    /**
+     * This flag helps avoid re-fetching balances repeatedly when removing tokens.
+     */
+    const skipBalancesRef = useRef(false);
+
+    /**
+     * Retrieves the tokens from localStorage once and sets `tokens` + `total`.
+     */
     const fetchTokens = useCallback(async () => {
         try {
             tools.showLoading(true);
+            const chain = await wallet.getChainType();
+            Web3API.setNetwork(chain);
 
-            const getChain = await wallet.getChainType();
-            Web3API.setNetwork(getChain);
-
-            const tokensImported = localStorage.getItem('opnetTokens_' + getChain);
-            let parsedTokens: { address: string; hidden: boolean }[] = [];
-            if (tokensImported) {
-                parsedTokens = JSON.parse(tokensImported) as { address: string; hidden: boolean }[];
-            }
+            const tokensImported = localStorage.getItem(`opnetTokens_${chain}`);
+            const parsedTokens: (StoredToken | string)[] = tokensImported
+                ? (JSON.parse(tokensImported) as (StoredToken | string)[])
+                : [];
 
             const currentNetwork = await wallet.getNetworkType();
-            pushDefaultTokens(parsedTokens, getChain, currentNetwork);
+            pushDefaultTokens(parsedTokens, chain, currentNetwork);
 
+            // Re-save back to localStorage in case we added the default token
             if (parsedTokens.length) {
-                localStorage.setItem('opnetTokens_' + getChain, JSON.stringify(parsedTokens.filter((token) => token)));
+                localStorage.setItem(`opnetTokens_${chain}`, JSON.stringify(parsedTokens.filter(Boolean)));
             }
 
             const deadAddress = Address.dead().p2tr(Web3API.network);
-            const validTokens = parsedTokens.filter((token) => token.address !== deadAddress);
-            const visibleTokens = validTokens.filter((token) => !token.hidden).map((token) => token.address);
+            const validTokens = parsedTokens.filter((token) => {
+                if (typeof token === 'string') return token !== deadAddress;
+                return token.address !== deadAddress;
+            });
 
-            setTokens(visibleTokens.filter((token) => token !== deadAddress && token));
-            setTotal(visibleTokens.length);
-        } catch (e) {
-            tools.toastError(`Error loading tokens: ${(e as Error).message}`);
+            const visibleTokens = validTokens
+                .filter((token) => (typeof token === 'string' ? true : !token.hidden))
+                .map((token) => (typeof token === 'string' ? token : token.address));
+
+            setTokens(visibleTokens);
+            setTotal(visibleTokens.length || 0);
+        } catch (err) {
+            tools.toastError(`Error loading tokens: ${(err as Error).message}`);
         } finally {
             tools.showLoading(false);
         }
-    }, [wallet, tools]);
+    }, [tools, wallet]);
 
+    /**
+     * Fetch the balances for the current page of tokens. We skip if `skipBalancesRef.current` is true.
+     */
     const fetchTokenBalances = useCallback(async () => {
+        if (skipBalancesRef.current) return;
+        if (!tokens.length) {
+            setTokenBalances([]);
+            return;
+        }
+
         try {
             tools.showLoading(true);
 
             const startIndex = (currentPage - 1) * TOKENS_PER_PAGE;
             const endIndex = Math.min(startIndex + TOKENS_PER_PAGE, tokens.length);
-
             const currentTokens = tokens.slice(startIndex, endIndex);
-            console.log('tokenAddress', currentTokens, tokens);
 
             const balances = await Promise.all(
                 currentTokens.map(async (tokenAddress) => {
-                    try {
-                        if (balanceCache.has(tokenAddress)) {
-                            return balanceCache.get(tokenAddress) as OPTokenInfo;
-                        }
+                    // Return from cache if available
+                    if (balanceCache.has(tokenAddress)) {
+                        return balanceCache.get(tokenAddress) as OPTokenInfo;
+                    }
 
-                        const contractInfo: ContractInformation | undefined =
+                    try {
+                        const contractInfo: ContractInformation | false | undefined =
                             await Web3API.queryContractInformation(tokenAddress);
 
                         if (!contractInfo || contractInfo.name === 'Generic Contract') {
+                            setFailedTokens((prev) => [...prev, tokenAddress]);
                             return null;
                         }
 
@@ -123,10 +175,8 @@ export function OPNetList() {
                             Web3API.network
                         );
 
-                        console.log(tokenAddress, contract.address);
-
                         const balance = await contract.balanceOf(Address.fromString(currentAccount.pubkey));
-                        const tokenDetails = {
+                        const tokenDetails: OPTokenInfo = {
                             address: tokenAddress,
                             name: contractInfo?.name || '',
                             amount: balance.properties.balance,
@@ -136,136 +186,206 @@ export function OPNetList() {
                         };
 
                         balanceCache.set(tokenAddress, tokenDetails);
-
                         return tokenDetails;
-                    } catch (e) {
-                        console.error(`Error fetching balance for token:`, e, tokenAddress);
+                    } catch (err) {
+                        console.error('Error fetching balance:', tokenAddress, err);
+                        setFailedTokens((prev) => [...prev, tokenAddress]);
                         return null;
                     }
                 })
             );
 
-            const validBalances = balances.filter((balance) => balance !== null);
-            setTokenBalances(validBalances);
-        } catch (e) {
-            tools.toastError(`Something went wrong while attempting to load tokens: ${(e as Error).message}`);
+            setTokenBalances(balances.filter(Boolean) as OPTokenInfo[]);
+        } catch (err) {
+            tools.toastError(`Failed to load token balances: ${(err as Error).message}`);
         } finally {
             tools.showLoading(false);
         }
-    }, [currentPage, tokens, currentAccount, tools]);
+    }, [currentAccount, currentPage, tokens, tools]);
 
+    // Fetch tokens once on mount (and on Refresh), not every time tokens state changes
+    useEffect(() => {
+        fetchTokens().catch((err: unknown) => console.error(err));
+    }, [fetchTokens, chainType, currentAccount, importTokenBool]);
+
+    // Fetch balances when tokens / page changes (unless skipping)
+    useEffect(() => {
+        void fetchTokenBalances();
+    }, [fetchTokenBalances, tokens, currentPage]);
+
+    // If new failures appear, display them one by one
+    useEffect(() => {
+        if (!currentFailedToken && failedTokens.length > 0) {
+            const [firstFailed] = failedTokens;
+            setCurrentFailedToken(firstFailed);
+            setShowFailedModal(true);
+        } else if (failedTokens.length === 0) {
+            setCurrentFailedToken(null);
+            setShowFailedModal(false);
+        }
+    }, [failedTokens, currentFailedToken]);
+
+    /**
+     * Handle removing or keeping a token that failed to load.
+     */
+    const handleRemoveFailedToken = async (shouldRemove: boolean) => {
+        if (!currentFailedToken) return;
+        skipBalancesRef.current = true;
+
+        if (shouldRemove) {
+            try {
+                const chain = await wallet.getChainType();
+                const storageKey = `opnetTokens_${chain}`;
+                const storedTokens = JSON.parse(localStorage.getItem(storageKey) || '[]') as (StoredToken | string)[];
+
+                // Correctly filter out the token we want to remove:
+                const updatedStored = storedTokens.filter((t) => {
+                    if (typeof t === 'object') return t.address !== currentFailedToken;
+                    return t !== currentFailedToken;
+                });
+
+                localStorage.setItem(storageKey, JSON.stringify(updatedStored));
+
+                // Also remove from our tokens array
+                setTokens((prev) => {
+                    const newArr = prev.filter((addr) => addr !== currentFailedToken);
+                    setTotal(newArr.length);
+                    return newArr;
+                });
+
+                balanceCache.delete(currentFailedToken);
+                tools.toastSuccess(`Token ${currentFailedToken} removed successfully!`);
+            } catch (err) {
+                tools.toastError(`Failed to remove the token: ${(err as Error).message}`);
+            }
+        }
+
+        setFailedTokens((prev) => prev.filter((t) => t !== currentFailedToken));
+        setCurrentFailedToken(null);
+        setShowFailedModal(false);
+        skipBalancesRef.current = false;
+    };
+
+    /**
+     * Normal flow: open Remove/Hide modal
+     */
     const handleRemoveToken = (address: string) => {
         setModalToken(address);
         setShowModal(true);
     };
 
-    const handleModalAction = async (action: 'remove' | 'hide') => {
+    type ModalAction = 'remove' | 'hide';
+
+    /**
+     * Remove/Hide a token in localStorage
+     */
+    const handleModalAction = async (action: ModalAction) => {
         if (!modalToken) return;
+        skipBalancesRef.current = true;
+
         try {
-            const getChain = await wallet.getChainType();
-            const storedTokens = JSON.parse(localStorage.getItem('opnetTokens_' + getChain) || '[]') as {
-                address: string;
-                hidden: boolean;
-            }[];
+            const chain = await wallet.getChainType();
+            const storageKey = `opnetTokens_${chain}`;
+            const storedTokens = JSON.parse(localStorage.getItem(storageKey) || '[]') as (StoredToken | string)[];
+
+            let updatedTokens: (StoredToken | string)[];
 
             if (action === 'remove') {
-                const updatedStoredTokens = storedTokens.filter((token) => token.address !== modalToken && token);
-                localStorage.setItem('opnetTokens_' + getChain, JSON.stringify(updatedStoredTokens));
+                // Filter out this token
+                updatedTokens = storedTokens.filter((t) => {
+                    if (typeof t === 'object') return t.address !== modalToken;
+                    return t !== modalToken;
+                });
+            } else {
+                // Hide this token
+                updatedTokens = storedTokens.map((t) => {
+                    if (typeof t === 'object' && t.address === modalToken) {
+                        return { ...t, hidden: true };
+                    }
+                    // If it’s a plain string and matches the modalToken,
+                    // turn it into an object with hidden: true
+                    if (typeof t === 'string' && t === modalToken) {
+                        return { address: t, hidden: true };
+                    }
+                    return t;
+                });
+            }
 
-                const updatedTokens = tokens.filter((token) => token !== modalToken && token);
-                setTokens(updatedTokens.filter((token) => token));
-                setTotal(updatedTokens.length);
-                const totalItems = updatedTokens.length;
-                const totalPages = Math.ceil(totalItems / TOKENS_PER_PAGE);
-                if (currentPage > totalPages) {
-                    setCurrentPage(totalPages);
-                }
+            localStorage.setItem(storageKey, JSON.stringify(updatedTokens));
+
+            // Also remove from our visible tokens array
+            setTokens((prev) => {
+                const newArr = prev.filter((addr) => addr !== modalToken);
+                setTotal(newArr.length);
+                return newArr;
+            });
+
+            // Fix pagination if needed
+            const totalItems = tokens.length - 1;
+            const totalPages = Math.ceil(totalItems / TOKENS_PER_PAGE);
+            if (currentPage > totalPages) {
+                setCurrentPage(totalPages > 0 ? totalPages : 1);
+            }
+
+            // Clear from cache if removed
+            if (action === 'remove') {
                 balanceCache.delete(modalToken);
-            } else if (action === 'hide') {
-                const updatedStoredTokens = storedTokens
-                    .map((token) => {
-                        if (token.address === modalToken) {
-                            return { ...token, hidden: true };
-                        }
-                        return token;
-                    })
-                    .filter((token) => token);
-                localStorage.setItem('opnetTokens_' + getChain, JSON.stringify(updatedStoredTokens));
-
-                const updatedTokens = tokens.filter((token) => token !== modalToken && token);
-                setTokens(updatedTokens.filter((token) => token));
-                setTotal(updatedTokens.length);
-                const totalItems = updatedTokens.length;
-                const totalPages = Math.ceil(totalItems / TOKENS_PER_PAGE);
-                if (currentPage > totalPages) {
-                    setCurrentPage(totalPages);
-                }
             }
 
             tools.toastSuccess(`Token ${action === 'remove' ? 'removed' : 'hidden'} successfully!`);
-        } catch (error) {
+        } catch (err) {
             tools.toastError(`Failed to ${action} the token.`);
-            console.error(error);
+            console.error(err);
         } finally {
             setShowModal(false);
             setModalToken(null);
+            skipBalancesRef.current = false;
         }
     };
 
+    /**
+     * Show all hidden tokens again
+     */
     const showHiddenTokens = async () => {
         try {
-            const getChain = await wallet.getChainType();
-            const storedTokens = JSON.parse(localStorage.getItem('opnetTokens_' + getChain) || '[]') as {
-                address: string;
-                hidden: boolean;
-            }[];
+            const chain = await wallet.getChainType();
+            const storageKey = `opnetTokens_${chain}`;
+            const storedTokens = JSON.parse(localStorage.getItem(storageKey) || '[]') as (StoredToken | string)[];
 
-            const visibleTokens = storedTokens
-                .filter((token) => token.hidden)
-                .map((token) => ({ ...token, hidden: false }));
-
-            if (!visibleTokens.length) {
-                tools.toastSuccess('There is no hidden token');
+            // Find all that are hidden
+            const previouslyHidden = storedTokens.filter((t) => typeof t === 'object' && t.hidden) as StoredToken[];
+            if (!previouslyHidden.length) {
+                tools.toastSuccess('There are no hidden tokens to show.');
                 return;
             }
 
-            const updatedStoredTokens = storedTokens.map((token) => {
-                if (visibleTokens.find((visible) => visible.address === token.address)) {
-                    return { ...token, hidden: false };
+            const updatedStoredTokens = storedTokens.map((t) => {
+                // If it’s an object that was hidden, make it visible
+                if (typeof t === 'object' && t.hidden) {
+                    return { ...t, hidden: false };
                 }
-                return token;
+                // If it's a string, leave it as-is (it's already “visible” by default).
+                return t;
             });
 
-            localStorage.setItem(
-                'opnetTokens_' + getChain,
-                JSON.stringify(updatedStoredTokens.filter((token) => token))
-            );
+            localStorage.setItem(storageKey, JSON.stringify(updatedStoredTokens));
 
-            setTokens((prev) => [...prev, ...visibleTokens.map((token) => token.address)].filter((token) => token));
-            setTotal((prev) => prev + visibleTokens.length);
+            // Re-add them to our tokens array
+            const newlyVisibleAddresses = previouslyHidden.map((t) => t.address);
+            setTokens((prev) => {
+                const combined = [...prev, ...newlyVisibleAddresses];
+                setTotal(combined.length);
+                return combined;
+            });
+
             tools.toastSuccess('Hidden tokens are now visible!');
-        } catch (error) {
+        } catch (err) {
             tools.toastError('Failed to show hidden tokens.');
-            console.error(error);
+            console.error(err);
         }
     };
 
-    useEffect(() => {
-        setTimeout(() => {
-            fetchTokens();
-        }, 100);
-    }, [chainType, currentAccount, importTokenBool, wallet]);
-
-    useEffect(() => {
-        if (tokens.length > 0) {
-            setTimeout(() => {
-                fetchTokenBalances();
-            }, 100);
-        }
-    }, [tokens, currentPage]);
-
     const totalPages = Math.ceil(total / TOKENS_PER_PAGE);
-
     const handlePageChange = (direction: 'next' | 'prev') => {
         setCurrentPage((prev) => {
             if (direction === 'next' && prev < totalPages) return prev + 1;
@@ -274,6 +394,7 @@ export function OPNetList() {
         });
     };
 
+    // If total === -1, we're still initializing.
     if (total === -1) {
         return (
             <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
@@ -282,60 +403,67 @@ export function OPNetList() {
         );
     }
 
-    const $footerBaseStyle = {
+    /** Styles */
+    const $footerBaseStyle: CSSProperties = {
         display: 'block',
         minHeight: 20,
         paddingBottom: 10,
         fontSize: 12,
         cursor: 'pointer',
         marginBottom: 10
-    } as CSSProperties;
+    };
 
-    const $opnet = {
+    const $opnet: CSSProperties = {
         display: 'block',
         marginBottom: 10
-    } as CSSProperties;
+    };
 
-    const $btnStyle = {
+    const $btnStyle: CSSProperties = {
         width: '33%',
         fontSize: '10px'
-    } as CSSProperties;
+    };
 
     return (
         <div>
+            {/* Top Buttons */}
             <BaseView style={$footerBaseStyle}>
                 <Row>
                     <Button
                         style={$btnStyle}
                         text="Import Token"
                         preset="fontsmall"
-                        icon={'eye'}
-                        onClick={() => setImportTokenBool(true)}></Button>
-
+                        icon="eye"
+                        onClick={() => setImportTokenBool(true)}
+                    />
                     <Button
                         style={$btnStyle}
                         text="Refresh List"
                         preset="fontsmall"
-                        icon={'history'}
-                        onClick={fetchTokens}></Button>
+                        icon="history"
+                        onClick={() => {
+                            fetchTokens().catch((err: unknown) => console.error(err));
+                        }}
+                    />
                     <Button
                         style={$btnStyle}
                         text="Deploy"
-                        icon={'pencil'}
+                        icon="pencil"
                         preset="fontsmall"
                         onClick={async () => {
                             await browser.tabs.create({
                                 url: browser.runtime.getURL('/index.html#/opnet/deploy-contract')
                             });
-                        }}></Button>
+                        }}
+                    />
                 </Row>
             </BaseView>
 
+            {/* Token List & Pagination */}
             {total > 0 && (
                 <BaseView style={$opnet}>
-                    {tokenBalances.map((data, index) => (
+                    {tokenBalances.map((data) => (
                         <Row
-                            key={index}
+                            key={data.address}
                             style={{
                                 display: 'flex',
                                 alignItems: 'center',
@@ -343,7 +471,6 @@ export function OPNetList() {
                                 gap: '10px'
                             }}>
                             <OpNetBalanceCard
-                                key={index}
                                 tokenInfo={data}
                                 onClick={() => {
                                     navigate(RouteTypes.OpNetTokenScreen, {
@@ -355,6 +482,7 @@ export function OPNetList() {
                         </Row>
                     ))}
 
+                    {/* Pagination Controls */}
                     <Row
                         style={{
                             display: 'flex',
@@ -364,9 +492,8 @@ export function OPNetList() {
                             marginTop: '20px'
                         }}>
                         <Button text="Prev" onClick={() => handlePageChange('prev')} disabled={currentPage === 1} />
-                        {Array.from({ length: totalPages }, (_, index) => {
-                            const pageNumber = index + 1;
-
+                        {Array.from({ length: totalPages }, (_, idx) => {
+                            const pageNumber = idx + 1;
                             const shouldShow =
                                 pageNumber === 1 ||
                                 pageNumber === totalPages ||
@@ -387,7 +514,6 @@ export function OPNetList() {
                                     />
                                 );
                             }
-
                             if (pageNumber === currentPage - 3 || pageNumber === currentPage + 3) {
                                 return (
                                     <span key={pageNumber} style={{ padding: '5px' }}>
@@ -395,7 +521,6 @@ export function OPNetList() {
                                     </span>
                                 );
                             }
-
                             return null;
                         })}
                         <Button
@@ -405,16 +530,19 @@ export function OPNetList() {
                         />
                     </Row>
 
+                    {/* Show Hidden Tokens */}
                     <Row style={{ marginTop: '12px' }}>
                         <Button
                             style={{ width: '100%', fontSize: '10px' }}
                             text="Show Hidden Tokens"
                             preset="fontsmall"
-                            onClick={showHiddenTokens}></Button>
+                            onClick={showHiddenTokens}
+                        />
                     </Row>
                 </BaseView>
             )}
 
+            {/* Import Token Modal */}
             {importTokenBool && (
                 <AddOpNetToken
                     setImportTokenBool={setImportTokenBool}
@@ -423,35 +551,68 @@ export function OPNetList() {
                 />
             )}
 
+            {/* Normal Remove/Hide Token Modal */}
             <Modal
                 open={showModal}
                 onCancel={() => setShowModal(false)}
                 footer={null}
-                closeIcon={<CloseOutlined style={{ fontSize: '24px' }} />}>
+                closeIcon={<CloseOutlined style={{ fontSize: '24px' } as CSSProperties} />}>
                 <Row>
                     <Text text="Remove or Hide Token" preset="title-bold" size="xxl" />
                 </Row>
                 <Row style={{ marginTop: '12px' }}>
                     <Text
-                        text="You can choose to either remove or hide this token. Removing the token will permanently delete it from the list, and you will need to manually import it again in the future. Hiding the token will temporarily remove it from the list, but you can easily retrieve it later by clicking the 'Show Hidden Tokens' button."
+                        text="You can either remove or hide this token. Removing the token will permanently delete it from the list (you will need to manually import it in the future). Hiding the token only temporarily removes it from the list, but you can bring it back by clicking 'Show Hidden Tokens' later."
                         size="md"
                     />
                 </Row>
-                <Row style={{ display: 'flex', gap: '10px', justifyContent: 'center', marginTop: '20px' }}>
+                <Row
+                    style={{
+                        display: 'flex',
+                        gap: '10px',
+                        justifyContent: 'center',
+                        marginTop: '20px'
+                    }}>
                     <Button
                         text="Hide"
-                        onClick={() => {
-                            handleModalAction('hide');
-                            setShowModal(false);
+                        onClick={async () => {
+                            await handleModalAction('hide');
                         }}
                     />
                     <Button
                         text="Remove"
-                        onClick={() => {
-                            handleModalAction('remove');
-                            setShowModal(false);
+                        onClick={async () => {
+                            await handleModalAction('remove');
                         }}
                     />
+                </Row>
+            </Modal>
+
+            {/* Failed-to-Load Token Modal */}
+            <Modal
+                open={showFailedModal}
+                onCancel={() => handleRemoveFailedToken(false)}
+                footer={null}
+                closeIcon={<CloseOutlined style={{ fontSize: '24px' } as CSSProperties} />}>
+                <Row>
+                    <Text text="Token Failed to Load" preset="title-bold" size="xxl" />
+                </Row>
+                <Row style={{ marginTop: '12px' }}>
+                    <Text
+                        text={`We couldn't fetch balance/contract info for: ${currentFailedToken ?? ''}.
+Would you like to remove it from your list?`}
+                        size="md"
+                    />
+                </Row>
+                <Row
+                    style={{
+                        display: 'flex',
+                        gap: '10px',
+                        justifyContent: 'center',
+                        marginTop: '20px'
+                    }}>
+                    <Button text="Yes, Remove" onClick={() => handleRemoveFailedToken(true)} />
+                    <Button text="No, Keep" onClick={() => handleRemoveFailedToken(false)} />
                 </Row>
             </Modal>
         </div>

@@ -88,7 +88,7 @@ export default function OpNetTokenScreen() {
                 myWallet.address
             );
 
-            const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(
+            const contractInfo: ContractInformation | false | undefined = await Web3API.queryContractInformation(
                 params.address
             );
             if (!contractInfo) {

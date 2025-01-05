@@ -143,7 +143,7 @@ export function Select(props: SelectProps) {
                         Web3API.provider,
                         Web3API.network
                     );
-                    const contractInfo: ContractInformation | undefined = await Web3API.queryContractInformation(
+                    const contractInfo: ContractInformation | false | undefined = await Web3API.queryContractInformation(
                         searchTerm
                     );
 
