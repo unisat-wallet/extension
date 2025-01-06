@@ -43,8 +43,6 @@ export function decodeCallData(calldata: string): Decoded | null {
     // Skip selector
     reader.setOffset(4);
 
-    console.log('selector', selector);
-
     // Switch: OP_20 + NativeSwap
     switch (selector) {
         // OP_20
