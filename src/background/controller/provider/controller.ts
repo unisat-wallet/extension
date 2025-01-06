@@ -94,17 +94,21 @@ export class ProviderController extends BaseController {
         return wallet.getLegacyNetworkName();
     };
 
-    @Reflect.metadata('APPROVAL', [ApprovalType.SwitchNetwork, (req: {data: {params: {network: string; networkType?: NetworkType}}}) => {
-        const network = req.data.params.network;
-        if (NETWORK_TYPES[NetworkType.MAINNET].validNames.includes(network)) {
-            req.data.params.networkType = NetworkType.MAINNET;
-        } else if (NETWORK_TYPES[NetworkType.TESTNET].validNames.includes(network)) {
-            req.data.params.networkType = NetworkType.TESTNET;
-        } else if (NETWORK_TYPES[NetworkType.REGTEST].validNames.includes(network)) {
-            req.data.params.networkType = NetworkType.REGTEST;
-        } else {
-            throw new Error(`the network is invalid, supported networks: ${NETWORK_TYPES.map(v => v.name).join(',')}`);
-        }
+    @Reflect.metadata('APPROVAL', [
+        ApprovalType.SwitchNetwork,
+        (req: { data: { params: { network: string; networkType?: NetworkType } } }) => {
+            const network = req.data.params.network;
+            if (NETWORK_TYPES[NetworkType.MAINNET].validNames.includes(network)) {
+                req.data.params.networkType = NetworkType.MAINNET;
+            } else if (NETWORK_TYPES[NetworkType.TESTNET].validNames.includes(network)) {
+                req.data.params.networkType = NetworkType.TESTNET;
+            } else if (NETWORK_TYPES[NetworkType.REGTEST].validNames.includes(network)) {
+                req.data.params.networkType = NetworkType.REGTEST;
+            } else {
+                throw new Error(
+                    `the network is invalid, supported networks: ${NETWORK_TYPES.map((v) => v.name).join(',')}`
+                );
+            }
 
             if (req.data.params.networkType === wallet.getNetworkType()) {
                 // skip approval
@@ -141,11 +145,13 @@ export class ProviderController extends BaseController {
         return getChainInfo(chainType);
     };
 
-    @Reflect.metadata('APPROVAL', [ApprovalType.SwitchChain, (req: {data: {params: {chain: ChainType}}}) => {
-        const chainType = req.data.params.chain;
-        if (!CHAINS_MAP[chainType]) {
-            throw new Error(`the chain is invalid, supported chains: ${CHAINS.map(v => v.enum).join(',')}`);
-        }
+    @Reflect.metadata('APPROVAL', [
+        ApprovalType.SwitchChain,
+        (req: { data: { params: { chain: ChainType } } }) => {
+            const chainType = req.data.params.chain;
+            if (!CHAINS_MAP[chainType]) {
+                throw new Error(`the chain is invalid, supported chains: ${CHAINS.map((v) => v.enum).join(',')}`);
+            }
 
             if (chainType == wallet.getChainType()) {
                 // skip approval
@@ -213,35 +219,39 @@ export class ProviderController extends BaseController {
         return verifyMessageOfBIP322Simple(params.address, params.message, params.signature, params.network) ? 1 : 0;
     };
 
-    @Reflect.metadata('APPROVAL', [ApprovalType.SignPsbt, (_req: ProviderControllerRequest) => {
-        //const { data: { params: { toAddress, satoshis } } } = req;
-    }])
-    sendBitcoin = async ({ approvalRes: { psbtHex } }: {
-        approvalRes: { psbtHex: string }
-    }) => {
-        const psbt = bitcoin.Psbt.fromHex(psbtHex);
-        const tx = psbt.extractTransaction();
-        const rawtx = tx.toHex();
-        return await wallet.pushTx(rawtx);
-    };
-
-    @Reflect.metadata('APPROVAL', [ApprovalType.SignPsbt, (_req: ProviderControllerRequest) => {
-        //const { data: { params: { toAddress, satoshis } } } = req;
-    }])
-    sendInscription = async ({ approvalRes: { psbtHex } }: {
-        approvalRes: { psbtHex: string }
-    }) => {
-        const psbt = bitcoin.Psbt.fromHex(psbtHex);
-        const tx = psbt.extractTransaction();
-        const rawtx = tx.toHex();
-        return await wallet.pushTx(rawtx);
-    };
-
-    @Reflect.metadata('APPROVAL', [ApprovalType.SignInteraction, (_req: ProviderControllerRequest) => {
-        const interactionParams = _req.data.params as DetailedInteractionParameters;
-        if (!Web3API.isValidAddress(interactionParams.interactionParameters.to)) {
-            throw new Error('Invalid contract address. Are you on the right network / are you using segwit?');
+    @Reflect.metadata('APPROVAL', [
+        ApprovalType.SignPsbt,
+        (_req: ProviderControllerRequest) => {
+            //const { data: { params: { toAddress, satoshis } } } = req;
         }
+    ])
+    sendBitcoin = async ({ approvalRes: { psbtHex } }: { approvalRes: { psbtHex: string } }) => {
+        const psbt = bitcoin.Psbt.fromHex(psbtHex);
+        const tx = psbt.extractTransaction();
+        const rawtx = tx.toHex();
+        return await wallet.pushTx(rawtx);
+    };
+
+    @Reflect.metadata('APPROVAL', [
+        ApprovalType.SignPsbt,
+        (_req: ProviderControllerRequest) => {
+            //const { data: { params: { toAddress, satoshis } } } = req;
+        }
+    ])
+    sendInscription = async ({ approvalRes: { psbtHex } }: { approvalRes: { psbtHex: string } }) => {
+        const psbt = bitcoin.Psbt.fromHex(psbtHex);
+        const tx = psbt.extractTransaction();
+        const rawtx = tx.toHex();
+        return await wallet.pushTx(rawtx);
+    };
+
+    @Reflect.metadata('APPROVAL', [
+        ApprovalType.SignInteraction,
+        (_req: ProviderControllerRequest) => {
+            const interactionParams = _req.data.params as DetailedInteractionParameters;
+            if (!Web3API.isValidAddress(interactionParams.interactionParameters.to)) {
+                throw new Error('Invalid contract address. Are you on the right network / are you using segwit?');
+            }
 
             interactionParams.network = wallet.getChainType();
         }
@@ -253,11 +263,13 @@ export class ProviderController extends BaseController {
         return wallet.signAndBroadcastInteraction(request.data.params.interactionParameters);
     };
 
-    @Reflect.metadata('APPROVAL', [ApprovalType.SignInteraction, (_req: ProviderControllerRequest) => {
-        const interactionParams = _req.data.params as DetailedInteractionParameters;
-        if (!Web3API.isValidAddress(interactionParams.interactionParameters.to)) {
-            throw new Error('Invalid contract address. Are you on the right network / are you using segwit?');
-        }
+    @Reflect.metadata('APPROVAL', [
+        ApprovalType.SignInteraction,
+        (_req: ProviderControllerRequest) => {
+            const interactionParams = _req.data.params as DetailedInteractionParameters;
+            if (!Web3API.isValidAddress(interactionParams.interactionParameters.to)) {
+                throw new Error('Invalid contract address. Are you on the right network / are you using segwit?');
+            }
 
             interactionParams.network = wallet.getChainType();
         }
@@ -266,25 +278,27 @@ export class ProviderController extends BaseController {
         return wallet.signInteraction(request.data.params.interactionParameters);
     };
 
-    @Reflect.metadata('APPROVAL', [ApprovalType.SignDeployment, (_req: ProviderControllerRequest) => {
-        const interactionParams = _req.data.params as IDeploymentParametersWithoutSigner;
-        if (!interactionParams.bytecode) {
-            throw new Error('Invalid bytecode');
-        }
+    @Reflect.metadata('APPROVAL', [
+        ApprovalType.SignDeployment,
+        (_req: ProviderControllerRequest) => {
+            const interactionParams = _req.data.params as IDeploymentParametersWithoutSigner;
+            if (!interactionParams.bytecode) {
+                throw new Error('Invalid bytecode');
+            }
 
-        if (!interactionParams.utxos || !interactionParams.utxos.length) {
-            throw new Error('No utxos');
-        }
+            if (!interactionParams.utxos || !interactionParams.utxos.length) {
+                throw new Error('No utxos');
+            }
 
-        if (!interactionParams.feeRate) {
-            throw new Error('No feeRate');
-        }
+            if (!interactionParams.feeRate) {
+                throw new Error('No feeRate');
+            }
 
-        // @ts-expect-error
-        interactionParams.priorityFee = BigInt(interactionParams.priorityFee);
+            // @ts-expect-error
+            interactionParams.priorityFee = BigInt(interactionParams.priorityFee);
 
-        // @ts-expect-error
-        interactionParams.bytecode = objToBuffer(interactionParams.bytecode);
+            // @ts-expect-error
+            interactionParams.bytecode = objToBuffer(interactionParams.bytecode);
         }
     ])
     deployContract = async (request: {
@@ -314,12 +328,20 @@ export class ProviderController extends BaseController {
         return wallet.deployContract(request.data.params);
     };
 
-    @Reflect.metadata('APPROVAL', [ApprovalType.SignText, () => {
-        // todo check text
-    }])
-    signMessage = async ({ data: { params: { text, type } }, approvalRes }: {
-        data: { params: { text: string, type: 'bip322-simple' | 'ecdsa' | 'schnorr' } },
-        approvalRes: { signature: string }
+    @Reflect.metadata('APPROVAL', [
+        ApprovalType.SignText,
+        () => {
+            // todo check text
+        }
+    ])
+    signMessage = async ({
+        data: {
+            params: { text, type }
+        },
+        approvalRes
+    }: {
+        data: { params: { text: string; type: 'bip322-simple' | 'ecdsa' | 'schnorr' } };
+        approvalRes: { signature: string };
     }) => {
         if (approvalRes?.signature) {
             return approvalRes.signature;
@@ -331,11 +353,18 @@ export class ProviderController extends BaseController {
         }
     };
 
-    @Reflect.metadata('APPROVAL', [ApprovalType.SignData, () => {
-        // todo check text
-    }])
-    signData = ({ data: { params: { data, type } } }: {
-        data: { params: { data: string, type: 'ecdsa' | 'schnorr' } }
+    @Reflect.metadata('APPROVAL', [
+        ApprovalType.SignData,
+        () => {
+            // todo check text
+        }
+    ])
+    signData = ({
+        data: {
+            params: { data, type }
+        }
+    }: {
+        data: { params: { data: string; type: 'ecdsa' | 'schnorr' } };
     }) => {
         return wallet.signData(data, type);
     };
@@ -351,11 +380,23 @@ export class ProviderController extends BaseController {
         return await wallet.pushTx(rawtx);
     };
 
-    @Reflect.metadata('APPROVAL', [ApprovalType.SignPsbt, (req: {data: {params: {psbtHex: string}}}) => {
-        const { data: { params: { psbtHex } } } = req;
-        req.data.params.psbtHex = formatPsbtHex(psbtHex);
-    }])
-    signPsbt = async ({ data: { params: { psbtHex, options } }, approvalRes }: {
+    @Reflect.metadata('APPROVAL', [
+        ApprovalType.SignPsbt,
+        (req: { data: { params: { psbtHex: string } } }) => {
+            const {
+                data: {
+                    params: { psbtHex }
+                }
+            } = req;
+            req.data.params.psbtHex = formatPsbtHex(psbtHex);
+        }
+    ])
+    signPsbt = async ({
+        data: {
+            params: { psbtHex, options }
+        },
+        approvalRes
+    }: {
         data: {
             params: {
                 psbtHex: string;

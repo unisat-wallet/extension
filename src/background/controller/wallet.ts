@@ -50,7 +50,6 @@ import {
 import { getChainInfo } from '@/shared/utils';
 import Web3API, { bigIntToDecimal, getBitcoinLibJSNetwork } from '@/shared/web3/Web3API';
 import { IDeploymentParameters, IInteractionParameters, Wallet } from '@btc-vision/transaction';
-import { SimpleKeyring } from '@btc-vision/wallet-sdk';
 import { publicKeyToAddress, scriptPkToAddress } from '@btc-vision/wallet-sdk/lib/address';
 import { bitcoin, ECPair } from '@btc-vision/wallet-sdk/lib/bitcoin-core';
 import { KeystoneKeyring } from '@btc-vision/wallet-sdk/lib/keyring';
@@ -68,6 +67,7 @@ import { ContactBookItem } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';
 import { ConnectedSite } from '../service/permission';
 import BaseController from './base';
+import { InteractionResponse } from '@btc-vision/transaction/src/transaction/TransactionFactory';
 
 const stashKeyrings: Record<string, Keyring> = {};
 
@@ -684,7 +684,7 @@ export class WalletController extends BaseController {
 
     signAndBroadcastInteraction = async (
         interactionParameters: InteractionParametersWithoutSigner
-    ): Promise<[BroadcastedTransaction, BroadcastedTransaction, import('@btc-vision/transaction').UTXO[]]> => {
+    ): Promise<[BroadcastedTransaction, BroadcastedTransaction, import('@btc-vision/transaction').UTXO[], string]> => {
         const account = preferenceService.getCurrentAccount();
         if (!account) throw new Error('no current account');
 
@@ -718,7 +718,7 @@ export class WalletController extends BaseController {
         };
 
         const sendTransaction = await Web3API.transactionFactory.signInteraction(interactionParametersSubmit);
-        const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransaction[0], false);
+        const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransaction.fundingTransaction, false);
 
         if (!firstTransaction) {
             throw new Error('Error in Broadcast');
@@ -729,7 +729,10 @@ export class WalletController extends BaseController {
         }
 
         // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
-        const secondTransaction = await Web3API.provider.sendRawTransaction(sendTransaction[1], false);
+        const secondTransaction = await Web3API.provider.sendRawTransaction(
+            sendTransaction.interactionTransaction,
+            false
+        );
         if (!secondTransaction) {
             throw new Error('Error in Broadcast');
         }
@@ -738,7 +741,7 @@ export class WalletController extends BaseController {
             throw new Error(secondTransaction.error);
         }
 
-        return [firstTransaction, secondTransaction, sendTransaction[2]];
+        return [firstTransaction, secondTransaction, sendTransaction.nextUTXOs, sendTransaction.preimage];
     };
 
     deployContract = async (params: IDeploymentParametersWithoutSigner) => {
@@ -779,7 +782,7 @@ export class WalletController extends BaseController {
 
     signInteraction = async (
         interactionParameters: InteractionParametersWithoutSigner
-    ): Promise<[string, string, import('@btc-vision/transaction').UTXO[], string]> => {
+    ): Promise<InteractionResponse> => {
         const account = preferenceService.getCurrentAccount();
         if (!account) throw new Error('no current account');
 
@@ -852,29 +855,6 @@ export class WalletController extends BaseController {
         return keyringService.signData(account.pubkey, data, type);
     };
 
-    // TODO (typing): As this function is not used anywhere for now and there is no mapping interface for Keyring that we can use
-    // to validate dynamically called functions, commented out this function for now.
-    // requestKeyring = (type: string, methodName: string, keyringId: number | null, ...params: unknown[]) => {
-    //     let keyring;
-    //     if (keyringId !== null && keyringId !== undefined) {
-    //         keyring = stashKeyrings[keyringId];
-    //     } else {
-    //         try {
-    //             keyring = this._getKeyringByType(type);
-    //         } catch {
-    //             const Keyring = keyringService.getKeyringClassForType(type) as typeof SimpleKeyring | undefined;
-    //             if (!Keyring) throw new Error('no keyring');
-    //             keyring = new Keyring();
-    //         }
-    //     }
-
-    //     // @ts-expect-error
-    //     if (keyring[methodName]) {
-    //         // @ts-expect-error
-    //         return keyring[methodName].call(keyring, ...params);
-    //     }
-    // };
-
     addContact = (data: ContactBookItem) => {
         contactBookService.addContact(data);
     };
@@ -917,8 +897,7 @@ export class WalletController extends BaseController {
     };
 
     getAlianName = (pubkey: string) => {
-        const contactName = contactBookService.getContactByAddress(pubkey)?.name;
-        return contactName;
+        return contactBookService.getContactByAddress(pubkey)?.name;
     };
 
     updateAlianName = (pubkey: string, name: string) => {

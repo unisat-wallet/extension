@@ -1,11 +1,12 @@
 import { SignInteractionApprovalParams } from '@/shared/types/Approval';
-import { decodeCallData, Decoded, selectorToString } from '@/shared/web3/decoder/CalldataDecoder';
-import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
+import { selectorToString } from '@/shared/web3/decoder/CalldataDecoder';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import InteractionHeader from '@/ui/pages/Approval/components/Headers/InteractionHeader';
 import { DecodedCalldata } from '@/ui/pages/OpNet/decoded/DecodedCalldata';
 import { useApproval } from '@/ui/utils/hooks';
+import { decodeCallData } from '@/ui/pages/OpNet/decoded/decodeCallData';
+import { Decoded } from '../../OpNet/decoded/DecodedTypes';
 
 export interface Props {
     params: SignInteractionApprovalParams;
@@ -27,9 +28,10 @@ export default function SignText(props: Props) {
         await resolveApproval();
     };
 
-    const contractInfo: ContractInformation = data.contractInfo;
+    const contractInfo = data.contractInfo;
     const interactionType = selectorToString(data.interactionParameters.calldata as unknown as string);
     const decoded: Decoded | null = decodeCallData(data.interactionParameters.calldata as unknown as string);
+    const chain = data.network;
 
     return (
         <Layout>
@@ -46,7 +48,8 @@ export default function SignText(props: Props) {
                         <DecodedCalldata
                             decoded={decoded}
                             contractInfo={contractInfo}
-                            interactionType={interactionType}></DecodedCalldata>
+                            interactionType={interactionType}
+                            chain={chain}></DecodedCalldata>
                     ) : (
                         <Card>
                             <Text

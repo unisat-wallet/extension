@@ -1,7 +1,13 @@
 import { BroadcastedTransaction } from 'opnet';
 
 import { OpnetProvider } from '@/content-script/pageProvider/index.js';
-import { DeploymentResult, IDeploymentParameters, IInteractionParameters, UTXO } from '@btc-vision/transaction';
+import {
+    DeploymentResult,
+    IDeploymentParameters,
+    IInteractionParameters,
+    InteractionResponse,
+    UTXO
+} from '@btc-vision/transaction';
 
 export type InteractionParametersWithoutSigner = Omit<IInteractionParameters, 'signer'>;
 export type IDeploymentParametersWithoutSigner = Omit<IDeploymentParameters, 'signer' | 'network'>;
@@ -20,9 +26,11 @@ export class Web3Provider {
 
     public async signAndBroadcastInteraction(
         interactionParameters: InteractionParametersWithoutSigner
-    ): Promise<[BroadcastedTransaction, BroadcastedTransaction, UTXO[]]> {
+    ): Promise<[BroadcastedTransaction, BroadcastedTransaction, UTXO[], string]> {
         if ('signer' in interactionParameters) {
-            throw new Error('signer is not allowed in interaction parameters');
+            console.warn(`signer is not allowed in interaction parameters`);
+
+            interactionParameters.signer = undefined;
         }
 
         return this.provider.signAndBroadcastInteraction(interactionParameters);
@@ -30,9 +38,11 @@ export class Web3Provider {
 
     public async signInteraction(
         interactionParameters: InteractionParametersWithoutSigner
-    ): Promise<[string, string, UTXO[], string]> {
+    ): Promise<InteractionResponse> {
         if ('signer' in interactionParameters) {
-            throw new Error('signer is not allowed in interaction parameters');
+            console.warn(`signer is not allowed in interaction parameters`);
+
+            interactionParameters.signer = undefined;
         }
 
         return this.provider.signInteraction(interactionParameters);

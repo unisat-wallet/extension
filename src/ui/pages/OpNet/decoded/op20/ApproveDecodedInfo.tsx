@@ -1,46 +1,18 @@
 import BigNumber from 'bignumber.js';
 
-import { Decoded, InteractionType } from '@/shared/web3/decoder/CalldataDecoder';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { Card, Column, Image, Row, Text } from '@/ui/components';
 import { fontSizes } from '@/ui/theme/font';
-import { Address, BinaryReader } from '@btc-vision/transaction';
-
-export interface DecodedApprove extends Decoded {
-    readonly amount: bigint;
-    readonly spender: Address;
-}
-
-export function decodeApprove(selector: InteractionType, reader: BinaryReader): DecodedApprove {
-    let amount = 0n;
-    let spender = Address.dead();
-    switch (selector) {
-        case InteractionType.Approve: {
-            spender = reader.readAddress();
-            amount = reader.readU256();
-            break;
-        }
-    }
-
-    return {
-        selector,
-        amount,
-        spender
-    };
-}
-
-export interface DecodedTransfer extends Decoded {
-    readonly amount: bigint;
-    readonly to: Address;
-}
+import { sliceAddress } from '@/ui/pages/OpNet/decoded/helpper';
+import { DecodedApprove } from '@/ui/pages/OpNet/decoded/DecodedTypes';
 
 interface DecodedApproveProps {
     readonly decoded: DecodedApprove;
-    readonly contractInfo: ContractInformation;
+    readonly contractInfo: Partial<ContractInformation>;
     readonly interactionType: string;
 }
 
-export function ApproveDecodedInfo(props: DecodedApproveProps): JSX.Element {
+export function ApproveDecodedInfo(props: DecodedApproveProps) {
     const { contractInfo } = props;
     const interactionType = props.interactionType;
     const decoded = props.decoded;
@@ -48,7 +20,7 @@ export function ApproveDecodedInfo(props: DecodedApproveProps): JSX.Element {
     const amount = new BigNumber(decoded.amount.toString()).div(new BigNumber(10).pow(contractInfo.decimals || 8));
     const balanceFormatted = amount.toFormat(6).toString();
 
-    const slicedAddress = `${decoded.spender.slice(0, 8)}...${decoded.spender.slice(-12)}`;
+    const slicedAddress = sliceAddress(decoded.spender);
 
     return (
         <Card>

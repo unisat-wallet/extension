@@ -1772,9 +1772,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@btc-vision/transaction@npm:1.2.4, @btc-vision/transaction@npm:^1.2.4":
-  version: 1.2.4
-  resolution: "@btc-vision/transaction@npm:1.2.4"
+"@btc-vision/transaction@npm:1.2.5, @btc-vision/transaction@npm:^1.2.5":
+  version: 1.2.5
+  resolution: "@btc-vision/transaction@npm:1.2.5"
   dependencies:
     "@babel/plugin-proposal-object-rest-spread": "npm:^7.20.7"
     "@bitcoinerlab/secp256k1": "npm:^1.1.1"
@@ -1803,25 +1803,26 @@ __metadata:
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.7.2"
     webpack: "npm:^5.97.1"
-  checksum: 10c0/4b429054f886018e9a04b3176ce2be3ef5b5f58e8fe62fa5befc7301e27d6402c747afa085bc6f90c4c3b57e091b47e4be29510b7a64abcef0b5269873025089
+  checksum: 10c0/056b57a2b032797bb31c53df0ff263f68f1e2935a1a8a17e8aabeefc77fe08d00310a3860fe72308372befe72a906e7aaa3c415a524e875e925218242f7c1580
   languageName: node
   linkType: hard
 
-"@btc-vision/wallet-sdk@npm:1.0.0":
-  version: 1.0.0
-  resolution: "@btc-vision/wallet-sdk@npm:1.0.0"
+"@btc-vision/wallet-sdk@npm:1.0.2":
+  version: 1.0.2
+  resolution: "@btc-vision/wallet-sdk@npm:1.0.2"
   dependencies:
-    "@bitcoinerlab/secp256k1": "npm:^1.1.1"
-    "@keystonehq/keystone-sdk": "npm:^0.3.0"
+    "@bitcoinerlab/secp256k1": "npm:^1.2.0"
+    "@keystonehq/keystone-sdk": "npm:^0.9.1"
+    "@noble/secp256k1": "npm:^2.2.2"
     big-integer: "npm:^1.6.52"
     bignumber.js: "npm:^9.1.2"
     bip-schnorr: "npm:^0.6.7"
     bip39: "npm:^3.1.0"
-    bitcoinjs-lib: "npm:^6.1.6"
-    bitcore-lib: "npm:^10.2.1"
+    bitcoinjs-lib: "npm:^6.1.7"
+    bitcore-lib: "npm:^10.7.0"
     ecpair: "npm:^2.1.0"
     hdkey: "npm:^2.1.0"
-  checksum: 10c0/c41715824996cd09018e14e70889939c56d498535b31a182c1f8d066fe2eb7237ab4bc3f557965eeb49dc7c870146e6fbb769d515d8f652e940c8e3ccc068656
+  checksum: 10c0/ae3d427447b6a15873379bf6377a554db46101e82685c279f224076a1edf5d6030cc3ddd286dec70c058d9d520edb101e52eb6717243858f418bb24318f48f72
   languageName: node
   linkType: hard
 
@@ -2449,6 +2450,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@ethereumjs/rlp@npm:^5.0.2":
+  version: 5.0.2
+  resolution: "@ethereumjs/rlp@npm:5.0.2"
+  bin:
+    rlp: bin/rlp.cjs
+  checksum: 10c0/56162eaee96dd429f0528a9e51b453398546d57f26057b3e188f2aa09efe8bd430502971c54238ca9cc42af41b0a3f137cf67b9e020d52bc83caca043d64911b
+  languageName: node
+  linkType: hard
+
 "@ethereumjs/tx@npm:^4.2.0":
   version: 4.2.0
   resolution: "@ethereumjs/tx@npm:4.2.0"
@@ -2461,7 +2471,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@ethereumjs/util@npm:^8.0.0, @ethereumjs/util@npm:^8.1.0":
+"@ethereumjs/util@npm:^8.1.0":
   version: 8.1.0
   resolution: "@ethereumjs/util@npm:8.1.0"
   dependencies:
@@ -2469,6 +2479,16 @@ __metadata:
     ethereum-cryptography: "npm:^2.0.0"
     micro-ftch: "npm:^0.3.1"
   checksum: 10c0/4e6e0449236f66b53782bab3b387108f0ddc050835bfe1381c67a7c038fea27cb85ab38851d98b700957022f0acb6e455ca0c634249cfcce1a116bad76500160
+  languageName: node
+  linkType: hard
+
+"@ethereumjs/util@npm:^9.0.3":
+  version: 9.1.0
+  resolution: "@ethereumjs/util@npm:9.1.0"
+  dependencies:
+    "@ethereumjs/rlp": "npm:^5.0.2"
+    ethereum-cryptography: "npm:^2.2.1"
+  checksum: 10c0/7b55c79d90e55da873037b8283c37b61164f1712b194e2783bdb0a3401ff0999dc9d1404c7051589f71fb79e8aeb6952ec43ede21dd0028d7d9b1c07abcfff27
   languageName: node
   linkType: hard
 
@@ -2971,28 +2991,28 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@keystonehq/bc-ur-registry-aptos@npm:^0.3.2":
-  version: 0.3.2
-  resolution: "@keystonehq/bc-ur-registry-aptos@npm:0.3.2"
+"@keystonehq/bc-ur-registry-aptos@npm:^0.6.3":
+  version: 0.6.3
+  resolution: "@keystonehq/bc-ur-registry-aptos@npm:0.6.3"
   dependencies:
-    "@keystonehq/bc-ur-registry": "npm:0.5.4"
+    "@keystonehq/bc-ur-registry": "npm:^0.6.4"
     bs58check: "npm:^2.1.2"
     uuid: "npm:^8.3.2"
-  checksum: 10c0/da7e459819de5003515b8af6fb79ff5d57a68be4ce66b58b286b9f2e2ca0f9ac88a8bd0b0c36c06a5d825e066fbdafdf4288507dcdac2984bd80791250fb9c6c
+  checksum: 10c0/402aee7e13856fe0bc2eacae9f53630f6c664a6ca6a3d39d3c7df47a60ba3412bf29998bc4b3800755be56aa4ee12cb2932f24fb33806533941d71a37f978671
   languageName: node
   linkType: hard
 
-"@keystonehq/bc-ur-registry-arweave@npm:^0.4.0":
-  version: 0.4.0
-  resolution: "@keystonehq/bc-ur-registry-arweave@npm:0.4.0"
+"@keystonehq/bc-ur-registry-arweave@npm:^0.5.3":
+  version: 0.5.3
+  resolution: "@keystonehq/bc-ur-registry-arweave@npm:0.5.3"
   dependencies:
-    "@keystonehq/bc-ur-registry": "npm:0.5.4"
+    "@keystonehq/bc-ur-registry": "npm:^0.6.4"
     uuid: "npm:^8.3.2"
-  checksum: 10c0/7b0a9f564b783c938eac4338cba5c837357ca171c1a43c61948ed0e827d7df77924624bb07608c5b546a66f682f99d51d3d48ccb5359a02d4f85cb7770183a99
+  checksum: 10c0/6a0759f3d45a89154bc1743bd5d8b821b3232271f4736da576dc4c7c8fe37334a94f786d46ae12002b830b59655e270a084b3a97ef06d2dbd2569bd13076d085
   languageName: node
   linkType: hard
 
-"@keystonehq/bc-ur-registry-btc@npm:^0.1.0":
+"@keystonehq/bc-ur-registry-btc@npm:^0.1.1":
   version: 0.1.1
   resolution: "@keystonehq/bc-ur-registry-btc@npm:0.1.1"
   dependencies:
@@ -3002,40 +3022,40 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@keystonehq/bc-ur-registry-cardano@npm:^0.3.0":
-  version: 0.3.9
-  resolution: "@keystonehq/bc-ur-registry-cardano@npm:0.3.9"
+"@keystonehq/bc-ur-registry-cardano@npm:^0.5.0":
+  version: 0.5.0
+  resolution: "@keystonehq/bc-ur-registry-cardano@npm:0.5.0"
   dependencies:
     "@keystonehq/bc-ur-registry": "npm:^0.6.4"
     uuid: "npm:^8.3.2"
-  checksum: 10c0/bbe48dd99f5ea26e323ccc4a4756c053655281ffbd0afe6bb1d4b42be940659c26e61ceac667f580e6cfcbc1198bd8b42593fc6cd7b37b1c11e0dd7d66300415
+  checksum: 10c0/a34b0d036bd776f3566935f07b322fa2ee1e134e377feb94dd21a8ea7a4b82f17ed848b53cfc1e873adc2eea9d5b3122aad6f6c93672c66defd8eadf76f3b3a6
   languageName: node
   linkType: hard
 
-"@keystonehq/bc-ur-registry-cosmos@npm:^0.2.2":
-  version: 0.2.2
-  resolution: "@keystonehq/bc-ur-registry-cosmos@npm:0.2.2"
+"@keystonehq/bc-ur-registry-cosmos@npm:^0.5.3":
+  version: 0.5.3
+  resolution: "@keystonehq/bc-ur-registry-cosmos@npm:0.5.3"
   dependencies:
-    "@keystonehq/bc-ur-registry": "npm:0.5.4"
+    "@keystonehq/bc-ur-registry": "npm:^0.6.4"
     bs58check: "npm:^2.1.2"
     uuid: "npm:^8.3.2"
-  checksum: 10c0/11872bce8fa33acbdf8242ac547bb09275f96dcce3efd6fc282c30a15f1c8b4a6ebd4fcd36d05ceace033957d52a24deb575836196b653c2f3156ab275e7123b
+  checksum: 10c0/91281f9e60ff2cad93f916d6ed7a6257f61495d070b650c53055295afcc95bcb7d9b35bd99bb8d2af733910c83d615aaa12ae11645b518d4caa7a2d58c22549f
   languageName: node
   linkType: hard
 
-"@keystonehq/bc-ur-registry-eth@npm:^0.15.2":
-  version: 0.15.2
-  resolution: "@keystonehq/bc-ur-registry-eth@npm:0.15.2"
+"@keystonehq/bc-ur-registry-eth@npm:^0.20.1":
+  version: 0.20.1
+  resolution: "@keystonehq/bc-ur-registry-eth@npm:0.20.1"
   dependencies:
-    "@ethereumjs/util": "npm:^8.0.0"
-    "@keystonehq/bc-ur-registry": "npm:0.5.4"
+    "@ethereumjs/util": "npm:^9.0.3"
+    "@keystonehq/bc-ur-registry": "npm:^0.6.4"
     hdkey: "npm:^2.0.1"
     uuid: "npm:^8.3.2"
-  checksum: 10c0/c13fc9e6ca1c5383f6d01bca50e92c54ffb304308f56065a79f3f8871f0222a2b820c9fb69c7383614de7ba8c35756a1981682ebdee30fa026d679e2872ee9a6
+  checksum: 10c0/9aa0f1c87335527a2293e48cf89c7a538cb4ca9ae1ca57134a1aa2666e7da3c52655f7d07322ca973654dfdd73220e2b24d181a42483249f489d99e8fbf86e1e
   languageName: node
   linkType: hard
 
-"@keystonehq/bc-ur-registry-evm@npm:^0.5.2":
+"@keystonehq/bc-ur-registry-evm@npm:^0.5.3":
   version: 0.5.3
   resolution: "@keystonehq/bc-ur-registry-evm@npm:0.5.3"
   dependencies:
@@ -3046,55 +3066,65 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@keystonehq/bc-ur-registry-keystone@npm:^0.1.0":
-  version: 0.1.0
-  resolution: "@keystonehq/bc-ur-registry-keystone@npm:0.1.0"
+"@keystonehq/bc-ur-registry-keystone@npm:^0.4.3":
+  version: 0.4.3
+  resolution: "@keystonehq/bc-ur-registry-keystone@npm:0.4.3"
   dependencies:
-    "@keystonehq/bc-ur-registry": "npm:0.5.4"
-  checksum: 10c0/eefac9347efed13b2f2d092f2f2241866ccb658be4c84ab516aee8a408b409bc34f9330f5968411cfe732b3d1dabbfa785cf1acdd2a4f82a1f4782556d324bed
+    "@keystonehq/bc-ur-registry": "npm:^0.6.4"
+  checksum: 10c0/9ed6e35b365440da3bd9c542e2f112fe805c69724e53857cc0ab97fe1b9a47a51e6fb9b7543c305079bd154e44202896218ba56d754f4024ac62b45229a4f9cb
   languageName: node
   linkType: hard
 
-"@keystonehq/bc-ur-registry-near@npm:^0.8.0":
-  version: 0.8.0
-  resolution: "@keystonehq/bc-ur-registry-near@npm:0.8.0"
+"@keystonehq/bc-ur-registry-near@npm:^0.9.3":
+  version: 0.9.3
+  resolution: "@keystonehq/bc-ur-registry-near@npm:0.9.3"
   dependencies:
-    "@keystonehq/bc-ur-registry": "npm:0.5.4"
+    "@keystonehq/bc-ur-registry": "npm:^0.6.4"
     bs58check: "npm:^2.1.2"
     uuid: "npm:^8.3.2"
-  checksum: 10c0/203178fb3348a48501bb63352ca145c5ede8b6443226f9133acb8f1999ccfd767c1c8a28254044bf839376f50d43449dd109bab8e6458b715990ad3fd074e8ad
+  checksum: 10c0/263e6315291a3fe90e4eca7962c1f59893d2388f8741eff66b1a91d86f40695af6d0821b0ea1abf7a872325ac86543f1cd42f4dace952de82b6236d5d86a1fda
   languageName: node
   linkType: hard
 
-"@keystonehq/bc-ur-registry-sol@npm:^0.6.2":
-  version: 0.6.2
-  resolution: "@keystonehq/bc-ur-registry-sol@npm:0.6.2"
+"@keystonehq/bc-ur-registry-sol@npm:^0.9.3":
+  version: 0.9.5
+  resolution: "@keystonehq/bc-ur-registry-sol@npm:0.9.5"
   dependencies:
-    "@keystonehq/bc-ur-registry": "npm:0.5.4"
+    "@keystonehq/bc-ur-registry": "npm:^0.7.0"
     bs58check: "npm:^2.1.2"
     uuid: "npm:^8.3.2"
-  checksum: 10c0/e66efb48bc10e9b7eca9d3546761833f89c29b0f528805f2edb7040b8021c71f7b95a769104fd77c1a6d265e83fe6028341ce4a849f90785734e8dc43c669497
+  checksum: 10c0/d844e63e4e9d15db8cf75b188315465692c7dba776a76cbe1cc12629db049acad675d9b2d6875550fad992dbb8f152095b5183a5aa78dc09dea73af84c0480ba
   languageName: node
   linkType: hard
 
-"@keystonehq/bc-ur-registry-sui@npm:^0.3.0":
-  version: 0.3.1
-  resolution: "@keystonehq/bc-ur-registry-sui@npm:0.3.1"
+"@keystonehq/bc-ur-registry-stellar@npm:^0.0.4":
+  version: 0.0.4
+  resolution: "@keystonehq/bc-ur-registry-stellar@npm:0.0.4"
+  dependencies:
+    "@keystonehq/bc-ur-registry": "npm:^0.6.4"
+    bs58check: "npm:^2.1.2"
+    uuid: "npm:^8.3.2"
+  checksum: 10c0/324386a751dadc129c3e29191a5c3dd7f4ffc3f669822291bc50ec3888825b31cad0a7b3d8ebc7c12ef6cf2ec3f7e3989cb2ff07a67e48a58a242a61ddbcf900
+  languageName: node
+  linkType: hard
+
+"@keystonehq/bc-ur-registry-sui@npm:0.4.0-alpha.0":
+  version: 0.4.0-alpha.0
+  resolution: "@keystonehq/bc-ur-registry-sui@npm:0.4.0-alpha.0"
   dependencies:
     "@keystonehq/bc-ur-registry": "npm:^0.6.4"
     uuid: "npm:^9.0.0"
-  checksum: 10c0/d69196ce67bad736296ebf435aa4301c51bb21ad12413f879bc672168a54cd9cba81d1228f536cfcf7de3cf8080aed691fbb96978e51dc3d5eb30dc6bb04ac2b
+  checksum: 10c0/a2e9b6b6dcfe6b8484d7c2c25a80f693324b1ddfc85d6edfd0196b862ef6804da3eec8bf15afa970c807b67a1d15e86329eaa0f0b9dc9beeb6fddb2e5a65cf5a
   languageName: node
   linkType: hard
 
-"@keystonehq/bc-ur-registry@npm:0.5.4":
-  version: 0.5.4
-  resolution: "@keystonehq/bc-ur-registry@npm:0.5.4"
+"@keystonehq/bc-ur-registry-ton@npm:^0.1.2":
+  version: 0.1.2
+  resolution: "@keystonehq/bc-ur-registry-ton@npm:0.1.2"
   dependencies:
-    "@ngraveio/bc-ur": "npm:^1.1.5"
-    bs58check: "npm:^2.1.2"
-    tslib: "npm:^2.3.0"
-  checksum: 10c0/cb67c90b6d75b4395249b6b6334bb338046f116b0483548ebb1e4bbfacc715c3b5afa6889b24deb37e44f27565b2fbbf7467d9d248de6eed3259946f23de1e51
+    "@keystonehq/bc-ur-registry": "npm:^0.6.4"
+    uuid: "npm:^9.0.0"
+  checksum: 10c0/5dece9ec2c2a87cb8ebd9018441f3c916960bbd1a755e3bd765f92f6b34fd47e51e706bda0519f95f80daf7508714b1f87abd8472981955ee10b61c2d3692af1
   languageName: node
   linkType: hard
 
@@ -3109,29 +3139,43 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@keystonehq/keystone-sdk@npm:^0.3.0":
-  version: 0.3.0
-  resolution: "@keystonehq/keystone-sdk@npm:0.3.0"
+"@keystonehq/bc-ur-registry@npm:^0.7.0":
+  version: 0.7.0
+  resolution: "@keystonehq/bc-ur-registry@npm:0.7.0"
+  dependencies:
+    "@ngraveio/bc-ur": "npm:^1.1.5"
+    bs58check: "npm:^2.1.2"
+    tslib: "npm:^2.3.0"
+  checksum: 10c0/33a1c6a1f51b183364b6def3c981ed7cc1b72d53af2d2de8e15b1f0f9be410110398f4e1a1cbc5ab13ba98cdb5f9cf759d847ca54a76f0d32d32d0ee79bfb692
+  languageName: node
+  linkType: hard
+
+"@keystonehq/keystone-sdk@npm:^0.9.1":
+  version: 0.9.1
+  resolution: "@keystonehq/keystone-sdk@npm:0.9.1"
   dependencies:
     "@bufbuild/protobuf": "npm:^1.2.0"
-    "@keystonehq/bc-ur-registry": "npm:^0.6.4"
-    "@keystonehq/bc-ur-registry-aptos": "npm:^0.3.2"
-    "@keystonehq/bc-ur-registry-arweave": "npm:^0.4.0"
-    "@keystonehq/bc-ur-registry-btc": "npm:^0.1.0"
-    "@keystonehq/bc-ur-registry-cardano": "npm:^0.3.0"
-    "@keystonehq/bc-ur-registry-cosmos": "npm:^0.2.2"
-    "@keystonehq/bc-ur-registry-eth": "npm:^0.15.2"
-    "@keystonehq/bc-ur-registry-evm": "npm:^0.5.2"
-    "@keystonehq/bc-ur-registry-keystone": "npm:^0.1.0"
-    "@keystonehq/bc-ur-registry-near": "npm:^0.8.0"
-    "@keystonehq/bc-ur-registry-sol": "npm:^0.6.2"
-    "@keystonehq/bc-ur-registry-sui": "npm:^0.3.0"
+    "@keystonehq/bc-ur-registry": "npm:^0.7.0"
+    "@keystonehq/bc-ur-registry-aptos": "npm:^0.6.3"
+    "@keystonehq/bc-ur-registry-arweave": "npm:^0.5.3"
+    "@keystonehq/bc-ur-registry-btc": "npm:^0.1.1"
+    "@keystonehq/bc-ur-registry-cardano": "npm:^0.5.0"
+    "@keystonehq/bc-ur-registry-cosmos": "npm:^0.5.3"
+    "@keystonehq/bc-ur-registry-eth": "npm:^0.20.1"
+    "@keystonehq/bc-ur-registry-evm": "npm:^0.5.3"
+    "@keystonehq/bc-ur-registry-keystone": "npm:^0.4.3"
+    "@keystonehq/bc-ur-registry-near": "npm:^0.9.3"
+    "@keystonehq/bc-ur-registry-sol": "npm:^0.9.3"
+    "@keystonehq/bc-ur-registry-stellar": "npm:^0.0.4"
+    "@keystonehq/bc-ur-registry-sui": "npm:0.4.0-alpha.0"
+    "@keystonehq/bc-ur-registry-ton": "npm:^0.1.2"
     "@ngraveio/bc-ur": "npm:^1.1.6"
+    "@noble/hashes": "npm:^1.5.0"
     bs58check: "npm:^3.0.1"
     pako: "npm:^2.1.0"
     ripple-binary-codec: "npm:^1.4.3"
     uuid: "npm:^9.0.0"
-  checksum: 10c0/f718e89f1a2c99dc96f1e99a9683b3b7f09919c105ad293f5ee501f5e849530f082f40006d0054287d15a6c227d3975380f86e61310116bbb7e3418770383f00
+  checksum: 10c0/d4554c99f63f6f78a02e6680d8730911b5dab0c05f3a9e49518320851ffb7e50d4c60cecc9850738eb13bcbc7641c8d7126ea528728699c45e3f87f5403f1c25
   languageName: node
   linkType: hard
 
@@ -3246,7 +3290,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@noble/hashes@npm:^1.7.0":
+"@noble/hashes@npm:^1.5.0, @noble/hashes@npm:^1.7.0":
   version: 1.7.0
   resolution: "@noble/hashes@npm:1.7.0"
   checksum: 10c0/1ef0c985ebdb5a1bd921ea6d959c90ba826af3ae05b40b459a703e2a5e9b259f190c6e92d6220fb3800e2385521e4159e238415ad3f6b79c52f91dd615e491dc
@@ -3257,6 +3301,13 @@ __metadata:
   version: 2.1.0
   resolution: "@noble/secp256k1@npm:2.1.0"
   checksum: 10c0/b4c7edd2a5ec5acf294546cd06d08dc2a2a2b2ebe34a6da1f2f5104f56983f81dd31c261ad365c6b9757d1c54017fc3363331ee33bba8715ff94c2bc954313cc
+  languageName: node
+  linkType: hard
+
+"@noble/secp256k1@npm:^2.2.2":
+  version: 2.2.2
+  resolution: "@noble/secp256k1@npm:2.2.2"
+  checksum: 10c0/c7ab85cfd6081ec2b1963f91beb38ebe3403261da96680ae2b060f10631cdb9699035a2274ce54704ab08f5a1d1d34fa7c591122506156f8b5def69bd805b3ef
   languageName: node
   linkType: hard
 
@@ -6430,7 +6481,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bitcoinjs-lib@npm:^6.1.6":
+"bitcoinjs-lib@npm:^6.1.7":
   version: 6.1.7
   resolution: "bitcoinjs-lib@npm:6.1.7"
   dependencies:
@@ -6444,7 +6495,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"bitcore-lib@npm:^10.2.1, bitcore-lib@npm:^10.7.0":
+"bitcore-lib@npm:^10.7.0":
   version: 10.7.0
   resolution: "bitcore-lib@npm:10.7.0"
   dependencies:
@@ -9472,7 +9523,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ethereum-cryptography@npm:^2.0.0":
+"ethereum-cryptography@npm:^2.0.0, ethereum-cryptography@npm:^2.2.1":
   version: 2.2.1
   resolution: "ethereum-cryptography@npm:2.2.1"
   dependencies:
@@ -14358,20 +14409,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"opnet@npm:1.2.5":
-  version: 1.2.5
-  resolution: "opnet@npm:1.2.5"
+"opnet@npm:1.2.8":
+  version: 1.2.8
+  resolution: "opnet@npm:1.2.8"
   dependencies:
     "@bitcoinerlab/secp256k1": "npm:^1.2.0"
     "@btc-vision/bitcoin": "npm:^6.3.3"
     "@btc-vision/bitcoin-rpc": "npm:^1.0.0"
-    "@btc-vision/transaction": "npm:^1.2.4"
+    "@btc-vision/transaction": "npm:^1.2.5"
     "@noble/hashes": "npm:^1.7.0"
     bignumber.js: "npm:^9.1.2"
     buffer: "npm:^6.0.3"
     ecpair: "npm:^2.1.0"
     tiny-secp256k1: "npm:^2.2.3"
-  checksum: 10c0/50cf77305dbfe1aaf8f4c75091bd0b464b33b293e5df8ff73a739d4da6215143471bf86dbe9baa8226cad2e6f14c8d52aee42e562d7bcf9538599b860410a22b
+  checksum: 10c0/beccf621a920d75bb0a483d8d3a1429180c524797a97d212155d2dcb5f7b311bbae18a9dc2b3fd48c62250d623f8c1ad5cd35927bfa67a52986ccd343a94edea
   languageName: node
   linkType: hard
 
@@ -14398,8 +14449,8 @@ __metadata:
     "@babel/plugin-proposal-private-property-in-object": "npm:^7.21.11"
     "@btc-vision/bitcoin": "npm:6.3.3"
     "@btc-vision/passworder": "npm:1.0.0"
-    "@btc-vision/transaction": "npm:1.2.4"
-    "@btc-vision/wallet-sdk": "npm:1.0.0"
+    "@btc-vision/transaction": "npm:1.2.5"
+    "@btc-vision/wallet-sdk": "npm:1.0.2"
     "@eslint/js": "npm:^9.17.0"
     "@fortawesome/fontawesome-svg-core": "npm:^6.7.2"
     "@fortawesome/free-regular-svg-icons": "npm:^6.7.2"
@@ -14495,7 +14546,7 @@ __metadata:
     lru-cache: "npm:7.18.3"
     mini-css-extract-plugin: "npm:2.9.2"
     minimist: "npm:^1.2.8"
-    opnet: "npm:1.2.5"
+    opnet: "npm:1.2.8"
     postcss: "npm:^8.4.49"
     postcss-flexbugs-fixes: "npm:^5.0.2"
     postcss-loader: "npm:^8.1.1"

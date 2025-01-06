@@ -7,7 +7,7 @@ import { RequestParams } from '@/shared/types/Request.js';
 import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
 import Web3API from '@/shared/web3/Web3API';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
-import { DeploymentResult, Unisat, UTXO } from '@btc-vision/transaction';
+import { DeploymentResult, InteractionResponse, Unisat, UTXO } from '@btc-vision/transaction';
 
 import { rpcErrors } from '@/shared/lib/bitcoin-rpc-errors/errors';
 import { ProviderState } from '@/shared/types/Provider';
@@ -311,7 +311,7 @@ export class OpnetProvider extends EventEmitter {
 
     signInteraction = async (
         interactionParameters: InteractionParametersWithoutSigner
-    ): Promise<[string, string, UTXO[], string]> => {
+    ): Promise<InteractionResponse> => {
         const contractInfo: ContractInformation | false | undefined = await Web3API.queryContractInformation(
             interactionParameters.to
         );
@@ -323,14 +323,15 @@ export class OpnetProvider extends EventEmitter {
                     ...interactionParameters,
                     calldata: interactionParameters.calldata.toString('hex')
                 },
+                network: Web3API.chain,
                 contractInfo: contractInfo
             }
-        })) as Promise<[string, string, UTXO[], string]>;
+        })) as Promise<InteractionResponse>;
     };
 
     signAndBroadcastInteraction = async (
         interactionParameters: InteractionParametersWithoutSigner
-    ): Promise<[BroadcastedTransaction, BroadcastedTransaction, UTXO[]]> => {
+    ): Promise<[BroadcastedTransaction, BroadcastedTransaction, UTXO[], string]> => {
         const contractInfo: ContractInformation | false | undefined = await Web3API.queryContractInformation(
             interactionParameters.to
         );
@@ -342,9 +343,10 @@ export class OpnetProvider extends EventEmitter {
                     ...interactionParameters,
                     calldata: interactionParameters.calldata.toString('hex')
                 },
+                network: Web3API.chain,
                 contractInfo: contractInfo
             }
-        })) as Promise<[BroadcastedTransaction, BroadcastedTransaction, UTXO[]]>;
+        })) as Promise<[BroadcastedTransaction, BroadcastedTransaction, UTXO[], string]>;
     };
 
     broadcast = async (transactions: BroadcastTransactionOptions[]): Promise<BroadcastedTransaction[]> => {

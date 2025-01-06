@@ -1,4 +1,4 @@
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ApprovalResponse } from '@/shared/types/Approval';
@@ -12,35 +12,41 @@ export const useApproval = () => {
     const navigate = useNavigate();
     const getApproval = wallet.getApproval.bind(wallet);
 
-    const resolveApproval = async (data?: ApprovalResponse, stay = false, forceReject = false) => {
-        const approval = await getApproval();
+    const resolveApproval = useCallback(
+        async (data?: ApprovalResponse, stay = false, forceReject = false) => {
+            const approval = await getApproval();
 
-        if (approval) {
-            await wallet.resolveApproval(data, forceReject);
-        }
+            if (approval) {
+                await wallet.resolveApproval(data, forceReject);
+            }
 
-        if (stay) {
-            return;
-        }
+            if (stay) {
+                return;
+            }
 
-        setTimeout(() => {
-            navigate('/');
-        });
-    };
+            setTimeout(() => {
+                navigate('/');
+            });
+        },
+        [getApproval, navigate, wallet]
+    );
 
-    const rejectApproval = async (err?: string, stay = false, isInternal = false) => {
-        const approval = await getApproval();
-        if (approval) {
-            await wallet.rejectApproval(err, stay, isInternal);
-        }
-        if (!stay) {
-            navigate('/');
-        }
-    };
+    const rejectApproval = useCallback(
+        async (err?: string, stay = false, isInternal = false) => {
+            const approval = await getApproval();
+            if (approval) {
+                await wallet.rejectApproval(err, stay, isInternal);
+            }
+            if (!stay) {
+                navigate('/');
+            }
+        },
+        [getApproval, navigate, wallet]
+    );
 
-    const handleBeforeUnload = () => {
-        rejectApproval('beforeUnload event occurred', false, false);
-    };
+    const handleBeforeUnload = useCallback(async () => {
+        await rejectApproval('beforeUnload event occurred', false, false);
+    }, [rejectApproval]);
 
     useEffect(() => {
         if (!getUiType().isNotification) {
@@ -49,7 +55,7 @@ export const useApproval = () => {
         window.addEventListener('beforeunload', handleBeforeUnload);
 
         return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-    }, []);
+    }, [handleBeforeUnload]);
 
     return [getApproval, resolveApproval, rejectApproval] as const;
 };
@@ -156,7 +162,7 @@ export const useWalletRequest = <TArgs extends unknown[], TResult>(
                 setErr(err);
                 onError?.(err);
             } else {
-                console.error("Non-WalletError caught: ", err);
+                console.error('Non-WalletError caught: ', err);
             }
         } finally {
             if (mounted.current) {

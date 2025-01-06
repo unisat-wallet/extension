@@ -108,6 +108,14 @@ class Web3API {
         return new Address(Buffer.from('mo0ejly2iijjlgVSA22IAJiavTT6Zd760g5myg6KW9k=', 'base64')); //this.metadata.router;
     }
 
+    public get chain(): ChainType {
+        if (!this.currentChain) {
+            throw new Error('Chain not set');
+        }
+
+        return this.currentChain;
+    }
+
     private _metadata?: OPNetTokenMetadata;
 
     private get metadata(): OPNetTokenMetadata | null {
@@ -184,6 +192,22 @@ class Web3API {
         return !!AddressVerificator.detectAddressType(address, this.network);
     }
 
+    public async queryDecimal(address: string): Promise<number> {
+        const genericContract: IOP_20Contract = getContract<IOP_20Contract>(
+            address,
+            OP_20_ABI,
+            this.provider,
+            this.network
+        );
+
+        try {
+            const decimals = await genericContract.decimals();
+            return decimals.properties.decimals;
+        } catch {
+            return 0;
+        }
+    }
+
     public async queryContractInformation(address: string): Promise<ContractInformation | undefined | false> {
         const genericContract: IOP_20Contract = getContract<IOP_20Contract>(
             address,
@@ -222,7 +246,8 @@ class Web3API {
                 logo
             };
         } catch (e) {
-            if((e as Error).message.includes('not found')) {
+            console.log(e);
+            if ((e as Error).message.includes('not found')) {
                 return false;
             }
             return;
@@ -270,6 +295,7 @@ class Web3API {
     }
 
     private getContractName(address: string): string | undefined {
+        console.log(address);
         return ContractNames[address] ?? 'Generic Contract';
     }
 

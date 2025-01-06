@@ -1,5 +1,3 @@
 export const ContractNames: Record<string, string> = {
-    // motoswap
-    bcrt1qz98txrd6csz0ljhp0v2rw8846k0zgn57uul8c9: 'MotoSwap Factory', // factory
-    bcrt1qelqwcguvwkgr90w6u5f2q0a7gqlnq4w8rl26ht: 'MotoSwap Router' // router
+    bcrt1p983k5pf006d4jnpyt5r52zuz0le9pd8aup8p4ctgpahllh7gkk9q0xnxhh: 'NativeSwap'
 };

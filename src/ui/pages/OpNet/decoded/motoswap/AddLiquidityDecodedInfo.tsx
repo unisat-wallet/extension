@@ -1,9 +1,10 @@
-import { Decoded } from '@/shared/web3/decoder/CalldataDecoder';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { Card, Column, Text } from '@/ui/components';
 import { Address, BinaryReader } from '@btc-vision/transaction';
+import { sliceAddress } from '../helpper';
+import { Decoded } from '@/ui/pages/OpNet/decoded/DecodedTypes';
 
-export function decodeAddLiquidity(selector: string, reader: BinaryReader): AddLiquidityDecoded {
+export function decodeAddLiquidityMotoswap(selector: string, reader: BinaryReader): AddLiquidityDecoded {
     const tokenA: Address = reader.readAddress();
     const tokenB: Address = reader.readAddress();
     const amountADesired: bigint = reader.readU256();
@@ -39,21 +40,17 @@ export interface AddLiquidityDecoded extends Decoded {
 
 interface AddLiquidityProps {
     readonly decoded: AddLiquidityDecoded;
-    readonly contractInfo: ContractInformation;
+    readonly contractInfo: Partial<ContractInformation>;
     readonly interactionType: string;
 }
 
-function sliceAddress(address: Address): string {
-    return `${address.slice(0, 8)}...${address.slice(-12)}`;
-}
-
-export function AddLiquidityDecodedInfo(props: AddLiquidityProps): JSX.Element {
+export function AddLiquidityDecodedInfo(props: AddLiquidityProps) {
     const interactionType = props.interactionType;
     const decoded = props.decoded;
 
-    const slicedToAddress = sliceAddress(decoded.to);
-    const slicedTokenA = sliceAddress(decoded.tokenA);
-    const slicedTokenB = sliceAddress(decoded.tokenB);
+    const slicedToAddress = sliceAddress(decoded.to.toHex());
+    const slicedTokenA = sliceAddress(decoded.tokenA.toHex());
+    const slicedTokenB = sliceAddress(decoded.tokenB.toHex());
 
     return (
         <Card>

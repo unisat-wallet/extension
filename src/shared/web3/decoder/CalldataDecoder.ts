@@ -1,20 +1,15 @@
-import { decodeAddLiquidity } from '@/ui/pages/OpNet/decoded/AddLiquidityDecodedInfo';
-import { decodeApprove } from '@/ui/pages/OpNet/decoded/ApproveDecodedInfo';
-import { decodeTransfer } from '@/ui/pages/OpNet/decoded/TransferDecodedInfo';
-import { BinaryReader } from '@btc-vision/transaction';
-
-export enum InteractionType {
-    Transfer = '27f576ca',
-    Approve = '74e21680',
-    TransferFrom = '23b872dd',
-    AddLiquidity = 'eb686505'
-}
-
-export function isInteractionType(selector: string): selector is InteractionType {
-    return Object.values(InteractionType).includes(selector as InteractionType);
-}
+import {
+    InteractionMotoswap,
+    InteractionOP20,
+    InteractionTypeNativeSwap,
+    isInteractionType
+} from '@/ui/pages/OpNet/decoded/InteractionType';
 
 export function selectorToString(calldata: string): string {
+    if (calldata.length < 4) {
+        return 'Unknown Interaction';
+    }
+
     const data = Buffer.from(calldata, 'hex');
     const selector = data.subarray(0, 4).toString('hex');
 
@@ -23,43 +18,36 @@ export function selectorToString(calldata: string): string {
     }
 
     switch (selector) {
-        case InteractionType.Transfer:
+        // OP20
+        case InteractionOP20.Transfer:
             return 'transfer(address,uint256)';
-        case InteractionType.Approve:
+        case InteractionOP20.Approve:
             return 'approve(address,uint256)';
-        case InteractionType.TransferFrom:
+        case InteractionOP20.TransferFrom:
             return 'transferFrom(address,address,uint256)';
-        case InteractionType.AddLiquidity:
+        // Motoswap
+        case InteractionMotoswap.AddLiquidity:
             return 'addLiquidity(address,address,bigint,bigint,bigint,bigint,address,bigint)';
+        // NativeSwap
+        case InteractionTypeNativeSwap.Reserve:
+            return 'reserve(address,uint256,uint256,bool)';
+        case InteractionTypeNativeSwap.ListLiquidity:
+            return 'listLiquidity(address,string,uint256,bool)';
+        case InteractionTypeNativeSwap.CancelListing:
+            return 'cancelListing(address)';
+        case InteractionTypeNativeSwap.CreatePool:
+            return 'createPool(address,uint256,uint256,...)';
+        case InteractionTypeNativeSwap.CreatePoolWithSignature:
+            return 'createPoolWithSignature(bytes,uint256,address,...)';
+        case InteractionTypeNativeSwap.SetFees:
+            return 'setFees(uint256,uint256,uint256)';
+        case InteractionTypeNativeSwap.AddLiquidity:
+            return 'addLiquidity(address,string,uint256,bool)';
+        case InteractionTypeNativeSwap.RemoveLiquidity:
+            return 'removeLiquidity(address,uint256)';
+        case InteractionTypeNativeSwap.Swap:
+            return 'swap(address)';
         default:
             return `Unknown Interaction : 0x${selector}`;
-    }
-}
-
-export interface Decoded {
-    readonly selector: string;
-}
-
-export function decodeCallData(calldata: string): Decoded | null {
-    const data = Buffer.from(calldata, 'hex');
-    const reader = new BinaryReader(data);
-    reader.setOffset(4);
-
-    const selector = data.subarray(0, 4).toString('hex');
-    if (!isInteractionType(selector)) {
-        return null;
-    }
-
-    switch (selector) {
-        case InteractionType.Transfer:
-            return decodeTransfer(selector, reader);
-        case InteractionType.Approve:
-            return decodeApprove(selector, reader);
-        //case InteractionType.TransferFrom:
-        // return decodeTransferFrom(selector, reader);
-        case InteractionType.AddLiquidity:
-            return decodeAddLiquidity(selector, reader);
-        default:
-            return null;
     }
 }

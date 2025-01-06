@@ -1,7 +1,7 @@
-
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { Card, Column, Image, Row, Text } from '@/ui/components';
 import { fontSizes } from '@/ui/theme/font';
+import { ContractNames } from '@/shared/web3/metadata/ContractNames';
 
 interface Props {
     readonly session: { origin: string; icon: string; name: string };
@@ -13,20 +13,17 @@ interface Props {
 const InteractionHeader = (props: Props) => {
     const contractInfo = props.contractInfo;
     const contract = props.contract;
-
     return (
         <Column>
             <Text
-                text={`Interacting with: ${contractInfo?.name !== undefined ? contractInfo.name : 'Generic Contract'}`}
+                text={`Interacting with: ${contractInfo?.name !== undefined ? contractInfo.name : (ContractNames[contract] ?? 'Generic Contract')}`}
                 textCenter
                 preset="title-bold"
                 mt="lg"
             />
             <Card preset="style2" selfItemsCenter>
                 <Row itemsCenter>
-                    {contractInfo?.logo ? (
-                        <Image src={contractInfo.logo} size={fontSizes.logo} />
-                    ) : undefined}
+                    {contractInfo?.logo ? <Image src={contractInfo.logo} size={fontSizes.logo} /> : undefined}
 
                     <div
                         style={{
