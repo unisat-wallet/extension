@@ -21,6 +21,7 @@ import { BitcoinUtils } from 'opnet';
 import Web3API from '@/shared/web3/Web3API';
 
 interface CommonNativeSwapProps {
+    // Kept here for type compatibility, but we DO NOT USE this anymore:
     readonly contractInfo: Partial<ContractInformation>;
     readonly interactionType: string;
 }
@@ -33,10 +34,19 @@ interface ReserveDecodedProps extends CommonNativeSwapProps {
 }
 
 export function ReserveDecodedInfo(props: ReserveDecodedProps) {
-    const { contractInfo, interactionType, decoded } = props;
+    const { interactionType, decoded } = props;
+    const [tokenCA, setTokenCA] = useState<ContractInformation | false | undefined>();
 
-    const maxFormatted = BitcoinUtils.formatUnits(decoded.maximumAmountIn, contractInfo.decimals || 8);
-    const minFormatted = BitcoinUtils.formatUnits(decoded.minimumAmountOut, contractInfo.decimals || 8);
+    useEffect(() => {
+        (async () => {
+            const info = await Web3API.queryContractInformation(decoded.token);
+            setTokenCA(info);
+        })();
+    }, [decoded.token]);
+
+    const decimals = tokenCA ? (tokenCA.decimals ?? 8) : 8;
+    const maxFormatted = BitcoinUtils.formatUnits(decoded.maximumAmountIn, decimals);
+    const minFormatted = BitcoinUtils.formatUnits(decoded.minimumAmountOut, decimals);
     const tokenSliced = sliceAddress(decoded.token);
 
     return (
@@ -44,7 +54,7 @@ export function ReserveDecodedInfo(props: ReserveDecodedProps) {
             <Column>
                 <Text text={interactionType} preset="sub" textCenter />
                 <Row>
-                    <Image src={contractInfo.logo} size={fontSizes.logo} />
+                    <Image src={tokenCA ? tokenCA.logo : ''} size={fontSizes.logo} />
                     <Text text={`MaxIn: ${maxFormatted}, MinOut: ${minFormatted}`} preset="large" textCenter />
                 </Row>
                 <Text text={`token: ${tokenSliced}`} preset="sub" textCenter />
@@ -62,20 +72,25 @@ interface ListLiquidityDecodedProps extends CommonNativeSwapProps {
 }
 
 export function ListLiquidityDecodedInfo(props: ListLiquidityDecodedProps) {
-    const { contractInfo, interactionType, decoded } = props;
-    const amountFormatted = BitcoinUtils.formatUnits(decoded.amountIn, contractInfo.decimals || 8);
+    const { interactionType, decoded } = props;
+    const [tokenCA, setTokenCA] = useState<ContractInformation | false | undefined>();
 
-    //const token = await Web3API.queryContractInformation(decoded.token);
+    useEffect(() => {
+        (async () => {
+            const info = await Web3API.queryContractInformation(decoded.token);
+            setTokenCA(info);
+        })();
+    }, [decoded.token]);
+
+    const decimals = tokenCA ? (tokenCA.decimals ?? 8) : 8;
+    const symbol = tokenCA ? tokenCA.symbol : 'UNKNOWN';
+    const amountFormatted = BitcoinUtils.formatUnits(decoded.amountIn, decimals);
 
     return (
         <Card>
             <Column>
                 <Text text={interactionType} preset="sub" textCenter />
-                <Text
-                    text={`Amount: ${amountFormatted} ${(contractInfo.symbol || '').toUpperCase()}`}
-                    preset="large"
-                    textCenter
-                />
+                <Text text={`Amount: ${amountFormatted} ${symbol.toUpperCase()}`} preset="large" textCenter />
                 <Text text={`Token: ${sliceAddress(decoded.token)}`} preset="sub" textCenter />
                 <Text text={`Receiver (BTC): ${decoded.receiver}`} preset="sub" textCenter />
                 <Text text={`Priority: ${String(decoded.priority)}`} preset="sub" textCenter />
@@ -93,6 +108,7 @@ interface CancelListingDecodedProps extends CommonNativeSwapProps {
 
 export function CancelListingDecodedInfo(props: CancelListingDecodedProps) {
     const { interactionType, decoded } = props;
+
     return (
         <Card>
             <Column>
@@ -145,10 +161,20 @@ interface CreatePoolWithSignatureDecodedProps extends CommonNativeSwapProps {
 }
 
 export function CreatePoolWithSignatureDecodedInfo(props: CreatePoolWithSignatureDecodedProps) {
-    const { contractInfo, interactionType, decoded } = props;
-    const approveAmountFormatted = BitcoinUtils.formatUnits(decoded.approveAmount, contractInfo.decimals || 8);
-    const floorFormatted = BitcoinUtils.formatUnits(decoded.floorPrice, contractInfo.decimals || 8);
-    const liqFormatted = BitcoinUtils.formatUnits(decoded.initialLiquidity, contractInfo.decimals || 8);
+    const { interactionType, decoded } = props;
+    const [tokenCA, setTokenCA] = useState<ContractInformation | false | undefined>();
+
+    useEffect(() => {
+        (async () => {
+            const info = await Web3API.queryContractInformation(decoded.token);
+            setTokenCA(info);
+        })();
+    }, [decoded.token]);
+
+    const decimals = tokenCA ? (tokenCA.decimals ?? 8) : 8;
+    const approveAmountFormatted = BitcoinUtils.formatUnits(decoded.approveAmount, decimals);
+    const floorFormatted = BitcoinUtils.formatUnits(decoded.floorPrice, decimals);
+    const liqFormatted = BitcoinUtils.formatUnits(decoded.initialLiquidity, decimals);
     const signatureLen = decoded.signature?.length || 0;
 
     return (
@@ -204,19 +230,25 @@ interface AddLiquidityDecodedProps extends CommonNativeSwapProps {
 }
 
 export function AddLiquidityDecodedInfoNative(props: AddLiquidityDecodedProps) {
-    const { contractInfo, interactionType, decoded } = props;
+    const { interactionType, decoded } = props;
+    const [tokenCA, setTokenCA] = useState<ContractInformation | false | undefined>();
 
-    const amountFormatted = BitcoinUtils.formatUnits(decoded.amountIn, contractInfo.decimals || 8);
+    useEffect(() => {
+        (async () => {
+            const info = await Web3API.queryContractInformation(decoded.token);
+            setTokenCA(info);
+        })();
+    }, [decoded.token]);
+
+    const decimals = tokenCA ? (tokenCA.decimals ?? 8) : 8;
+    const symbol = tokenCA ? tokenCA.symbol : 'UNKNOWN';
+    const amountFormatted = BitcoinUtils.formatUnits(decoded.amountIn, decimals);
 
     return (
         <Card>
             <Column>
                 <Text text={interactionType} preset="sub" textCenter />
-                <Text
-                    text={`Amount: ${amountFormatted} ${(contractInfo.symbol || '').toUpperCase()}`}
-                    preset="large"
-                    textCenter
-                />
+                <Text text={`Amount: ${amountFormatted} ${symbol.toUpperCase()}`} preset="large" textCenter />
                 <Text text={`Token: ${sliceAddress(decoded.token)}`} preset="sub" textCenter />
                 <Text text={`Receiver (BTC): ${decoded.receiver}`} preset="sub" textCenter />
                 <Text text={`Priority: ${String(decoded.priority)}`} preset="sub" textCenter />
@@ -233,18 +265,25 @@ interface RemoveLiquidityDecodedProps extends CommonNativeSwapProps {
 }
 
 export function RemoveLiquidityDecodedInfo(props: RemoveLiquidityDecodedProps) {
-    const { contractInfo, interactionType, decoded } = props;
-    const amountFormatted = BitcoinUtils.formatUnits(decoded.amount, contractInfo.decimals || 8);
+    const { interactionType, decoded } = props;
+    const [tokenCA, setTokenCA] = useState<ContractInformation | false | undefined>();
+
+    useEffect(() => {
+        (async () => {
+            const info = await Web3API.queryContractInformation(decoded.token);
+            setTokenCA(info);
+        })();
+    }, [decoded.token]);
+
+    const decimals = tokenCA ? (tokenCA.decimals ?? 8) : 8;
+    const symbol = tokenCA ? tokenCA.symbol : 'UNKNOWN';
+    const amountFormatted = BitcoinUtils.formatUnits(decoded.amount, decimals);
 
     return (
         <Card>
             <Column>
                 <Text text={interactionType} preset="sub" textCenter />
-                <Text
-                    text={`Remove: ${amountFormatted} ${(contractInfo.symbol || '').toUpperCase()}`}
-                    preset="large"
-                    textCenter
-                />
+                <Text text={`Remove: ${amountFormatted} ${symbol.toUpperCase()}`} preset="large" textCenter />
                 <Text text={`Token: ${sliceAddress(decoded.token)}`} preset="sub" textCenter />
             </Column>
         </Card>
