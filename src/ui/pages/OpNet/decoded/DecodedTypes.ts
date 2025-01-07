@@ -104,8 +104,6 @@ export interface DecodedSetFees extends Decoded {
 export interface DecodedAddLiquidityNative extends Decoded {
     token: string;
     receiver: string;
-    amountIn: bigint;
-    priority: boolean;
 }
 
 export interface DecodedRemoveLiquidity extends Decoded {

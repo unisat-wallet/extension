@@ -50,8 +50,6 @@ export function ReserveDecodedInfo(props: ReserveDecodedProps) {
     const maxFormatted = BitcoinUtils.formatUnits(decoded.maximumAmountIn, 8);
     const minFormatted = BitcoinUtils.formatUnits(decoded.minimumAmountOut, decimals);
 
-    const tokenSliced = sliceAddress(decoded.token);
-
     return (
         <Card>
             <Column>
@@ -263,18 +261,22 @@ export function AddLiquidityDecodedInfoNative(props: AddLiquidityDecodedProps) {
         })();
     }, [decoded.token]);
 
-    const decimals = tokenCA ? (tokenCA.decimals ?? 8) : 8;
-    const symbol = tokenCA ? tokenCA.symbol : 'UNKNOWN';
-    const amountFormatted = BitcoinUtils.formatUnits(decoded.amountIn, decimals);
-
     return (
         <Card>
             <Column>
                 <Text text={interactionType} preset="sub" textCenter />
-                <Text text={`Amount: ${amountFormatted} ${symbol.toUpperCase()}`} preset="large" textCenter />
-                <Text text={`Token: ${sliceAddress(decoded.token)}`} preset="sub" textCenter />
-                <Text text={`Receiver (BTC): ${decoded.receiver}`} preset="sub" textCenter />
-                <Text text={`Priority: ${String(decoded.priority)}`} preset="sub" textCenter />
+                <Row>
+                    <Image src={tokenCA ? tokenCA.logo : ''} size={fontSizes.logo} />
+                    <Text
+                        text={`Adding liquidity to ${tokenCA ? tokenCA.name : 'UNKNOWN'} (${tokenCA ? tokenCA.symbol : 'UNK'})`}
+                        preset="bold"
+                    />
+                </Row>
+
+                <Text text={`Token address`} preset="bold" textCenter />
+                <Text text={sliceAddress(decoded.token)} preset="sub" textCenter />
+                <Text text={`Withdrawal Receiver (BTC)`} preset="bold" textCenter />
+                <Text text={sliceAddress(decoded.receiver)} preset="sub" textCenter />
             </Column>
         </Card>
     );

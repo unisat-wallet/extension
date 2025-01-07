@@ -20,7 +20,7 @@ export enum InteractionTypeNativeSwap {
     CreatePool = '6fae9005', // createPool(address,uint256,uint256,string,uint32,uint256,uint32)
     CreatePoolWithSignature = 'x', // createPoolWithSignature(bytes,uint256,address,uint256,uint256,string,uint32,uint256,uint32)
     SetFees = 'x', // setFees(uint256,uint256,uint256)
-    AddLiquidity = 'x', // addLiquidity(address,string,uint256,bool)
+    AddLiquidity = 'eb686505', // addLiquidity(address,string,uint256,bool)
     RemoveLiquidity = 'x', // removeLiquidity(address,uint256)
     Swap = 'x' // swap(address)
 }

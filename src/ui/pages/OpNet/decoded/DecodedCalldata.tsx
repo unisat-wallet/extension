@@ -153,21 +153,17 @@ export function DecodedCalldata(props: DecodedProps) {
         }
 
         // -------------------------
-        //        Motoswap
+        //      NativeSwap
         // -------------------------
-        case InteractionMotoswap.AddLiquidity: {
+        case InteractionTypeNativeSwap.AddLiquidity: {
             return (
-                <AddLiquidityDecodedInfo
-                    decoded={decoded as AddLiquidityDecoded}
+                <AddLiquidityDecodedInfoNative
+                    decoded={decoded as DecodedAddLiquidityNative}
                     contractInfo={contractInfo}
                     interactionType={interactionType}
                 />
             );
         }
-
-        // -------------------------
-        //      NativeSwap
-        // -------------------------
         case InteractionTypeNativeSwap.Reserve: {
             return (
                 <ReserveDecodedInfo
@@ -222,15 +218,6 @@ export function DecodedCalldata(props: DecodedProps) {
                 />
             );
         }
-        case InteractionTypeNativeSwap.AddLiquidity: {
-            return (
-                <AddLiquidityDecodedInfoNative
-                    decoded={decoded as DecodedAddLiquidityNative}
-                    contractInfo={contractInfo}
-                    interactionType={interactionType}
-                />
-            );
-        }
         case InteractionTypeNativeSwap.RemoveLiquidity: {
             return (
                 <RemoveLiquidityDecodedInfo
@@ -244,6 +231,19 @@ export function DecodedCalldata(props: DecodedProps) {
             return (
                 <SwapDecodedInfo
                     decoded={decoded as DecodedSwap}
+                    contractInfo={contractInfo}
+                    interactionType={interactionType}
+                />
+            );
+        }
+
+        // -------------------------
+        //        Motoswap
+        // -------------------------
+        case InteractionMotoswap.AddLiquidity: {
+            return (
+                <AddLiquidityDecodedInfo
+                    decoded={decoded as AddLiquidityDecoded}
                     contractInfo={contractInfo}
                     interactionType={interactionType}
                 />

@@ -63,10 +63,6 @@ export function decodeCallData(calldata: string): Decoded | null {
         case InteractionOP20.AirdropWithAmount:
             return decodeAirdropWithAmount(selector, reader);
 
-        case InteractionMotoswap.AddLiquidity: {
-            return decodeAddLiquidityMotoswap(selector, reader);
-        }
-
         // NativeSwap
         case InteractionTypeNativeSwap.Reserve:
             return decodeReserve(selector, reader);
@@ -86,6 +82,10 @@ export function decodeCallData(calldata: string): Decoded | null {
             return decodeRemoveLiquidity(selector, reader);
         case InteractionTypeNativeSwap.Swap:
             return decodeSwap(selector, reader);
+
+        case InteractionMotoswap.AddLiquidity: {
+            return decodeAddLiquidityMotoswap(selector, reader);
+        }
 
         default:
             return null;

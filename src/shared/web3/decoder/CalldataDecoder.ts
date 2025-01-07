@@ -25,10 +25,9 @@ export function selectorToString(calldata: string): string {
             return 'approve(address,uint256)';
         case InteractionOP20.TransferFrom:
             return 'transferFrom(address,address,uint256)';
-        // Motoswap
-        case InteractionMotoswap.AddLiquidity:
-            return 'addLiquidity(address,address,bigint,bigint,bigint,bigint,address,bigint)';
         // NativeSwap
+        case InteractionTypeNativeSwap.AddLiquidity:
+            return 'addLiquidity(address,string)';
         case InteractionTypeNativeSwap.Reserve:
             return 'reserve(address,uint256,uint256,bool)';
         case InteractionTypeNativeSwap.ListLiquidity:
@@ -41,12 +40,13 @@ export function selectorToString(calldata: string): string {
             return 'createPoolWithSignature(bytes,uint256,address,...)';
         case InteractionTypeNativeSwap.SetFees:
             return 'setFees(uint256,uint256,uint256)';
-        case InteractionTypeNativeSwap.AddLiquidity:
-            return 'addLiquidity(address,string,uint256,bool)';
         case InteractionTypeNativeSwap.RemoveLiquidity:
             return 'removeLiquidity(address,uint256)';
         case InteractionTypeNativeSwap.Swap:
             return 'swap(address)';
+        // Motoswap
+        case InteractionMotoswap.AddLiquidity:
+            return 'addLiquidity(address,address,bigint,bigint,bigint,bigint,address,bigint)';
         default:
             return `Unknown Interaction : 0x${selector}`;
     }

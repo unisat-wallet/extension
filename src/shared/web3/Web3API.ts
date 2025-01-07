@@ -246,7 +246,7 @@ class Web3API {
                 logo
             };
         } catch (e) {
-            console.log(e);
+            console.warn(e);
             if ((e as Error).message.includes('not found')) {
                 return false;
             }

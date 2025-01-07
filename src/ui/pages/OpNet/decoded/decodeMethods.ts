@@ -180,9 +180,7 @@ export function decodeSetFees(selector: InteractionType, reader: BinaryReader): 
 export function decodeAddLiquidity(selector: InteractionType, reader: BinaryReader): DecodedAddLiquidityNative {
     const token = decodeAddress(reader);
     const receiver = decodeString(reader);
-    const amountIn = reader.readU128();
-    const priority = decodeBoolean(reader);
-    return { selector, token, receiver, amountIn, priority };
+    return { selector, token, receiver };
 }
 
 export function decodeRemoveLiquidity(selector: InteractionType, reader: BinaryReader): DecodedRemoveLiquidity {
