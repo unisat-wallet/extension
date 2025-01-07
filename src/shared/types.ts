@@ -296,13 +296,13 @@ export interface BuyBtcChannel {
 
 export interface GroupAsset {
     type: number;
-    address_arr: string[]; 
+    address_arr: string[];
     satoshis_arr: number[];
 }
 
 export interface AddressRecentHistory {
-    start: number; 
-    total: number; 
+    start: number;
+    total: number;
     detail: TxHistoryItem[];
 }
 

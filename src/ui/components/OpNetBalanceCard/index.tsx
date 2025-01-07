@@ -28,6 +28,11 @@ export default function OpNetBalanceCard(props: OpNetBalanceCardProps) {
             ? truncatedBalance.toLocaleString('en-US', { minimumFractionDigits: 5, maximumFractionDigits: 5 })
             : '0';
 
+    let finalBal = str.slice(0, 16);
+    if (finalBal !== str) {
+        finalBal += '...';
+    }
+
     return (
         <Card
             style={{
@@ -44,13 +49,13 @@ export default function OpNetBalanceCard(props: OpNetBalanceCardProps) {
                 <Row itemsCenter fullX justifyBetween>
                     <Row itemsCenter fullX>
                         {tokenInfo.logo && <Image src={tokenInfo.logo} size={fontSizes.tiny} />}
-                        <Column fullY justifyCenter>
+                        <Column fullY justifyCenter style={{ flex: '0 0 auto' }}>
                             <RunesTicker tick={tokenInfo.name} />
                         </Column>
                     </Row>
 
                     <Row itemsCenter fullY gap="zero">
-                        <Text text={str} size="xs" />
+                        <Text text={finalBal} size="xs" />
                         <Text text={tokenInfo.symbol} size="xs" mx="sm" />
                     </Row>
                 </Row>

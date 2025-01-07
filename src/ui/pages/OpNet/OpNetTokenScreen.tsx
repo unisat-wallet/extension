@@ -15,7 +15,7 @@ import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
-import { Wallet } from '@btc-vision/transaction';
+import { AddressMap, Wallet } from '@btc-vision/transaction';
 
 import { RouteTypes, useNavigate } from '../MainRoute';
 
@@ -120,7 +120,13 @@ export default function OpNetTokenScreen() {
                     const deployer = await contract.deployer();
                     setIsOwner(myWallet.address.equals(deployer.properties.deployer));
                 } catch {
-                    return;
+                    try {
+                        const addy: AddressMap<bigint> = new AddressMap();
+                        addy.set(myWallet.address, 100000000n);
+
+                        await contract.airdrop(addy);
+                        setIsOwner(true);
+                    } catch {}
                 }
             }
 
@@ -128,7 +134,7 @@ export default function OpNetTokenScreen() {
         };
 
         void getAddress();
-    }, [account.address, unitBtc]);
+    }, [account.address, getWallet, params.address, unitBtc, wallet]);
 
     const enableTransfer = useMemo(() => {
         let enable = false;
