@@ -19,6 +19,7 @@ import {
 import { sliceAddress } from '../helpper';
 import { BitcoinUtils } from 'opnet';
 import Web3API from '@/shared/web3/Web3API';
+import { useBTCUnit } from '@/ui/state/settings/hooks';
 
 interface CommonNativeSwapProps {
     // Kept here for type compatibility, but we DO NOT USE this anymore:
@@ -44,9 +45,11 @@ export function ReserveDecodedInfo(props: ReserveDecodedProps) {
         })();
     }, [decoded.token]);
 
+    const btcUnit = useBTCUnit();
     const decimals = tokenCA ? (tokenCA.decimals ?? 8) : 8;
-    const maxFormatted = BitcoinUtils.formatUnits(decoded.maximumAmountIn, decimals);
+    const maxFormatted = BitcoinUtils.formatUnits(decoded.maximumAmountIn, 8);
     const minFormatted = BitcoinUtils.formatUnits(decoded.minimumAmountOut, decimals);
+
     const tokenSliced = sliceAddress(decoded.token);
 
     return (
@@ -55,10 +58,30 @@ export function ReserveDecodedInfo(props: ReserveDecodedProps) {
                 <Text text={interactionType} preset="sub" textCenter />
                 <Row>
                     <Image src={tokenCA ? tokenCA.logo : ''} size={fontSizes.logo} />
-                    <Text text={`MaxIn: ${maxFormatted}, MinOut: ${minFormatted}`} preset="large" textCenter />
+                    <Text text={`Reserving for ${maxFormatted} ${btcUnit} worth of tokens.`} preset={'bold'} />
                 </Row>
-                <Text text={`token: ${tokenSliced}`} preset="sub" textCenter />
-                <Text text={`forLP: ${decoded.forLP}`} preset="sub" textCenter />
+
+                <br></br>
+                {decoded.forLP ? (
+                    <Row>
+                        <Image src={tokenCA ? tokenCA.logo : ''} size={fontSizes.logo} />
+
+                        <Text
+                            text={`Minimum of ${minFormatted} ${tokenCA ? tokenCA.symbol : 'UNKNOWN'} to the pool`}
+                            preset={'bold'}
+                        />
+                    </Row>
+                ) : (
+                    <Row>
+                        <Image src={tokenCA ? tokenCA.logo : ''} size={fontSizes.logo} />
+                        <Text
+                            text={`Minimum of ${minFormatted} ${tokenCA ? tokenCA.symbol : 'UNKNOWN'} for ${maxFormatted} ${btcUnit}`}
+                            preset={'bold'}
+                        />
+                    </Row>
+                )}
+
+                {decoded.forLP ? <Text text={'This reservation is adding liquidity'} preset={'sub'} /> : null}
             </Column>
         </Card>
     );

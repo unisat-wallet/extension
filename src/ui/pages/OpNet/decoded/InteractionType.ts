@@ -14,7 +14,7 @@ export enum InteractionMotoswap {
 }
 
 export enum InteractionTypeNativeSwap {
-    Reserve = 'x', // reserve(address,uint256,uint256,bool)
+    Reserve = '6df24c37', // reserve(address,uint256,uint256,bool)
     ListLiquidity = 'x', // listLiquidity(address,string,uint256,bool)
     CancelListing = 'x', // cancelListing(address)
     CreatePool = '6fae9005', // createPool(address,uint256,uint256,string,uint32,uint256,uint32)

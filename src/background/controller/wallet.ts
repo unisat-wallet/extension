@@ -774,7 +774,15 @@ export class WalletController extends BaseController {
             feeRate: Number(params.feeRate.toString()),
             priorityFee: BigInt(params.priorityFee || 0n) < 330n ? 330n : BigInt(params.priorityFee || 0n),
             bytecode:
-                typeof params.bytecode === 'string' ? Buffer.from(params.bytecode, 'hex') : Buffer.from(params.bytecode)
+                typeof params.bytecode === 'string'
+                    ? Buffer.from(params.bytecode, 'hex')
+                    : Buffer.from(params.bytecode),
+            calldata: params.calldata
+                ? typeof params.calldata === 'string'
+                    ? Buffer.from(params.calldata, 'hex')
+                    : Buffer.from(params.calldata)
+                : undefined,
+            optionalOutputs: params.optionalOutputs || [] // Optional outputs
         };
 
         return await Web3API.transactionFactory.signDeployment(deployContractParameters);
@@ -812,7 +820,8 @@ export class WalletController extends BaseController {
             network: Web3API.network, // Network
             feeRate: interactionParameters.feeRate, // Fee rate (satoshi per byte)
             priorityFee: BigInt(interactionParameters.priorityFee || 330n), // Priority fee (opnet)
-            calldata: Buffer.from(interactionParameters.calldata as unknown as string, 'hex') // Calldata
+            calldata: Buffer.from(interactionParameters.calldata as unknown as string, 'hex'), // Calldata
+            optionalOutputs: interactionParameters.optionalOutputs || [] // Optional outputs
         };
 
         return await Web3API.transactionFactory.signInteraction(interactionParametersSubmit);
