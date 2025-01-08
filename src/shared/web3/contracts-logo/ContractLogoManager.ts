@@ -18,14 +18,14 @@ export class ContractLogoManager {
 
         try {
             const contentInfo = await fetch(
-                `https://api.github.com/repos/btc-vision/contract-logo/contents/contracts/${address}.png`
+                `https://raw.githubusercontent.com/btc-vision/contract-logo/main/contracts/${address}.png` // `https://api.github.com/repos/btc-vision/contract-logo/contents/contracts/${address}.png`
             );
+
             if (contentInfo.status !== 200) {
                 throw new Error('Not found');
             }
 
-            const json = (await contentInfo.json()) as { download_url: string };
-            return json.download_url || 'https://raw.githubusercontent.com/Cryptofonts/cryptoicons/master/128/btc.png';
+            return `https://raw.githubusercontent.com/btc-vision/contract-logo/main/contracts/${address}.png`;
         } catch {
             return 'https://raw.githubusercontent.com/Cryptofonts/cryptoicons/master/128/btc.png';
         }

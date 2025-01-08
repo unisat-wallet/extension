@@ -325,10 +325,25 @@ interface SwapDecodedProps extends CommonNativeSwapProps {
 export function SwapDecodedInfo(props: SwapDecodedProps) {
     const { interactionType, decoded } = props;
 
+    const [tokenCA, setTokenCA] = useState<ContractInformation | false | undefined>();
+
+    useEffect(() => {
+        (async () => {
+            const info = await Web3API.queryContractInformation(decoded.token);
+            setTokenCA(info);
+        })();
+    }, [decoded.token]);
+
     return (
         <Card>
             <Column>
                 <Text text={interactionType} preset="sub" textCenter />
+
+                <Row>
+                    <Image src={tokenCA ? tokenCA.logo : ''} size={fontSizes.logo} />
+                    <Text text={`Swapping ${tokenCA ? tokenCA.name : 'UNKNOWN'}`} preset="bold" />
+                </Row>
+
                 <Text text={`Swap token: ${sliceAddress(decoded.token)}`} preset="sub" textCenter />
             </Column>
         </Card>

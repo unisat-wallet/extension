@@ -217,6 +217,11 @@ class Web3API {
         );
 
         try {
+            let addy: string = address;
+            if (address.startsWith('0x')) {
+                addy = Address.fromString(address).p2tr(this.network);
+            }
+
             const promises: [
                 Promise<CallResult<{ name: string }>>,
                 Promise<
@@ -230,7 +235,7 @@ class Web3API {
                 genericContract.name(),
                 genericContract.symbol(),
                 genericContract.decimals(),
-                contractLogoManager.getContractLogo(address)
+                contractLogoManager.getContractLogo(addy)
             ];
 
             const results = await Promise.all(promises);

@@ -22,7 +22,7 @@ export enum InteractionTypeNativeSwap {
     SetFees = 'x', // setFees(uint256,uint256,uint256)
     AddLiquidity = 'eb686505', // addLiquidity(address,string,uint256,bool)
     RemoveLiquidity = 'x', // removeLiquidity(address,uint256)
-    Swap = 'x' // swap(address)
+    Swap = 'da47c2f4' // swap(address)
 }
 
 export type InteractionType = InteractionOP20 | InteractionTypeNativeSwap | InteractionMotoswap;
