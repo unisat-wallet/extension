@@ -337,13 +337,23 @@ export function SwapDecodedInfo(props: SwapDecodedProps) {
     return (
         <Card>
             <Column>
+                {/* Type of interaction */}
                 <Text text={interactionType} preset="sub" textCenter />
 
+                {/* Logo row: Bitcoin -> token */}
                 <Row>
+                    <Image
+                        src="https://raw.githubusercontent.com/Cryptofonts/cryptoicons/master/128/btc.png"
+                        size={fontSizes.logo}
+                    />
+                    <Text text="→" preset="bold" textCenter />
                     <Image src={tokenCA ? tokenCA.logo : ''} size={fontSizes.logo} />
-                    <Text text={`Swapping ${tokenCA ? tokenCA.name : 'UNKNOWN'}`} preset="bold" />
                 </Row>
 
+                {/* Text describing the swap */}
+                <Text text={`Swapping Bitcoin -> ${tokenCA ? tokenCA.name : 'UNKNOWN'}`} preset="bold" textCenter />
+
+                {/* Token contract address */}
                 <Text text={`Swap token: ${sliceAddress(decoded.token)}`} preset="sub" textCenter />
             </Column>
         </Card>
