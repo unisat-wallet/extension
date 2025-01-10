@@ -8,8 +8,7 @@ import { Icon, IconTypes } from '../Icon';
 import { Row } from '../Row';
 import { Text } from '../Text';
 
-
-type Presets = keyof typeof $viewPresets;
+export type Presets = keyof typeof $viewPresets;
 
 export interface ButtonProps {
     /**

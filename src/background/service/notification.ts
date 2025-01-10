@@ -16,10 +16,10 @@ class NotificationService extends Events {
     constructor() {
         super();
 
-        winMgr.event.on('windowRemoved', (winId: number) => {
+        winMgr.event.on('windowRemoved', async (winId: number) => {
             if (winId === this.notifiWindowId) {
                 this.notifiWindowId = 0;
-                this.rejectApproval();
+                await this.rejectApproval();
             }
         });
 
@@ -49,9 +49,9 @@ class NotificationService extends Events {
     rejectApproval = async (err?: string, stay = false, isInternal = false) => {
         if (!this.approval) return;
         if (isInternal) {
-            this.approval?.reject(rpcErrors.internal({message: err}));
+            this.approval?.reject(rpcErrors.internal({ message: err }));
         } else {
-            this.approval?.reject(providerErrors.userRejectedRequest({message: err}));
+            this.approval?.reject(providerErrors.userRejectedRequest({ message: err }));
         }
 
         await this.clear(stay);
@@ -61,14 +61,14 @@ class NotificationService extends Events {
     // currently it only support one approval at the same time
     requestApproval = async (data: ApprovalData, winProps?: WindowProps): Promise<ApprovalResponse | undefined> => {
         // We will just override the existing open approval with the new one coming in
-        return new Promise((resolve, reject) => {
+        return new Promise(async (resolve, reject) => {
             this.approval = {
                 data,
                 resolve,
                 reject
             };
 
-            this.openNotification(winProps);
+            await this.openNotification(winProps);
         });
     };
 
@@ -88,15 +88,18 @@ class NotificationService extends Events {
         this.isLocked = true;
     };
 
-    openNotification = (winProps?: WindowProps) => {
+    openNotification = async (winProps?: WindowProps) => {
         // if (this.isLocked) return;
         // this.lock();
         if (this.notifiWindowId) {
-            winMgr.remove(this.notifiWindowId);
+            await winMgr.remove(this.notifiWindowId);
             this.notifiWindowId = 0;
         }
-        winMgr.openNotification(winProps).then((winId) => {
-            this.notifiWindowId = winId;
+
+        winMgr.openNotification(winProps).then((winId: number | undefined) => {
+            if (typeof winId === 'number') {
+                this.notifiWindowId = winId;
+            }
         });
     };
 }

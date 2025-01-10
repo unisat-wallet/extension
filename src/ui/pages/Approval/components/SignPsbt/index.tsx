@@ -30,15 +30,7 @@ interface InscriptioinInfo {
     isSent: boolean;
 }
 
-function SignTxDetails({
-    txInfo,
-    type,
-    rawTxInfo,
-}: {
-    txInfo: TxInfo;
-    rawTxInfo?: RawTxInfo;
-    type: TxType;
-}) {
+function SignTxDetails({ txInfo, type, rawTxInfo }: { txInfo: TxInfo; rawTxInfo?: RawTxInfo; type: TxType }) {
     const address = useAccountAddress();
     const chain = useChain();
     const btcUnit = useBTCUnit();
@@ -223,6 +215,7 @@ const initTxInfo: TxInfo = {
     toSignInputs: [],
     txError: '',
     decodedPsbt: {
+        risks: [],
         inputs: [],
         outputs: [],
         fee: 0,
@@ -292,8 +285,8 @@ export default function SignPsbt({
                     if (isWalletError(e)) {
                         tools.toastError(txError);
                     } else {
-                        tools.toastError("An unexpected error occurred.");
-                        console.error("Non-WalletError caught: ", e);
+                        tools.toastError('An unexpected error occurred.');
+                        console.error('Non-WalletError caught: ', e);
                     }
                 }
             }
@@ -428,7 +421,10 @@ export default function SignPsbt({
                 data={txInfo.psbtHex}
                 isFinalize={type !== TxType.SIGN_TX}
                 onSuccess={(data: ParsedSignPsbtUr) => {
-                    originalHandleConfirm(data);
+                    originalHandleConfirm({
+                        psbtHex: data.psbtHex,
+                        rawtx: data.rawTx
+                    });
                 }}
                 onBack={() => {
                     setIsKeystoneSigning(false);

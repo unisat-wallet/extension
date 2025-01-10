@@ -15,7 +15,6 @@ import { EcKeyPair, Wallet } from '@btc-vision/transaction';
 
 import { RouteTypes, useNavigate } from '../MainRoute';
 
-
 const ECPair = ECPairFactory(ecc);
 
 /*const _res = await wallet.createTmpKeyringWithPrivateKey(wif, AddressType.P2TR);
@@ -129,12 +128,17 @@ function Step2({
                     isUnisatLegacy: v.isUnisatLegacy
                 };
             });
-    }, [contextData]);
+    }, []);
 
     const [previewAddresses, setPreviewAddresses] = useState<string[]>(hdPathOptions.map((v) => ''));
     const [addressAssets, setAddressAssets] = useState<Record<string, AddressAssets>>({});
 
-    const selfRef = useRef({
+    const selfRef = useRef<{
+        maxSatoshis: number;
+        recommended: number;
+        count: number;
+        addressBalances: Record<string, AddressAssets>;
+    }>({
         maxSatoshis: 0,
         recommended: 0,
         count: 0,

@@ -21,12 +21,12 @@ import PushEventHandlers from './pushEventHandlers';
 import ReadyPromise from './readyPromise';
 import { $, domReadyCall, isPushEventHandlerMethod } from './utils';
 
-declare global {
+/*declare global {
     interface Window {
         opnet?: Unisat;
         unisat?: Unisat;
     }
-}
+}*/
 
 const log = (event: string, ...args: unknown[]) => {
     /*if (process && process.env.NODE_ENV !== 'production') {

@@ -1,5 +1,5 @@
 import VirtualList from 'rc-virtual-list';
-import { forwardRef, useMemo, useState } from 'react';
+import React, { forwardRef, useMemo, useState } from 'react';
 
 import { KEYRING_CLASS, KEYRING_TYPE } from '@/shared/constant';
 import { Account } from '@/shared/types';
@@ -32,23 +32,54 @@ interface MyItemProps {
     autoNav?: boolean;
 }
 
-export function MyItem({ account, autoNav }: MyItemProps, ref) {
+export function MyItem({ account, autoNav }: MyItemProps) {
+    // 1. Always call Hooks unconditionally at the top:
     const navigate = useNavigate();
     const currentAccount = useCurrentAccount();
-    const selected = currentAccount.pubkey == account?.pubkey;
     const wallet = useWallet();
     const dispatch = useAppDispatch();
     const keyring = useCurrentKeyring();
+    const [optionsVisible, setOptionsVisible] = useState(false);
+    const tools = useTools();
+
+    // 2. After calling Hooks, handle "no account" scenario:
     if (!account) {
+        // We still render something here, but the Hooks are
+        // already called above.
         return <div />;
     }
-    const [optionsVisible, setOptionsVisible] = useState(false);
+
+    const selected = currentAccount.pubkey === account.pubkey;
+
     let path = '';
-    if ((keyring.type !== KEYRING_CLASS.PRIVATE_KEY) && (account.index !== undefined)) {
-        path = ` (${keyring.hdPath + '/' + account.index.toString()})`;
+    if (keyring.type !== KEYRING_CLASS.PRIVATE_KEY && account.index !== undefined) {
+        path = ` (${keyring.hdPath}/${account.index})`;
     }
 
-    const tools = useTools();
+    const handleSelectAccount = async () => {
+        if (currentAccount.pubkey !== account.pubkey) {
+            await wallet.changeKeyring(keyring, account.index);
+            const newCurrentAccount = await wallet.getCurrentAccount();
+            dispatch(accountActions.setCurrent(newCurrentAccount));
+        }
+        if (autoNav) {
+            navigate(RouteTypes.MainScreen);
+        }
+    };
+
+    const handleEditName = () => {
+        navigate(RouteTypes.EditAccountNameScreen, { account });
+    };
+
+    const handleCopyAddress = async () => {
+        await copyToClipboard(account.address);
+        tools.toastSuccess('Copied');
+        setOptionsVisible(false);
+    };
+
+    const handleExportPrivateKey = () => {
+        navigate(RouteTypes.ExportPrivateKeyScreen, { account });
+    };
 
     return (
         <Card justifyBetween mt="md">
@@ -60,20 +91,13 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
                         </Icon>
                     )}
                 </Column>
-                <Column
-                    onClick={async (e) => {
-                        if (currentAccount.pubkey !== account.pubkey) {
-                            await wallet.changeKeyring(keyring, account.index);
-                            const _currentAccount = await wallet.getCurrentAccount();
-                            dispatch(accountActions.setCurrent(_currentAccount));
-                        }
-                        if (autoNav) navigate(RouteTypes.MainScreen);
-                    }}>
+                <Column onClick={handleSelectAccount}>
                     <Text text={account.alianName} />
                     <Text text={`${shortAddress(account.address)}${path}`} preset="sub" />
                 </Column>
             </Row>
             <Column relative>
+                {/* Click-away area for closing the options */}
                 {optionsVisible && (
                     <div
                         style={{
@@ -84,18 +108,12 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
                             top: 0,
                             bottom: 0
                         }}
-                        onTouchStart={() => {
-                            setOptionsVisible(false);
-                        }}
-                        onMouseDown={() => {
-                            setOptionsVisible(false);
-                        }}></div>
+                        onTouchStart={() => setOptionsVisible(false)}
+                        onMouseDown={() => setOptionsVisible(false)}
+                    />
                 )}
 
-                <Icon
-                    onClick={() => {
-                        setOptionsVisible(!optionsVisible);
-                    }}>
+                <Icon onClick={() => setOptionsVisible((v) => !v)}>
                     <EllipsisOutlined />
                 </Icon>
 
@@ -109,27 +127,18 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
                             padding: 5,
                             zIndex: 10
                         }}>
-                        <Row
-                            onClick={() => {
-                                navigate(RouteTypes.EditAccountNameScreen, { account });
-                            }}>
+                        <Row onClick={handleEditName}>
                             <EditOutlined />
                             <Text text="Edit Name" size="sm" />
                         </Row>
-                        <Row
-                            onClick={async () => {
-                                await copyToClipboard(account.address);
-                                tools.toastSuccess('copied');
-                                setOptionsVisible(false);
-                            }}>
+
+                        <Row onClick={handleCopyAddress}>
                             <CopyOutlined />
                             <Text text="Copy address" size="sm" />
                         </Row>
+
                         {account.type !== KEYRING_TYPE.KeystoneKeyring && (
-                            <Row
-                                onClick={() => {
-                                    navigate(RouteTypes.ExportPrivateKeyScreen, { account });
-                                }}>
+                            <Row onClick={handleExportPrivateKey}>
                                 <KeyOutlined />
                                 <Text text="Export Private Key" size="sm" />
                             </Row>
@@ -144,30 +153,25 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
 export default function SwitchAccountScreen() {
     const navigate = useNavigate();
     const keyring = useCurrentKeyring();
-    const items = useMemo(() => {
-        const _items: ItemData[] = keyring.accounts.map((v) => {
-            return {
-                key: v.address,
-                account: v
-            };
-        });
-        return _items;
-    }, []);
+
+    const items = useMemo<ItemData[]>(() => {
+        return keyring.accounts.map((acc) => ({
+            key: acc.address,
+            account: acc
+        }));
+    }, [keyring.accounts]);
+
+    // This is okay—`forwardRef` is not a Hook, so no violation here
     const ForwardMyItem = forwardRef(MyItem);
 
     return (
         <Layout>
             <Header
-                onBack={() => {
-                    window.history.go(-1);
-                }}
+                onBack={() => window.history.back()}
                 title="Switch Account"
                 RightComponent={
-                    keyring.type == KEYRING_CLASS.PRIVATE_KEY ? null : (
-                        <Icon
-                            onClick={() => {
-                                navigate(RouteTypes.CreateAccountScreen);
-                            }}>
+                    keyring.type === KEYRING_CLASS.PRIVATE_KEY ? null : (
+                        <Icon onClick={() => navigate(RouteTypes.CreateAccountScreen)}>
                             <PlusCircleOutlined />
                         </Icon>
                     )
@@ -175,7 +179,7 @@ export default function SwitchAccountScreen() {
             />
             <Content>
                 <VirtualList data={items} data-id="list" itemHeight={20} itemKey={(item) => item.key}>
-                    {(item) => <ForwardMyItem account={item.account} autoNav={true} />}
+                    {(item) => <ForwardMyItem account={item.account} autoNav />}
                 </VirtualList>
             </Content>
         </Layout>

@@ -13,6 +13,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 
 import SignPsbt from '../SignPsbt';
 import MultiSignDisclaimerModal from './MultiSignDisclaimerModal';
+import { Presets } from '@/ui/components/Button';
 
 interface Props {
     header?: React.ReactNode;
@@ -129,6 +130,7 @@ export default function MultiSignPsbt({
     if (!handleConfirm) {
         handleConfirm = () => {
             resolveApproval({
+                // @ts-expect-error ?????????? thx unisat
                 psbtHexs: txInfo.psbtHexs
             });
         };
@@ -251,7 +253,7 @@ export default function MultiSignPsbt({
                             text = 'Rejected';
                         }
 
-                        let preset = 'primary';
+                        let preset: Presets = 'primary';
                         if (signState === SignState.SUCCESS) {
                             preset = 'approval';
                         } else if (signState === SignState.FAILED) {
@@ -266,7 +268,7 @@ export default function MultiSignPsbt({
                                     </Column>
                                     <Column>
                                         <Button
-                                            preset={preset as any}
+                                            preset={preset}
                                             textStyle={{ fontSize: fontSizes.sm }}
                                             text={text}
                                             onClick={() => {

@@ -1,11 +1,9 @@
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 import { Action, AirdropParameters, Features } from '@/shared/interfaces/RawTxParameters';
 import { Account, OPTokenInfo } from '@/shared/types';
 import { Button, Content, Header, Layout, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { Address, AddressMap } from '@btc-vision/transaction';
 
 import { useLocationState } from '@/ui/utils';
@@ -17,10 +15,7 @@ interface ItemData {
 }
 
 export default function WrapBitcoinOpnet() {
-    const OpNetBalanceState = useLocationState<OPTokenInfo>();
-
-    const account = useCurrentAccount();
-    const OpNetBalance = OpNetBalanceState;
+    const OpNetBalance = useLocationState<OPTokenInfo>();
 
     const navigate = useNavigate();
     const [disabled, setDisabled] = useState(true);
@@ -31,16 +26,6 @@ export default function WrapBitcoinOpnet() {
     const tools = useTools();
 
     const [feeRate, setFeeRate] = useState(5);
-    const keyring = useCurrentKeyring();
-    const items = useMemo(() => {
-        const _items: ItemData[] = keyring.accounts.map((v) => {
-            return {
-                key: v.address,
-                account: v
-            };
-        });
-        return _items;
-    }, []);
 
     useEffect(() => {
         setError('');

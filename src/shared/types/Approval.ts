@@ -38,7 +38,7 @@ export type StandardApprovalData<T extends ApprovalType = ApprovalType> = {
     params: ApprovalComponentParams<T>;
     origin?: string;
     approvalType?: string;
-}
+};
 
 // APPROVAL COMPONENTS(TYPES) ENUM
 export enum ApprovalType {
@@ -49,20 +49,27 @@ export enum ApprovalType {
     SignText = 'SignText',
     SwitchChain = 'SwitchChain',
     SwitchNetwork = 'SwitchNetwork',
-    SignDeployment = 'SignDeployment',
+    SignDeployment = 'SignDeployment'
 }
 
 // APPROVAL COMPONENT PARAMS MAPPING
-export type ApprovalComponentParams<T extends ApprovalType> = 
-    T extends ApprovalType.Connect ? ConnectApprovalParams :
-    T extends ApprovalType.SignData ? SignDataApprovalParams :
-    T extends ApprovalType.SignInteraction ? SignInteractionApprovalParams :
-    T extends ApprovalType.SignPsbt ? SignPsbtApprovalParams :
-    T extends ApprovalType.SignText ? SignTextApprovalParams :
-    T extends ApprovalType.SwitchChain ? SwitchChainApprovalParams :
-    T extends ApprovalType.SwitchNetwork ? SwitchNetworkApprovalParams :
-    T extends ApprovalType.SignDeployment ? SignDeploymentApprovalParams :
-    never;
+export type ApprovalComponentParams<T extends ApprovalType> = T extends ApprovalType.Connect
+    ? ConnectApprovalParams
+    : T extends ApprovalType.SignData
+      ? SignDataApprovalParams
+      : T extends ApprovalType.SignInteraction
+        ? SignInteractionApprovalParams
+        : T extends ApprovalType.SignPsbt
+          ? SignPsbtApprovalParams
+          : T extends ApprovalType.SignText
+            ? SignTextApprovalParams
+            : T extends ApprovalType.SwitchChain
+              ? SwitchChainApprovalParams
+              : T extends ApprovalType.SwitchNetwork
+                ? SwitchNetworkApprovalParams
+                : T extends ApprovalType.SignDeployment
+                  ? SignDeploymentApprovalParams
+                  : never;
 
 // UNION OF APPROVAL RESPONSES
 export type ApprovalResponse =
@@ -75,7 +82,6 @@ export type ApprovalResponse =
     | SignDeploymentApprovalResponse
     | SignTextApprovalResponse
     | SignDataApprovalResponse;
-
 
 // APPROVAL RESPONSES
 export interface BaseApprovalResponse {
@@ -105,7 +111,6 @@ export interface SignTextApprovalResponse extends BaseApprovalResponse {
 
 export type SignDataApprovalResponse = BaseApprovalResponse | undefined;
 
-
 // APPROVAL REQUEST PARAMS
 export interface ConnectApprovalParams {
     method: string;
@@ -128,7 +133,6 @@ export interface SignInteractionApprovalParams {
 }
 
 export interface SignPsbtApprovalParams {
-    method: string;
     data: {
         type: TxType;
         psbtHex: string;

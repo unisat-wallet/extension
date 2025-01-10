@@ -7,8 +7,7 @@ import { useBTCUnit } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { satoshisToAmount } from '@/ui/utils';
 import { useApproval } from '@/ui/utils/hooks';
-import { PsbtTxOutput } from '@btc-vision/bitcoin';
-
+import { PsbtOutputExtended } from '@btc-vision/bitcoin';
 
 export interface Props {
     params: SignDeploymentApprovalParams;
@@ -51,7 +50,7 @@ export default function SignDeployment(props: Props) {
     const optionalOutputs: {
         address: string;
         value: number;
-    }[] = (data.optionalOutputs ?? []).map((output: PsbtTxOutput) => ({
+    }[] = (data.optionalOutputs ?? []).map((output: PsbtOutputExtended) => ({
         address: 'address' in output && output.address ? output.address : '',
         value: output.value
     }));
@@ -114,10 +113,10 @@ export default function SignDeployment(props: Props) {
                                                 index === 0
                                                     ? {}
                                                     : {
-                                                        borderColor: colors.border,
-                                                        borderTopWidth: 1,
-                                                        paddingTop: 10
-                                                    }
+                                                          borderColor: colors.border,
+                                                          borderTopWidth: 1,
+                                                          paddingTop: 10
+                                                      }
                                             }>
                                             <Column>
                                                 <Row justifyBetween>

@@ -7,6 +7,7 @@ import { useWallet, useWalletRequest } from '@/ui/utils';
 import { getPasswordStrengthWord, MIN_PASSWORD_LENGTH } from '@/ui/utils/password-utils';
 
 import { RouteTypes, useNavigate } from '../MainRoute';
+import { WalletError } from '@/shared/types/Error';
 
 interface LocationState {
     isNewAccount?: boolean;
@@ -26,7 +27,7 @@ export default function CreatePasswordScreen() {
 
     if (Array.from(params).length > 0) {
         params.forEach((value, key) => {
-            state[key as keyof LocationState] = (value === 'true');
+            state[key as keyof LocationState] = value === 'true';
         });
     }
 
@@ -46,8 +47,8 @@ export default function CreatePasswordScreen() {
                 navigate(RouteTypes.CreateHDWalletScreen, { isImport: true, fromUnlock: true });
             }
         },
-        onError(err) {
-            tools.toastError(err);
+        onError(err: WalletError) {
+            tools.toastError(typeof err === 'string' ? err : err.message);
         }
     });
 

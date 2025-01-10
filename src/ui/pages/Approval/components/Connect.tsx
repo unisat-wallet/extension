@@ -19,7 +19,7 @@ interface MyItemProps {
     onClick?: () => void;
 }
 
-export function MyItem({ account, selected, onClick }: MyItemProps, ref) {
+export function MyItem({ account, selected, onClick }: MyItemProps) {
     if (!account) {
         return <div />;
     }

@@ -13,7 +13,7 @@ import { RBFBar } from '@/ui/components/RBFBar';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { useLocationState, useWallet } from '@/ui/utils';
-import { Wallet } from '@btc-vision/transaction';
+import { AddressMap, Wallet } from '@btc-vision/transaction';
 
 import { RouteTypes, useNavigate } from '../MainRoute';
 
@@ -33,7 +33,7 @@ export default function Mint() {
     const wallet = useWallet();
     const [maxSupply, setMaxSupply] = useState<bigint>(0n);
 
-    const [addresses, setAddresses] = useState<{ pubKey: string; value: string }[]>([]);
+    const [addresses, setAddresses] = useState<AddressMap<bigint> | undefined>(undefined);
 
     const getWallet = async () => {
         const currentWalletAddress = await wallet.getCurrentAccount();
@@ -59,16 +59,13 @@ export default function Mint() {
         setError('');
 
         void (async () => {
-            const newAddresses: { pubKey: string; value: string }[] = [];
             const wallet = await getWallet();
             const value = expandToDecimals(inputAmount, props.divisibility);
 
-            newAddresses.push({
-                pubKey: wallet.address.toHex(),
-                value: value.toString()
-            });
+            const map = new AddressMap<bigint>();
+            map.set(wallet.address, value);
 
-            setAddresses(newAddresses);
+            setAddresses(map);
             setDisabled(false);
         })();
     }, [inputAmount]);
@@ -190,6 +187,10 @@ export default function Mint() {
                     preset="primary"
                     text="Next"
                     onClick={() => {
+                        if (!addresses) {
+                            return;
+                        }
+
                         const txInfo: AirdropParameters = {
                             contractAddress: props.address,
                             amounts: addresses,

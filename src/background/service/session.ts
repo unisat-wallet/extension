@@ -49,12 +49,9 @@ const deleteSession = (id: number) => {
 
 function broadcastEvent<T extends SessionEvent>(ev: T, data?: SessionEventPayload<T>, origin?: string) {
     let sessions: Session[] = [];
-    sessionMap.forEach((session, key) => {
+    sessionMap.forEach((session) => {
         if (permissionService.hasPermission(session.origin)) {
-            sessions.push({
-                key,
-                ...session
-            });
+            sessions.push(session);
         }
     });
 

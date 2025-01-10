@@ -187,6 +187,7 @@ export function Step2({
             // TODO (typing): HDPrivateKey class is extended later and isValidPath does not exist in the type definitions
             // given in https://github.com/DefinitelyTyped/DefinitelyTyped/blob/master/types/bitcore-lib/index.d.ts. That's why
             // eslint is disabled here.
+            // @ts-expect-error DOES EXIST JUST BAD TYPING.
             // eslint-disable-next-line @typescript-eslint/no-unsafe-call
             const isValid = bitcore.HDPrivateKey.isValidPath(text) as boolean;
             if (!isValid) {

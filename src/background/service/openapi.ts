@@ -88,7 +88,7 @@ export class OpenApiService {
         if (!res) throw new Error('Network error, no response');
         if (res.status !== 200) throw new Error(`Network error with status: ${res.status}`);
         try {
-            jsonRes = await res.json() as ApiResponse<T>;
+            jsonRes = (await res.json()) as ApiResponse<T>;
         } catch (e) {
             throw new Error('Network error, json parse error');
         }
@@ -100,7 +100,13 @@ export class OpenApiService {
         return jsonRes.data;
     };
 
-    httpGet = async <T>(route: string, params: object, endpoint?: string): Promise<T> => {
+    httpGet = async <T>(
+        route: string,
+        params: {
+            [key: string]: string | number | boolean | undefined;
+        },
+        endpoint?: string
+    ): Promise<T> => {
         if (!endpoint) {
             endpoint = this.endpoint;
         }
@@ -175,9 +181,7 @@ export class OpenApiService {
         });
     }
 
-    async findGroupAssets(
-        groups: { type: number; address_arr: string[] }[]
-    ): Promise<GroupAsset[]> {
+    async findGroupAssets(groups: { type: number; address_arr: string[] }[]): Promise<GroupAsset[]> {
         return this.httpPost<GroupAsset[]>('/v5/address/find-group-assets', {
             groups
         });
@@ -259,7 +263,11 @@ export class OpenApiService {
         });
     }
 
-    async getAddressRecentHistory(params: { address: string; start: number; limit: number }): Promise<AddressRecentHistory> {
+    async getAddressRecentHistory(params: {
+        address: string;
+        start: number;
+        limit: number;
+    }): Promise<AddressRecentHistory> {
         return this.httpGet<AddressRecentHistory>('/v5/address/history', params);
     }
 }

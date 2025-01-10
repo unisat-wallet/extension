@@ -1346,6 +1346,7 @@ export class WalletController extends BaseController {
         const shouldWarnFeeRate = feeRate < recommendedFeeRate;
 
         return {
+            risks: [],
             inputs,
             outputs,
             fee,

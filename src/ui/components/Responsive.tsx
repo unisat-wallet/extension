@@ -1,6 +1,7 @@
 import { useExtensionIsInTab } from '../features/browser/tabs';
+import { ReactNode } from 'react';
 
-export const AppDimensions = (props) => {
+export const AppDimensions = (props: { children: ReactNode }) => {
     const extensionIsInTab = useExtensionIsInTab();
 
     return (

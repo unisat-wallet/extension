@@ -13,12 +13,15 @@ interface UiTypeCheck {
     isTab: boolean;
     isNotification: boolean;
     isPop: boolean;
+
+    [key: string]: boolean;
 }
 
 export const getUiType = (): UiTypeCheck => {
     const { pathname } = window.location;
     return Object.entries(UI_TYPE).reduce<UiTypeCheck>(
         (m, [key, value]) => {
+            const a = key;
             m[`is${key}`] = pathname === `/${value}.html`;
 
             return m;
@@ -116,55 +119,45 @@ export async function sleep(timeSec: number) {
 }
 
 export function isValidAddress(address: string) {
-    if (!address) return false;
-    return true;
+    return !!address;
 }
 
-export const copyToClipboard = (textToCopy: string | number) => {
-    if (navigator.clipboard && window.isSecureContext) {
-        return navigator.clipboard.writeText(textToCopy.toString());
-    } else {
-        const textArea = document.createElement('textarea');
-        textArea.value = textToCopy.toString();
-        textArea.style.position = 'absolute';
-        textArea.style.opacity = '0';
-        textArea.style.left = '-999999px';
-        textArea.style.top = '-999999px';
-        document.body.appendChild(textArea);
-        textArea.focus();
-        textArea.select();
-        return new Promise<void>((res, rej) => {
-            if (document.execCommand('copy')) {
-                res();
-            } else {
-                rej(new Error('Failed to copy text to clipboard'));
-            }  
-            textArea.remove();
-        });
-    }
-};
+export const copyToClipboard = async (textToCopy: string | number): Promise<void> => {
+    const text = textToCopy.toString();
 
-export function formatDate(date: Date, fmt = 'yyyy-MM-dd hh:mm:ss') {
-    const o = {
-        'M+': date.getMonth() + 1,
-        'd+': date.getDate(),
-        'h+': date.getHours(),
-        'm+': date.getMinutes(),
-        's+': date.getSeconds(),
-        'q+': Math.floor((date.getMonth() + 3) / 3),
-        S: date.getMilliseconds()
-    };
-    if (/(y+)/.test(fmt)) fmt = fmt.replace(RegExp.$1, `${date.getFullYear()}`.substr(4 - RegExp.$1.length));
-    Object.entries(o).forEach(([k, v]) => {
-        if (new RegExp(`(${k})`).test(fmt)) {
-            fmt = fmt.replace(
-                RegExp.$1,
-                RegExp.$1.length === 1 ? String(v) : `00${String(v)}`.substr(String(v).length)
-            );
+    // If the modern API is available and we are in a secure context
+    if (navigator.clipboard && window.isSecureContext) {
+        // Use the asynchronous clipboard API
+        return navigator.clipboard.writeText(text);
+    }
+
+    // Fallback if Clipboard API is not available or we are not in a secure context
+    const textArea = document.createElement('textarea');
+    textArea.value = text;
+
+    // Make textarea invisible and move it off-screen
+    textArea.style.position = 'absolute';
+    textArea.style.opacity = '0';
+    textArea.style.left = '-999999px';
+    textArea.style.top = '-999999px';
+
+    document.body.appendChild(textArea);
+    textArea.focus();
+    textArea.select();
+
+    return new Promise<void>((resolve, reject) => {
+        // Deprecated path: still used as fallback
+        // eslint-disable-next-line @typescript-eslint/no-deprecated
+        const successful = document.execCommand('copy');
+        textArea.remove();
+
+        if (successful) {
+            resolve();
+        } else {
+            reject(new Error('Failed to copy text to clipboard'));
         }
     });
-    return fmt;
-}
+};
 
 export function satoshisToAmount(val: number) {
     const num = new BigNumber(val);

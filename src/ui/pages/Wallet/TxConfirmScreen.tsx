@@ -6,6 +6,7 @@ import { useLocationState } from '@/ui/utils';
 import { isWalletError } from '@/shared/utils/errors';
 import { SignPsbt } from '../Approval/components';
 import { RouteTypes, useNavigate } from '../MainRoute';
+import { SignPsbtApprovalParams } from '@/shared/types/Approval';
 
 interface LocationState {
     rawTxInfo: RawTxInfo;
@@ -15,6 +16,11 @@ export default function TxConfirmScreen() {
     const { rawTxInfo } = useLocationState<LocationState>();
     const navigate = useNavigate();
     const pushBitcoinTx = usePushBitcoinTxCallback();
+
+    const params: SignPsbtApprovalParams = {
+        data: { psbtHex: rawTxInfo.psbtHex, type: TxType.SEND_BITCOIN, rawTxInfo }
+    };
+
     return (
         <SignPsbt
             header={
@@ -24,7 +30,7 @@ export default function TxConfirmScreen() {
                     }}
                 />
             }
-            params={{ data: { psbtHex: rawTxInfo.psbtHex, type: TxType.SEND_BITCOIN, rawTxInfo } }}
+            params={params}
             handleCancel={() => {
                 window.history.go(-1);
             }}

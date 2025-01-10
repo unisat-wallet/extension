@@ -16,8 +16,8 @@ export default function ChainUpdater() {
     const selfRef = useRef({
         loading: false
     });
-    const self = selfRef.current;
 
+    const self = selfRef.current;
     const reloadChainType = useCallback(async () => {
         if (self.loading) return;
         self.loading = true;
@@ -32,11 +32,16 @@ export default function ChainUpdater() {
         } finally {
             self.loading = false;
         }
-    }, [currentChainType, dispatch, wallet]);
+    }, [currentChainType, dispatch, self, wallet]);
 
     useEffect(() => {
-        const chainChangeHandler = (newChainInfo: SessionEventPayload<SessionEvent.chainChanged>) => {
-            dispatch(settingsActions.updateSettings({ chainType: newChainInfo.enum }));
+        const chainChangeHandler = (newChainInfo: unknown) => {
+            const params = newChainInfo as SessionEventPayload<SessionEvent.chainChanged>;
+            if (!params || !params.enum) return;
+
+            if (typeof params.enum === 'string') {
+                dispatch(settingsActions.updateSettings({ chainType: params.enum }));
+            }
         };
 
         eventBus.addEventListener('chainChanged', chainChangeHandler);

@@ -33,7 +33,7 @@ interface MyItemProps {
     autoNav?: boolean;
 }
 
-export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
+export function MyItem({ keyring, autoNav }: MyItemProps) {
     const navigate = useNavigate();
     const currentKeyring = useCurrentKeyring();
     const selected = currentKeyring.index === keyring?.index;

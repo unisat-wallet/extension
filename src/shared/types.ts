@@ -224,6 +224,7 @@ export interface DecodedPsbt {
         address: string;
         value: number;
     }[];
+    risks: Risk[];
     fee: number;
     feeRate: number;
     transactionSize: number;

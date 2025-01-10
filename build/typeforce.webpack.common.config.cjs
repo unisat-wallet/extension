@@ -1,8 +1,8 @@
+// webpack.common.config.cjs
 const webpack = require('webpack');
 const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TSConfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const ESLintWebpackPlugin = require('eslint-webpack-plugin');
-const ForkTsCheckerWebpackPlugin = require('fork-ts-checker-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 const path = require('path');
 const fs = require('fs');
@@ -20,48 +20,19 @@ const lessModuleRegex = /\.module\.less$/;
 const stylusRegex = /\.styl$/;
 const stylusModuleRegex = /\.module\.styl$/;
 
-const config = (env) => {
-    // Determine dev/prod
-    const isEnvProduction = env.mode === 'production';
-    const isEnvDevelopment = !isEnvProduction;
+// If you want to define a single rule for both TS & JS with ts-loader, you can,
+// but typically we handle TS with ts-loader and JS with Babel.
+// Here is a helper to load styles:
+function getStyleLoaders(isEnvProduction, isEnvDevelopment, paths, useTailwind) {
+    const shouldUseSourceMap = false; // customize as needed
 
-    const version = env.version;
-    const paths = getBrowserPaths(env.browser);
-    const manifest = env.manifest;
-    const channel = env.channel;
-
-    // Check if Tailwind config exists
-    const useTailwind = fs.existsSync(path.join(paths.appPath, 'tailwind.config.js'));
-
-    // You can tweak this if you actually want source maps in production
-    const shouldUseSourceMap = false;
-
-    const imageInlineSizeLimit = parseInt(process.env.IMAGE_INLINE_SIZE_LIMIT || '10000');
-    // You can enable React Refresh only in dev if you like:
-    const shouldUseReactRefresh = false;
-
-    // Detect new JSX transform
-    const hasJsxRuntime = (() => {
-        if (process.env.DISABLE_NEW_JSX_TRANSFORM === 'true') {
-            return false;
-        }
-        try {
-            require.resolve('react/jsx-runtime');
-            return true;
-        } catch (e) {
-            return false;
-        }
-    })();
-
-    // Common function to set up style loaders (CSS, PostCSS, etc.),
-    // plus an optional pre-processor (less-loader, sass-loader, stylus-loader).
-    const getStyleLoaders = (cssOptions, preProcessor) => {
+    return (cssOptions, preProcessor) => {
         const loaders = [
             // In dev, inject styles via <style> tags; in prod, extract to .css files.
             isEnvDevelopment && require.resolve('style-loader'),
             isEnvProduction && {
                 loader: MiniCssExtractPlugin.loader,
-                options: paths.publicUrlOrPath.startsWith('.') ? { publicPath: '../../' } : {}
+                options: paths.publicUrlOrPath?.startsWith('.') ? { publicPath: '../../' } : {}
             },
             {
                 loader: require.resolve('css-loader'),
@@ -71,8 +42,6 @@ const config = (env) => {
                 loader: require.resolve('postcss-loader'),
                 options: {
                     postcssOptions: {
-                        // If you have a postcss.config.js, you can reference it,
-                        // but here we configure plugins inline:
                         plugins: !useTailwind
                             ? [
                                 require('postcss-flexbugs-fixes'),
@@ -80,7 +49,6 @@ const config = (env) => {
                                     autoprefixer: { flexbox: 'no-2009' },
                                     stage: 3
                                 }),
-                                // Adds PostCSS Normalize as the reset css with default options
                                 require('postcss-normalize')
                             ]
                             : [
@@ -101,7 +69,6 @@ const config = (env) => {
             let preProcessorOptions = { sourceMap: true };
 
             if (preProcessor === 'less-loader') {
-                // Custom theme variables if needed
                 preProcessorOptions = {
                     sourceMap: true,
                     lessOptions: {
@@ -159,6 +126,40 @@ const config = (env) => {
 
         return loaders;
     };
+}
+
+const config = (env) => {
+    // Determine dev/prod
+    const isEnvProduction = env.mode === 'production';
+    const isEnvDevelopment = !isEnvProduction;
+
+    const version = env.version;
+    const paths = getBrowserPaths(env.browser);
+    const manifest = env.manifest;
+    const channel = env.channel;
+
+    // Check if Tailwind config exists
+    const useTailwind = fs.existsSync(path.join(paths.appPath, 'tailwind.config.js'));
+
+    // If you actually want source maps in production, set to true:
+    const shouldUseSourceMap = false;
+    // React Refresh is optional for dev:
+    const shouldUseReactRefresh = false;
+
+    // Detect new JSX transform
+    const hasJsxRuntime = (() => {
+        if (process.env.DISABLE_NEW_JSX_TRANSFORM === 'true') {
+            return false;
+        }
+        try {
+            require.resolve('react/jsx-runtime');
+            return true;
+        } catch {
+            return false;
+        }
+    })();
+
+    const makeStyleLoaders = getStyleLoaders(isEnvProduction, isEnvDevelopment, paths, useTailwind);
 
     const finalConfig = {
         entry: {
@@ -167,15 +168,15 @@ const config = (env) => {
             pageProvider: paths.rootResolve('src/content-script/pageProvider/index.ts'),
             ui: paths.rootResolve('src/ui/index.tsx')
         },
+
         output: {
             path: paths.dist,
             filename: '[name].js',
             publicPath: '/',
-            // Use 'self' for better cross-context compatibility
             globalObject: 'self',
-            // ES Module output (for Manifest V3)
             environment: { module: true, dynamicImport: false }
         },
+
         module: {
             rules: [
                 // Optionally handle node_modules packages that contain sourcemaps
@@ -187,13 +188,14 @@ const config = (env) => {
                 },
                 {
                     oneOf: [
+                        // Images
                         {
                             test: [/\.avif$/],
                             type: 'asset',
                             mimetype: 'image/avif',
                             parser: {
                                 dataUrlCondition: {
-                                    maxSize: imageInlineSizeLimit
+                                    maxSize: parseInt(process.env.IMAGE_INLINE_SIZE_LIMIT || '10000')
                                 }
                             }
                         },
@@ -202,22 +204,18 @@ const config = (env) => {
                             type: 'asset',
                             parser: {
                                 dataUrlCondition: {
-                                    maxSize: imageInlineSizeLimit
+                                    maxSize: parseInt(process.env.IMAGE_INLINE_SIZE_LIMIT || '10000')
                                 }
                             }
                         },
-                        // Modern approach for SVG:
-                        // - Use asset/resource for the final file
-                        // - Also run @svgr/webpack for React components
+                        // Modern approach for SVG w/ @svgr
                         {
                             test: /\.svg$/,
                             type: 'asset/resource',
                             generator: {
                                 filename: 'static/media/[name].[hash][ext]'
                             },
-                            issuer: {
-                                and: [/\.(ts|tsx|js|jsx|md|mdx)$/]
-                            },
+                            issuer: { and: [/\.(ts|tsx|js|jsx|md|mdx)$/] },
                             use: [
                                 {
                                     loader: require.resolve('@svgr/webpack'),
@@ -232,6 +230,7 @@ const config = (env) => {
                             ]
                         },
 
+                        // JS/JSX with Babel only (no TS):
                         {
                             test: /\.(js|jsx)$/,
                             include: paths.appSrc,
@@ -272,7 +271,7 @@ const config = (env) => {
                                     options: {
                                         // Setting `transpileOnly: false` does full type-checking.
                                         // If you want faster rebuilds & use separate type-checker plugin, set to true.
-                                        transpileOnly: true
+                                        transpileOnly: false
                                     }
                                 },
                                 // Then optionally run the output JS through Babel for further transforms
@@ -301,57 +300,11 @@ const config = (env) => {
                             ]
                         },
 
-                        // Process application JS/TS with Babel
-                        /*{
-                            test: /\.(js|mjs|jsx|ts|tsx)$/,
-                            include: paths.appSrc,
-                            loader: require.resolve('babel-loader'),
-                            options: {
-                                customize: require.resolve('babel-preset-react-app/webpack-overrides'),
-                                presets: [
-                                    [
-                                        require.resolve('babel-preset-react-app'),
-                                        {
-                                            runtime: hasJsxRuntime ? 'automatic' : 'classic'
-                                        }
-                                    ]
-                                ],
-                                plugins: [
-                                    isEnvDevelopment &&
-                                    shouldUseReactRefresh &&
-                                    require.resolve('react-refresh/babel')
-                                ].filter(Boolean),
-                                cacheDirectory: true,
-                                cacheCompression: false,
-                                compact: isEnvProduction
-                            }
-                        },*/
-                        // Process any JS outside of the app with Babel
-                        {
-                            test: /\.(js|mjs)$/,
-                            exclude: /@babel(?:\/|\\{1,2})runtime/,
-                            loader: require.resolve('babel-loader'),
-                            options: {
-                                babelrc: false,
-                                configFile: false,
-                                compact: false,
-                                presets: [
-                                    [
-                                        require.resolve('babel-preset-react-app/dependencies'),
-                                        { helpers: true }
-                                    ]
-                                ],
-                                cacheDirectory: true,
-                                cacheCompression: false,
-                                sourceMaps: shouldUseSourceMap,
-                                inputSourceMap: shouldUseSourceMap
-                            }
-                        },
-                        // CSS (global)
+                        // Global CSS
                         {
                             test: cssRegex,
                             exclude: cssModuleRegex,
-                            use: getStyleLoaders(
+                            use: makeStyleLoaders(
                                 {
                                     importLoaders: 1,
                                     sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment,
@@ -360,10 +313,11 @@ const config = (env) => {
                             ),
                             sideEffects: true
                         },
+
                         // CSS Modules
                         {
                             test: cssModuleRegex,
-                            use: getStyleLoaders(
+                            use: makeStyleLoaders(
                                 {
                                     importLoaders: 1,
                                     sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment,
@@ -374,11 +328,12 @@ const config = (env) => {
                                 }
                             )
                         },
+
                         // SASS (global)
                         {
                             test: sassRegex,
                             exclude: sassModuleRegex,
-                            use: getStyleLoaders(
+                            use: makeStyleLoaders(
                                 {
                                     importLoaders: 3,
                                     sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment,
@@ -388,10 +343,11 @@ const config = (env) => {
                             ),
                             sideEffects: true
                         },
+
                         // SASS Modules
                         {
                             test: sassModuleRegex,
-                            use: getStyleLoaders(
+                            use: makeStyleLoaders(
                                 {
                                     importLoaders: 3,
                                     sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment,
@@ -403,11 +359,12 @@ const config = (env) => {
                                 'sass-loader'
                             )
                         },
+
                         // Less (global)
                         {
                             test: lessRegex,
                             exclude: lessModuleRegex,
-                            use: getStyleLoaders(
+                            use: makeStyleLoaders(
                                 {
                                     importLoaders: 3,
                                     sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment,
@@ -417,10 +374,11 @@ const config = (env) => {
                             ),
                             sideEffects: true
                         },
+
                         // Less Modules
                         {
                             test: lessModuleRegex,
-                            use: getStyleLoaders(
+                            use: makeStyleLoaders(
                                 {
                                     importLoaders: 3,
                                     sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment,
@@ -432,11 +390,12 @@ const config = (env) => {
                                 'less-loader'
                             )
                         },
+
                         // Stylus (global)
                         {
                             test: stylusRegex,
                             exclude: stylusModuleRegex,
-                            use: getStyleLoaders(
+                            use: makeStyleLoaders(
                                 {
                                     importLoaders: 3,
                                     sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment,
@@ -446,10 +405,11 @@ const config = (env) => {
                             ),
                             sideEffects: true
                         },
+
                         // Stylus Modules
                         {
                             test: stylusModuleRegex,
-                            use: getStyleLoaders(
+                            use: makeStyleLoaders(
                                 {
                                     importLoaders: 3,
                                     sourceMap: isEnvProduction ? shouldUseSourceMap : isEnvDevelopment,
@@ -461,11 +421,13 @@ const config = (env) => {
                                 'stylus-loader'
                             )
                         },
-                        // Fallback resource loader
+
+                        // Fallback for everything else
                         {
                             exclude: [/^$/, /\.(js|mjs|jsx|ts|tsx)$/, /\.html$/, /\.json$/],
                             type: 'asset/resource'
                         },
+
                         // WASM Babel config for specific deps
                         {
                             test: /\.m?js$/,
@@ -485,38 +447,16 @@ const config = (env) => {
                 }
             ].filter(Boolean)
         },
-        watchOptions: {
-            // for some systems, watching many files can result in a lot of CPU or memory usage
-            // https://webpack.js.org/configuration/watch/#watchoptionsignored
-            // don't use this pattern, if you have a monorepo with linked packages
-            ignored: /node_modules/,
-        },
+
         plugins: [
+            // ESLint Plugin with failOnError: true so lint errors break the build
             new ESLintWebpackPlugin({
                 extensions: ['ts', 'tsx', 'js', 'jsx'],
                 context: path.resolve(__dirname, '../src'),
                 overrideConfigFile: path.resolve(__dirname, '../eslint.config.cjs'),
-                failOnError: false,       // <--- this will fail the build on ESLint errors
-                failOnWarning: false,    // or true, if you want warnings to break the build
+                failOnError: true
             }),
-            new ForkTsCheckerWebpackPlugin({
-                async: true,
-                issue: {
-                    exclude: [
-                        { file: '**/node_modules/@btc-vision/transaction/**' }
-                    ]
-                },
-                typescript: {
-                    memoryLimit: 4096,
-                    configFile: './tsconfig.json',
-                    configOverwrite: {
-                        compilerOptions: {
-                            skipLibCheck: true,
-                        },
-                        exclude: ['./node_modules', '/dist/', '/build/', '/public/']
-                    }
-                }
-            }),
+
             new HtmlWebpackPlugin({
                 inject: true,
                 template: paths.notificationHtml,
@@ -535,28 +475,31 @@ const config = (env) => {
                 chunks: ['background'],
                 filename: 'background.html'
             }),
+
             new webpack.ProvidePlugin({
                 Buffer: ['buffer', 'Buffer'],
                 process: 'process',
                 dayjs: 'dayjs'
             }),
+
             new webpack.DefinePlugin({
                 'process.env.version': JSON.stringify(`Version: ${version}`),
                 'process.env.release': JSON.stringify(version),
                 'process.env.manifest': JSON.stringify(manifest),
                 'process.env.channel': JSON.stringify(channel)
             }),
-            // Extracts CSS in production
+
             new MiniCssExtractPlugin({
                 filename: 'static/css/[name].css',
                 chunkFilename: 'static/css/[name].chunk.css'
             }),
+
             new WasmModuleWebpackPlugin.WebpackPlugin()
         ],
+
         resolve: {
             alias: {
-                // Example: re-map 'moment' to 'dayjs'
-                moment: require.resolve('dayjs')
+                moment: require.resolve('dayjs') // example alias
             },
             plugins: [new TSConfigPathsPlugin()],
             fallback: {
@@ -572,20 +515,21 @@ const config = (env) => {
             },
             extensions: ['.js', '.jsx', '.ts', '.tsx']
         },
+
         stats: 'minimal',
-        // If you want to re-enable code splitting, do it here:
-        // optimization: { ... }
+
         experiments: {
             asyncWebAssembly: true,
             topLevelAwait: true,
             outputModule: true
         },
+
         target: 'web'
     };
 
     // Insert a "wasm" rule at the top of the oneOf array
     finalConfig.module.rules = finalConfig.module.rules.map((rule) => {
-        if (rule.oneOf instanceof Array) {
+        if (Array.isArray(rule.oneOf)) {
             return {
                 ...rule,
                 oneOf: [

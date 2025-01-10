@@ -1,4 +1,5 @@
 import { OPTokenInfo } from '@/shared/types';
+import { AddressMap } from '@btc-vision/transaction';
 
 export enum Features {
     rbf = 'rbf',
@@ -38,7 +39,7 @@ export interface TransferParameters extends BaseRawTxInfo<Action.Transfer> {
 
 export interface AirdropParameters extends BaseRawTxInfo<Action.Airdrop> {
     readonly contractAddress: string;
-    readonly amounts: { pubKey: string; value: string }[];
+    readonly amounts: AddressMap<bigint>;
 }
 
 export interface SendBitcoinParameters extends BaseRawTxInfo<Action.SendBitcoin> {

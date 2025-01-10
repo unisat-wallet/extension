@@ -1,4 +1,3 @@
- 
 import { useEffect, useState } from 'react';
 
 import { colors } from '@/ui/theme/colors';
@@ -18,7 +17,7 @@ interface TabBarProps {
     defaultActiveKey?: string | number;
     activeKey?: string | number;
     items: TabProps[];
-    onTabClick: (string) => void;
+    onTabClick: (string: string | number | undefined) => void;
     progressEnabled?: boolean;
     preset?: 'number-page' | 'default' | 'style1' | 'style2';
 }
@@ -33,7 +32,7 @@ export function TabBar(props: TabBarProps) {
         const curIndex = items.findIndex((v) => v.key === tabKey);
         setProgress(curIndex);
         onTabClick(tabKey);
-    }, [tabKey]);
+    }, [items, onTabClick, tabKey]);
 
     useEffect(() => {
         if (activeKey !== tabKey) {
@@ -42,14 +41,13 @@ export function TabBar(props: TabBarProps) {
             const curIndex = items.findIndex((v) => v.key === activeKey);
             setProgress(curIndex);
         }
-    }, [activeKey]);
+    }, [activeKey, items, tabKey]);
 
     if (preset == 'number-page') {
         return (
             <Row>
                 {items.map((v, index) => {
-                    const isSelected = v.key === tabKey;
-                    const reach = isSelected; //index <= (tabKey as number);
+                    const reach = v.key === tabKey; //index <= (tabKey as number);
                     return (
                         <Column
                             key={v.key}
