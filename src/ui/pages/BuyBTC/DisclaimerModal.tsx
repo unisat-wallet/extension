@@ -6,6 +6,7 @@ import { Button, Column, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BottomModal } from '@/ui/components/BottomModal';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
+import { useChain } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { useWallet } from '@/ui/utils';
@@ -17,6 +18,8 @@ const disclaimStr = `Please note that you are about to buy Bitcoin through a thi
 export default function DisclaimerModal({ channelType, onClose }: { channelType: PaymentChannelType; onClose: any }) {
   const currentAccount = useCurrentAccount();
   const wallet = useWallet();
+
+  const chain = useChain();
 
   const [understand, setUnderstand] = useState(false);
 
@@ -38,17 +41,19 @@ export default function DisclaimerModal({ channelType, onClose }: { channelType:
 
         <Row fullX style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
 
-        <Column justifyCenter rounded mb="lg" style={{maxHeight:'50vh',overflow:'auto'}}>
+        <Column justifyCenter rounded mb="lg" style={{ maxHeight: '50vh', overflow: 'auto' }}>
           <Text style={{ fontSize: fontSizes.sm, lineHeight: 2 }} text={disclaimStr} />
 
           <Text
             mt="lg"
             style={{ fontSize: fontSizes.sm, lineHeight: 2 }}
-            text={'Risk Warning: Don\'t invest unless you\'re prepared to lose all the money you invest.'}></Text>
+            text={"Risk Warning: Don't invest unless you're prepared to lose all the money you invest."}></Text>
           <Text
             mt="lg"
             style={{ fontSize: fontSizes.sm, lineHeight: 2 }}
-            text={'Additional transaction fees apply when purchasing through third-party platforms. Rates vary by country and payment method. Please review each platform\'s fees before proceeding with transactions.'}></Text>
+            text={
+              "Additional transaction fees apply when purchasing through third-party platforms. Rates vary by country and payment method. Please review each platform's fees before proceeding with transactions."
+            }></Text>
           <Text
             mt="lg"
             style={{ fontSize: fontSizes.sm, lineHeight: 2 }}
@@ -73,7 +78,7 @@ export default function DisclaimerModal({ channelType, onClose }: { channelType:
           onClick={() => {
             tools.showLoading(true);
             wallet
-              .createPaymentUrl(currentAccount.address, channelType)
+              .createBuyCoinPaymentUrl(chain.unit, currentAccount.address, channelType)
               .then((url) => {
                 window.open(url);
               })

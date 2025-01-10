@@ -291,8 +291,6 @@ export interface WalletController {
 
   expireUICachedData(address: string): Promise<void>;
 
-  createPaymentUrl(address: string, channel: string): Promise<string>;
-
   getWalletConfig(): Promise<WalletConfig>;
 
   getSkippedVersion(): Promise<string>;
@@ -385,8 +383,6 @@ export interface WalletController {
     outputValue?: number;
   }): Promise<string>;
 
-  getBuyBtcChannelList(): Promise<BtcChannelItem[]>;
-
   setAutoLockTimeId(timeId: number): Promise<void>;
   getAutoLockTimeId(): Promise<number>;
 
@@ -443,6 +439,9 @@ export interface WalletController {
     toSignInputs: UserToSignInput[]
   ): Promise<{ revealTx: string; toSignInputs: UserToSignInput[] }>;
   transferCAT721Step3(transferId: string, revealTx: string, toSignInputs: UserToSignInput[]): Promise<{ txid: string }>;
+
+  getBuyCoinChannelList(coin: string): Promise<BtcChannelItem[]>;
+  createBuyCoinPaymentUrl(coin: string, address: string, channel: string): Promise<string>;
 }
 
 const WalletContext = createContext<{

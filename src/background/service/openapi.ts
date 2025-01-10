@@ -516,12 +516,20 @@ export class OpenApiService {
     return this.httpPost('/v5/tx/decode2', { psbtHex, website });
   }
 
-  async getBuyBtcChannelList(): Promise<{ channel: string }[]> {
-    return this.httpGet('/v5/buy-btc/channel-list', {});
+  async getBuyCoinChannelList(coin: 'BTC' | 'FB'): Promise<{ channel: string }[]> {
+    if (coin === 'BTC') {
+      return this.httpGet('/v5/buy-btc/channel-list', {});
+    } else {
+      return this.httpGet('/v5/buy-fb/channel-list', {});
+    }
   }
 
-  async createPaymentUrl(address: string, channel: string): Promise<string> {
-    return this.httpPost('/v5/buy-btc/create', { address, channel });
+  async createBuyCoinPaymentUrl(coin: 'BTC' | 'FB', address: string, channel: string): Promise<string> {
+    if (coin === 'BTC') {
+      return this.httpPost('/v5/buy-btc/create', { address, channel });
+    } else {
+      return this.httpPost('/v5/buy-fb/create', { address, channel });
+    }
   }
 
   async checkWebsite(website: string): Promise<{ isScammer: boolean; warning: string }> {

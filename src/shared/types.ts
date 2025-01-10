@@ -95,6 +95,8 @@ export interface Inscription {
     amt: string;
     decimal: string;
   };
+  multipleNFT?: boolean;
+  sameOffset?: boolean;
 }
 
 export interface Atomical {

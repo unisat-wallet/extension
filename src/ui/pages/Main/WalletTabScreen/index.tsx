@@ -361,7 +361,7 @@ export default function WalletTabScreen() {
               onClick={(e) => {
                 setBuyBtcModalVisible(true);
               }}
-              disabled={chainType !== ChainType.BITCOIN_MAINNET}
+              disabled={chainType !== ChainType.BITCOIN_MAINNET && chainType !== ChainType.FRACTAL_BITCOIN_MAINNET}
             />
           </Row>
 

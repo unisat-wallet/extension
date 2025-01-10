@@ -1549,10 +1549,6 @@ export class WalletController extends BaseController {
     return preferenceService.expireUICachedData(address);
   };
 
-  createPaymentUrl = (address: string, channel: string) => {
-    return openapiService.createPaymentUrl(address, channel);
-  };
-
   getWalletConfig = () => {
     return openapiService.getWalletConfig();
   };
@@ -2001,10 +1997,6 @@ export class WalletController extends BaseController {
     return psbt.toHex();
   };
 
-  getBuyBtcChannelList = async () => {
-    return openapiService.getBuyBtcChannelList();
-  };
-
   getAutoLockTimeId = () => {
     return preferenceService.getAutoLockTimeId();
   };
@@ -2178,6 +2170,14 @@ export class WalletController extends BaseController {
     await this.signPsbt(psbt, toSignInputs, false);
     const _res = await openapiService.transferCAT721Step3(transferId, psbt.toBase64());
     return _res;
+  };
+
+  getBuyCoinChannelList = async (coin: 'FB' | 'BTC') => {
+    return openapiService.getBuyCoinChannelList(coin);
+  };
+
+  createBuyCoinPaymentUrl = (coin: 'FB' | 'BTC', address: string, channel: string) => {
+    return openapiService.createBuyCoinPaymentUrl(coin, address, channel);
   };
 }
 
