@@ -1,5 +1,5 @@
 import { getContract, IOP_20Contract, OP_20_ABI } from 'opnet';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 
 import { Action, AirdropParameters, Features } from '@/shared/interfaces/RawTxParameters';
 import { runesUtils } from '@/shared/lib/runes-utils';
@@ -35,7 +35,7 @@ export default function Mint() {
 
     const [addresses, setAddresses] = useState<{ [key: string]: string } | null>(null);
 
-    const getWallet = async () => {
+    const getWallet = useCallback(async () => {
         const currentWalletAddress = await wallet.getCurrentAccount();
         const pubkey = currentWalletAddress.pubkey;
 
@@ -45,7 +45,22 @@ export default function Mint() {
         });
 
         return Wallet.fromWif(wifWallet.wif, Web3API.network);
-    };
+    }, [wallet]);
+
+    const cb = useCallback(
+        async (inputAmount: string, divisibility: number) => {
+            const wallet = await getWallet();
+
+            const map: { [key: string]: string } = {
+                [wallet.address.toHex()]: expandToDecimals(inputAmount, divisibility).toString()
+            };
+
+            setAddresses(map);
+            setDisabled(false);
+            setError('');
+        },
+        [getWallet]
+    );
 
     useEffect(() => {
         setDisabled(true);
@@ -56,19 +71,8 @@ export default function Mint() {
             return;
         }
 
-        setError('');
-
-        void (async () => {
-            const wallet = await getWallet();
-
-            const map: { [key: string]: string } = {
-                [wallet.address.toHex()]: expandToDecimals(inputAmount, props.divisibility).toString()
-            };
-
-            setAddresses(map);
-            setDisabled(false);
-        })();
-    }, [inputAmount]);
+        void cb(inputAmount, props.divisibility);
+    }, [inputAmount, props.divisibility]);
 
     useEffect(() => {
         const setWallet = async () => {

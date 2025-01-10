@@ -439,7 +439,8 @@ export default function TxOpnetConfirmScreen() {
                 await waitForTransaction(secondTransaction.result, setOpenLoading, tools);
 
                 const getChain = await wallet.getChainType();
-                const tokensImported = localStorage.getItem('opnetTokens_' + getChain);
+                const key = `opnetTokens_${getChain}_${currentWalletAddress.pubkey}`;
+                const tokensImported = localStorage.getItem(key);
                 let updatedTokens: string[] = tokensImported ? (JSON.parse(tokensImported) as string[]) : [];
                 if (tokensImported) {
                     updatedTokens = JSON.parse(tokensImported) as string[];
@@ -447,7 +448,7 @@ export default function TxOpnetConfirmScreen() {
 
                 if (!updatedTokens.includes(sendTransact.contractAddress.toString())) {
                     updatedTokens.push(sendTransact.contractAddress.toString());
-                    localStorage.setItem('opnetTokens_' + getChain, JSON.stringify(updatedTokens));
+                    localStorage.setItem(key, JSON.stringify(updatedTokens));
                 }
 
                 tools.toastSuccess(`You have successfully deployed ${sendTransact.contractAddress}`);

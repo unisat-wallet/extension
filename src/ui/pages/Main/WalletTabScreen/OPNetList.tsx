@@ -46,8 +46,7 @@ function pushDefaultTokens(tokens: (StoredToken | string)[], chain: ChainType, n
     const opnetNetwork = getOPNetNetwork(network);
 
     try {
-        const metadata = OPNetMetadata.getAddresses(opnetNetwork, chainId);
-        const newTokenAddress = metadata.moto.p2tr(Web3API.network);
+        const newTokenAddress = OPNetMetadata.getAddresses(opnetNetwork, chainId).moto.p2tr(Web3API.network);
 
         const alreadyExists = tokens.some((token) => {
             if (typeof token === 'string') return token === newTokenAddress;
@@ -96,7 +95,8 @@ export function OPNetList() {
     const skipBalancesRef = useRef(false);
 
     /**
-     * Retrieves the tokens from localStorage once and sets `tokens` + `total`.
+     * Retrieves the tokens from localStorage once and sets tokens + total.
+     * Uses an account-specific storage key (so each account has its own list).
      */
     const fetchTokens = useCallback(async () => {
         try {
@@ -104,7 +104,11 @@ export function OPNetList() {
             const chain = await wallet.getChainType();
             Web3API.setNetwork(chain);
 
-            const tokensImported = localStorage.getItem(`opnetTokens_${chain}`);
+            // Account-specific key (old code used `opnetTokens_${chain}` only)
+            const accountAddr = currentAccount.pubkey;
+            const storageKey = `opnetTokens_${chain}_${accountAddr}`;
+
+            const tokensImported = localStorage.getItem(storageKey);
             const parsedTokens: (StoredToken | string)[] = tokensImported
                 ? (JSON.parse(tokensImported) as (StoredToken | string)[])
                 : [];
@@ -114,7 +118,7 @@ export function OPNetList() {
 
             // Re-save in case default tokens were added
             if (parsedTokens.length) {
-                localStorage.setItem(`opnetTokens_${chain}`, JSON.stringify(parsedTokens.filter(Boolean)));
+                localStorage.setItem(storageKey, JSON.stringify(parsedTokens.filter(Boolean)));
             }
 
             // Filter out "dead" address
@@ -124,27 +128,36 @@ export function OPNetList() {
                 return token.address !== deadAddress;
             });
 
-            // Only show visible tokens
+            // Only show visible tokens, then reverse so new tokens appear first
             const visibleTokens = validTokens
                 .filter((token) => (typeof token === 'string' ? true : !token.hidden))
-                .map((token) => (typeof token === 'string' ? token : token.address));
+                .map((token) => (typeof token === 'string' ? token : token.address))
+                .reverse();
 
-            // Reverse so new tokens appear first
-            visibleTokens.reverse();
+            // Filter out duplicates so they are not displayed multiple times
+            const uniqueTokens: string[] = [];
+            const seenAddresses = new Set<string>();
 
-            setTokens(visibleTokens);
-            setTotal(visibleTokens.length || 0);
+            for (const addr of visibleTokens) {
+                if (!seenAddresses.has(addr)) {
+                    uniqueTokens.push(addr);
+                    seenAddresses.add(addr);
+                }
+            }
+
+            setTokens(uniqueTokens);
+            setTotal(uniqueTokens.length || 0);
             setCurrentPage(1);
         } catch (err) {
             tools.toastError(`Error loading tokens: ${(err as Error).message}`);
         } finally {
             tools.showLoading(false);
         }
-    }, [tools, wallet]);
+    }, [tools, wallet, currentAccount]);
 
     /**
      * Fetch the balances for the current page of tokens.
-     * If `forceRefresh = true`, skip the cache for these tokens and re-fetch from chain.
+     * If forceRefresh = true, skip the cache for these tokens and re-fetch from chain.
      */
     const fetchTokenBalances = useCallback(
         async (forceRefresh = false) => {
@@ -170,8 +183,9 @@ export function OPNetList() {
 
                         try {
                             const contractInfo: ContractInformation | OPTokenInfo | false | undefined =
-                                balanceCache.get(tokenAddress) ||
-                                (await Web3API.queryContractInformation(tokenAddress));
+                                balanceCache.get(tokenAddress)
+                                    ? balanceCache.get(tokenAddress)
+                                    : await Web3API.queryContractInformation(tokenAddress);
 
                             if (!contractInfo || contractInfo.name === 'Generic Contract') {
                                 setFailedTokens((prev) => [...prev, tokenAddress]);
@@ -251,7 +265,9 @@ export function OPNetList() {
         if (shouldRemove) {
             try {
                 const chain = await wallet.getChainType();
-                const storageKey = `opnetTokens_${chain}`;
+                const accountAddr = currentAccount.pubkey;
+                const storageKey = `opnetTokens_${chain}_${accountAddr}`;
+
                 const storedTokens = JSON.parse(localStorage.getItem(storageKey) || '[]') as (StoredToken | string)[];
 
                 // Filter out the token we want to remove
@@ -301,7 +317,9 @@ export function OPNetList() {
 
         try {
             const chain = await wallet.getChainType();
-            const storageKey = `opnetTokens_${chain}`;
+            const accountAddr = currentAccount.pubkey;
+            const storageKey = `opnetTokens_${chain}_${accountAddr}`;
+
             const storedTokens = JSON.parse(localStorage.getItem(storageKey) || '[]') as (StoredToken | string)[];
 
             let updatedTokens: (StoredToken | string)[];
@@ -363,11 +381,14 @@ export function OPNetList() {
     const showHiddenTokens = async () => {
         try {
             const chain = await wallet.getChainType();
-            const storageKey = `opnetTokens_${chain}`;
+            const accountAddr = currentAccount.pubkey;
+            const storageKey = `opnetTokens_${chain}_${accountAddr}`;
+
             const storedTokens = JSON.parse(localStorage.getItem(storageKey) || '[]') as (StoredToken | string)[];
 
             // Find all that are hidden
             const previouslyHidden = storedTokens.filter((t) => typeof t === 'object' && t.hidden) as StoredToken[];
+
             if (!previouslyHidden.length) {
                 tools.toastSuccess('There are no hidden tokens to show.');
                 return;
@@ -612,8 +633,9 @@ export function OPNetList() {
                 </Row>
                 <Row style={{ marginTop: '12px' }}>
                     <Text
-                        text={`We couldn't fetch balance/contract info for: ${currentFailedToken ?? ''}.
-Would you like to remove it from your list?`}
+                        text={`We couldn't fetch balance/contract info for: ${
+                            currentFailedToken ?? ''
+                        }.\nWould you like to remove it from your list?`}
                         size="md"
                     />
                 </Row>
