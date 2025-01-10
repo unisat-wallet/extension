@@ -298,7 +298,13 @@ export class ProviderController extends BaseController {
             interactionParams.priorityFee = BigInt(interactionParams.priorityFee);
 
             // @ts-expect-error
+            interactionParams.gasSatFee = BigInt(interactionParams.gasSatFee);
+
+            // @ts-expect-error
             interactionParams.bytecode = objToBuffer(interactionParams.bytecode);
+
+            // @ts-expect-error
+            interactionParams.calldata = objToBuffer(interactionParams.calldata);
         }
     ])
     deployContract = async (request: {
@@ -323,7 +329,11 @@ export class ProviderController extends BaseController {
         // @ts-expect-error
         request.data.params.priorityFee = BigInt(request.data.params.priorityFee);
 
-        console.log('deployContract', request.data.params);
+        // @ts-expect-error
+        request.data.params.gasSatFee = BigInt(request.data.params.gasSatFee);
+
+        // @ts-expect-error
+        request.data.params.calldata = objToBuffer(request.data.params.calldata);
 
         return wallet.deployContract(request.data.params);
     };

@@ -68,7 +68,8 @@ export default tseslint.config(
             '@typescript-eslint/no-dynamic-delete': 'error',
             '@typescript-eslint/no-unnecessary-type-assertion': 'error',
             '@typescript-eslint/no-redundant-type-constituents': 'error',
-            '@typescript-eslint/no-useless-constructor': 'error'
+            '@typescript-eslint/no-useless-constructor': 'error',
+            'react/prop-types': 'warn',
         }
     },
     {

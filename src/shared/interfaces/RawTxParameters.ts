@@ -25,6 +25,7 @@ export interface BaseRawTxInfo<T extends Action> {
     readonly tokens: OPTokenInfo[];
     readonly feeRate: number;
     readonly priorityFee: bigint;
+    readonly gasSatFee?: bigint; // TODO: Implement this.
 
     readonly action: T;
 }

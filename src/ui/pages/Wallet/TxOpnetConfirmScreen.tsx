@@ -184,7 +184,8 @@ export default function TxOpnetConfirmScreen() {
                 refundTo: currentWalletAddress.address, // Refund the rest of the funds to this address
                 maximumAllowedSatToSpend: parameters.priorityFee, // The maximum we want to allocate to this transaction in satoshis
                 feeRate: parameters.feeRate, // We need to provide a fee rate
-                network: Web3API.network // The network we are operating on
+                network: Web3API.network, // The network we are operating on
+                priorityFee: parameters.priorityFee
             };
 
             const symbol = await contract.symbol();
@@ -231,7 +232,8 @@ export default function TxOpnetConfirmScreen() {
             refundTo: currentWalletAddress.address, // Refund the rest of the funds to this address
             maximumAllowedSatToSpend: parameters.priorityFee, // The maximum we want to allocate to this transaction in satoshis
             feeRate: parameters.feeRate, // We need to provide a fee rate
-            network: Web3API.network // The network we are operating on
+            network: Web3API.network, // The network we are operating on
+            priorityFee: parameters.priorityFee
         };
 
         const sendTransaction = await airdropData.sendTransaction(interactionParameters);
@@ -271,10 +273,10 @@ export default function TxOpnetConfirmScreen() {
             swapParameters.tokens[1].divisibility
         );
 
-        const addressOfContract = await Web3API.provider.getPublicKeysInfo([
+        const addressOfContract = (await Web3API.provider.getPublicKeysInfo([
             swapParameters.tokenIn,
             swapParameters.tokenOut
-        ]) as AddressesInfo;
+        ])) as AddressesInfo;
 
         const block = await Web3API.provider.getBlockNumber();
         const contractData = await getSwap.swapExactTokensForTokensSupportingFeeOnTransferTokens(
@@ -290,7 +292,8 @@ export default function TxOpnetConfirmScreen() {
             refundTo: currentWalletAddress.address, // Refund the rest of the funds to this address
             maximumAllowedSatToSpend: swapParameters.priorityFee, // The maximum we want to allocate to this transaction in satoshis
             feeRate: swapParameters.feeRate, // We need to provide a fee rate
-            network: Web3API.network // The network we are operating on
+            network: Web3API.network, // The network we are operating on
+            priorityFee: swapParameters.priorityFee
         };
 
         const sendTransaction = await contractData.sendTransaction(interactionParameters);
@@ -371,7 +374,8 @@ export default function TxOpnetConfirmScreen() {
                 signer: userWallet.keypair,
                 network: Web3API.network,
                 feeRate: parameters.feeRate,
-                priorityFee: parameters.priorityFee,
+                priorityFee: 0n,
+                gasSatFee: 0n,
                 to: parameters.to,
                 from: currentWalletAddress.address
             };
@@ -412,7 +416,8 @@ export default function TxOpnetConfirmScreen() {
                 signer: userWallet.keypair,
                 network: Web3API.network,
                 feeRate: parameters.feeRate,
-                priorityFee: parameters.priorityFee,
+                priorityFee: 0n,
+                gasSatFee: parameters.priorityFee,
                 from: currentWalletAddress.address,
                 bytecode: Buffer.from(uint8Array)
             };
@@ -435,7 +440,7 @@ export default function TxOpnetConfirmScreen() {
 
                 const getChain = await wallet.getChainType();
                 const tokensImported = localStorage.getItem('opnetTokens_' + getChain);
-                let updatedTokens: string[] = tokensImported ? JSON.parse(tokensImported) as string[] : [];
+                let updatedTokens: string[] = tokensImported ? (JSON.parse(tokensImported) as string[]) : [];
                 if (tokensImported) {
                     updatedTokens = JSON.parse(tokensImported) as string[];
                 }
@@ -486,7 +491,8 @@ export default function TxOpnetConfirmScreen() {
                 refundTo: currentWalletAddress.address, // Refund the rest of the funds to this address
                 maximumAllowedSatToSpend: parameters.priorityFee, // The maximum we want to allocate to this transaction in satoshis
                 feeRate: parameters.feeRate, // We need to provide a fee rate
-                network: Web3API.network // The network we are operating on
+                network: Web3API.network, // The network we are operating on
+                priorityFee: parameters.priorityFee
             };
 
             const sendTransaction = await mintData.sendTransaction(interactionParameters);
@@ -520,11 +526,18 @@ export default function TxOpnetConfirmScreen() {
                         <Text text="sat/vB" color="textDim" />
                     </Section>
 
+                    <Section title="Opnet Gas Fee:">
+                        <Text text={rawTxInfo.gasSatFee?.toString() || '0'} />
+
+                        <Text text="sat" color="textDim" />
+                    </Section>
+
                     <Section title="Opnet Fee Rate:">
                         <Text text={rawTxInfo.priorityFee.toString()} />
 
-                        <Text text="sat/vB" color="textDim" />
+                        <Text text="sat" color="textDim" />
                     </Section>
+                    
                     <Section title="Features:">
                         <Row>
                             {rawTxInfo.features.rbf ? (
