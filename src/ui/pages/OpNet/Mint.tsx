@@ -68,7 +68,7 @@ export default function Mint() {
             setAddresses(map);
             setDisabled(false);
         })();
-    }, [getWallet, inputAmount, props.divisibility]);
+    }, [inputAmount]);
 
     useEffect(() => {
         const setWallet = async () => {
