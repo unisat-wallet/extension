@@ -13,7 +13,7 @@ import { RBFBar } from '@/ui/components/RBFBar';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { useLocationState, useWallet } from '@/ui/utils';
-import { AddressMap, Wallet } from '@btc-vision/transaction';
+import { Wallet } from '@btc-vision/transaction';
 
 import { RouteTypes, useNavigate } from '../MainRoute';
 
@@ -33,7 +33,7 @@ export default function Mint() {
     const wallet = useWallet();
     const [maxSupply, setMaxSupply] = useState<bigint>(0n);
 
-    const [addresses, setAddresses] = useState<AddressMap<bigint> | undefined>(undefined);
+    const [addresses, setAddresses] = useState<{ [key: string]: string } | null>(null);
 
     const getWallet = async () => {
         const currentWalletAddress = await wallet.getCurrentAccount();
@@ -60,15 +60,15 @@ export default function Mint() {
 
         void (async () => {
             const wallet = await getWallet();
-            const value = expandToDecimals(inputAmount, props.divisibility);
 
-            const map = new AddressMap<bigint>();
-            map.set(wallet.address, value);
+            const map: { [key: string]: string } = {
+                [wallet.address.toHex()]: expandToDecimals(inputAmount, props.divisibility).toString()
+            };
 
             setAddresses(map);
             setDisabled(false);
         })();
-    }, [inputAmount]);
+    }, [getWallet, inputAmount, props.divisibility]);
 
     useEffect(() => {
         const setWallet = async () => {

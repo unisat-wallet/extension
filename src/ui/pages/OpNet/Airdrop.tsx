@@ -4,7 +4,6 @@ import { Action, AirdropParameters, Features } from '@/shared/interfaces/RawTxPa
 import { Account, OPTokenInfo } from '@/shared/types';
 import { Button, Content, Header, Layout, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
-import { Address, AddressMap } from '@btc-vision/transaction';
 
 import { useLocationState } from '@/ui/utils';
 import { RouteTypes, useNavigate } from '../MainRoute';
@@ -22,7 +21,7 @@ export default function WrapBitcoinOpnet() {
     const [getFile, setFile] = useState<File | null>(null);
 
     const [error, setError] = useState('');
-    const [amounts, SetAmounts] = useState<AddressMap<bigint>>();
+    const [amounts, SetAmounts] = useState<{ [key: string]: string } | null>(null);
     const tools = useTools();
 
     const [feeRate, setFeeRate] = useState(5);
@@ -36,7 +35,7 @@ export default function WrapBitcoinOpnet() {
                 const content = event.target?.result as string;
                 const lines = content.split('\n');
 
-                const amounts = new AddressMap<bigint>();
+                const amounts: { [key: string]: string } = {};
 
                 for (let i = 1; i < lines.length; i++) {
                     // Start from 1 to skip header
@@ -47,7 +46,7 @@ export default function WrapBitcoinOpnet() {
 
                         // verify if address is 0x
                         if (/^0x[a-fA-F0-9]$/.test(trimmedAddress) && /^\d+$/.test(trimmedAmount)) {
-                            amounts.set(Address.fromString(trimmedAddress), BigInt(trimmedAmount));
+                            amounts[trimmedAddress] = trimmedAmount;
                         } else {
                             setError('Invalid data found in CSV file.');
                             setDisabled(true);
@@ -56,10 +55,9 @@ export default function WrapBitcoinOpnet() {
                     }
                 }
 
-                if (amounts && amounts.size > 0) {
+                if (amounts && Object.keys(amounts).length > 0) {
                     console.log('Parsed amounts:', amounts);
                     SetAmounts(amounts);
-                    // You can use the amounts map here or store it in state for later use
                 } else {
                     setError('No valid data found in CSV file.');
                     setDisabled(true);

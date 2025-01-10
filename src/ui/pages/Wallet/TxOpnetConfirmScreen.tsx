@@ -221,14 +221,12 @@ export default function TxOpnetConfirmScreen() {
             userWallet.address
         );
 
-        //const addressMap = new AddressMap<bigint>();
-        /*parameters.amounts.forEach((amount) => {
-            addressMap.set(Address.fromString(amount.pubKey), BigInt(amount.value));
-        });*/
+        const addressMap = new AddressMap<bigint>();
+        for (const [pubKey, amount] of Object.entries(parameters.amounts)) {
+            addressMap.set(Address.fromString(pubKey), BigInt(amount));
+        }
 
-        console.log(parameters.amounts);
-
-        const airdropData = await contract.airdrop(parameters.amounts);
+        const airdropData = await contract.airdrop(addressMap);
         const interactionParameters: TransactionParameters = {
             signer: userWallet.keypair, // The keypair that will sign the transaction
             refundTo: currentWalletAddress.address, // Refund the rest of the funds to this address
