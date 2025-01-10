@@ -11,7 +11,7 @@ import {
     TransactionParameters
 } from 'opnet';
 import { AddressesInfo } from 'opnet/src/providers/interfaces/PublicKeyInfo';
-import React, { Dispatch, SetStateAction, useEffect, useState } from 'react';
+import React, { Dispatch, SetStateAction, useCallback, useEffect, useState } from 'react';
 
 import {
     Action,
@@ -134,7 +134,7 @@ export default function TxOpnetConfirmScreen() {
     const wallet = useWallet();
     const tools = useTools();
 
-    const getWallet = async () => {
+    const getWallet = useCallback(async () => {
         const currentWalletAddress = await wallet.getCurrentAccount();
         const pubkey = currentWalletAddress.pubkey;
 
@@ -144,7 +144,7 @@ export default function TxOpnetConfirmScreen() {
         });
 
         return Wallet.fromWif(wifWallet.wif, Web3API.network);
-    };
+    }, [wallet]);
 
     const getPubKey = async (to: string) => {
         let pubKey: Address;
@@ -533,7 +533,7 @@ export default function TxOpnetConfirmScreen() {
                         <Text text="sat" color="textDim" />
                     </Section>
 
-                    <Section title="Opnet Fee Rate:">
+                    <Section title="Priority Fee:">
                         <Text text={rawTxInfo.priorityFee.toString()} />
 
                         <Text text="sat" color="textDim" />

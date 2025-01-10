@@ -199,7 +199,7 @@ export default function TxCreateScreen() {
                     />
                 </Column>
 
-                <Text text="Opnet Fee" color="textDim" />
+                <Text text="Priority Fee" color="textDim" />
                 <Input
                     preset="amount"
                     placeholder={'sat/vB'}

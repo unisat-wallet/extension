@@ -8,9 +8,9 @@ import {
     OP_20_ABI
 } from 'opnet';
 import { AddressesInfo } from 'opnet/src/providers/interfaces/PublicKeyInfo';
-import { CSSProperties, useState } from 'react';
+import { CSSProperties, useEffect, useState } from 'react';
 
-import { Account, OPTokenInfo } from '@/shared/types';
+import { OPTokenInfo } from '@/shared/types';
 import Web3API from '@/shared/web3/Web3API';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { Button, Column, Content, Header, Icon, Input, Layout, Row, Select, Text } from '@/ui/components';
@@ -27,12 +27,12 @@ import { Address } from '@btc-vision/transaction';
 import { Action, Features, SwapParameters } from '@/shared/interfaces/RawTxParameters';
 import { RouteTypes, useNavigate } from '../MainRoute';
 
-interface ItemData {
-    key: string;
-    account?: Account;
-}
-
 BigNumber.config({ EXPONENTIAL_AT: 256 });
+
+interface StoredToken {
+    address: string;
+    hidden: boolean;
+}
 
 export default function Swap() {
     const [loading, setLoading] = useState(true);
@@ -51,8 +51,12 @@ export default function Swap() {
     const currentAccount = useCurrentAccount();
     const tools = useTools();
 
+    // -------------
+    // Handlers
+    // -------------
     const handleSelect = async (option: OPTokenInfo) => {
-        if (option.address == selectedOptionOutput?.address) {
+        // Prevent selecting the same token for input and output
+        if (option.address === selectedOptionOutput?.address) {
             tools.toastError("Token In and Token Out can't be the same");
             return;
         }
@@ -61,11 +65,10 @@ export default function Swap() {
     };
 
     const handleSelectOutput = async (option: OPTokenInfo) => {
-        if (option.address == selectedOption?.address) {
+        if (option.address === selectedOption?.address) {
             tools.toastError("Token In and Token Out can't be the same");
             return;
         }
-
         await handleInputChange(inputAmount);
         setSelectedOptioOutput(option);
     };
@@ -82,6 +85,7 @@ export default function Swap() {
     const handleInputChange = async (value: string) => {
         // Allow empty input, numbers, and one decimal point
         if (value === '' || /^\d*\.?\d*$/.test(value)) {
+            // If both tokens are selected, try fetching quote
             if (selectedOption && selectedOptionOutput) {
                 const maxBalance = new BigNumber(selectedOption.amount.toString()).dividedBy(
                     new BigNumber(10).pow(selectedOption.divisibility)
@@ -90,6 +94,7 @@ export default function Swap() {
                 // If the input is not empty and is a valid number
                 if (value !== '' && value !== '.') {
                     const numericValue = new BigNumber(value);
+                    // Check balance
                     if (numericValue.lt(maxBalance)) {
                         setInputAmount(value.toString());
                     } else {
@@ -109,6 +114,7 @@ export default function Swap() {
                     );
 
                     try {
+                        // We need original pubkeys for these tokens
                         const pubKeyInfoSelectedOption = (await Web3API.provider.getPublicKeysInfo([
                             selectedOption.address,
                             selectedOptionOutput.address
@@ -124,7 +130,7 @@ export default function Swap() {
 
                         setOutPutAmount(
                             BitcoinUtils.formatUnits(
-                                // TODO (typing): Check this again if accessing the first index is correct.
+                                // amountsOut[1] = quote for tokenOut
                                 getData.properties.amountsOut[1],
                                 selectedOptionOutput.divisibility
                             )
@@ -138,12 +144,15 @@ export default function Swap() {
                     setInputAmount(value);
                 }
             } else {
-                // If no option is selected, just set the input value
+                // If no token is selected yet, just set the input value
                 setInputAmount(value);
             }
         }
     };
 
+    // -------------
+    // UI Styles
+    // -------------
     const $searchInputStyle = {
         width: '40%',
         padding: 8,
@@ -153,8 +162,6 @@ export default function Swap() {
         outline: 'none',
         height: '42px',
         backgroundColor: '#2a2626'
-
-        // color: colors.text
     } as CSSProperties;
 
     const $styleBox = {
@@ -181,59 +188,84 @@ export default function Swap() {
 
     const $style = Object.assign({}, $styleBox);
 
-    useState(() => {
-        const getData = async () => {
-            Web3API.setNetwork(await wallet.getChainType());
+    // -------------
+    // Load tokens (account-specific)
+    // -------------
+    useEffect(() => {
+        const loadTokens = async () => {
+            try {
+                setLoading(true);
+                // Use an account-specific storage key
+                const chain = await wallet.getChainType();
+                Web3API.setNetwork(chain);
 
-            const getChain = await wallet.getChainType();
-            const tokensImported = localStorage.getItem('opnetTokens_' + getChain);
-            const parsedTokens = tokensImported ? (JSON.parse(tokensImported) as string[]) : [];
-            //if (OpNetBalance?.address) {
-            //    setSelectedOption(OpNetBalance);
-            //}
+                const accountAddr = currentAccount.pubkey;
+                const storageKey = `opnetTokens_${chain}_${accountAddr}`;
+                const tokensImported = localStorage.getItem(storageKey);
+                const parsedTokens = tokensImported ? (JSON.parse(tokensImported) as (StoredToken | string)[]) : [];
 
-            const tokenBalances: OPTokenInfo[] = [];
-            for (let i = 0; i < parsedTokens.length; i++) {
-                try {
-                    const tokenAddress = parsedTokens[i];
-                    const provider = Web3API.provider;
-                    const contract: IOP_20Contract = getContract<IOP_20Contract>(
-                        tokenAddress,
-                        OP_20_ABI,
-                        provider,
-                        Web3API.network
-                    );
+                // Filter out hidden tokens and deduplicate addresses
+                const visibleAddresses: string[] = [];
+                const seen = new Set<string>();
 
-                    const contractInfo: ContractInformation | false | undefined =
-                        await Web3API.queryContractInformation(tokenAddress);
-
-                    if (!contractInfo) {
-                        continue;
+                for (const token of parsedTokens) {
+                    let address: string;
+                    if (typeof token === 'object') {
+                        if (token.hidden) continue; // skip hidden tokens
+                        address = token.address;
+                    } else {
+                        address = token;
                     }
 
-                    const walletAddressPub = Address.fromString(currentAccount.pubkey);
-
-                    const balance = await contract.balanceOf(walletAddressPub);
-                    tokenBalances.push({
-                        address: tokenAddress,
-                        name: contractInfo?.name ?? '',
-                        amount: balance.properties.balance,
-                        divisibility: contractInfo?.decimals ?? 8,
-                        symbol: contractInfo?.symbol ?? '',
-                        logo: contractInfo?.logo
-                    });
-                } catch (e) {
-                    console.log(`Error processing token at index ${i}:`, e);
+                    if (!seen.has(address)) {
+                        visibleAddresses.push(address);
+                        seen.add(address);
+                    }
                 }
-            }
-            setSwitchOptions(tokenBalances);
 
-            setLoading(false);
+                const tokenBalances: OPTokenInfo[] = [];
+                for (const addr of visibleAddresses) {
+                    try {
+                        const contractInfo: ContractInformation | false | undefined =
+                            await Web3API.queryContractInformation(addr);
+                        if (!contractInfo) continue;
+
+                        const contract = getContract<IOP_20Contract>(
+                            addr,
+                            OP_20_ABI,
+                            Web3API.provider,
+                            Web3API.network
+                        );
+
+                        const balance = await contract.balanceOf(Address.fromString(accountAddr));
+                        tokenBalances.push({
+                            address: addr,
+                            name: contractInfo.name ?? '',
+                            amount: balance.properties.balance,
+                            divisibility: contractInfo.decimals ?? 8,
+                            symbol: contractInfo.symbol ?? '',
+                            logo: contractInfo.logo
+                        });
+                    } catch (e) {
+                        console.log(`Error fetching info for token ${addr}:`, e);
+                    }
+                }
+
+                setSwitchOptions(tokenBalances);
+            } catch (err) {
+                console.error('Failed to load tokens in Swap:', err);
+                tools.toastError('Failed to load tokens. Please try again.');
+            } finally {
+                setLoading(false);
+            }
         };
 
-        void getData();
-    });
+        void loadTokens();
+    }, [wallet, currentAccount, tools]);
 
+    // -------------
+    // Loading
+    // -------------
     if (loading) {
         return (
             <Layout>
@@ -245,6 +277,10 @@ export default function Swap() {
             </Layout>
         );
     }
+
+    // -------------
+    // Render
+    // -------------
     return (
         <Layout>
             <Header
@@ -257,10 +293,10 @@ export default function Swap() {
                     <Row itemsCenter fullX justifyBetween style={{ alignItems: 'baseline' }}>
                         <Select
                             selectIndex={0}
-                            setMax={() => setMax()}
+                            setMax={setMax}
                             options={switchOptions}
                             selectedoptionuse={selectedOption}
-                            placeholder={'Select Token'}
+                            placeholder="Select Token"
                             onSelect={handleSelect}
                         />
                         <input
@@ -277,7 +313,8 @@ export default function Swap() {
                         <Select
                             selectIndex={1}
                             options={switchOptions}
-                            placeholder={'Select Token'}
+                            selectedoptionuse={selectedOptionOutput}
+                            placeholder="Select Token"
                             onSelect={handleSelectOutput}
                         />
                         <input
@@ -295,30 +332,26 @@ export default function Swap() {
                     <Text text="Slippage Tolerance" color="textDim" />
                     <Input
                         preset="amount"
-                        placeholder={'5%'}
+                        placeholder="5%"
                         value={slippageTolerance}
                         onAmountInputChange={(value) => {
                             const numValue = Number(value);
                             if (!isNaN(numValue) && numValue >= 0 && numValue <= 100) {
-                                setSlippageTolerance(value.toString());
+                                setSlippageTolerance(value);
                             }
                         }}
-                        autoFocus={true}
+                        autoFocus
                     />
 
-                    <Text text="Opnet Fee" color="textDim" />
+                    <Text text="Priority Fee" color="textDim" />
                     <Input
                         preset="amount"
-                        placeholder={'sat/vB'}
+                        placeholder="sat/vB"
                         value={OpnetRateInputVal}
                         onAmountInputChange={(amount) => {
                             adjustFeeRateInput(amount);
                         }}
-                        // onBlur={() => {
-                        //   const val = parseInt(feeRateInputVal) + '';
-                        //   setFeeRateInputVal(val);
-                        // }}
-                        autoFocus={true}
+                        autoFocus
                     />
                     <Text text="Fee" color="textDim" />
 
@@ -343,10 +376,9 @@ export default function Swap() {
                         const event: SwapParameters = {
                             amountIn: Number(inputAmount),
                             amountOut: Number(outputAmount),
-                            tokenIn: selectedOption?.address || '',
-                            tokenOut: selectedOptionOutput?.address || '',
+                            tokenIn: selectedOption.address,
+                            tokenOut: selectedOptionOutput.address,
                             slippageTolerance: Number(slippageTolerance),
-
                             deadline: '1000000000000',
                             tokens: [selectedOption, selectedOptionOutput],
                             feeRate: feeRate,
@@ -354,7 +386,7 @@ export default function Swap() {
                                 [Features.rbf]: true
                             },
                             priorityFee: 0n,
-                            header: `Swap ${selectedOption?.symbol} for ${selectedOptionOutput?.symbol}`,
+                            header: `Swap ${selectedOption.symbol} for ${selectedOptionOutput.symbol}`,
                             action: Action.Swap
                         };
 

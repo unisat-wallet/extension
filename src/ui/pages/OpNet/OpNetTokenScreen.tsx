@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 import { getContract, IOP_20Contract, OP_20_ABI } from 'opnet';
-import { useEffect, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { OPTokenInfo } from '@/shared/types';
@@ -45,7 +45,15 @@ export default function OpNetTokenScreen() {
         divisibility: 0
     });
 
-    const getWallet = async () => {
+    const account = useCurrentAccount();
+
+    const [loading, setLoading] = useState(false);
+    const [isOwner, setIsOwner] = useState(false);
+
+    const tools = useTools();
+    const wallet = useWallet();
+
+    const getWallet = useCallback(async () => {
         const currentWalletAddress = await wallet.getCurrentAccount();
         const pubkey = currentWalletAddress.pubkey;
 
@@ -55,14 +63,7 @@ export default function OpNetTokenScreen() {
         });
 
         return Wallet.fromWif(wifWallet.wif, Web3API.network);
-    };
-
-    const account = useCurrentAccount();
-
-    const [loading, setLoading] = useState(false);
-    const [isOwner, setIsOwner] = useState(false);
-
-    const wallet = useWallet();
+    }, [wallet]);
 
     const unitBtc = useBTCUnit();
     useEffect(() => {
@@ -134,7 +135,7 @@ export default function OpNetTokenScreen() {
         };
 
         void getAddress();
-    }, [account.address, getWallet, params.address, unitBtc, wallet]);
+    }, [account.address, getWallet, params.address, tools, unitBtc, wallet]);
 
     const enableTransfer = useMemo(() => {
         let enable = false;
@@ -150,9 +151,9 @@ export default function OpNetTokenScreen() {
         tools.toastSuccess(`Copied!`);
     };
 
-    const deleteToken = async () => {
+    const deleteToken = useCallback(async () => {
         const getChain = await wallet.getChainType();
-        const tokensImported = localStorage.getItem('opnetTokens_' + getChain);
+        const tokensImported = localStorage.getItem(`opnetTokens_${getChain}_${account.pubkey}`);
 
         if (tokensImported) {
             let updatedTokens: string[] = JSON.parse(tokensImported) as string[];
@@ -162,9 +163,8 @@ export default function OpNetTokenScreen() {
 
         tools.toastSuccess('Token removed from imported list');
         window.history.go(-1);
-    };
+    }, [account.pubkey, tokenSummary.address, tools, wallet]);
 
-    const tools = useTools();
     if (loading) {
         return (
             <Layout>
