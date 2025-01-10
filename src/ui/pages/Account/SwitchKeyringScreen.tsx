@@ -1,5 +1,5 @@
 import VirtualList from 'rc-virtual-list';
-import { forwardRef, useMemo, useState } from 'react';
+import React, { forwardRef, useMemo, useState } from 'react';
 
 import { KEYRING_TYPE } from '@/shared/constant';
 import { WalletKeyring } from '@/shared/types';
@@ -33,7 +33,7 @@ interface MyItemProps {
     autoNav?: boolean;
 }
 
-export function MyItem({ keyring, autoNav }: MyItemProps) {
+export function MyItem({ keyring, autoNav }: MyItemProps, ref: React.Ref<HTMLDivElement>) {
     const navigate = useNavigate();
     const currentKeyring = useCurrentKeyring();
     const selected = currentKeyring.index === keyring?.index;

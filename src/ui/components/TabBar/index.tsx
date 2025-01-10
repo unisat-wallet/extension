@@ -32,7 +32,7 @@ export function TabBar(props: TabBarProps) {
         const curIndex = items.findIndex((v) => v.key === tabKey);
         setProgress(curIndex);
         onTabClick(tabKey);
-    }, [items, onTabClick, tabKey]);
+    }, [tabKey]);
 
     useEffect(() => {
         if (activeKey !== tabKey) {
@@ -41,7 +41,7 @@ export function TabBar(props: TabBarProps) {
             const curIndex = items.findIndex((v) => v.key === activeKey);
             setProgress(curIndex);
         }
-    }, [activeKey, items, tabKey]);
+    }, [activeKey]);
 
     if (preset == 'number-page') {
         return (
