@@ -380,8 +380,6 @@ export default function TxOpnetConfirmScreen() {
                 from: currentWalletAddress.address
             };
 
-            console.log('IFundingTransactionParameters', IFundingTransactionParameters);
-
             const sendTransact = await Web3API.transactionFactory.createBTCTransfer(IFundingTransactionParameters);
             const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransact.tx, false);
             if (!firstTransaction?.success) {
