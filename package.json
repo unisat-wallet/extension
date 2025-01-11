@@ -1,6 +1,6 @@
 {
     "name": "opwallet",
-    "version": "1.0.46",
+    "version": "1.0.47",
     "private": true,
     "type": "module",
     "homepage": "https://github.com/unisat-wallet/extension#readme",
