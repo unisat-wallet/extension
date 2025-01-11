@@ -1686,9 +1686,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@btc-vision/bitcoin@npm:6.3.3, @btc-vision/bitcoin@npm:^6.3.3":
-  version: 6.3.3
-  resolution: "@btc-vision/bitcoin@npm:6.3.3"
+"@btc-vision/bitcoin@npm:6.3.4, @btc-vision/bitcoin@npm:^6.3.4":
+  version: 6.3.4
+  resolution: "@btc-vision/bitcoin@npm:6.3.4"
   dependencies:
     "@babel/plugin-proposal-object-rest-spread": "npm:^7.20.7"
     "@btc-vision/logger": "npm:^1.0.6"
@@ -1711,7 +1711,7 @@ __metadata:
     process: "npm:^0.11.10"
     typeforce: "npm:^1.18.0"
     varuint-bitcoin: "npm:^1.1.2"
-  checksum: 10c0/a3b0e9ae0ff7bd71a4ed390ad90d3458e913600b9640a12faf51d16521169b7f110b8e968b5295c3c0c74e5971fd96043c915f3cc219cc11ad10bd7e80d71512
+  checksum: 10c0/194984240d101a492ddae285778afb085ef70bdaeec851a35fba3fc7e28eaf6db538b99625c7f39a368a5b4f6e63d8ce1ff5e9449a80799f5d1661ef0a3efa05
   languageName: node
   linkType: hard
 
@@ -1772,13 +1772,13 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@btc-vision/transaction@npm:^1.2.7":
-  version: 1.2.7
-  resolution: "@btc-vision/transaction@npm:1.2.7"
+"@btc-vision/transaction@npm:1.2.8, @btc-vision/transaction@npm:^1.2.8":
+  version: 1.2.8
+  resolution: "@btc-vision/transaction@npm:1.2.8"
   dependencies:
     "@babel/plugin-proposal-object-rest-spread": "npm:^7.20.7"
     "@bitcoinerlab/secp256k1": "npm:^1.1.1"
-    "@btc-vision/bitcoin": "npm:^6.3.3"
+    "@btc-vision/bitcoin": "npm:^6.3.4"
     "@btc-vision/bitcoin-rpc": "npm:^1.0.0"
     "@btc-vision/logger": "npm:^1.0.6"
     "@eslint/js": "npm:^9.14.0"
@@ -1803,7 +1803,7 @@ __metadata:
     ts-node: "npm:^10.9.2"
     typescript: "npm:^5.7.2"
     webpack: "npm:^5.97.1"
-  checksum: 10c0/ba79a59c427eb69599a7b4a82ffc4e858e53e45a689b581e29f39447021addd54578df428586ffa15d65891bf4e92d7a92cb629b04aa784d92d40e3a62d56d54
+  checksum: 10c0/b445a68902f8aa50678da2deee2e3e1540cf5078fa72ad54bb1c39f36eed4aa79e885c2d628f3b0de249b7348352f57426f99bb4cfefe78fee06fa77eb02ff1c
   languageName: node
   linkType: hard
 
@@ -14457,20 +14457,20 @@ __metadata:
   languageName: node
   linkType: hard
 
-"opnet@npm:1.2.18":
-  version: 1.2.18
-  resolution: "opnet@npm:1.2.18"
+"opnet@npm:1.2.19":
+  version: 1.2.19
+  resolution: "opnet@npm:1.2.19"
   dependencies:
     "@bitcoinerlab/secp256k1": "npm:^1.2.0"
-    "@btc-vision/bitcoin": "npm:^6.3.3"
+    "@btc-vision/bitcoin": "npm:^6.3.4"
     "@btc-vision/bitcoin-rpc": "npm:^1.0.0"
-    "@btc-vision/transaction": "npm:^1.2.7"
+    "@btc-vision/transaction": "npm:^1.2.8"
     "@noble/hashes": "npm:^1.7.0"
     bignumber.js: "npm:^9.1.2"
     buffer: "npm:^6.0.3"
     ecpair: "npm:^2.1.0"
     tiny-secp256k1: "npm:^2.2.3"
-  checksum: 10c0/15738edb4c5ad49bcc42b580147becb5b34543b532790fc670322b56bb13b54d57622f3122e05021ab96b6a7c7a8fb30256a03f3cab5c51c3a1feb400248e8a9
+  checksum: 10c0/6e8f3bc37611ccdcd18ae3f02755a99c4de7b2eb6a877144de9854657d7803199e7b3ec2ac1f43e26b5e20c63bbf3df7f1450a9cc20efa9f009ae54aa086b73e
   languageName: node
   linkType: hard
 
@@ -14495,8 +14495,9 @@ __metadata:
     "@ant-design/icons": "npm:^5.5.2"
     "@babel/core": "npm:^7.26.0"
     "@babel/plugin-proposal-private-property-in-object": "npm:^7.21.11"
-    "@btc-vision/bitcoin": "npm:6.3.3"
+    "@btc-vision/bitcoin": "npm:6.3.4"
     "@btc-vision/passworder": "npm:1.0.0"
+    "@btc-vision/transaction": "npm:1.2.8"
     "@btc-vision/wallet-sdk": "npm:1.0.2"
     "@eslint/js": "npm:^9.17.0"
     "@fortawesome/fontawesome-svg-core": "npm:^6.7.2"
@@ -14594,7 +14595,7 @@ __metadata:
     lru-cache: "npm:7.18.3"
     mini-css-extract-plugin: "npm:2.9.2"
     minimist: "npm:^1.2.8"
-    opnet: "npm:1.2.18"
+    opnet: "npm:1.2.19"
     postcss: "npm:^8.4.49"
     postcss-flexbugs-fixes: "npm:^5.0.2"
     postcss-loader: "npm:^8.1.1"
