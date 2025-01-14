@@ -1,5 +1,10 @@
 # UniSat Wallet Release Notes
 
+## v1.5.3
+
+- Support CAT721
+- Support purchasing FB through AlchemyPay
+
 ## v1.5.2
 
 - Added display of USD prices for FB, BRC20, Runes, CAT20 in fractal
@@ -84,7 +89,7 @@
 - Support cursed inscription
 - Optimized the UTXO selection strategy of runes to reduce gas fees
 - Add runes logo
-- Add Alichepay
+- Add AlchemyPay
 - Fix Runes details
 
 ## v1.3.1
