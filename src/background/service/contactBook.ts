@@ -67,7 +67,9 @@ class ContactBook {
     };
 
     listAlias = () => {
-        return Object.values(this.store).filter((item) => item?.isAlias);
+        return Object.values(this.store)
+            .filter((item) => item?.isAlias)
+            .filter((item) => !!item);
     };
 
     updateAlias = (data: { address: string; name: string }) => {
@@ -106,7 +108,7 @@ class ContactBook {
 
     getContactsByMap = () => {
         Object.values(this.store)
-        .filter((item): item is ContactBookItem => item?.isContact === true)
+            .filter((item): item is ContactBookItem => item?.isContact === true)
             .reduce(
                 (res, item) => ({
                     ...res,
