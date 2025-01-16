@@ -69,6 +69,17 @@ import { ConnectedSite } from '../service/permission';
 import BaseController from './base';
 import { InteractionResponse } from '@btc-vision/transaction/src/transaction/TransactionFactory';
 
+// Example: a custom error class with optional data
+class WalletControllerError extends Error {
+    data?: unknown;
+
+    constructor(message: string, data?: unknown) {
+        super(message);
+        this.name = 'WalletControllerError';
+        this.data = data;
+    }
+}
+
 const stashKeyrings: Record<string, Keyring> = {};
 
 export interface AccountAsset {
@@ -90,7 +101,15 @@ export class WalletController extends BaseController {
     getConnectedSites = permissionService.getConnectedSites;
 
     /* wallet */
-    boot = (password: string) => keyringService.boot(password);
+    boot = async (password: string) => {
+        try {
+            return await keyringService.boot(password);
+        } catch (err) {
+            throw new WalletControllerError(`Failed to boot keyringService: ${String(err)}`, {
+                passwordProvided: !!password
+            });
+        }
+    };
 
     isBooted = () => keyringService.isBooted();
 
@@ -101,24 +120,28 @@ export class WalletController extends BaseController {
     changePassword = (password: string, newPassword: string) => keyringService.changePassword(password, newPassword);
 
     initAlianNames = async () => {
-        preferenceService.changeInitAlianNameStatus();
-        const contacts = this.listContact();
-        const keyrings = await keyringService.getAllDisplayedKeyrings();
+        try {
+            preferenceService.changeInitAlianNameStatus();
+            const contacts = this.listContact();
+            const keyrings = await keyringService.getAllDisplayedKeyrings();
 
-        keyrings.forEach((v) => {
-            v.accounts.forEach((w, index) => {
-                this.updateAlianName(w.pubkey, `${BRAND_ALIAN_TYPE_TEXT[v.type]} ${index + 1}`);
+            keyrings.forEach((v) => {
+                v.accounts.forEach((w, index) => {
+                    this.updateAlianName(w.pubkey, `${BRAND_ALIAN_TYPE_TEXT[v.type]} ${index + 1}`);
+                });
             });
-        });
 
-        if (contacts.length !== 0 && keyrings.length !== 0) {
-            const allAccounts = keyrings.map((item) => item.accounts).flat();
-            const sameAddressList = contacts.filter((item) =>
-                allAccounts.find((contact) => contact.pubkey == item.address)
-            );
-            if (sameAddressList.length > 0) {
-                sameAddressList.forEach((item) => this.updateAlianName(item.address, item.name));
+            if (contacts.length !== 0 && keyrings.length !== 0) {
+                const allAccounts = keyrings.map((item) => item.accounts).flat();
+                const sameAddressList = contacts.filter((item) =>
+                    allAccounts.find((contact) => contact.pubkey == item.address)
+                );
+                if (sameAddressList.length > 0) {
+                    sameAddressList.forEach((item) => this.updateAlianName(item.address, item.name));
+                }
             }
+        } catch (err) {
+            throw new WalletControllerError(`Failed to initialize alias names: ${String(err)}`);
         }
     };
 
@@ -127,16 +150,19 @@ export class WalletController extends BaseController {
     };
 
     unlock = async (password: string) => {
-        const alianNameInited = preferenceService.getInitAlianNameStatus();
-        const alianNames = contactBookService.listAlias();
-        await keyringService.submitPassword(password);
-        sessionService.broadcastEvent(SessionEvent.unlock);
+        try {
+            const alianNameInited = preferenceService.getInitAlianNameStatus();
+            const alianNames = contactBookService.listAlias();
+            await keyringService.submitPassword(password);
+            sessionService.broadcastEvent(SessionEvent.unlock);
 
-        if (!alianNameInited && alianNames.length === 0) {
-            await this.initAlianNames();
+            if (!alianNameInited && alianNames.length === 0) {
+                await this.initAlianNames();
+            }
+            this._resetTimeout();
+        } catch (err) {
+            throw new WalletControllerError(`Unlock failed: ${String(err)}`, { passwordProvided: !!password });
         }
-
-        this._resetTimeout();
     };
 
     isUnlocked = () => {
@@ -144,13 +170,17 @@ export class WalletController extends BaseController {
     };
 
     lockWallet = async () => {
-        await keyringService.setLocked();
-        sessionService.broadcastEvent(SessionEvent.accountsChanged, []);
-        sessionService.broadcastEvent(SessionEvent.lock);
-        eventBus.emit(EVENTS.broadcastToUI, {
-            method: 'lock',
-            params: {}
-        });
+        try {
+            await keyringService.setLocked();
+            sessionService.broadcastEvent(SessionEvent.accountsChanged, []);
+            sessionService.broadcastEvent(SessionEvent.lock);
+            eventBus.emit(EVENTS.broadcastToUI, {
+                method: 'lock',
+                params: {}
+            });
+        } catch (err) {
+            throw new WalletControllerError(`Lock wallet failed: ${String(err)}`);
+        }
     };
 
     setPopupOpen = (isOpen: boolean) => {
@@ -158,33 +188,39 @@ export class WalletController extends BaseController {
     };
 
     getAddressBalance = async (address: string) => {
-        const data: BitcoinBalance = await this.getOpNetBalance(address);
-        preferenceService.updateAddressBalance(address, data);
-
-        return data;
+        try {
+            const data: BitcoinBalance = await this.getOpNetBalance(address);
+            preferenceService.updateAddressBalance(address, data);
+            return data;
+        } catch (err) {
+            throw new WalletControllerError(`Failed to get address balance: ${String(err)}`, { address });
+        }
     };
 
     getMultiAddressAssets = async (addresses: string): Promise<AddressSummary[]> => {
-        const network = this.getChainType();
-        Web3API.setNetwork(network);
+        try {
+            const network = this.getChainType();
+            Web3API.setNetwork(network);
 
-        const addressList = addresses.split(',');
-        const summaries: AddressSummary[] = [];
-        for (const address of addressList) {
-            const balance = await Web3API.getBalance(address, true);
-            const summary: AddressSummary = {
-                address: address,
-                totalSatoshis: Number(balance),
-                loading: false
-            };
-
-            summaries.push(summary);
+            const addressList = addresses.split(',');
+            const summaries: AddressSummary[] = [];
+            for (const address of addressList) {
+                const balance = await Web3API.getBalance(address, true);
+                const summary: AddressSummary = {
+                    address: address,
+                    totalSatoshis: Number(balance),
+                    loading: false
+                };
+                summaries.push(summary);
+            }
+            return summaries;
+        } catch (err) {
+            throw new WalletControllerError(`Failed to get multi-address assets: ${String(err)}`, { addresses });
         }
-
-        return summaries;
     };
 
     findGroupAssets = (groups: { type: number; address_arr: string[]; pubkey_arr: string[] }[]) => {
+        // Potentially wrap this in try/catch if there's network logic.
         return openapiService.findGroupAssets(groups);
     };
 
@@ -206,10 +242,12 @@ export class WalletController extends BaseController {
     };
 
     getAddressHistory = async (params: { address: string; start: number; limit: number }) => {
-        // preferenceService.updateAddressHistory(address, data);
-        // return data;
-        //   todo
-        return await openapiService.getAddressRecentHistory(params);
+        try {
+            // Just fetch from openapiService for now
+            return await openapiService.getAddressRecentHistory(params);
+        } catch (err) {
+            throw new WalletControllerError(`Failed to get address history: ${String(err)}`, params);
+        }
     };
 
     getAddressCacheHistory = (address: string | undefined) => {
@@ -220,7 +258,7 @@ export class WalletController extends BaseController {
     /* keyrings */
 
     getExternalLinkAck = () => {
-        preferenceService.getExternalLinkAck();
+        return preferenceService.getExternalLinkAck();
     };
 
     setExternalLinkAck = (ack: boolean) => {
@@ -261,13 +299,11 @@ export class WalletController extends BaseController {
         };
     };
 
-    getInternalPrivateKey = (params: { pubkey: string; type: string }) => {
-        const pubkey = params.pubkey;
+    getInternalPrivateKey = ({ pubkey, type }: { pubkey: string; type: string }) => {
         if (!pubkey) {
-            throw new Error('No pubkey found in params');
+            throw new WalletControllerError('No pubkey found in parameters');
         }
-
-        const keyring = keyringService.getKeyringForAccount(pubkey, params.type);
+        const keyring = keyringService.getKeyringForAccount(pubkey, type);
         if (!keyring) return null;
 
         const privateKey = keyring.exportAccount(pubkey);
@@ -288,7 +324,7 @@ export class WalletController extends BaseController {
         const serialized = originKeyring.serialize();
 
         if (!('mnemonic' in serialized)) {
-            throw new Error('No mnemonic found');
+            throw new WalletControllerError('No mnemonic found in keyring');
         }
 
         return {
@@ -304,7 +340,10 @@ export class WalletController extends BaseController {
             originKeyring = await keyringService.importPrivateKey(data, addressType);
         } catch (e) {
             console.warn('Something went wrong while attempting to load keyring', e);
-            throw e;
+            throw new WalletControllerError(`Could not import private key: ${String(e)}`, {
+                data,
+                addressType
+            });
         }
 
         const pubkeys = originKeyring.getAccounts();
@@ -332,24 +371,28 @@ export class WalletController extends BaseController {
         addressType: AddressType,
         accountCount: number
     ) => {
-        const originKeyring = await keyringService.createKeyringWithMnemonics(
-            mnemonic,
-            hdPath,
-            passphrase,
-            addressType,
-            accountCount
-        );
-        keyringService.removePreMnemonics();
+        try {
+            const originKeyring = await keyringService.createKeyringWithMnemonics(
+                mnemonic,
+                hdPath,
+                passphrase,
+                addressType,
+                accountCount
+            );
+            keyringService.removePreMnemonics();
 
-        const displayedKeyring = keyringService.displayForKeyring(
-            originKeyring,
-            addressType,
-            keyringService.keyrings.length - 1
-        );
+            const displayedKeyring = keyringService.displayForKeyring(
+                originKeyring,
+                addressType,
+                keyringService.keyrings.length - 1
+            );
 
-        const keyring = this.displayedKeyringToWalletKeyring(displayedKeyring, keyringService.keyrings.length - 1);
-        this.changeKeyring(keyring);
-        preferenceService.setShowSafeNotice(true);
+            const keyring = this.displayedKeyringToWalletKeyring(displayedKeyring, keyringService.keyrings.length - 1);
+            this.changeKeyring(keyring);
+            preferenceService.setShowSafeNotice(true);
+        } catch (err) {
+            throw new WalletControllerError(`Could not create keyring from mnemonics: ${String(err)}`);
+        }
     };
 
     createTmpKeyringWithMnemonics = (
@@ -379,7 +422,6 @@ export class WalletController extends BaseController {
 
     createTmpKeyringWithPrivateKey = (privateKey: string, addressType: AddressType) => {
         const network = this.getNetworkType();
-
         const originKeyring = keyringService.createTmpKeyring(KEYRING_TYPE.SimpleKeyring, {
             privateKeys: [privateKey],
             network: getBitcoinLibJSNetwork(network)
@@ -424,39 +466,53 @@ export class WalletController extends BaseController {
         accountCount = 1,
         filterPubkey: string[] = []
     ) => {
-        const originKeyring = await keyringService.createKeyringWithKeystone(
-            urType,
-            urCbor,
-            addressType,
-            hdPath,
-            accountCount
-        );
+        try {
+            const originKeyring = await keyringService.createKeyringWithKeystone(
+                urType,
+                urCbor,
+                addressType,
+                hdPath,
+                accountCount
+            );
 
-        if (filterPubkey !== null && filterPubkey !== undefined && filterPubkey.length > 0) {
-            const accounts = originKeyring.getAccounts();
-            accounts.forEach((account) => {
-                if (!filterPubkey.includes(account)) {
-                    originKeyring.removeAccount(account);
-                }
+            if (filterPubkey?.length > 0) {
+                const accounts = originKeyring.getAccounts();
+                accounts.forEach((account) => {
+                    if (!filterPubkey.includes(account)) {
+                        originKeyring.removeAccount(account);
+                    }
+                });
+            }
+            const displayedKeyring = keyringService.displayForKeyring(
+                originKeyring,
+                addressType,
+                keyringService.keyrings.length - 1
+            );
+            const keyring = this.displayedKeyringToWalletKeyring(displayedKeyring, keyringService.keyrings.length - 1);
+            this.changeKeyring(keyring);
+            preferenceService.setShowSafeNotice(false);
+        } catch (err) {
+            throw new WalletControllerError(`Could not create keyring with Keystone data: ${String(err)}`, {
+                urType,
+                urCbor,
+                addressType,
+                hdPath,
+                accountCount
             });
         }
-        const displayedKeyring = keyringService.displayForKeyring(
-            originKeyring,
-            addressType,
-            keyringService.keyrings.length - 1
-        );
-        const keyring = this.displayedKeyringToWalletKeyring(displayedKeyring, keyringService.keyrings.length - 1);
-        this.changeKeyring(keyring);
-        preferenceService.setShowSafeNotice(false);
     };
 
     removeKeyring = async (keyring: WalletKeyring) => {
-        await keyringService.removeKeyring(keyring.index);
-        const keyrings = await this.getKeyrings();
-        const nextKeyring = keyrings[keyrings.length - 1];
-        if (nextKeyring?.accounts[0]) {
-            this.changeKeyring(nextKeyring);
-            return nextKeyring;
+        try {
+            await keyringService.removeKeyring(keyring.index);
+            const keyrings = await this.getKeyrings();
+            const nextKeyring = keyrings[keyrings.length - 1];
+            if (nextKeyring?.accounts[0]) {
+                this.changeKeyring(nextKeyring);
+                return nextKeyring;
+            }
+        } catch (err) {
+            throw new WalletControllerError(`Could not remove keyring: ${String(err)}`, { keyring });
         }
     };
 
@@ -465,14 +521,22 @@ export class WalletController extends BaseController {
     };
 
     deriveNewAccountFromMnemonic = async (keyring: WalletKeyring, alianName?: string) => {
-        const _keyring = keyringService.keyrings[keyring.index];
-        const result = await keyringService.addNewAccount(_keyring);
-        if (alianName) this.updateAlianName(result[0], alianName);
+        try {
+            const _keyring = keyringService.keyrings[keyring.index];
+            const result = await keyringService.addNewAccount(_keyring);
+            if (alianName) this.updateAlianName(result[0], alianName);
 
-        const currentKeyring = await this.getCurrentKeyring();
-        if (!currentKeyring) throw new Error('no current keyring');
-        keyring = currentKeyring;
-        this.changeKeyring(keyring, keyring.accounts.length - 1);
+            const currentKeyring = await this.getCurrentKeyring();
+            if (!currentKeyring) {
+                throw new WalletControllerError('No current keyring after deriving new account');
+            }
+            this.changeKeyring(currentKeyring, currentKeyring.accounts.length - 1);
+        } catch (err) {
+            throw new WalletControllerError(`Could not derive new account from mnemonic: ${String(err)}`, {
+                keyring,
+                alianName
+            });
+        }
     };
 
     getAccountsCount = () => {
@@ -512,13 +576,17 @@ export class WalletController extends BaseController {
     };
 
     changeAddressType = async (addressType: AddressType) => {
-        const currentAccount = await this.getCurrentAccount();
-        const currentKeyringIndex = preferenceService.getCurrentKeyringIndex();
-        await keyringService.changeAddressType(currentKeyringIndex, addressType);
+        try {
+            const currentAccount = await this.getCurrentAccount();
+            const currentKeyringIndex = preferenceService.getCurrentKeyringIndex();
+            await keyringService.changeAddressType(currentKeyringIndex, addressType);
 
-        const keyring = await this.getCurrentKeyring();
-        if (!keyring) throw new Error('no current keyring');
-        this.changeKeyring(keyring, currentAccount?.index);
+            const keyring = await this.getCurrentKeyring();
+            if (!keyring) throw new WalletControllerError('No current keyring');
+            this.changeKeyring(keyring, currentAccount?.index);
+        } catch (err) {
+            throw new WalletControllerError(`Failed to change address type: ${String(err)}`, { addressType });
+        }
     };
 
     signTransaction = (type: string, from: string, psbt: bitcoin.Psbt, inputs: ToSignInput[]) => {
@@ -528,36 +596,39 @@ export class WalletController extends BaseController {
 
     formatOptionsToSignInputs = async (_psbt: string | bitcoin.Psbt, options?: SignPsbtOptions) => {
         const account = await this.getCurrentAccount();
-        if (!account) throw new Error('no current account');
+        if (!account) {
+            throw new WalletControllerError('No current account: formatOptionsToSignInputs');
+        }
 
         let toSignInputs: ToSignInput[] = [];
         if (options?.toSignInputs) {
-            // We expect userToSignInputs objects to be similar to ToSignInput interface,
-            // but we allow address to be specified in addition to publicKey for convenience.
+            // Validate user-provided inputs
             toSignInputs = options.toSignInputs.map((input) => {
                 const index = Number(input.index);
                 if (isNaN(index)) throw new Error('invalid index in toSignInput');
 
                 if (!(input as AddressUserToSignInput).address && !(input as PublicKeyUserToSignInput).publicKey) {
-                    throw new Error('no address or public key in toSignInput');
+                    throw new WalletControllerError('No address or public key in toSignInput');
                 }
 
                 if (
                     (input as AddressUserToSignInput).address &&
                     (input as AddressUserToSignInput).address != account.address
                 ) {
-                    throw new Error('invalid address in toSignInput');
+                    throw new WalletControllerError('Invalid address in toSignInput');
                 }
 
                 if (
                     (input as PublicKeyUserToSignInput).publicKey &&
                     (input as PublicKeyUserToSignInput).publicKey != account.pubkey
                 ) {
-                    throw new Error('invalid public key in toSignInput');
+                    throw new WalletControllerError('Invalid public key in toSignInput');
                 }
 
                 const sighashTypes = input.sighashTypes?.map(Number);
-                if (sighashTypes?.some(isNaN)) throw new Error('invalid sighash type in toSignInput');
+                if (sighashTypes?.some(isNaN)) {
+                    throw new WalletControllerError('Invalid sighash type in toSignInput');
+                }
 
                 return {
                     index,
@@ -567,6 +638,7 @@ export class WalletController extends BaseController {
                 };
             });
         } else {
+            // No custom toSignInputs => auto-detect
             const networkType = this.getNetworkType();
             const psbtNetwork = toPsbtNetwork(networkType);
 
@@ -598,26 +670,25 @@ export class WalletController extends BaseController {
 
     signPsbt = async (psbt: bitcoin.Psbt, toSignInputs: ToSignInput[], autoFinalized: boolean) => {
         const account = await this.getCurrentAccount();
-        if (!account) throw new Error('no current account');
+        if (!account) throw new WalletControllerError('No current account: signPsbt');
 
         const keyring = await this.getCurrentKeyring();
-        if (!keyring) throw new Error('no current keyring');
+        if (!keyring) throw new WalletControllerError('No current keyring');
         const __keyring = keyringService.keyrings[keyring.index];
 
         const networkType = this.getNetworkType();
         const psbtNetwork = toPsbtNetwork(networkType);
 
         if (!toSignInputs) {
-            // Compatibility with legacy code.
             toSignInputs = await this.formatOptionsToSignInputs(psbt);
         }
 
+        // Attempt to fix missing tapInternalKey for P2TR inputs
         psbt.data.inputs.forEach((v) => {
             const isNotSigned = !(v.finalScriptSig ?? v.finalScriptWitness);
             const isP2TR = keyring.addressType === AddressType.P2TR || keyring.addressType === AddressType.M44_P2TR;
             const lostInternalPubkey = !v.tapInternalKey;
 
-            // Special measures taken for compatibility with certain applications.
             if (isNotSigned && isP2TR && lostInternalPubkey) {
                 const tapInternalKey = toXOnly(Buffer.from(account.pubkey, 'hex'));
                 const { output } = bitcoin.payments.p2tr({
@@ -631,10 +702,11 @@ export class WalletController extends BaseController {
             }
         });
 
+        // Keystone special handling
         if (keyring.type === KEYRING_TYPE.KeystoneKeyring) {
             const _keyring = __keyring as KeystoneKeyring;
             if (!_keyring.mfp) {
-                throw new Error('no mfp in keyring');
+                throw new WalletControllerError('No master fingerprint found in Keystone keyring');
             }
 
             toSignInputs.forEach((input) => {
@@ -660,10 +732,10 @@ export class WalletController extends BaseController {
             return psbt;
         }
 
+        // Normal keyring
         psbt = keyringService.signTransaction(__keyring, psbt, toSignInputs);
         if (autoFinalized) {
             toSignInputs.forEach((v) => {
-                // psbt.validateSignaturesOfInput(v.index, validator);
                 psbt.finalizeInput(v.index);
             });
         }
@@ -678,7 +750,7 @@ export class WalletController extends BaseController {
 
     signMessage = (text: string) => {
         const account = preferenceService.getCurrentAccount();
-        if (!account) throw new Error('no current account');
+        if (!account) throw new WalletControllerError('No current account');
         return keyringService.signMessage(account.pubkey, account.type, text);
     };
 
@@ -686,164 +758,171 @@ export class WalletController extends BaseController {
         interactionParameters: InteractionParametersWithoutSigner
     ): Promise<[BroadcastedTransaction, BroadcastedTransaction, import('@btc-vision/transaction').UTXO[], string]> => {
         const account = preferenceService.getCurrentAccount();
-        if (!account) throw new Error('no current account');
+        if (!account) throw new WalletControllerError('No current account');
 
         const wifWallet = this.getInternalPrivateKey({
             pubkey: account.pubkey,
             type: account.type
         } as Account);
 
-        if (!wifWallet) throw new Error('no current account');
+        if (!wifWallet) throw new WalletControllerError('Could not retrieve internal private key');
 
-        const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
-        const utxos = interactionParameters.utxos.map((utxo) => {
-            return {
+        try {
+            const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
+            const utxos = interactionParameters.utxos.map((utxo) => ({
                 ...utxo,
-                value:
-                    (typeof utxo.value as unknown as string | bigint) === 'bigint'
-                        ? utxo.value
-                        : BigInt(utxo.value as unknown as string)
+                value: typeof utxo.value === 'bigint' ? utxo.value : BigInt(utxo.value as unknown as string)
+            }));
+
+            const interactionParametersSubmit: IInteractionParameters = {
+                from: interactionParameters.from,
+                to: interactionParameters.to,
+                utxos,
+                signer: walletGet.keypair,
+                network: Web3API.network,
+                feeRate: interactionParameters.feeRate,
+                priorityFee: BigInt(interactionParameters.priorityFee || 0n),
+                gasSatFee: BigInt(interactionParameters.gasSatFee || 330n),
+                calldata: Buffer.from(interactionParameters.calldata as unknown as string, 'hex')
             };
-        });
 
-        const interactionParametersSubmit: IInteractionParameters = {
-            from: interactionParameters.from, // From address
-            to: interactionParameters.to, // To address
-            utxos: utxos, // UTXOs
-            signer: walletGet.keypair, // Signer
-            network: Web3API.network, // Network
-            feeRate: interactionParameters.feeRate, // Fee rate (satoshi per byte)
-            priorityFee: BigInt(interactionParameters.priorityFee || 0n), // Priority fee (opnet)
-            gasSatFee: BigInt(interactionParameters.gasSatFee || 330n),
-            calldata: Buffer.from(interactionParameters.calldata as unknown as string, 'hex')
-        };
+            const sendTransaction = await Web3API.transactionFactory.signInteraction(interactionParametersSubmit);
+            const firstTransaction = await Web3API.provider.sendRawTransaction(
+                sendTransaction.fundingTransaction,
+                false
+            );
 
-        const sendTransaction = await Web3API.transactionFactory.signInteraction(interactionParametersSubmit);
-        const firstTransaction = await Web3API.provider.sendRawTransaction(sendTransaction.fundingTransaction, false);
+            if (!firstTransaction) {
+                throw new WalletControllerError('No result from funding transaction broadcast');
+            }
+            if (firstTransaction.error) {
+                throw new WalletControllerError(firstTransaction.error);
+            }
 
-        if (!firstTransaction) {
-            throw new Error('Error in Broadcast');
+            // This transaction is partially signed. Submitting it to OpNet
+            const secondTransaction = await Web3API.provider.sendRawTransaction(
+                sendTransaction.interactionTransaction,
+                false
+            );
+            if (!secondTransaction) {
+                throw new WalletControllerError('No result from interaction transaction broadcast');
+            }
+            if (secondTransaction.error) {
+                throw new WalletControllerError(secondTransaction.error);
+            }
+
+            return [firstTransaction, secondTransaction, sendTransaction.nextUTXOs, sendTransaction.preimage];
+        } catch (err) {
+            throw new WalletControllerError(`signAndBroadcastInteraction failed: ${String(err)}`, {
+                interactionParameters
+            });
         }
-
-        if (firstTransaction.error) {
-            throw new Error(firstTransaction.error);
-        }
-
-        // This transaction is partially signed. You can not submit it to the Bitcoin network. It must pass via the OPNet network.
-        const secondTransaction = await Web3API.provider.sendRawTransaction(
-            sendTransaction.interactionTransaction,
-            false
-        );
-        if (!secondTransaction) {
-            throw new Error('Error in Broadcast');
-        }
-
-        if (secondTransaction.error) {
-            throw new Error(secondTransaction.error);
-        }
-
-        return [firstTransaction, secondTransaction, sendTransaction.nextUTXOs, sendTransaction.preimage];
     };
 
     deployContract = async (params: IDeploymentParametersWithoutSigner) => {
         const account = preferenceService.getCurrentAccount();
-        if (!account) throw new Error('no current account');
+        if (!account) throw new WalletControllerError('No current account');
 
         const wifWallet = this.getInternalPrivateKey({
             pubkey: account.pubkey,
             type: account.type
         } as Account);
 
-        if (!wifWallet) throw new Error('no current account');
+        if (!wifWallet) throw new WalletControllerError('Could not retrieve internal private key');
 
-        const utxos = params.utxos.map((utxo) => {
-            return {
+        try {
+            const utxos = params.utxos.map((utxo) => ({
                 ...utxo,
-                value:
-                    (typeof utxo.value as unknown as string | bigint) === 'bigint'
-                        ? utxo.value
-                        : BigInt(utxo.value as unknown as string)
+                value: typeof utxo.value === 'bigint' ? utxo.value : BigInt(utxo.value as unknown as string)
+            }));
+
+            const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
+            const deployContractParameters: IDeploymentParameters = {
+                ...params,
+                utxos,
+                signer: walletGet.keypair,
+                network: Web3API.network,
+                feeRate: Number(params.feeRate.toString()),
+                gasSatFee: BigInt(params.gasSatFee || 0n) < 330n ? 330n : BigInt(params.gasSatFee || 0n),
+                priorityFee: BigInt(params.priorityFee || 0n),
+                bytecode:
+                    typeof params.bytecode === 'string'
+                        ? Buffer.from(params.bytecode, 'hex')
+                        : Buffer.from(params.bytecode),
+                calldata: params.calldata
+                    ? typeof params.calldata === 'string'
+                        ? Buffer.from(params.calldata, 'hex')
+                        : Buffer.from(params.calldata)
+                    : undefined,
+                optionalOutputs: params.optionalOutputs || []
             };
-        });
 
-        const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
-        const deployContractParameters: IDeploymentParameters = {
-            ...params,
-            utxos: utxos,
-            signer: walletGet.keypair,
-            network: Web3API.network,
-            feeRate: Number(params.feeRate.toString()),
-            gasSatFee: BigInt(params.gasSatFee || 0n) < 330n ? 330n : BigInt(params.gasSatFee || 0n),
-            priorityFee: BigInt(params.priorityFee || 0n), // Priority fee (opnet)
-            bytecode:
-                typeof params.bytecode === 'string'
-                    ? Buffer.from(params.bytecode, 'hex')
-                    : Buffer.from(params.bytecode),
-            calldata: params.calldata
-                ? typeof params.calldata === 'string'
-                    ? Buffer.from(params.calldata, 'hex')
-                    : Buffer.from(params.calldata)
-                : undefined,
-            optionalOutputs: params.optionalOutputs || [] // Optional outputs
-        };
-
-        return await Web3API.transactionFactory.signDeployment(deployContractParameters);
+            return await Web3API.transactionFactory.signDeployment(deployContractParameters);
+        } catch (err) {
+            throw new WalletControllerError(`Failed to deploy contract: ${String(err)}`, { params });
+        }
     };
 
     signInteraction = async (
         interactionParameters: InteractionParametersWithoutSigner
     ): Promise<InteractionResponse> => {
         const account = preferenceService.getCurrentAccount();
-        if (!account) throw new Error('no current account');
+        if (!account) throw new WalletControllerError('No current account');
 
         const wifWallet = this.getInternalPrivateKey({
             pubkey: account.pubkey,
             type: account.type
         } as Account);
 
-        if (!wifWallet) throw new Error('no current account');
+        if (!wifWallet) throw new WalletControllerError('Could not retrieve internal private key');
 
-        const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
-        const utxos = interactionParameters.utxos.map((utxo) => {
-            return {
+        try {
+            const walletGet: Wallet = Wallet.fromWif(wifWallet.wif, Web3API.network);
+            const utxos = interactionParameters.utxos.map((utxo) => ({
                 ...utxo,
-                value:
-                    (typeof utxo.value as unknown as string | bigint) === 'bigint'
-                        ? utxo.value
-                        : BigInt(utxo.value as unknown as string)
+                value: typeof utxo.value === 'bigint' ? utxo.value : BigInt(utxo.value as unknown as string)
+            }));
+
+            const interactionParametersSubmit: IInteractionParameters = {
+                from: interactionParameters.from,
+                to: interactionParameters.to,
+                utxos,
+                signer: walletGet.keypair,
+                network: Web3API.network,
+                feeRate: interactionParameters.feeRate,
+                priorityFee: BigInt(interactionParameters.priorityFee || 0n),
+                gasSatFee: BigInt(interactionParameters.gasSatFee || 330n),
+                calldata: Buffer.from(interactionParameters.calldata as unknown as string, 'hex'),
+                optionalOutputs: interactionParameters.optionalOutputs || []
             };
-        });
 
-        const interactionParametersSubmit: IInteractionParameters = {
-            from: interactionParameters.from, // From address
-            to: interactionParameters.to, // To address
-            utxos: utxos, // UTXOs
-            signer: walletGet.keypair, // Signer
-            network: Web3API.network, // Network
-            feeRate: interactionParameters.feeRate, // Fee rate (satoshi per byte)
-            priorityFee: BigInt(interactionParameters.priorityFee || 0n), // Priority fee (opnet)
-            gasSatFee: BigInt(interactionParameters.gasSatFee || 330n),
-            calldata: Buffer.from(interactionParameters.calldata as unknown as string, 'hex'), // Calldata
-            optionalOutputs: interactionParameters.optionalOutputs || [] // Optional outputs
-        };
-
-        return await Web3API.transactionFactory.signInteraction(interactionParametersSubmit);
+            return await Web3API.transactionFactory.signInteraction(interactionParametersSubmit);
+        } catch (err) {
+            throw new WalletControllerError(`Failed to sign interaction: ${String(err)}`, {
+                interactionParameters
+            });
+        }
     };
 
     broadcast = async (transactions: BroadcastTransactionOptions[]): Promise<BroadcastedTransaction[]> => {
         const broadcastedTransactions: BroadcastedTransaction[] = [];
 
         for (const transaction of transactions) {
-            const broadcastedTransaction = await Web3API.provider.sendRawTransaction(transaction.raw, transaction.psbt);
-            if (!broadcastedTransaction) {
-                throw new Error('Error in Broadcast');
+            try {
+                const broadcastedTransaction = await Web3API.provider.sendRawTransaction(
+                    transaction.raw,
+                    transaction.psbt
+                );
+                if (!broadcastedTransaction) {
+                    throw new WalletControllerError('Error in broadcast: no response');
+                }
+                if (broadcastedTransaction.error) {
+                    throw new WalletControllerError(broadcastedTransaction.error);
+                }
+                broadcastedTransactions.push(broadcastedTransaction);
+            } catch (err) {
+                throw new WalletControllerError(`Broadcast failed: ${String(err)}`, transaction);
             }
-
-            if (broadcastedTransaction.error) {
-                throw new Error(broadcastedTransaction.error);
-            }
-
-            broadcastedTransactions.push(broadcastedTransaction);
         }
 
         return broadcastedTransactions;
@@ -851,19 +930,26 @@ export class WalletController extends BaseController {
 
     signBIP322Simple = async (text: string) => {
         const account = preferenceService.getCurrentAccount();
-        if (!account) throw new Error('no current account');
+        if (!account) throw new WalletControllerError('No current account');
         const networkType = this.getNetworkType();
-        return signMessageOfBIP322Simple({
-            message: text,
-            address: account.address,
-            networkType,
-            wallet: this as unknown as AbstractWallet
-        });
+        try {
+            return await signMessageOfBIP322Simple({
+                message: text,
+                address: account.address,
+                networkType,
+                wallet: this as unknown as AbstractWallet
+            });
+        } catch (err) {
+            throw new WalletControllerError(`Failed to sign BIP322 message: ${String(err)}`, {
+                text,
+                networkType
+            });
+        }
     };
 
     signData = (data: string, type: 'ecdsa' | 'schnorr' = 'ecdsa') => {
         const account = preferenceService.getCurrentAccount();
-        if (!account) throw new Error('no current account');
+        if (!account) throw new WalletControllerError('No current account');
         return keyringService.signData(account.pubkey, data, type);
     };
 
@@ -940,18 +1026,25 @@ export class WalletController extends BaseController {
     };
 
     listChainAssets = async (pubkeyAddress: string) => {
-        const balance = await openapiService.getAddressBalance(pubkeyAddress);
-        const assets: AccountAsset[] = [
-            { name: COIN_NAME, symbol: COIN_SYMBOL, amount: balance.amount, value: balance.usd_value }
-        ];
-        return assets;
+        try {
+            const balance = await openapiService.getAddressBalance(pubkeyAddress);
+            const assets: AccountAsset[] = [
+                { name: COIN_NAME, symbol: COIN_SYMBOL, amount: balance.amount, value: balance.usd_value }
+            ];
+            return assets;
+        } catch (err) {
+            throw new WalletControllerError(`Failed to list chain assets: ${String(err)}`, {
+                pubkeyAddress
+            });
+        }
     };
 
     reportErrors = (error: string) => {
-        console.error('report not implemented');
+        console.error('report not implemented:', error);
+        // Potentially forward to logging service
     };
 
-    getNetworkType = () => {
+    getNetworkType = (): NetworkType => {
         const chainType = this.getChainType();
         return CHAINS_MAP[chainType].networkType;
     };
@@ -977,28 +1070,33 @@ export class WalletController extends BaseController {
     };
 
     setChainType = async (chainType: ChainType) => {
-        Web3API.setNetwork(chainType);
+        try {
+            Web3API.setNetwork(chainType);
+            preferenceService.setChainType(chainType);
+            await this.openapi.setEndpoints(CHAINS_MAP[chainType].endpoints);
 
-        preferenceService.setChainType(chainType);
-        await this.openapi.setEndpoints(CHAINS_MAP[chainType].endpoints);
+            const currentAccount = await this.getCurrentAccount();
+            const keyring = await this.getCurrentKeyring();
+            if (!keyring) {
+                throw new WalletControllerError('No current keyring in setChainType');
+            }
+            this.changeKeyring(keyring, currentAccount?.index);
 
-        const currentAccount = await this.getCurrentAccount();
-        const keyring = await this.getCurrentKeyring();
-        if (!keyring) throw new Error('no current keyring');
-        this.changeKeyring(keyring, currentAccount?.index);
+            const chainInfo = getChainInfo(chainType);
+            sessionService.broadcastEvent<SessionEvent.chainChanged>(SessionEvent.chainChanged, chainInfo);
+            eventBus.emit(EVENTS.broadcastToUI, {
+                method: 'chainChanged',
+                params: chainInfo
+            });
 
-        const chainInfo = getChainInfo(chainType);
-        sessionService.broadcastEvent<SessionEvent.chainChanged>(SessionEvent.chainChanged, chainInfo);
-        eventBus.emit(EVENTS.broadcastToUI, {
-            method: 'chainChanged',
-            params: chainInfo
-        });
-
-        const network = this.getLegacyNetworkName();
-        sessionService.broadcastEvent<SessionEvent.networkChanged>(SessionEvent.networkChanged, {
-            network,
-            chainType
-        });
+            const network = this.getLegacyNetworkName();
+            sessionService.broadcastEvent<SessionEvent.networkChanged>(SessionEvent.networkChanged, {
+                network,
+                chainType
+            });
+        } catch (err) {
+            throw new WalletControllerError(`Failed to set chain type: ${String(err)}`, { chainType });
+        }
     };
 
     getChainType = (): ChainType => {
@@ -1006,7 +1104,11 @@ export class WalletController extends BaseController {
     };
 
     pushTx = async (rawtx: string) => {
-        return await this.openapi.pushTx(rawtx);
+        try {
+            return await this.openapi.pushTx(rawtx);
+        } catch (err) {
+            throw new WalletControllerError(`Failed to push transaction: ${String(err)}`, { rawtx });
+        }
     };
 
     getAccounts = async () => {
@@ -1020,6 +1122,7 @@ export class WalletController extends BaseController {
         const key = `keyring_${index}`;
         const type = displayedKeyring.type;
         const accounts: Account[] = [];
+
         for (let j = 0; j < displayedKeyring.accounts.length; j++) {
             const { pubkey } = displayedKeyring.accounts[j];
             const address = publicKeyToAddress(pubkey, addressType, networkType);
@@ -1045,7 +1148,7 @@ export class WalletController extends BaseController {
             key,
             initName ? `${KEYRING_TYPES[type].alianName} #${index + 1}` : ''
         );
-        const keyring: WalletKeyring = {
+        const walletKeyring: WalletKeyring = {
             index,
             key,
             type,
@@ -1054,7 +1157,7 @@ export class WalletController extends BaseController {
             alianName,
             hdPath
         };
-        return keyring;
+        return walletKeyring;
     };
 
     getKeyrings = async (): Promise<WalletKeyring[]> => {
@@ -1065,11 +1168,9 @@ export class WalletController extends BaseController {
             if (displayedKeyring.type === KEYRING_TYPE.Empty) {
                 continue;
             }
-
-            const keyring = this.displayedKeyringToWalletKeyring(displayedKeyring, displayedKeyring.index);
-            keyrings.push(keyring);
+            const walletKeyring = this.displayedKeyringToWalletKeyring(displayedKeyring, displayedKeyring.index);
+            keyrings.push(walletKeyring);
         }
-
         return keyrings;
     };
 
@@ -1079,9 +1180,7 @@ export class WalletController extends BaseController {
         if (currentKeyringIndex === undefined) {
             const currentAccount = preferenceService.getCurrentAccount();
             for (let i = 0; i < displayedKeyrings.length; i++) {
-                if (displayedKeyrings[i].type !== currentAccount?.type) {
-                    continue;
-                }
+                if (displayedKeyrings[i].type !== currentAccount?.type) continue;
                 const found = displayedKeyrings[i].accounts.find((v) => v.pubkey === currentAccount?.pubkey);
                 if (found) {
                     currentKeyringIndex = i;
@@ -1116,13 +1215,13 @@ export class WalletController extends BaseController {
         const currentKeyring = await this.getCurrentKeyring();
         if (!currentKeyring) return null;
         const account = preferenceService.getCurrentAccount();
-        let currentAccount: Account | undefined = undefined;
+        let currentAccount: Account | undefined;
+
         currentKeyring.accounts.forEach((v) => {
             if (v.pubkey === account?.pubkey) {
                 currentAccount = v;
             }
         });
-
         if (!currentAccount) {
             currentAccount = currentKeyring.accounts[0];
         }
@@ -1131,7 +1230,6 @@ export class WalletController extends BaseController {
             currentAccount.flag = preferenceService.getAddressFlag(currentAccount.address);
             openapiService.setClientAddress(currentAccount.address, currentAccount.flag);
         }
-
         return currentAccount;
     };
 
@@ -1164,7 +1262,9 @@ export class WalletController extends BaseController {
                 if (w.time) {
                     if (Date.now() > w.time + 1000 * 60 * 60 * 24 * 7) {
                         w.new = false;
-                    } else w.new = !(readAppTime && readAppTime > w.time);
+                    } else {
+                        w.new = !(readAppTime && readAppTime > w.time);
+                    }
                 } else {
                     w.new = false;
                 }
@@ -1193,9 +1293,11 @@ export class WalletController extends BaseController {
     setRecentConnectedSites = (sites: ConnectedSite[]) => {
         permissionService.setRecentConnectedSites(sites);
     };
+
     getRecentConnectedSites = () => {
         return permissionService.getRecentConnectedSites();
     };
+
     getCurrentSite = (tabId: number): ConnectedSite | null => {
         const { origin = '', name = '', icon = '' } = sessionService.getSession(tabId) || {};
         if (!origin) {
@@ -1221,7 +1323,6 @@ export class WalletController extends BaseController {
         if (!origin) {
             return undefined;
         }
-
         return permissionService.getWithoutUpdate(origin);
     };
 
@@ -1230,14 +1331,7 @@ export class WalletController extends BaseController {
         if (data.isConnected) {
             const network = this.getLegacyNetworkName();
             const chainType = this.getChainType();
-            sessionService.broadcastEvent(
-                SessionEvent.networkChanged,
-                {
-                    network,
-                    chainType
-                },
-                data.origin
-            );
+            sessionService.broadcastEvent(SessionEvent.networkChanged, { network, chainType }, data.origin);
         }
     };
 
@@ -1245,14 +1339,7 @@ export class WalletController extends BaseController {
         permissionService.updateConnectSite(origin, data);
         const network = this.getLegacyNetworkName();
         const chainType = this.getChainType();
-        sessionService.broadcastEvent(
-            SessionEvent.networkChanged,
-            {
-                network,
-                chainType
-            },
-            data.origin
-        );
+        sessionService.broadcastEvent(SessionEvent.networkChanged, { network, chainType }, data.origin);
     };
 
     removeAllRecentConnectedSites = () => {
@@ -1341,7 +1428,7 @@ export class WalletController extends BaseController {
 
         const rbfEnabled = psbt.txInputs.some((input) => input.sequence && input.sequence < 0xfffffffe);
 
-        // TODO: Check if there is any way to find recommendedFeeRate
+        // Arbitrary recommended fee rate example
         const recommendedFeeRate = 1;
         const shouldWarnFeeRate = feeRate < recommendedFeeRate;
 
@@ -1379,17 +1466,12 @@ export class WalletController extends BaseController {
     };
 
     getAddressSummary = async (address: string) => {
-        // preferenceService.updateAddressBalance(address, data);
-        return await openapiService.getAddressSummary(address);
+        try {
+            return await openapiService.getAddressSummary(address);
+        } catch (err) {
+            throw new WalletControllerError(`Failed to get address summary: ${String(err)}`, { address });
+        }
     };
-
-    // TODO (typing): Since the __CACHE's type is not specified, the ts was giving error. As this function
-    // is not used in any part, just commented out for not to suppress the error.
-    // setPsbtSignNonSegwitEnable(psbt: bitcoin.Psbt, enabled: boolean) {
-
-    //     //@ts-expect-error
-    //     psbt.__CACHE.__UNSAFE_SIGN_NONSEGWIT = enabled;
-    // }
 
     getShowSafeNotice = () => {
         return preferenceService.getShowSafeNotice();
@@ -1405,16 +1487,16 @@ export class WalletController extends BaseController {
 
     checkKeyringMethod = async (method: string) => {
         const account = await this.getCurrentAccount();
-        if (!account) throw new Error('no current account');
+        if (!account) throw new WalletControllerError('No current account');
 
         const keyring = keyringService.getKeyringForAccount(account.pubkey);
         if (!keyring) {
-            throw new Error('keyring does not exist');
+            throw new WalletControllerError('Keyring does not exist for current account', { account });
         }
 
         // @ts-expect-error
         if (!keyring[method]) {
-            throw new Error(`keyring does not have ${method} method`);
+            throw new WalletControllerError(`Keyring does not have "${method}" method`, { method });
         }
 
         return { account, keyring };
@@ -1422,56 +1504,94 @@ export class WalletController extends BaseController {
 
     genSignPsbtUr = async (psbtHex: string) => {
         const { keyring } = await this.checkKeyringMethod('genSignPsbtUr');
-
-        return await (keyring as KeystoneKeyring).genSignPsbtUr(psbtHex);
+        try {
+            return await (keyring as KeystoneKeyring).genSignPsbtUr(psbtHex);
+        } catch (err) {
+            throw new WalletControllerError(`Failed to generate sign PSBT UR: ${String(err)}`, { psbtHex });
+        }
     };
 
     parseSignPsbtUr = async (type: string, cbor: string, isFinalize = true) => {
         const { keyring } = await this.checkKeyringMethod('parseSignPsbtUr');
-
-        const psbtHex = await (keyring as KeystoneKeyring).parseSignPsbtUr(type, cbor);
-        const psbt = bitcoin.Psbt.fromHex(psbtHex);
-        if (isFinalize) {
-            psbt.finalizeAllInputs();
+        try {
+            const psbtHex = await (keyring as KeystoneKeyring).parseSignPsbtUr(type, cbor);
+            const psbt = bitcoin.Psbt.fromHex(psbtHex);
+            if (isFinalize) {
+                psbt.finalizeAllInputs();
+            }
+            return {
+                psbtHex: psbt.toHex(),
+                rawtx: isFinalize ? psbt.extractTransaction().toHex() : undefined
+            };
+        } catch (err) {
+            throw new WalletControllerError(`Failed to parse sign PSBT UR: ${String(err)}`, {
+                type,
+                cbor,
+                isFinalize
+            });
         }
-        return {
-            psbtHex: psbt.toHex(),
-            rawtx: isFinalize ? psbt.extractTransaction().toHex() : undefined
-        };
     };
 
     genSignMsgUr = async (text: string, msgType?: string) => {
         if (msgType === 'bip322-simple') {
             const account = await this.getCurrentAccount();
-            if (!account) throw new Error('no current account');
-            const psbt = genPsbtOfBIP322Simple({
-                message: text,
-                address: account.address,
-                networkType: this.getNetworkType()
-            });
-            const toSignInputs = await this.formatOptionsToSignInputs(psbt);
-            await this.signPsbt(psbt, toSignInputs, false);
-            return await this.genSignPsbtUr(psbt.toHex());
+            if (!account) throw new WalletControllerError('No current account');
+            try {
+                const psbt = genPsbtOfBIP322Simple({
+                    message: text,
+                    address: account.address,
+                    networkType: this.getNetworkType()
+                });
+                const toSignInputs = await this.formatOptionsToSignInputs(psbt);
+                await this.signPsbt(psbt, toSignInputs, false);
+                return await this.genSignPsbtUr(psbt.toHex());
+            } catch (err) {
+                throw new WalletControllerError(`Failed bip322-simple UR generation: ${String(err)}`, {
+                    text,
+                    msgType
+                });
+            }
         }
         const { account, keyring } = await this.checkKeyringMethod('genSignMsgUr');
-        return await (keyring as KeystoneKeyring).genSignMsgUr(account.pubkey, text);
+        try {
+            return await (keyring as KeystoneKeyring).genSignMsgUr(account.pubkey, text);
+        } catch (err) {
+            throw new WalletControllerError(`Failed to generate sign message UR: ${String(err)}`, {
+                text,
+                msgType
+            });
+        }
     };
 
     parseSignMsgUr = async (type: string, cbor: string, msgType: string) => {
         if (msgType === 'bip322-simple') {
-            const res = await this.parseSignPsbtUr(type, cbor, false);
-            const psbt = bitcoin.Psbt.fromHex(res.psbtHex);
-            psbt.finalizeAllInputs();
-            return {
-                signature: getSignatureFromPsbtOfBIP322Simple(psbt)
-            };
+            try {
+                const res = await this.parseSignPsbtUr(type, cbor, false);
+                const psbt = bitcoin.Psbt.fromHex(res.psbtHex);
+                psbt.finalizeAllInputs();
+                return {
+                    signature: getSignatureFromPsbtOfBIP322Simple(psbt)
+                };
+            } catch (err) {
+                throw new WalletControllerError(`Failed bip322-simple UR parsing: ${String(err)}`, {
+                    type,
+                    cbor
+                });
+            }
         }
 
         const { keyring } = await this.checkKeyringMethod('parseSignMsgUr');
-        const sig = await (keyring as KeystoneKeyring).parseSignMsgUr(type, cbor);
-        sig.signature = Buffer.from(sig.signature, 'hex').toString('base64');
-
-        return sig;
+        try {
+            const sig = await (keyring as KeystoneKeyring).parseSignMsgUr(type, cbor);
+            sig.signature = Buffer.from(sig.signature, 'hex').toString('base64');
+            return sig;
+        } catch (err) {
+            throw new WalletControllerError(`Failed to parse sign message UR: ${String(err)}`, {
+                type,
+                cbor,
+                msgType
+            });
+        }
     };
 
     getEnableSignData = () => {
@@ -1507,42 +1627,45 @@ export class WalletController extends BaseController {
         const timeId = preferenceService.getAutoLockTimeId();
         const timeConfig = AUTO_LOCKTIMES[timeId] || AUTO_LOCKTIMES[DEFAULT_LOCKTIME_ID];
         this.timer = setTimeout(async () => {
-            await this.lockWallet();
+            try {
+                await this.lockWallet();
+            } catch (err) {
+                console.error('Failed to auto-lock wallet:', err);
+            }
         }, timeConfig.time) as unknown as number;
     };
 
-    //OPNET RPC API
+    // OPNET RPC API
     getOpNetBalance = async (address: string): Promise<BitcoinBalance> => {
-        const btcBalanceSpendable: bigint = await Web3API.getBalance(address, true); //await openapiService.getOPNetBalance(address);
+        try {
+            const btcBalanceSpendable: bigint = await Web3API.getBalance(address, true);
+            const btcBalanceTotal: bigint = await Web3API.getBalance(address, false);
+            const btcBalanceTotalStr: string = bigIntToDecimal(btcBalanceTotal, 8);
 
-        const btcBalanceTotal: bigint = await Web3API.getBalance(address, false);
-        const btcBalanceTotalStr: string = bigIntToDecimal(btcBalanceTotal, 8);
+            const inscriptionAmount: bigint = btcBalanceTotal - btcBalanceSpendable;
+            const inscriptionAmountStr: string = bigIntToDecimal(inscriptionAmount, 8);
 
-        const inscriptionAmount: bigint = btcBalanceTotal - btcBalanceSpendable;
-        const inscriptionAmountStr: string = bigIntToDecimal(inscriptionAmount, 8);
-
-        return {
-            confirm_amount: btcBalanceTotalStr,
-            pending_amount: '0',
-            amount: btcBalanceTotalStr,
-            confirm_btc_amount: btcBalanceTotalStr,
-            pending_btc_amount: '0',
-            btc_amount: btcBalanceTotalStr,
-            confirm_inscription_amount: '0',
-            pending_inscription_amount: '0',
-            inscription_amount: inscriptionAmountStr,
-            usd_value: '0.00'
-        };
+            return {
+                confirm_amount: btcBalanceTotalStr,
+                pending_amount: '0',
+                amount: btcBalanceTotalStr,
+                confirm_btc_amount: btcBalanceTotalStr,
+                pending_btc_amount: '0',
+                btc_amount: btcBalanceTotalStr,
+                confirm_inscription_amount: '0',
+                pending_inscription_amount: '0',
+                inscription_amount: inscriptionAmountStr,
+                usd_value: '0.00'
+            };
+        } catch (err) {
+            throw new WalletControllerError(`Failed to get OPNET balance: ${String(err)}`, { address });
+        }
     };
 
     private _getKeyringByType = (type: string): Keyring => {
-        const keyring = keyringService.getKeyringsByType(type)[0];
-
-        if (keyring) {
-            return keyring;
-        }
-
-        throw new Error(`No ${type} keyring found`);
+        const found = keyringService.getKeyringsByType(type)[0];
+        if (found) return found;
+        throw new WalletControllerError(`No ${type} keyring found`);
     };
 
     private _generateAlianName = (type: string, index: number) => {
