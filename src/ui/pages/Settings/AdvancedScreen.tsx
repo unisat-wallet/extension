@@ -1,9 +1,8 @@
-import { Checkbox, Switch } from 'antd';
 import { useEffect, useState } from 'react';
 
 import { AddressFlagType, AUTO_LOCKTIMES, DEFAULT_LOCKTIME_ID } from '@/shared/constant';
 import { checkAddressFlag } from '@/shared/utils';
-import { Button, Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
+import { Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { Loading } from '@/ui/components/ActionComponent/Loading';
 import { EnableUnconfirmedPopover } from '@/ui/components/EnableUnconfirmedPopover';
@@ -18,9 +17,9 @@ import { useWallet } from '@/ui/utils';
 
 export default function AdvancedScreen() {
     const wallet = useWallet();
-    const [enableSignData, setEnableSignData] = useState(false);
+    // const [enableSignData, setEnableSignData] = useState(false);
 
-    const [enableSignDataPopoverVisible, setEnableSignDataPopoverVisible] = useState(false);
+    // const [enableSignDataPopoverVisible, setEnableSignDataPopoverVisible] = useState(false);
 
     const [enableUnconfirmed, setEnableUnconfirmed] = useState(false);
     const [unconfirmedPopoverVisible, setUnconfirmedPopoverVisible] = useState(false);
@@ -36,14 +35,16 @@ export default function AdvancedScreen() {
     const dispatch = useAppDispatch();
     const [init, setInit] = useState(false);
     useEffect(() => {
-        wallet
-            .getEnableSignData()
-            .then((v) => {
-                setEnableSignData(v);
-            })
-            .finally(() => {
-                setInit(true);
-            });
+        // wallet
+        //     .getEnableSignData()
+        //     .then((v) => {
+        //         setEnableSignData(v);
+        //     })
+        //     .finally(() => {
+        //         setInit(true);
+        //     });
+
+        setInit(true);
 
         const only_confirmed = checkAddressFlag(currentAccount.flag, AddressFlagType.CONFIRMED_UTXO_MODE);
         if (only_confirmed) {
@@ -66,7 +67,7 @@ export default function AdvancedScreen() {
                 title="Advanced"
             />
             <Content>
-                <Column>
+                {/* <Column>
                     <Card style={{ borderRadius: 10 }}>
                         <Column>
                             <Text text={'signData requests'} preset="bold" size="sm" />
@@ -98,9 +99,9 @@ export default function AdvancedScreen() {
                             </Row>
                         </Column>
                     </Card>
-                </Column>
+                </Column> */}
 
-                <Column>
+                {/* <Column>
                     <Card style={{ borderRadius: 10 }}>
                         <Column>
                             <Text text={'Setup Preferences'} preset="bold" size="sm" />
@@ -117,7 +118,7 @@ export default function AdvancedScreen() {
                             <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
                         </Column>
                     </Card>
-                </Column>
+                </Column> */}
 
                 <Column>
                     <Card style={{ borderRadius: 10 }}>
@@ -163,7 +164,7 @@ export default function AdvancedScreen() {
                     }}
                 />
             ) : null}
-            {enableSignDataPopoverVisible ? (
+            {/* {enableSignDataPopoverVisible ? (
                 <EnableSignDataPopover
                     onNext={() => {
                         wallet.setEnableSignData(true).then(() => {
@@ -175,7 +176,7 @@ export default function AdvancedScreen() {
                         setEnableSignDataPopoverVisible(false);
                     }}
                 />
-            ) : null}
+            ) : null} */}
 
             {lockTimePopoverVisible ? (
                 <LockTimePopover
@@ -196,78 +197,78 @@ const riskColor: Record<string, ColorTypes> = {
     low: 'orange'
 };
 
-export const EnableSignDataPopover = ({ onNext, onCancel }: { onNext: () => void; onCancel: () => void }) => {
-    const [understand, setUnderstand] = useState(false);
-    return (
-        <Popover onClose={onCancel}>
-            <Column justifyCenter itemsCenter>
-                <Text text={'Use at your own risk'} textCenter preset="title-bold" color="orange" />
+// export const EnableSignDataPopover = ({ onNext, onCancel }: { onNext: () => void; onCancel: () => void }) => {
+//     const [understand, setUnderstand] = useState(false);
+//     return (
+//         <Popover onClose={onCancel}>
+//             <Column justifyCenter itemsCenter>
+//                 <Text text={'Use at your own risk'} textCenter preset="title-bold" color="orange" />
 
-                <Column mt="lg">
-                    <Column>
-                        <Row>
-                            <Text
-                                text={
-                                    'Allowing signData requests can make you vulnerable to phishing attacks. Always review the URL and be careful when signing messages that contain code.'
-                                }
-                            />
-                        </Row>
+//                 <Column mt="lg">
+//                     <Column>
+//                         <Row>
+//                             <Text
+//                                 text={
+//                                     'Allowing signData requests can make you vulnerable to phishing attacks. Always review the URL and be careful when signing messages that contain code.'
+//                                 }
+//                             />
+//                         </Row>
 
-                        <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
+//                         <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
 
-                        <Row style={{ backgroundColor: 'darkred', padding: 5, borderRadius: 5 }}>
-                            <Row>
-                                <Icon icon="info" size={40} color="white" />
-                                <Text
-                                    text={"If you've been asked to turn this setting on, you might be getting scammed"}
-                                />
-                            </Row>
-                        </Row>
+//                         <Row style={{ backgroundColor: 'darkred', padding: 5, borderRadius: 5 }}>
+//                             <Row>
+//                                 <Icon icon="info" size={40} color="white" />
+//                                 <Text
+//                                     text={"If you've been asked to turn this setting on, you might be getting scammed"}
+//                                 />
+//                             </Row>
+//                         </Row>
 
-                        <Row>
-                            <Row>
-                                <Checkbox
-                                    onChange={() => {
-                                        setUnderstand(!understand);
-                                    }}
-                                    checked={understand}></Checkbox>
-                                <Text
-                                    text={
-                                        'I understand that I can lose all of my funds and NFTs if I enable signData requests.'
-                                    }
-                                />
-                            </Row>
-                        </Row>
-                    </Column>
-                </Column>
+//                         <Row>
+//                             <Row>
+//                                 <Checkbox
+//                                     onChange={() => {
+//                                         setUnderstand(!understand);
+//                                     }}
+//                                     checked={understand}></Checkbox>
+//                                 <Text
+//                                     text={
+//                                         'I understand that I can lose all of my funds and NFTs if I enable signData requests.'
+//                                     }
+//                                 />
+//                             </Row>
+//                         </Row>
+//                     </Column>
+//                 </Column>
 
-                <Row full mt="lg">
-                    <Button
-                        text="Cancel"
-                        full
-                        preset="default"
-                        onClick={(e) => {
-                            if (onCancel) {
-                                onCancel();
-                            }
-                        }}
-                    />
-                    <Button
-                        text="Continue"
-                        full
-                        disabled={!understand}
-                        preset="primary"
-                        onClick={(e) => {
-                            if (onNext) {
-                                onNext();
-                            }
-                        }}
-                    />
-                </Row>
-            </Column>
-        </Popover>
-    );
-};
+//                 <Row full mt="lg">
+//                     <Button
+//                         text="Cancel"
+//                         full
+//                         preset="default"
+//                         onClick={(e) => {
+//                             if (onCancel) {
+//                                 onCancel();
+//                             }
+//                         }}
+//                     />
+//                     <Button
+//                         text="Continue"
+//                         full
+//                         disabled={!understand}
+//                         preset="primary"
+//                         onClick={(e) => {
+//                             if (onNext) {
+//                                 onNext();
+//                             }
+//                         }}
+//                     />
+//                 </Row>
+//             </Column>
+//         </Popover>
+//     );
+// };
 
 export const LockTimePopover = ({ onNext, onCancel }: { onNext: () => void; onCancel: () => void }) => {
     const [loading, setLoading] = useState(false);

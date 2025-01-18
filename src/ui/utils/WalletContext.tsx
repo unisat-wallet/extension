@@ -256,23 +256,15 @@ export interface WalletController {
 
     genSignPsbtUr(psbtHex: string): Promise<{ type: string; cbor: string }>;
 
-    parseSignPsbtUr(
-        type: string,
-        cbor: string,
-        isFinalize?: boolean
-    ): Promise<ParsedSignPsbtUr>;
+    parseSignPsbtUr(type: string, cbor: string, isFinalize?: boolean): Promise<ParsedSignPsbtUr>;
 
     genSignMsgUr(text: string, msgType?: string): Promise<{ type: string; cbor: string; requestId: string }>;
 
-    parseSignMsgUr(
-        type: string,
-        cbor: string,
-        msgType?: string
-    ): Promise<ParsedSignMsgUr>;
+    parseSignMsgUr(type: string, cbor: string, msgType?: string): Promise<ParsedSignMsgUr>;
 
-    getEnableSignData(): Promise<boolean>;
+    // getEnableSignData(): Promise<boolean>;
 
-    setEnableSignData(enable: boolean): Promise<void>;
+    // setEnableSignData(enable: boolean): Promise<void>;
 
     getBuyBtcChannelList(): Promise<BtcChannelItem[]>;
 

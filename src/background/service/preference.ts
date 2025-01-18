@@ -10,7 +10,6 @@ import { Account, AddressType, AppSummary, BitcoinBalance, NetworkType, TxHistor
 import browser from '../webapi/browser';
 import { i18n, sessionService } from './index';
 
-
 const version = process.env.release ?? '0';
 
 export type WalletSaveList = [];
@@ -44,7 +43,7 @@ export interface PreferenceStore {
     };
     showSafeNotice: boolean;
     addressFlags: Record<string, number>;
-    enableSignData: boolean;
+    // enableSignData: boolean;
     autoLockTimeId: number;
 }
 
@@ -88,7 +87,7 @@ class PreferenceService {
                 },
                 showSafeNotice: true,
                 addressFlags: {},
-                enableSignData: false,
+                // enableSignData: false,
                 autoLockTimeId: DEFAULT_LOCKTIME_ID
             }
         });
@@ -162,9 +161,9 @@ class PreferenceService {
             this.store.addressFlags = {};
         }
 
-        if (typeof this.store.enableSignData !== 'boolean') {
-            this.store.enableSignData = false;
-        }
+        // if (typeof this.store.enableSignData !== 'boolean') {
+        //     this.store.enableSignData = false;
+        // }
 
         if (!this.store.chainType) {
             this.store.chainType = ChainType.BITCOIN_REGTEST;
@@ -453,13 +452,13 @@ class PreferenceService {
         this.store.showSafeNotice = showSafeNotice;
     };
 
-    getEnableSignData = () => {
-        return this.store.enableSignData;
-    };
+    // getEnableSignData = () => {
+    //     return this.store.enableSignData;
+    // };
 
-    setEnableSignData = (enableSignData: boolean) => {
-        this.store.enableSignData = enableSignData;
-    };
+    // setEnableSignData = (enableSignData: boolean) => {
+    //     this.store.enableSignData = enableSignData;
+    // };
 
     getAutoLockTimeId = () => {
         return this.store.autoLockTimeId;

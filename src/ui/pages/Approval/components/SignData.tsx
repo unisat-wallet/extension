@@ -25,16 +25,17 @@ export default function SignData({ params: { data, session } }: Props) {
 
     const wallet = useWallet();
     const [ready, setReady] = useState(false);
-    const [enableSignData, setEnableSignData] = useState(false);
+    // const [enableSignData, setEnableSignData] = useState(false);
     useEffect(() => {
-        wallet
-            .getEnableSignData()
-            .then((enable) => {
-                setEnableSignData(enable);
-            })
-            .finally(() => {
-                setReady(true);
-            });
+        // wallet
+        //     .getEnableSignData()
+        //     .then((enable) => {
+        //         setEnableSignData(enable);
+        //     })
+        //     .finally(() => {
+        //         setReady(true);
+        //     });
+        setReady(true);
     }, []);
 
     const tools = useTools();
@@ -57,34 +58,34 @@ export default function SignData({ params: { data, session } }: Props) {
         );
     }
 
-    if (!enableSignData) {
-        return (
-            <Layout>
-                <Content>
-                    <Header>
-                        <WebsiteBar session={session} />
-                    </Header>
+    // if (!enableSignData) {
+    //     return (
+    //         <Layout>
+    //             <Content>
+    //                 <Header>
+    //                     <WebsiteBar session={session} />
+    //                 </Header>
 
-                    <Column>
-                        <Text text="Sign Data request" preset="title-bold" textCenter mt="lg" />
+    //                 <Column>
+    //                     <Text text="Sign Data request" preset="title-bold" textCenter mt="lg" />
 
-                        <Text
-                            text={
-                                'You need to enable the signData request feature in Settings -> Advanced to continue.'
-                            }
-                            textCenter
-                        />
-                    </Column>
-                </Content>
+    //                     <Text
+    //                         text={
+    //                             'You need to enable the signData request feature in Settings -> Advanced to continue.'
+    //                         }
+    //                         textCenter
+    //                     />
+    //                 </Column>
+    //             </Content>
 
-                <Footer>
-                    <Row full>
-                        <Button text="Reject" full preset="default" onClick={handleCancel} />
-                    </Row>
-                </Footer>
-            </Layout>
-        );
-    }
+    //             <Footer>
+    //                 <Row full>
+    //                     <Button text="Reject" full preset="default" onClick={handleCancel} />
+    //                 </Row>
+    //             </Footer>
+    //         </Layout>
+    //     );
+    // }
 
     return (
         <Layout>

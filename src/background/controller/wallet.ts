@@ -72,11 +72,10 @@ import { toXOnly } from '@btc-vision/wallet-sdk/lib/utils';
 import { AbstractWallet } from '@btc-vision/wallet-sdk/lib/wallet';
 
 import { address as bitcoinAddress, Psbt } from '@btc-vision/bitcoin';
+import { InteractionResponse } from '@btc-vision/transaction/src/transaction/TransactionFactory';
 import { ContactBookItem, ContactBookStore } from '../service/contactBook';
 import { OpenApiService } from '../service/openapi';
 import { ConnectedSite } from '../service/permission';
-import BaseController from './base';
-import { InteractionResponse } from '@btc-vision/transaction/src/transaction/TransactionFactory';
 
 export interface AccountAsset {
     name: string;
@@ -100,7 +99,7 @@ export class WalletControllerError extends Error {
 
 const stashKeyrings: Record<string, Keyring> = {};
 
-export class WalletController extends BaseController {
+export class WalletController {
     public openapi: OpenApiService = openapiService;
 
     public timer: string | number | null = null;
@@ -942,8 +941,8 @@ export class WalletController extends BaseController {
      * ECDSA or Schnorr message signing for the current account.
      * @throws WalletControllerError
      */
-    public signMessage = (text: string): string => {
-        const account = preferenceService.getCurrentAccount();
+    public signMessage = async (text: string): Promise<string> => {
+        const account = await this.getCurrentAccount();
         if (!account) {
             throw new WalletControllerError('No current account');
         }
@@ -958,7 +957,7 @@ export class WalletController extends BaseController {
     public signAndBroadcastInteraction = async (
         interactionParameters: InteractionParametersWithoutSigner
     ): Promise<[BroadcastedTransaction, BroadcastedTransaction, import('@btc-vision/transaction').UTXO[], string]> => {
-        const account = preferenceService.getCurrentAccount();
+        const account = await this.getCurrentAccount();
         if (!account) throw new WalletControllerError('No current account');
 
         const wifWallet = this.getInternalPrivateKey({
@@ -1024,7 +1023,7 @@ export class WalletController extends BaseController {
      * @throws WalletControllerError
      */
     public deployContract = async (params: IDeploymentParametersWithoutSigner): Promise<DeploymentResult> => {
-        const account = preferenceService.getCurrentAccount();
+        const account = await this.getCurrentAccount();
         if (!account) throw new WalletControllerError('No current account');
 
         const wifWallet = this.getInternalPrivateKey({
@@ -1074,7 +1073,7 @@ export class WalletController extends BaseController {
     public signInteraction = async (
         interactionParameters: InteractionParametersWithoutSigner
     ): Promise<InteractionResponse> => {
-        const account = preferenceService.getCurrentAccount();
+        const account = await this.getCurrentAccount();
         if (!account) throw new WalletControllerError('No current account');
 
         const wifWallet = this.getInternalPrivateKey({
@@ -1142,7 +1141,7 @@ export class WalletController extends BaseController {
      * @throws WalletControllerError
      */
     public signBIP322Simple = async (text: string): Promise<string> => {
-        const account = preferenceService.getCurrentAccount();
+        const account = await this.getCurrentAccount();
         if (!account) throw new WalletControllerError('No current account');
         const networkType = this.getNetworkType();
         try {
@@ -1163,8 +1162,8 @@ export class WalletController extends BaseController {
     /**
      * Sign arbitrary data using ecdsa or schnorr.
      */
-    public signData = (data: string, type: 'ecdsa' | 'schnorr' = 'ecdsa'): string => {
-        const account = preferenceService.getCurrentAccount();
+    public signData = async (data: string, type: 'ecdsa' | 'schnorr' = 'ecdsa'): Promise<string> => {
+        const account = await this.getCurrentAccount();
         if (!account) {
             throw new WalletControllerError('No current account');
         }
@@ -1434,7 +1433,7 @@ export class WalletController extends BaseController {
         let currentKeyringIndex = preferenceService.getCurrentKeyringIndex();
         const displayedKeyrings = await keyringService.getAllDisplayedKeyrings();
         if (currentKeyringIndex === undefined) {
-            const currentAccount = preferenceService.getCurrentAccount();
+            const currentAccount = await this.getCurrentAccount();
             for (let i = 0; i < displayedKeyrings.length; i++) {
                 if (displayedKeyrings[i].type !== currentAccount?.type) continue;
                 const found = displayedKeyrings[i].accounts.find((v) => v.pubkey === currentAccount?.pubkey);
@@ -1913,13 +1912,13 @@ export class WalletController extends BaseController {
         }
     };
 
-    public getEnableSignData = (): boolean => {
-        return preferenceService.getEnableSignData();
-    };
+    // public getEnableSignData = (): boolean => {
+    //     return preferenceService.getEnableSignData();
+    // };
 
-    public setEnableSignData = (enable: boolean): void => {
-        preferenceService.setEnableSignData(enable);
-    };
+    // public setEnableSignData = (enable: boolean): void => {
+    //     preferenceService.setEnableSignData(enable);
+    // };
 
     public getBuyBtcChannelList = async (): Promise<BuyBtcChannel[]> => {
         return openapiService.getBuyBtcChannelList();
