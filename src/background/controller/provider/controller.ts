@@ -16,7 +16,6 @@ import { amountToSatoshis } from '@/ui/utils';
 import { bitcoin } from '@btc-vision/wallet-sdk/lib/bitcoin-core';
 import { verifyMessageOfBIP322Simple } from '@btc-vision/wallet-sdk/lib/message';
 import { toPsbtNetwork } from '@btc-vision/wallet-sdk/lib/network';
-import BaseController from '../base';
 import wallet from '../wallet';
 
 function formatPsbtHex(psbtHex: string) {
@@ -49,7 +48,7 @@ function objToBuffer(obj: object): Uint8Array {
     return buffer;
 }
 
-export class ProviderController extends BaseController {
+export class ProviderController {
     requestAccounts = async (params: { session: Session }) => {
         const origin = params.session.origin;
         if (!permissionService.hasPermission(origin)) {
