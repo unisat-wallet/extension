@@ -137,9 +137,9 @@ export function task_uglify() {
         .pipe(
             uglify({
                 compress: true,
-                mangle: {
-                    toplevel: true
-                },
+                //mangle: {
+                //    toplevel: true
+                //},
                 ecma: 2023
             })
         )
