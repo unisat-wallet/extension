@@ -74,7 +74,7 @@ export class ProviderController {
         return account;
     };
 
-    disconnect = () => {
+    disconnect = ({ session: { origin } }: { session: { origin: string } }) => {
         wallet.removeConnectedSite(origin);
     };
 
