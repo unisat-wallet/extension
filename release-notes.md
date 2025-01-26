@@ -1,5 +1,11 @@
 # UniSat Wallet Release Notes
 
+## v1.5.4
+
+1. Added an Unlock button on the Fractal mainnet to navigate to the UTXO management tool.
+2. In advanced settings, added a toggle for Atomicals, allowing users to disable ARC20 and free up the unavailable balance.
+3. Adjusted the user interface.
+
 ## v1.5.3
 
 - Support CAT721
