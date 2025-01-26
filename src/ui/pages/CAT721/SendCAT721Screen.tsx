@@ -204,7 +204,12 @@ export default function SendCAT721Screen() {
         <Text text={collectionInfo.name} preset="title-bold" textCenter size="xxl" color="gold" />
 
         <Row justifyCenter>
-          <CAT721Preview preset="medium" collectionId={collectionInfo.collectionId} localId={localId} />
+          <CAT721Preview
+            preset="medium"
+            collectionId={collectionInfo.collectionId}
+            contentType={collectionInfo.contentType}
+            localId={localId}
+          />
         </Row>
 
         <Column mt="lg">

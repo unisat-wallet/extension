@@ -1,13 +1,17 @@
+import { useCallback } from 'react';
+
 import { CAT721Balance } from '@/shared/types';
 import { useCAT721NFTContentBaseUrl } from '@/ui/state/settings/hooks';
 
 import { Column } from '../Column';
+import Iframe from '../Iframe';
 import { Image } from '../Image';
 import { Row } from '../Row';
 import { Text } from '../Text';
 
 export interface CAT721CollectionCardProps {
   cat721Balance: CAT721Balance;
+  contentType: string;
   onClick?: () => void;
 }
 
@@ -37,7 +41,7 @@ function CardComponent(props: { children: React.ReactNode; onClick?: () => void 
 }
 
 export function CAT721CollectionCard(props: CAT721CollectionCardProps) {
-  const { cat721Balance, onClick } = props;
+  const { cat721Balance, contentType, onClick } = props;
 
   const previewLocalIds = cat721Balance.previewLocalIds.slice(0, 4);
   if (previewLocalIds.length > 1) {
@@ -49,6 +53,38 @@ export function CAT721CollectionCard(props: CAT721CollectionCardProps) {
   }
 
   const contentBaseUrl = useCAT721NFTContentBaseUrl();
+
+  const isHTML = contentType == 'text/html';
+
+  const renderItem = useCallback(
+    (key: string, localId: string, size: number) => {
+      return isHTML ? (
+        <Iframe
+          key={key}
+          disableSandbox
+          preview={`${contentBaseUrl}/api/collections/${cat721Balance.collectionId}/localId/${localId}/content`}
+          style={{
+            width: size,
+            height: size,
+            margin: 4
+          }}
+        />
+      ) : (
+        <Image
+          key={key}
+          src={`${contentBaseUrl}/api/collections/${cat721Balance.collectionId}/localId/${localId}/content`}
+          width={size}
+          height={size}
+          style={{
+            borderRadius: 8,
+            margin: 4
+          }}
+        />
+      );
+    },
+    [contentBaseUrl, cat721Balance.collectionId, isHTML]
+  );
+
   return (
     <Column>
       {cat721Balance.previewLocalIds.length > 1 ? (
@@ -68,31 +104,13 @@ export function CAT721CollectionCard(props: CAT721CollectionCardProps) {
                 />
               );
             } else {
-              return (
-                <Image
-                  key={cat721Balance.collectionId + index}
-                  src={`${contentBaseUrl}/api/collections/${cat721Balance.collectionId}/localId/${localId}/content`}
-                  width={68}
-                  height={68}
-                  style={{
-                    borderRadius: 8,
-                    margin: 4
-                  }}
-                />
-              );
+              return renderItem(cat721Balance.collectionId + index, localId, 68);
             }
           })}
         </CardComponent>
       ) : (
         <CardComponent onClick={onClick}>
-          <Image
-            src={`${contentBaseUrl}/api/collections/${cat721Balance.collectionId}/localId/${previewLocalIds[0]}/content`}
-            width={142}
-            height={142}
-            style={{
-              borderRadius: 8
-            }}
-          />
+          {renderItem(cat721Balance.collectionId, previewLocalIds[0], 142)}
         </CardComponent>
       )}
 

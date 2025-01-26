@@ -2,14 +2,15 @@ import { useEffect, useState } from 'react';
 
 import { AddressCAT721CollectionSummary } from '@/shared/types';
 import { Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import CAT721Preview from '@/ui/components/CAT721Preview';
+import { Line } from '@/ui/components/Line';
+import { Section } from '@/ui/components/Section';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
+import { useIsInExpandView } from '@/ui/state/ui/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
-import { copyToClipboard, shortAddress, useLocationState, useWallet } from '@/ui/utils';
-import { CopyOutlined, LoadingOutlined } from '@ant-design/icons';
+import { useLocationState, useWallet } from '@/ui/utils';
+import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
 
@@ -26,7 +27,8 @@ export default function CAT721CollectionScreen() {
       symbol: '',
       description: '',
       max: '0',
-      premine: '0'
+      premine: '0',
+      contentType: ''
     },
     localIds: []
   });
@@ -34,8 +36,6 @@ export default function CAT721CollectionScreen() {
   const wallet = useWallet();
 
   const account = useCurrentAccount();
-
-  const keyring = useCurrentKeyring();
 
   const [loading, setLoading] = useState(true);
 
@@ -47,6 +47,9 @@ export default function CAT721CollectionScreen() {
   }, []);
 
   const navigate = useNavigate();
+
+  const inExpandView = useIsInExpandView();
+  const justifyContent = inExpandView ? 'left' : 'space-between';
 
   if (loading) {
     return (
@@ -91,9 +94,17 @@ export default function CAT721CollectionScreen() {
           <Card style={{ borderRadius: 15 }}>
             <Column fullX my="sm">
               <Section title="Collection Id" value={collectionSummary.collectionInfo.collectionId} showCopyIcon />
-              <Section title="Collection" value={collectionSummary.collectionInfo.symbol} />
+              <Line />
+              <Section title="Collection" value={collectionSummary.collectionInfo.name} />
+              <Line />
+              <Section title="Symbol" value={collectionSummary.collectionInfo.symbol} />
+              <Line />
+
               <Section title="Max supply" value={collectionSummary.collectionInfo.max} />
+              <Line />
+
               <Section title="Premine" value={collectionSummary.collectionInfo.premine} />
+
               {collectionSummary.collectionInfo.description ? (
                 <Row
                   style={{
@@ -101,6 +112,7 @@ export default function CAT721CollectionScreen() {
                     height: 1
                   }}></Row>
               ) : null}
+
               {collectionSummary.collectionInfo.description ? (
                 <Row>
                   <Text text={collectionSummary.collectionInfo.description} preset="sub" />
@@ -110,12 +122,13 @@ export default function CAT721CollectionScreen() {
           </Card>
 
           {collectionSummary.localIds.length > 0 && (
-            <Row style={{ flexWrap: 'wrap' }} justifyBetween>
+            <Row style={{ flexWrap: 'wrap', justifyContent }}>
               {collectionSummary.localIds.map((localId, index) => (
                 <CAT721Preview
                   key={localId}
                   preset="medium"
                   collectionId={collectionSummary.collectionInfo.collectionId}
+                  contentType={collectionSummary.collectionInfo.contentType}
                   localId={localId}
                   onClick={() => {
                     navigate('CAT721NFTScreen', {
@@ -130,41 +143,5 @@ export default function CAT721CollectionScreen() {
         </Content>
       )}
     </Layout>
-  );
-}
-
-export function Section({
-  value,
-  title,
-  link,
-  showCopyIcon
-}: {
-  value: string | number;
-  title: string;
-  link?: string;
-  showCopyIcon?: boolean;
-}) {
-  const tools = useTools();
-  let displayText = value.toString();
-  if (value && typeof value === 'string' && value.length > 20) {
-    displayText = shortAddress(value, 10);
-  }
-  return (
-    <Row justifyBetween>
-      <Text text={title} preset="sub" />
-      <Row
-        onClick={() => {
-          if (link) {
-            window.open(link);
-          } else {
-            copyToClipboard(value).then(() => {
-              tools.toastSuccess('Copied');
-            });
-          }
-        }}>
-        <Text text={displayText} preset={link ? 'link' : 'regular'} size="xs" wrap />
-        {showCopyIcon && <CopyOutlined style={{ color: '#888', fontSize: 14 }} />}
-      </Row>
-    </Row>
   );
 }

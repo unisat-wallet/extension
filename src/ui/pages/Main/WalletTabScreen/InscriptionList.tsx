@@ -8,6 +8,7 @@ import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { Pagination } from '@/ui/components/Pagination';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useChainType } from '@/ui/state/settings/hooks';
+import { useIsInExpandView } from '@/ui/state/ui/hooks';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
@@ -23,6 +24,9 @@ export function InscriptionList() {
   const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 100 });
 
   const tools = useTools();
+
+  const inExpandView = useIsInExpandView();
+  const justifyContent = inExpandView ? 'left' : 'space-between';
 
   const fetchData = async () => {
     if (!currentAccount.address) return;
@@ -64,7 +68,7 @@ export function InscriptionList() {
 
   return (
     <Column>
-      <Row style={{ flexWrap: 'wrap' }} gap="lg">
+      <Row style={{ flexWrap: 'wrap', justifyContent }} gap="lg">
         {inscriptions.map((data, index) => (
           <InscriptionPreview
             key={index}
@@ -72,6 +76,9 @@ export function InscriptionList() {
             preset="medium"
             onClick={() => {
               navigate('OrdinalsInscriptionScreen', { inscription: data, withSend: true });
+            }}
+            style={{
+              marginBottom: 10
             }}
           />
         ))}

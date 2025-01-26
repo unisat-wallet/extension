@@ -24,7 +24,7 @@ export const $sizeStyles = {
 
 const $baseStyle: CSSProperties = Object.assign({}, $sizeStyles.sm, {
   fontFamily: typography.primary.regular,
-  color: colors.white,
+  color: colors.white_muted3,
   textAlign: 'left',
   userSelect: 'none'
 } as CSSProperties);

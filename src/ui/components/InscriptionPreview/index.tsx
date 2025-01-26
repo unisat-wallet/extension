@@ -45,31 +45,40 @@ const $viewPresets = {
 const $containerPresets: Record<Presets, CSSProperties> = {
   large: {
     backgroundColor: colors.black,
-    width: 300
+    width: 300,
+    borderRadius: 8
   },
   medium: {
     backgroundColor: colors.black,
-    width: 144,
-    height: 180
+    width: 156,
+    height: 180,
+    borderRadius: 8
   },
   small: {
     backgroundColor: colors.black,
-    width: 80
+    width: 80,
+    borderRadius: 8
   }
 };
 
 const $iframePresets: Record<Presets, CSSProperties> = {
   large: {
     width: 300,
-    height: 300
+    height: 300,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8
   },
   medium: {
-    width: 144,
-    height: 144
+    width: 156,
+    height: 156,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8
   },
   small: {
     width: 80,
-    height: 80
+    height: 80,
+    borderTopLeftRadius: 8,
+    borderTopRightRadius: 8
   }
 };
 
@@ -93,9 +102,17 @@ export interface InscriptionProps {
   preset: Presets;
   asLogo?: boolean;
   hideValue?: boolean;
+  style?: CSSProperties;
 }
 
-export default function InscriptionPreview({ data, onClick, preset, asLogo, hideValue }: InscriptionProps) {
+export default function InscriptionPreview({
+  data,
+  onClick,
+  preset,
+  asLogo,
+  hideValue,
+  style: $viewStyleOverride
+}: InscriptionProps) {
   const date = new Date(data.timestamp * 1000);
   const time = getDateShowdate(date);
   const isUnconfirmed = date.getTime() < 100;
@@ -113,13 +130,16 @@ export default function InscriptionPreview({ data, onClick, preset, asLogo, hide
   const valueText = `${data.outputValue} sats`;
 
   return (
-    <Column gap="zero" onClick={onClick} style={Object.assign({ position: 'relative' }, $containerPresets[preset])}>
+    <Column
+      gap="zero"
+      onClick={onClick}
+      style={Object.assign({ position: 'relative' }, $containerPresets[preset], $viewStyleOverride)}>
       <Iframe preview={preview} style={$iframePresets[preset]} />
       {data.outputValue && !hideValue ? (
         <div style={Object.assign({ position: 'absolute' }, $iframePresets[preset])}>
           <Column fullY>
             <Row style={{ flex: 1 }} />
-            <Row fullX justifyEnd mb="sm">
+            <Row fullX justifyEnd mb="md">
               <Tooltip
                 title={`The UTXO containing this inscription has ${data.outputValue} sats`}
                 overlayStyle={{
@@ -144,7 +164,16 @@ export default function InscriptionPreview({ data, onClick, preset, asLogo, hide
           </Column>
         </div>
       ) : null}
-      <Column px="md" py="sm" gap="zero" bg="bg4" full>
+      <Column
+        px="md"
+        py="sm"
+        gap="zero"
+        bg="bg4"
+        full
+        style={{
+          borderBottomRightRadius: 8,
+          borderBottomLeftRadius: 8
+        }}>
         <Text text={numberStr} color="gold" size={$numberPresets[preset] as any} max1Lines />
         {isUnconfirmed == false && data.timestamp && (
           <Text text={time} preset="sub" size={$timePresets[preset] as any} />

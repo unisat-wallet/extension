@@ -1,6 +1,7 @@
 import { useCAT721NFTContentBaseUrl } from '@/ui/state/settings/hooks';
 
 import { Column } from '../Column';
+import Iframe from '../Iframe';
 import { Image } from '../Image';
 import { Row } from '../Row';
 import { Sizes, Text } from '../Text';
@@ -19,26 +20,30 @@ const $stylePresets: {
   [key: string]: {
     width: number;
     height: number;
-    borderRadius: number;
+    borderTopLeftRadius: number;
+    borderTopRightRadius: number;
     textSize: Sizes;
   };
 } = {
   large: {
     width: 300,
     height: 300,
-    borderRadius: 20,
+    borderTopLeftRadius: 20,
+    borderTopRightRadius: 20,
     textSize: 'md'
   },
   medium: {
     width: 156,
     height: 156,
-    borderRadius: 15,
+    borderTopLeftRadius: 15,
+    borderTopRightRadius: 15,
     textSize: 'sm'
   },
   small: {
     width: 80,
     height: 80,
-    borderRadius: 10,
+    borderTopLeftRadius: 10,
+    borderTopRightRadius: 10,
     textSize: 'xxs'
   }
 };
@@ -47,34 +52,44 @@ type Presets = keyof typeof $viewPresets;
 
 export interface InscriptionProps {
   collectionId: string;
+  contentType: string;
   localId: string;
   onClick?: (data: any) => void;
   preset: Presets;
 }
 
-export default function CAT721Preview({ collectionId, localId, onClick, preset }: InscriptionProps) {
+export default function CAT721Preview({ collectionId, contentType, localId, onClick, preset }: InscriptionProps) {
   const style = $stylePresets[preset];
 
   const contentBaseUrl = useCAT721NFTContentBaseUrl();
   return (
     <Column gap="zero" onClick={onClick} style={{}}>
-      <Image
-        src={`${contentBaseUrl}/api/collections/${collectionId}/localId/${localId}/content`}
-        width={style.width}
-        height={style.height}
-        style={{
-          borderTopLeftRadius: style.borderRadius,
-          borderTopRightRadius: style.borderRadius
-        }}
-      />
+      {contentType && contentType.includes('html') ? (
+        <Iframe
+          disableSandbox
+          preview={`${contentBaseUrl}/api/collections/${collectionId}/localId/${localId}/content`}
+          style={$stylePresets[preset]}
+        />
+      ) : (
+        <Image
+          src={`${contentBaseUrl}/api/collections/${collectionId}/localId/${localId}/content`}
+          width={style.width}
+          height={style.height}
+          style={{
+            borderTopLeftRadius: style.borderTopLeftRadius,
+            borderTopRightRadius: style.borderTopRightRadius
+          }}
+        />
+      )}
+
       <Row
         px="lg"
         py="sm"
         gap="zero"
         bg="bg4"
         style={{
-          borderBottomLeftRadius: style.borderRadius,
-          borderBottomRightRadius: style.borderRadius
+          borderBottomLeftRadius: style.borderTopLeftRadius,
+          borderBottomRightRadius: style.borderTopRightRadius
         }}>
         <Row my="sm">
           <Text text={'Local Id:'} color="textDim" size={style.textSize} />

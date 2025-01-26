@@ -5,7 +5,6 @@ import React, { CSSProperties, useEffect, useState } from 'react';
 import { SAFE_DOMAIN_CONFIRMATION } from '@/shared/constant';
 import { getSatsName } from '@/shared/lib/satsname-utils';
 import { Inscription } from '@/shared/types';
-import { Button } from '@/ui/components';
 import { getAddressTips, useChain } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { spacing } from '@/ui/theme/spacing';
@@ -60,14 +59,16 @@ const $baseContainerStyle: CSSProperties = {
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  backgroundColor: '#2a2626',
+  backgroundColor: colors.black,
   paddingLeft: 15.2,
   paddingRight: 15.2,
   paddingTop: 11,
   paddingBottom: 11,
-  borderRadius: 5,
-  minHeight: '46.5px',
-  alignSelf: 'stretch'
+  borderRadius: 10,
+  minHeight: '56.5px',
+  alignSelf: 'stretch',
+  borderWidth: 1,
+  borderColor: colors.line2
 };
 
 const $baseInputStyle: CSSProperties = Object.assign({}, $textPresets.regular, {
@@ -369,7 +370,7 @@ export const AddressInput = (props: InputProps) => {
 };
 
 function SearchInput(props: InputProps) {
-  const { placeholder, containerStyle, style: $inputStyleOverride, disabled, autoFocus,onSearch, ...rest } = props;
+  const { placeholder, containerStyle, style: $inputStyleOverride, disabled, autoFocus, onSearch, ...rest } = props;
   return (
     <Row
       style={Object.assign(
@@ -379,7 +380,7 @@ function SearchInput(props: InputProps) {
           backgroundColor: '#2a2626',
           border: '1px solid #C08F23',
           borderRadius: 8,
-          padding:0,
+          padding: 0,
           alignSelf: 'stretch'
         },
         containerStyle
@@ -401,12 +402,11 @@ function SearchInput(props: InputProps) {
         justifyCenter
         clickable
         style={{
-          cursor:'pointer',
-          height:42.5,
-          width:42.5,
-          borderLeft:'1px solid #C08F23',
-        }}
-      >
+          cursor: 'pointer',
+          height: 42.5,
+          width: 42.5,
+          borderLeft: '1px solid #C08F23'
+        }}>
         <ArrowRightOutlined style={{ color: 'rgba(255,255,255,.85)' }} />
       </Row>
     </Row>

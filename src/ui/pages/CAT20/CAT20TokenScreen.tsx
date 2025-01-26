@@ -1,18 +1,20 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { KEYRING_TYPE } from '@/shared/constant';
+import { ChainType, KEYRING_TYPE } from '@/shared/constant';
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { AddressCAT20TokenSummary } from '@/shared/types';
 import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
+import { Line } from '@/ui/components/Line';
+import { Section } from '@/ui/components/Section';
 import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { useCAT20TokenInfoExplorerUrl } from '@/ui/state/settings/hooks';
+import { useCAT20MarketPlaceWebsite, useCAT20TokenInfoExplorerUrl, useChainType } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
-import { copyToClipboard, showLongNumber, useLocationState, useWallet } from '@/ui/utils';
+import { showLongNumber, useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
@@ -68,6 +70,16 @@ export default function CAT20TokenScreen() {
     }
     return enable;
   }, [tokenSummary]);
+
+  const chainType = useChainType();
+  const enableTrade = useMemo(() => {
+    if (chainType === ChainType.FRACTAL_BITCOIN_MAINNET) {
+      return true;
+    } else {
+      return false;
+    }
+  }, [chainType]);
+  const marketPlaceUrl = useCAT20MarketPlaceWebsite(tokenId);
 
   if (loading) {
     return (
@@ -137,7 +149,7 @@ export default function CAT20TokenScreen() {
             <Row justifyBetween mt="lg">
               <Button
                 text="Merge UTXOs"
-                preset="defaultV2"
+                preset="home"
                 icon="merge"
                 onClick={(e) => {
                   if (keyring.type === KEYRING_TYPE.KeystoneKeyring) {
@@ -154,9 +166,8 @@ export default function CAT20TokenScreen() {
 
               <Button
                 text="Send"
-                preset="primary"
+                preset="home"
                 icon="send"
-                style={!enableTransfer ? { backgroundColor: 'grey' } : {}}
                 disabled={!enableTransfer}
                 onClick={(e) => {
                   if (keyring.type === KEYRING_TYPE.KeystoneKeyring) {
@@ -170,29 +181,40 @@ export default function CAT20TokenScreen() {
                 }}
                 full
               />
-            </Row>
 
-            {/* <Row mb="zero">
-              <Text
-                text="Merge History ->"
-                preset="sub"
-                onClick={() => {
-                  navigate('MergeCAT20HistoryScreen', {
-                    cat20Info: tokenSummary.cat20Info
-                  });
-                }}
-              />
-            </Row> */}
+              {enableTrade ? (
+                <Button
+                  text="Trade"
+                  preset="home"
+                  icon="trade"
+                  disabled={!enableTrade}
+                  onClick={(e) => {
+                    window.open(marketPlaceUrl);
+                  }}
+                  full
+                />
+              ) : null}
+            </Row>
           </Column>
 
-          <Column gap="lg">
+          <Column
+            gap="lg"
+            px="md"
+            py="md"
+            style={{
+              backgroundColor: 'rgba(255,255,255,0.08)',
+              borderRadius: 15
+            }}>
             <Section title="token_id" value={tokenSummary.cat20Info.tokenId} link={tokenUrl} />
-
+            <Line />
             <Section title="name" value={tokenSummary.cat20Info.name} />
+            <Line />
 
             <Section title="symbol" value={tokenSummary.cat20Info.symbol} />
+            <Line />
 
             <Section title="decimals" value={tokenSummary.cat20Balance.decimals} />
+            <Line />
 
             <Section
               title="supply"
@@ -200,6 +222,7 @@ export default function CAT20TokenScreen() {
                 tokenSummary.cat20Info.symbol
               }`}
             />
+            <Line />
 
             <Section
               title="premine"
@@ -211,29 +234,5 @@ export default function CAT20TokenScreen() {
         </Content>
       )}
     </Layout>
-  );
-}
-
-function Section({ value, title, link }: { value: string | number; title: string; link?: string }) {
-  const tools = useTools();
-  return (
-    <Column>
-      <Text text={title} preset="sub" />
-      <Text
-        text={value}
-        preset={link ? 'link' : 'regular'}
-        size="xs"
-        wrap
-        onClick={() => {
-          if (link) {
-            window.open(link);
-          } else {
-            copyToClipboard(value).then(() => {
-              tools.toastSuccess('Copied');
-            });
-          }
-        }}
-      />
-    </Column>
   );
 }

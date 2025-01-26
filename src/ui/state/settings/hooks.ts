@@ -238,3 +238,18 @@ export function useCAT721NFTContentBaseUrl() {
     return '';
   }
 }
+
+export function useBRC20MarketPlaceWebsite(ticker: string) {
+  const chainType = useChainType();
+  return `${CHAINS_MAP[chainType].unisatUrl}/market/brc20?tick=${ticker}`;
+}
+
+export function useRunesMarketPlaceWebsite(ticker: string) {
+  const chainType = useChainType();
+  return `${CHAINS_MAP[chainType].unisatUrl}/runes/market?tick=${ticker}`;
+}
+
+export function useCAT20MarketPlaceWebsite(tokenId: string) {
+  const chainType = useChainType();
+  return `${CHAINS_MAP[chainType].unisatUrl}/dex/cat20/${tokenId}`;
+}

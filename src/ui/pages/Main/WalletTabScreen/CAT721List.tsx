@@ -8,7 +8,7 @@ import { Empty } from '@/ui/components/Empty';
 import { Pagination } from '@/ui/components/Pagination';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useChain, useChainType } from '@/ui/state/settings/hooks';
-import { useSupportedAssets } from '@/ui/state/ui/hooks';
+import { useIsInExpandView, useSupportedAssets } from '@/ui/state/ui/hooks';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
@@ -28,6 +28,9 @@ export function CAT721List() {
   const tools = useTools();
 
   const supportedAssets = useSupportedAssets();
+
+  const inExpandView = useIsInExpandView();
+  const justifyContent = inExpandView ? 'left' : 'space-between';
 
   useEffect(() => {
     const fetchData = async () => {
@@ -73,11 +76,12 @@ export function CAT721List() {
 
   return (
     <Column>
-      <Row style={{ flexWrap: 'wrap' }} gap="sm">
+      <Row style={{ flexWrap: 'wrap', justifyContent }} gap="sm">
         {collections.map((data, index) => (
           <CAT721CollectionCard
             key={index}
             cat721Balance={data}
+            contentType={data.contentType}
             onClick={() => {
               navigate('CAT721CollectionScreen', {
                 collectionId: data.collectionId

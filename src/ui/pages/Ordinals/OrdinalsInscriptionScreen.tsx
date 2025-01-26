@@ -3,13 +3,14 @@ import { useEffect, useState } from 'react';
 
 import { Inscription } from '@/shared/types';
 import { Button, Column, Content, Header, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
+import { Line } from '@/ui/components/Line';
+import { Section } from '@/ui/components/Section';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useTxExplorerUrl } from '@/ui/state/settings/hooks';
 import { transactionsActions } from '@/ui/state/transactions/reducer';
-import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
+import { useLocationState, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
 
@@ -107,43 +108,34 @@ export default function OrdinalsInscriptionScreen() {
               />
             ))}
 
-          <Column gap="lg">
+          <Column
+            gap="lg"
+            px="md"
+            py="md"
+            style={{
+              backgroundColor: 'rgba(255,255,255,0.08)',
+              borderRadius: 15
+            }}>
             <Section title="id" value={inscription.inscriptionId} />
+            <Line />
             <Section title="address" value={inscription.address} />
+            <Line />
             <Section title="output value" value={inscription.outputValue} />
+            <Line />
             <Section title="preview" value={inscription.preview} link={inscription.preview} />
+            <Line />
             <Section title="content" value={inscription.content} link={inscription.content} />
+            <Line />
             <Section title="content length" value={inscription.contentLength} />
+            <Line />
             <Section title="content type" value={inscription.contentType} />
+            <Line />
             <Section title="timestamp" value={isUnconfirmed ? 'unconfirmed' : date} />
+            <Line />
             <Section title="genesis transaction" value={inscription.genesisTransaction} link={genesisTxUrl} />
           </Column>
         </Column>
       </Content>
     </Layout>
-  );
-}
-
-function Section({ value, title, link }: { value: string | number; title: string; link?: string }) {
-  const tools = useTools();
-  return (
-    <Column>
-      <Text text={title} preset="sub" />
-      <Text
-        text={value}
-        preset={link ? 'link' : 'regular'}
-        size="xs"
-        wrap
-        onClick={() => {
-          if (link) {
-            window.open(link);
-          } else {
-            copyToClipboard(value).then(() => {
-              tools.toastSuccess('Copied');
-            });
-          }
-        }}
-      />
-    </Column>
   );
 }
