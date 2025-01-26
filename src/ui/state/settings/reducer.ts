@@ -22,7 +22,8 @@ export const initialState: SettingsState = {
     moonPayEnabled: true,
     statusMessage: '',
     endpoint: '',
-    chainTip: ''
+    chainTip: '',
+    disableUtxoTools: false
   },
   skippedVersion: '',
   autoLockTimeId: DEFAULT_LOCKTIME_ID

@@ -1,5 +1,5 @@
 import { Tooltip } from 'antd';
-import { CSSProperties, useEffect, useMemo, useRef, useState } from 'react';
+import { CSSProperties, useEffect, useMemo, useState } from 'react';
 
 import { AddressFlagType, ChainType } from '@/shared/constant';
 import { checkAddressFlag } from '@/shared/utils';
@@ -30,11 +30,10 @@ import {
   useVersionInfo,
   useWalletConfig
 } from '@/ui/state/settings/hooks';
-import { useFetchUtxosCallback, useSafeBalance } from '@/ui/state/transactions/hooks';
 import { useAssetTabKey, useResetUiTxCreateScreen, useSupportedAssets } from '@/ui/state/ui/hooks';
 import { AssetTabKey, uiActions } from '@/ui/state/ui/reducer';
 import { fontSizes } from '@/ui/theme/font';
-import { amountToSatoshis, satoshisToAmount, useWallet } from '@/ui/utils';
+import { satoshisToAmount, useWallet } from '@/ui/utils';
 
 import { BuyBTCModal } from '../../BuyBTC/BuyBTCModal';
 import { useNavigate } from '../../MainRoute';
@@ -53,6 +52,7 @@ export default function WalletTabScreen() {
   const navigate = useNavigate();
 
   const accountBalance = useAccountBalance();
+
   const chain = useChain();
   const chainType = useChainType();
   const addressTips = useAddressTips();
@@ -60,12 +60,8 @@ export default function WalletTabScreen() {
   const currentKeyring = useCurrentKeyring();
   const currentAccount = useCurrentAccount();
   const balanceValue = useMemo(() => {
-    if (accountBalance.amount === '0') {
-      return '--';
-    } else {
-      return accountBalance.amount;
-    }
-  }, [accountBalance.amount]);
+    return satoshisToAmount(accountBalance.totalBalance);
+  }, [accountBalance.totalBalance]);
 
   const wallet = useWallet();
   const [connected, setConnected] = useState(false);
@@ -81,22 +77,9 @@ export default function WalletTabScreen() {
   const [showSafeNotice, setShowSafeNotice] = useState(false);
   const [showDisableUnconfirmedUtxoNotice, setShowDisableUnconfirmedUtxoNotice] = useState(false);
 
-  const fetchUtxos = useFetchUtxosCallback();
-  const ref = useRef<{ fetchedUtxo: { [key: string]: { loading: boolean } } }>({
-    fetchedUtxo: {}
-  });
-  const [loadingFetch, setLoadingFetch] = useState(false);
-
-  const safeBalance = useSafeBalance();
-  const avaiableSatoshis = useMemo(() => {
-    return amountToSatoshis(safeBalance);
-  }, [safeBalance]);
-
-  const totalSatoshis = amountToSatoshis(accountBalance.amount);
-  const unavailableSatoshis = totalSatoshis - avaiableSatoshis;
-  const avaiableAmount = safeBalance;
-  const unavailableAmount = satoshisToAmount(unavailableSatoshis);
-  const totalAmount = satoshisToAmount(totalSatoshis);
+  const avaiableAmount = satoshisToAmount(accountBalance.availableBalance);
+  const unavailableAmount = satoshisToAmount(accountBalance.unavailableBalance);
+  const totalAmount = satoshisToAmount(accountBalance.totalBalance);
 
   const addressSummary = useAddressSummary();
 
@@ -229,48 +212,21 @@ export default function WalletTabScreen() {
           <Tooltip
             placement={'bottom'}
             title={
-              !loadingFetch ? (
-                <>
-                  <Row justifyBetween>
-                    <span style={$noBreakStyle}>{'Available '}</span>
-                    <span style={$noBreakStyle}>{` ${avaiableAmount} ${btcUnit}`}</span>
-                  </Row>
-                  <Row justifyBetween>
-                    <span style={$noBreakStyle}>{'Unavailable '}</span>
-                    <span style={$noBreakStyle}>{` ${unavailableAmount} ${btcUnit}`}</span>
-                  </Row>
-                  <Row justifyBetween>
-                    <span style={$noBreakStyle}>{'Total '}</span>
-                    <span style={$noBreakStyle}>{` ${totalAmount} ${btcUnit}`}</span>
-                  </Row>
-                </>
-              ) : (
-                <>
-                  <Row justifyBetween>
-                    <span style={$noBreakStyle}>{'Available '}</span>
-                    <span style={$noBreakStyle}>{'loading...'}</span>
-                  </Row>
-                  <Row justifyBetween>
-                    <span style={$noBreakStyle}>{'Unavailable '}</span>
-                    <span style={$noBreakStyle}>{'loading...'}</span>
-                  </Row>
-                  <Row justifyBetween>
-                    <span style={$noBreakStyle}>{'Total '}</span>
-                    <span style={$noBreakStyle}>{` ${totalAmount} ${btcUnit}`}</span>
-                  </Row>
-                </>
-              )
+              <>
+                <Row justifyBetween>
+                  <span style={$noBreakStyle}>{'Available '}</span>
+                  <span style={$noBreakStyle}>{` ${avaiableAmount} ${btcUnit}`}</span>
+                </Row>
+                <Row justifyBetween>
+                  <span style={$noBreakStyle}>{'Unavailable '}</span>
+                  <span style={$noBreakStyle}>{` ${unavailableAmount} ${btcUnit}`}</span>
+                </Row>
+                <Row justifyBetween>
+                  <span style={$noBreakStyle}>{'Total '}</span>
+                  <span style={$noBreakStyle}>{` ${totalAmount} ${btcUnit}`}</span>
+                </Row>
+              </>
             }
-            onOpenChange={(v) => {
-              if (!ref.current.fetchedUtxo[currentAccount.address]) {
-                ref.current.fetchedUtxo[currentAccount.address] = { loading: true };
-                setLoadingFetch(true);
-                fetchUtxos().finally(() => {
-                  ref.current.fetchedUtxo[currentAccount.address].loading = false;
-                  setLoadingFetch(false);
-                });
-              }
-            }}
             overlayStyle={{
               fontSize: fontSizes.xs
             }}>
@@ -281,7 +237,7 @@ export default function WalletTabScreen() {
           </Tooltip>
 
           <BtcUsd
-            sats={amountToSatoshis(balanceValue)}
+            sats={accountBalance.totalBalance}
             textCenter
             size={'md'}
             style={{

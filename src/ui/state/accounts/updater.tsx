@@ -7,7 +7,7 @@ import { useWallet } from '@/ui/utils';
 import { useIsUnlocked } from '../global/hooks';
 import { globalActions } from '../global/reducer';
 import { useAppDispatch } from '../hooks';
-import { useAccountBalance, useCurrentAccount, useFetchBalanceCallback, useReloadAccounts } from './hooks';
+import { useCurrentAccount, useFetchBalanceCallback, useReloadAccounts } from './hooks';
 import { accountActions } from './reducer';
 
 export default function AccountUpdater() {
@@ -15,7 +15,6 @@ export default function AccountUpdater() {
   const wallet = useWallet();
   const currentAccount = useCurrentAccount();
   const isUnlocked = useIsUnlocked();
-  const balance = useAccountBalance();
   const selfRef = useRef({
     preAccountKey: '',
     loadingBalance: false,
@@ -46,9 +45,6 @@ export default function AccountUpdater() {
       return;
     }
     if (!isUnlocked) {
-      return;
-    }
-    if (!balance.expired) {
       return;
     }
     self.loadingBalance = true;

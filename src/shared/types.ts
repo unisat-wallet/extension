@@ -393,6 +393,7 @@ export interface WalletConfig {
   statusMessage: string;
   endpoint: string;
   chainTip: string;
+  disableUtxoTools: boolean;
 }
 
 export enum WebsiteState {
@@ -525,6 +526,7 @@ export interface CAT721Balance {
   name: string;
   count: number;
   previewLocalIds: string[];
+  contentType: string;
 }
 
 export interface CAT721CollectionInfo {
@@ -534,9 +536,16 @@ export interface CAT721CollectionInfo {
   max: string;
   premine: string;
   description: string;
+  contentType: string;
 }
 
 export interface AddressCAT721CollectionSummary {
   collectionInfo: CAT721CollectionInfo;
   localIds: string[];
+}
+
+export interface BitcoinBalanceV2 {
+  availableBalance: number;
+  unavailableBalance: number;
+  totalBalance: number;
 }

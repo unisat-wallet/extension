@@ -447,7 +447,8 @@ export const MANIFEST_VERSION = process.env.manifest!;
 export enum AddressFlagType {
   Is_Enable_Atomicals = 0b1,
   CONFIRMED_UTXO_MODE = 0b10,
-  DISABLE_AUTO_SWITCH_CONFIRMED = 0b100
+  DISABLE_AUTO_SWITCH_CONFIRMED = 0b100,
+  DISABLE_ARC20 = 0b1000
 }
 
 export const UNCONFIRMED_HEIGHT = 4194303;

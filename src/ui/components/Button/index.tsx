@@ -131,6 +131,19 @@ const $viewPresets = {
     padding: 5,
     marginRight: 5,
     marginLeft: 5
+  }) as CSSProperties,
+
+  minimal: Object.assign({}, $baseViewStyle, {
+    backgroundColor: 'rgba(233,185,76,0.1)',
+    minWidth: 64,
+    flexDirection: 'column',
+    borderRadius: 5,
+    borderWidth: 0,
+    borderColor: '#FFFFFF4D',
+    padding: 2,
+    marginRight: 5,
+    marginLeft: 5,
+    alignItems: 'center'
   }) as CSSProperties
 };
 
@@ -156,7 +169,8 @@ const $hoverViewPresets: Record<Presets, CSSProperties> = {
   },
   home: {
     backgroundColor: '#383535'
-  }
+  },
+  minimal: {}
 };
 
 const $baseTextStyle: CSSProperties = {
@@ -184,18 +198,11 @@ const $textPresets: Record<Presets, CSSProperties> = {
   home: Object.assign({}, $baseTextStyle, {
     color: colors.textDim,
     fontSize: 12
+  }),
+  minimal: Object.assign({}, $baseTextStyle, {
+    color: colors.gold,
+    fontSize: 12
   })
-};
-
-const $pressedTextPresets: Record<Presets, CSSProperties> = {
-  default: { opacity: 0.9 },
-  primary: { opacity: 0.9 },
-  danger: { opacity: 0.9 },
-  approval: { opacity: 0.9 },
-  bar: { opacity: 0.9 },
-  defaultV2: { opacity: 0.9 },
-  primaryV2: { opacity: 0.9 },
-  home: { opacity: 0.9 }
 };
 
 const $rightAccessoryStyle: CSSProperties = { marginLeft: spacing.extraSmall, zIndex: 1 };
@@ -261,6 +268,9 @@ export function Button(props: ButtonProps) {
   }
 
   if (preset === 'home') {
+    if (disabled) {
+      $viewStyle.backgroundColor = 'rgba(255,255,255,0.15)';
+    }
     return (
       <div
         style={$viewStyle}
@@ -277,7 +287,19 @@ export function Button(props: ButtonProps) {
             containerStyle={iconSize ? iconSize : {}}
           />
         )}
-        {text && <Text style={$textStyle} text={text} preset="regular" mt="sm" />}
+        {text && <Text style={$textStyle} text={text} preset="regular" mt="sm" color={'white'} />}
+      </div>
+    );
+  }
+
+  if (preset === 'minimal') {
+    return (
+      <div
+        style={$viewStyle}
+        onClick={disabled ? undefined : onClick}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}>
+        {text && <Text style={$textStyle} text={text} preset="regular" />}
       </div>
     );
   }

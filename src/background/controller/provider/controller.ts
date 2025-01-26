@@ -146,6 +146,18 @@ class ProviderController extends BaseController {
   };
 
   @Reflect.metadata('SAFE', true)
+  getBalanceV2 = async () => {
+    const account = await wallet.getCurrentAccount();
+    if (!account) return null;
+    const balance = await wallet.getAddressBalanceV2(account.address)
+    return {
+      available: balance.availableBalance,
+      unavailable: balance.unavailableBalance,
+      total: balance.totalBalance
+    };
+  };
+
+  @Reflect.metadata('SAFE', true)
   verifyMessageOfBIP322Simple = async (req) => {
     const { data: { params } } = req;
     return verifyMessageOfBIP322Simple(params.address, params.message, params.signature, params.network) ? 1 : 0;

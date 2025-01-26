@@ -1,11 +1,10 @@
 import { useEffect } from 'react';
 
-import { NetworkType, ToAddressInfo, TokenBalance, TxType } from '@/shared/types';
+import { NetworkType, ToAddressInfo, TxType } from '@/shared/types';
 import { Card, Column, Content, Input, Layout, Text } from '@/ui/components';
 import { AddressDetailPopover } from '@/ui/components/AddressDetailPopover';
 import { AddressText } from '@/ui/components/AddressText';
 import { AddressTypeCard2 } from '@/ui/components/AddressTypeCard';
-import BRC20BalanceCard from '@/ui/components/BRC20BalanceCard';
 import { RemoveWalletPopover } from '@/ui/components/RemoveWalletPopover';
 import { SignPsbtWithRisksPopover } from '@/ui/components/SignPsbtWithRisksPopover';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
@@ -30,24 +29,6 @@ function TestSignPsbtWithRisksPopover() {
       }}
       decodedPsbt={testDecodedTx.data as any}
     />
-  );
-}
-
-const tokenBalance: TokenBalance = {
-  ticker: 'MEME',
-  availableBalance: '40',
-  transferableBalance: '60',
-  overallBalance: '100',
-  availableBalanceSafe: '',
-  availableBalanceUnSafe: ''
-};
-function TestBRC20BalanceCard() {
-  return (
-    <Layout>
-      <Content>
-        <BRC20BalanceCard tokenBalance={tokenBalance} />
-      </Content>
-    </Layout>
   );
 }
 
@@ -142,7 +123,7 @@ function TestApprovalSignPsbt() {
           psbtHex:
             '70736274ff01007d0200000001d0baba4fd7980fe2c29b1efc4eb9eb2aa43aa1a4dbe2d9f8f38facef3446f5900100000000fdffffff02a086010000000000225120517aaf863dcf93a135664bbede4dc219c054a63fdd5b8b10a7c2b61bd8d3e28f3fc95500000000001600143dcf0a89a523ff619a31af413954960414a7c21e000000000001011f79505700000000001600143dcf0a89a523ff619a31af413954960414a7c21e01086c024830450221008b3706ec6cff7e882fe6dbcbeacc09195f3f10f8b268acce6367bf4f37058edd02203ca6b1c8f6efdad8f6aa63cfe091d5871e1f19d44e3e267d311c31e51cb81f1c0121026887958bcc4cb6f8c04ea49260f0d10e312c41baf485252953b14724db552aac000000',
           type: TxType.SIGN_TX,
-          options:{autoFinalized:false}
+          options: { autoFinalized: false }
         },
         session: {
           origin: 'https://mail.google.com/',
@@ -170,7 +151,7 @@ function TestApprovalSignPsbtB() {
             rawtx: '',
             toAddressInfo: testAddressInfo as ToAddressInfo
           },
-          options:{autoFinalized:false}
+          options: { autoFinalized: false }
         },
         session: {
           origin: 'https://mail.google.com/',
@@ -194,7 +175,7 @@ function TestApprovalMultiSignPsbt() {
       params={{
         data: {
           psbtHexs: [psbtHex, psbtHex2],
-          options:[]
+          options: []
         },
         session: {
           origin: 'https://mail.google.com/',
@@ -229,7 +210,7 @@ function TestApprovalSignText() {
       params={{
         data: {
           text: 'hello',
-          type:''
+          type: ''
         },
         session: {
           origin: 'https://mail.google.com/',

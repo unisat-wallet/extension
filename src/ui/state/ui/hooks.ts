@@ -1,9 +1,12 @@
-import { ChainType } from '@/shared/constant';
+import { useMemo } from 'react';
+
+import { AddressFlagType, ChainType } from '@/shared/constant';
 import { AddressType, Inscription } from '@/shared/types';
+import { checkAddressFlag } from '@/shared/utils';
 import { getAddressType } from '@unisat/wallet-sdk/lib/address';
 
 import { AppState } from '..';
-import { useCurrentAddress } from '../accounts/hooks';
+import { useCurrentAccount, useCurrentAddress } from '../accounts/hooks';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { useChainType, useNetworkType } from '../settings/hooks';
 import { AssetTabKey, uiActions } from './reducer';
@@ -65,6 +68,7 @@ export function useSupportedAssets() {
   const chainType = useChainType();
   const currentAddress = useCurrentAddress();
   const networkType = useNetworkType();
+  const currentAccount = useCurrentAccount();
 
   const assetTabKeys: AssetTabKey[] = [];
   const assets = {
@@ -77,7 +81,9 @@ export function useSupportedAssets() {
   assets.ordinals = true;
   assetTabKeys.push(AssetTabKey.ORDINALS);
 
-  if (chainType === ChainType.BITCOIN_MAINNET) {
+  const isDisableAtomicals = checkAddressFlag(currentAccount.flag, AddressFlagType.DISABLE_ARC20);
+
+  if (chainType === ChainType.BITCOIN_MAINNET && isDisableAtomicals == false) {
     assets.atomicals = true;
     assetTabKeys.push(AssetTabKey.ATOMICALS);
   }
@@ -99,3 +105,13 @@ export function useSupportedAssets() {
     key: assetTabKeys.join(',')
   };
 }
+
+export const useIsInExpandView = () => {
+  return useMemo(() => {
+    if (window.innerWidth > 156 * 3) {
+      return true;
+    } else {
+      return false;
+    }
+  }, [window.innerWidth]);
+};

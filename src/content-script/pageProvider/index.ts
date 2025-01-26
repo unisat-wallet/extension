@@ -247,6 +247,12 @@ export class UnisatProvider extends EventEmitter {
     });
   };
 
+  getBalanceV2 = async () => {
+    return this._request({
+      method: 'getBalanceV2'
+    });
+  };
+
   getInscriptions = async (cursor = 0, size = 20) => {
     return this._request({
       method: 'getInscriptions',

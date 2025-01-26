@@ -23,8 +23,7 @@ import {
   EVENTS,
   KEYRING_TYPE,
   KEYRING_TYPES,
-  NETWORK_TYPES,
-  UNCONFIRMED_HEIGHT
+  NETWORK_TYPES
 } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 import { runesUtils } from '@/shared/lib/runes-utils';
@@ -144,6 +143,11 @@ export class WalletController extends BaseController {
   getAddressBalance = async (address: string) => {
     const data = await openapiService.getAddressBalance(address);
     preferenceService.updateAddressBalance(address, data);
+    return data;
+  };
+
+  getAddressBalanceV2 = async (address: string) => {
+    const data = await openapiService.getAddressBalanceV2(address);
     return data;
   };
 
@@ -816,11 +820,11 @@ export class WalletController extends BaseController {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
-    let utxos = await openapiService.getBTCUtxos(account.address);
+    const utxos = await openapiService.getBTCUtxos(account.address);
 
-    if (checkAddressFlag(openapiService.addressFlag, AddressFlagType.CONFIRMED_UTXO_MODE)) {
-      utxos = utxos.filter((v) => (v as any).height !== UNCONFIRMED_HEIGHT);
-    }
+    // if (checkAddressFlag(openapiService.addressFlag, AddressFlagType.CONFIRMED_UTXO_MODE)) {
+    //   utxos = utxos.filter((v) => (v as any).height !== UNCONFIRMED_HEIGHT);
+    // }
 
     const btcUtxos = utxos.map((v) => {
       return {

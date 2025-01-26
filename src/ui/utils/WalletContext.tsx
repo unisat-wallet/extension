@@ -17,6 +17,7 @@ import {
   AppSummary,
   Arc20Balance,
   BitcoinBalance,
+  BitcoinBalanceV2,
   BtcChannelItem,
   CAT20Balance,
   CAT20MergeOrder,
@@ -69,6 +70,7 @@ export interface WalletController {
   setPopupOpen(isOpen: boolean): void;
   isReady(): Promise<boolean>;
 
+  getAddressBalanceV2(address: string): Promise<BitcoinBalanceV2>;
   getAddressBalance(address: string): Promise<BitcoinBalance>;
   getAddressCacheBalance(address: string): Promise<BitcoinBalance>;
   getMultiAddressAssets(addresses: string): Promise<AddressSummary[]>;

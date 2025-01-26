@@ -10,6 +10,7 @@ import {
   AppSummary,
   Arc20Balance,
   BitcoinBalance,
+  BitcoinBalanceV2,
   CAT20Balance,
   CAT721CollectionInfo,
   CoinPrice,
@@ -194,6 +195,12 @@ export class OpenApiService {
 
   async getAddressBalance(address: string): Promise<BitcoinBalance> {
     return this.httpGet('/v5/address/balance', {
+      address
+    });
+  }
+
+  async getAddressBalanceV2(address: string): Promise<BitcoinBalanceV2> {
+    return this.httpGet('/v5/address/balance2', {
       address
     });
   }
