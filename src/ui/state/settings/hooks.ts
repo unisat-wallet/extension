@@ -112,21 +112,33 @@ export function useBTCUnit() {
     return CHAINS_MAP[chainType].unit;
 }
 
-export function useTxExplorerUrl(txid: string) {
+export function useTxExplorerUrl(txId: string) {
     const chain = useChain();
-    if (chain.defaultExplorer === 'mempool-space') {
-        return `${chain.mempoolSpaceUrl}/tx/${txid}`;
-    } else {
-        return `${chain.unisatExplorerUrl}/tx/${txid}`;
+
+    switch (chain.enum) {
+        case ChainType.BITCOIN_MAINNET:
+            return `https://opscan.org/transactions/${txId}?network=mainnet`;
+        case ChainType.BITCOIN_TESTNET:
+            return `https://opscan.org/transactions/${txId}?network=testnet`;
+        case ChainType.BITCOIN_REGTEST:
+            return `https://opscan.org/transactions/${txId}?network=regtest`;
+        default:
+            return `https://opscan.org/transactions/${txId}`;
     }
 }
 
 export function useAddressExplorerUrl(address: string) {
     const chain = useChain();
-    if (chain.defaultExplorer === 'mempool-space') {
-        return `${chain.mempoolSpaceUrl}/address/${address}`;
-    } else {
-        return `${chain.unisatExplorerUrl}/address/${address}`;
+
+    switch (chain.enum) {
+        case ChainType.BITCOIN_MAINNET:
+            return `https://opscan.org/accounts/${address}?network=mainnet`;
+        case ChainType.BITCOIN_TESTNET:
+            return `https://opscan.org/accounts/${address}?network=testnet`;
+        case ChainType.BITCOIN_REGTEST:
+            return `https://opscan.org/accounts/${address}?network=regtest`;
+        default:
+            return `https://opscan.org/accounts/${address}`;
     }
 }
 

@@ -41,7 +41,7 @@ export default function TxSuccessScreen() {
                                 window.open(txidUrl);
                             }}>
                             <Icon icon="eye" color="textDim" />
-                            <Text preset="regular-bold" text="View on Block Explorer" color="textDim" />
+                            <Text preset="regular-bold" text="View on OP_SCAN" color="textDim" />
                         </Row>
                     ) : (
                         <></>

@@ -1,10 +1,9 @@
 import { getContract, IOP_20Contract, OP_20_ABI } from 'opnet';
 import { useCallback, useEffect, useState } from 'react';
 
-import { Action, AirdropParameters, Features } from '@/shared/interfaces/RawTxParameters';
+import { Action, Features, MintParameters } from '@/shared/interfaces/RawTxParameters';
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { OPTokenInfo } from '@/shared/types';
-import { expandToDecimals } from '@/shared/utils';
 import Web3API, { bigIntToDecimal } from '@/shared/web3/Web3API';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -33,7 +32,7 @@ export default function Mint() {
     const wallet = useWallet();
     const [maxSupply, setMaxSupply] = useState<bigint>(0n);
 
-    const [addresses, setAddresses] = useState<{ [key: string]: string } | null>(null);
+    const [address, setAddress] = useState<string | null>(null);
 
     const getWallet = useCallback(async () => {
         const currentWalletAddress = await wallet.getCurrentAccount();
@@ -47,20 +46,13 @@ export default function Mint() {
         return Wallet.fromWif(wifWallet.wif, Web3API.network);
     }, [wallet]);
 
-    const cb = useCallback(
-        async (inputAmount: string, divisibility: number) => {
-            const wallet = await getWallet();
+    const cb = useCallback(async () => {
+        const wallet = await getWallet();
 
-            const map: { [key: string]: string } = {
-                [wallet.address.toHex()]: expandToDecimals(inputAmount, divisibility).toString()
-            };
-
-            setAddresses(map);
-            setDisabled(false);
-            setError('');
-        },
-        [getWallet]
-    );
+        setAddress(wallet.address.toString());
+        setDisabled(false);
+        setError('');
+    }, [getWallet]);
 
     useEffect(() => {
         setDisabled(true);
@@ -71,8 +63,8 @@ export default function Mint() {
             return;
         }
 
-        void cb(inputAmount, props.divisibility);
-    }, [inputAmount, props.divisibility]);
+        cb();
+    }, [inputAmount, cb]);
 
     useEffect(() => {
         const setWallet = async () => {
@@ -98,7 +90,7 @@ export default function Mint() {
         };
 
         void setWallet();
-    }, []);
+    }, [props.address, tools, wallet]);
 
     return (
         <Layout>
@@ -191,13 +183,14 @@ export default function Mint() {
                     preset="primary"
                     text="Next"
                     onClick={() => {
-                        if (!addresses) {
+                        if (!address) {
                             return;
                         }
 
-                        const txInfo: AirdropParameters = {
+                        const txInfo: MintParameters = {
                             contractAddress: props.address,
-                            amounts: addresses,
+                            to: address,
+                            inputAmount: Number(inputAmount),
                             header: 'Mint Token',
                             features: {
                                 [Features.rbf]: true
@@ -205,7 +198,7 @@ export default function Mint() {
                             tokens: [props],
                             feeRate: feeRate,
                             priorityFee: BigInt(OpnetRateInputVal),
-                            action: Action.Airdrop
+                            action: Action.Mint
                         };
 
                         console.log(txInfo);

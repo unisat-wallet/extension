@@ -1,8 +1,5 @@
- 
-
 /* constants pool */
 import { AddressType, NetworkType, RestoreWalletType } from '../types';
-
 
 export enum CHAINS_ENUM {
     BTC = 'BTC'
@@ -208,7 +205,6 @@ interface TypeChain<T extends ChainType> {
     mempoolSpaceUrl: string;
     unisatUrl: string;
     ordinalsUrl: string;
-    unisatExplorerUrl: string;
     faucetUrl: string;
     okxExplorerUrl: string;
     isViewTxHistoryInternally?: boolean;
@@ -231,7 +227,6 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         unisatUrl: 'https://unisat.io',
         ordinalsUrl: 'https://ordinals.com',
         faucetUrl: '',
-        unisatExplorerUrl: '',
         okxExplorerUrl: '',
         disable: true,
         showPrice: true,
@@ -249,7 +244,6 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         unisatUrl: 'https://testnet.unisat.io',
         ordinalsUrl: 'https://testnet.ordinals.com',
         faucetUrl: '',
-        unisatExplorerUrl: '',
         okxExplorerUrl: '',
         disable: true,
         showPrice: false,
@@ -267,7 +261,6 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         unisatUrl: 'https://testnet4.unisat.io',
         ordinalsUrl: 'https://testnet4.ordinals.com',
         faucetUrl: '',
-        unisatExplorerUrl: '',
         okxExplorerUrl: '',
         disable: true,
         showPrice: false,
@@ -285,7 +278,6 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         unisatUrl: 'https://unisat.io',
         ordinalsUrl: 'https://ordinals.com',
         faucetUrl: 'https://faucet.opnet.org/',
-        unisatExplorerUrl: '',
         okxExplorerUrl: '',
         showPrice: false,
         defaultExplorer: 'mempool-space'
@@ -302,7 +294,6 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         unisatUrl: 'https://signet.unisat.io',
         ordinalsUrl: 'https://signet.ordinals.com',
         faucetUrl: '',
-        unisatExplorerUrl: '',
         okxExplorerUrl: '',
         disable: true,
         showPrice: false,
@@ -319,7 +310,6 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         mempoolSpaceUrl: 'https://mempool.fractalbitcoin.io',
         unisatUrl: 'https://fractal.unisat.io',
         ordinalsUrl: 'https://ordinals.fractalbitcoin.io',
-        unisatExplorerUrl: 'https://explorer.unisat.io/fractal-mainnet',
         faucetUrl: '',
         okxExplorerUrl: '',
         isViewTxHistoryInternally: false,
@@ -339,7 +329,6 @@ export const CHAINS_MAP: { [key in ChainType]: TypeChain<key> } = {
         mempoolSpaceUrl: 'https://fractal-mempool.opnet.org',
         unisatUrl: 'https://fractal-testnet.unisat.io',
         ordinalsUrl: 'https://ordinals-testnet.fractalbitcoin.io',
-        unisatExplorerUrl: 'https://explorer.unisat.io/fractal-testnet',
         faucetUrl: 'https://fractal-faucet.opnet.org/',
         okxExplorerUrl: '',
         isViewTxHistoryInternally: true,

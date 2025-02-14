@@ -1,20 +1,20 @@
-import { CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
-import BigNumber from 'bignumber.js';
 import { CloseOutlined, LoadingOutlined } from '@ant-design/icons';
 import { Modal } from 'antd';
+import BigNumber from 'bignumber.js';
+import { CSSProperties, useCallback, useEffect, useRef, useState } from 'react';
 import browser from 'webextension-polyfill';
 
-import { getContract, IOP_20Contract, OP_20_ABI } from 'opnet';
 import Web3API, { getOPNetChainType, getOPNetNetwork } from '@/shared/web3/Web3API';
+import { getContract, IOP_20Contract, OP_20_ABI } from 'opnet';
 
 import { ChainType } from '@/shared/constant';
 import { NetworkType, OPTokenInfo } from '@/shared/types';
 import { ContractInformation } from '@/shared/web3/interfaces/ContractInformation';
 import { Address, OPNetMetadata } from '@btc-vision/transaction';
 
+import { Button, Column, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BaseView } from '@/ui/components/BaseView';
-import { Button, Column, Row, Text } from '@/ui/components';
 import OpNetBalanceCard from '@/ui/components/OpNetBalanceCard';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useChainType } from '@/ui/state/settings/hooks';
@@ -159,78 +159,71 @@ export function OPNetList() {
      * Fetch the balances for the current page of tokens.
      * If forceRefresh = true, skip the cache for these tokens and re-fetch from chain.
      */
-    const fetchTokenBalances = useCallback(
-        async (forceRefresh = false) => {
-            if (skipBalancesRef.current) return;
-            if (!tokens.length) {
-                setTokenBalances([]);
-                return;
-            }
+    const fetchTokenBalances = useCallback(async () => {
+        if (skipBalancesRef.current) return;
+        if (!tokens.length) {
+            setTokenBalances([]);
+            return;
+        }
 
-            try {
-                tools.showLoading(true);
+        try {
+            tools.showLoading(true);
 
-                const startIndex = (currentPage - 1) * TOKENS_PER_PAGE;
-                const endIndex = Math.min(startIndex + TOKENS_PER_PAGE, tokens.length);
-                const currentTokens = tokens.slice(startIndex, endIndex);
+            const startIndex = (currentPage - 1) * TOKENS_PER_PAGE;
+            const endIndex = Math.min(startIndex + TOKENS_PER_PAGE, tokens.length);
+            const currentTokens = tokens.slice(startIndex, endIndex);
 
-                const balances = await Promise.all(
-                    currentTokens.map(async (tokenAddress) => {
-                        // If we have cache and not force-refreshing, use cached info
-                        if (balanceCache.has(tokenAddress) && !forceRefresh) {
-                            return balanceCache.get(tokenAddress) as OPTokenInfo;
-                        }
+            const balances = await Promise.all(
+                currentTokens.map(async (tokenAddress) => {
+                    try {
+                        const contractInfo: ContractInformation | OPTokenInfo | false | undefined = balanceCache.get(
+                            tokenAddress
+                        )
+                            ? balanceCache.get(tokenAddress)
+                            : await Web3API.queryContractInformation(tokenAddress);
 
-                        try {
-                            const contractInfo: ContractInformation | OPTokenInfo | false | undefined =
-                                balanceCache.get(tokenAddress)
-                                    ? balanceCache.get(tokenAddress)
-                                    : await Web3API.queryContractInformation(tokenAddress);
-
-                            if (!contractInfo || contractInfo.name === 'Generic Contract') {
-                                setFailedTokens((prev) => [...prev, tokenAddress]);
-                                return null;
-                            }
-
-                            const contract: IOP_20Contract = getContract<IOP_20Contract>(
-                                tokenAddress,
-                                OP_20_ABI,
-                                Web3API.provider,
-                                Web3API.network
-                            );
-
-                            const balance = await contract.balanceOf(Address.fromString(currentAccount.pubkey));
-                            const tokenDetails: OPTokenInfo = {
-                                address: tokenAddress,
-                                name: contractInfo?.name || '',
-                                amount: balance.properties.balance,
-                                divisibility:
-                                    'divisibility' in contractInfo
-                                        ? contractInfo.divisibility
-                                        : contractInfo?.decimals || 8,
-                                symbol: contractInfo.symbol,
-                                logo: contractInfo?.logo
-                            };
-
-                            balanceCache.set(tokenAddress, tokenDetails);
-                            return tokenDetails;
-                        } catch (err) {
-                            console.error('Error fetching balance:', tokenAddress, err);
+                        if (!contractInfo || contractInfo.name === 'Generic Contract') {
                             setFailedTokens((prev) => [...prev, tokenAddress]);
                             return null;
                         }
-                    })
-                );
 
-                setTokenBalances(balances.filter(Boolean) as OPTokenInfo[]);
-            } catch (err) {
-                tools.toastError(`Failed to load token balances: ${(err as Error).message}`);
-            } finally {
-                tools.showLoading(false);
-            }
-        },
-        [currentAccount, currentPage, tokens, tools]
-    );
+                        const contract: IOP_20Contract = getContract<IOP_20Contract>(
+                            tokenAddress,
+                            OP_20_ABI,
+                            Web3API.provider,
+                            Web3API.network
+                        );
+
+                        const balance = await contract.balanceOf(Address.fromString(currentAccount.pubkey));
+                        const tokenDetails: OPTokenInfo = {
+                            address: tokenAddress,
+                            name: contractInfo?.name || '',
+                            amount: balance.properties.balance,
+                            divisibility:
+                                'divisibility' in contractInfo
+                                    ? contractInfo.divisibility
+                                    : contractInfo?.decimals || 8,
+                            symbol: contractInfo.symbol,
+                            logo: contractInfo?.logo
+                        };
+
+                        balanceCache.set(tokenAddress, tokenDetails);
+                        return tokenDetails;
+                    } catch (err) {
+                        console.error('Error fetching balance:', tokenAddress, err);
+                        setFailedTokens((prev) => [...prev, tokenAddress]);
+                        return null;
+                    }
+                })
+            );
+
+            setTokenBalances(balances.filter(Boolean) as OPTokenInfo[]);
+        } catch (err) {
+            tools.toastError(`Failed to load token balances: ${(err as Error).message}`);
+        } finally {
+            tools.showLoading(false);
+        }
+    }, [currentAccount, currentPage, tokens, tools]);
 
     // Fetch tokens once on mount (and whenever importTokenBool changes),
     // not every time tokens state changes
@@ -240,8 +233,8 @@ export function OPNetList() {
 
     // Fetch balances whenever tokens or page changes, unless skipping
     useEffect(() => {
-        void fetchTokenBalances();
-    }, [fetchTokenBalances, tokens, currentPage]);
+        fetchTokenBalances();
+    }, [fetchTokenBalances, tokens, currentPage, currentAccount]);
 
     // If new failures appear, display them one by one
     useEffect(() => {
@@ -475,7 +468,7 @@ export function OPNetList() {
                         icon="history"
                         // ----- IMPORTANT CHANGE: ONLY REFRESH BALANCES -----
                         onClick={() => {
-                            fetchTokenBalances(true).catch((err: unknown) => console.error(err));
+                            fetchTokenBalances().catch((err: unknown) => console.error(err));
                         }}
                     />
                     <Button
@@ -563,18 +556,20 @@ export function OPNetList() {
                             disabled={currentPage === totalPages}
                         />
                     </Row>
-
-                    {/* Show Hidden Tokens */}
-                    <Row style={{ marginTop: '12px' }}>
-                        <Button
-                            style={{ width: '100%', fontSize: '10px' }}
-                            text="Show Hidden Tokens"
-                            preset="fontsmall"
-                            onClick={showHiddenTokens}
-                        />
-                    </Row>
                 </BaseView>
             )}
+
+            <BaseView style={$opnet}>
+                {/* Show Hidden Tokens */}
+                <Row style={{ marginTop: '12px' }}>
+                    <Button
+                        style={{ width: '100%', fontSize: '10px' }}
+                        text="Show Hidden Tokens"
+                        preset="fontsmall"
+                        onClick={showHiddenTokens}
+                    />
+                </Row>
+            </BaseView>
 
             {/* Import Token Modal */}
             {importTokenBool && (

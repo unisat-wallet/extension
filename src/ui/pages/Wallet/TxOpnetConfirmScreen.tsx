@@ -245,7 +245,7 @@ export default function TxOpnetConfirmScreen() {
             return;
         }
 
-        tools.toastSuccess(`You have successfully deployed ${contractAddress}`);
+        tools.toastSuccess(`You have successfully airdropped tokens to ${addressMap.size} addresses`);
         navigate(RouteTypes.TxSuccessScreen, { txid: sendTransaction.transactionId, contractAddress: contractAddress });
     };
 
@@ -502,7 +502,7 @@ export default function TxOpnetConfirmScreen() {
                 return;
             }
 
-            tools.toastSuccess(`You have successfully minted ${parameters.inputAmount} `);
+            tools.toastSuccess(`You have successfully minted ${parameters.inputAmount} ${parameters.tokens[0].symbol}`);
             navigate(RouteTypes.TxSuccessScreen, { txid: sendTransaction.transactionId });
         } catch (e) {
             setDisabled(false);
