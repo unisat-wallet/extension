@@ -31,6 +31,9 @@ import SendArc20Screen from './Atomicals/SendArc20Screen';
 import SendAtomicalsInscriptionScreen from './Atomicals/SendAtomicalsNFTScreen';
 import BRC20SendScreen from './BRC20/BRC20SendScreen';
 import BRC20TokenScreen from './BRC20/BRC20TokenScreen';
+import BabylonStakingScreen from './Babylon/BabylonStakingScreen';
+import BabylonTxConfirmScreen from './Babylon/BabylonTxConfirmScreen';
+import SendBabyScreen from './Babylon/SendBabyScreen';
 import CAT721CollectionScreen from './CAT721/CAT721CollectionScreen';
 import CAT721NFTScreen from './CAT721/CAT721NFTScreen';
 import SendCAT721Screen from './CAT721/SendCAT721Screen';
@@ -290,6 +293,20 @@ export const routes = {
   SendCAT721Screen: {
     path: '/cat721/send-cat721',
     element: <SendCAT721Screen />
+  },
+
+  BabylonStakingScreen: {
+    path: '/babylon/staking',
+    element: <BabylonStakingScreen />
+  },
+
+  SendBABYScreen: {
+    path: '/babylon/send-baby',
+    element: <SendBabyScreen />
+  },
+  BabylonTxConfirmScreen: {
+    path: '/babylon/tx/confirm',
+    element: <BabylonTxConfirmScreen />
   }
 };
 

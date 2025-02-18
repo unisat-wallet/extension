@@ -134,12 +134,27 @@ const $viewPresets = {
   }) as CSSProperties,
 
   minimal: Object.assign({}, $baseViewStyle, {
-    backgroundColor: 'rgba(233,185,76,0.1)',
+    backgroundColor: 'rgba(255,124,42,0.1)',
     minWidth: 64,
+    height: 20,
     flexDirection: 'column',
-    borderRadius: 5,
-    borderWidth: 0,
-    borderColor: '#FFFFFF4D',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255,124,42,0.4)',
+    padding: 2,
+    marginRight: 5,
+    marginLeft: 5,
+    alignItems: 'center'
+  }) as CSSProperties,
+
+  minimal2: Object.assign({}, $baseViewStyle, {
+    backgroundColor: 'rgba(255,255,255,0.08)',
+    minWidth: 64,
+    height: 20,
+    flexDirection: 'column',
+    borderRadius: 8,
+    borderWidth: 1,
+    borderColor: 'rgba(255,255,255,0.1)',
     padding: 2,
     marginRight: 5,
     marginLeft: 5,
@@ -170,7 +185,12 @@ const $hoverViewPresets: Record<Presets, CSSProperties> = {
   home: {
     backgroundColor: '#383535'
   },
-  minimal: {}
+  minimal: {
+    backgroundColor: 'rgba(255,124,42,0.1)'
+  },
+  minimal2: {
+    backgroundColor: 'rgba(255,255,255,0.08)'
+  }
 };
 
 const $baseTextStyle: CSSProperties = {
@@ -200,7 +220,11 @@ const $textPresets: Record<Presets, CSSProperties> = {
     fontSize: 12
   }),
   minimal: Object.assign({}, $baseTextStyle, {
-    color: colors.gold,
+    color: '#FF7C2A',
+    fontSize: 12
+  }),
+  minimal2: Object.assign({}, $baseTextStyle, {
+    color: '#FFFFFF',
     fontSize: 12
   })
 };
@@ -292,7 +316,7 @@ export function Button(props: ButtonProps) {
     );
   }
 
-  if (preset === 'minimal') {
+  if (preset === 'minimal' || preset === 'minimal2') {
     return (
       <div
         style={$viewStyle}

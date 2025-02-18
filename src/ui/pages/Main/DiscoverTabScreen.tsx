@@ -15,7 +15,10 @@ import { useAppDispatch } from '@/ui/state/hooks';
 import { useChain, useChainType } from '@/ui/state/settings/hooks';
 import { useWallet } from '@/ui/utils';
 
+import { useNavigate } from '../MainRoute';
 import { SwitchChainModal } from '../Settings/SwitchChainModal';
+
+const APP_ID_BABYLON_STAKING = 1103;
 
 function BannerItem({ img, link }: { img: string; link: string }) {
   return (
@@ -36,8 +39,9 @@ function BannerItem({ img, link }: { img: string; link: string }) {
   );
 }
 
-function AppItem({ info }: { info: AppInfo }) {
+function AppItem({ info, onClick }: { info: AppInfo; onClick?: () => void }) {
   const readApp = useReadApp();
+  const navigate = useNavigate();
   return (
     <Card
       preset="style1"
@@ -46,7 +50,21 @@ function AppItem({ info }: { info: AppInfo }) {
         borderRadius: 16
       }}
       onClick={() => {
-        if (info.url) window.open(info.url);
+        if (onClick) {
+          onClick();
+          return;
+        }
+
+        if (info.route) {
+          navigate(info.route as any);
+          return;
+        }
+
+        if (info.url) {
+          window.open(info.url);
+          return;
+        }
+
         readApp(info.id);
       }}>
       <Row full>
@@ -90,6 +108,8 @@ export default function DiscoverTabScreen() {
 
   const wallet = useWallet();
   const dispatch = useAppDispatch();
+
+  const navigate = useNavigate();
   useEffect(() => {
     if (lastFetchInfo.lasfFetchChainType === chainType && Date.now() - lastFetchInfo.lastFetchTime < 1000 * 60 * 1) {
       return;

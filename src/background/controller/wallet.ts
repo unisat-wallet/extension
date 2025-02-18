@@ -25,6 +25,8 @@ import {
   KEYRING_TYPES,
   NETWORK_TYPES
 } from '@/shared/constant';
+import { BABYLON_CONFIG_MAP } from '@/shared/constant/babylon';
+import { COSMOS_CHAINS_MAP, CosmosChainInfo } from '@/shared/constant/cosmosChain';
 import eventBus from '@/shared/eventBus';
 import { runesUtils } from '@/shared/lib/runes-utils';
 import {
@@ -32,6 +34,7 @@ import {
   AddressType,
   AddressUserToSignInput,
   BitcoinBalance,
+  CosmosBalance,
   NetworkType,
   PublicKeyUserToSignInput,
   SignPsbtOptions,
@@ -53,7 +56,11 @@ import { toPsbtNetwork } from '@unisat/wallet-sdk/lib/network';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 import { toXOnly } from '@unisat/wallet-sdk/lib/utils';
 
+import { BabylonApiService } from '../service/babylon/api/babylonApiService';
+import { getDelegationsV2 } from '../service/babylon/api/getDelegationsV2';
+import { DelegationV2StakingState } from '../service/babylon/types/delegationsV2';
 import { ContactBookItem } from '../service/contactBook';
+import { CosmosKeyring } from '../service/keyring/CosmosKeyring';
 import { OpenApiService } from '../service/openapi';
 import { ConnectedSite } from '../service/permission';
 import BaseController from './base';
@@ -70,6 +77,11 @@ export class WalletController extends BaseController {
   openapi: OpenApiService = openapiService;
 
   timer: any = null;
+
+  private _cacheCosmosKeyringKey: string | null = null;
+  private _cosmosKeyring: CosmosKeyring | null = null;
+
+  cosmosChainInfoMap: Record<string, CosmosChainInfo> = Object.assign({}, COSMOS_CHAINS_MAP);
 
   /* wallet */
   boot = (password: string) => keyringService.boot(password);
@@ -2182,6 +2194,108 @@ export class WalletController extends BaseController {
 
   createBuyCoinPaymentUrl = (coin: 'FB' | 'BTC', address: string, channel: string) => {
     return openapiService.createBuyCoinPaymentUrl(coin, address, channel);
+  };
+
+  getCosmosKeyring = async (chainId: string) => {
+    if (!this.cosmosChainInfoMap[chainId]) {
+      throw new Error('Not supported chainId');
+    }
+
+    const currentAccount = await this.getCurrentAccount();
+    if (!currentAccount) return null;
+
+    const key = `${currentAccount.pubkey}-${currentAccount.type}-${chainId}`;
+    if (key === this._cacheCosmosKeyringKey) {
+      return this._cosmosKeyring;
+    }
+
+    const keyring = await keyringService.getKeyringForAccount(currentAccount.pubkey, currentAccount.type);
+    if (!keyring) return null;
+    const privateKey = await keyring.exportAccount(currentAccount.pubkey);
+
+    const name = `${currentAccount.alianName}-${chainId}`;
+    const cosmosKeyring = await CosmosKeyring.createCosmosKeyring({
+      privateKey,
+      name,
+      chainId,
+      provider: this
+    });
+
+    this._cacheCosmosKeyringKey = key;
+    this._cosmosKeyring = cosmosKeyring;
+
+    return cosmosKeyring;
+  };
+
+  getBabylonAddress = async (chainId: string) => {
+    const cosmosKeyring = await this.getCosmosKeyring(chainId);
+    if (!cosmosKeyring) return null;
+    const address = cosmosKeyring.getKey().bech32Address;
+    return address;
+  };
+
+  getBabylonAddressSummary = async (babylonChainId: string, withStakingInfo = true) => {
+    const chainType = this.getChainType();
+    const chain = CHAINS_MAP[chainType];
+
+    const cosmosKeyring = await this.getCosmosKeyring(babylonChainId);
+    if (!cosmosKeyring) return null;
+    const address = cosmosKeyring.getKey().bech32Address;
+    let balance: CosmosBalance = {
+      amount: '0',
+      denom: 'ubbn'
+    };
+    let rewardBalance = 0;
+    try {
+      balance = await cosmosKeyring.getBalance();
+      if (withStakingInfo) {
+        rewardBalance = await cosmosKeyring.getBabylonStakingRewards();
+      }
+    } catch (e) {
+      console.error('getBabylonAddressSummary:getBalance error:', e);
+    }
+
+    let stakedBalance = 0;
+    if (withStakingInfo) {
+      const babylonConfig = BABYLON_CONFIG_MAP[chainType];
+      try {
+        const currentAccount = await this.getCurrentAccount();
+        if (!currentAccount) return null;
+        const pubkey = toXOnly(Buffer.from(currentAccount.pubkey, 'hex')).toString('hex');
+        let pagination_key = '';
+
+        do {
+          const response = await getDelegationsV2(babylonConfig.phase2.stakingApi || '', pubkey, pagination_key);
+          stakedBalance += response.delegations
+            .filter((v) => v.state === DelegationV2StakingState.ACTIVE)
+            .reduce((pre, cur) => pre + cur.stakingAmount, 0);
+          if (response.pagination.next_key) {
+            pagination_key = response.pagination.next_key;
+          }
+        } while (pagination_key);
+      } catch (e) {
+        console.error('getBabylonAddressSummary:getDelegationsV2 error:', e);
+      }
+    }
+
+    return { address, balance, rewardBalance, stakedBalance };
+  };
+
+  getBabylonStakingStatusV2 = async () => {
+    const chainType = this.getChainType();
+    const babylonConfig = BABYLON_CONFIG_MAP[chainType];
+    if (!babylonConfig) {
+      return;
+    }
+    const apiService = new BabylonApiService(babylonConfig.phase1.stakingApi, babylonConfig.phase2.stakingApi);
+    return apiService.getBabylonStakingStatusV2();
+  };
+
+  sendTokens = async (chainId: string, tokenBalance: CosmosBalance, recipient: string, memo: string) => {
+    const keyring = await this.getCosmosKeyring(chainId);
+    if (!keyring) return null;
+    const result = await keyring.sendTokens(tokenBalance, recipient, memo);
+    return { code: result.code, transactionHash: result.transactionHash };
   };
 }
 

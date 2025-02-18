@@ -16,6 +16,8 @@ import {
   AppInfo,
   AppSummary,
   Arc20Balance,
+  BabylonAddressSummary,
+  BabylonStakingStatusV2,
   BitcoinBalance,
   BitcoinBalanceV2,
   BtcChannelItem,
@@ -23,6 +25,7 @@ import {
   CAT20MergeOrder,
   CAT721Balance,
   CoinPrice,
+  CosmosBalance,
   DecodedPsbt,
   FeeSummary,
   InscribeOrder,
@@ -444,6 +447,22 @@ export interface WalletController {
 
   getBuyCoinChannelList(coin: string): Promise<BtcChannelItem[]>;
   createBuyCoinPaymentUrl(coin: string, address: string, channel: string): Promise<string>;
+
+  getBabylonAddress(address: string): Promise<string>;
+
+  getBabylonAddressSummary(chainId: string, withStakingInfo?: boolean): Promise<BabylonAddressSummary>;
+
+  getBabylonStakingStatusV2(): Promise<BabylonStakingStatusV2>;
+
+  sendTokens(
+    chainId: string,
+    tokenBalance: CosmosBalance,
+    to: string,
+    memo: string
+  ): Promise<{
+    code: number;
+    transactionHash: string;
+  }>;
 }
 
 const WalletContext = createContext<{
