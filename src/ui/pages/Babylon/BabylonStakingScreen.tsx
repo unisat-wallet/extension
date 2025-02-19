@@ -330,6 +330,7 @@ export default function BabylonStakingScreen() {
             value={`${satoshisToAmount(babylonAddressSummary.stakedBalance)} ${chain.unit}`}
             button={
               <Button
+                style={{margin:0}}
                 text="Unstake"
                 preset="minimal"
                 disabled={babylonAddressSummary.stakedBalance === 0}
@@ -351,6 +352,7 @@ export default function BabylonStakingScreen() {
             )} ${babylonChain.stakeCurrency.coinDenom}`}
             button={
               <Button
+                style={{margin:0}}
                 text="Claim"
                 preset="minimal"
                 disabled={babylonAddressSummary.rewardBalance === 0}
@@ -371,6 +373,7 @@ export default function BabylonStakingScreen() {
           )} ${babylonChain.stakeCurrency.coinDenom}`}
           button={
             <Button
+              style={{margin:0}}
               text="Send"
               preset="minimal2"
               disabled={babylonAddressSummary.balance.amount === '0'}

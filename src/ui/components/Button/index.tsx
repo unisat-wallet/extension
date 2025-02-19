@@ -135,7 +135,7 @@ const $viewPresets = {
 
   minimal: Object.assign({}, $baseViewStyle, {
     backgroundColor: 'rgba(255,124,42,0.1)',
-    minWidth: 64,
+    minWidth: 60,
     height: 20,
     flexDirection: 'column',
     borderRadius: 8,
@@ -149,7 +149,7 @@ const $viewPresets = {
 
   minimal2: Object.assign({}, $baseViewStyle, {
     backgroundColor: 'rgba(255,255,255,0.08)',
-    minWidth: 64,
+    minWidth: 60,
     height: 20,
     flexDirection: 'column',
     borderRadius: 8,
