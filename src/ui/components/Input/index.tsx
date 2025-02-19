@@ -8,7 +8,7 @@ import { Inscription } from '@/shared/types';
 import { getAddressTips, useChain } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { spacing } from '@/ui/theme/spacing';
-import { useWallet } from '@/ui/utils';
+import { isValidBech32Address, useWallet } from '@/ui/utils';
 import { ArrowRightOutlined, SearchOutlined } from '@ant-design/icons';
 
 import { AccordingInscription } from '../AccordingInscription';
@@ -383,8 +383,6 @@ export const CosmosAddressInput = (props: InputProps) => {
 
   const [inputVal, setInputVal] = useState(addressInputData.domain || addressInputData.address);
 
-  const addressPlaceholder = 'Address';
-
   useEffect(() => {
     onAddressInputChange({
       address: validAddress,
@@ -409,10 +407,15 @@ export const CosmosAddressInput = (props: InputProps) => {
   };
 
   const handleInputAddress = (e) => {
-    const inputAddress = e.target.value.trim();
+    const inputAddress:string = e.target.value.trim();
     setInputVal(inputAddress);
 
     resetState();
+
+    if(!isValidBech32Address(inputAddress)){
+      setFormatError('Recipient address is invalid');
+      return;
+    }
 
     setValidAddress(inputAddress);
   };
@@ -421,7 +424,7 @@ export const CosmosAddressInput = (props: InputProps) => {
     <div style={{ alignSelf: 'stretch' }}>
       <div style={Object.assign({}, $baseContainerStyle, { flexDirection: 'column', minHeight: '56.5px' })}>
         <input
-          placeholder={addressPlaceholder}
+          placeholder={placeholder}
           type={'text'}
           style={Object.assign({}, $baseInputStyle, $inputStyleOverride)}
           onChange={async (e) => {
