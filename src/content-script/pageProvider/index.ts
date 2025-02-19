@@ -466,6 +466,23 @@ export class UnisatProvider extends EventEmitter {
 
     getOfflineSigner: (chainId: string, signOptions?: any) => {
       return new CosmJSOfflineSigner(chainId, this, signOptions);
+    },
+
+    signArbitrary: async (chainId: string, signerAddress: string, data: string | Uint8Array) => {
+      const key: any = await this.keplr.getKey(chainId);
+      if (key.bech32Address !== signerAddress) {
+        throw new Error('Unknown signer address');
+      }
+
+      return this._request({
+        method: 'cosmos_signArbitrary',
+        params: {
+          chainId,
+          signer: signerAddress,
+          type: typeof data === 'string' ? 'string' : 'Uint8Array',
+          data: typeof data === 'string' ? data : Buffer.from(data).toString('base64')
+        }
+      });
     }
   };
 }
@@ -510,25 +527,6 @@ class CosmJSOfflineSigner {
       },
       signature: response.signature
     };
-  }
-
-  async signAmino(signerAddress: string, signDoc: any) {
-    if (this.chainId !== signDoc.chain_id) {
-      throw new Error('Unmatched chain id with the offline signer');
-    }
-
-    const key: any = await this.provider.keplr.getKey(this.chainId);
-    if (key.bech32Address !== signerAddress) {
-      throw new Error('Unknown signer address');
-    }
-
-    return this.provider._request({
-      method: 'cosmos_signAmino',
-      params: {
-        signerAddress,
-        signDoc
-      }
-    });
   }
 }
 

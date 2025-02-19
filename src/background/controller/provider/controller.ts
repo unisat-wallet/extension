@@ -364,6 +364,29 @@ class ProviderController extends BaseController {
 
   }
 
+  // signArbitrary
+  @Reflect.metadata('APPROVAL', ['CosmosSign', (req) => {
+    // todo check
+  }])
+  cosmosSignArbitrary = async ({ data: { params:msg } }) => {
+
+    const cosmosKeyring = await wallet.getCosmosKeyring(msg.chainId);
+    if(!cosmosKeyring){
+      throw new Error('no keyring')
+    }
+
+    const response = await cosmosKeyring.signAminoADR36(
+      msg.chainId,
+      msg.signer,
+      typeof msg.data === "string" ? Buffer.from(msg.data) : msg.data,
+    );
+
+    return response
+
+
+  }
+
+
   @Reflect.metadata('SAFE', true)
   cosmosSignAmino = async ({ data: { params: { signerAddress, signDoc } } }) => {
     throw new Error('not implemented')

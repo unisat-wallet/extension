@@ -13,6 +13,34 @@ const REWARD_GAUGE_KEY_BTC_DELEGATION = 'btc_delegation';
 export const DEFAULT_BBN_GAS_PRICE = '0.007';
 export const DEFAULT_BBN_GAS_LIMIT = '300000';
 
+export function makeADR36AminoSignDoc(signer: string, data: string | Uint8Array) {
+  if (typeof data === 'string') {
+    data = Buffer.from(data).toString('base64');
+  } else {
+    data = Buffer.from(data).toString('base64');
+  }
+
+  return {
+    chain_id: '',
+    account_number: '0',
+    sequence: '0',
+    fee: {
+      gas: '0',
+      amount: []
+    },
+    msgs: [
+      {
+        type: 'sign/MsgSignData',
+        value: {
+          signer,
+          data
+        }
+      }
+    ],
+    memo: ''
+  };
+}
+
 export function encodeSecp256k1Pubkey(pubkey: Uint8Array): any {
   if (pubkey.length !== 33 || (pubkey[0] !== 0x02 && pubkey[0] !== 0x03)) {
     throw new Error('Public key must be compressed secp256k1, i.e. 33 bytes starting with 0x02 or 0x03');
@@ -152,28 +180,47 @@ export class CosmosKeyring {
     return coins.reduce((acc, coin) => acc + Number(coin.amount), 0) - (withdrawnCoins || 0);
   }
 
-  async signDirect(chainId: string, signer: string, signDoc: any): Promise<DirectSignResponse> {
+  async signDirect(chainId: string, signerAddress: string, signDoc: any): Promise<DirectSignResponse> {
     const chainInfo = this.provider.cosmosChainInfoMap[chainId];
     if (!chainInfo) {
       throw new Error('Chain info not found');
     }
     const key = this.getKey();
 
-    // const bech32Prefix = chainInfo.bech32Config?.bech32PrefixAccAddr ?? '';
-    // const bech32Address = new Bech32Address(key.address).toBech32(bech32Prefix);
-    // if (signer !== bech32Address) {
-    //   throw new Error('Signer mismatched');
-    // }
+    if (signerAddress !== key.bech32Address) {
+      throw new Error('Signer address does not match');
+    }
 
     signDoc.authInfoBytes = objToUint8Array(signDoc.authInfoBytes);
     signDoc.bodyBytes = objToUint8Array(signDoc.bodyBytes);
-    const _sig = await this.signer.signDirect(this.getKey().bech32Address, signDoc as any);
+    const _sig = await this.signer.signDirect(signerAddress, signDoc as any);
     const signature = Buffer.from(_sig.signature.signature, 'base64') as any;
     return {
       signed: {
         ..._sig.signed,
         accountNumber: _sig.signed.accountNumber.toString()
       },
+      signature: encodeSecp256k1Signature(key.pubKey, signature)
+    } as any;
+  }
+
+  async signAminoADR36(chainId: string, signerAddress: string, data: string | Uint8Array): Promise<DirectSignResponse> {
+    const chainInfo = this.provider.cosmosChainInfoMap[chainId];
+    if (!chainInfo) {
+      throw new Error('Chain info not found');
+    }
+    const key = this.getKey();
+
+    if (signerAddress !== key.bech32Address) {
+      throw new Error('Signer address does not match');
+    }
+
+    const signDoc = makeADR36AminoSignDoc(signerAddress, data);
+
+    const _sig = await this.signer.signDirect(signerAddress, signDoc as any);
+    const signature = Buffer.from(_sig.signature.signature, 'base64') as any;
+    return {
+      signed: _sig.signed,
       signature: encodeSecp256k1Signature(key.pubKey, signature)
     } as any;
   }

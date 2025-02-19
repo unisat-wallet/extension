@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { objToUint8Array } from '@/shared/utils';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { CopyableAddress } from '@/ui/components/CopyableAddress';
 import WebsiteBar from '@/ui/components/WebsiteBar';
@@ -12,6 +13,7 @@ interface Props {
     data: {
       signerAddress: string;
       signDoc: any;
+      data: any;
     };
     session: {
       origin: string;
@@ -76,7 +78,17 @@ export default function CosmosSign({ params: { data, session } }: Props) {
                 wordBreak: 'break-word',
                 flexWrap: 'wrap'
               }}>
-              {data.signerAddress}
+              {data.data ||
+                (data.signDoc
+                  ? JSON.stringify(
+                      Object.assign({}, data.signDoc, {
+                        bodyBytes: Buffer.from(objToUint8Array(data.signDoc.bodyBytes)).toString('hex'),
+                        authInfoBytes: Buffer.from(objToUint8Array(data.signDoc.authInfoBytes)).toString('hex')
+                      }),
+                      null,
+                      2
+                    )
+                  : '')}
             </div>
           </Card>
         </Column>
