@@ -2,21 +2,22 @@ import { Carousel, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 
 import { ChainType } from '@/shared/constant';
-import { AppInfo } from '@/shared/types';
+import { AddressType, AppInfo } from '@/shared/types';
 import { Card, Column, Content, Footer, Header, Image, Layout, Row, Text } from '@/ui/components';
 import { NavTabBar } from '@/ui/components/NavTabBar';
 import { SwitchNetworkBar } from '@/ui/components/SwitchNetworkBar';
 import { TabBar } from '@/ui/components/TabBar';
 import { SearchBar } from '@/ui/pages/Main/DiscoverTabComponents/SearchBar';
-import { useReadApp } from '@/ui/state/accounts/hooks';
+import { useCurrentAccount, useCurrentAddress, useReadApp } from '@/ui/state/accounts/hooks';
 import { useAppList, useBannerList, useLastFetchInfo } from '@/ui/state/discovery/hooks';
 import { discoveryActions } from '@/ui/state/discovery/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
-import { useChain, useChainType } from '@/ui/state/settings/hooks';
+import { useChain, useChainType, useNetworkType } from '@/ui/state/settings/hooks';
 import { useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
 import { SwitchChainModal } from '../Settings/SwitchChainModal';
+import { getAddressType } from '@unisat/wallet-sdk/lib/address';
 
 const APP_ID_BABYLON_STAKING = 1103;
 
@@ -42,6 +43,18 @@ function BannerItem({ img, link }: { img: string; link: string }) {
 function AppItem({ info, onClick }: { info: AppInfo; onClick?: () => void }) {
   const readApp = useReadApp();
   const navigate = useNavigate();
+
+  const currentAddress = useCurrentAddress();
+  const networkType = useNetworkType();
+
+  // todo: Temporary handling plan, should change to control by config
+  if (info.id === APP_ID_BABYLON_STAKING) {
+    const addressType = getAddressType(currentAddress, networkType);
+    if (addressType == AddressType.P2SH_P2WPKH || addressType == AddressType.P2PKH) {
+      return <></>;
+    }
+  }
+
   return (
     <Card
       preset="style1"
