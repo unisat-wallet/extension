@@ -111,7 +111,7 @@ export default function SendBabyScreen() {
     }
 
     if (memo.length > 256) {
-      setError('Memo is too long');
+      setError('Memo is too long. The maximum length is 256 characters.');
       return;
     }
 

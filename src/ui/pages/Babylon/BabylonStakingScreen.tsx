@@ -161,12 +161,12 @@ function EnableImportBabyPopover({ onClose }: { onClose: () => void }) {
 
         <StepItem
           step={1}
-          title={'Go to the account from the home page.'}
+          title={'Click the account on the main page.'}
           images={['./images/artifacts/how-to-import-baby-1.png']}
         />
         <StepItem
           step={2}
-          title={'Click the "More" menu at the top right and select the "Export Private Key" option.'}
+          title={'Tap the "More" menu, then select the "Export Private Key" option.'}
           images={[
             './images/artifacts/how-to-import-baby-2.png',
             './images/artifacts/how-to-import-baby-3.png'
@@ -380,7 +380,7 @@ export default function BabylonStakingScreen() {
         {babylonConfig.phase2.state === BabylonPhaseState.ACTIVE ? (
           <Section2
             icon={<Icon icon={'claimable-baby'} size={36} />}
-            title={`Claimable ${networkPrefix} ${babylonChain.stakeCurrency.coinDenom} Rewards`}
+            title={`Claimable ${networkPrefix} BABY Rewards`}
             value={`${runesUtils.toDecimalAmount(
               babylonAddressSummary.rewardBalance.toString(),
               babylonChain.stakeCurrency.coinDecimals
@@ -401,7 +401,7 @@ export default function BabylonStakingScreen() {
 
         <Section2
           icon={<Icon icon={'baby'} size={32} />}
-          title={`Total ${networkPrefix} ${babylonChain.stakeCurrency.coinDenom} Balance`}
+          title={`Total ${networkPrefix} BABY Balance`}
           value={`${runesUtils.toDecimalAmount(
             babylonAddressSummary.balance.amount,
             babylonChain.stakeCurrency.coinDecimals
