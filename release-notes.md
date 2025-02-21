@@ -1,5 +1,9 @@
 # UniSat Wallet Release Notes
 
+## v1.5.5
+
+- Integration of Babylon Bitcoin Staking Phase 2
+
 ## v1.5.4
 
 1. Added an Unlock button on the Fractal mainnet to navigate to the UTXO management tool.
