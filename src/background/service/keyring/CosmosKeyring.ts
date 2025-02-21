@@ -4,6 +4,7 @@ import { Buffer } from 'buffer/';
 import { WalletController } from '@/background/controller/wallet';
 import { objToUint8Array } from '@/shared/utils';
 import { incentivequery } from '@babylonlabs-io/babylon-proto-ts';
+import { Secp256k1, sha256 } from '@cosmjs/crypto';
 import { AccountData, DirectSecp256k1Wallet, DirectSignResponse } from '@cosmjs/proto-signing';
 import { GasPrice, QueryClient, SigningStargateClient, createProtobufRpcClient } from '@cosmjs/stargate';
 import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
@@ -12,6 +13,33 @@ const REWARD_GAUGE_KEY_BTC_DELEGATION = 'btc_delegation';
 // Default gas price for BABY
 export const DEFAULT_BBN_GAS_PRICE = '0.007';
 export const DEFAULT_BBN_GAS_LIMIT = '300000';
+
+export function sortObjectByKey(obj: Record<string, any>): any {
+  if (typeof obj !== 'object' || obj === null) {
+    return obj;
+  }
+  if (Array.isArray(obj)) {
+    return obj.map(sortObjectByKey);
+  }
+  const sortedKeys = Object.keys(obj).sort();
+  const result: Record<string, any> = {};
+  sortedKeys.forEach((key) => {
+    result[key] = sortObjectByKey(obj[key]);
+  });
+  return result;
+}
+
+export function sortedJsonByKeyStringify(obj: Record<string, any>): string {
+  return JSON.stringify(sortObjectByKey(obj));
+}
+
+export function escapeHTML(str: string): string {
+  return str.replace(/</g, '\\u003c').replace(/>/g, '\\u003e').replace(/&/g, '\\u0026');
+}
+
+export function serializeSignDoc(signDoc: any): Uint8Array {
+  return Buffer.from(escapeHTML(sortedJsonByKeyStringify(signDoc)));
+}
 
 export function makeADR36AminoSignDoc(signer: string, data: string | Uint8Array) {
   if (typeof data === 'string') {
@@ -216,13 +244,12 @@ export class CosmosKeyring {
     }
 
     const signDoc = makeADR36AminoSignDoc(signerAddress, data);
+    const toSignData = serializeSignDoc(signDoc);
 
-    const _sig = await this.signer.signDirect(signerAddress, signDoc as any);
-    const signature = Buffer.from(_sig.signature.signature, 'base64') as any;
-    return {
-      signed: _sig.signed,
-      signature: encodeSecp256k1Signature(key.pubKey, signature)
-    } as any;
+    const messageHash = sha256(toSignData);
+    const _sig = await Secp256k1.createSignature(messageHash, (this.signer as any).privkey);
+    const signature = new Uint8Array([..._sig.r(32), ..._sig.s(32)]);
+    return encodeSecp256k1Signature(key.pubKey, signature);
   }
 
   async sendTokens(tokenBalance: { denom: string; amount: string }, recipient: string, memo: string) {
