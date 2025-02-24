@@ -54,7 +54,7 @@ const flowContext = flow
       mapMethod
     } = ctx;
     // if (!Reflect.getMetadata('SAFE', providerController, mapMethod)) {
-    if(!['getNetwork','switchNetwork','getChain','switchChain'].includes(mapMethod)){
+    if (!['getNetwork', 'switchNetwork', 'getChain', 'switchChain'].includes(mapMethod)) {
       if (!permissionService.hasPermission(origin)) {
         if (['getAccounts'].includes(mapMethod)) {
           return [];
@@ -87,7 +87,7 @@ const flowContext = flow
       mapMethod
     } = ctx;
     const [approvalType, condition, options = {}] =
-    Reflect.getMetadata('APPROVAL', providerController, mapMethod) || [];
+      Reflect.getMetadata('APPROVAL', providerController, mapMethod) || [];
 
     if (approvalType && (!condition || !condition(ctx.request))) {
       ctx.request.requestedApproval = true;

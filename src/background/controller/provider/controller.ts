@@ -12,6 +12,10 @@ import { ethErrors } from 'eth-rpc-errors';
 import BaseController from '../base';
 import wallet from '../wallet';
 
+import {
+  SignDoc
+} from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
+
 function formatPsbtHex(psbtHex: string) {
   let formatData = '';
   try {
@@ -298,6 +302,96 @@ class ProviderController extends BaseController {
     const utxos = await wallet.getBTCUtxos()
     return utxos;
   };
+
+  @Reflect.metadata('APPROVAL', ['CosmosConnect', (req) => {
+    // todo check
+  }])
+  cosmosEnable = async ( {data:{params:{chainId}}} ) => {
+    if(!wallet.cosmosChainInfoMap[chainId]){
+      throw new Error('Not supported chainId')
+    }
+  };
+
+  @Reflect.metadata('SAFE', true)
+  cosmosExperimentalSuggestChain = async ( {data:{params:{chainData}}} ) => {
+    // const chainInfo:CosmosChainInfo = chainData;
+    // if(chainInfo.chainId && !wallet.cosmosChainInfoMap[chainInfo.chainId]){
+    //   wallet.cosmosChainInfoMap[chainInfo.chainId] = chainInfo;
+    // }
+
+    throw new Error('not implemented')
+  }
+
+  @Reflect.metadata('SAFE', true)
+  cosmosGetKey = async ({ data: { params: { chainId} } }) => {
+    const cosmosKeyring = await wallet.getCosmosKeyring(chainId);
+    if(!cosmosKeyring){
+      return null;
+    }
+
+    const key = cosmosKeyring.getKey();
+    const _key = Object.assign({},key,{
+      address:key.address.toString(),
+      pubKey:key.pubKey.toString()
+    })
+    return _key
+  }
+
+  @Reflect.metadata('APPROVAL', ['CosmosSign', (req) => {
+    // todo check
+  }])
+  cosmosSignDirect = async ({ data: { params:msg } }) => {
+    const signDoc = SignDoc.fromPartial({
+      bodyBytes: msg.signDoc.bodyBytes,
+      authInfoBytes: msg.signDoc.authInfoBytes,
+      chainId: msg.signDoc.chainId,
+      accountNumber: msg.signDoc.accountNumber,
+    });
+
+    const cosmosKeyring = await wallet.getCosmosKeyring(msg.signDoc.chainId);
+    if(!cosmosKeyring){
+      throw new Error('no keyring')
+    }
+
+    const response = await cosmosKeyring.signDirect(
+      msg.signDoc.chainId,
+      msg.signerAddress,
+      signDoc,
+    );
+
+    return response
+
+
+  }
+
+  // signArbitrary
+  @Reflect.metadata('APPROVAL', ['CosmosSign', (req) => {
+    // todo check
+  }])
+  cosmosSignArbitrary = async ({ data: { params:msg } }) => {
+
+    const cosmosKeyring = await wallet.getCosmosKeyring(msg.chainId);
+    if(!cosmosKeyring){
+      throw new Error('no keyring')
+    }
+
+    const response = await cosmosKeyring.signAminoADR36(
+      msg.chainId,
+      msg.signer,
+      typeof msg.data === "string" ? Buffer.from(msg.data) : msg.data,
+    );
+
+    return response
+
+
+  }
+
+
+  @Reflect.metadata('SAFE', true)
+  cosmosSignAmino = async ({ data: { params: { signerAddress, signDoc } } }) => {
+    throw new Error('not implemented')
+    // return signerAddress
+  }
 }
 
 export default new ProviderController();

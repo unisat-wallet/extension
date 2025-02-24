@@ -2,6 +2,7 @@ import compareVersions from 'compare-versions';
 import { useCallback } from 'react';
 
 import { CHAINS_MAP, ChainType, VERSION } from '@/shared/constant';
+import { BABYLON_CONFIG_MAP } from '@/shared/constant/babylon';
 import { AddressType, NetworkType } from '@/shared/types';
 import { useWallet } from '@/ui/utils';
 import i18n, { addResourceBundle } from '@/ui/utils/i18n';
@@ -252,4 +253,9 @@ export function useRunesMarketPlaceWebsite(ticker: string) {
 export function useCAT20MarketPlaceWebsite(tokenId: string) {
   const chainType = useChainType();
   return `${CHAINS_MAP[chainType].unisatUrl}/dex/cat20/${tokenId}`;
+}
+
+export function useBabylonConfig() {
+  const chainType = useChainType();
+  return BABYLON_CONFIG_MAP[chainType];
 }

@@ -8,7 +8,7 @@ import { Inscription } from '@/shared/types';
 import { getAddressTips, useChain } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { spacing } from '@/ui/theme/spacing';
-import { useWallet } from '@/ui/utils';
+import { isValidBech32Address, useWallet } from '@/ui/utils';
 import { ArrowRightOutlined, SearchOutlined } from '@ant-design/icons';
 
 import { AccordingInscription } from '../AccordingInscription';
@@ -51,6 +51,7 @@ const $inputPresets = {
   password: {},
   amount: {},
   address: {},
+  cosmosAddress: {},
   text: {},
   search: {}
 };
@@ -369,6 +370,78 @@ export const AddressInput = (props: InputProps) => {
   );
 };
 
+export const CosmosAddressInput = (props: InputProps) => {
+  const { placeholder, onAddressInputChange, addressInputData, style: $inputStyleOverride, ...rest } = props;
+
+  if (!addressInputData || !onAddressInputChange) {
+    return <div />;
+  }
+  const [validAddress, setValidAddress] = useState(addressInputData.address);
+  const [parseAddress, setParseAddress] = useState(addressInputData.domain ? addressInputData.address : '');
+  const [parseError, setParseError] = useState('');
+  const [formatError, setFormatError] = useState('');
+
+  const [inputVal, setInputVal] = useState(addressInputData.domain || addressInputData.address);
+
+  useEffect(() => {
+    onAddressInputChange({
+      address: validAddress,
+      domain: parseAddress ? inputVal : ''
+    });
+  }, [validAddress]);
+
+  const resetState = () => {
+    if (parseError) {
+      setParseError('');
+    }
+    if (parseAddress) {
+      setParseAddress('');
+    }
+    if (formatError) {
+      setFormatError('');
+    }
+
+    if (validAddress) {
+      setValidAddress('');
+    }
+  };
+
+  const handleInputAddress = (e) => {
+    const inputAddress:string = e.target.value.trim();
+    setInputVal(inputAddress);
+
+    resetState();
+
+    if(!isValidBech32Address(inputAddress)){
+      setFormatError('Recipient address is invalid');
+      return;
+    }
+
+    setValidAddress(inputAddress);
+  };
+
+  return (
+    <div style={{ alignSelf: 'stretch' }}>
+      <div style={Object.assign({}, $baseContainerStyle, { flexDirection: 'column', minHeight: '56.5px' })}>
+        <input
+          placeholder={placeholder}
+          type={'text'}
+          style={Object.assign({}, $baseInputStyle, $inputStyleOverride)}
+          onChange={async (e) => {
+            handleInputAddress(e);
+          }}
+          defaultValue={inputVal}
+          {...rest}
+        />
+      </div>
+
+      {parseError && <Text text={parseError} preset="regular" color="error" />}
+
+      <Text text={formatError} preset="regular" color="error" />
+    </div>
+  );
+};
+
 function SearchInput(props: InputProps) {
   const { placeholder, containerStyle, style: $inputStyleOverride, disabled, autoFocus, onSearch, ...rest } = props;
   return (
@@ -438,6 +511,8 @@ export function Input(props: InputProps) {
     return <AmountInput {...props} />;
   } else if (preset === 'address') {
     return <AddressInput {...props} />;
+  } else if (preset === 'cosmosAddress') {
+    return <CosmosAddressInput {...props} />;
   } else if (preset === 'search') {
     return <SearchInput {...props} />;
   } else {

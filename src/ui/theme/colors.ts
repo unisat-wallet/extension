@@ -35,6 +35,7 @@ const palette = {
   orange_dark: '#d9691c',
   orange: '#FF7B21',
   orange_light: '#ff8f42',
+  orange_light2: '#FF7C2A',
 
   gold: '#eac249'
 };

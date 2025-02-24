@@ -137,6 +137,7 @@ export interface AppInfo {
   logo: string;
   title: string;
   desc: string;
+  route?: string;
   url: string;
   time: number;
   id: number;
@@ -548,4 +549,32 @@ export interface BitcoinBalanceV2 {
   availableBalance: number;
   unavailableBalance: number;
   totalBalance: number;
+}
+
+export interface BabylonStakingStatusV2 {
+  active_tvl: number;
+  active_delegations: number;
+  active_stakers: number;
+  active_finality_providers: number;
+  total_finality_providers: number;
+}
+
+export interface CosmosBalance {
+  denom: string;
+  amount: string;
+}
+
+export interface BabylonAddressSummary {
+  address: string;
+  balance: CosmosBalance;
+  rewardBalance: number;
+  stakedBalance: number;
+}
+
+export interface BabylonTxInfo {
+  toAddress: string;
+  balance: CosmosBalance;
+  unitBalance: CosmosBalance;
+  memo: string;
+  txFee: CosmosBalance;
 }
