@@ -123,7 +123,7 @@ browserRuntimeOnInstalled((details) => {
   }
 });
 
-// MV3 保活代码
+// MV3 keep-alive code
 if (MANIFEST_VERSION === 'mv3') {
   const INTERNAL_STAYALIVE_PORT = 'CT_Internal_port_alive';
   let alivePort: any = null;
@@ -142,7 +142,7 @@ if (MANIFEST_VERSION === 'mv3') {
   }, 5000);
 }
 
-// 添加消息监听
+// Add message listener
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   try {
     if (message.type === 'CHECK_PHISHING') {
@@ -153,23 +153,18 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
         console.warn('Failed to send response:', e);
       }
     } else if (message.type === 'REDIRECT_TO_PHISHING_PAGE' && sender.tab?.id) {
-      // 立即进行重定向
       try {
-        chrome.tabs.update(
-          sender.tab.id,
-          {
-            url: chrome.runtime.getURL(`index.html#/phishing?hostname=${encodeURIComponent(message.hostname)}`),
-            active: true
-          },
-          () => {
-            if (chrome.runtime.lastError) {
-              console.error('Failed to redirect:', chrome.runtime.lastError);
-            }
-          }
-        );
+        chrome.tabs.update(sender.tab.id, {
+          url: chrome.runtime.getURL(`index.html#/phishing?hostname=${encodeURIComponent(message.hostname)}`),
+          active: true
+        });
       } catch (e) {
         console.error('Failed to update tab:', e);
       }
+    } else if (message.type === 'SKIP_PHISHING_PROTECTION') {
+      // Add domain to temporary whitelist
+      phishingService.addToWhitelist(message.hostname);
+      sendResponse(true);
     }
   } catch (e) {
     console.error('Error handling message:', e);

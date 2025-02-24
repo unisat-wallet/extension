@@ -28,6 +28,7 @@ const initConfig: PhishingConfig = {
 class PhishingService {
   private config: PhishingConfig = initConfig;
   private updating = false;
+  private temporaryWhitelist: Set<string> = new Set();
 
   constructor() {
     this.init();
@@ -91,6 +92,11 @@ class PhishingService {
 
     const cleanHostname = hostname.replace(/^www\./, '').toLowerCase();
 
+    // Check temporary whitelist
+    if (this.temporaryWhitelist.has(cleanHostname)) {
+      return false;
+    }
+
     // Check whitelist first
     if (this.config.whitelist.includes(cleanHostname)) {
       return false;
@@ -103,6 +109,12 @@ class PhishingService {
 
     // Check fuzzy matching patterns
     return this.config.fuzzylist.some((pattern) => cleanHostname.includes(pattern));
+  }
+
+  public addToWhitelist(hostname: string) {
+    if (!hostname) return;
+    const cleanHostname = hostname.replace(/^www\./, '').toLowerCase();
+    this.temporaryWhitelist.add(cleanHostname);
   }
 }
 
