@@ -1,6 +1,7 @@
 import { isNumber } from 'lodash-es';
 import { useCallback, useEffect, useState } from 'react';
 
+import phishingService from '@/background/service/phishing';
 import browser, {
   browserTabsCreate,
   browserTabsGetCurrent,
@@ -8,10 +9,37 @@ import browser, {
   browserTabsUpdate
 } from '@/background/webapi/browser';
 
-export const openExtensionInTab = async () => {
-  const url = browser.runtime.getURL('index.html');
-  const tab = await browserTabsCreate({ url });
-  return tab;
+export const openExtensionInTab = async (route: string, params: any = {}) => {
+  // 如果是扩展内部页面，直接打开
+  if (route.startsWith('index.html')) {
+    const tab = await browserTabsCreate({
+      url: browser.runtime.getURL(route),
+      active: true
+    });
+    return tab;
+  }
+
+  try {
+    // 检查目标 URL 是否是钓鱼网站
+    const hostname = new URL(route).hostname;
+    if (phishingService.checkPhishing(hostname)) {
+      // 如果是钓鱼网站，打开警告页面
+      await browserTabsCreate({
+        url: browser.runtime.getURL(`index.html#/phishing?hostname=${encodeURIComponent(hostname)}`),
+        active: true
+      });
+      return;
+    }
+
+    // 正常打开页面
+    const tab = await browserTabsCreate({ url: route });
+    return tab;
+  } catch (e) {
+    console.error('Failed to check URL:', e);
+    // 如果 URL 解析失败，仍然打开目标页面
+    const tab = await browserTabsCreate({ url: route });
+    return tab;
+  }
 };
 
 export const extensionIsInTab = async () => {
@@ -39,7 +67,7 @@ export const useExtensionIsInTab = () => {
 
 export const useOpenExtensionInTab = () => {
   return useCallback(async () => {
-    await openExtensionInTab();
+    await openExtensionInTab('index.html', {});
     window.close();
   }, []);
 };

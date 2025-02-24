@@ -1,3 +1,4 @@
+import phishingService from '@/background/service/phishing';
 import { EVENTS, MANIFEST_VERSION } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 import { Message } from '@/shared/utils';
@@ -108,7 +109,7 @@ browserRuntimeOnConnect((port) => {
 
 const addAppInstalledEvent = () => {
   if (appStoreLoaded) {
-    openExtensionInTab();
+    openExtensionInTab('index.html', {});
     return;
   }
   setTimeout(() => {
@@ -154,3 +155,38 @@ if (MANIFEST_VERSION === 'mv3') {
     }
   }, 5000);
 }
+
+// 添加消息监听
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  try {
+    if (message.type === 'CHECK_PHISHING') {
+      const isPhishing = phishingService.checkPhishing(message.hostname);
+      try {
+        sendResponse(isPhishing);
+      } catch (e) {
+        console.warn('Failed to send response:', e);
+      }
+    } else if (message.type === 'REDIRECT_TO_PHISHING_PAGE' && sender.tab?.id) {
+      // 立即进行重定向
+      try {
+        chrome.tabs.update(
+          sender.tab.id,
+          {
+            url: chrome.runtime.getURL(`index.html#/phishing?hostname=${encodeURIComponent(message.hostname)}`),
+            active: true
+          },
+          () => {
+            if (chrome.runtime.lastError) {
+              console.error('Failed to redirect:', chrome.runtime.lastError);
+            }
+          }
+        );
+      } catch (e) {
+        console.error('Failed to update tab:', e);
+      }
+    }
+  } catch (e) {
+    console.error('Error handling message:', e);
+  }
+  return true;
+});

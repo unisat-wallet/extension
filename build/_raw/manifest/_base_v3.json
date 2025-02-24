@@ -29,6 +29,7 @@
   },
   "homepage_url": "https://unisat.io",
   "permissions": ["storage", "unlimitedStorage", "activeTab"],
+  "host_permissions": ["<all_urls>"],
   "short_name": "__MSG_appName__",
 
   "content_scripts": [
@@ -42,7 +43,7 @@
 
   "web_accessible_resources": [
     {
-      "resources": ["pageProvider.js"],
+      "resources": ["pageProvider.js", "index.html"],
       "matches": ["<all_urls>"]
     }
   ],
