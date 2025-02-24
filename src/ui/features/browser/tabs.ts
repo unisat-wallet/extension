@@ -10,7 +10,7 @@ import browser, {
 } from '@/background/webapi/browser';
 
 export const openExtensionInTab = async (route: string, params: any = {}) => {
-  // 如果是扩展内部页面，直接打开
+  // If it's an internal extension page, open directly
   if (route.startsWith('index.html')) {
     const tab = await browserTabsCreate({
       url: browser.runtime.getURL(route),
@@ -20,10 +20,10 @@ export const openExtensionInTab = async (route: string, params: any = {}) => {
   }
 
   try {
-    // 检查目标 URL 是否是钓鱼网站
+    // Check if target URL is a phishing site
     const hostname = new URL(route).hostname;
     if (phishingService.checkPhishing(hostname)) {
-      // 如果是钓鱼网站，打开警告页面
+      // If it's a phishing site, open warning page
       await browserTabsCreate({
         url: browser.runtime.getURL(`index.html#/phishing?hostname=${encodeURIComponent(hostname)}`),
         active: true
@@ -31,12 +31,12 @@ export const openExtensionInTab = async (route: string, params: any = {}) => {
       return;
     }
 
-    // 正常打开页面
+    // Open page normally
     const tab = await browserTabsCreate({ url: route });
     return tab;
   } catch (e) {
     console.error('Failed to check URL:', e);
-    // 如果 URL 解析失败，仍然打开目标页面
+    // If URL parsing fails, still open the target page
     const tab = await browserTabsCreate({ url: route });
     return tab;
   }

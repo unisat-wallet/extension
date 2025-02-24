@@ -5,11 +5,11 @@ import { Message } from '@/shared/utils';
 
 const channelName = nanoid();
 
-// 添加钓鱼检测函数
+// Add phishing detection function
 async function checkPhishing() {
   try {
     const hostname = window.location.hostname;
-    // 发送消息给 background 检查是否是钓鱼网站
+    // Send message to background to check if it's a phishing site
     const isPhishing = await new Promise((resolve) => {
       try {
         chrome.runtime.sendMessage(
@@ -34,7 +34,7 @@ async function checkPhishing() {
 
     if (isPhishing) {
       try {
-        // 直接发送重定向消息
+        // Send redirect message
         chrome.runtime.sendMessage(
           {
             type: 'REDIRECT_TO_PHISHING_PAGE',
@@ -65,10 +65,10 @@ async function checkPhishing() {
  */
 function injectScript() {
   try {
-    // 在注入脚本前先检查钓鱼网站
+    // Check for phishing before injecting script
     checkPhishing().then((isPhishing) => {
       if (!isPhishing) {
-        // 只有在不是钓鱼网站的情况下才注入脚本
+        // Only inject script if not a phishing site
         const container = document.head || document.documentElement;
         const scriptTag = document.createElement('script');
         scriptTag.setAttribute('async', 'false');
@@ -185,21 +185,21 @@ function shouldInjectProvider() {
 if (shouldInjectProvider()) {
   injectScript();
 } else {
-  // 即使不注入 provider，也要检查钓鱼网站
+  // Check for phishing even if not injecting provider
   checkPhishing();
 }
 
-// 修改页面内跳转监听
+// Add page navigation listener with debounce
 let checkTimeout: NodeJS.Timeout | null = null;
 window.addEventListener('popstate', () => {
-  // 使用防抖，避免频繁检查
+  // Use debounce to avoid frequent checks
   if (checkTimeout) {
     clearTimeout(checkTimeout);
   }
   checkTimeout = setTimeout(checkPhishing, 100);
 });
 
-// 添加页面可见性变化监听
+// Add page visibility change listener
 document.addEventListener('visibilitychange', () => {
   if (document.visibilityState === 'visible') {
     checkPhishing();

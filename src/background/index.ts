@@ -123,35 +123,21 @@ browserRuntimeOnInstalled((details) => {
   }
 });
 
+// MV3 保活代码
 if (MANIFEST_VERSION === 'mv3') {
-  // Keep alive for MV3
   const INTERNAL_STAYALIVE_PORT = 'CT_Internal_port_alive';
   let alivePort: any = null;
 
   setInterval(() => {
-    // console.log('Highlander', Date.now());
     if (alivePort == null) {
       alivePort = chrome.runtime.connect({ name: INTERNAL_STAYALIVE_PORT });
-
-      alivePort.onDisconnect.addListener((p) => {
-        if (chrome.runtime.lastError) {
-          // console.log('(DEBUG Highlander) Expected disconnect (on error). SW should be still running.');
-        } else {
-          // console.log('(DEBUG Highlander): port disconnected');
-        }
-
+      alivePort.onDisconnect.addListener(() => {
         alivePort = null;
       });
     }
 
     if (alivePort) {
-      alivePort.postMessage({ content: 'keep alive~' });
-
-      if (chrome.runtime.lastError) {
-        // console.log(`(DEBUG Highlander): postMessage error: ${chrome.runtime.lastError.message}`);
-      } else {
-        // console.log(`(DEBUG Highlander): sent through ${alivePort.name} port`);
-      }
+      alivePort.postMessage({ content: 'keep alive' });
     }
   }, 5000);
 }

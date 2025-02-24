@@ -7,21 +7,27 @@ interface PhishingConfig {
   fuzzylist: string[];
   whitelist: string[];
   blacklist: string[];
-  lastFetchTime?: number;
+  lastFetchTime: number;
+  cacheExpireTime: number;
 }
 
 const STORE_KEY = 'phishing';
+const CACHE_DURATION = 24 * 60 * 60 * 1000; // 24 hours
+const VERSION = 2;
 
 const initConfig: PhishingConfig = {
-  version: 2,
+  version: VERSION,
   tolerance: 1,
   fuzzylist: [],
   whitelist: [],
-  blacklist: []
+  blacklist: [],
+  lastFetchTime: 0,
+  cacheExpireTime: CACHE_DURATION
 };
 
 class PhishingService {
   private config: PhishingConfig = initConfig;
+  private updating = false;
 
   constructor() {
     this.init();
@@ -29,67 +35,74 @@ class PhishingService {
 
   private async init() {
     try {
-      // 从 storage 获取配置
       const stored = await storage.get(STORE_KEY);
-      this.config = stored || initConfig;
+      if (stored) {
+        if (
+          stored.version !== VERSION ||
+          !stored.lastFetchTime ||
+          Date.now() - stored.lastFetchTime > stored.cacheExpireTime
+        ) {
+          await this.updatePhishingList();
+        } else {
+          this.config = stored;
+        }
+      } else {
+        await this.updatePhishingList();
+      }
 
-      // 立即更新一次列表
-      await this.updatePhishingList();
-
-      // 设置定期更新
-      setInterval(() => this.updatePhishingList(), 24 * 60 * 60 * 1000);
+      setInterval(() => this.updatePhishingList(), CACHE_DURATION);
     } catch (e) {
       console.error('Failed to init phishing service:', e);
-      // 如果初始化失败，使用空配置
       this.config = initConfig;
     }
   }
 
   private async updatePhishingList() {
+    if (this.updating) return;
+
     try {
+      this.updating = true;
       console.log('Updating phishing list...');
+
       const newConfig = await fetchPhishingList();
 
       this.config = {
         ...newConfig,
-        lastFetchTime: Date.now()
+        version: VERSION,
+        lastFetchTime: Date.now(),
+        cacheExpireTime: CACHE_DURATION
       };
 
-      // 保存到 storage
       await storage.set(STORE_KEY, this.config);
-      console.log('Phishing list updated:', this.config);
+      console.log('Phishing list updated');
     } catch (e) {
       console.error('Failed to update phishing list:', e);
+    } finally {
+      this.updating = false;
     }
+  }
+
+  public async forceUpdate() {
+    return this.updatePhishingList();
   }
 
   public checkPhishing(hostname: string): boolean {
     if (!hostname) return false;
 
-    // 清理域名
     const cleanHostname = hostname.replace(/^www\./, '').toLowerCase();
-    console.log('Checking hostname:', cleanHostname);
 
-    // 检查白名单
+    // Check whitelist first
     if (this.config.whitelist.includes(cleanHostname)) {
-      console.log('Domain is whitelisted');
       return false;
     }
 
-    // 检查黑名单
+    // Check blacklist
     if (this.config.blacklist.includes(cleanHostname)) {
-      console.log('Domain is blacklisted');
       return true;
     }
 
-    // 检查模糊匹配列表
-    const isFuzzyMatch = this.config.fuzzylist.some((pattern) => cleanHostname.includes(pattern));
-    if (isFuzzyMatch) {
-      console.log('Domain matches fuzzy pattern');
-      return true;
-    }
-
-    return false;
+    // Check fuzzy matching patterns
+    return this.config.fuzzylist.some((pattern) => cleanHostname.includes(pattern));
   }
 }
 
