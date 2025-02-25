@@ -29,7 +29,7 @@
     "persistent": true
   },
   "homepage_url": "https://unisat.io",
-  "permissions": ["storage", "unlimitedStorage", "activeTab"],
+  "permissions": ["storage", "unlimitedStorage", "activeTab", "webRequest", "webRequestBlocking", "<all_urls>"],
   "short_name": "__MSG_appName__",
 
   "content_scripts": [

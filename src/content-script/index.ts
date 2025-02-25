@@ -1,6 +1,7 @@
 import extension from 'extensionizer';
 import { nanoid } from 'nanoid';
 
+import { MANIFEST_VERSION } from '@/shared/constant';
 import { Message } from '@/shared/utils';
 
 const channelName = nanoid();
@@ -9,28 +10,26 @@ const channelName = nanoid();
 async function checkPhishing() {
   try {
     const hostname = window.location.hostname;
-    // Send message to background to check if it's a phishing site
     const isPhishing = await new Promise((resolve) => {
-      try {
-        chrome.runtime.sendMessage(
-          {
-            type: 'CHECK_PHISHING',
-            hostname
-          },
-          (response) => {
-            if (chrome.runtime.lastError) {
-              console.warn('Message channel error:', chrome.runtime.lastError);
-              resolve(false);
-              return;
-            }
-            resolve(response);
+      chrome.runtime.sendMessage(
+        {
+          type: 'CHECK_PHISHING',
+          hostname,
+          source: 'content_script'
+        },
+        (response) => {
+          if (chrome.runtime.lastError) {
+            console.warn('Message channel error:', chrome.runtime.lastError);
+            resolve(false);
+            return;
           }
-        );
-      } catch (e) {
-        console.warn('Failed to send message:', e);
-        resolve(false);
-      }
+          resolve(response);
+        }
+      );
     });
+
+    // Log the result
+    console.log(`[Content Script] Phishing check for ${hostname}: ${isPhishing}`);
 
     if (isPhishing) {
       try {
@@ -205,3 +204,172 @@ document.addEventListener('visibilitychange', () => {
     checkPhishing();
   }
 });
+
+// Add network error detection
+window.addEventListener(
+  'error',
+  (event) => {
+    // Check if target is an image or link element
+    if (event.target instanceof HTMLImageElement) {
+      const url = event.target.src;
+      if (url) {
+        chrome.runtime.sendMessage({
+          type: 'REPORT_NETWORK_ERROR',
+          url,
+          error: 'Image load failed',
+          status: 'error'
+        });
+      }
+    } else if (event.target instanceof HTMLAnchorElement) {
+      const url = event.target.href;
+      if (url) {
+        chrome.runtime.sendMessage({
+          type: 'REPORT_NETWORK_ERROR',
+          url,
+          error: 'Link load failed',
+          status: 'error'
+        });
+      }
+    }
+  },
+  true
+);
+
+// Add fetch error detection
+const originalFetch = window.fetch;
+window.fetch = async function (...args) {
+  try {
+    const response = await originalFetch.apply(this, args);
+    if (!response.ok) {
+      const requestUrl =
+        typeof args[0] === 'string' ? args[0] : args[0] instanceof URL ? args[0].href : (args[0] as Request).url;
+
+      chrome.runtime.sendMessage({
+        type: 'REPORT_NETWORK_ERROR',
+        url: requestUrl,
+        error: `HTTP ${response.status}`,
+        status: response.status
+      });
+    }
+    return response;
+  } catch (error: unknown) {
+    const errorMessage = error instanceof Error ? error.message : 'Unknown error';
+
+    const requestUrl =
+      typeof args[0] === 'string' ? args[0] : args[0] instanceof URL ? args[0].href : (args[0] as Request).url;
+
+    chrome.runtime.sendMessage({
+      type: 'REPORT_NETWORK_ERROR',
+      url: requestUrl,
+      error: errorMessage,
+      status: 'network_error'
+    });
+    throw error;
+  }
+};
+
+// Add XHR error detection
+const originalXHROpen = XMLHttpRequest.prototype.open;
+XMLHttpRequest.prototype.open = function (
+  method: string,
+  url: string | URL,
+  async = true,
+  username?: string | null,
+  password?: string | null
+) {
+  this.addEventListener('error', () => {
+    chrome.runtime.sendMessage({
+      type: 'REPORT_NETWORK_ERROR',
+      url: url.toString(),
+      error: 'XHR failed',
+      status: this.status
+    });
+  });
+
+  this.addEventListener('load', () => {
+    if (this.status >= 400) {
+      chrome.runtime.sendMessage({
+        type: 'REPORT_NETWORK_ERROR',
+        url: url.toString(),
+        error: `HTTP ${this.status}`,
+        status: this.status
+      });
+    }
+  });
+
+  // Call original with correct arguments
+  return originalXHROpen.call(this, method, url, async, username || null, password || null);
+};
+
+// Add navigation interception
+if (MANIFEST_VERSION === 'mv3') {
+  // 监听所有可能的导航事件
+  window.addEventListener('beforeunload', async (e) => {
+    const url = window.location.href;
+    const result = await new Promise((resolve) => {
+      chrome.runtime.sendMessage(
+        {
+          type: 'CHECK_NAVIGATION',
+          url
+        },
+        (response) => {
+          if (chrome.runtime.lastError) {
+            resolve(false);
+            return;
+          }
+          resolve(response?.isPhishing);
+        }
+      );
+    });
+
+    if (result) {
+      e.preventDefault();
+      e.returnValue = '';
+    }
+  });
+
+  // 监听点击事件
+  document.addEventListener(
+    'click',
+    async (e) => {
+      const element = e.target as HTMLElement;
+      let url: string | null = null;
+
+      // 检查链接
+      if (element instanceof HTMLAnchorElement && element.href) {
+        url = element.href;
+      }
+      // 检查其他可能触发导航的元素
+      else if (element.hasAttribute('href')) {
+        url = element.getAttribute('href');
+      }
+
+      if (url) {
+        try {
+          const result = await new Promise((resolve) => {
+            chrome.runtime.sendMessage(
+              {
+                type: 'CHECK_NAVIGATION',
+                url
+              },
+              (response) => {
+                if (chrome.runtime.lastError) {
+                  resolve(false);
+                  return;
+                }
+                resolve(response?.isPhishing);
+              }
+            );
+          });
+
+          if (result) {
+            e.preventDefault();
+          }
+        } catch (e) {
+          console.error('[Navigation Check] Error:', e);
+        }
+      }
+    },
+    true
+  );
+}

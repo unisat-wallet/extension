@@ -52,8 +52,7 @@ class PhishingService {
       }
 
       setInterval(() => this.updatePhishingList(), CACHE_DURATION);
-    } catch (e) {
-      console.error('Failed to init phishing service:', e);
+    } catch {
       this.config = initConfig;
     }
   }
@@ -63,8 +62,6 @@ class PhishingService {
 
     try {
       this.updating = true;
-      console.log('Updating phishing list...');
-
       const newConfig = await fetchPhishingList();
 
       this.config = {
@@ -75,9 +72,6 @@ class PhishingService {
       };
 
       await storage.set(STORE_KEY, this.config);
-      console.log('Phishing list updated');
-    } catch (e) {
-      console.error('Failed to update phishing list:', e);
     } finally {
       this.updating = false;
     }
@@ -91,24 +85,36 @@ class PhishingService {
     if (!hostname) return false;
 
     const cleanHostname = hostname.replace(/^www\./, '').toLowerCase();
+    let isPhishing = false;
 
-    // Check temporary whitelist
-    if (this.temporaryWhitelist.has(cleanHostname)) {
+    try {
+      // Check temporary whitelist
+      if (this.temporaryWhitelist.has(cleanHostname)) {
+        return false;
+      }
+
+      // Check permanent whitelist
+      if (this.config.whitelist.includes(cleanHostname)) {
+        return false;
+      }
+
+      // Check blacklist
+      if (this.config.blacklist.includes(cleanHostname)) {
+        return true;
+      }
+
+      // Check fuzzy matching patterns
+      for (const pattern of this.config.fuzzylist) {
+        if (cleanHostname.includes(pattern)) {
+          isPhishing = true;
+          break;
+        }
+      }
+
+      return isPhishing;
+    } catch {
       return false;
     }
-
-    // Check whitelist first
-    if (this.config.whitelist.includes(cleanHostname)) {
-      return false;
-    }
-
-    // Check blacklist
-    if (this.config.blacklist.includes(cleanHostname)) {
-      return true;
-    }
-
-    // Check fuzzy matching patterns
-    return this.config.fuzzylist.some((pattern) => cleanHostname.includes(pattern));
   }
 
   public addToWhitelist(hostname: string) {

@@ -145,29 +145,131 @@ if (MANIFEST_VERSION === 'mv3') {
 // Add message listener
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   try {
-    if (message.type === 'CHECK_PHISHING') {
-      const isPhishing = phishingService.checkPhishing(message.hostname);
-      try {
+    let isPhishing: boolean;
+
+    switch (message.type) {
+      case 'CHECK_PHISHING': {
+        isPhishing = phishingService.checkPhishing(message.hostname);
         sendResponse(isPhishing);
-      } catch (e) {
-        console.warn('Failed to send response:', e);
+        break;
       }
-    } else if (message.type === 'REDIRECT_TO_PHISHING_PAGE' && sender.tab?.id) {
-      try {
-        chrome.tabs.update(sender.tab.id, {
-          url: chrome.runtime.getURL(`index.html#/phishing?hostname=${encodeURIComponent(message.hostname)}`),
-          active: true
-        });
-      } catch (e) {
-        console.error('Failed to update tab:', e);
+
+      case 'REDIRECT_TO_PHISHING_PAGE': {
+        if (!sender.tab?.id) break;
+
+        try {
+          chrome.tabs.update(sender.tab.id, {
+            url: chrome.runtime.getURL(`index.html#/phishing?hostname=${encodeURIComponent(message.hostname)}`),
+            active: true
+          });
+        } catch {
+          // Ignore error
+        }
+        break;
       }
-    } else if (message.type === 'SKIP_PHISHING_PROTECTION') {
-      // Add domain to temporary whitelist
-      phishingService.addToWhitelist(message.hostname);
-      sendResponse(true);
+
+      case 'SKIP_PHISHING_PROTECTION': {
+        phishingService.addToWhitelist(message.hostname);
+        sendResponse(true);
+        break;
+      }
     }
-  } catch (e) {
-    console.error('Error handling message:', e);
+  } catch {
+    // Ignore error
   }
   return true;
 });
+
+// Version check
+const isManifestV2 = MANIFEST_VERSION === 'mv2';
+
+// Unified redirect function with query params
+async function redirectToPhishingPage(tabId: number, url: string, hostname: string) {
+  try {
+    const params = new URLSearchParams({
+      hostname,
+      href: url
+    });
+
+    const redirectUrl = chrome.runtime.getURL(`index.html#/phishing?${params}`);
+    await chrome.tabs.update(tabId, { url: redirectUrl, active: true });
+  } catch (e) {
+    console.error('[Redirect] Failed to redirect tab:', e);
+  }
+}
+
+// Request interception listener
+chrome.webRequest.onBeforeRequest.addListener(
+  (details) => {
+    try {
+      // Skip internal extension requests
+      if (details.tabId === chrome.tabs.TAB_ID_NONE || details.url.startsWith(chrome.runtime.getURL(''))) {
+        return { cancel: false };
+      }
+
+      // Only handle main frame and sub frame requests
+      if (details.type !== 'main_frame' && details.type !== 'sub_frame') {
+        return { cancel: false };
+      }
+
+      const url = new URL(details.url);
+      const isPhishing = phishingService.checkPhishing(url.hostname);
+
+      // Allow if not a phishing site
+      if (!isPhishing) {
+        return { cancel: false };
+      }
+
+      // Handle redirection based on manifest version
+      if (isManifestV2) {
+        // MV2: Use direct URL redirection for main frame
+        if (details.type === 'main_frame') {
+          const params = new URLSearchParams({
+            hostname: url.hostname,
+            href: details.url
+          });
+          return { redirectUrl: chrome.runtime.getURL(`index.html#/phishing?${params}`) };
+        }
+        // MV2: Cancel sub-frame requests and redirect main frame
+        if (details.tabId) {
+          redirectToPhishingPage(details.tabId, details.url, url.hostname);
+        }
+        return { cancel: true };
+      }
+
+      // MV3: Use tabs.update for redirection
+      if (details.tabId) {
+        redirectToPhishingPage(details.tabId, details.url, url.hostname);
+      }
+      return details.type === 'main_frame' ? {} : { cancel: true };
+    } catch {
+      return { cancel: false };
+    }
+  },
+  {
+    urls: ['http://*/*', 'https://*/*', 'ws://*/*', 'wss://*/*'],
+    types: ['main_frame', 'sub_frame']
+  },
+  isManifestV2 ? ['blocking'] : []
+);
+
+// Additional navigation check for MV3
+if (!isManifestV2) {
+  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+    if (message.type === 'CHECK_NAVIGATION') {
+      try {
+        const url = new URL(message.url);
+        const isPhishing = phishingService.checkPhishing(url.hostname);
+
+        if (isPhishing && sender.tab?.id) {
+          redirectToPhishingPage(sender.tab.id, message.url, url.hostname);
+        }
+
+        sendResponse({ isPhishing });
+      } catch {
+        sendResponse({ isPhishing: false });
+      }
+    }
+    return true;
+  });
+}
