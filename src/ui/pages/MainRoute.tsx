@@ -47,6 +47,7 @@ import OrdinalsInscriptionScreen from './Ordinals/OrdinalsInscriptionScreen';
 import SendOrdinalsInscriptionScreen from './Ordinals/SendOrdinalsInscriptionScreen';
 import SignOrdinalsTransactionScreen from './Ordinals/SignOrdinalsTransactionScreen';
 import SplitOrdinalsInscriptionScreen from './Ordinals/SplitOrdinalsInscriptionScreen';
+import PhishingScreen from './Phishing/PhishingScreen';
 import RunesTokenScreen from './Runes/RunesTokenScreen';
 import SendRunesScreen from './Runes/SendRunesScreen';
 import AddressTypeScreen from './Settings/AddressTypeScreen';
@@ -307,6 +308,11 @@ export const routes = {
   BabylonTxConfirmScreen: {
     path: '/babylon/tx/confirm',
     element: <BabylonTxConfirmScreen />
+  },
+
+  phishing: {
+    path: '/phishing',
+    element: <PhishingScreen />
   }
 };
 

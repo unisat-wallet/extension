@@ -1,0 +1,124 @@
+.phishing-container {
+  min-height: 100vh;
+  background-color: #1c1c1c;
+  padding: 2rem;
+}
+
+.phishing-content {
+  max-width: 48rem;
+  margin: 0 auto;
+}
+
+.phishing-header {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 3rem;
+}
+
+.phishing-logo {
+  height: 1.5rem;
+}
+
+.phishing-divider {
+  height: 1.5rem;
+  width: 1px;
+  background-color: #4b5563;
+}
+
+.phishing-warning-icon {
+  display: flex;
+  align-items: center;
+  color: #f97316;
+}
+
+.phishing-warning-icon svg {
+  width: 1.25rem;
+  height: 1.25rem;
+}
+
+.phishing-warning-icon span {
+  margin-left: 0.5rem;
+  font-size: 0.875rem;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.phishing-title-section {
+  border-left: 4px solid #f97316;
+  padding-left: 1rem;
+  margin-bottom: 2rem;
+}
+
+.phishing-title-section h1 {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.phishing-domain {
+  margin-top: 0.5rem;
+  font-size: 1.125rem;
+  color: #9ca3af;
+}
+
+.phishing-warning-box {
+  background-color: rgba(31, 41, 55, 0.5);
+  border-radius: 0.375rem;
+  padding: 1.5rem;
+  margin-bottom: 2rem;
+}
+
+.phishing-warning-box p {
+  color: #e5e7eb;
+}
+
+.phishing-warning-box ul {
+  margin-top: 1rem;
+  color: #9ca3af;
+}
+
+.phishing-warning-box li {
+  display: flex;
+  align-items: center;
+  margin-top: 0.5rem;
+}
+
+.phishing-warning-box li::before {
+  content: '•';
+  margin-right: 0.5rem;
+}
+
+.phishing-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 1rem;
+}
+
+.phishing-report-link {
+  color: #9ca3af;
+  text-decoration: none;
+  transition: color 0.2s;
+}
+
+.phishing-report-link:hover {
+  color: #f97316;
+}
+
+.phishing-proceed-text {
+  font-size: 0.875rem;
+  color: #6b7280;
+}
+
+.phishing-proceed-button {
+  background: none;
+  border: none;
+  color: #f97316;
+  margin-left: 0.25rem;
+  cursor: pointer;
+  transition: color 0.2s;
+}
+
+.phishing-proceed-button:hover {
+  color: #fb923c;
+}
