@@ -301,6 +301,7 @@ XMLHttpRequest.prototype.open = function (
 };
 
 // Add navigation interception
+// Listen for all possible navigation events
 window.addEventListener('beforeunload', async (e) => {
   const url = window.location.href;
   const result = await new Promise((resolve) => {
@@ -320,23 +321,24 @@ window.addEventListener('beforeunload', async (e) => {
   });
 
   if (result) {
+    // If it's a phishing site, prevent navigation and show warning
     e.preventDefault();
     e.returnValue = '';
   }
 });
 
-// Click event listener
+// Listen for click events
 document.addEventListener(
   'click',
   async (e) => {
     const element = e.target as HTMLElement;
     let url: string | null = null;
 
-    // Check for link elements
+    // Check for links
     if (element instanceof HTMLAnchorElement && element.href) {
       url = element.href;
     }
-    // Check other elements that may trigger navigation
+    // Check other elements that might trigger navigation
     else if (element.hasAttribute('href')) {
       url = element.getAttribute('href');
     }

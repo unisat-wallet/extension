@@ -5,15 +5,22 @@ import './PhishingScreen.css';
 const PhishingScreen = () => {
   const [searchParams] = useSearchParams();
   const hostname = searchParams.get('hostname');
+  const href = searchParams.get('href');
 
   const handleProceed = async () => {
-    // Send message to background to allow access to this domain
+    // Send message to background to proceed (one-time bypass, not adding to whitelist)
     await chrome.runtime.sendMessage({
       type: 'SKIP_PHISHING_PROTECTION',
       hostname
     });
-    // Go back to previous page
-    window.history.back();
+
+    // Redirect to the original URL if available
+    if (href) {
+      window.location.href = href;
+    } else {
+      // Fallback to hostname if full URL is not available
+      window.location.href = `https://${hostname}`;
+    }
   };
 
   return (
@@ -33,23 +40,23 @@ const PhishingScreen = () => {
                 strokeLinejoin="round"
               />
             </svg>
-            <span>安全警告</span>
+            <span>Security Warning</span>
           </div>
         </div>
 
         {/* Title & Domain */}
         <div className="phishing-title-section">
-          <h1>危险！检测到潜在的钓鱼网站</h1>
+          <h1>Danger! Potential phishing website detected</h1>
           <p className="phishing-domain">{hostname}</p>
         </div>
 
         {/* Warning Message */}
         <div className="phishing-warning-box">
-          <p>此网站已被 UniSat 识别为恶意网站，可能会:</p>
+          <p>This website has been identified as malicious by UniSat and may:</p>
           <ul>
-            <li>窃取您的私钥或助记词</li>
-            <li>诱导您签署恶意交易</li>
-            <li>获取您的个人信息</li>
+            <li>Steal your private keys or seed phrases</li>
+            <li>Trick you into signing malicious transactions</li>
+            <li>Collect your personal information</li>
           </ul>
         </div>
 
@@ -60,12 +67,12 @@ const PhishingScreen = () => {
             target="_blank"
             rel="noopener noreferrer"
             className="phishing-report-link">
-            认为这是误报？点击此处提交问题 →
+            Think this is a false positive? Click here to report an issue →
           </a>
           <p className="phishing-proceed-text">
-            如果您执意继续，请自行承担风险：
+            If you insist on continuing, proceed at your own risk:
             <button onClick={handleProceed} className="phishing-proceed-button">
-              继续访问 {hostname}
+              Continue to {hostname}
             </button>
           </p>
         </div>
