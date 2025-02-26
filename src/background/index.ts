@@ -180,9 +180,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   return true;
 });
 
-// Version check
-const isManifestV2 = MANIFEST_VERSION === 'mv2';
-
 // Unified redirect function with query params
 async function redirectToPhishingPage(tabId: number, url: string, hostname: string) {
   try {
@@ -220,23 +217,6 @@ chrome.webRequest.onBeforeRequest.addListener(
         return { cancel: false };
       }
 
-      // Handle redirection based on manifest version
-      if (isManifestV2) {
-        // MV2: Use direct URL redirection for main frame
-        if (details.type === 'main_frame') {
-          const params = new URLSearchParams({
-            hostname: url.hostname,
-            href: details.url
-          });
-          return { redirectUrl: chrome.runtime.getURL(`index.html#/phishing?${params}`) };
-        }
-        // MV2: Cancel sub-frame requests and redirect main frame
-        if (details.tabId) {
-          redirectToPhishingPage(details.tabId, details.url, url.hostname);
-        }
-        return { cancel: true };
-      }
-
       // MV3: Use tabs.update for redirection
       if (details.tabId) {
         redirectToPhishingPage(details.tabId, details.url, url.hostname);
@@ -249,27 +229,24 @@ chrome.webRequest.onBeforeRequest.addListener(
   {
     urls: ['http://*/*', 'https://*/*', 'ws://*/*', 'wss://*/*'],
     types: ['main_frame', 'sub_frame']
-  },
-  isManifestV2 ? ['blocking'] : []
+  }
 );
 
-// Additional navigation check for MV3
-if (!isManifestV2) {
-  chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
-    if (message.type === 'CHECK_NAVIGATION') {
-      try {
-        const url = new URL(message.url);
-        const isPhishing = phishingService.checkPhishing(url.hostname);
+// Navigation check for MV3
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'CHECK_NAVIGATION') {
+    try {
+      const url = new URL(message.url);
+      const isPhishing = phishingService.checkPhishing(url.hostname);
 
-        if (isPhishing && sender.tab?.id) {
-          redirectToPhishingPage(sender.tab.id, message.url, url.hostname);
-        }
-
-        sendResponse({ isPhishing });
-      } catch {
-        sendResponse({ isPhishing: false });
+      if (isPhishing && sender.tab?.id) {
+        redirectToPhishingPage(sender.tab.id, message.url, url.hostname);
       }
+
+      sendResponse({ isPhishing });
+    } catch {
+      sendResponse({ isPhishing: false });
     }
-    return true;
-  });
-}
+  }
+  return true;
+});

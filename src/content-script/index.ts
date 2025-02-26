@@ -1,7 +1,6 @@
 import extension from 'extensionizer';
 import { nanoid } from 'nanoid';
 
-import { MANIFEST_VERSION } from '@/shared/constant';
 import { Message } from '@/shared/utils';
 
 const channelName = nanoid();
@@ -302,74 +301,71 @@ XMLHttpRequest.prototype.open = function (
 };
 
 // Add navigation interception
-if (MANIFEST_VERSION === 'mv3') {
-  // 监听所有可能的导航事件
-  window.addEventListener('beforeunload', async (e) => {
-    const url = window.location.href;
-    const result = await new Promise((resolve) => {
-      chrome.runtime.sendMessage(
-        {
-          type: 'CHECK_NAVIGATION',
-          url
-        },
-        (response) => {
-          if (chrome.runtime.lastError) {
-            resolve(false);
-            return;
-          }
-          resolve(response?.isPhishing);
+window.addEventListener('beforeunload', async (e) => {
+  const url = window.location.href;
+  const result = await new Promise((resolve) => {
+    chrome.runtime.sendMessage(
+      {
+        type: 'CHECK_NAVIGATION',
+        url
+      },
+      (response) => {
+        if (chrome.runtime.lastError) {
+          resolve(false);
+          return;
         }
-      );
-    });
-
-    if (result) {
-      e.preventDefault();
-      e.returnValue = '';
-    }
+        resolve(response?.isPhishing);
+      }
+    );
   });
 
-  // 监听点击事件
-  document.addEventListener(
-    'click',
-    async (e) => {
-      const element = e.target as HTMLElement;
-      let url: string | null = null;
+  if (result) {
+    e.preventDefault();
+    e.returnValue = '';
+  }
+});
 
-      // 检查链接
-      if (element instanceof HTMLAnchorElement && element.href) {
-        url = element.href;
-      }
-      // 检查其他可能触发导航的元素
-      else if (element.hasAttribute('href')) {
-        url = element.getAttribute('href');
-      }
+// Click event listener
+document.addEventListener(
+  'click',
+  async (e) => {
+    const element = e.target as HTMLElement;
+    let url: string | null = null;
 
-      if (url) {
-        try {
-          const result = await new Promise((resolve) => {
-            chrome.runtime.sendMessage(
-              {
-                type: 'CHECK_NAVIGATION',
-                url
-              },
-              (response) => {
-                if (chrome.runtime.lastError) {
-                  resolve(false);
-                  return;
-                }
-                resolve(response?.isPhishing);
+    // Check for link elements
+    if (element instanceof HTMLAnchorElement && element.href) {
+      url = element.href;
+    }
+    // Check other elements that may trigger navigation
+    else if (element.hasAttribute('href')) {
+      url = element.getAttribute('href');
+    }
+
+    if (url) {
+      try {
+        const result = await new Promise((resolve) => {
+          chrome.runtime.sendMessage(
+            {
+              type: 'CHECK_NAVIGATION',
+              url
+            },
+            (response) => {
+              if (chrome.runtime.lastError) {
+                resolve(false);
+                return;
               }
-            );
-          });
+              resolve(response?.isPhishing);
+            }
+          );
+        });
 
-          if (result) {
-            e.preventDefault();
-          }
-        } catch (e) {
-          console.error('[Navigation Check] Error:', e);
+        if (result) {
+          e.preventDefault();
         }
+      } catch (e) {
+        console.error('[Navigation Check] Error:', e);
       }
-    },
-    true
-  );
-}
+    }
+  },
+  true
+);
