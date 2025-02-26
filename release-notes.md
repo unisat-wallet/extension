@@ -1,5 +1,9 @@
 # UniSat Wallet Release Notes
 
+## v1.5.6
+
+- Fix Babylon RPC
+
 ## v1.5.5
 
 - Integration of Babylon Bitcoin Staking Phase 2
