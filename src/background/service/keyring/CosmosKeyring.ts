@@ -3,6 +3,7 @@ import { Buffer } from 'buffer/';
 
 import { WalletController } from '@/background/controller/wallet';
 import { objToUint8Array } from '@/shared/utils';
+import { PubKeySecp256k1 } from '@/shared/lib/crypto';
 import { incentivequery } from '@babylonlabs-io/babylon-proto-ts';
 import { Secp256k1, sha256 } from '@cosmjs/crypto';
 import { AccountData, DirectSecp256k1Wallet, DirectSignResponse } from '@cosmjs/proto-signing';
@@ -218,6 +219,15 @@ export class CosmosKeyring {
     if (signerAddress !== key.bech32Address) {
       throw new Error('Signer address does not match');
     }
+  /**
+   * Convert Keystone public key to BBN address
+   * @param publicKey - The public key from Keystone as Uint8Array
+   * @returns BBN address string
+   */
+  static publicKeyToBBNAddress(publicKey: Uint8Array): string {
+    const pubKey = new PubKeySecp256k1(publicKey);
+    return pubKey.getBech32Address('bbn');
+  }
 
     signDoc.authInfoBytes = objToUint8Array(signDoc.authInfoBytes);
     signDoc.bodyBytes = objToUint8Array(signDoc.bodyBytes);
