@@ -1,16 +1,18 @@
 import { useState } from 'react';
 
 import { COSMOS_CHAINS_MAP } from '@/shared/constant/cosmosChain';
-import { BabylonTxInfo } from '@/shared/types';
+import { BabylonTxInfo, CosmosSignDataType } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressText } from '@/ui/components/AddressText';
+import { useAccountAddress, useCurrentAccount, useIsKeystoneWallet } from '@/ui/state/accounts/hooks';
+import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { useBabylonConfig } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { spacing } from '@/ui/theme/spacing';
 import { useLocationState, useWallet } from '@/ui/utils';
 
-import { useNavigate } from '../MainRoute';
+import CosmosSignScreen from '../Wallet/CosmosSignScreen';
 
 interface LocationState {
   txInfo: BabylonTxInfo;
@@ -48,7 +50,45 @@ export default function BabylonTxConfirmScreen() {
 
   const babylonChain = COSMOS_CHAINS_MAP[babylonConfig.chainId];
 
-  const navigate = useNavigate();
+  const [isCosmosSignScreenOpen, setIsCosmosSignScreenOpen] = useState(false);
+  const [cosmosSignRequest, setCosmosSignRequest] = useState<{
+    requestId?: string;
+    signData: any;
+    dataType: CosmosSignDataType;
+    path: string;
+    chainId?: string;
+    accountNumber?: string;
+    address?: string;
+  } | null>(null);
+
+  const currentAccount = useCurrentAccount();
+  const currentKeyring = useCurrentKeyring();
+  const address = useAccountAddress();
+  const isKeystone = useIsKeystoneWallet();
+
+  if (isCosmosSignScreenOpen && cosmosSignRequest) {
+    return (
+      <CosmosSignScreen
+        cosmosSignRequest={cosmosSignRequest}
+        onSuccess={async (signResult) => {
+          tools.showLoading(true);
+          try {
+            const txid = await wallet.createSendTokenStep2(babylonChain.chainId, signResult.signature);
+            setResult({ result: 'success', txid });
+          } catch (error) {
+            setResult({ result: 'failed', error: (error as any).message || 'Failed to handle signature' });
+          } finally {
+            setIsCosmosSignScreenOpen(false);
+            tools.showLoading(false);
+          }
+        }}
+        onBack={() => {
+          setIsCosmosSignScreenOpen(false);
+        }}
+      />
+    );
+  }
+
   if (result && result.result === 'success') {
     return (
       <Layout>
@@ -107,6 +147,43 @@ export default function BabylonTxConfirmScreen() {
       </Layout>
     );
   }
+
+  const handleSignAndPay = async () => {
+    tools.showLoading(true);
+    try {
+      const signDataBytesHex = await wallet.createSendTokenStep1(
+        babylonConfig.chainId,
+        txInfo.unitBalance,
+        txInfo.toAddress,
+        txInfo.memo || ''
+      );
+
+      if (isKeystone) {
+        setCosmosSignRequest({
+          signData: signDataBytesHex,
+          dataType: CosmosSignDataType.COSMOS_DIRECT,
+          path: currentKeyring.hdPath + '/' + currentAccount.index,
+          chainId: babylonChain.chainId,
+          address
+        });
+        tools.showLoading(false);
+        setIsCosmosSignScreenOpen(true);
+      } else {
+        try {
+          const result = await wallet.cosmosSignData(babylonConfig.chainId, signDataBytesHex);
+          const txid = await wallet.createSendTokenStep2(babylonChain.chainId, result.signature);
+          setResult({ result: 'success', txid: txid });
+        } catch (e) {
+          setResult({ result: 'failed', error: (e as any).message });
+        } finally {
+          tools.showLoading(false);
+        }
+      }
+    } catch (e) {
+      setResult({ result: 'failed', error: (e as any).message });
+      tools.showLoading(false);
+    }
+  };
 
   return (
     <Layout>
@@ -193,25 +270,7 @@ export default function BabylonTxConfirmScreen() {
             preset="primary"
             text={'Sign & Pay'}
             onClick={async () => {
-              tools.showLoading(true);
-              try {
-                const result = await wallet.sendTokens(
-                  babylonConfig.chainId,
-                  txInfo.unitBalance,
-                  txInfo.toAddress,
-                  txInfo.memo
-                );
-
-                if (result.code == 0) {
-                  setResult({ result: 'success', txid: result.transactionHash });
-                } else {
-                  setResult({ result: 'failed', error: 'unknown' });
-                }
-              } catch (e) {
-                setResult({ result: 'failed', error: (e as any).message });
-              } finally {
-                tools.showLoading(false);
-              }
+              handleSignAndPay();
             }}
             full
           />

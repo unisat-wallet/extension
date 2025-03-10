@@ -5,13 +5,13 @@ import { EventEmitter } from 'events';
 import log from 'loglevel';
 
 import { ADDRESS_TYPES, KEYRING_TYPE } from '@/shared/constant';
-import { AddressType } from '@/shared/types';
+import { AddressType, CosmosSignDataType } from '@/shared/types';
 import { ObservableStore } from '@metamask/obs-store';
 import { keyring } from '@unisat/wallet-sdk';
 import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 
 import i18n from '../i18n';
-import preference from '../preference';
+import { default as preference, default as preferenceService } from '../preference';
 import DisplayKeyring from './display';
 
 const { SimpleKeyring, HdKeyring, KeystoneKeyring } = keyring;
@@ -85,6 +85,16 @@ export interface Keyring {
   genSignMsgUr?(publicKey: string, text: string): Promise<{ type: string; cbor: string; requestId: string }>;
   parseSignMsgUr?(type: string, cbor: string): Promise<{ requestId: string; publicKey: string; signature: string }>;
   getConnectionType?(): 'USB' | 'QR';
+  genSignCosmosUr?(cosmosSignRequest: {
+    requestId?: string;
+    signData: string;
+    dataType: CosmosSignDataType;
+    path: string;
+    chainId?: string;
+    accountNumber?: string;
+    address?: string;
+  }): Promise<{ type: string; cbor: string; requestId: string }>;
+  parseSignCosmosUr?(type: string, cbor: string): Promise<any>;
 }
 
 class EmptyKeyring implements Keyring {
@@ -599,6 +609,76 @@ class KeyringService extends EventEmitter {
     const keyring = await this.getKeyringForAccount(address);
     const result = await keyring.signData(address, data, type);
     return result;
+  };
+
+  generateSignCosmosUr = async (signRequest: {
+    signData: string;
+    dataType: CosmosSignDataType;
+    path: string;
+    extra: {
+      chainId?: string;
+      accountNumber?: string;
+      address?: string;
+    };
+  }) => {
+    try {
+      const {
+        signData,
+        dataType,
+        path,
+        extra: { chainId, accountNumber, address }
+      } = signRequest;
+      const account = preferenceService.getCurrentAccount();
+      if (!account) throw new Error('No current account');
+
+      const keyring = await this.getKeyringForAccount(account.pubkey, account.type);
+      if (!keyring.genSignCosmosUr) {
+        throw new Error('Current keyring does not support genSignCosmosUr');
+      }
+
+      const result = await keyring.genSignCosmosUr({
+        signData,
+        dataType,
+        path,
+        chainId,
+        accountNumber,
+        address
+      });
+      return result;
+    } catch (error) {
+      console.error('generateSignCosmosUR error', error);
+      throw error;
+    }
+  };
+
+  /**
+   * Parse Cosmos Signature UR
+   *
+   * Parses a UR (Uniform Resource) containing a Cosmos signature
+   * received from a Keystone device
+   */
+  parseSignCosmosUr = async (
+    type: string,
+    cbor: string
+  ): Promise<{
+    requestId: string;
+    signature: string;
+    publicKey: string;
+  }> => {
+    try {
+      const account = preferenceService.getCurrentAccount();
+      if (!account) throw new Error('No current account');
+
+      const keyring = await this.getKeyringForAccount(account.pubkey, account.type);
+      if (!keyring.parseSignCosmosUr) {
+        throw new Error('Current keyring does not support parseSignCosmosUr');
+      }
+
+      return await keyring.parseSignCosmosUr(type, cbor);
+    } catch (error) {
+      console.error('parseSignCosmosUR error', error);
+      throw error;
+    }
   };
 
   //

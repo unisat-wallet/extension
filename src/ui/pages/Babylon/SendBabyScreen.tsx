@@ -101,6 +101,12 @@ export default function SendBabyScreen() {
     if (!isValidBech32Address(toInfo.address)) {
       return;
     }
+
+    if (toInfo.address.indexOf('bbn') !== 0) {
+      setError('Invalid recipient address');
+      return;
+    }
+
     if (!toValue || toValue == '0') {
       return;
     }

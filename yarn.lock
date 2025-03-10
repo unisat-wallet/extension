@@ -2104,6 +2104,13 @@
   dependencies:
     "@noble/hashes" "1.6.0"
 
+"@noble/curves@^1.0.0":
+  version "1.8.1"
+  resolved "https://registry.npmmirror.com/@noble/curves/-/curves-1.8.1.tgz#19bc3970e205c99e4bdb1c64a4785706bce497ff"
+  integrity sha512-warwspo+UYUPep0Q+vtdVB4Ugn8GGQj8iyB3gnRWsztmUHTI3S1nhdiWNsPUGL0vud7JlRRk1XEu7Lq1KGTnMQ==
+  dependencies:
+    "@noble/hashes" "1.7.1"
+
 "@noble/hashes@1.3.3", "@noble/hashes@^1.1.5", "@noble/hashes@~1.3.2":
   version "1.3.3"
   resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.3.3.tgz#39908da56a4adc270147bb07968bf3b16cfe1699"
@@ -2114,7 +2121,7 @@
   resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.6.0.tgz#d4bfb516ad6e7b5111c216a5cc7075f4cf19e6c5"
   integrity sha512-YUULf0Uk4/mAA89w+k3+yUYh6NrEvxZa5T6SY3wlMvE2chHkxFUUIDI8/XW1QSC357iA5pSnqt7XEhvFOqmDyQ==
 
-"@noble/hashes@^1":
+"@noble/hashes@1.7.1", "@noble/hashes@^1", "@noble/hashes@^1.7.1":
   version "1.7.1"
   resolved "https://registry.yarnpkg.com/@noble/hashes/-/hashes-1.7.1.tgz#5738f6d765710921e7a751e00c20ae091ed8db0f"
   integrity sha512-B8XBPsn4vT/KJAGqDzbwztd+6Yte3P4V7iafm24bxgDe/mlRuK6xmWPuCNrKt2vDafZ8MfJLlchDG/vYafQEjQ==
@@ -3254,10 +3261,10 @@
     "@typescript-eslint/types" "5.53.0"
     eslint-visitor-keys "^3.3.0"
 
-"@unisat/wallet-sdk@1.8.0":
-  version "1.8.0"
-  resolved "https://registry.yarnpkg.com/@unisat/wallet-sdk/-/wallet-sdk-1.8.0.tgz#b53ffcf8f66c1f03d3bb2eb3930c72e3b2c83332"
-  integrity sha512-qt2pR8lXqQln/FFNunFlnm55ucejyr3JGbyJvA3s/Qz13+MSjrH41WtyzzHUWfZbcSbEVHTzVb2MYwLNJYbDOA==
+"@unisat/wallet-sdk@1.9.0":
+  version "1.9.0"
+  resolved "https://registry.yarnpkg.com/@unisat/wallet-sdk/-/wallet-sdk-1.9.0.tgz#7e0a5c377f5b078e878ada1e079da187e82f6be8"
+  integrity sha512-IIHvYkJ+jJLcmsgHxSzNpknIG15PFnQC3OmpWjmtz7LETRHTnqiFUcCt1Qia5kbaFZ8Urwaq85WRYRmpM9OFog==
   dependencies:
     "@bitcoinerlab/secp256k1" "^1.0.5"
     "@keystonehq/keystone-sdk" "^0.3.0"

@@ -26,6 +26,7 @@ import {
   CAT721Balance,
   CoinPrice,
   CosmosBalance,
+  CosmosSignDataType,
   DecodedPsbt,
   FeeSummary,
   InscribeOrder,
@@ -348,21 +349,28 @@ export interface WalletController {
   getVersionDetail(version: string): Promise<VersionDetail>;
 
   genSignPsbtUr(psbtHex: string): Promise<{ type: string; cbor: string }>;
-  parseSignPsbtUr(
-    type: string,
-    cbor: string,
-    isFinalize?: boolean
-  ): Promise<{
-    psbtHex: string;
-    rawTx: string;
-  }>;
+  parseSignPsbtUr(type: string, cbor: string, isFinalize?: boolean): Promise<{ psbtHex: string; rawtx?: string }>;
   genSignMsgUr(text: string, msgType?: string): Promise<{ type: string; cbor: string; requestId: string }>;
-  parseSignMsgUr(
-    type: string,
-    cbor: string,
-    msgType?: string
-  ): Promise<{ requestId: string; publicKey: string; signature: string }>;
+  parseSignMsgUr(type: string, cbor: string, msgType: string): Promise<{ signature: string }>;
   getKeystoneConnectionType(): Promise<'USB' | 'QR'>;
+  genSignCosmosUr(cosmosSignRequest: {
+    requestId?: string;
+    signData: string;
+    dataType: CosmosSignDataType;
+    path: string;
+    chainId?: string;
+    accountNumber?: string;
+    address?: string;
+  }): Promise<{ type: string; cbor: string; requestId: string }>;
+  parseCosmosSignUr(type: string, cbor: string): Promise<any>;
+
+  cosmosSignData(
+    chainId: string,
+    signBytesHex: string
+  ): Promise<{
+    publicKey: string;
+    signature: string;
+  }>;
 
   getEnableSignData(): Promise<boolean>;
   setEnableSignData(enable: boolean): Promise<void>;
@@ -454,15 +462,8 @@ export interface WalletController {
 
   getBabylonStakingStatusV2(): Promise<BabylonStakingStatusV2>;
 
-  sendTokens(
-    chainId: string,
-    tokenBalance: CosmosBalance,
-    to: string,
-    memo: string
-  ): Promise<{
-    code: number;
-    transactionHash: string;
-  }>;
+  createSendTokenStep1(chainId: string, tokenBalance: CosmosBalance, to: string, memo: string): Promise<string>;
+  createSendTokenStep2(chainId: string, signature: string): Promise<string>;
 }
 
 const WalletContext = createContext<{

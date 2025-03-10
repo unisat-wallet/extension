@@ -1,10 +1,9 @@
-
 import { permissionService, sessionService } from '@/background/service';
 import { CHAINS, CHAINS_MAP, NETWORK_TYPES, VERSION } from '@/shared/constant';
-
 import { NetworkType } from '@/shared/types';
-import { getChainInfo } from '@/shared/utils';
+import { getChainInfo, objToUint8Array } from '@/shared/utils';
 import { amountToSatoshis } from '@/ui/utils';
+import * as encoding from '@cosmjs/encoding';
 import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 import { verifyMessageOfBIP322Simple } from '@unisat/wallet-sdk/lib/message';
 import { toPsbtNetwork } from '@unisat/wallet-sdk/lib/network';
@@ -12,9 +11,8 @@ import { ethErrors } from 'eth-rpc-errors';
 import BaseController from '../base';
 import wallet from '../wallet';
 
-import {
-  SignDoc
-} from "@keplr-wallet/proto-types/cosmos/tx/v1beta1/tx";
+import { encodeSecp256k1Signature, makeADR36AminoSignDoc, serializeSignDoc } from '@/background/service/keyring/CosmosKeyring';
+import { makeSignBytes } from '@cosmjs/proto-signing';
 
 function formatPsbtHex(psbtHex: string) {
   let formatData = '';
@@ -197,7 +195,7 @@ class ProviderController extends BaseController {
     return await wallet.pushTx(rawtx)
   }
 
-  @Reflect.metadata('APPROVAL', ['SignText', () => {
+  @Reflect.metadata('APPROVAL', ['SignText', (req) => {
     // todo check text
   }])
   signMessage = async ({ data: { params: { text, type } }, approvalRes }) => {
@@ -303,6 +301,13 @@ class ProviderController extends BaseController {
     return utxos;
   };
 
+
+  private _isKeystoneWallet = async () => {
+    const currentKeyring = await wallet.getCurrentKeyring();
+    return currentKeyring?.type === 'keystone';
+  }
+
+
   @Reflect.metadata('APPROVAL', ['CosmosConnect', (req) => {
     // todo check
   }])
@@ -311,6 +316,7 @@ class ProviderController extends BaseController {
       throw new Error('Not supported chainId')
     }
   };
+
 
   @Reflect.metadata('SAFE', true)
   cosmosExperimentalSuggestChain = async ( {data:{params:{chainData}}} ) => {
@@ -322,76 +328,71 @@ class ProviderController extends BaseController {
     throw new Error('not implemented')
   }
 
+
   @Reflect.metadata('SAFE', true)
   cosmosGetKey = async ({ data: { params: { chainId} } }) => {
     const cosmosKeyring = await wallet.getCosmosKeyring(chainId);
-    if(!cosmosKeyring){
-      return null;
-    }
+      if(!cosmosKeyring){
+        return null;
+      }
 
-    const key = cosmosKeyring.getKey();
-    const _key = Object.assign({},key,{
-      address:key.address.toString(),
-      pubKey:key.pubKey.toString()
-    })
-    return _key
+      const key = cosmosKeyring.getKey();
+      const _key = Object.assign({},key,{
+        address:key.address.toString(),
+        pubKey:key.pubKey.toString()
+      });
+      return _key;
+  }
+
+
+  @Reflect.metadata('APPROVAL', ['CosmosSign', (req) => {
+    const signDoc = req.data.params.signDoc;
+    signDoc.bodyBytes = objToUint8Array(signDoc.bodyBytes);
+    signDoc.authInfoBytes = objToUint8Array(signDoc.authInfoBytes);
+    const signBytes = makeSignBytes(signDoc);
+    req.data.params.signBytesHex = encoding.toHex(signBytes);
+    
+  }])
+  cosmosSignDirect = async ({ data: { params: msg } ,approvalRes}) => {
+    if (!approvalRes) {
+      throw new Error('approvalRes is required')
+    }
+    const {bodyBytes,authInfoBytes,chainId,accountNumber} = msg.signDoc;
+    const signature = encodeSecp256k1Signature(encoding.fromHex(approvalRes.publicKey),  encoding.fromHex(approvalRes.signature));
+    const respone = {
+      signed: {
+        bodyBytes:objToUint8Array(bodyBytes),
+        authInfoBytes:objToUint8Array(authInfoBytes),
+        chainId,
+        accountNumber,
+      },
+      signature
+    } ;
+    return respone;
+    
   }
 
   @Reflect.metadata('APPROVAL', ['CosmosSign', (req) => {
-    // todo check
+    const signerAddress = req.data.params.signerAddress;
+    const data = req.data.params.data;
+    const signDoc = makeADR36AminoSignDoc(signerAddress, data);
+    const signBytes = serializeSignDoc(signDoc);
+    req.data.params.signBytesHex = encoding.toHex(signBytes);
   }])
-  cosmosSignDirect = async ({ data: { params:msg } }) => {
-    const signDoc = SignDoc.fromPartial({
-      bodyBytes: msg.signDoc.bodyBytes,
-      authInfoBytes: msg.signDoc.authInfoBytes,
-      chainId: msg.signDoc.chainId,
-      accountNumber: msg.signDoc.accountNumber,
-    });
-
-    const cosmosKeyring = await wallet.getCosmosKeyring(msg.signDoc.chainId);
-    if(!cosmosKeyring){
-      throw new Error('no keyring')
+  cosmosSignArbitrary = async ({ data: { params:msg } ,approvalRes}) => {
+    if (!approvalRes) {
+      throw new Error('approvalRes is required')
     }
 
-    const response = await cosmosKeyring.signDirect(
-      msg.signDoc.chainId,
-      msg.signerAddress,
-      signDoc,
-    );
-
-    return response
-
-
-  }
-
-  // signArbitrary
-  @Reflect.metadata('APPROVAL', ['CosmosSign', (req) => {
-    // todo check
-  }])
-  cosmosSignArbitrary = async ({ data: { params:msg } }) => {
-
-    const cosmosKeyring = await wallet.getCosmosKeyring(msg.chainId);
-    if(!cosmosKeyring){
-      throw new Error('no keyring')
-    }
-
-    const response = await cosmosKeyring.signAminoADR36(
-      msg.chainId,
-      msg.signer,
-      typeof msg.data === "string" ? Buffer.from(msg.data) : msg.data,
-    );
-
-    return response
-
-
+    const signature = encodeSecp256k1Signature(encoding.fromHex(approvalRes.publicKey),  encoding.fromHex(approvalRes.signature));
+    const respone =  signature
+    return respone;
+ 
   }
 
 
-  @Reflect.metadata('SAFE', true)
-  cosmosSignAmino = async ({ data: { params: { signerAddress, signDoc } } }) => {
-    throw new Error('not implemented')
-    // return signerAddress
-  }
+
+
 }
 
 export default new ProviderController();

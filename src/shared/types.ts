@@ -22,6 +22,18 @@ export enum RestoreWalletType {
   OTHERS
 }
 
+/**
+ * Sign data type
+ * @enum {number}
+ * @readonly
+ * @enum {number}
+ * @readonly
+ */
+export enum CosmosSignDataType {
+  COSMOS_AMINO = 1,
+  COSMOS_DIRECT = 2
+}
+
 export interface Chain {
   name: string;
   logo: string;

@@ -2,6 +2,7 @@ import { Tooltip } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { KEYRING_TYPE } from '@/shared/constant';
+import { KeystoneSignEnum } from '@/shared/constant/KeystoneSignType';
 import {
   Atomical,
   DecodedPsbt,
@@ -816,9 +817,9 @@ export default function SignPsbt({
   if (isKeystoneSigning) {
     return (
       <KeystoneSignScreen
-        type="psbt"
+        type={KeystoneSignEnum.PSBT}
         data={txInfo.psbtHex}
-        isFinalize={type !== TxType.SIGN_TX}
+        isFinalize={options?.autoFinalized || true}
         onSuccess={(data) => {
           originalHandleConfirm(data as any);
         }}

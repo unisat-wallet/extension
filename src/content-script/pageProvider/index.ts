@@ -461,6 +461,7 @@ export class UnisatProvider extends EventEmitter {
         address: Uint8Array.from(_key.address.split(',')),
         pubKey: Uint8Array.from(_key.pubKey.split(','))
       });
+
       return key;
     },
 
@@ -469,18 +470,14 @@ export class UnisatProvider extends EventEmitter {
     },
 
     signArbitrary: async (chainId: string, signerAddress: string, data: string | Uint8Array) => {
-      const key: any = await this.keplr.getKey(chainId);
-      if (key.bech32Address !== signerAddress) {
-        throw new Error('Unknown signer address');
-      }
-
       return this._request({
         method: 'cosmos_signArbitrary',
         params: {
           chainId,
-          signer: signerAddress,
+          signerAddress,
           type: typeof data === 'string' ? 'string' : 'Uint8Array',
-          data: typeof data === 'string' ? data : Buffer.from(data).toString('base64')
+          data: typeof data === 'string' ? data : Buffer.from(data).toString('base64'),
+          origin: window.location.origin
         }
       });
     }

@@ -1,4 +1,5 @@
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
+import { useNavigate as useNavigateOrigin } from 'react-router-dom';
 
 import { NetworkType, ToAddressInfo, TxType } from '@/shared/types';
 import { Card, Column, Content, Input, Layout, Text } from '@/ui/components';
@@ -15,7 +16,35 @@ import { useNavigate } from '../MainRoute';
 import { testDecodedTx } from './testDecodedTx';
 
 export default function TestScreen() {
-  return <TestApprovalSignPsbt />;
+  const navigate = useNavigate();
+  const navigateOrigin = useNavigateOrigin();
+  const [testComponent, setTestComponent] = useState<string | null>(null);
+
+  if (testComponent === 'signPsbt') {
+    return <TestApprovalSignPsbt />;
+  }
+
+  return (
+    <Layout>
+      <Content>
+        <Column>
+          <Card
+            onClick={() => {
+              navigateOrigin('/test-cosmos-sign');
+            }}>
+            <Text text="Cosmos Sign Demo" />
+          </Card>
+
+          <Card
+            onClick={() => {
+              setTestComponent('signPsbt');
+            }}>
+            <Text text="Test Approval Sign PSBT" />
+          </Card>
+        </Column>
+      </Content>
+    </Layout>
+  );
 }
 
 function TestSignPsbtWithRisksPopover() {

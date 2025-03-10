@@ -45,8 +45,8 @@ export default function CosmosConnect({ params: { session, data } }: Props) {
   const [address, setAddress] = useState('');
 
   useEffect(() => {
-    wallet.getBabylonAddressSummary(data.chainId).then((addressSummary) => {
-      setAddress(addressSummary.address);
+    wallet.getBabylonAddress(data.chainId).then((address) => {
+      setAddress(address);
     });
 
     wallet.checkWebsite(session.origin).then((v) => {

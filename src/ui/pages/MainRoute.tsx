@@ -58,6 +58,7 @@ import ExportMnemonicsScreen from './Settings/ExportMnemonicsScreen';
 import ExportPrivateKeyScreen from './Settings/ExportPrivateKeyScreen';
 import NetworkTypeScreen from './Settings/NetworkTypeScreen';
 import UpgradeNoticeScreen from './Settings/UpgradeNoticeScreen';
+import CosmosSignDemo from './Test/CosmosSignDemo';
 import TestScreen from './Test/TestScreen';
 import HistoryScreen from './Wallet/HistoryScreen';
 import ReceiveScreen from './Wallet/ReceiveScreen';
@@ -241,10 +242,6 @@ export const routes = {
     path: '/brc20/token',
     element: <BRC20TokenScreen />
   },
-  TestScreen: {
-    path: '/test',
-    element: <TestScreen />
-  },
   SplitOrdinalsInscriptionScreen: {
     path: '/wallet/split-tx/create',
     element: <SplitOrdinalsInscriptionScreen />
@@ -309,6 +306,18 @@ export const routes = {
     element: <BabylonTxConfirmScreen />
   }
 };
+
+if (process.env.NODE_ENV === 'development') {
+  routes['TestScreen'] = {
+    path: '/test',
+    element: <TestScreen />
+  };
+
+  routes['CosmosSignDemo'] = {
+    path: '/test-cosmos-sign',
+    element: <CosmosSignDemo />
+  };
+}
 
 type RouteTypes = keyof typeof routes;
 
