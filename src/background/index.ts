@@ -1,3 +1,4 @@
+import phishingService from '@/background/service/phishing';
 import { EVENTS, MANIFEST_VERSION } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 import { Message } from '@/shared/utils';
@@ -108,7 +109,7 @@ browserRuntimeOnConnect((port) => {
 
 const addAppInstalledEvent = () => {
   if (appStoreLoaded) {
-    openExtensionInTab();
+    openExtensionInTab('index.html', {});
     return;
   }
   setTimeout(() => {
@@ -122,35 +123,130 @@ browserRuntimeOnInstalled((details) => {
   }
 });
 
+// MV3 keep-alive code
 if (MANIFEST_VERSION === 'mv3') {
-  // Keep alive for MV3
   const INTERNAL_STAYALIVE_PORT = 'CT_Internal_port_alive';
   let alivePort: any = null;
 
   setInterval(() => {
-    // console.log('Highlander', Date.now());
     if (alivePort == null) {
       alivePort = chrome.runtime.connect({ name: INTERNAL_STAYALIVE_PORT });
-
-      alivePort.onDisconnect.addListener((p) => {
-        if (chrome.runtime.lastError) {
-          // console.log('(DEBUG Highlander) Expected disconnect (on error). SW should be still running.');
-        } else {
-          // console.log('(DEBUG Highlander): port disconnected');
-        }
-
+      alivePort.onDisconnect.addListener(() => {
         alivePort = null;
       });
     }
 
     if (alivePort) {
-      alivePort.postMessage({ content: 'keep alive~' });
-
-      if (chrome.runtime.lastError) {
-        // console.log(`(DEBUG Highlander): postMessage error: ${chrome.runtime.lastError.message}`);
-      } else {
-        // console.log(`(DEBUG Highlander): sent through ${alivePort.name} port`);
-      }
+      alivePort.postMessage({ content: 'keep alive' });
     }
   }, 5000);
 }
+
+// Add message listener
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  try {
+    let isPhishing: boolean;
+
+    switch (message.type) {
+      case 'CHECK_PHISHING': {
+        isPhishing = phishingService.checkPhishing(message.hostname);
+        sendResponse(isPhishing);
+        break;
+      }
+
+      case 'REDIRECT_TO_PHISHING_PAGE': {
+        if (!sender.tab?.id) break;
+
+        try {
+          chrome.tabs.update(sender.tab.id, {
+            url: chrome.runtime.getURL(`index.html#/phishing?hostname=${encodeURIComponent(message.hostname)}`),
+            active: true
+          });
+        } catch {
+          // Ignore error
+        }
+        break;
+      }
+
+      case 'SKIP_PHISHING_PROTECTION': {
+        phishingService.addToWhitelist(message.hostname);
+        sendResponse(true);
+        break;
+      }
+    }
+  } catch {
+    // Ignore error
+  }
+  return true;
+});
+
+// Unified redirect function with query params
+async function redirectToPhishingPage(tabId: number, url: string, hostname: string) {
+  try {
+    const params = new URLSearchParams({
+      hostname,
+      href: url
+    });
+
+    const redirectUrl = chrome.runtime.getURL(`index.html#/phishing?${params}`);
+    await chrome.tabs.update(tabId, { url: redirectUrl, active: true });
+  } catch (e) {
+    console.error('[Redirect] Failed to redirect tab:', e);
+  }
+}
+
+// Request interception listener
+chrome.webRequest.onBeforeRequest.addListener(
+  (details) => {
+    try {
+      // Skip internal extension requests
+      if (details.tabId === chrome.tabs.TAB_ID_NONE || details.url.startsWith(chrome.runtime.getURL(''))) {
+        return { cancel: false };
+      }
+
+      // Only handle main frame and sub frame requests
+      if (details.type !== 'main_frame' && details.type !== 'sub_frame') {
+        return { cancel: false };
+      }
+
+      const url = new URL(details.url);
+      const isPhishing = phishingService.checkPhishing(url.hostname);
+
+      // Allow if not a phishing site
+      if (!isPhishing) {
+        return { cancel: false };
+      }
+
+      // MV3: Use tabs.update for redirection
+      if (details.tabId) {
+        redirectToPhishingPage(details.tabId, details.url, url.hostname);
+      }
+      return details.type === 'main_frame' ? {} : { cancel: true };
+    } catch {
+      return { cancel: false };
+    }
+  },
+  {
+    urls: ['http://*/*', 'https://*/*', 'ws://*/*', 'wss://*/*'],
+    types: ['main_frame', 'sub_frame']
+  }
+);
+
+// Navigation check for MV3
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'CHECK_NAVIGATION') {
+    try {
+      const url = new URL(message.url);
+      const isPhishing = phishingService.checkPhishing(url.hostname);
+
+      if (isPhishing && sender.tab?.id) {
+        redirectToPhishingPage(sender.tab.id, message.url, url.hostname);
+      }
+
+      sendResponse({ isPhishing });
+    } catch {
+      sendResponse({ isPhishing: false });
+    }
+  }
+  return true;
+});
