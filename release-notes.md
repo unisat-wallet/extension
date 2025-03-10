@@ -1,5 +1,9 @@
 # UniSat Wallet Release Notes
 
+## v1.5.7
+
+- Fix Keystone Babylon integration
+
 ## v1.5.6
 
 - Fix Babylon RPC
