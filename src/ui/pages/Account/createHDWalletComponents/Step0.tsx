@@ -1,17 +1,19 @@
-import { ContextData, TabType, UpdateContextDataParams } from '@/ui/pages/Account/createHDWalletComponents/types';
+import { getRestoreWallets } from '@/shared/constant';
 import { Button, Column, Text } from '@/ui/components';
-import { RESTORE_WALLETS } from '@/shared/constant';
+import { useI18n } from '@/ui/hooks/useI18n';
+import { ContextData, TabType, UpdateContextDataParams } from '@/ui/pages/Account/createHDWalletComponents/types';
 
 export function Step0({
-                 updateContextData
-               }: {
+  updateContextData
+}: {
   contextData: ContextData;
   updateContextData: (params: UpdateContextDataParams) => void;
 }) {
+  const { t } = useI18n();
   return (
     <Column gap="lg">
-      <Text text="Choose a wallet you want to restore from" preset="title-bold" textCenter mt="xl" />
-      {RESTORE_WALLETS.map((item, index) => {
+      <Text text={t('choose_a_wallet_you_want_to_restore_from')} preset="title-bold" textCenter mt="xl" />
+      {getRestoreWallets().map((item, index) => {
         return (
           <Button
             key={index}

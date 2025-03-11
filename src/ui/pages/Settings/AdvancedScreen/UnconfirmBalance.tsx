@@ -5,6 +5,7 @@ import { AddressFlagType } from '@/shared/constant';
 import { checkAddressFlag } from '@/shared/utils';
 import { Button, Card, Column, Icon, Row, Text } from '@/ui/components';
 import { Popover } from '@/ui/components/Popover';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
@@ -14,7 +15,7 @@ import { shortAddress, useWallet } from '@/ui/utils';
 
 export function UnconfirmedBalanceCard() {
   const [enableUnconfirmed, setEnableUnconfirmed] = useState(false);
-
+  const { t } = useI18n();
   const wallet = useWallet();
 
   const [unconfirmedPopoverVisible, setUnconfirmedPopoverVisible] = useState(false);
@@ -34,27 +35,27 @@ export function UnconfirmedBalanceCard() {
   return (
     <Card style={{ borderRadius: 10 }}>
       <Column fullX>
-        <Text text={'Unconfirmed Balance Not Spendable'} preset="bold" size="sm" />
+        <Text text={t('unconfirmed_balance_not_spendable')} preset="bold" size="sm" />
         <Row>
-          <Text
-            preset="sub"
-            size="sm"
-            text={`To protect your assets, only confirmed balances are spendable when holding Runes assets. This is to prevent accidental asset burning.`}
-          />
+          <Text preset="sub" size="sm" text={t('unconfirmed_balance_not_spendable_warning')} />
         </Row>
         <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
 
         <Row justifyBetween>
           <Column fullX gap="zero">
             {enableUnconfirmed ? (
-              <Text text={`Mandatory use of unconfirmed balance `} size="xs" />
+              <Text text={t('mandatory_use_of_unconfirmed_balance')} size="xs" />
             ) : (
-              <Text text={`Mandatory use of unconfirmed balance`} size="xs" />
+              <Text text={t('mandatory_use_of_unconfirmed_balance')} size="xs" />
             )}
-            <Text text={`Only applies to current address (${shortAddress(currentAccount.address)})`} preset="sub" />
+            <Text
+              text={`${t('only_applies_to_current_address')} (${shortAddress(currentAccount.address)})`}
+              preset="sub"
+            />
           </Column>
 
           <Switch
+            className="custom-switch"
             onChange={async () => {
               if (enableUnconfirmed) {
                 let _currentAccount = currentAccount;
@@ -65,7 +66,8 @@ export function UnconfirmedBalanceCard() {
                 setUnconfirmedPopoverVisible(true);
               }
             }}
-            checked={enableUnconfirmed}></Switch>
+            checked={enableUnconfirmed}
+          />
         </Row>
       </Column>
 
@@ -90,22 +92,22 @@ export function UnconfirmedBalanceCard() {
 }
 
 function EnableUnconfirmedPopover({ onClose, onConfirm }: { onClose: () => void; onConfirm: () => void }) {
+  const { t } = useI18n();
   return (
     <Popover>
       <Column justifyCenter itemsCenter>
         <Icon icon={'warning'} color={'icon_yellow'} size={57} />
 
-        <Text text="Enable Unconfirmed Balance" preset="title-bold" />
+        <Text text={t('enable_unconfirmed_balance')} preset="title-bold" />
         <Column gap="zero">
           <div style={{ fontSize: fontSizes.sm, color: '#ddd', marginTop: 20 }}>
-            If Runes assets are detected in the given address, the unconfirmed UTXOs are explicitly not allowed to be
-            spent until it's confirmed. Forcely spending these unconfirmed assets will incur the risks of losing assets.
+            {t('enable_unconfirmed_balance_warning')}
           </div>
         </Column>
 
         <Column full mt={'xl'}>
           <Button
-            text="Allow using Unconfirmed Balance"
+            text={t('allow_using_unconfirmed_balance')}
             preset="primaryV2"
             full
             onClick={(e) => {
@@ -115,7 +117,7 @@ function EnableUnconfirmedPopover({ onClose, onConfirm }: { onClose: () => void;
             }}
           />
           <Button
-            text="Cancel"
+            text={t('cancel')}
             full
             preset="defaultV2"
             onClick={(e) => {

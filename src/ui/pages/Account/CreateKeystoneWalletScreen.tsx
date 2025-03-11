@@ -12,6 +12,7 @@ import KeystoneLogoWithText from '@/ui/components/Keystone/LogoWithText';
 import KeystonePopover from '@/ui/components/Keystone/Popover';
 import KeystoneScan from '@/ui/components/Keystone/Scan';
 import KeystoneFetchKey from '@/ui/components/Keystone/usb/FetchKey';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useImportAccountsFromKeystoneCallback } from '@/ui/state/global/hooks';
 import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
@@ -33,7 +34,7 @@ interface ContextData {
 function Step1({ onNext, setIsUSB }) {
   const { state } = useLocation();
   const navigate = useNavigate();
-
+  const { t } = useI18n();
   const onBack = useCallback(() => {
     if (state && state.fromUnlock) {
       return navigate('WelcomeScreen');
@@ -43,7 +44,7 @@ function Step1({ onNext, setIsUSB }) {
 
   return (
     <Layout>
-      <Header title="Connect Keystone" onBack={window.history.length === 1 ? undefined : onBack} />
+      <Header title={t('connect_keystone')} onBack={window.history.length === 1 ? undefined : onBack} />
       <Content style={{ marginTop: '24px' }}>
         <Column
           style={{
@@ -73,20 +74,20 @@ function Step1({ onNext, setIsUSB }) {
               width: '50%'
             }}>
             <KeystoneLogo width={64} height={64} />
-            <Text text="Keystone hardware wallet" preset="title" />
+            <Text text={t('keystone_hardware_wallet')} preset="title" />
             <Text
-              text="The Ultimate Security Solution for Cryptocurrencies"
+              text={t('the_ultimate_security_solution_for_cryptocurrencie')}
               preset="sub"
               style={{
                 marginBottom: '40px'
               }}
             />
-            <Card>100% Air-Gapped</Card>
-            <Card>Open-source</Card>
-            <Card>Exceptional Compatibility</Card>
+            <Card>{t('100_air_gapped')}</Card>
+            <Card>{t('open_source')}</Card>
+            <Card>{t('exceptional_compatibility')}</Card>
             <Row justifyCenter>
               <a href="https://keyst.one/" target="_blank" rel="noreferrer">
-                Learn more about Keystone
+                {t('learn_more_about_keystone')}
               </a>
             </Row>
           </Column>
@@ -99,7 +100,7 @@ function Step1({ onNext, setIsUSB }) {
             onNext();
           }}>
           <UsbOutlined style={{ marginRight: '8px' }} />
-          <Text text="Connect via USB" color="black" />
+          <Text text={t('connect_via_usb')} color="black" />
         </Button>
         <Button
           preset="defaultV2"
@@ -109,7 +110,7 @@ function Step1({ onNext, setIsUSB }) {
             onNext();
           }}>
           <ScanOutlined style={{ marginRight: '8px' }} />
-          <Text text="Scan to connect" color="white" />
+          <Text text={t('scan_to_connect')} color="white" />
         </Button>
       </Content>
     </Layout>
@@ -117,6 +118,7 @@ function Step1({ onNext, setIsUSB }) {
 }
 
 function Step2({ onBack, onNext }) {
+  const { t } = useI18n();
   const onSucceed = useCallback(
     async ({ type, cbor }) => {
       onNext({ type, cbor });
@@ -125,13 +127,13 @@ function Step2({ onBack, onNext }) {
   );
   return (
     <Layout>
-      <Header title="Scan the QR Code" onBack={onBack} />
+      <Header title={t('scan_the_qr_code')} onBack={onBack} />
       <Content>
         <Column justifyCenter itemsCenter gap="xxl">
           <KeystoneLogoWithText width={160} />
-          <Text text="Scan the QR code displayed on your Keystone device" />
+          <Text text={t('scan_the_qr_code_displayed_on_your_keystone_device')} />
           <KeystoneScan onSucceed={onSucceed} size={360} />
-          <Text text="You need to allow camera access to use this feature." preset="sub" />
+          <Text text={t('you_need_to_allow_camera_access_to_use_this_featur')} preset="sub" />
         </Column>
       </Content>
     </Layout>
@@ -143,6 +145,7 @@ function StepTwoUSB({ onBack, onNext }) {
   const setIsCancelled = useCallback((value: boolean) => {
     isCancelledRef.current = value;
   }, []);
+  const { t } = useI18n();
 
   const onSucceed = useCallback(
     async ({ type, cbor }) => {
@@ -153,7 +156,7 @@ function StepTwoUSB({ onBack, onNext }) {
   return (
     <Layout>
       <Header
-        title="Connect Keystone via USB"
+        title={t('connect_keystone_via_usb')}
         onBack={() => {
           setIsCancelled(true);
           onBack();
@@ -162,7 +165,7 @@ function StepTwoUSB({ onBack, onNext }) {
       <Content>
         <Column justifyCenter itemsCenter>
           <KeystoneLogoWithText width={160} />
-          <Text text="Connect and unlock your Keystone" />
+          <Text text={t('connect_and_unlock_your_keystone')} />
           <KeystoneFetchKey onSucceed={onSucceed} isCancelledRef={isCancelledRef} size={180} />
         </Column>
       </Content>
@@ -386,14 +389,16 @@ function Step3({
     }
   };
 
+  const { t } = useI18n();
+
   return (
     <Layout>
-      <Header onBack={onBack} title="Address Type" />
+      <Header onBack={onBack} title={t('address_type')} />
       <Content>
         {!isScanned && (
           <Row justifyEnd>
             <Text
-              text="Scan in more addresses..."
+              text={t('scan_in_more_addresses')}
               preset="link"
               onClick={() => {
                 setScanned(true);
@@ -435,10 +440,10 @@ function Step3({
             // );
           })}
         </Column>
-        <Text text="Custom HdPath (Optional)" preset="bold" mt="lg" />
+        <Text text={t('custom_hdpath_optional')} preset="bold" mt="lg" />
         <Column>
           <Input
-            placeholder={'Custom HD Wallet Derivation Path'}
+            placeholder={t('custom_hdpath')}
             value={pathText}
             onChange={(e) => {
               submitCustomHdPath(e.target.value);
@@ -462,7 +467,7 @@ function Step3({
       )}
 
       <Footer>
-        <Button preset="primary" onClick={onConfirm} text="Continue" />
+        <Button preset="primary" onClick={onConfirm} text={t('continue')} />
       </Footer>
     </Layout>
   );

@@ -1,22 +1,24 @@
-import { useEffect, useState } from 'react';
-import { copyToClipboard, useWallet } from '@/ui/utils';
-import { useTools } from '@/ui/components/ActionComponent';
-import { CheckboxChangeEvent } from 'antd/lib/checkbox';
-import { Button, Card, Column, Grid, Icon, Row, Text } from '@/ui/components';
 import { Checkbox } from 'antd';
-import { fontSizes } from '@/ui/theme/font';
+import { CheckboxChangeEvent } from 'antd/lib/checkbox';
+import { useEffect, useState } from 'react';
+
+import { Button, Card, Column, Grid, Icon, Row, Text } from '@/ui/components';
+import { useTools } from '@/ui/components/ActionComponent';
 import { FooterButtonContainer } from '@/ui/components/FooterButtonContainer';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { ContextData, TabType, UpdateContextDataParams } from '@/ui/pages/Account/createHDWalletComponents/types';
+import { fontSizes } from '@/ui/theme/font';
+import { copyToClipboard, useWallet } from '@/ui/utils';
 
 export function Step1_Create({
-                        contextData,
-                        updateContextData
-                      }: {
+  contextData,
+  updateContextData
+}: {
   contextData: ContextData;
   updateContextData: (params: UpdateContextDataParams) => void;
 }) {
   const [checked, setChecked] = useState(false);
-
+  const { t } = useI18n();
   const wallet = useWallet();
   const tools = useTools();
 
@@ -39,7 +41,7 @@ export function Step1_Create({
 
   function copy(str: string) {
     copyToClipboard(str).then(() => {
-      tools.toastSuccess('Copied');
+      tools.toastSuccess(t('copied'));
     });
   }
 
@@ -52,12 +54,8 @@ export function Step1_Create({
   const words = contextData.mnemonics.split(' ');
   return (
     <Column gap="xl">
-      <Text text="Secret Recovery Phrase" preset="title-bold" textCenter />
-      <Text
-        text="This phrase is the ONLY way to recover your wallet. Do NOT share it with anyone!"
-        color="warning"
-        textCenter
-      />
+      <Text text={t('secret_recovery_phrase')} preset="title-bold" textCenter />
+      <Text text={t('this_phrase_is_the_only_way_to_recover_your_wallet')} color="warning" textCenter />
 
       <Row
         justifyCenter
@@ -65,7 +63,7 @@ export function Step1_Create({
           copy(contextData.mnemonics);
         }}>
         <Icon icon="copy" color="textDim" />
-        <Text text="Copy to clipboard" color="textDim" />
+        <Text text={t('copy_to_clipboard')} color="textDim" />
       </Row>
 
       <Row justifyCenter>
@@ -85,12 +83,12 @@ export function Step1_Create({
 
       <Row justifyCenter>
         <Checkbox onChange={onChange} checked={checked} style={{ fontSize: fontSizes.sm }}>
-          <Text text="I saved My Secret Recovery Phrase" />
+          <Text text={t('i_saved_my_secret_recovery_phrase')} />
         </Checkbox>
       </Row>
 
       <FooterButtonContainer>
-        <Button disabled={!checked} text="Continue" preset="primary" onClick={btnClick} />
+        <Button disabled={!checked} text={t('continue')} preset="primary" onClick={btnClick} />
       </FooterButtonContainer>
     </Column>
   );

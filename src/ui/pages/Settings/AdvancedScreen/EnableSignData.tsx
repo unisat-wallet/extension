@@ -3,13 +3,14 @@ import { useEffect, useState } from 'react';
 
 import { Button, Card, Column, Icon, Row, Text } from '@/ui/components';
 import { Popover } from '@/ui/components/Popover';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
 
 export function EnableSignDataCard() {
   const wallet = useWallet();
   const [enableSignData, setEnableSignData] = useState(false);
-
+  const { t } = useI18n();
   const [enableSignDataPopoverVisible, setEnableSignDataPopoverVisible] = useState(false);
 
   useEffect(() => {
@@ -26,19 +27,15 @@ export function EnableSignDataCard() {
   return (
     <Card style={{ borderRadius: 10 }}>
       <Column>
-        <Text text={'signData requests'} preset="bold" size="sm" />
+        <Text text={t('sign_data_requests')} preset="bold" size="sm" />
         <Row>
-          <Text
-            preset="sub"
-            size="sm"
-            text={`If you enable this setting, you might get signature requests that aren't readable. By signing a message you don't understand, you could be agreeing to give away your funds and NFTs.You're at risk for phishing attacks. Protect yourself by turning off signData.`}
-          />
+          <Text preset="sub" size="sm" text={t('enable_sign_data_warning')} />
         </Row>
 
         <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
 
         <Row justifyBetween>
-          <Text text={'Allow signData requests'} size="xs" />
+          <Text text={t('allow_sign_data_requests')} size="xs" />
 
           <Switch
             onChange={() => {
@@ -71,19 +68,16 @@ export function EnableSignDataCard() {
 }
 function EnableSignDataPopover({ onNext, onCancel }: { onNext: () => void; onCancel: () => void }) {
   const [understand, setUnderstand] = useState(false);
+  const { t } = useI18n();
   return (
     <Popover onClose={onCancel}>
       <Column justifyCenter itemsCenter>
-        <Text text={'Use at your own risk'} textCenter preset="title-bold" color="orange" />
+        <Text text={t('use_at_your_own_risk')} textCenter preset="title-bold" color="orange" />
 
         <Column mt="lg">
           <Column>
             <Row>
-              <Text
-                text={
-                  'Allowing signData requests can make you vulnerable to phishing attacks. Always review the URL and be careful when signing messages that contain code.'
-                }
-              />
+              <Text text={t('enable_sign_data_popover_warning')} />
             </Row>
 
             <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
@@ -91,7 +85,7 @@ function EnableSignDataPopover({ onNext, onCancel }: { onNext: () => void; onCan
             <Row style={{ backgroundColor: 'darkred', padding: 5, borderRadius: 5 }}>
               <Row>
                 <Icon icon="info" size={40} color="white" />
-                <Text text={"If you've been asked to turn this setting on, you might be getting scammed"} />
+                <Text text={t('enable_sign_data_popover_warning_2')} />
               </Row>
             </Row>
 
@@ -102,7 +96,7 @@ function EnableSignDataPopover({ onNext, onCancel }: { onNext: () => void; onCan
                     setUnderstand(!understand);
                   }}
                   checked={understand}></Checkbox>
-                <Text text={'I understand that I can lose all of my funds and NFTs if I enable signData requests.'} />
+                <Text text={t('understand_sign_data_warning')} />
               </Row>
             </Row>
           </Column>
@@ -110,7 +104,7 @@ function EnableSignDataPopover({ onNext, onCancel }: { onNext: () => void; onCan
 
         <Row full mt="lg">
           <Button
-            text="Cancel"
+            text={t('cancel')}
             full
             preset="default"
             onClick={(e) => {
@@ -120,7 +114,7 @@ function EnableSignDataPopover({ onNext, onCancel }: { onNext: () => void; onCan
             }}
           />
           <Button
-            text="Continue"
+            text={t('continue')}
             full
             disabled={!understand}
             preset="primary"

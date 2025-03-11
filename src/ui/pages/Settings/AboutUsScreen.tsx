@@ -1,11 +1,13 @@
 import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL, VERSION } from '@/shared/constant';
 import { Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useVersionInfo } from '@/ui/state/settings/hooks';
 import { spacing } from '@/ui/theme/spacing';
 
 export default function AboutUsScreen() {
   const versionInfo = useVersionInfo();
   const hasUpdate = versionInfo.latestVersion && versionInfo.latestVersion !== versionInfo.currentVesion;
+  const { t } = useI18n();
 
   return (
     <Layout>
@@ -13,7 +15,7 @@ export default function AboutUsScreen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="About Us"
+        title={t('about_us')}
       />
       <Content style={{ padding: 2 }}>
         <Column gap="lg" style={{ padding: spacing.small }}>
@@ -29,7 +31,7 @@ export default function AboutUsScreen() {
 
           {/* Version Info */}
           <Column itemsCenter>
-            <Text text={`Version: ${VERSION}`} preset="sub" color="textDim" />
+            <Text text={`${t('version')} ${VERSION}`} preset="sub" color="textDim" />
           </Column>
 
           {/* Update Status */}
@@ -49,11 +51,14 @@ export default function AboutUsScreen() {
                 }}
                 onClick={() => window.open('https://unisat.io/extension/update')}>
                 <Icon icon="arrowUp" size={14} />
-                <Text text="New Update Available" style={{ marginLeft: 3, whiteSpace: 'nowrap', color: '#EBB94C' }} />
+                <Text
+                  text={t('new_update_available')}
+                  style={{ marginLeft: 3, whiteSpace: 'nowrap', color: '#EBB94C' }}
+                />
               </Row>
             ) : (
               <Row style={{ padding: spacing.small, borderRadius: 8 }}>
-                <Text text="You're on the latest version" preset="sub" color="orange" />
+                <Text text={t('you_re_on_the_latest_version')} preset="sub" color="orange" />
               </Row>
             )}
           </Column>
@@ -79,7 +84,7 @@ export default function AboutUsScreen() {
                 }}
                 onClick={() => window.open(TERMS_OF_SERVICE_URL)}>
                 <Row style={{ justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
-                  <Text text="Terms of Service" preset="regular" size="sm" style={{ color: 'white' }} />
+                  <Text text={t('terms_of_service')} preset="regular" size="sm" style={{ color: 'white' }} />
                   <Icon icon="arrow-right" size={20} color="textDim" />
                 </Row>
               </Row>
@@ -92,7 +97,7 @@ export default function AboutUsScreen() {
                 }}
                 onClick={() => window.open(PRIVACY_POLICY_URL)}>
                 <Row style={{ justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
-                  <Text text="Privacy Policy" preset="regular" size="sm" style={{ color: 'white' }} />
+                  <Text text={t('privacy_policy')} preset="regular" size="sm" style={{ color: 'white' }} />
                   <Icon icon="arrow-right" size={20} color="textDim" />
                 </Row>
               </Row>

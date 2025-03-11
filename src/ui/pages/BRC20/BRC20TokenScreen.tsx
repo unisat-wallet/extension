@@ -9,6 +9,7 @@ import BRC20Preview from '@/ui/components/BRC20Preview';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { Empty } from '@/ui/components/Empty';
 import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useBRC20MarketPlaceWebsite, useChainType, useUnisatWebsite } from '@/ui/state/settings/hooks';
 import { useLocationState, useWallet } from '@/ui/utils';
@@ -22,6 +23,7 @@ interface LocationState {
 
 export default function BRC20TokenScreen() {
   const { ticker } = useLocationState<LocationState>();
+  const { t } = useI18n();
 
   const [tokenSummary, setTokenSummary] = useState<AddressTokenSummary>({
     tokenBalance: {
@@ -137,7 +139,7 @@ export default function BRC20TokenScreen() {
 
             <Row justifyBetween mt="lg">
               <Button
-                text="Mint"
+                text={t('mint')}
                 preset="home"
                 style={!enableMint ? { backgroundColor: 'rgba(255,255,255,0.15)' } : {}}
                 disabled={!enableMint}
@@ -149,7 +151,7 @@ export default function BRC20TokenScreen() {
               />
 
               <Button
-                text="Transfer"
+                text={t('transfer')}
                 preset="home"
                 icon="send"
                 disabled={!enableTransfer}
@@ -172,7 +174,7 @@ export default function BRC20TokenScreen() {
 
               {enableTrade ? (
                 <Button
-                  text="Trade"
+                  text={t('trade')}
                   preset="home"
                   icon="trade"
                   onClick={(e) => {
@@ -187,7 +189,7 @@ export default function BRC20TokenScreen() {
 
           <Column>
             <Column>
-              <Text text="Transferable" preset="bold" size="md" />
+              <Text text={t('transferable')} preset="bold" size="md" />
               <Row itemsCenter>
                 <Text text={`${tokenSummary.tokenBalance.transferableBalance}`} size="md" wrap digital />
                 <BRC20Ticker tick={ticker} displayName={tokenSummary.tokenBalance.displayName} />
@@ -198,7 +200,7 @@ export default function BRC20TokenScreen() {
             {deployInscription || tokenSummary.transferableList.length > 0 ? (
               <Row>
                 <Icon icon="circle-info" />
-                <Text text={'You may click on the inscription to send it directly.'} preset="sub" textCenter />
+                <Text text={t('send_inscription')} preset="sub" textCenter />
               </Row>
             ) : null}
 
@@ -209,7 +211,7 @@ export default function BRC20TokenScreen() {
                     <LoadingOutlined />
                   </Icon>
                 ) : (
-                  <Empty text="Empty" />
+                  <Empty text={t('empty')} />
                 )}
               </Column>
             )}

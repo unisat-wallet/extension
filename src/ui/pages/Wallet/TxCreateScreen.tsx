@@ -8,6 +8,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { RBFBar } from '@/ui/components/RBFBar';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useAccountBalance } from '@/ui/state/accounts/hooks';
 import { useBTCUnit, useChain, useWalletConfig } from '@/ui/state/settings/hooks';
@@ -18,6 +19,7 @@ import { fontSizes } from '@/ui/theme/font';
 import { amountToSatoshis, isValidAddress, satoshisToAmount } from '@/ui/utils';
 
 export default function TxCreateScreen() {
+  const { t } = useI18n();
   const accountBalance = useAccountBalance();
   const navigate = useNavigate();
   const bitcoinTx = useBitcoinTx();
@@ -74,12 +76,12 @@ export default function TxCreateScreen() {
       return;
     }
     if (toSatoshis < COIN_DUST) {
-      setError(`Amount must be at least ${dustAmount} ${btcUnit}`);
+      setError(`${t('amount_must_be_at_least')} ${dustAmount} ${btcUnit}`);
       return;
     }
 
     if (toSatoshis > accountBalance.availableBalance) {
-      setError('Amount exceeds your available balance');
+      setError(t('amount_exceeds_your_available_balance'));
       return;
     }
 
@@ -117,12 +119,12 @@ export default function TxCreateScreen() {
 
   const unavailableTipText = useMemo(() => {
     let tipText = '';
-    tipText += 'Includes Inscriptions, Runes, and unconfirmed UTXO assets.';
+    tipText += t('includes_inscriptions_runes_and_unconfirmed_utxos');
 
     if (walletConfig.disableUtxoTools) {
-      tipText += ' Future versions will support spending these assets.';
+      tipText += t('future_versions_will_support_spending_these_assets');
     } else {
-      tipText += ' You can unlock these assets by using the UTXO tools.';
+      tipText += t('you_can_unlock_these_assets_by_using_the_utxos_tools');
     }
     return tipText;
   }, [chain.enum]);
@@ -133,7 +135,7 @@ export default function TxCreateScreen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title={`Send ${btcUnit}`}
+        title={`${t('send')} ${btcUnit}`}
       />
       <Content style={{ padding: '0px 16px 24px' }}>
         <Row justifyCenter>
@@ -154,12 +156,12 @@ export default function TxCreateScreen() {
 
         <Column mt="lg">
           <Row justifyBetween>
-            <Text text="Transfer amount" preset="regular" />
+            <Text text={t('transfer_amount')} preset="regular" />
             <BtcUsd sats={toSatoshis} />
           </Row>
           <Input
             preset="amount"
-            placeholder={'Amount'}
+            placeholder={t('tx_amount')}
             value={inputAmount}
             onAmountInputChange={(amount) => {
               if (autoAdjust == true) {
@@ -186,7 +188,7 @@ export default function TxCreateScreen() {
               style={{
                 minHeight: 30
               }}>
-              <Text text="Available" color="gold" />
+              <Text text={t('available')} color="gold" />
               <Row>
                 <Text text={`${availableAmount}`} size="sm" color="gold" />
                 <Text text={btcUnit} size="sm" color="textDim" />
@@ -217,7 +219,7 @@ export default function TxCreateScreen() {
                   }}>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <Row itemsCenter>
-                      <Text text="Unavailable" />
+                      <Text text={t('unavailable')} />
                       <Icon icon="circle-question" color="textDim" />
                     </Row>
                   </div>
@@ -231,7 +233,7 @@ export default function TxCreateScreen() {
                   {walletConfig.disableUtxoTools ? null : (
                     <Button
                       preset="minimal"
-                      text="Unlock"
+                      text={t('unlock')}
                       onClick={() => {
                         window.open(`${chain.unisatUrl}/utils/utxo`);
                       }}
@@ -244,7 +246,7 @@ export default function TxCreateScreen() {
         </Column>
 
         <Column mt="lg">
-          <Text text="Fee" />
+          <Text text={t('fee')} />
 
           <FeeRateBar
             onChange={(val) => {
@@ -267,7 +269,7 @@ export default function TxCreateScreen() {
         <Button
           disabled={disabled}
           preset="primary"
-          text="Next"
+          text={t('next')}
           onClick={(e) => {
             navigate('TxConfirmScreen', { rawTxInfo });
           }}></Button>

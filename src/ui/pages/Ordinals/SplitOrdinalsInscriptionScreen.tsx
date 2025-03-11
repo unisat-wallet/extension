@@ -7,6 +7,7 @@ import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { OutputValueBar } from '@/ui/components/OutputValueBar';
 import { RBFBar } from '@/ui/components/RBFBar';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCreateSplitTxCallback, useOrdinalsTx } from '@/ui/state/transactions/hooks';
 import { useWallet } from '@/ui/utils';
@@ -30,7 +31,7 @@ export default function SplitOrdinalsInscriptionScreen() {
   const [feeRate, setFeeRate] = useState(5);
   const [enableRBF, setEnableRBF] = useState(false);
   const defaultOutputValue = inscription ? inscription.outputValue : 10000;
-
+  const { t } = useI18n();
   const account = useCurrentAccount();
   const minOutputValue = getAddressUtxoDust(account.address);
   const [outputValue, setOutputValue] = useState(defaultOutputValue);
@@ -53,7 +54,7 @@ export default function SplitOrdinalsInscriptionScreen() {
     setSplitedCount(0);
 
     if (feeRate <= 0) {
-      setError('Invalid fee rate');
+      setError(t('invalid_fee_rate'));
       return;
     }
 
@@ -62,7 +63,7 @@ export default function SplitOrdinalsInscriptionScreen() {
     }
 
     if (outputValue < minOutputValue) {
-      setError(`OutputValue must be at least ${minOutputValue}`);
+      setError(`${t('output_value_must_be_at_least')} ${minOutputValue}`);
       return;
     }
 
@@ -90,18 +91,12 @@ export default function SplitOrdinalsInscriptionScreen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Split Inscriptions"
+        title={t('split_inscriptions')}
       />
       <Content>
-        <Text
-          color="red"
-          textCenter
-          text={
-            'This feature is currently under experimentation. Please confirm the inscription splitting status of the transaction when signing the transaction.'
-          }
-        />
+        <Text color="red" textCenter text={t('split_inscription_tips')} />
         <Column>
-          <Text text={`Inscriptions (${inscriptions.length})`} color="textDim" />
+          <Text text={`${t('inscriptions')} (${inscriptions.length})`} color="textDim" />
           <Row justifyBetween>
             <Row overflowX gap="lg" pb="md">
               {inscriptions.map((v) => (
@@ -110,7 +105,7 @@ export default function SplitOrdinalsInscriptionScreen() {
             </Row>
           </Row>
 
-          <Text text="Each OutputValue" color="textDim" />
+          <Text text={t('each_output_value')} color="textDim" />
 
           <OutputValueBar
             defaultValue={minOutputValue}
@@ -120,7 +115,7 @@ export default function SplitOrdinalsInscriptionScreen() {
             }}
           />
           <Column mt="lg">
-            <Text text="Fee" color="textDim" />
+            <Text text={t('fee')} color="textDim" />
             <FeeRateBar
               onChange={(val) => {
                 setFeeRate(val);
@@ -139,13 +134,13 @@ export default function SplitOrdinalsInscriptionScreen() {
           {error && <Text text={error} color="error" />}
 
           {inscriptions.length > 1 && splitedCount > 0 && (
-            <Text text={`Spliting to ${splitedCount} UTXO`} color="primary" />
+            <Text text={`${t('spliting_to')} ${splitedCount} ${t('utxos')}`} color="primary" />
           )}
 
           <Button
             disabled={disabled}
             preset="primary"
-            text="Next"
+            text={t('next')}
             onClick={(e) => {
               navigate('SignOrdinalsTransactionScreen', { rawTxInfo });
             }}

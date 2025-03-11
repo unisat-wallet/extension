@@ -8,6 +8,7 @@ import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { OutputValueBar } from '@/ui/components/OutputValueBar';
 import { RBFBar } from '@/ui/components/RBFBar';
+import { useI18n } from '@/ui/hooks/useI18n';
 import {
   useFetchUtxosCallback,
   useOrdinalsTx,
@@ -31,6 +32,7 @@ export default function SendOrdinalsInscriptionScreen() {
     address: ordinalsTx.toAddress,
     domain: ordinalsTx.toDomain
   });
+  const { t } = useI18n();
 
   const fetchBtcUtxos = useFetchUtxosCallback();
   const tools = useTools();
@@ -73,7 +75,7 @@ export default function SendOrdinalsInscriptionScreen() {
     setError('');
 
     if (feeRate <= 0) {
-      setError('Invalid fee rate');
+      setError(t('invalid_fee_rate'));
       return;
     }
 
@@ -93,7 +95,7 @@ export default function SendOrdinalsInscriptionScreen() {
     const minOutputValue = Math.max(maxOffset + 1, dustUtxo);
 
     if (outputValue < minOutputValue) {
-      setError(`OutputValue must be at least ${minOutputValue}`);
+      setError(`${t('output_value_must_be_at_least')} ${minOutputValue}`);
       return;
     }
 
@@ -139,11 +141,11 @@ export default function SendOrdinalsInscriptionScreen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Send Inscription"
+        title={t('send_inscription2')}
       />
       <Content>
         <Column>
-          <Text text={`Ordinals Inscriptions (${inscriptions.length})`} color="textDim" />
+          <Text text={`${t('ordinals_inscriptions')} (${inscriptions.length})`} color="textDim" />
           <Row justifyBetween>
             <Row overflowX gap="md" pb="md">
               {inscriptions.map((v) => (
@@ -159,12 +161,12 @@ export default function SendOrdinalsInscriptionScreen() {
             onAddressInputChange={(val) => {
               setToInfo(val);
             }}
-            recipientLabel={<Text text="Recipient" color="textDim" />}
+            recipientLabel={<Text text={t('recipient')} color="textDim" />}
           />
 
           {toInfo.address ? (
             <Column mt="lg">
-              <Text text="OutputValue" color="textDim" />
+              <Text text={t('output_value')} color="textDim" />
 
               <OutputValueBar
                 defaultValue={Math.max(defaultOutputValue, 546)}
@@ -177,7 +179,7 @@ export default function SendOrdinalsInscriptionScreen() {
           ) : null}
 
           <Column mt="lg">
-            <Text text="Fee" color="textDim" />
+            <Text text={t('fee')} color="textDim" />
 
             <FeeRateBar
               onChange={(val) => {
@@ -198,7 +200,7 @@ export default function SendOrdinalsInscriptionScreen() {
           <Button
             disabled={disabled}
             preset="primary"
-            text="Next"
+            text={t('next')}
             onClick={(e) => {
               navigate('SignOrdinalsTransactionScreen', { rawTxInfo });
             }}

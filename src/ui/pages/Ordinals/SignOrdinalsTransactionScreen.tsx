@@ -1,3 +1,4 @@
+import { t } from '@/shared/modules/i18n';
 import { RawTxInfo, TxType } from '@/shared/types';
 import { Header } from '@/ui/components';
 import { usePushOrdinalsTxCallback } from '@/ui/state/transactions/hooks';
@@ -52,7 +53,7 @@ export default function SignOrdinalsTransactionScreen() {
           } else if (rawTxInfo.rawtx) {
             rawtx = rawTxInfo.rawtx;
           } else {
-            throw new Error('Invalid transaction data');
+            throw new Error(t('invalid_transaction_data'));
           }
 
           const { success, txid, error } = await pushOrdinalsTx(rawtx);

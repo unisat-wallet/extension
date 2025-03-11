@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useChain } from '@/ui/state/settings/hooks';
@@ -21,6 +22,7 @@ import { Text } from '../Text';
 
 export const MergeBTCPopover = ({ onClose }: { onClose: () => void }) => {
   const prepareSendBTC = usePrepareSendBTCCallback();
+  const { t } = useI18n();
 
   const currentAccount = useCurrentAccount();
 
@@ -58,16 +60,18 @@ export const MergeBTCPopover = ({ onClose }: { onClose: () => void }) => {
     <Popover onClose={onClose}>
       <Column justifyCenter itemsCenter>
         <Column mt="lg">
-          <Text preset="bold" text={`Merge ${chain.unit} UTXOs`} textCenter />
+          <Text preset="bold" text={`${t('merge_utxos1')} ${chain.unit} UTXOs`} textCenter />
         </Column>
 
         <Column style={{ marginTop: 8 }} mx="md">
           <Text
             preset="regular"
-            text={`Your ${chain.unit} balance have to be merged.This process will merge your UTXOs into one.`}
+            text={`${t('your_balance_have_to_be_merged')} ${chain.unit} ${t(
+              'this_process_will_merge_your_utxos_into_one'
+            )}`}
           />
-          <Text preset="regular" text={`Merging UTXOs: ${safeUTXOs.length}`} />
-          <Text preset="regular" text={`Merging Amount: ${safeBalance} ${chain.unit} `} />
+          <Text preset="regular" text={`${t('merging_utxos')}: ${safeUTXOs.length}`} />
+          <Text preset="regular" text={`${t('merging_amount')}: ${safeBalance} ${chain.unit} `} />
         </Column>
 
         <FeeRateBar
@@ -78,7 +82,7 @@ export const MergeBTCPopover = ({ onClose }: { onClose: () => void }) => {
 
         <Row full mt="lg">
           <Button
-            text="Cancel"
+            text={t('cancel')}
             full
             onClick={(e) => {
               if (onClose) {
@@ -88,7 +92,7 @@ export const MergeBTCPopover = ({ onClose }: { onClose: () => void }) => {
           />
 
           <Button
-            text="Confirm"
+            text={t('confirm')}
             full
             preset="primary"
             onClick={(e) => {

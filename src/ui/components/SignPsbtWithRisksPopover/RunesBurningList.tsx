@@ -2,6 +2,7 @@ import BigNumber from 'bignumber.js';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { DecodedPsbt } from '@/shared/types';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 
 import { Column } from '../Column';
@@ -19,6 +20,8 @@ export const RunesBurningList = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
       spacedRune: string;
     };
   } = {};
+
+  const { t } = useI18n();
 
   decodedPsbt.inputInfos.forEach((inputInfo) => {
     (inputInfo.runes || []).forEach((balance) => {
@@ -88,7 +91,7 @@ export const RunesBurningList = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
       <Column justifyCenter itemsCenter>
         <Row fullX justifyBetween>
           <Row />
-          <Text text="Runes Burn Risk List" preset="bold" />
+          <Text text={t('runes_burn_risk_list')} preset="bold" />
           <Icon
             icon="close"
             onClick={() => {

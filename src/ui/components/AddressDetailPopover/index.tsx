@@ -1,3 +1,4 @@
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useAddressExplorerUrl } from '@/ui/state/settings/hooks';
 import { copyToClipboard, shortAddress } from '@/ui/utils';
 
@@ -12,6 +13,7 @@ import { Text } from '../Text';
 export const AddressDetailPopover = ({ address, onClose }: { address: string; onClose: () => void }) => {
   const tools = useTools();
   const addressExplorerUrl = useAddressExplorerUrl(address);
+  const { t } = useI18n();
   return (
     <Popover onClose={onClose}>
       <Column>
@@ -20,7 +22,7 @@ export const AddressDetailPopover = ({ address, onClose }: { address: string; on
           preset="style2"
           onClick={(e) => {
             copyToClipboard(address).then(() => {
-              tools.toastSuccess('Copied');
+              tools.toastSuccess(t('copied'));
             });
           }}>
           <Row itemsCenter>
@@ -40,7 +42,7 @@ export const AddressDetailPopover = ({ address, onClose }: { address: string; on
             window.open(addressExplorerUrl);
           }}>
           <Icon icon="eye" color="textDim" />
-          <Text preset="regular-bold" text="View on Block Explorer" color="textDim" />
+          <Text preset="regular-bold" text={t('view_on_block_explorer')} color="textDim" />
         </Row>
       </Column>
     </Popover>

@@ -8,6 +8,7 @@ import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { Line } from '@/ui/components/Line';
 import { Section } from '@/ui/components/Section';
 import { Tabs } from '@/ui/components/Tabs';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useTxExplorerUrl } from '@/ui/state/settings/hooks';
@@ -38,6 +39,8 @@ export default function OrdinalsInscriptionScreen() {
   const currentAccount = useCurrentAccount();
 
   const dispatch = useAppDispatch();
+
+  const { t } = useI18n();
 
   const [isNeedToSplit, setIsNeedToSplit] = useState(false);
   const [isMultiStuck, setIsMultiStuck] = useState(false);
@@ -113,7 +116,7 @@ export default function OrdinalsInscriptionScreen() {
         />
         <Content>
           <Column>
-            <Text text="Inscription not found" preset="title-bold" textCenter />
+            <Text text={t('inscription_not_found')} preset="title-bold" textCenter />
           </Column>
         </Content>
       </Layout>
@@ -142,7 +145,7 @@ export default function OrdinalsInscriptionScreen() {
         />
         <Content>
           <Column>
-            <Text text="Failed to load inscription" preset="title-bold" textCenter />
+            <Text text={t('failed_to_load_inscription')} preset="title-bold" textCenter />
           </Column>
         </Content>
       </Layout>
@@ -169,7 +172,11 @@ export default function OrdinalsInscriptionScreen() {
       <Content>
         <Column>
           <Text
-            text={isUnconfirmed ? 'Inscription (not confirmed yet)' : `Inscription ${inscription.inscriptionNumber}`}
+            text={
+              isUnconfirmed
+                ? t('inscription_not_confirmed_yet')
+                : `${t('inscription')} ${inscription.inscriptionNumber}`
+            }
             preset="title-bold"
             textCenter
           />
@@ -182,7 +189,7 @@ export default function OrdinalsInscriptionScreen() {
               <Icon size={fontSizes.lg} color="gold">
                 <LoadingOutlined />
               </Icon>
-              <Text text="Loading details..." color="white_muted" />
+              <Text text={t('loading_details')} color="white_muted" />
             </Row>
           )}
 
@@ -190,7 +197,7 @@ export default function OrdinalsInscriptionScreen() {
             <Row fullX>
               {isNeedToSplit && (
                 <Button
-                  text="Split"
+                  text={t('split')}
                   icon="split"
                   preset="default"
                   full
@@ -202,7 +209,7 @@ export default function OrdinalsInscriptionScreen() {
               )}
               {
                 <Button
-                  text="Send"
+                  text={t('send')}
                   icon="send"
                   preset="default"
                   full
@@ -220,13 +227,13 @@ export default function OrdinalsInscriptionScreen() {
               <Text
                 color="warning"
                 textCenter
-                text={'Multiple inscriptions are mixed together. You can split them first or send them once.'}
+                text={t('multiple_inscriptions_are_mixed_together_you_can_split_them_first_or_send_them_once')}
               />
             ) : (
               <Text
                 color="warning"
                 textCenter
-                text={`This inscription carries a high balance! (>${HIGH_BALANCE} sats)`}
+                text={`${t('this_inscription_carries_a_high_balance')}(>${HIGH_BALANCE} sats)`}
               />
             ))}
         </Column>
@@ -238,12 +245,12 @@ export default function OrdinalsInscriptionScreen() {
             items={[
               {
                 key: TabKey.DETAILS,
-                label: 'Details',
+                label: t('details'),
                 children: <Details inscription={inscription} isLoading={isLoadingDetails} />
               },
               {
                 key: TabKey.PROVENANCE,
-                label: 'Provenance',
+                label: t('provenance'),
                 children: <Provenance inscription={inscription} />
               }
             ]}
@@ -264,6 +271,7 @@ function Details({ inscription, isLoading }: { inscription: Inscription; isLoadi
   const date = moment(inscription.timestamp * 1000).format('YYYY-MM-DD hh:mm:ss');
 
   const genesisTxUrl = useTxExplorerUrl(inscription.genesisTransaction);
+  const { t } = useI18n();
 
   return (
     <Column
@@ -274,23 +282,27 @@ function Details({ inscription, isLoading }: { inscription: Inscription; isLoadi
         backgroundColor: 'rgba(255,255,255,0.08)',
         borderRadius: 15
       }}>
-      <Section title="id" value={inscription.inscriptionId} />
+      <Section title={t('inscription_id')} value={inscription.inscriptionId} />
       <Line />
-      <Section title="address" value={inscription.address} />
+      <Section title={t('inscription_address')} value={inscription.address} />
       <Line />
-      <Section title="output value" value={inscription.outputValue} />
+      <Section title={t('inscription_output_value')} value={inscription.outputValue} />
       <Line />
-      <Section title="preview" value={inscription.preview} link={inscription.preview} />
+      <Section title={t('inscription_preview')} value={inscription.preview} link={inscription.preview} />
       <Line />
-      <Section title="content" value={inscription.content} link={inscription.content} />
+      <Section title={t('inscription_content')} value={inscription.content} link={inscription.content} />
       <Line />
-      <Section title="content length" value={inscription.contentLength} />
+      <Section title={t('inscription_content_length')} value={inscription.contentLength} />
       <Line />
-      <Section title="content type" value={inscription.contentType} />
+      <Section title={t('inscription_content_type')} value={inscription.contentType} />
       <Line />
-      <Section title="timestamp" value={isUnconfirmed ? 'unconfirmed' : date} />
+      <Section title={t('inscription_timestamp')} value={isUnconfirmed ? t('unconfirmed') : date} />
       <Line />
-      <Section title="genesis transaction" value={inscription.genesisTransaction} link={genesisTxUrl} />
+      <Section
+        title={t('inscription_genesis_transaction')}
+        value={inscription.genesisTransaction}
+        link={genesisTxUrl}
+      />
     </Column>
   );
 }

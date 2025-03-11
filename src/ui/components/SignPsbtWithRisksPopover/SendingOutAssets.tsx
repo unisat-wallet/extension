@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js';
 
 import { DecodedPsbt, Inscription } from '@/shared/types';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { colors } from '@/ui/theme/colors';
 
@@ -13,6 +14,8 @@ import { Text } from '../Text';
 
 export const SendingOutAssets = ({ decodedPsbt, onClose }: { decodedPsbt: DecodedPsbt; onClose: () => void }) => {
   const currentAccount = useCurrentAccount();
+  const { t } = useI18n();
+
   const inscriptionMap: {
     [key: string]: {
       data: Inscription;
@@ -133,7 +136,7 @@ export const SendingOutAssets = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
       <Column justifyCenter itemsCenter>
         <Row fullX justifyBetween>
           <Row />
-          <Text text="Sending Out Assets" preset="bold" />
+          <Text text={t('sending_out_assets')} preset="bold" />
           <Icon
             icon="close"
             onClick={() => {
@@ -145,7 +148,7 @@ export const SendingOutAssets = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
         <Row fullX style={{ borderBottomWidth: 1, borderColor: colors.border }} />
         {inscriptions.length > 0 ? (
           <Column fullX>
-            <Text text={'Inscriptions:'}></Text>
+            <Text text={`${t('inscriptions')}:`}></Text>
             <Row
               justifyBetween
               fullX
@@ -169,7 +172,7 @@ export const SendingOutAssets = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
 
         {arc20List.length > 0 ? (
           <Column fullX>
-            <Text text={'ARC20:'} mt="md"></Text>
+            <Text text={`${t('arc20')}:`} mt="md"></Text>
             {arc20List.map((burn, index) => {
               return (
                 <Row
@@ -197,7 +200,7 @@ export const SendingOutAssets = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
 
         {brc20List.length > 0 ? (
           <Column fullX>
-            <Text text={'BRC20:'} mt="md"></Text>
+            <Text text={'brc20:'} mt="md"></Text>
             {brc20List.map((burn, index) => {
               return (
                 <Row

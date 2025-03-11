@@ -1,6 +1,7 @@
 import { Column, Row } from '@/ui/components';
 import { Empty } from '@/ui/components/Empty';
 import { TabBar } from '@/ui/components/TabBar';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useAddressSummary } from '@/ui/state/accounts/hooks';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useAtomicalsAssetTabKey } from '@/ui/state/ui/hooks';
@@ -11,24 +12,26 @@ import { AtomicalList } from './AtomicalsList';
 
 export function AtomicalsTab() {
   const addressSummary = useAddressSummary();
+  const { t } = useI18n();
+
   const tabItems = [
     {
       key: AtomicalsAssetTabKey.ALL,
-      label: `ALL (${addressSummary.atomicalsCount})`,
+      label: `${t('all')} (${addressSummary.atomicalsCount})`,
       children: <AtomicalList />,
       hidden: true
     },
     {
       key: AtomicalsAssetTabKey.ARC20,
-      label: `ARC-20 (${addressSummary.arc20Count})`,
+      label: `${t('arc20')} (${addressSummary.arc20Count})`,
       children: <Arc20List />
     },
     {
       key: AtomicalsAssetTabKey.OTHERS,
-      label: `Others`,
+      label: `${t('others')}`,
       children: (
         <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
-          <Empty text="Not supported yet" />
+          <Empty text={t('not_supported_yet')} />
         </Column>
       )
     }

@@ -1,5 +1,6 @@
 import { useEffect, useState } from 'react';
 
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useChainType } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
@@ -18,7 +19,7 @@ enum FeeRateType {
   CUSTOM
 }
 
-const FEE_TITLES = ['Low Priority', 'Medium Priority', 'High Priority'];
+const FEE_TITLES = ['low_priority', 'medium_priority', 'high_priority'];
 
 interface FeeOption {
   title: string;
@@ -77,13 +78,14 @@ export function FeeRateIcon() {
 }
 
 function FeeOptionsPopover({ feeOptions, onClose }: { feeOptions: FeeOption[]; onClose: () => void }) {
+  const { t } = useI18n();
   return (
     <Popover onClose={onClose}>
       <Column>
         <Row
           justifyCenter
           style={{ borderBottomWidth: 1, borderColor: colors.border, marginBottom: 10, paddingBottom: 10 }}>
-          <Text text={'Network Fee'} preset="bold" />
+          <Text text={t('network_fee')} preset="bold" />
         </Row>
         {feeOptions.map((v, i) => {
           return (
@@ -101,7 +103,7 @@ function FeeOptionsPopover({ feeOptions, onClose }: { feeOptions: FeeOption[]; o
               }}>
               <Row justifyBetween full itemsCenter>
                 <Column>
-                  <Text color={'textDim'} size="sm" text={FEE_TITLES[i] || v.title}></Text>
+                  <Text color={'textDim'} size="sm" text={t(FEE_TITLES[i] || v.title)}></Text>
                 </Column>
 
                 <Row>

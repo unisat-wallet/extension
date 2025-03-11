@@ -6,6 +6,7 @@ import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/
 import { useTools } from '@/ui/components/ActionComponent';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { RBFBar } from '@/ui/components/RBFBar';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import {
   useAtomicalsTx,
@@ -22,6 +23,7 @@ export default function SendArc20Screen() {
   const props = state as {
     arc20Balance: Arc20Balance;
   };
+  const { t } = useI18n();
 
   const arc20Balance = props.arc20Balance;
 
@@ -92,7 +94,7 @@ export default function SendArc20Screen() {
     }
 
     if (parseInt(inputAmount) < dustUtxo) {
-      setError(`The minimum amount is ${dustUtxo}`);
+      setError(`${t('the_minimum_amount_is')} ${dustUtxo}`);
       return;
     }
 
@@ -132,7 +134,7 @@ export default function SendArc20Screen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Send ARC-20"
+        title={t('send_arc20')}
       />
       <Content>
         <Row justifyCenter>
@@ -152,25 +154,25 @@ export default function SendArc20Screen() {
               setToInfo(val);
             }}
             autoFocus={true}
-            recipientLabel={<Text text="Recipient" preset="regular" color="textDim" />}
+            recipientLabel={<Text text={t('recipient')} preset="regular" color="textDim" />}
           />
         </Column>
 
         <Column mt="lg">
           <Row justifyBetween>
-            <Text text="Balance" color="textDim" />
+            <Text text={t('balance')} color="textDim" />
             <Row
               itemsCenter
               onClick={() => {
                 setInputAmount(arc20AvailableBalance.toString());
               }}>
-              <Text text="MAX" preset="sub" style={{ color: colors.white_muted }} />
+              <Text text={t('max')} preset="sub" style={{ color: colors.white_muted }} />
               <Text text={`${showLongNumber(arc20AvailableBalance)} ${arc20Balance.ticker}`} preset="bold" size="sm" />
             </Row>
           </Row>
           <Input
             preset="amount"
-            placeholder={'Amount'}
+            placeholder={t('amount')}
             value={inputAmount.toString()}
             onAmountInputChange={(amount) => {
               setInputAmount(amount);
@@ -179,7 +181,7 @@ export default function SendArc20Screen() {
         </Column>
 
         <Column mt="lg">
-          <Text text="Fee" color="textDim" />
+          <Text text={t('fee')} color="textDim" />
 
           <FeeRateBar
             onChange={(val) => {
@@ -201,7 +203,7 @@ export default function SendArc20Screen() {
         <Button
           disabled={disabled}
           preset="primary"
-          text="Next"
+          text={t('next')}
           onClick={(e) => {
             navigate('TxConfirmScreen', { rawTxInfo });
           }}></Button>

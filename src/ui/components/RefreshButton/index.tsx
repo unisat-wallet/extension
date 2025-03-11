@@ -1,5 +1,6 @@
 import { ReactEventHandler, useState } from 'react';
 
+import { useI18n } from '@/ui/hooks/useI18n';
 import { ReloadOutlined } from '@ant-design/icons';
 
 import { Row } from '../Row';
@@ -18,6 +19,7 @@ export function RefreshButton({ onClick }: { onClick: ReactEventHandler<HTMLDivE
     }
     setDisabled(false);
   };
+  const { t } = useI18n();
 
   return (
     <Row
@@ -32,7 +34,7 @@ export function RefreshButton({ onClick }: { onClick: ReactEventHandler<HTMLDivE
         onClick(e);
       }}>
       <ReloadOutlined style={{ fontSize: 12 }} />
-      <Text text={disabled ? `${leftTime} secs` : 'refresh'} color="white" size="sm" textCenter />
+      <Text text={disabled ? `${leftTime} ${t('secs')}` : t('refresh')} color="white" size="sm" textCenter />
     </Row>
   );
 }

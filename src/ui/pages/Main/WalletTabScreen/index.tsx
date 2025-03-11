@@ -14,6 +14,7 @@ import { SwitchNetworkBar } from '@/ui/components/SwitchNetworkBar';
 import { Tabs } from '@/ui/components/Tabs';
 import { VersionNotice } from '@/ui/components/VersionNotice';
 import { getCurrentTab } from '@/ui/features/browser/tabs';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useAccountBalance, useAddressSummary, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
@@ -41,6 +42,7 @@ import { WalletActions } from './components/WalletActions';
 const STORAGE_VERSION_KEY = 'version_detail';
 
 export default function WalletTabScreen() {
+  const { t } = useI18n();
   const navigate = useNavigate();
 
   const accountBalance = useAccountBalance();
@@ -54,7 +56,6 @@ export default function WalletTabScreen() {
 
   const wallet = useWallet();
   const [connected, setConnected] = useState(false);
-
   const dispatch = useAppDispatch();
   const assetTabKey = useAssetTabKey();
 
@@ -140,28 +141,28 @@ export default function WalletTabScreen() {
     if (supportedAssets.assets.ordinals) {
       items.push({
         key: AssetTabKey.ORDINALS,
-        label: 'Ordinals',
+        label: t('ordinals'),
         children: <OrdinalsTab />
       });
     }
     if (supportedAssets.assets.atomicals) {
       items.push({
         key: AssetTabKey.ATOMICALS,
-        label: 'Atomicals',
+        label: t('atomicals'),
         children: <AtomicalsTab />
       });
     }
     if (supportedAssets.assets.runes) {
       items.push({
         key: AssetTabKey.RUNES,
-        label: 'Runes',
+        label: t('runes'),
         children: <RunesList />
       });
     }
     if (supportedAssets.assets.CAT20) {
       items.push({
         key: AssetTabKey.CAT,
-        label: 'CAT',
+        label: t('cat'),
         children: <CATTab />
       });
     }

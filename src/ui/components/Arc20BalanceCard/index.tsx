@@ -31,7 +31,7 @@ export default function Arc20BalanceCard(props: Arc2020BalanceCardProps) {
           </Column>
 
           <Row itemsCenter fullY gap="zero">
-            <Text text={balance} size="xs" digital/>
+            <Text text={balance} size="xs" digital />
           </Row>
         </Row>
       </Column>

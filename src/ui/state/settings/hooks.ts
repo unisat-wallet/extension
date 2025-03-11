@@ -3,6 +3,7 @@ import { useCallback } from 'react';
 
 import { CHAINS_MAP, ChainType, VERSION } from '@/shared/constant';
 import { BABYLON_CONFIG_MAP } from '@/shared/constant/babylon';
+import { t } from '@/shared/modules/i18n';
 import { AddressType, NetworkType } from '@/shared/types';
 import { useWallet } from '@/ui/utils';
 import i18n, { addResourceBundle } from '@/ui/utils/i18n';
@@ -210,10 +211,8 @@ export function getAddressTips(address: string, chanEnum: ChainType) {
     const addressType = getAddressType(address, chain.networkType);
     if (chain.isFractal && addressType === AddressType.P2PKH) {
       ret = {
-        homeTip:
-          '⚠️  It is not recommended to use legacy addresses, as they may lead to higher transaction fees or the unintended lock-up of CAT20 balances.',
-        sendTip:
-          '⚠️  It is not recommended to send transactions to legacy addresses, as this may result in the unintended spending of CAT20 balances.'
+        homeTip: t('legacy_address_warning_3'),
+        sendTip: t('legacy_address_warning_4')
       };
     }
   } catch (e) {

@@ -1,0 +1,2055 @@
+{
+  "appName": { "message": "UniSat Wallet" },
+  "appDescription": {
+    "message": "世界初のオープンソースOrdinals ChromeウォレットでインスクリプションをInscribeして保存しましょう！"
+  },
+  "receive": {
+    "message": "受信"
+  },
+  "total_balance": {
+    "message": "総残高"
+  },
+  "enter_your_password": {
+    "message": "パスワードを入力してください"
+  },
+  "enter": {
+    "message": "入力"
+  },
+  "to_continue": {
+    "message": "続けるには"
+  },
+  "ordinals": {
+    "message": "Ordinals"
+  },
+  "atomicals": {
+    "message": "Atomicals"
+  },
+  "runes": {
+    "message": "Runes"
+  },
+  "cat": {
+    "message": "CAT"
+  },
+  "payment_sent": {
+    "message": "支払い送信完了"
+  },
+  "your_transaction_has_been_successfully_sent": {
+    "message": "トランザクションは正常に送信されました"
+  },
+  "view_on_block_explorer": {
+    "message": "ブロックエクスプローラーで表示"
+  },
+  "view": {
+    "message": "表示"
+  },
+  "signed": {
+    "message": "署名済み"
+  },
+  "reject_all": {
+    "message": "すべて拒否"
+  },
+  "submit": {
+    "message": "送信"
+  },
+  "done": {
+    "message": "完了"
+  },
+  "payment_failed": {
+    "message": "支払い失敗"
+  },
+  "recipient": {
+    "message": "受信者"
+  },
+  "transfer_amount": {
+    "message": "転送額"
+  },
+  "amount": {
+    "message": "金額"
+  },
+  "calculating": {
+    "message": "計算中..."
+  },
+  "available": {
+    "message": "利用可能"
+  },
+  "unavailable": {
+    "message": "利用不可"
+  },
+  "unlock": {
+    "message": "アンロック"
+  },
+  "fee": {
+    "message": "手数料"
+  },
+  "next": {
+    "message": "次へ"
+  },
+  "this_account_has_no_transactions": {
+    "message": "このアカウントにはトランザクションがありません"
+  },
+  "transaction_details": {
+    "message": "トランザクション詳細"
+  },
+  "cosmos_sign_demo": {
+    "message": "Cosmos署名デモ"
+  },
+  "test_approval_sign_psbt": {
+    "message": "PSBT署名承認テスト"
+  },
+  "hello": {
+    "message": "こんにちは"
+  },
+  "world": {
+    "message": "世界"
+  },
+  "native_segwit_p2wpkh": {
+    "message": "Native Segwit (P2WPKH)"
+  },
+  "nested_segwit_p2shp2wpkh": {
+    "message": "Nested Segwit (P2SH-P2WPKH)"
+  },
+  "taproot_p2tr": {
+    "message": "Taproot (P2TR)"
+  },
+  "legacy_p2pkh": {
+    "message": "Legacy (P2PKH)"
+  },
+  "function_not_implemented": {
+    "message": "機能が実装されていません。"
+  },
+  "this_is_a_cosmos_signature_demo_page": {
+    "message": "これはCosmos署名のデモページです"
+  },
+  "click_the_button_below_to_start_the_signature_proc": {
+    "message": "下のボタンをクリックして署名プロセスを開始してください"
+  },
+  "start_cosmos_sign": {
+    "message": "COSMOS署名を開始"
+  },
+  "sign_result": {
+    "message": "署名結果:"
+  },
+  "back": {
+    "message": "戻る"
+  },
+  "cosmos_signature_demo": {
+    "message": "Cosmos署名デモ"
+  },
+  "cosmos_sign_success": {
+    "message": "Cosmos署名成功"
+  },
+  "ok": {
+    "message": "OK"
+  },
+  "select_network": {
+    "message": "ネットワークを選択"
+  },
+  "this_network_is_not_available": {
+    "message": "このネットワークは利用できません"
+  },
+  "if_you_lose_your_private_key_your_assets_will_be_g": {
+    "message": "秘密鍵を紛失すると、資産は失われます！"
+  },
+  "if_you_share_the_private_key_to_others_your_assets": {
+    "message": "秘密鍵を他人に共有すると、資産が盗まれます！"
+  },
+  "private_key_is_only_stored_in_your_browser_it_is_y": {
+    "message": "秘密鍵を安全に保管するのはあなたの責任です！"
+  },
+  "please_make_sure_you_have_read_the_security_tips_a": {
+    "message": "パスワードを入力する前に、上記のセキュリティに関するヒントを読んだことを確認してください"
+  },
+  "show_private_key": {
+    "message": "秘密鍵を表示"
+  },
+  "if_you_ever_change_browsers_or_move_computers_you_": {
+    "message": "ブラウザを変更したり、コンピューターを移動したりする場合、このアカウントにアクセスするにはこの秘密鍵が必要です。安全で秘密の場所に保存してください"
+  },
+  "changed_to_network": {
+    "message": "ネットワークを"
+  },
+  "wif_private_key": {
+    "message": "WIF秘密鍵:"
+  },
+  "wif_private_key_or_hex_private_key": {
+    "message": "WIF秘密鍵またはHex秘密鍵"
+  },
+  "create_single_wallet": {
+    "message": "単一ウォレットを作成"
+  },
+  "hex_private_key": {
+    "message": "Hex秘密鍵:"
+  },
+  "copied": {
+    "message": "コピーしました"
+  },
+  "if_you_lose_your_secret_recovery_phrase_your_asset": {
+    "message": "シークレットリカバリーフレーズを紛失すると、資産は失われます！"
+  },
+  "if_you_share_the_secret_recovery_phrase_to_others_": {
+    "message": "シークレットリカバリーフレーズを他人に共有すると、資産が盗まれます！"
+  },
+  "secret_recovery_phrase_is_only_stored_in_your_brow": {
+    "message": "シークレットリカバリーフレーズを安全に保管するのはあなたの責任です！"
+  },
+  "show_secret_recovery_phrase": {
+    "message": "シークレットリカバリーフレーズを表示"
+  },
+  "create_a_new_wallet": {
+    "message": "新しいウォレットを作成"
+  },
+  "this_phrase_is_the_only_way_to_recover_your_wallet": {
+    "message": "このフレーズはウォレットを回復する唯一の方法です。誰とも共有しないでください！（クリックしてコピー）"
+  },
+  "copy_to_clipboard": {
+    "message": "クリップボードにコピー"
+  },
+  "advance_options": {
+    "message": "詳細オプション"
+  },
+  "switch_wallet": {
+    "message": "ウォレットを切り替え"
+  },
+  "derivation_path": {
+    "message": "導出パス"
+  },
+  "passphrase": {
+    "message": "パスフレーズ"
+  },
+  "change_wallet_name": {
+    "message": "ウォレット名を変更"
+  },
+  "change_account_name": {
+    "message": "アカウント名を変更"
+  },
+  "password": {
+    "message": "パスワード"
+  },
+  "change_password": {
+    "message": "パスワードを変更"
+  },
+  "current_password": {
+    "message": "現在のパスワード"
+  },
+  "new_password": {
+    "message": "新しいパスワード"
+  },
+  "confirm_password": {
+    "message": "パスワードを確認"
+  },
+  "connected_sites": {
+    "message": "接続済みサイト"
+  },
+  "user_rejected_the_request": {
+    "message": "ユーザーがリクエストを拒否しました。"
+  },
+  "success": {
+    "message": "成功"
+  },
+  "new_account": {
+    "message": "新しいアカウント"
+  },
+  "address_type_changed": {
+    "message": "アドレスタイプが変更されました"
+  },
+  "enable_unconfirmed_balance": {
+    "message": "未確認残高を有効にする"
+  },
+  "enable_unconfirmed_balance_warning": {
+    "message": "指定されたアドレスに Runes アセットが存在する場合、未確認の UTXO は確認されるまで使用できません。未確認の UTXO を強制的に使用すると、アセットを失うリスクがあります。"
+  },
+  "allow_using_unconfirmed_balance": {
+    "message": "未確認残高の使用を許可する"
+  },
+  "is_unconfirmed_please_wait_for_confirmation": {
+    "message": "は未確認です。確認をお待ちください"
+  },
+  "unconfirmed": {
+    "message": "未確認"
+  },
+  "low": {
+    "message": "低"
+  },
+  "medium": {
+    "message": "中"
+  },
+  "high": {
+    "message": "高"
+  },
+  "invalid_recipient_address": {
+    "message": "無効な受信者アドレス"
+  },
+  "gas_fee_calculation_may_not_include_newly_received_tokens_try_a_smaller_amount": {
+    "message": "ガス手数料の計算には、新しく受信したトークンが含まれていない可能性があります。より少ない金額で試してください。"
+  },
+  "amount_exceeds_your_available_balance": {
+    "message": "金額が利用可能な残高を超えています"
+  },
+  "memo_is_too_long_the_maximum_length_is_256_characters": {
+    "message": "メモが長すぎます。最大長は256文字です。"
+  },
+  "loading": {
+    "message": "読み込み中..."
+  },
+  "cancel": {
+    "message": "キャンセル"
+  },
+  "continue": {
+    "message": "続行"
+  },
+  "balance": {
+    "message": "残高"
+  },
+  "invalid_fee_rate": {
+    "message": "無効な手数料率"
+  },
+  "max": {
+    "message": "最大"
+  },
+  "outputvalue": {
+    "message": "Output値"
+  },
+  "mint": {
+    "message": "ミント"
+  },
+  "send_inscription": {
+    "message": "インスクリプションをクリックして直接送信できます。"
+  },
+  "no_data": {
+    "message": "データなし"
+  },
+  "send": {
+    "message": "送信"
+  },
+  "trade": {
+    "message": "取引"
+  },
+  "runeid": {
+    "message": "runeid"
+  },
+  "mints": {
+    "message": "ミント数"
+  },
+  "supply": {
+    "message": "供給量"
+  },
+  "premine": {
+    "message": "プレマイン"
+  },
+  "burned": {
+    "message": "バーン済み"
+  },
+  "divisibility": {
+    "message": "分割可能性"
+  },
+  "symbol": {
+    "message": "シンボル"
+  },
+  "holders": {
+    "message": "保有者"
+  },
+  "transactions": {
+    "message": "トランザクション"
+  },
+  "etching": {
+    "message": "エッチング"
+  },
+  "parent": {
+    "message": "親"
+  },
+  "each_outputvalue": {
+    "message": "各Output値"
+  },
+  "split": {
+    "message": "分割"
+  },
+  "multiple_inscriptions_are_mixed_together_you_can_split_them_first_or_send_them_once": {
+    "message": "複数のインスクリプションが混在しています。最初に分割するか、一度に送信することができます。"
+  },
+  "this_inscription_carries_a_high_balance": {
+    "message": "このインスクリプションには高額の残高が含まれています！"
+  },
+  "id": {
+    "message": "ID"
+  },
+  "output_value": {
+    "message": "アウトプット値"
+  },
+  "address_preview": {
+    "message": "アドレス:"
+  },
+  "transaction_preview": {
+    "message": "トランザクション:"
+  },
+  "block_preview": {
+    "message": "ブロック:"
+  },
+  "text_preview": {
+    "message": "テキスト:"
+  },
+  "transactions_24h": {
+    "message": "トランザクション (24時間)"
+  },
+  "active_addresses_24h": {
+    "message": "アクティブアドレス (24時間)"
+  },
+  "go_to_unisat_explorer": {
+    "message": "UniSat Explorerへ移動"
+  },
+  "search_address_and_txids": {
+    "message": "アドレスとTXIDを検索"
+  },
+  "preview": {
+    "message": "プレビュー"
+  },
+  "content": {
+    "message": "コンテンツ"
+  },
+  "content_length": {
+    "message": "コンテンツ長"
+  },
+  "content_type": {
+    "message": "コンテンツタイプ"
+  },
+  "timestamp": {
+    "message": "タイムスタンプ"
+  },
+  "genesis_transaction": {
+    "message": "ジェネシストランザクション"
+  },
+  "create_new_wallet": {
+    "message": "新しいウォレットを作成"
+  },
+  "i_already_have_a_wallet": {
+    "message": "すでにウォレットを持っています"
+  },
+  "connect_to_hardware_wallet": {
+    "message": "ハードウェアウォレットに接続"
+  },
+  "hardware_wallet_feature_is_experimental_use_it_with_caution_as_potential_issues_may_arise": {
+    "message": "ハードウェアウォレット機能は実験的なものです。潜在的な問題が発生する可能性があるため、注意して使用してください"
+  },
+  "dapp_center": {
+    "message": "DAppセンター"
+  },
+  "home": {
+    "message": "ホーム"
+  },
+  "discover": {
+    "message": "発見"
+  },
+  "settings": {
+    "message": "設定"
+  },
+  "the_wallet_currently_uses_a_custom_hd_path_and_does_not_support_switching_address_types": {
+    "message": "ウォレットは現在カスタムHDパスを使用しており、アドレスタイプの切り替えをサポートしていません。"
+  },
+  "new": {
+    "message": "NEW!"
+  },
+  "coming_soon": {
+    "message": "近日公開"
+  },
+  "history": {
+    "message": "履歴"
+  },
+  "buy": {
+    "message": "購入"
+  },
+  "buy_service_provider": {
+    "message": "購入するには、以下のサービスプロバイダーを選択してください"
+  },
+  "disclaimStr": {
+    "message": "サードパーティプラットフォームを通じてビットコインを購入しようとしています。クレジットカード決済サービスは当社のパートナーによって提供されます。UniSat Walletは仲介プラットフォームとしてのみ機能し、クレジットカード決済サービスの使用から生じる可能性のある潜在的な損失または損害について、一切の責任を負いません。"
+  },
+  "additional_transaction_fees": {
+    "message": "サードパーティプラットフォームを通じて購入する場合、追加の取引手数料が適用されます。料金は国や支払い方法によって異なります。取引を進める前に、各プラットフォームの手数料を確認してください。"
+  },
+  "before_proceeding": {
+    "message": "続行する前に、免責事項を注意深く読み、同意してください。"
+  },
+  "continue_with": {
+    "message": "で続行"
+  },
+  "no_service_provider_available": {
+    "message": "利用可能なサービスプロバイダーがありません。"
+  },
+  "empty": {
+    "message": "空"
+  },
+  "all": {
+    "message": "すべて"
+  },
+  "arc20": {
+    "message": "ARC-20"
+  },
+  "others": {
+    "message": "その他"
+  },
+  "not_supported_yet": {
+    "message": "まだサポートされていません"
+  },
+  "step_1": {
+    "message": "ステップ1"
+  },
+  "step_2": {
+    "message": "ステップ2"
+  },
+  "step_3": {
+    "message": "ステップ3"
+  },
+  "step_12": {
+    "message": "ステップ 1/2"
+  },
+  "step_22": {
+    "message": "ステップ 2/2"
+  },
+  "send_cat721": {
+    "message": "CAT721を送信"
+  },
+  "collection_id": {
+    "message": "コレクションID"
+  },
+  "collection": {
+    "message": "コレクション"
+  },
+  "collection_not_found": {
+    "message": "コレクションが見つかりません"
+  },
+  "max_supply": {
+    "message": "最大供給量"
+  },
+  "token_not_found": {
+    "message": "トークンが見つかりません"
+  },
+  "merge_utxos": {
+    "message": "UTXOをマージ"
+  },
+  "token_id": {
+    "message": "トークンID"
+  },
+  "name": {
+    "message": "名前"
+  },
+  "decimals": {
+    "message": "小数桁数"
+  },
+  "merge_history": {
+    "message": "マージ履歴"
+  },
+  "the_recipient_must_be_p2tr_or_p2wpkh_address_type": {
+    "message": "受信者はP2TRまたはP2WPKHアドレスタイプである必要があります"
+  },
+  "merge_utxos_is_not_supported_for_keystone_yet": {
+    "message": "UTXOのマージはまだKeystoneでサポートされていません"
+  },
+  "address": {
+    "message": "アドレス"
+  },
+  "send_cat20_is_not_supported_for_keystone_yet": {
+    "message": "CAT20の送信はまだKeystoneでサポートされていません"
+  },
+  "send_cat20": {
+    "message": "CAT20を送信"
+  },
+  "to_send_a_larger_amount_please_merge_your_utxos_to_increase_the_available_balance": {
+    "message": "より大きな金額を送信するには、UTXOをマージして利用可能な残高を増やしてください。"
+  },
+  "merge_utxos_to_increase_the_available_balance": {
+    "message": "UTXOをマージ->"
+  },
+  "selected": {
+    "message": "選択済み"
+  },
+  "merge_transactions": {
+    "message": "マージトランザクション"
+  },
+  "retry_in_10s": {
+    "message": "10秒後に再試行"
+  },
+  "merge_utxos_for_cat20_asset": {
+    "message": "CAT20アセットのUTXOをマージ"
+  },
+  "you_need_at_least_2_utxos_to_merge": {
+    "message": "マージするには少なくとも2つのUTXOが必要です"
+  },
+  "this_feature_is_currently_in_the_experimental_test_phase_please_proceed_with_caution": {
+    "message": "この機能は現在実験的なテスト段階にあります。注意して進めてください。"
+  },
+  "set_utxo_amount_to_be_merged": {
+    "message": "マージするUTXOの量を設定"
+  },
+  "estimated_fee": {
+    "message": "推定手数料"
+  },
+  "start_merging": {
+    "message": "マージを開始"
+  },
+  "merge_progress": {
+    "message": "マージ進捗"
+  },
+  "start": {
+    "message": "開始"
+  },
+  "merging": {
+    "message": "マージ中..."
+  },
+  "quit_merging_process": {
+    "message": "マージプロセスを終了"
+  },
+  "disclaimer": {
+    "message": "免責事項"
+  },
+  "risk_warning": {
+    "message": "リスク警告：投資する資金をすべて失う覚悟がない限り、投資しないでください。"
+  },
+  "i_have_read_and_agree_to_the_above_disclaimer": {
+    "message": "上記の免責事項を読み、同意します"
+  },
+  "memo": {
+    "message": "メモ:"
+  },
+  "bbn": {
+    "message": "bbn..."
+  },
+  "sign_transaction": {
+    "message": "トランザクションに署名"
+  },
+  "spend_inscription": {
+    "message": "インスクリプションを使用"
+  },
+  "spend_amount": {
+    "message": "使用額"
+  },
+  "in_inscriptions": {
+    "message": "インスクリプション内"
+  },
+  "reject": {
+    "message": "拒否"
+  },
+  "sign_and_pay": {
+    "message": "署名して支払う"
+  },
+  "this_token_only_supports_up_to": {
+    "message": "このトークンは最大で"
+  },
+  "decimal_places": {
+    "message": "小数点以下の桁数までサポートしています。"
+  },
+  "tx_fee": {
+    "message": "Tx手数料:"
+  },
+  "t_baby": {
+    "message": "tBABY"
+  },
+  "send_to": {
+    "message": "送信先"
+  },
+  "send_amount": {
+    "message": "送信額"
+  },
+  "how_to_import_baby": {
+    "message": "BABYのインポート方法"
+  },
+  "click_the_account_on_the_main_page": {
+    "message": "メインページでアカウントをクリックします。"
+  },
+  "tap_the_more_menu_then_select_the_export_private_key_option": {
+    "message": "「その他」メニューをタップし、「秘密鍵をエクスポート」オプションを選択します。"
+  },
+  "once_you_have_your_hex_private_key_you_can_import_it_into_a_cosmos_compatible_wallet_to_access_your_babylon_reward_assets": {
+    "message": "Hex秘密鍵を取得したら、COSMOS互換ウォレットにインポートしてBabylonリワードアセットにアクセスできます。"
+  },
+  "babylon_bitcoin_staking": {
+    "message": "Babylonビットコインステーキング"
+  },
+  "babylon_bitcoin_staking_phase1": {
+    "message": "Babylonビットコインステーキング フェーズ1"
+  },
+  "babylon_bitcoin_staking_stats": {
+    "message": "Babylonビットコインステーキング統計"
+  },
+  "closed": {
+    "message": "終了"
+  },
+  "go_to_stake": {
+    "message": "ステークへ移動"
+  },
+  "staked": {
+    "message": "ステーク済み"
+  },
+  "learn_how_to_import_your_babylon_reward_assets_into_a_cosmos_compatible_wallet": {
+    "message": "BabylonリワードアセットをCOSMOS互換ウォレットにインポートする方法を学ぶ。"
+  },
+  "unstake": {
+    "message": "アンステーク"
+  },
+  "claimable": {
+    "message": "請求可能"
+  },
+  "baby_rewards": {
+    "message": "BABYリワード"
+  },
+  "claim": {
+    "message": "請求"
+  },
+  "transfer": {
+    "message": "転送"
+  },
+  "transferable": {
+    "message": "転送可能:"
+  },
+  "inscribe_transfer": {
+    "message": "TRANSFERをインスクライブ"
+  },
+  "to_send_brc20_you_have_to_inscribe_a_transfer_inscription_first": {
+    "message": "* BRC-20を送信するには、まずTRANSFERインスクリプションをインスクライブする必要があります"
+  },
+  "transfer_inscriptions": {
+    "message": "TRANSFERインスクリプション"
+  },
+  "transfer_inscriptions_0": {
+    "message": "TRANSFERインスクリプション (0)"
+  },
+  "select_all": {
+    "message": "すべて選択"
+  },
+  "receiver": {
+    "message": "受信者"
+  },
+  "step1": {
+    "message": "ステップ1"
+  },
+  "step2": {
+    "message": "ステップ2"
+  },
+  "fee_rate": {
+    "message": "手数料率"
+  },
+  "inscription": {
+    "message": "インスクリプション"
+  },
+  "atomicals_id": {
+    "message": "atomicals ID"
+  },
+  "send_arc20": {
+    "message": "ARC-20を送信"
+  },
+  "the_minimum_amount_is": {
+    "message": "最小金額は"
+  },
+  "atomicals_number": {
+    "message": "atomicals 番号"
+  },
+  "atomicals_inscription_not_confirmed_yet": {
+    "message": "Atomicalsインスクリプション (未確認)"
+  },
+  "atomicals_inscription": {
+    "message": "Atomicalsインスクリプション"
+  },
+  "inscription_not_confirmed_yet": {
+    "message": "インスクリプション (未確認)"
+  },
+  "allow_this_site_to_switch_the_network": {
+    "message": "このサイトにネットワークの切り替えを許可しますか？"
+  },
+  "switch_account": {
+    "message": "アカウントを切り替え"
+  },
+  "switch_network": {
+    "message": "ネットワークを切り替え"
+  },
+  "allow_this_site_to_switch_the_chain": {
+    "message": "このサイトにチェーンの切り替えを許可しますか？"
+  },
+  "switch_chain": {
+    "message": "チェーンを切り替え"
+  },
+  "signature_request": {
+    "message": "署名リクエスト"
+  },
+  "only_sign_this_message_if_you_fully_understand_the": {
+    "message": "内容を完全に理解し、リクエスト元のサイトを信頼する場合にのみ、このメッセージに署名してください。"
+  },
+  "you_are_signing": {
+    "message": "署名する内容:"
+  },
+  "sign": {
+    "message": "署名"
+  },
+  "sign_data_request": {
+    "message": "データ署名リクエスト"
+  },
+  "you_are_signing_data": {
+    "message": "署名するデータ:"
+  },
+  "payment_network_fee": {
+    "message": "支払いネットワーク手数料"
+  },
+  "inscription_output_value": {
+    "message": "インスクリプションOutput値"
+  },
+  "inscription_network_fee": {
+    "message": "インスクリプションネットワーク手数料"
+  },
+  "service_fee": {
+    "message": "サービス手数料"
+  },
+  "total": {
+    "message": "合計"
+  },
+  "baby_balance": {
+    "message": "BABY残高"
+  },
+  "failed_to_handle_signature": {
+    "message": "署名の処理に失敗しました"
+  },
+  "inscribing": {
+    "message": "インスクライブ中..."
+  },
+  "inscribe_success": {
+    "message": "インスクライブ成功"
+  },
+  "the_transferable_and_available_balance_of_brc20_wi": {
+    "message": "BRC20の転送可能残高と利用可能残高は数分後に更新されます。"
+  },
+  "i_only_sign_what_i_understand": {
+    "message": "理解したものにのみ署名します"
+  },
+  "you_need_to_enable_the_sign_data_request_feature_in_settings_advanced_to_continue": {
+    "message": "続行するには、設定 -> 詳細設定でsignDataリクエスト機能を有効にする必要があります。"
+  },
+  "cosmos_sign_request": {
+    "message": "Cosmos署名リクエスト"
+  },
+  "only_sign_if_you_fully_understand_the_content_and_": {
+    "message": "内容を完全に理解し、リクエスト元のサイトを信頼する場合にのみ署名してください。"
+  },
+  "phishing_detection": {
+    "message": "フィッシング検出"
+  },
+  "malicious_behavior_and_suspicious_activity_have_be": {
+    "message": "悪意のある行動や疑わしいアクティビティが検出されました。"
+  },
+  "your_access_to_this_page_has_been_restricted_by_un": {
+    "message": "安全でない可能性があるため、このページへのアクセスはUniSat Walletによって制限されています。"
+  },
+  "reject_blocked_by_unisat_wallet": {
+    "message": "拒否 (UniSat Walletによりブロック)"
+  },
+  "warning": {
+    "message": "警告"
+  },
+  "i_am_aware_of_the_risks": {
+    "message": "リスクを承知しています"
+  },
+  "connect_with_unisat_wallet": {
+    "message": "UniSat Walletに接続"
+  },
+  "select_the_account_to_use_on_this_site": {
+    "message": "このサイトで使用するアカウントを選択してください"
+  },
+  "only_connect_with_sites_you_trust": {
+    "message": "信頼できるサイトにのみ接続してください。"
+  },
+  "connect": {
+    "message": "接続"
+  },
+  "chain_id": {
+    "message": "チェーンID"
+  },
+  "involved_assets": {
+    "message": "関連アセット:"
+  },
+  "satvb": {
+    "message": "sat/vB"
+  },
+  "rbf": {
+    "message": "RBF"
+  },
+  "to_sign": {
+    "message": "署名する"
+  },
+  "network_fee": {
+    "message": "ネットワーク手数料:"
+  },
+  "network_fee_rate": {
+    "message": "ネットワーク手数料率:"
+  },
+  "the_fee_rate_is_much_lower_than_recommended_fee_rate": {
+    "message": "手数料率が推奨手数料率より大幅に低いです"
+  },
+  "the_fee_rate_is_much_higher_than_recommended_fee_rate": {
+    "message": "手数料率が推奨手数料率より大幅に高いです"
+  },
+  "inputs": {
+    "message": "インプット"
+  },
+  "outputs": {
+    "message": "アウトプット"
+  },
+  "features": {
+    "message": "機能:"
+  },
+  "psbt_data": {
+    "message": "PSBTデータ:"
+  },
+  "get_signature": {
+    "message": "署名を取得"
+  },
+  "get_signature_success": {
+    "message": "署名取得成功"
+  },
+  "sign_multiple_transactions": {
+    "message": "複数トランザクションに署名"
+  },
+  "transaction": {
+    "message": "トランザクション"
+  },
+  "merge_failed": {
+    "message": "マージに失敗しました。"
+  },
+  "dealing": {
+    "message": "処理中"
+  },
+  "paused": {
+    "message": "一時停止中"
+  },
+  "completed": {
+    "message": "完了"
+  },
+  "multisign_disclaimer": {
+    "message": "マルチシグ免責事項"
+  },
+  "by_proceeding_you_confirm_that_youve_read_and_accepted_this_disclaimer": {
+    "message": "続行することにより、この免責事項を読み、同意したことを確認します。"
+  },
+  "sign_all": {
+    "message": "すべてに署名"
+  },
+  "transactions_at_once": {
+    "message": "トランザクションを一度に"
+  },
+  "edit_name": {
+    "message": "名前を編集"
+  },
+  "export_private_key": {
+    "message": "秘密鍵をエクスポート"
+  },
+  "remove_wallet": {
+    "message": "ウォレットを削除"
+  },
+  "invalid_wallet_please_remove_it_and_add_new_one": {
+    "message": "無効なウォレットです。削除して新しいものを追加してください"
+  },
+  "removing_the_last_wallet_is_not_allowed": {
+    "message": "最後のウォレットを削除することはできません"
+  },
+  "copy_address": {
+    "message": "アドレスをコピー"
+  },
+  "private_key": {
+    "message": "秘密鍵"
+  },
+  "address_type": {
+    "message": "アドレスタイプ"
+  },
+  "invalid_privatekey": {
+    "message": "無効な秘密鍵"
+  },
+  "create_a_password": {
+    "message": "パスワードを作成"
+  },
+  "you_will_use_this_to_unlock_your_wallet": {
+    "message": "これを使用してウォレットをアンロックします"
+  },
+  "keystone_hardware_wallet": {
+    "message": "Keystoneハードウェアウォレット"
+  },
+  "the_ultimate_security_solution_for_cryptocurrencie": {
+    "message": "暗号通貨のための究極のセキュリティソリューション"
+  },
+  "100_air_gapped": {
+    "message": "100% エアギャップ"
+  },
+  "open_source": {
+    "message": "オープンソース"
+  },
+  "exceptional_compatibility": {
+    "message": "卓越した互換性"
+  },
+  "learn_more_about_keystone": {
+    "message": "Keystoneについてさらに詳しく"
+  },
+  "connect_via_usb": {
+    "message": "USB経由で接続"
+  },
+  "scan_to_connect": {
+    "message": "スキャンして接続"
+  },
+  "scan_the_qr_code_displayed_on_your_keystone_device": {
+    "message": "Keystoneデバイスに表示されているQRコードをスキャンしてください"
+  },
+  "you_need_to_allow_camera_access_to_use_this_featur": {
+    "message": "この機能を使用するには、カメラへのアクセスを許可する必要があります。"
+  },
+  "connect_and_unlock_your_keystone": {
+    "message": "Keystoneを接続してアンロックしてください"
+  },
+  "scan_in_more_addresses": {
+    "message": "さらにアドレスをスキャン..."
+  },
+  "custom_hdpath_optional": {
+    "message": "カスタムHdPath (オプション)"
+  },
+  "password_strength": {
+    "message": "パスワード強度:"
+  },
+  "passwords_dont_match": {
+    "message": "パスワードが一致しません"
+  },
+  "custom_hdpath": {
+    "message": "カスタムHDウォレット導出パス"
+  },
+  "connect_keystone": {
+    "message": "Keystoneを接続"
+  },
+  "scan_the_qr_code": {
+    "message": "QRコードをスキャン"
+  },
+  "connect_keystone_via_usb": {
+    "message": "USB経由でKeystoneを接続"
+  },
+  "create_an_account": {
+    "message": "アカウントを作成"
+  },
+  "create_wallet": {
+    "message": "ウォレットを作成"
+  },
+  "create_with_mnemonics_12words": {
+    "message": "ニーモニック (12単語) で作成"
+  },
+  "restore_wallet": {
+    "message": "ウォレットを復元"
+  },
+  "restore_from_mnemonics_12words24words": {
+    "message": "ニーモニック (12単語、24単語) から復元"
+  },
+  "restore_from_single_private_key": {
+    "message": "単一の秘密鍵から復元"
+  },
+  "create_a_new_hd_wallet": {
+    "message": "新しいHDウォレットを作成"
+  },
+  "keystone_wallet": {
+    "message": "Keystoneウォレット"
+  },
+  "phrase_optional": {
+    "message": "フレーズ (オプション)"
+  },
+  "secret_recovery_phrase": {
+    "message": "シークレットリカバリーフレーズ"
+  },
+  "unable_to_find_any_addresses_with_assets": {
+    "message": "アセットを持つアドレスが見つかりません"
+  },
+  "import_an_existing_wallet_with_your_secret_recover": {
+    "message": "シークレットリカバリーフレーズで既存のウォレットをインポート"
+  },
+  "i_saved_my_secret_recovery_phrase": {
+    "message": "シークレットリカバリーフレーズを保存しました"
+  },
+  "verify_recovery_phrase": {
+    "message": "リカバリーフレーズを確認"
+  },
+  "click_on_the_words_to_put_them_in_the_correct_orde": {
+    "message": "単語をクリックして正しい順序に並べ、バックアップしたリカバリーフレーズが正しいか確認してください"
+  },
+  "choose_a_wallet_you_want_to_restore_from": {
+    "message": "復元したいウォレットを選択してください"
+  },
+  "skip": {
+    "message": "スキップ"
+  },
+  "go_to_update": {
+    "message": "アップデートへ移動"
+  },
+  "use_at_your_own_risk": {
+    "message": "自己責任で使用してください"
+  },
+  "please_be_aware_that_sending_the_following_assets_involves_risk": {
+    "message": "以下のアセットの送信にはリスクが伴うことに注意してください："
+  },
+  "enable_atomicals_assets_warning": {
+    "message": "Atomicalsアセットはウォレットに表示されなくなり、通常の残高として使用できるようになります。注意して進めてください。"
+  },
+  "sign_data_requests": {
+    "message": "signDataリクエスト"
+  },
+  "enable_sign_data_warning": {
+    "message": "この設定を有効にすると、読み取れない署名リクエストを受け取る可能性があります。理解できないメッセージに署名すると、資金やNFTを渡すことに同意してしまう可能性があります。フィッシング攻撃のリスクにさらされます。signDataをオフにして自身を保護してください。"
+  },
+  "enable_sign_data_popover_warning": {
+    "message": "signDataリクエストを許可すると、フィッシング攻撃に対して脆弱になる可能性があります。常にURLを確認し、コードを含むメッセージに署名する際は注意してください。"
+  },
+  "enable_sign_data_popover_warning_2": {
+    "message": "この設定をオンにするように求められた場合、詐欺に遭っている可能性があります。"
+  },
+  "understand_sign_data_warning": {
+    "message": "signDataリクエストを有効にすると、すべての資金とNFTを失う可能性があることを理解しています。"
+  },
+  "understand_and_accept_the_risks_associated_with_this_transaction": {
+    "message": "このトランザクションに関連するリスクを理解し、受け入れます。"
+  },
+  "allow_sign_data_requests": {
+    "message": "signDataリクエストを許可する"
+  },
+  "sending_out_assets": {
+    "message": "アセットを送信中"
+  },
+  "runes_burn_risk_list": {
+    "message": "Runesバーンリスクリスト"
+  },
+  "inscription_burn_risk_list": {
+    "message": "インスクリプションバーンリスクリスト"
+  },
+  "changing_inscriptoins": {
+    "message": "インスクリプションを変更中"
+  },
+  "arc20_burn_risk_list": {
+    "message": "ARC20バーンリスクリスト"
+  },
+  "current_fee_rate": {
+    "message": "現在の手数料率:"
+  },
+  "recommended_fee_rates": {
+    "message": "推奨手数料率:"
+  },
+  "old_value": {
+    "message": "古い値:"
+  },
+  "new_value": {
+    "message": "新しい値:"
+  },
+  "please_pay_attention_to_whether_you_have_backed_up": {
+    "message": "資産損失を防ぐため、ニーモニック/秘密鍵をバックアップしたか注意してください"
+  },
+  "this_action_is_not_reversible": {
+    "message": "この操作は元に戻せません。"
+  },
+  "remove": {
+    "message": "削除"
+  },
+  "compatibility_tips": {
+    "message": "互換性のヒント"
+  },
+  "please_be_aware_that": {
+    "message": "ご注意ください："
+  },
+  "confirm": {
+    "message": "確認"
+  },
+  "unisat": {
+    "message": "UNISAT"
+  },
+  "try_again": {
+    "message": "再試行"
+  },
+  "usb_permissions_not_available": {
+    "message": "USB権限が利用できません"
+  },
+  "approve_on_your_keystone_device": {
+    "message": "Keystoneデバイスで承認してください"
+  },
+  "ensure_your_keystone_3_pro_is_on_the_homepage": {
+    "message": "Keystone 3 Proがホームページにあることを確認してください"
+  },
+  "onsuccess_not_implemented": {
+    "message": "onSuccessが実装されていません"
+  },
+  "scan_the_qr_code_via_your_keystone_device": {
+    "message": "KeystoneデバイスでQRコードをスキャンしてください"
+  },
+  "generating_qr_code": {
+    "message": "QRコードを生成中..."
+  },
+  "you_have_inscribed_a_transfer": {
+    "message": "TRANSFERをインスクライブしました"
+  },
+  "please_wait_for_the_update_of_brc20": {
+    "message": "BRC20の更新をお待ちください"
+  },
+  "about_3_minutes": {
+    "message": "(約3分)"
+  },
+  "for_ordinals_assets": {
+    "message": "Ordinalsアセットについては、"
+  },
+  "rare_sats": {
+    "message": "レアsat"
+  },
+  "are_not_supported": {
+    "message": "はサポートされていません。"
+  },
+  "for_atomicals_assets": {
+    "message": "Atomicalsアセットについては、"
+  },
+  "non_arc20": {
+    "message": "非ARC20"
+  },
+  "are_not_supported_yet": {
+    "message": "はまだサポートされていません。"
+  },
+  "not_supported": {
+    "message": "サポートされていません"
+  },
+  "satsvb": {
+    "message": "sats/vB"
+  },
+  "precautions": {
+    "message": "注意事項"
+  },
+  "enable_atomicals": {
+    "message": "Atomicalsを有効にする"
+  },
+  "security_notice": {
+    "message": "セキュリティ通知:"
+  },
+  "notice": {
+    "message": "通知"
+  },
+  "enable_atomicals_assets": {
+    "message": "Atomicalsアセットを有効にする"
+  },
+  "unconfirmed_balance_not_spendable": {
+    "message": "未確認残高は使用できません"
+  },
+  "to_enable_spending_of_unconfirmed_balances_please_": {
+    "message": "未確認残高の使用を有効にするには、設定の詳細オプションにアクセスしてください。"
+  },
+  "unconfirmed_balance_not_spendable_warning": {
+    "message": "アセットを保護するため、Runesアセットを保有している場合、確認済みの残高のみが使用可能です。これは意図しないアセットのバーンを防ぐためです。"
+  },
+  "mandatory_use_of_unconfirmed_balance": {
+    "message": "未確認残高の強制使用"
+  },
+  "only_applies_to_current_address": {
+    "message": "現在のアドレスにのみ適用されます"
+  },
+  "advanced": {
+    "message": "詳細設定"
+  },
+  "advanced_settings": {
+    "message": "言語、セキュリティ、権限設定"
+  },
+  "automatic_lock_time": {
+    "message": "自動ロック時間"
+  },
+  "the_auto_lock_time_has_been_changed_to": {
+    "message": "自動ロック時間が次のように変更されました："
+  },
+  "i_understand": {
+    "message": "理解しました"
+  },
+  "unknown_error": {
+    "message": "不明なエラー"
+  },
+  "version": {
+    "message": "バージョン:"
+  },
+  "latest_version": {
+    "message": "最新バージョン"
+  },
+  "inscribe_and_store_your_inscriptions_in_the_worlds_first_open_source_chrome_wallet_for_ordinals": {
+    "message": "世界初のオープンソースOrdinals ChromeウォレットでインスクリプションをInscribeして保存しましょう！"
+  },
+  "the_broadcastchannel_name_is_missing": {
+    "message": "broadcastChannel名がありません"
+  },
+  "promise_need_function_to_handle": {
+    "message": "Promiseには処理する関数が必要です"
+  },
+  "network_error_no_response": {
+    "message": "ネットワークエラー、応答なし"
+  },
+  "network_error_json_parse_error": {
+    "message": "ネットワークエラー、JSON解析エラー"
+  },
+  "network_errorno_response_data": {
+    "message": "ネットワークエラー、応答データなし"
+  },
+  "method_not_implemented": {
+    "message": "メソッドが実装されていません。"
+  },
+  "keyringcontroller_first_account_not_found": {
+    "message": "KeyringController - 最初のアカウントが見つかりません。"
+  },
+  "no_current_account": {
+    "message": "現在のアカウントがありません"
+  },
+  "current_keyring_does_not_support_gensigncosmosur": {
+    "message": "現在のキーリングはgenSignCosmosUrをサポートしていません"
+  },
+  "current_keyring_does_not_support_parsesigncosmosur": {
+    "message": "現在のキーリングはparseSignCosmosUrをサポートしていません"
+  },
+  "keyringcontroller_password_is_not_a_string": {
+    "message": "KeyringController - パスワードが文字列ではありません"
+  },
+  "no_keyring_found_for_the_requested_account": {
+    "message": "リクエストされたアカウントのキーリングが見つかりません。"
+  },
+  "public_key_must_be_compressed_secp256k1_ie_33_byte": {
+    "message": "公開鍵は圧縮されたsecp256k1（つまり、0x02または0x03で始まる33バイト）である必要があります"
+  },
+  "no_current_keyring": {
+    "message": "現在のキーリングがありません"
+  },
+  "invalid_index_in_tosigninput": {
+    "message": "toSignInput内の無効なインデックス"
+  },
+  "no_address_or_public_key_in_tosigninput": {
+    "message": "toSignInputにアドレスまたは公開鍵がありません"
+  },
+  "invalid_address_in_tosigninput": {
+    "message": "toSignInput内の無効なアドレス"
+  },
+  "invalid_public_key_in_tosigninput": {
+    "message": "toSignInput内の無効な公開鍵"
+  },
+  "invalid_sighash_type_in_tosigninput": {
+    "message": "toSignInput内の無効なsighashタイプ"
+  },
+  "no_mfp_in_keyring": {
+    "message": "キーリングにmfpがありません"
+  },
+  "insufficient_balance": {
+    "message": "残高不足です。"
+  },
+  "output_value_must_be_at_least": {
+    "message": "Output値は少なくとも"
+  },
+  "split_inscriptions": {
+    "message": "インスクリプションを分割"
+  },
+  "split_inscription_tips": {
+    "message": "この機能は現在実験段階です。トランザクションに署名する際は、トランザクションのインスクリプション分割状況を確認してください。"
+  },
+  "each_output_value": {
+    "message": "各Output値"
+  },
+  "spliting_to": {
+    "message": "に分割中"
+  },
+  "security_warning": {
+    "message": "セキュリティ警告"
+  },
+  "danger_potential_phishing_website_detected": {
+    "message": "危険！潜在的なフィッシングウェブサイトが検出されました"
+  },
+  "this_website_has_been_identified_as_malicious_by_unisat_and_may": {
+    "message": "このウェブサイトはUniSatによって悪意があると特定されており、以下の可能性があります："
+  },
+  "steal_your_private_keys_or_seed_phrases": {
+    "message": "秘密鍵やシードフレーズを盗む"
+  },
+  "trick_you_into_signing_malicious_transactions": {
+    "message": "悪意のあるトランザクションに署名させるよう誘導する"
+  },
+  "collect_your_personal_information": {
+    "message": "個人情報を収集する"
+  },
+  "think_this_is_a_false_positive_click_here_to_report_an_issue": {
+    "message": "これが誤検出だと思いますか？ ここをクリックして問題を報告してください →"
+  },
+  "if_you_insist_on_continuing_proceed_at_your_own_risk": {
+    "message": "続行を主張する場合、自己責任で進めてください："
+  },
+  "continue_to": {
+    "message": "へ進む"
+  },
+  "send_runes": {
+    "message": "Runesを送信"
+  },
+  "send_atomicals_inscription": {
+    "message": "Atomicalsインスクリプションを送信"
+  },
+  "send_inscription2": {
+    "message": "インスクリプションを送信"
+  },
+  "ordinals_inscriptions": {
+    "message": "Ordinalsインスクリプション"
+  },
+  "babylon_staking": {
+    "message": "Babylonステーキング"
+  },
+  "confirmed_tvl": {
+    "message": "確認済み"
+  },
+  "tvl": {
+    "message": "TVL"
+  },
+  "stakers": {
+    "message": "ステーカー"
+  },
+  "delegations": {
+    "message": "委任"
+  },
+  "finality_providers": {
+    "message": "ファイナリティプロバイダー"
+  },
+  "invalid_address": {
+    "message": "無効なアドレス。"
+  },
+  "utxo_not_found": {
+    "message": "UTXOが見つかりません。"
+  },
+  "multiple_inscriptions_are_mixed_together_please_sp": {
+    "message": "複数のインスクリプションが混在しています。最初に分割してください。"
+  },
+  "inscriptions": {
+    "message": "インスクリプション"
+  },
+  "atomicals_nft": {
+    "message": "Atomicals NFT"
+  },
+  "unable_to_send_inscriptions_to_this_address_in_bat": {
+    "message": "このアドレスにインスクリプションを一括で送信できません。一つずつ送信してください。"
+  },
+  "inscription_not_found": {
+    "message": "インスクリプションが見つかりません。"
+  },
+  "the_amount_for_change_is_too_low_please_adjust_the": {
+    "message": "お釣りの額が低すぎます。送信額を調整してください。"
+  },
+  "keyring_does_not_exist": {
+    "message": "キーリングが存在しません"
+  },
+  "not_supported_chainid": {
+    "message": "サポートされていないchainId"
+  },
+  "signdata_is_required_for_cosmos_signing": {
+    "message": "Cosmos署名にはsignDataが必要です"
+  },
+  "datatype_is_required_for_cosmos_signing": {
+    "message": "Cosmos署名にはdataTypeが必要です"
+  },
+  "path_is_required_for_cosmos_signing": {
+    "message": "Cosmos署名にはpathが必要です"
+  },
+  "ur_type_is_required_for_parsing_cosmos_signature": {
+    "message": "Cosmos署名の解析にはURタイプが必要です"
+  },
+  "cbor_data_is_required_for_parsing_cosmos_signature": {
+    "message": "Cosmos署名の解析にはCBORデータが必要です"
+  },
+  "invalid_psbt": {
+    "message": "無効なPSBT"
+  },
+  "not_implemented": {
+    "message": "実装されていません"
+  },
+  "approvalres_is_required": {
+    "message": "approvalResが必要です"
+  },
+  "connected": {
+    "message": "接続済み"
+  },
+  "not_connected": {
+    "message": "未接続"
+  },
+  "expand_view": {
+    "message": "拡大表示"
+  },
+  "lock_immediately": {
+    "message": "すぐにロック"
+  },
+  "change_your_lockscreen_password": {
+    "message": "ロック画面のパスワードを変更"
+  },
+  "manage_wallet": {
+    "message": "ウォレットを管理"
+  },
+  "network": {
+    "message": "ネットワーク"
+  },
+  "invalid_transaction_data": {
+    "message": "無効なトランザクションデータ"
+  },
+  "amount_must_be_at_least": {
+    "message": "金額は少なくとも"
+  },
+  "includes_inscriptions_runes_and_unconfirmed_utxos": {
+    "message": "インスクリプション、Runes、および未確認のUTXOアセットを含みます。"
+  },
+  "future_versions_will_support_spending_these_assets": {
+    "message": "将来のバージョンではこれらのアセットの使用がサポートされます。"
+  },
+  "you_can_unlock_these_assets_by_using_the_utxos_tools": {
+    "message": "UTXOツールを使用してこれらのアセットをアンロックできます。"
+  },
+  "spend": {
+    "message": "使用"
+  },
+  "transaction_success": {
+    "message": "トランザクション成功"
+  },
+  "transaction_id": {
+    "message": "トランザクションID"
+  },
+  "received_from": {
+    "message": "受信元"
+  },
+  "date": {
+    "message": "日付"
+  },
+  "view_on_unisat_explorer": {
+    "message": "UniSat Explorerで表示"
+  },
+  "view_on_okx_explorer": {
+    "message": "OKX Explorerで表示"
+  },
+  "view_on_mempool": {
+    "message": "Mempoolで表示"
+  },
+  "from": {
+    "message": "送信元"
+  },
+  "to": {
+    "message": "送信先"
+  },
+  "by_inscription": {
+    "message": "インスクリプションによる"
+  },
+  "unconfirmed_inscription": {
+    "message": "(未確認)"
+  },
+  "inscriptions_capital": {
+    "message": "インスクリプション"
+  },
+  "disable_atomicals": {
+    "message": "Atomicalsを無効にする"
+  },
+  "the_utxo_containing_this_inscription_has": {
+    "message": "このインスクリプションを含むUTXOには"
+  },
+  "address_book": {
+    "message": "アドレス帳"
+  },
+  "search_address_or_name": {
+    "message": "アドレスまたは名前を検索"
+  },
+  "loading_contacts": {
+    "message": "読み込み中..."
+  },
+  "you_haven_t_added_address_information_yet": {
+    "message": "まだアドレス情報を追加していません"
+  },
+  "no_matching_contacts_found": {
+    "message": "一致する連絡先が見つかりません"
+  },
+  "please_read_more_detail_on": {
+    "message": "詳細はこちらをご覧ください"
+  },
+  "bitcoin_address_verifier": {
+    "message": "ビットコインアドレス検証ツール"
+  },
+  "owner": {
+    "message": "所有者"
+  },
+  "description": {
+    "message": "説明"
+  },
+  "script": {
+    "message": "スクリプト"
+  },
+  "this_message_serves_as_a_notice_that_if_runes_assets_are_detected_in_your_address_your": {
+    "message": "このメッセージは、あなたのアドレスでRunesアセットが検出された場合、未確認の残高は使用できなくなるという通知です。何もする必要はありません。"
+  },
+  "in_the_current_version_only_the_confirmed_balance_can_be_used_once_atomicals_enabled": {
+    "message": "現在のバージョンでは、Atomicalsが有効になると確認済みの残高のみが使用できます。"
+  },
+  "oops_something_went_wrong": {
+    "message": "おっと！何かがうまくいきませんでした。"
+  },
+  "try_going_back_or_refreshing": {
+    "message": "戻るか、ページを更新してみてください。"
+  },
+  "go_back": {
+    "message": "戻る"
+  },
+  "refresh_page": {
+    "message": "ページを更新"
+  },
+  "refresh": {
+    "message": "更新"
+  },
+  "gas_limit": {
+    "message": "ガスリミット"
+  },
+  "auto": {
+    "message": "自動"
+  },
+  "recommended": {
+    "message": "推奨"
+  },
+  "range": {
+    "message": "範囲"
+  },
+  "gas_limit_explanation": {
+    "message": "ガスリミットの説明"
+  },
+  "gas_limit_explanation_1": {
+    "message": "• トランザクションの最大計算リソースを制御します"
+  },
+  "gas_limit_explanation_2": {
+    "message": "• 高いリミット = 高い潜在的料金ですが、完了を保証します"
+  },
+  "gas_limit_explanation_3": {
+    "message": "• 低すぎるとトランザクションが失敗する可能性があります"
+  },
+  "gas_limit_explanation_4": {
+    "message": "• 推奨値は通常十分です"
+  },
+  "gas_adjustment": {
+    "message": "ガス調整"
+  },
+  "gas_adjustment_explanation": {
+    "message": "ガス調整の説明："
+  },
+  "default": {
+    "message": "デフォルト"
+  },
+  "gas_adjustment_explanation_1": {
+    "message": "• 推定ガスに適用される乗数（1.0 = 100%）"
+  },
+  "gas_adjustment_explanation_2": {
+    "message": "• デフォルトの1.3（130%）は安全マージンを提供します"
+  },
+  "gas_adjustment_explanation_3": {
+    "message": "• 値が高いほどトランザクションの成功確率が高まります"
+  },
+  "remember_my_choice": {
+    "message": "選択を記憶する"
+  },
+  "close": {
+    "message": "閉じる"
+  },
+  "this_domain_has_been_transferred_or_inscribed_recently_please_wait_for_block_confirmations": {
+    "message": "このドメインは最近転送またはインスクライブされました。ブロックの確認をお待ちください"
+  },
+  "currently_only": {
+    "message": "現在"
+  },
+  "are_supported": {
+    "message": "のみサポートされています"
+  },
+  "recipient_address_is_invalid": {
+    "message": "受信者アドレスが無効です"
+  },
+  "address_book_placeholder": {
+    "message": "アドレス帳"
+  },
+  "name_recognized_and_resolved": {
+    "message": "名前が認識され、解決されました。"
+  },
+  "more_details": {
+    "message": "詳細"
+  },
+  "address_or_name_fb": {
+    "message": "アドレスまたは名前 (.fb)"
+  },
+  "address_or_name_sats_unisat_etc": {
+    "message": "アドレスまたは名前 (.sats, .unisat, ...)"
+  },
+  "does_not_exist": {
+    "message": "は存在しません"
+  },
+  "click_on_the": {
+    "message": "をクリックしてください"
+  },
+  "button_after_signing_the_transaction_with_your_keystone_device": {
+    "message": "Keystoneデバイスでトランザクションに署名した後、"
+  },
+  "processing_signature": {
+    "message": "署名を処理中..."
+  },
+  "position_the_qr_code_in_front_of_your_camera_the_screen_is_blurred_but_this_will_not_affect_the_scan": {
+    "message": "QRコードをカメラの前に配置してください。画面はぼやけていますが、スキャンには影響しません。"
+  },
+  "missing_browser_permissions_please_grant_keystone_permissions": {
+    "message": "ブラウザの権限がありません。Keystoneに権限を付与してください"
+  },
+  "request_was_rejected_to_proceed_please_reauthorize": {
+    "message": "リクエストは拒否されました。続行するには、再承認してください"
+  },
+  "please_reconnect_the_keystone_on_home_screen_and_reauthorize": {
+    "message": "ホーム画面でKeystoneを再接続し、再承認してください。"
+  },
+  "communication_with_the_keystone_device_failed_please_ensure_the_keystone_is_connected_and_try_again": {
+    "message": "Keystoneデバイスとの通信に失敗しました。Keystoneが接続されていることを確認し、再試行してください。"
+  },
+  "invalid_qr_code_please_ensure_you_have_selected_a_valid_qr_code_from_your_keystone_device": {
+    "message": "無効なQRコードです。Keystoneデバイスから有効なQRコードを選択したことを確認してください。"
+  },
+  "merging_utxos": {
+    "message": "UTXOをマージ中"
+  },
+  "merging_amount": {
+    "message": "マージ額"
+  },
+  "your_balance_have_to_be_merged": {
+    "message": "あなたの"
+  },
+  "this_process_will_merge_your_utxos_into_one": {
+    "message": "残高をマージする必要があります。このプロセスにより、UTXOが1つにマージされます。"
+  },
+  "merge_utxos1": {
+    "message": "マージ"
+  },
+  "can_not_change_to_a_lower_value": {
+    "message": "より低い値に変更できません"
+  },
+  "a_feature_allows_the_transaction_to_be_replaced": {
+    "message": "トランザクションの置換を許可する機能です。"
+  },
+  "strong_password_tip": {
+    "message": "強力なパスワードは、資産のセキュリティをより良く保護できます"
+  },
+  "not_long_enough": {
+    "message": "足りない"
+  },
+  "average": {
+    "message": "平均"
+  },
+  "password_must_be_at_least_8_characters": {
+    "message": "パスワードは少なくとも8文字である必要があります"
+  },
+  "unrecognized_password_strength": {
+    "message": "未認識のパスワード強度"
+  },
+  "weak": {
+    "message": "弱"
+  },
+  "strong": {
+    "message": "強"
+  },
+  "no_inscriptions_found": {
+    "message": "インスクリプションが見つかりません"
+  },
+  "new_version": {
+    "message": "新しいバージョン！"
+  },
+  "add_frequently_used_addresses": {
+    "message": "よく使うアドレスを追加"
+  },
+  "let_us_know_what_you_think": {
+    "message": "あなたの考えを教えてください"
+  },
+  "like_our_wallet_wed_love_your_rating": {
+    "message": "私たちのウォレットが気に入ったら、評価してください！"
+  },
+  "feedback": {
+    "message": "フィードバック"
+  },
+  "rate_us": {
+    "message": "評価してください"
+  },
+  "about_us": {
+    "message": "私たちについて"
+  },
+  "seconds": {
+    "message": "秒"
+  },
+  "minutes": {
+    "message": "分"
+  },
+  "hours": {
+    "message": "時間"
+  },
+  "finish": {
+    "message": "完了"
+  },
+  "add_address": {
+    "message": "アドレスを追加"
+  },
+  "delete_contact": {
+    "message": "連絡先を削除"
+  },
+  "are_you_sure_you_want_to_delete_this_contact": {
+    "message": "この連絡先を削除してもよろしいですか？"
+  },
+  "contact_not_found": {
+    "message": "連絡先が見つかりません"
+  },
+  "failed_to_load_contact_information": {
+    "message": "連絡先情報の読み込みに失敗しました"
+  },
+  "please_enter_name": {
+    "message": "名前を入力してください"
+  },
+  "please_enter_address": {
+    "message": "アドレスを入力してください"
+  },
+  "invalid_address_format_for_selected_network": {
+    "message": "選択されたネットワークのアドレス形式が無効です"
+  },
+  "failed_to_save_contact": {
+    "message": "連絡先の保存に失敗しました"
+  },
+  "failed_to_delete_contact": {
+    "message": "連絡先の削除に失敗しました"
+  },
+  "edit_address": {
+    "message": "アドレスを編集"
+  },
+  "name_label": {
+    "message": "名前"
+  },
+  "address_label": {
+    "message": "アドレス"
+  },
+  "saving": {
+    "message": "保存中..."
+  },
+  "save": {
+    "message": "保存"
+  },
+  "new_update_available": {
+    "message": "新しい更新が利用可能です"
+  },
+  "you_re_on_the_latest_version": {
+    "message": "最新バージョンを使用しています"
+  },
+  "terms_of_service": {
+    "message": "利用規約"
+  },
+  "privacy_policy": {
+    "message": "プライバシーポリシー"
+  },
+  "language": {
+    "message": "言語"
+  },
+  "language_description": {
+    "message": "アプリケーションの言語を変更します"
+  },
+  "more": {
+    "message": "もっと"
+  },
+  "restore_from_mnemonics": {
+    "message": "助記詞から復元"
+  },
+  "delete": {
+    "message": "削除"
+  },
+  "other_wallet": {
+    "message": "他のウォレット"
+  },
+  "12_words": {
+    "message": "12 語"
+  },
+  "24_words": {
+    "message": "24 語"
+  },
+  "invalid_derivation_path": {
+    "message": "不正な派生パスです。"
+  },
+  "failed_to_load_inscription": {
+    "message": "インスクリプションの読み込みに失敗しました"
+  },
+  "loading_details": {
+    "message": "詳細を読み込んでいます..."
+  },
+  "provenance": {
+    "message": "由来"
+  },
+  "details": {
+    "message": "詳細"
+  },
+  "inscription_id": {
+    "message": "ID"
+  },
+  "inscription_address": {
+    "message": "アドレス"
+  },
+  "inscription_preview": {
+    "message": "プレビュー"
+  },
+  "inscription_content": {
+    "message": "コンテンツ"
+  },
+  "inscription_content_length": {
+    "message": "コンテンツ長"
+  },
+  "inscription_content_type": {
+    "message": "コンテンツタイプ"
+  },
+  "inscription_timestamp": {
+    "message": "タイムスタンプ"
+  },
+  "inscription_genesis_transaction": {
+    "message": "創世トランザクション"
+  },
+  "custom": {
+    "message": "カスタム"
+  },
+  "legacy_address_warning": {
+    "message": "レガシーアドレスを使用することは、高いトランザクション手数料や意図しないCAT20バランスのロックアップを招く可能性があります。"
+  },
+  "legacy_address_warning_2": {
+    "message": "レガシーアドレスへのトランザクションは、意図しないCAT20バランスの支出を招く可能性があります。"
+  },
+  "slow": {
+    "message": "遅い"
+  },
+  "avg": {
+    "message": "普通"
+  },
+  "fast": {
+    "message": "速い"
+  },
+  "about_1_hour": {
+    "message": "約1時間"
+  },
+  "about_30_minutes": {
+    "message": "約30分"
+  },
+  "about_10_minutes": {
+    "message": "約10分"
+  },
+  "babylon_bitcoin_staking_phase2": {
+    "message": "Babylon ビットコインステーキング フェーズ2"
+  },
+  "go_to_babylon": {
+    "message": "Babylonへ移動"
+  },
+  "closed_babylon": {
+    "message": "閉鎖"
+  },
+  "open_babylon": {
+    "message": "開放"
+  },
+  "pending_babylon": {
+    "message": "保留中"
+  },
+  "convert_baby_to_brc20": {
+    "message": "$BABYをbrc-20に変換"
+  },
+  "you_are_about_to_convert_your_native_baby_to_btc_brc20_baby": {
+    "message": "ネイティブBABYをBTC brc-20 BABYに変換しようとしています。"
+  },
+  "once_the_conversion_is_complete_your_native_baby_cannot_be_restored": {
+    "message": "変換が完了すると、ネイティブBABYは復元できません。"
+  },
+  "do_you_confirm_the_conversion": {
+    "message": "変換を確認しますか？"
+  },
+  "transfer_baby_to_cosmos_wallet": {
+    "message": "$BABYをCosmosウォレットに転送"
+  },
+  "do_you_confirm_the_transfer": {
+    "message": "転送を確認しますか？"
+  },
+  "you_are_about_to_transfer_your_native_baby_to_your_cosmos_wallet": {
+    "message": "ネイティブBABYをCosmosウォレットに転送しようとしています。"
+  },
+  "click_baby_to_brc20_coming_soon": {
+    "message": "$BABYをbrc-20に変換（近日公開）"
+  },
+  "convert_your_native_baby_to_btc_brc20_baby": {
+    "message": "ネイティブ$BABYトークンをビットコイン上のbrc-20 BABYに変換します。"
+  },
+  "transfer_your_baby_to_your_cosmos_wallet": {
+    "message": "$BABYをCosmosウォレットに転送します。"
+  },
+  "password_error": {
+    "message": "パスワードが間違っています"
+  },
+  "the_private_key_is_invalid": {
+    "message": "秘密鍵が無効です"
+  },
+  "you_need_to_unlock_wallet_first": {
+    "message": "まずウォレットのロックを解除する必要があります"
+  },
+  "account_count_must_be_greater_than_0": {
+    "message": "アカウント数は0より大きい必要があります"
+  },
+  "mnemonic_phrase_is_invalid": {
+    "message": "ニーモニックフレーズが無効です"
+  },
+  "first_account_not_found": {
+    "message": "最初のアカウントが見つかりません"
+  },
+  "unlock_already_in_progress": {
+    "message": "ロック解除は既に進行中です"
+  },
+  "change_password_already_in_progress": {
+    "message": "パスワード変更は既に進行中です"
+  },
+  "change_password_failed": {
+    "message": "古いパスワードが正しくありません。"
+  },
+  "cannot_unlock_without_a_previous_vault": {
+    "message": "以前の保管庫がないとロックを解除できません"
+  },
+  "wallet_existed": {
+    "message": "ウォレットは既に存在します"
+  },
+  "does_not_support_account_removal_operations": {
+    "message": "アカウント削除操作はサポートされていません"
+  },
+  "disclaimStrFb": {
+    "message": "第三者プラットフォームを通じてFBを購入しようとしていることに注意してください。クレジットカード支払いサービスは、私たちのパートナーによって提供されています。UniSat Walletは唯一の仲介プラットフォームであり、クレジットカード支払いサービスの使用による潜在的な損失や損害に対して責任を負いません。"
+  },
+  "seconds_ago": {
+    "message": "秒前"
+  },
+  "minutes_ago": {
+    "message": "分前"
+  },
+  "hours_ago": {
+    "message": "時間前"
+  },
+  "days_ago": {
+    "message": "日前"
+  },
+  "current": {
+    "message": "現在"
+  },
+  "items": {
+    "message": "アイテム"
+  },
+  "claimabled": {
+    "message": "受領済み"
+  },
+  "agreement_text": {
+    "message": "確認する"
+  },
+  "to_proceed": {
+    "message": "続ける"
+  },
+  "tutorial": {
+    "message": "チュートリアル"
+  },
+  "tx_amount": {
+    "message": "金額"
+  },
+  "secs": {
+    "message": "秒"
+  },
+  "about_3_minutes_fb": {
+    "message": "約3分"
+  },
+  "about_1_5_minutes_fb": {
+    "message": "約1.5分"
+  },
+  "about_30_seconds_fb": {
+    "message": "約30秒"
+  },
+  "legacy_address_warning_3": {
+    "message": "レガシーアドレスを使用することは、高いトランザクション手数料や意図しないCAT20バランスのロックアップを招く可能性があります。"
+  },
+  "legacy_address_warning_4": {
+    "message": "レガシーアドレスへのトランザクションは、意図しないCAT20バランスの支出を招く可能性があります。"
+  }
+}

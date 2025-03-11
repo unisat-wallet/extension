@@ -1,4 +1,5 @@
 import { ContractResult } from '@/shared/types';
+import { useI18n } from '@/ui/hooks/useI18n';
 
 import { Button } from '../Button';
 import { Column } from '../Column';
@@ -11,14 +12,15 @@ import { TextArea } from '../TextArea';
 
 export const ContractPopover = ({ contract, onClose }: { contract: ContractResult; onClose: () => void }) => {
   const contractData = contract;
+  const { t } = useI18n();
 
   return (
     <Popover>
       <Column justifyCenter itemsCenter>
-        <Text text="Bitcoin Address Verifier" preset="title-bold" />
+        <Text text={t('bitcoin_address_verifier')} preset="title-bold" />
         <Row>
           <Text
-            text={'Please read more detail on https://github.com/unisat-wallet/bitcoin-address-verifier.'}
+            text={`${t('please_read_more_detail_on')} https://github.com/unisat-wallet/bitcoin-address-verifier.`}
             preset="sub"
             selectText
           />
@@ -26,13 +28,13 @@ export const ContractPopover = ({ contract, onClose }: { contract: ContractResul
         <Line />
 
         <Column gap="md" fullX mb="md">
-          <Section title="id" value={contractData.id} />
-          <Section title="name" value={contractData.name} maxLength={30} />
-          <Section title="address" value={contractData.address} showCopyIcon />
-          <Section title="script" value={contractData.script} showCopyIcon />
-          <Section title="owner" value={contractData.isOwned ? 'YES' : 'NO'} />
+          <Section title={t('id')} value={contractData.id} />
+          <Section title={t('name')} value={contractData.name} maxLength={30} />
+          <Section title={t('address')} value={contractData.address} showCopyIcon />
+          <Section title={t('script')} value={contractData.script} showCopyIcon />
+          <Section title={t('owner')} value={contractData.isOwned ? 'YES' : 'NO'} />
           <Line />
-          <Section title="description" value={''} />
+          <Section title={t('description')} value={''} />
           <TextArea
             text={contractData.description}
             style={{
@@ -43,7 +45,7 @@ export const ContractPopover = ({ contract, onClose }: { contract: ContractResul
 
         <Row full>
           <Button
-            text={'OK'}
+            text={t('ok')}
             preset="default"
             full
             onClick={(e) => {

@@ -22,10 +22,19 @@ function PriceChangePercent({ change, size }: { change: number; size?: Sizes }) 
 export function TickPriceChange(props: { price: TickPriceItem | undefined; color?: ColorTypes; size?: Sizes }) {
   const { price, color = 'textDim', size = 'xs' } = props;
 
+  if (!price || price.curPrice === 0) {
+    return (
+      <Row>
+        <Text text="--" color={color} size={size} />
+        <Text text=" (--)" color={color} size={size} />
+      </Row>
+    );
+  }
+
   return (
     <Row>
-      <BtcUsd sats={price?.curPrice || 0} color={color} size={size} {...props} />
-      <PriceChangePercent change={price?.changePercent || 0} size={size} />
+      <BtcUsd sats={price.curPrice} color={color} size={size} {...props} />
+      <PriceChangePercent change={price.changePercent || 0} size={size} />
     </Row>
   );
 }
@@ -40,11 +49,13 @@ export function TickUsd(
 ) {
   const { balance, price, color = 'textDim', size = 'xs' } = props;
 
-  const sats = useMemo(() => {
-    if (!price) return 0;
+  if (!price || price.curPrice === 0) {
+    return <Text text="--" color={color} size={size} {...props} />;
+  }
 
+  const sats = useMemo(() => {
     return new BigNumber(balance).multipliedBy(price.curPrice).toNumber();
-  }, []);
+  }, [balance, price.curPrice]);
 
   return <BtcUsd sats={sats} color={color} size={size} {...props} />;
 }

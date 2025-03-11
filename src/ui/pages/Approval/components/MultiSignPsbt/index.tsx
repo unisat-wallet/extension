@@ -7,6 +7,7 @@ import { Button, Card, Column, Content, Footer, Header, Icon, Layout, Row, Text 
 import { useTools } from '@/ui/components/ActionComponent';
 import { PhishingDetection } from '@/ui/components/PhishingDetection';
 import WebsiteBar from '@/ui/components/WebsiteBar';
+import { useI18n } from '@/ui/hooks/useI18n';
 import KeystoneSignScreen from '@/ui/pages/Wallet/KeystoneSignScreen';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { fontSizes } from '@/ui/theme/font';
@@ -66,10 +67,10 @@ export default function MultiSignPsbt({
   const [loading, setLoading] = useState(true);
   const [viewingPsbtIndex, setViewingPsbtIndex] = useState(-1);
   const [signStates, setSignStates] = useState<SignState[]>(new Array(psbtHexs.length).fill(SignState.PENDING));
-
   // keystone sign
   const wallet = useWallet();
   const tools = useTools();
+  const { t } = useI18n();
   const currentAccount = useCurrentAccount();
   const [isKeystoneSigning, setIsKeystoneSigning] = useState(false);
   const [signIndex, setSignIndex] = useState(0);
@@ -214,7 +215,7 @@ export default function MultiSignPsbt({
         type={KeystoneSignEnum.PSBT}
         data={txInfo.psbtHexs[signIndex]}
         isFinalize={options?.[signIndex]?.autoFinalized !== false}
-        signatureText={`Get Signature (${signIndex + 1}/${count})`}
+        signatureText={`${t('get_signature')} (${signIndex + 1}/${count})`}
         id={signIndex}
         onSuccess={(data) => {
           txInfo.psbtHexs[signIndex] = data.psbtHex || '';
@@ -222,7 +223,7 @@ export default function MultiSignPsbt({
             setIsKeystoneSigning(false);
             originalHandleConfirm();
           } else {
-            tools.toastSuccess(`Get Signature Success (${signIndex + 1}/${count})`);
+            tools.toastSuccess(`${t('get_signature_success')} (${signIndex + 1}/${count})`);
             setTimeout(() => {
               setSignIndex(signIndex + 1);
             }, 1000);
@@ -239,17 +240,17 @@ export default function MultiSignPsbt({
     <Layout>
       {header}
       <Content>
-        <Text text={'Sign Multiple Transactions'} preset="title-bold" textCenter mt="lg" />
+        <Text text={t('sign_multiple_transactions')} preset="title-bold" textCenter mt="lg" />
         <Column>
           {txInfo.psbtHexs.map((v, index) => {
             const signState = signStates[index];
             let text = 'View';
             if (signState == SignState.PENDING) {
-              text = 'View';
+              text = t('view');
             } else if (signState == SignState.SUCCESS) {
-              text = 'Signed';
+              text = t('signed');
             } else if (signState == SignState.FAILED) {
-              text = 'Rejected';
+              text = t('reject');
             }
 
             let preset = 'primary';
@@ -262,7 +263,7 @@ export default function MultiSignPsbt({
               <Card key={index}>
                 <Row justifyBetween fullX>
                   <Column>
-                    <Text text={`Transaction ${index + 1}`} preset="bold" />
+                    <Text text={`${t('transaction')} ${index + 1}`} preset="bold" />
                     <Text text={shortAddress(v, 10)} wrap />
                   </Column>
                   <Column>
@@ -285,12 +286,12 @@ export default function MultiSignPsbt({
 
       <Footer>
         <Row full>
-          <Button preset="default" text={'Reject All'} onClick={handleCancel} full />
+          <Button preset="default" text={t('reject_all')} onClick={handleCancel} full />
 
           {websiteResult.allowQuickMultiSign ? (
             <Button
               preset="primary"
-              text={isAllSigned ? 'Submit' : `(${signedCount}/${txInfo.psbtHexs.length}) Signed`}
+              text={isAllSigned ? t('submit') : `(${signedCount}/${txInfo.psbtHexs.length}) ${t('signed')}`}
               icon={isAllSigned ? undefined : 'alert'}
               onClick={() => {
                 if (isAllSigned) {
@@ -304,7 +305,7 @@ export default function MultiSignPsbt({
           ) : (
             <Button
               preset="primary"
-              text={isAllSigned ? 'Submit' : `(${signedCount}/${txInfo.psbtHexs.length}) Signed`}
+              text={isAllSigned ? t('submit') : `(${signedCount}/${txInfo.psbtHexs.length}) ${t('signed')}`}
               onClick={handleConfirm}
               full
               disabled={isAllSigned == false}

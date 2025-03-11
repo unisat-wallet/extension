@@ -47,7 +47,7 @@ export default function RunesBalanceCard(props: RunesBalanceCardProps) {
             <Text text={tokenBalance.symbol} size="xs" mx="sm" />
           </Row>
         </Row>
-        {showPrice && price?.curPrice !== 0 && (
+        {showPrice && (
           <Row justifyBetween mt={'xs'}>
             <TickPriceChange price={price} />
             <TickUsd price={price} balance={balance.toString()} />

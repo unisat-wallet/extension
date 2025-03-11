@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { DecodedPsbt, Risk, RiskType } from '@/shared/types';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 
 import { Button } from '../Button';
@@ -16,8 +17,6 @@ import { ChangingInscription } from './ChangingInscription';
 import { InscriptionBurning } from './InscriptionBurning';
 import { RunesBurningList } from './RunesBurningList';
 import { SendingOutAssets } from './SendingOutAssets';
-
-const AGREEMENT_TEXT = 'CONFIRM';
 
 const visibleRiskDetailTypes = [
   RiskType.MULTIPLE_ASSETS,
@@ -42,6 +41,9 @@ export const SignPsbtWithRisksPopover = ({
 }) => {
   const [inputValue, setInputValue] = useState('');
   const [understand, setUnderstand] = useState(false);
+  const { t } = useI18n();
+  const AGREEMENT_TEXT = 'CONFIRM';
+
   useEffect(() => {
     if (inputValue.toUpperCase() === AGREEMENT_TEXT) {
       setUnderstand(true);
@@ -81,8 +83,8 @@ export const SignPsbtWithRisksPopover = ({
     <Popover>
       <Column justifyCenter itemsCenter>
         <Icon icon={'alert'} color={'red'} size={20} />
-        <Text text="Use at your own risk" preset="title-bold" />
-        <Text text={'Please be aware that sending the following assets involves risk:'} preset="sub" />
+        <Text text={t('use_at_your_own_risk')} preset="title-bold" />
+        <Text text={t('please_be_aware_that_sending_the_following_assets_involves_risk')} preset="sub" />
 
         <Column gap="md" fullX mb="md">
           {decodedPsbt.risks.map((risk, index) => {
@@ -96,7 +98,7 @@ export const SignPsbtWithRisksPopover = ({
                   <Text text={risk.title} color={risk.level === 'warning' ? 'warning' : 'danger'} />
                   {visibleRiskDetailTypes.includes(risk.type) ? (
                     <Text
-                      text={'View>'}
+                      text={t('view')}
                       onClick={() => {
                         setDetailRisk(risk);
                       }}
@@ -111,10 +113,10 @@ export const SignPsbtWithRisksPopover = ({
 
           {confirmable && (
             <Column>
-              <Text text={'I understand and accept the risks associated with this transaction.'} preset="sub" />
+              <Text text={t('understand_and_accept_the_risks_associated_with_this_transaction')} preset="sub" />
 
               <Row itemsCenter gap="sm" mb="md">
-                <Text text={`Enter “${AGREEMENT_TEXT}” to proceed`} preset="bold" />
+                <Text text={`${t('enter')} “${AGREEMENT_TEXT}” ${t('to_proceed')}`} preset="bold" />
               </Row>
               <Input
                 preset="text"
@@ -129,7 +131,7 @@ export const SignPsbtWithRisksPopover = ({
 
         <Row full>
           <Button
-            text={'Cancel'}
+            text={t('cancel')}
             preset="default"
             full
             onClick={(e) => {
@@ -141,7 +143,7 @@ export const SignPsbtWithRisksPopover = ({
 
           {confirmable && (
             <Button
-              text={'Confirm'}
+              text={t('confirm')}
               preset="danger"
               disabled={!understand}
               full

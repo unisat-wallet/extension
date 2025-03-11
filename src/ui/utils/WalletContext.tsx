@@ -74,6 +74,9 @@ export interface WalletController {
   setPopupOpen(isOpen: boolean): void;
   isReady(): Promise<boolean>;
 
+  getIsFirstOpen(): Promise<boolean>;
+  updateIsFirstOpen(): Promise<void>;
+
   getAddressBalanceV2(address: string): Promise<BitcoinBalanceV2>;
   getAddressBalance(address: string): Promise<BitcoinBalance>;
   getAddressCacheBalance(address: string): Promise<BitcoinBalance>;

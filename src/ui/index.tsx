@@ -12,6 +12,7 @@ import { PriceProvider } from '@/ui/provider/PriceProvider';
 import AccountUpdater from '@/ui/state/accounts/updater';
 import '@/ui/styles/global.less';
 
+import { I18nProvider } from './app/contexts/I18nContext';
 import { ActionComponentProvider } from './components/ActionComponent';
 import { AppDimensions } from './components/Responsive';
 import AsyncMainRoute from './pages/MainRoute';
@@ -97,7 +98,6 @@ const wallet: Record<string, any> = new Proxy(
               }
             }
           );
-          break;
         default:
           return function (...params: any) {
             return portMessageChannel.request({
@@ -158,13 +158,15 @@ root.render(
       <ActionComponentProvider>
         <AppDimensions>
           <PriceProvider>
-            <IdleTimerProvider
-              onAction={() => {
-                wallet.setLastActiveTime();
-              }}>
-              <Updaters />
-              <AsyncMainRoute />
-            </IdleTimerProvider>
+            <I18nProvider>
+              <IdleTimerProvider
+                onAction={() => {
+                  wallet.setLastActiveTime();
+                }}>
+                <Updaters />
+                <AsyncMainRoute />
+              </IdleTimerProvider>
+            </I18nProvider>
           </PriceProvider>
         </AppDimensions>
       </ActionComponentProvider>

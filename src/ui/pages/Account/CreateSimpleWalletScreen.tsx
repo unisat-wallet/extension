@@ -7,6 +7,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { AddressTypeCard } from '@/ui/components/AddressTypeCard';
 import { FooterButtonContainer } from '@/ui/components/FooterButtonContainer';
 import { TabBar } from '@/ui/components/TabBar';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { satoshisToAmount, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
@@ -21,6 +22,7 @@ function Step1({
   const [wif, setWif] = useState('');
   const [disabled, setDisabled] = useState(true);
   const wallet = useWallet();
+  const { t } = useI18n();
   useEffect(() => {
     setDisabled(true);
 
@@ -43,7 +45,7 @@ function Step1({
     try {
       const _res = await wallet.createTmpKeyringWithPrivateKey(wif, AddressType.P2TR);
       if (_res.accounts.length == 0) {
-        throw new Error('Invalid PrivateKey');
+        throw new Error(t('invalid_privatekey'));
       }
     } catch (e) {
       tools.toastError((e as Error).message);
@@ -57,10 +59,10 @@ function Step1({
 
   return (
     <Column gap="lg">
-      <Text text="Private Key" textCenter preset="bold" />
+      <Text text={t('private_key')} textCenter preset="bold" />
 
       <Input
-        placeholder={'WIF Private Key or Hex Private Key'}
+        placeholder={t('wif_private_key_or_hex_private_key')}
         onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) => {
           if ('Enter' == e.key) {
             btnClick();
@@ -70,7 +72,7 @@ function Step1({
         autoFocus={true}
       />
       <FooterButtonContainer>
-        <Button disabled={disabled} text="Continue" preset="primary" onClick={btnClick} />
+        <Button disabled={disabled} text={t('continue')} preset="primary" onClick={btnClick} />
       </FooterButtonContainer>
     </Column>
   );
@@ -85,6 +87,7 @@ function Step2({
 }) {
   const wallet = useWallet();
   const tools = useTools();
+  const { t } = useI18n();
 
   const hdPathOptions = useMemo(() => {
     return ADDRESS_TYPES.filter((v) => {
@@ -169,7 +172,7 @@ function Step2({
   };
   return (
     <Column gap="lg">
-      <Text text="Address Type" preset="bold" />
+      <Text text={t('address_type')} preset="bold" />
       {hdPathOptions.map((item, index) => {
         const address = previewAddresses[index];
         const assets = addressAssets[address] || {
@@ -196,7 +199,7 @@ function Step2({
       })}
 
       <FooterButtonContainer>
-        <Button text="Continue" preset="primary" onClick={onNext} />
+        <Button text={t('continue')} preset="primary" onClick={onNext} />
       </FooterButtonContainer>
     </Column>
   );
@@ -228,7 +231,7 @@ export default function CreateSimpleWalletScreen() {
     step1Completed: false,
     tabType: TabType.STEP1
   });
-
+  const { t } = useI18n();
   const updateContextData = useCallback(
     (params: UpdateContextDataParams) => {
       setContextData(Object.assign({}, contextData, params));
@@ -239,12 +242,12 @@ export default function CreateSimpleWalletScreen() {
   const items = [
     {
       key: TabType.STEP1,
-      label: 'Step 1',
+      label: t('step_1'),
       children: <Step1 contextData={contextData} updateContextData={updateContextData} />
     },
     {
       key: TabType.STEP2,
-      label: 'Step 2',
+      label: t('step_2'),
       children: <Step2 contextData={contextData} updateContextData={updateContextData} />
     }
   ];
@@ -257,7 +260,7 @@ export default function CreateSimpleWalletScreen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Create Single Wallet"
+        title={t('create_single_wallet')}
       />
       <Content>
         <Row justifyCenter>

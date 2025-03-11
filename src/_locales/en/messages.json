@@ -1,0 +1,2069 @@
+{
+  "appName": { "message": "UniSat Wallet" },
+  "appDescription": {
+    "message": "Inscribe and store your inscriptions in the world's first open-source Ordinals Chrome wallet!"
+  },
+  "receive": {
+    "message": "Receive"
+  },
+  "total_balance": {
+    "message": "Total Balance"
+  },
+  "enter_your_password": {
+    "message": "Enter your password"
+  },
+  "enter": {
+    "message": "Enter"
+  },
+  "to_continue": {
+    "message": "to continue"
+  },
+  "ordinals": {
+    "message": "Ordinals"
+  },
+  "atomicals": {
+    "message": "Atomicals"
+  },
+  "runes": {
+    "message": "Runes"
+  },
+  "cat": {
+    "message": "CAT"
+  },
+
+  "payment_sent": {
+    "message": "Payment Sent"
+  },
+  "your_transaction_has_been_successfully_sent": {
+    "message": "Your transaction has been successfully sent"
+  },
+  "view_on_block_explorer": {
+    "message": "View on Block Explorer"
+  },
+  "view": {
+    "message": "View"
+  },
+  "signed": {
+    "message": "Signed"
+  },
+  "reject_all": {
+    "message": "Reject All"
+  },
+  "submit": {
+    "message": "Submit"
+  },
+  "done": {
+    "message": "Done"
+  },
+  "payment_failed": {
+    "message": "Payment Failed"
+  },
+  "recipient": {
+    "message": "Recipient"
+  },
+  "transfer_amount": {
+    "message": "Transfer Amount"
+  },
+  "amount": {
+    "message": "Amount"
+  },
+  "calculating": {
+    "message": "Calculating..."
+  },
+  "available": {
+    "message": "Available"
+  },
+  "unavailable": {
+    "message": "Unavailable"
+  },
+  "unlock": {
+    "message": "Unlock"
+  },
+  "fee": {
+    "message": "Fee"
+  },
+  "next": {
+    "message": "Next"
+  },
+  "this_account_has_no_transactions": {
+    "message": "This account has no transactions"
+  },
+  "transaction_details": {
+    "message": "Transaction Details"
+  },
+  "cosmos_sign_demo": {
+    "message": "Cosmos Sign Demo"
+  },
+  "test_approval_sign_psbt": {
+    "message": "Test Approval Sign PSBT"
+  },
+  "hello": {
+    "message": "HELLO"
+  },
+  "world": {
+    "message": "WORLD"
+  },
+  "native_segwit_p2wpkh": {
+    "message": "Native Segwit (P2WPKH)"
+  },
+  "nested_segwit_p2shp2wpkh": {
+    "message": "Nested Segwit (P2SH-P2WPKH)"
+  },
+  "taproot_p2tr": {
+    "message": "Taproot (P2TR)"
+  },
+  "legacy_p2pkh": {
+    "message": "Legacy (P2PKH)"
+  },
+  "function_not_implemented": {
+    "message": "Function not implemented."
+  },
+  "this_is_a_cosmos_signature_demo_page": {
+    "message": "This is a Cosmos signature demo page"
+  },
+  "click_the_button_below_to_start_the_signature_proc": {
+    "message": "Click the button below to start the signature process"
+  },
+  "start_cosmos_sign": {
+    "message": "START COSMOS SIGN"
+  },
+  "sign_result": {
+    "message": "SIGN RESULT:"
+  },
+  "back": {
+    "message": "Back"
+  },
+  "cosmos_signature_demo": {
+    "message": "Cosmos Signature Demo"
+  },
+  "cosmos_sign_success": {
+    "message": "Cosmos Sign Success"
+  },
+  "ok": {
+    "message": "OK"
+  },
+  "select_network": {
+    "message": "Select Network"
+  },
+  "this_network_is_not_available": {
+    "message": "This network is not available"
+  },
+  "if_you_lose_your_private_key_your_assets_will_be_g": {
+    "message": "If you lose your Private Key, your assets will be gone!"
+  },
+  "if_you_share_the_private_key_to_others_your_assets": {
+    "message": "If you share the Private Key to others, your assets will be stolen!"
+  },
+  "private_key_is_only_stored_in_your_browser_it_is_y": {
+    "message": "It's your responsibilities to keep the Private Key safe!"
+  },
+  "please_make_sure_you_have_read_the_security_tips_a": {
+    "message": "Please make sure you have read the security tips above before typing your password"
+  },
+  "show_private_key": {
+    "message": "Show Private Key"
+  },
+  "if_you_ever_change_browsers_or_move_computers_you_": {
+    "message": "If you ever change browsers or move computers, you will need this Private Key to access this account. Save it somewhere safe and secret"
+  },
+  "changed_to_network": {
+    "message": "Changed to"
+  },
+  "wif_private_key": {
+    "message": "WIF Private Key:"
+  },
+  "wif_private_key_or_hex_private_key": {
+    "message": "WIF Private Key or Hex Private Key"
+  },
+  "create_single_wallet": {
+    "message": "Create Single Wallet"
+  },
+  "hex_private_key": {
+    "message": "Hex Private Key:"
+  },
+  "copied": {
+    "message": "Copied"
+  },
+  "if_you_lose_your_secret_recovery_phrase_your_asset": {
+    "message": "If you lose your Secret Recovery Phrase, your assets will be gone!"
+  },
+  "if_you_share_the_secret_recovery_phrase_to_others_": {
+    "message": "If you share the Secret Recovery Phrase to others, your assets will be stolen!"
+  },
+  "secret_recovery_phrase_is_only_stored_in_your_brow": {
+    "message": "It's your responsibilities to keep your Secret Recovery Phrase  safe!"
+  },
+  "show_secret_recovery_phrase": {
+    "message": "Show Secret Recovery Phrase"
+  },
+  "create_a_new_wallet": {
+    "message": "Create a new wallet"
+  },
+  "this_phrase_is_the_only_way_to_recover_your_wallet": {
+    "message": "This phrase is the ONLY way to recover your wallet. Do NOT share it with anyone! (click to copy)"
+  },
+  "copy_to_clipboard": {
+    "message": "Copy to clipboard"
+  },
+  "advance_options": {
+    "message": "Advance Options"
+  },
+  "switch_wallet": {
+    "message": "Switch Wallet"
+  },
+  "derivation_path": {
+    "message": "Derivation Path"
+  },
+  "passphrase": {
+    "message": "Passphrase"
+  },
+  "change_wallet_name": {
+    "message": "Change Wallet Name"
+  },
+  "change_account_name": {
+    "message": "Change Account Name"
+  },
+  "password": {
+    "message": "Password"
+  },
+  "change_password": {
+    "message": "Change Password"
+  },
+  "current_password": {
+    "message": "Current Password"
+  },
+  "new_password": {
+    "message": "New Password"
+  },
+  "confirm_password": {
+    "message": "Confirm Password"
+  },
+  "connected_sites": {
+    "message": "Connected Sites"
+  },
+  "user_rejected_the_request": {
+    "message": "User rejected the request."
+  },
+  "success": {
+    "message": "Success"
+  },
+  "new_account": {
+    "message": "New account"
+  },
+  "address_type_changed": {
+    "message": "Address type changed"
+  },
+  "enable_unconfirmed_balance": {
+    "message": "Enable Unconfirmed Balance"
+  },
+  "enable_unconfirmed_balance_warning": {
+    "message": "If Runes assets are detected in the given address, unconfirmed UTXOs will not be allowed to be spent until they are confirmed. Forcing to spend these unconfirmed UTXOs may risk losing assets."
+  },
+
+  "allow_using_unconfirmed_balance": {
+    "message": "Allow using Unconfirmed Balance"
+  },
+  "is_unconfirmed_please_wait_for_confirmation": {
+    "message": "is unconfirmed, please wait for confirmation"
+  },
+  "unconfirmed": {
+    "message": "unconfirmed"
+  },
+  "low": {
+    "message": "Low"
+  },
+  "medium": {
+    "message": "Medium"
+  },
+  "high": {
+    "message": "High"
+  },
+  "invalid_recipient_address": {
+    "message": "Invalid recipient address"
+  },
+  "gas_fee_calculation_may_not_include_newly_received_tokens_try_a_smaller_amount": {
+    "message": "Gas fee calculation may not include newly received tokens. Try a smaller amount."
+  },
+  "amount_exceeds_your_available_balance": {
+    "message": "Amount exceeds your available balance"
+  },
+  "memo_is_too_long_the_maximum_length_is_256_characters": {
+    "message": "Memo is too long. The maximum length is 256 characters."
+  },
+  "loading": {
+    "message": "loading..."
+  },
+  "cancel": {
+    "message": "Cancel"
+  },
+  "continue": {
+    "message": "Continue"
+  },
+  "balance": {
+    "message": "Balance"
+  },
+  "invalid_fee_rate": {
+    "message": "Invalid fee rate"
+  },
+  "max": {
+    "message": "MAX"
+  },
+  "outputvalue": {
+    "message": "OutputValue"
+  },
+  "mint": {
+    "message": "Mint"
+  },
+  "send_inscription": {
+    "message": "You may click on the inscription to send it directly."
+  },
+  "no_data": {
+    "message": "NO DATA"
+  },
+  "send": {
+    "message": "Send"
+  },
+  "trade": {
+    "message": "Trade"
+  },
+  "runeid": {
+    "message": "runeid"
+  },
+  "mints": {
+    "message": "mints"
+  },
+  "supply": {
+    "message": "supply"
+  },
+  "premine": {
+    "message": "premine"
+  },
+  "burned": {
+    "message": "burned"
+  },
+  "divisibility": {
+    "message": "divisibility"
+  },
+  "symbol": {
+    "message": "symbol"
+  },
+  "holders": {
+    "message": "holders"
+  },
+  "transactions": {
+    "message": "transactions"
+  },
+  "etching": {
+    "message": "etching"
+  },
+  "parent": {
+    "message": "parent"
+  },
+  "each_outputvalue": {
+    "message": "Each OutputValue"
+  },
+  "split": {
+    "message": "Split"
+  },
+  "multiple_inscriptions_are_mixed_together_you_can_split_them_first_or_send_them_once": {
+    "message": "Multiple inscriptions are mixed together. You can split them first or send them once."
+  },
+  "this_inscription_carries_a_high_balance": {
+    "message": "This inscription carries a high balance!"
+  },
+  "id": {
+    "message": "id"
+  },
+  "output_value": {
+    "message": "output value"
+  },
+  "address_preview": {
+    "message": "Address:"
+  },
+  "transaction_preview": {
+    "message": "Transaction:"
+  },
+  "block_preview": {
+    "message": "Block:"
+  },
+  "text_preview": {
+    "message": "Text:"
+  },
+  "transactions_24h": {
+    "message": "Transactions (24h)"
+  },
+  "active_addresses_24h": {
+    "message": "Active Addresses (24h)"
+  },
+  "go_to_unisat_explorer": {
+    "message": "Go to UniSat Explorer"
+  },
+  "search_address_and_txids": {
+    "message": "Search Address and TXIDs"
+  },
+  "preview": {
+    "message": "Preview"
+  },
+  "content": {
+    "message": "content"
+  },
+  "content_length": {
+    "message": "content length"
+  },
+  "content_type": {
+    "message": "content type"
+  },
+  "timestamp": {
+    "message": "timestamp"
+  },
+  "genesis_transaction": {
+    "message": "genesis transaction"
+  },
+  "create_new_wallet": {
+    "message": "Create new wallet"
+  },
+  "i_already_have_a_wallet": {
+    "message": "I already have a wallet"
+  },
+  "connect_to_hardware_wallet": {
+    "message": "Connect to Hardware Wallet"
+  },
+  "hardware_wallet_feature_is_experimental_use_it_with_caution_as_potential_issues_may_arise": {
+    "message": "The hardware wallet feature is experimental. Use it with caution as potential issues may arise"
+  },
+  "dapp_center": {
+    "message": "DApp Center"
+  },
+  "home": {
+    "message": "Home"
+  },
+  "discover": {
+    "message": "Discover"
+  },
+  "settings": {
+    "message": "Settings"
+  },
+  "the_wallet_currently_uses_a_custom_hd_path_and_does_not_support_switching_address_types": {
+    "message": "The wallet currently uses a custom HD path and does not support switching address types."
+  },
+  "new": {
+    "message": "new!"
+  },
+  "coming_soon": {
+    "message": "Coming soon"
+  },
+  "history": {
+    "message": "History"
+  },
+  "buy": {
+    "message": "Buy"
+  },
+  "buy_service_provider": {
+    "message": "Please select a service provider below to buy"
+  },
+  "disclaimStr": {
+    "message": "Please note that you are about to buy Bitcoin through a third-party platform. Credit card payment services are provided by our partners. UniSat Wallet acts solely as an intermediary platform and assumes no liability for any potential losses or damages that may arise from using the credit card payment service."
+  },
+  "additional_transaction_fees": {
+    "message": "Additional transaction fees apply when purchasing through third-party platforms. Rates vary by country and payment method. Please review each platform's fees before proceeding with transactions."
+  },
+  "before_proceeding": {
+    "message": "Before proceeding, please carefully read and accept the disclaimer."
+  },
+  "continue_with": {
+    "message": "Continue with"
+  },
+  "no_service_provider_available": {
+    "message": "No service provider available."
+  },
+  "empty": {
+    "message": "Empty"
+  },
+  "all": {
+    "message": "All"
+  },
+  "arc20": {
+    "message": "ARC-20"
+  },
+  "others": {
+    "message": "Others"
+  },
+  "not_supported_yet": {
+    "message": "Not supported yet"
+  },
+  "step_1": {
+    "message": "STEP 1"
+  },
+  "step_2": {
+    "message": "STEP 2"
+  },
+  "step_3": {
+    "message": "STEP 3"
+  },
+  "step_12": {
+    "message": "STEP 1/2"
+  },
+  "step_22": {
+    "message": "STEP 2/2"
+  },
+  "send_cat721": {
+    "message": "Send CAT721"
+  },
+  "collection_id": {
+    "message": "Collection Id"
+  },
+  "collection": {
+    "message": "Collection"
+  },
+  "collection_not_found": {
+    "message": "Collection not found"
+  },
+  "max_supply": {
+    "message": "Max supply"
+  },
+  "token_not_found": {
+    "message": "Token not found"
+  },
+  "merge_utxos": {
+    "message": "Merge UTXOs"
+  },
+  "token_id": {
+    "message": "token_id"
+  },
+  "name": {
+    "message": "name"
+  },
+  "decimals": {
+    "message": "decimals"
+  },
+  "merge_history": {
+    "message": "Merge History"
+  },
+  "the_recipient_must_be_p2tr_or_p2wpkh_address_type": {
+    "message": "The recipient must be P2TR or P2WPKH address type"
+  },
+  "merge_utxos_is_not_supported_for_keystone_yet": {
+    "message": "Merge UTXOs is not supported for Keystone yet"
+  },
+  "address": {
+    "message": "Address"
+  },
+  "send_cat20_is_not_supported_for_keystone_yet": {
+    "message": "Send CAT20 is not supported for Keystone yet"
+  },
+  "send_cat20": {
+    "message": "Send CAT20"
+  },
+  "to_send_a_larger_amount_please_merge_your_utxos_to_increase_the_available_balance": {
+    "message": "To send a larger amount, please merge your UTXOs to increase the available balance."
+  },
+  "merge_utxos_to_increase_the_available_balance": {
+    "message": "Merge UTXOs->"
+  },
+  "selected": {
+    "message": "Selected"
+  },
+  "merge_transactions": {
+    "message": "Merge Transactions"
+  },
+  "retry_in_10s": {
+    "message": "Retry in 10s"
+  },
+  "merge_utxos_for_cat20_asset": {
+    "message": "Merge UTXOs for CAT20 Asset"
+  },
+  "you_need_at_least_2_utxos_to_merge": {
+    "message": "You need at least 2 UTXOs to merge"
+  },
+  "this_feature_is_currently_in_the_experimental_test_phase_please_proceed_with_caution": {
+    "message": "This feature is currently in the experimental test phase. Please proceed with caution."
+  },
+  "set_utxo_amount_to_be_merged": {
+    "message": "Set UTXO amount to be merged"
+  },
+  "estimated_fee": {
+    "message": "Estimated Fee"
+  },
+  "start_merging": {
+    "message": "Start Merging"
+  },
+  "merge_progress": {
+    "message": "Merge Progress"
+  },
+  "start": {
+    "message": "Start"
+  },
+  "merging": {
+    "message": "Merging..."
+  },
+  "quit_merging_process": {
+    "message": "Quit Merging Process"
+  },
+  "disclaimer": {
+    "message": "Disclaimer"
+  },
+  "risk_warning": {
+    "message": "Risk Warning: Don't invest unless you're prepared to lose all the money you invest."
+  },
+  "i_have_read_and_agree_to_the_above_disclaimer": {
+    "message": "I have read and agree to the above disclaimer"
+  },
+  "memo": {
+    "message": "Memo:"
+  },
+  "bbn": {
+    "message": "bbn..."
+  },
+  "sign_transaction": {
+    "message": "Sign Transaction"
+  },
+  "spend_inscription": {
+    "message": "Spend Inscription"
+  },
+  "spend_amount": {
+    "message": "Spend Amount"
+  },
+  "in_inscriptions": {
+    "message": "in inscriptions"
+  },
+
+  "reject": {
+    "message": "Reject"
+  },
+  "sign_and_pay": {
+    "message": "Sign & Pay"
+  },
+  "this_token_only_supports_up_to": {
+    "message": "This token only supports up to"
+  },
+  "decimal_places": {
+    "message": "decimal places."
+  },
+  "tx_fee": {
+    "message": "Tx Fee:"
+  },
+  "t_baby": {
+    "message": "tBABY"
+  },
+  "send_to": {
+    "message": "Send to"
+  },
+  "send_amount": {
+    "message": "Send Amount"
+  },
+  "how_to_import_baby": {
+    "message": "How to Import BABY"
+  },
+  "click_the_account_on_the_main_page": {
+    "message": "Click the account on the main page."
+  },
+  "tap_the_more_menu_then_select_the_export_private_key_option": {
+    "message": "Tap the 'More' menu, then select the 'Export Private Key' option."
+  },
+  "once_you_have_your_hex_private_key_you_can_import_it_into_a_cosmos_compatible_wallet_to_access_your_babylon_reward_assets": {
+    "message": "Once you have your Hex Private Key, you can import it into a COSMOS-compatible wallet to access your Babylon reward assets."
+  },
+  "babylon_bitcoin_staking": {
+    "message": "Babylon Bitcoin Staking"
+  },
+  "babylon_bitcoin_staking_phase1": {
+    "message": "Babylon Bitcoin Staking Phase1"
+  },
+  "babylon_bitcoin_staking_stats": {
+    "message": "Babylon Bitcoin Staking Stats"
+  },
+  "closed": {
+    "message": "Closed"
+  },
+  "go_to_stake": {
+    "message": "Go to Stake"
+  },
+  "staked": {
+    "message": "Staked"
+  },
+  "learn_how_to_import_your_babylon_reward_assets_into_a_cosmos_compatible_wallet": {
+    "message": "Learn how to import your Babylon reward assets into a COSMOS-compatible wallet."
+  },
+  "unstake": {
+    "message": "Unstake"
+  },
+  "claimable": {
+    "message": "Claimable"
+  },
+  "baby_rewards": {
+    "message": "BABY Rewards"
+  },
+  "claim": {
+    "message": "Claim"
+  },
+  "transfer": {
+    "message": "Transfer"
+  },
+  "transferable": {
+    "message": "Transferable:"
+  },
+  "inscribe_transfer": {
+    "message": "Inscribe TRANSFER"
+  },
+  "to_send_brc20_you_have_to_inscribe_a_transfer_inscription_first": {
+    "message": "* To send BRC-20, you have to inscribe a TRANSFER inscription first"
+  },
+  "transfer_inscriptions": {
+    "message": "TRANSFER Inscriptions"
+  },
+  "transfer_inscriptions_0": {
+    "message": "TRANSFER Inscriptions (0)"
+  },
+  "select_all": {
+    "message": "Select All"
+  },
+  "receiver": {
+    "message": "Receiver"
+  },
+  "step1": {
+    "message": "Step1"
+  },
+  "step2": {
+    "message": "Step2"
+  },
+
+  "fee_rate": {
+    "message": "Fee Rate"
+  },
+  "inscription": {
+    "message": "Inscription"
+  },
+  "atomicals_id": {
+    "message": "atomicals id"
+  },
+  "send_arc20": {
+    "message": "Send ARC-20"
+  },
+  "the_minimum_amount_is": {
+    "message": "The minimum amount is"
+  },
+  "atomicals_number": {
+    "message": "atomicals number"
+  },
+  "atomicals_inscription_not_confirmed_yet": {
+    "message": "Atomicals Inscription (not confirmed yet)"
+  },
+  "atomicals_inscription": {
+    "message": "Atomicals Inscription"
+  },
+  "inscription_not_confirmed_yet": {
+    "message": "Inscription (not confirmed yet)"
+  },
+  "allow_this_site_to_switch_the_network": {
+    "message": "Allow this site to switch the network?"
+  },
+  "switch_account": {
+    "message": "Switch Account"
+  },
+  "switch_network": {
+    "message": "Switch Network"
+  },
+  "allow_this_site_to_switch_the_chain": {
+    "message": "Allow this site to switch the chain?"
+  },
+  "switch_chain": {
+    "message": "Switch Chain"
+  },
+  "signature_request": {
+    "message": "Signature request"
+  },
+  "only_sign_this_message_if_you_fully_understand_the": {
+    "message": "Only sign this message if you fully understand the content and trust the requesting site."
+  },
+  "you_are_signing": {
+    "message": "You are signing:"
+  },
+  "sign": {
+    "message": "Sign"
+  },
+  "sign_data_request": {
+    "message": "Sign Data request"
+  },
+  "you_are_signing_data": {
+    "message": "You are signing data:"
+  },
+  "payment_network_fee": {
+    "message": "Payment Network Fee"
+  },
+  "inscription_output_value": {
+    "message": "Inscription Output Value"
+  },
+  "inscription_network_fee": {
+    "message": "Inscription Network Fee"
+  },
+  "service_fee": {
+    "message": "Service Fee"
+  },
+  "total": {
+    "message": "Total"
+  },
+  "baby_balance": {
+    "message": "BABY Balance"
+  },
+  "failed_to_handle_signature": {
+    "message": "Failed to handle signature"
+  },
+  "inscribing": {
+    "message": "Inscribing..."
+  },
+  "inscribe_success": {
+    "message": "Inscribe Success"
+  },
+  "the_transferable_and_available_balance_of_brc20_wi": {
+    "message": "The transferable and available balance of BRC20 will be refreshed in a few minutes."
+  },
+  "i_only_sign_what_i_understand": {
+    "message": "I only sign what I understand"
+  },
+  "you_need_to_enable_the_sign_data_request_feature_in_settings_advanced_to_continue": {
+    "message": "You need to enable the signData request feature in Settings -> Advanced to continue."
+  },
+  "cosmos_sign_request": {
+    "message": "Cosmos Sign request"
+  },
+  "only_sign_if_you_fully_understand_the_content_and_": {
+    "message": "Only sign if you fully understand the content and trust the requesting site."
+  },
+  "phishing_detection": {
+    "message": "Phishing Detection"
+  },
+  "malicious_behavior_and_suspicious_activity_have_be": {
+    "message": "Malicious behavior and suspicious activity have been detected."
+  },
+  "your_access_to_this_page_has_been_restricted_by_un": {
+    "message": "Your access to this page has been restricted by UniSat Wallet as it might be unsafe."
+  },
+  "reject_blocked_by_unisat_wallet": {
+    "message": "Reject (blocked by UniSat Wallet)"
+  },
+  "warning": {
+    "message": "Warning"
+  },
+  "i_am_aware_of_the_risks": {
+    "message": "I am aware of the risks"
+  },
+  "connect_with_unisat_wallet": {
+    "message": "Connect with UniSat Wallet"
+  },
+  "select_the_account_to_use_on_this_site": {
+    "message": "Select the account to use on this site"
+  },
+  "only_connect_with_sites_you_trust": {
+    "message": "Only connect with sites you trust."
+  },
+  "connect": {
+    "message": "Connect"
+  },
+  "chain_id": {
+    "message": "Chain ID"
+  },
+  "involved_assets": {
+    "message": "Involved Assets:"
+  },
+  "satvb": {
+    "message": "sat/vB"
+  },
+  "rbf": {
+    "message": "RBF"
+  },
+  "to_sign": {
+    "message": "to sign"
+  },
+  "network_fee": {
+    "message": "Network Fee:"
+  },
+  "network_fee_rate": {
+    "message": "Network Fee Rate:"
+  },
+  "the_fee_rate_is_much_lower_than_recommended_fee_rate": {
+    "message": "The fee rate is much lower than recommended fee rate"
+  },
+  "the_fee_rate_is_much_higher_than_recommended_fee_rate": {
+    "message": "The fee rate is much higher than recommended fee rate"
+  },
+  "inputs": {
+    "message": "Inputs"
+  },
+  "outputs": {
+    "message": "Outputs"
+  },
+
+  "features": {
+    "message": "Features:"
+  },
+  "psbt_data": {
+    "message": "PSBT Data:"
+  },
+  "get_signature": {
+    "message": "Get Signature"
+  },
+  "get_signature_success": {
+    "message": "Get Signature Success"
+  },
+  "sign_multiple_transactions": {
+    "message": "Sign Multiple Transactions"
+  },
+  "transaction": {
+    "message": "Transaction"
+  },
+  "merge_failed": {
+    "message": "Merge Failed."
+  },
+  "dealing": {
+    "message": "Dealing"
+  },
+  "paused": {
+    "message": "Paused"
+  },
+  "completed": {
+    "message": "Completed"
+  },
+  "multisign_disclaimer": {
+    "message": "MultiSign Disclaimer"
+  },
+  "by_proceeding_you_confirm_that_youve_read_and_accepted_this_disclaimer": {
+    "message": "By proceeding, you confirm that you've read and accepted this disclaimer."
+  },
+  "sign_all": {
+    "message": "Sign all"
+  },
+  "transactions_at_once": {
+    "message": "transactions at once"
+  },
+  "edit_name": {
+    "message": "Edit Name"
+  },
+  "export_private_key": {
+    "message": "Export Private Key"
+  },
+  "remove_wallet": {
+    "message": "Remove Wallet"
+  },
+  "invalid_wallet_please_remove_it_and_add_new_one": {
+    "message": "Invalid wallet, please remove it and add new one"
+  },
+  "removing_the_last_wallet_is_not_allowed": {
+    "message": "Removing the last wallet is not allowed"
+  },
+  "copy_address": {
+    "message": "Copy address"
+  },
+  "private_key": {
+    "message": "Private Key"
+  },
+  "address_type": {
+    "message": "Address Type"
+  },
+  "invalid_privatekey": {
+    "message": "Invalid PrivateKey"
+  },
+  "create_a_password": {
+    "message": "Create a password"
+  },
+  "you_will_use_this_to_unlock_your_wallet": {
+    "message": "You will use this to unlock your wallet"
+  },
+  "keystone_hardware_wallet": {
+    "message": "Keystone hardware wallet"
+  },
+  "the_ultimate_security_solution_for_cryptocurrencie": {
+    "message": "The Ultimate Security Solution for Cryptocurrencies"
+  },
+  "100_air_gapped": {
+    "message": "100% Air-Gapped"
+  },
+  "open_source": {
+    "message": "Open-source"
+  },
+  "exceptional_compatibility": {
+    "message": "Exceptional Compatibility"
+  },
+  "learn_more_about_keystone": {
+    "message": "Learn more about Keystone"
+  },
+  "connect_via_usb": {
+    "message": "Connect via USB"
+  },
+  "scan_to_connect": {
+    "message": "Scan to connect"
+  },
+  "scan_the_qr_code_displayed_on_your_keystone_device": {
+    "message": "Scan the QR code displayed on your Keystone device"
+  },
+  "you_need_to_allow_camera_access_to_use_this_featur": {
+    "message": "You need to allow camera access to use this feature."
+  },
+  "connect_and_unlock_your_keystone": {
+    "message": "Connect and unlock your Keystone"
+  },
+  "scan_in_more_addresses": {
+    "message": "Scan in more addresses..."
+  },
+  "custom_hdpath_optional": {
+    "message": "Custom HdPath (Optional)"
+  },
+  "password_strength": {
+    "message": "Password strength:"
+  },
+  "passwords_dont_match": {
+    "message": "Passwords don't match"
+  },
+  "custom_hdpath": {
+    "message": "Custom HD Wallet Derivation Path"
+  },
+  "connect_keystone": {
+    "message": "Connect Keystone"
+  },
+  "scan_the_qr_code": {
+    "message": "Scan the QR Code"
+  },
+  "connect_keystone_via_usb": {
+    "message": "Connect Keystone via USB"
+  },
+  "create_an_account": {
+    "message": "Create an Account"
+  },
+  "create_wallet": {
+    "message": "Create Wallet"
+  },
+  "create_with_mnemonics_12words": {
+    "message": "Create with mnemonics (12-words)"
+  },
+  "restore_wallet": {
+    "message": "Restore Wallet"
+  },
+  "restore_from_mnemonics_12words24words": {
+    "message": "Restore from mnemonics (12-words、24-words)"
+  },
+  "restore_from_single_private_key": {
+    "message": "Restore from single private key"
+  },
+  "create_a_new_hd_wallet": {
+    "message": "Create a new HD Wallet"
+  },
+  "keystone_wallet": {
+    "message": "Keystone Wallet"
+  },
+  "phrase_optional": {
+    "message": "Phrase (Optional)"
+  },
+  "secret_recovery_phrase": {
+    "message": "Secret Recovery Phrase"
+  },
+  "unable_to_find_any_addresses_with_assets": {
+    "message": "Unable to find any addresses with assets"
+  },
+  "import_an_existing_wallet_with_your_secret_recover": {
+    "message": "Import an existing wallet with your secret recovery phrase"
+  },
+  "i_saved_my_secret_recovery_phrase": {
+    "message": "I saved My Secret Recovery Phrase"
+  },
+  "verify_recovery_phrase": {
+    "message": "Verify Recovery Phrase"
+  },
+  "click_on_the_words_to_put_them_in_the_correct_orde": {
+    "message": "Click on the words to put them in the correct order to verify if the recovery phrase you backed up is correct"
+  },
+  "choose_a_wallet_you_want_to_restore_from": {
+    "message": "Choose a wallet you want to restore from"
+  },
+  "skip": {
+    "message": "Skip"
+  },
+  "go_to_update": {
+    "message": "Go to update"
+  },
+  "use_at_your_own_risk": {
+    "message": "Use at your own risk"
+  },
+  "please_be_aware_that_sending_the_following_assets_involves_risk": {
+    "message": "Please be aware that sending the following assets involves risk:"
+  },
+  "enable_atomicals_assets_warning": {
+    "message": "The atomicals assets will no longer be displayed in the wallet, and they can be spent as regular balance. Please proceed with caution."
+  },
+  "sign_data_requests": {
+    "message": "signData requests"
+  },
+  "enable_sign_data_warning": {
+    "message": "If you enable this setting, you might get signature requests that aren't readable. By signing a message you don't understand, you could be agreeing to give away your funds and NFTs.You're at risk for phishing attacks. Protect yourself by turning off signData."
+  },
+  "enable_sign_data_popover_warning": {
+    "message": "Allowing signData requests can make you vulnerable to phishing attacks. Always review the URL and be careful when signing messages that contain code."
+  },
+  "enable_sign_data_popover_warning_2": {
+    "message": "If you've been asked to turn this setting on, you might be getting scammed"
+  },
+  "understand_sign_data_warning": {
+    "message": "I understand that I can lose all of my funds and NFTs if I enable signData requests."
+  },
+  "understand_and_accept_the_risks_associated_with_this_transaction": {
+    "message": "I understand and accept the risks associated with this transaction."
+  },
+  "allow_sign_data_requests": {
+    "message": "Allow signData requests"
+  },
+  "sending_out_assets": {
+    "message": "Sending Out Assets"
+  },
+  "runes_burn_risk_list": {
+    "message": "Runes Burn Risk List"
+  },
+  "inscription_burn_risk_list": {
+    "message": "Inscription Burn Risk List"
+  },
+  "changing_inscriptoins": {
+    "message": "Changing Inscriptoins"
+  },
+  "arc20_burn_risk_list": {
+    "message": "ARC20 Burn Risk List"
+  },
+  "current_fee_rate": {
+    "message": "Current fee rate:"
+  },
+  "recommended_fee_rates": {
+    "message": "Recommended fee rates:"
+  },
+  "old_value": {
+    "message": "Old Value:"
+  },
+  "new_value": {
+    "message": "New Value:"
+  },
+  "please_pay_attention_to_whether_you_have_backed_up": {
+    "message": "Please pay attention to whether you have backed up the mnemonic/private key to prevent asset loss"
+  },
+  "this_action_is_not_reversible": {
+    "message": "This action is not reversible."
+  },
+  "remove": {
+    "message": "Remove"
+  },
+  "compatibility_tips": {
+    "message": "Compatibility Tips"
+  },
+  "please_be_aware_that": {
+    "message": "Please be aware that:"
+  },
+  "confirm": {
+    "message": "Confirm"
+  },
+  "unisat": {
+    "message": "UNISAT"
+  },
+  "try_again": {
+    "message": "Try again"
+  },
+  "usb_permissions_not_available": {
+    "message": "USB_PERMISSIONS_NOT_AVAILABLE"
+  },
+  "approve_on_your_keystone_device": {
+    "message": "Approve on your Keystone Device"
+  },
+  "ensure_your_keystone_3_pro_is_on_the_homepage": {
+    "message": "Ensure your Keystone 3 Pro is on the homepage"
+  },
+  "onsuccess_not_implemented": {
+    "message": "onSuccess Not implemented"
+  },
+  "scan_the_qr_code_via_your_keystone_device": {
+    "message": "Scan the QR code via your Keystone device"
+  },
+  "generating_qr_code": {
+    "message": "Generating QR code..."
+  },
+  "you_have_inscribed_a_transfer": {
+    "message": "You have inscribed a TRANSFER"
+  },
+  "please_wait_for_the_update_of_brc20": {
+    "message": "Please wait for the update of BRC20"
+  },
+  "about_3_minutes": {
+    "message": "(about 3 minutes)"
+  },
+  "for_ordinals_assets": {
+    "message": "For Ordinals assets,"
+  },
+  "rare_sats": {
+    "message": "Rare sats"
+  },
+  "are_not_supported": {
+    "message": "are not supported."
+  },
+  "for_atomicals_assets": {
+    "message": "For Atomicals assets,"
+  },
+  "non_arc20": {
+    "message": "Non-ARC20"
+  },
+  "are_not_supported_yet": {
+    "message": "are not supported yet."
+  },
+  "not_supported": {
+    "message": "Not supported"
+  },
+  "satsvb": {
+    "message": "sats/vB"
+  },
+  "precautions": {
+    "message": "Precautions"
+  },
+  "enable_atomicals": {
+    "message": "Enable Atomicals"
+  },
+  "security_notice": {
+    "message": "Security Notice:"
+  },
+  "notice": {
+    "message": "Notice"
+  },
+  "enable_atomicals_assets": {
+    "message": "Enable Atomicals Assets"
+  },
+  "unconfirmed_balance_not_spendable": {
+    "message": "Unconfirmed Balance Not Spendable"
+  },
+  "to_enable_spending_of_unconfirmed_balances_please_": {
+    "message": "To enable spending of unconfirmed balances, please visit the advanced options in settings."
+  },
+  "unconfirmed_balance_not_spendable_warning": {
+    "message": "To protect your assets, only confirmed balances are spendable when holding Runes assets. This is to prevent accidental asset burning."
+  },
+  "mandatory_use_of_unconfirmed_balance": {
+    "message": "Mandatory use of unconfirmed balance"
+  },
+  "only_applies_to_current_address": {
+    "message": "Only applies to current address"
+  },
+  "advanced": {
+    "message": "Advanced"
+  },
+  "advanced_settings": {
+    "message": "Language, Security & Permissions Settings"
+  },
+  "automatic_lock_time": {
+    "message": "Automatic Lock Time"
+  },
+  "the_auto_lock_time_has_been_changed_to": {
+    "message": "The auto-lock time has been changed to"
+  },
+  "i_understand": {
+    "message": "I understand"
+  },
+  "unknown_error": {
+    "message": "Unknown error"
+  },
+  "version": {
+    "message": "Version:"
+  },
+  "latest_version": {
+    "message": "Latest Version"
+  },
+  "inscribe_and_store_your_inscriptions_in_the_worlds_first_open_source_chrome_wallet_for_ordinals": {
+    "message": "Inscribe and store your inscriptions in the world's first Open Source Chrome wallet for Ordinals!"
+  },
+  "the_broadcastchannel_name_is_missing": {
+    "message": "the broadcastChannel name is missing"
+  },
+  "promise_need_function_to_handle": {
+    "message": "promise need function to handle"
+  },
+  "network_error_no_response": {
+    "message": "Network error, no response"
+  },
+  "network_error_json_parse_error": {
+    "message": "Network error, json parse error"
+  },
+  "network_errorno_response_data": {
+    "message": "Network error,no response data"
+  },
+  "method_not_implemented": {
+    "message": "Method not implemented."
+  },
+  "keyringcontroller_first_account_not_found": {
+    "message": "KeyringController - First Account not found."
+  },
+  "no_current_account": {
+    "message": "no current account"
+  },
+  "current_keyring_does_not_support_gensigncosmosur": {
+    "message": "Current keyring does not support genSignCosmosUr"
+  },
+  "current_keyring_does_not_support_parsesigncosmosur": {
+    "message": "Current keyring does not support parseSignCosmosUr"
+  },
+  "keyringcontroller_password_is_not_a_string": {
+    "message": "KeyringController - password is not a string"
+  },
+  "no_keyring_found_for_the_requested_account": {
+    "message": "No keyring found for the requested account."
+  },
+  "public_key_must_be_compressed_secp256k1_ie_33_byte": {
+    "message": "Public key must be compressed secp256k1, i.e. 33 bytes starting with 0x02 or 0x03"
+  },
+  "no_current_keyring": {
+    "message": "no current keyring"
+  },
+  "invalid_index_in_tosigninput": {
+    "message": "invalid index in toSignInput"
+  },
+  "no_address_or_public_key_in_tosigninput": {
+    "message": "no address or public key in toSignInput"
+  },
+  "invalid_address_in_tosigninput": {
+    "message": "invalid address in toSignInput"
+  },
+  "invalid_public_key_in_tosigninput": {
+    "message": "invalid public key in toSignInput"
+  },
+  "invalid_sighash_type_in_tosigninput": {
+    "message": "invalid sighash type in toSignInput"
+  },
+  "no_mfp_in_keyring": {
+    "message": "no mfp in keyring"
+  },
+  "insufficient_balance": {
+    "message": "Insufficient balance."
+  },
+  "output_value_must_be_at_least": {
+    "message": "OutputValue must be at least"
+  },
+  "split_inscriptions": {
+    "message": "Split Inscriptions"
+  },
+  "split_inscription_tips": {
+    "message": "This feature is currently under experimentation. Please confirm the inscription splitting status of the transaction when signing the transaction."
+  },
+  "each_output_value": {
+    "message": "Each OutputValue"
+  },
+  "spliting_to": {
+    "message": "Spliting to"
+  },
+  "security_warning": {
+    "message": "Security Warning"
+  },
+  "danger_potential_phishing_website_detected": {
+    "message": "Danger! Potential phishing website detected"
+  },
+  "this_website_has_been_identified_as_malicious_by_unisat_and_may": {
+    "message": "This website has been identified as malicious by UniSat and may:"
+  },
+  "steal_your_private_keys_or_seed_phrases": {
+    "message": "Steal your private keys or seed phrases"
+  },
+  "trick_you_into_signing_malicious_transactions": {
+    "message": "Trick you into signing malicious transactions"
+  },
+  "collect_your_personal_information": {
+    "message": "Collect your personal information"
+  },
+  "think_this_is_a_false_positive_click_here_to_report_an_issue": {
+    "message": "Think this is a false positive? Click here to report an issue →"
+  },
+  "if_you_insist_on_continuing_proceed_at_your_own_risk": {
+    "message": "If you insist on continuing, proceed at your own risk:"
+  },
+  "continue_to": {
+    "message": "Continue to"
+  },
+  "send_runes": {
+    "message": "Send Runes"
+  },
+  "send_atomicals_inscription": {
+    "message": "Send Atomicals Inscription"
+  },
+  "send_inscription2": {
+    "message": "Send Inscription"
+  },
+  "ordinals_inscriptions": {
+    "message": "Ordinals Inscriptions"
+  },
+  "babylon_staking": {
+    "message": "Babylon Staking"
+  },
+  "confirmed_tvl": {
+    "message": "Confirmed"
+  },
+  "tvl": {
+    "message": "TVL"
+  },
+  "stakers": {
+    "message": "Stakers"
+  },
+  "delegations": {
+    "message": "Delegations"
+  },
+  "finality_providers": {
+    "message": "Finality Providers"
+  },
+  "invalid_address": {
+    "message": "Invalid address."
+  },
+  "utxo_not_found": {
+    "message": "UTXO not found."
+  },
+  "multiple_inscriptions_are_mixed_together_please_sp": {
+    "message": "Multiple inscriptions are mixed together. Please split them first."
+  },
+  "inscriptions": {
+    "message": "Inscriptions"
+  },
+  "atomicals_nft": {
+    "message": "Atomicals NFT"
+  },
+  "unable_to_send_inscriptions_to_this_address_in_bat": {
+    "message": "Unable to send inscriptions to this address in batches, please send them one by one."
+  },
+  "inscription_not_found": {
+    "message": "Inscription not found."
+  },
+  "the_amount_for_change_is_too_low_please_adjust_the": {
+    "message": "The amount for change is too low, please adjust the sending amount."
+  },
+  "keyring_does_not_exist": {
+    "message": "keyring does not exist"
+  },
+  "not_supported_chainid": {
+    "message": "Not supported chainId"
+  },
+  "signdata_is_required_for_cosmos_signing": {
+    "message": "signData is required for Cosmos signing"
+  },
+  "datatype_is_required_for_cosmos_signing": {
+    "message": "dataType is required for Cosmos signing"
+  },
+  "path_is_required_for_cosmos_signing": {
+    "message": "path is required for Cosmos signing"
+  },
+  "ur_type_is_required_for_parsing_cosmos_signature": {
+    "message": "UR type is required for parsing Cosmos signature"
+  },
+  "cbor_data_is_required_for_parsing_cosmos_signature": {
+    "message": "CBOR data is required for parsing Cosmos signature"
+  },
+  "invalid_psbt": {
+    "message": "invalid psbt"
+  },
+  "not_implemented": {
+    "message": "not implemented"
+  },
+  "approvalres_is_required": {
+    "message": "approvalRes is required"
+  },
+  "connected": {
+    "message": "Connected"
+  },
+  "not_connected": {
+    "message": "Not connected"
+  },
+  "expand_view": {
+    "message": "Expand View"
+  },
+  "lock_immediately": {
+    "message": "Lock Immediately"
+  },
+  "change_your_lockscreen_password": {
+    "message": "Change your lockscreen password"
+  },
+  "manage_wallet": {
+    "message": "Manage Wallet"
+  },
+  "network": {
+    "message": "Network"
+  },
+  "invalid_transaction_data": {
+    "message": "Invalid transaction data"
+  },
+  "amount_must_be_at_least": {
+    "message": "Amount must be at least"
+  },
+  "includes_inscriptions_runes_and_unconfirmed_utxos": {
+    "message": "Includes Inscriptions, Runes, and unconfirmed UTXO assets."
+  },
+  "future_versions_will_support_spending_these_assets": {
+    "message": "Future versions will support spending these assets."
+  },
+  "you_can_unlock_these_assets_by_using_the_utxos_tools": {
+    "message": "You can unlock these assets by using the UTXO tools."
+  },
+  "spend": {
+    "message": "Spend"
+  },
+  "transaction_success": {
+    "message": "Transaction Success"
+  },
+  "transaction_id": {
+    "message": "Transaction ID"
+  },
+  "received_from": {
+    "message": "Received from"
+  },
+  "date": {
+    "message": "Date"
+  },
+  "view_on_unisat_explorer": {
+    "message": "View on UniSat Explorer"
+  },
+  "view_on_okx_explorer": {
+    "message": "View on OKX Explorer"
+  },
+  "view_on_mempool": {
+    "message": "View on Mempool"
+  },
+  "from": {
+    "message": "From"
+  },
+  "to": {
+    "message": "To"
+  },
+  "by_inscription": {
+    "message": "By inscription"
+  },
+  "unconfirmed_inscription": {
+    "message": "(unconfirmed)"
+  },
+  "inscriptions_capital": {
+    "message": "INSCRIPTIONS"
+  },
+  "disable_atomicals": {
+    "message": "Disable Atomicals"
+  },
+  "the_utxo_containing_this_inscription_has": {
+    "message": "The UTXO containing this inscription has"
+  },
+  "address_book": {
+    "message": "Address Book"
+  },
+  "search_address_or_name": {
+    "message": "Search address or name"
+  },
+  "loading_contacts": {
+    "message": "Loading..."
+  },
+  "you_haven_t_added_address_information_yet": {
+    "message": "You haven't added address information yet"
+  },
+  "no_matching_contacts_found": {
+    "message": "No matching contacts found"
+  },
+  "please_read_more_detail_on": {
+    "message": "Please read more detail on"
+  },
+  "bitcoin_address_verifier": {
+    "message": "Bitcoin Address Verifier"
+  },
+  "owner": {
+    "message": "Owner"
+  },
+  "description": {
+    "message": "Description"
+  },
+  "script": {
+    "message": "Script"
+  },
+  "this_message_serves_as_a_notice_that_if_runes_assets_are_detected_in_your_address_your": {
+    "message": "This message serves as a notice that if Runes assets are detected in your address, your unconfirmed balances will not be spendable. You don't need to do anything."
+  },
+  "in_the_current_version_only_the_confirmed_balance_can_be_used_once_atomicals_enabled": {
+    "message": "In the current version, only the confirmed balance can be used once atomicals enabled."
+  },
+  "oops_something_went_wrong": {
+    "message": "Oops! Something went wrong."
+  },
+  "try_going_back_or_refreshing": {
+    "message": "Try going back or refreshing."
+  },
+  "go_back": {
+    "message": "Go Back"
+  },
+  "refresh_page": {
+    "message": "Refresh Page"
+  },
+  "refresh": {
+    "message": "Refresh"
+  },
+  "gas_limit": {
+    "message": "Gas Limit"
+  },
+  "auto": {
+    "message": "Auto"
+  },
+  "recommended": {
+    "message": "Recommended"
+  },
+  "range": {
+    "message": "Range"
+  },
+  "gas_limit_explanation": {
+    "message": "Gas Limit Explanation"
+  },
+  "gas_limit_explanation_1": {
+    "message": "• Controls maximum computational resources for transaction"
+  },
+  "gas_limit_explanation_2": {
+    "message": "• Higher limit = higher potential fees but ensures completion"
+  },
+  "gas_limit_explanation_3": {
+    "message": "• Too low may cause transaction failure"
+  },
+  "gas_limit_explanation_4": {
+    "message": "• Recommended value is usually sufficient"
+  },
+  "gas_adjustment": {
+    "message": "Gas Adjustment"
+  },
+  "gas_adjustment_explanation": {
+    "message": "Gas Adjustment Explanation:"
+  },
+  "default": {
+    "message": "Default"
+  },
+  "gas_adjustment_explanation_1": {
+    "message": "• Multiplier applied to estimated gas (1.0 = 100%)"
+  },
+  "gas_adjustment_explanation_2": {
+    "message": "• Default 1.3 (130%) provides safety margin"
+  },
+  "gas_adjustment_explanation_3": {
+    "message": "• Higher values increase transaction success chance"
+  },
+  "remember_my_choice": {
+    "message": "Remember my choice"
+  },
+  "close": {
+    "message": "Close"
+  },
+  "this_domain_has_been_transferred_or_inscribed_recently_please_wait_for_block_confirmations": {
+    "message": "This domain has been transferred or inscribed recently. Please wait for block confirmations"
+  },
+  "currently_only": {
+    "message": "Currently only"
+  },
+  "are_supported": {
+    "message": "are supported"
+  },
+  "recipient_address_is_invalid": {
+    "message": "Recipient address is invalid"
+  },
+  "address_book_placeholder": {
+    "message": "Address Book"
+  },
+  "name_recognized_and_resolved": {
+    "message": "Name recognized and resolved."
+  },
+  "more_details": {
+    "message": "More details"
+  },
+  "address_or_name_fb": {
+    "message": "Address or name (.fb)"
+  },
+  "address_or_name_sats_unisat_etc": {
+    "message": "Address or name (.sats, .unisat, ...)"
+  },
+  "does_not_exist": {
+    "message": "does not exist"
+  },
+  "click_on_the": {
+    "message": "Click on the"
+  },
+  "button_after_signing_the_transaction_with_your_keystone_device": {
+    "message": "button after signing the transaction with your Keystone device"
+  },
+  "processing_signature": {
+    "message": "Processing signature..."
+  },
+  "position_the_qr_code_in_front_of_your_camera_the_screen_is_blurred_but_this_will_not_affect_the_scan": {
+    "message": "Position the QR code in front of your camera. The screen is blurred but this will not affect the scan."
+  },
+  "missing_browser_permissions_please_grant_keystone_permissions": {
+    "message": "Missing browser permissions, please grant Keystone permissions"
+  },
+  "request_was_rejected_to_proceed_please_reauthorize": {
+    "message": "Request was Rejected. To Proceed,please reauthorize"
+  },
+  "please_reconnect_the_keystone_on_home_screen_and_reauthorize": {
+    "message": "Please reconnect the Keystone on home screen and reauthorize."
+  },
+  "communication_with_the_keystone_device_failed_please_ensure_the_keystone_is_connected_and_try_again": {
+    "message": "Communication with the Keystone device failed. Please ensure the Keystone is connected, and try again."
+  },
+  "invalid_qr_code_please_ensure_you_have_selected_a_valid_qr_code_from_your_keystone_device": {
+    "message": "Invalid QR code. Please ensure you have selected a valid QR code from your Keystone device."
+  },
+  "merging_utxos": {
+    "message": "Merging UTXOs"
+  },
+  "merging_amount": {
+    "message": "Merging Amount"
+  },
+  "your_balance_have_to_be_merged": {
+    "message": "Your "
+  },
+  "this_process_will_merge_your_utxos_into_one": {
+    "message": "balance have to be merged.This process will merge your UTXOs into one."
+  },
+  "merge_utxos1": {
+    "message": "Merge"
+  },
+  "can_not_change_to_a_lower_value": {
+    "message": "Can not change to a lower value"
+  },
+  "a_feature_allows_the_transaction_to_be_replaced": {
+    "message": "A feature allows the transaction to be replaced."
+  },
+  "strong_password_tip": {
+    "message": "A strong password can better protect the security of your assets"
+  },
+  "not_long_enough": {
+    "message": "Not long enough"
+  },
+  "average": {
+    "message": "Average"
+  },
+  "password_must_be_at_least_8_characters": {
+    "message": "Password must be at least 8 characters"
+  },
+  "unrecognized_password_strength": {
+    "message": "Unrecognized password strength"
+  },
+  "weak": {
+    "message": "Weak"
+  },
+  "strong": {
+    "message": "Strong"
+  },
+  "no_inscriptions_found": {
+    "message": "No inscriptions found"
+  },
+  "new_version": {
+    "message": "New version!"
+  },
+  "add_frequently_used_addresses": {
+    "message": "Add frequently used addresses"
+  },
+  "let_us_know_what_you_think": {
+    "message": "Let us know what you think"
+  },
+  "like_our_wallet_wed_love_your_rating": {
+    "message": "Like our wallet? We'd love your rating!"
+  },
+  "feedback": {
+    "message": "Feedback"
+  },
+  "rate_us": {
+    "message": "Rate us"
+  },
+  "about_us": {
+    "message": "About us"
+  },
+  "seconds": {
+    "message": "Seconds"
+  },
+  "minutes": {
+    "message": "Minutes"
+  },
+  "hours": {
+    "message": "Hours"
+  },
+  "finish": {
+    "message": "Finish"
+  },
+  "add_address": {
+    "message": "Add Address"
+  },
+  "delete_contact": {
+    "message": "Delete Contact"
+  },
+  "are_you_sure_you_want_to_delete_this_contact": {
+    "message": "Are you sure you want to delete this contact?"
+  },
+  "contact_not_found": {
+    "message": "Contact not found"
+  },
+  "failed_to_load_contact_information": {
+    "message": "Failed to load contact information"
+  },
+  "please_enter_name": {
+    "message": "Please enter name"
+  },
+  "please_enter_address": {
+    "message": "Please enter address"
+  },
+  "invalid_address_format_for_selected_network": {
+    "message": "Invalid address format for selected network"
+  },
+  "failed_to_save_contact": {
+    "message": "Failed to save contact"
+  },
+  "failed_to_delete_contact": {
+    "message": "Failed to delete contact"
+  },
+  "edit_address": {
+    "message": "Edit Address"
+  },
+  "name_label": {
+    "message": "Name"
+  },
+  "address_label": {
+    "message": "Address"
+  },
+  "saving": {
+    "message": "Saving..."
+  },
+  "save": {
+    "message": "Save"
+  },
+  "new_update_available": {
+    "message": "New Update Available"
+  },
+  "you_re_on_the_latest_version": {
+    "message": "You're on the latest version"
+  },
+  "terms_of_service": {
+    "message": "Terms of Service"
+  },
+  "privacy_policy": {
+    "message": "Privacy Policy"
+  },
+  "language": {
+    "message": "Language"
+  },
+  "language_description": {
+    "message": "Change the language of the application"
+  },
+  "more": {
+    "message": "More"
+  },
+  "restore_from_mnemonics": {
+    "message": "Restore from Mnemonics"
+  },
+  "low_priority": {
+    "message": "Low Priority"
+  },
+  "medium_priority": {
+    "message": "Medium Priority"
+  },
+  "high_priority": {
+    "message": "High Priority"
+  },
+  "delete": {
+    "message": "Delete"
+  },
+  "other_wallet": {
+    "message": "Other Wallet"
+  },
+  "12_words": {
+    "message": "12 words"
+  },
+  "24_words": {
+    "message": "24 words"
+  },
+  "invalid_derivation_path": {
+    "message": "Invalid derivation path."
+  },
+  "failed_to_load_inscription": {
+    "message": "Failed to load inscription"
+  },
+  "loading_details": {
+    "message": "Loading details..."
+  },
+  "provenance": {
+    "message": "Provenance"
+  },
+  "details": {
+    "message": "Details"
+  },
+  "inscription_id": {
+    "message": "id"
+  },
+  "inscription_address": {
+    "message": "address"
+  },
+  "inscription_preview": {
+    "message": "preview"
+  },
+  "inscription_content": {
+    "message": "content"
+  },
+  "inscription_content_length": {
+    "message": "content length"
+  },
+  "inscription_content_type": {
+    "message": "content type"
+  },
+  "inscription_timestamp": {
+    "message": "timestamp"
+  },
+  "inscription_genesis_transaction": {
+    "message": "genesis transaction"
+  },
+  "custom": {
+    "message": "Custom"
+  },
+  "legacy_address_warning": {
+    "message": "It is not recommended to use legacy addresses, as they may lead to higher transaction fees or the unintended lock-up of CAT20 balances."
+  },
+  "legacy_address_warning_2": {
+    "message": "It is not recommended to send transactions to legacy addresses, as this may result in the unintended spending of CAT20 balances."
+  },
+  "slow": {
+    "message": "Slow"
+  },
+  "avg": {
+    "message": "Avg"
+  },
+  "fast": {
+    "message": "Fast"
+  },
+  "about_1_hour": {
+    "message": "about 1 hour"
+  },
+  "about_30_minutes": {
+    "message": "about 30 minutes"
+  },
+  "about_10_minutes": {
+    "message": "about 10 minutes"
+  },
+  "babylon_bitcoin_staking_phase2": {
+    "message": "Babylon Bitcoin Staking Phase2"
+  },
+  "go_to_babylon": {
+    "message": "Go to Babylon"
+  },
+  "closed_babylon": {
+    "message": "Closed"
+  },
+  "open_babylon": {
+    "message": "Open"
+  },
+  "pending_babylon": {
+    "message": "Pending"
+  },
+  "convert_baby_to_brc20": {
+    "message": "Convert $BABY to brc-20"
+  },
+  "you_are_about_to_convert_your_native_baby_to_btc_brc20_baby": {
+    "message": "You are about to convert your native BABY to BTC brc-20 BABY."
+  },
+  "once_the_conversion_is_complete_your_native_baby_cannot_be_restored": {
+    "message": "Once the conversion is complete, your native BABY cannot be restored."
+  },
+  "do_you_confirm_the_conversion": {
+    "message": "Do you confirm the conversion?"
+  },
+  "transfer_baby_to_cosmos_wallet": {
+    "message": "Transfer $BABY to Cosmos Wallet"
+  },
+  "do_you_confirm_the_transfer": {
+    "message": "Do you confirm the transfer?"
+  },
+  "you_are_about_to_transfer_your_native_baby_to_your_cosmos_wallet": {
+    "message": "You are about to transfer your native BABY to your Cosmos wallet."
+  },
+  "click_baby_to_brc20_coming_soon": {
+    "message": "Click $BABY to brc-20 (Coming Soon)"
+  },
+  "convert_your_native_baby_to_btc_brc20_baby": {
+    "message": "Convert your native $BABY token to brc-20 BABY on Bitcoin."
+  },
+  "transfer_your_baby_to_your_cosmos_wallet": {
+    "message": "Transfer your $BABY to your Cosmos wallet."
+  },
+  "password_error": {
+    "message": "Password is incorrect"
+  },
+  "the_private_key_is_invalid": {
+    "message": "The private key is invalid"
+  },
+  "you_need_to_unlock_wallet_first": {
+    "message": "You need to unlock wallet first"
+  },
+  "account_count_must_be_greater_than_0": {
+    "message": "account count must be greater than 0"
+  },
+  "mnemonic_phrase_is_invalid": {
+    "message": "mnemonic phrase is invalid"
+  },
+  "first_account_not_found": {
+    "message": "First Account not found."
+  },
+  "unlock_already_in_progress": {
+    "message": "Unlock already in progress"
+  },
+  "change_password_already_in_progress": {
+    "message": "changePassword already in progress"
+  },
+  "change_password_failed": {
+    "message": "The old password isn't correct."
+  },
+  "cannot_unlock_without_a_previous_vault": {
+    "message": "Cannot unlock without a previous vault"
+  },
+  "wallet_existed": {
+    "message": "Wallet existed."
+  },
+  "does_not_support_account_removal_operations": {
+    "message": "does not support account removal operations"
+  },
+  "disclaimStrFb": {
+    "message": "Please note that you are about to buy FB through a third-party platform. Credit card payment services are provided by our partners. UniSat Wallet acts solely as an intermediary platform and assumes no liability for any potential losses or damages that may arise from using the credit card payment service."
+  },
+  "seconds_ago": {
+    "message": "sec ago"
+  },
+  "minutes_ago": {
+    "message": "min ago"
+  },
+  "hours_ago": {
+    "message": "hours ago"
+  },
+  "days_ago": {
+    "message": "days ago"
+  },
+  "current": {
+    "message": "Current"
+  },
+  "items": {
+    "message": "Items"
+  },
+  "claimabled": {
+    "message": "Claimabled"
+  },
+  "agreement_text": {
+    "message": "CONFIRM"
+  },
+  "to_proceed": {
+    "message": "to proceed"
+  },
+  "tutorial": {
+    "message": "Tutorial"
+  },
+  "tx_amount": {
+    "message": "amount"
+  },
+  "secs": {
+    "message": "secs"
+  },
+  "about_3_minutes_fb": {
+    "message": "about 3 minutes"
+  },
+  "about_1_5_minutes_fb": {
+    "message": "about 1.5 minutes"
+  },
+  "about_30_seconds_fb": {
+    "message": "about 30 seconds"
+  },
+  "legacy_address_warning_3": {
+    "message": "It is not recommended to use legacy addresses, as they may lead to higher transaction fees or the unintended lock-up of CAT20 balances."
+  },
+  "legacy_address_warning_4": {
+    "message": "It is not recommended to send transactions to legacy addresses, as this may result in the unintended spending of CAT20 balances."
+  }
+}

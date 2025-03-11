@@ -1,6 +1,7 @@
 import { useCallback } from 'react';
 
 import { CAT721Balance } from '@/shared/types';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useCAT721NFTContentBaseUrl } from '@/ui/state/settings/hooks';
 
 import { Column } from '../Column';
@@ -42,6 +43,7 @@ function CardComponent(props: { children: React.ReactNode; onClick?: () => void 
 
 export function CAT721CollectionCard(props: CAT721CollectionCardProps) {
   const { cat721Balance, contentType, onClick } = props;
+  const { t } = useI18n();
 
   const previewLocalIds = cat721Balance.previewLocalIds.slice(0, 4);
   if (previewLocalIds.length > 1) {
@@ -61,7 +63,6 @@ export function CAT721CollectionCard(props: CAT721CollectionCardProps) {
       return isHTML ? (
         <Iframe
           key={key}
-          disableSandbox
           preview={`${contentBaseUrl}/api/collections/${cat721Balance.collectionId}/localId/${localId}/content`}
           style={{
             width: size,
@@ -118,7 +119,7 @@ export function CAT721CollectionCard(props: CAT721CollectionCardProps) {
         <Text text={`${cat721Balance.name}`} size="md" color="white" />
 
         <Row itemsCenter fullY gap="zero">
-          <Text text={`${cat721Balance.count} Items`} size="xs" color="textDim" />
+          <Text text={`${cat721Balance.count} ${t('items')}`} size="xs" color="textDim" />
         </Row>
       </Column>
     </Column>

@@ -10,6 +10,7 @@ import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { OutputValueBar } from '@/ui/components/OutputValueBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import {
@@ -28,6 +29,7 @@ export default function SendRunesScreen() {
     runeBalance: RuneBalance;
     runeInfo: RuneInfo;
   };
+  const { t } = useI18n();
 
   const runeBalance = props.runeBalance;
 
@@ -114,7 +116,7 @@ export default function SendRunesScreen() {
     }
 
     if (outputValue < minOutputValue) {
-      setError(`OutputValue must be at least ${minOutputValue}`);
+      setError(`${t('output_value_must_be_at_least')} ${minOutputValue}`);
       return;
     }
 
@@ -161,7 +163,7 @@ export default function SendRunesScreen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Send Runes"
+        title={t('send_runes')}
       />
       <Content>
         <Row justifyCenter>
@@ -191,21 +193,21 @@ export default function SendRunesScreen() {
             onAddressInputChange={(val) => {
               setToInfo(val);
             }}
-            recipientLabel={<Text text="Recipient" preset="regular" color="textDim" />}
+            recipientLabel={<Text text={t('recipient')} preset="regular" color="textDim" />}
             autoFocus={true}
           />
         </Column>
 
         <Column mt="lg">
           <Row justifyBetween>
-            <Text text="Balance" color="textDim" />
+            <Text text={t('balance')} color="textDim" />
             <TickUsdWithoutPrice tick={runeInfo.spacedRune} balance={inputAmount} type={TokenType.RUNES} />
             <Row
               itemsCenter
               onClick={() => {
                 setInputAmount(runesUtils.toDecimalAmount(availableBalance, runeBalance.divisibility));
               }}>
-              <Text text="MAX" preset="sub" style={{ color: colors.white_muted }} />
+              <Text text={t('max')} preset="sub" style={{ color: colors.white_muted }} />
               <Text
                 text={`${showLongNumber(runesUtils.toDecimalAmount(availableBalance, runeBalance.divisibility))} ${
                   runeInfo.symbol
@@ -218,7 +220,7 @@ export default function SendRunesScreen() {
           </Row>
           <Input
             preset="amount"
-            placeholder={'Amount'}
+            placeholder={t('amount')}
             value={inputAmount.toString()}
             onAmountInputChange={(amount) => {
               setInputAmount(amount);
@@ -229,7 +231,7 @@ export default function SendRunesScreen() {
 
         {toInfo.address ? (
           <Column mt="lg">
-            <Text text="OutputValue" color="textDim" />
+            <Text text={t('output_value')} color="textDim" />
 
             <OutputValueBar
               defaultValue={defaultOutputValue}
@@ -242,7 +244,7 @@ export default function SendRunesScreen() {
         ) : null}
 
         <Column mt="lg">
-          <Text text="Fee" color="textDim" />
+          <Text text={t('fee')} color="textDim" />
 
           <FeeRateBar
             onChange={(val) => {
@@ -264,7 +266,7 @@ export default function SendRunesScreen() {
         <Button
           disabled={disabled}
           preset="primary"
-          text="Next"
+          text={t('next')}
           onClick={(e) => {
             navigate('TxConfirmScreen', { rawTxInfo });
           }}></Button>

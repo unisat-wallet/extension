@@ -1,0 +1,2064 @@
+{
+  "appName": { "message": "UniSat Wallet" },
+  "appDescription": {
+    "message": "Создавайте и храните свои надписи в первом в мире Chrome-кошельке для Ordinals с открытым исходным кодом!"
+  },
+  "receive": {
+    "message": "Получить"
+  },
+  "total_balance": {
+    "message": "Общий баланс"
+  },
+  "enter_your_password": {
+    "message": "Введите ваш пароль"
+  },
+  "enter": {
+    "message": "Ввести"
+  },
+  "to_continue": {
+    "message": "чтобы продолжить"
+  },
+  "ordinals": {
+    "message": "Ordinals"
+  },
+  "atomicals": {
+    "message": "Atomicals"
+  },
+  "runes": {
+    "message": "Runes"
+  },
+  "cat": {
+    "message": "CAT"
+  },
+  "payment_sent": {
+    "message": "Платёж отправлен"
+  },
+  "your_transaction_has_been_successfully_sent": {
+    "message": "Ваша транзакция была успешно отправлена"
+  },
+  "view_on_block_explorer": {
+    "message": "Посмотреть в обозревателе блоков"
+  },
+  "view": {
+    "message": "Посмотреть"
+  },
+  "signed": {
+    "message": "Подписано"
+  },
+  "reject_all": {
+    "message": "Отклонить всё"
+  },
+  "submit": {
+    "message": "Отправить"
+  },
+  "done": {
+    "message": "Готово"
+  },
+  "payment_failed": {
+    "message": "Ошибка платежа"
+  },
+  "recipient": {
+    "message": "Получатель"
+  },
+  "transfer_amount": {
+    "message": "Сумма перевода"
+  },
+  "amount": {
+    "message": "Сумма"
+  },
+  "calculating": {
+    "message": "Расчёт..."
+  },
+  "available": {
+    "message": "Доступно"
+  },
+  "unavailable": {
+    "message": "Недоступно"
+  },
+  "unlock": {
+    "message": "Разблокировать"
+  },
+  "fee": {
+    "message": "Комиссия"
+  },
+  "next": {
+    "message": "Далее"
+  },
+  "this_account_has_no_transactions": {
+    "message": "У этого аккаунта нет транзакций"
+  },
+  "transaction_details": {
+    "message": "Детали транзакции"
+  },
+  "cosmos_sign_demo": {
+    "message": "Демо подписи Cosmos"
+  },
+  "test_approval_sign_psbt": {
+    "message": "Тестовое подтверждение подписи PSBT"
+  },
+  "hello": {
+    "message": "ПРИВЕТ"
+  },
+  "world": {
+    "message": "МИР"
+  },
+  "native_segwit_p2wpkh": {
+    "message": "Native Segwit (P2WPKH)"
+  },
+  "nested_segwit_p2shp2wpkh": {
+    "message": "Nested Segwit (P2SH-P2WPKH)"
+  },
+  "taproot_p2tr": {
+    "message": "Taproot (P2TR)"
+  },
+  "legacy_p2pkh": {
+    "message": "Legacy (P2PKH)"
+  },
+  "function_not_implemented": {
+    "message": "Функция не реализована."
+  },
+  "this_is_a_cosmos_signature_demo_page": {
+    "message": "Это демонстрационная страница подписи Cosmos"
+  },
+  "click_the_button_below_to_start_the_signature_proc": {
+    "message": "Нажмите кнопку ниже, чтобы начать процесс подписи"
+  },
+  "start_cosmos_sign": {
+    "message": "НАЧАТЬ ПОДПИСЬ COSMOS"
+  },
+  "sign_result": {
+    "message": "РЕЗУЛЬТАТ ПОДПИСИ:"
+  },
+  "back": {
+    "message": "Назад"
+  },
+  "cosmos_signature_demo": {
+    "message": "Демо подписи Cosmos"
+  },
+  "cosmos_sign_success": {
+    "message": "Подпись Cosmos успешна"
+  },
+  "ok": {
+    "message": "OK"
+  },
+  "select_network": {
+    "message": "Выберите сеть"
+  },
+  "this_network_is_not_available": {
+    "message": "Эта сеть недоступна"
+  },
+  "if_you_lose_your_private_key_your_assets_will_be_g": {
+    "message": "Если вы потеряете свой приватный ключ, ваши активы будут утеряны!"
+  },
+  "if_you_share_the_private_key_to_others_your_assets": {
+    "message": "Если вы поделитесь приватным ключом с другими, ваши активы будут украдены!"
+  },
+  "private_key_is_only_stored_in_your_browser_it_is_y": {
+    "message": "Вы несёте ответственность за сохранность приватного ключа!"
+  },
+  "please_make_sure_you_have_read_the_security_tips_a": {
+    "message": "Пожалуйста, убедитесь, что вы прочитали советы по безопасности выше, прежде чем вводить пароль"
+  },
+  "show_private_key": {
+    "message": "Показать приватный ключ"
+  },
+  "if_you_ever_change_browsers_or_move_computers_you_": {
+    "message": "Если вы смените браузер или компьютер, вам понадобится этот приватный ключ для доступа к этому аккаунту. Сохраните его в безопасном и секретном месте"
+  },
+  "changed_to_network": {
+    "message": "Переключено на"
+  },
+  "wif_private_key": {
+    "message": "Приватный ключ WIF:"
+  },
+  "wif_private_key_or_hex_private_key": {
+    "message": "Приватный ключ WIF или Hex"
+  },
+  "create_single_wallet": {
+    "message": "Создать одиночный кошелёк"
+  },
+  "hex_private_key": {
+    "message": "Приватный ключ Hex:"
+  },
+  "copied": {
+    "message": "Скопировано"
+  },
+  "if_you_lose_your_secret_recovery_phrase_your_asset": {
+    "message": "Если вы потеряете свою секретную фразу восстановления, ваши активы будут утеряны!"
+  },
+  "if_you_share_the_secret_recovery_phrase_to_others_": {
+    "message": "Если вы поделитесь секретной фразой восстановления с другими, ваши активы будут украдены!"
+  },
+  "secret_recovery_phrase_is_only_stored_in_your_brow": {
+    "message": "Вы несёте ответственность за сохранность вашей секретной фразы восстановления!"
+  },
+  "show_secret_recovery_phrase": {
+    "message": "Показать секретную фразу восстановления"
+  },
+  "create_a_new_wallet": {
+    "message": "Создать новый кошелёк"
+  },
+  "this_phrase_is_the_only_way_to_recover_your_wallet": {
+    "message": "Эта фраза - ЕДИНСТВЕННЫЙ способ восстановить ваш кошелёк. НЕ делитесь ею ни с кем! (нажмите, чтобы скопировать)"
+  },
+  "copy_to_clipboard": {
+    "message": "Скопировать в буфер обмена"
+  },
+  "advance_options": {
+    "message": "Расширенные опции"
+  },
+  "switch_wallet": {
+    "message": "Сменить кошелёк"
+  },
+  "derivation_path": {
+    "message": "Путь деривации"
+  },
+  "passphrase": {
+    "message": "Парольная фраза"
+  },
+  "change_wallet_name": {
+    "message": "Изменить имя кошелька"
+  },
+  "change_account_name": {
+    "message": "Изменить имя аккаунта"
+  },
+  "password": {
+    "message": "Пароль"
+  },
+  "change_password": {
+    "message": "Изменить пароль"
+  },
+  "current_password": {
+    "message": "Текущий пароль"
+  },
+  "new_password": {
+    "message": "Новый пароль"
+  },
+  "confirm_password": {
+    "message": "Подтвердите пароль"
+  },
+  "connected_sites": {
+    "message": "Подключенные сайты"
+  },
+  "user_rejected_the_request": {
+    "message": "Пользователь отклонил запрос."
+  },
+  "success": {
+    "message": "Успешно"
+  },
+  "new_account": {
+    "message": "Новый аккаунт"
+  },
+  "address_type_changed": {
+    "message": "Тип адреса изменён"
+  },
+  "enable_unconfirmed_balance": {
+    "message": "Включить неподтверждённый баланс"
+  },
+  "enable_unconfirmed_balance_warning": {
+    "message": "Если на данном адресе обнаружены активы Runes, неподтвержденные UTXO нельзя будет тратить до их подтверждения. Принудительная трата этих неподтвержденных UTXO может привести к риску потери активов."
+  },
+  "allow_using_unconfirmed_balance": {
+    "message": "Разрешить использование неподтверждённого баланса"
+  },
+  "is_unconfirmed_please_wait_for_confirmation": {
+    "message": "не подтверждена, пожалуйста, дождитесь подтверждения"
+  },
+  "unconfirmed": {
+    "message": "не подтверждено"
+  },
+  "low": {
+    "message": "Низкий"
+  },
+  "medium": {
+    "message": "Средний"
+  },
+  "high": {
+    "message": "Высокий"
+  },
+  "invalid_recipient_address": {
+    "message": "Неверный адрес получателя"
+  },
+  "gas_fee_calculation_may_not_include_newly_received_tokens_try_a_smaller_amount": {
+    "message": "Расчёт комиссии за газ может не включать недавно полученные токены. Попробуйте меньшую сумму."
+  },
+  "amount_exceeds_your_available_balance": {
+    "message": "Сумма превышает ваш доступный баланс"
+  },
+  "memo_is_too_long_the_maximum_length_is_256_characters": {
+    "message": "Заметка слишком длинная. Максимальная длина - 256 символов."
+  },
+  "loading": {
+    "message": "загрузка..."
+  },
+  "cancel": {
+    "message": "Отмена"
+  },
+  "continue": {
+    "message": "Продолжить"
+  },
+  "balance": {
+    "message": "Баланс"
+  },
+  "invalid_fee_rate": {
+    "message": "Неверная ставка комиссии"
+  },
+  "max": {
+    "message": "МАКС"
+  },
+  "outputvalue": {
+    "message": "Выходное значение"
+  },
+  "mint": {
+    "message": "Минт"
+  },
+  "send_inscription": {
+    "message": "Вы можете нажать на надпись, чтобы отправить её напрямую."
+  },
+  "no_data": {
+    "message": "НЕТ ДАННЫХ"
+  },
+  "send": {
+    "message": "Отправить"
+  },
+  "trade": {
+    "message": "Торговать"
+  },
+  "runeid": {
+    "message": "runeid"
+  },
+  "mints": {
+    "message": "минты"
+  },
+  "supply": {
+    "message": "Предложение"
+  },
+  "premine": {
+    "message": "премайн"
+  },
+  "burned": {
+    "message": "сожжено"
+  },
+  "divisibility": {
+    "message": "делимость"
+  },
+  "symbol": {
+    "message": "символ"
+  },
+  "holders": {
+    "message": "держатели"
+  },
+  "transactions": {
+    "message": "транзакции"
+  },
+  "etching": {
+    "message": "etching"
+  },
+  "parent": {
+    "message": "родительский"
+  },
+  "each_outputvalue": {
+    "message": "Каждое выходное значение"
+  },
+  "split": {
+    "message": "Разделить"
+  },
+  "multiple_inscriptions_are_mixed_together_you_can_split_them_first_or_send_them_once": {
+    "message": "Несколько надписей смешаны вместе. Вы можете сначала разделить их или отправить все сразу."
+  },
+  "this_inscription_carries_a_high_balance": {
+    "message": "Эта надпись содержит высокий баланс!"
+  },
+  "id": {
+    "message": "id"
+  },
+  "output_value": {
+    "message": "выходное значение"
+  },
+  "address_preview": {
+    "message": "Адрес:"
+  },
+  "transaction_preview": {
+    "message": "Транзакция:"
+  },
+  "block_preview": {
+    "message": "Блок:"
+  },
+  "text_preview": {
+    "message": "Текст:"
+  },
+  "transactions_24h": {
+    "message": "Транзакции (24ч)"
+  },
+  "active_addresses_24h": {
+    "message": "Активные адреса (24ч)"
+  },
+  "go_to_unisat_explorer": {
+    "message": "Перейти в UniSat Explorer"
+  },
+  "search_address_and_txids": {
+    "message": "Поиск адреса и TXID"
+  },
+  "preview": {
+    "message": "Предпросмотр"
+  },
+  "content": {
+    "message": "содержимое"
+  },
+  "content_length": {
+    "message": "длина содержимого"
+  },
+  "content_type": {
+    "message": "тип содержимого"
+  },
+  "timestamp": {
+    "message": "временная метка"
+  },
+  "genesis_transaction": {
+    "message": "генезис-транзакция"
+  },
+  "create_new_wallet": {
+    "message": "Создать новый кошелёк"
+  },
+  "i_already_have_a_wallet": {
+    "message": "У меня уже есть кошелёк"
+  },
+  "connect_to_hardware_wallet": {
+    "message": "Подключить аппаратный кошелёк"
+  },
+  "hardware_wallet_feature_is_experimental_use_it_with_caution_as_potential_issues_may_arise": {
+    "message": "Функция аппаратного кошелька является экспериментальной. Используйте её с осторожностью, так как могут возникнуть потенциальные проблемы"
+  },
+  "dapp_center": {
+    "message": "Центр DApp"
+  },
+  "home": {
+    "message": "Главная"
+  },
+  "discover": {
+    "message": "Обзор"
+  },
+  "settings": {
+    "message": "Настройки"
+  },
+  "the_wallet_currently_uses_a_custom_hd_path_and_does_not_support_switching_address_types": {
+    "message": "Кошелёк в данный момент использует пользовательский HD-путь и не поддерживает переключение типов адресов."
+  },
+  "new": {
+    "message": "новое!"
+  },
+  "coming_soon": {
+    "message": "Скоро"
+  },
+  "history": {
+    "message": "История"
+  },
+  "buy": {
+    "message": "Купить"
+  },
+  "buy_service_provider": {
+    "message": "Пожалуйста, выберите поставщика услуг ниже, чтобы купить"
+  },
+  "disclaimStr": {
+    "message": "Обратите внимание, что вы собираетесь купить Bitcoin через стороннюю платформу. Услуги оплаты кредитной картой предоставляются нашими партнерами. UniSat Wallet выступает исключительно как посредническая платформа и не несет ответственности за любые потенциальные убытки или ущерб, которые могут возникнуть в результате использования услуги оплаты кредитной картой."
+  },
+  "additional_transaction_fees": {
+    "message": "При покупке через сторонние платформы взимаются дополнительные комиссии за транзакции. Ставки варьируются в зависимости от страны и способа оплаты. Пожалуйста, ознакомьтесь с комиссиями каждой платформы перед совершением транзакций."
+  },
+  "before_proceeding": {
+    "message": "Прежде чем продолжить, пожалуйста, внимательно прочитайте и примите отказ от ответственности."
+  },
+  "continue_with": {
+    "message": "Продолжить с"
+  },
+  "no_service_provider_available": {
+    "message": "Нет доступных поставщиков услуг."
+  },
+  "empty": {
+    "message": "Пусто"
+  },
+  "all": {
+    "message": "Все"
+  },
+  "arc20": {
+    "message": "ARC-20"
+  },
+  "others": {
+    "message": "Другие"
+  },
+  "not_supported_yet": {
+    "message": "Пока не поддерживается"
+  },
+  "step_1": {
+    "message": "ШАГ 1"
+  },
+  "step_2": {
+    "message": "ШАГ 2"
+  },
+  "step_3": {
+    "message": "ШАГ 3"
+  },
+  "step_12": {
+    "message": "ШАГ 1/2"
+  },
+  "step_22": {
+    "message": "ШАГ 2/2"
+  },
+  "send_cat721": {
+    "message": "Отправить CAT721"
+  },
+  "collection_id": {
+    "message": "ID Коллекции"
+  },
+  "collection": {
+    "message": "Коллекция"
+  },
+  "collection_not_found": {
+    "message": "Коллекция не найдена"
+  },
+  "max_supply": {
+    "message": "Макс. предложение"
+  },
+  "token_not_found": {
+    "message": "Токен не найден"
+  },
+  "merge_utxos": {
+    "message": "Объединить UTXO"
+  },
+  "token_id": {
+    "message": "token_id"
+  },
+  "name": {
+    "message": "имя"
+  },
+  "decimals": {
+    "message": "децималы"
+  },
+  "merge_history": {
+    "message": "История объединений"
+  },
+  "the_recipient_must_be_p2tr_or_p2wpkh_address_type": {
+    "message": "Адрес получателя должен быть типа P2TR или P2WPKH"
+  },
+  "merge_utxos_is_not_supported_for_keystone_yet": {
+    "message": "Объединение UTXO пока не поддерживается для Keystone"
+  },
+  "address": {
+    "message": "Адрес"
+  },
+  "send_cat20_is_not_supported_for_keystone_yet": {
+    "message": "Отправка CAT20 пока не поддерживается для Keystone"
+  },
+  "send_cat20": {
+    "message": "Отправить CAT20"
+  },
+  "to_send_a_larger_amount_please_merge_your_utxos_to_increase_the_available_balance": {
+    "message": "Чтобы отправить большую сумму, пожалуйста, объедините ваши UTXO, чтобы увеличить доступный баланс."
+  },
+  "merge_utxos_to_increase_the_available_balance": {
+    "message": "Объединить UTXO->"
+  },
+  "selected": {
+    "message": "Выбрано"
+  },
+  "merge_transactions": {
+    "message": "Транзакции объединения"
+  },
+  "retry_in_10s": {
+    "message": "Повторить через 10 сек"
+  },
+  "merge_utxos_for_cat20_asset": {
+    "message": "Объединить UTXO для актива CAT20"
+  },
+  "you_need_at_least_2_utxos_to_merge": {
+    "message": "Для объединения необходимо как минимум 2 UTXO"
+  },
+  "this_feature_is_currently_in_the_experimental_test_phase_please_proceed_with_caution": {
+    "message": "Эта функция в настоящее время находится на стадии экспериментального тестирования. Пожалуйста, действуйте с осторожностью."
+  },
+  "set_utxo_amount_to_be_merged": {
+    "message": "Установите сумму UTXO для объединения"
+  },
+  "estimated_fee": {
+    "message": "Примерная комиссия"
+  },
+  "start_merging": {
+    "message": "Начать объединение"
+  },
+  "merge_progress": {
+    "message": "Прогресс объединения"
+  },
+  "start": {
+    "message": "Начать"
+  },
+  "merging": {
+    "message": "Объединение..."
+  },
+  "quit_merging_process": {
+    "message": "Прервать процесс объединения"
+  },
+  "disclaimer": {
+    "message": "Отказ от ответственности"
+  },
+  "risk_warning": {
+    "message": "Предупреждение о риске: Не инвестируйте, если вы не готовы потерять все вложенные деньги."
+  },
+  "i_have_read_and_agree_to_the_above_disclaimer": {
+    "message": "Я прочитал(а) и согласен(на) с вышеуказанным отказом от ответственности"
+  },
+  "memo": {
+    "message": "Заметка:"
+  },
+  "bbn": {
+    "message": "bbn..."
+  },
+  "sign_transaction": {
+    "message": "Подписать транзакцию"
+  },
+  "spend_inscription": {
+    "message": "Потратить надпись"
+  },
+  "spend_amount": {
+    "message": "Сумма траты"
+  },
+  "in_inscriptions": {
+    "message": "в надписях"
+  },
+  "reject": {
+    "message": "Отклонить"
+  },
+  "sign_and_pay": {
+    "message": "Подписать и оплатить"
+  },
+  "this_token_only_supports_up_to": {
+    "message": "Этот токен поддерживает только до"
+  },
+  "decimal_places": {
+    "message": "знаков после запятой."
+  },
+  "tx_fee": {
+    "message": "Комиссия Tx:"
+  },
+  "t_baby": {
+    "message": "tBABY"
+  },
+  "send_to": {
+    "message": "Отправить:"
+  },
+  "send_amount": {
+    "message": "Сумма отправки"
+  },
+  "how_to_import_baby": {
+    "message": "Как импортировать BABY"
+  },
+  "click_the_account_on_the_main_page": {
+    "message": "Нажмите на аккаунт на главной странице."
+  },
+  "tap_the_more_menu_then_select_the_export_private_key_option": {
+    "message": "Нажмите меню 'Ещё', затем выберите опцию 'Экспорт приватного ключа'."
+  },
+  "once_you_have_your_hex_private_key_you_can_import_it_into_a_cosmos_compatible_wallet_to_access_your_babylon_reward_assets": {
+    "message": "Получив ваш Hex приватный ключ, вы можете импортировать его в кошелёк, совместимый с COSMOS, для доступа к вашим наградам Babylon."
+  },
+  "babylon_bitcoin_staking": {
+    "message": "Стейкинг Bitcoin в Babylon"
+  },
+  "babylon_bitcoin_staking_phase1": {
+    "message": "Стейкинг Bitcoin в Babylon Фаза 1"
+  },
+  "babylon_bitcoin_staking_stats": {
+    "message": "Статистика стейкинга Bitcoin в Babylon"
+  },
+  "closed": {
+    "message": "Закрыто"
+  },
+  "go_to_stake": {
+    "message": "Перейти к стейкингу"
+  },
+  "staked": {
+    "message": "В стейкинге"
+  },
+  "learn_how_to_import_your_babylon_reward_assets_into_a_cosmos_compatible_wallet": {
+    "message": "Узнайте, как импортировать ваши награды Babylon в кошелёк, совместимый с COSMOS."
+  },
+  "unstake": {
+    "message": "Вывести из стейкинга"
+  },
+  "claimable": {
+    "message": "Доступно к получению"
+  },
+  "baby_rewards": {
+    "message": "Награды BABY"
+  },
+  "claim": {
+    "message": "Получить"
+  },
+  "transfer": {
+    "message": "Перевести"
+  },
+  "transferable": {
+    "message": "Доступно для перевода:"
+  },
+  "inscribe_transfer": {
+    "message": "Создать надпись TRANSFER"
+  },
+  "to_send_brc20_you_have_to_inscribe_a_transfer_inscription_first": {
+    "message": "* Для отправки BRC-20 необходимо сначала создать надпись TRANSFER"
+  },
+  "transfer_inscriptions": {
+    "message": "Надписи TRANSFER"
+  },
+  "transfer_inscriptions_0": {
+    "message": "Надписи TRANSFER (0)"
+  },
+  "select_all": {
+    "message": "Выбрать все"
+  },
+  "receiver": {
+    "message": "Получатель"
+  },
+  "step1": {
+    "message": "Шаг 1"
+  },
+  "step2": {
+    "message": "Шаг 2"
+  },
+  "fee_rate": {
+    "message": "Ставка комиссии"
+  },
+  "inscription": {
+    "message": "Надпись"
+  },
+  "atomicals_id": {
+    "message": "id atomicals"
+  },
+  "send_arc20": {
+    "message": "Отправить ARC-20"
+  },
+  "the_minimum_amount_is": {
+    "message": "Минимальная сумма:"
+  },
+  "atomicals_number": {
+    "message": "номер atomicals"
+  },
+  "atomicals_inscription_not_confirmed_yet": {
+    "message": "Надпись Atomicals (еще не подтверждена)"
+  },
+  "atomicals_inscription": {
+    "message": "Надпись Atomicals"
+  },
+  "inscription_not_confirmed_yet": {
+    "message": "Надпись (еще не подтверждена)"
+  },
+  "allow_this_site_to_switch_the_network": {
+    "message": "Разрешить этому сайту переключить сеть?"
+  },
+  "switch_account": {
+    "message": "Сменить аккаунт"
+  },
+  "switch_network": {
+    "message": "Сменить сеть"
+  },
+  "allow_this_site_to_switch_the_chain": {
+    "message": "Разрешить этому сайту переключить блокчейн?"
+  },
+  "switch_chain": {
+    "message": "Сменить блокчейн"
+  },
+  "signature_request": {
+    "message": "Запрос подписи"
+  },
+  "only_sign_this_message_if_you_fully_understand_the": {
+    "message": "Подписывайте это сообщение, только если вы полностью понимаете его содержание и доверяете запрашивающему сайту."
+  },
+  "you_are_signing": {
+    "message": "Вы подписываете:"
+  },
+  "sign": {
+    "message": "Подписать"
+  },
+  "sign_data_request": {
+    "message": "Запрос подписи данных"
+  },
+  "you_are_signing_data": {
+    "message": "Вы подписываете данные:"
+  },
+  "payment_network_fee": {
+    "message": "Комиссия сети за платёж"
+  },
+  "inscription_output_value": {
+    "message": "Выходное значение надписи"
+  },
+  "inscription_network_fee": {
+    "message": "Комиссия сети за надпись"
+  },
+  "service_fee": {
+    "message": "Сервисный сбор"
+  },
+  "total": {
+    "message": "Итого"
+  },
+  "baby_balance": {
+    "message": "Баланс BABY"
+  },
+  "failed_to_handle_signature": {
+    "message": "Не удалось обработать подпись"
+  },
+  "inscribing": {
+    "message": "Создание надписи..."
+  },
+  "inscribe_success": {
+    "message": "Надпись успешно создана"
+  },
+  "the_transferable_and_available_balance_of_brc20_wi": {
+    "message": "Доступный для перевода и общий баланс BRC20 обновится через несколько минут."
+  },
+  "i_only_sign_what_i_understand": {
+    "message": "Я подписываю только то, что понимаю"
+  },
+  "you_need_to_enable_the_sign_data_request_feature_in_settings_advanced_to_continue": {
+    "message": "Вам необходимо включить функцию запроса подписи данных (signData) в Настройки -> Расширенные, чтобы продолжить."
+  },
+  "cosmos_sign_request": {
+    "message": "Запрос подписи Cosmos"
+  },
+  "only_sign_if_you_fully_understand_the_content_and_": {
+    "message": "Подписывайте, только если вы полностью понимаете содержание и доверяете запрашивающему сайту."
+  },
+  "phishing_detection": {
+    "message": "Обнаружение фишинга"
+  },
+  "malicious_behavior_and_suspicious_activity_have_be": {
+    "message": "Обнаружено вредоносное поведение и подозрительная активность."
+  },
+  "your_access_to_this_page_has_been_restricted_by_un": {
+    "message": "Ваш доступ к этой странице был ограничен UniSat Wallet, так как она может быть небезопасной."
+  },
+  "reject_blocked_by_unisat_wallet": {
+    "message": "Отклонить (заблокировано UniSat Wallet)"
+  },
+  "warning": {
+    "message": "Предупреждение"
+  },
+  "i_am_aware_of_the_risks": {
+    "message": "Я осознаю риски"
+  },
+  "connect_with_unisat_wallet": {
+    "message": "Подключиться с помощью UniSat Wallet"
+  },
+  "select_the_account_to_use_on_this_site": {
+    "message": "Выберите аккаунт для использования на этом сайте"
+  },
+  "only_connect_with_sites_you_trust": {
+    "message": "Подключайтесь только к сайтам, которым вы доверяете."
+  },
+  "connect": {
+    "message": "Подключить"
+  },
+  "chain_id": {
+    "message": "ID сети"
+  },
+  "involved_assets": {
+    "message": "Задействованные активы:"
+  },
+  "satvb": {
+    "message": "sat/vB"
+  },
+  "rbf": {
+    "message": "RBF"
+  },
+  "to_sign": {
+    "message": "для подписи"
+  },
+  "network_fee": {
+    "message": "Комиссия сети:"
+  },
+  "network_fee_rate": {
+    "message": "Ставка комиссии сети:"
+  },
+  "the_fee_rate_is_much_lower_than_recommended_fee_rate": {
+    "message": "Ставка комиссии значительно ниже рекомендуемой"
+  },
+  "the_fee_rate_is_much_higher_than_recommended_fee_rate": {
+    "message": "Ставка комиссии значительно выше рекомендуемой"
+  },
+  "inputs": {
+    "message": "Входы"
+  },
+  "outputs": {
+    "message": "Выходы"
+  },
+  "features": {
+    "message": "Функции:"
+  },
+  "psbt_data": {
+    "message": "Данные PSBT:"
+  },
+  "get_signature": {
+    "message": "Получить подпись"
+  },
+  "get_signature_success": {
+    "message": "Подпись успешно получена"
+  },
+  "sign_multiple_transactions": {
+    "message": "Подписать несколько транзакций"
+  },
+  "transaction": {
+    "message": "Транзакция"
+  },
+  "merge_failed": {
+    "message": "Объединение не удалось."
+  },
+  "dealing": {
+    "message": "В обработке"
+  },
+  "paused": {
+    "message": "Приостановлено"
+  },
+  "completed": {
+    "message": "Завершено"
+  },
+  "multisign_disclaimer": {
+    "message": "Отказ от ответственности MultiSign"
+  },
+  "by_proceeding_you_confirm_that_youve_read_and_accepted_this_disclaimer": {
+    "message": "Продолжая, вы подтверждаете, что прочитали и приняли этот отказ от ответственности."
+  },
+  "sign_all": {
+    "message": "Подписать все"
+  },
+  "transactions_at_once": {
+    "message": "транзакций сразу"
+  },
+  "edit_name": {
+    "message": "Изменить имя"
+  },
+  "export_private_key": {
+    "message": "Экспорт приватного ключа"
+  },
+  "remove_wallet": {
+    "message": "Удалить кошелёк"
+  },
+  "invalid_wallet_please_remove_it_and_add_new_one": {
+    "message": "Недействительный кошелёк, пожалуйста, удалите его и добавьте новый"
+  },
+  "removing_the_last_wallet_is_not_allowed": {
+    "message": "Удаление последнего кошелька не допускается"
+  },
+  "copy_address": {
+    "message": "Скопировать адрес"
+  },
+  "private_key": {
+    "message": "Приватный ключ"
+  },
+  "address_type": {
+    "message": "Тип адреса"
+  },
+  "invalid_privatekey": {
+    "message": "Неверный приватный ключ"
+  },
+  "create_a_password": {
+    "message": "Создайте пароль"
+  },
+  "you_will_use_this_to_unlock_your_wallet": {
+    "message": "Вы будете использовать его для разблокировки кошелька"
+  },
+  "keystone_hardware_wallet": {
+    "message": "Аппаратный кошелёк Keystone"
+  },
+  "the_ultimate_security_solution_for_cryptocurrencie": {
+    "message": "Максимальное решение безопасности для криптовалют"
+  },
+  "100_air_gapped": {
+    "message": "100% Air-Gapped"
+  },
+  "open_source": {
+    "message": "Открытый исходный код"
+  },
+  "exceptional_compatibility": {
+    "message": "Исключительная совместимость"
+  },
+  "learn_more_about_keystone": {
+    "message": "Узнать больше о Keystone"
+  },
+  "connect_via_usb": {
+    "message": "Подключить через USB"
+  },
+  "scan_to_connect": {
+    "message": "Сканировать для подключения"
+  },
+  "scan_the_qr_code_displayed_on_your_keystone_device": {
+    "message": "Отсканируйте QR-код, отображаемый на вашем устройстве Keystone"
+  },
+  "you_need_to_allow_camera_access_to_use_this_featur": {
+    "message": "Вам необходимо разрешить доступ к камере для использования этой функции."
+  },
+  "connect_and_unlock_your_keystone": {
+    "message": "Подключите и разблокируйте ваш Keystone"
+  },
+  "scan_in_more_addresses": {
+    "message": "Сканировать больше адресов..."
+  },
+  "custom_hdpath_optional": {
+    "message": "Пользовательский HD-путь (необязательно)"
+  },
+  "password_strength": {
+    "message": "Надежность пароля:"
+  },
+  "passwords_dont_match": {
+    "message": "Пароли не совпадают"
+  },
+  "custom_hdpath": {
+    "message": "Пользовательский путь деривации HD-кошелька"
+  },
+  "connect_keystone": {
+    "message": "Подключить Keystone"
+  },
+  "scan_the_qr_code": {
+    "message": "Сканировать QR-код"
+  },
+  "connect_keystone_via_usb": {
+    "message": "Подключить Keystone через USB"
+  },
+  "create_an_account": {
+    "message": "Создать аккаунт"
+  },
+  "create_wallet": {
+    "message": "Создать кошелёк"
+  },
+  "create_with_mnemonics_12words": {
+    "message": "Создать с помощью мнемоники (12 слов)"
+  },
+  "restore_wallet": {
+    "message": "Восстановить кошелёк"
+  },
+  "restore_from_mnemonics_12words24words": {
+    "message": "Восстановить из мнемоники (12 слов, 24 слова)"
+  },
+  "restore_from_single_private_key": {
+    "message": "Восстановить из одиночного приватного ключа"
+  },
+  "create_a_new_hd_wallet": {
+    "message": "Создать новый HD-кошелёк"
+  },
+  "keystone_wallet": {
+    "message": "Кошелёк Keystone"
+  },
+  "phrase_optional": {
+    "message": "Фраза (необязательно)"
+  },
+  "secret_recovery_phrase": {
+    "message": "Секретная фраза восстановления"
+  },
+  "unable_to_find_any_addresses_with_assets": {
+    "message": "Не удалось найти адреса с активами"
+  },
+  "import_an_existing_wallet_with_your_secret_recover": {
+    "message": "Импортируйте существующий кошелёк с помощью вашей секретной фразы восстановления"
+  },
+  "i_saved_my_secret_recovery_phrase": {
+    "message": "Я сохранил(а) свою секретную фразу восстановления"
+  },
+  "verify_recovery_phrase": {
+    "message": "Проверить фразу восстановления"
+  },
+  "click_on_the_words_to_put_them_in_the_correct_orde": {
+    "message": "Нажмите на слова, чтобы расставить их в правильном порядке для проверки корректности вашей резервной копии фразы восстановления"
+  },
+  "choose_a_wallet_you_want_to_restore_from": {
+    "message": "Выберите кошелёк, из которого вы хотите восстановить"
+  },
+  "skip": {
+    "message": "Пропустить"
+  },
+  "go_to_update": {
+    "message": "Перейти к обновлению"
+  },
+  "use_at_your_own_risk": {
+    "message": "Используйте на свой страх и риск"
+  },
+  "please_be_aware_that_sending_the_following_assets_involves_risk": {
+    "message": "Пожалуйста, имейте в виду, что отправка следующих активов сопряжена с риском:"
+  },
+  "enable_atomicals_assets_warning": {
+    "message": "Активы atomicals больше не будут отображаться в кошельке, и их можно будет тратить как обычный баланс. Пожалуйста, действуйте с осторожностью."
+  },
+  "sign_data_requests": {
+    "message": "Запросы signData"
+  },
+  "enable_sign_data_warning": {
+    "message": "Если вы включите эту настройку, вы можете получать запросы подписи, которые не читаемы. Подписывая сообщение, которое вы не понимаете, вы можете согласиться на передачу ваших средств и NFT. Вы подвергаетесь риску фишинговых атак. Защитите себя, отключив signData."
+  },
+  "enable_sign_data_popover_warning": {
+    "message": "Разрешение запросов signData может сделать вас уязвимым для фишинговых атак. Всегда проверяйте URL и будьте осторожны при подписании сообщений, содержащих код."
+  },
+  "enable_sign_data_popover_warning_2": {
+    "message": "Если вас попросили включить эту настройку, возможно, вас пытаются обмануть"
+  },
+  "understand_sign_data_warning": {
+    "message": "Я понимаю, что могу потерять все свои средства и NFT, если включу запросы signData."
+  },
+  "understand_and_accept_the_risks_associated_with_this_transaction": {
+    "message": "Я понимаю и принимаю риски, связанные с этой транзакцией."
+  },
+  "allow_sign_data_requests": {
+    "message": "Разрешить запросы signData"
+  },
+  "sending_out_assets": {
+    "message": "Отправляемые активы"
+  },
+  "runes_burn_risk_list": {
+    "message": "Список рисков сжигания Runes"
+  },
+  "inscription_burn_risk_list": {
+    "message": "Список рисков сжигания надписей"
+  },
+  "changing_inscriptoins": {
+    "message": "Изменяемые надписи"
+  },
+  "arc20_burn_risk_list": {
+    "message": "Список рисков сжигания ARC20"
+  },
+  "current_fee_rate": {
+    "message": "Текущая ставка комиссии:"
+  },
+  "recommended_fee_rates": {
+    "message": "Рекомендуемые ставки комиссии:"
+  },
+  "old_value": {
+    "message": "Старое значение:"
+  },
+  "new_value": {
+    "message": "Новое значение:"
+  },
+  "please_pay_attention_to_whether_you_have_backed_up": {
+    "message": "Пожалуйста, обратите внимание, сделали ли вы резервную копию мнемоники/приватного ключа, чтобы предотвратить потерю активов"
+  },
+  "this_action_is_not_reversible": {
+    "message": "Это действие необратимо."
+  },
+  "remove": {
+    "message": "Удалить"
+  },
+  "compatibility_tips": {
+    "message": "Советы по совместимости"
+  },
+  "please_be_aware_that": {
+    "message": "Пожалуйста, имейте в виду, что:"
+  },
+  "confirm": {
+    "message": "Подтвердить"
+  },
+  "unisat": {
+    "message": "UNISAT"
+  },
+  "try_again": {
+    "message": "Попробовать снова"
+  },
+  "usb_permissions_not_available": {
+    "message": "РАЗРЕШЕНИЯ_USB_НЕДОСТУПНЫ"
+  },
+  "approve_on_your_keystone_device": {
+    "message": "Подтвердите на вашем устройстве Keystone"
+  },
+  "ensure_your_keystone_3_pro_is_on_the_homepage": {
+    "message": "Убедитесь, что ваш Keystone 3 Pro находится на главном экране"
+  },
+  "onsuccess_not_implemented": {
+    "message": "onSuccess не реализован"
+  },
+  "scan_the_qr_code_via_your_keystone_device": {
+    "message": "Отсканируйте QR-код с помощью вашего устройства Keystone"
+  },
+  "generating_qr_code": {
+    "message": "Генерация QR-кода..."
+  },
+  "you_have_inscribed_a_transfer": {
+    "message": "Вы создали надпись TRANSFER"
+  },
+  "please_wait_for_the_update_of_brc20": {
+    "message": "Пожалуйста, дождитесь обновления BRC20"
+  },
+  "about_3_minutes": {
+    "message": "(около 3 минут)"
+  },
+  "for_ordinals_assets": {
+    "message": "Для активов Ordinals,"
+  },
+  "rare_sats": {
+    "message": "Редкие сатоши"
+  },
+  "are_not_supported": {
+    "message": "не поддерживаются."
+  },
+  "for_atomicals_assets": {
+    "message": "Для активов Atomicals,"
+  },
+  "non_arc20": {
+    "message": "Не-ARC20"
+  },
+  "are_not_supported_yet": {
+    "message": "пока не поддерживаются."
+  },
+  "not_supported": {
+    "message": "Не поддерживается"
+  },
+  "satsvb": {
+    "message": "sats/vB"
+  },
+  "precautions": {
+    "message": "Меры предосторожности"
+  },
+  "enable_atomicals": {
+    "message": "Включить Atomicals"
+  },
+  "security_notice": {
+    "message": "Уведомление о безопасности:"
+  },
+  "notice": {
+    "message": "Уведомление"
+  },
+  "enable_atomicals_assets": {
+    "message": "Включить активы Atomicals"
+  },
+  "unconfirmed_balance_not_spendable": {
+    "message": "Неподтверждённый баланс недоступен для траты"
+  },
+  "to_enable_spending_of_unconfirmed_balances_please_": {
+    "message": "Чтобы разрешить трату неподтвержденных балансов, пожалуйста, посетите расширенные опции в настройках."
+  },
+  "unconfirmed_balance_not_spendable_warning": {
+    "message": "Для защиты ваших активов при наличии активов Runes можно тратить только подтвержденные балансы. Это сделано для предотвращения случайного сжигания активов."
+  },
+  "mandatory_use_of_unconfirmed_balance": {
+    "message": "Обязательное использование неподтвержденного баланса"
+  },
+  "only_applies_to_current_address": {
+    "message": "Применяется только к текущему адресу"
+  },
+  "advanced": {
+    "message": "Расширенные"
+  },
+  "advanced_settings": {
+    "message": "Настройки языка, безопасности и разрешений"
+  },
+  "automatic_lock_time": {
+    "message": "Время автоматической блокировки"
+  },
+  "the_auto_lock_time_has_been_changed_to": {
+    "message": "Время автоблокировки изменено на"
+  },
+  "i_understand": {
+    "message": "Я понимаю"
+  },
+  "unknown_error": {
+    "message": "Неизвестная ошибка"
+  },
+  "version": {
+    "message": "Версия:"
+  },
+  "latest_version": {
+    "message": "Последняя версия"
+  },
+  "inscribe_and_store_your_inscriptions_in_the_worlds_first_open_source_chrome_wallet_for_ordinals": {
+    "message": "Создавайте и храните свои надписи в первом в мире Chrome-кошельке с открытым исходным кодом для Ordinals!"
+  },
+  "the_broadcastchannel_name_is_missing": {
+    "message": "отсутствует имя broadcastChannel"
+  },
+  "promise_need_function_to_handle": {
+    "message": "промису нужна функция для обработки"
+  },
+  "network_error_no_response": {
+    "message": "Сетевая ошибка, нет ответа"
+  },
+  "network_error_json_parse_error": {
+    "message": "Сетевая ошибка, ошибка парсинга json"
+  },
+  "network_errorno_response_data": {
+    "message": "Сетевая ошибка, нет данных ответа"
+  },
+  "method_not_implemented": {
+    "message": "Метод не реализован."
+  },
+  "keyringcontroller_first_account_not_found": {
+    "message": "KeyringController - Первый аккаунт не найден."
+  },
+  "no_current_account": {
+    "message": "нет текущего аккаунта"
+  },
+  "current_keyring_does_not_support_gensigncosmosur": {
+    "message": "Текущий keyring не поддерживает genSignCosmosUr"
+  },
+  "current_keyring_does_not_support_parsesigncosmosur": {
+    "message": "Текущий keyring не поддерживает parseSignCosmosUr"
+  },
+  "keyringcontroller_password_is_not_a_string": {
+    "message": "KeyringController - пароль не является строкой"
+  },
+  "no_keyring_found_for_the_requested_account": {
+    "message": "Не найден keyring для запрошенного аккаунта."
+  },
+  "public_key_must_be_compressed_secp256k1_ie_33_byte": {
+    "message": "Публичный ключ должен быть сжатым secp256k1, т.е. 33 байта, начинающихся с 0x02 или 0x03"
+  },
+  "no_current_keyring": {
+    "message": "нет текущего keyring"
+  },
+  "invalid_index_in_tosigninput": {
+    "message": "неверный индекс в toSignInput"
+  },
+  "no_address_or_public_key_in_tosigninput": {
+    "message": "нет адреса или публичного ключа в toSignInput"
+  },
+  "invalid_address_in_tosigninput": {
+    "message": "неверный адрес в toSignInput"
+  },
+  "invalid_public_key_in_tosigninput": {
+    "message": "неверный публичный ключ в toSignInput"
+  },
+  "invalid_sighash_type_in_tosigninput": {
+    "message": "неверный тип sighash в toSignInput"
+  },
+  "no_mfp_in_keyring": {
+    "message": "нет mfp в keyring"
+  },
+  "insufficient_balance": {
+    "message": "Недостаточно средств."
+  },
+  "output_value_must_be_at_least": {
+    "message": "Выходное значение должно быть не менее"
+  },
+  "split_inscriptions": {
+    "message": "Разделить надписи"
+  },
+  "split_inscription_tips": {
+    "message": "Эта функция в настоящее время находится на стадии экспериментирования. Пожалуйста, подтверждайте статус разделения надписей транзакции при ее подписании."
+  },
+  "each_output_value": {
+    "message": "Каждое выходное значение"
+  },
+  "spliting_to": {
+    "message": "Разделение на"
+  },
+  "security_warning": {
+    "message": "Предупреждение о безопасности"
+  },
+  "danger_potential_phishing_website_detected": {
+    "message": "Опасно! Обнаружен потенциальный фишинговый сайт"
+  },
+  "this_website_has_been_identified_as_malicious_by_unisat_and_may": {
+    "message": "Этот веб-сайт был идентифицирован UniSat как вредоносный и может:"
+  },
+  "steal_your_private_keys_or_seed_phrases": {
+    "message": "Украсть ваши приватные ключи или сид-фразы"
+  },
+  "trick_you_into_signing_malicious_transactions": {
+    "message": "Обманом заставить вас подписать вредоносные транзакции"
+  },
+  "collect_your_personal_information": {
+    "message": "Собирать вашу личную информацию"
+  },
+  "think_this_is_a_false_positive_click_here_to_report_an_issue": {
+    "message": "Считаете, что это ложное срабатывание? Нажмите здесь, чтобы сообщить о проблеме →"
+  },
+  "if_you_insist_on_continuing_proceed_at_your_own_risk": {
+    "message": "Если вы настаиваете на продолжении, действуйте на свой страх и риск:"
+  },
+  "continue_to": {
+    "message": "Перейти на"
+  },
+  "send_runes": {
+    "message": "Отправить Runes"
+  },
+  "send_atomicals_inscription": {
+    "message": "Отправить надпись Atomicals"
+  },
+  "send_inscription2": {
+    "message": "Отправить надпись"
+  },
+  "ordinals_inscriptions": {
+    "message": "Надписи Ordinals"
+  },
+  "babylon_staking": {
+    "message": "Стейкинг Babylon"
+  },
+  "confirmed_tvl": {
+    "message": "Подтверждено"
+  },
+  "tvl": {
+    "message": "TVL"
+  },
+  "stakers": {
+    "message": "Стейкеры"
+  },
+  "delegations": {
+    "message": "Делегирования"
+  },
+  "finality_providers": {
+    "message": "Провайдеры финализации"
+  },
+  "invalid_address": {
+    "message": "Неверный адрес."
+  },
+  "utxo_not_found": {
+    "message": "UTXO не найден."
+  },
+  "multiple_inscriptions_are_mixed_together_please_sp": {
+    "message": "Несколько надписей смешаны вместе. Пожалуйста, сначала разделите их."
+  },
+  "inscriptions": {
+    "message": "Надписи"
+  },
+  "atomicals_nft": {
+    "message": "Atomicals NFT"
+  },
+  "unable_to_send_inscriptions_to_this_address_in_bat": {
+    "message": "Невозможно отправить надписи на этот адрес пакетом, пожалуйста, отправляйте их по одной."
+  },
+  "inscription_not_found": {
+    "message": "Надпись не найдена."
+  },
+  "the_amount_for_change_is_too_low_please_adjust_the": {
+    "message": "Сумма сдачи слишком мала, пожалуйста, скорректируйте сумму отправки."
+  },
+  "keyring_does_not_exist": {
+    "message": "keyring не существует"
+  },
+  "not_supported_chainid": {
+    "message": "Неподдерживаемый chainId"
+  },
+  "signdata_is_required_for_cosmos_signing": {
+    "message": "signData требуется для подписи Cosmos"
+  },
+  "datatype_is_required_for_cosmos_signing": {
+    "message": "dataType требуется для подписи Cosmos"
+  },
+  "path_is_required_for_cosmos_signing": {
+    "message": "path требуется для подписи Cosmos"
+  },
+  "ur_type_is_required_for_parsing_cosmos_signature": {
+    "message": "Тип UR требуется для парсинга подписи Cosmos"
+  },
+  "cbor_data_is_required_for_parsing_cosmos_signature": {
+    "message": "Данные CBOR требуются для парсинга подписи Cosmos"
+  },
+  "invalid_psbt": {
+    "message": "неверный PSBT"
+  },
+  "not_implemented": {
+    "message": "не реализовано"
+  },
+  "approvalres_is_required": {
+    "message": "approvalRes требуется"
+  },
+  "connected": {
+    "message": "Подключено"
+  },
+  "not_connected": {
+    "message": "Не подключено"
+  },
+  "expand_view": {
+    "message": "Развернуть вид"
+  },
+  "lock_immediately": {
+    "message": "Заблокировать немедленно"
+  },
+  "change_your_lockscreen_password": {
+    "message": "Изменить пароль блокировки экрана"
+  },
+  "manage_wallet": {
+    "message": "Управление кошельком"
+  },
+  "network": {
+    "message": "Сеть"
+  },
+  "invalid_transaction_data": {
+    "message": "Неверные данные транзакции"
+  },
+  "amount_must_be_at_least": {
+    "message": "Сумма должна быть не менее"
+  },
+  "includes_inscriptions_runes_and_unconfirmed_utxos": {
+    "message": "Включает надписи, Runes и неподтвержденные UTXO активы."
+  },
+  "future_versions_will_support_spending_these_assets": {
+    "message": "Будущие версии будут поддерживать трату этих активов."
+  },
+  "you_can_unlock_these_assets_by_using_the_utxos_tools": {
+    "message": "Вы можете разблокировать эти активы с помощью инструментов UTXO."
+  },
+  "spend": {
+    "message": "Потратить"
+  },
+  "transaction_success": {
+    "message": "Транзакция успешна"
+  },
+  "transaction_id": {
+    "message": "ID транзакции"
+  },
+  "received_from": {
+    "message": "Получено от"
+  },
+  "date": {
+    "message": "Дата"
+  },
+  "view_on_unisat_explorer": {
+    "message": "Посмотреть в UniSat Explorer"
+  },
+  "view_on_okx_explorer": {
+    "message": "Посмотреть в OKX Explorer"
+  },
+  "view_on_mempool": {
+    "message": "Посмотреть в Mempool"
+  },
+  "from": {
+    "message": "От"
+  },
+  "to": {
+    "message": "Кому"
+  },
+  "by_inscription": {
+    "message": "По надписи"
+  },
+  "unconfirmed_inscription": {
+    "message": "(не подтверждено)"
+  },
+  "inscriptions_capital": {
+    "message": "НАДПИСИ"
+  },
+  "disable_atomicals": {
+    "message": "Отключить Atomicals"
+  },
+  "the_utxo_containing_this_inscription_has": {
+    "message": "UTXO, содержащий эту надпись, имеет"
+  },
+  "address_book": {
+    "message": "Адресная книга"
+  },
+  "search_address_or_name": {
+    "message": "Поиск адреса или имени"
+  },
+  "loading_contacts": {
+    "message": "Загрузка..."
+  },
+  "you_haven_t_added_address_information_yet": {
+    "message": "Вы еще не добавили информацию об адресах"
+  },
+  "no_matching_contacts_found": {
+    "message": "Совпадающих контактов не найдено"
+  },
+  "please_read_more_detail_on": {
+    "message": "Пожалуйста, прочитайте подробнее на"
+  },
+  "bitcoin_address_verifier": {
+    "message": "Верификатор адресов Bitcoin"
+  },
+  "owner": {
+    "message": "Владелец"
+  },
+  "description": {
+    "message": "Описание"
+  },
+  "script": {
+    "message": "Скрипт"
+  },
+  "this_message_serves_as_a_notice_that_if_runes_assets_are_detected_in_your_address_your": {
+    "message": "Это сообщение служит уведомлением о том, что если на вашем адресе обнаружены активы Runes, ваши неподтвержденные балансы не будут доступны для траты. Вам не нужно ничего делать."
+  },
+  "in_the_current_version_only_the_confirmed_balance_can_be_used_once_atomicals_enabled": {
+    "message": "В текущей версии, после включения Atomicals, можно использовать только подтвержденный баланс."
+  },
+  "oops_something_went_wrong": {
+    "message": "Ой! Что-то пошло не так."
+  },
+  "try_going_back_or_refreshing": {
+    "message": "Попробуйте вернуться назад или обновить страницу."
+  },
+  "go_back": {
+    "message": "Вернуться назад"
+  },
+  "refresh_page": {
+    "message": "Обновить страницу"
+  },
+  "refresh": {
+    "message": "Обновить"
+  },
+  "gas_limit": {
+    "message": "Лимит газа"
+  },
+  "auto": {
+    "message": "Авто"
+  },
+  "recommended": {
+    "message": "Рекомендуемый"
+  },
+  "range": {
+    "message": "Диапазон"
+  },
+  "gas_limit_explanation": {
+    "message": "Объяснение лимита газа"
+  },
+  "gas_limit_explanation_1": {
+    "message": "• Контролирует максимальные вычислительные ресурсы для транзакции"
+  },
+  "gas_limit_explanation_2": {
+    "message": "• Высший лимит = выше потенциальные комиссии, но гарантирует завершение"
+  },
+  "gas_limit_explanation_3": {
+    "message": "• Слишком низкий может привести к сбою транзакции"
+  },
+  "gas_limit_explanation_4": {
+    "message": "• Рекомендуемого значения обычно достаточно"
+  },
+  "gas_adjustment": {
+    "message": "Корректировка газа"
+  },
+  "gas_adjustment_explanation": {
+    "message": "Объяснение корректировки газа:"
+  },
+  "default": {
+    "message": "По умолчанию"
+  },
+  "gas_adjustment_explanation_1": {
+    "message": "• Множитель, применяемый к расчетному газу (1.0 = 100%)"
+  },
+  "gas_adjustment_explanation_2": {
+    "message": "• По умолчанию 1.3 (130%) обеспечивает запас прочности"
+  },
+  "gas_adjustment_explanation_3": {
+    "message": "• Более высокие значения увеличивают шанс успеха транзакции"
+  },
+  "remember_my_choice": {
+    "message": "Запомнить мой выбор"
+  },
+  "close": {
+    "message": "Закрыть"
+  },
+  "this_domain_has_been_transferred_or_inscribed_recently_please_wait_for_block_confirmations": {
+    "message": "Этот домен был недавно передан или записан. Пожалуйста, дождитесь подтверждений блока"
+  },
+  "currently_only": {
+    "message": "В настоящее время только"
+  },
+  "are_supported": {
+    "message": "поддерживаются"
+  },
+  "recipient_address_is_invalid": {
+    "message": "Адрес получателя недействителен"
+  },
+  "address_book_placeholder": {
+    "message": "Адресная книга"
+  },
+  "name_recognized_and_resolved": {
+    "message": "Имя распознано и разрешено."
+  },
+  "more_details": {
+    "message": "Подробнее"
+  },
+  "address_or_name_fb": {
+    "message": "Адрес или имя (.fb)"
+  },
+  "address_or_name_sats_unisat_etc": {
+    "message": "Адрес или имя (.sats, .unisat, ...)"
+  },
+  "does_not_exist": {
+    "message": "не существует"
+  },
+  "click_on_the": {
+    "message": "Нажмите на"
+  },
+  "button_after_signing_the_transaction_with_your_keystone_device": {
+    "message": "кнопку после подписания транзакции на вашем устройстве Keystone"
+  },
+  "processing_signature": {
+    "message": "Обработка подписи..."
+  },
+  "position_the_qr_code_in_front_of_your_camera_the_screen_is_blurred_but_this_will_not_affect_the_scan": {
+    "message": "Расположите QR-код перед камерой. Экран размыт, но это не повлияет на сканирование."
+  },
+  "missing_browser_permissions_please_grant_keystone_permissions": {
+    "message": "Отсутствуют разрешения браузера, пожалуйста, предоставьте разрешения Keystone"
+  },
+  "request_was_rejected_to_proceed_please_reauthorize": {
+    "message": "Запрос был отклонен. Чтобы продолжить, пожалуйста, повторно авторизуйтесь"
+  },
+  "please_reconnect_the_keystone_on_home_screen_and_reauthorize": {
+    "message": "Пожалуйста, переподключите Keystone на главном экране и повторно авторизуйтесь."
+  },
+  "communication_with_the_keystone_device_failed_please_ensure_the_keystone_is_connected_and_try_again": {
+    "message": "Связь с устройством Keystone не удалась. Убедитесь, что Keystone подключен, и попробуйте снова."
+  },
+  "invalid_qr_code_please_ensure_you_have_selected_a_valid_qr_code_from_your_keystone_device": {
+    "message": "Неверный QR-код. Убедитесь, что вы выбрали действительный QR-код с вашего устройства Keystone."
+  },
+  "merging_utxos": {
+    "message": "Объединение UTXO"
+  },
+  "merging_amount": {
+    "message": "Сумма объединения"
+  },
+  "your_balance_have_to_be_merged": {
+    "message": "Ваш "
+  },
+  "this_process_will_merge_your_utxos_into_one": {
+    "message": "баланс должен быть объединен. Этот процесс объединит ваши UTXO в один."
+  },
+  "merge_utxos1": {
+    "message": "Объединить"
+  },
+  "can_not_change_to_a_lower_value": {
+    "message": "Нельзя изменить на меньшее значение"
+  },
+  "a_feature_allows_the_transaction_to_be_replaced": {
+    "message": "Функция, позволяющая заменить транзакцию."
+  },
+  "strong_password_tip": {
+    "message": "Надежный пароль может лучше защитить безопасность ваших активов"
+  },
+  "not_long_enough": {
+    "message": "Недостаточно длинный"
+  },
+  "average": {
+    "message": "Средний"
+  },
+  "password_must_be_at_least_8_characters": {
+    "message": "Пароль должен содержать не менее 8 символов"
+  },
+  "unrecognized_password_strength": {
+    "message": "Нераспознанная надежность пароля"
+  },
+  "weak": {
+    "message": "Слабый"
+  },
+  "strong": {
+    "message": "Надёжный"
+  },
+  "no_inscriptions_found": {
+    "message": "Надписи не найдены"
+  },
+  "new_version": {
+    "message": "Новая версия!"
+  },
+  "add_frequently_used_addresses": {
+    "message": "Добавить часто используемые адреса"
+  },
+  "let_us_know_what_you_think": {
+    "message": "Поделитесь своим мнением"
+  },
+  "like_our_wallet_wed_love_your_rating": {
+    "message": "Нравится наш кошелёк? Будем рады вашей оценке!"
+  },
+  "feedback": {
+    "message": "Обратная связь"
+  },
+  "rate_us": {
+    "message": "Оцените нас"
+  },
+  "about_us": {
+    "message": "О нас"
+  },
+  "seconds": {
+    "message": "Секунды"
+  },
+  "minutes": {
+    "message": "Минуты"
+  },
+  "hours": {
+    "message": "Часы"
+  },
+  "finish": {
+    "message": "Завершить"
+  },
+  "add_address": {
+    "message": "Добавить адрес"
+  },
+  "delete_contact": {
+    "message": "Удалить контакт"
+  },
+  "are_you_sure_you_want_to_delete_this_contact": {
+    "message": "Вы уверены, что хотите удалить этот контакт?"
+  },
+  "contact_not_found": {
+    "message": "Контакт не найден"
+  },
+  "failed_to_load_contact_information": {
+    "message": "Не удалось загрузить информацию о контакте"
+  },
+  "please_enter_name": {
+    "message": "Пожалуйста, введите имя"
+  },
+  "please_enter_address": {
+    "message": "Пожалуйста, введите адрес"
+  },
+  "invalid_address_format_for_selected_network": {
+    "message": "Неверный формат адреса для выбранной сети"
+  },
+  "failed_to_save_contact": {
+    "message": "Не удалось сохранить контакт"
+  },
+  "failed_to_delete_contact": {
+    "message": "Не удалось удалить контакт"
+  },
+  "edit_address": {
+    "message": "Изменить адрес"
+  },
+  "name_label": {
+    "message": "Имя"
+  },
+  "address_label": {
+    "message": "Адрес"
+  },
+  "saving": {
+    "message": "Сохранение..."
+  },
+  "save": {
+    "message": "Сохранить"
+  },
+  "new_update_available": {
+    "message": "Доступно новое обновление"
+  },
+  "you_re_on_the_latest_version": {
+    "message": "У вас установлена последняя версия"
+  },
+  "terms_of_service": {
+    "message": "Условия обслуживания"
+  },
+  "privacy_policy": {
+    "message": "Политика конфиденциальности"
+  },
+  "language": {
+    "message": "Язык"
+  },
+  "language_description": {
+    "message": "Изменить язык приложения"
+  },
+  "more": {
+    "message": "Ещё"
+  },
+  "restore_from_mnemonics": {
+    "message": "Восстановить из мнемоники"
+  },
+  "low_priority": {
+    "message": "Низкий приоритет"
+  },
+  "medium_priority": {
+    "message": "Средний приоритет"
+  },
+  "high_priority": {
+    "message": "Высокий приоритет"
+  },
+  "delete": {
+    "message": "Удалить"
+  },
+  "other_wallet": {
+    "message": "Другой кошелёк"
+  },
+  "12_words": {
+    "message": "12 слов"
+  },
+  "24_words": {
+    "message": "24 слова"
+  },
+  "invalid_derivation_path": {
+    "message": "Неверный путь деривации."
+  },
+  "failed_to_load_inscription": {
+    "message": "Не удалось загрузить надпись"
+  },
+  "loading_details": {
+    "message": "Загрузка деталей..."
+  },
+  "provenance": {
+    "message": "Провенанс"
+  },
+  "details": {
+    "message": "Детали"
+  },
+  "inscription_id": {
+    "message": "id"
+  },
+  "inscription_address": {
+    "message": "адрес"
+  },
+  "inscription_preview": {
+    "message": "предпросмотр"
+  },
+  "inscription_content": {
+    "message": "содержимое"
+  },
+  "inscription_content_length": {
+    "message": "длина содержимого"
+  },
+  "inscription_content_type": {
+    "message": "тип содержимого"
+  },
+  "inscription_timestamp": {
+    "message": "временная метка"
+  },
+  "inscription_genesis_transaction": {
+    "message": "генезис-транзакция"
+  },
+  "custom": {
+    "message": "Пользовательский"
+  },
+  "legacy_address_warning": {
+    "message": "Не рекомендуется использовать legacy адреса, так как это может привести к более высоким комиссиям за транзакции или непреднамеренной блокировке балансов CAT20."
+  },
+  "legacy_address_warning_2": {
+    "message": "Не рекомендуется отправлять транзакции на legacy адреса, так как это может привести к непреднамеренной трате балансов CAT20."
+  },
+  "slow": {
+    "message": "Медленно"
+  },
+  "avg": {
+    "message": "Средне"
+  },
+  "fast": {
+    "message": "Быстро"
+  },
+  "about_1_hour": {
+    "message": "около 1 часа"
+  },
+  "about_30_minutes": {
+    "message": "около 30 минут"
+  },
+  "about_10_minutes": {
+    "message": "около 10 минут"
+  },
+  "babylon_bitcoin_staking_phase2": {
+    "message": "Стейкинг Bitcoin в Babylon Фаза 2"
+  },
+  "go_to_babylon": {
+    "message": "Перейти в Babylon"
+  },
+  "closed_babylon": {
+    "message": "Закрыто"
+  },
+  "open_babylon": {
+    "message": "Открыто"
+  },
+  "pending_babylon": {
+    "message": "В ожидании"
+  },
+  "convert_baby_to_brc20": {
+    "message": "Конвертировать $BABY в brc-20"
+  },
+  "you_are_about_to_convert_your_native_baby_to_btc_brc20_baby": {
+    "message": "Вы собираетесь конвертировать ваши нативные BABY в BTC brc-20 BABY."
+  },
+  "once_the_conversion_is_complete_your_native_baby_cannot_be_restored": {
+    "message": "После завершения конвертации ваши нативные BABY не могут быть восстановлены."
+  },
+  "do_you_confirm_the_conversion": {
+    "message": "Вы подтверждаете конвертацию?"
+  },
+  "transfer_baby_to_cosmos_wallet": {
+    "message": "Перевести $BABY в кошелёк Cosmos"
+  },
+  "do_you_confirm_the_transfer": {
+    "message": "Вы подтверждаете перевод?"
+  },
+  "you_are_about_to_transfer_your_native_baby_to_your_cosmos_wallet": {
+    "message": "Вы собираетесь перевести ваши нативные BABY в ваш кошелёк Cosmos."
+  },
+  "click_baby_to_brc20_coming_soon": {
+    "message": "Нажмите $BABY в brc-20 (Скоро)"
+  },
+  "convert_your_native_baby_to_btc_brc20_baby": {
+    "message": "Конвертируйте ваш нативный токен $BABY в brc-20 BABY на Bitcoin."
+  },
+  "transfer_your_baby_to_your_cosmos_wallet": {
+    "message": "Переведите ваши $BABY в ваш кошелёк Cosmos."
+  },
+  "password_error": {
+    "message": "Пароль неверный"
+  },
+  "the_private_key_is_invalid": {
+    "message": "Приватный ключ недействителен"
+  },
+  "you_need_to_unlock_wallet_first": {
+    "message": "Вам нужно сначала разблокировать кошелёк"
+  },
+  "account_count_must_be_greater_than_0": {
+    "message": "количество аккаунтов должно быть больше 0"
+  },
+  "mnemonic_phrase_is_invalid": {
+    "message": "мнемоническая фраза недействительна"
+  },
+  "first_account_not_found": {
+    "message": "Первый аккаунт не найден."
+  },
+  "unlock_already_in_progress": {
+    "message": "Разблокировка уже выполняется"
+  },
+  "change_password_already_in_progress": {
+    "message": "Смена пароля уже выполняется"
+  },
+  "change_password_failed": {
+    "message": "Старый пароль неверный."
+  },
+  "cannot_unlock_without_a_previous_vault": {
+    "message": "Невозможно разблокировать без предыдущего хранилища (vault)"
+  },
+  "wallet_existed": {
+    "message": "Кошелёк уже существует."
+  },
+  "does_not_support_account_removal_operations": {
+    "message": "не поддерживает операции удаления аккаунта"
+  },
+  "disclaimStrFb": {
+    "message": "Обратите внимание, что вы собираетесь купить FB через стороннюю платформу. Услуги оплаты кредитной картой предоставляются нашими партнерами. UniSat Wallet выступает исключительно как посредническая платформа и не несет ответственности за любые потенциальные убытки или ущерб, которые могут возникнуть в результате использования услуги оплаты кредитной картой."
+  },
+  "seconds_ago": {
+    "message": "сек назад"
+  },
+  "minutes_ago": {
+    "message": "мин назад"
+  },
+  "hours_ago": {
+    "message": "час назад"
+  },
+  "days_ago": {
+    "message": "день назад"
+  },
+  "current": {
+    "message": "Текущий"
+  },
+  "items": {
+    "message": "Элементы"
+  },
+  "claimabled": {
+    "message": "Доступно к получению"
+  },
+  "agreement_text": {
+    "message": "ПОДТВЕРДИТЬ"
+  },
+  "to_proceed": {
+    "message": "чтобы продолжить"
+  },
+  "tutorial": {
+    "message": "Руководство"
+  },
+  "tx_amount": {
+    "message": "сумма"
+  },
+  "secs": {
+    "message": "сек"
+  },
+  "about_3_minutes_fb": {
+    "message": "около 3 минут"
+  },
+  "about_1_5_minutes_fb": {
+    "message": "около 1,5 минут"
+  },
+  "about_30_seconds_fb": {
+    "message": "около 30 секунд"
+  },
+  "legacy_address_warning_3": {
+    "message": "Не рекомендуется использовать legacy адреса, так как они могут привести к более высоким комиссиям за транзакции или непреднамеренной блокировке балансов CAT20."
+  },
+  "legacy_address_warning_4": {
+    "message": "Не рекомендуется отправлять транзакции на legacy адреса, так как это может привести к непреднамеренной трате балансов CAT20."
+  }
+}

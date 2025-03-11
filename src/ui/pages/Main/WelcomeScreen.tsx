@@ -3,6 +3,7 @@ import { useState } from 'react';
 
 import { Button, Column, Content, Layout, Logo, Row, Text } from '@/ui/components';
 import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
@@ -12,6 +13,7 @@ export default function WelcomeScreen() {
   const navigate = useNavigate();
   const wallet = useWallet();
   const isInTab = useExtensionIsInTab();
+  const { t } = useI18n();
 
   const [connectHardwareModalVisible, setConnectHardwareModalVisible] = useState(false);
 
@@ -24,13 +26,15 @@ export default function WelcomeScreen() {
           </Row>
           <Column gap="xl" mt="xxl">
             <Text
-              text={"Inscribe and store your inscriptions in the world's first Open Source Chrome wallet for Ordinals!"}
+              text={t(
+                'inscribe_and_store_your_inscriptions_in_the_worlds_first_open_source_chrome_wallet_for_ordinals'
+              )}
               preset="sub"
               textCenter
             />
 
             <Button
-              text="Create new wallet"
+              text={t('create_new_wallet')}
               preset="primary"
               onClick={async () => {
                 const isBooted = await wallet.isBooted();
@@ -42,7 +46,7 @@ export default function WelcomeScreen() {
               }}
             />
             <Button
-              text="I already have a wallet"
+              text={t('i_already_have_a_wallet')}
               preset="default"
               onClick={async () => {
                 const isBooted = await wallet.isBooted();
@@ -54,7 +58,7 @@ export default function WelcomeScreen() {
               }}
             />
             <Button
-              text="Connect to Hardware Wallet"
+              text={t('connect_to_hardware_wallet')}
               preset="default"
               onClick={async () => {
                 setConnectHardwareModalVisible(true);

@@ -15,6 +15,7 @@ import { OutputValueBar } from '@/ui/components/OutputValueBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
 import WebsiteBar from '@/ui/components/WebsiteBar';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useBTCUnit, useNetworkType } from '@/ui/state/settings/hooks';
 import {
@@ -140,9 +141,10 @@ interface StepProps {
 function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
   const networkType = useNetworkType();
   const [getApproval, resolveApproval, rejectApproval] = useApproval();
+  const { t } = useI18n();
 
   const handleCancel = () => {
-    rejectApproval('User rejected the request.');
+    rejectApproval(t('user_rejected_the_request'));
   };
 
   const wallet = useWallet();
@@ -181,7 +183,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
       const decimal = inputAmount.split('.')[1].length;
       const token_decimal = contextData.tokenInfo?.decimal || 0;
       if (decimal > token_decimal) {
-        setInputError(`This token only supports up to ${token_decimal} decimal places.`);
+        setInputError(`${t('this_token_only_supports_up_to')} ${token_decimal} ${t('decimal_places')}.`);
         return;
       }
     }
@@ -204,7 +206,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
     }
 
     if (amount.gt(contextData.tokenBalance.availableBalanceSafe)) {
-      setInputError('Insufficient Balance');
+      setInputError(t('insufficient_balance'));
       return;
     }
 
@@ -214,7 +216,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
 
     const dust = getAddressUtxoDust(account.address);
     if (outputValue < dust) {
-      setInputError(`OutputValue must be at least ${dust}`);
+      setInputError(`${t('output_value_must_be_at_least')} ${dust}`);
       return;
     }
 
@@ -282,11 +284,11 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
       <Content>
         <Column full>
           <Column gap="lg" full>
-            <Text text="Inscribe TRANSFER" preset="title-bold" textCenter my="lg" />
+            <Text text={t('inscribe_transfer')} preset="title-bold" textCenter my="lg" />
 
             <Column>
               <Row justifyBetween itemsCenter>
-                <Text text="Available" color="textDim" />
+                <Text text={t('available')} color="textDim" />
                 <TickUsdWithoutPrice tick={contextData.ticker} balance={inputAmount} type={TokenType.BRC20} />
                 {tokenBalance ? (
                   <Column>
@@ -302,7 +304,9 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
                           }}
                         />
                         <Tooltip
-                          title={`${tokenBalance.availableBalanceUnSafe} ${tokenBalance.ticker} is unconfirmed, please wait for confirmation `}
+                          title={`${tokenBalance.availableBalanceUnSafe} ${tokenBalance.ticker} ${t(
+                            'is_unconfirmed_please_wait_for_confirmation'
+                          )} `}
                           overlayStyle={{
                             fontSize: fontSizes.xs
                           }}>
@@ -335,13 +339,13 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
                     )}
                   </Column>
                 ) : (
-                  <Text text={'loading...'} />
+                  <Text text={t('loading')} />
                 )}
               </Row>
 
               <Input
                 preset="amount"
-                placeholder={'Amount'}
+                placeholder={t('amount')}
                 value={inputAmount}
                 autoFocus={true}
                 enableBrc20Decimal={true}
@@ -354,7 +358,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
             </Column>
 
             <Column mt="lg">
-              <Text text="OutputValue" color="textDim" />
+              <Text text={t('output_value')} color="textDim" />
 
               <OutputValueBar
                 defaultValue={defaultOutputValue}
@@ -366,7 +370,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
             </Column>
 
             <Column>
-              <Text text="Fee Rate" color="textDim" />
+              <Text text={t('fee_rate')} color="textDim" />
               <FeeRateBar
                 onChange={(val) => {
                   setFeeRate(val);
@@ -388,14 +392,14 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
       {contextData.isApproval ? (
         <Footer>
           <Row full>
-            <Button text="Cancel" preset="default" onClick={handleCancel} full />
-            <Button text="Next" preset="primary" onClick={onClickInscribe} full disabled={disabled} />
+            <Button text={t('cancel')} preset="default" onClick={handleCancel} full />
+            <Button text={t('next')} preset="primary" onClick={onClickInscribe} full disabled={disabled} />
           </Row>
         </Footer>
       ) : (
         <Footer>
           <Row full>
-            <Button text="Next" preset="primary" onClick={onClickInscribe} full disabled={disabled} />
+            <Button text={t('next')} preset="primary" onClick={onClickInscribe} full disabled={disabled} />
           </Row>
         </Footer>
       )}
@@ -406,6 +410,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
 function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
   const { order, tokenBalance, amount, rawTxInfo, session } = contextData;
   const btcUnit = useBTCUnit();
+  const { t } = useI18n();
 
   if (!order || !tokenBalance || !rawTxInfo) {
     return <Empty />;
@@ -438,7 +443,7 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
       <Content>
         <Column full>
           <Column gap="lg" full>
-            <Text text="Inscribe TRANSFER" preset="title-bold" textCenter mt="lg" />
+            <Text text={t('inscribe_transfer')} preset="title-bold" textCenter mt="lg" />
 
             <Column justifyCenter style={{ height: 250 }}>
               <Row itemsCenter justifyCenter>
@@ -449,7 +454,7 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
                 <TickUsdWithoutPrice tick={tokenBalance.ticker} balance={amount + ''} type={TokenType.BRC20} />
               </Row>
               <Column mt="xxl">
-                <Text text="Preview" preset="sub-bold" />
+                <Text text={t('preview')} preset="sub-bold" />
                 <Card preset="style2">
                   <Text
                     text={`{"p":"brc-20","op":"transfer","tick":"${tokenBalance.ticker}","amt":"${amount}"}`}
@@ -462,22 +467,22 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
 
             <Column>
               <Row justifyBetween>
-                <Text text="Payment Network Fee" color="textDim" />
+                <Text text={t('payment_network_fee')} color="textDim" />
                 <Text text={`${networkFee} ${btcUnit}`} />
               </Row>
 
               <Row justifyBetween>
-                <Text text="Inscription Output Value" color="textDim" />
+                <Text text={t('inscription_output_value')} color="textDim" />
                 <Text text={`${outputValue} ${btcUnit}`} />
               </Row>
 
               <Row justifyBetween>
-                <Text text="Inscription Network Fee" color="textDim" />
+                <Text text={t('inscription_network_fee')} color="textDim" />
                 <Text text={`${minerFee} ${btcUnit}`} />
               </Row>
 
               <Row justifyBetween>
-                <Text text="Service Fee" color="textDim" />
+                <Text text={t('service_fee')} color="textDim" />
                 {originServiceFee != serviceFee ? (
                   <Column>
                     <Text
@@ -492,7 +497,7 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
                 )}
               </Row>
               <Row justifyBetween>
-                <Text text="Total" color="gold" />
+                <Text text={t('total')} color="gold" />
                 <Text text={`${totalFee} ${btcUnit}`} color="gold" />
               </Row>
               <Row justifyBetween>
@@ -507,7 +512,7 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
         <Footer>
           <Row full>
             <Button
-              text="Back"
+              text={t('back')}
               preset="default"
               onClick={() => {
                 updateContextData({
@@ -518,7 +523,7 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
               full
             />
             <Button
-              text="Next"
+              text={t('next')}
               preset="primary"
               onClick={() => {
                 updateContextData({
@@ -534,7 +539,7 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
         <Footer>
           <Row full>
             <Button
-              text="Next"
+              text={t('next')}
               preset="primary"
               onClick={() => {
                 updateContextData({
@@ -619,6 +624,7 @@ function InscribeResultStep({
   const [getApproval, resolveApproval, rejectApproval] = useApproval();
   const navigate = useNavigate();
   const [result, setResult] = useState<any>();
+  const { t } = useI18n();
   const checkResult = async () => {
     const result = await wallet.getInscribeResult(order.orderId);
     if (!result) {
@@ -677,12 +683,12 @@ function InscribeResultStep({
               <Icon icon="success" size={50} style={{ alignSelf: 'center' }} />
             </Row>
 
-            <Text preset="title" text="Payment Sent" textCenter />
-            <Text preset="sub" text="Your transaction has been successfully sent" color="textDim" textCenter />
+            <Text preset="title" text={t('payment_sent')} textCenter />
+            <Text preset="sub" text={t('your_transaction_has_been_successfully_sent')} color="textDim" textCenter />
 
             <Column justifyCenter itemsCenter>
               <Column mt="lg">
-                <Loading text="Inscribing..." />
+                <Loading text={t('inscribing')} />
               </Column>
             </Column>
           </Column>
@@ -702,17 +708,14 @@ function InscribeResultStep({
       )}
       <Content style={{ gap: spacing.small }}>
         <Column justifyCenter mt="xxl" gap="xl">
-          <Text text="Inscribe Success" preset="title-bold" textCenter />
+          <Text text={t('inscribe_success')} preset="title-bold" textCenter />
           <Column justifyCenter itemsCenter style={{ width: '100%', alignItems: 'center' }}>
             <div style={{ width: '120px' }}>
               <InscriptionPreview data={result.inscription} preset="medium" />
             </div>
 
             <Column mt="lg">
-              <Text
-                text="The transferable and available balance of BRC20 will be refreshed in a few minutes."
-                textCenter
-              />
+              <Text text={t('the_transferable_and_available_balance_of_brc20_wi')} textCenter />
             </Column>
           </Column>
         </Column>
@@ -721,7 +724,7 @@ function InscribeResultStep({
         <Footer>
           <Row full>
             <Button
-              text="Done"
+              text={t('done')}
               preset="primary"
               onClick={() => {
                 onClickConfirm();
@@ -734,7 +737,7 @@ function InscribeResultStep({
         <Footer>
           <Row full>
             <Button
-              text="Done"
+              text={t('done')}
               preset="primary"
               onClick={() => {
                 onClickConfirm();

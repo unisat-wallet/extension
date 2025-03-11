@@ -1,3 +1,4 @@
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { copyToClipboard, shortAddress } from '@/ui/utils';
@@ -15,6 +16,8 @@ const AccountSelect = () => {
   const currentAccount = useCurrentAccount();
   const tools = useTools();
   const address = currentAccount.address;
+  const { t } = useI18n();
+
   return (
     <Row
       justifyBetween
@@ -38,10 +41,10 @@ const AccountSelect = () => {
         }}
         onClick={(e) => {
           copyToClipboard(address).then(() => {
-            tools.toastSuccess('Copied');
+            tools.toastSuccess(t('copied'));
           });
         }}>
-        <Text text={shortAddress(currentAccount?.alianName, 8)} textCenter />
+        <Text text={shortAddress(currentAccount?.alianName, 8)} textCenter ellipsis />
         <Row selfItemsCenter itemsCenter>
           <Text text={shortAddress(address)} color="textDim" />
           <CopyOutlined style={{ color: '#888', fontSize: 14 }} />

@@ -5,12 +5,12 @@ import { EventEmitter } from 'events';
 import log from 'loglevel';
 
 import { ADDRESS_TYPES, KEYRING_TYPE } from '@/shared/constant';
+import { t } from '@/shared/modules/i18n';
 import { AddressType, CosmosSignDataType } from '@/shared/types';
 import { ObservableStore } from '@metamask/obs-store';
 import { keyring } from '@unisat/wallet-sdk';
 import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 
-import i18n from '../i18n';
 import { default as preference, default as preferenceService } from '../preference';
 import DisplayKeyring from './display';
 
@@ -225,7 +225,7 @@ class KeyringService extends EventEmitter {
 
   generatePreMnemonic = async (): Promise<string> => {
     if (!this.password) {
-      throw new Error(i18n.t('you need to unlock wallet first'));
+      throw new Error(t('you_need_to_unlock_wallet_first'));
     }
     const mnemonic = this.generateMnemonic();
     const preMnemonics = await this.encryptor.encrypt(this.password, mnemonic);
@@ -250,7 +250,7 @@ class KeyringService extends EventEmitter {
     }
 
     if (!this.password) {
-      throw new Error(i18n.t('you need to unlock wallet first'));
+      throw new Error(t('you_need_to_unlock_wallet_first'));
     }
 
     return await this.encryptor.decrypt(this.password, this.memStore.getState().preMnemonics);
@@ -274,10 +274,10 @@ class KeyringService extends EventEmitter {
     accountCount: number
   ) => {
     if (accountCount < 1) {
-      throw new Error(i18n.t('account count must be greater than 0'));
+      throw new Error(t('account_count_must_be_greater_than_0'));
     }
     if (!bip39.validateMnemonic(seed)) {
-      return Promise.reject(new Error(i18n.t('mnemonic phrase is invalid')));
+      return Promise.reject(new Error(t('mnemonic_phrase_is_invalid')));
     }
 
     // await this.persistAllKeyrings();
@@ -297,7 +297,7 @@ class KeyringService extends EventEmitter {
     );
     const accounts = await keyring.getAccounts();
     if (!accounts[0]) {
-      throw new Error('KeyringController - First Account not found.');
+      throw new Error(t('first_account_not_found'));
     }
     // this.persistAllKeyrings();
     this.setUnlocked();
@@ -314,7 +314,7 @@ class KeyringService extends EventEmitter {
     connectionType: 'USB' | 'QR' = 'USB'
   ) => {
     if (accountCount < 1) {
-      throw new Error(i18n.t('account count must be greater than 0'));
+      throw new Error(t('account_count_must_be_greater_than_0'));
     }
     // await this.persistAllKeyrings();
     const tmpKeyring = new KeystoneKeyring();
@@ -332,7 +332,7 @@ class KeyringService extends EventEmitter {
     const accounts = await keyring.getAccounts();
 
     if (!accounts[0]) {
-      throw new Error('KeyringController - First Account not found.');
+      throw new Error(t('keyringcontroller_first_account_not_found'));
     }
     this.setUnlocked();
     return keyring;
@@ -406,7 +406,7 @@ class KeyringService extends EventEmitter {
    */
   submitPassword = async (password: string): Promise<MemStoreState> => {
     if (this.isUnlocking) {
-      throw new Error('Unlock already in progress');
+      throw new Error(t('unlock_already_in_progress'));
     }
 
     this.isUnlocking = true;
@@ -431,7 +431,7 @@ class KeyringService extends EventEmitter {
   changePassword = async (oldPassword: string, newPassword: string) => {
     try {
       if (this.isUnlocking) {
-        throw new Error('changePassword already in progress');
+        throw new Error(t('change_password_already_in_progress'));
       }
       this.isUnlocking = true;
 
@@ -452,7 +452,7 @@ class KeyringService extends EventEmitter {
       await this._updateMemStoreKeyrings();
       await this.fullUpdate();
     } catch (e) {
-      throw new Error('Change password failed');
+      throw new Error(t('change_password_failed'));
     } finally {
       this.isUnlocking = false;
     }
@@ -469,7 +469,7 @@ class KeyringService extends EventEmitter {
   verifyPassword = async (password: string): Promise<void> => {
     const encryptedBooted = this.store.getState().booted;
     if (!encryptedBooted) {
-      throw new Error(i18n.t('Cannot unlock without a previous vault'));
+      throw new Error(t('cannot_unlock_without_a_previous_vault'));
     }
     await this.encryptor.decrypt(password, encryptedBooted);
   };
@@ -519,7 +519,7 @@ class KeyringService extends EventEmitter {
       return accounts.find((key) => key === account);
     });
 
-    return isIncluded ? Promise.reject(new Error(i18n.t('Wallet existed.'))) : Promise.resolve(newAccountArray);
+    return isIncluded ? Promise.reject(new Error(t('wallet_existed'))) : Promise.resolve(newAccountArray);
   };
 
   /**
@@ -576,7 +576,7 @@ class KeyringService extends EventEmitter {
 
     // Not all the keyrings support this, so we have to check
     if (typeof keyring.removeAccount != 'function') {
-      throw new Error(`Keyring ${keyring.type} doesn't support account removal operations`);
+      throw new Error(`Keyring ${keyring.type} ${t('does_not_support_account_removal_operations')}`);
     }
     keyring.removeAccount(address);
     this.cachedDisplayedKeyring = null;
@@ -666,11 +666,11 @@ class KeyringService extends EventEmitter {
         extra: { chainId, accountNumber, address }
       } = signRequest;
       const account = preferenceService.getCurrentAccount();
-      if (!account) throw new Error('No current account');
+      if (!account) throw new Error(t('no_current_account'));
 
       const keyring = await this.getKeyringForAccount(account.pubkey, account.type);
       if (!keyring.genSignCosmosUr) {
-        throw new Error('Current keyring does not support genSignCosmosUr');
+        throw new Error(t('current_keyring_does_not_support_gensigncosmosur'));
       }
 
       const result = await keyring.genSignCosmosUr({
@@ -704,11 +704,11 @@ class KeyringService extends EventEmitter {
   }> => {
     try {
       const account = preferenceService.getCurrentAccount();
-      if (!account) throw new Error('No current account');
+      if (!account) throw new Error(t('no_current_account'));
 
       const keyring = await this.getKeyringForAccount(account.pubkey, account.type);
       if (!keyring.parseSignCosmosUr) {
-        throw new Error('Current keyring does not support parseSignCosmosUr');
+        throw new Error(t('current_keyring_does_not_support_parsesigncosmosur'));
       }
 
       return await keyring.parseSignCosmosUr(type, cbor);
@@ -735,7 +735,7 @@ class KeyringService extends EventEmitter {
    */
   persistAllKeyrings = (): Promise<boolean> => {
     if (!this.password || typeof this.password !== 'string') {
-      return Promise.reject(new Error('KeyringController - password is not a string'));
+      return Promise.reject(new Error(t('keyringcontroller_password_is_not_a_string')));
     }
     return Promise.all(
       this.keyrings.map((keyring, index) => {
@@ -770,7 +770,7 @@ class KeyringService extends EventEmitter {
   unlockKeyrings = async (password: string): Promise<any[]> => {
     const encryptedVault = this.store.getState().vault;
     if (!encryptedVault) {
-      throw new Error(i18n.t('Cannot unlock without a previous vault'));
+      throw new Error(t('cannot_unlock_without_a_previous_vault'));
     }
 
     await this.clearKeyrings();
@@ -899,7 +899,7 @@ class KeyringService extends EventEmitter {
         return keyring;
       }
     }
-    throw new Error('No keyring found for the requested account.');
+    throw new Error(t('no_keyring_found_for_the_requested_account'));
   };
 
   /**

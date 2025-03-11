@@ -18,6 +18,7 @@ import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { MergeBTCPopover } from '@/ui/components/MergeBTCPopover';
 import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useNetworkType } from '@/ui/state/settings/hooks';
@@ -45,6 +46,7 @@ export default function SendCAT20Screen() {
   const wallet = useWallet();
 
   const navigate = useNavigate();
+  const { t } = useI18n();
   const runesTx = useRunesTx();
   const [inputAmount, setInputAmount] = useState('');
   const [disabled, setDisabled] = useState(false);
@@ -106,7 +108,7 @@ export default function SendCAT20Screen() {
 
     const addressType = getAddressType(toInfo.address, networkType);
     if (addressType !== AddressType.P2TR && addressType !== AddressType.P2WPKH) {
-      setError('The recipient must be P2TR or P2WPKH address type');
+      setError(t('the_recipient_must_be_p2tr_or_p2wpkh_address_type'));
       return;
     }
 
@@ -168,7 +170,7 @@ export default function SendCAT20Screen() {
     return (
       <SignPsbt
         header=<Header
-          title="STEP 1/2"
+          title={t('step_12')}
           onBack={() => {
             setStep(0);
           }}
@@ -213,7 +215,7 @@ export default function SendCAT20Screen() {
     return (
       <SignPsbt
         header=<Header
-          title="STEP 2/2"
+          title={t('step_22')}
           onBack={() => {
             setStep(0);
           }}
@@ -254,7 +256,7 @@ export default function SendCAT20Screen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Send CAT20"
+        title={t('send_cat20')}
       />
       <Content>
         <Text text={cat20Info.name} preset="title-bold" textCenter size="xxl" color="gold" />
@@ -286,21 +288,21 @@ export default function SendCAT20Screen() {
             onAddressInputChange={(val) => {
               setToInfo(val);
             }}
-            recipientLabel={<Text text="Recipient" preset="regular" color="textDim" />}
+            recipientLabel={<Text text={t('recipient')} preset="regular" color="textDim" />}
             autoFocus={true}
           />
         </Column>
 
         <Column mt="lg">
           <Row justifyBetween>
-            <Text text="Balance" color="textDim" />
+            <Text text={t('balance')} color="textDim" />
             <TickUsdWithoutPrice tick={cat20Info.tokenId} balance={inputAmount} type={TokenType.CAT20} />
             <Row
               itemsCenter
               onClick={() => {
                 setInputAmount(runesUtils.toDecimalAmount(availableTokenAmount, cat20Balance.decimals));
               }}>
-              <Text text="MAX" preset="sub" style={{ color: colors.white_muted }} />
+              <Text text={t('max')} preset="sub" style={{ color: colors.white_muted }} />
               <Text
                 text={`${showLongNumber(runesUtils.toDecimalAmount(availableTokenAmount, cat20Balance.decimals))}`}
                 preset="bold"
@@ -312,7 +314,7 @@ export default function SendCAT20Screen() {
           </Row>
           <Input
             preset="amount"
-            placeholder={'Amount'}
+            placeholder={t('amount')}
             value={inputAmount.toString()}
             runesDecimal={cat20Balance.decimals}
             onAmountInputChange={(amount) => {
@@ -324,13 +326,13 @@ export default function SendCAT20Screen() {
             <Column style={{ borderWidth: 1, borderRadius: 10, borderColor: 'rgba(255,255,255,0.3)' }}>
               <Column mx="md" my="md">
                 <Text
-                  text={'To send a larger amount, please merge your UTXOs to increase the available balance.'}
+                  text={t('to_send_a_larger_amount_please_merge_your_utxos_to_increase_the_available_balance')}
                   size="xs"
                   color="textDim"
                 />
 
                 <Text
-                  text={'Merge UTXOs->'}
+                  text={t('merge_utxos_to_increase_the_available_balance')}
                   size="xs"
                   color="gold"
                   onClick={() => {
@@ -346,7 +348,7 @@ export default function SendCAT20Screen() {
         </Column>
 
         <Column mt="lg">
-          <Text text="Fee" color="textDim" />
+          <Text text={t('fee')} color="textDim" />
 
           <FeeRateBar
             onChange={(val) => {
@@ -360,7 +362,7 @@ export default function SendCAT20Screen() {
         <Button
           disabled={disabled}
           preset="primary"
-          text="Next"
+          text={t('next')}
           onClick={(e) => {
             onConfirm();
           }}></Button>

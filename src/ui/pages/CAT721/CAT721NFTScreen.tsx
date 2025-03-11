@@ -5,6 +5,7 @@ import { Button, Card, Column, Content, Header, Layout, Row, Text } from '@/ui/c
 import CAT721Preview from '@/ui/components/CAT721Preview';
 import { Line } from '@/ui/components/Line';
 import { Section } from '@/ui/components/Section';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useNavigate } from '@/ui/pages/MainRoute';
 
 export default function CAT721NFTScreen() {
@@ -13,6 +14,7 @@ export default function CAT721NFTScreen() {
     collectionInfo: CAT721CollectionInfo;
     localId: string;
   };
+  const { t } = useI18n();
 
   const collectionInfo = props.collectionInfo;
   const localId = props.localId;
@@ -42,14 +44,14 @@ export default function CAT721NFTScreen() {
 
         <Card style={{ borderRadius: 15 }}>
           <Column fullX my="sm">
-            <Section title="Collection Id" value={collectionInfo.collectionId} showCopyIcon />
+            <Section title={t('collection_id')} value={collectionInfo.collectionId} showCopyIcon />
             <Line />
-            <Section title="Collection" value={collectionInfo.name} />
+            <Section title={t('collection')} value={collectionInfo.name} />
           </Column>
         </Card>
         <Button
           preset="primary"
-          text="Send"
+          text={t('send')}
           icon="send"
           onClick={(e) => {
             navigate('SendCAT721Screen', {

@@ -54,6 +54,7 @@ import SendRunesScreen from './Runes/SendRunesScreen';
 import AboutUsScreen from './Settings/AboutUsScreen';
 import AddressTypeScreen from './Settings/AddressTypeScreen';
 import AdvancedScreen from './Settings/AdvancedScreen';
+import { LockTimePage } from './Settings/AdvancedScreen/LockTimePage';
 import ChangePasswordScreen from './Settings/ChangePasswordScreen';
 import ContactsScreen from './Settings/ContactsScreen';
 import EditAccountNameScreen from './Settings/EditAccountNameScreen';
@@ -61,6 +62,7 @@ import EditContactScreen from './Settings/EditContactScreen';
 import EditWalletNameScreen from './Settings/EditWalletNameScreen';
 import ExportMnemonicsScreen from './Settings/ExportMnemonicsScreen';
 import ExportPrivateKeyScreen from './Settings/ExportPrivateKeyScreen';
+import LanguageScreen from './Settings/LanguageScreen';
 import NetworkTypeScreen from './Settings/NetworkTypeScreen';
 import UpgradeNoticeScreen from './Settings/UpgradeNoticeScreen';
 import CosmosSignDemo from './Test/CosmosSignDemo';
@@ -194,6 +196,14 @@ export const routes = {
   AdvancedScreen: {
     path: '/settings/advanced',
     element: <AdvancedScreen />
+  },
+  LanguageScreen: {
+    path: '/settings/language',
+    element: <LanguageScreen />
+  },
+  LockTimePage: {
+    path: '/settings/lock-time',
+    element: <LockTimePage />
   },
   HistoryScreen: {
     path: '/wallet/history',

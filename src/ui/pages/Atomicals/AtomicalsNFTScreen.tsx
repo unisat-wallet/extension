@@ -5,6 +5,7 @@ import { Inscription } from '@/shared/types';
 import { Button, Column, Content, Header, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useTxExplorerUrl } from '@/ui/state/settings/hooks';
@@ -16,7 +17,7 @@ import { useNavigate } from '../MainRoute';
 export default function AtomicalsNFTScreen() {
   const navigate = useNavigate();
   const { inscription } = useLocationState<{ inscription: Inscription }>();
-
+  const { t } = useI18n();
   const currentAccount = useCurrentAccount();
   const withSend = currentAccount.address === inscription.address;
 
@@ -49,7 +50,7 @@ export default function AtomicalsNFTScreen() {
       <Content>
         <Column>
           <Text
-            text={isUnconfirmed ? 'Atomicals Inscription (not confirmed yet)' : `Atomicals Inscription`}
+            text={isUnconfirmed ? t('atomicals_inscription_not_confirmed_yet') : t('atomicals_inscription')}
             preset="title-bold"
             textCenter
           />
@@ -59,7 +60,7 @@ export default function AtomicalsNFTScreen() {
           {withSend && (
             <Row fullX>
               <Button
-                text="Send"
+                text={t('send')}
                 icon="send"
                 preset="default"
                 full
@@ -72,24 +73,20 @@ export default function AtomicalsNFTScreen() {
           )}
 
           {isMultiStuck ? (
-            <Text
-              color="danger"
-              textCenter
-              text={'Multiple inscriptions are mixed together. Please split them first.'}
-            />
+            <Text color="danger" textCenter text={t('multiple_inscriptions_are_mixed_together_please_sp')} />
           ) : null}
 
           <Column gap="lg">
-            <Section title="atomicals id" value={inscription.inscriptionId} />
-            <Section title="atomicals number" value={inscription.inscriptionNumber} />
-            <Section title="address" value={inscription.address} />
-            <Section title="output value" value={inscription.outputValue} />
-            <Section title="preview" value={inscription.preview} link={inscription.preview} />
-            <Section title="content" value={inscription.content} link={inscription.content} />
-            <Section title="content length" value={inscription.contentLength} />
-            <Section title="content type" value={inscription.contentType} />
-            <Section title="timestamp" value={isUnconfirmed ? 'unconfirmed' : date} />
-            <Section title="genesis transaction" value={inscription.genesisTransaction} link={genesisTxUrl} />
+            <Section title={t('atomicals_id')} value={inscription.inscriptionId} />
+            <Section title={t('atomicals_number')} value={inscription.inscriptionNumber} />
+            <Section title={t('address')} value={inscription.address} />
+            <Section title={t('output_value')} value={inscription.outputValue} />
+            <Section title={t('preview')} value={inscription.preview} link={inscription.preview} />
+            <Section title={t('content')} value={inscription.content} link={inscription.content} />
+            <Section title={t('content_length')} value={inscription.contentLength} />
+            <Section title={t('content_type')} value={inscription.contentType} />
+            <Section title={t('timestamp')} value={isUnconfirmed ? t('unconfirmed') : date} />
+            <Section title={t('genesis_transaction')} value={inscription.genesisTransaction} link={genesisTxUrl} />
           </Column>
         </Column>
       </Content>
@@ -99,6 +96,7 @@ export default function AtomicalsNFTScreen() {
 
 function Section({ value, title, link }: { value: string | number; title: string; link?: string }) {
   const tools = useTools();
+  const { t } = useI18n();
   return (
     <Column>
       <Text text={title} preset="sub" />
@@ -112,7 +110,7 @@ function Section({ value, title, link }: { value: string | number; title: string
             window.open(link);
           } else {
             copyToClipboard(value).then(() => {
-              tools.toastSuccess('Copied');
+              tools.toastSuccess(t('copied'));
             });
           }
         }}

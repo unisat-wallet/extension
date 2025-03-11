@@ -2,6 +2,7 @@ import { runesUtils } from '@/shared/lib/runes-utils';
 import { AddressCAT20UtxoSummary, CAT20Balance } from '@/shared/types';
 import { Column, Content, Header, Layout, Row, Text } from '@/ui/components';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
+import { useI18n } from '@/ui/hooks/useI18n';
 
 export function NoMergeLayout({
   cat20Balance,
@@ -10,13 +11,14 @@ export function NoMergeLayout({
   cat20Balance: CAT20Balance;
   tokenUtxoSummary: AddressCAT20UtxoSummary;
 }) {
+  const { t } = useI18n();
   return (
     <Layout>
       <Header
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Merge UTXOs for CAT20 Asset"
+        title={t('merge_utxos_for_cat20_asset')}
       />
       <Content>
         <Column>
@@ -51,7 +53,7 @@ export function NoMergeLayout({
               backgroundColor: 'rgba(244, 182, 44, 0.08)'
             }}>
             <Column mx="md" my="md">
-              <Text text={'You need at least 2 UTXOs to merge'} size="xs" color="warning_content" />
+              <Text text={t('you_need_at_least_2_utxos_to_merge')} size="xs" color="warning_content" />
             </Column>
           </Column>
         </Column>

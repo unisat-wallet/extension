@@ -7,6 +7,7 @@ import { BabylonAddressSummary } from '@/shared/types';
 import { Button, Card, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { FeeOptionsPopover } from '@/ui/components/FeeOptionsPopover';
 import { FeeSettings } from '@/ui/components/FeeOptionsPopover/interface';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useAppDispatch, useAppSelector } from '@/ui/state/hooks';
 import { useBabylonConfig } from '@/ui/state/settings/hooks';
@@ -22,6 +23,7 @@ export default function SendBabyScreen() {
   const wallet = useWallet();
   const dispatch = useAppDispatch();
   const hasInitializedRef = useRef(false);
+  const { t } = useI18n();
 
   let savedBabylonState;
   const navigationSource = useAppSelector((state) => state.ui.navigationSource);
@@ -144,9 +146,9 @@ export default function SendBabyScreen() {
   const feeOptions = useMemo(() => {
     const { low, average, high } = babylonChain.feeCurrencies[0].gasPriceStep;
     return [
-      { title: 'Low', gasPrice: low },
-      { title: 'Medium', gasPrice: average },
-      { title: 'High', gasPrice: high }
+      { title: t('low'), gasPrice: low },
+      { title: t('medium'), gasPrice: average },
+      { title: t('high'), gasPrice: high }
     ];
   }, [babylonChain]);
 
@@ -314,7 +316,7 @@ export default function SendBabyScreen() {
     }
 
     if (toInfo.address.indexOf('bbn') !== 0) {
-      setError('Invalid recipient address');
+      setError(t('invalid_recipient_address'));
       return;
     }
 
@@ -333,15 +335,15 @@ export default function SendBabyScreen() {
       // but the toSpendValue (which includes gas) exceeds the balance,
       // it's likely due to newly received tokens not being included in gas calculation
       if (runesUtils.compareAmount(inputValueInMinimalDenom, babylonAddressSummary.balance.amount) <= 0) {
-        setError('Gas fee calculation may not include newly received tokens. Try a smaller amount.');
+        setError(t('gas_fee_calculation_may_not_include_newly_received_tokens_try_a_smaller_amount'));
       } else {
-        setError('Amount exceeds your available balance');
+        setError(t('amount_exceeds_your_available_balance'));
       }
       return;
     }
 
     if (memo.length > 256) {
-      setError('Memo is too long. The maximum length is 256 characters.');
+      setError(t('memo_is_too_long_the_maximum_length_is_256_characters'));
       return;
     }
 
@@ -387,9 +389,9 @@ export default function SendBabyScreen() {
       <Header
         onBack={() => {
           clearReduxState();
-          window.history.go(-1);
+          navigate('BabylonStakingScreen');
         }}
-        title={`Send ${babylonChain.stakeCurrency.coinDenom}`}
+        title={`${t('send')} ${babylonChain.stakeCurrency.coinDenom}`}
       />
       <Content style={{ padding: '0px 16px 16px' }}>
         <Row justifyCenter style={{ marginBottom: 16 }}>
@@ -410,11 +412,11 @@ export default function SendBabyScreen() {
 
         <Column mt="md">
           <Row justifyBetween>
-            <Text text="Transfer amount" preset="regular" />
+            <Text text={t('transfer_amount')} preset="regular" />
           </Row>
           <Input
             preset="amount"
-            placeholder={'Amount'}
+            placeholder={t('amount')}
             value={inputAmount}
             runesDecimal={babylonChain.stakeCurrency.coinDecimals}
             onAmountInputChange={(amount) => {
@@ -443,10 +445,10 @@ export default function SendBabyScreen() {
               style={{
                 minHeight: 24
               }}>
-              <Text text="Available" color="gold" />
+              <Text text={t('available')} color="gold" />
               <Row justifyEnd itemsCenter>
                 {summaryLoading ? (
-                  <Text text="Loading..." size="sm" color="gold" />
+                  <Text text={t('loading')} size="sm" color="gold" />
                 ) : (
                   <>
                     <Text text={`${availableAmount}`} size="sm" color="gold" />
@@ -487,9 +489,9 @@ export default function SendBabyScreen() {
         </Column>
 
         <Column mt="md">
-          <Text text="Memo" preset="regular" />
+          <Text text={t('memo')} preset="regular" />
           <Input
-            placeholder={'Memo'}
+            placeholder={t('memo')}
             value={memo}
             onChange={(e) => {
               setMemo(e.target.value);
@@ -499,11 +501,11 @@ export default function SendBabyScreen() {
 
         <Column mt="md">
           <Row justifyBetween>
-            <Text text="Fee" onClick={() => setFeeOptionVisible(true)} style={{ cursor: 'pointer' }} />
+            <Text text={t('fee')} onClick={() => setFeeOptionVisible(true)} style={{ cursor: 'pointer' }} />
 
             <Row itemsCenter>
               {isSimulating ? (
-                <Text text="Calculating..." color="white" />
+                <Text text={t('calculating')} color="white" />
               ) : (
                 <Row
                   itemsCenter
@@ -549,7 +551,7 @@ export default function SendBabyScreen() {
         <Button
           disabled={disabled}
           preset="primary"
-          text="Next"
+          text={t('next')}
           onClick={() => {
             updateReduxState();
             navigate('BabylonTxConfirmScreen', { txInfo: prepareTxInfo() });

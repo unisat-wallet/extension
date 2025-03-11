@@ -207,7 +207,10 @@ const $hoverViewPresets: Record<Presets, CSSProperties> = {
   home: {
     backgroundColor: '#383535'
   },
-  homeGold: {},
+  homeGold: {
+    backgroundColor: 'rgba(244, 182, 44, 0.20)',
+    borderColor: 'rgba(244, 182, 44, 0.40)'
+  },
   minimal: {
     backgroundColor: 'rgba(255,124,42,0.1)'
   },

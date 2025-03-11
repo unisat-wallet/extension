@@ -1,0 +1,2045 @@
+{
+  "appName": { "message": "UniSat 钱包" },
+  "appDescription": {
+    "message": "在全球首个开源的 Ordinals Chrome 钱包中铭刻并存储您的铭文！"
+  },
+  "receive": {
+    "message": "接收"
+  },
+  "total_balance": {
+    "message": "总余额"
+  },
+  "enter_your_password": {
+    "message": "输入您的密码"
+  },
+  "payment_sent": {
+    "message": "付款已发送"
+  },
+  "your_transaction_has_been_successfully_sent": {
+    "message": "您的交易已成功发送"
+  },
+  "view_on_block_explorer": {
+    "message": "在区块浏览器中查看"
+  },
+  "i_only_sign_what_i_understand": {
+    "message": "我只签署我理解的内容"
+  },
+  "done": {
+    "message": "完成"
+  },
+  "payment_failed": {
+    "message": "付款失败"
+  },
+  "recipient": {
+    "message": "接收地址"
+  },
+  "address_preview": {
+    "message": "地址:"
+  },
+  "transaction_preview": {
+    "message": "交易:"
+  },
+  "block_preview": {
+    "message": "区块:"
+  },
+  "text_preview": {
+    "message": "文本:"
+  },
+  "transactions_24h": {
+    "message": "交易 (24h)"
+  },
+  "active_addresses_24h": {
+    "message": "活跃地址 (24h)"
+  },
+  "go_to_unisat_explorer": {
+    "message": "去 UniSat 浏览器"
+  },
+  "search_address_and_txids": {
+    "message": "搜索地址和交易ID"
+  },
+  "to_send_a_larger_amount_please_merge_your_utxos_to_increase_the_available_balance": {
+    "message": "要发送更大的金额，请合并您的 UTXOs 以增加可用余额。"
+  },
+  "merge_utxos_to_increase_the_available_balance": {
+    "message": "合并 UTXOs->"
+  },
+  "merge_utxos_for_cat20_asset": {
+    "message": "合并 UTXOs 为 CAT20 资产"
+  },
+  "you_need_at_least_2_utxos_to_merge": {
+    "message": "您需要至少 2 个 UTXOs 才能合并"
+  },
+  "this_feature_is_currently_in_the_experimental_test_phase_please_proceed_with_caution": {
+    "message": "此功能目前处于实验测试阶段。请谨慎操作。"
+  },
+  "set_utxo_amount_to_be_merged": {
+    "message": "设置要合并的 UTXO 数量"
+  },
+  "selected": {
+    "message": "已选择"
+  },
+  "merge_transactions": {
+    "message": "合并交易"
+  },
+  "retry_in_10s": {
+    "message": "10秒后重试"
+  },
+  "transfer_amount": {
+    "message": "转账金额"
+  },
+  "transfer_inscriptions": {
+    "message": "TRANSFER 铭文"
+  },
+  "available": {
+    "message": "可用"
+  },
+  "to_send_brc20_you_have_to_inscribe_a_transfer_inscription_first": {
+    "message": "* 要发送 BRC-20，您必须先铭刻一个 TRANSFER 铭文"
+  },
+  "transfer_inscriptions_0": {
+    "message": "TRANSFER 铭文 (0)"
+  },
+  "unavailable": {
+    "message": "不可用"
+  },
+  "calculating": {
+    "message": "计算中..."
+  },
+  "amount": {
+    "message": "数量"
+  },
+  "is_unconfirmed_please_wait_for_confirmation": {
+    "message": "未确认，请等待确认"
+  },
+  "loading": {
+    "message": "加载中..."
+  },
+  "unlock": {
+    "message": "解锁"
+  },
+  "fee": {
+    "message": "手续费"
+  },
+  "next": {
+    "message": "下一步"
+  },
+  "this_account_has_no_transactions": {
+    "message": "此账户没有交易记录"
+  },
+  "transaction_details": {
+    "message": "交易详情"
+  },
+  "cosmos_sign_demo": {
+    "message": "Cosmos 签名演示"
+  },
+  "test_approval_sign_psbt": {
+    "message": "测试批准签名 PSBT"
+  },
+  "hello": {
+    "message": "你好"
+  },
+  "world": {
+    "message": "世界"
+  },
+  "native_segwit_p2wpkh": {
+    "message": "原生隔离见证 (P2WPKH)"
+  },
+  "nested_segwit_p2shp2wpkh": {
+    "message": "嵌套隔离见证 (P2SH-P2WPKH)"
+  },
+  "taproot_p2tr": {
+    "message": "Taproot (P2TR)"
+  },
+  "legacy_p2pkh": {
+    "message": "传统 (P2PKH)"
+  },
+  "function_not_implemented": {
+    "message": "功能尚未实现。"
+  },
+  "this_is_a_cosmos_signature_demo_page": {
+    "message": "这是一个 Cosmos 签名演示页面"
+  },
+  "click_the_button_below_to_start_the_signature_proc": {
+    "message": "点击下方按钮开始签名流程"
+  },
+  "start_cosmos_sign": {
+    "message": "开始 COSMOS 签名"
+  },
+  "sign_result": {
+    "message": "签名结果："
+  },
+  "back": {
+    "message": "返回"
+  },
+  "cosmos_signature_demo": {
+    "message": "Cosmos 签名演示"
+  },
+  "cosmos_sign_success": {
+    "message": "Cosmos 签名成功"
+  },
+  "ok": {
+    "message": "确定"
+  },
+  "enable_atomicals_assets": {
+    "message": "启用 Atomicals 资产"
+  },
+  "select_network": {
+    "message": "选择网络"
+  },
+  "notice": {
+    "message": "注意"
+  },
+  "this_network_is_not_available": {
+    "message": "此网络不可用"
+  },
+  "changed_to_network": {
+    "message": "已切换到"
+  },
+  "if_you_lose_your_private_key_your_assets_will_be_g": {
+    "message": "如果您丢失私钥，您的资产将会丢失！"
+  },
+  "if_you_share_the_private_key_to_others_your_assets": {
+    "message": "如果您与他人分享私钥，您的资产将被盗！"
+  },
+  "private_key_is_only_stored_in_your_browser_it_is_y": {
+    "message": "私钥仅存储在您的浏览器中，保证私钥安全是您的责任！"
+  },
+  "please_make_sure_you_have_read_the_security_tips_a": {
+    "message": "在输入密码前，请确保您已阅读上述安全提示"
+  },
+  "show_private_key": {
+    "message": "显示私钥"
+  },
+  "if_you_ever_change_browsers_or_move_computers_you_": {
+    "message": "如果您更换浏览器或电脑，您将需要此私钥来访问此账户。请将其保存在安全且私密的地方"
+  },
+  "wif_private_key": {
+    "message": "WIF 私钥："
+  },
+  "hex_private_key": {
+    "message": "十六进制私钥："
+  },
+  "copied": {
+    "message": "已复制"
+  },
+  "if_you_lose_your_secret_recovery_phrase_your_asset": {
+    "message": "如果您丢失助记词，您的资产将会丢失！"
+  },
+  "if_you_share_the_secret_recovery_phrase_to_others_": {
+    "message": "如果您与他人分享助记词，您的资产将被盗！"
+  },
+  "secret_recovery_phrase_is_only_stored_in_your_brow": {
+    "message": "请妥善保管您的助记词！"
+  },
+  "switch_wallet": {
+    "message": "切换钱包"
+  },
+  "show_secret_recovery_phrase": {
+    "message": "显示助记词"
+  },
+  "this_phrase_is_the_only_way_to_recover_your_wallet": {
+    "message": "助记词是恢复您钱包的唯一方式。请勿与任何人分享！(点击复制)"
+  },
+  "passphrase": {
+    "message": "密码短语"
+  },
+  "derivation_path": {
+    "message": "衍生路径"
+  },
+  "copy_to_clipboard": {
+    "message": "复制到剪贴板"
+  },
+  "advance_options": {
+    "message": "高级选项"
+  },
+  "change_wallet_name": {
+    "message": "更改钱包名称"
+  },
+  "change_account_name": {
+    "message": "更改账户名称"
+  },
+  "password": {
+    "message": "密码"
+  },
+  "change_password": {
+    "message": "更改密码"
+  },
+  "current_password": {
+    "message": "当前密码"
+  },
+  "new_password": {
+    "message": "新密码"
+  },
+  "confirm_password": {
+    "message": "确认密码"
+  },
+  "connected_sites": {
+    "message": "已连接的网站"
+  },
+  "user_rejected_the_request": {
+    "message": "用户拒绝了请求。"
+  },
+  "success": {
+    "message": "成功"
+  },
+  "new_account": {
+    "message": "新账户"
+  },
+  "address_type_changed": {
+    "message": "地址类型已更改"
+  },
+  "enable_unconfirmed_balance": {
+    "message": "启用未确认余额"
+  },
+  "allow_using_unconfirmed_balance": {
+    "message": "允许使用未确认余额"
+  },
+  "cancel": {
+    "message": "取消"
+  },
+  "sign_data_requests": {
+    "message": "signData 请求"
+  },
+  "enable_sign_data_warning": {
+    "message": "如果启用此设置，您可能会收到无法读取的签名请求。通过签署您不了解的消息，您可能会同意放弃您的资金和 NFT。您可能会面临钓鱼攻击的风险。通过关闭 signData 保护自己。"
+  },
+  "enable_unconfirmed_balance_warning": {
+    "message": "如果检测到给定地址中存在 Runes资产，未确认的 UTXOs 将不允许花费，直到它被确认。强制花费这些未确认的UTXOs会有损失资产的风险。"
+  },
+  "allow_sign_data_requests": {
+    "message": "允许 signData 请求"
+  },
+  "atomicals_inscription_not_confirmed_yet": {
+    "message": "Atomicals 铭文（未确认）"
+  },
+  "atomicals_inscription": {
+    "message": "Atomicals 铭文"
+  },
+  "balance": {
+    "message": "余额"
+  },
+  "invalid_fee_rate": {
+    "message": "无效的手续费率"
+  },
+  "max": {
+    "message": "最大"
+  },
+  "outputvalue": {
+    "message": "输出值"
+  },
+  "mint": {
+    "message": "铸造"
+  },
+  "send": {
+    "message": "发送"
+  },
+  "trade": {
+    "message": "交易"
+  },
+  "runeid": {
+    "message": "符文ID"
+  },
+  "mints": {
+    "message": "铸造次数"
+  },
+  "supply": {
+    "message": "供应量"
+  },
+  "premine": {
+    "message": "预铸"
+  },
+  "merge_history": {
+    "message": "合并历史"
+  },
+  "the_recipient_must_be_p2tr_or_p2wpkh_address_type": {
+    "message": "接收方必须为 P2TR 或 P2WPKH 地址类型"
+  },
+  "burned": {
+    "message": "已销毁"
+  },
+  "divisibility": {
+    "message": "可分割性"
+  },
+  "symbol": {
+    "message": "符号"
+  },
+  "holders": {
+    "message": "持有者"
+  },
+  "create_a_new_wallet": {
+    "message": "创建新钱包"
+  },
+  "transactions": {
+    "message": "交易"
+  },
+  "etching": {
+    "message": "铭刻"
+  },
+  "parent": {
+    "message": "父级"
+  },
+  "each_outputvalue": {
+    "message": "每个输出值"
+  },
+  "split": {
+    "message": "拆分"
+  },
+  "multiple_inscriptions_are_mixed_together_you_can_split_them_first_or_send_them_once": {
+    "message": "多个铭文混合在一起。您可以先拆分它们，或者一次性发送它们。"
+  },
+  "this_inscription_carries_a_high_balance": {
+    "message": "此铭文携带高余额！"
+  },
+  "id": {
+    "message": "ID"
+  },
+  "address": {
+    "message": "地址"
+  },
+  "output_value": {
+    "message": "输出值"
+  },
+  "unconfirmed": {
+    "message": "未确认"
+  },
+  "preview": {
+    "message": "预览"
+  },
+  "content": {
+    "message": "内容"
+  },
+  "content_length": {
+    "message": "内容长度"
+  },
+  "content_type": {
+    "message": "内容类型"
+  },
+  "timestamp": {
+    "message": "时间戳"
+  },
+  "genesis_transaction": {
+    "message": "创世交易"
+  },
+  "the_minimum_amount_is": {
+    "message": "最小金额为"
+  },
+  "send_arc20": {
+    "message": "发送 ARC-20"
+  },
+  "create_new_wallet": {
+    "message": "创建新钱包"
+  },
+  "i_already_have_a_wallet": {
+    "message": "我已有钱包"
+  },
+  "connect_to_hardware_wallet": {
+    "message": "连接硬件钱包"
+  },
+  "new": {
+    "message": "新!"
+  },
+  "all": {
+    "message": "全部"
+  },
+  "arc20": {
+    "message": "ARC-20"
+  },
+  "others": {
+    "message": "其他"
+  },
+  "history": {
+    "message": "历史"
+  },
+  "buy": {
+    "message": "购买"
+  },
+  "coming_soon": {
+    "message": "即将推出"
+  },
+  "hardware_wallet_feature_is_experimental_use_it_with_caution_as_potential_issues_may_arise": {
+    "message": "硬件钱包功能处于实验阶段，使用时请谨慎，可能出现潜在问题。"
+  },
+  "dapp_center": {
+    "message": "DApp 中心"
+  },
+  "home": {
+    "message": "首页"
+  },
+  "discover": {
+    "message": "发现"
+  },
+  "settings": {
+    "message": "设置"
+  },
+  "version": {
+    "message": "版本:"
+  },
+  "latest_version": {
+    "message": "最新版本"
+  },
+  "buy_service_provider": {
+    "message": "请选择以下服务提供商购买"
+  },
+  "the_wallet_currently_uses_a_custom_hd_path_and_does_not_support_switching_address_types": {
+    "message": "钱包当前使用自定义 HD 路径，不支持切换地址类型。"
+  },
+  "no_service_provider_available": {
+    "message": "暂无服务提供商"
+  },
+  "inscribe_and_store_your_inscriptions_in_the_worlds_first_open_source_chrome_wallet_for_ordinals": {
+    "message": "在世界上第一个开源的 Chrome 钱包中铭刻和存储您的铭文！"
+  },
+  "disclaimStr": {
+    "message": "请注意，您即将通过第三方平台购买比特币。信用卡支付服务由我们的合作伙伴提供。UniSat 钱包仅作为中介平台，不对使用信用卡支付服务可能产生的任何潜在损失或损害承担责任。"
+  },
+  "risk_warning": {
+    "message": "风险警告：除非您准备损失所有投资资金，否则不要投资。"
+  },
+  "before_proceeding": {
+    "message": "在继续之前，请仔细阅读并接受免责声明。"
+  },
+  "empty": {
+    "message": "空"
+  },
+  "not_supported_yet": {
+    "message": "尚不支持"
+  },
+  "ordinals": {
+    "message": "Ordinals"
+  },
+  "atomicals": {
+    "message": "Atomicals"
+  },
+  "inscription_not_confirmed_yet": {
+    "message": "铭文（未确认）"
+  },
+  "cat": {
+    "message": "CAT"
+  },
+  "step_12": {
+    "message": "步骤 1/2"
+  },
+  "step_22": {
+    "message": "步骤 2/2"
+  },
+  "send_cat721": {
+    "message": "发送 CAT721"
+  },
+  "send_cat20": {
+    "message": "发送 CAT20"
+  },
+  "collection_id": {
+    "message": "集合 ID"
+  },
+  "collection": {
+    "message": "集合"
+  },
+  "collection_not_found": {
+    "message": "未找到集合"
+  },
+  "max_supply": {
+    "message": "最大供应量"
+  },
+  "token_not_found": {
+    "message": "未找到代币"
+  },
+  "merge_utxos": {
+    "message": "合并 UTXO"
+  },
+  "token_id": {
+    "message": "代币 ID"
+  },
+  "name": {
+    "message": "名称"
+  },
+  "decimals": {
+    "message": "小数位"
+  },
+  "merge_utxos_is_not_supported_for_keystone_yet": {
+    "message": "Keystone 尚不支持合并 UTXO"
+  },
+  "send_cat20_is_not_supported_for_keystone_yet": {
+    "message": "Keystone 尚不支持发送 CAT20"
+  },
+  "estimated_fee": {
+    "message": "预估手续费"
+  },
+  "start_merging": {
+    "message": "开始合并"
+  },
+  "merge_progress": {
+    "message": "合并进度"
+  },
+  "start": {
+    "message": "开始"
+  },
+  "merging": {
+    "message": "合并中..."
+  },
+  "quit_merging_process": {
+    "message": "退出合并过程"
+  },
+  "disclaimer": {
+    "message": "免责声明"
+  },
+  "i_have_read_and_agree_to_the_above_disclaimer": {
+    "message": "我已阅读并同意上述免责声明"
+  },
+  "additional_transaction_fees": {
+    "message": "通过第三方平台购买时，额外交易费用适用。费率因国家/地区和支付方式而异。请在继续交易前查看每个平台的费用。"
+  },
+  "continue_with": {
+    "message": "继续"
+  },
+  "memo": {
+    "message": "备注："
+  },
+  "bbn": {
+    "message": "bbn..."
+  },
+  "sign_transaction": {
+    "message": "签名交易"
+  },
+  "reject": {
+    "message": "拒绝"
+  },
+  "tx_fee": {
+    "message": "交易手续费："
+  },
+  "how_to_import_baby": {
+    "message": "如何导入 BABY"
+  },
+  "t_baby": {
+    "message": "tBABY"
+  },
+  "send_to": {
+    "message": "发送至"
+  },
+  "spend_inscription": {
+    "message": "花费铭文"
+  },
+  "spend_amount": {
+    "message": "花费金额"
+  },
+  "in_inscriptions": {
+    "message": "在铭文中"
+  },
+  "inscriptions": {
+    "message": "铭文"
+  },
+  "network_fee_rate": {
+    "message": "网络费用:"
+  },
+  "the_fee_rate_is_much_lower_than_recommended_fee_rate": {
+    "message": "手续费率远低于推荐手续费率"
+  },
+  "the_fee_rate_is_much_higher_than_recommended_fee_rate": {
+    "message": "手续费率远高于推荐手续费率"
+  },
+  "inputs": {
+    "message": "输入"
+  },
+  "outputs": {
+    "message": "输出"
+  },
+  "to_sign": {
+    "message": "to sign"
+  },
+
+  "send_amount": {
+    "message": "发送金额"
+  },
+  "click_the_account_on_the_main_page": {
+    "message": "点击主页上的账户。"
+  },
+  "tap_the_more_menu_then_select_the_export_private_key_option": {
+    "message": "点击\"更多\"菜单，然后选择\"导出私钥\"选项。"
+  },
+  "once_you_have_your_hex_private_key_you_can_import_it_into_a_cosmos_compatible_wallet_to_access_your_babylon_reward_assets": {
+    "message": "一旦您拥有您的十六进制私钥，您可以将其导入到兼容的 COSMOS 钱包中以访问您的 Babylon 奖励资产。"
+  },
+  "babylon_bitcoin_staking": {
+    "message": "Babylon 比特币质押"
+  },
+  "babylon_bitcoin_staking_phase1": {
+    "message": "Babylon 比特币质押阶段 1"
+  },
+  "babylon_bitcoin_staking_stats": {
+    "message": "Babylon 比特币质押统计"
+  },
+  "confirmed": {
+    "message": "已确认"
+  },
+  "tvl": {
+    "message": "TVL"
+  },
+  "stakers": {
+    "message": "质押者"
+  },
+  "learn_how_to_import_your_babylon_reward_assets_into_a_cosmos_compatible_wallet": {
+    "message": "学习如何将您的 Babylon 奖励资产导入到兼容的 COSMOS 钱包中。"
+  },
+  "delegations": {
+    "message": "委托"
+  },
+  "finality_providers": {
+    "message": "最终提供者"
+  },
+  "closed": {
+    "message": "已关闭"
+  },
+  "go_to_stake": {
+    "message": "去质押"
+  },
+  "staked": {
+    "message": "已质押"
+  },
+  "unstake": {
+    "message": "解除质押"
+  },
+  "claimable": {
+    "message": "可领取"
+  },
+  "baby_rewards": {
+    "message": "BABY 奖励"
+  },
+  "claim": {
+    "message": "领取"
+  },
+  "transfer": {
+    "message": "转账"
+  },
+  "transferable": {
+    "message": "可转账："
+  },
+  "send_inscription": {
+    "message": "您可以点击铭文直接发送。"
+  },
+  "send_inscription2": {
+    "message": "发送铭文"
+  },
+  "no_data": {
+    "message": "暂无数据"
+  },
+  "inscribe_transfer": {
+    "message": "铭刻转账铭文"
+  },
+  "select_all": {
+    "message": "全选"
+  },
+  "receiver": {
+    "message": "接收方"
+  },
+  "step1": {
+    "message": "步骤 1"
+  },
+  "step2": {
+    "message": "步骤 2"
+  },
+  "fee_rate": {
+    "message": "费率"
+  },
+  "inscription": {
+    "message": "铭文"
+  },
+  "atomicals_id": {
+    "message": "atomicals ID"
+  },
+  "atomicals_number": {
+    "message": "atomicals 编号"
+  },
+  "allow_this_site_to_switch_the_network": {
+    "message": "允许此网站切换网络？"
+  },
+  "switch_account": {
+    "message": "切换账户"
+  },
+  "switch_network": {
+    "message": "切换网络"
+  },
+  "allow_this_site_to_switch_the_chain": {
+    "message": "允许此网站切换链？"
+  },
+  "switch_chain": {
+    "message": "切换链"
+  },
+  "signature_request": {
+    "message": "签名请求"
+  },
+  "only_sign_this_message_if_you_fully_understand_the": {
+    "message": "只有在您完全理解内容并信任请求网站的情况下才签名此消息。"
+  },
+  "enter": {
+    "message": "输入"
+  },
+  "to_continue": {
+    "message": "继续"
+  },
+  "you_are_signing": {
+    "message": "您正在签名："
+  },
+  "sign": {
+    "message": "签名"
+  },
+  "sign_data_request": {
+    "message": "签名数据请求"
+  },
+  "you_need_to_enable_the_sign_data_request_feature_in_settings_advanced_to_continue": {
+    "message": "您需要启用设置中的签名数据请求功能才能继续。"
+  },
+  "advanced": {
+    "message": "高级"
+  },
+  "automatic_lock_time": {
+    "message": "自动锁定时间"
+  },
+  "the_auto_lock_time_has_been_changed_to": {
+    "message": "自动锁定时间已更改为"
+  },
+  "you_are_signing_data": {
+    "message": "您正在签名数据："
+  },
+  "payment_network_fee": {
+    "message": "支付网络费用"
+  },
+  "inscription_output_value": {
+    "message": "铭文输出值"
+  },
+  "inscription_network_fee": {
+    "message": "铭文网络费用"
+  },
+  "service_fee": {
+    "message": "服务费"
+  },
+  "total": {
+    "message": "总计"
+  },
+  "baby_balance": {
+    "message": "BABY 余额"
+  },
+  "failed_to_handle_signature": {
+    "message": "处理签名失败"
+  },
+  "inscribing": {
+    "message": "铭刻中..."
+  },
+  "inscribe_success": {
+    "message": "铭刻成功"
+  },
+  "the_transferable_and_available_balance_of_brc20_wi": {
+    "message": "BRC20 的可转账和可用余额将在几分钟内刷新。"
+  },
+  "cosmos_sign_request": {
+    "message": "Cosmos 签名请求"
+  },
+  "only_sign_if_you_fully_understand_the_content_and_": {
+    "message": "只有在您完全理解内容并信任请求网站的情况下才签名。"
+  },
+  "phishing_detection": {
+    "message": "钓鱼检测"
+  },
+  "malicious_behavior_and_suspicious_activity_have_be": {
+    "message": "已检测到恶意行为和可疑活动。"
+  },
+  "your_access_to_this_page_has_been_restricted_by_un": {
+    "message": "您对此页面的访问已被 UniSat 钱包限制，因为它可能不安全。"
+  },
+  "reject_blocked_by_unisat_wallet": {
+    "message": "拒绝（被 UniSat 钱包阻止）"
+  },
+  "this_token_only_supports_up_to": {
+    "message": "此代币仅支持至多"
+  },
+  "sign_and_pay": {
+    "message": "签名并支付"
+  },
+  "signed": {
+    "message": "已签名"
+  },
+  "reject_all": {
+    "message": "拒绝所有"
+  },
+  "submit": {
+    "message": "提交"
+  },
+  "get_signature": {
+    "message": "获取签名"
+  },
+  "sign_multiple_transactions": {
+    "message": "签名多笔交易"
+  },
+  "view": {
+    "message": "查看"
+  },
+  "understand_and_accept_the_risks_associated_with_this_transaction": {
+    "message": "我理解并接受此交易的风险。"
+  },
+  "get_signature_success": {
+    "message": "获取签名成功"
+  },
+  "low": {
+    "message": "低"
+  },
+  "medium": {
+    "message": "中"
+  },
+  "high": {
+    "message": "高"
+  },
+  "invalid_recipient_address": {
+    "message": "无效的接收地址"
+  },
+  "gas_fee_calculation_may_not_include_newly_received_tokens_try_a_smaller_amount": {
+    "message": "Gas 费用计算可能未包含新接收的代币。请尝试发送更小的金额。"
+  },
+  "amount_exceeds_your_available_balance": {
+    "message": "金额超过您的可用余额"
+  },
+  "memo_is_too_long_the_maximum_length_is_256_characters": {
+    "message": "备注太长，最大长度为 256 个字符。"
+  },
+  "decimal_places": {
+    "message": "小数位。"
+  },
+  "warning": {
+    "message": "警告"
+  },
+  "i_am_aware_of_the_risks": {
+    "message": "我已了解风险"
+  },
+  "connect_with_unisat_wallet": {
+    "message": "连接 UniSat 钱包"
+  },
+  "select_the_account_to_use_on_this_site": {
+    "message": "选择在此网站上使用的账户"
+  },
+  "only_connect_with_sites_you_trust": {
+    "message": "仅与您信任的网站连接。"
+  },
+  "connect": {
+    "message": "连接"
+  },
+  "chain_id": {
+    "message": "链 ID"
+  },
+  "involved_assets": {
+    "message": "涉及资产："
+  },
+  "satvb": {
+    "message": "sat/vB"
+  },
+  "rbf": {
+    "message": "RBF"
+  },
+  "network_fee": {
+    "message": "网络费用："
+  },
+
+  "features": {
+    "message": "特性："
+  },
+  "psbt_data": {
+    "message": "PSBT 数据："
+  },
+  "atomicals_nft": {
+    "message": "Atomicals NFT"
+  },
+  "runes": {
+    "message": "RUNES"
+  },
+  "multisign_disclaimer": {
+    "message": "多重签名免责声明"
+  },
+  "by_proceeding_you_confirm_that_youve_read_and_accepted_this_disclaimer": {
+    "message": "继续操作，即表示您已阅读并接受此免责声明。"
+  },
+  "sign_all_transactions_at_once": {
+    "message": "一次签名所有交易"
+  },
+  "sign_all": {
+    "message": "签名所有"
+  },
+  "transactions_at_once": {
+    "message": "一次签名所有交易"
+  },
+  "transaction": {
+    "message": "交易"
+  },
+  "merge_failed": {
+    "message": "合并失败"
+  },
+  "dealing": {
+    "message": "处理中"
+  },
+  "paused": {
+    "message": "暂停"
+  },
+  "completed": {
+    "message": "完成"
+  },
+  "edit_name": {
+    "message": "编辑名称"
+  },
+  "export_private_key": {
+    "message": "导出私钥"
+  },
+  "remove_wallet": {
+    "message": "移除钱包"
+  },
+  "invalid_wallet_please_remove_it_and_add_new_one": {
+    "message": "无效钱包，请移除并添加新钱包"
+  },
+  "removing_the_last_wallet_is_not_allowed": {
+    "message": "不允许移除最后一个钱包"
+  },
+  "copy_address": {
+    "message": "复制地址"
+  },
+  "private_key": {
+    "message": "私钥"
+  },
+  "wif_private_key_or_hex_private_key": {
+    "message": "WIF 私钥或十六进制私钥"
+  },
+  "create_single_wallet": {
+    "message": "创建单钱包"
+  },
+  "address_type": {
+    "message": "地址类型"
+  },
+  "invalid_privatekey": {
+    "message": "无效的私钥"
+  },
+  "create_a_password": {
+    "message": "创建密码"
+  },
+  "you_will_use_this_to_unlock_your_wallet": {
+    "message": "您将使用此密码解锁您的钱包"
+  },
+  "keystone_hardware_wallet": {
+    "message": "Keystone 硬件钱包"
+  },
+  "the_ultimate_security_solution_for_cryptocurrencie": {
+    "message": "加密货币的终极安全解决方案"
+  },
+  "100_air_gapped": {
+    "message": "100% 离线"
+  },
+  "open_source": {
+    "message": "开源"
+  },
+  "exceptional_compatibility": {
+    "message": "卓越兼容性"
+  },
+  "learn_more_about_keystone": {
+    "message": "了解更多关于 Keystone 的信息"
+  },
+  "connect_via_usb": {
+    "message": "通过 USB 连接"
+  },
+  "scan_to_connect": {
+    "message": "扫描连接"
+  },
+  "scan_the_qr_code_displayed_on_your_keystone_device": {
+    "message": "扫描您 Keystone 设备上显示的二维码"
+  },
+  "you_need_to_allow_camera_access_to_use_this_featur": {
+    "message": "您需要允许相机访问才能使用此功能。"
+  },
+  "connect_and_unlock_your_keystone": {
+    "message": "连接并解锁您的 Keystone"
+  },
+  "scan_in_more_addresses": {
+    "message": "扫描更多地址..."
+  },
+  "custom_hdpath_optional": {
+    "message": "自定义 HD 路径（可选）"
+  },
+  "passwords_dont_match": {
+    "message": "密码不匹配"
+  },
+  "password_strength": {
+    "message": "密码强度："
+  },
+  "connect_keystone": {
+    "message": "连接 Keystone"
+  },
+  "scan_the_qr_code": {
+    "message": "扫描二维码"
+  },
+  "connect_keystone_via_usb": {
+    "message": "通过 USB 连接 Keystone"
+  },
+  "create_an_account": {
+    "message": "创建账户"
+  },
+  "custom_hdpath": {
+    "message": "自定义 HD 路径"
+  },
+  "create_wallet": {
+    "message": "创建钱包"
+  },
+  "create_with_mnemonics_12words": {
+    "message": "使用助记词创建（12 个词）"
+  },
+  "restore_wallet": {
+    "message": "恢复钱包"
+  },
+  "restore_from_mnemonics_12words24words": {
+    "message": "从助记词恢复（12 个词、24 个词）"
+  },
+  "create_a_new_hd_wallet": {
+    "message": "创建新的 HD 钱包"
+  },
+  "restore_from_single_private_key": {
+    "message": "从单个私钥恢复"
+  },
+  "keystone_wallet": {
+    "message": "Keystone 钱包"
+  },
+  "phrase_optional": {
+    "message": "密码（可选）"
+  },
+  "secret_recovery_phrase": {
+    "message": "助记词"
+  },
+  "import_an_existing_wallet_with_your_secret_recover": {
+    "message": "使用助记词导入现有钱包"
+  },
+  "unable_to_find_any_addresses_with_assets": {
+    "message": "无法找到任何带有资产的地址"
+  },
+  "continue": {
+    "message": "继续"
+  },
+  "step_1": {
+    "message": "步骤 1"
+  },
+  "step_2": {
+    "message": "步骤 2"
+  },
+  "step_3": {
+    "message": "步骤 3"
+  },
+  "i_saved_my_secret_recovery_phrase": {
+    "message": "我已保存助记词"
+  },
+  "verify_recovery_phrase": {
+    "message": "验证助记词"
+  },
+  "click_on_the_words_to_put_them_in_the_correct_orde": {
+    "message": "点击单词将其按正确顺序排列，以验证您备份的助记词是否正确"
+  },
+  "choose_a_wallet_you_want_to_restore_from": {
+    "message": "选择要从中恢复的钱包"
+  },
+  "skip": {
+    "message": "跳过"
+  },
+  "go_to_update": {
+    "message": "前往更新"
+  },
+  "use_at_your_own_risk": {
+    "message": "风险自负"
+  },
+  "enable_atomicals_assets_warning": {
+    "message": "Atomicals 资产将不再显示在钱包中，它们可以作为常规余额花费。请谨慎操作。"
+  },
+  "enable_sign_data_popover_warning": {
+    "message": "允许 signData 请求可能会使您面临钓鱼攻击的风险。始终审查 URL 并小心谨慎地签署包含代码的消息。"
+  },
+  "enable_sign_data_popover_warning_2": {
+    "message": "如果有人要求您打开此设置，您可能正在受到欺诈。"
+  },
+  "understand_sign_data_warning": {
+    "message": "我理解如果我启用 signData 请求，我可能会失去所有资金和 NFT。"
+  },
+  "sending_out_assets": {
+    "message": "发送资产"
+  },
+  "runes_burn_risk_list": {
+    "message": "符文销毁风险列表"
+  },
+  "inscription_burn_risk_list": {
+    "message": "铭文销毁风险列表"
+  },
+  "changing_inscriptoins": {
+    "message": "更改铭文"
+  },
+  "old_value": {
+    "message": "旧值："
+  },
+  "please_be_aware_that_sending_the_following_assets_involves_risk": {
+    "message": "请注意，发送以下资产涉及风险："
+  },
+  "new_value": {
+    "message": "新值："
+  },
+  "arc20_burn_risk_list": {
+    "message": "ARC20 销毁风险列表"
+  },
+  "current_fee_rate": {
+    "message": "当前手续费率："
+  },
+  "recommended_fee_rates": {
+    "message": "推荐手续费率："
+  },
+  "please_pay_attention_to_whether_you_have_backed_up": {
+    "message": "请注意是否已备份助记词或私钥以防资产丢失"
+  },
+  "this_action_is_not_reversible": {
+    "message": "此操作不可逆。"
+  },
+  "remove": {
+    "message": "移除"
+  },
+  "compatibility_tips": {
+    "message": "兼容性提示"
+  },
+  "please_be_aware_that": {
+    "message": "请注意："
+  },
+  "for_ordinals_assets": {
+    "message": "对于 Ordinals 资产，"
+  },
+  "for_atomicals_assets": {
+    "message": "对于 Atomicals 资产，"
+  },
+  "non_arc20": {
+    "message": "非 ARC20"
+  },
+  "are_not_supported_yet": {
+    "message": "也不支持。"
+  },
+  "rare_sats": {
+    "message": "稀有 sats"
+  },
+  "are_not_supported": {
+    "message": "不支持。"
+  },
+  "confirm": {
+    "message": "确认"
+  },
+  "unisat": {
+    "message": "UNISAT"
+  },
+  "try_again": {
+    "message": "重试"
+  },
+  "usb_permissions_not_available": {
+    "message": "USB 权限不可用"
+  },
+  "approve_on_your_keystone_device": {
+    "message": "在您的 Keystone 设备上批准"
+  },
+  "ensure_your_keystone_3_pro_is_on_the_homepage": {
+    "message": "确保您的 Keystone 3 Pro 在主页上"
+  },
+  "onsuccess_not_implemented": {
+    "message": "onSuccess 未实现"
+  },
+  "scan_the_qr_code_via_your_keystone_device": {
+    "message": "通过您的 Keystone 设备扫描二维码"
+  },
+  "generating_qr_code": {
+    "message": "生成二维码中..."
+  },
+  "you_have_inscribed_a_transfer": {
+    "message": "您已铭刻一个转账"
+  },
+  "please_wait_for_the_update_of_brc20": {
+    "message": "请等待 BRC20 的更新"
+  },
+  "about_3_minutes": {
+    "message": "（约 3 分钟）"
+  },
+  "satsvb": {
+    "message": "sats/vB"
+  },
+  "precautions": {
+    "message": "注意事项"
+  },
+  "enable_atomicals": {
+    "message": "启用 Atomicals"
+  },
+  "security_notice": {
+    "message": "安全提示："
+  },
+  "unconfirmed_balance_not_spendable": {
+    "message": "未确认余额不可花费"
+  },
+  "unconfirmed_balance_not_spendable_warning": {
+    "message": "为保护您的资产，仅当持有 Runes 资产时，才可花费未确认的余额。这是为了避免意外的资产销毁。"
+  },
+  "mandatory_use_of_unconfirmed_balance": {
+    "message": "强制使用未确认余额"
+  },
+  "only_applies_to_current_address": {
+    "message": "仅适用于当前地址"
+  },
+  "to_enable_spending_of_unconfirmed_balances_please_": {
+    "message": "要启用未确认余额的花费，请访问设置中的高级选项。"
+  },
+  "i_understand": {
+    "message": "我理解"
+  },
+  "unknown_error": {
+    "message": "未知错误"
+  },
+  "the_broadcastchannel_name_is_missing": {
+    "message": "缺少广播频道名称"
+  },
+  "promise_need_function_to_handle": {
+    "message": "Promise 需要函数处理"
+  },
+  "network_error_no_response": {
+    "message": "网络错误，无响应"
+  },
+  "network_error_json_parse_error": {
+    "message": "网络错误，JSON 解析错误"
+  },
+  "network_errorno_response_data": {
+    "message": "网络错误，无响应数据"
+  },
+  "method_not_implemented": {
+    "message": "方法未实现。"
+  },
+  "keyringcontroller_first_account_not_found": {
+    "message": "KeyringController - 未找到第一个账户。"
+  },
+  "no_current_account": {
+    "message": "没有当前账户"
+  },
+  "current_keyring_does_not_support_gensigncosmosur": {
+    "message": "当前密钥环不支持 genSignCosmosUr"
+  },
+  "current_keyring_does_not_support_parsesigncosmosur": {
+    "message": "当前密钥环不支持 parseSignCosmosUr"
+  },
+  "keyringcontroller_password_is_not_a_string": {
+    "message": "KeyringController - 密码不是字符串"
+  },
+  "no_keyring_found_for_the_requested_account": {
+    "message": "未找到所请求账户的密钥环。"
+  },
+  "public_key_must_be_compressed_secp256k1_ie_33_byte": {
+    "message": "公钥必须是压缩的 secp256k1，即以 0x02 或 0x03 开头的 33 字节"
+  },
+  "no_current_keyring": {
+    "message": "没有当前密钥环"
+  },
+  "invalid_index_in_tosigninput": {
+    "message": "toSignInput 中的索引无效"
+  },
+  "no_address_or_public_key_in_tosigninput": {
+    "message": "toSignInput 中没有地址或公钥"
+  },
+  "invalid_address_in_tosigninput": {
+    "message": "toSignInput 中的地址无效"
+  },
+  "invalid_public_key_in_tosigninput": {
+    "message": "toSignInput 中的公钥无效"
+  },
+  "invalid_sighash_type_in_tosigninput": {
+    "message": "toSignInput 中的 sighash 类型无效"
+  },
+  "no_mfp_in_keyring": {
+    "message": "密钥环中没有 mfp"
+  },
+  "insufficient_balance": {
+    "message": "余额不足。"
+  },
+  "output_value_must_be_at_least": {
+    "message": "输出值必须至少为"
+  },
+  "send_runes": {
+    "message": "发送符文"
+  },
+  "split_inscriptions": {
+    "message": "拆分铭文"
+  },
+  "each_output_value": {
+    "message": "每个输出值"
+  },
+  "spliting_to": {
+    "message": "拆分到"
+  },
+  "split_inscription_tips": {
+    "message": "此功能目前处于实验阶段。请在签名交易时确认铭文拆分状态。"
+  },
+  "send_atomicals_inscription": {
+    "message": "发送 Atomicals 铭文"
+  },
+  "ordinals_inscriptions": {
+    "message": "Ordinals 铭文"
+  },
+  "not_supported": {
+    "message": "不支持"
+  },
+  "babylon_staking": {
+    "message": "Babylon 质押"
+  },
+  "invalid_address": {
+    "message": "无效地址。"
+  },
+  "utxo_not_found": {
+    "message": "未找到 UTXO。"
+  },
+  "multiple_inscriptions_are_mixed_together_please_sp": {
+    "message": "多个铭文混合在一起。请先拆分它们。"
+  },
+  "unable_to_send_inscriptions_to_this_address_in_bat": {
+    "message": "无法批量向此地址发送铭文，请逐个发送。"
+  },
+  "inscription_not_found": {
+    "message": "铭文不存在"
+  },
+  "the_amount_for_change_is_too_low_please_adjust_the": {
+    "message": "找零金额太低，请调整发送金额。"
+  },
+  "keyring_does_not_exist": {
+    "message": "密钥环不存在"
+  },
+  "not_supported_chainid": {
+    "message": "不支持的链ID"
+  },
+  "signdata_is_required_for_cosmos_signing": {
+    "message": "需要 signData 进行 Cosmos 签名"
+  },
+  "datatype_is_required_for_cosmos_signing": {
+    "message": "需要 dataType 进行 Cosmos 签名"
+  },
+  "path_is_required_for_cosmos_signing": {
+    "message": "需要 path 进行 Cosmos 签名"
+  },
+  "ur_type_is_required_for_parsing_cosmos_signature": {
+    "message": "需要 UR 类型进行解析 Cosmos 签名"
+  },
+  "cbor_data_is_required_for_parsing_cosmos_signature": {
+    "message": "需要 CBOR 数据进行解析 Cosmos 签名"
+  },
+  "invalid_psbt": {
+    "message": "无效的 PSBT"
+  },
+  "not_implemented": {
+    "message": "未实现"
+  },
+  "approvalres_is_required": {
+    "message": "需要 approvalRes"
+  },
+  "security_warning": {
+    "message": "安全警告"
+  },
+  "danger_potential_phishing_website_detected": {
+    "message": "危险！检测到潜在的钓鱼网站"
+  },
+  "this_website_has_been_identified_as_malicious_by_unisat_and_may": {
+    "message": "此网站已被 UniSat 识别为恶意网站，可能："
+  },
+  "steal_your_private_keys_or_seed_phrases": {
+    "message": "窃取您的私钥或助记词"
+  },
+  "trick_you_into_signing_malicious_transactions": {
+    "message": "诱骗您签署恶意交易"
+  },
+  "collect_your_personal_information": {
+    "message": "收集您的个人信息"
+  },
+  "think_this_is_a_false_positive_click_here_to_report_an_issue": {
+    "message": "您认为这是误报吗？点击这里报告问题 →"
+  },
+  "if_you_insist_on_continuing_proceed_at_your_own_risk": {
+    "message": "如果您坚持继续，请自行承担风险："
+  },
+  "continue_to": {
+    "message": "继续到"
+  },
+  "not_connected": {
+    "message": "未连接"
+  },
+  "expand_view": {
+    "message": "展开视图"
+  },
+  "lock_immediately": {
+    "message": "立即锁定"
+  },
+  "change_your_lockscreen_password": {
+    "message": "更改锁屏密码"
+  },
+  "manage_wallet": {
+    "message": "管理钱包"
+  },
+  "network": {
+    "message": "网络"
+  },
+  "advanced_settings": {
+    "message": "语言、安全、权限设置"
+  },
+  "invalid_transaction_data": {
+    "message": "无效的交易数据"
+  },
+  "amount_must_be_at_least": {
+    "message": "金额必须至少为"
+  },
+  "includes_inscriptions_runes_and_unconfirmed_utxos": {
+    "message": "包含铭文、符文和未确认的 UTXO 资产。"
+  },
+  "future_versions_will_support_spending_these_assets": {
+    "message": "未来的版本将支持花费这些资产。"
+  },
+  "you_can_unlock_these_assets_by_using_the_utxos_tools": {
+    "message": "您可以通过使用 UTXO 工具解锁这些资产。"
+  },
+  "spend": {
+    "message": "花费"
+  },
+  "date": {
+    "message": "日期"
+  },
+  "view_on_unisat_explorer": {
+    "message": "在 UniSat Explorer 上查看"
+  },
+  "view_on_okx_explorer": {
+    "message": "在 OKX Explorer 上查看"
+  },
+  "view_on_mempool": {
+    "message": "在 Mempool 上查看"
+  },
+  "from": {
+    "message": "从"
+  },
+  "to": {
+    "message": "到"
+  },
+  "by_inscription": {
+    "message": "铭文"
+  },
+  "unconfirmed_inscription": {
+    "message": "(未确认)"
+  },
+  "inscriptions_capital": {
+    "message": "铭文"
+  },
+  "disable_atomicals": {
+    "message": "禁用 Atomicals"
+  },
+  "the_utxo_containing_this_inscription_has": {
+    "message": "包含此铭文的 UTXO 有"
+  },
+  "address_book": {
+    "message": "地址簿"
+  },
+  "search_address_or_name": {
+    "message": "搜索地址或名称"
+  },
+  "loading_contacts": {
+    "message": "加载中..."
+  },
+  "you_haven_t_added_address_information_yet": {
+    "message": "您还没有添加地址信息"
+  },
+  "no_matching_contacts_found": {
+    "message": "未找到匹配的联系人"
+  },
+  "please_read_more_detail_on": {
+    "message": "请阅读更多详情"
+  },
+  "bitcoin_address_verifier": {
+    "message": "比特币地址验证器"
+  },
+  "owner": {
+    "message": "所有者"
+  },
+  "description": {
+    "message": "描述"
+  },
+  "script": {
+    "message": "脚本"
+  },
+  "this_message_serves_as_a_notice_that_if_runes_assets_are_detected_in_your_address_your": {
+    "message": "此消息作为通知，如果您的地址中检测到 Runes 资产，您的未确认余额将不可花费。您不需要做任何事情。"
+  },
+  "in_the_current_version_only_the_confirmed_balance_can_be_used_once_atomicals_enabled": {
+    "message": "在当前版本中，只有确认的余额可以在启用 Atomicals 后使用。"
+  },
+  "oops_something_went_wrong": {
+    "message": "哎呀！出错了。"
+  },
+  "try_going_back_or_refreshing": {
+    "message": "尝试返回或刷新。"
+  },
+  "go_back": {
+    "message": "返回"
+  },
+  "refresh_page": {
+    "message": "刷新页面"
+  },
+  "gas_limit": {
+    "message": "Gas 限制"
+  },
+  "auto": {
+    "message": "自动"
+  },
+  "gas_limit_explanation_1": {
+    "message": "• 控制交易的最大计算资源"
+  },
+  "gas_limit_explanation_2": {
+    "message": "• 更高的限制 = 更高的潜在费用，但确保完成"
+  },
+  "gas_limit_explanation_3": {
+    "message": "• 太低可能会导致交易失败"
+  },
+  "gas_limit_explanation_4": {
+    "message": "• 推荐值通常足够"
+  },
+  "gas_adjustment": {
+    "message": "Gas 调整"
+  },
+  "gas_adjustment_explanation": {
+    "message": "Gas 调整说明："
+  },
+  "default": {
+    "message": "默认"
+  },
+  "gas_adjustment_explanation_1": {
+    "message": "• 乘数应用于估计的 Gas (1.0 = 100%)"
+  },
+  "gas_adjustment_explanation_2": {
+    "message": "• 默认 1.3 (130%) 提供安全裕度"
+  },
+  "gas_adjustment_explanation_3": {
+    "message": "• 更高的值会增加交易成功的几率"
+  },
+  "remember_my_choice": {
+    "message": "记住我的选择"
+  },
+  "close": {
+    "message": "关闭"
+  },
+  "this_domain_has_been_transferred_or_inscribed_recently_please_wait_for_block_confirmations": {
+    "message": "此域名最近已转移或铭文，请等待区块确认"
+  },
+  "currently_only": {
+    "message": "目前只有"
+  },
+  "are_supported": {
+    "message": "被支持"
+  },
+  "recipient_address_is_invalid": {
+    "message": "接收地址无效"
+  },
+  "address_book_placeholder": {
+    "message": "地址簿"
+  },
+  "name_recognized_and_resolved": {
+    "message": "名称已识别并解析。"
+  },
+  "more_details": {
+    "message": "更多详情"
+  },
+  "address_or_name_fb": {
+    "message": "地址或域名 (.fb)"
+  },
+  "address_or_name_sats_unisat_etc": {
+    "message": "地址或域名 (.sats, .unisat, ...)"
+  },
+  "does_not_exist": {
+    "message": "不存在"
+  },
+  "click_on_the": {
+    "message": "点击"
+  },
+  "button_after_signing_the_transaction_with_your_keystone_device": {
+    "message": "签名交易按钮"
+  },
+  "processing_signature": {
+    "message": "处理签名..."
+  },
+  "position_the_qr_code_in_front_of_your_camera_the_screen_is_blurred_but_this_will_not_affect_the_scan": {
+    "message": "将二维码置于相机前。屏幕模糊，但不会影响扫描。"
+  },
+  "missing_browser_permissions_please_grant_keystone_permissions": {
+    "message": "缺少浏览器权限，请授予 Keystone 权限"
+  },
+  "request_was_rejected_to_proceed_please_reauthorize": {
+    "message": "请求被拒绝。请重新授权。"
+  },
+  "please_reconnect_the_keystone_on_home_screen_and_reauthorize": {
+    "message": "请在主屏幕上重新连接 Keystone 并重新授权。"
+  },
+  "communication_with_the_keystone_device_failed_please_ensure_the_keystone_is_connected_and_try_again": {
+    "message": "与 Keystone 设备通信失败。请确保 Keystone 已连接，并重试。"
+  },
+  "invalid_qr_code_please_ensure_you_have_selected_a_valid_qr_code_from_your_keystone_device": {
+    "message": "无效的二维码。请确保您已从 Keystone 设备中选择了有效的二维码。"
+  },
+  "merging_utxos": {
+    "message": "合并 UTXOs"
+  },
+  "merging_amount": {
+    "message": "合并金额"
+  },
+  "your_balance_have_to_be_merged": {
+    "message": "您的"
+  },
+  "this_process_will_merge_your_utxos_into_one": {
+    "message": "余额必须合并。此过程将合并您的 UTXOs 为一个。"
+  },
+  "merge_utxos1": {
+    "message": "合并"
+  },
+  "can_not_change_to_a_lower_value": {
+    "message": "不能降低值"
+  },
+  "a_feature_allows_the_transaction_to_be_replaced": {
+    "message": "一个功能允许交易被替换。"
+  },
+  "refresh": {
+    "message": "刷新"
+  },
+  "strong_password_tip": {
+    "message": "一个强密码可以更好地保护您的资产安全"
+  },
+  "not_long_enough": {
+    "message": "不够长"
+  },
+  "average": {
+    "message": "平均"
+  },
+  "password_must_be_at_least_8_characters": {
+    "message": "密码至少为 8 个字符"
+  },
+  "unrecognized_password_strength": {
+    "message": "未识别的密码强度"
+  },
+  "weak": {
+    "message": "弱"
+  },
+  "strong": {
+    "message": "强"
+  },
+  "no_inscriptions_found": {
+    "message": "未找到铭文"
+  },
+  "new_version": {
+    "message": "新版本！"
+  },
+  "add_frequently_used_addresses": {
+    "message": "添加常用地址"
+  },
+  "let_us_know_what_you_think": {
+    "message": "让我们知道你的想法"
+  },
+  "like_our_wallet_wed_love_your_rating": {
+    "message": "喜欢我们的钱包吗？我们希望得到你的评分！"
+  },
+  "feedback": {
+    "message": "反馈"
+  },
+  "rate_us": {
+    "message": "给我们评分"
+  },
+  "about_us": {
+    "message": "关于我们"
+  },
+  "seconds": {
+    "message": "秒"
+  },
+  "minutes": {
+    "message": "分钟"
+  },
+  "hours": {
+    "message": "小时"
+  },
+  "finish": {
+    "message": "完成"
+  },
+  "add_address": {
+    "message": "添加地址"
+  },
+  "delete_contact": {
+    "message": "删除联系人"
+  },
+  "are_you_sure_you_want_to_delete_this_contact": {
+    "message": "确定要删除此联系人吗？"
+  },
+  "contact_not_found": {
+    "message": "联系人未找到"
+  },
+  "failed_to_load_contact_information": {
+    "message": "加载联系人信息失败"
+  },
+  "please_enter_name": {
+    "message": "请输入名称"
+  },
+  "please_enter_address": {
+    "message": "请输入地址"
+  },
+  "invalid_address_format_for_selected_network": {
+    "message": "无效的地址格式"
+  },
+  "failed_to_save_contact": {
+    "message": "保存联系人失败"
+  },
+  "failed_to_delete_contact": {
+    "message": "删除联系人失败"
+  },
+  "edit_address": {
+    "message": "编辑地址"
+  },
+  "name_label": {
+    "message": "名称"
+  },
+  "address_label": {
+    "message": "地址"
+  },
+  "saving": {
+    "message": "保存中..."
+  },
+  "save": {
+    "message": "保存"
+  },
+  "new_update_available": {
+    "message": "有新版本可用"
+  },
+  "you_re_on_the_latest_version": {
+    "message": "您使用的是最新版本"
+  },
+  "terms_of_service": {
+    "message": "服务条款"
+  },
+  "privacy_policy": {
+    "message": "隐私政策"
+  },
+  "language": {
+    "message": "语言"
+  },
+  "language_description": {
+    "message": "更改应用程序语言"
+  },
+  "more": {
+    "message": "更多"
+  },
+  "restore_from_mnemonics": {
+    "message": "使用助记词恢复"
+  },
+  "low_priority": {
+    "message": "低优先级"
+  },
+  "medium_priority": {
+    "message": "中优先级"
+  },
+  "high_priority": {
+    "message": "高优先级"
+  },
+  "delete": {
+    "message": "删除"
+  },
+  "other_wallet": {
+    "message": "其他钱包"
+  },
+  "12_words": {
+    "message": "12 词"
+  },
+  "24_words": {
+    "message": "24 词"
+  },
+  "invalid_derivation_path": {
+    "message": "无效的派生路径。"
+  },
+  "failed_to_load_inscription": {
+    "message": "加载铭文失败"
+  },
+  "loading_details": {
+    "message": "加载中..."
+  },
+  "provenance": {
+    "message": "来源"
+  },
+  "details": {
+    "message": "详情"
+  },
+  "inscription_id": {
+    "message": "编号"
+  },
+  "inscription_address": {
+    "message": "持有者"
+  },
+  "inscription_preview": {
+    "message": "预览"
+  },
+  "inscription_content": {
+    "message": "内容"
+  },
+  "inscription_content_length": {
+    "message": "内容长度"
+  },
+  "inscription_content_type": {
+    "message": "内容类型"
+  },
+  "inscription_timestamp": {
+    "message": "时间戳"
+  },
+  "inscription_genesis_transaction": {
+    "message": "创世交易"
+  },
+  "custom": {
+    "message": "自定义"
+  },
+  "legacy_address_warning": {
+    "message": "不建议使用Legacy地址，因为它们可能会导致更高的交易费用或意外锁定CAT20余额。"
+  },
+  "legacy_address_warning_2": {
+    "message": "不建议向Legacy地址发送交易，因为这可能会导致CAT20余额的意外支出。"
+  },
+  "slow": {
+    "message": "慢"
+  },
+  "avg": {
+    "message": "平均"
+  },
+  "fast": {
+    "message": "快"
+  },
+  "about_1_hour": {
+    "message": "约1小时"
+  },
+  "about_30_minutes": {
+    "message": "约30分钟"
+  },
+  "about_10_minutes": {
+    "message": "约10分钟"
+  },
+  "babylon_bitcoin_staking_phase2": {
+    "message": "Babylon 比特币质押第二阶段"
+  },
+  "go_to_babylon": {
+    "message": "前往 Babylon"
+  },
+  "closed_babylon": {
+    "message": "已关闭"
+  },
+  "open_babylon": {
+    "message": "开放中"
+  },
+  "pending_babylon": {
+    "message": "等待中"
+  },
+  "convert_baby_to_brc20": {
+    "message": "将 $BABY 转换为 brc-20"
+  },
+  "you_are_about_to_convert_your_native_baby_to_btc_brc20_baby": {
+    "message": "您即将将原生 BABY 转换为 BTC brc-20 BABY。"
+  },
+  "once_the_conversion_is_complete_your_native_baby_cannot_be_restored": {
+    "message": "转换完成后，您的原生 BABY 将无法恢复。"
+  },
+  "do_you_confirm_the_conversion": {
+    "message": "您确认要进行转换吗？"
+  },
+  "transfer_baby_to_cosmos_wallet": {
+    "message": "将 $BABY 转移到 Cosmos 钱包"
+  },
+  "do_you_confirm_the_transfer": {
+    "message": "您确认要进行转账吗？"
+  },
+  "you_are_about_to_transfer_your_native_baby_to_your_cosmos_wallet": {
+    "message": "您即将将原生 BABY 转移到您的 Cosmos 钱包。"
+  },
+  "click_baby_to_brc20_coming_soon": {
+    "message": "点击将 $BABY 转换为 brc-20（即将推出）"
+  },
+  "convert_your_native_baby_to_btc_brc20_baby": {
+    "message": "将您的原生 $BABY 代币转换为比特币上的 brc-20 BABY。"
+  },
+  "transfer_your_baby_to_your_cosmos_wallet": {
+    "message": "将您的 $BABY 转移到您的 Cosmos 钱包。"
+  },
+  "password_error": {
+    "message": "密码错误"
+  },
+  "the_private_key_is_invalid": {
+    "message": "私钥无效"
+  },
+  "you_need_to_unlock_wallet_first": {
+    "message": "请先解锁钱包"
+  },
+  "account_count_must_be_greater_than_0": {
+    "message": "账户数量必须大于0"
+  },
+  "mnemonic_phrase_is_invalid": {
+    "message": "助记词无效"
+  },
+  "first_account_not_found": {
+    "message": "未找到第一个账户"
+  },
+  "unlock_already_in_progress": {
+    "message": "解锁操作正在进行中"
+  },
+  "change_password_already_in_progress": {
+    "message": "修改密码操作正在进行中"
+  },
+  "change_password_failed": {
+    "message": "旧密码不正确"
+  },
+  "cannot_unlock_without_a_previous_vault": {
+    "message": "没有之前的保险库无法解锁"
+  },
+  "wallet_existed": {
+    "message": "钱包已存在"
+  },
+  "does_not_support_account_removal_operations": {
+    "message": "不支持账户删除操作"
+  },
+  "disclaimStrFb": {
+    "message": "请注意，您即将通过第三方平台购买FB。信用卡支付服务由我们的合作伙伴提供。UniSat Wallet 仅作为中介平台，不对使用信用卡支付服务可能产生的任何潜在损失或损害承担责任。"
+  },
+  "seconds_ago": {
+    "message": "秒前"
+  },
+  "minutes_ago": {
+    "message": "分钟前"
+  },
+  "hours_ago": {
+    "message": "小时前"
+  },
+  "days_ago": {
+    "message": "天前"
+  },
+  "current": {
+    "message": "当前"
+  },
+  "items": {
+    "message": "项"
+  },
+  "agreement_text": {
+    "message": "确认"
+  },
+  "to_proceed": {
+    "message": "继续"
+  },
+  "tutorial": {
+    "message": "教程"
+  },
+  "tx_amount": {
+    "message": "金额"
+  },
+  "secs": {
+    "message": "秒"
+  },
+  "about_3_minutes_fb": {
+    "message": "约3分钟"
+  },
+  "about_1_5_minutes_fb": {
+    "message": "约1.5分钟"
+  },
+  "about_30_seconds_fb": {
+    "message": "约30秒"
+  },
+  "legacy_address_warning_3": {
+    "message": "不建议使用Legacy地址，因为它们可能会导致更高的交易费用或意外锁定CAT20余额。"
+  },
+  "legacy_address_warning_4": {
+    "message": "不建议向Legacy地址发送交易，因为这可能会导致CAT20余额的意外支出。"
+  }
+}

@@ -1,5 +1,6 @@
 import { RawTxInfo, TxType } from '@/shared/types';
 import { Header } from '@/ui/components';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { usePushBitcoinTxCallback } from '@/ui/state/transactions/hooks';
 import { useLocationState } from '@/ui/utils';
 import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
@@ -12,6 +13,7 @@ interface LocationState {
 }
 
 export default function TxConfirmScreen() {
+  const { t } = useI18n();
   const { rawTxInfo } = useLocationState<LocationState>();
   const navigate = useNavigate();
   const pushBitcoinTx = usePushBitcoinTxCallback();
@@ -45,7 +47,7 @@ export default function TxConfirmScreen() {
           } else if (rawTxInfo && rawTxInfo.rawtx) {
             rawtx = rawTxInfo.rawtx;
           } else {
-            throw new Error('Invalid transaction data');
+            throw new Error(t('invalid_transaction_data'));
           }
 
           const { success, txid, error } = await pushBitcoinTx(rawtx);

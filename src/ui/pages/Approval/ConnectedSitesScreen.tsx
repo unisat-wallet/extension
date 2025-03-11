@@ -3,11 +3,13 @@ import { useEffect, useState } from 'react';
 import { ConnectedSite } from '@/background/service/permission';
 import { Card, Column, Content, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import { Empty } from '@/ui/components/Empty';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { fontSizes } from '@/ui/theme/font';
 import { formatSessionIcon, useWallet } from '@/ui/utils';
 
 export default function ConnectedSitesScreen() {
   const wallet = useWallet();
+  const { t } = useI18n();
 
   const [sites, setSites] = useState<ConnectedSite[]>([]);
 
@@ -30,7 +32,7 @@ export default function ConnectedSitesScreen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Connected Sites"
+        title={t('connected_sites')}
       />
       <Content>
         <Column>

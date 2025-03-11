@@ -9,6 +9,7 @@ import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { Line } from '@/ui/components/Line';
 import { Section } from '@/ui/components/Section';
 import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { useCAT20MarketPlaceWebsite, useCAT20TokenInfoExplorerUrl, useChainType } from '@/ui/state/settings/hooks';
@@ -44,6 +45,7 @@ export default function CAT20TokenScreen() {
   });
 
   const wallet = useWallet();
+  const { t } = useI18n();
 
   const account = useCurrentAccount();
 
@@ -102,7 +104,7 @@ export default function CAT20TokenScreen() {
           }}
         />
         <Content itemsCenter justifyCenter>
-          <Text text="Token not found" />
+          <Text text={t('token_not_found')} />
         </Content>
       </Layout>
     );
@@ -148,12 +150,12 @@ export default function CAT20TokenScreen() {
 
             <Row justifyBetween mt="lg">
               <Button
-                text="Merge UTXOs"
+                text={t('merge_utxos')}
                 preset="home"
                 icon="merge"
                 onClick={(e) => {
                   if (keyring.type === KEYRING_TYPE.KeystoneKeyring) {
-                    tools.toastError('Merge UTXOs is not supported for Keystone yet');
+                    tools.toastError(t('merge_utxos_is_not_supported_for_keystone_yet'));
                     return;
                   }
                   navigate('MergeCAT20Screen', {
@@ -165,13 +167,13 @@ export default function CAT20TokenScreen() {
               />
 
               <Button
-                text="Send"
+                text={t('send')}
                 preset="home"
                 icon="send"
                 disabled={!enableTransfer}
                 onClick={(e) => {
                   if (keyring.type === KEYRING_TYPE.KeystoneKeyring) {
-                    tools.toastError('Send CAT20 is not supported for Keystone yet');
+                    tools.toastError(t('send_cat20_is_not_supported_for_keystone_yet'));
                     return;
                   }
                   navigate('SendCAT20Screen', {
@@ -184,7 +186,7 @@ export default function CAT20TokenScreen() {
 
               {enableTrade ? (
                 <Button
-                  text="Trade"
+                  text={t('trade')}
                   preset="home"
                   icon="trade"
                   disabled={!enableTrade}
@@ -205,19 +207,19 @@ export default function CAT20TokenScreen() {
               backgroundColor: 'rgba(255,255,255,0.08)',
               borderRadius: 15
             }}>
-            <Section title="token_id" value={tokenSummary.cat20Info.tokenId} link={tokenUrl} />
+            <Section title={t('token_id')} value={tokenSummary.cat20Info.tokenId} link={tokenUrl} />
             <Line />
-            <Section title="name" value={tokenSummary.cat20Info.name} />
-            <Line />
-
-            <Section title="symbol" value={tokenSummary.cat20Info.symbol} />
+            <Section title={t('name')} value={tokenSummary.cat20Info.name} />
             <Line />
 
-            <Section title="decimals" value={tokenSummary.cat20Balance.decimals} />
+            <Section title={t('symbol')} value={tokenSummary.cat20Info.symbol} />
+            <Line />
+
+            <Section title={t('decimals')} value={tokenSummary.cat20Balance.decimals} />
             <Line />
 
             <Section
-              title="supply"
+              title={t('supply')}
               value={`${showLongNumber(runesUtils.toDecimalAmount(tokenSummary.cat20Info.max, 0))} ${
                 tokenSummary.cat20Info.symbol
               }`}
@@ -225,7 +227,7 @@ export default function CAT20TokenScreen() {
             <Line />
 
             <Section
-              title="premine"
+              title={t('premine')}
               value={`${showLongNumber(runesUtils.toDecimalAmount(tokenSummary.cat20Info.premine, 0))} ${
                 tokenSummary.cat20Info.symbol
               }`}

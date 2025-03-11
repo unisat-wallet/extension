@@ -3,6 +3,7 @@ import { useEffect, useState } from 'react';
 import { Account, WebsiteState } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import WebsiteBar from '@/ui/components/WebsiteBar';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { fontSizes } from '@/ui/theme/font';
@@ -57,9 +58,10 @@ interface Props {
 
 export default function Connect({ params: { session } }: Props) {
   const [getApproval, resolveApproval, rejectApproval] = useApproval();
+  const { t } = useI18n();
 
   const handleCancel = () => {
-    rejectApproval('User rejected the request.');
+    rejectApproval(t('user_rejected_the_request'));
   };
 
   const handleConnect = async () => {
@@ -107,15 +109,15 @@ export default function Connect({ params: { session } }: Props) {
         </Header>
         <Content>
           <Column>
-            <Text text="Phishing Detection" preset="title-bold" textCenter mt="xxl" />
-            <Text text="Malicious behavior and suspicious activity have been detected." mt="md" />
-            <Text text="Your access to this page has been restricted by UniSat Wallet as it might be unsafe." mt="md" />
+            <Text text={t('phishing_detection')} preset="title-bold" textCenter mt="xxl" />
+            <Text text={t('malicious_behavior_and_suspicious_activity_have_be')} mt="md" />
+            <Text text={t('your_access_to_this_page_has_been_restricted_by_un')} mt="md" />
           </Column>
         </Content>
 
         <Footer>
           <Row full>
-            <Button text="Reject (blocked by UniSat Wallet)" preset="danger" onClick={handleCancel} full />
+            <Button text={t('reject_blocked_by_unisat_wallet')} preset="danger" onClick={handleCancel} full />
           </Row>
         </Footer>
       </Layout>
@@ -130,7 +132,7 @@ export default function Connect({ params: { session } }: Props) {
         </Header>
         <Content>
           <Column>
-            <Text text="Warning" preset="title-bold" textCenter mt="xxl" />
+            <Text text={t('warning')} preset="title-bold" textCenter mt="xxl" />
             <Text text={warning} mt="md" />
           </Column>
         </Content>
@@ -138,7 +140,7 @@ export default function Connect({ params: { session } }: Props) {
         <Footer>
           <Row full>
             <Button
-              text="I am aware of the risks"
+              text={t('i_am_aware_of_the_risks')}
               preset="danger"
               onClick={() => {
                 setWarning('');
@@ -158,9 +160,9 @@ export default function Connect({ params: { session } }: Props) {
       </Header>
       <Content>
         <Column>
-          <Text text="Connect with UniSat Wallet" preset="title-bold" textCenter mt="lg" />
-          <Text text="Select the account to use on this site" textCenter mt="md" />
-          <Text text="Only connect with sites you trust." preset="sub" textCenter mt="md" />
+          <Text text={t('connect_with_unisat_wallet')} preset="title-bold" textCenter mt="lg" />
+          <Text text={t('select_the_account_to_use_on_this_site')} textCenter mt="md" />
+          <Text text={t('only_connect_with_sites_you_trust')} preset="sub" textCenter mt="md" />
 
           <Text text={currentKeyring.alianName} preset="sub" />
           <MyItem account={currentAccount} />
@@ -169,8 +171,8 @@ export default function Connect({ params: { session } }: Props) {
 
       <Footer>
         <Row full>
-          <Button text="Cancel" preset="default" onClick={handleCancel} full />
-          <Button text="Connect" preset="primary" onClick={handleConnect} full />
+          <Button text={t('cancel')} preset="default" onClick={handleCancel} full />
+          <Button text={t('connect')} preset="primary" onClick={handleConnect} full />
         </Row>
       </Footer>
     </Layout>

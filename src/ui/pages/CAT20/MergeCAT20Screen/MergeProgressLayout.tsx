@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { CAT20MergeOrder } from '@/shared/types';
 import { Button, Column, Content, Header, Layout, Text } from '@/ui/components';
+import { useI18n } from '@/ui/hooks/useI18n';
 
 import { MergeState, MergingItem } from './MergingItem';
 
@@ -18,16 +19,18 @@ export function MergeProgressLayout({
 }) {
   const [hideItems, setHideItems] = useState(false);
 
+  const { t } = useI18n();
+
   return (
     <Layout>
       <Header
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Merge Progress"
+        title={t('merge_progress')}
       />
       <Content>
-        <Text preset="regular" text={`Merge Progress: ${mergeOrder.batchIndex}/${mergeOrder.batchCount}`} />
+        <Text preset="regular" text={`${t('merge_progress')}: ${mergeOrder.batchIndex}/${mergeOrder.batchCount}`} />
         <Column overflowY style={{ maxHeight: 300 }}>
           {hideItems
             ? null
@@ -39,7 +42,7 @@ export function MergeProgressLayout({
         {mergeState == MergeState.Prepare && (
           <Button
             preset="primary"
-            text="Start"
+            text={t('start')}
             onClick={(e) => {
               onContinue();
             }}></Button>
@@ -49,7 +52,7 @@ export function MergeProgressLayout({
           <Button
             disabled={true}
             preset="defaultV2"
-            text="Merging..."
+            text={t('merging')}
             onClick={(e) => {
               // onContinue();
             }}></Button>
@@ -58,7 +61,7 @@ export function MergeProgressLayout({
         {mergeState == MergeState.Paused && (
           <Button
             preset="defaultV2"
-            text="Quit Merging Process"
+            text={t('quit_merging_process')}
             onClick={(e) => {
               window.history.go(-1);
             }}></Button>
@@ -67,7 +70,7 @@ export function MergeProgressLayout({
         {mergeState == MergeState.Done && (
           <Button
             preset="primary"
-            text="Done"
+            text={t('done')}
             onClick={(e) => {
               window.history.go(-1);
             }}></Button>

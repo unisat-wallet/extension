@@ -3,6 +3,7 @@ import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 import { CHAINS_ENUM, CHAINS_MAP, ChainType } from '@/shared/constant';
 import { Button, Column, Content, Footer, Header, Image, Input, Layout, Row, Text } from '@/ui/components';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 import { spacing } from '@/ui/theme/spacing';
 import { useWallet } from '@/ui/utils/WalletContext';
@@ -32,6 +33,7 @@ function EditContactScreen() {
   const [chainType, setChainType] = useState<ChainType>(ChainType.BITCOIN_MAINNET);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { t } = useI18n();
 
   useEffect(() => {
     if (address) {
@@ -60,32 +62,32 @@ function EditContactScreen() {
         setOriginalChain(contact.chain);
         setChainType(contact.chain);
       } else {
-        setError('Contact not found');
+        setError(t('contact_not_found'));
         setTimeout(() => {
           navigate('/settings/contacts');
         }, 1500);
       }
     } catch (err) {
       console.error('Error fetching contact:', err);
-      setError('Failed to load contact information');
+      setError(t('failed_to_load_contact_information'));
     }
   };
 
   const handleSubmit = async () => {
     if (!name.trim()) {
-      setError('Please enter name');
+      setError(t('please_enter_name'));
       return;
     }
 
     if (!contactAddress.trim()) {
-      setError('Please enter address');
+      setError(t('please_enter_address'));
       return;
     }
 
     const networkType = CHAINS_MAP[chainType].networkType;
 
     if (!isValidAddress(contactAddress, networkType)) {
-      setError('Invalid address format for selected network');
+      setError(t('invalid_address_format_for_selected_network'));
       return;
     }
 
@@ -116,7 +118,7 @@ function EditContactScreen() {
         }
       });
     } catch (err) {
-      setError('Failed to save contact');
+      setError(t('failed_to_save_contact'));
     } finally {
       setLoading(false);
     }
@@ -135,7 +137,7 @@ function EditContactScreen() {
         }
       });
     } catch (err) {
-      setError('Failed to delete contact');
+      setError(t('failed_to_delete_contact'));
     } finally {
       setLoading(false);
     }
@@ -145,7 +147,7 @@ function EditContactScreen() {
     const value = e.target.value.trim();
     setContactAddress(value);
 
-    if (error.includes('Invalid address')) {
+    if (error.includes('Invalid address') || !value) {
       setError('');
     }
 
@@ -153,7 +155,7 @@ function EditContactScreen() {
       const networkType = CHAINS_MAP[chainType].networkType;
 
       if (value.length > 15 && !isValidAddress(value, networkType)) {
-        setError('Invalid address format for selected network');
+        setError(t('invalid_address_format_for_selected_network'));
       }
     }
   };
@@ -166,36 +168,36 @@ function EditContactScreen() {
     <Layout>
       <Header
         onBack={() => navigate('/settings/contacts', { state: { returnWithNetwork: chainType } })}
-        title={address ? 'Edit Address' : 'Add Address'}
+        title={address ? t('edit_address') : t('add_address')}
       />
       <Content>
         <Column gap="xl" style={{ padding: `${spacing.large}px ${spacing.small}px` }}>
           <Column>
-            <Text text="Name" preset="regular" />
+            <Text text={t('name_label')} preset="regular" />
             <Input
               preset="text"
               value={name}
               onChange={handleNameChange}
-              placeholder="Please enter name"
+              placeholder={t('please_enter_name')}
               containerStyle={inputStyle}
               style={{ color: 'white' }}
             />
           </Column>
 
           <Column>
-            <Text text="Address" preset="regular" />
+            <Text text={t('address_label')} preset="regular" />
             <Input
               preset="text"
               value={contactAddress}
               onChange={handleAddressChange}
-              placeholder="Please enter address"
+              placeholder={t('please_enter_address')}
               containerStyle={inputStyle}
               style={{ color: 'white' }}
             />
           </Column>
 
           <Column>
-            <Text text="Network" preset="regular" />
+            <Text text={t('network')} preset="regular" />
             <Row
               style={{
                 ...inputStyle,
@@ -226,7 +228,7 @@ function EditContactScreen() {
       <Footer style={{ padding: '16px 16px 32px 16px' }}>
         <Column full gap="lg" style={{ marginBottom: 0 }}>
           <Button
-            text={loading ? 'Saving...' : 'Save'}
+            text={loading ? t('saving') : t('save')}
             onClick={handleSubmit}
             disabled={loading}
             preset="primary"
@@ -237,7 +239,7 @@ function EditContactScreen() {
           />
           {address && (
             <Button
-              text="Delete"
+              text={t('delete')}
               preset="delete"
               onClick={handleDelete}
               disabled={loading}

@@ -2,6 +2,7 @@ import { useState } from 'react';
 
 import { AddressTokenSummary, TickPriceItem, TokenBalance } from '@/shared/types';
 import { TickPriceChange, TickUsd } from '@/ui/components/TickUsd';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -34,6 +35,7 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
   const [tokenSummary, setTokenSummary] = useState<AddressTokenSummary>();
   const [loading, setLoading] = useState(false);
   const wallet = useWallet();
+  const { t } = useI18n();
 
   const deploy_count = tokenSummary ? (tokenSummary.tokenInfo.holder == account.address ? 1 : 0) : 0;
   let _names: string[] = [];
@@ -149,7 +151,7 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
             <Column>
               <Row style={{ borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }} mt="sm" />
               <Row justifyBetween>
-                <Text text="Transferable:" color="textDim" size="xs" />
+                <Text text={t('transferable')} color="textDim" size="xs" />
                 <Text text={transferableBalance} size="xs" digital />
               </Row>
               <Column>

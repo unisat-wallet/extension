@@ -1,14 +1,16 @@
 import { Button, Card, Column, Content, Header, Layout } from '@/ui/components';
+import { useI18n } from '@/ui/hooks/useI18n';
 
 const UPGRADE_NOTICE = '...';
 export default function UpgradeNoticeScreen() {
+  const { t } = useI18n();
   return (
     <Layout>
       <Header
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Notice"
+        title={t('notice')}
       />
       <Content>
         <Column>
@@ -26,7 +28,7 @@ export default function UpgradeNoticeScreen() {
             </div>
           </Card>
           <Button
-            text="OK"
+            text={t('ok')}
             preset="danger"
             onClick={async () => {
               window.history.go(-1);

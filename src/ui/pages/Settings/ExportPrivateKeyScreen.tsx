@@ -1,16 +1,16 @@
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 import { useLocation } from 'react-router-dom';
 
 import { Account } from '@/shared/types';
-import { Button, Input, Layout, Icon, Content, Header, Text, Column, Card, Row } from '@/ui/components';
+import { Button, Card, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { copyToClipboard, useWallet } from '@/ui/utils';
 
 type Status = '' | 'error' | 'warning' | undefined;
 
 export default function ExportPrivateKeyScreen() {
-  const { t } = useTranslation();
+  const { t } = useI18n();
 
   const { state } = useLocation();
   const { account } = state as {
@@ -53,7 +53,7 @@ export default function ExportPrivateKeyScreen() {
 
   function copy(str: string) {
     copyToClipboard(str);
-    tools.toastSuccess('Copied');
+    tools.toastSuccess(t('copied'));
   }
 
   return (
@@ -62,31 +62,23 @@ export default function ExportPrivateKeyScreen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Export Private Key"
+        title={t('export_private_key')}
       />
       <Content>
         {privateKey.wif == '' ? (
           <Column gap="lg">
             <Card>
               <Column gap="lg">
-                <Text text="If you lose your Private Key, your assets will be gone!" preset="title-bold" color="red" />
+                <Text text={t('if_you_lose_your_private_key_your_assets_will_be_g')} preset="title-bold" color="red" />
 
-                <Text
-                  text="If you share the Private Key to others, your assets will be stolen!"
-                  preset="title-bold"
-                  color="red"
-                />
+                <Text text={t('if_you_share_the_private_key_to_others_your_assets')} preset="title-bold" color="red" />
 
-                <Text
-                  text="Private Key is only stored in your browser, it is your responsibilities to keep the Private Key safe!"
-                  preset="title-bold"
-                  color="red"
-                />
+                <Text text={t('private_key_is_only_stored_in_your_browser_it_is_y')} preset="title-bold" color="red" />
               </Column>
             </Card>
 
             <Text
-              text=" Please make sure you have read the security tips above before typing your password"
+              text={t('please_make_sure_you_have_read_the_security_tips_a')}
               preset="title"
               color="warning"
               textCenter
@@ -102,18 +94,13 @@ export default function ExportPrivateKeyScreen() {
             />
             {error && <Text text={error} preset="regular" color="error" />}
 
-            <Button text="Show Private Key" preset="primary" disabled={disabled} onClick={btnClick} />
+            <Button text={t('show_private_key')} preset="primary" disabled={disabled} onClick={btnClick} />
           </Column>
         ) : (
           <Column>
-            <Text
-              text="If you ever change browsers or move computers, you will need this Private Key to access this account. Save it somewhere safe and secret"
-              preset="sub"
-              size="sm"
-              textCenter
-            />
+            <Text text={t('if_you_ever_change_browsers_or_move_computers_you_')} preset="sub" size="sm" textCenter />
 
-            <Text text="WIF Private Key:" preset="sub" size="sm" textCenter mt="lg" />
+            <Text text={t('wif_private_key')} preset="sub" size="sm" textCenter mt="lg" />
 
             <Card
               onClick={(e) => {
@@ -131,7 +118,7 @@ export default function ExportPrivateKeyScreen() {
               </Row>
             </Card>
 
-            <Text text="Hex Private Key:" preset="sub" size="sm" textCenter mt="lg" />
+            <Text text={t('hex_private_key')} preset="sub" size="sm" textCenter mt="lg" />
 
             <Card
               onClick={(e) => {

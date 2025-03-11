@@ -6,6 +6,7 @@ import { Button, Card, Column, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { Icon } from '@/ui/components/Icon';
 import { getCurrentTab, useExtensionIsInTab, useOpenExtensionInTab } from '@/ui/features/browser/tabs';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { SwitchChainModal } from '@/ui/pages/Settings/SwitchChainModal';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
@@ -14,7 +15,7 @@ import { fontSizes } from '@/ui/theme/font';
 import { spacing } from '@/ui/theme/spacing';
 import { useWallet } from '@/ui/utils';
 
-import { SettingsListConst } from './const';
+import { getSettingsList } from './const';
 import { SettingsAction, SettingsItemType } from './types';
 
 export function SettingsList() {
@@ -30,6 +31,7 @@ export function SettingsList() {
   const [switchChainModalVisible, setSwitchChainModalVisible] = useState(false);
   const versionInfo = useVersionInfo();
   const hasUpdate = versionInfo.latestVersion && versionInfo.latestVersion !== versionInfo.currentVesion;
+  const { t } = useI18n();
 
   useEffect(() => {
     const run = async () => {
@@ -57,13 +59,13 @@ export function SettingsList() {
   }, [currentKeyring]);
 
   const toRenderSettings = useMemo(() => {
-    return SettingsListConst.filter((v) => {
+    return getSettingsList().filter((v) => {
       if (v.action === SettingsAction.MANAGE_WALLET) {
         v.value = currentKeyring.alianName;
       }
 
       if (v.action === SettingsAction.CONNECTED_SITES) {
-        v.value = connected ? 'Connected' : 'Not connected';
+        v.value = connected ? t('connected') : t('not_connected');
       }
 
       if (v.action === SettingsAction.NETWORK_TYPE) {
@@ -81,7 +83,7 @@ export function SettingsList() {
       }
 
       if (v.action === SettingsAction.ABOUT_US) {
-        v.badge = hasUpdate ? 'New version!' : undefined;
+        v.badge = hasUpdate ? t('new_version') : undefined;
       }
 
       if (v.action === SettingsAction.EXPAND_VIEW) {
@@ -92,7 +94,7 @@ export function SettingsList() {
 
       return true;
     });
-  }, [connected, currentKeyring, currentAccount, chain, isInTab, hasUpdate]);
+  }, [connected, currentKeyring, currentAccount, chain, isInTab, hasUpdate, t]);
 
   const onClick = (item: SettingsItemType) => {
     if (item.action === SettingsAction.EXPAND_VIEW) {
@@ -111,7 +113,7 @@ export function SettingsList() {
     }
     if (item.action === SettingsAction.ADDRESS_TYPE) {
       if (isCustomHdPath) {
-        tools.showTip('The wallet currently uses a custom HD path and does not support switching address types.');
+        tools.showTip(t('the_wallet_currently_uses_a_custom_hd_path_and_does_not_support_switching_address_types'));
         return;
       }
       navigate('/settings/address-type');
@@ -181,7 +183,7 @@ export function SettingsList() {
                   backgroundColor: connected ? '#4CD9AC' : 'rgba(255, 255, 255, 0.3)'
                 }}
               />
-              <Text text={connected ? 'Connected' : 'Not connected'} preset="sub" size="xs" />
+              <Text text={connected ? t('connected') : t('not_connected')} preset="sub" size="xs" />
             </Row>
           )}
           {item.right && <Icon icon="right" size={fontSizes.lg} color="textDim" />}

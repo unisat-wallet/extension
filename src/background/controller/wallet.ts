@@ -11,12 +11,11 @@ import {
   preferenceService,
   sessionService
 } from '@/background/service';
-import i18n from '@/background/service/i18n';
 import { DisplayedKeyring, Keyring } from '@/background/service/keyring';
 import {
   ADDRESS_TYPES,
   AddressFlagType,
-  AUTO_LOCKTIMES,
+  AUTO_LOCK_TIMES,
   BRAND_ALIAN_TYPE_TEXT,
   CHAINS_ENUM,
   CHAINS_MAP,
@@ -266,8 +265,6 @@ export class WalletController extends BaseController {
   };
 
   createKeyringWithPrivateKey = async (data: string, addressType: AddressType, alianName?: string) => {
-    const error = new Error(i18n.t('The private key is invalid'));
-
     let originKeyring: Keyring;
     try {
       originKeyring = await keyringService.importPrivateKey(data, addressType);
@@ -2123,7 +2120,7 @@ export class WalletController extends BaseController {
     }
 
     const timeId = preferenceService.getAutoLockTimeId();
-    const timeConfig = AUTO_LOCKTIMES[timeId] || AUTO_LOCKTIMES[DEFAULT_LOCKTIME_ID];
+    const timeConfig = AUTO_LOCK_TIMES[timeId] || AUTO_LOCK_TIMES[DEFAULT_LOCKTIME_ID];
     this.timer = setTimeout(() => {
       this.lockWallet();
     }, timeConfig.time);

@@ -8,6 +8,7 @@ import Arc20PreviewCard from '@/ui/components/Arc20PreviewCard';
 import AssetTag from '@/ui/components/AssetTag';
 import { Empty } from '@/ui/components/Empty';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useBTCUnit, useOrdinalsWebsite } from '@/ui/state/settings/hooks';
 import { useSetSpendUnavailableUtxosCallback } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
@@ -21,6 +22,7 @@ type UnavailableUnspentOutput = UnspentOutput & {
 export default function UnavailableUtxoScreen() {
   const wallet = useWallet();
   const unitBtc = useBTCUnit();
+  const { t } = useI18n();
 
   const [utxos, setUtxos] = useState<UnavailableUnspentOutput[]>([]);
 
@@ -48,7 +50,7 @@ export default function UnavailableUtxoScreen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Unavaiable"
+        title={t('unavaiable')}
       />
       <Content>
         {loading ? (
@@ -142,7 +144,7 @@ export default function UnavailableUtxoScreen() {
         <Footer>
           <Row full>
             <Button
-              text={`Spend (${selectedCount})`}
+              text={`${t('spend')} (${selectedCount})`}
               full
               preset="primary"
               onClick={() => {

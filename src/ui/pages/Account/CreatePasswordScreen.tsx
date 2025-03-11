@@ -3,6 +3,7 @@ import { useLocation } from 'react-router-dom';
 
 import { Button, Column, Content, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useWallet, useWalletRequest } from '@/ui/utils';
 import { getPasswordStrengthWord, MIN_PASSWORD_LENGTH } from '@/ui/utils/password-utils';
 
@@ -26,6 +27,7 @@ export default function CreatePasswordScreen() {
   }
   const { isNewAccount, isKeystone } = state as { isNewAccount: boolean; isKeystone: boolean };
   const [newPassword, setNewPassword] = useState('');
+  const { t } = useI18n();
 
   const [confirmPassword, setConfirmPassword] = useState('');
 
@@ -69,7 +71,7 @@ export default function CreatePasswordScreen() {
     return (
       <Column>
         <Row>
-          <Text size="xs" text={'Password strength: '} />
+          <Text size="xs" text={t('password_strength')} />
           <Text size="xs" text={text} style={{ color: color }} />
         </Row>
         {tip ? <Text size="xs" preset="sub" text={tip} /> : null}
@@ -85,7 +87,7 @@ export default function CreatePasswordScreen() {
     if (newPassword !== confirmPassword) {
       return (
         <Row>
-          <Text size="xs" text={`Passwords don't match`} color="red" />
+          <Text size="xs" text={t('passwords_dont_match')} color="red" />
         </Row>
       );
     } else {
@@ -104,8 +106,8 @@ export default function CreatePasswordScreen() {
       <Content preset="middle">
         <Column fullX fullY>
           <Column gap="xl" style={{ marginTop: 200 }}>
-            <Text text="Create a password" preset="title-bold" textCenter />
-            <Text text="You will use this to unlock your wallet" preset="sub" textCenter />
+            <Text text={t('create_a_password')} preset="title-bold" textCenter />
+            <Text text={t('you_will_use_this_to_unlock_your_wallet')} preset="sub" textCenter />
             <Column>
               <Input
                 preset="password"
@@ -120,7 +122,7 @@ export default function CreatePasswordScreen() {
             <Column>
               <Input
                 preset="password"
-                placeholder="Confirm Password"
+                placeholder={t('confirm_password')}
                 onChange={(e) => {
                   setConfirmPassword(e.target.value);
                 }}
@@ -129,7 +131,7 @@ export default function CreatePasswordScreen() {
               {matchText}
             </Column>
 
-            <Button disabled={disabled} text="Continue" preset="primary" onClick={btnClick} />
+            <Button disabled={disabled} text={t('continue')} preset="primary" onClick={btnClick} />
           </Column>
         </Column>
       </Content>

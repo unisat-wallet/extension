@@ -1,12 +1,13 @@
 import bitcore from 'bitcore-lib';
 import { useEffect, useMemo, useState } from 'react';
 
-import { ADDRESS_TYPES, RESTORE_WALLETS } from '@/shared/constant';
+import { ADDRESS_TYPES, getRestoreWallets } from '@/shared/constant';
 import { AddressType } from '@/shared/types';
 import { Button, Column, Icon, Input, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressTypeCard2 } from '@/ui/components/AddressTypeCard';
 import { FooterButtonContainer } from '@/ui/components/FooterButtonContainer';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { ContextData, UpdateContextDataParams } from '@/ui/pages/Account/createHDWalletComponents/types';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useCreateAccountCallback } from '@/ui/state/global/hooks';
@@ -22,9 +23,10 @@ export function Step2({
 }) {
   const wallet = useWallet();
   const tools = useTools();
+  const { t } = useI18n();
 
   const hdPathOptions = useMemo(() => {
-    const restoreWallet = RESTORE_WALLETS[contextData.restoreWalletType];
+    const restoreWallet = getRestoreWallets()[contextData.restoreWalletType];
     return ADDRESS_TYPES.filter((v) => {
       if (v.displayIndex < 0) {
         return false;
@@ -177,7 +179,7 @@ export function Step2({
     if (text !== '') {
       const isValid = bitcore.HDPrivateKey.isValidPath(text);
       if (!isValid) {
-        setPathError('Invalid derivation path.');
+        setPathError(t('invalid_derivation_path'));
         return;
       }
       updateContextData({
@@ -261,7 +263,7 @@ export function Step2({
 
       setScannedGroups(groups);
       if (groups.length == 0) {
-        tools.showTip('Unable to find any addresses with assets');
+        tools.showTip(t('unable_to_find_any_addresses_with_assets'));
       }
     } catch (e) {
       setError((e as any).message);
@@ -274,9 +276,9 @@ export function Step2({
     <Column>
       {contextData.isRestore && scanned == false ? (
         <Row justifyBetween>
-          <Text text="Address Type" preset="bold" />
+          <Text text={t('address_type')} preset="bold" />
           <Text
-            text="Scan in more addresses..."
+            text={t('scan_in_more_addresses')}
             preset="link"
             onClick={() => {
               scanVaultAddress();
@@ -284,7 +286,7 @@ export function Step2({
           />
         </Row>
       ) : (
-        <Text text="Address Type" preset="bold" />
+        <Text text={t('address_type')} preset="bold" />
       )}
 
       {scannedGroups.length > 0 &&
@@ -349,11 +351,11 @@ export function Step2({
           );
         })}
 
-      <Text text="Custom HdPath (Optional)" preset="bold" mt="lg" />
+      <Text text={t('custom_hdpath_optional')} preset="bold" mt="lg" />
 
       <Column>
         <Input
-          placeholder={'Custom HD Wallet Derivation Path'}
+          placeholder={t('custom_hdpath')}
           value={pathText}
           onChange={(e) => {
             submitCustomHdPath(e.target.value);
@@ -363,10 +365,10 @@ export function Step2({
       {pathError && <Text text={pathError} color="error" />}
       {error && <Text text={error} color="error" />}
 
-      <Text text="Phrase (Optional)" preset="bold" mt="lg" />
+      <Text text={t('phrase_optional')} preset="bold" mt="lg" />
 
       <Input
-        placeholder={'Passphrase'}
+        placeholder={t('passphrase')}
         defaultValue={contextData.passphrase}
         onChange={async (e) => {
           updateContextData({
@@ -376,7 +378,7 @@ export function Step2({
       />
 
       <FooterButtonContainer>
-        <Button text="Continue" preset="primary" onClick={onNext} disabled={disabled} />
+        <Button text={t('continue')} preset="primary" onClick={onNext} disabled={disabled} />
       </FooterButtonContainer>
 
       {loading && (

@@ -1,5 +1,6 @@
 import { CSSProperties, useEffect, useState } from 'react';
 
+import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 
 import { useTools } from '../ActionComponent';
@@ -22,13 +23,15 @@ export function OutputValueBar({
   minValue: number;
   onChange: (val: number) => void;
 }) {
+  const tools = useTools();
+  const { t } = useI18n();
   const options = [
     {
-      title: 'Current',
+      title: t('current'),
       value: defaultValue
     },
     {
-      title: 'Custom'
+      title: t('custom')
     }
   ];
   const [optionIndex, setOptionIndex] = useState(FeeRateType.CURRENT);
@@ -61,7 +64,6 @@ export function OutputValueBar({
     }
   }, [minValue, currentValue]);
 
-  const tools = useTools();
   return (
     <Column>
       <Row justifyCenter>
@@ -72,7 +74,7 @@ export function OutputValueBar({
               key={v.title}
               onClick={() => {
                 if (defaultValue < minValue && index === 0) {
-                  tools.showTip('Can not change to a lower value');
+                  tools.showTip(t('can_not_change_to_a_lower_value'));
                   return;
                 }
                 setOptionIndex(index);

@@ -3,8 +3,9 @@ import BigNumber from 'bignumber.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
+import { t } from '@/shared/modules/i18n';
 import { RawTxInfo, TokenBalance, TokenInfo, TokenTransfer, TxType } from '@/shared/types';
-import { Button, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
+import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import BRC20Preview from '@/ui/components/BRC20Preview';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
@@ -13,6 +14,7 @@ import { RBFBar } from '@/ui/components/RBFBar';
 import { RefreshButton } from '@/ui/components/RefreshButton';
 import { TabBar } from '@/ui/components/TabBar';
 import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import {
   useFetchUtxosCallback,
@@ -38,6 +40,7 @@ function Step1({
   const { tokenBalance, transferAmount } = contextData;
 
   const navigate = useNavigate();
+  const { t } = useI18n();
 
   const [disabled, setDisabled] = useState(true);
 
@@ -76,32 +79,44 @@ function Step1({
                   preset="default"
                   onClick={() => {
                     navigate('InscribeTransferScreen', { ticker: tokenBalance.ticker });
-                  }}>
-                  <Column px="md" py="md">
-                    <Row justifyCenter itemsCenter>
-                      <Text text="Inscribe TRANSFER" textCenter preset="bold" />
-                      <Icon icon="inscribe-right" size={22} />
+                  }}
+                  style={{ width: '100%' }}>
+                  <Column style={{ width: '100%', padding: '12px 0' }}>
+                    <Row justifyCenter style={{ width: '100%' }}>
+                      <Text text={t('inscribe_transfer')} preset="bold" />
                     </Row>
 
                     {tokenBalance.availableBalanceUnSafe != '0' ? (
-                      <Row justifyCenter>
-                        <Text text={'Available '} textCenter color="textDim" size="xs" />
-                        <Text text={`${tokenBalance.availableBalanceSafe}  `} textCenter size="xs" digital />
-                        <Text
-                          text={` + ${tokenBalance.availableBalanceUnSafe}`}
-                          textCenter
-                          color="textDim"
-                          size="xs"
-                          digital
-                        />
-                        <BRC20Ticker tick={tokenBalance.ticker} displayName={tokenBalance.displayName} />
-                      </Row>
+                      <Column itemsCenter>
+                        <Row justifyCenter>
+                          <Text text={t('available')} textCenter color="textDim" size="xs" />
+                        </Row>
+                        <Row justifyCenter>
+                          <Text text={`${tokenBalance.availableBalanceSafe}  `} textCenter size="xs" digital />
+                          <Text
+                            text={` + ${tokenBalance.availableBalanceUnSafe}`}
+                            textCenter
+                            color="textDim"
+                            size="xs"
+                            digital
+                          />
+                        </Row>
+                        <Row justifyCenter>
+                          <BRC20Ticker tick={tokenBalance.ticker} displayName={tokenBalance.displayName} />
+                        </Row>
+                      </Column>
                     ) : (
-                      <Row justifyCenter>
-                        <Text text={'Available '} textCenter color="textDim" size="xs" />
-                        <Text text={`${tokenBalance.availableBalanceSafe}  `} textCenter size="xs" digital />
-                        <BRC20Ticker tick={tokenBalance.ticker} displayName={tokenBalance.displayName} preset="sm" />
-                      </Row>
+                      <Column itemsCenter>
+                        <Row justifyCenter>
+                          <Text text={t('available')} textCenter color="textDim" size="xs" />
+                        </Row>
+                        <Row justifyCenter>
+                          <Text text={`${tokenBalance.availableBalanceSafe}  `} textCenter size="xs" digital />
+                        </Row>
+                        <Row justifyCenter>
+                          <BRC20Ticker tick={tokenBalance.ticker} displayName={tokenBalance.displayName} preset="sm" />
+                        </Row>
+                      </Column>
                     )}
                   </Column>
                 </Button>
@@ -112,15 +127,22 @@ function Step1({
                     navigate('InscribeTransferScreen', { tokenBalance });
                   }}
                 /> */}
-                <Row>
-                  <Text text={'* To send BRC-20, you have to inscribe a TRANSFER inscription first'} preset="sub" />
+                <Row style={{ width: '100%' }} justifyCenter>
+                  <Text
+                    text={t('to_send_brc20_you_have_to_inscribe_a_transfer_inscription_first')}
+                    preset="sub"
+                    textCenter
+                    style={{
+                      whiteSpace: 'nowrap'
+                    }}
+                  />
                 </Row>
               </Column>
             </Column>
           </Row>
         </Column>
 
-        <Button text="Next" preset="primary" onClick={onClickNext} disabled={disabled} />
+        <Button text={t('next')} preset="primary" onClick={onClickNext} disabled={disabled} />
       </Column>
     </Content>
   );
@@ -148,6 +170,7 @@ function TransferableList({
 }) {
   const wallet = useWallet();
   const currentAccount = useCurrentAccount();
+  const { t } = useI18n();
 
   const [items, setItems] = useState<TokenTransfer[]>([]);
   const [total, setTotal] = useState(0);
@@ -182,9 +205,22 @@ function TransferableList({
   return (
     <Column>
       <Column>
-        <Text text={'Transfer Amount'} color="textDim" />
+        <Text text={t('transfer_amount')} color="textDim" />
         <Row justifyCenter itemsCenter>
-          <Text text={`${contextData.transferAmount}`} size="xxl" textCenter my="lg" digital />
+          <Text
+            text={`${showLongNumber(contextData.transferAmount)}`}
+            size="xxl"
+            textCenter
+            my="lg"
+            digital
+            style={{
+              maxWidth: '85%',
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              wordBreak: 'break-all',
+              fontSize: new BigNumber(contextData.transferAmount).gte(1000000) ? fontSizes.xl : fontSizes.xxl
+            }}
+          />
           <BRC20Ticker tick={contextData.tokenBalance.ticker} displayName={contextData.tokenBalance.displayName} />
         </Row>
         <Row justifyCenter itemsCenter style={{ marginTop: -12 }}>
@@ -200,7 +236,7 @@ function TransferableList({
       {items.length > 0 ? (
         <Column>
           <Row justifyBetween>
-            <Text text={`TRANSFER Inscriptions (${selectedCount}/${items.length})`} color="textDim" />
+            <Text text={`${t('transfer_inscriptions')} (${selectedCount}/${items.length})`} color="textDim" />
           </Row>
 
           <Row overflowX gap="lg" pb="md">
@@ -272,7 +308,7 @@ function TransferableList({
               }}
               checked={allSelected}
               style={{ fontSize: fontSizes.sm }}>
-              <Text text="Select All" preset="sub" color="white" />
+              <Text text={t('select_all')} preset="sub" color="white" />
             </Checkbox>
           </Row>
 
@@ -289,7 +325,7 @@ function TransferableList({
       ) : (
         <Column>
           <Row justifyBetween>
-            <Text text={'TRANSFER Inscriptions (0)'} color="textDim" />
+            <Text text={t('transfer_inscriptions_0')} color="textDim" />
             <RefreshButton
               onClick={() => {
                 fetchData();
@@ -365,12 +401,14 @@ function Step2({
       tools.showLoading(false);
     }
   };
+  const { t } = useI18n();
+
   return (
     <Content mt="lg">
       <Column full>
         <Column>
           <Row justifyBetween>
-            <Text text="Send" color="textDim" />
+            <Text text={t('send')} color="textDim" />
             <TickUsdWithoutPrice
               tick={contextData.tokenBalance.ticker}
               balance={contextData.transferAmount}
@@ -399,7 +437,7 @@ function Step2({
           />
         </Column>
         <Column>
-          <Text text="Fee Rate" color="textDim" />
+          <Text text={t('fee_rate')} color="textDim" />
           <FeeRateBar
             onChange={(val) => {
               updateContextData({ feeRate: val });
@@ -416,7 +454,7 @@ function Step2({
         </Column>
       </Column>
 
-      <Button text="Next" preset="primary" onClick={onClickNext} disabled={disabled} />
+      <Button text={t('next')} preset="primary" onClick={onClickNext} disabled={disabled} />
     </Content>
   );
 }
@@ -456,7 +494,7 @@ function Step3({
           } else if (contextData.rawTxInfo.rawtx) {
             rawtx = contextData.rawTxInfo.rawtx;
           } else {
-            throw new Error('Invalid transaction data');
+            throw new Error(t('invalid_transaction_data'));
           }
 
           const { success, txid, error } = await pushOrdinalsTx(rawtx);
@@ -552,6 +590,8 @@ export default function BRC20SendScreen() {
     }
   }, [contextData]);
 
+  const { t } = useI18n();
+
   return (
     <Layout>
       <Header
@@ -569,8 +609,8 @@ export default function BRC20SendScreen() {
           defaultActiveKey={TabKey.STEP1}
           activeKey={contextData.tabKey}
           items={[
-            { key: TabKey.STEP1, label: 'Step1' },
-            { key: TabKey.STEP2, label: 'Step2' }
+            { key: TabKey.STEP1, label: t('step1') },
+            { key: TabKey.STEP2, label: t('step2') }
             // { key: TabKey.STEP3, label: 'Step3' }
           ]}
           onTabClick={(key) => {

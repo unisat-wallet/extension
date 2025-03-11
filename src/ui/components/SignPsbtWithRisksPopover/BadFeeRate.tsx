@@ -1,4 +1,5 @@
 import { DecodedPsbt, Risk } from '@/shared/types';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 
 import { Column } from '../Column';
@@ -17,6 +18,7 @@ export const BadFeeRate = ({
   risk: Risk;
   onClose: () => void;
 }) => {
+  const { t } = useI18n();
   return (
     <Popover>
       <Column justifyCenter itemsCenter>
@@ -33,10 +35,10 @@ export const BadFeeRate = ({
 
         <Row fullX style={{ borderBottomWidth: 1, borderColor: colors.border }} />
 
-        <Text text={`Current fee rate:`} preset="sub" />
+        <Text text={t('current_fee_rate')} preset="sub" />
         <Text text={`${decodedPsbt.feeRate} sat/vB`} />
 
-        <Text text={`Recommended fee rates:`} preset="sub" mt="lg" />
+        <Text text={t('recommended_fee_rates')} preset="sub" mt="lg" />
         <FeeRateBar readonly />
       </Column>
     </Popover>

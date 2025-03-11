@@ -1,6 +1,7 @@
 import { useMemo } from 'react';
 
 import { WalletKeyring } from '@/shared/types';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
@@ -27,6 +28,8 @@ export const RemoveWalletPopover = ({ keyring, onClose }: { keyring: WalletKeyri
     const address = keyring.accounts[0].address;
     return shortAddress(address);
   }, []);
+  const { t } = useI18n();
+
   return (
     <Popover onClose={onClose}>
       <Column justifyCenter itemsCenter>
@@ -50,15 +53,12 @@ export const RemoveWalletPopover = ({ keyring, onClose }: { keyring: WalletKeyri
             <Text text={displayAddress} preset="sub" textCenter />
           </Column>
         </Card>
-        <Text
-          text="Please pay attention to whether you have backed up the mnemonic/private key to prevent asset loss"
-          textCenter
-        />
+        <Text text={t('please_pay_attention_to_whether_you_have_backed_up')} textCenter />
 
-        <Text text="This action is not reversible." color="danger" />
+        <Text text={t('this_action_is_not_reversible')} color="danger" />
         <Row full>
           <Button
-            text="Cancel"
+            text={t('cancel')}
             full
             onClick={(e) => {
               if (onClose) {
@@ -67,7 +67,7 @@ export const RemoveWalletPopover = ({ keyring, onClose }: { keyring: WalletKeyri
             }}
           />
           <Button
-            text="Remove"
+            text={t('remove')}
             preset="danger"
             full
             onClick={async () => {

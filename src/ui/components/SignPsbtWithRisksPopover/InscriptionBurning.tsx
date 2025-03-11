@@ -1,4 +1,5 @@
 import { DecodedPsbt } from '@/shared/types';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 
 import { Column } from '../Column';
@@ -10,6 +11,7 @@ import { Text } from '../Text';
 
 export const InscriptionBurning = ({ decodedPsbt, onClose }: { decodedPsbt: DecodedPsbt; onClose: () => void }) => {
   const inputInscriptionMap = {};
+  const { t } = useI18n();
   decodedPsbt.inputInfos.forEach((inputInfo) => {
     inputInfo.inscriptions.forEach((ins) => {
       inputInscriptionMap[ins.inscriptionId] = true;
@@ -35,7 +37,7 @@ export const InscriptionBurning = ({ decodedPsbt, onClose }: { decodedPsbt: Deco
       <Column justifyCenter itemsCenter>
         <Row fullX justifyBetween>
           <Row />
-          <Text text="Inscription Burn Risk List" preset="bold" />
+          <Text text={t('inscription_burn_risk_list')} preset="bold" />
           <Icon
             icon="close"
             onClick={() => {

@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 
 import { ContactBookItem } from '@/background/service/contactBook';
 import { CHAINS_MAP, ChainType } from '@/shared/constant';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { fontSizes } from '@/ui/theme/font';
 import { spacing } from '@/ui/theme/spacing';
 import { useWallet } from '@/ui/utils/WalletContext';
@@ -27,6 +28,7 @@ export const ContactsModal: React.FC<ContactsModalProps> = ({ onClose, onSelect,
   const [contacts, setContacts] = useState<ContactBookItem[]>([]);
   const [searchKeyword, setSearchKeyword] = useState('');
   const [isLoading, setIsLoading] = useState(true);
+  const { t } = useI18n();
 
   useEffect(() => {
     const loadContacts = async () => {
@@ -56,7 +58,7 @@ export const ContactsModal: React.FC<ContactsModalProps> = ({ onClose, onSelect,
       <div style={{ backgroundColor: '#181A1F', margin: -20, padding: 20, borderRadius: '15px 15px 0 0' }}>
         <Column gap="lg" style={{ height: '70vh' }}>
           <Row justifyCenter itemsCenter style={{ position: 'relative', width: '100%' }}>
-            <Text text="Address Book" preset="regular" style={{ color: 'white' }} size="md" />
+            <Text text={t('address_book')} preset="regular" style={{ color: 'white' }} size="md" />
             <Icon
               icon="close"
               onClick={onClose}
@@ -89,7 +91,7 @@ export const ContactsModal: React.FC<ContactsModalProps> = ({ onClose, onSelect,
             <SearchOutlined style={{ color: '#888', marginRight: 8, fontSize: 20, display: 'flex' }} />
             <input
               type="text"
-              placeholder="Search address or name"
+              placeholder={t('search_address_or_name')}
               value={searchKeyword}
               onChange={(e) => setSearchKeyword(e.target.value)}
               style={{
@@ -106,7 +108,7 @@ export const ContactsModal: React.FC<ContactsModalProps> = ({ onClose, onSelect,
 
           {isLoading ? (
             <Column full justifyCenter itemsCenter style={{ flex: 1 }}>
-              <Text text="Loading..." preset="sub" textCenter />
+              <Text text={t('loading_contacts')} preset="sub" textCenter />
             </Column>
           ) : filteredContacts.length === 0 ? (
             <Column full justifyCenter itemsCenter style={{ flex: 1 }}>
@@ -117,7 +119,9 @@ export const ContactsModal: React.FC<ContactsModalProps> = ({ onClose, onSelect,
               />
               <Text
                 text={
-                  contacts.length === 0 ? "You haven't added address information yet" : 'No matching contacts found'
+                  contacts.length === 0
+                    ? t('you_haven_t_added_address_information_yet')
+                    : t('no_matching_contacts_found')
                 }
                 preset="sub"
                 textCenter

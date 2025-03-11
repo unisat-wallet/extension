@@ -6,6 +6,7 @@ import { objToUint8Array } from '@/shared/utils';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { CopyableAddress } from '@/ui/components/CopyableAddress';
 import WebsiteBar from '@/ui/components/WebsiteBar';
+import { useI18n } from '@/ui/hooks/useI18n';
 import KeystoneSignScreen from '@/ui/pages/Wallet/KeystoneSignScreen';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useBabylonConfig } from '@/ui/state/settings/hooks';
@@ -33,6 +34,7 @@ export default function CosmosSign({ params: { data, session }, origin }: Props)
   const [getApproval, resolveApproval, rejectApproval] = useApproval();
   const account = useCurrentAccount();
   const [isKeystoneSigning, setIsKeystoneSigning] = useState(false);
+  const { t } = useI18n();
 
   const isKeystone = account.type === KEYRING_TYPE.KeystoneKeyring;
 
@@ -92,7 +94,7 @@ export default function CosmosSign({ params: { data, session }, origin }: Props)
           <WebsiteBar session={session} />
         </Header>
         <Column>
-          <Text text="Cosmos Sign request" preset="title-bold" textCenter mt="lg" />
+          <Text text={t('cosmos_sign_request')} preset="title-bold" textCenter mt="lg" />
 
           <Row justifyCenter>
             <Row justifyCenter px="lg" py="sm" style={{ backgroundColor: '#3F3227', borderRadius: 10 }}>
@@ -100,13 +102,8 @@ export default function CosmosSign({ params: { data, session }, origin }: Props)
             </Row>
           </Row>
 
-          <Text
-            text="Only sign if you fully understand the content and trust the requesting site."
-            preset="sub"
-            textCenter
-            mt="lg"
-          />
-          <Text text="You are signing:" textCenter mt="lg" />
+          <Text text={t('only_sign_if_you_fully_understand_the_content_and_')} preset="sub" textCenter mt="lg" />
+          <Text text={t('you_are_signing')} textCenter mt="lg" />
 
           <Card>
             <div
@@ -140,8 +137,8 @@ export default function CosmosSign({ params: { data, session }, origin }: Props)
 
       <Footer>
         <Row full>
-          <Button text="Reject" full preset="default" onClick={handleCancel} />
-          <Button text="Sign" full preset="primary" onClick={handleConfirm} />
+          <Button text={t('reject')} full preset="default" onClick={handleCancel} />
+          <Button text={t('sign')} full preset="primary" onClick={handleConfirm} />
         </Row>
       </Footer>
     </Layout>

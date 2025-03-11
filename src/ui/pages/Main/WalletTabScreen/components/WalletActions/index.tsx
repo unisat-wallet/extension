@@ -4,6 +4,7 @@ import { ChainType, TypeChain } from '@/shared/constant';
 import { Row, Text } from '@/ui/components';
 import { Button } from '@/ui/components/Button';
 import { Icon } from '@/ui/components/Icon';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { BuyBTCModal } from '@/ui/pages/BuyBTC/BuyBTCModal';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useAddressExplorerUrl, useChainType, useWalletConfig } from '@/ui/state/settings/hooks';
@@ -24,6 +25,7 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
   const addressExplorerUrl = useAddressExplorerUrl(address);
   const [buyBtcModalVisible, setBuyBtcModalVisible] = useState(false);
   const walletConfig = useWalletConfig();
+  const { t } = useI18n();
 
   const shouldUseMoreExpandedLayout = () => {
     if (walletConfig.disableUtxoTools) return false;
@@ -79,7 +81,7 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
         backgroundColor: 'rgba(176, 37, 37, 0.25)',
         zIndex: 10
       }}>
-      <Text text="new!" color="red_light2" size="xxs" />
+      <Text text={t('new')} color="red_light2" size="xxs" />
     </div>
   );
 
@@ -88,7 +90,7 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
       {!shouldUseMoreExpandedLayout() ? (
         <Row justifyCenter mt="md">
           <Button
-            text="Receive"
+            text={t('receive')}
             preset="home"
             icon="receive"
             onClick={(e) => {
@@ -97,7 +99,7 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
           />
 
           <Button
-            text="Send"
+            text={t('send')}
             preset="home"
             icon="send"
             onClick={(e) => {
@@ -106,7 +108,7 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
             }}
           />
           <Button
-            text="History"
+            text={t('history')}
             preset="home"
             icon="history"
             onClick={(e) => {
@@ -118,7 +120,7 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
             }}
           />
           <Button
-            text="Buy"
+            text={t('buy')}
             preset="home"
             icon={chain.isFractal ? 'fb' : 'bitcoin'}
             iconSize={
@@ -138,10 +140,10 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
       ) : (
         <>
           <Row justifyCenter mt="md">
-            <Button text="Receive" preset="home" icon="receive" onClick={onReceiveClick} />
+            <Button text={t('receive')} preset="home" icon="receive" onClick={onReceiveClick} />
 
-            <Button text="Send" preset="home" icon="send" onClick={onSendClick} />
-            <Button text="History" preset="home" icon="history" onClick={onHistoryClick} />
+            <Button text={t('send')} preset="home" icon="send" onClick={onSendClick} />
+            <Button text={t('history')} preset="home" icon="history" onClick={onHistoryClick} />
             {/* Custom div used to avoid Button component's style merging issues with toggle states */}
             <div
               style={{
@@ -177,7 +179,7 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
                 </>
               )}
               <Icon icon="more" style={{ marginBottom: 7 }} />
-              <Text text="More" color="white" size="xs" />
+              <Text text={t('more')} color="white" size="xs" />
             </div>
           </Row>
 
@@ -191,7 +193,7 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
                   {!utxoClicked && <NewBadge top={-5} right={-5} />}
                 </div>
                 <Button
-                  text="Buy"
+                  text={t('buy')}
                   preset="homeGold"
                   icon={isFractal ? 'fb' : 'bitcoin'}
                   iconSize={

@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { Button, Content, Footer, Header, Layout, Row } from '@/ui/components';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useWallet } from '@/ui/utils';
 
 import { Step1, Step2, USBStep } from './SignSteps';
@@ -20,6 +21,7 @@ function QRModeContent({
   setStep,
   ...props
 }: KeystoneSignBaseProps & { step: number; setStep: (step: number) => void }) {
+  const { t } = useI18n();
   return (
     <Layout>
       <Header
@@ -38,11 +40,11 @@ function QRModeContent({
       {step === KeystoneStep.INITIAL && (
         <Footer>
           <Row full>
-            <Button preset="default" full text="Reject" onClick={props.onBack} />
+            <Button preset="default" full text={t('reject')} onClick={props.onBack} />
             <Button
               preset="primary"
               full
-              text={props.signatureText ?? 'Get Signature'}
+              text={props.signatureText ?? t('get_signature')}
               onClick={() => setStep(KeystoneStep.SCAN)}
             />
           </Row>

@@ -1,10 +1,13 @@
+import { useCallback, useState } from 'react';
+
 import { Button, Column, Content, Text } from '@/ui/components';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { LoadingOutlined } from '@ant-design/icons';
 import Base, { convertMulitAccountToCryptoAccount, CryptoMultiAccounts } from '@keystonehq/hw-app-base';
 import { Curve, DerivationAlgorithm } from '@keystonehq/keystone-sdk';
-import { useCallback, useState } from 'react';
+
 import KeystonePopover from '../Popover';
 import { createKeystoneTransport, handleKeystoneUSBError } from './utils';
 
@@ -13,38 +16,35 @@ const EXPECTED_HD_PATH = ["m/44'/0'/0'", "m/49'/0'/0'", "m/84'/0'/0'", "m/86'/0'
 export default function KeystoneFetchKey({
   onSucceed,
   isCancelledRef,
-  size,
+  size
 }: {
   onSucceed: (data: { type: string; cbor: string }) => void;
-  isCancelledRef: React.MutableRefObject<boolean>
+  isCancelledRef: React.MutableRefObject<boolean>;
   size?: number;
 }) {
   const [isError, setIsError] = useState(false);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
+  const { t } = useI18n();
 
   const onError = useCallback((e: any) => {
     console.error(e);
-    setError(handleKeystoneUSBError(e));
+    setError(t(handleKeystoneUSBError(e)));
     setIsError(true);
   }, []);
 
   const onClick = useCallback(async () => {
     try {
-      setLoading(true)
+      setLoading(true);
       const transport = await createKeystoneTransport();
       const base = new Base(transport as any);
       const accounts: CryptoMultiAccounts[] = [];
       for (const path of EXPECTED_HD_PATH) {
-        console.log(isCancelledRef.current)
+        console.log(isCancelledRef.current);
         if (isCancelledRef.current) {
-          return []
+          return [];
         }
-        const res = await base.getURAccount(
-          path,
-          Curve.secp256k1,
-          DerivationAlgorithm.slip10
-        );
+        const res = await base.getURAccount(path, Curve.secp256k1, DerivationAlgorithm.slip10);
         accounts.push(res);
       }
       const urCryptoAccount = convertMulitAccountToCryptoAccount(accounts);
@@ -53,33 +53,33 @@ export default function KeystoneFetchKey({
     } catch (e) {
       onError(e);
     } finally {
-      setLoading(false)
+      setLoading(false);
     }
   }, []);
 
   const onCloseError = useCallback(() => {
     setIsError(false);
     setError('');
-  }, [])
+  }, []);
 
   return (
     <Content itemsCenter justifyCenter>
       <Column style={{ minHeight: size }} itemsCenter justifyCenter>
-        {loading && <LoadingOutlined style={{
-          fontSize: fontSizes.xxxl,
-          color: colors.blue
-        }} />}
+        {loading && (
+          <LoadingOutlined
+            style={{
+              fontSize: fontSizes.xxxl,
+              color: colors.blue
+            }}
+          />
+        )}
       </Column>
       <Column style={{ minWidth: 300 }} itemsCenter justifyCenter>
         <Button preset="defaultV2" style={{ color: colors.white, marginTop: '2px' }} onClick={onClick}>
-          <Text text="Connect" color="white" />
+          <Text text={t('connect')} color="white" />
         </Button>
       </Column>
-      {isError && <KeystonePopover
-        msg={error}
-        onClose={onCloseError}
-        onConfirm={onCloseError}
-      />}
+      {isError && <KeystonePopover msg={error} onClose={onCloseError} onConfirm={onCloseError} />}
     </Content>
   );
 }

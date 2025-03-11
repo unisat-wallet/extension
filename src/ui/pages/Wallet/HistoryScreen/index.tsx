@@ -7,6 +7,7 @@ import { Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/component
 import { useTools } from '@/ui/components/ActionComponent';
 import AssetTag from '@/ui/components/AssetTag';
 import { Pagination } from '@/ui/components/Pagination';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { HistoryDetail } from '@/ui/pages/Wallet/HistoryScreen/HistoryDetail';
 import { useAccountAddress } from '@/ui/state/accounts/hooks';
 import { fontSizes } from '@/ui/theme/font';
@@ -96,6 +97,7 @@ export function AmountItem({ item, inDetail }: { item: ExtraItem; inDetail?: boo
 }
 
 function MyItem({ group, index, onItemClick }: MyItemProps) {
+  const { t } = useI18n();
   return (
     <Column key={index} style={{ position: 'relative' }} gap={'zero'}>
       <Text
@@ -165,8 +167,8 @@ function MyItem({ group, index, onItemClick }: MyItemProps) {
                 )}
 
                 <Column gap={'sm'}>
-                  <Text text={isReceived ? 'Receive' : 'send'} />
-                  <Text text={`${isReceived ? 'From' : 'To'} ${shortAddress(item.address)}`} preset="sub" />
+                  <Text text={isReceived ? t('receive') : t('send')} />
+                  <Text text={`${isReceived ? t('from') : t('to')} ${shortAddress(item.address)}`} preset="sub" />
                 </Column>
               </Row>
               <Column style={{ alignItems: 'flex-end', justifyContent: 'center' }}>
@@ -202,6 +204,7 @@ export default function HistoryScreen() {
   const [historyGroups, setHistoryGroups] = useState<GroupItem[]>([]);
   const [total, setTotal] = useState(0);
   const [detail, setDetail] = useState<HistoryItem>();
+  const { t } = useI18n();
 
   useEffect(() => {
     if (address) {
@@ -349,7 +352,7 @@ export default function HistoryScreen() {
                   <ClockCircleFilled />
                 </Icon>
               </Row>
-              <Text text="This account has no transactions" color="textDim" textCenter />
+              <Text text={t('this_account_has_no_transactions')} color="textDim" textCenter />
             </Column>
           </Content>
         ) : (

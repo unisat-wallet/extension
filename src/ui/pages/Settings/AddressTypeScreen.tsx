@@ -6,6 +6,7 @@ import { Column, Content, Header, Layout } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressTypeCard } from '@/ui/components/AddressTypeCard';
 import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount, useReloadAccounts } from '@/ui/state/accounts/hooks';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
@@ -15,6 +16,7 @@ import { useNavigate } from '../MainRoute';
 
 export default function AddressTypeScreen() {
   const isInTab = useExtensionIsInTab();
+  const { t } = useI18n();
 
   const wallet = useWallet();
   const currentKeyring = useCurrentKeyring();
@@ -91,7 +93,7 @@ export default function AddressTypeScreen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Address Type"
+        title={t('address_type')}
       />
       <Content>
         <Column>
@@ -120,7 +122,7 @@ export default function AddressTypeScreen() {
                   await wallet.changeAddressType(item.value);
                   reloadAccounts();
                   navigate('MainScreen');
-                  tools.toastSuccess('Address type changed');
+                  tools.toastSuccess(t('address_type_changed'));
                 }}
               />
             );

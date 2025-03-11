@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { CHAIN_GROUPS, CHAINS_MAP, ChainType, TypeChainGroup } from '@/shared/constant';
 import { Card, Column, Icon, Image, Row, Text } from '@/ui/components';
 import { BottomModal } from '@/ui/components/BottomModal';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 import { CloseOutlined } from '@ant-design/icons';
 
@@ -129,6 +130,7 @@ export const ContactChainModal = ({
   selectedChainType: ChainType | null;
   hideAllNetworks?: boolean;
 }) => {
+  const { t } = useI18n();
   const handleSelectAll = () => {
     onSelect(null as any);
     onClose();
@@ -143,7 +145,7 @@ export const ContactChainModal = ({
     <BottomModal onClose={onClose}>
       <Column justifyCenter itemsCenter>
         <Row justifyBetween itemsCenter style={{ height: 20 }} fullX>
-          <Text text="Select Network" textCenter size="md" />
+          <Text text={t('select_network')} textCenter size="md" />
           <Row
             onClick={() => {
               onClose();
@@ -169,7 +171,7 @@ export const ContactChainModal = ({
               <Row fullX justifyBetween itemsCenter>
                 <Row itemsCenter>
                   <Icon icon="bitcoin" size={30} color="gold" />
-                  <Text text="All Networks" color="text" />
+                  <Text text={t('all_networks')} color="text" />
                 </Row>
               </Row>
             </Card>

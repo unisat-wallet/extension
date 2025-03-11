@@ -1,6 +1,7 @@
 import { Progress } from 'antd';
 import { useCallback, useState } from 'react';
 
+import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 import { CameraOutlined } from '@ant-design/icons';
 import { useAnimatedQRScanner } from '@keystonehq/animated-qr';
@@ -17,6 +18,7 @@ export default function KeystoneScan({
   const [isError, setIsError] = useState(false);
   const [progress, setProgress] = useState(0);
   const { AnimatedQRScanner, setIsDone, isDone } = useAnimatedQRScanner();
+  const { t } = useI18n();
 
   const onError = useCallback((e: any) => {
     console.error(e);
@@ -71,7 +73,7 @@ export default function KeystoneScan({
       )}
       {isError && (
         <KeystonePopover
-          msg="Invalid QR code. Please ensure you have selected a valid QR code from your Keystone device."
+          msg={t('invalid_qr_code_please_ensure_you_have_selected_a_valid_qr_code_from_your_keystone_device')}
           onClose={onCloseError}
           onConfirm={onCloseError}
         />

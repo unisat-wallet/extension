@@ -1,6 +1,8 @@
 /* eslint-disable quotes */
 
 /* constants pool */
+import { t } from '@/shared/modules/i18n';
+
 import { AddressType, NetworkType, RestoreWalletType } from '../types';
 
 export type CHAINS_ENUM = ChainType;
@@ -162,7 +164,7 @@ export const ADDRESS_TYPES: {
 
 export const OW_HD_PATH = "m/86'/0'/0'";
 
-export const RESTORE_WALLETS: { value: RestoreWalletType; name: string; addressTypes: AddressType[] }[] = [
+export const getRestoreWallets = (): { value: RestoreWalletType; name: string; addressTypes: AddressType[] }[] => [
   {
     value: RestoreWalletType.UNISAT,
     name: 'UniSat Wallet',
@@ -192,7 +194,7 @@ export const RESTORE_WALLETS: { value: RestoreWalletType; name: string; addressT
   },
   {
     value: RestoreWalletType.OTHERS,
-    name: 'Other Wallet',
+    name: t('other_wallet'),
     addressTypes: [
       AddressType.P2PKH,
       AddressType.P2WPKH,
@@ -500,15 +502,26 @@ export const HARDWARE_WALLETS = {
   }
 };
 
-export const AUTO_LOCKTIMES = [
-  { id: 0, time: 30000, label: '30 Seconds' },
-  { id: 1, time: 60000, label: '1 Minute' },
-  { id: 2, time: 180000, label: '3 Minutes' },
-  { id: 3, time: 300000, label: '5 Minutes' },
-  { id: 4, time: 600000, label: '10 Minutes' },
-  { id: 5, time: 1800000, label: '30 Minutes' },
-  { id: 6, time: 3600000, label: '1 Hour' },
-  { id: 7, time: 14400000, label: '4 Hours' }
+export const AUTO_LOCK_TIMES = [
+  { id: 0, time: 30000 },
+  { id: 1, time: 60000 },
+  { id: 2, time: 180000 },
+  { id: 3, time: 300000 },
+  { id: 4, time: 600000 },
+  { id: 5, time: 1800000 },
+  { id: 6, time: 3600000 },
+  { id: 7, time: 14400000 }
+];
+
+export const getAutoLockTimes = () => [
+  { id: 0, time: 30000, label: `30${t('seconds')}` },
+  { id: 1, time: 60000, label: `1${t('minutes')}` },
+  { id: 2, time: 180000, label: `3${t('minutes')}` },
+  { id: 3, time: 300000, label: `5${t('minutes')}` },
+  { id: 4, time: 600000, label: `10${t('minutes')}` },
+  { id: 5, time: 1800000, label: `30${t('minutes')}` },
+  { id: 6, time: 3600000, label: `1${t('hours')}` },
+  { id: 7, time: 14400000, label: `4${t('hours')}` }
 ];
 
 export const DEFAULT_LOCKTIME_ID = 5;

@@ -4,6 +4,7 @@ const HtmlWebpackPlugin = require('html-webpack-plugin');
 const TSConfigPathsPlugin = require('tsconfig-paths-webpack-plugin');
 const ESLintWebpackPlugin = require('eslint-webpack-plugin');
 const MiniCssExtractPlugin = require('mini-css-extract-plugin');
+const CopyWebpackPlugin = require('copy-webpack-plugin');
 const path = require('path');
 const fs = require('fs');
 const getCSSModuleLocalIdent = require('react-dev-utils/getCSSModuleLocalIdent');
@@ -500,6 +501,14 @@ const config = (env) => {
         // chunkFilename: 'static/css/[name].[contenthash:8].chunk.css',
         filename: 'static/css/[name].css',
         chunkFilename: 'static/css/[name].chunk.css'
+      }),
+      new CopyWebpackPlugin({
+        patterns: [
+          {
+            from: 'src/_locales',
+            to: '_locales'
+          }
+        ]
       }),
       new WasmModuleWebpackPlugin.WebpackPlugin()
     ],

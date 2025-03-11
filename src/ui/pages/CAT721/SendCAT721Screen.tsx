@@ -8,6 +8,7 @@ import { Loading } from '@/ui/components/ActionComponent/Loading';
 import CAT721Preview from '@/ui/components/CAT721Preview';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { MergeBTCPopover } from '@/ui/components/MergeBTCPopover';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useNetworkType } from '@/ui/state/settings/hooks';
@@ -29,6 +30,7 @@ export default function SendCAT721Screen() {
   const localId = props.localId;
 
   const wallet = useWallet();
+  const { t } = useI18n();
 
   const navigate = useNavigate();
   const runesTx = useRunesTx();
@@ -65,7 +67,7 @@ export default function SendCAT721Screen() {
 
     const addressType = getAddressType(toInfo.address, networkType);
     if (addressType !== AddressType.P2TR && addressType !== AddressType.P2WPKH) {
-      setError('The recipient must be P2TR or P2WPKH address type');
+      setError(t('the_recipient_must_be_p2tr_or_p2wpkh_address_type'));
       return;
     }
 
@@ -112,7 +114,7 @@ export default function SendCAT721Screen() {
     return (
       <SignPsbt
         header=<Header
-          title="STEP 1/2"
+          title={t('step_12')}
           onBack={() => {
             setStep(0);
           }}
@@ -157,7 +159,7 @@ export default function SendCAT721Screen() {
     return (
       <SignPsbt
         header=<Header
-          title="STEP 2/2"
+          title={t('step_22')}
           onBack={() => {
             setStep(0);
           }}
@@ -198,7 +200,7 @@ export default function SendCAT721Screen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title={'Send CAT721'}
+        title={t('send_cat721')}
       />
       <Content>
         <Text text={collectionInfo.name} preset="title-bold" textCenter size="xxl" color="gold" />
@@ -220,12 +222,12 @@ export default function SendCAT721Screen() {
               setToInfo(val);
             }}
             autoFocus={true}
-            recipientLabel={<Text text="Recipient" preset="regular" color="textDim" />}
+            recipientLabel={<Text text={t('recipient')} preset="regular" color="textDim" />}
           />
         </Column>
 
         <Column mt="lg">
-          <Text text="Fee" color="textDim" />
+          <Text text={t('fee')} color="textDim" />
 
           <FeeRateBar
             onChange={(val) => {
@@ -239,7 +241,7 @@ export default function SendCAT721Screen() {
         <Button
           disabled={disabled}
           preset="primary"
-          text="Next"
+          text={t('next')}
           onClick={(e) => {
             onConfirm();
           }}></Button>

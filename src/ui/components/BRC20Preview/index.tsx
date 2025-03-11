@@ -1,5 +1,6 @@
 import { TickPriceItem } from '@/shared/types';
 import { TickUsd, TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 
 import { BRC20Ticker } from '../BRC20Ticker';
@@ -35,6 +36,7 @@ export default function BRC20Preview({
   priceInProps,
   price
 }: BRC20PreviewProps) {
+  const { t } = useI18n();
   if (!balance) {
     balance = 'Deploy';
   }
@@ -117,7 +119,7 @@ export default function BRC20Preview({
       <Column px="sm" pb="sm" gap="sm" py="sm">
         <Row itemsCenter justifyCenter>
           <Text
-            text={confirmations === 0 ? 'Unconfirmed' : `#${inscriptionNumber}`}
+            text={confirmations === 0 ? t('unconfirmed') : `#${inscriptionNumber}`}
             color="primary"
             size={numberSize}
           />

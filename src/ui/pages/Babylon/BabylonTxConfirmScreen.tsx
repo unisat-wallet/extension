@@ -5,6 +5,7 @@ import { BabylonTxInfo, CosmosSignDataType } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressText } from '@/ui/components/AddressText';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useAccountAddress, useCurrentAccount, useIsKeystoneWallet } from '@/ui/state/accounts/hooks';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
@@ -14,6 +15,7 @@ import { colors } from '@/ui/theme/colors';
 import { spacing } from '@/ui/theme/spacing';
 import { useLocationState, useWallet } from '@/ui/utils';
 
+import { useNavigate } from '../MainRoute';
 import CosmosSignScreen from '../Wallet/CosmosSignScreen';
 
 interface LocationState {
@@ -40,6 +42,8 @@ export default function BabylonTxConfirmScreen() {
   const { txInfo } = useLocationState<LocationState>();
   const wallet = useWallet();
   const dispatch = useAppDispatch();
+  const { t } = useI18n();
+  const navigate = useNavigate();
 
   const [result, setResult] = useState<{
     result: 'success' | 'failed';
@@ -69,6 +73,24 @@ export default function BabylonTxConfirmScreen() {
   const address = useAccountAddress();
   const isKeystone = useIsKeystoneWallet();
 
+  const clearReduxState = () => {
+    dispatch(uiActions.resetBabylonSendScreen());
+    dispatch(uiActions.setNavigationSource(NavigationSource.NORMAL));
+  };
+
+  const updateReduxState = () => {
+    dispatch(uiActions.setNavigationSource(NavigationSource.BACK));
+
+    if (txInfo) {
+      dispatch(
+        uiActions.updateBabylonSendScreen({
+          inputAmount: txInfo.balance.amount,
+          memo: txInfo.memo || ''
+        })
+      );
+    }
+  };
+
   if (isCosmosSignScreenOpen && cosmosSignRequest) {
     return (
       <CosmosSignScreen
@@ -79,7 +101,7 @@ export default function BabylonTxConfirmScreen() {
             const txid = await wallet.createSendTokenStep2(babylonChain.chainId, signResult.signature);
             setResult({ result: 'success', txid });
           } catch (error) {
-            setResult({ result: 'failed', error: (error as any).message || 'Failed to handle signature' });
+            setResult({ result: 'failed', error: (error as any).message || t('failed_to_handle_signature') });
           } finally {
             setIsCosmosSignScreenOpen(false);
             tools.showLoading(false);
@@ -103,8 +125,8 @@ export default function BabylonTxConfirmScreen() {
               <Icon icon="success" size={50} style={{ alignSelf: 'center' }} />
             </Row>
 
-            <Text preset="title" text="Payment Sent" textCenter />
-            <Text preset="sub" text="Your transaction has been successfully sent" color="textDim" textCenter />
+            <Text preset="title" text={t('payment_sent')} textCenter />
+            <Text preset="sub" text={t('your_transaction_has_been_successfully_sent')} color="textDim" textCenter />
 
             {babylonChain.explorer ? (
               <Row
@@ -113,7 +135,7 @@ export default function BabylonTxConfirmScreen() {
                   window.open(`${babylonChain.explorer}/transaction/${result.txid}`, '_blank');
                 }}>
                 <Icon icon="eye" color="textDim" />
-                <Text preset="regular-bold" text="View on Block Explorer" color="textDim" />
+                <Text preset="regular-bold" text={t('view_on_block_explorer')} color="textDim" />
               </Row>
             ) : null}
           </Column>
@@ -121,9 +143,10 @@ export default function BabylonTxConfirmScreen() {
         <Footer>
           <Button
             full
-            text="Done"
+            text={t('done')}
             onClick={() => {
-              window.history.go(-2);
+              clearReduxState();
+              navigate('BabylonStakingScreen');
             }}
           />
         </Footer>
@@ -132,21 +155,27 @@ export default function BabylonTxConfirmScreen() {
   } else if (result && result.result === 'failed') {
     return (
       <Layout>
-        <Header
-          onBack={() => {
-            window.history.go(-1);
-          }}
-        />
-        <Content>
+        <Header />
+        <Content style={{ gap: spacing.small }}>
           <Column justifyCenter mt="xxl" gap="xl">
             <Row justifyCenter>
               <Icon icon="delete" size={50} />
             </Row>
 
-            <Text preset="title" text="Payment Failed" textCenter />
+            <Text preset="title" text={t('payment_failed')} textCenter />
             <Text preset="sub" style={{ color: colors.red }} text={result.error} textCenter />
           </Column>
         </Content>
+        <Footer>
+          <Button
+            full
+            text={t('done')}
+            onClick={() => {
+              clearReduxState();
+              navigate('BabylonStakingScreen');
+            }}
+          />
+        </Footer>
       </Layout>
     );
   }
@@ -193,34 +222,32 @@ export default function BabylonTxConfirmScreen() {
     }
   };
 
-  console.log('txInfo', txInfo);
-
   return (
     <Layout>
       <Header
         onBack={() => {
-          dispatch(uiActions.setNavigationSource(NavigationSource.BACK));
-          window.history.go(-1);
+          updateReduxState();
+          navigate('SendBABYScreen');
         }}
       />
       <Content>
         <Column gap="lg" style={{ position: 'relative' }}>
           <Row itemsCenter justifyCenter fullX py={'sm'}>
-            <Text text="Sign Transaction" preset="title-bold" textCenter />
+            <Text text={t('sign_transaction')} preset="title-bold" textCenter />
           </Row>
           <Row justifyCenter>
             <Card style={{ backgroundColor: '#272626', flex: '1' }}>
               <Column fullX itemsCenter>
                 <Row itemsCenter justifyCenter>
                   <Image src={'./images/icons/baby.svg'} size={24} />
-                  <Text text={'tBABY'} />
+                  <Text text={babylonChain.currencies[0].coinDenom} />
                 </Row>
                 <Row
                   style={{ borderTopWidth: 1, borderColor: colors.border, borderStyle: 'dashed', alignSelf: 'stretch' }}
                   my="md"
                 />
                 <Column>
-                  <Text text={'Send to'} textCenter color="textDim" />
+                  <Text text={t('send_to')} textCenter color="textDim" />
                   <Row justifyCenter>
                     <AddressText
                       addressInfo={{
@@ -234,7 +261,7 @@ export default function BabylonTxConfirmScreen() {
                 <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
 
                 <Column>
-                  <Text text={'Send Amount'} textCenter color="textDim" />
+                  <Text text={t('send_amount')} textCenter color="textDim" />
 
                   <Column justifyCenter>
                     <Row itemsCenter>
@@ -254,14 +281,14 @@ export default function BabylonTxConfirmScreen() {
         </Column>
 
         {txInfo.memo ? (
-          <Section title="Memo:">
+          <Section title={t('memo')}>
             <Row>
               <Text text={txInfo.memo} wrap />
             </Row>
           </Section>
         ) : null}
 
-        <Section title="Tx Fee:">
+        <Section title={t('tx_fee')}>
           <Text text={txInfo.txFee.amount} color="white" />
           <Text text={txInfo.txFee.denom} color="textDim" />
         </Section>
@@ -271,16 +298,16 @@ export default function BabylonTxConfirmScreen() {
         <Row full>
           <Button
             preset="default"
-            text="Reject"
+            text={t('reject')}
             onClick={() => {
-              dispatch(uiActions.setNavigationSource(NavigationSource.BACK));
-              window.history.go(-1);
+              updateReduxState();
+              navigate('SendBABYScreen');
             }}
             full
           />
           <Button
             preset="primary"
-            text={'Sign & Pay'}
+            text={t('sign_and_pay')}
             onClick={async () => {
               handleSignAndPay();
             }}

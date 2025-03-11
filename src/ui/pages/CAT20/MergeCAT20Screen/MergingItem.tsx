@@ -1,5 +1,6 @@
 import { Card, Column, Icon, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useTxExplorerUrl } from '@/ui/state/settings/hooks';
 import { shortAddress } from '@/ui/utils';
 
@@ -14,12 +15,12 @@ export interface MergeItem {
 export function MergingItem({ item }: { item: MergeItem }) {
   const tools = useTools();
   const txidUrl = useTxExplorerUrl(item.txid || '');
-
+  const { t } = useI18n();
   return (
     <Card style={{ borderRadius: 10, minHeight: 60 }}>
       <Column fullX>
         <Row justifyBetween>
-          <Text text={`Transaction ${item.index + 1}`} />
+          <Text text={`${t('transaction')} ${item.index + 1}`} />
           <MergeItemStatus mergeItem={item} />
         </Row>
 
@@ -35,7 +36,7 @@ export function MergingItem({ item }: { item: MergeItem }) {
             {/* {item.feeRate && <Text text={` ( Fee Rate: ${item.feeRate} sats/vB) `} color="txid_color" size="xs" />} */}
           </Row>
         )}
-        {item.error && <Text text={`Merge Failed. (${item.error})`} color="error" />}
+        {item.error && <Text text={`${t('merge_failed')} (${item.error})`} color="error" />}
       </Column>
     </Card>
   );
@@ -56,32 +57,33 @@ export enum ItemStatus {
   completed
 }
 function MergeItemStatus({ mergeItem }: { mergeItem: MergeItem }) {
+  const { t } = useI18n();
   if (mergeItem.status == ItemStatus.pending) {
     return (
       <Row itemsCenter>
         <Icon icon="history" color="textDim" />
-        <Text text={'Pending...'} color="textDim" />
+        <Text text={t('pending')} color="textDim" />
       </Row>
     );
   } else if (mergeItem.status == ItemStatus.dealing) {
     return (
       <Row itemsCenter>
         <Icon icon="circle-check" color="warning" />
-        <Text text={'Dealing'} color="warning" />
+        <Text text={t('dealing')} color="warning" />
       </Row>
     );
   } else if (mergeItem.status == ItemStatus.paused) {
     return (
       <Row itemsCenter>
         <Icon icon="paused" color="red" />
-        <Text text={'Paused'} color="red" />
+        <Text text={t('paused')} color="red" />
       </Row>
     );
   } else if (mergeItem.status == ItemStatus.completed) {
     return (
       <Row itemsCenter>
         <Icon icon="circle-check" color="success" />
-        <Text text={'Completed'} color="success" />
+        <Text text={t('completed')} color="success" />
       </Row>
     );
   } else {

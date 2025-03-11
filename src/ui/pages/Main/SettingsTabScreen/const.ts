@@ -1,8 +1,10 @@
+import { t } from '@/shared/modules/i18n';
+
 import { SettingsAction, SettingsItemType } from './types';
 
-export const SettingsListConst: SettingsItemType[] = [
+export const getSettingsList = (): SettingsItemType[] => [
   {
-    label: 'Connected Sites',
+    label: t('connected_sites'),
     value: '',
     desc: '',
     action: SettingsAction.CONNECTED_SITES,
@@ -20,8 +22,8 @@ export const SettingsListConst: SettingsItemType[] = [
   },
 
   {
-    label: 'Address Book',
-    value: 'Add frequently used addresses',
+    label: t('address_book'),
+    value: t('add_frequently_used_addresses'),
     desc: '',
     action: SettingsAction.CONTACTS,
     route: '/settings/contacts',
@@ -38,8 +40,8 @@ export const SettingsListConst: SettingsItemType[] = [
   },
 
   {
-    label: 'Address Type',
-    value: 'Native Segwit (P2WPKH) (m/84/0/0/0/0)',
+    label: t('address_type'),
+    value: t('native_segwit_p2wpkh'),
     desc: '',
     action: SettingsAction.ADDRESS_TYPE,
     route: '/settings/address-type',
@@ -47,8 +49,8 @@ export const SettingsListConst: SettingsItemType[] = [
     icon: 'addressType'
   },
   {
-    label: 'Settings',
-    value: 'Advanced settings',
+    label: t('settings'),
+    value: t('advanced_settings'),
     desc: '',
     action: SettingsAction.ADVANCED,
     route: '/settings/advanced',
@@ -65,8 +67,8 @@ export const SettingsListConst: SettingsItemType[] = [
   },
 
   {
-    label: 'Feedback',
-    value: 'Let us know what you think',
+    label: t('feedback'),
+    value: t('let_us_know_what_you_think'),
     desc: '',
     action: SettingsAction.FEEDBACK,
     route: '',
@@ -74,8 +76,8 @@ export const SettingsListConst: SettingsItemType[] = [
     icon: 'feedback'
   },
   {
-    label: 'Rate us',
-    value: "Like our wallet? We'd love your rating!",
+    label: t('rate_us'),
+    value: t('like_our_wallet_wed_love_your_rating'),
     desc: '',
     action: SettingsAction.RATE_US,
     route: '',
@@ -83,20 +85,20 @@ export const SettingsListConst: SettingsItemType[] = [
     icon: 'rateUs'
   },
   {
-    label: 'About us',
+    label: t('about_us'),
     value: '',
     desc: '',
     action: SettingsAction.ABOUT_US,
     route: '/settings/about-us',
     right: true,
     icon: 'aboutUsLogo',
-    badge: 'New version!'
+    badge: t('new_version')
   },
   // 5. Bottom Buttons (unchanged)
   {
     label: '',
     value: '',
-    desc: 'Expand View ',
+    desc: t('expand_view'),
     action: SettingsAction.EXPAND_VIEW,
     route: '/settings/export-privatekey',
     right: false
@@ -104,7 +106,7 @@ export const SettingsListConst: SettingsItemType[] = [
   {
     label: '',
     value: '',
-    desc: 'Lock Immediately',
+    desc: t('lock_immediately'),
     action: SettingsAction.LOCK_WALLET,
     route: '',
     right: false

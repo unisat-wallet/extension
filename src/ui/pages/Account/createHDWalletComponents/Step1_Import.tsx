@@ -1,53 +1,54 @@
+import { Radio } from 'antd';
+import * as bip39 from 'bip39';
+import { useEffect, useMemo, useState } from 'react';
+
+import { OW_HD_PATH } from '@/shared/constant';
+import { t } from '@/shared/modules/i18n';
+import { AddressType, RestoreWalletType } from '@/shared/types';
+import { Button, Card, Column, Grid, Input, Row, Text } from '@/ui/components';
+import { useTools } from '@/ui/components/ActionComponent';
+import { FooterButtonContainer } from '@/ui/components/FooterButtonContainer';
+import { useI18n } from '@/ui/hooks/useI18n';
 import {
   ContextData,
   TabType,
   UpdateContextDataParams,
   WordsType
 } from '@/ui/pages/Account/createHDWalletComponents/types';
-import { useEffect, useMemo, useState } from 'react';
-import { AddressType, RestoreWalletType } from '@/shared/types';
-import * as bip39 from 'bip39';
-import { useCreateAccountCallback } from '@/ui/state/global/hooks';
 import { useNavigate } from '@/ui/pages/MainRoute';
-import { useTools } from '@/ui/components/ActionComponent';
-import { OW_HD_PATH } from '@/shared/constant';
-import { Button, Card, Column, Grid, Input, Row, Text } from '@/ui/components';
-import { Radio } from 'antd';
-import { FooterButtonContainer } from '@/ui/components/FooterButtonContainer';
+import { useCreateAccountCallback } from '@/ui/state/global/hooks';
 
-
-
-const WORDS_12_ITEM = {
+const getWords12Item = () => ({
   key: WordsType.WORDS_12,
-  label: '12 words',
+  label: t('12_words'),
   count: 12
-};
+});
 
-const WORDS_24_ITEM = {
+const getWords24Item = () => ({
   key: WordsType.WORDS_24,
-  label: '24 words',
+  label: t('24_words'),
   count: 24
-};
-
+});
 
 export function Step1_Import({
-                        contextData,
-                        updateContextData
-                      }: {
+  contextData,
+  updateContextData
+}: {
   contextData: ContextData;
   updateContextData: (params: UpdateContextDataParams) => void;
 }) {
   const [curInputIndex, setCurInputIndex] = useState(0);
   const [hover, setHover] = useState(999);
   const [disabled, setDisabled] = useState(true);
+  const { t } = useI18n();
 
   const wordsItems = useMemo(() => {
     if (contextData.restoreWalletType === RestoreWalletType.OW) {
-      return [WORDS_12_ITEM];
+      return [getWords12Item()];
     } else if (contextData.restoreWalletType === RestoreWalletType.XVERSE) {
-      return [WORDS_12_ITEM];
+      return [getWords12Item()];
     } else {
-      return [WORDS_12_ITEM, WORDS_24_ITEM];
+      return [getWords12Item(), getWords24Item()];
     }
   }, [contextData]);
 
@@ -123,8 +124,8 @@ export function Step1_Import({
 
   return (
     <Column gap="lg">
-      <Text text="Secret Recovery Phrase" preset="title-bold" textCenter />
-      <Text text="Import an existing wallet with your secret recovery phrase" preset="sub" textCenter />
+      <Text text={t('secret_recovery_phrase')} preset="title-bold" textCenter />
+      <Text text={t('import_an_existing_wallet_with_your_secret_recover')} preset="sub" textCenter />
 
       {wordsItems.length > 1 ? (
         <Row justifyCenter>
@@ -173,7 +174,7 @@ export function Step1_Import({
                     onBlur={(e) => {
                       setCurInputIndex(999);
                     }}
-                    onKeyUp={(e) => handleOnKeyUp(e)}
+                    onKeyUp={(e) => handleOnKeyUp(e as React.KeyboardEvent<HTMLInputElement>)}
                     autoFocus={index == curInputIndex}
                     preset={'password'}
                     placeholder=""
@@ -188,7 +189,7 @@ export function Step1_Import({
       <FooterButtonContainer>
         <Button
           disabled={disabled}
-          text="Continue"
+          text={t('continue')}
           preset="primary"
           onClick={() => {
             onNext();

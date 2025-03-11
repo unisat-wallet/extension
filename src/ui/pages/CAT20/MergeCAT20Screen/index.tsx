@@ -11,6 +11,7 @@ import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { MergeBTCPopover } from '@/ui/components/MergeBTCPopover';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useBTCUnit } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
@@ -26,6 +27,7 @@ export default function MergeCAT20Screen() {
     cat20Balance: CAT20Balance;
     cat20Info: CAT20TokenInfo;
   };
+  const { t } = useI18n();
 
   const cat20Balance = props.cat20Balance;
 
@@ -182,7 +184,7 @@ export default function MergeCAT20Screen() {
         }
 
         mergeItems[i].status = ItemStatus.dealing;
-        mergeItems[i].error = 'Retry in 10s';
+        mergeItems[i].error = t('retry_in_10s');
         failedCount += 1;
 
         setMergeItems(mergeItems.map((v) => v));
@@ -249,7 +251,7 @@ export default function MergeCAT20Screen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Merge UTXOs for CAT20 Asset"
+        title={t('merge_utxos_for_cat20_asset')}
       />
       <Content>
         <Column>
@@ -262,7 +264,7 @@ export default function MergeCAT20Screen() {
             }}>
             <Column mx="md" my="md">
               <Text
-                text={'This feature is currently in the experimental test phase. Please proceed with caution.'}
+                text={t('this_feature_is_currently_in_the_experimental_test_phase_please_proceed_with_caution')}
                 size="xs"
                 color="warning_content"
               />
@@ -294,7 +296,7 @@ export default function MergeCAT20Screen() {
           </Row>
 
           <Row itemsCenter>
-            <Text text={`set UTXO amount to be merged`} preset="regular" color="textDim" />
+            <Text text={t('set_utxo_amount_to_be_merged')} preset="regular" color="textDim" />
           </Row>
         </Column>
 
@@ -366,14 +368,14 @@ export default function MergeCAT20Screen() {
               <Divider style={{ borderColor: '#FFFFFF26', borderWidth: 1 }} dashed></Divider>
 
               <Row justifyBetween>
-                <Text text={`Selected ${cat20Balance.symbol}`} color="textDim" size="sm" />
+                <Text text={`${t('selected')} ${cat20Balance.symbol}`} color="textDim" size="sm" />
                 <Row>
                   <Text text={`${estimatedData.amount} `} color="white" />
                   <Text text={`${cat20Balance.symbol} from ${inputUtxoCount} UTXOs`} color="textDim" />
                 </Row>
               </Row>
               <Row justifyBetween>
-                <Text text={'Merge Transactions'} preset="sub" />
+                <Text text={t('merge_transactions')} preset="sub" />
                 <Text text={estimatedData.batchCount} />
               </Row>
             </Column>
@@ -381,7 +383,7 @@ export default function MergeCAT20Screen() {
         </Column>
 
         <Column>
-          <Text text="Fee" color="textDim" />
+          <Text text={t('fee')} color="textDim" />
 
           <FeeRateBar
             onChange={(val) => {
@@ -396,7 +398,7 @@ export default function MergeCAT20Screen() {
           <Card>
             <Column fullX>
               <Row justifyBetween>
-                <Text text="Estimated Fee" color="textDim" />
+                <Text text={t('estimated_fee')} color="textDim" />
                 <Row itemsCenter>
                   <Text text={estimatedData.fee ? `${satoshisToAmount(estimatedData.fee)}` : '--'} />
                   <Text text={btcUnit} preset="sub" />
@@ -412,7 +414,7 @@ export default function MergeCAT20Screen() {
         <Button
           disabled={disabled}
           preset="primary"
-          text="Start Merging"
+          text={t('start_merging')}
           onClick={(e) => {
             onPrepare();
           }}></Button>

@@ -1,11 +1,10 @@
 import { useEffect, useState } from 'react';
-import { useTranslation } from 'react-i18next';
 
 import { ADDRESS_TYPES } from '@/shared/constant';
 import { WalletKeyring } from '@/shared/types';
-import { Button, Input, Layout, Content, Icon, Header, Text, Column, Row, Card, Grid } from '@/ui/components';
+import { Button, Card, Column, Content, Grid, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
-import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
 
 type Status = '' | 'error' | 'warning' | undefined;
@@ -13,7 +12,7 @@ type Status = '' | 'error' | 'warning' | undefined;
 export default function ExportMnemonicsScreen() {
   const { keyring } = useLocationState<{ keyring: WalletKeyring }>();
 
-  const { t } = useTranslation();
+  const { t } = useI18n();
 
   const [password, setPassword] = useState('');
   const [disabled, setDisabled] = useState(true);
@@ -54,7 +53,7 @@ export default function ExportMnemonicsScreen() {
 
   function copy(str: string) {
     copyToClipboard(str);
-    tools.toastSuccess('Copied');
+    tools.toastSuccess(t('copied'));
   }
   const words = mnemonic.split(' ');
 
@@ -65,7 +64,7 @@ export default function ExportMnemonicsScreen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Secret Recovery Phrase"
+        title={t('secret_recovery_phrase')}
       />
 
       <Content>
@@ -73,28 +72,16 @@ export default function ExportMnemonicsScreen() {
           <Column>
             <Card>
               <Column gap="lg">
-                <Text
-                  text="If you lose your Secret Recovery Phrase, your assets will be gone!"
-                  preset="title-bold"
-                  color="red"
-                />
+                <Text text={t('if_you_lose_your_secret_recovery_phrase_your_asset')} preset="title-bold" color="red" />
 
-                <Text
-                  text="If you share the Secret Recovery Phrase to others, your assets will be stolen!"
-                  preset="title-bold"
-                  color="red"
-                />
+                <Text text={t('if_you_share_the_secret_recovery_phrase_to_others_')} preset="title-bold" color="red" />
 
-                <Text
-                  text="Secret Recovery Phrase is only stored in your browser, it is your responsibilities to keep the Private Key safe!"
-                  preset="title-bold"
-                  color="red"
-                />
+                <Text text={t('secret_recovery_phrase_is_only_stored_in_your_brow')} preset="title-bold" color="red" />
               </Column>
             </Card>
 
             <Text
-              text=" Please make sure you have read the security tips above before typing your password"
+              text={t('please_make_sure_you_have_read_the_security_tips_a')}
               preset="title"
               color="warning"
               textCenter
@@ -110,12 +97,12 @@ export default function ExportMnemonicsScreen() {
             />
             {error && <Text text={error} preset="regular" color="error" />}
 
-            <Button disabled={disabled} text="Show Secret Recovery Phrase" preset="primary" onClick={btnClick} />
+            <Button disabled={disabled} text={t('show_secret_recovery_phrase')} preset="primary" onClick={btnClick} />
           </Column>
         ) : (
           <Column>
             <Text
-              text="This phrase is the ONLY way to recover your wallet. Do NOT share it with anyone! (click to copy)"
+              text={t('this_phrase_is_the_only_way_to_recover_your_wallet')}
               color="warning"
               textCenter
               mt="xl"
@@ -128,7 +115,7 @@ export default function ExportMnemonicsScreen() {
                 copy(mnemonic);
               }}>
               <Icon icon="copy" color="textDim" />
-              <Text text="Copy to clipboard" color="textDim" />
+              <Text text={t('copy_to_clipboard')} color="textDim" />
             </Row>
 
             <Row justifyCenter>
@@ -147,16 +134,16 @@ export default function ExportMnemonicsScreen() {
             </Row>
             <Card>
               <Column>
-                <Text text="Advance Options" />
+                <Text text={t('advance_options')} />
                 <Text
-                  text={`Derivation Path: ${keyring.hdPath}/0 (${pathName})`}
+                  text={`${t('derivation_path')}: ${keyring.hdPath}/0 (${pathName})`}
                   preset="sub"
                   onClick={() => {
                     copy(keyring.hdPath);
                   }}
                   disableTranslate
                 />
-                {passphrase && <Text text={`Passphrase: ${passphrase}`} preset="sub" disableTranslate />}
+                {passphrase && <Text text={`${t('passphrase')}: ${passphrase}`} preset="sub" disableTranslate />}
               </Column>
             </Card>
           </Column>

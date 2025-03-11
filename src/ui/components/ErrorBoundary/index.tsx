@@ -6,8 +6,15 @@ import { Content } from '../Content';
 import { Icon } from '../Icon';
 import { Layout } from '../Layout';
 import { Text } from '../Text';
+import { withI18n } from '../withI18n';
 
-export class ErrorBoundary extends React.Component {
+interface ErrorBoundaryProps {
+  i18n?: {
+    t: (key: string) => string;
+  };
+}
+
+class ErrorBoundaryComponent extends React.Component<ErrorBoundaryProps> {
   state: {
     hasError: boolean;
   } = {
@@ -44,6 +51,8 @@ export class ErrorBoundary extends React.Component {
   };
 
   render() {
+    const { t } = this.props.i18n || { t: (key: string) => key };
+
     if (this.state.hasError) {
       return (
         <Layout style={{ backgroundColor: '#000000' }}>
@@ -54,14 +63,14 @@ export class ErrorBoundary extends React.Component {
               </div>
 
               <Column gap="sm" itemsCenter style={{ marginTop: '10px', marginBottom: '20px' }}>
-                <Text preset="title" text="Oops! Something went wrong." textCenter />
-                <Text preset="regular" text="Try going back or refreshing." color="textDim" textCenter />
+                <Text preset="title" text={t('oops_something_went_wrong')} textCenter />
+                <Text preset="regular" text={t('try_going_back_or_refreshing')} color="textDim" textCenter />
               </Column>
 
               <Column gap="md" fullX style={{ maxWidth: '400px' }}>
                 <Button
                   preset="primary"
-                  text="Go Back"
+                  text={t('go_back')}
                   style={{
                     fill: 'var(--1, linear-gradient(104deg, #EBB94C 0%, #E97E00 100%))',
                     width: '280px',
@@ -75,7 +84,7 @@ export class ErrorBoundary extends React.Component {
                 />
                 <Button
                   preset="default"
-                  text="Refresh Page"
+                  text={t('refresh_page')}
                   style={{
                     borderRadius: '12px',
                     height: '48px',
@@ -95,3 +104,5 @@ export class ErrorBoundary extends React.Component {
     return (this.props as any).children;
   }
 }
+
+export const ErrorBoundary = withI18n(ErrorBoundaryComponent);

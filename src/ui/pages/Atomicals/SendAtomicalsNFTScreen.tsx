@@ -7,6 +7,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import AtomicalsNFTPreview from '@/ui/components/AtomicalsNFTPreview';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { RBFBar } from '@/ui/components/RBFBar';
+import { useI18n } from '@/ui/hooks/useI18n';
 import {
   useFetchUtxosCallback,
   useOrdinalsTx,
@@ -19,7 +20,7 @@ import { useNavigate } from '../MainRoute';
 export default function SendAtomicalsInscriptionScreen() {
   const [disabled, setDisabled] = useState(true);
   const navigate = useNavigate();
-
+  const { t } = useI18n();
   const { state } = useLocation();
   const { atomical } = state as {
     atomical: Atomical;
@@ -55,12 +56,12 @@ export default function SendAtomicalsInscriptionScreen() {
     setError('');
 
     if (feeRate <= 0) {
-      setError('Invalid fee rate');
+      setError(t('invalid_fee_rate'));
       return;
     }
 
     if (outputValue < minOutputValue) {
-      setError(`OutputValue must be at least ${minOutputValue}`);
+      setError(`${t('output_value_must_be_at_least')} ${minOutputValue}`);
       return;
     }
 
@@ -104,12 +105,12 @@ export default function SendAtomicalsInscriptionScreen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Send Atomicals Inscription"
+        title={t('send_atomicals_inscription')}
       />
       <Content>
         <Column>
           <Row justifyBetween>
-            <Text text="Inscription" color="textDim" />
+            <Text text={t('inscription')} color="textDim" />
             {atomical && <AtomicalsNFTPreview data={atomical} preset="small" />}
           </Row>
 
@@ -123,7 +124,7 @@ export default function SendAtomicalsInscriptionScreen() {
           />
 
           <Column mt="lg">
-            <Text text="Fee" color="textDim" />
+            <Text text={t('fee')} color="textDim" />
 
             <FeeRateBar
               onChange={(val) => {
@@ -144,7 +145,7 @@ export default function SendAtomicalsInscriptionScreen() {
           <Button
             disabled={disabled}
             preset="primary"
-            text="Next"
+            text={t('next')}
             onClick={(e) => {
               // todo
               // navigate('SignOrdinalsTransactionScreen', { rawTxInfo });

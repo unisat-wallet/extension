@@ -1,6 +1,7 @@
 import QRCode from 'qrcode.react';
 
 import { AddressBar, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useChain } from '@/ui/state/settings/hooks';
 import { sizes } from '@/ui/theme/spacing';
@@ -11,6 +12,7 @@ export default function ReceiveScreen() {
   const currentAccount = useCurrentAccount();
   const address = useAccountAddress();
   const chain = useChain();
+  const { t } = useI18n();
 
   return (
     <Layout>
@@ -18,7 +20,7 @@ export default function ReceiveScreen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Address"
+        title={t('address_label')}
       />
       <Content>
         <Column gap="xl" mt="lg">

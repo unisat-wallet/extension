@@ -4,6 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { DEFAULT_BBN_GAS_LIMIT } from '@/background/service/keyring/CosmosKeyring';
 import { bbnDevnet } from '@/shared/constant/cosmosChain';
 import { runesUtils } from '@/shared/lib/runes-utils';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useBabylonConfig } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
@@ -39,6 +40,7 @@ export function FeeOptionsPopover({
   const [gasAdjustmentTimeout, setGasAdjustmentTimeout] = useState<NodeJS.Timeout | null>(null);
 
   const babylonConfig = useBabylonConfig();
+  const { t } = useI18n();
   const wallet = useWallet();
 
   useEffect(() => {
@@ -250,7 +252,7 @@ export function FeeOptionsPopover({
               size="sm"
             />
             <Text
-              text={isLoading ? 'Loading...' : option.adjustedGasPrice || ''}
+              text={isLoading ? t('loading') : option.adjustedGasPrice || ''}
               size="xs"
               color="white"
               textCenter
@@ -266,9 +268,9 @@ export function FeeOptionsPopover({
     !isAutoGasLimit && (
       <div style={{ marginBottom: 20 }}>
         <Row fullX mb="md" justifyBetween>
-          <Text text="Gas Limit" color="textDim" size="sm" />
+          <Text text={t('gas_limit')} color="textDim" size="sm" />
           <Row itemsCenter>
-            <Text text="Auto" color="textDim" size="sm" style={{ marginRight: 8 }} />
+            <Text text={t('auto')} color="textDim" size="sm" style={{ marginRight: 8 }} />
             <Switch size="small" checked={isAutoGasLimit} onChange={handleAutoGasLimitChange} disabled={isLoading} />
           </Row>
         </Row>
@@ -292,20 +294,20 @@ export function FeeOptionsPopover({
             precision={0}
             value={gasLimit}
             onChange={handleGasLimitChange}
-            placeholder={`Recommended: ${recommendedGasLimit}`}
+            placeholder={`${t('recommended')}: ${recommendedGasLimit}`}
             disabled={isLoading}
           />
         </div>
         <Row justifyBetween fullX>
-          <Text text={`Recommended: ${recommendedGasLimit}`} color="textDim" size="xs" />
-          <Text text="Range: 1,000 - 300,000" color="textDim" size="xs" />
+          <Text text={`${t('recommended')}: ${recommendedGasLimit}`} color="textDim" size="xs" />
+          <Text text={`${t('range')}: 1,000 - 300,000`} color="textDim" size="xs" />
         </Row>
         <Column mt="sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', padding: '8px 12px', borderRadius: 8 }}>
-          <Text text="Gas Limit Explanation:" color="textDim" size="xs" style={{ marginBottom: 4 }} />
-          <Text text="• Controls maximum computational resources for transaction" color="textDim" size="xs" />
-          <Text text="• Higher limit = higher potential fees but ensures completion" color="textDim" size="xs" />
-          <Text text="• Too low may cause transaction failure" color="textDim" size="xs" />
-          <Text text="• Recommended value is usually sufficient" color="textDim" size="xs" />
+          <Text text={t('gas_limit_explanation')} color="textDim" size="xs" style={{ marginBottom: 4 }} />
+          <Text text={t('gas_limit_explanation_1')} color="textDim" size="xs" />
+          <Text text={t('gas_limit_explanation_2')} color="textDim" size="xs" />
+          <Text text={t('gas_limit_explanation_3')} color="textDim" size="xs" />
+          <Text text={t('gas_limit_explanation_4')} color="textDim" size="xs" />
         </Column>
       </div>
     );
@@ -314,9 +316,9 @@ export function FeeOptionsPopover({
     isAutoGasLimit && (
       <div style={{ marginBottom: 20 }}>
         <Row fullX mb="md" justifyBetween>
-          <Text text="Gas Adjustment" color="textDim" size="sm" />
+          <Text text={t('gas_adjustment')} color="textDim" size="sm" />
           <Row itemsCenter>
-            <Text text="Auto" color="textDim" size="sm" style={{ marginRight: 8 }} />
+            <Text text={t('auto')} color="textDim" size="sm" style={{ marginRight: 8 }} />
             <Switch size="small" checked={isAutoGasLimit} onChange={handleAutoGasLimitChange} disabled={isLoading} />
           </Row>
         </Row>
@@ -340,14 +342,14 @@ export function FeeOptionsPopover({
           />
         </div>
         <Row justifyBetween fullX>
-          <Text text="Default: 1.3" color="textDim" size="xs" />
-          <Text text="Range: 0.1 - 3.0" color="textDim" size="xs" />
+          <Text text={`${t('default')}: 1.3`} color="textDim" size="xs" />
+          <Text text={`${t('range')}: 0.1 - 3.0`} color="textDim" size="xs" />
         </Row>
         <Column mt="sm" style={{ backgroundColor: 'rgba(255, 255, 255, 0.05)', padding: '8px 12px', borderRadius: 8 }}>
-          <Text text="Gas Adjustment Explanation:" color="textDim" size="xs" style={{ marginBottom: 4 }} />
-          <Text text="• Multiplier applied to estimated gas (1.0 = 100%)" color="textDim" size="xs" />
-          <Text text="• Default 1.3 (130%) provides safety margin" color="textDim" size="xs" />
-          <Text text="• Higher values increase transaction success chance" color="textDim" size="xs" />
+          <Text text={t('gas_adjustment_explanation')} color="textDim" size="xs" style={{ marginBottom: 4 }} />
+          <Text text={t('gas_adjustment_explanation_1')} color="textDim" size="xs" />
+          <Text text={t('gas_adjustment_explanation_2')} color="textDim" size="xs" />
+          <Text text={t('gas_adjustment_explanation_3')} color="textDim" size="xs" />
         </Column>
       </div>
     );
@@ -373,9 +375,9 @@ export function FeeOptionsPopover({
       <Column style={{ padding: '0 4px' }}>
         <div className="fees-section" style={{ marginBottom: 20 }}>
           <Row justifyBetween fullX mb="md">
-            <Text text="Fee" color="textDim" size="sm" />
+            <Text text={t('fee')} color="textDim" size="sm" />
             <Row itemsCenter>
-              <Text text="Remember my choice" color="textDim" size="sm" style={{ marginRight: 8 }} />
+              <Text text={t('remember_my_choice')} color="textDim" size="sm" style={{ marginRight: 8 }} />
               <Switch
                 size="small"
                 checked={settings.rememberChoice}
@@ -393,7 +395,7 @@ export function FeeOptionsPopover({
 
         <Button
           preset="primary"
-          text={isLoading ? 'Loading...' : 'Close'}
+          text={isLoading ? t('loading') : t('close')}
           onClick={isLoading ? undefined : handleClose}
           disabled={isLoading}
           style={{

@@ -1,4 +1,5 @@
 import { DecodedPsbt } from '@/shared/types';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 
 import { Column } from '../Column';
@@ -9,6 +10,7 @@ import { Text } from '../Text';
 
 export const Arc20BurningList = ({ decodedPsbt, onClose }: { decodedPsbt: DecodedPsbt; onClose: () => void }) => {
   const inputTokenMap = {};
+  const { t } = useI18n();
 
   decodedPsbt.inputInfos.forEach((inputInfo) => {
     inputInfo.atomicals.forEach((ins) => {
@@ -47,7 +49,7 @@ export const Arc20BurningList = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
       <Column justifyCenter itemsCenter>
         <Row fullX justifyBetween>
           <Row />
-          <Text text="ARC20 Burn Risk List" preset="bold" />
+          <Text text={t('arc20_burn_risk_list')} preset="bold" />
           <Icon
             icon="close"
             onClick={() => {

@@ -1,18 +1,18 @@
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { RuneBalance, TickPriceItem } from '@/shared/types';
+import { TickUsd } from '@/ui/components/TickUsd';
 
 import { Column } from '../Column';
 import { Row } from '../Row';
 import { Text } from '../Text';
-import { TickUsd, TickUsdWithoutPrice } from '@/ui/components/TickUsd';
 
 export interface RunesPreviewCardProps {
   balance: RuneBalance;
   onClick?: () => void;
-  price: TickPriceItem | undefined,
+  price: TickPriceItem | undefined;
 }
 
-export default function RunesPreviewCard({ balance, onClick,price }: RunesPreviewCardProps) {
+export default function RunesPreviewCard({ balance, onClick, price }: RunesPreviewCardProps) {
   const balanceStr = `${runesUtils.toDecimalAmount(balance.amount, balance.divisibility)} ${balance.symbol}`;
 
   let size = 'sm';
@@ -55,7 +55,7 @@ export default function RunesPreviewCard({ balance, onClick,price }: RunesPrevie
       <Column fullY justifyCenter itemsCenter gap={'xs'}>
         <Text text={balanceStr} size={size as any} textCenter wrap />
         <TickUsd
-          style={{marginBottom:-16}}
+          style={{ marginBottom: -16 }}
           price={price}
           balance={runesUtils.toDecimalAmount(balance.amount, balance.divisibility)}
         />

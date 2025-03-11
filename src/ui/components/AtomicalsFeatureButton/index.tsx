@@ -4,9 +4,11 @@ import { AddressFlagType } from '@/shared/constant';
 import { checkAddressFlag } from '@/shared/utils';
 import { Button, Icon, Text } from '@/ui/components';
 import { EnableAtomicalsPopover } from '@/ui/components/EnableAtomicalsPopover';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useChangeAddressFlagCallback, useCurrentAccount, useReloadAccounts } from '@/ui/state/accounts/hooks';
 
 export default function AtomicalsFeatureButton() {
+  const { t } = useI18n();
   const currentAccount = useCurrentAccount();
   const isEnableAtomicals = checkAddressFlag(currentAccount.flag, AddressFlagType.Is_Enable_Atomicals);
 
@@ -31,7 +33,7 @@ export default function AtomicalsFeatureButton() {
             setIsShowAlert(false);
           }}>
           <Icon icon={'atomicals'} />
-          <Text text={'Disable Atomicals'} mx={'md'} />
+          <Text text={t('disable_atomicals')} mx={'md'} />
         </Button>
       </>
     );
@@ -44,7 +46,7 @@ export default function AtomicalsFeatureButton() {
             setIsShowAlert(true);
           }}>
           <Icon icon={'atomicals'} />
-          <Text text={'Enable Atomicals'} mx={'md'} />
+          <Text text={t('enable_atomicals')} mx={'md'} />
         </Button>
         {isShowAlert && (
           <EnableAtomicalsPopover

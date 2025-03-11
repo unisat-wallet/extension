@@ -1,11 +1,13 @@
 import { AppInfo } from '@/shared/types';
 import { Card, Column, Content, Footer, Header, Image, Layout, Row, Text } from '@/ui/components';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useAppSummary, useReadApp } from '@/ui/state/accounts/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { shortDesc } from '@/ui/utils';
 
 function AppItem({ info }: { info: AppInfo }) {
   const readApp = useReadApp();
+  const { t } = useI18n();
   return (
     <Card
       preset="style1"
@@ -24,7 +26,7 @@ function AppItem({ info }: { info: AppInfo }) {
             <Card preset="style2" style={{ backgroundColor: info.tagColor }}>
               <Text text={info.tag} size="xxs" />
             </Card>
-            {info.new && <Text text="new!" color="red" />}
+            {info.new && <Text text={t('new')} color="red" />}
           </Row>
 
           <Text text={shortDesc(info.desc)} preset="sub" />

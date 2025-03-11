@@ -1,0 +1,2069 @@
+{
+  "appName": { "message": "UniSat 錢包" },
+  "appDescription": {
+    "message": "在世界第一個開源 Ordinals Chrome 錢包中銘刻並儲存您的銘文！"
+  },
+  "receive": {
+    "message": "接收"
+  },
+  "total_balance": {
+    "message": "總餘額"
+  },
+  "enter_your_password": {
+    "message": "輸入您的密碼"
+  },
+  "enter": {
+    "message": "輸入"
+  },
+  "to_continue": {
+    "message": "以繼續"
+  },
+  "ordinals": {
+    "message": "Ordinals"
+  },
+  "atomicals": {
+    "message": "Atomicals"
+  },
+  "runes": {
+    "message": "符文"
+  },
+  "cat": {
+    "message": "CAT"
+  },
+
+  "payment_sent": {
+    "message": "付款已發送"
+  },
+  "your_transaction_has_been_successfully_sent": {
+    "message": "您的交易已成功發送"
+  },
+  "view_on_block_explorer": {
+    "message": "在區塊瀏覽器上查看"
+  },
+  "view": {
+    "message": "查看"
+  },
+  "signed": {
+    "message": "已簽署"
+  },
+  "reject_all": {
+    "message": "全部拒絕"
+  },
+  "submit": {
+    "message": "送出"
+  },
+  "done": {
+    "message": "完成"
+  },
+  "payment_failed": {
+    "message": "付款失敗"
+  },
+  "recipient": {
+    "message": "接收地址"
+  },
+  "transfer_amount": {
+    "message": "轉帳金額"
+  },
+  "amount": {
+    "message": "數量"
+  },
+  "calculating": {
+    "message": "計算中..."
+  },
+  "available": {
+    "message": "可用"
+  },
+  "unavailable": {
+    "message": "不可用"
+  },
+  "unlock": {
+    "message": "解鎖"
+  },
+  "fee": {
+    "message": "費用"
+  },
+  "next": {
+    "message": "下一步"
+  },
+  "this_account_has_no_transactions": {
+    "message": "此帳戶沒有交易紀錄"
+  },
+  "transaction_details": {
+    "message": "交易詳情"
+  },
+  "cosmos_sign_demo": {
+    "message": "Cosmos 簽署演示"
+  },
+  "test_approval_sign_psbt": {
+    "message": "測試核准簽署 PSBT"
+  },
+  "hello": {
+    "message": "哈囉"
+  },
+  "world": {
+    "message": "世界"
+  },
+  "native_segwit_p2wpkh": {
+    "message": "原生隔離見證 (P2WPKH)"
+  },
+  "nested_segwit_p2shp2wpkh": {
+    "message": "嵌套隔離見證 (P2SH-P2WPKH)"
+  },
+  "taproot_p2tr": {
+    "message": "Taproot (P2TR)"
+  },
+  "legacy_p2pkh": {
+    "message": "傳統 (P2PKH)"
+  },
+  "function_not_implemented": {
+    "message": "功能尚未實作。"
+  },
+  "this_is_a_cosmos_signature_demo_page": {
+    "message": "這是 Cosmos 簽章演示頁面"
+  },
+  "click_the_button_below_to_start_the_signature_proc": {
+    "message": "點擊下方按鈕開始簽章流程"
+  },
+  "start_cosmos_sign": {
+    "message": "開始 COSMOS 簽署"
+  },
+  "sign_result": {
+    "message": "簽署結果："
+  },
+  "back": {
+    "message": "返回"
+  },
+  "cosmos_signature_demo": {
+    "message": "Cosmos 簽章演示"
+  },
+  "cosmos_sign_success": {
+    "message": "Cosmos 簽署成功"
+  },
+  "ok": {
+    "message": "確定"
+  },
+  "select_network": {
+    "message": "選擇網路"
+  },
+  "this_network_is_not_available": {
+    "message": "此網路不可用"
+  },
+  "if_you_lose_your_private_key_your_assets_will_be_g": {
+    "message": "如果您遺失私鑰，您的資產將會永遠消失！"
+  },
+  "if_you_share_the_private_key_to_others_your_assets": {
+    "message": "如果您將私鑰分享給他人，您的資產將會被盜！"
+  },
+  "private_key_is_only_stored_in_your_browser_it_is_y": {
+    "message": "請妥善保管您的私鑰!"
+  },
+  "please_make_sure_you_have_read_the_security_tips_a": {
+    "message": "輸入密碼前，請確保您已閱讀以上安全提示"
+  },
+  "show_private_key": {
+    "message": "顯示私鑰"
+  },
+  "if_you_ever_change_browsers_or_move_computers_you_": {
+    "message": "如果您更換瀏覽器或電腦，您將需要此私鑰才能存取此帳戶。請將其保存在安全且秘密的地方"
+  },
+  "changed_to_network": {
+    "message": "已切換至"
+  },
+  "wif_private_key": {
+    "message": "WIF 私鑰："
+  },
+  "wif_private_key_or_hex_private_key": {
+    "message": "WIF 私鑰或十六進位私鑰 (Hex)"
+  },
+  "create_single_wallet": {
+    "message": "創建單一私鑰錢包"
+  },
+  "hex_private_key": {
+    "message": "十六進位私鑰 (Hex)："
+  },
+  "copied": {
+    "message": "已複製"
+  },
+  "if_you_lose_your_secret_recovery_phrase_your_asset": {
+    "message": "如果您遺失助記詞，您的資產將會永遠消失！"
+  },
+  "if_you_share_the_secret_recovery_phrase_to_others_": {
+    "message": "如果您將助記詞分享給他人，您的資產將會被盜！"
+  },
+  "secret_recovery_phrase_is_only_stored_in_your_brow": {
+    "message": "請妥善保管您的助記詞！"
+  },
+  "show_secret_recovery_phrase": {
+    "message": "顯示助記詞"
+  },
+  "create_a_new_wallet": {
+    "message": "創建新錢包"
+  },
+  "this_phrase_is_the_only_way_to_recover_your_wallet": {
+    "message": "這是恢復您錢包的唯一方式。請勿與任何人分享！(點擊複製)"
+  },
+  "copy_to_clipboard": {
+    "message": "複製到剪貼簿"
+  },
+  "advance_options": {
+    "message": "進階選項"
+  },
+  "switch_wallet": {
+    "message": "切換錢包"
+  },
+  "derivation_path": {
+    "message": "派生路徑"
+  },
+  "passphrase": {
+    "message": "密碼短語 (Passphrase)"
+  },
+  "change_wallet_name": {
+    "message": "更改錢包名稱"
+  },
+  "change_account_name": {
+    "message": "更改帳戶名稱"
+  },
+  "password": {
+    "message": "密碼"
+  },
+  "change_password": {
+    "message": "更改密碼"
+  },
+  "current_password": {
+    "message": "目前密碼"
+  },
+  "new_password": {
+    "message": "新密碼"
+  },
+  "confirm_password": {
+    "message": "確認密碼"
+  },
+  "connected_sites": {
+    "message": "已連接的網站"
+  },
+  "user_rejected_the_request": {
+    "message": "使用者已拒絕請求。"
+  },
+  "success": {
+    "message": "成功"
+  },
+  "new_account": {
+    "message": "新帳戶"
+  },
+  "address_type_changed": {
+    "message": "地址類型已更改"
+  },
+  "enable_unconfirmed_balance": {
+    "message": "啟用未確認餘額"
+  },
+  "enable_unconfirmed_balance_warning": {
+    "message": "如果檢測到給定地址中存在 Runes 資產，未確認的 UTXOs 將不允許花費，直到它被確認。強制花費這些未確認的 UTXOs 會有損失資產的風險。"
+  },
+  "allow_using_unconfirmed_balance": {
+    "message": "允許使用未確認餘額"
+  },
+  "is_unconfirmed_please_wait_for_confirmation": {
+    "message": "尚未確認，請等待確認"
+  },
+  "unconfirmed": {
+    "message": "未確認"
+  },
+  "low": {
+    "message": "低"
+  },
+  "medium": {
+    "message": "中"
+  },
+  "high": {
+    "message": "高"
+  },
+  "invalid_recipient_address": {
+    "message": "無效的收款地址"
+  },
+  "gas_fee_calculation_may_not_include_newly_received_tokens_try_a_smaller_amount": {
+    "message": "Gas 費用計算可能未包含新收到的代幣。請嘗試較小的金額。"
+  },
+  "amount_exceeds_your_available_balance": {
+    "message": "金額超過您的可用餘額"
+  },
+  "memo_is_too_long_the_maximum_length_is_256_characters": {
+    "message": "備註過長。最大長度為 256 個字元。"
+  },
+  "loading": {
+    "message": "載入中..."
+  },
+  "cancel": {
+    "message": "取消"
+  },
+  "continue": {
+    "message": "繼續"
+  },
+  "balance": {
+    "message": "餘額"
+  },
+  "invalid_fee_rate": {
+    "message": "無效的手續費率"
+  },
+  "max": {
+    "message": "最大值"
+  },
+  "outputvalue": {
+    "message": "輸出值 (OutputValue)"
+  },
+  "mint": {
+    "message": "鑄造"
+  },
+  "send_inscription": {
+    "message": "您可以點擊銘文直接發送。"
+  },
+  "no_data": {
+    "message": "無資料"
+  },
+  "send": {
+    "message": "發送"
+  },
+  "trade": {
+    "message": "交易"
+  },
+  "runeid": {
+    "message": "符文 ID"
+  },
+  "mints": {
+    "message": "鑄造次數"
+  },
+  "supply": {
+    "message": "供應量"
+  },
+  "premine": {
+    "message": "預挖礦"
+  },
+  "burned": {
+    "message": "已銷毀"
+  },
+  "divisibility": {
+    "message": "可分割性"
+  },
+  "symbol": {
+    "message": "符號"
+  },
+  "holders": {
+    "message": "持有者"
+  },
+  "transactions": {
+    "message": "交易數"
+  },
+  "etching": {
+    "message": "蝕刻 (Etching)"
+  },
+  "parent": {
+    "message": "父級"
+  },
+  "each_outputvalue": {
+    "message": "每個輸出值 (OutputValue)"
+  },
+  "split": {
+    "message": "分割"
+  },
+  "multiple_inscriptions_are_mixed_together_you_can_split_them_first_or_send_them_once": {
+    "message": "多個銘文混合在一起。您可以先分割它們或一次性發送。"
+  },
+  "this_inscription_carries_a_high_balance": {
+    "message": "此銘文附帶高額餘額！"
+  },
+  "id": {
+    "message": "ID"
+  },
+  "output_value": {
+    "message": "輸出值"
+  },
+  "address_preview": {
+    "message": "地址："
+  },
+  "transaction_preview": {
+    "message": "交易："
+  },
+  "block_preview": {
+    "message": "區塊："
+  },
+  "text_preview": {
+    "message": "文字："
+  },
+  "transactions_24h": {
+    "message": "交易數 (24小時)"
+  },
+  "active_addresses_24h": {
+    "message": "活躍地址數 (24小時)"
+  },
+  "go_to_unisat_explorer": {
+    "message": "前往 UniSat 瀏覽器"
+  },
+  "search_address_and_txids": {
+    "message": "搜尋地址和交易 ID"
+  },
+  "preview": {
+    "message": "預覽"
+  },
+  "content": {
+    "message": "內容"
+  },
+  "content_length": {
+    "message": "內容長度"
+  },
+  "content_type": {
+    "message": "內容類型"
+  },
+  "timestamp": {
+    "message": "時間戳"
+  },
+  "genesis_transaction": {
+    "message": "創世交易"
+  },
+  "create_new_wallet": {
+    "message": "創建新錢包"
+  },
+  "i_already_have_a_wallet": {
+    "message": "我已經有錢包了"
+  },
+  "connect_to_hardware_wallet": {
+    "message": "連接硬體錢包"
+  },
+  "hardware_wallet_feature_is_experimental_use_it_with_caution_as_potential_issues_may_arise": {
+    "message": "硬體錢包功能為實驗性質。請謹慎使用，因為可能出現潛在問題。"
+  },
+  "dapp_center": {
+    "message": "DApp 中心"
+  },
+  "home": {
+    "message": "首頁"
+  },
+  "discover": {
+    "message": "探索"
+  },
+  "settings": {
+    "message": "設定"
+  },
+  "the_wallet_currently_uses_a_custom_hd_path_and_does_not_support_switching_address_types": {
+    "message": "錢包目前使用自訂 HD 路徑，不支援切換地址類型。"
+  },
+  "new": {
+    "message": "新！"
+  },
+  "coming_soon": {
+    "message": "即將推出"
+  },
+  "history": {
+    "message": "歷史紀錄"
+  },
+  "buy": {
+    "message": "購買"
+  },
+  "buy_service_provider": {
+    "message": "請選擇下方的服務提供商進行購買"
+  },
+  "disclaimStr": {
+    "message": "請注意，您即將透過第三方平台購買比特幣。信用卡支付服務由我們的合作夥伴提供。UniSat 錢包僅作為中介平台，對於使用信用卡支付服務可能產生的任何潛在損失或損害不承擔任何責任。"
+  },
+  "additional_transaction_fees": {
+    "message": "透過第三方平台購買時會產生額外的交易手續費。費率因國家和支付方式而異。請在進行交易前查看各平台的費用。"
+  },
+  "before_proceeding": {
+    "message": "繼續前，請仔細閱讀並接受免責聲明。"
+  },
+  "continue_with": {
+    "message": "繼續使用"
+  },
+
+  "no_service_provider_available": {
+    "message": "沒有可用的服務提供商。"
+  },
+  "empty": {
+    "message": "空的"
+  },
+  "all": {
+    "message": "全部"
+  },
+  "arc20": {
+    "message": "ARC-20"
+  },
+  "others": {
+    "message": "其他"
+  },
+  "not_supported_yet": {
+    "message": "尚不支援"
+  },
+  "step_1": {
+    "message": "步驟 1"
+  },
+  "step_2": {
+    "message": "步驟 2"
+  },
+  "step_3": {
+    "message": "步驟 3"
+  },
+  "step_12": {
+    "message": "步驟 1/2"
+  },
+  "step_22": {
+    "message": "步驟 2/2"
+  },
+  "send_cat721": {
+    "message": "發送 CAT721"
+  },
+  "collection_id": {
+    "message": "合集ID"
+  },
+  "collection": {
+    "message": "合集"
+  },
+  "collection_not_found": {
+    "message": "找不到合集"
+  },
+  "max_supply": {
+    "message": "最大供應量"
+  },
+  "token_not_found": {
+    "message": "找不到代幣"
+  },
+  "merge_utxos": {
+    "message": "合併 UTXO"
+  },
+  "token_id": {
+    "message": "代幣 ID"
+  },
+  "name": {
+    "message": "名稱"
+  },
+  "decimals": {
+    "message": "小數位數"
+  },
+  "merge_history": {
+    "message": "合併歷史紀錄"
+  },
+  "the_recipient_must_be_p2tr_or_p2wpkh_address_type": {
+    "message": "收款地址必須是 P2TR 或 P2WPKH 地址類型"
+  },
+  "merge_utxos_is_not_supported_for_keystone_yet": {
+    "message": "Keystone 尚不支援合併 UTXO"
+  },
+  "address": {
+    "message": "地址"
+  },
+  "send_cat20_is_not_supported_for_keystone_yet": {
+    "message": "Keystone 尚不支援發送 CAT20"
+  },
+  "send_cat20": {
+    "message": "發送 CAT20"
+  },
+  "to_send_a_larger_amount_please_merge_your_utxos_to_increase_the_available_balance": {
+    "message": "若要發送更大金額，請合併您的 UTXO 以增加可用餘額。"
+  },
+  "merge_utxos_to_increase_the_available_balance": {
+    "message": "合併 UTXO->"
+  },
+  "selected": {
+    "message": "已選擇"
+  },
+  "merge_transactions": {
+    "message": "合併交易"
+  },
+  "retry_in_10s": {
+    "message": "10 秒後重試"
+  },
+  "merge_utxos_for_cat20_asset": {
+    "message": "合併 CAT20 資產的 UTXO"
+  },
+  "you_need_at_least_2_utxos_to_merge": {
+    "message": "您至少需要 2 個 UTXO 才能合併"
+  },
+  "this_feature_is_currently_in_the_experimental_test_phase_please_proceed_with_caution": {
+    "message": "此功能目前處於實驗測試階段。請謹慎操作。"
+  },
+  "set_utxo_amount_to_be_merged": {
+    "message": "設定要合併的 UTXO 數量"
+  },
+  "estimated_fee": {
+    "message": "預估手續費"
+  },
+  "start_merging": {
+    "message": "開始合併"
+  },
+  "merge_progress": {
+    "message": "合併進度"
+  },
+  "start": {
+    "message": "開始"
+  },
+  "merging": {
+    "message": "合併中..."
+  },
+  "quit_merging_process": {
+    "message": "退出合併流程"
+  },
+  "disclaimer": {
+    "message": "免責聲明"
+  },
+  "risk_warning": {
+    "message": "風險警告：除非您準備好損失所有投資金額，否則請勿投資。"
+  },
+  "i_have_read_and_agree_to_the_above_disclaimer": {
+    "message": "我已閱讀並同意上述免責聲明"
+  },
+  "memo": {
+    "message": "備註："
+  },
+  "bbn": {
+    "message": "bbn..."
+  },
+  "sign_transaction": {
+    "message": "簽署交易"
+  },
+  "spend_inscription": {
+    "message": "花費銘文"
+  },
+  "spend_amount": {
+    "message": "花費金額"
+  },
+  "in_inscriptions": {
+    "message": "在銘文中"
+  },
+
+  "reject": {
+    "message": "拒絕"
+  },
+  "sign_and_pay": {
+    "message": "簽署並支付"
+  },
+  "this_token_only_supports_up_to": {
+    "message": "此代幣最多支援到"
+  },
+  "decimal_places": {
+    "message": "位小數。"
+  },
+  "tx_fee": {
+    "message": "交易手續費："
+  },
+  "t_baby": {
+    "message": "tBABY"
+  },
+  "send_to": {
+    "message": "發送到"
+  },
+  "send_amount": {
+    "message": "發送金額"
+  },
+  "how_to_import_baby": {
+    "message": "如何匯入 BABY"
+  },
+  "click_the_account_on_the_main_page": {
+    "message": "點擊主頁上的帳戶。"
+  },
+  "tap_the_more_menu_then_select_the_export_private_key_option": {
+    "message": "點擊「更多」選單，然後選擇「匯出私鑰」選項。"
+  },
+  "once_you_have_your_hex_private_key_you_can_import_it_into_a_cosmos_compatible_wallet_to_access_your_babylon_reward_assets": {
+    "message": "獲得您的十六進位私鑰 (Hex) 後，您可以將其匯入與 COSMOS 相容的錢包，以存取您的 Babylon 獎勵資產。"
+  },
+  "babylon_bitcoin_staking": {
+    "message": "Babylon 比特幣質押"
+  },
+  "babylon_bitcoin_staking_phase1": {
+    "message": "Babylon 比特幣質押 第一階段"
+  },
+  "babylon_bitcoin_staking_stats": {
+    "message": "Babylon 比特幣質押統計"
+  },
+  "closed": {
+    "message": "已關閉"
+  },
+  "go_to_stake": {
+    "message": "前往質押"
+  },
+  "staked": {
+    "message": "已質押"
+  },
+  "learn_how_to_import_your_babylon_reward_assets_into_a_cosmos_compatible_wallet": {
+    "message": "了解如何將您的 Babylon 獎勵資產匯入與 COSMOS 相容的錢包。"
+  },
+  "unstake": {
+    "message": "解除質押"
+  },
+  "claimable": {
+    "message": "可領取"
+  },
+  "baby_rewards": {
+    "message": "BABY 獎勵"
+  },
+  "claim": {
+    "message": "領取"
+  },
+  "transfer": {
+    "message": "轉帳"
+  },
+  "transferable": {
+    "message": "可轉移："
+  },
+  "inscribe_transfer": {
+    "message": "銘刻 TRANSFER"
+  },
+  "to_send_brc20_you_have_to_inscribe_a_transfer_inscription_first": {
+    "message": "* 若要發送 BRC-20，您必須先銘刻 TRANSFER 銘文"
+  },
+  "transfer_inscriptions": {
+    "message": "TRANSFER 銘文"
+  },
+  "transfer_inscriptions_0": {
+    "message": "TRANSFER 銘文 (0)"
+  },
+  "select_all": {
+    "message": "全選"
+  },
+  "receiver": {
+    "message": "接收者"
+  },
+  "step1": {
+    "message": "步驟1"
+  },
+  "step2": {
+    "message": "步驟2"
+  },
+
+  "fee_rate": {
+    "message": "費率"
+  },
+  "inscription": {
+    "message": "銘文"
+  },
+  "atomicals_id": {
+    "message": "Atomicals ID"
+  },
+  "send_arc20": {
+    "message": "發送 ARC-20"
+  },
+  "the_minimum_amount_is": {
+    "message": "最小金額為"
+  },
+  "atomicals_number": {
+    "message": "Atomicals 編號"
+  },
+  "atomicals_inscription_not_confirmed_yet": {
+    "message": "Atomicals 銘文 (尚未確認)"
+  },
+  "atomicals_inscription": {
+    "message": "Atomicals 銘文"
+  },
+  "inscription_not_confirmed_yet": {
+    "message": "銘文 (尚未確認)"
+  },
+  "allow_this_site_to_switch_the_network": {
+    "message": "允許此網站切換網路嗎？"
+  },
+  "switch_account": {
+    "message": "切換帳戶"
+  },
+  "switch_network": {
+    "message": "切換網路"
+  },
+  "allow_this_site_to_switch_the_chain": {
+    "message": "允許此網站切換鏈嗎？"
+  },
+  "switch_chain": {
+    "message": "切換鏈"
+  },
+  "signature_request": {
+    "message": "簽署請求"
+  },
+  "only_sign_this_message_if_you_fully_understand_the": {
+    "message": "請只在您完全理解內容並信任請求網站的情況下簽署此訊息。"
+  },
+  "you_are_signing": {
+    "message": "您正在簽署："
+  },
+  "sign": {
+    "message": "簽署"
+  },
+  "sign_data_request": {
+    "message": "簽署資料請求"
+  },
+  "you_are_signing_data": {
+    "message": "您正在簽署資料："
+  },
+  "payment_network_fee": {
+    "message": "支付網路手續費"
+  },
+  "inscription_output_value": {
+    "message": "輸出價值"
+  },
+  "inscription_network_fee": {
+    "message": "銘刻網路手續費"
+  },
+  "service_fee": {
+    "message": "服務費"
+  },
+  "total": {
+    "message": "總計"
+  },
+  "baby_balance": {
+    "message": "BABY 餘額"
+  },
+  "failed_to_handle_signature": {
+    "message": "處理簽章失敗"
+  },
+  "inscribing": {
+    "message": "銘刻中..."
+  },
+  "inscribe_success": {
+    "message": "銘刻成功"
+  },
+  "the_transferable_and_available_balance_of_brc20_wi": {
+    "message": "BRC20 的可轉移和可用餘額將在幾分鐘內刷新。"
+  },
+  "i_only_sign_what_i_understand": {
+    "message": "我只簽署我理解的內容"
+  },
+  "you_need_to_enable_the_sign_data_request_feature_in_settings_advanced_to_continue": {
+    "message": "您需要在「設定 -> 進階」中啟用「簽署資料請求」功能才能繼續。"
+  },
+  "cosmos_sign_request": {
+    "message": "Cosmos 簽署請求"
+  },
+  "only_sign_if_you_fully_understand_the_content_and_": {
+    "message": "請只在您完全理解內容並信任請求網站的情況下簽署。"
+  },
+  "phishing_detection": {
+    "message": "釣魚偵測"
+  },
+  "malicious_behavior_and_suspicious_activity_have_be": {
+    "message": "已偵測到惡意行為和可疑活動。"
+  },
+  "your_access_to_this_page_has_been_restricted_by_un": {
+    "message": "由於此頁面可能不安全，UniSat 錢包已限制您對其的存取。"
+  },
+  "reject_blocked_by_unisat_wallet": {
+    "message": "拒絕 (已被 UniSat 錢包阻擋)"
+  },
+  "warning": {
+    "message": "警告"
+  },
+  "i_am_aware_of_the_risks": {
+    "message": "我已了解相關風險"
+  },
+  "connect_with_unisat_wallet": {
+    "message": "連接 UniSat 錢包"
+  },
+  "select_the_account_to_use_on_this_site": {
+    "message": "選擇要在此網站上使用的帳戶"
+  },
+  "only_connect_with_sites_you_trust": {
+    "message": "僅連接您信任的網站。"
+  },
+  "connect": {
+    "message": "連接"
+  },
+  "chain_id": {
+    "message": "鏈 ID"
+  },
+  "involved_assets": {
+    "message": "涉及資產："
+  },
+  "satvb": {
+    "message": "sat/vB"
+  },
+  "rbf": {
+    "message": "RBF"
+  },
+  "to_sign": {
+    "message": "待簽署"
+  },
+  "network_fee": {
+    "message": "網路費用"
+  },
+  "network_fee_rate": {
+    "message": "網路手續費率："
+  },
+  "the_fee_rate_is_much_lower_than_recommended_fee_rate": {
+    "message": "手續費率遠低於建議費率"
+  },
+  "the_fee_rate_is_much_higher_than_recommended_fee_rate": {
+    "message": "手續費率遠高於建議費率"
+  },
+  "inputs": {
+    "message": "輸入"
+  },
+  "outputs": {
+    "message": "輸出"
+  },
+
+  "features": {
+    "message": "功能："
+  },
+  "psbt_data": {
+    "message": "PSBT 資料："
+  },
+  "get_signature": {
+    "message": "取得簽章"
+  },
+  "get_signature_success": {
+    "message": "取得簽章成功"
+  },
+  "sign_multiple_transactions": {
+    "message": "簽署多筆交易"
+  },
+  "transaction": {
+    "message": "交易"
+  },
+  "merge_failed": {
+    "message": "合併失敗。"
+  },
+  "dealing": {
+    "message": "處理中"
+  },
+  "paused": {
+    "message": "已暫停"
+  },
+  "completed": {
+    "message": "已完成"
+  },
+  "multisign_disclaimer": {
+    "message": "多重簽署免責聲明"
+  },
+  "by_proceeding_you_confirm_that_youve_read_and_accepted_this_disclaimer": {
+    "message": "繼續操作即表示您確認已閱讀並接受此免責聲明。"
+  },
+  "sign_all": {
+    "message": "全部簽署"
+  },
+  "transactions_at_once": {
+    "message": "筆交易"
+  },
+  "edit_name": {
+    "message": "編輯名稱"
+  },
+  "export_private_key": {
+    "message": "匯出私鑰"
+  },
+  "remove_wallet": {
+    "message": "移除錢包"
+  },
+  "invalid_wallet_please_remove_it_and_add_new_one": {
+    "message": "無效的錢包，請將其移除並新增一個新的錢包"
+  },
+  "removing_the_last_wallet_is_not_allowed": {
+    "message": "不允許移除最後一個錢包"
+  },
+  "copy_address": {
+    "message": "複製地址"
+  },
+  "private_key": {
+    "message": "私鑰"
+  },
+  "address_type": {
+    "message": "地址類型"
+  },
+  "invalid_privatekey": {
+    "message": "無效的私鑰"
+  },
+  "create_a_password": {
+    "message": "創建密碼"
+  },
+  "you_will_use_this_to_unlock_your_wallet": {
+    "message": "您將使用此密碼來解鎖您的錢包"
+  },
+  "keystone_hardware_wallet": {
+    "message": "Keystone 硬體錢包"
+  },
+  "the_ultimate_security_solution_for_cryptocurrencie": {
+    "message": "加密貨幣的終極安全解決方案"
+  },
+  "100_air_gapped": {
+    "message": "100% 氣隙隔離"
+  },
+  "open_source": {
+    "message": "開源"
+  },
+  "exceptional_compatibility": {
+    "message": "卓越的相容性"
+  },
+  "learn_more_about_keystone": {
+    "message": "了解更多關於 Keystone"
+  },
+  "connect_via_usb": {
+    "message": "透過 USB 連接"
+  },
+  "scan_to_connect": {
+    "message": "掃描連接"
+  },
+  "scan_the_qr_code_displayed_on_your_keystone_device": {
+    "message": "掃描您 Keystone 設備上顯示的 QR Code"
+  },
+  "you_need_to_allow_camera_access_to_use_this_featur": {
+    "message": "您需要允許相機存取權限才能使用此功能。"
+  },
+  "connect_and_unlock_your_keystone": {
+    "message": "連接並解鎖您的 Keystone"
+  },
+  "scan_in_more_addresses": {
+    "message": "掃描更多地址..."
+  },
+  "custom_hdpath_optional": {
+    "message": "自訂 HD 路徑 (選填)"
+  },
+  "password_strength": {
+    "message": "密碼強度："
+  },
+  "passwords_dont_match": {
+    "message": "密碼不匹配"
+  },
+  "custom_hdpath": {
+    "message": "自訂 HD 錢包派生路徑"
+  },
+  "connect_keystone": {
+    "message": "連接 Keystone"
+  },
+  "scan_the_qr_code": {
+    "message": "掃描 QR Code"
+  },
+  "connect_keystone_via_usb": {
+    "message": "透過 USB 連接 Keystone"
+  },
+  "create_an_account": {
+    "message": "創建帳戶"
+  },
+  "create_wallet": {
+    "message": "創建錢包"
+  },
+  "create_with_mnemonics_12words": {
+    "message": "使用助記詞創建 (12 個單詞)"
+  },
+  "restore_wallet": {
+    "message": "恢復錢包"
+  },
+  "restore_from_mnemonics_12words24words": {
+    "message": "從助記詞恢復 (12 個單詞、24 個單詞)"
+  },
+  "restore_from_single_private_key": {
+    "message": "從單一私鑰恢復"
+  },
+  "create_a_new_hd_wallet": {
+    "message": "創建新的 HD 錢包"
+  },
+  "keystone_wallet": {
+    "message": "Keystone 錢包"
+  },
+  "phrase_optional": {
+    "message": "密碼短語 (選填)"
+  },
+  "secret_recovery_phrase": {
+    "message": "助記詞"
+  },
+  "unable_to_find_any_addresses_with_assets": {
+    "message": "找不到任何持有資產的地址"
+  },
+  "import_an_existing_wallet_with_your_secret_recover": {
+    "message": "使用您的助記詞匯入現有錢包"
+  },
+  "i_saved_my_secret_recovery_phrase": {
+    "message": "我已儲存我的助記詞"
+  },
+  "verify_recovery_phrase": {
+    "message": "驗證助記詞"
+  },
+  "click_on_the_words_to_put_them_in_the_correct_orde": {
+    "message": "請按正確順序點擊單詞，以驗證您備份的助記詞是否正確"
+  },
+  "choose_a_wallet_you_want_to_restore_from": {
+    "message": "選擇您想從中恢復的錢包"
+  },
+  "skip": {
+    "message": "跳過"
+  },
+  "go_to_update": {
+    "message": "前往更新"
+  },
+  "use_at_your_own_risk": {
+    "message": "風險自負"
+  },
+  "please_be_aware_that_sending_the_following_assets_involves_risk": {
+    "message": "請注意，發送以下資產涉及風險："
+  },
+  "enable_atomicals_assets_warning": {
+    "message": "Atomicals 資產將不再顯示在錢包中，並且可以作為常規餘額花費。請謹慎操作。"
+  },
+  "sign_data_requests": {
+    "message": "簽署資料請求"
+  },
+  "enable_sign_data_warning": {
+    "message": "如果您啟用此設定，您可能會收到無法讀取的簽署請求。簽署您不理解的訊息，可能代表您同意交出您的資金和 NFT。您將面臨釣魚攻擊的風險。請關閉簽署資料 (signData) 功能以保護自己。"
+  },
+  "enable_sign_data_popover_warning": {
+    "message": "允許簽署資料請求可能使您容易受到釣魚攻擊。請務必檢查 URL，並在簽署包含程式碼的訊息時保持警惕。"
+  },
+  "enable_sign_data_popover_warning_2": {
+    "message": "如果您被要求開啟此設定，您可能正在遭受詐騙"
+  },
+  "understand_sign_data_warning": {
+    "message": "我了解如果啟用簽署資料請求，我可能會損失所有資金和 NFT。"
+  },
+  "understand_and_accept_the_risks_associated_with_this_transaction": {
+    "message": "我了解並接受此交易所涉及的風險。"
+  },
+  "allow_sign_data_requests": {
+    "message": "允許簽署資料請求"
+  },
+  "sending_out_assets": {
+    "message": "發送資產"
+  },
+  "runes_burn_risk_list": {
+    "message": "符文銷毀風險清單"
+  },
+  "inscription_burn_risk_list": {
+    "message": "銘文銷毀風險清單"
+  },
+  "changing_inscriptoins": {
+    "message": "變更中的銘文"
+  },
+  "arc20_burn_risk_list": {
+    "message": "ARC20 銷毀風險清單"
+  },
+  "current_fee_rate": {
+    "message": "目前手續費率："
+  },
+  "recommended_fee_rates": {
+    "message": "建議手續費率："
+  },
+  "old_value": {
+    "message": "舊值："
+  },
+  "new_value": {
+    "message": "新值："
+  },
+  "please_pay_attention_to_whether_you_have_backed_up": {
+    "message": "請注意是否已備份助記詞或私鑰，以防資產遺失"
+  },
+  "this_action_is_not_reversible": {
+    "message": "此操作不可逆。"
+  },
+  "remove": {
+    "message": "移除"
+  },
+  "compatibility_tips": {
+    "message": "相容性提示"
+  },
+  "please_be_aware_that": {
+    "message": "請注意："
+  },
+  "confirm": {
+    "message": "確認"
+  },
+  "unisat": {
+    "message": "UNISAT"
+  },
+  "try_again": {
+    "message": "再試一次"
+  },
+  "usb_permissions_not_available": {
+    "message": "USB 權限不可用"
+  },
+  "approve_on_your_keystone_device": {
+    "message": "在您的 Keystone 設備上核准"
+  },
+  "ensure_your_keystone_3_pro_is_on_the_homepage": {
+    "message": "確保您的 Keystone 3 Pro 在主畫面上"
+  },
+  "onsuccess_not_implemented": {
+    "message": "onSuccess 尚未實作"
+  },
+  "scan_the_qr_code_via_your_keystone_device": {
+    "message": "透過您的 Keystone 設備掃描 QR Code"
+  },
+  "generating_qr_code": {
+    "message": "正在生成 QR Code..."
+  },
+  "you_have_inscribed_a_transfer": {
+    "message": "您已銘刻 TRANSFER"
+  },
+  "please_wait_for_the_update_of_brc20": {
+    "message": "請等待 BRC20 更新"
+  },
+  "about_3_minutes": {
+    "message": "(約 3 分鐘)"
+  },
+  "for_ordinals_assets": {
+    "message": "對於 Ordinals 資產，"
+  },
+  "rare_sats": {
+    "message": "稀有聰 (Rare sats)"
+  },
+  "are_not_supported": {
+    "message": "不支援。"
+  },
+  "for_atomicals_assets": {
+    "message": "對於 Atomicals 資產，"
+  },
+  "non_arc20": {
+    "message": "非 ARC20"
+  },
+  "are_not_supported_yet": {
+    "message": "尚不支援。"
+  },
+  "not_supported": {
+    "message": "不支援"
+  },
+  "satsvb": {
+    "message": "sats/vB"
+  },
+  "precautions": {
+    "message": "注意事項"
+  },
+  "enable_atomicals": {
+    "message": "啟用 Atomicals"
+  },
+  "security_notice": {
+    "message": "安全提示："
+  },
+  "notice": {
+    "message": "注意"
+  },
+  "enable_atomicals_assets": {
+    "message": "啟用 Atomicals 資產"
+  },
+  "unconfirmed_balance_not_spendable": {
+    "message": "未確認餘額不可花費"
+  },
+  "to_enable_spending_of_unconfirmed_balances_please_": {
+    "message": "若要啟用未確認餘額的花費，請前往設定中的進階選項。"
+  },
+  "unconfirmed_balance_not_spendable_warning": {
+    "message": "為保護您的資產，當持有符文資產時，只有已確認的餘額可以花費。這是為了防止意外的資產銷毀。"
+  },
+  "mandatory_use_of_unconfirmed_balance": {
+    "message": "強制使用未確認餘額"
+  },
+  "only_applies_to_current_address": {
+    "message": "僅適用於目前地址"
+  },
+  "advanced": {
+    "message": "進階"
+  },
+  "advanced_settings": {
+    "message": "語言、安全性與權限設定"
+  },
+  "automatic_lock_time": {
+    "message": "自動鎖定時間"
+  },
+  "the_auto_lock_time_has_been_changed_to": {
+    "message": "自動鎖定時間已更改為"
+  },
+  "i_understand": {
+    "message": "我了解"
+  },
+  "unknown_error": {
+    "message": "未知錯誤"
+  },
+  "version": {
+    "message": "版本："
+  },
+  "latest_version": {
+    "message": "最新版本"
+  },
+  "inscribe_and_store_your_inscriptions_in_the_worlds_first_open_source_chrome_wallet_for_ordinals": {
+    "message": "在世界第一個開源 Ordinals Chrome 錢包中銘刻並儲存您的銘文！"
+  },
+  "the_broadcastchannel_name_is_missing": {
+    "message": "缺少 broadcastChannel 名稱"
+  },
+  "promise_need_function_to_handle": {
+    "message": "promise 需要函數來處理"
+  },
+  "network_error_no_response": {
+    "message": "網路錯誤，無回應"
+  },
+  "network_error_json_parse_error": {
+    "message": "網路錯誤，JSON 解析錯誤"
+  },
+  "network_errorno_response_data": {
+    "message": "網路錯誤，無回應資料"
+  },
+  "method_not_implemented": {
+    "message": "方法尚未實作。"
+  },
+  "keyringcontroller_first_account_not_found": {
+    "message": "KeyringController - 找不到第一個帳戶。"
+  },
+  "no_current_account": {
+    "message": "沒有目前帳戶"
+  },
+  "current_keyring_does_not_support_gensigncosmosur": {
+    "message": "目前的 Keyring 不支援 genSignCosmosUr"
+  },
+  "current_keyring_does_not_support_parsesigncosmosur": {
+    "message": "目前的 Keyring 不支援 parseSignCosmosUr"
+  },
+  "keyringcontroller_password_is_not_a_string": {
+    "message": "KeyringController - 密碼不是字串"
+  },
+  "no_keyring_found_for_the_requested_account": {
+    "message": "找不到請求帳戶的 Keyring。"
+  },
+  "public_key_must_be_compressed_secp256k1_ie_33_byte": {
+    "message": "公鑰必須是壓縮的 secp256k1，即 33 位元組，以 0x02 或 0x03 開頭"
+  },
+  "no_current_keyring": {
+    "message": "沒有目前的 Keyring"
+  },
+  "invalid_index_in_tosigninput": {
+    "message": "toSignInput 中的索引無效"
+  },
+  "no_address_or_public_key_in_tosigninput": {
+    "message": "toSignInput 中沒有地址或公鑰"
+  },
+  "invalid_address_in_tosigninput": {
+    "message": "toSignInput 中的地址無效"
+  },
+  "invalid_public_key_in_tosigninput": {
+    "message": "toSignInput 中的公鑰無效"
+  },
+  "invalid_sighash_type_in_tosigninput": {
+    "message": "toSignInput 中的 sighash 類型無效"
+  },
+  "no_mfp_in_keyring": {
+    "message": "Keyring 中沒有 mfp"
+  },
+  "insufficient_balance": {
+    "message": "餘額不足。"
+  },
+  "output_value_must_be_at_least": {
+    "message": "輸出值 (OutputValue) 必須至少為"
+  },
+  "split_inscriptions": {
+    "message": "分割銘文"
+  },
+  "split_inscription_tips": {
+    "message": "此功能目前正在實驗中。簽署交易時，請確認交易的銘文分割狀態。"
+  },
+  "each_output_value": {
+    "message": "每個輸出值"
+  },
+  "spliting_to": {
+    "message": "分割為"
+  },
+  "security_warning": {
+    "message": "安全警告"
+  },
+  "danger_potential_phishing_website_detected": {
+    "message": "危險！偵測到潛在的釣魚網站"
+  },
+  "this_website_has_been_identified_as_malicious_by_unisat_and_may": {
+    "message": "此網站已被 UniSat 識別為惡意網站，可能："
+  },
+  "steal_your_private_keys_or_seed_phrases": {
+    "message": "竊取您的私鑰或助記詞"
+  },
+  "trick_you_into_signing_malicious_transactions": {
+    "message": "誘騙您簽署惡意交易"
+  },
+  "collect_your_personal_information": {
+    "message": "收集您的個人資訊"
+  },
+  "think_this_is_a_false_positive_click_here_to_report_an_issue": {
+    "message": "認為這是誤判？點擊此處回報問題 →"
+  },
+  "if_you_insist_on_continuing_proceed_at_your_own_risk": {
+    "message": "如果您堅持繼續，請自行承擔風險："
+  },
+  "continue_to": {
+    "message": "繼續前往"
+  },
+  "send_runes": {
+    "message": "發送符文"
+  },
+  "send_atomicals_inscription": {
+    "message": "發送 Atomicals 銘文"
+  },
+  "send_inscription2": {
+    "message": "發送銘文"
+  },
+  "ordinals_inscriptions": {
+    "message": "Ordinals 銘文"
+  },
+  "babylon_staking": {
+    "message": "Babylon 質押"
+  },
+  "confirmed_tvl": {
+    "message": "已確認"
+  },
+  "tvl": {
+    "message": "總鎖倉價值 (TVL)"
+  },
+  "stakers": {
+    "message": "質押者"
+  },
+  "delegations": {
+    "message": "委託"
+  },
+  "finality_providers": {
+    "message": "最終性提供者"
+  },
+  "invalid_address": {
+    "message": "無效地址。"
+  },
+  "utxo_not_found": {
+    "message": "找不到 UTXO。"
+  },
+  "multiple_inscriptions_are_mixed_together_please_sp": {
+    "message": "多個銘文混合在一起。請先分割它們。"
+  },
+  "inscriptions": {
+    "message": "銘文"
+  },
+  "atomicals_nft": {
+    "message": "Atomicals NFT"
+  },
+  "unable_to_send_inscriptions_to_this_address_in_bat": {
+    "message": "無法批量向此地址發送銘文，請逐一發送。"
+  },
+  "inscription_not_found": {
+    "message": "找不到銘文。"
+  },
+  "the_amount_for_change_is_too_low_please_adjust_the": {
+    "message": "找零金額過低，請調整發送金額。"
+  },
+  "keyring_does_not_exist": {
+    "message": "Keyring 不存在"
+  },
+  "not_supported_chainid": {
+    "message": "不支援的 chainId"
+  },
+  "signdata_is_required_for_cosmos_signing": {
+    "message": "Cosmos 簽署需要 signData"
+  },
+  "datatype_is_required_for_cosmos_signing": {
+    "message": "Cosmos 簽署需要 dataType"
+  },
+  "path_is_required_for_cosmos_signing": {
+    "message": "Cosmos 簽署需要 path"
+  },
+  "ur_type_is_required_for_parsing_cosmos_signature": {
+    "message": "解析 Cosmos 簽章需要 UR type"
+  },
+  "cbor_data_is_required_for_parsing_cosmos_signature": {
+    "message": "解析 Cosmos 簽章需要 CBOR data"
+  },
+  "invalid_psbt": {
+    "message": "無效的 PSBT"
+  },
+  "not_implemented": {
+    "message": "尚未實作"
+  },
+  "approvalres_is_required": {
+    "message": "需要 approvalRes"
+  },
+  "connected": {
+    "message": "已連接"
+  },
+  "not_connected": {
+    "message": "未連接"
+  },
+  "expand_view": {
+    "message": "擴展視圖"
+  },
+  "lock_immediately": {
+    "message": "立即鎖定"
+  },
+  "change_your_lockscreen_password": {
+    "message": "更改您的鎖定畫面密碼"
+  },
+  "manage_wallet": {
+    "message": "管理錢包"
+  },
+  "network": {
+    "message": "網路"
+  },
+  "invalid_transaction_data": {
+    "message": "無效的交易資料"
+  },
+  "amount_must_be_at_least": {
+    "message": "金額必須至少為"
+  },
+  "includes_inscriptions_runes_and_unconfirmed_utxos": {
+    "message": "包含銘文、符文和未確認的 UTXO 資產。"
+  },
+  "future_versions_will_support_spending_these_assets": {
+    "message": "未來版本將支援花費這些資產。"
+  },
+  "you_can_unlock_these_assets_by_using_the_utxos_tools": {
+    "message": "您可以使用 UTXO 工具解鎖這些資產。"
+  },
+  "spend": {
+    "message": "花費"
+  },
+  "transaction_success": {
+    "message": "交易成功"
+  },
+  "transaction_id": {
+    "message": "交易 ID"
+  },
+  "received_from": {
+    "message": "接收自"
+  },
+  "date": {
+    "message": "日期"
+  },
+  "view_on_unisat_explorer": {
+    "message": "在 UniSat 瀏覽器上查看"
+  },
+  "view_on_okx_explorer": {
+    "message": "在 OKX 瀏覽器上查看"
+  },
+  "view_on_mempool": {
+    "message": "在 Mempool 上查看"
+  },
+  "from": {
+    "message": "從"
+  },
+  "to": {
+    "message": "到"
+  },
+  "by_inscription": {
+    "message": "透過銘文"
+  },
+  "unconfirmed_inscription": {
+    "message": "(未確認)"
+  },
+  "inscriptions_capital": {
+    "message": "銘文"
+  },
+  "disable_atomicals": {
+    "message": "停用 Atomicals"
+  },
+  "the_utxo_containing_this_inscription_has": {
+    "message": "包含此銘文的 UTXO 擁有"
+  },
+  "address_book": {
+    "message": "地址簿"
+  },
+  "search_address_or_name": {
+    "message": "搜尋地址或名稱"
+  },
+  "loading_contacts": {
+    "message": "載入中..."
+  },
+  "you_haven_t_added_address_information_yet": {
+    "message": "您尚未新增任何地址資訊"
+  },
+  "no_matching_contacts_found": {
+    "message": "找不到匹配的聯絡人"
+  },
+  "please_read_more_detail_on": {
+    "message": "請閱讀更多詳情於"
+  },
+  "bitcoin_address_verifier": {
+    "message": "比特幣地址驗證器"
+  },
+  "owner": {
+    "message": "擁有者"
+  },
+  "description": {
+    "message": "描述"
+  },
+  "script": {
+    "message": "腳本"
+  },
+  "this_message_serves_as_a_notice_that_if_runes_assets_are_detected_in_your_address_your": {
+    "message": "此訊息用於通知，如果在您的地址中偵測到符文資產，您的未確認餘額將無法花費。您無需執行任何操作。"
+  },
+  "in_the_current_version_only_the_confirmed_balance_can_be_used_once_atomicals_enabled": {
+    "message": "在目前版本中，一旦啟用 Atomicals，只能使用已確認的餘額。"
+  },
+  "oops_something_went_wrong": {
+    "message": "糟糕！發生錯誤。"
+  },
+  "try_going_back_or_refreshing": {
+    "message": "嘗試返回或重新整理。"
+  },
+  "go_back": {
+    "message": "返回"
+  },
+  "refresh_page": {
+    "message": "刷新頁面"
+  },
+  "refresh": {
+    "message": "刷新"
+  },
+  "gas_limit": {
+    "message": "Gas 上限"
+  },
+  "auto": {
+    "message": "自動"
+  },
+  "recommended": {
+    "message": "建議值"
+  },
+  "range": {
+    "message": "範圍"
+  },
+  "gas_limit_explanation": {
+    "message": "Gas 上限說明"
+  },
+  "gas_limit_explanation_1": {
+    "message": "• 控制交易可使用的最大計算資源"
+  },
+  "gas_limit_explanation_2": {
+    "message": "• 較高的上限 = 潛在費用較高，但確保完成"
+  },
+  "gas_limit_explanation_3": {
+    "message": "• 過低可能導致交易失敗"
+  },
+  "gas_limit_explanation_4": {
+    "message": "• 建議值通常已足夠"
+  },
+  "gas_adjustment": {
+    "message": "Gas 調整因子"
+  },
+  "gas_adjustment_explanation": {
+    "message": "Gas 調整因子說明："
+  },
+  "default": {
+    "message": "預設值"
+  },
+  "gas_adjustment_explanation_1": {
+    "message": "• 應用於預估 Gas 的乘數 (1.0 = 100%)"
+  },
+  "gas_adjustment_explanation_2": {
+    "message": "• 預設 1.3 (130%) 提供安全邊際"
+  },
+  "gas_adjustment_explanation_3": {
+    "message": "• 較高的值增加交易成功機會"
+  },
+  "remember_my_choice": {
+    "message": "記住我的選擇"
+  },
+  "close": {
+    "message": "關閉"
+  },
+  "this_domain_has_been_transferred_or_inscribed_recently_please_wait_for_block_confirmations": {
+    "message": "此域名最近被轉移或銘刻。請等待區塊確認"
+  },
+  "currently_only": {
+    "message": "目前僅支援"
+  },
+  "are_supported": {
+    "message": ""
+  },
+  "recipient_address_is_invalid": {
+    "message": "收款地址無效"
+  },
+  "address_book_placeholder": {
+    "message": "地址簿"
+  },
+  "name_recognized_and_resolved": {
+    "message": "名稱已識別並解析。"
+  },
+  "more_details": {
+    "message": "更多詳情"
+  },
+  "address_or_name_fb": {
+    "message": "地址或域名 (.fb)"
+  },
+  "address_or_name_sats_unisat_etc": {
+    "message": "地址或域名 (.sats, .unisat, ...)"
+  },
+  "does_not_exist": {
+    "message": "不存在"
+  },
+  "click_on_the": {
+    "message": "請在用您的 Keystone 設備簽署交易後，點擊"
+  },
+  "button_after_signing_the_transaction_with_your_keystone_device": {
+    "message": "按鈕"
+  },
+  "processing_signature": {
+    "message": "正在處理簽章..."
+  },
+  "position_the_qr_code_in_front_of_your_camera_the_screen_is_blurred_but_this_will_not_affect_the_scan": {
+    "message": "將 QR Code 置於您的相機前方。螢幕會模糊，但不會影響掃描。"
+  },
+  "missing_browser_permissions_please_grant_keystone_permissions": {
+    "message": "缺少瀏覽器權限，請授予 Keystone 權限"
+  },
+  "request_was_rejected_to_proceed_please_reauthorize": {
+    "message": "請求已被拒絕。若要繼續，請重新授權"
+  },
+  "please_reconnect_the_keystone_on_home_screen_and_reauthorize": {
+    "message": "請在主畫面上重新連接 Keystone 並重新授權。"
+  },
+  "communication_with_the_keystone_device_failed_please_ensure_the_keystone_is_connected_and_try_again": {
+    "message": "與 Keystone 設備的通訊失敗。請確保 Keystone 已連接，然後重試。"
+  },
+  "invalid_qr_code_please_ensure_you_have_selected_a_valid_qr_code_from_your_keystone_device": {
+    "message": "無效的 QR Code。請確保您已從 Keystone 設備選擇了有效的 QR Code。"
+  },
+  "merging_utxos": {
+    "message": "合併 UTXO"
+  },
+  "merging_amount": {
+    "message": "合併金額"
+  },
+  "your_balance_have_to_be_merged": {
+    "message": "您的 "
+  },
+  "this_process_will_merge_your_utxos_into_one": {
+    "message": "餘額需要合併。此過程會將您的 UTXO 合併為一個。"
+  },
+  "merge_utxos1": {
+    "message": "合併"
+  },
+  "can_not_change_to_a_lower_value": {
+    "message": "無法變更為較低的值"
+  },
+  "a_feature_allows_the_transaction_to_be_replaced": {
+    "message": "允許交易被替換的功能。"
+  },
+  "strong_password_tip": {
+    "message": "強力密碼可以更好地保護您的資產安全"
+  },
+  "not_long_enough": {
+    "message": "不足夠長"
+  },
+  "average": {
+    "message": "平均"
+  },
+  "password_must_be_at_least_8_characters": {
+    "message": "密碼至少為 8 個字符"
+  },
+  "unrecognized_password_strength": {
+    "message": "未識別的密碼強度"
+  },
+  "weak": {
+    "message": "弱"
+  },
+  "strong": {
+    "message": "強"
+  },
+  "new_version": {
+    "message": "新版本！"
+  },
+  "add_frequently_used_addresses": {
+    "message": "添加常用地址"
+  },
+  "let_us_know_what_you_think": {
+    "message": "讓我們知道你的想法"
+  },
+  "like_our_wallet_wed_love_your_rating": {
+    "message": "喜歡我們的錢包嗎？我們希望得到你的評分！"
+  },
+  "feedback": {
+    "message": "反饋"
+  },
+  "rate_us": {
+    "message": "給我們評分"
+  },
+  "about_us": {
+    "message": "關於我們"
+  },
+  "seconds": {
+    "message": "秒"
+  },
+  "minutes": {
+    "message": "分"
+  },
+  "hours": {
+    "message": "小時"
+  },
+  "finish": {
+    "message": "完成"
+  },
+  "add_address": {
+    "message": "添加地址"
+  },
+  "delete_contact": {
+    "message": "刪除聯絡人"
+  },
+  "are_you_sure_you_want_to_delete_this_contact": {
+    "message": "確定要刪除此聯絡人嗎？"
+  },
+  "contact_not_found": {
+    "message": "找不到聯絡人"
+  },
+  "failed_to_load_contact_information": {
+    "message": "載入聯絡人資訊失敗"
+  },
+  "please_enter_name": {
+    "message": "請輸入名稱"
+  },
+  "please_enter_address": {
+    "message": "請輸入地址"
+  },
+  "invalid_address_format_for_selected_network": {
+    "message": "選擇的網路的地址格式無效"
+  },
+  "failed_to_save_contact": {
+    "message": "保存聯絡人失敗"
+  },
+  "failed_to_delete_contact": {
+    "message": "刪除聯絡人失敗"
+  },
+  "edit_address": {
+    "message": "編輯地址"
+  },
+  "name_label": {
+    "message": "名稱"
+  },
+  "address_label": {
+    "message": "地址"
+  },
+  "saving": {
+    "message": "保存中..."
+  },
+  "save": {
+    "message": "保存"
+  },
+  "new_update_available": {
+    "message": "有新版本可用"
+  },
+  "you_re_on_the_latest_version": {
+    "message": "您使用的是最新版本"
+  },
+  "terms_of_service": {
+    "message": "服務條款"
+  },
+  "privacy_policy": {
+    "message": "隱私政策"
+  },
+  "language": {
+    "message": "語言"
+  },
+  "language_description": {
+    "message": "更改應用程式語言"
+  },
+  "no_inscriptions_found": {
+    "message": "找不到銘文"
+  },
+  "more": {
+    "message": "更多"
+  },
+  "restore_from_mnemonics": {
+    "message": "使用助記詞恢復"
+  },
+  "low_priority": {
+    "message": "低優先級"
+  },
+  "medium_priority": {
+    "message": "中優先級"
+  },
+  "high_priority": {
+    "message": "高優先級"
+  },
+  "delete": {
+    "message": "刪除"
+  },
+  "other_wallet": {
+    "message": "其他錢包"
+  },
+  "12_words": {
+    "message": "12 詞"
+  },
+  "24_words": {
+    "message": "24 詞"
+  },
+  "invalid_derivation_path": {
+    "message": "無效的派生路徑。"
+  },
+  "failed_to_load_inscription": {
+    "message": "載入銘文失敗"
+  },
+  "loading_details": {
+    "message": "載入中..."
+  },
+  "provenance": {
+    "message": "來源"
+  },
+  "details": {
+    "message": "詳情"
+  },
+  "inscription_id": {
+    "message": "編號"
+  },
+  "inscription_address": {
+    "message": "持有者"
+  },
+  "inscription_preview": {
+    "message": "預覽"
+  },
+  "inscription_content": {
+    "message": "內容"
+  },
+  "inscription_content_length": {
+    "message": "內容長度"
+  },
+  "inscription_content_type": {
+    "message": "內容類型"
+  },
+  "inscription_timestamp": {
+    "message": "時間戳"
+  },
+  "inscription_genesis_transaction": {
+    "message": "創世交易"
+  },
+  "custom": {
+    "message": "自定義"
+  },
+  "legacy_address_warning": {
+    "message": "不建議使用Legacy地址，因為它們可能會導致更高的交易費用或意外鎖定CAT20餘額。"
+  },
+  "legacy_address_warning_2": {
+    "message": "不建議將交易發送到Legacy地址，因為這可能導致CAT20被意外花費"
+  },
+  "slow": {
+    "message": "慢"
+  },
+  "avg": {
+    "message": "平均"
+  },
+  "fast": {
+    "message": "快"
+  },
+  "about_1_hour": {
+    "message": "約1小時"
+  },
+  "about_30_minutes": {
+    "message": "約30分鐘"
+  },
+  "about_10_minutes": {
+    "message": "約10分鐘"
+  },
+  "babylon_bitcoin_staking_phase2": {
+    "message": "Babylon比特幣質押第二階段"
+  },
+  "go_to_babylon": {
+    "message": "前往Babylon质押网站"
+  },
+  "closed_babylon": {
+    "message": "已關閉"
+  },
+  "open_babylon": {
+    "message": "已開啟"
+  },
+  "pending_babylon": {
+    "message": "待開啟"
+  },
+  "convert_baby_to_brc20": {
+    "message": "將 $BABY 轉換為 brc-20"
+  },
+  "you_are_about_to_convert_your_native_baby_to_btc_brc20_baby": {
+    "message": "您即將把原生 BABY 轉換為 BTC brc-20 BABY。"
+  },
+  "once_the_conversion_is_complete_your_native_baby_cannot_be_restored": {
+    "message": "轉換完成後，您的原生 BABY 將無法恢復。"
+  },
+  "do_you_confirm_the_conversion": {
+    "message": "您確認要進行轉換嗎？"
+  },
+  "transfer_baby_to_cosmos_wallet": {
+    "message": "將 $BABY 轉移到 Cosmos 錢包"
+  },
+  "do_you_confirm_the_transfer": {
+    "message": "您確認要進行轉移嗎？"
+  },
+  "you_are_about_to_transfer_your_native_baby_to_your_cosmos_wallet": {
+    "message": "您即將把原生 BABY 轉移到您的 Cosmos 錢包。"
+  },
+  "click_baby_to_brc20_coming_soon": {
+    "message": "點擊將 $BABY 轉換為 brc-20（即將推出）"
+  },
+  "convert_your_native_baby_to_btc_brc20_baby": {
+    "message": "將您的原生 $BABY 代幣轉換為比特幣上的 brc-20 BABY。"
+  },
+  "transfer_your_baby_to_your_cosmos_wallet": {
+    "message": "將您的 $BABY 轉移到您的 Cosmos 錢包。"
+  },
+  "password_error": {
+    "message": "密碼錯誤"
+  },
+  "the_private_key_is_invalid": {
+    "message": "私鑰無效"
+  },
+  "you_need_to_unlock_wallet_first": {
+    "message": "需要先解鎖錢包"
+  },
+  "account_count_must_be_greater_than_0": {
+    "message": "帳戶數量必須大於0"
+  },
+  "mnemonic_phrase_is_invalid": {
+    "message": "助記詞無效"
+  },
+  "first_account_not_found": {
+    "message": "找不到第一個帳戶"
+  },
+  "unlock_already_in_progress": {
+    "message": "解鎖操作正在進行中"
+  },
+  "change_password_already_in_progress": {
+    "message": "密碼修改操作正在進行中"
+  },
+  "change_password_failed": {
+    "message": "舊密碼不正確"
+  },
+  "cannot_unlock_without_a_previous_vault": {
+    "message": "沒有之前的錢包無法解鎖"
+  },
+  "wallet_existed": {
+    "message": "錢包已存在"
+  },
+  "does_not_support_account_removal_operations": {
+    "message": "不支援帳戶刪除操作"
+  },
+  "disclaimStrFb": {
+    "message": "請注意，您即將透過第三方平台購買FB。信用卡支付服務由我們的合作夥伴提供。UniSat 錢包僅作為中介平台，對於使用信用卡支付服務可能產生的任何潛在損失或損害不承擔任何責任。"
+  },
+  "seconds_ago": {
+    "message": "秒前"
+  },
+  "minutes_ago": {
+    "message": "分鐘前"
+  },
+  "hours_ago": {
+    "message": "小時前"
+  },
+  "days_ago": {
+    "message": "天前"
+  },
+  "current": {
+    "message": "當前"
+  },
+  "items": {
+    "message": "項"
+  },
+  "claimabled": {
+    "message": "已領取"
+  },
+  "agreement_text": {
+    "message": "確認"
+  },
+  "to_proceed": {
+    "message": "繼續"
+  },
+  "tutorial": {
+    "message": "教學"
+  },
+  "tx_amount": {
+    "message": "金額"
+  },
+  "secs": {
+    "message": "秒"
+  },
+  "about_3_minutes_fb": {
+    "message": "約3分鐘"
+  },
+  "about_1_5_minutes_fb": {
+    "message": "約1.5分鐘"
+  },
+  "about_30_seconds_fb": {
+    "message": "約30秒"
+  },
+  "legacy_address_warning_3": {
+    "message": "不建議使用Legacy地址，因為它們可能會導致更高的交易費用或意外鎖定CAT20餘額"
+  },
+  "legacy_address_warning_4": {
+    "message": "不建議將交易發送到Legacy地址，因為這可能導致CAT20被意外花費"
+  }
+}

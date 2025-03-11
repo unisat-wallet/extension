@@ -1,5 +1,8 @@
 import { CSSProperties, useEffect, useState } from 'react';
 
+import { ChainType } from '@/shared/constant';
+import { useI18n } from '@/ui/hooks/useI18n';
+import { useChainType } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
 
@@ -7,26 +10,60 @@ import { Column } from '../Column';
 import { Input } from '../Input';
 import { Row } from '../Row';
 import { Text } from '../Text';
-
-enum FeeRateType {
-  SLOW,
-  AVG,
-  FAST,
-  CUSTOM
-}
-
-const MAX_FEE_RATE = 10000;
+import { FeeRateType, MAX_FEE_RATE, translationKeys } from './const';
 
 export function FeeRateBar({ readonly, onChange }: { readonly?: boolean; onChange?: (val: number) => void }) {
   const wallet = useWallet();
   const [feeOptions, setFeeOptions] = useState<{ title: string; desc?: string; feeRate: number }[]>([]);
+  const { t } = useI18n();
+  const chainType = useChainType();
+  const isFractal = chainType === ChainType.FRACTAL_BITCOIN_MAINNET || chainType === ChainType.FRACTAL_BITCOIN_TESTNET;
 
   useEffect(() => {
     wallet.getFeeSummary().then((v) => {
+      const hasSameRates = v.list.some((option, index, array) => {
+        if (index < array.length - 1) {
+          return option.feeRate === array[index + 1].feeRate;
+        }
+        return false;
+      });
+
+      const translatedList = v.list.map((option, index) => {
+        const keys = translationKeys[index];
+        if (keys) {
+          let desc = t(keys.desc);
+
+          if (hasSameRates) {
+            if (isFractal) {
+              desc = t('about_30_seconds_fb');
+            } else {
+              desc = t('about_10_minutes');
+            }
+          } else {
+            if (isFractal) {
+              if (index === FeeRateType.FAST) {
+                desc = t('about_30_seconds_fb');
+              } else if (index === FeeRateType.AVG) {
+                desc = t('about_1_5_minutes_fb');
+              } else if (index === FeeRateType.SLOW) {
+                desc = t('about_3_minutes_fb');
+              }
+            }
+          }
+
+          return {
+            ...option,
+            title: t(keys.title),
+            desc: desc
+          };
+        }
+        return option;
+      });
+
       if (readonly) {
-        setFeeOptions(v.list);
+        setFeeOptions(translatedList);
       } else {
-        setFeeOptions([...v.list, { title: 'Custom', feeRate: 0 }]);
+        setFeeOptions([...translatedList, { title: t('custom'), feeRate: 0 }]);
       }
     });
   }, []);
@@ -64,6 +101,8 @@ export function FeeRateBar({ readonly, onChange }: { readonly?: boolean; onChang
     }
   };
 
+  const isCustomOption = (title: string) => title === t('custom');
+
   return (
     <Column>
       <Row justifyCenter>
@@ -100,7 +139,7 @@ export function FeeRateBar({ readonly, onChange }: { readonly?: boolean; onChang
                 selected ? { backgroundColor: colors.primary } : {}
               )}>
               <Text text={v.title} textCenter style={{ color: selected ? colors.black : colors.white }} />
-              {v.title !== 'Custom' && (
+              {!isCustomOption(v.title) && (
                 <Text
                   text={`${v.feeRate} sat/vB`}
                   size="xxs"
@@ -108,7 +147,7 @@ export function FeeRateBar({ readonly, onChange }: { readonly?: boolean; onChang
                   style={{ color: selected ? colors.black : colors.white }}
                 />
               )}
-              {v.title !== 'Custom' && (
+              {!isCustomOption(v.title) && (
                 <Text
                   text={`${v.desc}`}
                   size="xxs"

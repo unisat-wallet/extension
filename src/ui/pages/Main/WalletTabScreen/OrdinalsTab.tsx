@@ -2,6 +2,7 @@ import { useMemo } from 'react';
 
 import { Column, Row } from '@/ui/components';
 import { TabBar } from '@/ui/components/TabBar';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useAddressSummary } from '@/ui/state/accounts/hooks';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useChain } from '@/ui/state/settings/hooks';
@@ -20,6 +21,7 @@ export function OrdinalsTab() {
   if (chain.isFractal && tabKey === OrdinalsAssetTabKey.BRC20_5BYTE) {
     tabKey = OrdinalsAssetTabKey.BRC20;
   }
+  const { t } = useI18n();
 
   const dispatch = useAppDispatch();
 
@@ -27,7 +29,7 @@ export function OrdinalsTab() {
     const items = [
       {
         key: OrdinalsAssetTabKey.ALL,
-        label: `All (${addressSummary.inscriptionCount})`,
+        label: `${t('all')} (${addressSummary.inscriptionCount})`,
         children: <InscriptionList />
       },
       {

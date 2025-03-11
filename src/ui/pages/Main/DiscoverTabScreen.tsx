@@ -7,17 +7,18 @@ import { Card, Column, Content, Footer, Header, Image, Layout, Row, Text } from 
 import { NavTabBar } from '@/ui/components/NavTabBar';
 import { SwitchNetworkBar } from '@/ui/components/SwitchNetworkBar';
 import { TabBar } from '@/ui/components/TabBar';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { SearchBar } from '@/ui/pages/Main/DiscoverTabComponents/SearchBar';
-import { useCurrentAccount, useCurrentAddress, useReadApp } from '@/ui/state/accounts/hooks';
+import { useCurrentAddress, useReadApp } from '@/ui/state/accounts/hooks';
 import { useAppList, useBannerList, useLastFetchInfo } from '@/ui/state/discovery/hooks';
 import { discoveryActions } from '@/ui/state/discovery/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
-import { useChain, useChainType, useNetworkType } from '@/ui/state/settings/hooks';
+import { useChainType, useNetworkType } from '@/ui/state/settings/hooks';
 import { useWallet } from '@/ui/utils';
+import { getAddressType } from '@unisat/wallet-sdk/lib/address';
 
 import { useNavigate } from '../MainRoute';
 import { SwitchChainModal } from '../Settings/SwitchChainModal';
-import { getAddressType } from '@unisat/wallet-sdk/lib/address';
 
 const APP_ID_BABYLON_STAKING = 1103;
 
@@ -43,6 +44,7 @@ function BannerItem({ img, link }: { img: string; link: string }) {
 function AppItem({ info, onClick }: { info: AppInfo; onClick?: () => void }) {
   const readApp = useReadApp();
   const navigate = useNavigate();
+  const { t } = useI18n();
 
   const currentAddress = useCurrentAddress();
   const networkType = useNetworkType();
@@ -88,7 +90,7 @@ function AppItem({ info, onClick }: { info: AppInfo; onClick?: () => void }) {
         <Column justifyCenter gap="zero">
           <Row itemsCenter>
             <Text text={info.title} />
-            {info.new && <Text text="new!" color="red" />}
+            {info.new && <Text text={t('new')} color="red" />}
           </Row>
 
           <Tooltip
@@ -109,7 +111,7 @@ function AppItem({ info, onClick }: { info: AppInfo; onClick?: () => void }) {
 
 export default function DiscoverTabScreen() {
   const chainType = useChainType();
-  const chain = useChain();
+  const { t } = useI18n();
 
   const [tabKey, setTabKey] = useState(0);
 
@@ -122,7 +124,6 @@ export default function DiscoverTabScreen() {
   const wallet = useWallet();
   const dispatch = useAppDispatch();
 
-  const navigate = useNavigate();
   useEffect(() => {
     if (lastFetchInfo.lasfFetchChainType === chainType && Date.now() - lastFetchInfo.lastFetchTime < 1000 * 60 * 1) {
       return;
@@ -199,7 +200,7 @@ export default function DiscoverTabScreen() {
         type="style2"
         LeftComponent={
           <Row>
-            <Text preset="title-bold" text={'DApp Center'} />
+            <Text preset="title-bold" text={t('dapp_center')} />
           </Row>
         }
         RightComponent={<SwitchNetworkBar />}

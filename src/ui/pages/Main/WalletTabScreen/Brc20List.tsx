@@ -6,6 +6,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import BRC20BalanceCard2 from '@/ui/components/BRC20BalanceCard2';
 import { Empty } from '@/ui/components/Empty';
 import { Pagination } from '@/ui/components/Pagination';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useChain } from '@/ui/state/settings/hooks';
 import { useWallet } from '@/ui/utils';
@@ -18,7 +19,7 @@ export function BRC20List() {
   const wallet = useWallet();
   const currentAccount = useCurrentAccount();
   const chain = useChain();
-
+  const { t } = useI18n();
   const [tokens, setTokens] = useState<TokenBalance[]>([]);
   const [total, setTotal] = useState(-1);
   const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 100 });
@@ -60,7 +61,7 @@ export function BRC20List() {
   if (total === 0) {
     return (
       <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
-        <Empty text="Empty" />
+        <Empty text={t('empty')} />
       </Column>
     );
   }

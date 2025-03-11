@@ -1,3 +1,5 @@
+import { useI18n } from '@/ui/hooks/useI18n';
+
 import { Row } from '../Row';
 import { Text } from '../Text';
 
@@ -16,9 +18,26 @@ const colors = {
 
 export default function AssetTag(props: AssetTagProps) {
   const { type, small } = props;
+  const { t } = useI18n();
+
+  const displayText = () => {
+    if (type === 'RUNES') {
+      return t('runes');
+    } else if (type === 'Unconfirmed') {
+      return t('unconfirmed');
+    } else if (type === 'Inscription') {
+      return t('inscription');
+    }
+    return type;
+  };
+
   return (
-    <Row style={{ backgroundColor: colors[type], borderRadius: small ? 4 : 5 }} px={small?'sm': 'md'} py={small?'zero': 'xs'} itemsCenter>
-      <Text text={type} size={small ? 'xxs' : 'xs'} />
+    <Row
+      style={{ backgroundColor: colors[type], borderRadius: small ? 4 : 5 }}
+      px={small ? 'sm' : 'md'}
+      py={small ? 'zero' : 'xs'}
+      itemsCenter>
+      <Text text={displayText()} size={small ? 'xxs' : 'xs'} />
     </Row>
   );
 }

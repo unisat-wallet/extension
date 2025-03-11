@@ -6,12 +6,14 @@ import { Button } from '@/ui/components/Button';
 import { Input } from '@/ui/components/Input';
 import { Logo } from '@/ui/components/Logo';
 import { Text } from '@/ui/components/Text';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useUnlockCallback } from '@/ui/state/global/hooks';
 import { getUiType, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../../MainRoute';
 
 export default function UnlockScreen() {
+  const { t } = useI18n();
   const wallet = useWallet();
   const navigate = useNavigate();
   const [password, setPassword] = useState('');
@@ -43,7 +45,7 @@ export default function UnlockScreen() {
       }
     } catch (e) {
       console.log(e);
-      tools.toastError('PASSWORD ERROR');
+      tools.toastError(t('password_error'));
     } finally {
       setLoading(false);
     }
@@ -71,15 +73,15 @@ export default function UnlockScreen() {
           </Row>
 
           <Column gap="xl" mt="xxl">
-            <Text preset="title-bold" text="Enter your password" textCenter />
+            <Text preset="title-bold" text={t('enter_your_password')} textCenter />
             <Input
               preset="password"
-              placeholder="Password"
+              placeholder={t('password')}
               onChange={(e) => setPassword(e.target.value)}
               onKeyUp={(e) => handleOnKeyUp(e)}
               autoFocus={true}
             />
-            <Button disabled={disabled} text="Unlock" preset="primary" onClick={btnClick} />
+            <Button disabled={disabled} text={t('unlock')} preset="primary" onClick={btnClick} />
           </Column>
         </Column>
       </Content>

@@ -4,6 +4,7 @@ import { Button, Card, Column, Content, Footer, Header, Icon, Input, Layout, Row
 import { useTools } from '@/ui/components/ActionComponent';
 import { Loading } from '@/ui/components/ActionComponent/Loading';
 import WebsiteBar from '@/ui/components/WebsiteBar';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { copyToClipboard, useApproval, useWallet } from '@/ui/utils';
 
 interface Props {
@@ -19,9 +20,10 @@ interface Props {
   };
 }
 
-const AGREEMENT_TEXT = 'I only sign what I understand';
 export default function SignData({ params: { data, session } }: Props) {
   const [getApproval, resolveApproval, rejectApproval] = useApproval();
+  const { t } = useI18n();
+  const AGREEMENT_TEXT = t('i_only_sign_what_i_understand');
 
   const handleCancel = () => {
     rejectApproval();
@@ -74,10 +76,10 @@ export default function SignData({ params: { data, session } }: Props) {
           </Header>
 
           <Column>
-            <Text text="Sign Data request" preset="title-bold" textCenter mt="lg" />
+            <Text text={t('sign_data_request')} preset="title-bold" textCenter mt="lg" />
 
             <Text
-              text={'You need to enable the signData request feature in Settings -> Advanced to continue.'}
+              text={t('you_need_to_enable_the_sign_data_request_feature_in_settings_advanced_to_continue')}
               textCenter
             />
           </Column>
@@ -85,7 +87,7 @@ export default function SignData({ params: { data, session } }: Props) {
 
         <Footer>
           <Row full>
-            <Button text="Reject" full preset="default" onClick={handleCancel} />
+            <Button text={t('reject')} full preset="default" onClick={handleCancel} />
           </Row>
         </Footer>
       </Layout>
@@ -100,9 +102,9 @@ export default function SignData({ params: { data, session } }: Props) {
         </Header>
 
         <Column>
-          <Text text="Signature request" preset="title-bold" textCenter mt="lg" />
+          <Text text={t('signature_request')} preset="title-bold" textCenter mt="lg" />
 
-          <Text text="You are signing data:" textCenter mt="lg" />
+          <Text text={t('you_are_signing_data')} textCenter mt="lg" />
 
           <Card>
             <div
@@ -123,19 +125,19 @@ export default function SignData({ params: { data, session } }: Props) {
             textCenter
             mt="lg"
             color="warning"
-            text={
-              'Only sign this message if you fully understand the content and trust the requesting site. Or you could be agreeing to give away your funds and NFTs.'
-            }
+            text={t(
+              'only_sign_this_message_if_you_fully_understand_the_content_and_trust_the_requesting_site_or_you_could_be_agreeing_to_give_away_your_funds_and_nfts'
+            )}
           />
           <Row
             itemsCenter
             gap="sm"
             onClick={(e) => {
               copyToClipboard(AGREEMENT_TEXT).then(() => {
-                tools.toastSuccess('Copied');
+                tools.toastSuccess(t('copied'));
               });
             }}>
-            <Text text={`Enter “${AGREEMENT_TEXT}” to continue`} preset="bold" />
+            <Text text={`${t('enter')} “${AGREEMENT_TEXT}” ${t('to_continue')}`} preset="bold" />
             <Icon icon="copy" color="textDim" />
           </Row>
           <Input
@@ -150,8 +152,8 @@ export default function SignData({ params: { data, session } }: Props) {
 
       <Footer>
         <Row full>
-          <Button text="Reject" full preset="default" onClick={handleCancel} />
-          <Button text="Sign" full preset="primary" onClick={handleConfirm} disabled={!understand} />
+          <Button text={t('reject')} full preset="default" onClick={handleCancel} />
+          <Button text={t('sign')} full preset="primary" onClick={handleConfirm} disabled={!understand} />
         </Row>
       </Footer>
     </Layout>

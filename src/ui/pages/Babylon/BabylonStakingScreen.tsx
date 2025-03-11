@@ -10,6 +10,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { Loading } from '@/ui/components/ActionComponent/Loading';
 import { CopyableAddress } from '@/ui/components/CopyableAddress';
 import { Popover } from '@/ui/components/Popover';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useBabylonConfig, useChain, useChainType } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { satoshisToAmount, useWallet } from '@/ui/utils';
@@ -22,22 +23,25 @@ const formatter = Intl.NumberFormat('en', {
 });
 
 export function NotSupportedLayout() {
+  const { t } = useI18n();
   return (
     <Layout>
       <Header
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Babylon Staking"
+        title={t('babylon_staking')}
       />
       <Content>
-        <Text text={'Not supported'} />
+        <Text text={t('not_supported')} />
       </Content>
     </Layout>
   );
 }
 
 function StatusTag({ status }: { status: 'Open' | 'Closed' | 'Pending' }) {
+  const { t } = useI18n();
+
   const backgroundColors = {
     Open: 'rgba(124, 219, 152, 0.1)',
     Closed: 'rgba(255, 255, 255, 0.1)',
@@ -49,6 +53,13 @@ function StatusTag({ status }: { status: 'Open' | 'Closed' | 'Pending' }) {
     Closed: 'rgba(255, 255, 255, 0.65)',
     Pending: 'rgba(244, 182, 44, 0.85)'
   };
+
+  const statusToTranslationKey = {
+    Open: 'open_babylon',
+    Closed: 'closed_babylon',
+    Pending: 'pending_babylon'
+  };
+
   const backgroundColor = backgroundColors[status];
   const textColor = textColors[status];
   return (
@@ -60,7 +71,7 @@ function StatusTag({ status }: { status: 'Open' | 'Closed' | 'Pending' }) {
         paddingLeft: 10,
         paddingRight: 10
       }}>
-      <Text text={status} style={{ color: textColor }} />
+      <Text text={t(statusToTranslationKey[status])} style={{ color: textColor }} />
     </Row>
   );
 }
@@ -128,6 +139,7 @@ function Section2(props: {
 }
 
 function Section3(props: { onClick: () => void }) {
+  const { t } = useI18n();
   return (
     <Row
       justifyBetween
@@ -144,12 +156,12 @@ function Section3(props: { onClick: () => void }) {
 
         <Column gap="sm">
           <Row itemsCenter>
-            <Text text={'How to import BABY'} style={{ color: 'white' }} size="xs" />
+            <Text text={t('how_to_import_baby')} style={{ color: 'white' }} size="xs" />
             <Icon icon="circle-question" size={14} />
           </Row>
 
           <Text
-            text={'Learn how to import your Babylon reward assets into a COSMOS-compatible wallet.'}
+            text={t('learn_how_to_import_your_babylon_reward_assets_into_a_cosmos_compatible_wallet')}
             style={{ color: '#ffffff99' }}
             size="xs"
           />
@@ -160,6 +172,7 @@ function Section3(props: { onClick: () => void }) {
 }
 
 function EnableImportBabyPopover({ onClose }: { onClose: () => void }) {
+  const { t } = useI18n();
   function StepIcon({ step }: { step: number }) {
     return (
       <Row
@@ -195,23 +208,23 @@ function EnableImportBabyPopover({ onClose }: { onClose: () => void }) {
   return (
     <Popover onClose={onClose}>
       <Column justifyCenter itemsCenter gap={'md'}>
-        <Text text="How to Import BABY" preset="title-bold" />
+        <Text text={t('how_to_import_baby')} preset="title-bold" />
 
         <StepItem
           step={1}
-          title={'Click the account on the main page.'}
+          title={t('click_the_account_on_the_main_page')}
           images={['./images/artifacts/how-to-import-baby-1.png']}
         />
         <StepItem
           step={2}
-          title={'Tap the "More" menu, then select the "Export Private Key" option.'}
+          title={t('tap_the_more_menu_then_select_the_export_private_key_option')}
           images={['./images/artifacts/how-to-import-baby-2.png', './images/artifacts/how-to-import-baby-3.png']}
         />
         <StepItem
           step={3}
-          title={
-            'Once you have your Hex Private Key, you can import it into a COSMOS-compatible wallet to access your Babylon reward assets.'
-          }
+          title={t(
+            'once_you_have_your_hex_private_key_you_can_import_it_into_a_cosmos_compatible_wallet_to_access_your_babylon_reward_assets'
+          )}
           images={[]}
         />
       </Column>
@@ -221,6 +234,7 @@ function EnableImportBabyPopover({ onClose }: { onClose: () => void }) {
 
 function TransferBabyPopover({ onClose }: { onClose: () => void }) {
   const [showConfirm1, setShowConfirm1] = useState(false);
+  const { t } = useI18n();
 
   const [showConfirm2, setShowConfirm2] = useState(false);
   const navigate = useNavigate();
@@ -229,18 +243,18 @@ function TransferBabyPopover({ onClose }: { onClose: () => void }) {
     return (
       <Popover onClose={onClose}>
         <Column justifyCenter itemsCenter gap={'md'}>
-          <Text text="Convert $BABY to brc-20" preset="bold" />
+          <Text text={t('convert_baby_to_brc20')} preset="bold" />
           <Row full mt="md" style={{ borderBottomWidth: 1, borderColor: 'rgba(255, 255, 255, 0.1)' }} />
 
           <Column fullX px="md" py="lg" my="sm">
-            <Text text={'You are about to convert your native BABY to BTC brc-20 BABY.'} />
-            <Text text={'Once the conversion is complete, your native BABY cannot be restored.'} />
-            <Text text={'Do you confirm the conversion?'} />
+            <Text text={t('you_are_about_to_convert_your_native_baby_to_btc_brc20_baby')} />
+            <Text text={t('once_the_conversion_is_complete_your_native_baby_cannot_be_restored')} />
+            <Text text={t('do_you_confirm_the_conversion')} />
           </Column>
 
           <Row fullX>
             <Button
-              text="Cancel"
+              text={t('cancel')}
               preset="defaultV2"
               full
               onClick={() => {
@@ -248,7 +262,7 @@ function TransferBabyPopover({ onClose }: { onClose: () => void }) {
               }}
             />
             <Button
-              text="Confirm"
+              text={t('confirm')}
               preset="primaryV2"
               full
               onClick={() => {
@@ -265,17 +279,17 @@ function TransferBabyPopover({ onClose }: { onClose: () => void }) {
     return (
       <Popover onClose={onClose}>
         <Column justifyCenter itemsCenter gap={'md'}>
-          <Text text="Transfer $BABY to Cosmos Wallet" preset="bold" />
+          <Text text={t('transfer_baby_to_cosmos_wallet')} preset="bold" />
           <Row full mt="md" style={{ borderBottomWidth: 1, borderColor: 'rgba(255, 255, 255, 0.1)' }} />
 
           <Column fullX px="md" py="lg" my="sm">
-            <Text preset="default" text={'You are about to transfer your native BABY to your Cosmos wallet.'} />
-            <Text text={'Do you confirm the transfer?'} />
+            <Text preset="default" text={t('you_are_about_to_transfer_your_native_baby_to_your_cosmos_wallet')} />
+            <Text text={t('do_you_confirm_the_transfer')} />
           </Column>
 
           <Row fullX>
             <Button
-              text="Cancel"
+              text={t('cancel')}
               preset="defaultV2"
               full
               onClick={() => {
@@ -283,7 +297,7 @@ function TransferBabyPopover({ onClose }: { onClose: () => void }) {
               }}
             />
             <Button
-              text="Confirm"
+              text={t('confirm')}
               preset="primaryV2"
               full
               onClick={() => {
@@ -332,20 +346,20 @@ function TransferBabyPopover({ onClose }: { onClose: () => void }) {
   return (
     <Popover onClose={onClose}>
       <Column justifyCenter itemsCenter gap={'md'}>
-        <Text text="Transfer" preset="bold" />
+        <Text text={t('transfer')} preset="bold" />
         <Row full style={{ borderBottomWidth: 1, borderColor: 'rgba(255, 255, 255, 0.1)' }} />
 
         <ButtonItem
-          title={'Click $BABY to brc-20 (Coming Soon)'}
-          desc="Convert your native $BABY token to brc-20 BABY on Bitcoin."
+          title={t('click_baby_to_brc20_coming_soon')}
+          desc={t('convert_your_native_baby_to_btc_brc20_baby')}
           disabled
         />
         <ButtonItem
           onClick={() => {
             setShowConfirm2(true);
           }}
-          title={'Transfer $BABY to Cosmos Wallet'}
-          desc="Transfer your $BABY to your Cosmos wallet."
+          title={t('transfer_baby_to_cosmos_wallet')}
+          desc={t('transfer_your_baby_to_your_cosmos_wallet')}
         />
       </Column>
     </Popover>
@@ -355,7 +369,7 @@ function TransferBabyPopover({ onClose }: { onClose: () => void }) {
 export default function BabylonStakingScreen() {
   const chainType = useChainType();
   const navigate = useNavigate();
-
+  const { t } = useI18n();
   const babylonConfig = useBabylonConfig();
   const wallet = useWallet();
   const chain = useChain();
@@ -436,7 +450,7 @@ export default function BabylonStakingScreen() {
           onBack={() => {
             window.history.go(-1);
           }}
-          title="Babylon Bitcoin Staking"
+          title={t('babylon_bitcoin_staking')}
         />
         <Content>
           <Loading />
@@ -449,12 +463,12 @@ export default function BabylonStakingScreen() {
     return (
       <Section2
         icon={<Icon icon={'claimed-baby'} size={36} />}
-        title={`Claimed ${networkPrefix} BABY `}
-        value={summaryLoading ? 'Loading...' : `${formattedBalance} ${babylonChain.stakeCurrency.coinDenom}`}
+        title={`${t('claimabled')} ${networkPrefix} Baby`}
+        value={summaryLoading ? `${t('loading')}...` : `${formattedBalance} ${babylonChain.stakeCurrency.coinDenom}`}
         button={
           <Button
             style={{ margin: 0 }}
-            text="Transfer"
+            text={t('transfer')}
             preset="minimal2"
             textStyle={{
               color: 'white'
@@ -474,9 +488,9 @@ export default function BabylonStakingScreen() {
     <Layout>
       <Header
         onBack={() => {
-          window.history.go(-1);
+          navigate('DiscoverTabScreen');
         }}
-        title="Babylon Bitcoin Staking"
+        title={t('babylon_bitcoin_staking')}
       />
       <Content>
         <Column>
@@ -500,7 +514,7 @@ export default function BabylonStakingScreen() {
                 <StatusTag status="Closed" />
               </Row>
               <Button
-                text="Go to Babylon"
+                text={t('go_to_babylon')}
                 onClick={() => {
                   window.open(babylonConfigV2.phase1.stakingUrl, '_blank');
                 }}
@@ -522,7 +536,7 @@ export default function BabylonStakingScreen() {
                 <StatusTag status="Pending" />
               </Row>
               <Button
-                text="Go to Babylon"
+                text={t('go_to_babylon')}
                 onClick={() => {
                   window.open(babylonConfigV2.phase2.stakingUrl, '_blank');
                 }}
@@ -541,12 +555,12 @@ export default function BabylonStakingScreen() {
                 position: 'relative'
               }}>
               <Row justifyBetween itemsCenter>
-                <Text text={'Babylon Bitcoin Staking Phase2'} preset="bold" />
+                <Text text={t('babylon_bitcoin_staking_phase2')} preset="bold" />
                 <StatusTag status="Open" />
               </Row>
 
               <Button
-                text="Go to Babylon"
+                text={t('go_to_babylon')}
                 preset="minimal"
                 onClick={() => {
                   window.open(babylonConfigV2.phase2.stakingUrl, '_blank');
@@ -564,14 +578,16 @@ export default function BabylonStakingScreen() {
         {babylonConfigV2 && babylonConfigV2.phase2.state === BabylonPhaseState.ACTIVE ? (
           <Section2
             icon={<Icon icon={'staked-btc'} size={36} />}
-            title={`Staked ${chain.unit}`}
+            title={`${t('staked')} ${chain.unit}`}
             value={
-              summaryLoading ? 'Loading...' : `${satoshisToAmount(babylonAddressSummary.stakedBalance)} ${chain.unit}`
+              summaryLoading
+                ? `${t('loading')}...`
+                : `${satoshisToAmount(babylonAddressSummary.stakedBalance)} ${chain.unit}`
             }
             button={
               <Button
                 style={{ margin: 0 }}
-                text="Unstake"
+                text={t('unstake')}
                 preset="minimal"
                 disabled={summaryLoading || babylonAddressSummary.stakedBalance === 0}
                 onClick={() => {
@@ -589,14 +605,16 @@ export default function BabylonStakingScreen() {
             <React.Fragment>
               <Section2
                 icon={<Icon icon={'claimable-baby'} size={36} />}
-                title={`Claimable ${networkPrefix} BABY`}
+                title={`${t('claimable')} ${networkPrefix} BABY`}
                 value={
-                  summaryLoading ? 'Loading...' : `${formattedRewardBalance} ${babylonChain.stakeCurrency.coinDenom}`
+                  summaryLoading
+                    ? `${t('loading')}...`
+                    : `${formattedRewardBalance} ${babylonChain.stakeCurrency.coinDenom}`
                 }
                 button={
                   <Button
                     style={{ margin: 0 }}
-                    text="Claim"
+                    text={t('claim')}
                     preset="minimal"
                     disabled={summaryLoading || babylonAddressSummary.rewardBalance === 0}
                     onClick={() => {

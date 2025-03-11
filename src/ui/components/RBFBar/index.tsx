@@ -1,6 +1,7 @@
 import { Checkbox, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 
+import { useI18n } from '@/ui/hooks/useI18n';
 import { fontSizes } from '@/ui/theme/font';
 
 import { Icon } from '../Icon';
@@ -9,14 +10,14 @@ import { Text } from '../Text';
 
 export function RBFBar({ defaultValue, onChange }: { defaultValue?: boolean; onChange: (val: boolean) => void }) {
   const [enableRBF, setEnableRBF] = useState(defaultValue || false);
-
+  const { t } = useI18n();
   useEffect(() => {
     onChange(enableRBF);
   }, [enableRBF]);
   return (
     <Row justifyBetween>
       <Tooltip
-        title={`A feature allows the transaction to be replaced.`}
+        title={t('a_feature_allows_the_transaction_to_be_replaced')}
         overlayStyle={{
           fontSize: fontSizes.xs
         }}>

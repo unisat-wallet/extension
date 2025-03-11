@@ -6,6 +6,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { Empty } from '@/ui/components/Empty';
 import { Pagination } from '@/ui/components/Pagination';
 import RunesBalanceCard from '@/ui/components/RunesBalanceCard';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useChainType } from '@/ui/state/settings/hooks';
 import { useWallet } from '@/ui/utils';
@@ -18,6 +19,7 @@ export function RunesList() {
   const wallet = useWallet();
   const currentAccount = useCurrentAccount();
   const chainType = useChainType();
+  const { t } = useI18n();
 
   const [tokens, setTokens] = useState<RuneBalance[]>([]);
   const [total, setTotal] = useState(-1);
@@ -59,7 +61,7 @@ export function RunesList() {
   if (total === 0) {
     return (
       <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
-        <Empty text="Empty" />
+        <Empty text={t('empty')} />
       </Column>
     );
   }

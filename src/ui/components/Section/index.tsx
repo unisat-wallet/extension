@@ -1,3 +1,4 @@
+import { useI18n } from '@/ui/hooks/useI18n';
 import { copyToClipboard, shortAddress } from '@/ui/utils';
 import { CopyOutlined } from '@ant-design/icons';
 
@@ -19,6 +20,7 @@ export function Section({
   maxLength?: number;
 }) {
   const tools = useTools();
+  const { t } = useI18n();
 
   let displayText = value.toString();
   if (value && typeof value === 'string' && value.length > maxLength) {
@@ -40,7 +42,7 @@ export function Section({
             window.open(link);
           } else {
             copyToClipboard(value).then(() => {
-              tools.toastSuccess('Copied');
+              tools.toastSuccess(t('copied'));
             });
           }
         }}>

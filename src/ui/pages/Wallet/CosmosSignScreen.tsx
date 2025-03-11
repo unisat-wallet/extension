@@ -2,6 +2,7 @@ import { useCallback } from 'react';
 
 import { CosmosSignDataType } from '@/shared/types';
 import KeystoneSignBase, { KeystoneSignBaseProps } from '@/ui/components/Keystone/SignBase';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useWallet } from '@/ui/utils';
 
 interface Props {
@@ -20,6 +21,7 @@ interface Props {
 
 export default function CosmosSignScreen(props: Props) {
   const wallet = useWallet();
+  const { t } = useI18n();
 
   const generateUR = useCallback(async () => {
     return wallet.genSignCosmosUr(props.cosmosSignRequest);
@@ -35,7 +37,7 @@ export default function CosmosSignScreen(props: Props) {
   const baseProps: KeystoneSignBaseProps = {
     onBack: props.onBack,
     onSuccess: props.onSuccess,
-    signatureText: 'Get Signature',
+    signatureText: t('get_signature'),
     id: props.cosmosSignRequest.requestId,
     generateUR,
     parseUR

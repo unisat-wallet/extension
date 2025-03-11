@@ -1,4 +1,5 @@
 import { Icon } from '@/ui/components';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { fontSizes } from '@/ui/theme/font';
 
 import { Button } from '../Button';
@@ -7,21 +8,21 @@ import { Popover } from '../Popover';
 import { Text } from '../Text';
 
 export const EnableAtomicalsPopover = ({ onClose, onConfirm }: { onClose: () => void; onConfirm: () => void }) => {
+  const { t } = useI18n();
   return (
     <Popover onClose={onClose}>
       <Column justifyCenter itemsCenter>
-        <Text text="Precautions" preset="title-bold" />
+        <Text text={t('precautions')} preset="title-bold" />
         <Icon icon={'warning'} color={'icon_yellow'} size={57} />
         <Column gap="zero">
           <div style={{ fontSize: fontSizes.sm, color: '#ddd' }}>
-            In the current version, only <span style={{ color: '#EBB94C' }}>the confirmed balance</span> can be used
-            once atomicals enabled.
+            {t('in_the_current_version_only_the_confirmed_balance_can_be_used_once_atomicals_enabled')}
           </div>
         </Column>
 
         <Column full mt={'xl'}>
           <Button
-            text="Enable Atomicals"
+            text={t('enable_atomicals')}
             preset="primary"
             full
             onClick={(e) => {
@@ -31,7 +32,7 @@ export const EnableAtomicalsPopover = ({ onClose, onConfirm }: { onClose: () => 
             }}
           />
           <Button
-            text="Cancel"
+            text={t('cancel')}
             full
             onClick={(e) => {
               if (onClose) {

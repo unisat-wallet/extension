@@ -6,6 +6,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { CAT20BalanceCard } from '@/ui/components/CAT20BalanceCard';
 import { Empty } from '@/ui/components/Empty';
 import { Pagination } from '@/ui/components/Pagination';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useChain, useChainType } from '@/ui/state/settings/hooks';
 import { useSupportedAssets } from '@/ui/state/ui/hooks';
@@ -20,6 +21,7 @@ export function CAT20List() {
   const currentAccount = useCurrentAccount();
   const chainType = useChainType();
   const chain = useChain();
+  const { t } = useI18n();
 
   const [tokens, setTokens] = useState<CAT20Balance[]>([]);
   const [total, setTotal] = useState(-1);
@@ -70,7 +72,7 @@ export function CAT20List() {
   if (total === 0) {
     return (
       <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
-        <Empty text="Empty" />
+        <Empty text={t('empty')} />
       </Column>
     );
   }

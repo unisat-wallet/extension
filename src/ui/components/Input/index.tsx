@@ -6,6 +6,7 @@ import { ChainType, SAFE_DOMAIN_CONFIRMATION } from '@/shared/constant';
 import { getSatsName } from '@/shared/lib/satsname-utils';
 import { Inscription } from '@/shared/types';
 import { Icon, Row, Text } from '@/ui/components';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { getAddressTips, useChain } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { spacing } from '@/ui/theme/spacing';
@@ -100,11 +101,12 @@ const $baseTextareaStyle: CSSProperties = Object.assign({}, $baseInputStyle, {
 
 function PasswordInput(props: InputProps) {
   const { placeholder, containerStyle, style: $inputStyleOverride, ...rest } = props;
+  const { t } = useI18n();
   const [type, setType] = useState<'password' | 'text'>('password');
   return (
     <div style={Object.assign({}, $baseContainerStyle, containerStyle)}>
       <input
-        placeholder={isNull(placeholder) ? 'Password' : placeholder}
+        placeholder={isNull(placeholder) ? t('password') : placeholder}
         type={type}
         style={Object.assign({}, $baseInputStyle, $inputStyleOverride)}
         {...rest}
@@ -132,7 +134,7 @@ function AmountInput(props: InputProps) {
     ...rest
   } = props;
   const $style = Object.assign({}, $baseInputStyle, $inputStyleOverride, disabled ? { color: colors.textDim } : {});
-
+  const { t } = useI18n();
   if (!onAmountInputChange) {
     return <div />;
   }
@@ -185,7 +187,7 @@ function AmountInput(props: InputProps) {
           onClick={() => {
             if (onMaxClick) onMaxClick();
           }}
-          text={'Max'}
+          text={t('max')}
           color={'yellow'}
           size="sm"
         />
@@ -195,6 +197,7 @@ function AmountInput(props: InputProps) {
 }
 
 export const AddressInput = (props: InputProps) => {
+  const { t } = useI18n();
   const {
     placeholder,
     onAddressInputChange,
@@ -225,10 +228,10 @@ export const AddressInput = (props: InputProps) => {
   const networkType = propsNetworkType || chain.enum;
 
   let SUPPORTED_DOMAINS = ['sats', 'unisat', 'x', 'btc'];
-  let inputAddressPlaceholder = props.addressPlaceholder || 'Address or name (.sats, .unisat, ...) ';
+  let inputAddressPlaceholder = props.addressPlaceholder || t('address_or_name_sats_unisat_etc');
   if (chain.isFractal) {
     SUPPORTED_DOMAINS = ['fb'];
-    inputAddressPlaceholder = 'Address or name (.fb) ';
+    inputAddressPlaceholder = t('address_or_name_fb');
   }
 
   useEffect(() => {
@@ -283,13 +286,15 @@ export const AddressInput = (props: InputProps) => {
           .then((inscription) => {
             resetState();
             if (!inscription) {
-              setParseError(`${inputAddress} does not exist`);
+              setParseError(`${inputAddress} ${t('does_not_exist')}`);
               return;
             }
             setInscription(inscription);
             if (inscription.utxoConfirmation < SAFE_DOMAIN_CONFIRMATION) {
               setParseError(
-                `This domain has been transferred or inscribed recently. Please wait for block confirmations (${inscription.utxoConfirmation}/3).`
+                `${t('this_domain_has_been_transferred_or_inscribed_recently_please_wait_for_block_confirmations')} (${
+                  inscription.utxoConfirmation
+                }/${SAFE_DOMAIN_CONFIRMATION}).`
               );
               return;
             }
@@ -319,13 +324,13 @@ export const AddressInput = (props: InputProps) => {
           }
           str += `${names[i]}`;
         }
-        setFormatError(`Currently only ${str} are supported.`);
+        setFormatError(`${t('currently_only')} ${str} ${t('are_supported')}.`);
         return;
       }
     } else {
       const isValid = bitcore.Address.isValid(inputAddress);
       if (!isValid) {
-        setFormatError('Recipient address is invalid');
+        setFormatError(t('recipient_address_is_invalid'));
         return;
       }
       setValidAddress(inputAddress);
@@ -335,9 +340,9 @@ export const AddressInput = (props: InputProps) => {
   return (
     <div style={{ alignSelf: 'stretch' }}>
       <Row justifyBetween itemsCenter style={{ marginTop: 20, marginBottom: 12 }}>
-        {recipientLabel || <Text text="Recipient" preset="regular" />}
+        {recipientLabel || <Text text={t('recipient')} preset="regular" />}
         <Row itemsCenter clickable onClick={() => setShowContactsModal(true)} style={{ cursor: 'pointer', gap: 0 }}>
-          <Text text="Address Book" color="yellow" style={{ fontSize: '14px' }} />
+          <Text text={t('address_book_placeholder')} color="yellow" style={{ fontSize: '14px' }} />
           <Icon icon="right" color="yellow" size={16} style={{ marginLeft: 4 }} />
         </Row>
       </Row>
@@ -361,7 +366,7 @@ export const AddressInput = (props: InputProps) => {
 
         {searching && (
           <Row full mt="sm">
-            <Text preset="sub" text={'Loading...'} />
+            <Text preset="sub" text={t('loading')} />
           </Row>
         )}
         {inscription && (
@@ -374,11 +379,11 @@ export const AddressInput = (props: InputProps) => {
 
       {parseName ? (
         <Row mt="sm" gap="zero" itemsCenter>
-          <Text preset="sub" size="sm" text={'Name recognized and resolved. ('} />
+          <Text preset="sub" size="sm" text={t('name_recognized_and_resolved')} />
           <Text
             preset="link"
             color="yellow"
-            text={'More details'}
+            text={t('more_details')}
             onClick={() => {
               window.open('https://docs.unisat.io/unisat-wallet/name-recognized-and-resolved');
             }}
@@ -414,7 +419,7 @@ export const AddressInput = (props: InputProps) => {
             if (bitcore.Address.isValid(addressValue)) {
               setValidAddress(addressValue);
             } else {
-              setFormatError('Recipient address is invalid');
+              setFormatError(t('recipient_address_is_invalid'));
             }
 
             setShowContactsModal(false);
@@ -428,7 +433,7 @@ export const AddressInput = (props: InputProps) => {
 
 export const CosmosAddressInput = (props: InputProps) => {
   const { placeholder, onAddressInputChange, addressInputData, style: $inputStyleOverride, ...rest } = props;
-
+  const { t } = useI18n();
   if (!addressInputData || !onAddressInputChange) {
     return <div />;
   }
@@ -469,7 +474,7 @@ export const CosmosAddressInput = (props: InputProps) => {
     resetState();
 
     if (!isValidBech32Address(inputAddress)) {
-      setFormatError('Recipient address is invalid');
+      setFormatError(t('recipient_address_is_invalid'));
       return;
     }
 

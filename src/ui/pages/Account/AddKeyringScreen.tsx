@@ -1,11 +1,13 @@
 import { Card, Column, Content, Header, Layout, Text } from '@/ui/components';
 import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
+import { useI18n } from '@/ui/hooks/useI18n';
 
 import { useNavigate } from '../MainRoute';
 
 export default function AddKeyringScreen() {
   const navigate = useNavigate();
   const isInTab = useExtensionIsInTab();
+  const { t } = useI18n();
 
   return (
     <Layout>
@@ -13,11 +15,11 @@ export default function AddKeyringScreen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Create a new wallet"
+        title={t('create_a_new_wallet')}
       />
       <Content>
         <Column>
-          <Text text="Create Wallet" preset="regular-bold" />
+          <Text text={t('create_wallet')} preset="regular-bold" />
 
           <Card
             justifyCenter
@@ -25,11 +27,11 @@ export default function AddKeyringScreen() {
               navigate('CreateHDWalletScreen', { isImport: false });
             }}>
             <Column full justifyCenter>
-              <Text text="Create with mnemonics (12-words)" size="sm" />
+              <Text text={t('create_with_mnemonics_12words')} size="sm" />
             </Column>
           </Card>
 
-          <Text text="Restore Wallet" preset="regular-bold" mt="lg" />
+          <Text text={t('restore_wallet')} preset="regular-bold" mt="lg" />
 
           <Card
             justifyCenter
@@ -37,7 +39,7 @@ export default function AddKeyringScreen() {
               navigate('CreateHDWalletScreen', { isImport: true });
             }}>
             <Column full justifyCenter>
-              <Text text="Restore from mnemonics (12-words、24-words)" size="sm" />
+              <Text text={t('restore_from_mnemonics_12words24words')} size="sm" />
             </Column>
           </Card>
 
@@ -47,11 +49,11 @@ export default function AddKeyringScreen() {
               navigate('CreateSimpleWalletScreen');
             }}>
             <Column full justifyCenter>
-              <Text text="Restore from single private key" size="sm" />
+              <Text text={t('restore_from_single_private_key')} size="sm" />
             </Column>
           </Card>
 
-          <Text text="Connect to Hardware Wallet" preset="regular-bold" mt="lg" />
+          <Text text={t('connect_to_hardware_wallet')} preset="regular-bold" mt="lg" />
 
           <Card
             justifyCenter
@@ -63,7 +65,7 @@ export default function AddKeyringScreen() {
               }
             }}>
             <Column full justifyCenter>
-              <Text text="Keystone Wallet" size="sm" />
+              <Text text={t('keystone_wallet')} size="sm" />
             </Column>
           </Card>
         </Column>

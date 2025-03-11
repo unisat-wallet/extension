@@ -5,6 +5,7 @@ import { ContactBookItem } from '@/background/service/contactBook';
 import { CHAINS_MAP, ChainType } from '@/shared/constant';
 import { Button, Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import { BottomModal } from '@/ui/components/BottomModal';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useChain } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
@@ -164,6 +165,7 @@ export default function ContactsScreen() {
   const [selectedNetworkFilter, setSelectedNetworkFilter] = useState<ChainType>(ChainType.BITCOIN_MAINNET);
   const [isSortingMode, setIsSortingMode] = useState(false);
   const [orderedContacts, setOrderedContacts] = useState<ContactBookItem[]>([]);
+  const { t } = useI18n();
 
   // Setup sensors for touch and keyboard operations
   const sensors = useSensors(
@@ -457,7 +459,7 @@ export default function ContactsScreen() {
         onBack={() => {
           navigate('/settings');
         }}
-        title="Address Book"
+        title={t('address_book')}
       />
 
       <Row justifyBetween mt="md" mb="lg" style={{ padding: '0 16px' }}>
@@ -498,7 +500,7 @@ export default function ContactsScreen() {
               alignItems: 'center'
             }}>
             <Text
-              text="Cancel"
+              text={t('cancel')}
               style={{
                 color: '#F55454',
                 textAlign: 'right',
@@ -517,12 +519,12 @@ export default function ContactsScreen() {
       <Content style={{ display: 'flex', flexDirection: 'column', flex: 1 }}>
         {isLoading ? (
           <Column full justifyCenter itemsCenter style={{ flex: 1 }}>
-            <Text text="Loading..." preset="sub" textCenter />
+            <Text text={t('loading_contacts')} preset="sub" textCenter />
           </Column>
         ) : showEmptyState ? (
           <Column full justifyCenter itemsCenter style={{ flex: 1 }}>
             <Icon icon="addressBookEmpty" size={fontSizes.iconEmpty} style={{ marginBottom: spacing.large }} />
-            <Text text="You haven't added address information yet" preset="sub" textCenter mt="md" />
+            <Text text={t('you_haven_t_added_address_information_yet')} preset="sub" textCenter mt="md" />
           </Column>
         ) : (
           <Column gap="lg" style={{ flex: filteredContacts.length === 0 ? 1 : 'unset' }}>
@@ -541,7 +543,7 @@ export default function ContactsScreen() {
               <SearchOutlined style={{ color: '#888', marginRight: 8, fontSize: 20, display: 'flex' }} />
               <input
                 type="text"
-                placeholder="Search address or name"
+                placeholder={t('search_address_or_name')}
                 value={searchKeyword}
                 onChange={(e) => !isSortingMode && setSearchKeyword(e.target.value)}
                 style={{
@@ -561,7 +563,7 @@ export default function ContactsScreen() {
             {filteredContacts.length === 0 ? (
               <Column full justifyCenter itemsCenter style={{ flex: 1 }}>
                 <Icon icon="addressBookEmpty" size={fontSizes.iconEmpty} style={{ marginBottom: spacing.large }} />
-                <Text text="No matching contacts found" preset="sub" textCenter mt="md" />
+                <Text text={t('you_haven_t_added_address_information_yet')} preset="sub" textCenter mt="md" />
               </Column>
             ) : isSortingMode ? (
               <DndContext
@@ -599,7 +601,7 @@ export default function ContactsScreen() {
       </Content>
       <Footer>
         <Button
-          text={isSortingMode ? 'Finish' : 'Add Address'}
+          text={isSortingMode ? t('finish') : t('add_address')}
           preset="primary"
           onClick={
             isSortingMode
@@ -618,7 +620,7 @@ export default function ContactsScreen() {
         <BottomModal onClose={() => setDeleteModalVisible(false)}>
           <Column gap="xl" style={{ padding: `${spacing.large}px ${spacing.large}px ${spacing.large}px` }}>
             <Row justifyBetween itemsCenter>
-              <Text text="Delete Contact" preset="title-bold" />
+              <Text text={t('delete_contact')} preset="title-bold" />
               <Icon
                 icon="close"
                 color="textDim"
@@ -628,7 +630,7 @@ export default function ContactsScreen() {
             </Row>
 
             <Column gap="lg">
-              <Text text="Are you sure you want to delete this contact?" preset="regular" color="textDim" />
+              <Text text={t('are_you_sure_you_want_to_delete_this_contact')} preset="regular" color="textDim" />
 
               <Card style={{ backgroundColor: colors.black_muted, padding: spacing.medium }}>
                 <Column gap="sm">
@@ -643,7 +645,7 @@ export default function ContactsScreen() {
 
             <Row gap="md">
               <Button
-                text="Cancel"
+                text={t('cancel')}
                 preset="default"
                 onClick={() => {
                   setDeleteModalVisible(false);
@@ -655,7 +657,7 @@ export default function ContactsScreen() {
                   border: `1px solid ${colors.border}`
                 }}
               />
-              <Button text="Delete" preset="danger" onClick={confirmDelete} style={{ flex: 1 }} />
+              <Button text={t('delete')} preset="danger" onClick={confirmDelete} style={{ flex: 1 }} />
             </Row>
           </Column>
         </BottomModal>

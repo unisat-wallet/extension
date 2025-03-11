@@ -1,21 +1,20 @@
-import { ContextData, TabType, UpdateContextDataParams } from '@/ui/pages/Account/createHDWalletComponents/types';
-import { Button, Card, Column, Grid, Icon, Row, Text } from '@/ui/components';
-import { Checkbox } from 'antd';
-import { fontSizes } from '@/ui/theme/font';
-import { FooterButtonContainer } from '@/ui/components/FooterButtonContainer';
 import { useState } from 'react';
 
+import { Button, Card, Column, Grid, Row, Text } from '@/ui/components';
+import { FooterButtonContainer } from '@/ui/components/FooterButtonContainer';
+import { useI18n } from '@/ui/hooks/useI18n';
+import { ContextData, TabType, UpdateContextDataParams } from '@/ui/pages/Account/createHDWalletComponents/types';
+
 export function Step1_Confirm({
-                                contextData,
-                                updateContextData
-                              }: {
+  contextData,
+  updateContextData
+}: {
   contextData: ContextData;
   updateContextData: (params: UpdateContextDataParams) => void;
 }) {
-
   const [checked, setChecked] = useState(true);
   const words = contextData.mnemonics.split(' ');
-
+  const { t } = useI18n();
 
   const btnClick = () => {
     updateContextData({
@@ -25,12 +24,8 @@ export function Step1_Confirm({
 
   return (
     <Column gap="xl">
-      <Text text="Verify Recovery Phrase" preset="title-bold" textCenter />
-      <Text
-        text="Click on the words to put them in the correct order to verify if the recovery phrase you backed up is correct"
-        color="warning"
-        textCenter
-      />
+      <Text text={t('verify_recovery_phrase')} preset="title-bold" textCenter />
+      <Text text={t('click_on_the_words_to_put_them_in_the_correct_orde')} color="warning" textCenter />
       <Row justifyCenter>
         <Grid columns={2}>
           {words.map((v, index) => {
@@ -46,7 +41,7 @@ export function Step1_Confirm({
         </Grid>
       </Row>
       <FooterButtonContainer>
-        <Button disabled={!checked} text="Continue" preset="primary" onClick={btnClick} />
+        <Button disabled={!checked} text={t('continue')} preset="primary" onClick={btnClick} />
       </FooterButtonContainer>
     </Column>
   );

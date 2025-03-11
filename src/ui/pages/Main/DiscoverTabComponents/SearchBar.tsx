@@ -2,6 +2,7 @@ import { Spin } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 
 import { Column, Input, Row, Text } from '@/ui/components';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useChain } from '@/ui/state/settings/hooks';
 import { shortAddress, useWallet } from '@/ui/utils';
 import { EnterOutlined } from '@ant-design/icons';
@@ -31,6 +32,7 @@ function isBlock(str: string) {
 export function SearchBar() {
   const chain = useChain();
   const wallet = useWallet();
+  const { t } = useI18n();
 
   const [info, setInfo] = useState<{ allTransactions: number | string; allAddrs: number | string }>();
 
@@ -59,7 +61,7 @@ export function SearchBar() {
         return {
           searchContent: (
             <Row py={'lg'} px={'lg'} clickable onClick={onSearch}>
-              <Text text={'Address:'} preset={'sub'} size={'sm'} />
+              <Text text={t('address_preview')} preset={'sub'} size={'sm'} />
               <Text text={shortAddress(value)} fullX />
               <EnterOutlined style={{ color: '#ccc', fontSize: 14 }} />
             </Row>
@@ -75,7 +77,7 @@ export function SearchBar() {
         return {
           searchContent: (
             <Row py={'lg'} px={'lg'} clickable onClick={onSearch}>
-              <Text text={'Transaction:'} preset={'sub'} size={'sm'} />
+              <Text text={t('transaction_preview')} preset={'sub'} size={'sm'} />
               <Text text={shortAddress(value)} fullX />
               <EnterOutlined style={{ color: '#ccc', fontSize: 14 }} />
             </Row>
@@ -91,7 +93,7 @@ export function SearchBar() {
         return {
           searchContent: (
             <Row py={'lg'} px={'lg'} clickable onClick={onSearch}>
-              <Text text={'Block:'} preset={'sub'} size={'sm'} />
+              <Text text={t('block_preview')} preset={'sub'} size={'sm'} />
               <Text text={value} fullX />
               <EnterOutlined style={{ color: '#ccc', fontSize: 14 }} />
             </Row>
@@ -107,7 +109,7 @@ export function SearchBar() {
       return {
         searchContent: (
           <Row py={'lg'} px={'lg'} clickable onClick={onSearch}>
-            <Text text={'Text:'} preset={'sub'} size={'sm'} />
+            <Text text={t('text_preview')} preset={'sub'} size={'sm'} />
             <Text text={value} fullX ellipsis />
             <EnterOutlined style={{ color: '#ccc', fontSize: 14 }} />
           </Row>
@@ -124,14 +126,20 @@ export function SearchBar() {
       searchContent: (
         <Column py={'lg'} px={'lg'} gap={'lg'}>
           <Row justifyBetween itemsCenter>
-            <Text text={'Transactions (24h)'} preset={'sub'} size={'sm'} />
+            <Text text={t('transactions_24h')} preset={'sub'} size={'sm'} />
             {!info ? <Spin size={'small'} /> : <Text text={info.allTransactions} digital />}
           </Row>
           <Row justifyBetween itemsCenter>
-            <Text text={'Active Addresses (24h)'} preset={'sub'} size={'sm'} />
+            <Text text={t('active_addresses_24h')} preset={'sub'} size={'sm'} />
             {!info ? <Spin size={'small'} /> : <Text text={info.allAddrs} digital />}{' '}
           </Row>
-          <Text text={'Go to UniSat Explorer'} size={'xs'} selfItemsCenter color={'primary'} onClick={gotoExplorer} />
+          <Text
+            text={t('go_to_unisat_explorer')}
+            size={'xs'}
+            selfItemsCenter
+            color={'primary'}
+            onClick={gotoExplorer}
+          />
         </Column>
       ),
       onSearch: gotoExplorer
@@ -162,7 +170,7 @@ export function SearchBar() {
           setFocused(false);
         }}
         preset={'search'}
-        placeholder={'Search Address and TXIDs'}
+        placeholder={t('search_address_and_txids')}
         value={value}
         onChange={(e) => setValue(e.target.value)}
         onSearch={onSearch}

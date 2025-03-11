@@ -1,6 +1,7 @@
 import { ReactEventHandler } from 'react';
 
 import { AddressAssets } from '@/shared/types';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useBTCUnit, useChain } from '@/ui/state/settings/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { satoshisToBTC } from '@/ui/utils';
@@ -24,6 +25,7 @@ export function AddressTypeCard(props: AddressTypeCardProps) {
   const btcUnit = useBTCUnit();
   const { onClick, label, address, checked, assets } = props;
   const hasVault = Boolean(assets.satoshis && assets.satoshis > 0);
+  const { t } = useI18n();
 
   const chain = useChain();
   return (
@@ -46,7 +48,7 @@ export function AddressTypeCard(props: AddressTypeCardProps) {
             </Row>
             <Row>
               {assets.total_inscription > 0 && (
-                <Text text={`${assets.total_inscription} INSCRIPTIONS`} color="gold" preset="bold" />
+                <Text text={`${assets.total_inscription} ${t('inscriptions_capital')}`} color="gold" preset="bold" />
               )}
             </Row>
           </Row>

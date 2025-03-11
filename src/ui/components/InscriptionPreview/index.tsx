@@ -2,38 +2,18 @@ import { Tooltip } from 'antd';
 import { CSSProperties, useEffect, useRef, useState } from 'react';
 
 import { Inscription } from '@/shared/types';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useOrdinalsWebsite } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
+import { getDateShowdate } from '@/ui/utils/getDateShowdate';
 import { LoadingOutlined } from '@ant-design/icons';
 
-import { formatDate } from '../../utils';
 import { Column } from '../Column';
 import Iframe from '../Iframe';
 import { Row } from '../Row';
 import { Text } from '../Text';
 import './index.less';
-
-function getDateShowdate(date: Date) {
-  if (date.getTime() < 100) {
-    return 'unconfirmed';
-  } else {
-    const old = Date.now() - date.getTime();
-    if (old < 60 * 1000) {
-      return `${Math.floor(old / 1000)} secs ago`;
-    }
-    if (old < 1000 * 60 * 60) {
-      return `${Math.floor(old / 60000)} mins ago`;
-    }
-    if (old < 1000 * 60 * 60 * 24) {
-      return `${Math.floor(old / 3600000)} hours ago`;
-    }
-    if (old < 1000 * 60 * 60 * 24 * 30) {
-      return `${Math.floor(old / 86400000)} days ago`;
-    }
-  }
-  return formatDate(date, 'yyyy-MM-dd');
-}
 
 const $viewPresets = {
   large: {},
@@ -132,13 +112,13 @@ export default function InscriptionPreview({ data, onClick, preset, asLogo, hide
   /** iframe loaded */
   const [isLoaded, setIsLoaded] = useState(false);
   const previewRef = useRef<HTMLDivElement>(null);
-
+  const { t } = useI18n();
   const date = new Date(data.timestamp * 1000);
-  const time = getDateShowdate(date);
+  const time = getDateShowdate(date, t);
   const isUnconfirmed = date.getTime() < 100;
   let numberStr = '';
   if (isUnconfirmed) {
-    numberStr = 'unconfirmed';
+    numberStr = t('unconfirmed');
   } else if (data.inscriptionNumber) {
     numberStr = `# ${data.inscriptionNumber}`;
   }
@@ -221,7 +201,7 @@ export default function InscriptionPreview({ data, onClick, preset, asLogo, hide
               <Row style={{ flex: 1 }} />
               <Row fullX justifyEnd mb="sm">
                 <Tooltip
-                  title={`The UTXO containing this inscription has ${data.outputValue} sats`}
+                  title={`${t('the_utxo_containing_this_inscription_has')} ${data.outputValue} sats`}
                   overlayStyle={{
                     fontSize: fontSizes.xs
                   }}>

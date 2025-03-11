@@ -29,6 +29,7 @@ import { PhishingDetection } from '@/ui/components/PhishingDetection';
 import RunesPreviewCard from '@/ui/components/RunesPreviewCard';
 import { SignPsbtWithRisksPopover } from '@/ui/components/SignPsbtWithRisksPopover';
 import WebsiteBar from '@/ui/components/WebsiteBar';
+import { useI18n } from '@/ui/hooks/useI18n';
 import KeystoneSignScreen from '@/ui/pages/Wallet/KeystoneSignScreen';
 import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useBTCUnit, useChain } from '@/ui/state/settings/hooks';
@@ -122,6 +123,7 @@ function SignTxDetails({
   const address = useAccountAddress();
   const chain = useChain();
   const btcUnit = useBTCUnit();
+  const { t } = useI18n();
 
   const sendingInscriptions = useMemo(() => {
     return txInfo.decodedPsbt.inputInfos
@@ -248,7 +250,7 @@ function SignTxDetails({
     if (!involved) return;
     return (
       <Column>
-        <Text text="Involved Assets:" preset="bold" />
+        <Text text={t('involved_assets')} preset="bold" />
         <Column justifyCenter>
           {ordinalsInscriptionCount > 0 ? (
             <Column
@@ -380,7 +382,7 @@ function SignTxDetails({
     return (
       <Column gap="lg">
         <Row itemsCenter justifyCenter fullX py={'sm'}>
-          <Text text="Sign Transaction" preset="title-bold" textCenter />
+          <Text text={t('sign_transaction')} preset="title-bold" textCenter />
         </Row>
         <Row justifyCenter fullX>
           <Card style={{ backgroundColor: '#272626', flex: '1' }}>
@@ -421,7 +423,7 @@ function SignTxDetails({
   return (
     <Column gap="lg" style={{ position: 'relative' }}>
       <Row itemsCenter justifyCenter fullX py={'sm'}>
-        <Text text="Sign Transaction" preset="title-bold" textCenter />
+        <Text text={t('sign_transaction')} preset="title-bold" textCenter />
       </Row>
       <Row justifyCenter>
         <Card style={{ backgroundColor: '#272626', flex: '1' }}>
@@ -436,7 +438,7 @@ function SignTxDetails({
             />
             {rawTxInfo && (
               <Column>
-                <Text text={'Send to'} textCenter color="textDim" />
+                <Text text={t('send_to')} textCenter color="textDim" />
                 <Row justifyCenter>
                   <AddressText addressInfo={rawTxInfo.toAddressInfo} textCenter />
                 </Row>
@@ -454,8 +456,8 @@ function SignTxDetails({
                 <Text
                   text={
                     sendingInscriptions.length === 1
-                      ? 'Spend Inscription'
-                      : `Spend Inscription (${sendingInscriptions.length})`
+                      ? t('spend_inscription')
+                      : `${t('spend_inscription')} (${sendingInscriptions.length})`
                   }
                   textCenter
                   color="textDim"
@@ -472,7 +474,7 @@ function SignTxDetails({
             )}
 
             <Column>
-              <Text text={'Spend Amount'} textCenter color="textDim" />
+              <Text text={t('spend_amount')} textCenter color="textDim" />
 
               <Column justifyCenter>
                 <Row itemsCenter>
@@ -481,9 +483,11 @@ function SignTxDetails({
                 <BtcUsd sats={spendSatoshis} textCenter bracket style={{ marginTop: -8 }} />
 
                 {sendingInscriptionSaotoshis > 0 && (
-                  <Text text={`${sendingInscriptionAmount} (in inscriptions)`} preset="sub" textCenter />
+                  <Text text={`${sendingInscriptionAmount} (${t('in_inscriptions')})`} preset="sub" textCenter />
                 )}
-                {isCurrentToPayFee && <Text text={`${feeAmount} ${btcUnit} (network fee)`} preset="sub" textCenter />}
+                {isCurrentToPayFee && (
+                  <Text text={`${feeAmount} ${btcUnit} (${t('network_fee')})`} preset="sub" textCenter />
+                )}
               </Column>
             </Column>
           </Column>
@@ -882,6 +886,8 @@ export default function SignPsbt({
     );
   }
 
+  const { t } = useI18n();
+
   return (
     <Layout>
       {header}
@@ -891,20 +897,24 @@ export default function SignPsbt({
           {/*this div is used to double gap*/}
           <div />
           {canChanged == false && (
-            <Section title="Network Fee:" extra={<BtcUsd sats={amountToSatoshis(networkFee)} />}>
+            <Section title={t('network_fee') + ':'} extra={<BtcUsd sats={amountToSatoshis(networkFee)} />}>
               <Text text={networkFee} />
               <Text text={btcUnit} color="textDim" />
             </Section>
           )}
 
           {canChanged == false && (
-            <Section title="Network Fee Rate:">
+            <Section title={t('network_fee_rate') + ':'}>
               {txInfo.decodedPsbt.shouldWarnFeeRate ? (
                 <Tooltip
                   title={
                     txInfo.decodedPsbt.recommendedFeeRate > txInfo.decodedPsbt.feeRate
-                      ? `The fee rate is much lower than recommended fee rate (${txInfo.decodedPsbt.recommendedFeeRate} sat/vB)`
-                      : `The fee rate is much higher than recommended fee rate (${txInfo.decodedPsbt.recommendedFeeRate} sat/vB)`
+                      ? `${t('the_fee_rate_is_much_lower_than_recommended_fee_rate')} (${
+                          txInfo.decodedPsbt.recommendedFeeRate
+                        } sat/vB)`
+                      : `${t('the_fee_rate_is_much_higher_than_recommended_fee_rate')} (${
+                          txInfo.decodedPsbt.recommendedFeeRate
+                        } sat/vB)`
                   }
                   overlayStyle={{
                     fontSize: fontSizes.xs
@@ -924,7 +934,7 @@ export default function SignPsbt({
             </Section>
           )}
 
-          <Section title="Features:">
+          <Section title={t('features')}>
             <Row>
               {txInfo.decodedPsbt.features.rbf ? (
                 <Text text="RBF" color="white" style={{ backgroundColor: 'green', padding: 5, borderRadius: 5 }} />
@@ -941,7 +951,7 @@ export default function SignPsbt({
           {isValidData && (
             <Column gap="xl">
               <Column>
-                <Text text={`Inputs: (${txInfo.decodedPsbt.inputInfos.length})`} preset="bold" />
+                <Text text={`${t('inputs')}: (${txInfo.decodedPsbt.inputInfos.length})`} preset="bold" />
                 <Card>
                   <Column full justifyCenter>
                     {txInfo.decodedPsbt.inputInfos.map((v, index) => {
@@ -962,7 +972,7 @@ export default function SignPsbt({
                                   <AddressText address={v.address} color={isToSign ? 'white' : 'textDim'} />
                                   {isToSign && (
                                     <Row style={{ borderWidth: 1, borderColor: 'gold', borderRadius: 5, padding: 2 }}>
-                                      <Text text="to sign" color="gold" size="xs" />
+                                      <Text text={t('to_sign')} color="gold" size="xs" />
                                     </Row>
                                   )}
                                 </Row>
@@ -978,7 +988,7 @@ export default function SignPsbt({
                               <Row>
                                 <Column justifyCenter>
                                   <Text
-                                    text={`Inscriptions (${inscriptions.length})`}
+                                    text={`${t('inscriptions')} (${inscriptions.length})`}
                                     color={isToSign ? 'white' : 'textDim'}
                                   />
                                   <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
@@ -1002,7 +1012,7 @@ export default function SignPsbt({
                               <Row>
                                 <Column justifyCenter>
                                   <Text
-                                    text={`Atomicals NFT (${inscriptions.length})`}
+                                    text={`${t('atomicals_nft')} (${inscriptions.length})`}
                                     color={isToSign ? 'white' : 'textDim'}
                                   />
                                   <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
@@ -1024,7 +1034,7 @@ export default function SignPsbt({
                             {atomicals_ft.length > 0 && (
                               <Row>
                                 <Column justifyCenter>
-                                  <Text text={'ARC20'} color={isToSign ? 'white' : 'textDim'} />
+                                  <Text text={t('arc20')} color={isToSign ? 'white' : 'textDim'} />
                                   <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
                                     {atomicals_ft.map((w) => (
                                       <Arc20PreviewCard key={w.ticker} ticker={w.ticker || ''} amt={w.atomicalValue} />
@@ -1037,7 +1047,7 @@ export default function SignPsbt({
                             {runes.length > 0 && (
                               <Row>
                                 <Column justifyCenter>
-                                  <Text text={'RUNES'} color={isToSign ? 'white' : 'textDim'} />
+                                  <Text text={t('runes')} color={isToSign ? 'white' : 'textDim'} />
                                   <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
                                     {runes.map((w) => (
                                       <RunesPreviewCard
@@ -1059,7 +1069,7 @@ export default function SignPsbt({
               </Column>
 
               <Column>
-                <Text text={`Outputs: (${txInfo.decodedPsbt.outputInfos.length})`} preset="bold" />
+                <Text text={`${t('outputs')}: (${txInfo.decodedPsbt.outputInfos.length})`} preset="bold" />
                 <Card>
                   <Column full justifyCenter gap="lg">
                     {txInfo.decodedPsbt.outputInfos.map((v, index) => {
@@ -1090,7 +1100,7 @@ export default function SignPsbt({
                             <Row>
                               <Column justifyCenter>
                                 <Text
-                                  text={`Inscriptions (${inscriptions.length})`}
+                                  text={`${t('inscriptions')} (${inscriptions.length})`}
                                   color={isMyAddress ? 'white' : 'textDim'}
                                 />
                                 <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
@@ -1114,7 +1124,7 @@ export default function SignPsbt({
                             <Row>
                               <Column justifyCenter>
                                 <Text
-                                  text={`Atomicals NFT (${inscriptions.length})`}
+                                  text={`${t('atomicals_nft')} (${inscriptions.length})`}
                                   color={isMyAddress ? 'white' : 'textDim'}
                                 />
                                 <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
@@ -1136,7 +1146,7 @@ export default function SignPsbt({
                           {atomicals_ft.length > 0 && (
                             <Row>
                               <Column justifyCenter>
-                                <Text text={'ARC20'} color={isMyAddress ? 'white' : 'textDim'} />
+                                <Text text={t('arc20')} color={isMyAddress ? 'white' : 'textDim'} />
                                 <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
                                   {atomicals_ft.map((w) => (
                                     <Arc20PreviewCard key={w.ticker} ticker={w.ticker || ''} amt={w.atomicalValue} />
@@ -1149,7 +1159,7 @@ export default function SignPsbt({
                           {runes.length > 0 && (
                             <Row>
                               <Column justifyCenter>
-                                <Text text={'RUNES'} color={isMyAddress ? 'white' : 'textDim'} />
+                                <Text text={t('runes')} color={isMyAddress ? 'white' : 'textDim'} />
                                 <Row overflowX gap="lg" style={{ width: 280 }} pb="lg">
                                   {runes.map((w) => (
                                     <RunesPreviewCard
@@ -1171,13 +1181,13 @@ export default function SignPsbt({
             </Column>
           )}
 
-          <Section title="PSBT Data:">
+          <Section title={t('psbt_data')}>
             <Text text={shortAddress(txInfo.psbtHex, 10)} />
             <Row
               itemsCenter
               onClick={(e) => {
                 copyToClipboard(txInfo.psbtHex).then(() => {
-                  tools.toastSuccess('Copied');
+                  tools.toastSuccess(t('copied'));
                 });
               }}>
               <Text text={`${txInfo.psbtHex.length / 2} bytes`} color="textDim" />
@@ -1189,11 +1199,11 @@ export default function SignPsbt({
 
       <Footer>
         <Row full>
-          <Button preset="default" text="Reject" onClick={handleCancel} full />
+          <Button preset="default" text={t('reject')} onClick={handleCancel} full />
           <Button
             preset="primary"
             icon={txInfo.decodedPsbt.risks.length > 0 ? 'risk' : undefined}
-            text={type == TxType.SIGN_TX ? 'Sign' : 'Sign & Pay'}
+            text={type == TxType.SIGN_TX ? t('sign') : t('sign_and_pay')}
             onClick={() => {
               if (txInfo.decodedPsbt.risks.length > 0) {
                 setIsPsbtRiskPopoverVisible(true);

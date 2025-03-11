@@ -1,11 +1,14 @@
 import { useSearchParams } from 'react-router-dom';
 
+import { useI18n } from '@/ui/hooks/useI18n';
+
 import './PhishingScreen.css';
 
 const PhishingScreen = () => {
   const [searchParams] = useSearchParams();
   const hostname = searchParams.get('hostname');
   const href = searchParams.get('href');
+  const { t } = useI18n();
 
   const handleProceed = async () => {
     // Send message to background to proceed (one-time bypass, not adding to whitelist)
@@ -40,23 +43,23 @@ const PhishingScreen = () => {
                 strokeLinejoin="round"
               />
             </svg>
-            <span>Security Warning</span>
+            <span>{t('security_warning')}</span>
           </div>
         </div>
 
         {/* Title & Domain */}
         <div className="phishing-title-section">
-          <h1>Danger! Potential phishing website detected</h1>
+          <h1>{t('danger_potential_phishing_website_detected')}</h1>
           <p className="phishing-domain">{hostname}</p>
         </div>
 
         {/* Warning Message */}
         <div className="phishing-warning-box">
-          <p>This website has been identified as malicious by UniSat and may:</p>
+          <p>{t('this_website_has_been_identified_as_malicious_by_unisat_and_may')}</p>
           <ul>
-            <li>Steal your private keys or seed phrases</li>
-            <li>Trick you into signing malicious transactions</li>
-            <li>Collect your personal information</li>
+            <li>{t('steal_your_private_keys_or_seed_phrases')}</li>
+            <li>{t('trick_you_into_signing_malicious_transactions')}</li>
+            <li>{t('collect_your_personal_information')}</li>
           </ul>
         </div>
 
@@ -67,12 +70,12 @@ const PhishingScreen = () => {
             target="_blank"
             rel="noopener noreferrer"
             className="phishing-report-link">
-            Think this is a false positive? Click here to report an issue →
+            {t('think_this_is_a_false_positive_click_here_to_report_an_issue')}
           </a>
           <p className="phishing-proceed-text">
-            If you insist on continuing, proceed at your own risk:
+            {t('if_you_insist_on_continuing_proceed_at_your_own_risk')}
             <button onClick={handleProceed} className="phishing-proceed-button">
-              Continue to {hostname}
+              {t('continue_to')} {hostname}
             </button>
           </p>
         </div>

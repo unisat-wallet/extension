@@ -5,6 +5,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import KeystoneDisplay from '@/ui/components/Keystone/Display';
 import KeystoneLogoWithText from '@/ui/components/Keystone/LogoWithText';
 import { $textPresets } from '@/ui/components/Text';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 
 import { KeystoneSignBaseProps } from '../SignBase';
@@ -17,6 +18,7 @@ export default function Step1({ generateUR, signatureText }: KeystoneSignBasePro
   });
   const [loading, setLoading] = useState(false);
   const tools = useTools();
+  const { t } = useI18n();
 
   useEffect(() => {
     setLoading(true);
@@ -36,15 +38,15 @@ export default function Step1({ generateUR, signatureText }: KeystoneSignBasePro
   return (
     <Column itemsCenter gap="xl" style={{ maxWidth: CONTENT_MAX_WIDTH }}>
       <KeystoneLogoWithText width={160} height={38} />
-      <Text text="Scan the QR code via your Keystone device" preset="title" textCenter />
+      <Text text={t('scan_the_qr_code_via_your_keystone_device')} preset="title" textCenter />
       {loading ? (
-        <Text text="Generating QR code..." preset="sub" textCenter />
+        <Text text={t('generating_qr_code')} preset="sub" textCenter />
       ) : (
         <KeystoneDisplay type={ur.type} cbor={ur.cbor} />
       )}
       <div style={{ ...$textPresets.sub, textAlign: 'center' }}>
-        Click on the <span style={{ color: colors.primary }}>{signatureText ?? 'Get Signature'}</span> button after
-        signing the transaction with your Keystone device.
+        {t('click_on_the')} <span style={{ color: colors.primary }}>{signatureText ?? t('get_signature')}</span>{' '}
+        {t('button_after_signing_the_transaction_with_your_keystone_device')}
       </div>
     </Column>
   );

@@ -6,6 +6,7 @@ import { BtcChannelItem } from '@/shared/types';
 import { Card, Column, Image, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BottomModal } from '@/ui/components/BottomModal';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useChain } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
@@ -59,7 +60,7 @@ function PaymentItem({ channel, onClick }: { channel: BtcChannelItem; onClick: (
 export const BuyBTCModal = ({ onClose }: { onClose: () => void }) => {
   const [disclaimerModalVisible, setDisclaimerModalVisible] = useState(false);
   const [channelType, setChannelType] = useState<PaymentChannelType>(PaymentChannelType.AlchemyPay);
-
+  const { t } = useI18n();
   const [channels, setChannels] = useState<BtcChannelItem[] | undefined>(undefined);
 
   const chain = useChain();
@@ -84,7 +85,7 @@ export const BuyBTCModal = ({ onClose }: { onClose: () => void }) => {
       <Column justifyCenter itemsCenter>
         <Row justifyBetween itemsCenter style={{ height: 20 }} fullX>
           <Row />
-          <Text text={`Buy ${chain.unit}`} textCenter size="md" />
+          <Text text={`${t('buy')} ${chain.unit}`} textCenter size="md" />
           <Row
             onClick={() => {
               onClose();
@@ -96,11 +97,11 @@ export const BuyBTCModal = ({ onClose }: { onClose: () => void }) => {
         <Row fullX style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
 
         <Column gap="zero" mt="sm" mb="lg">
-          <Text size="sm" color="textDim" text={`Please select a service provider below to buy ${chain.unit}.`} />
+          <Text size="sm" color="textDim" text={`${t('buy_service_provider')} ${chain.unit}.`} />
           {!channels ? (
             <Skeleton active />
           ) : channels.length <= 0 ? (
-            <Text size="sm" color="textDim" text={`No service provider available.`} />
+            <Text size="sm" color="textDim" text={t('no_service_provider_available')} />
           ) : (
             channels.map((channel, index) => (
               <PaymentItem

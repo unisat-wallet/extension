@@ -95,7 +95,10 @@ export const svgRegistry = {
   sortAddress: '/images/icons/sort-address.svg',
   sortTop: '/images/icons/sort-top.svg',
   sortDrag: '/images/icons/sort-drag.svg',
-  userContact: '/images/icons/user-contact.svg'
+  userContact: '/images/icons/user-contact.svg',
+
+  checked: '/images/icons/checked.svg',
+  language: '/images/icons/language.svg'
 };
 
 const iconImgList: Array<IconTypes> = [
@@ -126,7 +129,14 @@ const iconImgList: Array<IconTypes> = [
   'aboutus',
   'moreInfo',
   'aboutUsLogo',
-  'rateUs'
+  'rateUs',
+  'checked',
+  'language',
+  'receive',
+  'send',
+  'history',
+  'utxo',
+  'more'
 ];
 
 export type IconTypes = keyof typeof svgRegistry;

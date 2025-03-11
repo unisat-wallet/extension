@@ -1,13 +1,15 @@
 import { useEffect, useState } from 'react';
 
 import { Content, Header, Layout } from '@/ui/components';
+import { useI18n } from '@/ui/hooks/useI18n';
 
-import { ChangePasswordCard } from './ChangePassword';
 import { EnableSignDataCard } from './EnableSignData';
-import { LockTimeCard } from './LockTime';
+import { LanguageCard } from './Language';
+import { SecurityCard } from './SecurityCard';
 import { UnconfirmedBalanceCard } from './UnconfirmBalance';
 
 export default function AdvancedScreen() {
+  const { t } = useI18n();
   const [init, setInit] = useState(false);
   useEffect(() => {
     setTimeout(() => {
@@ -25,15 +27,16 @@ export default function AdvancedScreen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Advanced"
+        title={t('advanced')}
       />
       <Content>
+        <LanguageCard />
+
+        <SecurityCard />
+
         <UnconfirmedBalanceCard />
 
         <EnableSignDataCard />
-
-        <ChangePasswordCard />
-        <LockTimeCard />
       </Content>
     </Layout>
   );

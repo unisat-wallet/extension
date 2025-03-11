@@ -5,6 +5,7 @@ import { KEYRING_CLASS, KEYRING_TYPE } from '@/shared/constant';
 import { Account } from '@/shared/types';
 import { Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
@@ -33,6 +34,7 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
   const wallet = useWallet();
   const dispatch = useAppDispatch();
   const keyring = useCurrentKeyring();
+  const { t } = useI18n();
   if (!account) {
     return <div style={{ height: ITEM_HEIGHT }} />;
   }
@@ -68,8 +70,9 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
               dispatch(accountActions.setCurrent(_currentAccount));
             }
             if (autoNav) navigate('MainScreen');
-          }}>
-          <Text text={account.alianName} />
+          }}
+          style={{ height: 40 }}>
+          <Text text={account.alianName} style={{ overflow: 'hidden', maxWidth: 180 }} />
           <Text text={`${shortAddress(account.address)}${path}`} preset="sub" />
         </Column>
       </Row>
@@ -114,16 +117,16 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
                 navigate('EditAccountNameScreen', { account });
               }}>
               <EditOutlined />
-              <Text text="Edit Name" size="sm" />
+              <Text text={t('edit_name')} size="sm" />
             </Row>
             <Row
               onClick={() => {
                 copyToClipboard(account.address);
-                tools.toastSuccess('copied');
+                tools.toastSuccess(t('copied'));
                 setOptionsVisible(false);
               }}>
               <CopyOutlined />
-              <Text text="Copy address" size="sm" />
+              <Text text={t('copy_address')} size="sm" />
             </Row>
             {account.type !== KEYRING_TYPE.KeystoneKeyring && (
               <Row
@@ -131,7 +134,7 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
                   navigate('ExportPrivateKeyScreen', { account });
                 }}>
                 <KeyOutlined />
-                <Text text="Export Private Key" size="sm" />
+                <Text text={t('export_private_key')} size="sm" />
               </Row>
             )}
           </Column>
@@ -144,6 +147,7 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
 export default function SwitchAccountScreen() {
   const navigate = useNavigate();
   const keyring = useCurrentKeyring();
+  const { t } = useI18n();
   const items = useMemo(() => {
     const _items: ItemData[] = keyring.accounts.map((v) => {
       return {
@@ -185,7 +189,7 @@ export default function SwitchAccountScreen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Switch Account"
+        title={t('switch_account')}
         RightComponent={
           keyring.type == KEYRING_CLASS.PRIVATE_KEY ? null : (
             <Icon

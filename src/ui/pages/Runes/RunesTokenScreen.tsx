@@ -10,6 +10,7 @@ import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { Line } from '@/ui/components/Line';
 import { Section } from '@/ui/components/Section';
 import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import {
   useChainType,
@@ -78,6 +79,8 @@ export default function RunesTokenScreen() {
   const account = useCurrentAccount();
 
   const [loading, setLoading] = useState(true);
+
+  const { t } = useI18n();
 
   useEffect(() => {
     wallet.getAddressRunesTokenSummary(account.address, runeid).then((tokenSummary) => {
@@ -165,7 +168,7 @@ export default function RunesTokenScreen() {
 
             <Row justifyBetween mt="lg">
               <Button
-                text="Mint"
+                text={t('mint')}
                 preset="home"
                 disabled={!enableMint}
                 icon="pencil"
@@ -176,7 +179,7 @@ export default function RunesTokenScreen() {
               />
 
               <Button
-                text="Send"
+                text={t('send')}
                 preset="home"
                 icon="send"
                 disabled={!enableTransfer}
@@ -191,7 +194,7 @@ export default function RunesTokenScreen() {
 
               {enableTrade ? (
                 <Button
-                  text="Trade"
+                  text={t('trade')}
                   preset="home"
                   icon="trade"
                   disabled={!enableTrade}
@@ -209,7 +212,7 @@ export default function RunesTokenScreen() {
             preset="title-bold"
             onClick={() => {
               copyToClipboard(tokenSummary.runeInfo.spacedRune).then(() => {
-                tools.toastSuccess('Copied');
+                tools.toastSuccess(t('copied'));
               });
             }}></Text>
           {tokenSummary.runeLogo ? (
@@ -226,13 +229,13 @@ export default function RunesTokenScreen() {
               backgroundColor: 'rgba(255,255,255,0.08)',
               borderRadius: 15
             }}>
-            <Section title="runeid" value={tokenSummary.runeInfo.runeid} />
+            <Section title={t('runeid')} value={tokenSummary.runeInfo.runeid} />
             <Line />
-            <Section title="mints" value={showLongNumber(tokenSummary.runeInfo.mints)} />
+            <Section title={t('mints')} value={showLongNumber(tokenSummary.runeInfo.mints)} />
             <Line />
 
             <Section
-              title="supply"
+              title={t('supply')}
               value={`${showLongNumber(
                 runesUtils.toDecimalAmount(tokenSummary.runeInfo.supply, tokenSummary.runeInfo.divisibility)
               )} ${tokenSummary.runeInfo.symbol}`}
@@ -240,7 +243,7 @@ export default function RunesTokenScreen() {
             <Line />
 
             <Section
-              title="premine"
+              title={t('premine')}
               value={`${showLongNumber(
                 runesUtils.toDecimalAmount(tokenSummary.runeInfo.premine, tokenSummary.runeInfo.divisibility)
               )} ${tokenSummary.runeInfo.symbol}`}
@@ -248,31 +251,31 @@ export default function RunesTokenScreen() {
             <Line />
 
             <Section
-              title="burned"
+              title={t('burned')}
               value={`${showLongNumber(
                 runesUtils.toDecimalAmount(tokenSummary.runeInfo.burned, tokenSummary.runeInfo.divisibility)
               )} ${tokenSummary.runeInfo.symbol}`}
             />
             <Line />
 
-            <Section title="divisibility" value={tokenSummary.runeInfo.divisibility} />
+            <Section title={t('divisibility')} value={tokenSummary.runeInfo.divisibility} />
             <Line />
 
-            <Section title="symbol" value={tokenSummary.runeInfo.symbol} />
+            <Section title={t('symbol')} value={tokenSummary.runeInfo.symbol} />
             <Line />
 
-            <Section title="holders" value={showLongNumber(tokenSummary.runeInfo.holders)} />
+            <Section title={t('holders')} value={showLongNumber(tokenSummary.runeInfo.holders)} />
             <Line />
 
-            <Section title="transactions" value={showLongNumber(tokenSummary.runeInfo.transactions)} />
+            <Section title={t('transactions')} value={showLongNumber(tokenSummary.runeInfo.transactions)} />
             <Line />
 
-            <Section title="etching" value={tokenSummary.runeInfo.etching} link={txExplorerUrl} />
+            <Section title={t('etching')} value={tokenSummary.runeInfo.etching} link={txExplorerUrl} />
             {tokenSummary.runeInfo.parent ? <Line /> : null}
 
             {tokenSummary.runeInfo.parent ? (
               <Section
-                title="parent"
+                title={t('parent')}
                 value={tokenSummary.runeInfo.parent}
                 link={`${ordinalsWebsite}/inscription/${tokenSummary.runeInfo.parent}`}
               />

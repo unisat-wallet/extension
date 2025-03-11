@@ -5,12 +5,14 @@ import { AddressFlagType } from '@/shared/constant';
 import { checkAddressFlag } from '@/shared/utils';
 import { Button, Card, Column, Row, Text } from '@/ui/components';
 import { Popover } from '@/ui/components/Popover';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useChangeAddressFlagCallback, useCurrentAccount, useReloadAccounts } from '@/ui/state/accounts/hooks';
 
 export function EnableAtomicalsCard() {
   const currentAccount = useCurrentAccount();
   const isEnableAtomicals = checkAddressFlag(currentAccount.flag, AddressFlagType.DISABLE_ARC20) == false;
   const reloadAccounts = useReloadAccounts();
+  const { t } = useI18n();
 
   const [disableAtomicalsPopoverVisible, setDisableAtomicalsPopoverVisible] = useState(false);
 
@@ -27,7 +29,7 @@ export function EnableAtomicalsCard() {
     <Card style={{ borderRadius: 10 }}>
       <Column fullX>
         <Row justifyBetween>
-          <Text text={'Enable Atomicals Assets'} preset="bold" size="sm" />
+          <Text text={t('enable_atomicals_assets')} preset="bold" size="sm" />
 
           <Switch
             onChange={async () => {
@@ -59,26 +61,23 @@ export function EnableAtomicalsCard() {
 }
 
 function DisableAtomicalsPopover({ onNext, onCancel }: { onNext: () => void; onCancel: () => void }) {
+  const { t } = useI18n();
   return (
     <Popover onClose={onCancel}>
       <Column justifyCenter itemsCenter>
-        <Text text={'Use at your own risk'} textCenter preset="title-bold" color="orange" />
+        <Text text={t('use_at_your_own_risk')} textCenter preset="title-bold" color="orange" />
 
         <Column mt="lg">
           <Column>
             <Row>
-              <Text
-                text={
-                  'The atomicals assets will no longer be displayed in the wallet, and they can be spent as regular balance. Please proceed with caution.'
-                }
-              />
+              <Text text={t('enable_atomicals_assets_warning')} />
             </Row>
           </Column>
         </Column>
 
         <Row full mt="lg">
           <Button
-            text="Cancel"
+            text={t('cancel')}
             full
             preset="default"
             onClick={(e) => {
@@ -88,7 +87,7 @@ function DisableAtomicalsPopover({ onNext, onCancel }: { onNext: () => void; onC
             }}
           />
           <Button
-            text="Continue"
+            text={t('continue')}
             full
             // disabled={!understand}
             preset="primary"

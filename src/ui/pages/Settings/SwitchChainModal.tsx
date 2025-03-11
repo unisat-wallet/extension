@@ -4,6 +4,7 @@ import { CHAIN_GROUPS, CHAINS_MAP, ChainType, TypeChainGroup } from '@/shared/co
 import { Card, Column, Icon, Image, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BottomModal } from '@/ui/components/BottomModal';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useReloadAccounts } from '@/ui/state/accounts/hooks';
 import { useChain, useChangeChainTypeCallback } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
@@ -17,6 +18,7 @@ function ChainItem(props: { chainType: ChainType; inGroup?: boolean; onClose: ()
   const changeChainType = useChangeChainTypeCallback();
   const reloadAccounts = useReloadAccounts();
   const tools = useTools();
+  const { t } = useI18n();
   return (
     <Card
       style={Object.assign(
@@ -35,7 +37,7 @@ function ChainItem(props: { chainType: ChainType; inGroup?: boolean; onClose: ()
       )}
       onClick={async () => {
         if (chain.disable) {
-          return tools.toastError('This network is not available');
+          return tools.toastError(t('this_network_is_not_available'));
         }
 
         if (currentChain.enum == chain.enum) {
@@ -44,7 +46,7 @@ function ChainItem(props: { chainType: ChainType; inGroup?: boolean; onClose: ()
         await changeChainType(chain.enum);
         props.onClose();
         reloadAccounts();
-        tools.toastSuccess(`Changed to ${chain.label}`);
+        tools.toastSuccess(`${t('changed_to_network')} ${chain.label}`);
       }}>
       <Row fullX justifyBetween itemsCenter>
         <Row itemsCenter>
@@ -117,11 +119,12 @@ function ChainGroup(props: { group: TypeChainGroup; onClose: () => void }) {
 }
 
 export const SwitchChainModal = ({ onClose }: { onClose: () => void }) => {
+  const { t } = useI18n();
   return (
     <BottomModal onClose={onClose}>
       <Column justifyCenter itemsCenter>
         <Row justifyBetween itemsCenter style={{ height: 20 }} fullX>
-          <Text text="Select Network" textCenter size="md" />
+          <Text text={t('select_network')} textCenter size="md" />
           <Row
             onClick={() => {
               onClose();

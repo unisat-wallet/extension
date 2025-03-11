@@ -4,6 +4,7 @@ import { KEYRING_TYPE } from '@/shared/constant';
 import { KeystoneSignEnum } from '@/shared/constant/KeystoneSignType';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import WebsiteBar from '@/ui/components/WebsiteBar';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useApproval } from '@/ui/utils';
 
@@ -26,6 +27,7 @@ export default function SignText({ params: { data, session } }: Props) {
   const [getApproval, resolveApproval, rejectApproval] = useApproval();
   const account = useCurrentAccount();
   const [isKeystoneSigning, setIsKeystoneSigning] = useState(false);
+  const { t } = useI18n();
 
   const handleCancel = () => {
     rejectApproval();
@@ -60,14 +62,9 @@ export default function SignText({ params: { data, session } }: Props) {
           <WebsiteBar session={session} />
         </Header>
         <Column>
-          <Text text="Signature request" preset="title-bold" textCenter mt="lg" />
-          <Text
-            text="Only sign this message if you fully understand the content and trust the requesting site."
-            preset="sub"
-            textCenter
-            mt="lg"
-          />
-          <Text text="You are signing:" textCenter mt="lg" />
+          <Text text={t('signature_request')} preset="title-bold" textCenter mt="lg" />
+          <Text text={t('only_sign_this_message_if_you_fully_understand_the')} preset="sub" textCenter mt="lg" />
+          <Text text={t('you_are_signing')} textCenter mt="lg" />
 
           <Card>
             <div
@@ -87,8 +84,8 @@ export default function SignText({ params: { data, session } }: Props) {
 
       <Footer>
         <Row full>
-          <Button text="Reject" full preset="default" onClick={handleCancel} />
-          <Button text="Sign" full preset="primary" onClick={handleConfirm} />
+          <Button text={t('reject')} full preset="default" onClick={handleCancel} />
+          <Button text={t('sign')} full preset="primary" onClick={handleConfirm} />
         </Row>
       </Footer>
     </Layout>

@@ -90,7 +90,7 @@ export interface PreferenceStore {
   autoLockTimeId: number;
 }
 
-const SUPPORT_LOCALES = ['en'];
+const SUPPORTED_LOCALES = ['en', 'zh_TW', 'fr', 'es', 'ru', 'ja'];
 
 class PreferenceService {
   store!: PreferenceStore;
@@ -98,7 +98,10 @@ class PreferenceService {
   hasOtherProvider = false;
 
   init = async () => {
-    const defaultLang = 'en';
+    const browserLangs = await this.getAcceptLanguages();
+
+    const defaultLang = browserLangs.length > 0 ? browserLangs[0] : 'en';
+
     this.store = await createPersistStore<PreferenceStore>({
       name: 'preference',
       template: {
@@ -135,10 +138,19 @@ class PreferenceService {
         autoLockTimeId: DEFAULT_LOCKTIME_ID
       }
     });
-    if (!this.store.locale || this.store.locale !== defaultLang) {
+
+    if (!SUPPORTED_LOCALES.includes(this.store.locale)) {
       this.store.locale = defaultLang;
     }
-    i18n.changeLanguage(this.store.locale);
+
+    try {
+      const { changeLanguage } = require('./i18n');
+      if (typeof changeLanguage === 'function') {
+        changeLanguage(this.store.locale);
+      }
+    } catch (e) {
+      console.error('Failed to change language:', e);
+    }
 
     if (!this.store.currency) {
       this.store.currency = 'USD';
@@ -229,7 +241,7 @@ class PreferenceService {
   getAcceptLanguages = async () => {
     let langs = await browser.i18n.getAcceptLanguages();
     if (!langs) langs = [];
-    return langs.map((lang) => lang.replace(/-/g, '_')).filter((lang) => SUPPORT_LOCALES.includes(lang));
+    return langs.map((lang) => lang.replace(/-/g, '_')).filter((lang) => SUPPORTED_LOCALES.includes(lang));
   };
 
   getCurrentAccount = () => {

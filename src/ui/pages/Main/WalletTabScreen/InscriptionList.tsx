@@ -5,6 +5,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { VirtualList } from '@/ui/components/VirtualList';
 import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useChainType } from '@/ui/state/settings/hooks';
 import { useWallet } from '@/ui/utils';
@@ -19,6 +20,7 @@ export function InscriptionList() {
   const tools = useTools();
   const isInTab = useExtensionIsInTab();
   const [isMobile, setIsMobile] = useState(false);
+  const { t } = useI18n();
 
   useEffect(() => {
     const checkMobile = () => {
@@ -80,7 +82,7 @@ export function InscriptionList() {
       fetchData={fetchInscriptions}
       renderItem={renderInscription}
       onError={handleError}
-      emptyText="No inscriptions found"
+      emptyText={t('no_inscriptions_found')}
       itemsPerRow={itemsPerRow}
     />
   );

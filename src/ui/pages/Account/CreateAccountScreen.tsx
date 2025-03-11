@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { Button, Column, Content, Header, Input, Layout } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useSetCurrentAccountCallback } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { useWallet } from '@/ui/utils';
@@ -16,9 +17,10 @@ export default function CreateAccountScreen() {
   const currentKeyring = useCurrentKeyring();
   const [alianName, setAlianName] = useState('');
   const [defaultName, setDefaultName] = useState('');
+  const { t } = useI18n();
   const handleOnClick = async () => {
     await wallet.deriveNewAccountFromMnemonic(currentKeyring, alianName || defaultName);
-    tools.toastSuccess('Success');
+    tools.toastSuccess(t('success'));
     const currentAccount = await wallet.getCurrentAccount();
     setCurrentAccount(currentAccount);
     navigate('MainScreen');
@@ -44,7 +46,7 @@ export default function CreateAccountScreen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="New account"
+        title={t('new_account')}
       />
       <Content>
         <Column>
@@ -57,7 +59,7 @@ export default function CreateAccountScreen() {
             autoFocus={true}
           />
           <Button
-            text="Create an Account"
+            text={t('create_an_account')}
             preset="primary"
             onClick={(e) => {
               handleOnClick();

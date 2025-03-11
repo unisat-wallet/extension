@@ -6,6 +6,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { Empty } from '@/ui/components/Empty';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { Pagination } from '@/ui/components/Pagination';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
@@ -20,7 +21,7 @@ export function AtomicalList() {
   const [inscriptions, setInscriptions] = useState<Inscription[]>([]);
   const [total, setTotal] = useState(-1);
   const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 100 });
-
+  const { t } = useI18n();
   const tools = useTools();
 
   const fetchData = async () => {
@@ -55,7 +56,7 @@ export function AtomicalList() {
   if (total === 0) {
     return (
       <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
-        <Empty text="Empty" />
+        <Empty text={t('empty')} />
       </Column>
     );
   }

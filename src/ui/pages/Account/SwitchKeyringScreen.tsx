@@ -6,6 +6,7 @@ import { WalletKeyring } from '@/shared/types';
 import { Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { RemoveWalletPopover } from '@/ui/components/RemoveWalletPopover';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring, useKeyrings } from '@/ui/state/keyrings/hooks';
@@ -33,6 +34,7 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
   const currentKeyring = useCurrentKeyring();
   const selected = currentKeyring.index === keyring?.index;
   const wallet = useWallet();
+  const { t } = useI18n();
 
   const keyrings = useKeyrings();
 
@@ -71,7 +73,7 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
         full
         onClick={async (e) => {
           if (!keyring.accounts[0]) {
-            tools.toastError('Invalid wallet, please remove it and add new one');
+            tools.toastError(t('invalid_wallet_please_remove_it_and_add_new_one'));
             return;
           }
           if (currentKeyring.key !== keyring.key) {
@@ -87,7 +89,7 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
         </Column>
 
         <Column justifyCenter style={{ height: 40 }}>
-          <Text text={`${keyring.alianName}`} style={{ overflow: 'hidden', maxWidth: 180 }} />
+          <Text text={`${keyring.alianName}`} style={{ overflow: 'hidden', maxWidth: 200 }} />
           <Text text={`${displayAddress}`} preset="sub" />
         </Column>
       </Row>
@@ -134,7 +136,7 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
                   navigate('EditWalletNameScreen', { keyring });
                 }}>
                 <EditOutlined />
-                <Text text="Edit Name" size="sm" />
+                <Text text={t('edit_name')} size="sm" />
               </Row>
 
               {keyring.type === KEYRING_TYPE.HdKeyring && (
@@ -143,7 +145,7 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
                     navigate('ExportMnemonicsScreen', { keyring });
                   }}>
                   <KeyOutlined />
-                  <Text text="Show Secret Recovery Phrase" size="sm" />
+                  <Text text={t('show_secret_recovery_phrase')} size="sm" />
                 </Row>
               )}
               {keyring.type !== KEYRING_TYPE.HdKeyring && keyring.type !== KEYRING_TYPE.KeystoneKeyring && (
@@ -152,13 +154,13 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
                     navigate('ExportPrivateKeyScreen', { account: keyring.accounts[0] });
                   }}>
                   <KeyOutlined />
-                  <Text text="Export Private Key" size="sm" />
+                  <Text text={t('export_private_key')} size="sm" />
                 </Row>
               )}
               <Row
                 onClick={() => {
                   if (keyrings.length == 1) {
-                    tools.toastError('Removing the last wallet is not allowed');
+                    tools.toastError(t('removing_the_last_wallet_is_not_allowed'));
                     return;
                   }
                   setRemoveVisible(true);
@@ -168,7 +170,7 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
                   <DeleteOutlined />
                 </Icon>
 
-                <Text text="Remove Wallet" size="sm" color="danger" />
+                <Text text={t('remove_wallet')} size="sm" color="danger" />
               </Row>
             </Column>
           </Column>
@@ -191,6 +193,7 @@ export default function SwitchKeyringScreen() {
   const navigate = useNavigate();
 
   const keyrings = useKeyrings();
+  const { t } = useI18n();
 
   const ForwardMyItem = forwardRef(MyItem);
   const refList = useRef<ListRef>(null);
@@ -233,7 +236,7 @@ export default function SwitchKeyringScreen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title="Switch Wallet"
+        title={t('switch_wallet')}
         RightComponent={
           <Icon
             onClick={() => {

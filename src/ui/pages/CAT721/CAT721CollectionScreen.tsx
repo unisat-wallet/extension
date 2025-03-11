@@ -5,6 +5,7 @@ import { Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/com
 import CAT721Preview from '@/ui/components/CAT721Preview';
 import { Line } from '@/ui/components/Line';
 import { Section } from '@/ui/components/Section';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useIsInExpandView } from '@/ui/state/ui/hooks';
 import { colors } from '@/ui/theme/colors';
@@ -19,6 +20,7 @@ interface LocationState {
 }
 
 export default function CAT721CollectionScreen() {
+  const { t } = useI18n();
   const { collectionId } = useLocationState<LocationState>();
   const [collectionSummary, setCollectionSummary] = useState<AddressCAT721CollectionSummary>({
     collectionInfo: {
@@ -72,7 +74,7 @@ export default function CAT721CollectionScreen() {
           }}
         />
         <Content itemsCenter justifyCenter>
-          <Text text="Collection not found" />
+          <Text text={t('collection_not_found')} />
         </Content>
       </Layout>
     );
@@ -93,17 +95,17 @@ export default function CAT721CollectionScreen() {
 
           <Card style={{ borderRadius: 15 }}>
             <Column fullX my="sm">
-              <Section title="Collection Id" value={collectionSummary.collectionInfo.collectionId} showCopyIcon />
+              <Section title={t('collection_id')} value={collectionSummary.collectionInfo.collectionId} showCopyIcon />
               <Line />
-              <Section title="Collection" value={collectionSummary.collectionInfo.name} />
+              <Section title={t('collection')} value={collectionSummary.collectionInfo.name} />
               <Line />
-              <Section title="Symbol" value={collectionSummary.collectionInfo.symbol} />
-              <Line />
-
-              <Section title="Max supply" value={collectionSummary.collectionInfo.max} />
+              <Section title={t('symbol')} value={collectionSummary.collectionInfo.symbol} />
               <Line />
 
-              <Section title="Premine" value={collectionSummary.collectionInfo.premine} />
+              <Section title={t('max_supply')} value={collectionSummary.collectionInfo.max} />
+              <Line />
+
+              <Section title={t('premine')} value={collectionSummary.collectionInfo.premine} />
 
               {collectionSummary.collectionInfo.description ? (
                 <Row
