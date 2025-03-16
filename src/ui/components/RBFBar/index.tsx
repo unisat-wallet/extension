@@ -22,7 +22,7 @@ export function RBFBar({ defaultValue, onChange }: { defaultValue?: boolean; onC
         }}>
         <div style={{ display: 'flex', alignItems: 'center' }}>
           <Row itemsCenter>
-            <Text text="RBF" color="textDim" />
+            <Text text="RBF" />
             <Icon icon="circle-question" color="textDim" />
           </Row>
         </div>

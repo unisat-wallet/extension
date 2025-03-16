@@ -21,7 +21,7 @@ const format = (str, ...args) => {
   return args.reduce((m, n) => m.replace('_s_', n), str);
 };
 
-export { Message, format, t };
+export { format, Message, t };
 
 const chainsDict = keyBy(CHAINS, 'serverId');
 export const getChain = (chainId?: string) => {
@@ -44,3 +44,11 @@ export function getChainInfo(chainType: ChainType) {
     network: NETWORK_TYPES[chain.networkType].name
   };
 }
+
+export const objToUint8Array = (obj) => {
+  const arr: number[] = [];
+  for (const id in obj) {
+    arr[parseInt(id)] = obj[id];
+  }
+  return Uint8Array.from(arr);
+};

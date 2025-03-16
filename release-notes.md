@@ -1,5 +1,28 @@
 # UniSat Wallet Release Notes
 
+## v1.5.7
+
+- Fix Keystone Babylon integration
+
+## v1.5.6
+
+- Fix Babylon RPC
+
+## v1.5.5
+
+- Integration of Babylon Bitcoin Staking Phase 2
+
+## v1.5.4
+
+1. Added an Unlock button on the Fractal mainnet to navigate to the UTXO management tool.
+2. In advanced settings, added a toggle for Atomicals, allowing users to disable ARC20 and free up the unavailable balance.
+3. Adjusted the user interface.
+
+## v1.5.3
+
+- Support CAT721
+- Support purchasing FB through AlchemyPay
+
 ## v1.5.2
 
 - Added display of USD prices for FB, BRC20, Runes, CAT20 in fractal
@@ -83,8 +106,9 @@
 
 - Support cursed inscription
 - Optimized the UTXO selection strategy of runes to reduce gas fees
-- Added runes logo
-- Add Alichepay
+
+- Add runes logo
+- Add AlchemyPay
 - Fix Runes details
 
 ## v1.3.1

@@ -2,7 +2,9 @@
 import { ethErrors, serializeError } from 'eth-rpc-errors';
 import { EventEmitter } from 'events';
 
+import { CosmosChainInfo } from '@/shared/constant/cosmosChain';
 import { TxType } from '@/shared/types';
+import { objToUint8Array } from '@/shared/utils';
 import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
 
 import PushEventHandlers from './pushEventHandlers';
@@ -247,6 +249,12 @@ export class UnisatProvider extends EventEmitter {
     });
   };
 
+  getBalanceV2 = async () => {
+    return this._request({
+      method: 'getBalanceV2'
+    });
+  };
+
   getInscriptions = async (cursor = 0, size = 20) => {
     return this._request({
       method: 'getInscriptions',
@@ -420,6 +428,103 @@ export class UnisatProvider extends EventEmitter {
       }
     });
   };
+
+  // cosmos
+  keplr = {
+    enable: async (chainId: string) => {
+      return this._request({
+        method: 'cosmos_enable',
+        params: {
+          chainId
+        }
+      });
+    },
+
+    experimentalSuggestChain: async (chainData: CosmosChainInfo) => {
+      return this._request({
+        method: 'cosmos_experimentalSuggestChain',
+        params: {
+          chainData
+        }
+      });
+    },
+
+    getKey: async (chainId: string) => {
+      const _key: any = await this._request({
+        method: 'cosmos_getKey',
+        params: {
+          chainId
+        }
+      });
+
+      const key = Object.assign({}, _key, {
+        address: Uint8Array.from(_key.address.split(',')),
+        pubKey: Uint8Array.from(_key.pubKey.split(','))
+      });
+
+      return key;
+    },
+
+    getOfflineSigner: (chainId: string, signOptions?: any) => {
+      return new CosmJSOfflineSigner(chainId, this, signOptions);
+    },
+
+    signArbitrary: async (chainId: string, signerAddress: string, data: string | Uint8Array) => {
+      return this._request({
+        method: 'cosmos_signArbitrary',
+        params: {
+          chainId,
+          signerAddress,
+          type: typeof data === 'string' ? 'string' : 'Uint8Array',
+          data: typeof data === 'string' ? data : Buffer.from(data).toString('base64'),
+          origin: window.location.origin
+        }
+      });
+    }
+  };
+}
+
+class CosmJSOfflineSigner {
+  constructor(
+    protected readonly chainId: string,
+    protected readonly provider: UnisatProvider,
+    protected readonly signOptions?: any
+  ) {}
+
+  async getAccounts() {
+    const key: any = await this.provider.keplr.getKey(this.chainId);
+    return [
+      {
+        address: key.bech32Address,
+        algo: key.algo,
+        pubkey: key.pubKey
+      }
+    ];
+  }
+
+  async signDirect(signerAddress: string, signDoc: any) {
+    const response: any = await this.provider._request({
+      method: 'cosmos_signDirect',
+      params: {
+        signerAddress,
+        signDoc: {
+          bodyBytes: signDoc.bodyBytes,
+          authInfoBytes: signDoc.authInfoBytes,
+          chainId: signDoc.chainId,
+          accountNumber: signDoc.accountNumber.toString()
+        }
+      }
+    });
+    return {
+      signed: {
+        bodyBytes: objToUint8Array(response.signed.bodyBytes),
+        authInfoBytes: objToUint8Array(response.signed.authInfoBytes),
+        chainId: response.signed.chainId.toString(),
+        accountNumber: response.signed.accountNumber.toString()
+      },
+      signature: response.signature
+    };
+  }
 }
 
 declare global {

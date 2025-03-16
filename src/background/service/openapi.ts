@@ -1,15 +1,35 @@
 import randomstring from 'randomstring';
 
-
-
 import { createPersistStore } from '@/background/utils';
 import { CHAINS_MAP, CHANNEL, VERSION } from '@/shared/constant';
-import { AddressRunesTokenSummary, AddressSummary, AddressTokenSummary, AppInfo, AppSummary, Arc20Balance, BitcoinBalance, CAT20Balance, CoinPrice, DecodedPsbt, FeeSummary, InscribeOrder, Inscription, InscriptionSummary, RuneBalance, TickPriceItem, TokenBalance, TokenTransfer, UTXO, UTXO_Detail, VersionDetail, WalletConfig } from '@/shared/types';
-
-
+import {
+  AddressRunesTokenSummary,
+  AddressSummary,
+  AddressTokenSummary,
+  AppInfo,
+  AppSummary,
+  Arc20Balance,
+  BitcoinBalance,
+  BitcoinBalanceV2,
+  CAT20Balance,
+  CAT721CollectionInfo,
+  CoinPrice,
+  DecodedPsbt,
+  FeeSummary,
+  InscribeOrder,
+  Inscription,
+  InscriptionSummary,
+  RuneBalance,
+  TickPriceItem,
+  TokenBalance,
+  TokenTransfer,
+  UTXO,
+  UTXO_Detail,
+  VersionDetail,
+  WalletConfig
+} from '@/shared/types';
 
 import { preferenceService } from '.';
-
 
 interface OpenApiStore {
   deviceId: string;
@@ -175,6 +195,12 @@ export class OpenApiService {
 
   async getAddressBalance(address: string): Promise<BitcoinBalance> {
     return this.httpGet('/v5/address/balance', {
+      address
+    });
+  }
+
+  async getAddressBalanceV2(address: string): Promise<BitcoinBalanceV2> {
+    return this.httpGet('/v5/address/balance2', {
       address
     });
   }
@@ -497,12 +523,20 @@ export class OpenApiService {
     return this.httpPost('/v5/tx/decode2', { psbtHex, website });
   }
 
-  async getBuyBtcChannelList(): Promise<{ channel: string }[]> {
-    return this.httpGet('/v5/buy-btc/channel-list', {});
+  async getBuyCoinChannelList(coin: 'BTC' | 'FB'): Promise<{ channel: string }[]> {
+    if (coin === 'BTC') {
+      return this.httpGet('/v5/buy-btc/channel-list', {});
+    } else {
+      return this.httpGet('/v5/buy-fb/channel-list', {});
+    }
   }
 
-  async createPaymentUrl(address: string, channel: string): Promise<string> {
-    return this.httpPost('/v5/buy-btc/create', { address, channel });
+  async createBuyCoinPaymentUrl(coin: 'BTC' | 'FB', address: string, channel: string): Promise<string> {
+    if (coin === 'BTC') {
+      return this.httpPost('/v5/buy-btc/create', { address, channel });
+    } else {
+      return this.httpPost('/v5/buy-fb/create', { address, channel });
+    }
   }
 
   async checkWebsite(website: string): Promise<{ isScammer: boolean; warning: string }> {
@@ -635,6 +669,50 @@ export class OpenApiService {
   async getMergeCAT20Status(mergeId: string) {
     return this.httpPost(`/v5/cat20/merge-token-status`, {
       id: mergeId
+    });
+  }
+
+  async getCAT721CollectionList(
+    address: string,
+    cursor: number,
+    size: number
+  ): Promise<{ list: CAT721CollectionInfo[]; total: number }> {
+    return this.httpGet('/v5/cat721/collection/list', { address, cursor, size });
+  }
+
+  async getAddressCAT721CollectionSummary(address: string, collectionId: string) {
+    return this.httpGet(`/v5/cat721/collection-summary?address=${address}&collectionId=${collectionId}`, {});
+  }
+
+  async transferCAT721Step1(
+    address: string,
+    pubkey: string,
+    to: string,
+    collectionId: string,
+    localId: string,
+    feeRate: number
+  ) {
+    return this.httpPost(`/v5/cat721/transfer-nft-step1`, {
+      address,
+      pubkey,
+      to,
+      collectionId,
+      localId,
+      feeRate
+    });
+  }
+
+  async transferCAT721Step2(transferId: string, signedPsbt: string) {
+    return this.httpPost(`/v5/cat721/transfer-nft-step2`, {
+      id: transferId,
+      psbt: signedPsbt
+    });
+  }
+
+  async transferCAT721Step3(transferId: string, signedPsbt: string) {
+    return this.httpPost(`/v5/cat721/transfer-nft-step3`, {
+      id: transferId,
+      psbt: signedPsbt
     });
   }
 }

@@ -1,30 +1,24 @@
 import { Tooltip } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 
-import { COIN_DUST } from '@/shared/constant';
+import { ChainType, COIN_DUST } from '@/shared/constant';
 import { RawTxInfo } from '@/shared/types';
-import { Button, Column, Content, Header, Icon, Image, Input, Layout, Row, Text } from '@/ui/components';
+import { Button, Card, Column, Content, Header, Icon, Image, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useAccountBalance } from '@/ui/state/accounts/hooks';
-import { useBTCUnit, useChain } from '@/ui/state/settings/hooks';
-import {
-  useBitcoinTx,
-  useFetchUtxosCallback,
-  usePrepareSendBTCCallback,
-  useSafeBalance,
-  useSpendUnavailableUtxos
-} from '@/ui/state/transactions/hooks';
+import { useBTCUnit, useChain, useWalletConfig } from '@/ui/state/settings/hooks';
+import { useBitcoinTx, useFetchUtxosCallback, usePrepareSendBTCCallback } from '@/ui/state/transactions/hooks';
 import { useUiTxCreateScreen, useUpdateUiTxCreateScreen } from '@/ui/state/ui/hooks';
+import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { amountToSatoshis, isValidAddress, satoshisToAmount } from '@/ui/utils';
 
 export default function TxCreateScreen() {
   const accountBalance = useAccountBalance();
-  const safeBalance = useSafeBalance();
   const navigate = useNavigate();
   const bitcoinTx = useBitcoinTx();
   const btcUnit = useBTCUnit();
@@ -54,10 +48,6 @@ export default function TxCreateScreen() {
 
   const prepareSendBTC = usePrepareSendBTCCallback();
 
-  const avaiableSatoshis = useMemo(() => {
-    return amountToSatoshis(safeBalance);
-  }, [safeBalance]);
-
   const toSatoshis = useMemo(() => {
     if (!inputAmount) return 0;
     return amountToSatoshis(inputAmount);
@@ -67,25 +57,10 @@ export default function TxCreateScreen() {
 
   const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
 
-  const spendUnavailableUtxos = useSpendUnavailableUtxos();
-  const spendUnavailableSatoshis = useMemo(() => {
-    return spendUnavailableUtxos.reduce((acc, cur) => {
-      return acc + cur.satoshis;
-    }, 0);
-  }, [spendUnavailableUtxos]);
-  const spendUnavailableAmount = satoshisToAmount(spendUnavailableSatoshis);
+  const availableAmount = satoshisToAmount(accountBalance.availableBalance);
+  const unavailableAmount = satoshisToAmount(accountBalance.unavailableBalance);
 
-  const totalAvailableSatoshis = avaiableSatoshis + spendUnavailableSatoshis;
-  const totalAvailableAmount = satoshisToAmount(totalAvailableSatoshis);
-
-  const totalSatoshis = amountToSatoshis(accountBalance.amount);
-  const unavailableSatoshis = totalSatoshis - avaiableSatoshis;
-
-  const avaiableAmount = safeBalance;
-  const unavailableAmount = satoshisToAmount(unavailableSatoshis);
-  const totalAmount = accountBalance.amount;
-
-  const unspendUnavailableAmount = satoshisToAmount(unavailableSatoshis - spendUnavailableSatoshis);
+  const showUnavailable = accountBalance.unavailableBalance > 0;
 
   const chain = useChain();
   useEffect(() => {
@@ -103,7 +78,7 @@ export default function TxCreateScreen() {
       return;
     }
 
-    if (toSatoshis > avaiableSatoshis + spendUnavailableSatoshis) {
+    if (toSatoshis > accountBalance.availableBalance) {
       setError('Amount exceeds your available balance');
       return;
     }
@@ -138,6 +113,24 @@ export default function TxCreateScreen() {
       });
   }, [toInfo, inputAmount, feeRate, enableRBF]);
 
+  const walletConfig = useWalletConfig();
+
+  const unavailableTipText = useMemo(() => {
+    let tipText = '';
+    if (chain.enum === ChainType.BITCOIN_MAINNET) {
+      tipText += `Includes Inscriptions, ARC20, Runes, and unconfirmed UTXO assets.`;
+    } else {
+      tipText += `Includes Inscriptions, Runes, and unconfirmed UTXO assets.`;
+    }
+
+    if (walletConfig.disableUtxoTools) {
+      tipText += ` Future versions will support spending these assets.`;
+    } else {
+      tipText += ` You can unlock these assets by using the UTXO tools.`;
+    }
+    return tipText;
+  }, [chain.enum]);
+
   return (
     <Layout>
       <Header
@@ -152,7 +145,7 @@ export default function TxCreateScreen() {
         </Row>
 
         <Column mt="lg">
-          <Text text="Recipient" preset="regular" color="textDim" />
+          <Text text="Recipient" preset="regular" />
           <Input
             preset="address"
             addressInputData={toInfo}
@@ -165,7 +158,7 @@ export default function TxCreateScreen() {
 
         <Column mt="lg">
           <Row justifyBetween>
-            <Text text="Transfer amount" preset="regular" color="textDim" />
+            <Text text="Transfer amount" preset="regular" />
             <BtcUsd sats={toSatoshis} />
           </Row>
           <Input
@@ -181,72 +174,81 @@ export default function TxCreateScreen() {
             enableMax={true}
             onMaxClick={() => {
               setAutoAdjust(true);
-              setUiState({ inputAmount: totalAvailableAmount.toString() });
+              setUiState({ inputAmount: availableAmount.toString() });
             }}
           />
 
-          <Row justifyBetween>
-            <Text text="Available" color="gold" />
-            {spendUnavailableSatoshis > 0 && (
-              <Row>
-                <Text text={`${spendUnavailableAmount}`} size="sm" style={{ color: '#65D5F0' }} />
-                <Text text={btcUnit} size="sm" color="textDim" />
-                <Text text={`+`} size="sm" color="textDim" />
-              </Row>
-            )}
-
-            <Row>
-              <Text text={`${avaiableAmount}`} size="sm" color="gold" />
-              <Text text={btcUnit} size="sm" color="textDim" />
-            </Row>
-          </Row>
-
-          <Row justifyBetween>
-            <Tooltip
-              title={`Includes Inscriptions, ARC20, Runes, and unconfirmed UTXO assets. Future versions will support spending these assets.`}
-              overlayStyle={{
-                fontSize: fontSizes.xs
+          <Card
+            style={{
+              flexDirection: 'column',
+              borderRadius: 8
+            }}>
+            <Row
+              justifyBetween
+              fullX
+              itemsCenter
+              style={{
+                minHeight: 30
               }}>
-              <div style={{ display: 'flex', alignItems: 'center' }}>
-                <Row itemsCenter>
-                  <Text
-                    text="Unavailable"
-                    // text="Unavailable >"
-                    color="textDim"
-                    // onClick={() => {
-                    //   navigate('UnavailableUtxoScreen');
-                    // }}
-                  />
-
-                  <Icon icon="circle-question" color="textDim" />
-                </Row>
-              </div>
-            </Tooltip>
-
-            {spendUnavailableSatoshis > 0 ? (
+              <Text text="Available" color="gold" />
               <Row>
-                <Text text={`${unspendUnavailableAmount}`} size="sm" color="textDim" />
+                <Text text={`${availableAmount}`} size="sm" color="gold" />
                 <Text text={btcUnit} size="sm" color="textDim" />
               </Row>
-            ) : (
-              <Row>
-                <Text text={`${unavailableAmount}`} size="sm" color="textDim" />
-                <Text text={btcUnit} size="sm" color="textDim" />
-              </Row>
-            )}
-          </Row>
-
-          <Row justifyBetween>
-            <Text text="Total" color="textDim" />
-            <Row>
-              <Text text={`${totalAmount}`} size="sm" color="textDim" />
-              <Text text={btcUnit} size="sm" color="textDim" />
             </Row>
-          </Row>
+
+            {showUnavailable ? (
+              <Row
+                style={{
+                  width: '100%',
+                  border: '1px dashed',
+                  borderColor: colors.line
+                }}></Row>
+            ) : null}
+
+            {showUnavailable ? (
+              <Row
+                justifyBetween
+                fullX
+                itemsCenter
+                style={{
+                  minHeight: 30
+                }}>
+                <Tooltip
+                  title={unavailableTipText}
+                  overlayStyle={{
+                    fontSize: fontSizes.xs
+                  }}>
+                  <div style={{ display: 'flex', alignItems: 'center' }}>
+                    <Row itemsCenter>
+                      <Text text="Unavailable" />
+                      <Icon icon="circle-question" color="textDim" />
+                    </Row>
+                  </div>
+                </Tooltip>
+
+                <Row itemsCenter>
+                  <Row>
+                    <Text text={`${unavailableAmount}`} size="sm" />
+                    <Text text={btcUnit} size="sm" color="textDim" />
+                  </Row>
+                  {walletConfig.disableUtxoTools ? null : (
+                    <Button
+                      preset="minimal"
+                      text="Unlock"
+                      onClick={() => {
+                        window.open(`${chain.unisatUrl}/utils/utxo`);
+                      }}
+                    />
+                  )}
+                </Row>
+              </Row>
+            ) : null}
+          </Card>
         </Column>
 
         <Column mt="lg">
-          <Text text="Fee" color="textDim" />
+          <Text text="Fee" />
 
           <FeeRateBar
             onChange={(val) => {

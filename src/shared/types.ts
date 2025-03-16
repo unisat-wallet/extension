@@ -22,6 +22,18 @@ export enum RestoreWalletType {
   OTHERS
 }
 
+/**
+ * Sign data type
+ * @enum {number}
+ * @readonly
+ * @enum {number}
+ * @readonly
+ */
+export enum CosmosSignDataType {
+  COSMOS_AMINO = 1,
+  COSMOS_DIRECT = 2
+}
+
 export interface Chain {
   name: string;
   logo: string;
@@ -95,6 +107,8 @@ export interface Inscription {
     amt: string;
     decimal: string;
   };
+  multipleNFT?: boolean;
+  sameOffset?: boolean;
 }
 
 export interface Atomical {
@@ -135,6 +149,7 @@ export interface AppInfo {
   logo: string;
   title: string;
   desc: string;
+  route?: string;
   url: string;
   time: number;
   id: number;
@@ -391,6 +406,7 @@ export interface WalletConfig {
   statusMessage: string;
   endpoint: string;
   chainTip: string;
+  disableUtxoTools: boolean;
 }
 
 export enum WebsiteState {
@@ -516,4 +532,61 @@ export interface WebsiteResult {
   isScammer: boolean;
   warning: string;
   allowQuickMultiSign: boolean;
+}
+
+export interface CAT721Balance {
+  collectionId: string;
+  name: string;
+  count: number;
+  previewLocalIds: string[];
+  contentType: string;
+}
+
+export interface CAT721CollectionInfo {
+  collectionId: string;
+  name: string;
+  symbol: string;
+  max: string;
+  premine: string;
+  description: string;
+  contentType: string;
+}
+
+export interface AddressCAT721CollectionSummary {
+  collectionInfo: CAT721CollectionInfo;
+  localIds: string[];
+}
+
+export interface BitcoinBalanceV2 {
+  availableBalance: number;
+  unavailableBalance: number;
+  totalBalance: number;
+}
+
+export interface BabylonStakingStatusV2 {
+  active_tvl: number;
+  active_delegations: number;
+  active_stakers: number;
+  active_finality_providers: number;
+  total_finality_providers: number;
+}
+
+export interface CosmosBalance {
+  denom: string;
+  amount: string;
+}
+
+export interface BabylonAddressSummary {
+  address: string;
+  balance: CosmosBalance;
+  rewardBalance: number;
+  stakedBalance: number;
+}
+
+export interface BabylonTxInfo {
+  toAddress: string;
+  balance: CosmosBalance;
+  unitBalance: CosmosBalance;
+  memo: string;
+  txFee: CosmosBalance;
 }

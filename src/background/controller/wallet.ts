@@ -1,27 +1,74 @@
-import { contactBookService, keyringService, notificationService, openapiService, permissionService, preferenceService, sessionService } from '@/background/service';
+import { PsbtInput } from 'bip174/src/lib/interfaces';
+import { tapleafHash } from 'bitcoinjs-lib/src/payments/bip341';
+import { pubkeyInScript } from 'bitcoinjs-lib/src/psbt/psbtutils';
+
+import {
+  contactBookService,
+  keyringService,
+  notificationService,
+  openapiService,
+  permissionService,
+  preferenceService,
+  sessionService
+} from '@/background/service';
 import i18n from '@/background/service/i18n';
 import { DisplayedKeyring, Keyring } from '@/background/service/keyring';
-import { ADDRESS_TYPES, AddressFlagType, AUTO_LOCKTIMES, BRAND_ALIAN_TYPE_TEXT, CHAINS_ENUM, CHAINS_MAP, ChainType, COIN_NAME, COIN_SYMBOL, DEFAULT_LOCKTIME_ID, EVENTS, KEYRING_TYPE, KEYRING_TYPES, NETWORK_TYPES, UNCONFIRMED_HEIGHT } from '@/shared/constant';
+import {
+  ADDRESS_TYPES,
+  AddressFlagType,
+  AUTO_LOCKTIMES,
+  BRAND_ALIAN_TYPE_TEXT,
+  CHAINS_ENUM,
+  CHAINS_MAP,
+  ChainType,
+  COIN_NAME,
+  COIN_SYMBOL,
+  DEFAULT_LOCKTIME_ID,
+  EVENTS,
+  KEYRING_TYPE,
+  KEYRING_TYPES,
+  NETWORK_TYPES
+} from '@/shared/constant';
+import { BABYLON_CONFIG_MAP } from '@/shared/constant/babylon';
+import { COSMOS_CHAINS_MAP, CosmosChainInfo } from '@/shared/constant/cosmosChain';
 import eventBus from '@/shared/eventBus';
 import { runesUtils } from '@/shared/lib/runes-utils';
-import { Account, AddressType, AddressUserToSignInput, BitcoinBalance, NetworkType, PublicKeyUserToSignInput, SignPsbtOptions, ToSignInput, UTXO, WalletKeyring } from '@/shared/types';
+import {
+  Account,
+  AddressType,
+  AddressUserToSignInput,
+  BitcoinBalance,
+  CosmosBalance,
+  CosmosSignDataType,
+  NetworkType,
+  PublicKeyUserToSignInput,
+  SignPsbtOptions,
+  ToSignInput,
+  UTXO,
+  WalletKeyring
+} from '@/shared/types';
 import { checkAddressFlag, getChainInfo } from '@/shared/utils';
 import { txHelpers, UnspentOutput, UTXO_DUST } from '@unisat/wallet-sdk';
 import { isValidAddress, publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
 import { bitcoin, ECPair } from '@unisat/wallet-sdk/lib/bitcoin-core';
 import { KeystoneKeyring } from '@unisat/wallet-sdk/lib/keyring';
-import { genPsbtOfBIP322Simple, getSignatureFromPsbtOfBIP322Simple, signMessageOfBIP322Simple } from '@unisat/wallet-sdk/lib/message';
+import {
+  genPsbtOfBIP322Simple,
+  getSignatureFromPsbtOfBIP322Simple,
+  signMessageOfBIP322Simple
+} from '@unisat/wallet-sdk/lib/message';
 import { toPsbtNetwork } from '@unisat/wallet-sdk/lib/network';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 import { toXOnly } from '@unisat/wallet-sdk/lib/utils';
 
-
-
+import { BabylonApiService } from '../service/babylon/api/babylonApiService';
+import { getDelegationsV2 } from '../service/babylon/api/getDelegationsV2';
+import { DelegationV2StakingState } from '../service/babylon/types/delegationsV2';
 import { ContactBookItem } from '../service/contactBook';
+import { CosmosKeyring } from '../service/keyring/CosmosKeyring';
 import { OpenApiService } from '../service/openapi';
 import { ConnectedSite } from '../service/permission';
 import BaseController from './base';
-
 
 const stashKeyrings: Record<string, Keyring> = {};
 export type AccountAsset = {
@@ -31,10 +78,32 @@ export type AccountAsset = {
   value: string;
 };
 
+const caculateTapLeafHash = (input: PsbtInput, pubkey: Buffer) => {
+  if (input.tapInternalKey && !input.tapLeafScript) {
+    return [];
+  }
+  const tapLeafHashes = (input.tapLeafScript || [])
+    .filter((tapLeaf) => pubkeyInScript(pubkey, tapLeaf.script))
+    .map((tapLeaf) => {
+      const hash = tapleafHash({
+        output: tapLeaf.script,
+        version: tapLeaf.leafVersion
+      });
+      return Object.assign({ hash }, tapLeaf);
+    });
+
+  return tapLeafHashes.map((each) => each.hash);
+};
+
 export class WalletController extends BaseController {
   openapi: OpenApiService = openapiService;
 
   timer: any = null;
+
+  private _cacheCosmosKeyringKey: string | null = null;
+  private _cosmosKeyring: CosmosKeyring | null = null;
+
+  cosmosChainInfoMap: Record<string, CosmosChainInfo> = Object.assign({}, COSMOS_CHAINS_MAP);
 
   /* wallet */
   boot = (password: string) => keyringService.boot(password);
@@ -108,6 +177,11 @@ export class WalletController extends BaseController {
   getAddressBalance = async (address: string) => {
     const data = await openapiService.getAddressBalance(address);
     preferenceService.updateAddressBalance(address, data);
+    return data;
+  };
+
+  getAddressBalanceV2 = async (address: string) => {
+    const data = await openapiService.getAddressBalanceV2(address);
     return data;
   };
 
@@ -522,46 +596,82 @@ export class WalletController extends BaseController {
       toSignInputs = await this.formatOptionsToSignInputs(psbt);
       if (autoFinalized !== false) autoFinalized = true;
     }
-    psbt.data.inputs.forEach((v) => {
-      const isNotSigned = !(v.finalScriptSig || v.finalScriptWitness);
-      const isP2TR = keyring.addressType === AddressType.P2TR || keyring.addressType === AddressType.M44_P2TR;
-      const lostInternalPubkey = !v.tapInternalKey;
-      // Special measures taken for compatibility with certain applications.
-      if (isNotSigned && isP2TR && lostInternalPubkey) {
-        const tapInternalKey = toXOnly(Buffer.from(account.pubkey, 'hex'));
-        const { output } = bitcoin.payments.p2tr({
-          internalPubkey: tapInternalKey,
-          network: psbtNetwork
+
+    const isKeystone = keyring.type === KEYRING_TYPE.KeystoneKeyring;
+    let bip32Derivation: any = undefined;
+
+    if (isKeystone) {
+      if (!_keyring.mfp) {
+        throw new Error('no mfp in keyring');
+      }
+      bip32Derivation = {
+        masterFingerprint: Buffer.from(_keyring.mfp as string, 'hex'),
+        path: `${keyring.hdPath}/${account.index}`,
+        pubkey: Buffer.from(account.pubkey, 'hex')
+      };
+    }
+
+    const isToSignInputsEmpty = toSignInputs.length == 0;
+    psbt.data.inputs.forEach((input, index) => {
+      const isSigned = input.finalScriptSig || input.finalScriptWitness;
+      if (isSigned) {
+        return;
+      }
+
+      let isP2TR = false;
+      try {
+        bitcoin.payments.p2tr({ output: input.witnessUtxo?.script, network: psbtNetwork });
+        isP2TR = true;
+      } catch (e) {
+        // skip
+      }
+
+      if (isP2TR) {
+        let isKeyPathP2TR = false;
+        try {
+          const tapInternalKey = toXOnly(Buffer.from(account.pubkey, 'hex'));
+          const { output } = bitcoin.payments.p2tr({
+            internalPubkey: tapInternalKey,
+            network: psbtNetwork
+          });
+          if (input.witnessUtxo?.script.toString('hex') == output?.toString('hex')) {
+            isKeyPathP2TR = true;
+          }
+          if (isKeyPathP2TR) {
+            input.tapInternalKey = tapInternalKey;
+          } else {
+            // only keypath p2tr can have tapInternalKey
+            delete input.tapInternalKey;
+          }
+        } catch (e) {
+          // skip
+        }
+      }
+
+      // if no toSignInputs, sign all inputs
+      if (isToSignInputsEmpty) {
+        toSignInputs.push({
+          index: index,
+          publicKey: account.pubkey
         });
-        if (v.witnessUtxo?.script.toString('hex') == output?.toString('hex')) {
-          v.tapInternalKey = tapInternalKey;
+      }
+
+      if (isKeystone) {
+        if (isP2TR) {
+          input.tapBip32Derivation = [
+            {
+              ...bip32Derivation,
+              pubkey: bip32Derivation.pubkey.slice(1),
+              leafHashes: caculateTapLeafHash(input, bip32Derivation.pubkey)
+            }
+          ];
+        } else {
+          input.bip32Derivation = [bip32Derivation];
         }
       }
     });
 
-    if (keyring.type === KEYRING_TYPE.KeystoneKeyring) {
-      if (!_keyring.mfp) {
-        throw new Error('no mfp in keyring');
-      }
-      toSignInputs.forEach((input) => {
-        const isP2TR = keyring.addressType === AddressType.P2TR || keyring.addressType === AddressType.M44_P2TR;
-        const bip32Derivation = {
-          masterFingerprint: Buffer.from(_keyring.mfp as string, 'hex'),
-          path: `${keyring.hdPath}/${account.index}`,
-          pubkey: Buffer.from(account.pubkey, 'hex')
-        };
-        if (isP2TR) {
-          psbt.data.inputs[input.index].tapBip32Derivation = [
-            {
-              ...bip32Derivation,
-              pubkey: bip32Derivation.pubkey.slice(1),
-              leafHashes: []
-            }
-          ];
-        } else {
-          psbt.data.inputs[input.index].bip32Derivation = [bip32Derivation];
-        }
-      });
+    if (isKeystone) {
       return psbt;
     }
 
@@ -780,11 +890,11 @@ export class WalletController extends BaseController {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
-    let utxos = await openapiService.getBTCUtxos(account.address);
+    const utxos = await openapiService.getBTCUtxos(account.address);
 
-    if (checkAddressFlag(openapiService.addressFlag, AddressFlagType.CONFIRMED_UTXO_MODE)) {
-      utxos = utxos.filter((v) => (v as any).height !== UNCONFIRMED_HEIGHT);
-    }
+    // if (checkAddressFlag(openapiService.addressFlag, AddressFlagType.CONFIRMED_UTXO_MODE)) {
+    //   utxos = utxos.filter((v) => (v as any).height !== UNCONFIRMED_HEIGHT);
+    // }
 
     const btcUtxos = utxos.map((v) => {
       return {
@@ -1513,10 +1623,6 @@ export class WalletController extends BaseController {
     return preferenceService.expireUICachedData(address);
   };
 
-  createPaymentUrl = (address: string, channel: string) => {
-    return openapiService.createPaymentUrl(address, channel);
-  };
-
   getWalletConfig = () => {
     return openapiService.getWalletConfig();
   };
@@ -1810,6 +1916,7 @@ export class WalletController extends BaseController {
     const { keyring } = await this.checkKeyringMethod('parseSignMsgUr');
     const sig = await keyring.parseSignMsgUr!(type, cbor);
     sig.signature = Buffer.from(sig.signature, 'hex').toString('base64');
+
     return sig;
   };
 
@@ -1965,10 +2072,6 @@ export class WalletController extends BaseController {
     return psbt.toHex();
   };
 
-  getBuyBtcChannelList = async () => {
-    return openapiService.getBuyBtcChannelList();
-  };
-
   getAutoLockTimeId = () => {
     return preferenceService.getAutoLockTimeId();
   };
@@ -2089,6 +2192,243 @@ export class WalletController extends BaseController {
 
   getBlockActiveInfo = () => {
     return openapiService.getBlockActiveInfo();
+  };
+
+  getCAT721List = async (address: string, currentPage: number, pageSize: number) => {
+    const cursor = (currentPage - 1) * pageSize;
+    const size = pageSize;
+    const { total, list } = await openapiService.getCAT721CollectionList(address, cursor, size);
+
+    return {
+      currentPage,
+      pageSize,
+      total,
+      list
+    };
+  };
+
+  getAddressCAT721CollectionSummary = async (address: string, collectionId: string) => {
+    const collectionSummary = await openapiService.getAddressCAT721CollectionSummary(address, collectionId);
+    return collectionSummary;
+  };
+
+  transferCAT721Step1 = async (to: string, collectionId: string, localId: string, feeRate: number) => {
+    const currentAccount = await this.getCurrentAccount();
+    if (!currentAccount) {
+      return;
+    }
+
+    const _res = await openapiService.transferCAT721Step1(
+      currentAccount.address,
+      currentAccount.pubkey,
+      to,
+      collectionId,
+      localId,
+      feeRate
+    );
+    return _res;
+  };
+
+  transferCAT721Step2 = async (transferId: string, commitTx: string, toSignInputs: ToSignInput[]) => {
+    const networkType = this.getNetworkType();
+    const psbtNetwork = toPsbtNetwork(networkType);
+    const psbt = bitcoin.Psbt.fromBase64(commitTx, { network: psbtNetwork });
+    await this.signPsbt(psbt, toSignInputs, true);
+    const _res = await openapiService.transferCAT721Step2(transferId, psbt.toBase64());
+    return _res;
+  };
+
+  transferCAT721Step3 = async (transferId: string, revealTx: string, toSignInputs: ToSignInput[]) => {
+    const networkType = this.getNetworkType();
+    const psbtNetwork = toPsbtNetwork(networkType);
+    const psbt = bitcoin.Psbt.fromBase64(revealTx, { network: psbtNetwork });
+    await this.signPsbt(psbt, toSignInputs, false);
+    const _res = await openapiService.transferCAT721Step3(transferId, psbt.toBase64());
+    return _res;
+  };
+
+  getBuyCoinChannelList = async (coin: 'FB' | 'BTC') => {
+    return openapiService.getBuyCoinChannelList(coin);
+  };
+
+  createBuyCoinPaymentUrl = (coin: 'FB' | 'BTC', address: string, channel: string) => {
+    return openapiService.createBuyCoinPaymentUrl(coin, address, channel);
+  };
+
+  //  ----------- cosmos support --------
+
+  getCosmosKeyring = async (chainId: string) => {
+    if (!this.cosmosChainInfoMap[chainId]) {
+      throw new Error('Not supported chainId');
+    }
+
+    const currentAccount = await this.getCurrentAccount();
+    if (!currentAccount) return null;
+
+    const key = `${currentAccount.pubkey}-${currentAccount.type}-${chainId}`;
+
+    if (key === this._cacheCosmosKeyringKey) {
+      return this._cosmosKeyring;
+    }
+
+    const keyring = await keyringService.getKeyringForAccount(currentAccount.pubkey, currentAccount.type);
+    if (!keyring) return null;
+
+    let cosmosKeyring: CosmosKeyring | null = null;
+    const name = `${currentAccount.alianName}-${chainId}`;
+    let privateKey;
+
+    if (currentAccount.type !== KEYRING_TYPE.KeystoneKeyring) {
+      privateKey = await keyring.exportAccount(currentAccount.pubkey);
+    }
+
+    cosmosKeyring = await CosmosKeyring.createCosmosKeyring({
+      privateKey,
+      publicKey: currentAccount.pubkey,
+      name,
+      chainId,
+      provider: this
+    });
+
+    this._cacheCosmosKeyringKey = key;
+    this._cosmosKeyring = cosmosKeyring;
+    return cosmosKeyring;
+  };
+
+  getBabylonAddress = async (chainId: string) => {
+    const cosmosKeyring = await this.getCosmosKeyring(chainId);
+    if (!cosmosKeyring) return null;
+    const address = cosmosKeyring.getKey().bech32Address;
+    return address;
+  };
+
+  getBabylonAddressSummary = async (babylonChainId: string, withStakingInfo = true) => {
+    const chainType = this.getChainType();
+    const chain = CHAINS_MAP[chainType];
+
+    const cosmosKeyring = await this.getCosmosKeyring(babylonChainId);
+    if (!cosmosKeyring) return null;
+    const address = cosmosKeyring.getKey().bech32Address;
+    let balance: CosmosBalance = {
+      amount: '0',
+      denom: 'ubbn'
+    };
+    let rewardBalance = 0;
+    try {
+      balance = await cosmosKeyring.getBalance();
+      if (withStakingInfo) {
+        rewardBalance = await cosmosKeyring.getBabylonStakingRewards();
+      }
+    } catch (e) {
+      console.error('getBabylonAddressSummary:getBalance error:', e);
+    }
+
+    let stakedBalance = 0;
+    if (withStakingInfo) {
+      const babylonConfig = BABYLON_CONFIG_MAP[chainType];
+      try {
+        const currentAccount = await this.getCurrentAccount();
+        if (!currentAccount) return null;
+        const pubkey = toXOnly(Buffer.from(currentAccount.pubkey, 'hex')).toString('hex');
+        let pagination_key = '';
+
+        do {
+          const response = await getDelegationsV2(babylonConfig.phase2.stakingApi || '', pubkey, pagination_key);
+          stakedBalance += response.delegations
+            .filter((v) => v.state === DelegationV2StakingState.ACTIVE)
+            .reduce((pre, cur) => pre + cur.stakingAmount, 0);
+          if (response.pagination.next_key) {
+            pagination_key = response.pagination.next_key;
+          }
+        } while (pagination_key);
+      } catch (e) {
+        console.error('getBabylonAddressSummary:getDelegationsV2 error:', e);
+      }
+    }
+
+    return { address, balance, rewardBalance, stakedBalance };
+  };
+
+  getBabylonStakingStatusV2 = async () => {
+    const chainType = this.getChainType();
+    const babylonConfig = BABYLON_CONFIG_MAP[chainType];
+    if (!babylonConfig) {
+      return;
+    }
+    const apiService = new BabylonApiService(babylonConfig.phase1.stakingApi, babylonConfig.phase2.stakingApi);
+    return apiService.getBabylonStakingStatusV2();
+  };
+
+  genSignCosmosUr = async (cosmosSignRequest: {
+    requestId?: string;
+    signData: string;
+    dataType: CosmosSignDataType;
+    path: string;
+    chainId?: string;
+    accountNumber?: string;
+    address?: string;
+  }) => {
+    if (!cosmosSignRequest.signData) {
+      throw new Error('signData is required for Cosmos signing');
+    }
+
+    if (!cosmosSignRequest.dataType) {
+      throw new Error('dataType is required for Cosmos signing');
+    }
+
+    if (!cosmosSignRequest.path) {
+      throw new Error('path is required for Cosmos signing');
+    }
+
+    const { requestId, signData, dataType, path, chainId, accountNumber, address } = cosmosSignRequest;
+
+    const signRequest = {
+      requestId,
+      signData,
+      dataType,
+      path,
+      extra: {
+        chainId,
+        accountNumber,
+        address
+      }
+    };
+
+    return keyringService.generateSignCosmosUr(signRequest);
+  };
+
+  parseCosmosSignUr = async (type: string, cbor: string) => {
+    if (!type) {
+      throw new Error('UR type is required for parsing Cosmos signature');
+    }
+
+    if (!cbor) {
+      throw new Error('CBOR data is required for parsing Cosmos signature');
+    }
+
+    const result = await keyringService.parseSignCosmosUr(type, cbor);
+    return result;
+  };
+
+  cosmosSignData = async (chainId: string, signBytesHex: string) => {
+    const keyring = await this.getCosmosKeyring(chainId);
+    if (!keyring) return null;
+    const result = await keyring.cosmosSignData(signBytesHex);
+    return result;
+  };
+
+  createSendTokenStep1 = async (chainId: string, tokenBalance: CosmosBalance, recipient: string, memo: string) => {
+    const keyring = await this.getCosmosKeyring(chainId);
+    if (!keyring) return null;
+    const result = await keyring.createSendTokenStep1(tokenBalance, recipient, memo);
+    return result;
+  };
+
+  createSendTokenStep2 = async (chainId: string, signature: string) => {
+    const keyring = await this.getCosmosKeyring(chainId);
+    if (!keyring) return null;
+    const result = await keyring.createSendTokenStep2(signature);
+    return result;
   };
 }
 

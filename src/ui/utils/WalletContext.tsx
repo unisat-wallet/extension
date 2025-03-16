@@ -1,16 +1,54 @@
 import { createContext, ReactNode, useContext } from 'react';
 
-
-
 import { AccountAsset } from '@/background/controller/wallet';
 import { ContactBookItem, ContactBookStore } from '@/background/service/contactBook';
 import { ToSignInput } from '@/background/service/keyring';
 import { ConnectedSite } from '@/background/service/permission';
 import { AddressFlagType, ChainType } from '@/shared/constant';
-import { Account, AddressCAT20TokenSummary, AddressCAT20UtxoSummary, AddressRunesTokenSummary, AddressSummary, AddressTokenSummary, AppInfo, AppSummary, Arc20Balance, BitcoinBalance, BtcChannelItem, CAT20Balance, CAT20MergeOrder, CoinPrice, DecodedPsbt, FeeSummary, InscribeOrder, Inscription, InscriptionSummary, NetworkType, RuneBalance, SignPsbtOptions, TickPriceItem, TokenBalance, TokenTransfer, TxHistoryItem, UserToSignInput, UTXO, UTXO_Detail, VersionDetail, WalletConfig, WalletKeyring, WebsiteResult } from '@/shared/types';
+import {
+  Account,
+  AddressCAT20TokenSummary,
+  AddressCAT20UtxoSummary,
+  AddressCAT721CollectionSummary,
+  AddressRunesTokenSummary,
+  AddressSummary,
+  AddressTokenSummary,
+  AppInfo,
+  AppSummary,
+  Arc20Balance,
+  BabylonAddressSummary,
+  BabylonStakingStatusV2,
+  BitcoinBalance,
+  BitcoinBalanceV2,
+  BtcChannelItem,
+  CAT20Balance,
+  CAT20MergeOrder,
+  CAT721Balance,
+  CoinPrice,
+  CosmosBalance,
+  CosmosSignDataType,
+  DecodedPsbt,
+  FeeSummary,
+  InscribeOrder,
+  Inscription,
+  InscriptionSummary,
+  NetworkType,
+  RuneBalance,
+  SignPsbtOptions,
+  TickPriceItem,
+  TokenBalance,
+  TokenTransfer,
+  TxHistoryItem,
+  UserToSignInput,
+  UTXO,
+  UTXO_Detail,
+  VersionDetail,
+  WalletConfig,
+  WalletKeyring,
+  WebsiteResult
+} from '@/shared/types';
 import { AddressType, UnspentOutput } from '@unisat/wallet-sdk';
 import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
-
 
 export interface WalletController {
   openapi: {
@@ -36,6 +74,7 @@ export interface WalletController {
   setPopupOpen(isOpen: boolean): void;
   isReady(): Promise<boolean>;
 
+  getAddressBalanceV2(address: string): Promise<BitcoinBalanceV2>;
   getAddressBalance(address: string): Promise<BitcoinBalance>;
   getAddressCacheBalance(address: string): Promise<BitcoinBalance>;
   getMultiAddressAssets(addresses: string): Promise<AddressSummary[]>;
@@ -258,8 +297,6 @@ export interface WalletController {
 
   expireUICachedData(address: string): Promise<void>;
 
-  createPaymentUrl(address: string, channel: string): Promise<string>;
-
   getWalletConfig(): Promise<WalletConfig>;
 
   getSkippedVersion(): Promise<string>;
@@ -312,21 +349,28 @@ export interface WalletController {
   getVersionDetail(version: string): Promise<VersionDetail>;
 
   genSignPsbtUr(psbtHex: string): Promise<{ type: string; cbor: string }>;
-  parseSignPsbtUr(
-    type: string,
-    cbor: string,
-    isFinalize?: boolean
-  ): Promise<{
-    psbtHex: string;
-    rawTx: string;
-  }>;
+  parseSignPsbtUr(type: string, cbor: string, isFinalize?: boolean): Promise<{ psbtHex: string; rawtx?: string }>;
   genSignMsgUr(text: string, msgType?: string): Promise<{ type: string; cbor: string; requestId: string }>;
-  parseSignMsgUr(
-    type: string,
-    cbor: string,
-    msgType?: string
-  ): Promise<{ requestId: string; publicKey: string; signature: string }>;
+  parseSignMsgUr(type: string, cbor: string, msgType: string): Promise<{ signature: string }>;
   getKeystoneConnectionType(): Promise<'USB' | 'QR'>;
+  genSignCosmosUr(cosmosSignRequest: {
+    requestId?: string;
+    signData: string;
+    dataType: CosmosSignDataType;
+    path: string;
+    chainId?: string;
+    accountNumber?: string;
+    address?: string;
+  }): Promise<{ type: string; cbor: string; requestId: string }>;
+  parseCosmosSignUr(type: string, cbor: string): Promise<any>;
+
+  cosmosSignData(
+    chainId: string,
+    signBytesHex: string
+  ): Promise<{
+    publicKey: string;
+    signature: string;
+  }>;
 
   getEnableSignData(): Promise<boolean>;
   setEnableSignData(enable: boolean): Promise<void>;
@@ -351,8 +395,6 @@ export interface WalletController {
     assetUtxos?: UnspentOutput[];
     outputValue?: number;
   }): Promise<string>;
-
-  getBuyBtcChannelList(): Promise<BtcChannelItem[]>;
 
   setAutoLockTimeId(timeId: number): Promise<void>;
   getAutoLockTimeId(): Promise<number>;
@@ -388,7 +430,40 @@ export interface WalletController {
 
   getAppList(): Promise<{ tab: string; items: AppInfo[] }[]>;
   getBannerList(): Promise<{ id: string; img: string; link: string }[]>;
-  getBlockActiveInfo():Promise<{ allTransactions: number, allAddrs: number }>
+  getBlockActiveInfo(): Promise<{ allTransactions: number; allAddrs: number }>;
+
+  getCAT721List(
+    address: string,
+    currentPage: number,
+    pageSize: number
+  ): Promise<{ currentPage: number; pageSize: number; total: number; list: CAT721Balance[] }>;
+
+  getAddressCAT721CollectionSummary(address: string, collectionId: string): Promise<AddressCAT721CollectionSummary>;
+
+  transferCAT721Step1(
+    to: string,
+    collectionId: string,
+    localId: string,
+    feeRate: number
+  ): Promise<{ id: string; commitTx: string; toSignInputs: UserToSignInput[]; feeRate: number }>;
+  transferCAT721Step2(
+    transferId: string,
+    commitTx: string,
+    toSignInputs: UserToSignInput[]
+  ): Promise<{ revealTx: string; toSignInputs: UserToSignInput[] }>;
+  transferCAT721Step3(transferId: string, revealTx: string, toSignInputs: UserToSignInput[]): Promise<{ txid: string }>;
+
+  getBuyCoinChannelList(coin: string): Promise<BtcChannelItem[]>;
+  createBuyCoinPaymentUrl(coin: string, address: string, channel: string): Promise<string>;
+
+  getBabylonAddress(address: string): Promise<string>;
+
+  getBabylonAddressSummary(chainId: string, withStakingInfo?: boolean): Promise<BabylonAddressSummary>;
+
+  getBabylonStakingStatusV2(): Promise<BabylonStakingStatusV2>;
+
+  createSendTokenStep1(chainId: string, tokenBalance: CosmosBalance, to: string, memo: string): Promise<string>;
+  createSendTokenStep2(chainId: string, signature: string): Promise<string>;
 }
 
 const WalletContext = createContext<{

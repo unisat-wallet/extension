@@ -8,7 +8,6 @@ import { useChain } from '@/ui/state/settings/hooks';
 import { useOrdinalsAssetTabKey } from '@/ui/state/ui/hooks';
 import { OrdinalsAssetTabKey, uiActions } from '@/ui/state/ui/reducer';
 
-import { BRC20List5Byte } from './BRC20List5Byte';
 import { BRC20List } from './Brc20List';
 import { InscriptionList } from './InscriptionList';
 
@@ -38,13 +37,13 @@ export function OrdinalsTab() {
       }
     ];
 
-    if (!chain.isFractal) {
-      items.push({
-        key: OrdinalsAssetTabKey.BRC20_5BYTE,
-        label: `brc-20[5-byte] (${addressSummary.brc20Count5Byte || 0})`,
-        children: <BRC20List5Byte />
-      });
-    }
+    // if (!chain.isFractal) {
+    //   items.push({
+    //     key: OrdinalsAssetTabKey.BRC20_5BYTE,
+    //     label: `brc-20[5-byte] (${addressSummary.brc20Count5Byte || 0})`,
+    //     children: <BRC20List5Byte />
+    //   });
+    // }
     return items;
   }, [addressSummary, chain]);
 

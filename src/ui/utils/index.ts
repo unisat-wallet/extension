@@ -1,3 +1,4 @@
+import { bech32 } from 'bech32';
 import BigNumber from 'bignumber.js';
 import { useLocation } from 'react-router-dom';
 
@@ -210,4 +211,18 @@ export function formatSessionIcon(session: { origin: string; icon: string; name:
     iconUrl = `${session.origin}${iconUrl}`;
   }
   return iconUrl;
+}
+
+export function isValidBech32Address(address: string) {
+  try {
+    if (!address) {
+      return false;
+    }
+    if (bech32.decode(address)) {
+      return true;
+    }
+    return false;
+  } catch (e) {
+    return false;
+  }
 }

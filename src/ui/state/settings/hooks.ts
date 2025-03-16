@@ -2,6 +2,7 @@ import compareVersions from 'compare-versions';
 import { useCallback } from 'react';
 
 import { CHAINS_MAP, ChainType, VERSION } from '@/shared/constant';
+import { BABYLON_CONFIG_MAP } from '@/shared/constant/babylon';
 import { AddressType, NetworkType } from '@/shared/types';
 import { useWallet } from '@/ui/utils';
 import i18n, { addResourceBundle } from '@/ui/utils/i18n';
@@ -226,4 +227,35 @@ export function useAddressTips() {
   const chain = useChain();
   const account = useCurrentAccount();
   return getAddressTips(account.address, chain.enum);
+}
+
+export function useCAT721NFTContentBaseUrl() {
+  const chainType = useChainType();
+  if (chainType === ChainType.FRACTAL_BITCOIN_MAINNET) {
+    return 'https://tracker-fractal-mainnet.catprotocol.org';
+  } else if (chainType === ChainType.FRACTAL_BITCOIN_TESTNET) {
+    return 'https://tracker-fractal-testnet.catprotocol.org';
+  } else {
+    return '';
+  }
+}
+
+export function useBRC20MarketPlaceWebsite(ticker: string) {
+  const chainType = useChainType();
+  return `${CHAINS_MAP[chainType].unisatUrl}/market/brc20?tick=${ticker}`;
+}
+
+export function useRunesMarketPlaceWebsite(ticker: string) {
+  const chainType = useChainType();
+  return `${CHAINS_MAP[chainType].unisatUrl}/runes/market?tick=${ticker}`;
+}
+
+export function useCAT20MarketPlaceWebsite(tokenId: string) {
+  const chainType = useChainType();
+  return `${CHAINS_MAP[chainType].unisatUrl}/dex/cat20/${tokenId}`;
+}
+
+export function useBabylonConfig() {
+  const chainType = useChainType();
+  return BABYLON_CONFIG_MAP[chainType] || BABYLON_CONFIG_MAP[ChainType.BITCOIN_MAINNET];
 }

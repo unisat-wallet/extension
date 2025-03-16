@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 
+import { KEYRING_TYPE } from '@/shared/constant';
 import { Account, AddressType } from '@/shared/types';
 import { useWallet } from '@/ui/utils';
 
@@ -33,12 +34,10 @@ export function useAccountBalance() {
   const accountsState = useAccountsState();
   const currentAccount = useCurrentAccount();
   return (
-    accountsState.balanceMap[currentAccount.address] || {
-      amount: '0',
-      expired: true,
-      confirm_btc_amount: '0',
-      pending_btc_amount: '0',
-      inscription_amount: '0'
+    accountsState.balanceV2Map[currentAccount.address] || {
+      availableBalance: 0,
+      unavailableBalance: 0,
+      totalBalance: 0
     }
   );
 }
@@ -196,26 +195,34 @@ export function useFetchBalanceCallback() {
   const balance = useAccountBalance();
   return useCallback(async () => {
     if (!currentAccount.address) return;
-    const cachedBalance = await wallet.getAddressCacheBalance(currentAccount.address);
-    const _accountBalance = await wallet.getAddressBalance(currentAccount.address);
-    dispatch(
-      accountActions.setBalance({
-        address: currentAccount.address,
-        amount: _accountBalance.amount,
-        btc_amount: _accountBalance.btc_amount,
-        inscription_amount: _accountBalance.inscription_amount,
-        confirm_btc_amount: _accountBalance.confirm_btc_amount,
-        pending_btc_amount: _accountBalance.pending_btc_amount
-      })
-    );
-    if (cachedBalance.amount !== _accountBalance.amount) {
-      wallet.expireUICachedData(currentAccount.address);
-      dispatch(accountActions.expireHistory());
-    }
+    // const cachedBalance = await wallet.getAddressCacheBalance(currentAccount.address);
+    // const _accountBalance = await wallet.getAddressBalance(currentAccount.address);
+    // dispatch(
+    //   accountActions.setBalance({
+    //     address: currentAccount.address,
+    //     amount: _accountBalance.amount,
+    //     btc_amount: _accountBalance.btc_amount,
+    //     inscription_amount: _accountBalance.inscription_amount,
+    //     confirm_btc_amount: _accountBalance.confirm_btc_amount,
+    //     pending_btc_amount: _accountBalance.pending_btc_amount
+    //   })
+    // );
+    // if (cachedBalance.amount !== _accountBalance.amount) {
+    //   wallet.expireUICachedData(currentAccount.address);
+    //   dispatch(accountActions.expireHistory());
+    // }
 
     const summary = await wallet.getAddressSummary(currentAccount.address);
     summary.address = currentAccount.address;
     dispatch(accountActions.setAddressSummary(summary));
+
+    const balanceV2 = await wallet.getAddressBalanceV2(currentAccount.address);
+    dispatch(
+      accountActions.setBalanceV2({
+        address: currentAccount.address,
+        balance: balanceV2
+      })
+    );
   }, [dispatch, wallet, currentAccount, balance]);
 }
 
@@ -242,4 +249,9 @@ export function useReloadAccounts() {
       dispatch(settingsActions.updateSettings({ walletConfig: data }));
     });
   }, [dispatch, wallet]);
+}
+
+export function useIsKeystoneWallet() {
+  const currentKeyring = useCurrentKeyring();
+  return currentKeyring.type === KEYRING_TYPE.KeystoneKeyring;
 }

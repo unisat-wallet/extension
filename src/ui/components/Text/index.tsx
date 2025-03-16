@@ -24,7 +24,7 @@ export const $sizeStyles = {
 
 const $baseStyle: CSSProperties = Object.assign({}, $sizeStyles.sm, {
   fontFamily: typography.primary.regular,
-  color: colors.white,
+  color: colors.white_muted3,
   textAlign: 'left',
   userSelect: 'none'
 } as CSSProperties);
@@ -73,6 +73,7 @@ export interface TextProps extends BaseViewProps {
   disableTranslate?: boolean;
   digital?: boolean;
   ellipsis?: boolean;
+  max1Lines?: boolean;
   max2Lines?: boolean;
 }
 
@@ -89,6 +90,7 @@ export function Text(props: TextProps) {
     disableTranslate,
     ellipsis,
     style: $styleOverride,
+    max1Lines,
     max2Lines,
     ...rest
   } = props;
@@ -111,6 +113,12 @@ export function Text(props: TextProps) {
   );
   const $style = Object.assign({}, $textStyle, $styleOverride);
   const textUse = props.digital ? showLongNumber(text) : text;
+  let textUseClassName = '';
+  if (max1Lines) {
+    textUseClassName = 'span-max-lines-1';
+  } else if (max2Lines) {
+    textUseClassName = 'span-max-lines-2';
+  }
   return (
     <BaseView style={$style} {...rest}>
       {disableTranslate ? (
@@ -118,7 +126,7 @@ export function Text(props: TextProps) {
           {textUse}
         </span>
       ) : (
-        <span className={max2Lines ? 'span-max-lines-2' : ''}>{textUse}</span>
+        <span className={textUseClassName}>{textUse}</span>
       )}
     </BaseView>
   );

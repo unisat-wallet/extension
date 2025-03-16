@@ -1,6 +1,7 @@
 import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
 
+import { ChainType } from '@/shared/constant';
 import { AddressTokenSummary, Inscription } from '@/shared/types';
 import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -9,7 +10,7 @@ import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { Empty } from '@/ui/components/Empty';
 import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useUnisatWebsite } from '@/ui/state/settings/hooks';
+import { useBRC20MarketPlaceWebsite, useChainType, useUnisatWebsite } from '@/ui/state/settings/hooks';
 import { useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
@@ -106,6 +107,16 @@ export default function BRC20TokenScreen() {
   }, [tokenSummary]);
 
   const tools = useTools();
+  const chainType = useChainType();
+
+  const enableTrade = useMemo(() => {
+    if (chainType === ChainType.BITCOIN_MAINNET || chainType === ChainType.FRACTAL_BITCOIN_MAINNET) {
+      return true;
+    } else {
+      return false;
+    }
+  }, [chainType]);
+  const marketPlaceUrl = useBRC20MarketPlaceWebsite(ticker);
   return (
     <Layout>
       <Header
@@ -126,9 +137,9 @@ export default function BRC20TokenScreen() {
 
             <Row justifyBetween mt="lg">
               <Button
-                text="MINT"
-                preset="primary"
-                style={!enableMint ? { backgroundColor: 'grey' } : {}}
+                text="Mint"
+                preset="home"
+                style={!enableMint ? { backgroundColor: 'rgba(255,255,255,0.15)' } : {}}
                 disabled={!enableMint}
                 icon="pencil"
                 onClick={(e) => {
@@ -138,10 +149,9 @@ export default function BRC20TokenScreen() {
               />
 
               <Button
-                text="TRANSFER"
-                preset="primary"
+                text="Transfer"
+                preset="home"
                 icon="send"
-                style={!enableTransfer ? { backgroundColor: 'grey' } : {}}
                 disabled={!enableTransfer}
                 onClick={(e) => {
                   // todo
@@ -159,6 +169,18 @@ export default function BRC20TokenScreen() {
                 }}
                 full
               />
+
+              {enableTrade ? (
+                <Button
+                  text="Trade"
+                  preset="home"
+                  icon="trade"
+                  onClick={(e) => {
+                    window.open(marketPlaceUrl);
+                  }}
+                  full
+                />
+              ) : null}
             </Row>
           </Column>
           <Row style={{ borderTopWidth: 1, borderColor: '#FFFFFF1F', alignSelf: 'stretch', width: '100%' }} my="md" />

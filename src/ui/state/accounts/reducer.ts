@@ -1,4 +1,12 @@
-import { Account, AddressSummary, AppSummary, Inscription, InscriptionSummary, TxHistoryItem } from '@/shared/types';
+import {
+  Account,
+  AddressSummary,
+  AppSummary,
+  BitcoinBalanceV2,
+  Inscription,
+  InscriptionSummary,
+  TxHistoryItem
+} from '@/shared/types';
 import { createSlice } from '@reduxjs/toolkit';
 
 import { updateVersion } from '../global/actions';
@@ -16,6 +24,9 @@ export interface AccountsState {
       inscription_amount: string;
       expired: boolean;
     };
+  };
+  balanceV2Map: {
+    [key: string]: BitcoinBalanceV2;
   };
   historyMap: {
     [key: string]: {
@@ -52,6 +63,7 @@ export const initialState: AccountsState = {
   current: initialAccount,
   loading: false,
   balanceMap: {},
+  balanceV2Map: {},
   historyMap: {},
   inscriptionsMap: {},
   appSummary: {
@@ -120,6 +132,30 @@ const slice = createSlice({
       state.balanceMap[address].confirm_btc_amount = confirm_btc_amount;
       state.balanceMap[address].pending_btc_amount = pending_btc_amount;
       state.balanceMap[address].expired = false;
+    },
+    setBalanceV2(
+      state,
+      action: {
+        payload: {
+          address: string;
+          balance: BitcoinBalanceV2;
+        };
+      }
+    ) {
+      const {
+        payload: {
+          balance: { availableBalance, unavailableBalance, totalBalance },
+          address
+        }
+      } = action;
+      state.balanceV2Map[address] = state.balanceV2Map[address] || {
+        availableBalance: 0,
+        unavailableBalance: 0,
+        totalBalance: 0
+      };
+      state.balanceV2Map[address].availableBalance = availableBalance;
+      state.balanceV2Map[address].unavailableBalance = unavailableBalance;
+      state.balanceV2Map[address].totalBalance = totalBalance;
     },
     setAddressSummary(state, action: { payload: any }) {
       state.addressSummary = action.payload;
@@ -227,6 +263,10 @@ const slice = createSlice({
           address: '',
           runesCount: 0
         };
+      }
+
+      if (!state.balanceV2Map) {
+        state.balanceV2Map = {};
       }
     });
   }

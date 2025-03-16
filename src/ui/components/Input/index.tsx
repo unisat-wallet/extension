@@ -5,11 +5,10 @@ import React, { CSSProperties, useEffect, useState } from 'react';
 import { SAFE_DOMAIN_CONFIRMATION } from '@/shared/constant';
 import { getSatsName } from '@/shared/lib/satsname-utils';
 import { Inscription } from '@/shared/types';
-import { Button } from '@/ui/components';
 import { getAddressTips, useChain } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { spacing } from '@/ui/theme/spacing';
-import { useWallet } from '@/ui/utils';
+import { isValidBech32Address, useWallet } from '@/ui/utils';
 import { ArrowRightOutlined, SearchOutlined } from '@ant-design/icons';
 
 import { AccordingInscription } from '../AccordingInscription';
@@ -52,6 +51,7 @@ const $inputPresets = {
   password: {},
   amount: {},
   address: {},
+  cosmosAddress: {},
   text: {},
   search: {}
 };
@@ -60,14 +60,16 @@ const $baseContainerStyle: CSSProperties = {
   display: 'flex',
   flexDirection: 'row',
   alignItems: 'center',
-  backgroundColor: '#2a2626',
+  backgroundColor: colors.black,
   paddingLeft: 15.2,
   paddingRight: 15.2,
   paddingTop: 11,
   paddingBottom: 11,
-  borderRadius: 5,
-  minHeight: '46.5px',
-  alignSelf: 'stretch'
+  borderRadius: 10,
+  minHeight: '56.5px',
+  alignSelf: 'stretch',
+  borderWidth: 1,
+  borderColor: colors.line2
 };
 
 const $baseInputStyle: CSSProperties = Object.assign({}, $textPresets.regular, {
@@ -368,8 +370,80 @@ export const AddressInput = (props: InputProps) => {
   );
 };
 
+export const CosmosAddressInput = (props: InputProps) => {
+  const { placeholder, onAddressInputChange, addressInputData, style: $inputStyleOverride, ...rest } = props;
+
+  if (!addressInputData || !onAddressInputChange) {
+    return <div />;
+  }
+  const [validAddress, setValidAddress] = useState(addressInputData.address);
+  const [parseAddress, setParseAddress] = useState(addressInputData.domain ? addressInputData.address : '');
+  const [parseError, setParseError] = useState('');
+  const [formatError, setFormatError] = useState('');
+
+  const [inputVal, setInputVal] = useState(addressInputData.domain || addressInputData.address);
+
+  useEffect(() => {
+    onAddressInputChange({
+      address: validAddress,
+      domain: parseAddress ? inputVal : ''
+    });
+  }, [validAddress]);
+
+  const resetState = () => {
+    if (parseError) {
+      setParseError('');
+    }
+    if (parseAddress) {
+      setParseAddress('');
+    }
+    if (formatError) {
+      setFormatError('');
+    }
+
+    if (validAddress) {
+      setValidAddress('');
+    }
+  };
+
+  const handleInputAddress = (e) => {
+    const inputAddress:string = e.target.value.trim();
+    setInputVal(inputAddress);
+
+    resetState();
+
+    if(!isValidBech32Address(inputAddress)){
+      setFormatError('Recipient address is invalid');
+      return;
+    }
+
+    setValidAddress(inputAddress);
+  };
+
+  return (
+    <div style={{ alignSelf: 'stretch' }}>
+      <div style={Object.assign({}, $baseContainerStyle, { flexDirection: 'column', minHeight: '56.5px' })}>
+        <input
+          placeholder={placeholder}
+          type={'text'}
+          style={Object.assign({}, $baseInputStyle, $inputStyleOverride)}
+          onChange={async (e) => {
+            handleInputAddress(e);
+          }}
+          defaultValue={inputVal}
+          {...rest}
+        />
+      </div>
+
+      {parseError && <Text text={parseError} preset="regular" color="error" />}
+
+      <Text text={formatError} preset="regular" color="error" />
+    </div>
+  );
+};
+
 function SearchInput(props: InputProps) {
-  const { placeholder, containerStyle, style: $inputStyleOverride, disabled, autoFocus,onSearch, ...rest } = props;
+  const { placeholder, containerStyle, style: $inputStyleOverride, disabled, autoFocus, onSearch, ...rest } = props;
   return (
     <Row
       style={Object.assign(
@@ -379,7 +453,7 @@ function SearchInput(props: InputProps) {
           backgroundColor: '#2a2626',
           border: '1px solid #C08F23',
           borderRadius: 8,
-          padding:0,
+          padding: 0,
           alignSelf: 'stretch'
         },
         containerStyle
@@ -401,12 +475,11 @@ function SearchInput(props: InputProps) {
         justifyCenter
         clickable
         style={{
-          cursor:'pointer',
-          height:42.5,
-          width:42.5,
-          borderLeft:'1px solid #C08F23',
-        }}
-      >
+          cursor: 'pointer',
+          height: 42.5,
+          width: 42.5,
+          borderLeft: '1px solid #C08F23'
+        }}>
         <ArrowRightOutlined style={{ color: 'rgba(255,255,255,.85)' }} />
       </Row>
     </Row>
@@ -438,6 +511,8 @@ export function Input(props: InputProps) {
     return <AmountInput {...props} />;
   } else if (preset === 'address') {
     return <AddressInput {...props} />;
+  } else if (preset === 'cosmosAddress') {
+    return <CosmosAddressInput {...props} />;
   } else if (preset === 'search') {
     return <SearchInput {...props} />;
   } else {

@@ -25,17 +25,7 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
   const {
     showPrice,
     price,
-    tokenBalance: {
-      ticker,
-      overallBalance,
-      transferableBalance,
-      availableBalance,
-      availableBalanceSafe,
-      availableBalanceUnSafe,
-      selfMint,
-      displayName,
-      tag
-    },
+    tokenBalance: { ticker, overallBalance, transferableBalance, selfMint, displayName, tag },
     onClick
   } = props;
 

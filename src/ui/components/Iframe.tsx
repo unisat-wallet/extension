@@ -1,8 +1,8 @@
 import { CSSProperties, memo, useMemo } from 'react';
 
-export type IframeProps = { preview: string; style?: CSSProperties; ref: any };
+export type IframeProps = { preview: string; style?: CSSProperties; ref: any; disableSandbox?: boolean };
 
-const Iframe = ({ preview, style, ref }: IframeProps) => {
+const Iframe = ({ preview, style, ref, disableSandbox }: IframeProps) => {
   return useMemo(
     () => (
       <iframe
@@ -10,7 +10,7 @@ const Iframe = ({ preview, style, ref }: IframeProps) => {
         ref={ref}
         style={Object.assign({}, { pointerEvents: 'none' }, style)} // prevent events in iframe
         src={preview}
-        sandbox="allow-scripts"
+        sandbox={disableSandbox ? undefined : 'allow-scripts'}
         scrolling="no"
         loading="lazy"></iframe>
     ),

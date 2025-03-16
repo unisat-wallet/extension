@@ -30,4 +30,4 @@ const domReadyCall = (callback) => {
 
 const $ = document.querySelector.bind(document);
 
-export { domReadyCall, $ };
+export { $, domReadyCall };

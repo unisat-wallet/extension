@@ -1,14 +1,23 @@
 import { useEffect, useMemo, useState } from 'react';
 
+import { ChainType } from '@/shared/constant';
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { AddressRunesTokenSummary } from '@/shared/types';
 import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
+import { Line } from '@/ui/components/Line';
+import { Section } from '@/ui/components/Section';
 import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useOrdinalsWebsite, useTxExplorerUrl, useUnisatWebsite } from '@/ui/state/settings/hooks';
+import {
+  useChainType,
+  useOrdinalsWebsite,
+  useRunesMarketPlaceWebsite,
+  useTxExplorerUrl,
+  useUnisatWebsite
+} from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { copyToClipboard, showLongNumber, useLocationState, useWallet } from '@/ui/utils';
@@ -97,6 +106,16 @@ export default function RunesTokenScreen() {
 
   const txExplorerUrl = useTxExplorerUrl(tokenSummary.runeInfo.etching);
 
+  const chainType = useChainType();
+  const enableTrade = useMemo(() => {
+    if (chainType === ChainType.BITCOIN_MAINNET || chainType === ChainType.FRACTAL_BITCOIN_MAINNET) {
+      return true;
+    } else {
+      return false;
+    }
+  }, [chainType]);
+  const marketPlaceUrl = useRunesMarketPlaceWebsite(runeid);
+
   if (loading) {
     return (
       <Layout>
@@ -147,8 +166,7 @@ export default function RunesTokenScreen() {
             <Row justifyBetween mt="lg">
               <Button
                 text="Mint"
-                preset="primary"
-                style={!enableMint ? { backgroundColor: 'grey' } : {}}
+                preset="home"
                 disabled={!enableMint}
                 icon="pencil"
                 onClick={(e) => {
@@ -159,9 +177,8 @@ export default function RunesTokenScreen() {
 
               <Button
                 text="Send"
-                preset="primary"
+                preset="home"
                 icon="send"
-                style={!enableTransfer ? { backgroundColor: 'grey' } : {}}
                 disabled={!enableTransfer}
                 onClick={(e) => {
                   navigate('SendRunesScreen', {
@@ -171,6 +188,19 @@ export default function RunesTokenScreen() {
                 }}
                 full
               />
+
+              {enableTrade ? (
+                <Button
+                  text="Trade"
+                  preset="home"
+                  icon="trade"
+                  disabled={!enableTrade}
+                  onClick={(e) => {
+                    window.open(marketPlaceUrl);
+                  }}
+                  full
+                />
+              ) : null}
             </Row>
           </Column>
 
@@ -188,10 +218,18 @@ export default function RunesTokenScreen() {
             </Row>
           ) : null}
 
-          <Column gap="lg">
+          <Column
+            gap="lg"
+            px="md"
+            py="md"
+            style={{
+              backgroundColor: 'rgba(255,255,255,0.08)',
+              borderRadius: 15
+            }}>
             <Section title="runeid" value={tokenSummary.runeInfo.runeid} />
-
+            <Line />
             <Section title="mints" value={showLongNumber(tokenSummary.runeInfo.mints)} />
+            <Line />
 
             <Section
               title="supply"
@@ -199,6 +237,7 @@ export default function RunesTokenScreen() {
                 runesUtils.toDecimalAmount(tokenSummary.runeInfo.supply, tokenSummary.runeInfo.divisibility)
               )} ${tokenSummary.runeInfo.symbol}`}
             />
+            <Line />
 
             <Section
               title="premine"
@@ -206,6 +245,7 @@ export default function RunesTokenScreen() {
                 runesUtils.toDecimalAmount(tokenSummary.runeInfo.premine, tokenSummary.runeInfo.divisibility)
               )} ${tokenSummary.runeInfo.symbol}`}
             />
+            <Line />
 
             <Section
               title="burned"
@@ -213,16 +253,22 @@ export default function RunesTokenScreen() {
                 runesUtils.toDecimalAmount(tokenSummary.runeInfo.burned, tokenSummary.runeInfo.divisibility)
               )} ${tokenSummary.runeInfo.symbol}`}
             />
+            <Line />
 
             <Section title="divisibility" value={tokenSummary.runeInfo.divisibility} />
+            <Line />
 
             <Section title="symbol" value={tokenSummary.runeInfo.symbol} />
+            <Line />
 
             <Section title="holders" value={showLongNumber(tokenSummary.runeInfo.holders)} />
+            <Line />
 
             <Section title="transactions" value={showLongNumber(tokenSummary.runeInfo.transactions)} />
+            <Line />
 
             <Section title="etching" value={tokenSummary.runeInfo.etching} link={txExplorerUrl} />
+            {tokenSummary.runeInfo.parent ? <Line /> : null}
 
             {tokenSummary.runeInfo.parent ? (
               <Section
@@ -235,29 +281,5 @@ export default function RunesTokenScreen() {
         </Content>
       )}
     </Layout>
-  );
-}
-
-function Section({ value, title, link }: { value: string | number; title: string; link?: string }) {
-  const tools = useTools();
-  return (
-    <Column>
-      <Text text={title} preset="sub" />
-      <Text
-        text={value}
-        preset={link ? 'link' : 'regular'}
-        size="xs"
-        wrap
-        onClick={() => {
-          if (link) {
-            window.open(link);
-          } else {
-            copyToClipboard(value).then(() => {
-              tools.toastSuccess('Copied');
-            });
-          }
-        }}
-      />
-    </Column>
   );
 }

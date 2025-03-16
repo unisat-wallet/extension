@@ -55,10 +55,30 @@ export const svgRegistry = {
   paused: '/images/icons/paused.svg',
 
   unisat: './images/icons/unisat.svg',
-  gas: './images/icons/gas.svg'
+  gas: './images/icons/gas.svg',
+  fb: './images/icons/fb.svg',
+  trade: './images/icons/trade.svg',
+  baby: './images/icons/baby.svg',
+  'claimable-baby': './images/icons/claimable-baby.svg',
+  'staked-btc': './images/icons/staked-btc.svg',
+  'baby-tip1': './images/icons/baby-tip1.svg',
+  'baby-tip2': './images/icons/baby-tip2.svg',
+  'baby-delegation': './images/icons/baby-delegation.svg',
+  'baby-stakers': './images/icons/baby-stakers.svg',
+  'baby-staking': './images/icons/baby-staking.svg',
+  'baby-tvl': './images/icons/baby-tvl.svg'
 };
 
-const iconImgList: Array<IconTypes> = ['success', 'delete', 'btc'];
+const iconImgList: Array<IconTypes> = [
+  'success',
+  'delete',
+  'btc',
+  'baby',
+  'staked-btc',
+  'claimable-baby',
+  'baby-tip1',
+  'baby-tip2'
+];
 
 export type IconTypes = keyof typeof svgRegistry;
 interface IconProps {
