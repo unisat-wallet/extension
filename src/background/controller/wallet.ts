@@ -626,7 +626,9 @@ export class WalletController extends BaseController {
         // skip
       }
 
-      if (isP2TR) {
+      const isToBeSigned = toSignInputs.some((v) => v.index === index);
+      if (isP2TR && isToBeSigned) {
+        // fix p2tr input data
         let isKeyPathP2TR = false;
         try {
           const tapInternalKey = toXOnly(Buffer.from(account.pubkey, 'hex'));
