@@ -533,19 +533,30 @@ declare global {
   }
 }
 
-const provider = new UnisatProvider();
-
-if (!window.unisat) {
-  window.unisat = new Proxy(provider, {
-    deleteProperty: () => true
-  });
+function defineUnwritablePropertyIfPossible(o: any, p: string, value: any) {
+  const descriptor = Object.getOwnPropertyDescriptor(o, p);
+  if (!descriptor || descriptor.writable) {
+    if (!descriptor || descriptor.configurable) {
+      Object.defineProperty(o, p, {
+        value,
+        writable: false
+      });
+    } else {
+      o[p] = value;
+    }
+  } else {
+    console.warn(`Failed to inject ${p} from unisat. Probably, other wallet is trying to intercept UniSat Wallet`);
+  }
 }
 
-Object.defineProperty(window, 'unisat', {
-  value: new Proxy(provider, {
-    deleteProperty: () => true
-  }),
-  writable: false
+const provider = new UnisatProvider();
+const providerProxy = new Proxy(provider, {
+  deleteProperty: () => true
 });
+
+defineUnwritablePropertyIfPossible(window, 'unisat', providerProxy);
+
+// Many wallets occupy the window.unisat namespace, so we need to use a different namespace to avoid conflicts.
+defineUnwritablePropertyIfPossible(window, 'unisat_wallet', providerProxy);
 
 window.dispatchEvent(new Event('unisat#initialized'));
