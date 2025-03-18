@@ -66,7 +66,8 @@ export const svgRegistry = {
   'baby-delegation': './images/icons/baby-delegation.svg',
   'baby-stakers': './images/icons/baby-stakers.svg',
   'baby-staking': './images/icons/baby-staking.svg',
-  'baby-tvl': './images/icons/baby-tvl.svg'
+  'baby-tvl': './images/icons/baby-tvl.svg',
+  'error-boundary': '/images/icons/error-boundary.svg'
 };
 
 const iconImgList: Array<IconTypes> = [
@@ -77,7 +78,8 @@ const iconImgList: Array<IconTypes> = [
   'staked-btc',
   'claimable-baby',
   'baby-tip1',
-  'baby-tip2'
+  'baby-tip2',
+  'error-boundary'
 ];
 
 export type IconTypes = keyof typeof svgRegistry;

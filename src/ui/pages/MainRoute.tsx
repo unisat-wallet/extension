@@ -8,6 +8,7 @@ import SendCAT20Screen from '@/ui/pages/CAT20/SendCAT20Screen';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { Content, Icon } from '../components';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 import { accountActions } from '../state/accounts/reducer';
 import { useIsReady, useIsUnlocked } from '../state/global/hooks';
 import { globalActions } from '../state/global/reducer';
@@ -456,7 +457,7 @@ const Main = () => {
         {Object.keys(routes)
           .map((v) => routes[v])
           .map((v) => (
-            <Route key={v.path} path={v.path} element={v.element} />
+            <Route key={v.path} path={v.path} element={<ErrorBoundary>{v.element}</ErrorBoundary>} />
           ))}
       </Routes>
     </HashRouter>
