@@ -438,7 +438,6 @@ export const SAFE_DOMAIN_CONFIRMATION = 3;
 export const GITHUB_URL = 'https://github.com/unisat-wallet/extension';
 export const DISCORD_URL = 'https://discord.com/invite/EMskB2sMz8';
 export const TWITTER_URL = 'https://twitter.com/unisat_wallet';
-export const TELEGRAM_URL = 'https://t.me/UniSat_Official ';
 
 export const CHANNEL = process.env.channel!;
 export const VERSION = process.env.release!;
