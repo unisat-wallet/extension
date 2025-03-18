@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
 import { ADDRESS_TYPES, DISCORD_URL, GITHUB_URL, KEYRING_TYPE, TELEGRAM_URL, X_URL } from '@/shared/constant';
+import { ADDRESS_TYPES, DISCORD_URL, GITHUB_URL, KEYRING_TYPE, TWITTER_URL } from '@/shared/constant';
 import { Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { Button } from '@/ui/components/Button';
@@ -267,15 +268,6 @@ export default function SettingsTabScreen() {
               color="textDim"
               onClick={() => {
                 window.open(GITHUB_URL);
-              }}
-            />
-
-            <Icon
-              icon="telegram"
-              size={fontSizes.iconMiddle}
-              color="textDim"
-              onClick={() => {
-                window.open(TELEGRAM_URL);
               }}
             />
           </Row>

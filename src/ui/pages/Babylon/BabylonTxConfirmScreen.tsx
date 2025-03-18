@@ -6,8 +6,10 @@ import { Button, Card, Column, Content, Footer, Header, Icon, Image, Layout, Row
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressText } from '@/ui/components/AddressText';
 import { useAccountAddress, useCurrentAccount, useIsKeystoneWallet } from '@/ui/state/accounts/hooks';
+import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { useBabylonConfig } from '@/ui/state/settings/hooks';
+import { NavigationSource, uiActions } from '@/ui/state/ui/reducer';
 import { colors } from '@/ui/theme/colors';
 import { spacing } from '@/ui/theme/spacing';
 import { useLocationState, useWallet } from '@/ui/utils';
@@ -37,6 +39,7 @@ function Section({ title, children, extra }: { title: string; children?: React.R
 export default function BabylonTxConfirmScreen() {
   const { txInfo } = useLocationState<LocationState>();
   const wallet = useWallet();
+  const dispatch = useAppDispatch();
 
   const [result, setResult] = useState<{
     result: 'success' | 'failed';
@@ -155,7 +158,11 @@ export default function BabylonTxConfirmScreen() {
         babylonConfig.chainId,
         txInfo.unitBalance,
         txInfo.toAddress,
-        txInfo.memo || ''
+        txInfo.memo || '',
+        {
+          gasLimit: txInfo.gasLimit,
+          gasPrice: txInfo.gasPrice
+        }
       );
 
       if (isKeystone) {
@@ -185,10 +192,13 @@ export default function BabylonTxConfirmScreen() {
     }
   };
 
+  console.log('txInfo', txInfo);
+
   return (
     <Layout>
       <Header
         onBack={() => {
+          dispatch(uiActions.setNavigationSource(NavigationSource.BACK));
           window.history.go(-1);
         }}
       />
@@ -262,6 +272,7 @@ export default function BabylonTxConfirmScreen() {
             preset="default"
             text="Reject"
             onClick={() => {
+              dispatch(uiActions.setNavigationSource(NavigationSource.BACK));
               window.history.go(-1);
             }}
             full

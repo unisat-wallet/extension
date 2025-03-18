@@ -18,6 +18,11 @@ export interface UIState {
     enableRBF: boolean;
     feeRate: number;
   };
+  babylonSendScreen: {
+    inputAmount: string;
+    memo: string;
+  };
+  navigationSource: NavigationSource;
 }
 
 export enum AssetTabKey {
@@ -44,6 +49,11 @@ export enum CATAssetTabKey {
   CAT721
 }
 
+export enum NavigationSource {
+  BACK,
+  NORMAL
+}
+
 export const initialState: UIState = {
   assetTabKey: AssetTabKey.ORDINALS,
   ordinalsAssetTabKey: OrdinalsAssetTabKey.ALL,
@@ -58,7 +68,12 @@ export const initialState: UIState = {
     inputAmount: '',
     enableRBF: false,
     feeRate: 1
-  }
+  },
+  babylonSendScreen: {
+    inputAmount: '',
+    memo: ''
+  },
+  navigationSource: NavigationSource.NORMAL
 };
 
 const slice = createSlice({
@@ -124,6 +139,28 @@ const slice = createSlice({
     },
     resetTxCreateScreen(state) {
       state.uiTxCreateScreen = initialState.uiTxCreateScreen;
+    },
+    updateBabylonSendScreen(
+      state,
+      action: {
+        payload: {
+          inputAmount?: string;
+          memo?: string;
+        };
+      }
+    ) {
+      if (action.payload.inputAmount !== undefined) {
+        state.babylonSendScreen.inputAmount = action.payload.inputAmount;
+      }
+      if (action.payload.memo !== undefined) {
+        state.babylonSendScreen.memo = action.payload.memo;
+      }
+    },
+    resetBabylonSendScreen(state) {
+      state.babylonSendScreen = initialState.babylonSendScreen;
+    },
+    setNavigationSource(state, action: { payload: NavigationSource }) {
+      state.navigationSource = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -143,6 +180,9 @@ const slice = createSlice({
       }
       if (!state.uiTxCreateScreen) {
         state.uiTxCreateScreen = initialState.uiTxCreateScreen;
+      }
+      if (!state.babylonSendScreen) {
+        state.babylonSendScreen = initialState.babylonSendScreen;
       }
     });
   }

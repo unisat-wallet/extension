@@ -1,6 +1,7 @@
 import { isNumber } from 'lodash-es';
 import { useCallback, useEffect, useState } from 'react';
 
+import phishingService from '@/background/service/phishing';
 import browser, {
   browserTabsCreate,
   browserTabsGetCurrent,
@@ -8,10 +9,37 @@ import browser, {
   browserTabsUpdate
 } from '@/background/webapi/browser';
 
-export const openExtensionInTab = async () => {
-  const url = browser.runtime.getURL('index.html');
-  const tab = await browserTabsCreate({ url });
-  return tab;
+export const openExtensionInTab = async (route: string, params: any = {}) => {
+  // If it's an internal extension page, open directly
+  if (route.startsWith('index.html')) {
+    const tab = await browserTabsCreate({
+      url: browser.runtime.getURL(route),
+      active: true
+    });
+    return tab;
+  }
+
+  try {
+    // Check if target URL is a phishing site
+    const hostname = new URL(route).hostname;
+    if (phishingService.checkPhishing(hostname)) {
+      // If it's a phishing site, open warning page
+      await browserTabsCreate({
+        url: browser.runtime.getURL(`index.html#/phishing?hostname=${encodeURIComponent(hostname)}`),
+        active: true
+      });
+      return;
+    }
+
+    // Open page normally
+    const tab = await browserTabsCreate({ url: route });
+    return tab;
+  } catch (e) {
+    console.error('Failed to check URL:', e);
+    // If URL parsing fails, still open the target page
+    const tab = await browserTabsCreate({ url: route });
+    return tab;
+  }
 };
 
 export const extensionIsInTab = async () => {
@@ -39,7 +67,7 @@ export const useExtensionIsInTab = () => {
 
 export const useOpenExtensionInTab = () => {
   return useCallback(async () => {
-    await openExtensionInTab();
+    await openExtensionInTab('index.html', {});
     window.close();
   }, []);
 };

@@ -626,7 +626,9 @@ export class WalletController extends BaseController {
         // skip
       }
 
-      if (isP2TR) {
+      const isToBeSigned = toSignInputs.some((v) => v.index === index);
+      if (isP2TR && isToBeSigned) {
+        // fix p2tr input data
         let isKeyPathP2TR = false;
         try {
           const tapInternalKey = toXOnly(Buffer.from(account.pubkey, 'hex'));
@@ -1659,8 +1661,40 @@ export class WalletController extends BaseController {
     return utxo;
   };
 
-  checkWebsite = (website: string) => {
-    return openapiService.checkWebsite(website);
+  /**
+   * Check if a website is a known phishing site
+   * @param website Website URL or origin to check
+   * @returns Object containing check results with isScammer flag and optional warning message
+   */
+  checkWebsite = async (
+    website: string
+  ): Promise<{ isScammer: boolean; warning: string; allowQuickMultiSign?: boolean }> => {
+    let isLocalPhishing = false;
+
+    try {
+      let hostname = '';
+      try {
+        hostname = new URL(website).hostname;
+      } catch (e) {
+        hostname = website;
+      }
+
+      const phishingService = await import('@/background/service/phishing');
+      isLocalPhishing = phishingService.default.checkPhishing(hostname);
+    } catch (error) {
+      console.error('[Phishing] Local check error:', error);
+    }
+
+    const apiResult = await openapiService.checkWebsite(website);
+
+    if (isLocalPhishing) {
+      return {
+        ...apiResult,
+        isScammer: true
+      };
+    }
+
+    return apiResult;
   };
 
   getArc20BalanceList = async (address: string, currentPage: number, pageSize: number) => {
@@ -2417,10 +2451,22 @@ export class WalletController extends BaseController {
     return result;
   };
 
-  createSendTokenStep1 = async (chainId: string, tokenBalance: CosmosBalance, recipient: string, memo: string) => {
+  createSendTokenStep1 = async (
+    chainId: string,
+    tokenBalance: CosmosBalance,
+    recipient: string,
+    memo: string,
+    {
+      gasLimit,
+      gasPrice
+    }: {
+      gasLimit: number;
+      gasPrice: string;
+    }
+  ) => {
     const keyring = await this.getCosmosKeyring(chainId);
     if (!keyring) return null;
-    const result = await keyring.createSendTokenStep1(tokenBalance, recipient, memo);
+    const result = await keyring.createSendTokenStep1(tokenBalance, recipient, memo, { gasLimit, gasPrice });
     return result;
   };
 
@@ -2428,6 +2474,26 @@ export class WalletController extends BaseController {
     const keyring = await this.getCosmosKeyring(chainId);
     if (!keyring) return null;
     const result = await keyring.createSendTokenStep2(signature);
+    return result;
+  };
+
+  /**
+   * Simulate the gas for the send tokens transaction
+   * @param chainId
+   * @param tokenBalance
+   * @param recipient
+   * @param memo
+   * @returns
+   */
+  simulateBabylonGas = async (
+    chainId: string,
+    recipient: string,
+    amount: { denom: string; amount: string },
+    memo: string
+  ) => {
+    const keyring = await this.getCosmosKeyring(chainId);
+    if (!keyring) return null;
+    const result = await keyring.simulateBabylonGas(recipient, amount, memo);
     return result;
   };
 }

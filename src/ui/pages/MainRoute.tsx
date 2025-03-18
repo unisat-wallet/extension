@@ -8,6 +8,7 @@ import SendCAT20Screen from '@/ui/pages/CAT20/SendCAT20Screen';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { Content, Icon } from '../components';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 import { accountActions } from '../state/accounts/reducer';
 import { useIsReady, useIsUnlocked } from '../state/global/hooks';
 import { globalActions } from '../state/global/reducer';
@@ -47,6 +48,7 @@ import OrdinalsInscriptionScreen from './Ordinals/OrdinalsInscriptionScreen';
 import SendOrdinalsInscriptionScreen from './Ordinals/SendOrdinalsInscriptionScreen';
 import SignOrdinalsTransactionScreen from './Ordinals/SignOrdinalsTransactionScreen';
 import SplitOrdinalsInscriptionScreen from './Ordinals/SplitOrdinalsInscriptionScreen';
+import PhishingScreen from './Phishing/PhishingScreen';
 import RunesTokenScreen from './Runes/RunesTokenScreen';
 import SendRunesScreen from './Runes/SendRunesScreen';
 import AddressTypeScreen from './Settings/AddressTypeScreen';
@@ -304,6 +306,11 @@ export const routes = {
   BabylonTxConfirmScreen: {
     path: '/babylon/tx/confirm',
     element: <BabylonTxConfirmScreen />
+  },
+
+  phishing: {
+    path: '/phishing',
+    element: <PhishingScreen />
   }
 };
 
@@ -456,7 +463,7 @@ const Main = () => {
         {Object.keys(routes)
           .map((v) => routes[v])
           .map((v) => (
-            <Route key={v.path} path={v.path} element={v.element} />
+            <Route key={v.path} path={v.path} element={<ErrorBoundary>{v.element}</ErrorBoundary>} />
           ))}
       </Routes>
     </HashRouter>

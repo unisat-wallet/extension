@@ -1,5 +1,27 @@
 # UniSat Wallet Release Notes
 
+## v1.5.8
+
+New Features
+
+- Added Phishing Website Detection: Implemented a new feature to detect and warn users about potential phishing websites.
+
+Improvements
+
+- Error Page Handling: Improved user experience by displaying an error page instead of a black bar when a page encounters an exception.
+
+- BABY Transfer Interface: Added a gas fee modification option to the BABY transfer interface (previously, gas fees were fixed).
+
+- Window Object Conflict Prevention: Introduced window.unisat_wallet object to prevent conflicts with other existing plugins that might interfere with Unisat.
+
+Bug Fixes
+
+- Fixed a signing issue introduced in version 1.5.7
+
+Other Changes
+
+- Removed the Telegram group contact information from the project.
+
 ## v1.5.7
 
 - Fix Keystone Babylon integration

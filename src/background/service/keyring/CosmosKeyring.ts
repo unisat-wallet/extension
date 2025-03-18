@@ -7,15 +7,15 @@ import { PubKeySecp256k1 } from '@/shared/lib/crypto';
 import { incentivequery } from '@babylonlabs-io/babylon-proto-ts';
 import { Secp256k1, sha256 } from '@cosmjs/crypto';
 import * as encoding from '@cosmjs/encoding';
-import * as math from '@cosmjs/math';
 import {
+  AccountData,
   DirectSecp256k1Wallet,
   encodePubkey,
   makeAuthInfoBytes,
   makeSignBytes,
   makeSignDoc
 } from '@cosmjs/proto-signing';
-import { QueryClient, SigningStargateClient, createProtobufRpcClient } from '@cosmjs/stargate';
+import { GasPrice, QueryClient, SigningStargateClient, createProtobufRpcClient } from '@cosmjs/stargate';
 import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
 
 const REWARD_GAUGE_KEY_BTC_DELEGATION = 'btc_delegation';
@@ -253,7 +253,18 @@ export class CosmosKeyring {
     return this.key;
   }
 
-  async createSendTokenStep1(tokenBalance: { denom: string; amount: string }, recipient: string, memo: string) {
+  async createSendTokenStep1(
+    tokenBalance: { denom: string; amount: string },
+    recipient: string,
+    memo: string,
+    {
+      gasLimit,
+      gasPrice
+    }: {
+      gasLimit: number;
+      gasPrice: string;
+    }
+  ) {
     const chainInfo = this.provider.cosmosChainInfoMap[this.chainId];
 
     const fromAddress = this.getKey().bech32Address;
@@ -281,13 +292,13 @@ export class CosmosKeyring {
       amount: [
         {
           denom: chainInfo.feeCurrencies[0].coinMinimalDenom,
-          amount: Math.ceil(parseFloat(DEFAULT_BBN_GAS_PRICE) * parseInt(DEFAULT_BBN_GAS_LIMIT)).toString()
+          amount: Math.ceil(parseFloat(gasPrice) * gasLimit).toString()
         }
       ],
-      gas: DEFAULT_BBN_GAS_LIMIT // for transfer is enough
+      gas: gasLimit // for transfer is enough
     };
     const txBodyBytes = this.client.registry.encode(txBodyEncodeObject);
-    const gasLimit = math.Int53.fromString(fee.gas).toNumber();
+    // const gasLimit = math.Int53.fromString(fee.gas).toNumber();
 
     const pubkey = encodePubkey(encodeSecp256k1Pubkey(this.getKey().pubKey));
     const authInfoBytes = makeAuthInfoBytes([{ pubkey, sequence }], fee.amount, gasLimit, undefined, undefined);
@@ -312,5 +323,49 @@ export class CosmosKeyring {
 
     const txBytes = TxRaw.encode(txRaw).finish();
     return this.client.broadcastTxSync(txBytes);
+  }
+
+  /**
+   * simulate babylon gas
+   * @param recipient
+   * @param amount
+   * @param memo
+   * @returns return gas fee
+   */
+  async simulateBabylonGas(recipient: string, amount: { denom: string; amount: string }, memo: string) {
+    try {
+      const chainInfo = this.provider.cosmosChainInfoMap[this.chainId];
+
+      const key: AccountData = {
+        address: this.getKey().bech32Address,
+        algo: 'secp256k1',
+        pubkey: this.getKey().pubKey
+      };
+
+      const dummySigner = {
+        getAccounts: async () => [key]
+      } as unknown as DirectSecp256k1Wallet;
+
+      // TODO: Check if we can remove account query before simulation to optimize performance
+      const client = await SigningStargateClient.connectWithSigner(chainInfo.rpc, dummySigner, {
+        gasPrice: GasPrice.fromString(DEFAULT_BBN_GAS_PRICE + 'ubbn')
+      });
+
+      const { bech32Address } = this.getKey();
+      const sendMsg = {
+        typeUrl: '/cosmos.bank.v1beta1.MsgSend',
+        value: {
+          fromAddress: bech32Address,
+          toAddress: recipient,
+          amount: [amount]
+        }
+      };
+
+      const ret = await client.simulate(bech32Address, [sendMsg], memo);
+
+      return ret;
+    } catch (error: any) {
+      console.log('simulation error:', error);
+    }
   }
 }
