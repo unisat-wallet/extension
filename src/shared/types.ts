@@ -589,4 +589,6 @@ export interface BabylonTxInfo {
   unitBalance: CosmosBalance;
   memo: string;
   txFee: CosmosBalance;
+  gasLimit: number;
+  gasPrice: string;
 }

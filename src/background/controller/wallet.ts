@@ -2417,10 +2417,22 @@ export class WalletController extends BaseController {
     return result;
   };
 
-  createSendTokenStep1 = async (chainId: string, tokenBalance: CosmosBalance, recipient: string, memo: string) => {
+  createSendTokenStep1 = async (
+    chainId: string,
+    tokenBalance: CosmosBalance,
+    recipient: string,
+    memo: string,
+    {
+      gasLimit,
+      gasPrice
+    }: {
+      gasLimit: number;
+      gasPrice: string;
+    }
+  ) => {
     const keyring = await this.getCosmosKeyring(chainId);
     if (!keyring) return null;
-    const result = await keyring.createSendTokenStep1(tokenBalance, recipient, memo);
+    const result = await keyring.createSendTokenStep1(tokenBalance, recipient, memo, { gasLimit, gasPrice });
     return result;
   };
 
@@ -2428,6 +2440,26 @@ export class WalletController extends BaseController {
     const keyring = await this.getCosmosKeyring(chainId);
     if (!keyring) return null;
     const result = await keyring.createSendTokenStep2(signature);
+    return result;
+  };
+
+  /**
+   * Simulate the gas for the send tokens transaction
+   * @param chainId
+   * @param tokenBalance
+   * @param recipient
+   * @param memo
+   * @returns
+   */
+  simulateBabylonGas = async (
+    chainId: string,
+    recipient: string,
+    amount: { denom: string; amount: string },
+    memo: string
+  ) => {
+    const keyring = await this.getCosmosKeyring(chainId);
+    if (!keyring) return null;
+    const result = await keyring.simulateBabylonGas(recipient, amount, memo);
     return result;
   };
 }

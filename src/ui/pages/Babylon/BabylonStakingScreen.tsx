@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 
 import { ChainType } from '@/shared/constant';
 import { BabylonPhaseState } from '@/shared/constant/babylon';
@@ -182,7 +182,7 @@ export default function BabylonStakingScreen() {
 
   const babylonConfig = useBabylonConfig();
   const wallet = useWallet();
-
+  const isBabylon = chainType !== ChainType.BITCOIN_MAINNET;
   const chain = useChain();
   if (!babylonConfig) {
     return <NotSupportedLayout />;
@@ -191,6 +191,10 @@ export default function BabylonStakingScreen() {
   const babylonChain = COSMOS_CHAINS_MAP[babylonConfig.chainId];
 
   const [importBabyPopoverVisible, setImportBabyPopoverVisible] = useState(false);
+
+  const [addressLoading, setAddressLoading] = useState(true);
+  const [summaryLoading, setSummaryLoading] = useState(true);
+  const [statusLoading, setStatusLoading] = useState(true);
 
   const [babylonAddressSummary, setBabylonAddressSummary] = useState<BabylonAddressSummary>({
     address: '',
@@ -210,40 +214,72 @@ export default function BabylonStakingScreen() {
     total_finality_providers: 0
   });
 
-  const [loading, setLoading] = useState(true);
-
   const tools = useTools();
+
+  const formattedBalance = useMemo(() => {
+    return runesUtils.toDecimalAmount(babylonAddressSummary.balance.amount, babylonChain.stakeCurrency.coinDecimals);
+  }, [babylonAddressSummary.balance.amount, babylonChain.stakeCurrency.coinDecimals]);
+
+  const formattedRewardBalance = useMemo(() => {
+    return runesUtils.toDecimalAmount(
+      babylonAddressSummary.rewardBalance.toString(),
+      babylonChain.stakeCurrency.coinDecimals
+    );
+  }, [babylonAddressSummary.rewardBalance, babylonChain.stakeCurrency.coinDecimals]);
+
   useEffect(() => {
-    const run = async () => {
+    const loadAddress = async () => {
       try {
-        if (babylonConfig.phase2.state === BabylonPhaseState.ACTIVE) {
-          const address = await wallet.getBabylonAddress(babylonConfig.chainId);
-          setBabylonAddressSummary(Object.assign({}, babylonAddressSummary, { address }));
-
-          const summary = await wallet.getBabylonAddressSummary(babylonConfig.chainId);
-          setBabylonAddressSummary(summary);
-
-          const status = await wallet.getBabylonStakingStatusV2();
-          setBabylonStakingStatus(status);
-        } else {
-          const address = await wallet.getBabylonAddress(babylonConfig.chainId);
-          setBabylonAddressSummary(Object.assign({}, babylonAddressSummary, { address }));
-        }
+        const address = await wallet.getBabylonAddress(babylonConfig.chainId);
+        setBabylonAddressSummary((prev) => ({ ...prev, address }));
       } catch (e) {
         tools.toastError((e as any).message);
       } finally {
-        setLoading(false);
+        setAddressLoading(false);
       }
     };
-    run();
-  }, [babylonConfig]);
+
+    loadAddress();
+  }, [babylonConfig, wallet, tools]);
+
+  useEffect(() => {
+    if (!addressLoading && babylonConfig.phase2.state === BabylonPhaseState.ACTIVE) {
+      const loadSummary = async () => {
+        try {
+          const summary = await wallet.getBabylonAddressSummary(babylonConfig.chainId);
+          setBabylonAddressSummary(summary);
+        } catch (e) {
+          console.error('Error loading summary:', e);
+        } finally {
+          setSummaryLoading(false);
+        }
+      };
+
+      const loadStatus = async () => {
+        try {
+          const status = await wallet.getBabylonStakingStatusV2();
+          setBabylonStakingStatus(status);
+        } catch (e) {
+          console.error('Error loading status:', e);
+        } finally {
+          setStatusLoading(false);
+        }
+      };
+
+      loadSummary();
+      loadStatus();
+    } else if (!addressLoading) {
+      setSummaryLoading(false);
+      setStatusLoading(false);
+    }
+  }, [addressLoading, babylonConfig, wallet]);
 
   let networkPrefix = '';
-  if (chainType !== ChainType.BITCOIN_MAINNET) {
+  if (isBabylon) {
     networkPrefix = 'Testnet';
   }
 
-  if (loading) {
+  if (addressLoading) {
     return (
       <Layout>
         <Header
@@ -326,28 +362,36 @@ export default function BabylonStakingScreen() {
               </svg>
               <Text text={'Babylon Bitcoin Staking Stats'} preset="bold" />
 
-              <Section
-                icon={<Icon icon={'baby-tvl'} color="orange_light2" size={18} />}
-                title={`Confirmed ${chain.unit} TVL`}
-                value={`${satoshisToAmount(babylonStakingStatus.active_tvl)} ${chain.unit}`}
-              />
-              <Section
-                icon={<Icon icon={'baby-stakers'} color="orange_light2" size={18} />}
-                title="Stakers"
-                value={formatter.format(babylonStakingStatus.active_stakers)}
-              />
+              {statusLoading ? (
+                <Row justifyCenter py="md">
+                  <Loading />
+                </Row>
+              ) : (
+                <>
+                  <Section
+                    icon={<Icon icon={'baby-tvl'} color="orange_light2" size={18} />}
+                    title={`Confirmed ${chain.unit} TVL`}
+                    value={`${satoshisToAmount(babylonStakingStatus.active_tvl)} ${chain.unit}`}
+                  />
+                  <Section
+                    icon={<Icon icon={'baby-stakers'} color="orange_light2" size={18} />}
+                    title="Stakers"
+                    value={formatter.format(babylonStakingStatus.active_stakers)}
+                  />
 
-              <Section
-                icon={<Icon icon={'baby-delegation'} color="orange_light2" size={18} />}
-                title="Delegations"
-                value={formatter.format(babylonStakingStatus.active_delegations)}
-              />
+                  <Section
+                    icon={<Icon icon={'baby-delegation'} color="orange_light2" size={18} />}
+                    title="Delegations"
+                    value={formatter.format(babylonStakingStatus.active_delegations)}
+                  />
 
-              <Section
-                icon={<Icon icon={'baby-staking'} color="orange_light2" size={18} />}
-                title="Finality Providers"
-                value={`${babylonStakingStatus.active_finality_providers} Active (${babylonStakingStatus.total_finality_providers} Total)`}
-              />
+                  <Section
+                    icon={<Icon icon={'baby-staking'} color="orange_light2" size={18} />}
+                    title="Finality Providers"
+                    value={`${babylonStakingStatus.active_finality_providers} Active (${babylonStakingStatus.total_finality_providers} Total)`}
+                  />
+                </>
+              )}
 
               <Button
                 text="Go to Stake"
@@ -372,13 +416,15 @@ export default function BabylonStakingScreen() {
           <Section2
             icon={<Icon icon={'staked-btc'} size={36} />}
             title={`Staked ${chain.unit}`}
-            value={`${satoshisToAmount(babylonAddressSummary.stakedBalance)} ${chain.unit}`}
+            value={
+              summaryLoading ? 'Loading...' : `${satoshisToAmount(babylonAddressSummary.stakedBalance)} ${chain.unit}`
+            }
             button={
               <Button
                 style={{ margin: 0 }}
                 text="Unstake"
                 preset="minimal"
-                disabled={babylonAddressSummary.stakedBalance === 0}
+                disabled={summaryLoading || babylonAddressSummary.stakedBalance === 0}
                 onClick={() => {
                   window.open(babylonConfig.phase2.stakingUrl, '_blank');
                 }}
@@ -391,16 +437,13 @@ export default function BabylonStakingScreen() {
           <Section2
             icon={<Icon icon={'claimable-baby'} size={36} />}
             title={`Claimable ${networkPrefix} BABY Rewards`}
-            value={`${runesUtils.toDecimalAmount(
-              babylonAddressSummary.rewardBalance.toString(),
-              babylonChain.stakeCurrency.coinDecimals
-            )} ${babylonChain.stakeCurrency.coinDenom}`}
+            value={summaryLoading ? 'Loading...' : `${formattedRewardBalance} ${babylonChain.stakeCurrency.coinDenom}`}
             button={
               <Button
                 style={{ margin: 0 }}
                 text="Claim"
                 preset="minimal"
-                disabled={babylonAddressSummary.rewardBalance === 0}
+                disabled={summaryLoading || babylonAddressSummary.rewardBalance === 0}
                 onClick={() => {
                   window.open(babylonConfig.phase2.stakingUrl, '_blank');
                 }}
@@ -409,25 +452,24 @@ export default function BabylonStakingScreen() {
           />
         ) : null}
 
-        <Section2
-          icon={<Icon icon={'baby'} size={32} />}
-          title={`Total ${networkPrefix} BABY Balance`}
-          value={`${runesUtils.toDecimalAmount(
-            babylonAddressSummary.balance.amount,
-            babylonChain.stakeCurrency.coinDecimals
-          )} ${babylonChain.stakeCurrency.coinDenom}`}
-          button={
-            <Button
-              style={{ margin: 0 }}
-              text="Send"
-              preset="minimal2"
-              disabled={babylonAddressSummary.balance.amount === '0'}
-              onClick={() => {
-                navigate('SendBABYScreen', {});
-              }}
-            />
-          }
-        />
+        {isBabylon && (
+          <Section2
+            icon={<Icon icon={'baby'} size={32} />}
+            title={`Total ${networkPrefix} BABY Balance`}
+            value={summaryLoading ? 'Loading...' : `${formattedBalance} ${babylonChain.stakeCurrency.coinDenom}`}
+            button={
+              <Button
+                style={{ margin: 0 }}
+                text="Send"
+                preset="minimal2"
+                disabled={summaryLoading || babylonAddressSummary.balance.amount === '0'}
+                onClick={() => {
+                  navigate('SendBABYScreen', {});
+                }}
+              />
+            }
+          />
+        )}
       </Content>
       {importBabyPopoverVisible ? (
         <EnableImportBabyPopover

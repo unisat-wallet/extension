@@ -462,8 +462,27 @@ export interface WalletController {
 
   getBabylonStakingStatusV2(): Promise<BabylonStakingStatusV2>;
 
-  createSendTokenStep1(chainId: string, tokenBalance: CosmosBalance, to: string, memo: string): Promise<string>;
+  createSendTokenStep1(
+    chainId: string,
+    tokenBalance: CosmosBalance,
+    to: string,
+    memo: string,
+    {
+      gasLimit,
+      gasPrice
+    }: {
+      gasLimit: number;
+      gasPrice: string;
+    }
+  ): Promise<string>;
   createSendTokenStep2(chainId: string, signature: string): Promise<string>;
+
+  simulateBabylonGas(
+    chainId: string,
+    recipient: string,
+    amount: { denom: string; amount: string },
+    memo: string
+  ): Promise<number>;
 }
 
 const WalletContext = createContext<{
