@@ -109,6 +109,8 @@ export interface Inscription {
   };
   multipleNFT?: boolean;
   sameOffset?: boolean;
+  children?: string[];
+  parents?: string[];
 }
 
 export interface Atomical {

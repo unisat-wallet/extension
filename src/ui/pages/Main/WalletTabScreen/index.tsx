@@ -189,7 +189,7 @@ export default function WalletTabScreen() {
         }
       />
 
-      <Content>
+      <Content style={{ overflowY: 'auto' }}>
         <AccountSelect />
 
         <Column gap="lg2" mt="md">
@@ -245,7 +245,7 @@ export default function WalletTabScreen() {
               marginBottom: -8
             }}
           />
-          {/* 
+          {/*
           <Column
             py={'lg'}
             px={'md'}

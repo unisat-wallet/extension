@@ -267,15 +267,17 @@ function SignTxDetails({
               <Row overflowX>
                 {inscriptionArray.map((inscription, index) => {
                   return (
-                    <InscriptionPreview
-                      key={'inscription_' + index}
-                      data={inscription}
-                      preset="small"
-                      hideValue
-                      onClick={() => {
-                        window.open(inscription.preview);
-                      }}
-                    />
+                    <div style={{ width: '80px' }} key={'inscription_' + index}>
+                      <InscriptionPreview
+                        key={'inscription_' + index}
+                        data={inscription}
+                        preset="small"
+                        hideValue
+                        onClick={() => {
+                          window.open(inscription.preview);
+                        }}
+                      />
+                    </div>
                   );
                 })}
               </Row>

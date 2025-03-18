@@ -334,11 +334,46 @@ type RouteTypes = keyof typeof routes;
 
 export function useNavigate() {
   const navigate = useNavigateOrigin();
+  const navigatingRef = useRef(false);
+
   return useCallback(
-    (routKey: RouteTypes, state?: any) => {
-      navigate(routes[routKey].path, { state });
+    (routKey: RouteTypes | '#back', state?: any, pathState?: any) => {
+      /** Prevent duplicate route stack caused by parent-child inscription navigation */
+      if (navigatingRef.current) {
+        return;
+      }
+
+      navigatingRef.current = true;
+
+      if (routKey === '#back') {
+        window.history.back();
+        navigatingRef.current = false;
+        return;
+      }
+
+      if (!routes[routKey]) {
+        navigatingRef.current = false;
+        return;
+      }
+
+      const route: any = routes[routKey];
+      if (route.getDynamicPath) {
+        const path = route.getDynamicPath(pathState);
+        navigate(path, { replace: false, state });
+        navigatingRef.current = false;
+        return;
+      }
+
+      navigate(
+        {
+          pathname: route.path
+        },
+        { replace: false, state }
+      );
+
+      navigatingRef.current = false;
     },
-    [useNavigateOrigin]
+    [navigate]
   );
 }
 

@@ -699,8 +699,10 @@ function InscribeResultStep({
       <Content style={{ gap: spacing.small }}>
         <Column justifyCenter mt="xxl" gap="xl">
           <Text text="Inscribe Success" preset="title-bold" textCenter />
-          <Column justifyCenter itemsCenter>
-            <InscriptionPreview data={result.inscription} preset="medium" />
+          <Column justifyCenter itemsCenter style={{ width: '100%', alignItems: 'center' }}>
+            <div style={{ width: '120px' }}>
+              <InscriptionPreview data={result.inscription} preset="medium" />
+            </div>
 
             <Column mt="lg">
               <Text

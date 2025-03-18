@@ -145,7 +145,7 @@ export default function SendOrdinalsInscriptionScreen() {
         <Column>
           <Text text={`Ordinals Inscriptions (${inscriptions.length})`} color="textDim" />
           <Row justifyBetween>
-            <Row overflowX gap="lg" pb="md">
+            <Row overflowX gap="md" pb="md">
               {inscriptions.map((v) => (
                 <InscriptionPreview key={v.inscriptionId} data={v} preset="small" />
               ))}

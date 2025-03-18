@@ -28,7 +28,7 @@ export function Tabs({ items, defaultActiveKey, activeKey, onTabClick }: TabsPro
 
   return (
     <Column>
-      <Column gap="zero">
+      <Column gap="zero" style={{ position: 'sticky', top: 0, zIndex: 10, backgroundColor: '#070606' }}>
         <Row style={{ padding: 0, height: 50 }}>
           {items.map((item) => {
             const isActiveItem = item.key === activeTab;
