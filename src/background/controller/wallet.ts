@@ -1659,8 +1659,40 @@ export class WalletController extends BaseController {
     return utxo;
   };
 
-  checkWebsite = (website: string) => {
-    return openapiService.checkWebsite(website);
+  /**
+   * Check if a website is a known phishing site
+   * @param website Website URL or origin to check
+   * @returns Object containing check results with isScammer flag and optional warning message
+   */
+  checkWebsite = async (
+    website: string
+  ): Promise<{ isScammer: boolean; warning: string; allowQuickMultiSign?: boolean }> => {
+    let isLocalPhishing = false;
+
+    try {
+      let hostname = '';
+      try {
+        hostname = new URL(website).hostname;
+      } catch (e) {
+        hostname = website;
+      }
+
+      const phishingService = await import('@/background/service/phishing');
+      isLocalPhishing = phishingService.default.checkPhishing(hostname);
+    } catch (error) {
+      console.error('[Phishing] Local check error:', error);
+    }
+
+    const apiResult = await openapiService.checkWebsite(website);
+
+    if (isLocalPhishing) {
+      return {
+        ...apiResult,
+        isScammer: true
+      };
+    }
+
+    return apiResult;
   };
 
   getArc20BalanceList = async (address: string, currentPage: number, pageSize: number) => {
