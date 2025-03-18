@@ -139,7 +139,11 @@ export const routes = {
   },
 
   OrdinalsInscriptionScreen: {
-    path: '/ordinals/inscription-detail',
+    path: '/inscription/:inscriptionId',
+    getDynamicPath: (props: { inscriptionId?: string }, state?: any) => {
+      const inscriptionId = props?.inscriptionId || state?.inscription?.inscriptionId;
+      return `/inscription/${inscriptionId}`;
+    },
     element: <OrdinalsInscriptionScreen />
   },
 
