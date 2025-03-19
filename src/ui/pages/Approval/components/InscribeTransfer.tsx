@@ -61,6 +61,7 @@ interface ContextData {
   amount?: string;
   isApproval: boolean;
   tokenInfo?: TokenInfo;
+  amountEditable?: boolean;
 }
 
 interface UpdateContextDataParams {
@@ -72,6 +73,7 @@ interface UpdateContextDataParams {
   rawTxInfo?: RawTxInfo;
   amount?: string;
   tokenInfo?: TokenInfo;
+  amountEditable?: boolean;
 }
 
 export default function InscribeTransfer({ params: { data, session } }: Props) {
@@ -168,7 +170,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
   useEffect(() => {
     if (contextData.amount) {
       setInputAmount(contextData.amount.toString());
-      setInputDisabled(true);
+      setInputDisabled(!contextData.amountEditable);
     }
   }, []);
 
@@ -427,7 +429,8 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
         <Header
           onBack={() => {
             updateContextData({
-              step: Step.STEP1
+              step: Step.STEP1,
+              amountEditable: true
             });
           }}
         />
@@ -508,7 +511,8 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
               preset="default"
               onClick={() => {
                 updateContextData({
-                  step: Step.STEP1
+                  step: Step.STEP1,
+                  amountEditable: true
                 });
               }}
               full
