@@ -220,7 +220,7 @@ export const NETWORK_TYPES = [
   { value: NetworkType.TESTNET, label: 'TESTNET', name: 'testnet', validNames: ['testnet'] }
 ];
 
-type TypeChain = {
+export type TypeChain = {
   enum: ChainType;
   label: string;
   iconLabel: string;

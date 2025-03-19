@@ -1,22 +1,18 @@
-import { Tooltip } from 'antd';
-import { CSSProperties, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { AddressFlagType, ChainType } from '@/shared/constant';
+import { AddressFlagType } from '@/shared/constant';
 import { checkAddressFlag } from '@/shared/utils';
 import { Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
 import { BtcUsd } from '@/ui/components/BtcUsd';
-import { Button } from '@/ui/components/Button';
 import { DisableUnconfirmedsPopover } from '@/ui/components/DisableUnconfirmedPopover';
 import { FeeRateIcon } from '@/ui/components/FeeRateIcon';
-import { Icon } from '@/ui/components/Icon';
 import { NavTabBar } from '@/ui/components/NavTabBar';
 import { NoticePopover } from '@/ui/components/NoticePopover';
 import { SwitchNetworkBar } from '@/ui/components/SwitchNetworkBar';
 import { Tabs } from '@/ui/components/Tabs';
 import { UpgradePopover } from '@/ui/components/UpgradePopover';
 import { getCurrentTab } from '@/ui/features/browser/tabs';
-import { BtcDisplay } from '@/ui/pages/Main/WalletTabScreen/components/BtcDisplay';
 import { useAccountBalance, useAddressSummary, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
@@ -26,14 +22,12 @@ import {
   useAddressTips,
   useBTCUnit,
   useChain,
-  useChainType,
   useSkipVersionCallback,
   useVersionInfo,
   useWalletConfig
 } from '@/ui/state/settings/hooks';
-import { useAssetTabKey, useResetUiTxCreateScreen, useSupportedAssets } from '@/ui/state/ui/hooks';
+import { useAssetTabKey, useSupportedAssets } from '@/ui/state/ui/hooks';
 import { AssetTabKey, uiActions } from '@/ui/state/ui/reducer';
-import { fontSizes } from '@/ui/theme/font';
 import { satoshisToAmount, useWallet } from '@/ui/utils';
 
 import { BuyBTCModal } from '../../BuyBTC/BuyBTCModal';
@@ -43,11 +37,8 @@ import { AtomicalsTab } from './AtomicalsTab';
 import { CATTab } from './CATTab';
 import { OrdinalsTab } from './OrdinalsTab';
 import { RunesList } from './RunesList';
-
-const $noBreakStyle: CSSProperties = {
-  whiteSpace: 'nowrap',
-  wordBreak: 'keep-all'
-};
+import { BalanceTooltip } from './components/BalanceTooltip';
+import { WalletActions } from './components/WalletActions';
 
 export default function WalletTabScreen() {
   const navigate = useNavigate();
@@ -55,7 +46,7 @@ export default function WalletTabScreen() {
   const accountBalance = useAccountBalance();
 
   const chain = useChain();
-  const chainType = useChainType();
+
   const addressTips = useAddressTips();
 
   const currentKeyring = useCurrentKeyring();
@@ -83,9 +74,6 @@ export default function WalletTabScreen() {
   const totalAmount = satoshisToAmount(accountBalance.totalBalance);
 
   const addressSummary = useAddressSummary();
-
-  const [moreExpanded, setMoreExpanded] = useState(false);
-  const [utxoClicked, setUtxoClicked] = useState(false);
 
   useEffect(() => {
     if (currentAccount.address === addressSummary.address) {
@@ -115,16 +103,6 @@ export default function WalletTabScreen() {
       }
     };
     run();
-  }, []);
-
-  useEffect(() => {
-    const checkUtxoClicked = async () => {
-      const hasClickedUtxo = localStorage.getItem('utxo_clicked');
-      if (hasClickedUtxo === 'true') {
-        setUtxoClicked(true);
-      }
-    };
-    checkUtxoClicked();
   }, []);
 
   const supportedAssets = useSupportedAssets();
@@ -174,18 +152,12 @@ export default function WalletTabScreen() {
   }, [assetTabKey, supportedAssets.key]);
 
   const addressExplorerUrl = useAddressExplorerUrl(currentAccount.address);
-  const resetUiTxCreateScreen = useResetUiTxCreateScreen();
+
   const btcUnit = useBTCUnit();
 
   const [buyBtcModalVisible, setBuyBtcModalVisible] = useState(false);
 
   const [switchChainModalVisible, setSwitchChainModalVisible] = useState(false);
-
-  const handleUtxoClick = () => {
-    setUtxoClicked(true);
-    localStorage.setItem('utxo_clicked', 'true');
-    navigate('UnavailableUtxoScreen');
-  };
 
   return (
     <Layout>
@@ -229,64 +201,15 @@ export default function WalletTabScreen() {
             </Column>
           )}
 
-          <Tooltip
-            placement={'bottom'}
-            title={
-              <>
-                <div style={{ textAlign: 'left' }}>
-                  <Row>
-                    <span style={{ ...$noBreakStyle, width: 80 }}>{'Available '}</span>
-                    <span style={$noBreakStyle}>{` ${avaiableAmount} ${btcUnit}`}</span>
-                  </Row>
-                  <Row>
-                    <span style={{ ...$noBreakStyle, width: 80 }}>{'Unavailable '}</span>
-                    <span style={$noBreakStyle}>{` ${unavailableAmount} ${btcUnit}`}</span>
-                    {
-                      <div
-                        style={{
-                          display: 'flex',
-                          width: 50,
-                          height: 20,
-                          padding: 10,
-                          justifyContent: 'center',
-                          alignItems: 'center',
-                          gap: 10,
-                          flexShrink: 0,
-                          borderRadius: 4,
-                          border: '1px solid rgba(244, 182, 44, 0.15)',
-                          background: 'rgba(244, 182, 44, 0.10)',
-                          cursor: 'pointer'
-                        }}
-                        onClick={() => {
-                          window.open(`${chain.unisatUrl}/utils/utxo`);
-                        }}>
-                        <Text
-                          text="Unlock"
-                          size="xs"
-                          style={{
-                            color: '#F4B62C',
-                            fontFamily: 'Inter',
-                            fontWeight: 500
-                          }}
-                        />
-                      </div>
-                    }
-                  </Row>
-                  <Row>
-                    <span style={{ ...$noBreakStyle, width: 80 }}>{'Total '}</span>
-                    <span style={$noBreakStyle}>{` ${totalAmount} ${btcUnit}`}</span>
-                  </Row>
-                </div>
-              </>
-            }
-            overlayStyle={{
-              fontSize: fontSizes.xs
-            }}>
-            <div>
-              <Text text={'TOTAL BALANCE'} textCenter color="textDim" />
-              <BtcDisplay balance={balanceValue} />
-            </div>
-          </Tooltip>
+          <BalanceTooltip
+            avaiableAmount={avaiableAmount}
+            unavailableAmount={unavailableAmount}
+            totalAmount={totalAmount}
+            balanceValue={balanceValue}
+            btcUnit={btcUnit}
+            unisatUrl={chain.unisatUrl}
+            disableUtxoTools={walletConfig.disableUtxoTools}
+          />
 
           <BtcUsd
             sats={accountBalance.totalBalance}
@@ -297,166 +220,12 @@ export default function WalletTabScreen() {
               marginBottom: -8
             }}
           />
-          {/*
-          <Column
-            py={'lg'}
-            px={'md'}
-            gap={'lg'}
-            style={{
-              borderRadius: 12,
-              border: '1px solid rgba(245, 84, 84, 0.35)',
-              background: 'rgba(245, 84, 84, 0.08)'
-            }}>
-            {
-              <Row
-                style={{
-                  borderBottomWidth: 1,
-                  color: '#FA701A'
-                }}>
-                <Text
-                  text={'1 FB is locked by inscription,\n click to go to unlock.'}
-                  color="warning"
-                  textCenter
-                  style={{}}
-                />
-              </Row>
-            }
-          </Column> */}
 
-          <Row justifyCenter mt="md">
-            <Button
-              text="Receive"
-              preset="home"
-              icon="receive"
-              onClick={(e) => {
-                navigate('ReceiveScreen');
-              }}
-            />
-
-            <Button
-              text="Send"
-              preset="home"
-              icon="send"
-              onClick={(e) => {
-                resetUiTxCreateScreen();
-                navigate('TxCreateScreen');
-              }}
-            />
-            <Button
-              text="History"
-              preset="home"
-              icon="history"
-              onClick={(e) => {
-                if (chain.isViewTxHistoryInternally) {
-                  navigate('HistoryScreen');
-                } else {
-                  window.open(addressExplorerUrl);
-                }
-              }}
-            />
-            {/* Custom div used to avoid Button component's style merging issues with toggle states */}
-            <div
-              style={{
-                display: 'flex',
-                minWidth: 64,
-                minHeight: 64,
-                flexDirection: 'column',
-                borderRadius: 16,
-                border: moreExpanded ? '1px solid rgba(244, 182, 44, 0.25)' : '1px solid #FFFFFF4D',
-                background: moreExpanded ? 'rgba(244, 182, 44, 0.10)' : '#2a2626',
-                padding: 5,
-                marginRight: 5,
-                marginLeft: 5,
-                justifyContent: 'center',
-                alignItems: 'center',
-                cursor: 'pointer',
-                position: 'relative'
-              }}
-              onClick={() => setMoreExpanded(!moreExpanded)}>
-              {!moreExpanded && (
-                <>
-                  {!utxoClicked && (
-                    <div
-                      style={{
-                        position: 'absolute',
-                        top: -16,
-                        right: -10,
-                        padding: '0px 5px',
-                        borderRadius: 4,
-                        backgroundColor: 'rgba(176, 37, 37, 0.25)',
-                        zIndex: 10
-                      }}>
-                      <Text text="new!" color="red_light2" size="xxxs" />
-                    </div>
-                  )}
-
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: -12,
-                      right: -12,
-                      zIndex: 5
-                    }}>
-                    <Icon icon="utxobg" size={32} />
-                  </div>
-                </>
-              )}
-              <Icon icon="more" style={{ marginBottom: 7 }} />
-              <Text text="More" color="white" size="xs" />
-            </div>
-          </Row>
-
-          {moreExpanded && (
-            <Row justifyEnd mt="md">
-              <div style={{ position: 'relative' }}>
-                <Button
-                  text="UTXO"
-                  preset="home"
-                  icon="utxo"
-                  onClick={handleUtxoClick}
-                  style={{
-                    border: '1px solid rgba(244, 182, 44, 0.25)',
-                    background: 'rgba(244, 182, 44, 0.10)'
-                  }}
-                />
-                {!utxoClicked && (
-                  <div
-                    style={{
-                      position: 'absolute',
-                      top: -5,
-                      right: -5,
-                      padding: '0px 5px',
-                      borderRadius: 4,
-                      backgroundColor: 'rgba(176, 37, 37, 0.25)',
-                      zIndex: 10
-                    }}>
-                    <Text text="new!" color="red_light2" size="xxxs" />
-                  </div>
-                )}
-              </div>
-              <Button
-                text="Buy"
-                preset="home"
-                icon={chain.isFractal ? 'fb' : 'bitcoin'}
-                iconSize={
-                  chain.isFractal
-                    ? {
-                        width: 24,
-                        height: 11
-                      }
-                    : undefined
-                }
-                onClick={() => {
-                  setBuyBtcModalVisible(true);
-                }}
-                disabled={chainType !== ChainType.BITCOIN_MAINNET && chainType !== ChainType.FRACTAL_BITCOIN_MAINNET}
-                style={{
-                  border: '1px solid rgba(244, 182, 44, 0.25)',
-                  background: 'rgba(244, 182, 44, 0.10)'
-                }}
-              />
-            </Row>
-          )}
+          <WalletActions
+            addressExplorerUrl={addressExplorerUrl}
+            onBuyClick={() => setBuyBtcModalVisible(true)}
+            chain={chain}
+          />
 
           <Tabs
             defaultActiveKey={finalAssetTabKey as unknown as string}
