@@ -7,6 +7,8 @@ export const svgRegistry = {
   history: './images/icons/clock-solid.svg',
   send: './images/icons/send.svg',
   receive: './images/icons/qrcode.svg',
+  more: './images/icons/more.svg',
+  utxo: './images/icons/utxo.svg',
 
   right: './images/icons/right.svg',
   left: './images/icons/arrow-left.svg',

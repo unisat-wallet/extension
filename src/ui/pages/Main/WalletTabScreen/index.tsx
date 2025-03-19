@@ -9,6 +9,7 @@ import { BtcUsd } from '@/ui/components/BtcUsd';
 import { Button } from '@/ui/components/Button';
 import { DisableUnconfirmedsPopover } from '@/ui/components/DisableUnconfirmedPopover';
 import { FeeRateIcon } from '@/ui/components/FeeRateIcon';
+import { Icon } from '@/ui/components/Icon';
 import { NavTabBar } from '@/ui/components/NavTabBar';
 import { NoticePopover } from '@/ui/components/NoticePopover';
 import { SwitchNetworkBar } from '@/ui/components/SwitchNetworkBar';
@@ -167,6 +168,8 @@ export default function WalletTabScreen() {
 
   const [switchChainModalVisible, setSwitchChainModalVisible] = useState(false);
 
+  const [moreExpanded, setMoreExpanded] = useState(false);
+
   return (
     <Layout>
       <Header
@@ -220,6 +223,36 @@ export default function WalletTabScreen() {
                 <Row justifyBetween>
                   <span style={$noBreakStyle}>{'Unavailable '}</span>
                   <span style={$noBreakStyle}>{` ${unavailableAmount} ${btcUnit}`}</span>
+                  {walletConfig.disableUtxoTools ? null : (
+                    <div
+                      style={{
+                        display: 'flex',
+                        width: 50,
+                        height: 20,
+                        padding: 10,
+                        justifyContent: 'center',
+                        alignItems: 'center',
+                        gap: 10,
+                        flexShrink: 0,
+                        borderRadius: 4,
+                        border: '1px solid rgba(244, 182, 44, 0.15)',
+                        background: 'rgba(244, 182, 44, 0.10)',
+                        cursor: 'pointer'
+                      }}
+                      onClick={() => {
+                        window.open(`${chain.unisatUrl}/utils/utxo`);
+                      }}>
+                      <Text
+                        text="Unlock"
+                        size="xs"
+                        style={{
+                          color: '#F4B62C',
+                          fontFamily: 'Inter',
+                          fontWeight: 500
+                        }}
+                      />
+                    </div>
+                  )}
                 </Row>
                 <Row justifyBetween>
                   <span style={$noBreakStyle}>{'Total '}</span>
@@ -302,24 +335,102 @@ export default function WalletTabScreen() {
                 }
               }}
             />
-            <Button
-              text="Buy"
-              preset="home"
-              icon={chain.isFractal ? 'fb' : 'bitcoin'}
-              iconSize={
-                chain.isFractal
-                  ? {
-                      width: 24,
-                      height: 11
-                    }
-                  : undefined
-              }
-              onClick={(e) => {
-                setBuyBtcModalVisible(true);
+            {/* Custom div used to avoid Button component's style merging issues with toggle states */}
+            <div
+              style={{
+                display: 'flex',
+                minWidth: 64,
+                minHeight: 64,
+                flexDirection: 'column',
+                borderRadius: 16,
+                border: moreExpanded ? '1px solid rgba(244, 182, 44, 0.25)' : '1px solid #FFFFFF4D',
+                background: moreExpanded ? 'rgba(244, 182, 44, 0.10)' : '#1E1E1E',
+                padding: 5,
+                marginRight: 5,
+                marginLeft: 5,
+                justifyContent: 'center',
+                alignItems: 'center',
+                cursor: 'pointer',
+                position: 'relative'
               }}
-              disabled={chainType !== ChainType.BITCOIN_MAINNET && chainType !== ChainType.FRACTAL_BITCOIN_MAINNET}
-            />
+              onClick={() => setMoreExpanded(!moreExpanded)}>
+              {!moreExpanded && (
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: -10,
+                    right: -10,
+                    padding: '4px 8px',
+                    borderRadius: 12,
+                    background: 'linear-gradient(103.92deg, #EBB94C 0%, #E97E00 100%)',
+                    fontSize: 14,
+                    fontWeight: 'bold',
+                    color: '#fff'
+                  }}>
+                  UTXO
+                </div>
+              )}
+              <Icon icon="more" />
+              <Text text="More" preset="regular" mt="sm" color="white" style={{ fontSize: 12, color: '#86888D' }} />
+            </div>
           </Row>
+
+          {moreExpanded && (
+            <Row justifyEnd mt="md">
+              <div style={{ position: 'relative' }}>
+                <Button
+                  text="UTXO"
+                  preset="home"
+                  icon="wallet"
+                  onClick={() => {
+                    navigate('UnavailableUtxoScreen');
+                  }}
+                  style={{
+                    border: '1px solid rgba(244, 182, 44, 0.25)',
+                    background: 'rgba(244, 182, 44, 0.10)'
+                  }}
+                />
+                <div
+                  style={{
+                    position: 'absolute',
+                    top: -5,
+                    right: -5,
+                    borderRadius: 4,
+                    height: 14,
+                    width: 28,
+                    backgroundColor: 'rgba(245, 84, 84, 0.15)',
+                    fontSize: 12,
+                    color: '#F55454',
+                    display: 'flex',
+                    alignItems: 'center',
+                    fontWeight: 'bold'
+                  }}>
+                  new!
+                </div>
+              </div>
+              <Button
+                text="Buy"
+                preset="home"
+                icon={chain.isFractal ? 'fb' : 'bitcoin'}
+                iconSize={
+                  chain.isFractal
+                    ? {
+                        width: 24,
+                        height: 11
+                      }
+                    : undefined
+                }
+                onClick={() => {
+                  setBuyBtcModalVisible(true);
+                }}
+                disabled={chainType !== ChainType.BITCOIN_MAINNET && chainType !== ChainType.FRACTAL_BITCOIN_MAINNET}
+                style={{
+                  border: '1px solid rgba(244, 182, 44, 0.25)',
+                  background: 'rgba(244, 182, 44, 0.10)'
+                }}
+              />
+            </Row>
+          )}
 
           <Tabs
             defaultActiveKey={finalAssetTabKey as unknown as string}
