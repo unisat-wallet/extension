@@ -4,7 +4,7 @@ import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { RawTxInfo, TokenBalance, TokenInfo, TokenTransfer, TxType } from '@/shared/types';
-import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
+import { Button, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import BRC20Preview from '@/ui/components/BRC20Preview';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
@@ -20,7 +20,6 @@ import {
   usePrepareSendOrdinalsInscriptionsCallback,
   usePushOrdinalsTxCallback
 } from '@/ui/state/transactions/hooks';
-import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { showLongNumber, useWallet } from '@/ui/utils';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
@@ -72,36 +71,39 @@ function Step1({
           <Row justifyCenter mt="xxl">
             <Column style={{ width: 250 }}>
               <Column>
-                <Column
-                  style={{ borderWidth: 1, borderColor: colors.border, borderRadius: 10 }}
-                  px="md"
-                  py="md"
+                <Button
+                  preset="default"
                   onClick={() => {
                     navigate('InscribeTransferScreen', { ticker: tokenBalance.ticker });
                   }}>
-                  <Text text="Inscribe TRANSFER" textCenter preset="bold" />
+                  <Column px="md" py="md">
+                    <Row justifyCenter itemsCenter>
+                      <Text text="Inscribe TRANSFER" textCenter preset="bold" />
+                      <Icon icon="inscribe-right" size={22} />
+                    </Row>
 
-                  {tokenBalance.availableBalanceUnSafe != '0' ? (
-                    <Row justifyCenter>
-                      <Text text={'Available '} textCenter color="textDim" size="xs" />
-                      <Text text={`${tokenBalance.availableBalanceSafe}  `} textCenter size="xs" digital />
-                      <Text
-                        text={` + ${tokenBalance.availableBalanceUnSafe}`}
-                        textCenter
-                        color="textDim"
-                        size="xs"
-                        digital
-                      />
-                      <BRC20Ticker tick={tokenBalance.ticker} displayName={tokenBalance.displayName} />
-                    </Row>
-                  ) : (
-                    <Row justifyCenter>
-                      <Text text={'Available '} textCenter color="textDim" size="xs" />
-                      <Text text={`${tokenBalance.availableBalanceSafe}  `} textCenter size="xs" digital />
-                      <BRC20Ticker tick={tokenBalance.ticker} displayName={tokenBalance.displayName} preset="sm" />
-                    </Row>
-                  )}
-                </Column>
+                    {tokenBalance.availableBalanceUnSafe != '0' ? (
+                      <Row justifyCenter>
+                        <Text text={'Available '} textCenter color="textDim" size="xs" />
+                        <Text text={`${tokenBalance.availableBalanceSafe}  `} textCenter size="xs" digital />
+                        <Text
+                          text={` + ${tokenBalance.availableBalanceUnSafe}`}
+                          textCenter
+                          color="textDim"
+                          size="xs"
+                          digital
+                        />
+                        <BRC20Ticker tick={tokenBalance.ticker} displayName={tokenBalance.displayName} />
+                      </Row>
+                    ) : (
+                      <Row justifyCenter>
+                        <Text text={'Available '} textCenter color="textDim" size="xs" />
+                        <Text text={`${tokenBalance.availableBalanceSafe}  `} textCenter size="xs" digital />
+                        <BRC20Ticker tick={tokenBalance.ticker} displayName={tokenBalance.displayName} preset="sm" />
+                      </Row>
+                    )}
+                  </Column>
+                </Button>
                 {/* <Button
                   preset="primary"
                   text="Inscribe TRANSFER"
