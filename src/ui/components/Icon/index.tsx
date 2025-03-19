@@ -9,6 +9,7 @@ export const svgRegistry = {
   receive: './images/icons/qrcode.svg',
   more: './images/icons/more.svg',
   utxo: './images/icons/utxo.svg',
+  utxobg: './images/icons/utxobg.svg',
 
   right: './images/icons/right.svg',
   left: './images/icons/arrow-left.svg',
@@ -81,7 +82,8 @@ const iconImgList: Array<IconTypes> = [
   'claimable-baby',
   'baby-tip1',
   'baby-tip2',
-  'error-boundary'
+  'error-boundary',
+  'utxobg'
 ];
 
 export type IconTypes = keyof typeof svgRegistry;

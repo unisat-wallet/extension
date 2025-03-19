@@ -27,6 +27,7 @@ const palette = {
   red_dark: '#c92b40',
   red: '#ED334B',
   red_light: '#f05266',
+  red_light2: '#f55454',
 
   blue_dark: '#1461d1',
   blue: '#1872F6',

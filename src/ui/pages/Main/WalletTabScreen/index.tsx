@@ -84,6 +84,9 @@ export default function WalletTabScreen() {
 
   const addressSummary = useAddressSummary();
 
+  const [moreExpanded, setMoreExpanded] = useState(false);
+  const [utxoClicked, setUtxoClicked] = useState(false);
+
   useEffect(() => {
     if (currentAccount.address === addressSummary.address) {
       if (addressSummary.arc20Count > 0 || addressSummary.runesCount > 0) {
@@ -112,6 +115,16 @@ export default function WalletTabScreen() {
       }
     };
     run();
+  }, []);
+
+  useEffect(() => {
+    const checkUtxoClicked = async () => {
+      const hasClickedUtxo = localStorage.getItem('utxo_clicked');
+      if (hasClickedUtxo === 'true') {
+        setUtxoClicked(true);
+      }
+    };
+    checkUtxoClicked();
   }, []);
 
   const supportedAssets = useSupportedAssets();
@@ -168,7 +181,11 @@ export default function WalletTabScreen() {
 
   const [switchChainModalVisible, setSwitchChainModalVisible] = useState(false);
 
-  const [moreExpanded, setMoreExpanded] = useState(false);
+  const handleUtxoClick = () => {
+    setUtxoClicked(true);
+    localStorage.setItem('utxo_clicked', 'true');
+    navigate('UnavailableUtxoScreen');
+  };
 
   return (
     <Layout>
@@ -216,48 +233,50 @@ export default function WalletTabScreen() {
             placement={'bottom'}
             title={
               <>
-                <Row justifyBetween>
-                  <span style={$noBreakStyle}>{'Available '}</span>
-                  <span style={$noBreakStyle}>{` ${avaiableAmount} ${btcUnit}`}</span>
-                </Row>
-                <Row justifyBetween>
-                  <span style={$noBreakStyle}>{'Unavailable '}</span>
-                  <span style={$noBreakStyle}>{` ${unavailableAmount} ${btcUnit}`}</span>
-                  {walletConfig.disableUtxoTools ? null : (
-                    <div
-                      style={{
-                        display: 'flex',
-                        width: 50,
-                        height: 20,
-                        padding: 10,
-                        justifyContent: 'center',
-                        alignItems: 'center',
-                        gap: 10,
-                        flexShrink: 0,
-                        borderRadius: 4,
-                        border: '1px solid rgba(244, 182, 44, 0.15)',
-                        background: 'rgba(244, 182, 44, 0.10)',
-                        cursor: 'pointer'
-                      }}
-                      onClick={() => {
-                        window.open(`${chain.unisatUrl}/utils/utxo`);
-                      }}>
-                      <Text
-                        text="Unlock"
-                        size="xs"
+                <div style={{ textAlign: 'left' }}>
+                  <Row>
+                    <span style={{ ...$noBreakStyle, width: 80 }}>{'Available '}</span>
+                    <span style={$noBreakStyle}>{` ${avaiableAmount} ${btcUnit}`}</span>
+                  </Row>
+                  <Row>
+                    <span style={{ ...$noBreakStyle, width: 80 }}>{'Unavailable '}</span>
+                    <span style={$noBreakStyle}>{` ${unavailableAmount} ${btcUnit}`}</span>
+                    {
+                      <div
                         style={{
-                          color: '#F4B62C',
-                          fontFamily: 'Inter',
-                          fontWeight: 500
+                          display: 'flex',
+                          width: 50,
+                          height: 20,
+                          padding: 10,
+                          justifyContent: 'center',
+                          alignItems: 'center',
+                          gap: 10,
+                          flexShrink: 0,
+                          borderRadius: 4,
+                          border: '1px solid rgba(244, 182, 44, 0.15)',
+                          background: 'rgba(244, 182, 44, 0.10)',
+                          cursor: 'pointer'
                         }}
-                      />
-                    </div>
-                  )}
-                </Row>
-                <Row justifyBetween>
-                  <span style={$noBreakStyle}>{'Total '}</span>
-                  <span style={$noBreakStyle}>{` ${totalAmount} ${btcUnit}`}</span>
-                </Row>
+                        onClick={() => {
+                          window.open(`${chain.unisatUrl}/utils/utxo`);
+                        }}>
+                        <Text
+                          text="Unlock"
+                          size="xs"
+                          style={{
+                            color: '#F4B62C',
+                            fontFamily: 'Inter',
+                            fontWeight: 500
+                          }}
+                        />
+                      </div>
+                    }
+                  </Row>
+                  <Row>
+                    <span style={{ ...$noBreakStyle, width: 80 }}>{'Total '}</span>
+                    <span style={$noBreakStyle}>{` ${totalAmount} ${btcUnit}`}</span>
+                  </Row>
+                </div>
               </>
             }
             overlayStyle={{
@@ -344,7 +363,7 @@ export default function WalletTabScreen() {
                 flexDirection: 'column',
                 borderRadius: 16,
                 border: moreExpanded ? '1px solid rgba(244, 182, 44, 0.25)' : '1px solid #FFFFFF4D',
-                background: moreExpanded ? 'rgba(244, 182, 44, 0.10)' : '#1E1E1E',
+                background: moreExpanded ? 'rgba(244, 182, 44, 0.10)' : '#2a2626',
                 padding: 5,
                 marginRight: 5,
                 marginLeft: 5,
@@ -355,23 +374,35 @@ export default function WalletTabScreen() {
               }}
               onClick={() => setMoreExpanded(!moreExpanded)}>
               {!moreExpanded && (
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: -10,
-                    right: -10,
-                    padding: '4px 8px',
-                    borderRadius: 12,
-                    background: 'linear-gradient(103.92deg, #EBB94C 0%, #E97E00 100%)',
-                    fontSize: 14,
-                    fontWeight: 'bold',
-                    color: '#fff'
-                  }}>
-                  UTXO
-                </div>
+                <>
+                  {!utxoClicked && (
+                    <div
+                      style={{
+                        position: 'absolute',
+                        top: -16,
+                        right: -10,
+                        padding: '0px 5px',
+                        borderRadius: 4,
+                        backgroundColor: 'rgba(176, 37, 37, 0.25)',
+                        zIndex: 10
+                      }}>
+                      <Text text="new!" color="red_light2" size="xxxs" />
+                    </div>
+                  )}
+
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: -12,
+                      right: -12,
+                      zIndex: 5
+                    }}>
+                    <Icon icon="utxobg" size={32} />
+                  </div>
+                </>
               )}
-              <Icon icon="more" />
-              <Text text="More" preset="regular" mt="sm" color="white" style={{ fontSize: 12, color: '#86888D' }} />
+              <Icon icon="more" style={{ marginBottom: 7 }} />
+              <Text text="More" color="white" size="xs" />
             </div>
           </Row>
 
@@ -381,32 +412,27 @@ export default function WalletTabScreen() {
                 <Button
                   text="UTXO"
                   preset="home"
-                  icon="wallet"
-                  onClick={() => {
-                    navigate('UnavailableUtxoScreen');
-                  }}
+                  icon="utxo"
+                  onClick={handleUtxoClick}
                   style={{
                     border: '1px solid rgba(244, 182, 44, 0.25)',
                     background: 'rgba(244, 182, 44, 0.10)'
                   }}
                 />
-                <div
-                  style={{
-                    position: 'absolute',
-                    top: -5,
-                    right: -5,
-                    borderRadius: 4,
-                    height: 14,
-                    width: 28,
-                    backgroundColor: 'rgba(245, 84, 84, 0.15)',
-                    fontSize: 12,
-                    color: '#F55454',
-                    display: 'flex',
-                    alignItems: 'center',
-                    fontWeight: 'bold'
-                  }}>
-                  new!
-                </div>
+                {!utxoClicked && (
+                  <div
+                    style={{
+                      position: 'absolute',
+                      top: -5,
+                      right: -5,
+                      padding: '0px 5px',
+                      borderRadius: 4,
+                      backgroundColor: 'rgba(176, 37, 37, 0.25)',
+                      zIndex: 10
+                    }}>
+                    <Text text="new!" color="red_light2" size="xxxs" />
+                  </div>
+                )}
               </div>
               <Button
                 text="Buy"
