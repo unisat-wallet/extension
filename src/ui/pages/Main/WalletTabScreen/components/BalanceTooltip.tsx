@@ -1,9 +1,12 @@
 import { Tooltip } from 'antd';
-import { CSSProperties } from 'react';
+import { CSSProperties, useMemo } from 'react';
 
+import { BitcoinBalanceV2 } from '@/shared/types';
 import { Row, Text } from '@/ui/components';
 import { BtcDisplay } from '@/ui/pages/Main/WalletTabScreen/components/BtcDisplay';
+import { useBTCUnit } from '@/ui/state/settings/hooks';
 import { fontSizes } from '@/ui/theme/font';
+import { satoshisToAmount } from '@/ui/utils';
 
 const $noBreakStyle: CSSProperties = {
   whiteSpace: 'nowrap',
@@ -11,24 +14,21 @@ const $noBreakStyle: CSSProperties = {
 };
 
 interface BalanceTooltipProps {
-  avaiableAmount: string;
-  unavailableAmount: string;
-  totalAmount: string;
-  balanceValue: string;
-  btcUnit: string;
+  accountBalance: BitcoinBalanceV2;
   unisatUrl: string;
   disableUtxoTools?: boolean;
 }
 
-export const BalanceTooltip = ({
-  avaiableAmount,
-  unavailableAmount,
-  totalAmount,
-  balanceValue,
-  btcUnit,
-  unisatUrl,
-  disableUtxoTools = false
-}: BalanceTooltipProps) => {
+export const BalanceTooltip = ({ accountBalance, unisatUrl, disableUtxoTools = false }: BalanceTooltipProps) => {
+  const balanceValue = useMemo(() => {
+    return satoshisToAmount(accountBalance.totalBalance);
+  }, [accountBalance.totalBalance]);
+
+  const btcUnit = useBTCUnit();
+  const avaiableAmount = satoshisToAmount(accountBalance.availableBalance);
+  const unavailableAmount = satoshisToAmount(accountBalance.unavailableBalance);
+  const totalAmount = satoshisToAmount(accountBalance.totalBalance);
+
   return (
     <Tooltip
       placement={'bottom'}

@@ -4,23 +4,25 @@ import { ChainType, TypeChain } from '@/shared/constant';
 import { Row, Text } from '@/ui/components';
 import { Button } from '@/ui/components/Button';
 import { Icon } from '@/ui/components/Icon';
+import { BuyBTCModal } from '@/ui/pages/BuyBTC/BuyBTCModal';
 import { useNavigate } from '@/ui/pages/MainRoute';
-import { useChainType } from '@/ui/state/settings/hooks';
+import { useAddressExplorerUrl, useChainType } from '@/ui/state/settings/hooks';
 import { useResetUiTxCreateScreen } from '@/ui/state/ui/hooks';
 
 interface WalletActionsProps {
-  onBuyClick: () => void;
   chain: TypeChain;
-  addressExplorerUrl: string;
+  address: string;
 }
 
-export const WalletActions = ({ onBuyClick, chain, addressExplorerUrl }: WalletActionsProps) => {
+export const WalletActions = ({ chain, address }: WalletActionsProps) => {
   const [moreExpanded, setMoreExpanded] = useState(false);
   const [utxoClicked, setUtxoClicked] = useState(false);
   const isFractal = chain.isFractal;
   const navigate = useNavigate();
   const resetUiTxCreateScreen = useResetUiTxCreateScreen();
   const chainType = useChainType();
+  const addressExplorerUrl = useAddressExplorerUrl(address);
+  const [buyBtcModalVisible, setBuyBtcModalVisible] = useState(false);
 
   useEffect(() => {
     const checkUtxoClicked = async () => {
@@ -154,7 +156,7 @@ export const WalletActions = ({ onBuyClick, chain, addressExplorerUrl }: WalletA
                   }
                 : undefined
             }
-            onClick={onBuyClick}
+            onClick={() => setBuyBtcModalVisible(true)}
             disabled={chainType !== ChainType.BITCOIN_MAINNET && chainType !== ChainType.FRACTAL_BITCOIN_MAINNET}
             style={{
               border: '1px solid rgba(244, 182, 44, 0.25)',
@@ -162,6 +164,14 @@ export const WalletActions = ({ onBuyClick, chain, addressExplorerUrl }: WalletA
             }}
           />
         </Row>
+      )}
+
+      {buyBtcModalVisible && (
+        <BuyBTCModal
+          onClose={() => {
+            setBuyBtcModalVisible(false);
+          }}
+        />
       )}
     </>
   );

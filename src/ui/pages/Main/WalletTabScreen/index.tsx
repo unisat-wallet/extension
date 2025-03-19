@@ -18,9 +18,7 @@ import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import {
-  useAddressExplorerUrl,
   useAddressTips,
-  useBTCUnit,
   useChain,
   useSkipVersionCallback,
   useVersionInfo,
@@ -28,9 +26,8 @@ import {
 } from '@/ui/state/settings/hooks';
 import { useAssetTabKey, useSupportedAssets } from '@/ui/state/ui/hooks';
 import { AssetTabKey, uiActions } from '@/ui/state/ui/reducer';
-import { satoshisToAmount, useWallet } from '@/ui/utils';
+import { useWallet } from '@/ui/utils';
 
-import { BuyBTCModal } from '../../BuyBTC/BuyBTCModal';
 import { useNavigate } from '../../MainRoute';
 import { SwitchChainModal } from '../../Settings/SwitchChainModal';
 import { AtomicalsTab } from './AtomicalsTab';
@@ -51,9 +48,6 @@ export default function WalletTabScreen() {
 
   const currentKeyring = useCurrentKeyring();
   const currentAccount = useCurrentAccount();
-  const balanceValue = useMemo(() => {
-    return satoshisToAmount(accountBalance.totalBalance);
-  }, [accountBalance.totalBalance]);
 
   const wallet = useWallet();
   const [connected, setConnected] = useState(false);
@@ -68,10 +62,6 @@ export default function WalletTabScreen() {
 
   const [showSafeNotice, setShowSafeNotice] = useState(false);
   const [showDisableUnconfirmedUtxoNotice, setShowDisableUnconfirmedUtxoNotice] = useState(false);
-
-  const avaiableAmount = satoshisToAmount(accountBalance.availableBalance);
-  const unavailableAmount = satoshisToAmount(accountBalance.unavailableBalance);
-  const totalAmount = satoshisToAmount(accountBalance.totalBalance);
 
   const addressSummary = useAddressSummary();
 
@@ -151,12 +141,6 @@ export default function WalletTabScreen() {
     return assetTabKey;
   }, [assetTabKey, supportedAssets.key]);
 
-  const addressExplorerUrl = useAddressExplorerUrl(currentAccount.address);
-
-  const btcUnit = useBTCUnit();
-
-  const [buyBtcModalVisible, setBuyBtcModalVisible] = useState(false);
-
   const [switchChainModalVisible, setSwitchChainModalVisible] = useState(false);
 
   return (
@@ -202,11 +186,7 @@ export default function WalletTabScreen() {
           )}
 
           <BalanceTooltip
-            avaiableAmount={avaiableAmount}
-            unavailableAmount={unavailableAmount}
-            totalAmount={totalAmount}
-            balanceValue={balanceValue}
-            btcUnit={btcUnit}
+            accountBalance={accountBalance}
             unisatUrl={chain.unisatUrl}
             disableUtxoTools={walletConfig.disableUtxoTools}
           />
@@ -221,11 +201,7 @@ export default function WalletTabScreen() {
             }}
           />
 
-          <WalletActions
-            addressExplorerUrl={addressExplorerUrl}
-            onBuyClick={() => setBuyBtcModalVisible(true)}
-            chain={chain}
-          />
+          <WalletActions address={currentAccount?.address} chain={chain} />
 
           <Tabs
             defaultActiveKey={finalAssetTabKey as unknown as string}
@@ -255,13 +231,7 @@ export default function WalletTabScreen() {
         {showDisableUnconfirmedUtxoNotice && (
           <DisableUnconfirmedsPopover onClose={() => setShowDisableUnconfirmedUtxoNotice(false)} />
         )}
-        {buyBtcModalVisible && (
-          <BuyBTCModal
-            onClose={() => {
-              setBuyBtcModalVisible(false);
-            }}
-          />
-        )}
+
         {switchChainModalVisible && (
           <SwitchChainModal
             onClose={() => {
