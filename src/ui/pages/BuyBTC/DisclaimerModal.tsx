@@ -41,8 +41,14 @@ export default function DisclaimerModal({ channelType, onClose }: { channelType:
 
         <Row fullX style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
 
-        <Column justifyCenter rounded mb="lg" style={{ maxHeight: '50vh', overflow: 'auto' }}>
-          <Text style={{ fontSize: fontSizes.sm, lineHeight: 2, paddingTop: 128 }} text={disclaimStr} />
+        <div
+          style={{
+            maxHeight: '40vh',
+            overflow: 'auto',
+            padding: '0 0 10px 0',
+            marginBottom: 16
+          }}>
+          <Text style={{ fontSize: fontSizes.sm, lineHeight: 2 }} text={disclaimStr} />
 
           <Text
             mt="lg"
@@ -58,7 +64,7 @@ export default function DisclaimerModal({ channelType, onClose }: { channelType:
             mt="lg"
             style={{ fontSize: fontSizes.sm, lineHeight: 2 }}
             text={'Before proceeding, please carefully read and accept the disclaimer.'}></Text>
-        </Column>
+        </div>
 
         <Row justifyCenter>
           <Checkbox
