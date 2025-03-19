@@ -1,28 +1,6 @@
 import React, { useEffect, useState } from 'react';
 
 export const BottomModal = ({ children, onClose }: { children: React.ReactNode; onClose?: () => void }) => {
-  return (
-    <div
-      className="popover-container"
-      style={{
-        backgroundColor: 'rgba(0,0,0,0.7)'
-      }}>
-      <div
-        style={{
-          backgroundColor: '#24282F',
-          width: '100%',
-          padding: 20,
-          borderRadius: 15,
-          position: 'fixed',
-          bottom: 0
-        }}>
-        {children}
-      </div>
-    </div>
-  );
-};
-
-export const FeeOptionsBottomModal = ({ children, onClose }: { children: React.ReactNode; onClose?: () => void }) => {
   const [isVisible, setIsVisible] = useState(false);
 
   useEffect(() => {
@@ -69,11 +47,10 @@ export const FeeOptionsBottomModal = ({ children, onClose }: { children: React.R
           width: '100%',
           padding: 20,
           borderRadius: '15px 15px 0 0',
-          position: 'relative',
+          position: 'fixed',
+          bottom: 0,
           transform: isVisible ? 'translateY(0)' : 'translateY(100%)',
-          transition: 'transform 0.3s ease-out',
-          maxHeight: '80vh',
-          overflowY: 'auto'
+          transition: 'transform 0.3s ease-out'
         }}>
         {children}
       </div>

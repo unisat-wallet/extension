@@ -8,7 +8,7 @@ import { useBabylonConfig } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { useLocationState, useWallet } from '@/ui/utils';
 
-import { FeeOptionsBottomModal } from '../BottomModal';
+import { BottomModal } from '../BottomModal';
 import { Button } from '../Button';
 import { Column } from '../Column';
 import { Row } from '../Row';
@@ -371,7 +371,7 @@ export function FeeOptionsPopover({
   }, [gasAdjustmentTimeout]);
 
   return (
-    <FeeOptionsBottomModal onClose={onClose}>
+    <BottomModal onClose={onClose}>
       <Column style={{ padding: '0 4px' }}>
         <div className="fees-section" style={{ marginBottom: 20 }}>
           <Row justifyBetween fullX mb="md">
@@ -408,6 +408,6 @@ export function FeeOptionsPopover({
           }}
         />
       </Column>
-    </FeeOptionsBottomModal>
+    </BottomModal>
   );
 }
