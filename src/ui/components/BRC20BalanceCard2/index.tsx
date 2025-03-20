@@ -113,10 +113,22 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
             </Row>
           </Row>
         </Row>
-        {showPrice && price?.curPrice !== 0 && (
+        {showPrice && (
           <Row justifyBetween mt={'xs'}>
-            <TickPriceChange price={price} />
-            <TickUsd price={price} balance={overallBalance} />
+            <Row>
+              {price && price.curPrice > 0 ? (
+                <TickPriceChange price={price} />
+              ) : (
+                <Text text="$0.00 0%" color="textDim" size="xs" />
+              )}
+            </Row>
+            <Row>
+              {price && price.curPrice > 0 ? (
+                <TickUsd price={price} balance={overallBalance} />
+              ) : (
+                <Text text="$0.00" color="textDim" size="xs" />
+              )}
+            </Row>
           </Row>
         )}
         {(tag || selfMint) && (

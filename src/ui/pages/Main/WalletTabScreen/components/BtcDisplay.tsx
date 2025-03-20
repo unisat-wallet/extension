@@ -24,7 +24,7 @@ export function BtcDisplay({ balance }: { balance: string }) {
     }
     return (
       <Row style={{ alignItems: 'flex-end' }} justifyCenter gap={'zero'} my="sm">
-        <Text text={intPart} preset="title-bold" size="xxxl" />
+        <Text text={intPart} preset="title-bold" size="xxxl" color="white" />
         {decPart && (
           <Text
             text={'.' + decPart.slice(0, decimalPlaces)}
@@ -35,7 +35,7 @@ export function BtcDisplay({ balance }: { balance: string }) {
             }}
           />
         )}
-        <Text text={btcUnit} preset="title-bold" size="xxxl" style={{ marginLeft: '0.25em' }} />
+        <Text text={btcUnit} preset="title-bold" size="xxxl" style={{ marginLeft: '0.25em' }} color="white" />
       </Row>
     );
   }

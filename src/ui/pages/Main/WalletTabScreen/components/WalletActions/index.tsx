@@ -62,7 +62,7 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
     navigate('TxCreateScreen');
   };
 
-  const NewBadge = ({ top = -16, right = -10 }: { top?: number; right?: number }) => (
+  const NewBadge = ({ top = -16, right = -14 }: { top?: number; right?: number }) => (
     <div
       style={{
         position: 'absolute',
@@ -73,7 +73,7 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
         backgroundColor: 'rgba(176, 37, 37, 0.25)',
         zIndex: 10
       }}>
-      <Text text="new!" color="red_light2" size="xxxs" />
+      <Text text="new!" color="red_light2" size="xxs" />
     </div>
   );
 
