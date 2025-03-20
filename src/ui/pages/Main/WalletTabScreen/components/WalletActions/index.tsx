@@ -25,9 +25,7 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
   const [buyBtcModalVisible, setBuyBtcModalVisible] = useState(false);
 
   const shouldUseMoreExpandedLayout = () => {
-    if (isFractal) return true;
-    // Maybe add more chains here in the future
-
+    if (chain.enum === ChainType.FRACTAL_BITCOIN_MAINNET) return true;
     return false;
   };
 
