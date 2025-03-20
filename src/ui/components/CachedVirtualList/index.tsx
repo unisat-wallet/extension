@@ -15,9 +15,8 @@ interface DataCache<T> {
   };
 }
 
-// Global cache and scroll position objects
+// Global cache object
 const globalCache: Record<string, DataCache<any>> = {};
-const globalScrollPosition: Record<string, Record<string, number>> = {};
 
 export interface CachedListProps<T> {
   // Unique namespace for this list type (e.g. 'inscriptions', 'tokens', etc.)
@@ -59,6 +58,7 @@ export function CachedList<T>({
   fetchData,
   renderItem,
   itemsPerRow = 2,
+  pageSize,
   cacheExpiration = 3 * 60 * 1000, // 3 minutes default
   onError,
   emptyText = 'Empty'
@@ -66,34 +66,68 @@ export function CachedList<T>({
   const [items, setItems] = useState<T[]>([]);
   const [total, setTotal] = useState(-1);
   const isInTab = useExtensionIsInTab();
-
-  // Update page size based on view mode
-  const effectivePageSize = isInTab ? 50 : 20;
+  const effectivePageSize = pageSize || (isInTab ? 50 : 20);
   const [pagination, setPagination] = useState({ currentPage: 1, pageSize: effectivePageSize });
-
-  // Update pagination when isPopup changes
-  useEffect(() => {
-    setPagination((prev) => ({ ...prev, pageSize: effectivePageSize }));
-  }, [effectivePageSize]);
-
+  const prevIsInTabRef = useRef(isInTab);
+  const prevPageSizeRef = useRef(pagination.pageSize);
   const [isLoading, setIsLoading] = useState(false);
   const isLoadingRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const prevChainTypeRef = useRef<string | null>(null);
 
+  useEffect(() => {
+    const hasViewModeChanged = prevIsInTabRef.current !== isInTab;
+    prevIsInTabRef.current = isInTab;
+
+    if (hasViewModeChanged) {
+      const newPageSize = pageSize || (isInTab ? 50 : 20);
+
+      if (prevPageSizeRef.current !== newPageSize) {
+        prevPageSizeRef.current = newPageSize;
+
+        setPagination({ currentPage: 1, pageSize: newPageSize });
+
+        if (globalCache[namespace]) {
+          Object.keys(globalCache[namespace]).forEach((key) => {
+            delete globalCache[namespace][key];
+          });
+        }
+
+        if (address) {
+          setIsLoading(true);
+          isLoadingRef.current = true;
+
+          fetchData(address, 1, newPageSize)
+            .then(({ list, total }) => {
+              const cacheKey = `${address}_${chainType}_1_${newPageSize}`;
+              globalCache[namespace][cacheKey] = {
+                items: list,
+                total,
+                timestamp: Date.now()
+              };
+
+              setItems(list);
+              setTotal(total);
+              dispatchDataLoadedEvent(namespace, list);
+            })
+            .catch((e) => {
+              if (onError && e instanceof Error) {
+                onError(e);
+              }
+            })
+            .finally(() => {
+              setIsLoading(false);
+              isLoadingRef.current = false;
+            });
+        }
+      }
+    }
+  }, [isInTab, address, namespace, chainType, fetchData, onError, pageSize]);
+
   // Initialize namespace cache if not exists
   if (!globalCache[namespace]) {
     globalCache[namespace] = {};
   }
-
-  if (!globalScrollPosition[namespace]) {
-    globalScrollPosition[namespace] = {};
-  }
-
-  // Get current page unique identifier
-  const getPageKey = useCallback(() => {
-    return `${address}_${chainType}`;
-  }, [address, chainType]);
 
   // Get current cache key
   const getCacheKey = useCallback(
@@ -110,21 +144,6 @@ export function CachedList<T>({
     },
     [cacheExpiration]
   );
-
-  // Save scroll position
-  const saveScrollPosition = useCallback(() => {
-    if (containerRef.current) {
-      globalScrollPosition[namespace][getPageKey()] = containerRef.current.scrollTop;
-    }
-  }, [namespace, getPageKey]);
-
-  // Restore scroll position
-  const restoreScrollPosition = useCallback(() => {
-    if (containerRef.current) {
-      const savedPosition = globalScrollPosition[namespace][getPageKey()] || 0;
-      containerRef.current.scrollTop = savedPosition;
-    }
-  }, [namespace, getPageKey]);
 
   const loadData = useCallback(async () => {
     if (!address || isLoadingRef.current) return;
@@ -143,8 +162,6 @@ export function CachedList<T>({
 
       // Dispatch data loaded event
       dispatchDataLoadedEvent(namespace, cachedData.items);
-
-      setTimeout(restoreScrollPosition, 0);
       return;
     }
 
@@ -160,7 +177,6 @@ export function CachedList<T>({
       setItems(list);
       setTotal(total);
 
-      // Dispatch data loaded event
       dispatchDataLoadedEvent(namespace, list);
     } catch (e) {
       if (onError && e instanceof Error) {
@@ -169,13 +185,8 @@ export function CachedList<T>({
     } finally {
       setIsLoading(false);
       isLoadingRef.current = false;
-      setTimeout(restoreScrollPosition, 0);
     }
-  }, [address, chainType, pagination, namespace, getCacheKey, isCacheValid, fetchData, restoreScrollPosition, onError]);
-
-  const handleScroll = useCallback(() => {
-    saveScrollPosition();
-  }, [saveScrollPosition]);
+  }, [address, chainType, pagination, namespace, getCacheKey, isCacheValid, fetchData, onError]);
 
   // Clear cache when account or chain type changes
   useEffect(() => {
@@ -211,30 +222,6 @@ export function CachedList<T>({
       loadData();
     }
   }, [pagination, address, loadData, chainType]);
-
-  // Restore scroll position when component mounts
-  useEffect(() => {
-    const timer = setTimeout(restoreScrollPosition, 100);
-    return () => clearTimeout(timer);
-  }, [restoreScrollPosition]);
-
-  // Save scroll position before component unmounts
-  useEffect(() => {
-    return () => {
-      saveScrollPosition();
-    };
-  }, [saveScrollPosition]);
-
-  // Add scroll event listener
-  useEffect(() => {
-    const container = containerRef.current;
-    if (container) {
-      container.addEventListener('scroll', handleScroll);
-      return () => {
-        container.removeEventListener('scroll', handleScroll);
-      };
-    }
-  }, [handleScroll]);
 
   // Create grid rows
   const gridRows = useMemo(() => {
@@ -309,7 +296,6 @@ export function CachedList<T>({
           pagination={pagination}
           total={total}
           onChange={(pagination) => {
-            saveScrollPosition();
             setPagination(pagination);
           }}
         />
