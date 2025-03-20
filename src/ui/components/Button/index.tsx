@@ -133,6 +133,19 @@ const $viewPresets = {
     marginLeft: 5
   }) as CSSProperties,
 
+  homeGold: Object.assign({}, $baseViewStyle, {
+    backgroundColor: 'rgba(244, 182, 44, 0.10)',
+    minWidth: 64,
+    minHeight: 64,
+    flexDirection: 'column',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(244, 182, 44, 0.25)',
+    padding: 5,
+    marginRight: 5,
+    marginLeft: 5
+  }) as CSSProperties,
+
   minimal: Object.assign({}, $baseViewStyle, {
     backgroundColor: 'rgba(255,124,42,0.1)',
     minWidth: 60,
@@ -185,6 +198,7 @@ const $hoverViewPresets: Record<Presets, CSSProperties> = {
   home: {
     backgroundColor: '#383535'
   },
+  homeGold: {},
   minimal: {
     backgroundColor: 'rgba(255,124,42,0.1)'
   },
@@ -216,6 +230,10 @@ const $textPresets: Record<Presets, CSSProperties> = {
   defaultV2: Object.assign({}, $baseTextStyle, {}),
   primaryV2: Object.assign({}, $baseTextStyle, { color: colors.black }),
   home: Object.assign({}, $baseTextStyle, {
+    color: colors.textDim,
+    fontSize: 12
+  }),
+  homeGold: Object.assign({}, $baseTextStyle, {
     color: colors.textDim,
     fontSize: 12
   }),
@@ -291,7 +309,7 @@ export function Button(props: ButtonProps) {
     );
   }
 
-  if (preset === 'home') {
+  if (preset === 'home' || preset === 'homeGold') {
     if (disabled) {
       $viewStyle.backgroundColor = 'rgba(255,255,255,0.15)';
     }

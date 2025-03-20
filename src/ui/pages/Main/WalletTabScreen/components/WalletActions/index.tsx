@@ -180,21 +180,12 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
           {moreExpanded && (
             <Row justifyEnd mt="md">
               <div style={{ position: 'relative' }}>
-                <Button
-                  text="UTXO"
-                  preset="home"
-                  icon="utxo"
-                  onClick={handleUtxoClick}
-                  style={{
-                    border: '1px solid rgba(244, 182, 44, 0.25)',
-                    background: 'rgba(244, 182, 44, 0.10)'
-                  }}
-                />
+                <Button text="UTXO" preset="homeGold" icon="utxo" onClick={handleUtxoClick} />
                 {!utxoClicked && <NewBadge top={-5} right={-5} />}
               </div>
               <Button
                 text="Buy"
-                preset="home"
+                preset="homeGold"
                 icon={isFractal ? 'fb' : 'bitcoin'}
                 iconSize={
                   isFractal
@@ -206,10 +197,6 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
                 }
                 onClick={() => setBuyBtcModalVisible(true)}
                 disabled={chainType !== ChainType.BITCOIN_MAINNET && chainType !== ChainType.FRACTAL_BITCOIN_MAINNET}
-                style={{
-                  border: '1px solid rgba(244, 182, 44, 0.25)',
-                  background: 'rgba(244, 182, 44, 0.10)'
-                }}
               />
             </Row>
           )}
