@@ -322,10 +322,7 @@ export function Button(props: ButtonProps) {
         {icon && (
           <Icon
             icon={icon}
-            style={Object.assign(
-              { marginRight: spacing.tiny, backgroundColor: colors.white },
-              iconSize ? iconSize : {}
-            )}
+            style={Object.assign({ backgroundColor: colors.white }, iconSize ? iconSize : {})}
             containerStyle={iconSize ? iconSize : {}}
           />
         )}

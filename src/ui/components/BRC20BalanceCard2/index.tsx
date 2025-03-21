@@ -119,14 +119,14 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
               {price && price.curPrice > 0 ? (
                 <TickPriceChange price={price} />
               ) : (
-                <Text text="$0.00 0%" color="textDim" size="xs" />
+                <Text text="$- " color="textDim" size="xs" />
               )}
             </Row>
             <Row>
               {price && price.curPrice > 0 ? (
                 <TickUsd price={price} balance={overallBalance} />
               ) : (
-                <Text text="$0.00" color="textDim" size="xs" />
+                <Text text="$-" color="textDim" size="xs" />
               )}
             </Row>
           </Row>
