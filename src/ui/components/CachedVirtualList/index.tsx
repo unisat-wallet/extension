@@ -218,9 +218,7 @@ export function CachedList<T>({
   }, [chainType, address, namespace, effectivePageSize, fetchData, onError]);
 
   useEffect(() => {
-    if (prevChainTypeRef.current === chainType) {
-      loadData();
-    }
+    loadData();
   }, [pagination, address, loadData, chainType]);
 
   // Create grid rows
