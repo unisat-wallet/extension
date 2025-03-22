@@ -5,12 +5,12 @@ const PHISHING_SOURCES = {
   /**
    * Primary source from GitHub raw content
    */
-  PRIMARY: 'https://raw.githubusercontent.com/MetaMask/eth-phishing-detect/master/src/config.json',
+  PRIMARY: 'https://raw.githubusercontent.com/MetaMask/eth-phishing-detect/refs/heads/main/src/config.json',
 
   /**
    * Backup source from CDN
    */
-  BACKUP: 'https://cdn.jsdelivr.net/gh/MetaMask/eth-phishing-detect@master/src/config.json',
+  BACKUP: 'https://cdn.jsdelivr.net/gh/MetaMask/eth-phishing-detect@main/src/config.json',
 
   /**
    * Unisat phishing list source
