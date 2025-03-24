@@ -276,11 +276,16 @@ export default function SendBabyScreen() {
     }
 
     const fee = parseFloat(currentGasPrice) * gasLimitValue * (feeSettings.gasAdjustment || 1.3);
-
     const rawFee = runesUtils.toDecimalAmount(fee.toString(), babylonChain.feeCurrencies[0].coinDecimals);
     // Always display 6 decimal places
     return parseFloat(rawFee).toFixed(6);
-  }, [currentGasPrice, gasLimitValue, feeSettings, babylonChain.feeCurrencies]);
+  }, [
+    feeSettings.currentFeeDisplay,
+    currentGasPrice,
+    gasLimitValue,
+    feeSettings.gasAdjustment,
+    babylonChain.feeCurrencies
+  ]);
 
   const toSpendValue = useMemo(() => {
     const gasFee = Math.ceil(parseFloat(currentGasPrice) * gasLimitValue * (feeSettings.gasAdjustment || 1.3));
@@ -532,21 +537,6 @@ export default function SendBabyScreen() {
             onSettingsChange={handleFeeSettingsChange}
             onClose={() => {
               setFeeOptionVisible(false);
-              if (feeSettings.currentFeeDisplay) {
-                const fee =
-                  parseFloat(feeOptions[feeSettings.selectedOption].gasPrice.toString()) *
-                  (feeSettings.gasLimit || gasLimitValue) *
-                  (feeSettings.gasAdjustment || 1.3);
-
-                const rawFee = runesUtils.toDecimalAmount(fee.toString(), babylonChain.feeCurrencies[0].coinDecimals);
-                const formattedFee = parseFloat(rawFee).toFixed(6);
-
-                if (formattedFee !== feeSettings.currentFeeDisplay) {
-                  handleFeeSettingsChange({
-                    currentFeeDisplay: formattedFee
-                  });
-                }
-              }
             }}
             coinDenom={babylonChain.feeCurrencies[0].coinDenom}
             feeCurrencies={babylonChain.feeCurrencies.map((fc) => fc.coinDenom)}

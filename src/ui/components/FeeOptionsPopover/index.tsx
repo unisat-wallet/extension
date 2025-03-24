@@ -112,8 +112,11 @@ export function FeeOptionsPopover({
         setGasLimit(newGasLimit);
 
         if (isAutoGasLimit) {
-          onSettingsChange({ gasLimit: newGasLimit });
-          updateFeeDisplay(localSelectedOption, newGasLimit, gasAdjustment);
+          const newFeeValue = calculateOptionFee(localSelectedOption, newGasLimit, gasAdjustment);
+          onSettingsChange({
+            gasLimit: newGasLimit,
+            currentFeeDisplay: newFeeValue
+          });
         }
       }
     } catch (error) {
@@ -131,7 +134,7 @@ export function FeeOptionsPopover({
     onSettingsChange,
     localSelectedOption,
     gasAdjustment,
-    updateFeeDisplay
+    calculateOptionFee
   ]);
 
   useEffect(() => {
@@ -160,14 +163,9 @@ export function FeeOptionsPopover({
 
     const feeValue = calculatedFeeOptions[index].adjustedGasPrice;
     onSettingsChange({
-      currentFeeDisplay: feeValue
+      currentFeeDisplay: feeValue,
+      selectedOption: index
     });
-
-    if (settings.rememberChoice) {
-      onSettingsChange({
-        selectedOption: index
-      });
-    }
   };
 
   const handleAutoGasLimitChange = (checked: boolean) => {
@@ -194,24 +192,18 @@ export function FeeOptionsPopover({
   const handleGasAdjustmentChange = (value: number | null) => {
     if (value !== null && value >= 0.1 && value <= 3.0) {
       setGasAdjustment(value);
-      onSettingsChange({ gasAdjustment: value });
 
       const effectiveGasValue = isAutoGasLimit && simulatedGasValue ? Math.ceil(simulatedGasValue * 2) : gasLimit;
-
       const feeValue = calculateOptionFee(localSelectedOption, effectiveGasValue, value);
+
       onSettingsChange({
+        gasAdjustment: value,
         currentFeeDisplay: feeValue
       });
 
       if (gasAdjustmentTimeout) {
         clearTimeout(gasAdjustmentTimeout);
       }
-
-      const newTimeout = setTimeout(() => {
-        fetchSimulatedGas();
-      }, 500);
-
-      setGasAdjustmentTimeout(newTimeout);
     }
   };
 
@@ -370,8 +362,16 @@ export function FeeOptionsPopover({
     };
   }, [gasAdjustmentTimeout]);
 
+  const handleClose = () => {
+    if (calculatedFeeOptions && calculatedFeeOptions.length > 0) {
+      const currentFee = calculatedFeeOptions[localSelectedOption].adjustedGasPrice;
+      onSettingsChange({ currentFeeDisplay: currentFee });
+    }
+    onClose();
+  };
+
   return (
-    <BottomModal onClose={onClose}>
+    <BottomModal onClose={handleClose}>
       <Column style={{ padding: '0 4px' }}>
         <div className="fees-section" style={{ marginBottom: 20 }}>
           <Row justifyBetween fullX mb="md">
@@ -396,7 +396,7 @@ export function FeeOptionsPopover({
         <Button
           preset="primary"
           text={isLoading ? 'Loading...' : 'Close'}
-          onClick={isLoading ? undefined : onClose}
+          onClick={isLoading ? undefined : handleClose}
           disabled={isLoading}
           style={{
             width: '100%',
