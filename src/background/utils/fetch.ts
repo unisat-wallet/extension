@@ -62,17 +62,20 @@ async function fetchWithTimeout(url: string, options: RequestInit = {}, timeoutM
  * @returns Phishing configuration object
  */
 export const fetchPhishingList = async (forceRefresh = false): Promise<any> => {
+  let cachedData: any = null;
+  let useCache = false;
+
   // If not forcing refresh, try to use cache first
   if (!forceRefresh) {
     try {
-      const cachedData = await getFromLocalCache();
+      cachedData = await getFromLocalCache();
       if (cachedData && cachedData.lastFetchTime) {
         const cacheAge = Date.now() - cachedData.lastFetchTime;
 
-        // If cache is fresh enough, use it directly
+        // If cache is fresh enough, use it directly (but still fetch UNISAT)
         if (cacheAge < MIN_CACHE_AGE) {
           console.log('[Phishing] Using recent cache, age:', Math.round(cacheAge / 60000), 'minutes');
-          return cachedData;
+          useCache = true;
         }
       }
     } catch (error) {
@@ -80,6 +83,26 @@ export const fetchPhishingList = async (forceRefresh = false): Promise<any> => {
     }
   }
 
+  // If using cache and not forcing refresh, return early for most sources
+  // But always fetch UNISAT source
+  if (useCache && !forceRefresh) {
+    // Create a working copy of cached data for UNISAT updates
+    const mergedData = JSON.parse(JSON.stringify(cachedData));
+
+    // Always fetch UNISAT source
+    try {
+      await fetchAndMergeUnisat(mergedData);
+
+      // Update the cache with the UNISAT updates
+      await saveToLocalCache(mergedData);
+      return mergedData;
+    } catch (error) {
+      console.error('[Phishing] UNISAT source fetch failed, using cache only:', error);
+      return cachedData;
+    }
+  }
+
+  // If not using cache, fetch from all sources
   const fetchOptions: RequestInit = {
     cache: 'no-cache',
     headers: {
@@ -128,16 +151,10 @@ export const fetchPhishingList = async (forceRefresh = false): Promise<any> => {
     console.error('[Phishing] Backup source fetch failed:', error);
   }
 
+  // Always try to fetch UNISAT source
   try {
-    const response = await fetchWithTimeout(PHISHING_SOURCES.UNISAT, fetchOptions);
-
-    if (response.ok) {
-      const data = await response.json();
-      mergePhishingData(mergedData, data);
-      mergedData.sources.push('UNISAT');
-      hasAnySourceSucceeded = true;
-      console.log('[Phishing] Successfully fetched from UNISAT source');
-    }
+    await fetchAndMergeUnisat(mergedData);
+    hasAnySourceSucceeded = true;
   } catch (error) {
     console.error('[Phishing] Unisat source fetch failed:', error);
   }
@@ -150,7 +167,7 @@ export const fetchPhishingList = async (forceRefresh = false): Promise<any> => {
 
   // All remote sources failed, try using cache (regardless of age)
   try {
-    const cachedData = await getFromLocalCache();
+    cachedData = await getFromLocalCache();
     if (cachedData) {
       console.warn('[Phishing] Using cached data as all remote sources failed');
       return cachedData;
@@ -162,6 +179,38 @@ export const fetchPhishingList = async (forceRefresh = false): Promise<any> => {
   // All sources failed
   throw new Error('Failed to fetch phishing list from all available sources');
 };
+
+/**
+ * Fetches UNISAT phishing list and merges it into target data
+ * This function is separated to allow always fetching UNISAT data
+ * @param targetData The data object to merge UNISAT data into
+ * @returns Promise<boolean> indicating success
+ */
+async function fetchAndMergeUnisat(targetData: any): Promise<boolean> {
+  const fetchOptions: RequestInit = {
+    cache: 'no-cache',
+    headers: {
+      Accept: 'application/json'
+    }
+  };
+
+  const response = await fetchWithTimeout(PHISHING_SOURCES.UNISAT, fetchOptions);
+
+  if (response.ok) {
+    const data = await response.json();
+    mergePhishingData(targetData, data);
+
+    // Only add to sources if not already there
+    if (!targetData.sources.includes('UNISAT')) {
+      targetData.sources.push('UNISAT');
+    }
+
+    console.log('[Phishing] Successfully fetched from UNISAT source');
+    return true;
+  }
+
+  throw new Error('Failed to fetch from UNISAT source');
+}
 
 function mergePhishingData(target: any, source: any): void {
   if (Array.isArray(source.blacklist)) {

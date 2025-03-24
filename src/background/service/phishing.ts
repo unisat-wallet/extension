@@ -272,7 +272,6 @@ class PhishingService {
       }
 
       // Check permanent whitelist - enhanced check including subdomains
-      // First check the full domain
       if (this.whitelistSet.has(cleanHostname)) {
         return false;
       }
@@ -280,43 +279,13 @@ class PhishingService {
       // Then check if it's a subdomain of a whitelisted domain
       const domainParts = cleanHostname.split('.');
       if (domainParts.length > 2) {
-        // Try to match main domain (e.g., mail.google.com -> google.com)
         const mainDomain = domainParts.slice(domainParts.length - 2).join('.');
         if (this.whitelistSet.has(mainDomain)) {
           return false;
         }
       }
 
-      // Check blacklist
-      if (this.blacklistSet.has(cleanHostname)) {
-        // Check domain length - unusually long domains are more likely to be phishing sites
-        if (cleanHostname.length > 30) {
-          return true;
-        }
-
-        // If it's a common short domain, double-check
-        if (cleanHostname.split('.').length <= 2 && cleanHostname.length < 15) {
-          const tld = cleanHostname.split('.').pop();
-          if (['com', 'org', 'net', 'io', 'app', 'dev'].includes(tld || '')) {
-            // Add to temporary whitelist to avoid checking again
-            this.temporaryWhitelist.add(cleanHostname);
-            return false;
-          }
-        }
-
-        return true;
-      }
-
-      // Check fuzzy match patterns (most expensive check last)
-      if (this.config.fuzzylist && this.config.fuzzylist.length > 0) {
-        for (const pattern of this.config.fuzzylist) {
-          if (cleanHostname.includes(pattern)) {
-            return true;
-          }
-        }
-      }
-
-      return false;
+      return this.blacklistSet.has(cleanHostname);
     } catch (error) {
       console.error('[PhishingService] Check error:', error);
       // Default to safe on error
