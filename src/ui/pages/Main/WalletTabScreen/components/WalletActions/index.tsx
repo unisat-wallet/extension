@@ -39,6 +39,11 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
     checkUtxoClicked();
   }, []);
 
+  // Reset moreExpanded state when chain changes
+  useEffect(() => {
+    setMoreExpanded(false);
+  }, [chain.enum]);
+
   const handleUtxoClick = () => {
     setUtxoClicked(true);
     localStorage.setItem('utxo_clicked', 'true');
@@ -176,26 +181,30 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
           </Row>
 
           {moreExpanded && (
-            <Row justifyEnd mt="md">
-              <div style={{ position: 'relative' }}>
-                <Button text="UTXO" preset="homeGold" icon="utxo" onClick={handleUtxoClick} />
-                {!utxoClicked && <NewBadge top={-5} right={-5} />}
+            <Row justifyCenter mt="md">
+              <div style={{ display: 'flex', width: '100%', maxWidth: 300, justifyContent: 'space-between' }}>
+                <Button preset="home" style={{ opacity: 0 }}></Button>
+                <Button preset="home" style={{ opacity: 0 }}></Button>
+                <div style={{ position: 'relative', marginRight: 7, marginLeft: 8 }}>
+                  <Button text="UTXO" preset="homeGold" icon="utxo" onClick={handleUtxoClick} />
+                  {!utxoClicked && <NewBadge top={-5} right={-5} />}
+                </div>
+                <Button
+                  text="Buy"
+                  preset="homeGold"
+                  icon={isFractal ? 'fb' : 'bitcoin'}
+                  iconSize={
+                    isFractal
+                      ? {
+                          width: 24,
+                          height: 11
+                        }
+                      : undefined
+                  }
+                  onClick={() => setBuyBtcModalVisible(true)}
+                  disabled={chainType !== ChainType.BITCOIN_MAINNET && chainType !== ChainType.FRACTAL_BITCOIN_MAINNET}
+                />
               </div>
-              <Button
-                text="Buy"
-                preset="homeGold"
-                icon={isFractal ? 'fb' : 'bitcoin'}
-                iconSize={
-                  isFractal
-                    ? {
-                        width: 24,
-                        height: 11
-                      }
-                    : undefined
-                }
-                onClick={() => setBuyBtcModalVisible(true)}
-                disabled={chainType !== ChainType.BITCOIN_MAINNET && chainType !== ChainType.FRACTAL_BITCOIN_MAINNET}
-              />
             </Row>
           )}
         </>
