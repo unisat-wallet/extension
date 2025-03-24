@@ -469,10 +469,12 @@ export interface WalletController {
     memo: string,
     {
       gasLimit,
-      gasPrice
+      gasPrice,
+      gasAdjustment
     }: {
       gasLimit: number;
       gasPrice: string;
+      gasAdjustment?: number;
     }
   ): Promise<string>;
   createSendTokenStep2(chainId: string, signature: string): Promise<string>;

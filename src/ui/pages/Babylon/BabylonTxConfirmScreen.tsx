@@ -161,7 +161,8 @@ export default function BabylonTxConfirmScreen() {
         txInfo.memo || '',
         {
           gasLimit: txInfo.gasLimit,
-          gasPrice: txInfo.gasPrice
+          gasPrice: txInfo.gasPrice,
+          gasAdjustment: txInfo.gasAdjustment || 1.3
         }
       );
 

@@ -259,10 +259,12 @@ export class CosmosKeyring {
     memo: string,
     {
       gasLimit,
-      gasPrice
+      gasPrice,
+      gasAdjustment
     }: {
       gasLimit: number;
       gasPrice: string;
+      gasAdjustment?: number;
     }
   ) {
     const chainInfo = this.provider.cosmosChainInfoMap[this.chainId];
@@ -292,7 +294,7 @@ export class CosmosKeyring {
       amount: [
         {
           denom: chainInfo.feeCurrencies[0].coinMinimalDenom,
-          amount: Math.ceil(parseFloat(gasPrice) * gasLimit).toString()
+          amount: Math.ceil(parseFloat(gasPrice) * gasLimit * (gasAdjustment || 1.0)).toString()
         }
       ],
       gas: gasLimit // for transfer is enough

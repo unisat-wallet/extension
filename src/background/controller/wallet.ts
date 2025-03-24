@@ -2458,15 +2458,21 @@ export class WalletController extends BaseController {
     memo: string,
     {
       gasLimit,
-      gasPrice
+      gasPrice,
+      gasAdjustment
     }: {
       gasLimit: number;
       gasPrice: string;
+      gasAdjustment?: number;
     }
   ) => {
     const keyring = await this.getCosmosKeyring(chainId);
     if (!keyring) return null;
-    const result = await keyring.createSendTokenStep1(tokenBalance, recipient, memo, { gasLimit, gasPrice });
+    const result = await keyring.createSendTokenStep1(tokenBalance, recipient, memo, {
+      gasLimit,
+      gasPrice,
+      gasAdjustment
+    });
     return result;
   };
 

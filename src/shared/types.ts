@@ -593,4 +593,5 @@ export interface BabylonTxInfo {
   txFee: CosmosBalance;
   gasLimit: number;
   gasPrice: string;
+  gasAdjustment?: number;
 }

@@ -155,7 +155,7 @@ export default function SendBabyScreen() {
       const selectedOption = feeOptions[feeSettings.selectedOption];
       const gasPrice = selectedOption.gasPrice;
 
-      const fee = parseFloat(gasPrice.toString()) * gasLimit * (feeSettings.gasAdjustment || 1.3);
+      const fee = Math.ceil(parseFloat(gasPrice.toString()) * gasLimit * (feeSettings.gasAdjustment || 1.3));
 
       const formattedFee = runesUtils.toDecimalAmount(fee.toString(), babylonChain.feeCurrencies[0].coinDecimals);
       // Always display 6 decimal places
@@ -275,7 +275,7 @@ export default function SendBabyScreen() {
       return feeSettings.currentFeeDisplay;
     }
 
-    const fee = parseFloat(currentGasPrice) * gasLimitValue * (feeSettings.gasAdjustment || 1.3);
+    const fee = Math.ceil(parseFloat(currentGasPrice) * gasLimitValue * (feeSettings.gasAdjustment || 1.3));
     const rawFee = runesUtils.toDecimalAmount(fee.toString(), babylonChain.feeCurrencies[0].coinDecimals);
     // Always display 6 decimal places
     return parseFloat(rawFee).toFixed(6);
@@ -378,7 +378,8 @@ export default function SendBabyScreen() {
       denom: babylonChain.feeCurrencies[0].coinDenom
     },
     gasLimit: gasLimitValue,
-    gasPrice: currentGasPrice
+    gasPrice: currentGasPrice,
+    gasAdjustment: feeSettings.gasAdjustment || 1.3
   });
 
   return (
