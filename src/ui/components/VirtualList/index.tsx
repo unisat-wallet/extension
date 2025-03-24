@@ -6,21 +6,7 @@ import { Pagination } from '@/ui/components/Pagination';
 import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
 import { LoadingOutlined } from '@ant-design/icons';
 
-// Generic cache structure
-interface DataCache<T> {
-  [key: string]: {
-    items: T[];
-    total: number;
-    timestamp: number;
-  };
-}
-
-// Global cache object
-const globalCache: Record<string, DataCache<any>> = {};
-
-export interface CachedListProps<T> {
-  // Unique namespace for this list type (e.g. 'inscriptions', 'tokens', etc.)
-  namespace: string;
+export interface VirtualListProps<T> {
   // Current account address
   address: string;
   // Current chain type
@@ -33,8 +19,6 @@ export interface CachedListProps<T> {
   itemsPerRow?: number;
   // Initial page size
   pageSize?: number;
-  // Cache expiration time in milliseconds
-  cacheExpiration?: number;
   // Error handler
   onError?: (error: Error) => void;
   // Empty state message
@@ -43,26 +27,16 @@ export interface CachedListProps<T> {
   containerHeight?: number;
 }
 
-// Custom event for data loaded
-const dispatchDataLoadedEvent = <T,>(namespace: string, items: T[]) => {
-  const event = new CustomEvent(`cachedList:${namespace}:dataLoaded`, {
-    detail: { items }
-  });
-  window.dispatchEvent(event);
-};
-
-export function CachedList<T>({
-  namespace,
+export function VirtualList<T>({
   address,
   chainType,
   fetchData,
   renderItem,
   itemsPerRow = 2,
   pageSize,
-  cacheExpiration = 3 * 60 * 1000, // 3 minutes default
   onError,
   emptyText = 'Empty'
-}: CachedListProps<T>) {
+}: VirtualListProps<T>) {
   const [items, setItems] = useState<T[]>([]);
   const [total, setTotal] = useState(-1);
   const isInTab = useExtensionIsInTab();
@@ -74,6 +48,7 @@ export function CachedList<T>({
   const isLoadingRef = useRef(false);
   const containerRef = useRef<HTMLDivElement>(null);
   const prevChainTypeRef = useRef<string | null>(null);
+  const chainChangedRef = useRef(false);
 
   useEffect(() => {
     const hasViewModeChanged = prevIsInTabRef.current !== isInTab;
@@ -84,14 +59,7 @@ export function CachedList<T>({
 
       if (prevPageSizeRef.current !== newPageSize) {
         prevPageSizeRef.current = newPageSize;
-
         setPagination({ currentPage: 1, pageSize: newPageSize });
-
-        if (globalCache[namespace]) {
-          Object.keys(globalCache[namespace]).forEach((key) => {
-            delete globalCache[namespace][key];
-          });
-        }
 
         if (address) {
           setIsLoading(true);
@@ -99,16 +67,8 @@ export function CachedList<T>({
 
           fetchData(address, 1, newPageSize)
             .then(({ list, total }) => {
-              const cacheKey = `${address}_${chainType}_1_${newPageSize}`;
-              globalCache[namespace][cacheKey] = {
-                items: list,
-                total,
-                timestamp: Date.now()
-              };
-
               setItems(list);
               setTotal(total);
-              dispatchDataLoadedEvent(namespace, list);
             })
             .catch((e) => {
               if (onError && e instanceof Error) {
@@ -122,62 +82,23 @@ export function CachedList<T>({
         }
       }
     }
-  }, [isInTab, address, namespace, chainType, fetchData, onError, pageSize]);
-
-  // Initialize namespace cache if not exists
-  if (!globalCache[namespace]) {
-    globalCache[namespace] = {};
-  }
-
-  // Get current cache key
-  const getCacheKey = useCallback(
-    (page: number) => {
-      return `${address}_${chainType}_${page}_${pagination.pageSize}`;
-    },
-    [address, chainType, pagination.pageSize]
-  );
-
-  // Check if cache is valid
-  const isCacheValid = useCallback(
-    (cacheEntry: { timestamp: number }) => {
-      return Date.now() - cacheEntry.timestamp < cacheExpiration;
-    },
-    [cacheExpiration]
-  );
+  }, [isInTab, address, fetchData, onError, pageSize]);
 
   const loadData = useCallback(async () => {
     if (!address || isLoadingRef.current) return;
 
-    isLoadingRef.current = true;
-    setIsLoading(true);
-
-    const cacheKey = getCacheKey(pagination.currentPage);
-    const cachedData = globalCache[namespace][cacheKey];
-
-    if (cachedData && isCacheValid(cachedData)) {
-      setItems(cachedData.items);
-      setTotal(cachedData.total);
-      setIsLoading(false);
-      isLoadingRef.current = false;
-
-      // Dispatch data loaded event
-      dispatchDataLoadedEvent(namespace, cachedData.items);
+    if (chainChangedRef.current) {
+      chainChangedRef.current = false;
       return;
     }
 
+    isLoadingRef.current = true;
+    setIsLoading(true);
+
     try {
       const { list, total } = await fetchData(address, pagination.currentPage, pagination.pageSize);
-
-      globalCache[namespace][cacheKey] = {
-        items: list,
-        total,
-        timestamp: Date.now()
-      };
-
       setItems(list);
       setTotal(total);
-
-      dispatchDataLoadedEvent(namespace, list);
     } catch (e) {
       if (onError && e instanceof Error) {
         onError(e);
@@ -186,11 +107,12 @@ export function CachedList<T>({
       setIsLoading(false);
       isLoadingRef.current = false;
     }
-  }, [address, chainType, pagination, namespace, getCacheKey, isCacheValid, fetchData, onError]);
+  }, [address, pagination, fetchData, onError]);
 
-  // Clear cache when account or chain type changes
   useEffect(() => {
-    if (prevChainTypeRef.current !== null && prevChainTypeRef.current !== chainType) {
+    if (prevChainTypeRef.current !== chainType) {
+      chainChangedRef.current = true;
+
       setPagination({ currentPage: 1, pageSize: effectivePageSize });
       setItems([]);
       setTotal(-1);
@@ -198,30 +120,35 @@ export function CachedList<T>({
         containerRef.current.scrollTop = 0;
       }
 
-      Object.keys(globalCache[namespace]).forEach((key) => {
-        delete globalCache[namespace][key];
-      });
+      if (!isLoadingRef.current && address) {
+        isLoadingRef.current = true;
+        setIsLoading(true);
 
-      fetchData(address, 1, effectivePageSize)
-        .then(({ list, total }) => {
-          setItems(list);
-          setTotal(total);
-        })
-        .catch((e) => {
-          if (onError && e instanceof Error) {
-            onError(e);
-          }
-        });
+        fetchData(address, 1, effectivePageSize)
+          .then(({ list, total }) => {
+            setItems(list);
+            setTotal(total);
+          })
+          .catch((e) => {
+            if (onError && e instanceof Error) {
+              onError(e);
+            }
+          })
+          .finally(() => {
+            setIsLoading(false);
+            isLoadingRef.current = false;
+            chainChangedRef.current = false;
+          });
+      }
     }
 
     prevChainTypeRef.current = chainType;
-  }, [chainType, address, namespace, effectivePageSize, fetchData, onError]);
+  }, [chainType, address, effectivePageSize, fetchData, onError]);
 
   useEffect(() => {
     loadData();
-  }, [pagination, address, loadData, chainType]);
+  }, [pagination, address, loadData]);
 
-  // Create grid rows
   const gridRows = useMemo(() => {
     const rows: T[][] = [];
     for (let i = 0; i < items.length; i += itemsPerRow) {

@@ -2,8 +2,8 @@ import { useCallback, useEffect, useState } from 'react';
 
 import { Inscription } from '@/shared/types';
 import { useTools } from '@/ui/components/ActionComponent';
-import { CachedList } from '@/ui/components/CachedVirtualList';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
+import { VirtualList } from '@/ui/components/VirtualList';
 import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useChainType } from '@/ui/state/settings/hooks';
@@ -74,8 +74,7 @@ export function InscriptionList() {
   const itemsPerRow = isInTab && !isMobile ? 9 : 2;
 
   return (
-    <CachedList<Inscription>
-      namespace="inscriptions"
+    <VirtualList<Inscription>
       address={currentAccount.address}
       chainType={chainType}
       fetchData={fetchInscriptions}
