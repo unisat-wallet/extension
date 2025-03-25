@@ -1,5 +1,25 @@
 # UniSat Wallet Release Notes
 
+## v1.5.9
+
+New Features
+
+- Added UTXO management tool entry on the homepage.
+
+Bug Fixes
+
+- Updated outdated phishing website list.
+
+- Fixed text overflow in purchase popup.
+
+- Fixed amount modification issue when going back in the Transfer page.
+
+- Fixed gas fee selection not applying when sending tBABY.
+
+Improvements
+
+- Optimized performance for the homepage inscription list.
+
 ## v1.5.8
 
 New Features
