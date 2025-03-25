@@ -130,7 +130,7 @@ Other Changes
 - Added display of USD prices for BTC、BRC20 and Runes
 - Real-time fee displays for various buy BTC options
 - Fix unisat.sendRunes
-- Fix unisat.multiSginPsbt
+- Fix unisat.multiSignPsbt
 
 ## v1.4.0
 
@@ -148,6 +148,7 @@ Other Changes
 
 - Support cursed inscription
 - Optimized the UTXO selection strategy of runes to reduce gas fees
+
 - Add runes logo
 - Add AlchemyPay
 - Fix Runes details
@@ -374,7 +375,7 @@ In this version, we focused on security upgrades and introduced several new feat
   - Use mempool.space data as fee options
   - Show 100 inscriptions per page
 - Fix
-  - Fix display error of pagination
+  - Fix pagination display error
   - Fix a issue that addresses holding too many UTXOs cannot construct transactions
   - Fix a issue that changing wallet/account name sometimes does not take effect
   - Fix a issue that N/A problem occurs because the input amount is not legal

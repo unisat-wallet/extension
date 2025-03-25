@@ -19,7 +19,7 @@ export const svgRegistry = {
   'inscribe-right': './images/icons/inscribe-right.svg',
 
   discord: './images/icons/discord.svg',
-  twitter: './images/icons/twitter.svg',
+  X: './images/icons/X.svg',
   github: './images/icons/github.svg',
   telegram: './images/icons/telegram.svg',
 
