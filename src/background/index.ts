@@ -111,7 +111,7 @@ browserRuntimeOnConnect((port) => {
     const sessionId = port.sender?.tab?.id;
     const session = sessionService.getOrCreateSession(sessionId);
 
-    const req = { data, session };
+    const req = { data, session, port };
     // for background push to respective page
     req.session.pushMessage = (event, data) => {
       pm.send('message', { event, data });

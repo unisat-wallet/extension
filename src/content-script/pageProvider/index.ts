@@ -72,6 +72,9 @@ const _unisatPrividerPrivate: {
 
 let cache_origin = '';
 
+// Create Symbol key for private methods
+const requestMethodKey = Symbol('requestMethod');
+
 export class UnisatProvider extends EventEmitter {
   constructor({ maxListeners = 100 } = {}) {
     super();
@@ -80,7 +83,7 @@ export class UnisatProvider extends EventEmitter {
     _unisatPrividerPrivate._pushEventHandlers = new PushEventHandlers(this, _unisatPrividerPrivate);
   }
 
-  tryDetectTab = async () => {
+  private tryDetectTab = async () => {
     const origin = window.top?.location.origin;
     if (origin && cache_origin !== origin) {
       cache_origin = origin;
@@ -91,7 +94,7 @@ export class UnisatProvider extends EventEmitter {
       const name = document.title || ($('head > meta[name="title"]') as HTMLMetaElement)?.content || origin;
       _unisatPrividerPrivate._bcm.request({
         method: 'tabCheckin',
-        params: { icon, name, origin }
+        params: { icon, name }
       });
     }
   };
@@ -107,7 +110,7 @@ export class UnisatProvider extends EventEmitter {
     });
 
     try {
-      const { network, accounts, isUnlocked }: any = await this._request({
+      const { network, accounts, isUnlocked }: any = await this[requestMethodKey]({
         method: 'getProviderState'
       });
       if (isUnlocked) {
@@ -132,10 +135,11 @@ export class UnisatProvider extends EventEmitter {
   };
 
   /**
+   * @private
    * Sending a message to the extension to receive will keep the service worker alive.
    */
   private keepAlive = () => {
-    this._request({
+    this[requestMethodKey]({
       method: 'keepAlive',
       params: {}
     }).then((v) => {
@@ -161,12 +165,9 @@ export class UnisatProvider extends EventEmitter {
 
     this.emit(event, data);
   };
-  // TODO: support multi request!
-  // request = async (data) => {
-  //   return this._request(data);
-  // };
 
-  _request = async (data) => {
+  // Implement truly private method using Symbol
+  private [requestMethodKey] = async (data) => {
     if (!data) {
       throw ethErrors.rpc.invalidRequest();
     }
@@ -188,27 +189,35 @@ export class UnisatProvider extends EventEmitter {
     });
   };
 
-  // public methods
+  // Keep _request method as a compatibility layer, but show warning
+  _request = async (data) => {
+    console.warn(
+      '[UniSat] Directly accessing _request method is deprecated and will be removed in future versions. Please use the public API instead.'
+    );
+    return this[requestMethodKey](data);
+  };
+
+  // Modify all public methods to use Symbol method
   requestAccounts = async () => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'requestAccounts'
     });
   };
 
   disconnect = async () => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'disconnect'
     });
   };
 
   getNetwork = async () => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'getNetwork'
     });
   };
 
   switchNetwork = async (network: string) => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'switchNetwork',
       params: {
         network
@@ -217,13 +226,13 @@ export class UnisatProvider extends EventEmitter {
   };
 
   getChain = async () => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'getChain'
     });
   };
 
   switchChain = async (chain: string) => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'switchChain',
       params: {
         chain
@@ -232,31 +241,31 @@ export class UnisatProvider extends EventEmitter {
   };
 
   getAccounts = async () => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'getAccounts'
     });
   };
 
   getPublicKey = async () => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'getPublicKey'
     });
   };
 
   getBalance = async () => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'getBalance'
     });
   };
 
   getBalanceV2 = async () => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'getBalanceV2'
     });
   };
 
   getInscriptions = async (cursor = 0, size = 20) => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'getInscriptions',
       params: {
         cursor,
@@ -266,7 +275,7 @@ export class UnisatProvider extends EventEmitter {
   };
 
   signMessage = async (text: string, type: string) => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'signMessage',
       params: {
         text,
@@ -276,7 +285,7 @@ export class UnisatProvider extends EventEmitter {
   };
 
   verifyMessageOfBIP322Simple = async (address: string, message: string, signature: string, network?: number) => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'verifyMessageOfBIP322Simple',
       params: {
         address,
@@ -288,7 +297,7 @@ export class UnisatProvider extends EventEmitter {
   };
 
   signData = async (data: string, type: string) => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'signData',
       params: {
         data,
@@ -302,7 +311,7 @@ export class UnisatProvider extends EventEmitter {
     satoshis: number,
     options?: { feeRate: number; memo?: string; memos?: string[] }
   ) => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'sendBitcoin',
       params: {
         sendBitcoinParams: {
@@ -318,7 +327,7 @@ export class UnisatProvider extends EventEmitter {
   };
 
   sendInscription = async (toAddress: string, inscriptionId: string, options?: { feeRate: number }) => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'sendInscription',
       params: {
         sendInscriptionParams: {
@@ -332,7 +341,7 @@ export class UnisatProvider extends EventEmitter {
   };
 
   sendRunes = async (toAddress: string, runeid: string, amount: string, options?: { feeRate: number }) => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'sendRunes',
       params: {
         sendRunesParams: {
@@ -347,7 +356,7 @@ export class UnisatProvider extends EventEmitter {
   };
 
   // signTx = async (rawtx: string) => {
-  //   return this._request({
+  //   return this[requestMethodKey]({
   //     method: 'signTx',
   //     params: {
   //       rawtx
@@ -359,7 +368,7 @@ export class UnisatProvider extends EventEmitter {
    * push transaction
    */
   pushTx = async (rawtx: string) => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'pushTx',
       params: {
         rawtx
@@ -368,7 +377,7 @@ export class UnisatProvider extends EventEmitter {
   };
 
   signPsbt = async (psbtHex: string, options?: any) => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'signPsbt',
       params: {
         psbtHex,
@@ -379,7 +388,7 @@ export class UnisatProvider extends EventEmitter {
   };
 
   signPsbts = async (psbtHexs: string[], options?: any[]) => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'multiSignPsbt',
       params: {
         psbtHexs,
@@ -389,7 +398,7 @@ export class UnisatProvider extends EventEmitter {
   };
 
   pushPsbt = async (psbtHex: string) => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'pushPsbt',
       params: {
         psbtHex
@@ -398,7 +407,7 @@ export class UnisatProvider extends EventEmitter {
   };
 
   inscribeTransfer = async (ticker: string, amount: string) => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'inscribeTransfer',
       params: {
         ticker,
@@ -408,19 +417,19 @@ export class UnisatProvider extends EventEmitter {
   };
 
   getVersion = async () => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'getVersion'
     });
   };
 
   isAtomicalsEnabled = async () => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'isAtomicalsEnabled'
     });
   };
 
   getBitcoinUtxos = async (cursor = 0, size = 20) => {
-    return this._request({
+    return this[requestMethodKey]({
       method: 'getBitcoinUtxos',
       params: {
         cursor,
@@ -432,7 +441,7 @@ export class UnisatProvider extends EventEmitter {
   // cosmos
   keplr = {
     enable: async (chainId: string) => {
-      return this._request({
+      return this[requestMethodKey]({
         method: 'cosmos_enable',
         params: {
           chainId
@@ -441,7 +450,7 @@ export class UnisatProvider extends EventEmitter {
     },
 
     experimentalSuggestChain: async (chainData: CosmosChainInfo) => {
-      return this._request({
+      return this[requestMethodKey]({
         method: 'cosmos_experimentalSuggestChain',
         params: {
           chainData
@@ -450,7 +459,7 @@ export class UnisatProvider extends EventEmitter {
     },
 
     getKey: async (chainId: string) => {
-      const _key: any = await this._request({
+      const _key: any = await this[requestMethodKey]({
         method: 'cosmos_getKey',
         params: {
           chainId
@@ -470,7 +479,7 @@ export class UnisatProvider extends EventEmitter {
     },
 
     signArbitrary: async (chainId: string, signerAddress: string, data: string | Uint8Array) => {
-      return this._request({
+      return this[requestMethodKey]({
         method: 'cosmos_signArbitrary',
         params: {
           chainId,
@@ -503,7 +512,7 @@ class CosmJSOfflineSigner {
   }
 
   async signDirect(signerAddress: string, signDoc: any) {
-    const response: any = await this.provider._request({
+    const response: any = await this.provider[requestMethodKey]({
       method: 'cosmos_signDirect',
       params: {
         signerAddress,
@@ -551,7 +560,19 @@ function defineUnwritablePropertyIfPossible(o: any, p: string, value: any) {
 
 const provider = new UnisatProvider();
 const providerProxy = new Proxy(provider, {
-  deleteProperty: () => true
+  deleteProperty: () => true,
+  get: (target, prop) => {
+    if (prop === '_events' || prop === '_eventsCount' || prop === '_maxListeners') {
+      return target[prop];
+    }
+
+    // Block access to methods starting with underscore or Symbol methods
+    if ((typeof prop === 'string' && prop.startsWith('_')) || prop === requestMethodKey) {
+      console.warn(`[UniSat] Attempted access to private method: ${String(prop)} is not allowed for security reasons`);
+      return undefined;
+    }
+    return target[prop];
+  }
 });
 
 defineUnwritablePropertyIfPossible(window, 'unisat', providerProxy);
