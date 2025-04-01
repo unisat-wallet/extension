@@ -17,7 +17,7 @@ export const DisableUnconfirmedsPopover = ({ onClose }: { onClose: () => void })
         <Column gap="zero" mt="sm">
           <Text
             size="sm"
-            text={`This message serves as a notice that if Runes (or ARC-20) assets are detected in your address, your
+            text={`This message serves as a notice that if Runes assets are detected in your address, your
           unconfirmed balances will not be spendable. You don't need to do anything.`}
           />
 

@@ -39,7 +39,7 @@ export function UnconfirmedBalanceCard() {
           <Text
             preset="sub"
             size="sm"
-            text={`To protect your assets, only confirmed balances are spendable when holding Runes (or ARC-20) assets. This is to prevent accidental asset burning.`}
+            text={`To protect your assets, only confirmed balances are spendable when holding Runes assets. This is to prevent accidental asset burning.`}
           />
         </Row>
         <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
@@ -98,9 +98,8 @@ function EnableUnconfirmedPopover({ onClose, onConfirm }: { onClose: () => void;
         <Text text="Enable Unconfirmed Balance" preset="title-bold" />
         <Column gap="zero">
           <div style={{ fontSize: fontSizes.sm, color: '#ddd', marginTop: 20 }}>
-            If Runes (or ARC20) assets are detected in the given address, the unconfirmed UTXOs are explicitly not
-            allowed to be spent until it's confirmed. Forcely spending these unconfirmed assets will incur the risks of
-            losing assets.
+            If Runes assets are detected in the given address, the unconfirmed UTXOs are explicitly not allowed to be
+            spent until it's confirmed. Forcely spending these unconfirmed assets will incur the risks of losing assets.
           </div>
         </Column>
 
