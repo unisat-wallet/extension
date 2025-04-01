@@ -564,7 +564,7 @@ export class WalletController extends BaseController {
           script = output.script;
           value = output.value;
         }
-        const isSigned = v.finalScriptSig || v.finalScriptWitness;
+        const isSigned = v.finalScriptSig || v.finalScriptWitness || v.tapKeySig || v.partialSig || v.tapScriptSig;
         if (script && !isSigned) {
           const address = scriptPkToAddress(script, networkType);
           if (account.address === address) {
@@ -576,7 +576,18 @@ export class WalletController extends BaseController {
           }
         }
       });
+
+      if (toSignInputs.length === 0) {
+        psbt.data.inputs.forEach((input, index) => {
+          // if no toSignInputs, sign all inputs
+          toSignInputs.push({
+            index: index,
+            publicKey: account.pubkey
+          });
+        });
+      }
     }
+
     return toSignInputs;
   };
 
@@ -611,10 +622,15 @@ export class WalletController extends BaseController {
       };
     }
 
-    const isToSignInputsEmpty = toSignInputs.length == 0;
     psbt.data.inputs.forEach((input, index) => {
-      const isSigned = input.finalScriptSig || input.finalScriptWitness;
+      const isSigned =
+        input.finalScriptSig || input.finalScriptWitness || input.tapKeySig || input.partialSig || input.tapScriptSig;
       if (isSigned) {
+        return;
+      }
+
+      const isToBeSigned = toSignInputs.some((v) => v.index === index);
+      if (!isToBeSigned) {
         return;
       }
 
@@ -626,8 +642,7 @@ export class WalletController extends BaseController {
         // skip
       }
 
-      const isToBeSigned = toSignInputs.some((v) => v.index === index);
-      if (isP2TR && isToBeSigned) {
+      if (isP2TR) {
         // fix p2tr input data
         let isKeyPathP2TR = false;
         try {
@@ -648,14 +663,6 @@ export class WalletController extends BaseController {
         } catch (e) {
           // skip
         }
-      }
-
-      // if no toSignInputs, sign all inputs
-      if (isToSignInputsEmpty) {
-        toSignInputs.push({
-          index: index,
-          publicKey: account.pubkey
-        });
       }
 
       if (isKeystone) {

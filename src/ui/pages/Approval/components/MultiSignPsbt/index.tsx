@@ -213,7 +213,7 @@ export default function MultiSignPsbt({
       <KeystoneSignScreen
         type={KeystoneSignEnum.PSBT}
         data={txInfo.psbtHexs[signIndex]}
-        isFinalize={false}
+        isFinalize={options?.[signIndex]?.autoFinalized !== false}
         signatureText={`Get Signature (${signIndex + 1}/${count})`}
         id={signIndex}
         onSuccess={(data) => {

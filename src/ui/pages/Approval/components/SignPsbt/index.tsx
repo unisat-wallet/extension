@@ -821,7 +821,7 @@ export default function SignPsbt({
       <KeystoneSignScreen
         type={KeystoneSignEnum.PSBT}
         data={txInfo.psbtHex}
-        isFinalize={options?.autoFinalized || true}
+        isFinalize={options?.autoFinalized !== false}
         onSuccess={(data) => {
           originalHandleConfirm(data as any);
         }}
