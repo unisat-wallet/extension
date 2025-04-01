@@ -6,14 +6,14 @@ import { bbnDevnet } from '@/shared/constant/cosmosChain';
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { useBabylonConfig } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
-import { useLocationState, useWallet } from '@/ui/utils';
+import { useWallet } from '@/ui/utils';
 
 import { BottomModal } from '../BottomModal';
 import { Button } from '../Button';
 import { Column } from '../Column';
 import { Row } from '../Row';
 import { Text } from '../Text';
-import { FeeOptionsPopoverProps, LocationState, MODAL_BG } from './interface';
+import { FeeOptionsPopoverProps, MODAL_BG } from './interface';
 
 const formatFeeDisplay = (value: string): string => {
   return parseFloat(value).toFixed(6);
@@ -40,7 +40,6 @@ export function FeeOptionsPopover({
 
   const babylonConfig = useBabylonConfig();
   const wallet = useWallet();
-  const { txInfo: locationTxInfo } = useLocationState<LocationState>();
 
   useEffect(() => {
     if (txInfo?.txFee?.amount && !settings.currentFeeDisplay) {
@@ -56,12 +55,12 @@ export function FeeOptionsPopover({
 
   const getValidTxInfo = useMemo(
     () => ({
-      toAddress: txInfo?.toAddress || locationTxInfo?.toAddress || '',
-      unitBalance: txInfo?.unitBalance || locationTxInfo?.unitBalance,
-      memo: txInfo?.memo || locationTxInfo?.memo || '',
-      txFee: txInfo?.txFee || locationTxInfo?.txFee
+      toAddress: txInfo?.toAddress || '',
+      unitBalance: txInfo?.unitBalance,
+      memo: txInfo?.memo || '',
+      txFee: txInfo?.txFee
     }),
-    [txInfo, locationTxInfo]
+    [txInfo]
   );
 
   const calculateOptionFee = useCallback(
@@ -87,7 +86,7 @@ export function FeeOptionsPopover({
 
   const fetchSimulatedGas = useCallback(async () => {
     if (!babylonConfig) return;
-    if (!txInfo && !locationTxInfo) return;
+    if (!txInfo) return;
 
     const { toAddress, unitBalance, memo } = getValidTxInfo;
     if (!unitBalance) return;
@@ -97,8 +96,8 @@ export function FeeOptionsPopover({
       let targetAddress = toAddress;
       if (!targetAddress || targetAddress.trim() === '') {
         try {
-          const summary = await wallet.getBabylonAddressSummary(babylonConfig.chainId, false);
-          targetAddress = summary.address;
+          const address = await wallet.getBabylonAddress(babylonConfig.chainId);
+          targetAddress = address;
         } catch (err) {
           console.error('Error getting user address for simulation:', err);
         }
@@ -128,7 +127,6 @@ export function FeeOptionsPopover({
     babylonConfig,
     wallet,
     txInfo,
-    locationTxInfo,
     getValidTxInfo,
     isAutoGasLimit,
     onSettingsChange,

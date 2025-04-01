@@ -2,6 +2,7 @@ import randomstring from 'randomstring';
 
 import { createPersistStore } from '@/background/utils';
 import { CHAINS_MAP, CHANNEL, VERSION } from '@/shared/constant';
+import { BabylonConfigV2 } from '@/shared/constant/babylon';
 import {
   AddressRunesTokenSummary,
   AddressSummary,
@@ -718,6 +719,10 @@ export class OpenApiService {
 
   async decodeContracts(contracts: any[], account: any): Promise<any> {
     return this.httpPost('/v5/tx/decode-contracts', { contracts, account });
+  }
+
+  async getBabylonConfig(): Promise<BabylonConfigV2> {
+    return this.httpGet(`/v5/babylon/config`, {});
   }
 }
 

@@ -5,6 +5,7 @@ import { ContactBookItem, ContactBookStore } from '@/background/service/contactB
 import { ToSignInput } from '@/background/service/keyring';
 import { ConnectedSite } from '@/background/service/permission';
 import { AddressFlagType, CHAINS_ENUM, ChainType } from '@/shared/constant';
+import { BabylonConfigV2 } from '@/shared/constant/babylon';
 import {
   Account,
   AddressCAT20TokenSummary,
@@ -17,7 +18,6 @@ import {
   AppSummary,
   Arc20Balance,
   BabylonAddressSummary,
-  BabylonStakingStatusV2,
   BitcoinBalance,
   BitcoinBalanceV2,
   BtcChannelItem,
@@ -459,9 +459,7 @@ export interface WalletController {
 
   getBabylonAddress(address: string): Promise<string>;
 
-  getBabylonAddressSummary(chainId: string, withStakingInfo?: boolean): Promise<BabylonAddressSummary>;
-
-  getBabylonStakingStatusV2(): Promise<BabylonStakingStatusV2>;
+  getBabylonAddressSummary(chainId: string, babylonConfig?: BabylonConfigV2): Promise<BabylonAddressSummary>;
 
   createSendTokenStep1(
     chainId: string,
@@ -486,6 +484,8 @@ export interface WalletController {
     amount: { denom: string; amount: string },
     memo: string
   ): Promise<number>;
+
+  getBabylonConfig(): Promise<BabylonConfigV2>;
 
   getContactByAddress(address: string): Promise<ContactBookItem | undefined>;
   getContactByAddressAndChain(address: string, chain: CHAINS_ENUM): Promise<ContactBookItem | undefined>;

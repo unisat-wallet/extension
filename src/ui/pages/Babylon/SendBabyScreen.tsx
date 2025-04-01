@@ -223,7 +223,7 @@ export default function SendBabyScreen() {
 
     const loadData = async () => {
       try {
-        const summary = await wallet.getBabylonAddressSummary(babylonChainId, false);
+        const summary = await wallet.getBabylonAddressSummary(babylonChainId);
         setBabylonAddressSummary(summary);
 
         if (!isSimulating) {
@@ -458,7 +458,7 @@ export default function SendBabyScreen() {
                       onClick={async () => {
                         setSummaryLoading(true);
                         try {
-                          const summary = await wallet.getBabylonAddressSummary(babylonChainId, false);
+                          const summary = await wallet.getBabylonAddressSummary(babylonChainId);
                           setBabylonAddressSummary(summary);
                           simulateTransaction();
                         } catch (e) {

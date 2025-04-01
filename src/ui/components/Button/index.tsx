@@ -168,13 +168,12 @@ const $viewPresets = {
   }) as CSSProperties,
 
   minimal2: Object.assign({}, $baseViewStyle, {
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: 'rgba(255, 124, 42, 1)',
     minWidth: 60,
     height: 20,
     flexDirection: 'column',
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderWidth: 0,
     padding: 2,
     marginRight: 5,
     marginLeft: 5,
@@ -213,7 +212,7 @@ const $hoverViewPresets: Record<Presets, CSSProperties> = {
     backgroundColor: 'rgba(255,124,42,0.1)'
   },
   minimal2: {
-    backgroundColor: 'rgba(255,255,255,0.08)'
+    backgroundColor: 'rgba(255, 124, 42, 1)'
   }
 };
 

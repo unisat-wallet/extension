@@ -29,7 +29,7 @@ import {
   KEYRING_TYPES,
   NETWORK_TYPES
 } from '@/shared/constant';
-import { BABYLON_CONFIG_MAP } from '@/shared/constant/babylon';
+import { BabylonConfigV2 } from '@/shared/constant/babylon';
 import { COSMOS_CHAINS_MAP, CosmosChainInfo } from '@/shared/constant/cosmosChain';
 import eventBus from '@/shared/eventBus';
 import { runesUtils } from '@/shared/lib/runes-utils';
@@ -61,7 +61,6 @@ import { toPsbtNetwork } from '@unisat/wallet-sdk/lib/network';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 import { toXOnly } from '@unisat/wallet-sdk/lib/utils';
 
-import { BabylonApiService } from '../service/babylon/api/babylonApiService';
 import { getDelegationsV2 } from '../service/babylon/api/getDelegationsV2';
 import { DelegationV2StakingState } from '../service/babylon/types/delegationsV2';
 import { ContactBookItem } from '../service/contactBook';
@@ -2335,7 +2334,7 @@ export class WalletController extends BaseController {
     return address;
   };
 
-  getBabylonAddressSummary = async (babylonChainId: string, withStakingInfo = true) => {
+  getBabylonAddressSummary = async (babylonChainId: string, babylonConfig: BabylonConfigV2) => {
     const chainType = this.getChainType();
     const chain = CHAINS_MAP[chainType];
 
@@ -2349,7 +2348,7 @@ export class WalletController extends BaseController {
     let rewardBalance = 0;
     try {
       balance = await cosmosKeyring.getBalance();
-      if (withStakingInfo) {
+      if (babylonConfig) {
         rewardBalance = await cosmosKeyring.getBabylonStakingRewards();
       }
     } catch (e) {
@@ -2357,8 +2356,7 @@ export class WalletController extends BaseController {
     }
 
     let stakedBalance = 0;
-    if (withStakingInfo) {
-      const babylonConfig = BABYLON_CONFIG_MAP[chainType];
+    if (babylonConfig) {
       try {
         const currentAccount = await this.getCurrentAccount();
         if (!currentAccount) return null;
@@ -2380,16 +2378,6 @@ export class WalletController extends BaseController {
     }
 
     return { address, balance, rewardBalance, stakedBalance };
-  };
-
-  getBabylonStakingStatusV2 = async () => {
-    const chainType = this.getChainType();
-    const babylonConfig = BABYLON_CONFIG_MAP[chainType];
-    if (!babylonConfig) {
-      return;
-    }
-    const apiService = new BabylonApiService(babylonConfig.phase1.stakingApi, babylonConfig.phase2.stakingApi);
-    return apiService.getBabylonStakingStatusV2();
   };
 
   genSignCosmosUr = async (cosmosSignRequest: {
@@ -2500,6 +2488,10 @@ export class WalletController extends BaseController {
     if (!keyring) return null;
     const result = await keyring.simulateBabylonGas(recipient, amount, memo);
     return result;
+  };
+
+  getBabylonConfig = async () => {
+    return openapiService.getBabylonConfig();
   };
 }
 
