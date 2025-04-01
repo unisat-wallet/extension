@@ -715,6 +715,10 @@ export class OpenApiService {
       psbt: signedPsbt
     });
   }
+
+  async decodeContracts(contracts: any[], account: any): Promise<any> {
+    return this.httpPost('/v5/tx/decode-contracts', { contracts, account });
+  }
 }
 
 export default new OpenApiService();

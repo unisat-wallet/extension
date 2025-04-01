@@ -243,6 +243,7 @@ export type UserToSignInput = AddressUserToSignInput | PublicKeyUserToSignInput;
 export interface SignPsbtOptions {
   autoFinalized: boolean;
   toSignInputs?: UserToSignInput[];
+  contracts?: any[];
 }
 
 export interface ToSignInput {
@@ -369,6 +370,7 @@ export interface DecodedPsbt {
     atomicals: Atomical[];
     sighashType: number;
     runes: RuneBalance[];
+    contract?: ContractResult;
   }[];
   outputInfos: {
     address: string;
@@ -376,6 +378,7 @@ export interface DecodedPsbt {
     inscriptions: Inscription[];
     atomicals: Atomical[];
     runes: RuneBalance[];
+    contract?: ContractResult;
   }[];
   inscriptions: { [key: string]: Inscription };
   feeRate: number;
@@ -595,4 +598,13 @@ export interface BabylonTxInfo {
   gasLimit: number;
   gasPrice: string;
   gasAdjustment?: number;
+}
+
+export interface ContractResult {
+  id: string;
+  name: string;
+  description: string;
+  address: string;
+  script: string;
+  isOwned: boolean;
 }

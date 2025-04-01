@@ -255,6 +255,8 @@ export interface WalletController {
 
   decodePsbt(psbtHex: string, website: string): Promise<DecodedPsbt>;
 
+  decodeContracts(contracts: any[], account: any): Promise<any[]>;
+
   getAllInscriptionList(
     address: string,
     currentPage: number,

@@ -1517,6 +1517,10 @@ export class WalletController extends BaseController {
     return openapiService.decodePsbt(psbtHex, website);
   };
 
+  decodeContracts = (contracts: any[], account) => {
+    return openapiService.decodeContracts(contracts, account);
+  };
+
   getBRC20List = async (address: string, currentPage: number, pageSize: number) => {
     const cursor = (currentPage - 1) * pageSize;
     const size = pageSize;

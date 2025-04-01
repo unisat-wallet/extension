@@ -9,18 +9,20 @@ export function Section({
   value,
   title,
   link,
-  showCopyIcon
+  showCopyIcon,
+  maxLength = 20
 }: {
   value: string | number;
   title: string;
   link?: string;
   showCopyIcon?: boolean;
+  maxLength?: number;
 }) {
   const tools = useTools();
 
   let displayText = value.toString();
-  if (value && typeof value === 'string' && value.length > 20) {
-    displayText = shortAddress(value, 10);
+  if (value && typeof value === 'string' && value.length > maxLength) {
+    displayText = shortAddress(value, maxLength / 2);
   }
 
   return (
