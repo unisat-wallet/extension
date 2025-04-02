@@ -148,6 +148,7 @@ class KeyringService extends EventEmitter {
   addressTypes: AddressType[];
   encryptor: typeof encryptor = encryptor;
   password: string | null = null;
+  private isUnlocking = false;
 
   constructor() {
     super();
@@ -395,36 +396,56 @@ class KeyringService extends EventEmitter {
    * @returns {Promise<Object>} A Promise that resolves to the state.
    */
   submitPassword = async (password: string): Promise<MemStoreState> => {
-    await this.verifyPassword(password);
-    this.password = password;
-    try {
-      this.keyrings = await this.unlockKeyrings(password);
-    } catch {
-      //
-    } finally {
-      this.setUnlocked();
+    if (this.isUnlocking) {
+      throw new Error('Unlock already in progress');
     }
 
-    return this.fullUpdate();
+    this.isUnlocking = true;
+
+    try {
+      await this.verifyPassword(password);
+
+      this.password = password;
+
+      this.keyrings = await this.unlockKeyrings(password);
+
+      this.setUnlocked();
+      return this.fullUpdate();
+    } catch (e) {
+      throw e;
+    } finally {
+      this.isUnlocking = false;
+    }
   };
 
   changePassword = async (oldPassword: string, newPassword: string) => {
-    await this.verifyPassword(oldPassword);
-    await this.unlockKeyrings(oldPassword);
-    this.password = newPassword;
+    try {
+      if (this.isUnlocking) {
+        throw new Error('changePassword already in progress');
+      }
+      this.isUnlocking = true;
 
-    const encryptBooted = await this.encryptor.encrypt(newPassword, 'true');
-    this.store.updateState({ booted: encryptBooted });
+      await this.verifyPassword(oldPassword);
+      await this.unlockKeyrings(oldPassword);
+      this.password = newPassword;
 
-    if (this.memStore.getState().preMnemonics) {
-      const mnemonic = await this.encryptor.decrypt(oldPassword, this.memStore.getState().preMnemonics);
-      const preMnemonics = await this.encryptor.encrypt(newPassword, mnemonic);
-      this.memStore.updateState({ preMnemonics });
+      const encryptBooted = await this.encryptor.encrypt(newPassword, 'true');
+      this.store.updateState({ booted: encryptBooted });
+
+      if (this.memStore.getState().preMnemonics) {
+        const mnemonic = await this.encryptor.decrypt(oldPassword, this.memStore.getState().preMnemonics);
+        const preMnemonics = await this.encryptor.encrypt(newPassword, mnemonic);
+        this.memStore.updateState({ preMnemonics });
+      }
+
+      await this.persistAllKeyrings();
+      await this._updateMemStoreKeyrings();
+      await this.fullUpdate();
+    } catch (e) {
+      throw new Error('Change password failed');
+    } finally {
+      this.isUnlocking = false;
     }
-
-    await this.persistAllKeyrings();
-    await this._updateMemStoreKeyrings();
-    await this.fullUpdate();
   };
 
   /**

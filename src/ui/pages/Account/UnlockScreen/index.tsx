@@ -20,10 +20,17 @@ export default function UnlockScreen() {
   const isInNotification = UIType.isNotification;
   const unlock = useUnlockCallback();
   const tools = useTools();
+
+  const [loading, setLoading] = useState(false);
+
   const btnClick = async () => {
-    // run(password);
     try {
+      if (loading) {
+        return;
+      }
+      setLoading(true);
       await unlock(password);
+
       if (!isInNotification) {
         const hasVault = await wallet.hasVault();
         if (!hasVault) {
@@ -37,6 +44,8 @@ export default function UnlockScreen() {
     } catch (e) {
       console.log(e);
       tools.toastError('PASSWORD ERROR');
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -47,7 +56,7 @@ export default function UnlockScreen() {
   };
 
   useEffect(() => {
-    if (password) {
+    if (password && loading === false) {
       setDisabled(false);
     } else {
       setDisabled(true);

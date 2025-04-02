@@ -20,6 +20,8 @@ export default function ChangePasswordScreen() {
   const wallet = useWallet();
   const tools = useTools();
 
+  const [loading, setLoading] = useState(false);
+
   const strongText = useMemo(() => {
     if (!newPassword) {
       return;
@@ -54,7 +56,12 @@ export default function ChangePasswordScreen() {
   }, [newPassword, confirmPassword]);
 
   useEffect(() => {
-    if (originPassword.length > 0 && newPassword.length >= MIN_PASSWORD_LENGTH && newPassword === confirmPassword) {
+    if (
+      originPassword.length > 0 &&
+      newPassword.length >= MIN_PASSWORD_LENGTH &&
+      newPassword === confirmPassword &&
+      loading === false
+    ) {
       setDisabled(false);
     } else {
       setDisabled(true);
@@ -63,11 +70,17 @@ export default function ChangePasswordScreen() {
 
   const verify = async () => {
     try {
+      if (loading) {
+        return;
+      }
+      setLoading(true);
       await wallet.changePassword(originPassword, newPassword);
       tools.toastSuccess('Success');
       navigate('MainScreen');
     } catch (err) {
       tools.toastError((err as any).message);
+    } finally {
+      setLoading(false);
     }
   };
   return (
