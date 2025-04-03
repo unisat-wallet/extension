@@ -22,6 +22,7 @@ import {
 } from '@/ui/state/transactions/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { showLongNumber, useWallet } from '@/ui/utils';
+import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
 import { SignPsbt } from '../Approval/components';
@@ -439,14 +440,35 @@ function Step3({
           options: { autoFinalized: false }
         }
       }}
-      handleConfirm={(res) => {
-        pushOrdinalsTx(res ? res.rawtx : contextData.rawTxInfo.rawtx).then(({ success, txid, error }) => {
+      handleConfirm={async (res) => {
+        try {
+          let rawtx = '';
+
+          if (res && res.psbtHex) {
+            const psbt = bitcoin.Psbt.fromHex(res.psbtHex);
+            try {
+              psbt.finalizeAllInputs();
+            } catch (e) {
+              // ignore
+            }
+            rawtx = psbt.extractTransaction().toHex();
+          } else if (res && res.rawtx) {
+            rawtx = res.rawtx;
+          } else if (contextData.rawTxInfo.rawtx) {
+            rawtx = contextData.rawTxInfo.rawtx;
+          } else {
+            throw new Error('Invalid transaction data');
+          }
+
+          const { success, txid, error } = await pushOrdinalsTx(rawtx);
           if (success) {
             navigate('TxSuccessScreen', { txid });
           } else {
-            navigate('TxFailScreen', { error });
+            throw new Error(error);
           }
-        });
+        } catch (e) {
+          navigate('TxFailScreen', { error: (e as any).message });
+        }
       }}
     />
   );
