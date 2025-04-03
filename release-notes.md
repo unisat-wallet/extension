@@ -1,5 +1,21 @@
 # UniSat Wallet Release Notes
 
+## v1.6.0
+
+Changes
+
+- Remove atomicals token support.
+
+Bug Fixes
+
+- Fixed Keystone signing bugs.
+
+- Fixed potential vulnerabilities.
+
+Improvements
+
+- Improve wallet loading speed.
+
 ## v1.5.9
 
 New Features
