@@ -38,7 +38,7 @@ async function restoreAppState() {
 
   // Initialize phishing service early to ensure protection is active
   try {
-    await phishingService.forceUpdate();
+    phishingService.forceUpdate();
   } catch (error) {
     console.error('[Background] Failed to initialize phishing service:', error);
     // Continue initialization even if phishing service fails
