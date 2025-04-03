@@ -435,6 +435,7 @@ export interface VersionDetail {
   version: string;
   title: string;
   changelogs: string[];
+  notice: string;
 }
 
 export interface RuneBalance {

@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { AddressFlagType } from '@/shared/constant';
+import { VersionDetail } from '@/shared/types';
 import { checkAddressFlag } from '@/shared/utils';
 import { Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
@@ -12,6 +13,7 @@ import { NoticePopover } from '@/ui/components/NoticePopover';
 import { SwitchNetworkBar } from '@/ui/components/SwitchNetworkBar';
 import { Tabs } from '@/ui/components/Tabs';
 import { UpgradePopover } from '@/ui/components/UpgradePopover';
+import { VersionNotice } from '@/ui/components/VersionNotice';
 import { getCurrentTab } from '@/ui/features/browser/tabs';
 import { useAccountBalance, useAddressSummary, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { accountActions } from '@/ui/state/accounts/reducer';
@@ -37,6 +39,8 @@ import { RunesList } from './RunesList';
 import { BalanceTooltip } from './components/BalanceTooltip';
 import { WalletActions } from './components/WalletActions';
 
+const STORAGE_VERSION_KEY = 'version_detail';
+
 export default function WalletTabScreen() {
   const navigate = useNavigate();
 
@@ -61,6 +65,8 @@ export default function WalletTabScreen() {
   const versionInfo = useVersionInfo();
 
   const [showSafeNotice, setShowSafeNotice] = useState(false);
+  const [showVersionNotice, setShowVersionNotice] = useState('');
+
   const [showDisableUnconfirmedUtxoNotice, setShowDisableUnconfirmedUtxoNotice] = useState(false);
 
   const addressSummary = useAddressSummary();
@@ -90,6 +96,35 @@ export default function WalletTabScreen() {
       const site = await wallet.getCurrentConnectedSite(activeTab.id);
       if (site) {
         setConnected(site.isConnected);
+      }
+    };
+    run();
+  }, []);
+
+  useEffect(() => {
+    const run = async () => {
+      try {
+        let needFetchVersionDetail = false;
+        const item = localStorage.getItem(STORAGE_VERSION_KEY);
+        let versionDetail: VersionDetail | undefined = undefined;
+        if (!item) {
+          needFetchVersionDetail = true;
+        } else {
+          versionDetail = JSON.parse(item || '{}');
+          if (versionDetail && versionDetail.version !== versionInfo.currentVesion) {
+            needFetchVersionDetail = true;
+          }
+        }
+        if (needFetchVersionDetail) {
+          versionDetail = await wallet.getVersionDetail(versionInfo.currentVesion);
+          localStorage.setItem(STORAGE_VERSION_KEY, JSON.stringify(versionDetail));
+
+          if (versionDetail && versionDetail.notice) {
+            setShowVersionNotice(versionDetail.notice);
+          }
+        }
+      } catch (e) {
+        console.log(e);
       }
     };
     run();
@@ -236,6 +271,15 @@ export default function WalletTabScreen() {
           <SwitchChainModal
             onClose={() => {
               setSwitchChainModalVisible(false);
+            }}
+          />
+        )}
+
+        {showVersionNotice && (
+          <VersionNotice
+            notice={showVersionNotice}
+            onClose={() => {
+              setShowVersionNotice('');
             }}
           />
         )}
