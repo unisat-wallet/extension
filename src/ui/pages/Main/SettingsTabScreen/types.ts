@@ -10,6 +10,7 @@ export enum SettingAction {
   LOCK_WALLET = 'lock-wallet',
   MANAGE_WALLET = 'manage-wallet',
   ABOUT_US = 'about-us',
+  FEEDBACK = 'feedback',
   RATE_US = 'rate-us',
   SECTION_DIVIDER = 'section-divider'
 }

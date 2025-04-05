@@ -63,6 +63,16 @@ export const SettingListConst: SettingItemType[] = [
     route: '',
     right: false
   },
+
+  {
+    label: 'Feedback',
+    value: 'Let us know what you think',
+    desc: '',
+    action: SettingAction.FEEDBACK,
+    route: '',
+    right: true,
+    icon: 'feedback'
+  },
   {
     label: 'Rate us',
     value: "Like our wallet? We'd love your rating!",

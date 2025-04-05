@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ADDRESS_TYPES, KEYRING_TYPE, REVIEW_URL } from '@/shared/constant';
+import { ADDRESS_TYPES, FEEDBACK_URL, KEYRING_TYPE, REVIEW_URL } from '@/shared/constant';
 import { Button, Card, Column, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { Icon } from '@/ui/components/Icon';
@@ -117,6 +117,10 @@ export function SettingList() {
       navigate('/settings/address-type');
       return;
     }
+    if (item.action === SettingAction.FEEDBACK) {
+      window.open(FEEDBACK_URL);
+      return;
+    }
     if (item.action === SettingAction.RATE_US) {
       window.open(REVIEW_URL);
       return;
@@ -203,7 +207,7 @@ export function SettingList() {
     (item) => item.action === SettingAction.ADDRESS_TYPE || item.action === SettingAction.ADVANCED
   );
   const feedbackGroup = toRenderSettings.filter((item) =>
-    [SettingAction.RATE_US, SettingAction.ABOUT_US].includes(item.action)
+    [SettingAction.FEEDBACK, SettingAction.RATE_US, SettingAction.ABOUT_US].includes(item.action)
   );
   const buttonSettings = toRenderSettings.filter((item) =>
     [SettingAction.EXPAND_VIEW, SettingAction.LOCK_WALLET].includes(item.action)

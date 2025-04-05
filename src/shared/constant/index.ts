@@ -434,6 +434,7 @@ export const DISCORD_URL = 'https://discord.com/invite/EMskB2sMz8';
 export const TWITTER_URL = 'https://twitter.com/unisat_wallet';
 export const TELEGRAM_URL = 'https://t.me/unisat_wallet';
 export const WEBSITE_URL = 'https://unisat.io';
+export const FEEDBACK_URL = 'https://unisat.io/feedback';
 export const EMAIL_URL = 'contact@unisat.io';
 export const DOCS_URL = ' https://docs.unisat.io/dev/unisat-developer-center ';
 export const MEDIUM_URL = 'https://unisat-wallet.medium.com/';
