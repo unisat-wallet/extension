@@ -1,5 +1,17 @@
 # UniSat Wallet Release Notes
 
+## v1.6.1
+
+New Features
+
+- Added address book
+- Added feedback entrance
+- Support Babylon mainnet
+
+Improvements
+
+- Restructure Settings Tab
+
 ## v1.6.0
 
 Changes
