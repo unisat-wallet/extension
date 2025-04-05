@@ -185,13 +185,13 @@ export default function SendRunesScreen() {
         </Row>
 
         <Column mt="lg">
-          <Text text="Recipient" preset="regular" color="textDim" />
           <Input
             preset="address"
             addressInputData={toInfo}
             onAddressInputChange={(val) => {
               setToInfo(val);
             }}
+            recipientLabel={<Text text="Recipient" preset="regular" color="textDim" />}
             autoFocus={true}
           />
         </Column>

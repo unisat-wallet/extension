@@ -1,7 +1,7 @@
 import { Tooltip } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 
-import { ChainType, COIN_DUST } from '@/shared/constant';
+import { COIN_DUST } from '@/shared/constant';
 import { RawTxInfo } from '@/shared/types';
 import { Button, Card, Column, Content, Header, Icon, Image, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -117,16 +117,12 @@ export default function TxCreateScreen() {
 
   const unavailableTipText = useMemo(() => {
     let tipText = '';
-    if (chain.enum === ChainType.BITCOIN_MAINNET) {
-      tipText += `Includes Inscriptions, ARC20, Runes, and unconfirmed UTXO assets.`;
-    } else {
-      tipText += `Includes Inscriptions, Runes, and unconfirmed UTXO assets.`;
-    }
+    tipText += 'Includes Inscriptions, Runes, and unconfirmed UTXO assets.';
 
     if (walletConfig.disableUtxoTools) {
-      tipText += ` Future versions will support spending these assets.`;
+      tipText += ' Future versions will support spending these assets.';
     } else {
-      tipText += ` You can unlock these assets by using the UTXO tools.`;
+      tipText += ' You can unlock these assets by using the UTXO tools.';
     }
     return tipText;
   }, [chain.enum]);
@@ -145,7 +141,6 @@ export default function TxCreateScreen() {
         </Row>
 
         <Column mt="lg">
-          <Text text="Recipient" preset="regular" />
           <Input
             preset="address"
             addressInputData={toInfo}
@@ -153,6 +148,7 @@ export default function TxCreateScreen() {
               setUiState({ toInfo: val });
             }}
             autoFocus={true}
+            networkType={chain.enum}
           />
         </Column>
 

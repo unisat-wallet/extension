@@ -5,7 +5,7 @@ import { SwitchNetworkBar } from '@/ui/components/SwitchNetworkBar';
 import { useVersionInfo } from '@/ui/state/settings/hooks';
 import { fontSizes } from '@/ui/theme/font';
 
-import { SettingList } from './SettingList';
+import { SettingsList } from './SettingsList';
 
 export default function SettingsTabScreen() {
   const versionInfo = useVersionInfo();
@@ -23,7 +23,7 @@ export default function SettingsTabScreen() {
       />
       <Content>
         <Column>
-          <SettingList />
+          <SettingsList />
 
           <Row justifyCenter gap="xl" mt="lg">
             <Icon
@@ -54,17 +54,6 @@ export default function SettingsTabScreen() {
             />
           </Row>
           <Text text={`Version: ${versionInfo.currentVesion}`} preset="sub" textCenter />
-          {versionInfo.latestVersion && (
-            <Text
-              text={`Latest Version: ${versionInfo.latestVersion}`}
-              preset="link"
-              color="red"
-              textCenter
-              onClick={() => {
-                window.open('https://unisat.io/extension/update');
-              }}
-            />
-          )}
         </Column>
       </Content>
       <Footer px="zero" py="zero">

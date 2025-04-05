@@ -1,6 +1,6 @@
 import { IconTypes } from '@/ui/components/Icon';
 
-export enum SettingAction {
+export enum SettingsAction {
   ADDRESS_TYPE = 'addressType',
   ADVANCED = 'advanced',
   CONTACTS = 'contacts',
@@ -15,12 +15,12 @@ export enum SettingAction {
   SECTION_DIVIDER = 'section-divider'
 }
 
-export interface SettingItemType {
+export interface SettingsItemType {
   label?: string;
   value?: string;
   desc?: string;
   danger?: boolean;
-  action: SettingAction;
+  action: SettingsAction;
   route: string;
   right: boolean;
   icon?: IconTypes;

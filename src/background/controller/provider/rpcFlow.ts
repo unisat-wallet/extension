@@ -3,7 +3,7 @@ import 'reflect-metadata';
 
 import { keyringService, notificationService, permissionService } from '@/background/service';
 import { PromiseFlow, underline2Camelcase } from '@/background/utils';
-import { CHAINS_ENUM, EVENTS } from '@/shared/constant';
+import { ChainType, EVENTS } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 
 import providerController from './controller';
@@ -71,7 +71,7 @@ const flowContext = flow
           },
           { height: windowHeight }
         );
-        permissionService.addConnectedSite(origin, name, icon, CHAINS_ENUM.BTC);
+        permissionService.addConnectedSite(origin, name, icon, ChainType.BITCOIN_MAINNET);
       }
     }
 

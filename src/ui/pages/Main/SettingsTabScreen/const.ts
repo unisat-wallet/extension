@@ -1,11 +1,11 @@
-import { SettingAction, SettingItemType } from './types';
+import { SettingsAction, SettingsItemType } from './types';
 
-export const SettingListConst: SettingItemType[] = [
+export const SettingsListConst: SettingsItemType[] = [
   {
     label: 'Connected Sites',
     value: '',
     desc: '',
-    action: SettingAction.CONNECTED_SITES,
+    action: SettingsAction.CONNECTED_SITES,
     route: '/connected-sites',
     right: true,
     icon: 'connectedSites'
@@ -14,7 +14,7 @@ export const SettingListConst: SettingItemType[] = [
     label: '',
     value: '',
     desc: '',
-    action: SettingAction.SECTION_DIVIDER,
+    action: SettingsAction.SECTION_DIVIDER,
     route: '',
     right: false
   },
@@ -23,7 +23,7 @@ export const SettingListConst: SettingItemType[] = [
     label: 'Address Book',
     value: 'Add frequently used addresses',
     desc: '',
-    action: SettingAction.CONTACTS,
+    action: SettingsAction.CONTACTS,
     route: '/settings/contacts',
     right: true,
     icon: 'addressBook'
@@ -32,7 +32,7 @@ export const SettingListConst: SettingItemType[] = [
     label: '',
     value: '',
     desc: '',
-    action: SettingAction.SECTION_DIVIDER,
+    action: SettingsAction.SECTION_DIVIDER,
     route: '',
     right: false
   },
@@ -41,7 +41,7 @@ export const SettingListConst: SettingItemType[] = [
     label: 'Address Type',
     value: 'Native Segwit (P2WPKH) (m/84/0/0/0/0)',
     desc: '',
-    action: SettingAction.ADDRESS_TYPE,
+    action: SettingsAction.ADDRESS_TYPE,
     route: '/settings/address-type',
     right: true,
     icon: 'addressType'
@@ -50,7 +50,7 @@ export const SettingListConst: SettingItemType[] = [
     label: 'Settings',
     value: 'Advanced settings',
     desc: '',
-    action: SettingAction.ADVANCED,
+    action: SettingsAction.ADVANCED,
     route: '/settings/advanced',
     right: true,
     icon: 'advance'
@@ -59,7 +59,7 @@ export const SettingListConst: SettingItemType[] = [
     label: '',
     value: '',
     desc: '',
-    action: SettingAction.SECTION_DIVIDER,
+    action: SettingsAction.SECTION_DIVIDER,
     route: '',
     right: false
   },
@@ -68,7 +68,7 @@ export const SettingListConst: SettingItemType[] = [
     label: 'Feedback',
     value: 'Let us know what you think',
     desc: '',
-    action: SettingAction.FEEDBACK,
+    action: SettingsAction.FEEDBACK,
     route: '',
     right: true,
     icon: 'feedback'
@@ -77,7 +77,7 @@ export const SettingListConst: SettingItemType[] = [
     label: 'Rate us',
     value: "Like our wallet? We'd love your rating!",
     desc: '',
-    action: SettingAction.RATE_US,
+    action: SettingsAction.RATE_US,
     route: '',
     right: true,
     icon: 'rateUs'
@@ -86,7 +86,7 @@ export const SettingListConst: SettingItemType[] = [
     label: 'About us',
     value: '',
     desc: '',
-    action: SettingAction.ABOUT_US,
+    action: SettingsAction.ABOUT_US,
     route: '/settings/about-us',
     right: true,
     icon: 'aboutUsLogo',
@@ -97,7 +97,7 @@ export const SettingListConst: SettingItemType[] = [
     label: '',
     value: '',
     desc: 'Expand View ',
-    action: SettingAction.EXPAND_VIEW,
+    action: SettingsAction.EXPAND_VIEW,
     route: '/settings/export-privatekey',
     right: false
   },
@@ -105,7 +105,7 @@ export const SettingListConst: SettingItemType[] = [
     label: '',
     value: '',
     desc: 'Lock Immediately',
-    action: SettingAction.LOCK_WALLET,
+    action: SettingsAction.LOCK_WALLET,
     route: '',
     right: false
   }

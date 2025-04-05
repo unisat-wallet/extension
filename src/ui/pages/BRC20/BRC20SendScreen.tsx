@@ -386,7 +386,6 @@ function Step2({
         </Column>
 
         <Column>
-          <Text text="Receiver" color="textDim" />
           <Input
             preset="address"
             addressInputData={{

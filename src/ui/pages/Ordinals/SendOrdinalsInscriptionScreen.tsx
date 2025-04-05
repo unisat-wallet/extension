@@ -152,8 +152,6 @@ export default function SendOrdinalsInscriptionScreen() {
             </Row>
           </Row>
 
-          <Text text="Recipient" color="textDim" />
-
           <Input
             preset="address"
             addressInputData={toInfo}
@@ -161,6 +159,7 @@ export default function SendOrdinalsInscriptionScreen() {
             onAddressInputChange={(val) => {
               setToInfo(val);
             }}
+            recipientLabel={<Text text="Recipient" color="textDim" />}
           />
 
           {toInfo.address ? (

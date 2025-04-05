@@ -14,10 +14,10 @@ import { fontSizes } from '@/ui/theme/font';
 import { spacing } from '@/ui/theme/spacing';
 import { useWallet } from '@/ui/utils';
 
-import { SettingListConst } from './const';
-import { SettingAction, SettingItemType } from './types';
+import { SettingsListConst } from './const';
+import { SettingsAction, SettingsItemType } from './types';
 
-export function SettingList() {
+export function SettingsList() {
   const navigate = useNavigate();
   const currentKeyring = useCurrentKeyring();
   const currentAccount = useCurrentAccount();
@@ -57,20 +57,20 @@ export function SettingList() {
   }, [currentKeyring]);
 
   const toRenderSettings = useMemo(() => {
-    return SettingListConst.filter((v) => {
-      if (v.action === SettingAction.MANAGE_WALLET) {
+    return SettingsListConst.filter((v) => {
+      if (v.action === SettingsAction.MANAGE_WALLET) {
         v.value = currentKeyring.alianName;
       }
 
-      if (v.action === SettingAction.CONNECTED_SITES) {
+      if (v.action === SettingsAction.CONNECTED_SITES) {
         v.value = connected ? 'Connected' : 'Not connected';
       }
 
-      if (v.action === SettingAction.NETWORK_TYPE) {
+      if (v.action === SettingsAction.NETWORK_TYPE) {
         v.value = chain.label;
       }
 
-      if (v.action === SettingAction.ADDRESS_TYPE) {
+      if (v.action === SettingsAction.ADDRESS_TYPE) {
         const item = ADDRESS_TYPES[currentKeyring.addressType];
         const hdPath = currentKeyring.hdPath || item.hdPath;
         if (currentKeyring.type === KEYRING_TYPE.SimpleKeyring) {
@@ -80,11 +80,11 @@ export function SettingList() {
         }
       }
 
-      if (v.action === SettingAction.ABOUT_US) {
+      if (v.action === SettingsAction.ABOUT_US) {
         v.badge = hasUpdate ? 'New version!' : undefined;
       }
 
-      if (v.action === SettingAction.EXPAND_VIEW) {
+      if (v.action === SettingsAction.EXPAND_VIEW) {
         if (isInTab) {
           return false;
         }
@@ -94,22 +94,22 @@ export function SettingList() {
     });
   }, [connected, currentKeyring, currentAccount, chain, isInTab, hasUpdate]);
 
-  const onClick = (item: SettingItemType) => {
-    if (item.action === SettingAction.EXPAND_VIEW) {
+  const onClick = (item: SettingsItemType) => {
+    if (item.action === SettingsAction.EXPAND_VIEW) {
       openExtensionInTab();
       return;
     }
-    if (item.action === SettingAction.LOCK_WALLET) {
+    if (item.action === SettingsAction.LOCK_WALLET) {
       wallet.lockWallet();
       navigate('/account/unlock');
       return;
     }
 
-    if (item.action === SettingAction.NETWORK_TYPE) {
+    if (item.action === SettingsAction.NETWORK_TYPE) {
       setSwitchChainModalVisible(true);
       return;
     }
-    if (item.action === SettingAction.ADDRESS_TYPE) {
+    if (item.action === SettingsAction.ADDRESS_TYPE) {
       if (isCustomHdPath) {
         tools.showTip('The wallet currently uses a custom HD path and does not support switching address types.');
         return;
@@ -117,25 +117,36 @@ export function SettingList() {
       navigate('/settings/address-type');
       return;
     }
-    if (item.action === SettingAction.FEEDBACK) {
-      window.open(FEEDBACK_URL);
+    if (item.action === SettingsAction.FEEDBACK) {
+      const addressParam = currentAccount.address;
+
+      let feedbackUrl = FEEDBACK_URL;
+      feedbackUrl += `?address=${addressParam}&category=wallet`;
+
+      window.open(feedbackUrl);
       return;
     }
-    if (item.action === SettingAction.RATE_US) {
+    if (item.action === SettingsAction.RATE_US) {
       window.open(REVIEW_URL);
       return;
     }
     navigate(item.route);
   };
 
-  const renderSettingItem = (item: SettingItemType) => (
+  const renderSettingsItem = (item: SettingsItemType, groupTop: boolean, groupBottom: boolean) => (
     <Card
       onClick={() => onClick(item)}
       style={{
-        width: '328px',
         height: '64px',
         flexShrink: 0,
-        borderRadius: '12px',
+        borderRadius:
+          groupTop && groupBottom
+            ? '12px 12px 12px 12px'
+            : groupTop
+            ? '12px 12px 0 0'
+            : groupBottom
+            ? '0 0 12px 12px'
+            : '0',
         background: 'rgba(255, 255, 255, 0.06)',
         padding: '0 16px',
         margin: 0
@@ -156,11 +167,11 @@ export function SettingList() {
                 />
               )}
             </Row>
-            {item.action !== SettingAction.CONNECTED_SITES && <Text text={item.value} preset="sub" wrap size="xxs" />}
+            {item.action !== SettingsAction.CONNECTED_SITES && <Text text={item.value} preset="sub" wrap size="xxs" />}
           </Column>
         </Row>
         <Row style={{ alignItems: 'center', gap: spacing.small }}>
-          {item.action === SettingAction.CONNECTED_SITES && (
+          {item.action === SettingsAction.CONNECTED_SITES && (
             <Row style={{ alignItems: 'center', gap: spacing.tiny }}>
               <div
                 style={{
@@ -189,11 +200,11 @@ export function SettingList() {
     />
   );
 
-  const renderGroup = (items: SettingItemType[]) => (
+  const renderGroup = (items: SettingsItemType[]) => (
     <div>
       {items.map((item, index) => (
         <React.Fragment key={item.action}>
-          {renderSettingItem(item)}
+          {renderSettingsItem(item, index === 0, index === items.length - 1)}
           {index < items.length - 1 && renderDivider()}
         </React.Fragment>
       ))}
@@ -201,29 +212,28 @@ export function SettingList() {
   );
 
   // Group settings
-  const connectedSitesGroup = toRenderSettings.filter((item) => item.action === SettingAction.CONNECTED_SITES);
-  const addressBookGroup = toRenderSettings.filter((item) => item.action === SettingAction.CONTACTS);
+  const connectedSitesGroup = toRenderSettings.filter((item) => item.action === SettingsAction.CONNECTED_SITES);
+  const addressBookGroup = toRenderSettings.filter((item) => item.action === SettingsAction.CONTACTS);
   const addressTypeSettingsGroup = toRenderSettings.filter(
-    (item) => item.action === SettingAction.ADDRESS_TYPE || item.action === SettingAction.ADVANCED
+    (item) => item.action === SettingsAction.ADDRESS_TYPE || item.action === SettingsAction.ADVANCED
   );
   const feedbackGroup = toRenderSettings.filter((item) =>
-    [SettingAction.FEEDBACK, SettingAction.RATE_US, SettingAction.ABOUT_US].includes(item.action)
+    [SettingsAction.FEEDBACK, SettingsAction.RATE_US, SettingsAction.ABOUT_US].includes(item.action)
   );
   const buttonSettings = toRenderSettings.filter((item) =>
-    [SettingAction.EXPAND_VIEW, SettingAction.LOCK_WALLET].includes(item.action)
+    [SettingsAction.EXPAND_VIEW, SettingsAction.LOCK_WALLET].includes(item.action)
   );
 
   return (
     <Column style={{ alignItems: 'center' }}>
-      <div style={{ display: 'flex', flexDirection: 'column', gap: '12px', marginBottom: '20px' }}>
+      <Column fullX>
         {renderGroup(connectedSitesGroup)}
         {renderGroup(addressBookGroup)}
         {renderGroup(addressTypeSettingsGroup)}
         {renderGroup(feedbackGroup)}
-      </div>
+      </Column>
 
-      <div
-        style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', width: '100%', gap: spacing.small }}>
+      <Column>
         {buttonSettings.map((item) => (
           <Button
             key={item.action}
@@ -239,7 +249,7 @@ export function SettingList() {
             onClick={() => onClick(item)}
           />
         ))}
-      </div>
+      </Column>
 
       {switchChainModalVisible && (
         <SwitchChainModal

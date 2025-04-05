@@ -119,22 +119,6 @@ export class WalletController extends BaseController {
 
   initAlianNames = async () => {
     preferenceService.changeInitAlianNameStatus();
-    const contacts = this.listContact();
-    const keyrings = await keyringService.getAllDisplayedKeyrings();
-
-    keyrings.forEach((v) => {
-      v.accounts.forEach((w, index) => {
-        this.updateAlianName(w.pubkey, `${BRAND_ALIAN_TYPE_TEXT[v.type]} ${index + 1}`);
-      });
-    });
-
-    if (contacts.length !== 0 && keyrings.length !== 0) {
-      const allAccounts = keyrings.map((item) => item.accounts).flat();
-      const sameAddressList = contacts.filter((item) => allAccounts.find((contact) => contact.pubkey == item.address));
-      if (sameAddressList.length > 0) {
-        sameAddressList.forEach((item) => this.updateAlianName(item.address, item.name));
-      }
-    }
   };
 
   isReady = () => {
@@ -292,8 +276,6 @@ export class WalletController extends BaseController {
       console.log(e);
       throw e;
     }
-    const pubkeys = await originKeyring.getAccounts();
-    if (alianName) this.updateAlianName(pubkeys[0], alianName);
 
     const displayedKeyring = await keyringService.displayForKeyring(
       originKeyring,
@@ -439,7 +421,6 @@ export class WalletController extends BaseController {
   deriveNewAccountFromMnemonic = async (keyring: WalletKeyring, alianName?: string) => {
     const _keyring = keyringService.keyrings[keyring.index];
     const result = await keyringService.addNewAccount(_keyring);
-    if (alianName) this.updateAlianName(result[0], alianName);
 
     const currentKeyring = await this.getCurrentKeyring();
     if (!currentKeyring) throw new Error('no current keyring');
@@ -759,8 +740,28 @@ export class WalletController extends BaseController {
     contactBookService.updateContact(data);
   };
 
-  removeContact = (address: string) => {
-    contactBookService.removeContact(address);
+  getContactByAddress = (address: string) => {
+    return contactBookService.getContactByAddress(address);
+  };
+
+  getContactByAddressAndChain = (address: string, chain: CHAINS_ENUM) => {
+    return contactBookService.getContactByAddressAndChain(address, chain);
+  };
+
+  private _generateAlianName = (type: string, index: number) => {
+    return `${BRAND_ALIAN_TYPE_TEXT[type]} ${index}`;
+  };
+
+  removeContact = (address: string, chain?: CHAINS_ENUM) => {
+    if (chain) {
+      contactBookService.removeContact(address, chain);
+    } else {
+      console.warn('removeContact called without chain parameter, using old method');
+      const contact = contactBookService.getContactByAddress(address);
+      if (contact) {
+        contactBookService.removeContact(address, contact.chain);
+      }
+    }
   };
 
   listContact = (includeAlias = true) => {
@@ -772,17 +773,16 @@ export class WalletController extends BaseController {
     }
   };
 
+  listContacts = () => {
+    return contactBookService.listContacts();
+  };
+
+  saveContactsOrder = (contacts: ContactBookItem[]) => {
+    return contactBookService.saveContactsOrder(contacts);
+  };
+
   getContactsByMap = () => {
     return contactBookService.getContactsByMap();
-  };
-
-  getContactByAddress = (address: string) => {
-    return contactBookService.getContactByAddress(address);
-  };
-
-  private _generateAlianName = (type: string, index: number) => {
-    const alianName = `${BRAND_ALIAN_TYPE_TEXT[type]} ${index}`;
-    return alianName;
   };
 
   getNextAlianName = (keyring: WalletKeyring) => {
@@ -795,18 +795,6 @@ export class WalletController extends BaseController {
 
   updateHighlightWalletList = (list) => {
     return preferenceService.updateWalletSavedList(list);
-  };
-
-  getAlianName = (pubkey: string) => {
-    const contactName = contactBookService.getContactByAddress(pubkey)?.name;
-    return contactName;
-  };
-
-  updateAlianName = (pubkey: string, name: string) => {
-    contactBookService.updateAlias({
-      name,
-      address: pubkey
-    });
   };
 
   getAllAlianName = () => {
@@ -1232,7 +1220,7 @@ export class WalletController extends BaseController {
       const { pubkey } = displayedKeyring.accounts[j];
       const address = publicKeyToAddress(pubkey, addressType, networkType);
       const accountKey = key + '#' + j;
-      const defaultName = this.getAlianName(pubkey) || this._generateAlianName(type, j + 1);
+      const defaultName = this._generateAlianName(type, j + 1);
       const alianName = preferenceService.getAccountAlianName(accountKey, defaultName);
       const flag = preferenceService.getAddressFlag(address);
       accounts.push({
@@ -1429,7 +1417,7 @@ export class WalletController extends BaseController {
       origin,
       name,
       icon,
-      chain: CHAINS_ENUM.BTC,
+      chain: ChainType.BITCOIN_MAINNET,
       isConnected: false,
       isSigned: false,
       isTop: false

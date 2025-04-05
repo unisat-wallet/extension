@@ -4,7 +4,7 @@ import { AccountAsset } from '@/background/controller/wallet';
 import { ContactBookItem, ContactBookStore } from '@/background/service/contactBook';
 import { ToSignInput } from '@/background/service/keyring';
 import { ConnectedSite } from '@/background/service/permission';
-import { AddressFlagType, ChainType } from '@/shared/constant';
+import { AddressFlagType, CHAINS_ENUM, ChainType } from '@/shared/constant';
 import {
   Account,
   AddressCAT20TokenSummary,
@@ -154,7 +154,6 @@ export interface WalletController {
   getAccountsCount(): Promise<number>;
   getAllAlianName: () => (ContactBookItem | undefined)[];
   getContactsByMap: () => ContactBookStore;
-  updateAlianName: (pubkey: string, name: string) => Promise<void>;
 
   getCurrentAccount(): Promise<Account>;
   getAccounts(): Promise<Account[]>;
@@ -485,6 +484,13 @@ export interface WalletController {
     amount: { denom: string; amount: string },
     memo: string
   ): Promise<number>;
+
+  getContactByAddress(address: string): Promise<ContactBookItem | undefined>;
+  getContactByAddressAndChain(address: string, chain: CHAINS_ENUM): Promise<ContactBookItem | undefined>;
+  updateContact(data: ContactBookItem): Promise<void>;
+  removeContact(address: string, chain?: CHAINS_ENUM): Promise<void>;
+  listContacts(): Promise<ContactBookItem[]>;
+  saveContactsOrder(contacts: ContactBookItem[]): Promise<void>;
 }
 
 const WalletContext = createContext<{

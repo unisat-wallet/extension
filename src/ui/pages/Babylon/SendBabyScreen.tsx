@@ -397,7 +397,6 @@ export default function SendBabyScreen() {
         </Row>
 
         <Column mt="md">
-          <Text text="Recipient" preset="regular" />
           <Input
             preset="cosmosAddress"
             placeholder="bbn..."

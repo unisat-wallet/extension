@@ -6,7 +6,7 @@ import { Button } from '@/ui/components/Button';
 import { Icon } from '@/ui/components/Icon';
 import { BuyBTCModal } from '@/ui/pages/BuyBTC/BuyBTCModal';
 import { useNavigate } from '@/ui/pages/MainRoute';
-import { useAddressExplorerUrl, useChainType } from '@/ui/state/settings/hooks';
+import { useAddressExplorerUrl, useChainType, useWalletConfig } from '@/ui/state/settings/hooks';
 import { useResetUiTxCreateScreen } from '@/ui/state/ui/hooks';
 
 interface WalletActionsProps {
@@ -23,10 +23,11 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
   const chainType = useChainType();
   const addressExplorerUrl = useAddressExplorerUrl(address);
   const [buyBtcModalVisible, setBuyBtcModalVisible] = useState(false);
+  const walletConfig = useWalletConfig();
 
   const shouldUseMoreExpandedLayout = () => {
-    if (chain.enum === ChainType.FRACTAL_BITCOIN_MAINNET) return true;
-    return false;
+    if (walletConfig.disableUtxoTools) return false;
+    return true;
   };
 
   useEffect(() => {

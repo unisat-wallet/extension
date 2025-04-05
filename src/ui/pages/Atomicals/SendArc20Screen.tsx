@@ -52,7 +52,10 @@ export default function SendArc20Screen() {
     tools.showLoading(true);
     fetchAssetUtxosAtomicalsFT(arc20Balance.ticker)
       .then((utxos) => {
-        const available = utxos.reduce((pre, cur) => pre + cur.atomicals.reduce((p, c) => p + (c?.atomicalValue || 0), 0), 0);
+        const available = utxos.reduce(
+          (pre, cur) => pre + cur.atomicals.reduce((p, c) => p + (c?.atomicalValue || 0), 0),
+          0
+        );
         setArc20AvailableBalance(available);
       })
       .finally(() => {
@@ -133,12 +136,15 @@ export default function SendArc20Screen() {
       />
       <Content>
         <Row justifyCenter>
-          <Text text={`${showLongNumber(arc20Balance.balance)} ${arc20Balance.ticker}`} preset="bold" textCenter
-                size="xxl" />
+          <Text
+            text={`${showLongNumber(arc20Balance.balance)} ${arc20Balance.ticker}`}
+            preset="bold"
+            textCenter
+            size="xxl"
+          />
         </Row>
 
         <Column mt="lg">
-          <Text text="Recipient" preset="regular" color="textDim" />
           <Input
             preset="address"
             addressInputData={toInfo}
@@ -146,6 +152,7 @@ export default function SendArc20Screen() {
               setToInfo(val);
             }}
             autoFocus={true}
+            recipientLabel={<Text text="Recipient" preset="regular" color="textDim" />}
           />
         </Column>
 

@@ -55,7 +55,9 @@ import AboutUsScreen from './Settings/AboutUsScreen';
 import AddressTypeScreen from './Settings/AddressTypeScreen';
 import AdvancedScreen from './Settings/AdvancedScreen';
 import ChangePasswordScreen from './Settings/ChangePasswordScreen';
+import ContactsScreen from './Settings/ContactsScreen';
 import EditAccountNameScreen from './Settings/EditAccountNameScreen';
+import EditContactScreen from './Settings/EditContactScreen';
 import EditWalletNameScreen from './Settings/EditWalletNameScreen';
 import ExportMnemonicsScreen from './Settings/ExportMnemonicsScreen';
 import ExportPrivateKeyScreen from './Settings/ExportPrivateKeyScreen';
@@ -232,6 +234,18 @@ export const routes = {
   AddressTypeScreen: {
     path: '/settings/address-type',
     element: <AddressTypeScreen />
+  },
+  ContactsScreen: {
+    path: '/settings/contacts',
+    element: <ContactsScreen />
+  },
+  EditContactScreen: {
+    path: '/settings/contacts/edit',
+    element: <EditContactScreen />
+  },
+  EditContactWithChainScreen: {
+    path: '/settings/contact/:address/:chain',
+    element: <EditContactScreen />
   },
   EditAccountNameScreen: {
     path: '/settings/edit-account-name',

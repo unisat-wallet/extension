@@ -1,4 +1,4 @@
-import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL, UPDATE_URL, VERSION } from '@/shared/constant';
+import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL, VERSION } from '@/shared/constant';
 import { Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useVersionInfo } from '@/ui/state/settings/hooks';
 import { spacing } from '@/ui/theme/spacing';
@@ -47,7 +47,7 @@ export default function AboutUsScreen() {
                   whiteSpace: 'nowrap',
                   gap: 0
                 }}
-                onClick={() => window.open(UPDATE_URL)}>
+                onClick={() => window.open('https://unisat.io/extension/update')}>
                 <Icon icon="arrowUp" size={14} />
                 <Text text="New Update Available" style={{ marginLeft: 3, whiteSpace: 'nowrap', color: '#EBB94C' }} />
               </Row>

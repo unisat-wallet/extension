@@ -145,19 +145,6 @@ export function useImportAccountCallback() {
   );
 }
 
-export function useChangeAccountNameCallback() {
-  const dispatch = useAppDispatch();
-  const wallet = useWallet();
-  const currentAccount = useCurrentAccount();
-  return useCallback(
-    async (name: string) => {
-      await wallet.updateAlianName(currentAccount.pubkey, name);
-      dispatch(accountActions.setCurrentAccountName(name));
-    },
-    [dispatch, wallet, currentAccount]
-  );
-}
-
 export function useChangeAddressFlagCallback() {
   const dispatch = useAppDispatch();
   const wallet = useWallet();
