@@ -16,5 +16,6 @@ export const fontSizes = {
   logo: 32,
   icon: 14,
   iconMiddle: 20,
-  iconLarge: 32
+  iconLarge: 32,
+  iconEmpty: 104
 };

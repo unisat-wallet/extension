@@ -17,14 +17,24 @@ export const svgRegistry = {
   up: './images/icons/up.svg',
   link: './images/icons/arrow-up-right.svg',
   'inscribe-right': './images/icons/inscribe-right.svg',
+  'arrow-right': './images/icons/right.svg',
 
-  discord: './images/icons/discord.svg',
-  twitter: './images/icons/twitter.svg',
-  github: './images/icons/github.svg',
-  telegram: './images/icons/telegram.svg',
-
+  discord: '/images/icons/discord.svg',
+  twitter: '/images/icons/twitter.svg',
+  github: '/images/icons/github.svg',
+  telegram: '/images/icons/telegram.svg',
+  website: '/images/icons/website.svg',
+  apidocs: '/images/icons/apidocs.svg',
+  medium: '/images/icons/medium.svg',
+  email: '/images/icons/email.svg',
+  arrowUp: '/images/icons/arrowup.svg',
+  aboutus: '/images/icons/aboutus.svg',
+  offcial: '/images/icons/offcial.svg',
   btc: './images/icons/btc.svg',
   qrcode: './images/icons/qrcode.svg',
+  moreInfo: './images/icons/moreinfo.svg',
+  aboutUsLogo: '/images/icons/about-us-logo.svg',
+  rateUs: '/images/icons/rate-us.svg',
 
   user: '/images/icons/user-solid.svg',
   wallet: '/images/icons/wallet-solid.svg',
@@ -71,7 +81,19 @@ export const svgRegistry = {
   'baby-stakers': './images/icons/baby-stakers.svg',
   'baby-staking': './images/icons/baby-staking.svg',
   'baby-tvl': './images/icons/baby-tvl.svg',
-  'error-boundary': '/images/icons/error-boundary.svg'
+  'error-boundary': '/images/icons/error-boundary.svg',
+
+  addressType: '/images/icons/address-type.svg',
+  addressBook: '/images/icons/address-book.svg',
+  advance: '/images/icons/advance.svg',
+  connectedSites: '/images/icons/connected-sites.svg',
+  network: '/images/icons/network.svg',
+  changePassword: '/images/icons/change-password.svg',
+  addressBookEmpty: '/images/icons/address-book-empty.svg',
+  sortAddress: '/images/icons/sort-address.svg',
+  sortTop: '/images/icons/sort-top.svg',
+  sortDrag: '/images/icons/sort-drag.svg',
+  userContact: '/images/icons/user-contact.svg'
 };
 
 const iconImgList: Array<IconTypes> = [
@@ -84,7 +106,23 @@ const iconImgList: Array<IconTypes> = [
   'baby-tip1',
   'baby-tip2',
   'error-boundary',
-  'utxobg'
+  'utxobg',
+  'addressType',
+  'addressBook',
+  'advance',
+  'connectedSites',
+  'network',
+  'changePassword',
+  'addressBookEmpty',
+  'website',
+  'apidocs',
+  'medium',
+  'email',
+  'arrowUp',
+  'aboutus',
+  'moreInfo',
+  'aboutUsLogo',
+  'rateUs'
 ];
 
 export type IconTypes = keyof typeof svgRegistry;

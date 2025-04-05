@@ -51,6 +51,7 @@ import SplitOrdinalsInscriptionScreen from './Ordinals/SplitOrdinalsInscriptionS
 import PhishingScreen from './Phishing/PhishingScreen';
 import RunesTokenScreen from './Runes/RunesTokenScreen';
 import SendRunesScreen from './Runes/SendRunesScreen';
+import AboutUsScreen from './Settings/AboutUsScreen';
 import AddressTypeScreen from './Settings/AddressTypeScreen';
 import AdvancedScreen from './Settings/AdvancedScreen';
 import ChangePasswordScreen from './Settings/ChangePasswordScreen';
@@ -315,6 +316,11 @@ export const routes = {
   phishing: {
     path: '/phishing',
     element: <PhishingScreen />
+  },
+
+  AboutUsScreen: {
+    path: '/settings/about-us',
+    element: <AboutUsScreen />
   }
 };
 
