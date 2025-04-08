@@ -243,7 +243,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     enum: ChainType.BITCOIN_MAINNET,
     label: 'Bitcoin',
     iconLabel: 'Bitcoin',
-    icon: './images/artifacts/bitcoin-mainnet.png',
+    icon: './images/artifacts/bitcoin-mainnet.svg',
     unit: 'BTC',
     networkType: NetworkType.MAINNET,
     endpoints: ['https://wallet-api.unisat.io'],
