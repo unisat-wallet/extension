@@ -188,7 +188,7 @@ export default function WalletTabScreen() {
             onClick={() => {
               navigate('SwitchKeyringScreen');
             }}>
-            <Text text={currentKeyring.alianName} size="xxs" />
+            <Text text={currentKeyring.alianName} size="xxs" ellipsis style={{ maxWidth: 100 }} />
           </Card>
         }
         RightComponent={

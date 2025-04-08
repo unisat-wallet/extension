@@ -86,8 +86,8 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
           {selected ? <Icon icon="circle-check" color="gold" /> : <Icon icon="circle-check" color="white_muted2" />}
         </Column>
 
-        <Column justifyCenter>
-          <Text text={`${keyring.alianName}`} />
+        <Column justifyCenter style={{ height: 40 }}>
+          <Text text={`${keyring.alianName}`} style={{ overflow: 'hidden', maxWidth: 180 }} />
           <Text text={`${displayAddress}`} preset="sub" />
         </Column>
       </Row>
