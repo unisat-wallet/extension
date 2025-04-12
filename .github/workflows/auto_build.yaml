@@ -19,7 +19,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout the code
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - uses: ./.github/actions/setup
 
       - name: Build Chrome (Test Build)
@@ -48,48 +48,27 @@ jobs:
       - name: Create Test Release
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.build_type == 'test'
         id: create_test_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: test-${{ steps.get-test-version.outputs.version }}
-          release_name: Test Build ${{ steps.get-test-version.outputs.version }}
-          draft: false
-          prerelease: true
-
-      - name: Upload Test Release Assets
-        if: github.event_name == 'workflow_dispatch' && github.event.inputs.build_type == 'test'
         uses: softprops/action-gh-release@v1
         with:
           tag_name: test-${{ steps.get-test-version.outputs.version }}
+          name: Test Build ${{ steps.get-test-version.outputs.version }}
           files: dist/renamed/*.zip
+          draft: false
           prerelease: true
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          
+
       - name: Upload Test Artifacts (Backup)
         if: github.event_name == 'workflow_dispatch' && github.event.inputs.build_type == 'test'
-        uses: actions/upload-artifact@v2
+        uses: actions/upload-artifact@v3
         with:
           name: extension-test-build
           path: dist/*.zip
           retention-days: 7
 
-      - name: Create Release
-        if: github.event_name != 'workflow_dispatch' || github.event.inputs.build_type == 'release'
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
-
       - name: Get Version Name
         if: github.event_name != 'workflow_dispatch' || github.event.inputs.build_type == 'release'
-        uses: actions/github-script@v3
+        uses: actions/github-script@v6
         id: get-version
         with:
           script: |
@@ -97,26 +76,16 @@ jobs:
             return str.substring(str.indexOf("v"));
           result-encoding: string
 
-      - name: Upload Asset
+      - name: Create Release and Upload Assets
         if: github.event_name != 'workflow_dispatch' || github.event.inputs.build_type == 'release'
-        id: upload-asset1
-        uses: actions/upload-release-asset@v1
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ github.ref_name }}
+          name: Release ${{ github.ref_name }}
+          files: |
+            dist/unisat-chrome-mv2-${{steps.get-version.outputs.result}}.zip
+            dist/unisat-chrome-mv3-${{steps.get-version.outputs.result}}.zip
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/unisat-chrome-mv2-${{steps.get-version.outputs.result}}.zip
-          asset_name: unisat-chrome-mv2-${{steps.get-version.outputs.result}}.zip
-          asset_content_type: application/zip
-
-      - name: Upload Asset
-        if: github.event_name != 'workflow_dispatch' || github.event.inputs.build_type == 'release'
-        id: upload-asset2
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/unisat-chrome-mv3-${{steps.get-version.outputs.result}}.zip
-          asset_name: unisat-chrome-mv3-${{steps.get-version.outputs.result}}.zip
-          asset_content_type: application/zip
