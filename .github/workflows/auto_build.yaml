@@ -25,7 +25,6 @@ jobs:
 
       - name: Build Chrome (Test Build)
         run: |
-          yarn build:chrome:dev
           yarn build:chrome:mv3:dev
 
       - name: Get Version Name for Test Build
@@ -58,7 +57,6 @@ jobs:
 
       - name: Build Chrome (Release Build)
         run: |
-          yarn build:chrome
           yarn build:chrome:mv3
 
       - name: Get Version Name
@@ -76,7 +74,6 @@ jobs:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
           files: |
-            dist/unisat-chrome-mv2-${{steps.get-version.outputs.result}}.zip
             dist/unisat-chrome-mv3-${{steps.get-version.outputs.result}}.zip
           draft: false
           prerelease: false
