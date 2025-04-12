@@ -28,16 +28,43 @@ jobs:
   test-build:
     if: github.event_name == 'workflow_dispatch' && github.event.inputs.build_type == 'test'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout the code
         uses: actions/checkout@v3
         with:
           fetch-depth: 1
-      - uses: ./.github/actions/setup
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+          cache: yarn
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        id: cache-deps
+        with:
+          path: |
+            node_modules
+            ~/.cache/yarn
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-
+
+      - name: Install dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: yarn install --ignore-scripts
+
+      - name: Show environment info
+        run: |
+          node --version
+          yarn --version
+          df -h
 
       - name: Build Chrome (Test Build)
-        run: |
-          yarn build:chrome:mv3:dev
+        run: yarn build:chrome:mv3
 
       - name: Get Version Name for Test Build
         id: get-test-version
@@ -62,16 +89,43 @@ jobs:
   release-build:
     if: github.event_name != 'workflow_dispatch' || github.event.inputs.build_type == 'release'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout the code
         uses: actions/checkout@v3
         with:
           fetch-depth: 1
-      - uses: ./.github/actions/setup
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: 20
+          registry-url: https://registry.npmjs.org
+          cache: yarn
+
+      - name: Cache dependencies
+        uses: actions/cache@v3
+        id: cache-deps
+        with:
+          path: |
+            node_modules
+            ~/.cache/yarn
+          key: ${{ runner.os }}-deps-${{ hashFiles('**/yarn.lock') }}
+          restore-keys: |
+            ${{ runner.os }}-deps-
+
+      - name: Install dependencies
+        if: steps.cache-deps.outputs.cache-hit != 'true'
+        run: yarn install --ignore-scripts
+
+      - name: Show environment info
+        run: |
+          node --version
+          yarn --version
+          df -h
 
       - name: Build Chrome (Release Build)
-        run: |
-          yarn build:chrome:mv3
+        run: yarn build:chrome:mv3
 
       - name: Get Version Name
         uses: actions/github-script@v6
