@@ -55,7 +55,10 @@ jobs:
 
       - name: Install dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
-        run: yarn install --ignore-scripts
+        run: yarn install
+
+      - name: Apply patches
+        run: npx patch-package
 
       - name: Show environment info
         run: |
@@ -66,10 +69,15 @@ jobs:
       - name: Build Chrome (Test Build)
         run: yarn build:chrome:mv3
 
+      - name: List Build Output
+        run: |
+          echo "===== Checking dist directory contents ====="
+          ls -la dist/
+          find dist -name "*.zip" -o -name "*.xpi"
+
       - name: Get Version Name for Test Build
         id: get-test-version
         run: |
-          # Get version from package.json and add timestamp
           VERSION=$(node -p "require('./package.json').version")
           TIMESTAMP=$(date +'%Y%m%d%H%M')
           echo "version=v$VERSION-test-$TIMESTAMP" >> $GITHUB_OUTPUT
@@ -78,11 +86,18 @@ jobs:
       - name: Prepare Test Release Files
         run: |
           mkdir -p dist/release
-          # Find all zip files and copy to release directory with version number
-          find dist -name "*.zip" -exec bash -c 'FILENAME=$(basename {}); EXT="${FILENAME##*.}"; NAME="${FILENAME%.*}"; cp {} dist/release/$NAME-${{ steps.get-test-version.outputs.version }}.$EXT' \;
-          # If no zip files found, create a default one
-          if [ ! -f "$(find dist/release -name "*.zip" | head -1)" ]; then
-            find dist -name "*.zip" -exec cp {} dist/release/unisat-chrome-mv3-${{ steps.get-test-version.outputs.version }}.zip \;
+          VERSION="${{ steps.get-test-version.outputs.version }}"
+          find dist -name "*.zip" -exec bash -c '
+            FILENAME=$(basename {})
+            if [[ "$FILENAME" == *"$VERSION"* ]]; then
+              cp {} dist/release/
+            else
+              cp {} dist/release/unisat-chrome-mv3-$VERSION.zip
+            fi
+          ' \;
+          if [ -z "$(find dist/release -name "*.zip" | head -1)" ]; then
+            echo "No zip files found in build output"
+            exit 1
           fi
           echo "Files prepared for test release:"
           ls -la dist/release/
@@ -128,7 +143,10 @@ jobs:
 
       - name: Install dependencies
         if: steps.cache-deps.outputs.cache-hit != 'true'
-        run: yarn install --ignore-scripts
+        run: yarn install
+
+      - name: Apply patches
+        run: npx patch-package
 
       - name: Show environment info
         run: |
@@ -148,7 +166,6 @@ jobs:
       - name: Get Version Name
         id: get-version
         run: |
-          # Get version from package.json
           VERSION=$(node -p "require('./package.json').version")
           echo "version=v$VERSION" >> $GITHUB_OUTPUT
           echo "Using version: v$VERSION"
@@ -156,11 +173,18 @@ jobs:
       - name: Prepare Release Files
         run: |
           mkdir -p dist/release
-          # Find all zip files and copy to release directory with version number
-          find dist -name "*.zip" -exec bash -c 'FILENAME=$(basename {}); EXT="${FILENAME##*.}"; NAME="${FILENAME%.*}"; cp {} dist/release/$NAME-${{ steps.get-version.outputs.version }}.$EXT' \;
-          # If no zip files found, create a default one
-          if [ ! -f "$(find dist/release -name "*.zip" | head -1)" ]; then
-            find dist -name "*.zip" -exec cp {} dist/release/unisat-chrome-mv3-${{ steps.get-version.outputs.version }}.zip \;
+          VERSION="${{ steps.get-version.outputs.version }}"
+          find dist -name "*.zip" -exec bash -c '
+            FILENAME=$(basename {})
+            if [[ "$FILENAME" == *"$VERSION"* ]]; then
+              cp {} dist/release/
+            else
+              cp {} dist/release/unisat-chrome-mv3-$VERSION.zip
+            fi
+          ' \;
+          if [ -z "$(find dist/release -name "*.zip" | head -1)" ]; then
+            echo "No zip files found in build output"
+            exit 1
           fi
           echo "Files prepared for release:"
           ls -la dist/release/
