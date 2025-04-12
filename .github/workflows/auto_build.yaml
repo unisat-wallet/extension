@@ -38,7 +38,7 @@ jobs:
 
       - name: Build Chrome (Test Build)
         run: |
-          yarn build:chrome:mv3:dev --max-old-space-size=4096 --no-progress
+          NODE_OPTIONS="--max-old-space-size=4096" yarn build:chrome:mv3:dev --no-progress
 
       - name: Get Version Name for Test Build
         id: get-test-version
@@ -73,7 +73,7 @@ jobs:
 
       - name: Build Chrome (Release Build)
         run: |
-          yarn build:chrome:mv3 --max-old-space-size=4096 --no-progress
+          NODE_OPTIONS="--max-old-space-size=4096" yarn build:chrome:mv3 --no-progress
 
       - name: Get Version Name
         uses: actions/github-script@v6
