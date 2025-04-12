@@ -68,19 +68,31 @@ jobs:
 
       - name: Get Version Name for Test Build
         id: get-test-version
-        run: echo "version=test-$(date +'%Y%m%d%H%M')" >> $GITHUB_OUTPUT
-
-      - name: Rename Test Build Files
         run: |
-          mkdir -p dist/renamed
-          find dist -name "*.zip" -exec bash -c 'FILENAME=$(basename {}); EXT="${FILENAME##*.}"; NAME="${FILENAME%.*}"; mv {} dist/renamed/$NAME-${{ steps.get-test-version.outputs.version }}.$EXT' \;
+          # Get version from package.json and add timestamp
+          VERSION=$(node -p "require('./package.json').version")
+          TIMESTAMP=$(date +'%Y%m%d%H%M')
+          echo "version=v$VERSION-test-$TIMESTAMP" >> $GITHUB_OUTPUT
+          echo "Using test version: v$VERSION-test-$TIMESTAMP"
+
+      - name: Prepare Test Release Files
+        run: |
+          mkdir -p dist/release
+          # Find all zip files and copy to release directory with version number
+          find dist -name "*.zip" -exec bash -c 'FILENAME=$(basename {}); EXT="${FILENAME##*.}"; NAME="${FILENAME%.*}"; cp {} dist/release/$NAME-${{ steps.get-test-version.outputs.version }}.$EXT' \;
+          # If no zip files found, create a default one
+          if [ ! -f "$(find dist/release -name "*.zip" | head -1)" ]; then
+            find dist -name "*.zip" -exec cp {} dist/release/unisat-chrome-mv3-${{ steps.get-test-version.outputs.version }}.zip \;
+          fi
+          echo "Files prepared for test release:"
+          ls -la dist/release/
 
       - name: Create Test Release
         uses: softprops/action-gh-release@v1
         with:
-          tag_name: test-${{ steps.get-test-version.outputs.version }}
+          tag_name: ${{ steps.get-test-version.outputs.version }}
           name: Test Build ${{ steps.get-test-version.outputs.version }}
-          files: dist/renamed/*.zip
+          files: dist/release/*.zip
           draft: false
           prerelease: true
         env:
@@ -127,22 +139,38 @@ jobs:
       - name: Build Chrome (Release Build)
         run: yarn build:chrome:mv3
 
+      - name: List Build Output
+        run: |
+          echo "===== Checking dist directory contents ====="
+          ls -la dist/
+          find dist -name "*.zip" -o -name "*.xpi"
+
       - name: Get Version Name
-        uses: actions/github-script@v6
         id: get-version
-        with:
-          script: |
-            const str=process.env.GITHUB_REF;
-            return str.substring(str.indexOf("v"));
-          result-encoding: string
+        run: |
+          # Get version from package.json
+          VERSION=$(node -p "require('./package.json').version")
+          echo "version=v$VERSION" >> $GITHUB_OUTPUT
+          echo "Using version: v$VERSION"
+
+      - name: Prepare Release Files
+        run: |
+          mkdir -p dist/release
+          # Find all zip files and copy to release directory with version number
+          find dist -name "*.zip" -exec bash -c 'FILENAME=$(basename {}); EXT="${FILENAME##*.}"; NAME="${FILENAME%.*}"; cp {} dist/release/$NAME-${{ steps.get-version.outputs.version }}.$EXT' \;
+          # If no zip files found, create a default one
+          if [ ! -f "$(find dist/release -name "*.zip" | head -1)" ]; then
+            find dist -name "*.zip" -exec cp {} dist/release/unisat-chrome-mv3-${{ steps.get-version.outputs.version }}.zip \;
+          fi
+          echo "Files prepared for release:"
+          ls -la dist/release/
 
       - name: Create Release and Upload Assets
         uses: softprops/action-gh-release@v1
         with:
           tag_name: ${{ github.ref_name }}
           name: Release ${{ github.ref_name }}
-          files: |
-            dist/unisat-chrome-mv3-${{steps.get-version.outputs.result}}.zip
+          files: dist/release/*.zip
           draft: false
           prerelease: false
         env:
