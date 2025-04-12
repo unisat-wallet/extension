@@ -54,11 +54,17 @@ jobs:
             ${{ runner.os }}-deps-
 
       - name: Install dependencies
-        if: steps.cache-deps.outputs.cache-hit != 'true'
-        run: yarn install
+        run: |
+          if [ "${{ steps.cache-deps.outputs.cache-hit }}" != "true" ]; then
+            yarn install
+          fi
+          yarn add bitcoinjs-lib@6.1.6 --dev
 
       - name: Apply patches
-        run: npx patch-package
+        run: |
+          ls -la patches/
+          npm install -g patch-package
+          patch-package
 
       - name: Show environment info
         run: |
@@ -142,11 +148,17 @@ jobs:
             ${{ runner.os }}-deps-
 
       - name: Install dependencies
-        if: steps.cache-deps.outputs.cache-hit != 'true'
-        run: yarn install
+        run: |
+          if [ "${{ steps.cache-deps.outputs.cache-hit }}" != "true" ]; then
+            yarn install
+          fi
+          yarn add bitcoinjs-lib@6.1.6 --dev
 
       - name: Apply patches
-        run: npx patch-package
+        run: |
+          ls -la patches/
+          npm install -g patch-package
+          patch-package
 
       - name: Show environment info
         run: |
