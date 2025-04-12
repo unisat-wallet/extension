@@ -7,6 +7,12 @@ on:
   pull_request:
     tags:
       - v*
+  workflow_dispatch:
+    inputs:
+      build_type:
+        description: 'Build type (test/release)'
+        required: true
+        default: 'test'
 
 jobs:
   build:
@@ -16,12 +22,61 @@ jobs:
         uses: actions/checkout@v2
       - uses: ./.github/actions/setup
 
-      - name: Build Chrome
+      - name: Build Chrome (Test Build)
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.build_type == 'test'
+        run: |
+          yarn build:chrome:dev
+          yarn build:chrome:mv3:dev
+
+      - name: Build Chrome (Release Build)
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.build_type == 'release'
         run: |
           yarn build:chrome
           yarn build:chrome:mv3
 
+      - name: Get Version Name for Test Build
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.build_type == 'test'
+        id: get-test-version
+        run: echo "version=test-$(date +'%Y%m%d%H%M')" >> $GITHUB_OUTPUT
+
+      - name: Rename Test Build Files
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.build_type == 'test'
+        run: |
+          mkdir -p dist/renamed
+          find dist -name "*.zip" -exec bash -c 'FILENAME=$(basename {}); EXT="${FILENAME##*.}"; NAME="${FILENAME%.*}"; mv {} dist/renamed/$NAME-${{ steps.get-test-version.outputs.version }}.$EXT' \;
+
+      - name: Create Test Release
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.build_type == 'test'
+        id: create_test_release
+        uses: actions/create-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          tag_name: test-${{ steps.get-test-version.outputs.version }}
+          release_name: Test Build ${{ steps.get-test-version.outputs.version }}
+          draft: false
+          prerelease: true
+
+      - name: Upload Test Release Assets
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.build_type == 'test'
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: test-${{ steps.get-test-version.outputs.version }}
+          files: dist/renamed/*.zip
+          prerelease: true
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          
+      - name: Upload Test Artifacts (Backup)
+        if: github.event_name == 'workflow_dispatch' && github.event.inputs.build_type == 'test'
+        uses: actions/upload-artifact@v2
+        with:
+          name: extension-test-build
+          path: dist/*.zip
+          retention-days: 7
+
       - name: Create Release
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.build_type == 'release'
         id: create_release
         uses: actions/create-release@v1
         env:
@@ -33,6 +88,7 @@ jobs:
           prerelease: false
 
       - name: Get Version Name
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.build_type == 'release'
         uses: actions/github-script@v3
         id: get-version
         with:
@@ -42,6 +98,7 @@ jobs:
           result-encoding: string
 
       - name: Upload Asset
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.build_type == 'release'
         id: upload-asset1
         uses: actions/upload-release-asset@v1
         env:
@@ -53,6 +110,7 @@ jobs:
           asset_content_type: application/zip
 
       - name: Upload Asset
+        if: github.event_name != 'workflow_dispatch' || github.event.inputs.build_type == 'release'
         id: upload-asset2
         uses: actions/upload-release-asset@v1
         env:
