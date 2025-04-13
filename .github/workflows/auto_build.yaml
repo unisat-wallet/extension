@@ -23,13 +23,24 @@ on:
         description: 'version (ps:v1.0.0)'
         required: true
         default: 'custom-build'
+      branch:
+        description: 'Git branch to build from'
+        required: true
+        default: 'develop'
 
 jobs:
   release-build:
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
-      - uses: ./.github/actions/setup
+      - name: Checkout code
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ github.event.inputs.branch || github.ref }}
+          fetch-depth: 1
+
+      - name: Setup environment
+        uses: ./.github/actions/setup
 
       - name: Remove wallet-sdk patches
         run: rm -rf node_modules/@unisat/wallet-sdk/patches 2>/dev/null || true
