@@ -44,8 +44,13 @@ jobs:
 
       - name: Install dependencies
         run: |
+          # 安装依赖但跳过postinstall脚本
           yarn install --ignore-scripts
 
+          # 在执行fix:modules之前删除@unisat/wallet-sdk中的补丁文件
+          rm -rf node_modules/@unisat/wallet-sdk/patches 2>/dev/null || true
+
+          # 执行fix:modules脚本
           yarn fix:modules
 
       - name: Build Chrome (Test Build)
@@ -94,8 +99,13 @@ jobs:
 
       - name: Install dependencies
         run: |
+          # 安装依赖但跳过postinstall脚本
           yarn install --ignore-scripts
 
+          # 在执行fix:modules之前删除@unisat/wallet-sdk中的补丁文件
+          rm -rf node_modules/@unisat/wallet-sdk/patches 2>/dev/null || true
+
+          # 执行fix:modules脚本
           yarn fix:modules
 
       - name: Build Chrome (Release Build)
