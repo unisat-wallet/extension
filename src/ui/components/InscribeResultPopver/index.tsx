@@ -18,7 +18,7 @@ export const InscribeResultPopver = ({ inscription, onClose }: { inscription: In
   return (
     <Popover onClose={onClose}>
       <Column justifyCenter itemsCenter>
-        <InscriptionPreview data={inscription} preset="medium" />
+        <InscriptionPreview data={inscription} preset="medium" style={{ maxWidth: '200px' }} />
         <Column mt="lg">
           <Text text="You have inscribed a TRANSFER " textCenter />
           <Text text="Please wait for the update of BRC20" textCenter />

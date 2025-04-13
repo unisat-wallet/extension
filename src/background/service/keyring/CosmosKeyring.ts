@@ -1,11 +1,20 @@
 import { bech32 } from 'bech32';
 import { Buffer } from 'buffer/';
+import { TxRaw } from 'cosmjs-types/cosmos/tx/v1beta1/tx';
 
 import { WalletController } from '@/background/controller/wallet';
-import { objToUint8Array } from '@/shared/utils';
+import { PubKeySecp256k1 } from '@/shared/lib/crypto';
 import { incentivequery } from '@babylonlabs-io/babylon-proto-ts';
 import { Secp256k1, sha256 } from '@cosmjs/crypto';
-import { AccountData, DirectSecp256k1Wallet, DirectSignResponse } from '@cosmjs/proto-signing';
+import * as encoding from '@cosmjs/encoding';
+import {
+  AccountData,
+  DirectSecp256k1Wallet,
+  encodePubkey,
+  makeAuthInfoBytes,
+  makeSignBytes,
+  makeSignDoc
+} from '@cosmjs/proto-signing';
 import { GasPrice, QueryClient, SigningStargateClient, createProtobufRpcClient } from '@cosmjs/stargate';
 import { Tendermint34Client } from '@cosmjs/tendermint-rpc';
 
@@ -108,32 +117,25 @@ type Key = {
 export class CosmosKeyring {
   private chainId: string;
   private key: Key;
-  private signer: DirectSecp256k1Wallet;
+  private signer?: DirectSecp256k1Wallet;
   private provider: WalletController;
   private client: SigningStargateClient;
+  private _signDoc_bodyBytes: any = null;
+  private _signDoc_authInfoBytes: any = null;
   constructor({
     key,
     signer,
     client,
-    name,
     provider,
     chainId
   }: {
-    key: AccountData;
-    signer: DirectSecp256k1Wallet;
+    key: Key;
+    signer?: DirectSecp256k1Wallet;
     client: SigningStargateClient;
-    name: string;
     provider: WalletController;
     chainId: string;
   }) {
-    this.key = {
-      name,
-      algo: key.algo,
-      pubKey: key.pubkey,
-      address: bech32AddressToAddress(key.address),
-      bech32Address: key.address,
-      isNanoLedger: false
-    };
+    this.key = key;
     this.signer = signer;
     this.client = client;
     this.provider = provider;
@@ -142,28 +144,40 @@ export class CosmosKeyring {
 
   static async createCosmosKeyring({
     privateKey,
+    publicKey,
     name,
     chainId,
     provider
   }: {
-    privateKey: string;
+    privateKey?: string;
+    publicKey: string;
     name: string;
     chainId: string;
     provider: WalletController;
   }): Promise<CosmosKeyring> {
-    const signer = await DirectSecp256k1Wallet.fromKey(
-      Buffer.from(privateKey, 'hex') as any,
-      provider.cosmosChainInfoMap[chainId].bech32Config.bech32PrefixAccAddr
-    );
-    const client = await SigningStargateClient.connectWithSigner(provider.cosmosChainInfoMap[chainId].rpc, signer);
+    let signer: DirectSecp256k1Wallet = undefined as any;
+    if (privateKey) {
+      signer = await DirectSecp256k1Wallet.fromKey(
+        Buffer.from(privateKey, 'hex') as any,
+        provider.cosmosChainInfoMap[chainId].bech32Config.bech32PrefixAccAddr
+      );
+    }
 
-    const keys = await signer.getAccounts();
-    const key = keys[0];
-    return new CosmosKeyring({ key, signer, client, name, provider, chainId });
-  }
+    const client = await SigningStargateClient.connectWithSigner(provider.cosmosChainInfoMap[chainId].rpc, null as any);
 
-  getKey(): Key {
-    return this.key;
+    const pubKey = encoding.fromHex(publicKey);
+    const address = CosmosKeyring.publicKeyToBBNAddress(pubKey);
+
+    const key = {
+      name,
+      algo: 'secp256k1',
+      pubKey: pubKey,
+      address: bech32AddressToAddress(address),
+      bech32Address: address,
+      isNanoLedger: false
+    };
+
+    return new CosmosKeyring({ key, signer, client, provider, chainId });
   }
 
   async getBalance() {
@@ -208,72 +222,152 @@ export class CosmosKeyring {
     return coins.reduce((acc, coin) => acc + Number(coin.amount), 0) - (withdrawnCoins || 0);
   }
 
-  async signDirect(chainId: string, signerAddress: string, signDoc: any): Promise<DirectSignResponse> {
-    const chainInfo = this.provider.cosmosChainInfoMap[chainId];
-    if (!chainInfo) {
-      throw new Error('Chain info not found');
-    }
-    const key = this.getKey();
-
-    if (signerAddress !== key.bech32Address) {
-      throw new Error('Signer address does not match');
-    }
-
-    signDoc.authInfoBytes = objToUint8Array(signDoc.authInfoBytes);
-    signDoc.bodyBytes = objToUint8Array(signDoc.bodyBytes);
-    const _sig = await this.signer.signDirect(signerAddress, signDoc as any);
-    const signature = Buffer.from(_sig.signature.signature, 'base64') as any;
-    return {
-      signed: {
-        ..._sig.signed,
-        accountNumber: _sig.signed.accountNumber.toString()
-      },
-      signature: encodeSecp256k1Signature(key.pubKey, signature)
-    } as any;
-  }
-
-  async signAminoADR36(chainId: string, signerAddress: string, data: string | Uint8Array): Promise<DirectSignResponse> {
-    const chainInfo = this.provider.cosmosChainInfoMap[chainId];
-    if (!chainInfo) {
-      throw new Error('Chain info not found');
-    }
-    const key = this.getKey();
-
-    if (signerAddress !== key.bech32Address) {
-      throw new Error('Signer address does not match');
-    }
-
-    const signDoc = makeADR36AminoSignDoc(signerAddress, data);
-    const toSignData = serializeSignDoc(signDoc);
-
-    const messageHash = sha256(toSignData);
+  async cosmosSignData(signBytesHex: string): Promise<{
+    publicKey: string;
+    signature: string;
+  }> {
+    const messageHash = sha256(encoding.fromHex(signBytesHex));
     const _sig = await Secp256k1.createSignature(messageHash, (this.signer as any).privkey);
     const signature = new Uint8Array([..._sig.r(32), ..._sig.s(32)]);
-    return encodeSecp256k1Signature(key.pubKey, signature);
+    return {
+      publicKey: encoding.toHex(this.key.pubKey),
+      signature: encoding.toHex(signature)
+    };
   }
 
-  async sendTokens(tokenBalance: { denom: string; amount: string }, recipient: string, memo: string) {
+  /**
+   * Convert Keystone public key to BBN address
+   * @param publicKey - The public key from Keystone as Uint8Array
+   * @returns BBN address string
+   */
+  static publicKeyToBBNAddress(publicKey: Uint8Array): string {
+    const pubKey = new PubKeySecp256k1(publicKey);
+    return pubKey.getBech32Address('bbn');
+  }
+
+  /**
+   * getCurrentKey
+   * @returns
+   */
+  getKey(): Key {
+    return this.key;
+  }
+
+  async createSendTokenStep1(
+    tokenBalance: { denom: string; amount: string },
+    recipient: string,
+    memo: string,
+    {
+      gasLimit,
+      gasPrice,
+      gasAdjustment
+    }: {
+      gasLimit: number;
+      gasPrice: string;
+      gasAdjustment?: number;
+    }
+  ) {
     const chainInfo = this.provider.cosmosChainInfoMap[this.chainId];
-    const client = await SigningStargateClient.connectWithSigner(chainInfo.rpc, this.signer, {
-      gasPrice: GasPrice.fromString(DEFAULT_BBN_GAS_PRICE + 'ubbn')
+
+    const fromAddress = this.getKey().bech32Address;
+    const sendMsg = {
+      typeUrl: '/cosmos.bank.v1beta1.MsgSend',
+      value: {
+        fromAddress: fromAddress,
+        toAddress: recipient,
+        amount: [tokenBalance]
+      }
+    };
+
+    const txBodyEncodeObject = {
+      typeUrl: '/cosmos.tx.v1beta1.TxBody',
+      value: {
+        messages: [sendMsg],
+        memo: memo,
+        timeoutHeight: undefined
+      }
+    };
+
+    const { accountNumber, sequence } = await this.client.getSequence(fromAddress);
+
+    const fee = {
+      amount: [
+        {
+          denom: chainInfo.feeCurrencies[0].coinMinimalDenom,
+          amount: Math.ceil(parseFloat(gasPrice) * gasLimit * (gasAdjustment || 1.0)).toString()
+        }
+      ],
+      gas: gasLimit // for transfer is enough
+    };
+    const txBodyBytes = this.client.registry.encode(txBodyEncodeObject);
+    // const gasLimit = math.Int53.fromString(fee.gas).toNumber();
+
+    const pubkey = encodePubkey(encodeSecp256k1Pubkey(this.getKey().pubKey));
+    const authInfoBytes = makeAuthInfoBytes([{ pubkey, sequence }], fee.amount, gasLimit, undefined, undefined);
+
+    const signDoc = makeSignDoc(txBodyBytes, authInfoBytes, this.chainId, accountNumber);
+
+    // cache
+    this._signDoc_bodyBytes = signDoc.bodyBytes;
+    this._signDoc_authInfoBytes = signDoc.authInfoBytes;
+
+    const signBytes = makeSignBytes(signDoc);
+
+    return encoding.toHex(signBytes);
+  }
+
+  async createSendTokenStep2(signature: string) {
+    const txRaw = TxRaw.fromPartial({
+      bodyBytes: this._signDoc_bodyBytes,
+      authInfoBytes: this._signDoc_authInfoBytes,
+      signatures: [encoding.fromHex(signature)] // only hex for keystone. should use base64 for other signers
     });
 
-    const { bech32Address } = this.getKey();
-    const result = await client.sendTokens(
-      bech32Address,
-      recipient,
-      [tokenBalance],
-      {
-        amount: [
-          {
-            denom: chainInfo.feeCurrencies[0].coinMinimalDenom,
-            amount: Math.ceil(parseFloat(DEFAULT_BBN_GAS_PRICE) * parseInt(DEFAULT_BBN_GAS_LIMIT)).toString()
-          }
-        ],
-        gas: DEFAULT_BBN_GAS_LIMIT // for transfer is enough
-      },
-      memo
-    );
-    return result;
+    const txBytes = TxRaw.encode(txRaw).finish();
+    return this.client.broadcastTxSync(txBytes);
+  }
+
+  /**
+   * simulate babylon gas
+   * @param recipient
+   * @param amount
+   * @param memo
+   * @returns return gas fee
+   */
+  async simulateBabylonGas(recipient: string, amount: { denom: string; amount: string }, memo: string) {
+    try {
+      const chainInfo = this.provider.cosmosChainInfoMap[this.chainId];
+
+      const key: AccountData = {
+        address: this.getKey().bech32Address,
+        algo: 'secp256k1',
+        pubkey: this.getKey().pubKey
+      };
+
+      const dummySigner = {
+        getAccounts: async () => [key]
+      } as unknown as DirectSecp256k1Wallet;
+
+      // TODO: Check if we can remove account query before simulation to optimize performance
+      const client = await SigningStargateClient.connectWithSigner(chainInfo.rpc, dummySigner, {
+        gasPrice: GasPrice.fromString(DEFAULT_BBN_GAS_PRICE + 'ubbn')
+      });
+
+      const { bech32Address } = this.getKey();
+      const sendMsg = {
+        typeUrl: '/cosmos.bank.v1beta1.MsgSend',
+        value: {
+          fromAddress: bech32Address,
+          toAddress: recipient,
+          amount: [amount]
+        }
+      };
+
+      const ret = await client.simulate(bech32Address, [sendMsg], memo);
+
+      return ret;
+    } catch (error: any) {
+      console.log('simulation error:', error);
+    }
   }
 }

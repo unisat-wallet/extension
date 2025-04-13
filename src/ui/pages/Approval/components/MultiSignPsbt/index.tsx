@@ -1,6 +1,7 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
 import { KEYRING_TYPE } from '@/shared/constant';
+import { KeystoneSignEnum } from '@/shared/constant/KeystoneSignType';
 import { SignPsbtOptions, TxType, WebsiteResult } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -210,9 +211,9 @@ export default function MultiSignPsbt({
   if (isKeystoneSigning) {
     return (
       <KeystoneSignScreen
-        type="psbt"
+        type={KeystoneSignEnum.PSBT}
         data={txInfo.psbtHexs[signIndex]}
-        isFinalize={false}
+        isFinalize={options?.[signIndex]?.autoFinalized !== false}
         signatureText={`Get Signature (${signIndex + 1}/${count})`}
         id={signIndex}
         onSuccess={(data) => {

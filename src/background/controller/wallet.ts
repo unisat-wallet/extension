@@ -1,3 +1,7 @@
+import { PsbtInput } from 'bip174/src/lib/interfaces';
+import { tapleafHash } from 'bitcoinjs-lib/src/payments/bip341';
+import { pubkeyInScript } from 'bitcoinjs-lib/src/psbt/psbtutils';
+
 import {
   contactBookService,
   keyringService,
@@ -25,7 +29,7 @@ import {
   KEYRING_TYPES,
   NETWORK_TYPES
 } from '@/shared/constant';
-import { BABYLON_CONFIG_MAP } from '@/shared/constant/babylon';
+import { BabylonConfigV2 } from '@/shared/constant/babylon';
 import { COSMOS_CHAINS_MAP, CosmosChainInfo } from '@/shared/constant/cosmosChain';
 import eventBus from '@/shared/eventBus';
 import { runesUtils } from '@/shared/lib/runes-utils';
@@ -35,6 +39,7 @@ import {
   AddressUserToSignInput,
   BitcoinBalance,
   CosmosBalance,
+  CosmosSignDataType,
   NetworkType,
   PublicKeyUserToSignInput,
   SignPsbtOptions,
@@ -56,7 +61,6 @@ import { toPsbtNetwork } from '@unisat/wallet-sdk/lib/network';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 import { toXOnly } from '@unisat/wallet-sdk/lib/utils';
 
-import { BabylonApiService } from '../service/babylon/api/babylonApiService';
 import { getDelegationsV2 } from '../service/babylon/api/getDelegationsV2';
 import { DelegationV2StakingState } from '../service/babylon/types/delegationsV2';
 import { ContactBookItem } from '../service/contactBook';
@@ -71,6 +75,23 @@ export type AccountAsset = {
   symbol: string;
   amount: string;
   value: string;
+};
+
+const caculateTapLeafHash = (input: PsbtInput, pubkey: Buffer) => {
+  if (input.tapInternalKey && !input.tapLeafScript) {
+    return [];
+  }
+  const tapLeafHashes = (input.tapLeafScript || [])
+    .filter((tapLeaf) => pubkeyInScript(pubkey, tapLeaf.script))
+    .map((tapLeaf) => {
+      const hash = tapleafHash({
+        output: tapLeaf.script,
+        version: tapLeaf.leafVersion
+      });
+      return Object.assign({ hash }, tapLeaf);
+    });
+
+  return tapLeafHashes.map((each) => each.hash);
 };
 
 export class WalletController extends BaseController {
@@ -97,22 +118,6 @@ export class WalletController extends BaseController {
 
   initAlianNames = async () => {
     preferenceService.changeInitAlianNameStatus();
-    const contacts = this.listContact();
-    const keyrings = await keyringService.getAllDisplayedKeyrings();
-
-    keyrings.forEach((v) => {
-      v.accounts.forEach((w, index) => {
-        this.updateAlianName(w.pubkey, `${BRAND_ALIAN_TYPE_TEXT[v.type]} ${index + 1}`);
-      });
-    });
-
-    if (contacts.length !== 0 && keyrings.length !== 0) {
-      const allAccounts = keyrings.map((item) => item.accounts).flat();
-      const sameAddressList = contacts.filter((item) => allAccounts.find((contact) => contact.pubkey == item.address));
-      if (sameAddressList.length > 0) {
-        sameAddressList.forEach((item) => this.updateAlianName(item.address, item.name));
-      }
-    }
   };
 
   isReady = () => {
@@ -270,8 +275,6 @@ export class WalletController extends BaseController {
       console.log(e);
       throw e;
     }
-    const pubkeys = await originKeyring.getAccounts();
-    if (alianName) this.updateAlianName(pubkeys[0], alianName);
 
     const displayedKeyring = await keyringService.displayForKeyring(
       originKeyring,
@@ -417,7 +420,6 @@ export class WalletController extends BaseController {
   deriveNewAccountFromMnemonic = async (keyring: WalletKeyring, alianName?: string) => {
     const _keyring = keyringService.keyrings[keyring.index];
     const result = await keyringService.addNewAccount(_keyring);
-    if (alianName) this.updateAlianName(result[0], alianName);
 
     const currentKeyring = await this.getCurrentKeyring();
     if (!currentKeyring) throw new Error('no current keyring');
@@ -542,7 +544,7 @@ export class WalletController extends BaseController {
           script = output.script;
           value = output.value;
         }
-        const isSigned = v.finalScriptSig || v.finalScriptWitness;
+        const isSigned = v.finalScriptSig || v.finalScriptWitness || v.tapKeySig || v.partialSig || v.tapScriptSig;
         if (script && !isSigned) {
           const address = scriptPkToAddress(script, networkType);
           if (account.address === address) {
@@ -554,7 +556,18 @@ export class WalletController extends BaseController {
           }
         }
       });
+
+      if (toSignInputs.length === 0) {
+        psbt.data.inputs.forEach((input, index) => {
+          // if no toSignInputs, sign all inputs
+          toSignInputs.push({
+            index: index,
+            publicKey: account.pubkey
+          });
+        });
+      }
     }
+
     return toSignInputs;
   };
 
@@ -574,46 +587,80 @@ export class WalletController extends BaseController {
       toSignInputs = await this.formatOptionsToSignInputs(psbt);
       if (autoFinalized !== false) autoFinalized = true;
     }
-    psbt.data.inputs.forEach((v) => {
-      const isNotSigned = !(v.finalScriptSig || v.finalScriptWitness);
-      const isP2TR = keyring.addressType === AddressType.P2TR || keyring.addressType === AddressType.M44_P2TR;
-      const lostInternalPubkey = !v.tapInternalKey;
-      // Special measures taken for compatibility with certain applications.
-      if (isNotSigned && isP2TR && lostInternalPubkey) {
-        const tapInternalKey = toXOnly(Buffer.from(account.pubkey, 'hex'));
-        const { output } = bitcoin.payments.p2tr({
-          internalPubkey: tapInternalKey,
-          network: psbtNetwork
-        });
-        if (v.witnessUtxo?.script.toString('hex') == output?.toString('hex')) {
-          v.tapInternalKey = tapInternalKey;
+
+    const isKeystone = keyring.type === KEYRING_TYPE.KeystoneKeyring;
+    let bip32Derivation: any = undefined;
+
+    if (isKeystone) {
+      if (!_keyring.mfp) {
+        throw new Error('no mfp in keyring');
+      }
+      bip32Derivation = {
+        masterFingerprint: Buffer.from(_keyring.mfp as string, 'hex'),
+        path: `${keyring.hdPath}/${account.index}`,
+        pubkey: Buffer.from(account.pubkey, 'hex')
+      };
+    }
+
+    psbt.data.inputs.forEach((input, index) => {
+      const isSigned =
+        input.finalScriptSig || input.finalScriptWitness || input.tapKeySig || input.partialSig || input.tapScriptSig;
+      if (isSigned) {
+        return;
+      }
+
+      const isToBeSigned = toSignInputs.some((v) => v.index === index);
+      if (!isToBeSigned) {
+        return;
+      }
+
+      let isP2TR = false;
+      try {
+        bitcoin.payments.p2tr({ output: input.witnessUtxo?.script, network: psbtNetwork });
+        isP2TR = true;
+      } catch (e) {
+        // skip
+      }
+
+      if (isP2TR) {
+        // fix p2tr input data
+        let isKeyPathP2TR = false;
+        try {
+          const tapInternalKey = toXOnly(Buffer.from(account.pubkey, 'hex'));
+          const { output } = bitcoin.payments.p2tr({
+            internalPubkey: tapInternalKey,
+            network: psbtNetwork
+          });
+          if (input.witnessUtxo?.script.toString('hex') == output?.toString('hex')) {
+            isKeyPathP2TR = true;
+          }
+          if (isKeyPathP2TR) {
+            input.tapInternalKey = tapInternalKey;
+          } else {
+            // only keypath p2tr can have tapInternalKey
+            delete input.tapInternalKey;
+          }
+        } catch (e) {
+          // skip
+        }
+      }
+
+      if (isKeystone) {
+        if (isP2TR) {
+          input.tapBip32Derivation = [
+            {
+              ...bip32Derivation,
+              pubkey: bip32Derivation.pubkey.slice(1),
+              leafHashes: caculateTapLeafHash(input, bip32Derivation.pubkey)
+            }
+          ];
+        } else {
+          input.bip32Derivation = [bip32Derivation];
         }
       }
     });
 
-    if (keyring.type === KEYRING_TYPE.KeystoneKeyring) {
-      if (!_keyring.mfp) {
-        throw new Error('no mfp in keyring');
-      }
-      toSignInputs.forEach((input) => {
-        const isP2TR = keyring.addressType === AddressType.P2TR || keyring.addressType === AddressType.M44_P2TR;
-        const bip32Derivation = {
-          masterFingerprint: Buffer.from(_keyring.mfp as string, 'hex'),
-          path: `${keyring.hdPath}/${account.index}`,
-          pubkey: Buffer.from(account.pubkey, 'hex')
-        };
-        if (isP2TR) {
-          psbt.data.inputs[input.index].tapBip32Derivation = [
-            {
-              ...bip32Derivation,
-              pubkey: bip32Derivation.pubkey.slice(1),
-              leafHashes: []
-            }
-          ];
-        } else {
-          psbt.data.inputs[input.index].bip32Derivation = [bip32Derivation];
-        }
-      });
+    if (isKeystone) {
       return psbt;
     }
 
@@ -692,8 +739,28 @@ export class WalletController extends BaseController {
     contactBookService.updateContact(data);
   };
 
-  removeContact = (address: string) => {
-    contactBookService.removeContact(address);
+  getContactByAddress = (address: string) => {
+    return contactBookService.getContactByAddress(address);
+  };
+
+  getContactByAddressAndChain = (address: string, chain: CHAINS_ENUM) => {
+    return contactBookService.getContactByAddressAndChain(address, chain);
+  };
+
+  private _generateAlianName = (type: string, index: number) => {
+    return `${BRAND_ALIAN_TYPE_TEXT[type]} ${index}`;
+  };
+
+  removeContact = (address: string, chain?: CHAINS_ENUM) => {
+    if (chain) {
+      contactBookService.removeContact(address, chain);
+    } else {
+      console.warn('removeContact called without chain parameter, using old method');
+      const contact = contactBookService.getContactByAddress(address);
+      if (contact) {
+        contactBookService.removeContact(address, contact.chain);
+      }
+    }
   };
 
   listContact = (includeAlias = true) => {
@@ -705,17 +772,16 @@ export class WalletController extends BaseController {
     }
   };
 
+  listContacts = () => {
+    return contactBookService.listContacts();
+  };
+
+  saveContactsOrder = (contacts: ContactBookItem[]) => {
+    return contactBookService.saveContactsOrder(contacts);
+  };
+
   getContactsByMap = () => {
     return contactBookService.getContactsByMap();
-  };
-
-  getContactByAddress = (address: string) => {
-    return contactBookService.getContactByAddress(address);
-  };
-
-  private _generateAlianName = (type: string, index: number) => {
-    const alianName = `${BRAND_ALIAN_TYPE_TEXT[type]} ${index}`;
-    return alianName;
   };
 
   getNextAlianName = (keyring: WalletKeyring) => {
@@ -728,18 +794,6 @@ export class WalletController extends BaseController {
 
   updateHighlightWalletList = (list) => {
     return preferenceService.updateWalletSavedList(list);
-  };
-
-  getAlianName = (pubkey: string) => {
-    const contactName = contactBookService.getContactByAddress(pubkey)?.name;
-    return contactName;
-  };
-
-  updateAlianName = (pubkey: string, name: string) => {
-    contactBookService.updateAlias({
-      name,
-      address: pubkey
-    });
   };
 
   getAllAlianName = () => {
@@ -1165,7 +1219,7 @@ export class WalletController extends BaseController {
       const { pubkey } = displayedKeyring.accounts[j];
       const address = publicKeyToAddress(pubkey, addressType, networkType);
       const accountKey = key + '#' + j;
-      const defaultName = this.getAlianName(pubkey) || this._generateAlianName(type, j + 1);
+      const defaultName = this._generateAlianName(type, j + 1);
       const alianName = preferenceService.getAccountAlianName(accountKey, defaultName);
       const flag = preferenceService.getAddressFlag(address);
       accounts.push({
@@ -1362,7 +1416,7 @@ export class WalletController extends BaseController {
       origin,
       name,
       icon,
-      chain: CHAINS_ENUM.BTC,
+      chain: ChainType.BITCOIN_MAINNET,
       isConnected: false,
       isSigned: false,
       isTop: false
@@ -1460,6 +1514,10 @@ export class WalletController extends BaseController {
 
   decodePsbt = (psbtHex: string, website: string) => {
     return openapiService.decodePsbt(psbtHex, website);
+  };
+
+  decodeContracts = (contracts: any[], account) => {
+    return openapiService.decodeContracts(contracts, account);
   };
 
   getBRC20List = async (address: string, currentPage: number, pageSize: number) => {
@@ -1601,8 +1659,40 @@ export class WalletController extends BaseController {
     return utxo;
   };
 
-  checkWebsite = (website: string) => {
-    return openapiService.checkWebsite(website);
+  /**
+   * Check if a website is a known phishing site
+   * @param website Website URL or origin to check
+   * @returns Object containing check results with isScammer flag and optional warning message
+   */
+  checkWebsite = async (
+    website: string
+  ): Promise<{ isScammer: boolean; warning: string; allowQuickMultiSign?: boolean }> => {
+    let isLocalPhishing = false;
+
+    try {
+      let hostname = '';
+      try {
+        hostname = new URL(website).hostname;
+      } catch (e) {
+        hostname = website;
+      }
+
+      const phishingService = await import('@/background/service/phishing');
+      isLocalPhishing = phishingService.default.checkPhishing(hostname);
+    } catch (error) {
+      console.error('[Phishing] Local check error:', error);
+    }
+
+    const apiResult = await openapiService.checkWebsite(website);
+
+    if (isLocalPhishing) {
+      return {
+        ...apiResult,
+        isScammer: true
+      };
+    }
+
+    return apiResult;
   };
 
   getArc20BalanceList = async (address: string, currentPage: number, pageSize: number) => {
@@ -1858,6 +1948,7 @@ export class WalletController extends BaseController {
     const { keyring } = await this.checkKeyringMethod('parseSignMsgUr');
     const sig = await keyring.parseSignMsgUr!(type, cbor);
     sig.signature = Buffer.from(sig.signature, 'hex').toString('base64');
+
     return sig;
   };
 
@@ -2196,6 +2287,8 @@ export class WalletController extends BaseController {
     return openapiService.createBuyCoinPaymentUrl(coin, address, channel);
   };
 
+  //  ----------- cosmos support --------
+
   getCosmosKeyring = async (chainId: string) => {
     if (!this.cosmosChainInfoMap[chainId]) {
       throw new Error('Not supported chainId');
@@ -2205,17 +2298,25 @@ export class WalletController extends BaseController {
     if (!currentAccount) return null;
 
     const key = `${currentAccount.pubkey}-${currentAccount.type}-${chainId}`;
+
     if (key === this._cacheCosmosKeyringKey) {
       return this._cosmosKeyring;
     }
 
     const keyring = await keyringService.getKeyringForAccount(currentAccount.pubkey, currentAccount.type);
     if (!keyring) return null;
-    const privateKey = await keyring.exportAccount(currentAccount.pubkey);
 
+    let cosmosKeyring: CosmosKeyring | null = null;
     const name = `${currentAccount.alianName}-${chainId}`;
-    const cosmosKeyring = await CosmosKeyring.createCosmosKeyring({
+    let privateKey;
+
+    if (currentAccount.type !== KEYRING_TYPE.KeystoneKeyring) {
+      privateKey = await keyring.exportAccount(currentAccount.pubkey);
+    }
+
+    cosmosKeyring = await CosmosKeyring.createCosmosKeyring({
       privateKey,
+      publicKey: currentAccount.pubkey,
       name,
       chainId,
       provider: this
@@ -2223,7 +2324,6 @@ export class WalletController extends BaseController {
 
     this._cacheCosmosKeyringKey = key;
     this._cosmosKeyring = cosmosKeyring;
-
     return cosmosKeyring;
   };
 
@@ -2234,7 +2334,7 @@ export class WalletController extends BaseController {
     return address;
   };
 
-  getBabylonAddressSummary = async (babylonChainId: string, withStakingInfo = true) => {
+  getBabylonAddressSummary = async (babylonChainId: string, babylonConfig: BabylonConfigV2) => {
     const chainType = this.getChainType();
     const chain = CHAINS_MAP[chainType];
 
@@ -2248,7 +2348,7 @@ export class WalletController extends BaseController {
     let rewardBalance = 0;
     try {
       balance = await cosmosKeyring.getBalance();
-      if (withStakingInfo) {
+      if (babylonConfig) {
         rewardBalance = await cosmosKeyring.getBabylonStakingRewards();
       }
     } catch (e) {
@@ -2256,8 +2356,7 @@ export class WalletController extends BaseController {
     }
 
     let stakedBalance = 0;
-    if (withStakingInfo) {
-      const babylonConfig = BABYLON_CONFIG_MAP[chainType];
+    if (babylonConfig) {
       try {
         const currentAccount = await this.getCurrentAccount();
         if (!currentAccount) return null;
@@ -2281,21 +2380,118 @@ export class WalletController extends BaseController {
     return { address, balance, rewardBalance, stakedBalance };
   };
 
-  getBabylonStakingStatusV2 = async () => {
-    const chainType = this.getChainType();
-    const babylonConfig = BABYLON_CONFIG_MAP[chainType];
-    if (!babylonConfig) {
-      return;
+  genSignCosmosUr = async (cosmosSignRequest: {
+    requestId?: string;
+    signData: string;
+    dataType: CosmosSignDataType;
+    path: string;
+    chainId?: string;
+    accountNumber?: string;
+    address?: string;
+  }) => {
+    if (!cosmosSignRequest.signData) {
+      throw new Error('signData is required for Cosmos signing');
     }
-    const apiService = new BabylonApiService(babylonConfig.phase1.stakingApi, babylonConfig.phase2.stakingApi);
-    return apiService.getBabylonStakingStatusV2();
+
+    if (!cosmosSignRequest.dataType) {
+      throw new Error('dataType is required for Cosmos signing');
+    }
+
+    if (!cosmosSignRequest.path) {
+      throw new Error('path is required for Cosmos signing');
+    }
+
+    const { requestId, signData, dataType, path, chainId, accountNumber, address } = cosmosSignRequest;
+
+    const signRequest = {
+      requestId,
+      signData,
+      dataType,
+      path,
+      extra: {
+        chainId,
+        accountNumber,
+        address
+      }
+    };
+
+    return keyringService.generateSignCosmosUr(signRequest);
   };
 
-  sendTokens = async (chainId: string, tokenBalance: CosmosBalance, recipient: string, memo: string) => {
+  parseCosmosSignUr = async (type: string, cbor: string) => {
+    if (!type) {
+      throw new Error('UR type is required for parsing Cosmos signature');
+    }
+
+    if (!cbor) {
+      throw new Error('CBOR data is required for parsing Cosmos signature');
+    }
+
+    const result = await keyringService.parseSignCosmosUr(type, cbor);
+    return result;
+  };
+
+  cosmosSignData = async (chainId: string, signBytesHex: string) => {
     const keyring = await this.getCosmosKeyring(chainId);
     if (!keyring) return null;
-    const result = await keyring.sendTokens(tokenBalance, recipient, memo);
-    return { code: result.code, transactionHash: result.transactionHash };
+    const result = await keyring.cosmosSignData(signBytesHex);
+    return result;
+  };
+
+  createSendTokenStep1 = async (
+    chainId: string,
+    tokenBalance: CosmosBalance,
+    recipient: string,
+    memo: string,
+    {
+      gasLimit,
+      gasPrice,
+      gasAdjustment
+    }: {
+      gasLimit: number;
+      gasPrice: string;
+      gasAdjustment?: number;
+    }
+  ) => {
+    const keyring = await this.getCosmosKeyring(chainId);
+    if (!keyring) return null;
+    const result = await keyring.createSendTokenStep1(tokenBalance, recipient, memo, {
+      gasLimit,
+      gasPrice,
+      gasAdjustment
+    });
+    return result;
+  };
+
+  createSendTokenStep2 = async (chainId: string, signature: string) => {
+    const keyring = await this.getCosmosKeyring(chainId);
+    if (!keyring) return null;
+    const result = await keyring.createSendTokenStep2(signature);
+    return result;
+  };
+
+  /**
+   * Simulate the gas for the send tokens transaction
+   * @param chainId
+   * @param tokenBalance
+   * @param recipient
+   * @param memo
+   * @returns
+   */
+  simulateBabylonGas = async (
+    chainId: string,
+    recipient: string,
+    amount: { denom: string; amount: string },
+    memo: string
+  ) => {
+    const keyring = await this.getCosmosKeyring(chainId);
+    if (!keyring) return null;
+    const result = await keyring.simulateBabylonGas(recipient, amount, memo);
+    return result;
+  };
+
+  getBabylonConfig = async () => {
+    return openapiService.getBabylonConfig();
   };
 }
 

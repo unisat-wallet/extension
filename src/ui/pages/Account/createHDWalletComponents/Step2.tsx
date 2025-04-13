@@ -1,22 +1,22 @@
 import bitcore from 'bitcore-lib';
-
-import { ContextData, UpdateContextDataParams } from '@/ui/pages/Account/createHDWalletComponents/types';
-import { satoshisToAmount, useWallet } from '@/ui/utils';
-import { useTools } from '@/ui/components/ActionComponent';
 import { useEffect, useMemo, useState } from 'react';
+
 import { ADDRESS_TYPES, RESTORE_WALLETS } from '@/shared/constant';
 import { AddressType } from '@/shared/types';
-import { useCreateAccountCallback } from '@/ui/state/global/hooks';
-import { useNavigate } from '@/ui/pages/MainRoute';
 import { Button, Column, Icon, Input, Row, Text } from '@/ui/components';
+import { useTools } from '@/ui/components/ActionComponent';
 import { AddressTypeCard2 } from '@/ui/components/AddressTypeCard';
 import { FooterButtonContainer } from '@/ui/components/FooterButtonContainer';
+import { ContextData, UpdateContextDataParams } from '@/ui/pages/Account/createHDWalletComponents/types';
+import { useNavigate } from '@/ui/pages/MainRoute';
+import { useCreateAccountCallback } from '@/ui/state/global/hooks';
+import { satoshisToAmount, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 export function Step2({
-                 contextData,
-                 updateContextData
-               }: {
+  contextData,
+  updateContextData
+}: {
   contextData: ContextData;
   updateContextData: (params: UpdateContextDataParams) => void;
 }) {
@@ -227,7 +227,7 @@ export function Step2({
     setScanned(true);
     tools.showLoading(true);
     try {
-      let groups: { type: AddressType; address_arr: string[]; satoshis_arr: number[],pubkey_arr:string[] }[] = [];
+      let groups: { type: AddressType; address_arr: string[]; satoshis_arr: number[]; pubkey_arr: string[] }[] = [];
       for (let i = 0; i < allHdPathOptions.length; i++) {
         const options = allHdPathOptions[i];
         const address_arr: string[] = [];
@@ -253,7 +253,7 @@ export function Step2({
           type: options.addressType,
           address_arr: address_arr,
           satoshis_arr: satoshis_arr,
-          pubkey_arr:[],
+          pubkey_arr: []
         });
       }
 

@@ -61,7 +61,8 @@ module.exports = {
         argsIgnorePattern: '^_',
         varsIgnorePattern: '^_'
       }
-    ]
+    ],
+    'no-useless-catch': 0
   },
   settings: {
     'import/resolver': {

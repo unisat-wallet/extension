@@ -4,7 +4,8 @@ import { AccountAsset } from '@/background/controller/wallet';
 import { ContactBookItem, ContactBookStore } from '@/background/service/contactBook';
 import { ToSignInput } from '@/background/service/keyring';
 import { ConnectedSite } from '@/background/service/permission';
-import { AddressFlagType, ChainType } from '@/shared/constant';
+import { AddressFlagType, CHAINS_ENUM, ChainType } from '@/shared/constant';
+import { BabylonConfigV2 } from '@/shared/constant/babylon';
 import {
   Account,
   AddressCAT20TokenSummary,
@@ -17,7 +18,6 @@ import {
   AppSummary,
   Arc20Balance,
   BabylonAddressSummary,
-  BabylonStakingStatusV2,
   BitcoinBalance,
   BitcoinBalanceV2,
   BtcChannelItem,
@@ -26,6 +26,7 @@ import {
   CAT721Balance,
   CoinPrice,
   CosmosBalance,
+  CosmosSignDataType,
   DecodedPsbt,
   FeeSummary,
   InscribeOrder,
@@ -153,7 +154,6 @@ export interface WalletController {
   getAccountsCount(): Promise<number>;
   getAllAlianName: () => (ContactBookItem | undefined)[];
   getContactsByMap: () => ContactBookStore;
-  updateAlianName: (pubkey: string, name: string) => Promise<void>;
 
   getCurrentAccount(): Promise<Account>;
   getAccounts(): Promise<Account[]>;
@@ -255,6 +255,8 @@ export interface WalletController {
 
   decodePsbt(psbtHex: string, website: string): Promise<DecodedPsbt>;
 
+  decodeContracts(contracts: any[], account: any): Promise<any[]>;
+
   getAllInscriptionList(
     address: string,
     currentPage: number,
@@ -348,21 +350,28 @@ export interface WalletController {
   getVersionDetail(version: string): Promise<VersionDetail>;
 
   genSignPsbtUr(psbtHex: string): Promise<{ type: string; cbor: string }>;
-  parseSignPsbtUr(
-    type: string,
-    cbor: string,
-    isFinalize?: boolean
-  ): Promise<{
-    psbtHex: string;
-    rawTx: string;
-  }>;
+  parseSignPsbtUr(type: string, cbor: string, isFinalize?: boolean): Promise<{ psbtHex: string; rawtx?: string }>;
   genSignMsgUr(text: string, msgType?: string): Promise<{ type: string; cbor: string; requestId: string }>;
-  parseSignMsgUr(
-    type: string,
-    cbor: string,
-    msgType?: string
-  ): Promise<{ requestId: string; publicKey: string; signature: string }>;
+  parseSignMsgUr(type: string, cbor: string, msgType: string): Promise<{ signature: string }>;
   getKeystoneConnectionType(): Promise<'USB' | 'QR'>;
+  genSignCosmosUr(cosmosSignRequest: {
+    requestId?: string;
+    signData: string;
+    dataType: CosmosSignDataType;
+    path: string;
+    chainId?: string;
+    accountNumber?: string;
+    address?: string;
+  }): Promise<{ type: string; cbor: string; requestId: string }>;
+  parseCosmosSignUr(type: string, cbor: string): Promise<any>;
+
+  cosmosSignData(
+    chainId: string,
+    signBytesHex: string
+  ): Promise<{
+    publicKey: string;
+    signature: string;
+  }>;
 
   getEnableSignData(): Promise<boolean>;
   setEnableSignData(enable: boolean): Promise<void>;
@@ -450,19 +459,40 @@ export interface WalletController {
 
   getBabylonAddress(address: string): Promise<string>;
 
-  getBabylonAddressSummary(chainId: string, withStakingInfo?: boolean): Promise<BabylonAddressSummary>;
+  getBabylonAddressSummary(chainId: string, babylonConfig?: BabylonConfigV2): Promise<BabylonAddressSummary>;
 
-  getBabylonStakingStatusV2(): Promise<BabylonStakingStatusV2>;
-
-  sendTokens(
+  createSendTokenStep1(
     chainId: string,
     tokenBalance: CosmosBalance,
     to: string,
+    memo: string,
+    {
+      gasLimit,
+      gasPrice,
+      gasAdjustment
+    }: {
+      gasLimit: number;
+      gasPrice: string;
+      gasAdjustment?: number;
+    }
+  ): Promise<string>;
+  createSendTokenStep2(chainId: string, signature: string): Promise<string>;
+
+  simulateBabylonGas(
+    chainId: string,
+    recipient: string,
+    amount: { denom: string; amount: string },
     memo: string
-  ): Promise<{
-    code: number;
-    transactionHash: string;
-  }>;
+  ): Promise<number>;
+
+  getBabylonConfig(): Promise<BabylonConfigV2>;
+
+  getContactByAddress(address: string): Promise<ContactBookItem | undefined>;
+  getContactByAddressAndChain(address: string, chain: CHAINS_ENUM): Promise<ContactBookItem | undefined>;
+  updateContact(data: ContactBookItem): Promise<void>;
+  removeContact(address: string, chain?: CHAINS_ENUM): Promise<void>;
+  listContacts(): Promise<ContactBookItem[]>;
+  saveContactsOrder(contacts: ContactBookItem[]): Promise<void>;
 }
 
 const WalletContext = createContext<{

@@ -5,13 +5,13 @@ import { EventEmitter } from 'events';
 import log from 'loglevel';
 
 import { ADDRESS_TYPES, KEYRING_TYPE } from '@/shared/constant';
-import { AddressType } from '@/shared/types';
+import { AddressType, CosmosSignDataType } from '@/shared/types';
 import { ObservableStore } from '@metamask/obs-store';
 import { keyring } from '@unisat/wallet-sdk';
 import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 
 import i18n from '../i18n';
-import preference from '../preference';
+import { default as preference, default as preferenceService } from '../preference';
 import DisplayKeyring from './display';
 
 const { SimpleKeyring, HdKeyring, KeystoneKeyring } = keyring;
@@ -85,6 +85,16 @@ export interface Keyring {
   genSignMsgUr?(publicKey: string, text: string): Promise<{ type: string; cbor: string; requestId: string }>;
   parseSignMsgUr?(type: string, cbor: string): Promise<{ requestId: string; publicKey: string; signature: string }>;
   getConnectionType?(): 'USB' | 'QR';
+  genSignCosmosUr?(cosmosSignRequest: {
+    requestId?: string;
+    signData: string;
+    dataType: CosmosSignDataType;
+    path: string;
+    chainId?: string;
+    accountNumber?: string;
+    address?: string;
+  }): Promise<{ type: string; cbor: string; requestId: string }>;
+  parseSignCosmosUr?(type: string, cbor: string): Promise<any>;
 }
 
 class EmptyKeyring implements Keyring {
@@ -138,6 +148,8 @@ class KeyringService extends EventEmitter {
   addressTypes: AddressType[];
   encryptor: typeof encryptor = encryptor;
   password: string | null = null;
+  private isUnlocking = false;
+  private cachedDisplayedKeyring: DisplayedKeyring[] | null = null;
 
   constructor() {
     super();
@@ -199,9 +211,9 @@ class KeyringService extends EventEmitter {
    * @returns  A Promise that resolves to the state.
    */
   importPrivateKey = async (privateKey: string, addressType: AddressType) => {
-    await this.persistAllKeyrings();
+    // await this.persistAllKeyrings();
     const keyring = await this.addNewKeyring('Simple Key Pair', [privateKey], addressType);
-    await this.persistAllKeyrings();
+    // await this.persistAllKeyrings();
     this.setUnlocked();
     this.fullUpdate();
     return keyring;
@@ -268,7 +280,7 @@ class KeyringService extends EventEmitter {
       return Promise.reject(new Error(i18n.t('mnemonic phrase is invalid')));
     }
 
-    await this.persistAllKeyrings();
+    // await this.persistAllKeyrings();
     const activeIndexes: number[] = [];
     for (let i = 0; i < accountCount; i++) {
       activeIndexes.push(i);
@@ -287,7 +299,7 @@ class KeyringService extends EventEmitter {
     if (!accounts[0]) {
       throw new Error('KeyringController - First Account not found.');
     }
-    this.persistAllKeyrings();
+    // this.persistAllKeyrings();
     this.setUnlocked();
     this.fullUpdate();
     return keyring;
@@ -304,7 +316,7 @@ class KeyringService extends EventEmitter {
     if (accountCount < 1) {
       throw new Error(i18n.t('account count must be greater than 0'));
     }
-    await this.persistAllKeyrings();
+    // await this.persistAllKeyrings();
     const tmpKeyring = new KeystoneKeyring();
     await tmpKeyring.initFromUR(urType, urCbor, connectionType);
     if (hdPath.length >= 13) {
@@ -329,8 +341,11 @@ class KeyringService extends EventEmitter {
   addKeyring = async (keyring: Keyring, addressType: AddressType) => {
     const accounts = await keyring.getAccounts();
     await this.checkForDuplicate(keyring.type, accounts);
+
     this.keyrings.push(keyring);
     this.addressTypes.push(addressType);
+    this.cachedDisplayedKeyring = null;
+
     await this.persistAllKeyrings();
     await this._updateMemStoreKeyrings();
     await this.fullUpdate();
@@ -346,6 +361,8 @@ class KeyringService extends EventEmitter {
       }
     }
     this.addressTypes[keyringIndex] = addressType;
+    this.cachedDisplayedKeyring = null;
+
     await this.persistAllKeyrings();
     await this._updateMemStoreKeyrings();
     await this.fullUpdate();
@@ -363,9 +380,12 @@ class KeyringService extends EventEmitter {
     // set locked
     this.password = null;
     this.memStore.updateState({ isUnlocked: false });
+
     // remove keyrings
     this.keyrings = [];
     this.addressTypes = [];
+    this.cachedDisplayedKeyring = null;
+
     await this._updateMemStoreKeyrings();
     this.emit('lock');
     return this.fullUpdate();
@@ -385,36 +405,57 @@ class KeyringService extends EventEmitter {
    * @returns {Promise<Object>} A Promise that resolves to the state.
    */
   submitPassword = async (password: string): Promise<MemStoreState> => {
-    await this.verifyPassword(password);
-    this.password = password;
-    try {
-      this.keyrings = await this.unlockKeyrings(password);
-    } catch {
-      //
-    } finally {
-      this.setUnlocked();
+    if (this.isUnlocking) {
+      throw new Error('Unlock already in progress');
     }
 
-    return this.fullUpdate();
+    this.isUnlocking = true;
+
+    try {
+      await this.verifyPassword(password);
+
+      this.password = password;
+
+      this.keyrings = await this.unlockKeyrings(password);
+      this.cachedDisplayedKeyring = null;
+
+      this.setUnlocked();
+      return this.fullUpdate();
+    } catch (e) {
+      throw e;
+    } finally {
+      this.isUnlocking = false;
+    }
   };
 
   changePassword = async (oldPassword: string, newPassword: string) => {
-    await this.verifyPassword(oldPassword);
-    await this.unlockKeyrings(oldPassword);
-    this.password = newPassword;
+    try {
+      if (this.isUnlocking) {
+        throw new Error('changePassword already in progress');
+      }
+      this.isUnlocking = true;
 
-    const encryptBooted = await this.encryptor.encrypt(newPassword, 'true');
-    this.store.updateState({ booted: encryptBooted });
+      await this.verifyPassword(oldPassword);
+      await this.unlockKeyrings(oldPassword);
+      this.password = newPassword;
 
-    if (this.memStore.getState().preMnemonics) {
-      const mnemonic = await this.encryptor.decrypt(oldPassword, this.memStore.getState().preMnemonics);
-      const preMnemonics = await this.encryptor.encrypt(newPassword, mnemonic);
-      this.memStore.updateState({ preMnemonics });
+      const encryptBooted = await this.encryptor.encrypt(newPassword, 'true');
+      this.store.updateState({ booted: encryptBooted });
+
+      if (this.memStore.getState().preMnemonics) {
+        const mnemonic = await this.encryptor.decrypt(oldPassword, this.memStore.getState().preMnemonics);
+        const preMnemonics = await this.encryptor.encrypt(newPassword, mnemonic);
+        this.memStore.updateState({ preMnemonics });
+      }
+
+      await this.persistAllKeyrings();
+      await this._updateMemStoreKeyrings();
+      await this.fullUpdate();
+    } catch (e) {
+      throw new Error('Change password failed');
+    } finally {
+      this.isUnlocking = false;
     }
-
-    await this.persistAllKeyrings();
-    await this._updateMemStoreKeyrings();
-    await this.fullUpdate();
   };
 
   /**
@@ -492,6 +533,8 @@ class KeyringService extends EventEmitter {
    */
   addNewAccount = async (selectedKeyring: Keyring): Promise<string[]> => {
     const accounts = await selectedKeyring.addAccounts(1);
+    this.cachedDisplayedKeyring = null;
+
     accounts.forEach((hexAccount) => {
       this.emit('newAccount', hexAccount);
     });
@@ -536,6 +579,8 @@ class KeyringService extends EventEmitter {
       throw new Error(`Keyring ${keyring.type} doesn't support account removal operations`);
     }
     keyring.removeAccount(address);
+    this.cachedDisplayedKeyring = null;
+
     this.emit('removedAccount', address);
     await this.persistAllKeyrings();
     await this._updateMemStoreKeyrings();
@@ -545,6 +590,8 @@ class KeyringService extends EventEmitter {
   removeKeyring = async (keyringIndex: number): Promise<any> => {
     delete this.keyrings[keyringIndex];
     this.keyrings[keyringIndex] = new EmptyKeyring();
+    this.cachedDisplayedKeyring = null;
+
     await this.persistAllKeyrings();
     await this._updateMemStoreKeyrings();
     await this.fullUpdate();
@@ -599,6 +646,76 @@ class KeyringService extends EventEmitter {
     const keyring = await this.getKeyringForAccount(address);
     const result = await keyring.signData(address, data, type);
     return result;
+  };
+
+  generateSignCosmosUr = async (signRequest: {
+    signData: string;
+    dataType: CosmosSignDataType;
+    path: string;
+    extra: {
+      chainId?: string;
+      accountNumber?: string;
+      address?: string;
+    };
+  }) => {
+    try {
+      const {
+        signData,
+        dataType,
+        path,
+        extra: { chainId, accountNumber, address }
+      } = signRequest;
+      const account = preferenceService.getCurrentAccount();
+      if (!account) throw new Error('No current account');
+
+      const keyring = await this.getKeyringForAccount(account.pubkey, account.type);
+      if (!keyring.genSignCosmosUr) {
+        throw new Error('Current keyring does not support genSignCosmosUr');
+      }
+
+      const result = await keyring.genSignCosmosUr({
+        signData,
+        dataType,
+        path,
+        chainId,
+        accountNumber,
+        address
+      });
+      return result;
+    } catch (error) {
+      console.error('generateSignCosmosUR error', error);
+      throw error;
+    }
+  };
+
+  /**
+   * Parse Cosmos Signature UR
+   *
+   * Parses a UR (Uniform Resource) containing a Cosmos signature
+   * received from a Keystone device
+   */
+  parseSignCosmosUr = async (
+    type: string,
+    cbor: string
+  ): Promise<{
+    requestId: string;
+    signature: string;
+    publicKey: string;
+  }> => {
+    try {
+      const account = preferenceService.getCurrentAccount();
+      if (!account) throw new Error('No current account');
+
+      const keyring = await this.getKeyringForAccount(account.pubkey, account.type);
+      if (!keyring.parseSignCosmosUr) {
+        throw new Error('Current keyring does not support parseSignCosmosUr');
+      }
+
+      return await keyring.parseSignCosmosUr(type, cbor);
+    } catch (error) {
+      console.error('parseSignCosmosUR error', error);
+      throw error;
+    }
   };
 
   //
@@ -665,6 +782,7 @@ class KeyringService extends EventEmitter {
       this.keyrings.push(keyring);
       this.addressTypes.push(addressType);
     }
+    this.cachedDisplayedKeyring = null;
 
     await this._updateMemStoreKeyrings();
     return this.keyrings;
@@ -810,10 +928,13 @@ class KeyringService extends EventEmitter {
     };
   };
 
-  getAllDisplayedKeyrings = (): Promise<DisplayedKeyring[]> => {
-    return Promise.all(
-      this.keyrings.map((keyring, index) => this.displayForKeyring(keyring, this.addressTypes[index], index))
-    );
+  getAllDisplayedKeyrings = async (resetCache?: boolean): Promise<DisplayedKeyring[]> => {
+    if (resetCache || !this.cachedDisplayedKeyring) {
+      this.cachedDisplayedKeyring = await Promise.all(
+        this.keyrings.map((keyring, index) => this.displayForKeyring(keyring, this.addressTypes[index], index))
+      );
+    }
+    return this.cachedDisplayedKeyring;
   };
 
   getAllVisibleAccountsArray = async () => {
@@ -862,8 +983,11 @@ class KeyringService extends EventEmitter {
   /* eslint-disable require-await */
   clearKeyrings = async (): Promise<void> => {
     // clear keyrings from memory
+
     this.keyrings = [];
     this.addressTypes = [];
+    this.cachedDisplayedKeyring = null;
+
     this.memStore.updateState({
       keyrings: []
     });

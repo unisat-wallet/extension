@@ -4,11 +4,21 @@ import wallet from '../wallet';
 
 const tabCheckin = ({
   data: {
-    params: { origin, name, icon }
+    params: { name, icon }
   },
-  session
+  session,
+  port
 }) => {
-  session.setProp({ origin, name, icon });
+  // Get the trusted origin from the port's sender tab URL
+  const trustedOrigin = port?.sender?.tab?.url ? new URL(port.sender.tab.url).origin : null;
+
+  // If we can't verify the origin, reject the request
+  if (!trustedOrigin) {
+    throw new Error('Cannot verify request origin');
+  }
+
+  // Use the verified trusted origin instead of trusting client-provided values
+  session.setProp({ origin: trustedOrigin, name, icon });
 };
 
 const getProviderState = async (req) => {

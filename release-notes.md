@@ -1,5 +1,79 @@
 # UniSat Wallet Release Notes
 
+## v1.6.1
+
+New Features
+
+- Added address book
+- Added feedback entrance
+- Support Babylon mainnet
+
+Improvements
+
+- Restructure Settings Tab
+
+## v1.6.0
+
+Changes
+
+- Remove atomicals token support.
+
+Bug Fixes
+
+- Fixed Keystone signing bugs.
+
+- Fixed potential vulnerabilities.
+
+Improvements
+
+- Improve wallet loading speed.
+
+## v1.5.9
+
+New Features
+
+- Added UTXO management tool entry on the homepage.
+
+Bug Fixes
+
+- Updated outdated phishing website list.
+
+- Fixed text overflow in purchase popup.
+
+- Fixed amount modification issue when going back in the Transfer page.
+
+- Fixed gas fee selection not applying when sending tBABY.
+
+Improvements
+
+- Optimized performance for the homepage inscription list.
+
+## v1.5.8
+
+New Features
+
+- Added Phishing Website Detection: Implemented a new feature to detect and warn users about potential phishing websites.
+
+Improvements
+
+- Error Page Handling: Improved user experience by displaying an error page instead of a black bar when a page encounters an exception.
+
+- BABY Transfer Interface: Added a gas fee modification option to the BABY transfer interface (previously, gas fees were fixed).
+
+- Window Object Conflict Prevention: Introduced window.unisat_wallet object to prevent conflicts with other existing plugins that might interfere with Unisat.
+
+Bug Fixes
+
+- Fixed a signing issue introduced in version 1.5.7
+
+Other Changes
+
+- Removed the Telegram group contact information from the project.
+
+## v1.5.7
+
+- Fix Keystone Babylon integration
+
 ## v1.5.6
 
 - Fix Babylon RPC

@@ -1,16 +1,17 @@
 import { CSSProperties, memo, useMemo } from 'react';
 
-export type IframeProps = { preview: string; style?: CSSProperties; ref: any; disableSandbox?: boolean };
+export type IframeProps = { preview: string; style?: CSSProperties; ref: any; onLoad?: () => void };
 
-const Iframe = ({ preview, style, ref, disableSandbox }: IframeProps) => {
+const Iframe = ({ preview, style, ref, onLoad }: IframeProps) => {
   return useMemo(
     () => (
       <iframe
         onClick={(e) => e.preventDefault()}
         ref={ref}
-        style={Object.assign({}, { pointerEvents: 'none' }, style)} // prevent events in iframe
+        style={Object.assign({}, { pointerEvents: 'auto' }, style)}
         src={preview}
-        sandbox={disableSandbox ? undefined : 'allow-scripts'}
+        onLoad={onLoad}
+        sandbox="allow-scripts"
         scrolling="no"
         loading="lazy"></iframe>
     ),

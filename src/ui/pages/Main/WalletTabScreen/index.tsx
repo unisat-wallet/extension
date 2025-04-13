@@ -1,52 +1,44 @@
-import { Tooltip } from 'antd';
-import { CSSProperties, useEffect, useMemo, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 
-import { AddressFlagType, ChainType } from '@/shared/constant';
+import { AddressFlagType } from '@/shared/constant';
+import { VersionDetail } from '@/shared/types';
 import { checkAddressFlag } from '@/shared/utils';
 import { Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
 import { BtcUsd } from '@/ui/components/BtcUsd';
-import { Button } from '@/ui/components/Button';
 import { DisableUnconfirmedsPopover } from '@/ui/components/DisableUnconfirmedPopover';
 import { FeeRateIcon } from '@/ui/components/FeeRateIcon';
 import { NavTabBar } from '@/ui/components/NavTabBar';
 import { NoticePopover } from '@/ui/components/NoticePopover';
 import { SwitchNetworkBar } from '@/ui/components/SwitchNetworkBar';
 import { Tabs } from '@/ui/components/Tabs';
-import { UpgradePopover } from '@/ui/components/UpgradePopover';
+import { VersionNotice } from '@/ui/components/VersionNotice';
 import { getCurrentTab } from '@/ui/features/browser/tabs';
-import { BtcDisplay } from '@/ui/pages/Main/WalletTabScreen/components/BtcDisplay';
 import { useAccountBalance, useAddressSummary, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { accountActions } from '@/ui/state/accounts/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import {
-  useAddressExplorerUrl,
   useAddressTips,
-  useBTCUnit,
   useChain,
-  useChainType,
   useSkipVersionCallback,
   useVersionInfo,
   useWalletConfig
 } from '@/ui/state/settings/hooks';
-import { useAssetTabKey, useResetUiTxCreateScreen, useSupportedAssets } from '@/ui/state/ui/hooks';
+import { useAssetTabKey, useSupportedAssets } from '@/ui/state/ui/hooks';
 import { AssetTabKey, uiActions } from '@/ui/state/ui/reducer';
-import { fontSizes } from '@/ui/theme/font';
-import { satoshisToAmount, useWallet } from '@/ui/utils';
+import { useWallet } from '@/ui/utils';
 
-import { BuyBTCModal } from '../../BuyBTC/BuyBTCModal';
 import { useNavigate } from '../../MainRoute';
 import { SwitchChainModal } from '../../Settings/SwitchChainModal';
 import { AtomicalsTab } from './AtomicalsTab';
 import { CATTab } from './CATTab';
 import { OrdinalsTab } from './OrdinalsTab';
 import { RunesList } from './RunesList';
+import { BalanceTooltip } from './components/BalanceTooltip';
+import { WalletActions } from './components/WalletActions';
 
-const $noBreakStyle: CSSProperties = {
-  whiteSpace: 'nowrap',
-  wordBreak: 'keep-all'
-};
+const STORAGE_VERSION_KEY = 'version_detail';
 
 export default function WalletTabScreen() {
   const navigate = useNavigate();
@@ -54,14 +46,11 @@ export default function WalletTabScreen() {
   const accountBalance = useAccountBalance();
 
   const chain = useChain();
-  const chainType = useChainType();
+
   const addressTips = useAddressTips();
 
   const currentKeyring = useCurrentKeyring();
   const currentAccount = useCurrentAccount();
-  const balanceValue = useMemo(() => {
-    return satoshisToAmount(accountBalance.totalBalance);
-  }, [accountBalance.totalBalance]);
 
   const wallet = useWallet();
   const [connected, setConnected] = useState(false);
@@ -75,11 +64,9 @@ export default function WalletTabScreen() {
   const versionInfo = useVersionInfo();
 
   const [showSafeNotice, setShowSafeNotice] = useState(false);
-  const [showDisableUnconfirmedUtxoNotice, setShowDisableUnconfirmedUtxoNotice] = useState(false);
+  const [showVersionNotice, setShowVersionNotice] = useState('');
 
-  const avaiableAmount = satoshisToAmount(accountBalance.availableBalance);
-  const unavailableAmount = satoshisToAmount(accountBalance.unavailableBalance);
-  const totalAmount = satoshisToAmount(accountBalance.totalBalance);
+  const [showDisableUnconfirmedUtxoNotice, setShowDisableUnconfirmedUtxoNotice] = useState(false);
 
   const addressSummary = useAddressSummary();
 
@@ -108,6 +95,35 @@ export default function WalletTabScreen() {
       const site = await wallet.getCurrentConnectedSite(activeTab.id);
       if (site) {
         setConnected(site.isConnected);
+      }
+    };
+    run();
+  }, []);
+
+  useEffect(() => {
+    const run = async () => {
+      try {
+        let needFetchVersionDetail = false;
+        const item = localStorage.getItem(STORAGE_VERSION_KEY);
+        let versionDetail: VersionDetail | undefined = undefined;
+        if (!item) {
+          needFetchVersionDetail = true;
+        } else {
+          versionDetail = JSON.parse(item || '{}');
+          if (versionDetail && versionDetail.version !== versionInfo.currentVesion) {
+            needFetchVersionDetail = true;
+          }
+        }
+        if (needFetchVersionDetail) {
+          versionDetail = await wallet.getVersionDetail(versionInfo.currentVesion);
+          localStorage.setItem(STORAGE_VERSION_KEY, JSON.stringify(versionDetail));
+
+          if (versionDetail && versionDetail.notice) {
+            setShowVersionNotice(versionDetail.notice);
+          }
+        }
+      } catch (e) {
+        console.log(e);
       }
     };
     run();
@@ -159,12 +175,6 @@ export default function WalletTabScreen() {
     return assetTabKey;
   }, [assetTabKey, supportedAssets.key]);
 
-  const addressExplorerUrl = useAddressExplorerUrl(currentAccount.address);
-  const resetUiTxCreateScreen = useResetUiTxCreateScreen();
-  const btcUnit = useBTCUnit();
-
-  const [buyBtcModalVisible, setBuyBtcModalVisible] = useState(false);
-
   const [switchChainModalVisible, setSwitchChainModalVisible] = useState(false);
 
   return (
@@ -178,7 +188,7 @@ export default function WalletTabScreen() {
             onClick={() => {
               navigate('SwitchKeyringScreen');
             }}>
-            <Text text={currentKeyring.alianName} size="xxs" />
+            <Text text={currentKeyring.alianName} size="xxs" ellipsis style={{ maxWidth: 100 }} />
           </Card>
         }
         RightComponent={
@@ -189,7 +199,7 @@ export default function WalletTabScreen() {
         }
       />
 
-      <Content>
+      <Content style={{ overflowY: 'auto' }}>
         <AccountSelect />
 
         <Column gap="lg2" mt="md">
@@ -209,32 +219,11 @@ export default function WalletTabScreen() {
             </Column>
           )}
 
-          <Tooltip
-            placement={'bottom'}
-            title={
-              <>
-                <Row justifyBetween>
-                  <span style={$noBreakStyle}>{'Available '}</span>
-                  <span style={$noBreakStyle}>{` ${avaiableAmount} ${btcUnit}`}</span>
-                </Row>
-                <Row justifyBetween>
-                  <span style={$noBreakStyle}>{'Unavailable '}</span>
-                  <span style={$noBreakStyle}>{` ${unavailableAmount} ${btcUnit}`}</span>
-                </Row>
-                <Row justifyBetween>
-                  <span style={$noBreakStyle}>{'Total '}</span>
-                  <span style={$noBreakStyle}>{` ${totalAmount} ${btcUnit}`}</span>
-                </Row>
-              </>
-            }
-            overlayStyle={{
-              fontSize: fontSizes.xs
-            }}>
-            <div>
-              <Text text={'TOTAL BALANCE'} textCenter color="textDim" />
-              <BtcDisplay balance={balanceValue} />
-            </div>
-          </Tooltip>
+          <BalanceTooltip
+            accountBalance={accountBalance}
+            unisatUrl={chain.unisatUrl}
+            disableUtxoTools={walletConfig.disableUtxoTools}
+          />
 
           <BtcUsd
             sats={accountBalance.totalBalance}
@@ -245,81 +234,8 @@ export default function WalletTabScreen() {
               marginBottom: -8
             }}
           />
-          {/* 
-          <Column
-            py={'lg'}
-            px={'md'}
-            gap={'lg'}
-            style={{
-              borderRadius: 12,
-              border: '1px solid rgba(245, 84, 84, 0.35)',
-              background: 'rgba(245, 84, 84, 0.08)'
-            }}>
-            {
-              <Row
-                style={{
-                  borderBottomWidth: 1,
-                  color: '#FA701A'
-                }}>
-                <Text
-                  text={'1 FB is locked by inscription,\n click to go to unlock.'}
-                  color="warning"
-                  textCenter
-                  style={{}}
-                />
-              </Row>
-            }
-          </Column> */}
 
-          <Row justifyCenter mt="md">
-            <Button
-              text="Receive"
-              preset="home"
-              icon="receive"
-              onClick={(e) => {
-                navigate('ReceiveScreen');
-              }}
-            />
-
-            <Button
-              text="Send"
-              preset="home"
-              icon="send"
-              onClick={(e) => {
-                resetUiTxCreateScreen();
-                navigate('TxCreateScreen');
-              }}
-            />
-            <Button
-              text="History"
-              preset="home"
-              icon="history"
-              onClick={(e) => {
-                if (chain.isViewTxHistoryInternally) {
-                  navigate('HistoryScreen');
-                } else {
-                  window.open(addressExplorerUrl);
-                }
-              }}
-            />
-            <Button
-              text="Buy"
-              preset="home"
-              icon={chain.isFractal ? 'fb' : 'bitcoin'}
-              iconSize={
-                chain.isFractal
-                  ? {
-                      width: 24,
-                      height: 11
-                    }
-                  : undefined
-              }
-              onClick={(e) => {
-                setBuyBtcModalVisible(true);
-              }}
-              disabled={chainType !== ChainType.BITCOIN_MAINNET && chainType !== ChainType.FRACTAL_BITCOIN_MAINNET}
-            />
-          </Row>
+          <WalletActions address={currentAccount?.address} chain={chain} />
 
           <Tabs
             defaultActiveKey={finalAssetTabKey as unknown as string}
@@ -338,28 +254,31 @@ export default function WalletTabScreen() {
             }}
           />
         )}
-        {!versionInfo.skipped && (
+        {/* {!versionInfo.skipped && (
           <UpgradePopover
             onClose={() => {
               skipVersion(versionInfo.newVersion);
             }}
           />
-        )}
+        )} */}
 
         {showDisableUnconfirmedUtxoNotice && (
           <DisableUnconfirmedsPopover onClose={() => setShowDisableUnconfirmedUtxoNotice(false)} />
         )}
-        {buyBtcModalVisible && (
-          <BuyBTCModal
-            onClose={() => {
-              setBuyBtcModalVisible(false);
-            }}
-          />
-        )}
+
         {switchChainModalVisible && (
           <SwitchChainModal
             onClose={() => {
               setSwitchChainModalVisible(false);
+            }}
+          />
+        )}
+
+        {showVersionNotice && (
+          <VersionNotice
+            notice={showVersionNotice}
+            onClose={() => {
+              setShowVersionNotice('');
             }}
           />
         )}

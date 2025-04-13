@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { Content, Header, Layout } from '@/ui/components';
 
-import { EnableAtomicalsCard } from './EnableAtomicals';
+import { ChangePasswordCard } from './ChangePassword';
 import { EnableSignDataCard } from './EnableSignData';
 import { LockTimeCard } from './LockTime';
 import { UnconfirmedBalanceCard } from './UnconfirmBalance';
@@ -31,8 +31,9 @@ export default function AdvancedScreen() {
         <UnconfirmedBalanceCard />
 
         <EnableSignDataCard />
+
+        <ChangePasswordCard />
         <LockTimeCard />
-        <EnableAtomicalsCard />
       </Content>
     </Layout>
   );

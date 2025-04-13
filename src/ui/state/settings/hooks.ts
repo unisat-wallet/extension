@@ -257,5 +257,5 @@ export function useCAT20MarketPlaceWebsite(tokenId: string) {
 
 export function useBabylonConfig() {
   const chainType = useChainType();
-  return BABYLON_CONFIG_MAP[chainType];
+  return BABYLON_CONFIG_MAP[chainType] || BABYLON_CONFIG_MAP[ChainType.BITCOIN_MAINNET];
 }

@@ -28,7 +28,7 @@ async function checkPhishing() {
     });
 
     // Log the result
-    console.log(`[Content Script] Phishing check for ${hostname}: ${isPhishing}`);
+    // console.log(`[Content Script] Phishing check for ${hostname}: ${isPhishing}`);
 
     if (isPhishing) {
       try {
@@ -55,6 +55,12 @@ async function checkPhishing() {
     return false;
   }
 }
+
+// Enhanced MV3 phishing check - runs immediately when content script loads
+(async function runInitialPhishingCheck() {
+  // Run phishing check as soon as content script loads
+  await checkPhishing();
+})();
 
 /**
  * Injects a script tag into the current document

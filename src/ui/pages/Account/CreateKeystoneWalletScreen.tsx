@@ -3,6 +3,7 @@ import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { ADDRESS_TYPES } from '@/shared/constant';
+import KeystoneProductImg from '@/ui/assets/keystone-product.png';
 import { Button, Card, Column, Content, Footer, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressTypeCard2 } from '@/ui/components/AddressTypeCard';
@@ -10,10 +11,8 @@ import KeystoneLogo from '@/ui/components/Keystone/Logo';
 import KeystoneLogoWithText from '@/ui/components/Keystone/LogoWithText';
 import KeystonePopover from '@/ui/components/Keystone/Popover';
 import KeystoneScan from '@/ui/components/Keystone/Scan';
-import KeystoneProductImg from '@/ui/components/Keystone/imgs/keystone-product.png';
 import KeystoneFetchKey from '@/ui/components/Keystone/usb/FetchKey';
 import { useImportAccountsFromKeystoneCallback } from '@/ui/state/global/hooks';
-
 import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
 import { ScanOutlined, UsbOutlined } from '@ant-design/icons';
@@ -51,8 +50,7 @@ function Step1({ onNext, setIsUSB }) {
             background: 'linear-gradient(270deg, rgba(4, 5, 7, 0.00) 0.06%, #040507 8.94%)',
             position: 'relative',
             overflow: 'hidden'
-          }}
-        >
+          }}>
           <img
             src={KeystoneProductImg}
             style={{
@@ -73,8 +71,7 @@ function Step1({ onNext, setIsUSB }) {
               position: 'relative',
               zIndex: 2,
               width: '50%'
-            }}
-          >
+            }}>
             <KeystoneLogo width={64} height={64} />
             <Text text="Keystone hardware wallet" preset="title" />
             <Text
@@ -100,8 +97,7 @@ function Step1({ onNext, setIsUSB }) {
           onClick={() => {
             setIsUSB(true);
             onNext();
-          }}
-        >
+          }}>
           <UsbOutlined style={{ marginRight: '8px' }} />
           <Text text="Connect via USB" color="black" />
         </Button>
@@ -111,8 +107,7 @@ function Step1({ onNext, setIsUSB }) {
           onClick={() => {
             setIsUSB(false);
             onNext();
-          }}
-        >
+          }}>
           <ScanOutlined style={{ marginRight: '8px' }} />
           <Text text="Scan to connect" color="white" />
         </Button>
@@ -157,10 +152,13 @@ function StepTwoUSB({ onBack, onNext }) {
   );
   return (
     <Layout>
-      <Header title="Connect Keystone via USB" onBack={() => {
-        setIsCancelled(true);
-        onBack();
-      }} />
+      <Header
+        title="Connect Keystone via USB"
+        onBack={() => {
+          setIsCancelled(true);
+          onBack();
+        }}
+      />
       <Content>
         <Column justifyCenter itemsCenter>
           <KeystoneLogoWithText width={160} />
@@ -220,7 +218,15 @@ function Step3({
         );
       } else {
         await wallet.getKeyrings();
-        await importAccounts(contextData.ur.type, contextData.ur.cbor, addressType, 1, contextData.customHdPath, undefined, contextData.connectionType);
+        await importAccounts(
+          contextData.ur.type,
+          contextData.ur.cbor,
+          addressType,
+          1,
+          contextData.customHdPath,
+          undefined,
+          contextData.connectionType
+        );
       }
     } catch (e) {
       setError((e as any).message);
@@ -488,18 +494,23 @@ export default function CreateKeystoneWalletScreen() {
   }
   if (step === 2) {
     if (isUSB) {
-      return <StepTwoUSB onBack={() => setStep(1)} onNext={({ type, cbor }) => {
-        setStep(3);
-        updateContextData({
-          ur: {
-            type,
-            cbor
-          },
-          passphrase: '',
-          customHdPath: '',
-          connectionType: 'USB'
-        });
-      }} />;
+      return (
+        <StepTwoUSB
+          onBack={() => setStep(1)}
+          onNext={({ type, cbor }) => {
+            setStep(3);
+            updateContextData({
+              ur: {
+                type,
+                cbor
+              },
+              passphrase: '',
+              customHdPath: '',
+              connectionType: 'USB'
+            });
+          }}
+        />
+      );
     }
     return (
       <Step2

@@ -113,8 +113,6 @@ export default function SendAtomicalsInscriptionScreen() {
             {atomical && <AtomicalsNFTPreview data={atomical} preset="small" />}
           </Row>
 
-          <Text text="Recipient" color="textDim" />
-
           <Input
             preset="address"
             addressInputData={toInfo}

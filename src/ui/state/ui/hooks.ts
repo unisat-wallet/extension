@@ -1,8 +1,7 @@
 import { useMemo } from 'react';
 
-import { AddressFlagType, ChainType } from '@/shared/constant';
+import { ChainType } from '@/shared/constant';
 import { AddressType, Inscription } from '@/shared/types';
-import { checkAddressFlag } from '@/shared/utils';
 import { getAddressType } from '@unisat/wallet-sdk/lib/address';
 
 import { AppState } from '..';
@@ -81,12 +80,12 @@ export function useSupportedAssets() {
   assets.ordinals = true;
   assetTabKeys.push(AssetTabKey.ORDINALS);
 
-  const isDisableAtomicals = checkAddressFlag(currentAccount.flag, AddressFlagType.DISABLE_ARC20);
+  // const isDisableAtomicals = checkAddressFlag(currentAccount.flag, AddressFlagType.DISABLE_ARC20);
 
-  if (chainType === ChainType.BITCOIN_MAINNET && isDisableAtomicals == false) {
-    assets.atomicals = true;
-    assetTabKeys.push(AssetTabKey.ATOMICALS);
-  }
+  // if (chainType === ChainType.BITCOIN_MAINNET && isDisableAtomicals == false) {
+  //   assets.atomicals = true;
+  //   assetTabKeys.push(AssetTabKey.ATOMICALS);
+  // }
 
   assets.runes = true;
   assetTabKeys.push(AssetTabKey.RUNES);

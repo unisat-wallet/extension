@@ -4,7 +4,7 @@ import eventBus from '@/shared/eventBus';
 import { Message } from '@/shared/utils';
 import { openExtensionInTab } from '@/ui/features/browser/tabs';
 
-import { providerController, walletController } from './controller';
+import { phishingController, providerController, walletController } from './controller';
 import {
   contactBookService,
   keyringService,
@@ -18,24 +18,40 @@ import { browserRuntimeOnConnect, browserRuntimeOnInstalled } from './webapi/bro
 
 const { PortMessage } = Message;
 
+/**
+ * Flag indicating if app store has been loaded
+ */
 let appStoreLoaded = false;
+
+/**
+ * Restore application state from storage
+ */
 async function restoreAppState() {
   const keyringState = await storage.get('keyringState');
   keyringService.loadStore(keyringState);
   keyringService.store.subscribe((value) => storage.set('keyringState', value));
 
   await preferenceService.init();
-
   await openapiService.init();
-
   await permissionService.init();
-
   await contactBookService.init();
+
+  // Initialize phishing service early to ensure protection is active
+  try {
+    phishingService.forceUpdate();
+  } catch (error) {
+    console.error('[Background] Failed to initialize phishing service:', error);
+    // Continue initialization even if phishing service fails
+  }
 
   appStoreLoaded = true;
 }
 
+// Start app state restoration
 restoreAppState();
+
+// Initialize phishing protection features
+phishingController.init();
 
 // for page provider
 browserRuntimeOnConnect((port) => {
@@ -88,12 +104,14 @@ browserRuntimeOnConnect((port) => {
   const pm = new PortMessage(port);
   pm.listen(async (data) => {
     if (!appStoreLoaded) {
-      // todo
+      // Return a pending state if app is not loaded yet
+      return { error: 'App is initializing, please try again shortly' };
     }
+
     const sessionId = port.sender?.tab?.id;
     const session = sessionService.getOrCreateSession(sessionId);
 
-    const req = { data, session };
+    const req = { data, session, port };
     // for background push to respective page
     req.session.pushMessage = (event, data) => {
       pm.send('message', { event, data });
@@ -103,10 +121,17 @@ browserRuntimeOnConnect((port) => {
   });
 
   port.onDisconnect.addListener(() => {
-    // todo
+    // Clean up session if needed
+    const sessionId = port.sender?.tab?.id;
+    if (sessionId) {
+      // Consider session cleanup here if needed
+    }
   });
 });
 
+/**
+ * Handle extension installation event
+ */
 const addAppInstalledEvent = () => {
   if (appStoreLoaded) {
     openExtensionInTab('index.html', {});

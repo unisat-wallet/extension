@@ -114,7 +114,7 @@ export default function RunesTokenScreen() {
       return false;
     }
   }, [chainType]);
-  const marketPlaceUrl = useRunesMarketPlaceWebsite(runeid);
+  const marketPlaceUrl = useRunesMarketPlaceWebsite(tokenSummary.runeInfo.spacedRune);
 
   if (loading) {
     return (

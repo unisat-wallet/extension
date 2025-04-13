@@ -8,6 +8,7 @@ import SendCAT20Screen from '@/ui/pages/CAT20/SendCAT20Screen';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { Content, Icon } from '../components';
+import { ErrorBoundary } from '../components/ErrorBoundary';
 import { accountActions } from '../state/accounts/reducer';
 import { useIsReady, useIsUnlocked } from '../state/global/hooks';
 import { globalActions } from '../state/global/reducer';
@@ -50,15 +51,19 @@ import SplitOrdinalsInscriptionScreen from './Ordinals/SplitOrdinalsInscriptionS
 import PhishingScreen from './Phishing/PhishingScreen';
 import RunesTokenScreen from './Runes/RunesTokenScreen';
 import SendRunesScreen from './Runes/SendRunesScreen';
+import AboutUsScreen from './Settings/AboutUsScreen';
 import AddressTypeScreen from './Settings/AddressTypeScreen';
 import AdvancedScreen from './Settings/AdvancedScreen';
 import ChangePasswordScreen from './Settings/ChangePasswordScreen';
+import ContactsScreen from './Settings/ContactsScreen';
 import EditAccountNameScreen from './Settings/EditAccountNameScreen';
+import EditContactScreen from './Settings/EditContactScreen';
 import EditWalletNameScreen from './Settings/EditWalletNameScreen';
 import ExportMnemonicsScreen from './Settings/ExportMnemonicsScreen';
 import ExportPrivateKeyScreen from './Settings/ExportPrivateKeyScreen';
 import NetworkTypeScreen from './Settings/NetworkTypeScreen';
 import UpgradeNoticeScreen from './Settings/UpgradeNoticeScreen';
+import CosmosSignDemo from './Test/CosmosSignDemo';
 import TestScreen from './Test/TestScreen';
 import HistoryScreen from './Wallet/HistoryScreen';
 import ReceiveScreen from './Wallet/ReceiveScreen';
@@ -137,7 +142,11 @@ export const routes = {
   },
 
   OrdinalsInscriptionScreen: {
-    path: '/ordinals/inscription-detail',
+    path: '/inscription/:inscriptionId',
+    getDynamicPath: (props: { inscriptionId?: string }, state?: any) => {
+      const inscriptionId = props?.inscriptionId || state?.inscription?.inscriptionId;
+      return `/inscription/${inscriptionId}`;
+    },
     element: <OrdinalsInscriptionScreen />
   },
 
@@ -226,6 +235,18 @@ export const routes = {
     path: '/settings/address-type',
     element: <AddressTypeScreen />
   },
+  ContactsScreen: {
+    path: '/settings/contacts',
+    element: <ContactsScreen />
+  },
+  EditContactScreen: {
+    path: '/settings/contacts/edit',
+    element: <EditContactScreen />
+  },
+  EditContactWithChainScreen: {
+    path: '/settings/contact/:address/:chain',
+    element: <EditContactScreen />
+  },
   EditAccountNameScreen: {
     path: '/settings/edit-account-name',
     element: <EditAccountNameScreen />
@@ -241,10 +262,6 @@ export const routes = {
   BRC20TokenScreen: {
     path: '/brc20/token',
     element: <BRC20TokenScreen />
-  },
-  TestScreen: {
-    path: '/test',
-    element: <TestScreen />
   },
   SplitOrdinalsInscriptionScreen: {
     path: '/wallet/split-tx/create',
@@ -313,18 +330,70 @@ export const routes = {
   phishing: {
     path: '/phishing',
     element: <PhishingScreen />
+  },
+
+  AboutUsScreen: {
+    path: '/settings/about-us',
+    element: <AboutUsScreen />
   }
 };
+
+if (process.env.NODE_ENV === 'development') {
+  routes['TestScreen'] = {
+    path: '/test',
+    element: <TestScreen />
+  };
+
+  routes['CosmosSignDemo'] = {
+    path: '/test-cosmos-sign',
+    element: <CosmosSignDemo />
+  };
+}
 
 type RouteTypes = keyof typeof routes;
 
 export function useNavigate() {
   const navigate = useNavigateOrigin();
+  const navigatingRef = useRef(false);
+
   return useCallback(
-    (routKey: RouteTypes, state?: any) => {
-      navigate(routes[routKey].path, { state });
+    (routKey: RouteTypes | '#back', state?: any, pathState?: any) => {
+      /** Prevent duplicate route stack caused by parent-child inscription navigation */
+      if (navigatingRef.current) {
+        return;
+      }
+
+      navigatingRef.current = true;
+
+      if (routKey === '#back') {
+        window.history.back();
+        navigatingRef.current = false;
+        return;
+      }
+
+      if (!routes[routKey]) {
+        navigatingRef.current = false;
+        return;
+      }
+
+      const route: any = routes[routKey];
+      if (route.getDynamicPath) {
+        const path = route.getDynamicPath(pathState);
+        navigate(path, { replace: false, state });
+        navigatingRef.current = false;
+        return;
+      }
+
+      navigate(
+        {
+          pathname: route.path
+        },
+        { replace: false, state }
+      );
+
+      navigatingRef.current = false;
     },
-    [useNavigateOrigin]
+    [navigate]
   );
 }
 
@@ -453,7 +522,7 @@ const Main = () => {
         {Object.keys(routes)
           .map((v) => routes[v])
           .map((v) => (
-            <Route key={v.path} path={v.path} element={v.element} />
+            <Route key={v.path} path={v.path} element={<ErrorBoundary>{v.element}</ErrorBoundary>} />
           ))}
       </Routes>
     </HashRouter>

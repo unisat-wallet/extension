@@ -22,6 +22,18 @@ export enum RestoreWalletType {
   OTHERS
 }
 
+/**
+ * Sign data type
+ * @enum {number}
+ * @readonly
+ * @enum {number}
+ * @readonly
+ */
+export enum CosmosSignDataType {
+  COSMOS_AMINO = 1,
+  COSMOS_DIRECT = 2
+}
+
 export interface Chain {
   name: string;
   logo: string;
@@ -97,6 +109,8 @@ export interface Inscription {
   };
   multipleNFT?: boolean;
   sameOffset?: boolean;
+  children?: string[];
+  parents?: string[];
 }
 
 export interface Atomical {
@@ -229,6 +243,7 @@ export type UserToSignInput = AddressUserToSignInput | PublicKeyUserToSignInput;
 export interface SignPsbtOptions {
   autoFinalized: boolean;
   toSignInputs?: UserToSignInput[];
+  contracts?: any[];
 }
 
 export interface ToSignInput {
@@ -355,6 +370,7 @@ export interface DecodedPsbt {
     atomicals: Atomical[];
     sighashType: number;
     runes: RuneBalance[];
+    contract?: ContractResult;
   }[];
   outputInfos: {
     address: string;
@@ -362,6 +378,7 @@ export interface DecodedPsbt {
     inscriptions: Inscription[];
     atomicals: Atomical[];
     runes: RuneBalance[];
+    contract?: ContractResult;
   }[];
   inscriptions: { [key: string]: Inscription };
   feeRate: number;
@@ -421,6 +438,7 @@ export interface VersionDetail {
   version: string;
   title: string;
   changelogs: string[];
+  notice: string;
 }
 
 export interface RuneBalance {
@@ -577,4 +595,16 @@ export interface BabylonTxInfo {
   unitBalance: CosmosBalance;
   memo: string;
   txFee: CosmosBalance;
+  gasLimit: number;
+  gasPrice: string;
+  gasAdjustment?: number;
+}
+
+export interface ContractResult {
+  id: string;
+  name: string;
+  description: string;
+  address: string;
+  script: string;
+  isOwned: boolean;
 }

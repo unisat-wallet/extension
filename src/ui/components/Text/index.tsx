@@ -54,6 +54,18 @@ const $presets = {
     color: colors.white_muted
   }),
 
+  badge: Object.assign({}, $baseStyle, $sizeStyles.xs, {
+    width: '86px',
+    height: '18px',
+    padding: '1px 6px',
+    background: '#431A1A',
+    color: '#FF6765',
+    borderRadius: '4px',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center'
+  } as CSSProperties),
+
   link: Object.assign({}, $baseStyle, $sizeStyles.xs, {
     color: colors.blue,
     textDecorationLine: 'underline'

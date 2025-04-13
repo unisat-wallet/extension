@@ -93,6 +93,13 @@ const $viewPresets = {
     height: '48px'
   } as CSSProperties),
 
+  delete: Object.assign({}, $baseViewStyle, {
+    backgroundColor: 'rgba(245, 84, 84, 0.10)',
+    border: '1px solid #F55454',
+    height: '48px',
+    borderRadius: 8
+  } as CSSProperties),
+
   approval: Object.assign({}, $baseViewStyle, {
     backgroundColor: colors.orange,
     height: '48px'
@@ -133,6 +140,19 @@ const $viewPresets = {
     marginLeft: 5
   }) as CSSProperties,
 
+  homeGold: Object.assign({}, $baseViewStyle, {
+    backgroundColor: 'rgba(244, 182, 44, 0.10)',
+    minWidth: 64,
+    minHeight: 64,
+    flexDirection: 'column',
+    borderRadius: 16,
+    borderWidth: 1,
+    borderColor: 'rgba(244, 182, 44, 0.25)',
+    padding: 5,
+    marginRight: 5,
+    marginLeft: 5
+  }) as CSSProperties,
+
   minimal: Object.assign({}, $baseViewStyle, {
     backgroundColor: 'rgba(255,124,42,0.1)',
     minWidth: 60,
@@ -148,13 +168,12 @@ const $viewPresets = {
   }) as CSSProperties,
 
   minimal2: Object.assign({}, $baseViewStyle, {
-    backgroundColor: 'rgba(255,255,255,0.08)',
+    backgroundColor: 'rgba(255, 124, 42, 1)',
     minWidth: 60,
     height: 20,
     flexDirection: 'column',
     borderRadius: 8,
-    borderWidth: 1,
-    borderColor: 'rgba(255,255,255,0.1)',
+    borderWidth: 0,
     padding: 2,
     marginRight: 5,
     marginLeft: 5,
@@ -175,6 +194,9 @@ const $hoverViewPresets: Record<Presets, CSSProperties> = {
   danger: {
     backgroundColor: colors.red_dark
   },
+  delete: {
+    backgroundColor: 'rgba(245, 84, 84, 0.15)'
+  },
   bar: {
     backgroundColor: '#383535'
   },
@@ -185,11 +207,12 @@ const $hoverViewPresets: Record<Presets, CSSProperties> = {
   home: {
     backgroundColor: '#383535'
   },
+  homeGold: {},
   minimal: {
     backgroundColor: 'rgba(255,124,42,0.1)'
   },
   minimal2: {
-    backgroundColor: 'rgba(255,255,255,0.08)'
+    backgroundColor: 'rgba(255, 124, 42, 1)'
   }
 };
 
@@ -211,11 +234,16 @@ const $textPresets: Record<Presets, CSSProperties> = {
   primary: Object.assign({}, $baseTextStyle, { color: colors.black }),
   approval: Object.assign({}, $baseTextStyle, { color: colors.black }),
   danger: Object.assign({}, $baseTextStyle, { color: colors.white }),
+  delete: Object.assign({}, $baseTextStyle, { color: '#F55454' }),
   bar: Object.assign({}, $baseTextStyle, { textAlign: 'left', fontWeight: 'bold' } as CSSProperties),
 
   defaultV2: Object.assign({}, $baseTextStyle, {}),
   primaryV2: Object.assign({}, $baseTextStyle, { color: colors.black }),
   home: Object.assign({}, $baseTextStyle, {
+    color: colors.textDim,
+    fontSize: 12
+  }),
+  homeGold: Object.assign({}, $baseTextStyle, {
     color: colors.textDim,
     fontSize: 12
   }),
@@ -291,7 +319,7 @@ export function Button(props: ButtonProps) {
     );
   }
 
-  if (preset === 'home') {
+  if (preset === 'home' || preset === 'homeGold') {
     if (disabled) {
       $viewStyle.backgroundColor = 'rgba(255,255,255,0.15)';
     }
@@ -304,10 +332,7 @@ export function Button(props: ButtonProps) {
         {icon && (
           <Icon
             icon={icon}
-            style={Object.assign(
-              { marginRight: spacing.tiny, backgroundColor: colors.white },
-              iconSize ? iconSize : {}
-            )}
+            style={Object.assign({ backgroundColor: colors.white }, iconSize ? iconSize : {})}
             containerStyle={iconSize ? iconSize : {}}
           />
         )}

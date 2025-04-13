@@ -14,7 +14,12 @@ import { Text } from '../Text';
 export const UpgradePopover = ({ onClose }: { onClose: () => void }) => {
   const versionInfo = useVersionInfo();
 
-  const [versionDetail, setVersionDetail] = useState<VersionDetail>({ version: '', changelogs: [], title: '' });
+  const [versionDetail, setVersionDetail] = useState<VersionDetail>({
+    version: '',
+    changelogs: [],
+    title: '',
+    notice: ''
+  });
   const wallet = useWallet();
   useEffect(() => {
     if (!versionInfo.newVersion) return;

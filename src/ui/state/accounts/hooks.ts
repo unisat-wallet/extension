@@ -1,5 +1,6 @@
 import { useCallback } from 'react';
 
+import { KEYRING_TYPE } from '@/shared/constant';
 import { Account, AddressType } from '@/shared/types';
 import { useWallet } from '@/ui/utils';
 
@@ -144,19 +145,6 @@ export function useImportAccountCallback() {
   );
 }
 
-export function useChangeAccountNameCallback() {
-  const dispatch = useAppDispatch();
-  const wallet = useWallet();
-  const currentAccount = useCurrentAccount();
-  return useCallback(
-    async (name: string) => {
-      await wallet.updateAlianName(currentAccount.pubkey, name);
-      dispatch(accountActions.setCurrentAccountName(name));
-    },
-    [dispatch, wallet, currentAccount]
-  );
-}
-
 export function useChangeAddressFlagCallback() {
   const dispatch = useAppDispatch();
   const wallet = useWallet();
@@ -248,4 +236,9 @@ export function useReloadAccounts() {
       dispatch(settingsActions.updateSettings({ walletConfig: data }));
     });
   }, [dispatch, wallet]);
+}
+
+export function useIsKeystoneWallet() {
+  const currentKeyring = useCurrentKeyring();
+  return currentKeyring.type === KEYRING_TYPE.KeystoneKeyring;
 }

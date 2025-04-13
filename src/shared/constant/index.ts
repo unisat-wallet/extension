@@ -3,9 +3,7 @@
 /* constants pool */
 import { AddressType, NetworkType, RestoreWalletType } from '../types';
 
-export enum CHAINS_ENUM {
-  BTC = 'BTC'
-}
+export type CHAINS_ENUM = ChainType;
 
 export const KEYRING_TYPE = {
   HdKeyring: 'HD Key Tree',
@@ -220,7 +218,7 @@ export const NETWORK_TYPES = [
   { value: NetworkType.TESTNET, label: 'TESTNET', name: 'testnet', validNames: ['testnet'] }
 ];
 
-type TypeChain = {
+export type TypeChain = {
   enum: ChainType;
   label: string;
   iconLabel: string;
@@ -245,7 +243,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     enum: ChainType.BITCOIN_MAINNET,
     label: 'Bitcoin',
     iconLabel: 'Bitcoin',
-    icon: './images/artifacts/bitcoin-mainnet.png',
+    icon: './images/artifacts/bitcoin-mainnet.svg',
     unit: 'BTC',
     networkType: NetworkType.MAINNET,
     endpoints: ['https://wallet-api.unisat.io'],
@@ -420,10 +418,6 @@ export const SORT_WEIGHT = {
   [KEYRING_TYPE.WatchAddressKeyring]: 5
 };
 
-export const GASPRICE_RANGE = {
-  [CHAINS_ENUM.BTC]: [0, 10000]
-};
-
 export const COIN_NAME = 'BTC';
 export const COIN_SYMBOL = 'BTC';
 
@@ -438,7 +432,17 @@ export const SAFE_DOMAIN_CONFIRMATION = 3;
 export const GITHUB_URL = 'https://github.com/unisat-wallet/extension';
 export const DISCORD_URL = 'https://discord.com/invite/EMskB2sMz8';
 export const TWITTER_URL = 'https://twitter.com/unisat_wallet';
-export const TELEGRAM_URL = 'https://t.me/UniSat_Official ';
+export const TELEGRAM_URL = 'https://t.me/unisat_wallet';
+export const WEBSITE_URL = 'https://unisat.io';
+export const FEEDBACK_URL = 'https://feedback.unisat.io';
+export const EMAIL_URL = 'contact@unisat.io';
+export const DOCS_URL = ' https://docs.unisat.io/dev/unisat-developer-center ';
+export const MEDIUM_URL = 'https://unisat-wallet.medium.com/';
+export const UPDATE_URL = 'https://chromewebstore.google.com/detail/unisat-wallet/ppbibelpcjmhbdihakflkdcoccbgbkpo';
+export const REVIEW_URL =
+  'https://chromewebstore.google.com/detail/unisat-wallet/ppbibelpcjmhbdihakflkdcoccbgbkpo/reviews';
+export const TERMS_OF_SERVICE_URL = 'https://unisat.io/terms-of-service.html';
+export const PRIVACY_POLICY_URL = 'https://unisat.io/privacy-policy.html';
 
 export const CHANNEL = process.env.channel!;
 export const VERSION = process.env.release!;

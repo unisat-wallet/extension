@@ -2,9 +2,10 @@ import bitcore from 'bitcore-lib';
 import { isNull } from 'lodash';
 import React, { CSSProperties, useEffect, useState } from 'react';
 
-import { SAFE_DOMAIN_CONFIRMATION } from '@/shared/constant';
+import { ChainType, SAFE_DOMAIN_CONFIRMATION } from '@/shared/constant';
 import { getSatsName } from '@/shared/lib/satsname-utils';
 import { Inscription } from '@/shared/types';
+import { Icon, Row, Text } from '@/ui/components';
 import { getAddressTips, useChain } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { spacing } from '@/ui/theme/spacing';
@@ -12,23 +13,21 @@ import { isValidBech32Address, useWallet } from '@/ui/utils';
 import { ArrowRightOutlined, SearchOutlined } from '@ant-design/icons';
 
 import { AccordingInscription } from '../AccordingInscription';
-import { useTools } from '../ActionComponent';
 import { Column } from '../Column';
+import { ContactsModal } from '../ContactsModal';
 import { CopyableAddress } from '../CopyableAddress';
-import { Icon } from '../Icon';
-import { Row } from '../Row';
-import { $textPresets, Text } from '../Text';
+import { $textPresets } from '../Text';
 import './index.less';
 
 export interface InputProps {
   preset?: Presets;
   placeholder?: string;
   children?: React.ReactNode;
-  onChange?: React.ChangeEventHandler<HTMLInputElement>;
-  onKeyUp?: React.KeyboardEventHandler<HTMLInputElement>;
-  onBlur?: React.FocusEventHandler<HTMLInputElement>;
-  onFocus?: React.FocusEventHandler<HTMLInputElement>;
-  onPaste?: React.ClipboardEventHandler<HTMLInputElement>;
+  onChange?: React.ChangeEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  onKeyUp?: React.KeyboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  onBlur?: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  onFocus?: React.FocusEventHandler<HTMLInputElement | HTMLTextAreaElement>;
+  onPaste?: React.ClipboardEventHandler<HTMLInputElement | HTMLTextAreaElement>;
   autoFocus?: boolean;
   defaultValue?: string;
   value?: string;
@@ -44,6 +43,10 @@ export interface InputProps {
   enableMax?: boolean;
   onMaxClick?: () => void;
   onSearch?: () => void;
+  recipientLabel?: React.ReactNode;
+  networkType?: ChainType;
+  addressPlaceholder?: string;
+  maxLength?: number;
 }
 
 type Presets = keyof typeof $inputPresets;
@@ -79,6 +82,20 @@ const $baseInputStyle: CSSProperties = Object.assign({}, $textPresets.regular, {
   outlineWidth: 0,
   backgroundColor: 'rgba(0,0,0,0)',
   alignSelf: 'stretch'
+});
+
+const $baseTextareaStyle: CSSProperties = Object.assign({}, $baseInputStyle, {
+  overflowWrap: 'break-word',
+  wordWrap: 'break-word',
+  wordBreak: 'break-all',
+  whiteSpace: 'pre-wrap',
+  resize: 'none',
+  border: 'none',
+  padding: '11px 0',
+  height: 'auto',
+  minHeight: '22px',
+  background: 'transparent',
+  lineHeight: '22px'
 });
 
 function PasswordInput(props: InputProps) {
@@ -178,33 +195,41 @@ function AmountInput(props: InputProps) {
 }
 
 export const AddressInput = (props: InputProps) => {
-  const { placeholder, onAddressInputChange, addressInputData, style: $inputStyleOverride, ...rest } = props;
+  const {
+    placeholder,
+    onAddressInputChange,
+    addressInputData,
+    style: $inputStyleOverride,
+    networkType: propsNetworkType,
+    recipientLabel,
+    ...rest
+  } = props;
 
   if (!addressInputData || !onAddressInputChange) {
     return <div />;
   }
-  const [validAddress, setValidAddress] = useState(addressInputData.address);
+
+  const [showContactsModal, setShowContactsModal] = useState(false);
+  const [validAddress, setValidAddress] = useState(addressInputData.address || '');
+  const [parseName, setParseName] = useState<boolean>(false);
   const [parseAddress, setParseAddress] = useState(addressInputData.domain ? addressInputData.address : '');
   const [parseError, setParseError] = useState('');
   const [formatError, setFormatError] = useState('');
+  const [inscription, setInscription] = useState<Inscription>();
+  const [inputVal, setInputVal] = useState(addressInputData.domain || addressInputData.address || '');
+  const [searching, setSearching] = useState(false);
   const [addressTip, setAddressTip] = useState('');
 
-  const [inputVal, setInputVal] = useState(addressInputData.domain || addressInputData.address);
-
-  const [inscription, setInscription] = useState<Inscription>();
-  const [parseName, setParseName] = useState('');
   const wallet = useWallet();
-
   const chain = useChain();
+  const networkType = propsNetworkType || chain.enum;
 
   let SUPPORTED_DOMAINS = ['sats', 'unisat', 'x', 'btc'];
-  let addressPlaceholder = 'Address or name (.sats, .unisat, ...) ';
+  let inputAddressPlaceholder = props.addressPlaceholder || 'Address or name (.sats, .unisat, ...) ';
   if (chain.isFractal) {
     SUPPORTED_DOMAINS = ['fb'];
-    addressPlaceholder = 'Address or name (.fb) ';
+    inputAddressPlaceholder = 'Address or name (.fb) ';
   }
-
-  const tools = useTools();
 
   useEffect(() => {
     onAddressInputChange({
@@ -220,8 +245,6 @@ export const AddressInput = (props: InputProps) => {
       setAddressTip('');
     }
   }, [validAddress]);
-
-  const [searching, setSearching] = useState(false);
 
   const resetState = () => {
     if (parseError) {
@@ -241,10 +264,10 @@ export const AddressInput = (props: InputProps) => {
     if (inscription) {
       setInscription(undefined);
     }
-    setParseName('');
+    setParseName(false);
   };
 
-  const handleInputAddress = (e) => {
+  const handleInputAddress = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     const inputAddress = e.target.value.trim();
     setInputVal(inputAddress);
 
@@ -274,7 +297,7 @@ export const AddressInput = (props: InputProps) => {
             const address = inscription.address || '';
             setParseAddress(address);
             setValidAddress(address);
-            setParseName(satsname.suffix);
+            setParseName(true);
           })
           .catch((err: Error) => {
             const errMsg = err.message + ' for ' + inputAddress;
@@ -311,17 +334,30 @@ export const AddressInput = (props: InputProps) => {
 
   return (
     <div style={{ alignSelf: 'stretch' }}>
-      <div style={Object.assign({}, $baseContainerStyle, { flexDirection: 'column', minHeight: '56.5px' })}>
-        <input
-          placeholder={addressPlaceholder}
-          type={'text'}
-          style={Object.assign({}, $baseInputStyle, $inputStyleOverride)}
-          onChange={async (e) => {
-            handleInputAddress(e);
-          }}
-          defaultValue={inputVal}
-          {...rest}
-        />
+      <Row justifyBetween itemsCenter style={{ marginTop: 20, marginBottom: 12 }}>
+        {recipientLabel || <Text text="Recipient" preset="regular" />}
+        <Row itemsCenter clickable onClick={() => setShowContactsModal(true)} style={{ cursor: 'pointer', gap: 0 }}>
+          <Text text="Address Book" color="yellow" style={{ fontSize: '14px' }} />
+          <Icon icon="right" color="yellow" size={16} style={{ marginLeft: 4 }} />
+        </Row>
+      </Row>
+      <div
+        style={Object.assign({}, $baseContainerStyle, {
+          flexDirection: 'column',
+          minHeight: '56.5px',
+          paddingTop: 0,
+          paddingBottom: 0
+        })}>
+        <Row full itemsCenter>
+          <textarea
+            placeholder={inputAddressPlaceholder}
+            style={Object.assign({}, $baseTextareaStyle, $inputStyleOverride)}
+            onChange={handleInputAddress}
+            value={inputVal}
+            rows={inputVal && inputVal.length > 50 ? 2 : 1}
+            {...rest}
+          />
+        </Row>
 
         {searching && (
           <Row full mt="sm">
@@ -344,7 +380,7 @@ export const AddressInput = (props: InputProps) => {
             color="yellow"
             text={'More details'}
             onClick={() => {
-              window.open(`https://docs.unisat.io/unisat-wallet/name-recognized-and-resolved`);
+              window.open('https://docs.unisat.io/unisat-wallet/name-recognized-and-resolved');
             }}
           />
           <Text preset="sub" size="sm" text={')'} />
@@ -366,6 +402,26 @@ export const AddressInput = (props: InputProps) => {
         </Column>
       )}
       <Text text={formatError} preset="regular" color="error" />
+
+      {showContactsModal && (
+        <ContactsModal
+          onClose={() => setShowContactsModal(false)}
+          onSelect={(contact) => {
+            setInputVal(contact.address);
+            resetState();
+            const addressValue = contact.address.trim();
+
+            if (bitcore.Address.isValid(addressValue)) {
+              setValidAddress(addressValue);
+            } else {
+              setFormatError('Recipient address is invalid');
+            }
+
+            setShowContactsModal(false);
+          }}
+          selectedNetworkFilter={networkType}
+        />
+      )}
     </div>
   );
 };
@@ -407,12 +463,12 @@ export const CosmosAddressInput = (props: InputProps) => {
   };
 
   const handleInputAddress = (e) => {
-    const inputAddress:string = e.target.value.trim();
+    const inputAddress: string = e.target.value.trim();
     setInputVal(inputAddress);
 
     resetState();
 
-    if(!isValidBech32Address(inputAddress)){
+    if (!isValidBech32Address(inputAddress)) {
       setFormatError('Recipient address is invalid');
       return;
     }
@@ -487,7 +543,7 @@ function SearchInput(props: InputProps) {
 }
 
 function TextInput(props: InputProps) {
-  const { placeholder, containerStyle, style: $inputStyleOverride, disabled, autoFocus, ...rest } = props;
+  const { placeholder, containerStyle, style: $inputStyleOverride, disabled, autoFocus, maxLength, ...rest } = props;
   return (
     <div style={Object.assign({}, $baseContainerStyle, containerStyle)}>
       <input
@@ -495,6 +551,7 @@ function TextInput(props: InputProps) {
         type={'text'}
         disabled={disabled}
         autoFocus={autoFocus}
+        maxLength={maxLength}
         style={Object.assign({}, $baseInputStyle, $inputStyleOverride, disabled ? { color: colors.textDim } : {})}
         {...rest}
       />

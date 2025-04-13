@@ -49,20 +49,20 @@ export const NoticePopover = ({ onClose }: { onClose: () => void }) => {
           </div>
           <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
 
-          <div>
+          {/* <div>
             <Checkbox checked={checked2} onChange={(e) => setChecked2(e.target.checked)}>
               <div style={{ fontSize: fontSizes.sm }}>
                 for Atomicals assets, <span style={{ color: '#EBB94C' }}>Non-ARC20</span> are not supported yet.
               </div>
             </Checkbox>
-          </div>
+          </div> */}
         </Column>
 
         <Row full>
           <Button
             text={coolDown > 0 ? `OK (${coolDown}s)` : 'OK'}
             preset="primary"
-            disabled={!checked1 || !checked2}
+            disabled={!checked1}
             full
             onClick={(e) => {
               if (!enable) return;

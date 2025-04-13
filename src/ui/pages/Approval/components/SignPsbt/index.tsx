@@ -2,8 +2,10 @@ import { Tooltip } from 'antd';
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { KEYRING_TYPE } from '@/shared/constant';
+import { KeystoneSignEnum } from '@/shared/constant/KeystoneSignType';
 import {
   Atomical,
+  ContractResult,
   DecodedPsbt,
   Inscription,
   RawTxInfo,
@@ -21,6 +23,7 @@ import AssetTag from '@/ui/components/AssetTag';
 import AtomicalsNFTPreview from '@/ui/components/AtomicalsNFTPreview';
 import BRC20Preview from '@/ui/components/BRC20Preview';
 import { BtcUsd } from '@/ui/components/BtcUsd';
+import { ContractPopover } from '@/ui/components/ContractPopover';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { PhishingDetection } from '@/ui/components/PhishingDetection';
 import RunesPreviewCard from '@/ui/components/RunesPreviewCard';
@@ -266,15 +269,17 @@ function SignTxDetails({
               <Row overflowX>
                 {inscriptionArray.map((inscription, index) => {
                   return (
-                    <InscriptionPreview
-                      key={'inscription_' + index}
-                      data={inscription}
-                      preset="small"
-                      hideValue
-                      onClick={() => {
-                        window.open(inscription.preview);
-                      }}
-                    />
+                    <div style={{ width: '80px' }} key={'inscription_' + index}>
+                      <InscriptionPreview
+                        key={'inscription_' + index}
+                        data={inscription}
+                        preset="small"
+                        hideValue
+                        onClick={() => {
+                          window.open(inscription.preview);
+                        }}
+                      />
+                    </div>
                   );
                 })}
               </Row>
@@ -513,6 +518,7 @@ interface TxInfo {
   toSignInputs: ToSignInput[];
   txError: string;
   decodedPsbt: DecodedPsbt;
+  contractResults: ContractResult[];
 }
 
 const initTxInfo: TxInfo = {
@@ -535,7 +541,8 @@ const initTxInfo: TxInfo = {
     isScammer: false,
     shouldWarnFeeRate: false,
     recommendedFeeRate: 1
-  }
+  },
+  contractResults: []
 };
 
 export default function SignPsbt({
@@ -573,6 +580,8 @@ export default function SignPsbt({
 
   const [brc20PriceMap, setBrc20PriceMap] = useState<{ [key: string]: TickPriceItem }>();
   const [runesPriceMap, setRunesPriceMap] = useState<{ [key: string]: TickPriceItem }>();
+
+  const [contractPopoverData, setContractPopoverData] = useState<ContractResult | undefined>(undefined);
 
   useEffect(() => {
     if (txInfo?.decodedPsbt?.inputInfos) {
@@ -699,6 +708,31 @@ export default function SignPsbt({
       }
     }
 
+    try {
+      if (options && options.contracts) {
+        const results = await wallet.decodeContracts(options?.contracts || [], {
+          address: currentAccount.address,
+          publicKey: currentAccount.pubkey
+        });
+
+        decodedPsbt.inputInfos.forEach((v) => {
+          results.forEach((r) => {
+            if (v.address == r.address) {
+              v.contract = r;
+            }
+          });
+        });
+        decodedPsbt.outputInfos.forEach((v) => {
+          results.forEach((r) => {
+            if (v.address == r.address) {
+              v.contract = r;
+            }
+          });
+        });
+      }
+    } catch (e) {
+      // ignore
+    }
     setTxInfo({
       decodedPsbt,
       changedBalance: 0,
@@ -706,7 +740,8 @@ export default function SignPsbt({
       psbtHex,
       rawtx: '',
       toSignInputs,
-      txError
+      txError,
+      contractResults: []
     });
 
     setLoading(false);
@@ -789,6 +824,24 @@ export default function SignPsbt({
     return val;
   }, [txInfo.decodedPsbt]);
 
+  const ContractSection = (props: { contract: ContractResult }) => {
+    return (
+      <Row
+        style={{
+          borderWidth: 1,
+          borderColor: 'rgba(244, 182, 44, 0.2)',
+          borderRadius: 5,
+          padding: 2,
+          backgroundColor: 'rgba(244, 182, 44, 0.1)'
+        }}
+        onClick={() => {
+          setContractPopoverData(props.contract);
+        }}>
+        <Text text={props.contract.name + ' >'} style={{ color: 'rgba(244, 182, 44, 0.85)' }} size="xs" />
+      </Row>
+    );
+  };
+
   if (loading) {
     return (
       <Layout>
@@ -816,9 +869,9 @@ export default function SignPsbt({
   if (isKeystoneSigning) {
     return (
       <KeystoneSignScreen
-        type="psbt"
+        type={KeystoneSignEnum.PSBT}
         data={txInfo.psbtHex}
-        isFinalize={type !== TxType.SIGN_TX}
+        isFinalize={options?.autoFinalized !== false}
         onSuccess={(data) => {
           originalHandleConfirm(data as any);
         }}
@@ -913,6 +966,7 @@ export default function SignPsbt({
                                     </Row>
                                   )}
                                 </Row>
+                                {v.contract ? <ContractSection contract={v.contract} /> : null}
                               </Column>
                               <Row>
                                 <Text text={`${satoshisToAmount(v.value)}`} color={isToSign ? 'white' : 'textDim'} />
@@ -1020,7 +1074,11 @@ export default function SignPsbt({
                           style={index === 0 ? {} : { borderColor: colors.border, borderTopWidth: 1, paddingTop: 10 }}>
                           <Column>
                             <Row justifyBetween>
-                              <AddressText address={v.address} color={isMyAddress ? 'white' : 'textDim'} />
+                              <Column>
+                                <AddressText address={v.address} color={isMyAddress ? 'white' : 'textDim'} />
+                                {v.contract ? <ContractSection contract={v.contract} /> : null}
+                              </Column>
+
                               <Row>
                                 <Text text={`${satoshisToAmount(v.value)}`} color={isMyAddress ? 'white' : 'textDim'} />
                                 <Text text={btcUnit} color="textDim" />
@@ -1157,6 +1215,15 @@ export default function SignPsbt({
           onConfirm={() => {
             setIsPsbtRiskPopoverVisible(false);
             handleConfirm && handleConfirm();
+          }}
+        />
+      )}
+
+      {contractPopoverData && (
+        <ContractPopover
+          contract={contractPopoverData}
+          onClose={() => {
+            setContractPopoverData(undefined);
           }}
         />
       )}

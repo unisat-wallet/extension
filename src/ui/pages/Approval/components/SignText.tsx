@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 import { KEYRING_TYPE } from '@/shared/constant';
+import { KeystoneSignEnum } from '@/shared/constant/KeystoneSignType';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
@@ -37,10 +38,11 @@ export default function SignText({ params: { data, session } }: Props) {
     }
     resolveApproval();
   };
+
   if (isKeystoneSigning) {
     return (
       <KeystoneSignScreen
-        type={data.type === 'bip322-simple' ? 'bip322-simple' : 'msg'}
+        type={data.type === KeystoneSignEnum.BIP322_SIMPLE ? KeystoneSignEnum.BIP322_SIMPLE : KeystoneSignEnum.MSG}
         data={data.text}
         onSuccess={({ signature }) => {
           resolveApproval({ signature });

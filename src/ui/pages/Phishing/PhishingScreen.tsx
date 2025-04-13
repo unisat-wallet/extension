@@ -63,7 +63,7 @@ const PhishingScreen = () => {
         {/* Actions */}
         <div className="phishing-actions">
           <a
-            href="https://github.com/MetaMask/eth-phishing-detect/issues/new"
+            href="https://github.com/unisat-wallet/phishing-detect/issues/new"
             target="_blank"
             rel="noopener noreferrer"
             className="phishing-report-link">

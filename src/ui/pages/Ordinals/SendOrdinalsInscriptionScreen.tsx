@@ -145,14 +145,12 @@ export default function SendOrdinalsInscriptionScreen() {
         <Column>
           <Text text={`Ordinals Inscriptions (${inscriptions.length})`} color="textDim" />
           <Row justifyBetween>
-            <Row overflowX gap="lg" pb="md">
+            <Row overflowX gap="md" pb="md">
               {inscriptions.map((v) => (
                 <InscriptionPreview key={v.inscriptionId} data={v} preset="small" />
               ))}
             </Row>
           </Row>
-
-          <Text text="Recipient" color="textDim" />
 
           <Input
             preset="address"
@@ -161,6 +159,7 @@ export default function SendOrdinalsInscriptionScreen() {
             onAddressInputChange={(val) => {
               setToInfo(val);
             }}
+            recipientLabel={<Text text="Recipient" color="textDim" />}
           />
 
           {toInfo.address ? (

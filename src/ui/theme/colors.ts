@@ -27,6 +27,7 @@ const palette = {
   red_dark: '#c92b40',
   red: '#ED334B',
   red_light: '#f05266',
+  red_light2: '#f55454',
 
   blue_dark: '#1461d1',
   blue: '#1872F6',
@@ -64,6 +65,7 @@ export const colors = Object.assign({}, palette, {
   search_bar_bg: '#1E1F24',
 
   border: 'rgba(255,255,255,0.04)',
+  border2: 'rgba(255, 255, 255, 0.1)',
 
   icon_yellow: '#FFBA33',
 

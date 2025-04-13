@@ -1,3 +1,4 @@
+import log from 'loglevel';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
 import { ADDRESS_TYPES, KEYRING_TYPE } from '@/shared/constant';
@@ -36,24 +37,27 @@ export default function AddressTypeScreen() {
 
   const tools = useTools();
   const loadAddresses = async () => {
-    tools.showLoading(true);
-
-    const _res = await wallet.getAllAddresses(currentKeyring, account.index || 0);
-    setAddresses(_res);
-    const balances = await wallet.getMultiAddressAssets(_res.join(','));
-    for (let i = 0; i < _res.length; i++) {
-      const address = _res[i];
-      const balance = balances[i];
-      const satoshis = balance.totalSatoshis;
-      self.addressAssets[address] = {
-        total_btc: satoshisToAmount(balance.totalSatoshis),
-        satoshis,
-        total_inscription: balance.inscriptionCount
-      };
+    try {
+      tools.showLoading(true);
+      const _res = await wallet.getAllAddresses(currentKeyring, account.index || 0);
+      setAddresses(_res);
+      const balances = await wallet.getMultiAddressAssets(_res.join(','));
+      for (let i = 0; i < _res.length; i++) {
+        const address = _res[i];
+        const balance = balances[i];
+        const satoshis = balance.totalSatoshis;
+        self.addressAssets[address] = {
+          total_btc: satoshisToAmount(balance.totalSatoshis),
+          satoshis,
+          total_inscription: balance.inscriptionCount
+        };
+      }
+      setAddressAssets(self.addressAssets);
+    } catch (e) {
+      log.error(e);
+    } finally {
+      tools.showLoading(false);
     }
-    setAddressAssets(self.addressAssets);
-
-    tools.showLoading(false);
   };
 
   useEffect(() => {

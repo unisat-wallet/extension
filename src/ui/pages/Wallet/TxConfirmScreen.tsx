@@ -2,6 +2,7 @@ import { RawTxInfo, TxType } from '@/shared/types';
 import { Header } from '@/ui/components';
 import { usePushBitcoinTxCallback } from '@/ui/state/transactions/hooks';
 import { useLocationState } from '@/ui/utils';
+import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 
 import { SignPsbt } from '../Approval/components';
 import { useNavigate } from '../MainRoute';
@@ -27,14 +28,35 @@ export default function TxConfirmScreen() {
       handleCancel={() => {
         window.history.go(-1);
       }}
-      handleConfirm={(res) => {
-        pushBitcoinTx((res ?? rawTxInfo).rawtx).then(({ success, txid, error }) => {
+      handleConfirm={async (res) => {
+        try {
+          let rawtx = '';
+
+          if (res && res.psbtHex) {
+            const psbt = bitcoin.Psbt.fromHex(res.psbtHex);
+            try {
+              psbt.finalizeAllInputs();
+            } catch (e) {
+              // ignore
+            }
+            rawtx = psbt.extractTransaction().toHex();
+          } else if (res && res.rawtx) {
+            rawtx = res.rawtx;
+          } else if (rawTxInfo && rawTxInfo.rawtx) {
+            rawtx = rawTxInfo.rawtx;
+          } else {
+            throw new Error('Invalid transaction data');
+          }
+
+          const { success, txid, error } = await pushBitcoinTx(rawtx);
           if (success) {
             navigate('TxSuccessScreen', { txid });
           } else {
-            navigate('TxFailScreen', { error });
+            throw new Error(error);
           }
-        });
+        } catch (e) {
+          navigate('TxFailScreen', { error: (e as any).message });
+        }
       }}
     />
   );
