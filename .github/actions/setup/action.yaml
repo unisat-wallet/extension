@@ -25,7 +25,7 @@ runs:
           ${{ runner.os }}-node-
 
     - if: steps.install-cache.outputs.cache-hit != 'true'
-      run: yarn install --frozen-lockfile --ignore-scripts
+      run: yarn install --ignore-scripts
       shell: bash
 
     - uses: gradle/gradle-build-action@v2
