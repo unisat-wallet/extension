@@ -17,71 +17,9 @@ on:
     tags:
       - v*
       - auto_build*
-  workflow_dispatch:
-    inputs:
-      build_type:
-        description: 'Build type (test/release)'
-        required: true
-        default: 'test'
 
 jobs:
-  test-build:
-    if: github.event_name == 'workflow_dispatch' && github.event.inputs.build_type == 'test'
-    runs-on: ubuntu-latest
-    timeout-minutes: 30
-    steps:
-      - name: Checkout the code
-        uses: actions/checkout@v3
-        with:
-          fetch-depth: 1
-
-      - name: Setup Node.js
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
-          registry-url: https://registry.npmjs.org
-          cache: yarn
-
-      - name: Install dependencies
-        run: |
-
-          yarn install --ignore-scripts
-
-
-          rm -rf node_modules/@unisat/wallet-sdk/patches 2>/dev/null || true
-
-
-          yarn fix:modules
-
-      - name: Build Chrome (Test Build)
-        run: yarn build:chrome:mv3
-
-      - name: Get Version Name for Test Build
-        id: get-test-version
-        run: |
-          TAG_VERSION="${GITHUB_REF##*/}"
-          echo "version=$TAG_VERSION" >> $GITHUB_OUTPUT
-          echo "Using test version: $TAG_VERSION"
-
-      - name: Prepare Test Release Files
-        run: |
-          mkdir -p dist/release
-          find dist -name "*.zip" -exec cp {} dist/release/unisat-chrome-mv3-${{ steps.get-test-version.outputs.version }}.zip \;
-          ls -la dist/release/
-
-      - name: Create Test Release
-        uses: softprops/action-gh-release@v1
-        with:
-          tag_name: ${{ steps.get-test-version.outputs.version }}
-          name: Test Build ${{ steps.get-test-version.outputs.version }}
-          files: dist/release/*.zip
-          draft: false
-          prerelease: true
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-
   release-build:
-    if: github.event_name != 'workflow_dispatch' || github.event.inputs.build_type == 'release'
     runs-on: ubuntu-latest
     timeout-minutes: 30
     steps:
