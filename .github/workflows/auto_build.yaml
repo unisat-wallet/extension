@@ -44,38 +44,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # 正常安装依赖
-          yarn install --ignore-scripts
+          yarn install
 
-          # 手动为unisat-wallet-sdk安装缺少的bitcoinjs-lib
-          if [ -d "node_modules/@unisat/wallet-sdk" ]; then
-            echo "Installing bitcoinjs-lib for @unisat/wallet-sdk"
-            cd node_modules/@unisat/wallet-sdk
-            mkdir -p node_modules
-            cd ../..
-            if [ -d "bitcoinjs-lib" ]; then
-              # 如果主项目已安装了这个库，直接复制
-              cp -r bitcoinjs-lib @unisat/wallet-sdk/node_modules/
-            else
-              # 否则单独安装
-              cd @unisat/wallet-sdk
-              yarn add bitcoinjs-lib@6.1.6 --no-lockfile
-              cd ../..
-            fi
-
-            # 应用补丁
-            cd @unisat/wallet-sdk
-            if [ -d "patches" ]; then
-              npx patch-package --error-on-fail=false
-            fi
-            cd ../..
-            cd ..
-          fi
-
-          # 应用主项目补丁
-          if [ -d "patches" ]; then
-            npx patch-package --error-on-fail=false
-          fi
+          yarn fix:modules
 
       - name: Build Chrome (Test Build)
         run: yarn build:chrome:mv3
@@ -83,10 +54,9 @@ jobs:
       - name: Get Version Name for Test Build
         id: get-test-version
         run: |
-          VERSION=$(node -p "require('./package.json').version")
-          TIMESTAMP=$(date +'%Y%m%d%H%M')
-          echo "version=v$VERSION-test-$TIMESTAMP" >> $GITHUB_OUTPUT
-          echo "Using test version: v$VERSION-test-$TIMESTAMP"
+          TAG_VERSION="${GITHUB_REF##*/}"
+          echo "version=$TAG_VERSION" >> $GITHUB_OUTPUT
+          echo "Using test version: $TAG_VERSION"
 
       - name: Prepare Test Release Files
         run: |
@@ -124,38 +94,9 @@ jobs:
 
       - name: Install dependencies
         run: |
-          # 正常安装依赖
-          yarn install --ignore-scripts
+          yarn install
 
-          # 手动为unisat-wallet-sdk安装缺少的bitcoinjs-lib
-          if [ -d "node_modules/@unisat/wallet-sdk" ]; then
-            echo "Installing bitcoinjs-lib for @unisat/wallet-sdk"
-            cd node_modules/@unisat/wallet-sdk
-            mkdir -p node_modules
-            cd ../..
-            if [ -d "bitcoinjs-lib" ]; then
-              # 如果主项目已安装了这个库，直接复制
-              cp -r bitcoinjs-lib @unisat/wallet-sdk/node_modules/
-            else
-              # 否则单独安装
-              cd @unisat/wallet-sdk
-              yarn add bitcoinjs-lib@6.1.6 --no-lockfile
-              cd ../..
-            fi
-
-            # 应用补丁
-            cd @unisat/wallet-sdk
-            if [ -d "patches" ]; then
-              npx patch-package --error-on-fail=false
-            fi
-            cd ../..
-            cd ..
-          fi
-
-          # 应用主项目补丁
-          if [ -d "patches" ]; then
-            npx patch-package --error-on-fail=false
-          fi
+          yarn fix:modules
 
       - name: Build Chrome (Release Build)
         run: yarn build:chrome:mv3
@@ -163,9 +104,9 @@ jobs:
       - name: Get Version Name
         id: get-version
         run: |
-          VERSION=$(node -p "require('./package.json').version")
-          echo "version=v$VERSION" >> $GITHUB_OUTPUT
-          echo "Using version: v$VERSION"
+          TAG_VERSION="${GITHUB_REF##*/}"
+          echo "version=$TAG_VERSION" >> $GITHUB_OUTPUT
+          echo "Using version: $TAG_VERSION"
 
       - name: Prepare Release Files
         run: |
