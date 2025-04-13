@@ -220,43 +220,6 @@ async function redirectToPhishingPage(tabId: number, url: string, hostname: stri
   }
 }
 
-// Request interception listener
-chrome.webRequest.onBeforeRequest.addListener(
-  (details) => {
-    try {
-      // Skip internal extension requests
-      if (details.tabId === chrome.tabs.TAB_ID_NONE || details.url.startsWith(chrome.runtime.getURL(''))) {
-        return { cancel: false };
-      }
-
-      // Only handle main frame and sub frame requests
-      if (details.type !== 'main_frame' && details.type !== 'sub_frame') {
-        return { cancel: false };
-      }
-
-      const url = new URL(details.url);
-      const isPhishing = phishingService.checkPhishing(url.hostname);
-
-      // Allow if not a phishing site
-      if (!isPhishing) {
-        return { cancel: false };
-      }
-
-      // MV3: Use tabs.update for redirection
-      if (details.tabId) {
-        redirectToPhishingPage(details.tabId, details.url, url.hostname);
-      }
-      return details.type === 'main_frame' ? {} : { cancel: true };
-    } catch {
-      return { cancel: false };
-    }
-  },
-  {
-    urls: ['http://*/*', 'https://*/*', 'ws://*/*', 'wss://*/*'],
-    types: ['main_frame', 'sub_frame']
-  }
-);
-
 // Navigation check for MV3
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.type === 'CHECK_NAVIGATION') {
