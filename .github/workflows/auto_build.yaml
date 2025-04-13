@@ -1,64 +1,80 @@
 name: Create Release
 
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
 on:
   push:
     tags:
       - v*
+      - auto_build*
+    paths-ignore:
+      - '**.md'
+      - 'docs/**'
+      - '.github/ISSUE_TEMPLATE/**'
   pull_request:
     tags:
       - v*
+      - auto_build*
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'version (ps:v1.0.0)'
+        required: true
+        default: 'custom-build'
+      branch:
+        description: 'Git branch to build from'
+        required: true
+        default: 'develop'
 
 jobs:
-  build:
+  release-build:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
-      - name: Checkout the code
-        uses: actions/checkout@v2
-      - uses: ./.github/actions/setup
-
-      - name: Build Chrome
-        run: |
-          yarn build:chrome
-          yarn build:chrome:mv3
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Checkout code
+        uses: actions/checkout@v3
         with:
-          tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
-          draft: false
-          prerelease: false
+          ref: ${{ github.event.inputs.branch || github.ref }}
+          fetch-depth: 1
+
+      - name: Setup environment
+        uses: ./.github/actions/setup
+
+      - name: Remove wallet-sdk patches
+        run: rm -rf node_modules/@unisat/wallet-sdk/patches 2>/dev/null || true
+
+      - name: Fix modules
+        run: yarn fix:modules
+
+      - name: Build Chrome (Release Build)
+        run: yarn build:chrome:mv3
 
       - name: Get Version Name
-        uses: actions/github-script@v3
         id: get-version
-        with:
-          script: |
-            const str=process.env.GITHUB_REF;
-            return str.substring(str.indexOf("v"));
-          result-encoding: string
+        run: |
+          if [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            TAG_VERSION="${{ github.event.inputs.version }}"
+          else
+            TAG_VERSION="${GITHUB_REF##*/}"
+          fi
+          echo "version=$TAG_VERSION" >> $GITHUB_OUTPUT
+          echo "Using version: $TAG_VERSION"
 
-      - name: Upload Asset
-        id: upload-asset1
-        uses: actions/upload-release-asset@v1
+      - name: Prepare Release Files
+        run: |
+          mkdir -p dist/release
+          find dist -name "*.zip" -exec cp {} dist/release/unisat-chrome-mv3-${{ steps.get-version.outputs.version }}.zip \;
+          ls -la dist/release/
+
+      - name: Create Release and Upload Assets
+        uses: softprops/action-gh-release@v1
+        with:
+          tag_name: ${{ steps.get-version.outputs.version }}
+          name: Release ${{ steps.get-version.outputs.version }}
+          files: dist/release/*.zip
+          draft: false
+          prerelease: false
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/unisat-chrome-mv2-${{steps.get-version.outputs.result}}.zip
-          asset_name: unisat-chrome-mv2-${{steps.get-version.outputs.result}}.zip
-          asset_content_type: application/zip
-
-      - name: Upload Asset
-        id: upload-asset2
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: dist/unisat-chrome-mv3-${{steps.get-version.outputs.result}}.zip
-          asset_name: unisat-chrome-mv3-${{steps.get-version.outputs.result}}.zip
-          asset_content_type: application/zip

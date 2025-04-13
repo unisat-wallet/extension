@@ -13598,7 +13598,11 @@ string-width@^1.0.1, string-width@^1.0.2:
 
 string-width@^4.1.0, string-width@^4.2.0, string-width@^4.2.3:
   version "4.2.3"
+<<<<<<< HEAD
+  resolved "https://registry.yarnpkg.com/string-width/-/string-width-4.2.3.tgz#269c7117d27b05ad2e536830a8ec895ef9c6d010"
+=======
   resolved "https://registry.npmjs.org/string-width/-/string-width-4.2.3.tgz"
+>>>>>>> upstream/master
   integrity sha512-wKyQRQpjJ0sIp62ErSZdGsjMJWsap5oRNihHhu6G7JVO/9jIB6UyevL+tXuOqrng8j/cxKTWyWUwvSTriiZz/g==
   dependencies:
     emoji-regex "^8.0.0"

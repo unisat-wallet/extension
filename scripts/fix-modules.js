@@ -116,6 +116,33 @@ const fixWalletSdkError = () => {
   fs.writeFileSync(file, fileData);
 };
 
+const fixBitcoinjsPsbt = () => {
+  try {
+    const file = './node_modules/bitcoinjs-lib/src/psbt.js';
+    let fileData = fs.readFileSync(file).toString();
+
+    fileData = fileData.replace(
+      "checkScriptForPubkey(pSig.pubkey, script, 'verify');",
+      "// checkScriptForPubkey(pSig.pubkey, script, 'verify');"
+    );
+
+    fileData = fileData.replace(
+      "checkScriptForPubkey(pubkey, script, 'sign');",
+      "// checkScriptForPubkey(pubkey, script, 'sign');"
+    );
+
+    fileData = fileData.replace(
+      '.filter(tapLeaf => (0, psbtutils_1.pubkeyInScript)(pubkey, tapLeaf.script))',
+      '// .filter(tapLeaf => (0, psbtutils_1.pubkeyInScript)(pubkey, tapLeaf.script))'
+    );
+
+    fs.writeFileSync(file, fileData);
+    console.log('Applied bitcoinjs-lib psbt.js patches');
+  } catch (e) {
+    console.error('Failed to apply bitcoinjs-lib psbt.js patches:', e.message);
+  }
+};
+
 const run = async () => {
   let success = true;
   try {
@@ -124,6 +151,7 @@ const run = async () => {
     fixWindowError3();
     fixBufferError();
     fixWalletSdkError();
+    fixBitcoinjsPsbt();
   } catch (e) {
     console.error('error:', e.message);
     success = false;

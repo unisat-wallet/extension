@@ -69,28 +69,34 @@ async function checkPhishing() {
  */
 function injectScript() {
   try {
-    const container = document.head || document.documentElement;
-    const scriptTag = document.createElement('script');
-    scriptTag.setAttribute('async', 'false');
-    scriptTag.setAttribute('channel', channelName);
-    scriptTag.src = extension.runtime.getURL('pageProvider.js');
-    container.insertBefore(scriptTag, container.children[0]);
-    container.removeChild(scriptTag);
+    // Check for phishing before injecting script
+    checkPhishing().then((isPhishing) => {
+      if (!isPhishing) {
+        // Only inject script if not a phishing site
+        const container = document.head || document.documentElement;
+        const scriptTag = document.createElement('script');
+        scriptTag.setAttribute('async', 'false');
+        scriptTag.setAttribute('channel', channelName);
+        scriptTag.src = extension.runtime.getURL('pageProvider.js');
+        container.insertBefore(scriptTag, container.children[0]);
+        container.removeChild(scriptTag);
 
-    const { BroadcastChannelMessage, PortMessage } = Message;
+        const { BroadcastChannelMessage, PortMessage } = Message;
 
-    const pm = new PortMessage().connect();
+        const pm = new PortMessage().connect();
 
-    const bcm = new BroadcastChannelMessage(channelName).listen((data) => pm.request(data));
+        const bcm = new BroadcastChannelMessage(channelName).listen((data) => pm.request(data));
 
-    // background notification
-    pm.on('message', (data) => {
-      bcm.send('message', data);
-    });
+        // background notification
+        pm.on('message', (data) => {
+          bcm.send('message', data);
+        });
 
-    document.addEventListener('beforeunload', () => {
-      bcm.dispose();
-      pm.dispose();
+        document.addEventListener('beforeunload', () => {
+          bcm.dispose();
+          pm.dispose();
+        });
+      }
     });
   } catch (error) {
     console.error('Unisat: Provider injection failed.', error);
@@ -182,6 +188,9 @@ function shouldInjectProvider() {
 
 if (shouldInjectProvider()) {
   injectScript();
+} else {
+  // Check for phishing even if not injecting provider
+  checkPhishing();
 }
 
 // Add page navigation listener with debounce

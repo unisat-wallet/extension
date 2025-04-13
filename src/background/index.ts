@@ -166,3 +166,75 @@ if (MANIFEST_VERSION === 'mv3') {
     }
   }, 5000);
 }
+
+// Add message listener
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  try {
+    let isPhishing: boolean;
+
+    switch (message.type) {
+      case 'CHECK_PHISHING': {
+        isPhishing = phishingService.checkPhishing(message.hostname);
+        sendResponse(isPhishing);
+        break;
+      }
+
+      case 'REDIRECT_TO_PHISHING_PAGE': {
+        if (!sender.tab?.id) break;
+
+        try {
+          chrome.tabs.update(sender.tab.id, {
+            url: chrome.runtime.getURL(`index.html#/phishing?hostname=${encodeURIComponent(message.hostname)}`),
+            active: true
+          });
+        } catch {
+          // Ignore error
+        }
+        break;
+      }
+
+      case 'SKIP_PHISHING_PROTECTION': {
+        phishingService.addToWhitelist(message.hostname);
+        sendResponse(true);
+        break;
+      }
+    }
+  } catch {
+    // Ignore error
+  }
+  return true;
+});
+
+// Unified redirect function with query params
+async function redirectToPhishingPage(tabId: number, url: string, hostname: string) {
+  try {
+    const params = new URLSearchParams({
+      hostname,
+      href: url
+    });
+
+    const redirectUrl = chrome.runtime.getURL(`index.html#/phishing?${params}`);
+    await chrome.tabs.update(tabId, { url: redirectUrl, active: true });
+  } catch (e) {
+    console.error('[Redirect] Failed to redirect tab:', e);
+  }
+}
+
+// Navigation check for MV3
+chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
+  if (message.type === 'CHECK_NAVIGATION') {
+    try {
+      const url = new URL(message.url);
+      const isPhishing = phishingService.checkPhishing(url.hostname);
+
+      if (isPhishing && sender.tab?.id) {
+        redirectToPhishingPage(sender.tab.id, message.url, url.hostname);
+      }
+
+      sendResponse({ isPhishing });
+    } catch {
+      sendResponse({ isPhishing: false });
+    }
+  }
+  return true;
+});
