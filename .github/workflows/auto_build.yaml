@@ -42,44 +42,11 @@ jobs:
           registry-url: https://registry.npmjs.org
           cache: yarn
 
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        id: cache-deps
-        with:
-          path: |
-            node_modules
-            ~/.cache/yarn
-          key: ${{ runner.os }}-deps-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-
-
       - name: Install dependencies
-        run: |
-          if [ "${{ steps.cache-deps.outputs.cache-hit }}" != "true" ]; then
-            yarn install
-          fi
-          yarn add bitcoinjs-lib@6.1.6 --dev
-
-      - name: Apply patches
-        run: |
-          ls -la patches/
-          npm install -g patch-package
-          patch-package
-
-      - name: Show environment info
-        run: |
-          node --version
-          yarn --version
-          df -h
+        run: yarn install
 
       - name: Build Chrome (Test Build)
         run: yarn build:chrome:mv3
-
-      - name: List Build Output
-        run: |
-          echo "===== Checking dist directory contents ====="
-          ls -la dist/
-          find dist -name "*.zip" -o -name "*.xpi"
 
       - name: Get Version Name for Test Build
         id: get-test-version
@@ -92,20 +59,7 @@ jobs:
       - name: Prepare Test Release Files
         run: |
           mkdir -p dist/release
-          VERSION="${{ steps.get-test-version.outputs.version }}"
-          find dist -name "*.zip" -exec bash -c '
-            FILENAME=$(basename {})
-            if [[ "$FILENAME" == *"$VERSION"* ]]; then
-              cp {} dist/release/
-            else
-              cp {} dist/release/unisat-chrome-mv3-$VERSION.zip
-            fi
-          ' \;
-          if [ -z "$(find dist/release -name "*.zip" | head -1)" ]; then
-            echo "No zip files found in build output"
-            exit 1
-          fi
-          echo "Files prepared for test release:"
+          find dist -name "*.zip" -exec cp {} dist/release/unisat-chrome-mv3-${{ steps.get-test-version.outputs.version }}.zip \;
           ls -la dist/release/
 
       - name: Create Test Release
@@ -136,44 +90,11 @@ jobs:
           registry-url: https://registry.npmjs.org
           cache: yarn
 
-      - name: Cache dependencies
-        uses: actions/cache@v3
-        id: cache-deps
-        with:
-          path: |
-            node_modules
-            ~/.cache/yarn
-          key: ${{ runner.os }}-deps-${{ hashFiles('**/yarn.lock') }}
-          restore-keys: |
-            ${{ runner.os }}-deps-
-
       - name: Install dependencies
-        run: |
-          if [ "${{ steps.cache-deps.outputs.cache-hit }}" != "true" ]; then
-            yarn install
-          fi
-          yarn add bitcoinjs-lib@6.1.6 --dev
-
-      - name: Apply patches
-        run: |
-          ls -la patches/
-          npm install -g patch-package
-          patch-package
-
-      - name: Show environment info
-        run: |
-          node --version
-          yarn --version
-          df -h
+        run: yarn install
 
       - name: Build Chrome (Release Build)
         run: yarn build:chrome:mv3
-
-      - name: List Build Output
-        run: |
-          echo "===== Checking dist directory contents ====="
-          ls -la dist/
-          find dist -name "*.zip" -o -name "*.xpi"
 
       - name: Get Version Name
         id: get-version
@@ -185,20 +106,7 @@ jobs:
       - name: Prepare Release Files
         run: |
           mkdir -p dist/release
-          VERSION="${{ steps.get-version.outputs.version }}"
-          find dist -name "*.zip" -exec bash -c '
-            FILENAME=$(basename {})
-            if [[ "$FILENAME" == *"$VERSION"* ]]; then
-              cp {} dist/release/
-            else
-              cp {} dist/release/unisat-chrome-mv3-$VERSION.zip
-            fi
-          ' \;
-          if [ -z "$(find dist/release -name "*.zip" | head -1)" ]; then
-            echo "No zip files found in build output"
-            exit 1
-          fi
-          echo "Files prepared for release:"
+          find dist -name "*.zip" -exec cp {} dist/release/unisat-chrome-mv3-${{ steps.get-version.outputs.version }}.zip \;
           ls -la dist/release/
 
       - name: Create Release and Upload Assets
