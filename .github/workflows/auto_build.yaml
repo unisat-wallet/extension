@@ -43,7 +43,39 @@ jobs:
           cache: yarn
 
       - name: Install dependencies
-        run: yarn install
+        run: |
+          # 正常安装依赖
+          yarn install --ignore-scripts
+
+          # 手动为unisat-wallet-sdk安装缺少的bitcoinjs-lib
+          if [ -d "node_modules/@unisat/wallet-sdk" ]; then
+            echo "Installing bitcoinjs-lib for @unisat/wallet-sdk"
+            cd node_modules/@unisat/wallet-sdk
+            mkdir -p node_modules
+            cd ../..
+            if [ -d "bitcoinjs-lib" ]; then
+              # 如果主项目已安装了这个库，直接复制
+              cp -r bitcoinjs-lib @unisat/wallet-sdk/node_modules/
+            else
+              # 否则单独安装
+              cd @unisat/wallet-sdk
+              yarn add bitcoinjs-lib@6.1.6 --no-lockfile
+              cd ../..
+            fi
+
+            # 应用补丁
+            cd @unisat/wallet-sdk
+            if [ -d "patches" ]; then
+              npx patch-package --error-on-fail=false
+            fi
+            cd ../..
+            cd ..
+          fi
+
+          # 应用主项目补丁
+          if [ -d "patches" ]; then
+            npx patch-package --error-on-fail=false
+          fi
 
       - name: Build Chrome (Test Build)
         run: yarn build:chrome:mv3
@@ -91,7 +123,39 @@ jobs:
           cache: yarn
 
       - name: Install dependencies
-        run: yarn install
+        run: |
+          # 正常安装依赖
+          yarn install --ignore-scripts
+
+          # 手动为unisat-wallet-sdk安装缺少的bitcoinjs-lib
+          if [ -d "node_modules/@unisat/wallet-sdk" ]; then
+            echo "Installing bitcoinjs-lib for @unisat/wallet-sdk"
+            cd node_modules/@unisat/wallet-sdk
+            mkdir -p node_modules
+            cd ../..
+            if [ -d "bitcoinjs-lib" ]; then
+              # 如果主项目已安装了这个库，直接复制
+              cp -r bitcoinjs-lib @unisat/wallet-sdk/node_modules/
+            else
+              # 否则单独安装
+              cd @unisat/wallet-sdk
+              yarn add bitcoinjs-lib@6.1.6 --no-lockfile
+              cd ../..
+            fi
+
+            # 应用补丁
+            cd @unisat/wallet-sdk
+            if [ -d "patches" ]; then
+              npx patch-package --error-on-fail=false
+            fi
+            cd ../..
+            cd ..
+          fi
+
+          # 应用主项目补丁
+          if [ -d "patches" ]; then
+            npx patch-package --error-on-fail=false
+          fi
 
       - name: Build Chrome (Release Build)
         run: yarn build:chrome:mv3
