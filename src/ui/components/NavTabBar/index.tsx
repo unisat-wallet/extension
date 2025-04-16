@@ -1,5 +1,5 @@
 import { useNavigate } from '@/ui/pages/MainRoute';
-import { useUnreadAppSummary } from '@/ui/state/accounts/hooks';
+import { useHasNewBanner } from '@/ui/state/discovery/hooks';
 import { TabOption } from '@/ui/state/global/reducer';
 import { colors } from '@/ui/theme/colors';
 
@@ -20,7 +20,8 @@ export function NavTabBar({ tab }: { tab: TabOption }) {
 
 function TabButton({ tabName, icon, isActive }: { tabName: TabOption; icon: IconTypes; isActive: boolean }) {
   const navigate = useNavigate();
-  const unreadApp = useUnreadAppSummary();
+  const hasNewBanner = useHasNewBanner();
+
   return (
     <Column
       justifyCenter
@@ -36,14 +37,14 @@ function TabButton({ tabName, icon, isActive }: { tabName: TabOption; icon: Icon
       }}>
       <Icon size={20} icon={icon} color={isActive ? 'white' : 'white_muted'} />
       <BaseView style={{ position: 'relative' }}>
-        {tabName === 'discover' && unreadApp && (
+        {tabName === 'discover' && hasNewBanner && (
           <BaseView
             style={{
               position: 'absolute',
-              bottom: 20,
-              left: 5,
-              width: 5,
-              height: 5,
+              top: -28,
+              right: -10,
+              width: 7,
+              height: 7,
               backgroundColor: 'red',
               borderRadius: '50%'
             }}></BaseView>

@@ -22,3 +22,8 @@ export function useLastFetchInfo() {
     lasfFetchChainType: state.lastFetchChainType
   };
 }
+
+export function useHasNewBanner() {
+  const state = useDiscoveryState();
+  return state.hasNewBanner;
+}
