@@ -52,7 +52,7 @@
     "message": "活跃地址 (24h)"
   },
   "go_to_unisat_explorer": {
-    "message": "去 UniSat 浏览器"
+    "message": "前往 UniScan"
   },
   "search_address_and_txids": {
     "message": "搜索地址和交易ID"
