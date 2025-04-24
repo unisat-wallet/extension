@@ -178,8 +178,8 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
                   </div>
                 </>
               )}
-              <Icon icon="more" style={{ marginBottom: 7 }} />
-              <Text text={t('more')} color="white" size="xs" />
+              <Icon icon="more" />
+              <Text text={t('more')} color="white" size="xs" style={{ marginTop: 4 }} />
             </div>
           </Row>
 
