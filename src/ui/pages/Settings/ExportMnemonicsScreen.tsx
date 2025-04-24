@@ -92,7 +92,7 @@ export default function ExportMnemonicsScreen() {
               onChange={(e) => {
                 setPassword(e.target.value);
               }}
-              onKeyUp={(e) => handleOnKeyUp(e)}
+              onKeyUp={(e: React.KeyboardEvent<HTMLInputElement>) => handleOnKeyUp(e)}
               autoFocus={true}
             />
             {error && <Text text={error} preset="regular" color="error" />}
@@ -111,6 +111,7 @@ export default function ExportMnemonicsScreen() {
 
             <Row
               justifyCenter
+              itemsCenter
               onClick={(e) => {
                 copy(mnemonic);
               }}>

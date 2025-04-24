@@ -318,7 +318,8 @@ export default function MergeCAT20Screen() {
                       width: '100%',
                       height: '100%',
                       textAlign: 'center',
-                      fontSize: 10
+                      fontSize: 10,
+                      lineHeight: '24px'
                     }}
                     preset="amount"
                     value={textInputUtxoValue}
@@ -371,7 +372,7 @@ export default function MergeCAT20Screen() {
                 <Text text={`${t('selected')} ${cat20Balance.symbol}`} color="textDim" size="sm" />
                 <Row>
                   <Text text={`${estimatedData.amount} `} color="white" />
-                  <Text text={`${cat20Balance.symbol} from ${inputUtxoCount} UTXOs`} color="textDim" />
+                  <Text text={`${cat20Balance.symbol} ${t('from')} ${inputUtxoCount} ${t('utxos')}`} color="textDim" />
                 </Row>
               </Row>
               <Row justifyBetween>
