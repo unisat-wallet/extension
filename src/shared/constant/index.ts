@@ -252,7 +252,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     mempoolSpaceUrl: 'https://mempool.space',
     unisatUrl: 'https://unisat.io',
     ordinalsUrl: 'https://ordinals.com',
-    unisatExplorerUrl: '',
+    unisatExplorerUrl: 'https://unisat.io/explorer',
     okxExplorerUrl: '',
     showPrice: true,
     defaultExplorer: 'mempool-space'

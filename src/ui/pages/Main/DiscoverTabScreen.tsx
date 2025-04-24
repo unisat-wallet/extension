@@ -214,7 +214,7 @@ export default function DiscoverTabScreen() {
       />
       <Content>
         <Column justifyCenter>
-          {chainType === ChainType.FRACTAL_BITCOIN_MAINNET && (
+          {(chainType === ChainType.FRACTAL_BITCOIN_MAINNET || chainType === ChainType.BITCOIN_MAINNET) && (
             <>
               <SearchBar />
               <Row mt="md" />
