@@ -21,33 +21,43 @@ export function FeeRateBar({ readonly, onChange }: { readonly?: boolean; onChang
 
   useEffect(() => {
     wallet.getFeeSummary().then((v) => {
-      const hasSameRates = v.list.some((option, index, array) => {
-        if (index < array.length - 1) {
-          return option.feeRate === array[index + 1].feeRate;
-        }
-        return false;
-      });
+      // Fee rate display rules:
+      // if (Fast = Avg = Slow) -> show Fast time (30s) for all
+      // if (Fast = Avg) -> show Fast time (30s) for both
+      // if (Avg = Slow) -> show Avg time (1.5m) for both
+      const { FAST, AVG, SLOW } = FeeRateType;
+      const fastRate = v.list[FAST].feeRate;
+      const avgRate = v.list[AVG].feeRate;
+      const slowRate = v.list[SLOW].feeRate;
 
       const translatedList = v.list.map((option, index) => {
         const keys = translationKeys[index];
         if (keys) {
           let desc = t(keys.desc);
 
-          if (hasSameRates) {
-            if (isFractal) {
-              desc = t('about_30_seconds_fb');
-            } else {
-              desc = t('about_10_minutes');
-            }
-          } else {
-            if (isFractal) {
-              if (index === FeeRateType.FAST) {
+          if (isFractal) {
+            if (fastRate === avgRate) {
+              if (index === FAST || index === AVG) {
                 desc = t('about_30_seconds_fb');
-              } else if (index === FeeRateType.AVG) {
-                desc = t('about_1_5_minutes_fb');
-              } else if (index === FeeRateType.SLOW) {
+              } else if (index === SLOW && avgRate === slowRate) {
+                desc = t('about_30_seconds_fb');
+              } else {
                 desc = t('about_3_minutes_fb');
               }
+            } else if (avgRate === slowRate && (index === AVG || index === SLOW)) {
+              desc = t('about_1_5_minutes_fb');
+            } else {
+              if (index === FAST) {
+                desc = t('about_30_seconds_fb');
+              } else if (index === AVG) {
+                desc = t('about_1_5_minutes_fb');
+              } else if (index === SLOW) {
+                desc = t('about_3_minutes_fb');
+              }
+            }
+          } else {
+            if (fastRate === slowRate) {
+              desc = t('about_10_minutes');
             }
           }
 
