@@ -144,7 +144,7 @@ export function SearchBar() {
       ),
       onSearch: gotoExplorer
     };
-  }, [value, info]);
+  }, [value, info, chain, t]);
 
   useEffect(() => {
     const handleKeyPress = (event) => {
