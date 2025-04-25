@@ -59,6 +59,7 @@ export function Step1_Create({
 
       <Row
         justifyCenter
+        itemsCenter
         onClick={(e) => {
           copy(contextData.mnemonics);
         }}>
