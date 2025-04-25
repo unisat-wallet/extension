@@ -61,7 +61,7 @@ export function SearchBar() {
         return {
           searchContent: (
             <Row py={'lg'} px={'lg'} clickable onClick={onSearch}>
-              <Text text={t('address_preview')} preset={'sub'} size={'sm'} />
+              <Text text={t('address_preview')} preset={'sub'} size={'sm'} style={{ whiteSpace: 'nowrap' }} />
               <Text text={shortAddress(value)} fullX />
               <EnterOutlined style={{ color: '#ccc', fontSize: 14 }} />
             </Row>
@@ -77,7 +77,7 @@ export function SearchBar() {
         return {
           searchContent: (
             <Row py={'lg'} px={'lg'} clickable onClick={onSearch}>
-              <Text text={t('transaction_preview')} preset={'sub'} size={'sm'} />
+              <Text text={t('transaction_preview')} preset={'sub'} size={'sm'} style={{ whiteSpace: 'nowrap' }} />
               <Text text={shortAddress(value)} fullX />
               <EnterOutlined style={{ color: '#ccc', fontSize: 14 }} />
             </Row>
@@ -93,7 +93,7 @@ export function SearchBar() {
         return {
           searchContent: (
             <Row py={'lg'} px={'lg'} clickable onClick={onSearch}>
-              <Text text={t('block_preview')} preset={'sub'} size={'sm'} />
+              <Text text={t('block_preview')} preset={'sub'} size={'sm'} style={{ whiteSpace: 'nowrap' }} />
               <Text text={value} fullX />
               <EnterOutlined style={{ color: '#ccc', fontSize: 14 }} />
             </Row>
@@ -109,7 +109,7 @@ export function SearchBar() {
       return {
         searchContent: (
           <Row py={'lg'} px={'lg'} clickable onClick={onSearch}>
-            <Text text={t('text_preview')} preset={'sub'} size={'sm'} />
+            <Text text={t('text_preview')} preset={'sub'} size={'sm'} style={{ whiteSpace: 'nowrap' }} />
             <Text text={value} fullX ellipsis />
             <EnterOutlined style={{ color: '#ccc', fontSize: 14 }} />
           </Row>
@@ -126,11 +126,11 @@ export function SearchBar() {
       searchContent: (
         <Column py={'lg'} px={'lg'} gap={'lg'}>
           <Row justifyBetween itemsCenter>
-            <Text text={t('transactions_24h')} preset={'sub'} size={'sm'} />
+            <Text text={t('transactions_24h')} preset={'sub'} size={'sm'} style={{ whiteSpace: 'nowrap' }} />
             {!info ? <Spin size={'small'} /> : <Text text={info.allTransactions} digital />}
           </Row>
           <Row justifyBetween itemsCenter>
-            <Text text={t('active_addresses_24h')} preset={'sub'} size={'sm'} />
+            <Text text={t('active_addresses_24h')} preset={'sub'} size={'sm'} style={{ whiteSpace: 'nowrap' }} />
             {!info ? <Spin size={'small'} /> : <Text text={info.allAddrs} digital />}{' '}
           </Row>
           <Text
