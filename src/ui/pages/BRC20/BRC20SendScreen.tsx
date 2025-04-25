@@ -549,8 +549,8 @@ export default function BRC20SendScreen() {
   };
 
   const tokenBalance = props.tokenBalance;
-  const selectedInscriptionIds = props.selectedInscriptionIds || [];
-  const selectedAmount = props.selectedAmount || '0';
+  const selectedInscriptionIds = [];
+  const selectedAmount = '0';
 
   const [contextData, setContextData] = useState<ContextData>({
     tabKey: TabKey.STEP1,
