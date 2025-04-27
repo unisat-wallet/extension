@@ -1,0 +1,193 @@
+// Colors
+@black: #000;
+@black-muted: rgba(0, 0, 0, 0.45);
+@black-muted-55: rgba(0, 0, 0, 0.55);
+@black-muted-65: rgba(0, 0, 0, 0.65);
+@white: #FFF;
+@divider: rgba(109, 65, 0, 0.15);
+@container-bg: linear-gradient(117deg, #FFCF6D 1.38%, #FF7A00 94.19%);
+@details-bg: rgba(255, 255, 255, 0.2);
+
+// Fonts
+@font-inter: 'Inter';
+@font-din: 'DIN';
+@font-din-bold: 'DIN-Bold';
+
+.container {
+  width: 328px;
+  flex-shrink: 0;
+  padding: 16px;
+  border-radius: 24px;
+  display: flex;
+  flex-direction: column;
+  cursor: pointer;
+  position: relative;
+  background: @container-bg;
+
+  &.collapsed {
+    height: 118px;
+  }
+
+  &.expanded {
+    height: 192px;
+  }
+}
+
+.header {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  color: @black-muted-55;
+  margin-bottom: 4px;
+  font-family: @font-inter;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 12px;
+}
+
+.balanceWrapper {
+  display: flex;
+  align-items: center;
+  margin-bottom: 4px;
+}
+
+.balanceContent {
+  display: flex;
+  align-items: baseline;
+}
+
+.balanceNumber {
+  color: @black;
+  font-family: @font-inter;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 38px;
+  letter-spacing: 0.56px;
+}
+
+.unit {
+  .balanceNumber();
+  margin-left: 8px;
+  margin-right: 16px;
+}
+
+.decimal {
+  color: @black-muted;
+  font-family: @font-din-bold;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 38px;
+  letter-spacing: 0.56px;
+}
+
+.usdValue {
+  color: @black-muted;
+  margin-bottom: 0;
+}
+
+.detailsContainer {
+  display: flex;
+  justify-content: flex-start;
+  align-items: center;
+  padding: 12px 16px;
+  background: @details-bg;
+  border-radius: 16px;
+  width: 312px;
+  height: 62px;
+  flex-shrink: 0;
+  box-sizing: border-box;
+  position: relative;
+  left: 50%;
+  transform: translateX(-50%);
+  margin-top: 25px;
+}
+
+.column {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.label {
+  color: @black-muted-65;
+  font-family: @font-inter;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 16px;
+}
+
+.detailsAmount {
+  display: flex;
+  align-items: center;
+  gap: 2px;
+  color: @black;
+  font-family: @font-din;
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 24px;
+  width: 97px;
+  min-height: 24px;
+}
+
+.detailsDecimal {
+  color: @black-muted;
+  font-family: @font-din;
+  font-size: 11px;
+  font-weight: 700;
+  line-height: 24px;
+}
+
+.unlockButton {
+  width: 71px;
+  height: 28px;
+  flex-shrink: 0;
+  border-radius: 25px;
+  background: @black;
+  color: @white;
+  text-align: center;
+  font-family: @font-inter;
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  &.disabled {
+    background: @black-muted;
+    cursor: default;
+  }
+}
+
+.divider {
+  width: 1px;
+  height: 32px;
+  background: @divider;
+  margin: 0 12px;
+  flex-shrink: 0;
+}
+
+.backgroundImage {
+  position: absolute;
+  top: 0;
+  right: 0;
+  width: 64px;
+  height: 64px;
+  background-size: contain;
+  background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+.tooltipStyle {
+  max-width: 328px;
+  border-radius: 8px;
+  background: #1D1E23;
+  width: 328px;
+  height: 110px;
+  padding: 16px;
+  color: @white;
+  font-size: 14px;
+  line-height: 20px;
+  font-family: @font-inter;
+} 
