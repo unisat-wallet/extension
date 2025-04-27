@@ -1,6 +1,6 @@
 import { BitcoinBalanceV2 } from '@/shared/types';
 
-export interface BalanceTooltipProps {
+export interface BalanceCardProps {
   /**
    * The account balance
    */

@@ -35,7 +35,7 @@ import { AtomicalsTab } from './AtomicalsTab';
 import { CATTab } from './CATTab';
 import { OrdinalsTab } from './OrdinalsTab';
 import { RunesList } from './RunesList';
-import { BalanceTooltip } from './components/BalanceTooltip';
+import { BalanceCard } from './components/BalanceCard';
 import { WalletActions } from './components/WalletActions';
 
 const STORAGE_VERSION_KEY = 'version_detail';
@@ -219,7 +219,7 @@ export default function WalletTabScreen() {
             </Column>
           )}
 
-          <BalanceTooltip
+          <BalanceCard
             accountBalance={accountBalance}
             unisatUrl={chain.unisatUrl}
             disableUtxoTools={walletConfig.disableUtxoTools}

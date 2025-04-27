@@ -8,8 +8,8 @@ import { useI18n } from '@/ui/hooks/useI18n';
 import { useBTCUnit, useChain } from '@/ui/state/settings/hooks';
 import { satoshisToAmount } from '@/ui/utils';
 
-import styles from './BalanceTooltip.module.less';
-import { BalanceTooltipProps } from './interface';
+import styles from './BalanceCard.module.less';
+import { BalanceCardProps } from './interface';
 
 const tooltipStyle = {
   maxWidth: '328px',
@@ -24,7 +24,7 @@ const tooltipStyle = {
   fontFamily: 'Inter'
 };
 
-export function BalanceTooltip({ accountBalance, unisatUrl, disableUtxoTools = false }: BalanceTooltipProps) {
+export function BalanceCard({ accountBalance, unisatUrl, disableUtxoTools = false }: BalanceCardProps) {
   const { t } = useI18n();
   const btcUnit = useBTCUnit();
   const chain = useChain();
