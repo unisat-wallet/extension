@@ -15,9 +15,10 @@ export function BtcUsd(
     color?: ColorTypes;
     size?: Sizes;
     bracket?: boolean; // ()
+    isHidden?: boolean;
   } & TextProps
 ) {
-  const { sats, color = 'textDim', size = 'sm', bracket = false } = props;
+  const { sats, color = 'textDim', size = 'sm', bracket = false, isHidden = false } = props;
 
   const { coinPrice, refreshCoinPrice, isLoadingCoinPrice } = usePrice();
   const chainType = useChainType();
@@ -68,6 +69,13 @@ export function BtcUsd(
 
     return result.toFixed(2);
   }, [chainType, coinPrice.btc, coinPrice.fb, sats]);
+
+  if (isHidden) {
+    if (bracket) {
+      return <Text color={color} size={size} text={'(****)'} {...props} />;
+    }
+    return <Text color={color} size={size} text={'****'} {...props} />;
+  }
 
   if (!chain.showPrice) {
     return <></>;

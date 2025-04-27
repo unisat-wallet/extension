@@ -98,7 +98,13 @@ export const svgRegistry = {
   userContact: '/images/icons/user-contact.svg',
 
   checked: '/images/icons/checked.svg',
-  language: '/images/icons/language.svg'
+  language: '/images/icons/language.svg',
+
+  'balance-eyes': '/images/icons/balance-eyes.svg',
+  'balance-eyes-closed': '/images/icons/balance-eyes-closed.svg',
+  'balance-question': '/images/icons/balance-question.svg',
+  'balance-right': '/images/icons/balance-right.svg',
+  'balance-unlock-right': '/images/icons/balance-unlock-right.svg'
 };
 
 const iconImgList: Array<IconTypes> = [
@@ -136,7 +142,12 @@ const iconImgList: Array<IconTypes> = [
   'send',
   'history',
   'utxo',
-  'more'
+  'more',
+  'balance-right',
+  'balance-eyes',
+  'balance-eyes-closed',
+  'balance-question',
+  'balance-unlock-right'
 ];
 
 export type IconTypes = keyof typeof svgRegistry;

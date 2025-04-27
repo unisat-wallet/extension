@@ -2065,5 +2065,8 @@
   },
   "legacy_address_warning_4": {
     "message": "不建議將交易發送到Legacy地址，因為這可能導致CAT20被意外花費"
+  },
+  "unavailable_tooltip": {
+    "message": "如果您的餘額顯示為不可用，可能是因為您的UTXOs被鎖定，因為它們包含銘文、符文、brc-20資產或未確認。在大多數情況下，您可以使用我們的UTXO管理工具解鎖這些UTXOs，並使它們再次可花費。"
   }
 }

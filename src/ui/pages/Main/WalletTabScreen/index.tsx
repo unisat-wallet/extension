@@ -5,7 +5,6 @@ import { VersionDetail } from '@/shared/types';
 import { checkAddressFlag } from '@/shared/utils';
 import { Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
-import { BtcUsd } from '@/ui/components/BtcUsd';
 import { DisableUnconfirmedsPopover } from '@/ui/components/DisableUnconfirmedPopover';
 import { FeeRateIcon } from '@/ui/components/FeeRateIcon';
 import { NavTabBar } from '@/ui/components/NavTabBar';
@@ -224,16 +223,6 @@ export default function WalletTabScreen() {
             accountBalance={accountBalance}
             unisatUrl={chain.unisatUrl}
             disableUtxoTools={walletConfig.disableUtxoTools}
-          />
-
-          <BtcUsd
-            sats={accountBalance.totalBalance}
-            textCenter
-            size={'md'}
-            style={{
-              marginTop: -16,
-              marginBottom: -8
-            }}
           />
 
           <WalletActions address={currentAccount?.address} chain={chain} />

@@ -7,7 +7,7 @@
     "message": "Receive"
   },
   "total_balance": {
-    "message": "Total Balance"
+    "message": "TOTAL BALANCE"
   },
   "enter_your_password": {
     "message": "Enter your password"
@@ -2065,5 +2065,8 @@
   },
   "legacy_address_warning_4": {
     "message": "It is not recommended to send transactions to legacy addresses, as this may result in the unintended spending of CAT20 balances."
+  },
+  "unavailable_tooltip": {
+    "message": "If your balance shows as unavailable, it may be because your UTXOs are locked due to containing inscriptions, runes, brc-20 assets, or being unconfirmed. In most cases, you can use our UTXO Management Tool to unlock these UTXOs and make them spendable again."
   }
 }
