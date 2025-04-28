@@ -23,6 +23,7 @@ export interface UIState {
     memo: string;
   };
   navigationSource: NavigationSource;
+  isBalanceHidden: boolean;
 }
 
 export enum AssetTabKey {
@@ -73,7 +74,8 @@ export const initialState: UIState = {
     inputAmount: '',
     memo: ''
   },
-  navigationSource: NavigationSource.NORMAL
+  navigationSource: NavigationSource.NORMAL,
+  isBalanceHidden: false
 };
 
 const slice = createSlice({
@@ -161,6 +163,9 @@ const slice = createSlice({
     },
     setNavigationSource(state, action: { payload: NavigationSource }) {
       state.navigationSource = action.payload;
+    },
+    setBalanceHidden(state, action: { payload: boolean }) {
+      state.isBalanceHidden = action.payload;
     }
   },
   extraReducers: (builder) => {
@@ -183,6 +188,9 @@ const slice = createSlice({
       }
       if (!state.babylonSendScreen) {
         state.babylonSendScreen = initialState.babylonSendScreen;
+      }
+      if (state.isBalanceHidden === undefined) {
+        state.isBalanceHidden = false;
       }
     });
   }

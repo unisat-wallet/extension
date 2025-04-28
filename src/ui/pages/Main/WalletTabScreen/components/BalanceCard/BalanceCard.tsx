@@ -1,11 +1,14 @@
 import { Tooltip } from 'antd';
 import classNames from 'classnames';
 import { useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { Icon } from '@/ui/components/Icon';
 import { useI18n } from '@/ui/hooks/useI18n';
+import { AppState } from '@/ui/state';
 import { useBTCUnit, useChain } from '@/ui/state/settings/hooks';
+import { uiActions } from '@/ui/state/ui/reducer';
 import { satoshisToAmount } from '@/ui/utils';
 
 import styles from './BalanceCard.module.less';
@@ -30,7 +33,8 @@ export function BalanceCard({ accountBalance, unisatUrl, disableUtxoTools = fals
   const btcUnit = useBTCUnit();
   const chain = useChain();
   const [isExpanded, setIsExpanded] = useState(false);
-  const [isBalanceHidden, setIsBalanceHidden] = useState(false);
+  const dispatch = useDispatch();
+  const isBalanceHidden = useSelector((state: AppState) => state.ui.isBalanceHidden);
 
   const backgroundImage = chain.isFractal
     ? './images/artifacts/balance-bg-fb.png'
@@ -46,7 +50,7 @@ export function BalanceCard({ accountBalance, unisatUrl, disableUtxoTools = fals
 
   const toggleBalanceVisibility = (e: React.MouseEvent) => {
     e.stopPropagation();
-    setIsBalanceHidden(!isBalanceHidden);
+    dispatch(uiActions.setBalanceHidden(!isBalanceHidden));
   };
 
   const EyeIcon = ({ onClick }: { onClick: (e: React.MouseEvent) => void }) => (
