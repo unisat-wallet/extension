@@ -117,6 +117,11 @@ export default function BRC20TokenScreen() {
       return false;
     }
   }, [chainType]);
+
+  const shouldUseTwoRowLayout = useMemo(() => {
+    return enableTrade && chain.enableBrc20SingleStep;
+  }, [enableTrade, chain.enableBrc20SingleStep]);
+
   const marketPlaceUrl = useBRC20MarketPlaceWebsite(ticker);
   return (
     <Layout>
@@ -137,34 +142,49 @@ export default function BRC20TokenScreen() {
               <TickUsdWithoutPrice tick={ticker} balance={balance} type={TokenType.BRC20} size={'md'} />
             </Row>
 
-            <Row justifyBetween mt="lg" style={{ gap: '8px' }}>
-              <Button
-                text={t('mint')}
-                preset="home"
-                style={!enableMint ? { backgroundColor: 'rgba(255,255,255,0.15)' } : {}}
-                disabled={!enableMint}
-                icon="pencil"
-                onClick={(e) => {
-                  window.open(`${unisatWebsite}/brc20/${encodeURIComponent(ticker)}`);
-                }}
-                full
-              />
+            {shouldUseTwoRowLayout ? (
+              <Column gap="lg2" mt="sm">
+                <Row gap="sm">
+                  <Button
+                    text={t('mint')}
+                    preset="home"
+                    style={!enableMint ? { backgroundColor: 'rgba(255,255,255,0.15)' } : {}}
+                    disabled={!enableMint}
+                    icon="pencil"
+                    onClick={(e) => {
+                      window.open(`${unisatWebsite}/brc20/${encodeURIComponent(ticker)}`);
+                    }}
+                    full
+                  />
 
-              <Button
-                text={t('transfer')}
-                preset="home"
-                icon="send"
-                disabled={!enableTransfer}
-                onClick={(e) => {
-                  navigate('BRC20SendScreen', {
-                    tokenBalance: tokenSummary.tokenBalance,
-                    tokenInfo: tokenSummary.tokenInfo
-                  });
-                }}
-                full
-              />
+                  <Button
+                    text={t('send')}
+                    preset="home"
+                    icon="send"
+                    disabled={!enableTransfer}
+                    onClick={(e) => {
+                      navigate('BRC20SendScreen', {
+                        tokenBalance: tokenSummary.tokenBalance,
+                        tokenInfo: tokenSummary.tokenInfo
+                      });
+                    }}
+                    style={{
+                      width: chain.enableBrc20SingleStep && !enableTrade ? '75px' : 'auto'
+                    }}
+                    full
+                  />
 
-              {chain.enableBrc20SingleStep ? (
+                  <Button
+                    text={t('trade')}
+                    preset="home"
+                    icon="trade"
+                    onClick={(e) => {
+                      window.open(marketPlaceUrl);
+                    }}
+                    full
+                  />
+                </Row>
+
                 <Button
                   text={t('single_step_transfer')}
                   preset="home"
@@ -172,10 +192,14 @@ export default function BRC20TokenScreen() {
                   style={{
                     background: 'linear-gradient(113deg, #EABB5A 5.41%, #E78327 92.85%)',
                     color: 'black',
-                    width: '328px',
-                    height: '48px',
-                    flexShrink: 0,
-                    borderRadius: '12px'
+                    width: enableTrade ? 'auto' : '328px',
+                    minHeight: '48px',
+                    borderRadius: '12px',
+                    flexDirection: 'row',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                    gap: '4px',
+                    padding: '0 8px'
                   }}
                   textStyle={{
                     color: 'black'
@@ -187,22 +211,78 @@ export default function BRC20TokenScreen() {
                       tokenInfo: tokenSummary.tokenInfo
                     });
                   }}
-                  full
                 />
-              ) : null}
-
-              {enableTrade ? (
+              </Column>
+            ) : (
+              <Row gap="sm">
                 <Button
-                  text={t('trade')}
+                  text={t('mint')}
                   preset="home"
-                  icon="trade"
+                  disabled={!enableMint}
+                  icon="pencil"
                   onClick={(e) => {
-                    window.open(marketPlaceUrl);
+                    window.open(`${unisatWebsite}/brc20/${encodeURIComponent(ticker)}`);
                   }}
-                  full
+                  style={{
+                    ...(!enableMint ? { backgroundColor: 'rgba(255,255,255,0.15)' } : {}),
+                    width: chain.enableBrc20SingleStep && !enableTrade ? '73px' : '101px'
+                  }}
                 />
-              ) : null}
-            </Row>
+
+                <Button
+                  text={t('transfer')}
+                  preset="home"
+                  icon="send"
+                  disabled={!enableTransfer}
+                  onClick={(e) => {
+                    navigate('BRC20SendScreen', {
+                      tokenBalance: tokenSummary.tokenBalance,
+                      tokenInfo: tokenSummary.tokenInfo
+                    });
+                  }}
+                  style={{
+                    width: chain.enableBrc20SingleStep && !enableTrade ? '73px' : '101px'
+                  }}
+                />
+
+                {chain.enableBrc20SingleStep ? (
+                  <Button
+                    text={t('single_step_transfer')}
+                    preset="home"
+                    icon="brc20-single-step"
+                    style={{
+                      background: 'linear-gradient(113deg, #EABB5A 5.41%, #E78327 92.85%)',
+                      color: 'black',
+                      flexShrink: 0,
+                      borderRadius: '12px',
+                      width: enableTrade ? 'auto' : '155px'
+                    }}
+                    textStyle={{
+                      color: 'black'
+                    }}
+                    disabled={!enableTransfer}
+                    onClick={(e) => {
+                      navigate('BRC20SingleStepScreen', {
+                        tokenBalance: tokenSummary.tokenBalance,
+                        tokenInfo: tokenSummary.tokenInfo
+                      });
+                    }}
+                  />
+                ) : enableTrade ? (
+                  <Button
+                    text={t('trade')}
+                    preset="home"
+                    icon="trade"
+                    onClick={(e) => {
+                      window.open(marketPlaceUrl);
+                    }}
+                    style={{
+                      width: '101px'
+                    }}
+                  />
+                ) : null}
+              </Row>
+            )}
           </Column>
 
           <Column
@@ -210,10 +290,10 @@ export default function BRC20TokenScreen() {
             px="md"
             py="md"
             style={{
-              backgroundColor: 'rgba(255,255,255,0.08)',
+              backgroundColor: 'rgba(244, 182, 44, 0.1)',
               borderRadius: 15,
               borderWidth: 1,
-              borderColor: 'rgba(255,255,255,0.08)'
+              borderColor: 'rgba(244, 182, 44, 0.25)'
             }}>
             {deployInscription ? (
               <Section
@@ -232,7 +312,6 @@ export default function BRC20TokenScreen() {
                 }
               />
             ) : null}
-            <Line />
 
             <Section
               title={t('available_balance')}

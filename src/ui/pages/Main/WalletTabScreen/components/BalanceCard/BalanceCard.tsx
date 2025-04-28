@@ -76,7 +76,6 @@ export function BalanceCard({ accountBalance, unisatUrl, disableUtxoTools = fals
       <div className={styles.decorativeLineOne} />
       <div className={styles.decorativeLineTwo} />
       <img className={styles.decorativeImage} src={backgroundImage} alt="Balance background" />
-      <div className={styles.backgroundImage} style={{ backgroundImage: `url(${backgroundImage})` }} />
 
       <div className={styles.header}>
         {t('total_balance')}
@@ -152,8 +151,7 @@ export function BalanceCard({ accountBalance, unisatUrl, disableUtxoTools = fals
 
           <div style={{ marginLeft: 'auto' }} onClick={handleUnlock}>
             <div className={classNames(styles.unlockButton, { [styles.disabled]: disableUtxoTools })}>
-              <span
-                style={{ marginRight: isSpecialLocale ? '0' : '2px', fontSize: isSpecialLocale ? '10px' : 'inherit' }}>
+              <span style={{ marginRight: isSpecialLocale ? '0' : '2px', fontSize: isSpecialLocale ? '8px' : '14px' }}>
                 {t('unlock')}
               </span>
               {!isSpecialLocale && <Icon icon="balance-unlock-right" size={14} />}
