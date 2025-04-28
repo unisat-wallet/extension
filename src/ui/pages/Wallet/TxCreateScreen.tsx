@@ -119,7 +119,7 @@ export default function TxCreateScreen() {
 
   const unavailableTipText = useMemo(() => {
     let tipText = '';
-    tipText += t('includes_inscriptions_runes_and_unconfirmed_utxos');
+    tipText += t('unavailable_tooltip');
 
     if (walletConfig.disableUtxoTools) {
       tipText += t('future_versions_will_support_spending_these_assets');

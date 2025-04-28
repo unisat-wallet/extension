@@ -46,7 +46,8 @@
   font-size: 12px;
   font-weight: 600;
   line-height: 12px;
-  text-transform: uppercase; 
+  text-transform: uppercase;
+  white-space: nowrap;
 }
 
 .balanceWrapper {
@@ -63,6 +64,7 @@
 .balanceContent {
   display: flex;
   align-items: baseline;
+  white-space: nowrap;
 }
 
 .balanceNumber {
@@ -72,12 +74,14 @@
   font-weight: 700;
   line-height: 38px;
   letter-spacing: 0.56px;
+  white-space: nowrap;
 }
 
 .unit {
   .balanceNumber();
   margin-left: 8px;
   margin-right: 16px;
+  white-space: nowrap;
 }
 
 .decimal {
@@ -87,12 +91,14 @@
   font-weight: 700;
   line-height: 38px;
   letter-spacing: 0.56px;
+  white-space: nowrap;
 }
 
 .usdValue {
   color: @black-muted;
   margin-bottom: 0;
   margin-left: 8px;
+  white-space: nowrap;
 }
 
 .detailsWrapper {
@@ -146,6 +152,7 @@
   font-size: 12px;
   font-weight: 500;
   line-height: 16px;
+  white-space: nowrap;
 }
 
 .detailsAmount {
@@ -159,6 +166,7 @@
   line-height: 24px;
   width: 97px;
   min-height: 24px;
+  white-space: nowrap;
 }
 
 .detailsDecimal {
@@ -167,6 +175,7 @@
   font-size: 11px;
   font-weight: 700;
   line-height: 24px;
+  white-space: nowrap;
 }
 
 .unlockButton {
@@ -189,6 +198,7 @@
   transition: all 0.2s ease-in-out;
   margin-left: auto;
   margin-right: 0; 
+  white-space: nowrap;
 
   &.disabled {
     background: @black-muted;
@@ -208,6 +218,7 @@
   
   span {
     margin-right: 4px;
+    white-space: nowrap;
   }
 }
 
@@ -289,4 +300,5 @@
   font-size: 14px;
   line-height: 20px;
   font-family: @font-inter;
+  white-space: nowrap;
 }

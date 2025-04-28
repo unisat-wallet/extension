@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { getCurrentLocale } from '@/shared/modules/i18n';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { Icon } from '@/ui/components/Icon';
 import { useI18n } from '@/ui/hooks/useI18n';
@@ -35,6 +36,8 @@ export function BalanceCard({ accountBalance, unisatUrl, disableUtxoTools = fals
   const [isExpanded, setIsExpanded] = useState(false);
   const dispatch = useDispatch();
   const isBalanceHidden = useSelector((state: AppState) => state.ui.isBalanceHidden);
+  const currentLocale = getCurrentLocale();
+  const isSpecialLocale = currentLocale === 'es' || currentLocale === 'ru' || currentLocale === 'fr';
 
   const backgroundImage = chain.isFractal
     ? './images/artifacts/balance-bg-fb.png'
@@ -113,32 +116,33 @@ export function BalanceCard({ accountBalance, unisatUrl, disableUtxoTools = fals
           <div className={styles.divider} />
 
           <div className={styles.column}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-              <span className={styles.label}>{t('unavailable')}</span>
-              <Tooltip
-                overlayStyle={{
-                  maxWidth: '328px',
-                  padding: 0
-                }}
-                autoAdjustOverflow={false}
-                arrowPointAtCenter={true}
-                align={{
-                  points: ['bc', 'tc'],
-                  offset: [10, 0],
-                  overflow: {
-                    adjustX: true,
-                    adjustY: true
-                  }
-                }}
-                overlayInnerStyle={tooltipStyle}
-                title={t('unavailable_tooltip')}
-                placement="top"
-                destroyTooltipOnHide={true}>
+            <Tooltip
+              overlayStyle={{
+                maxWidth: '328px',
+                padding: 0
+              }}
+              autoAdjustOverflow={false}
+              arrowPointAtCenter={true}
+              align={{
+                points: ['bc', 'tc'],
+                offset: [10, 0],
+                overflow: {
+                  adjustX: true,
+                  adjustY: true
+                }
+              }}
+              overlayInnerStyle={tooltipStyle}
+              title={t('unavailable_tooltip')}
+              placement="top"
+              destroyTooltipOnHide={true}>
+              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }} onClick={(e) => e.stopPropagation()}>
+                <span className={styles.label}>{t('unavailable')}</span>
+
                 <span className={styles.questionIconWrapper}>
                   <Icon icon="balance-question" style={{ width: 16, height: 16, cursor: 'pointer' }} />
                 </span>
-              </Tooltip>
-            </div>
+              </div>
+            </Tooltip>
             <div className={styles.detailsAmount}>
               <span>{isBalanceHidden ? '*****' : unavailableAmount.split('.')[0]}</span>
               {!isBalanceHidden && <span className={styles.detailsDecimal}>.{unavailableAmount.split('.')[1]}</span>}
@@ -148,8 +152,11 @@ export function BalanceCard({ accountBalance, unisatUrl, disableUtxoTools = fals
 
           <div style={{ marginLeft: 'auto' }} onClick={handleUnlock}>
             <div className={classNames(styles.unlockButton, { [styles.disabled]: disableUtxoTools })}>
-              <span style={{ marginRight: '2px' }}>{t('unlock')}</span>
-              <Icon icon="balance-unlock-right" size={14} />
+              <span
+                style={{ marginRight: isSpecialLocale ? '0' : '2px', fontSize: isSpecialLocale ? '10px' : 'inherit' }}>
+                {t('unlock')}
+              </span>
+              {!isSpecialLocale && <Icon icon="balance-unlock-right" size={14} />}
             </div>
           </div>
         </div>

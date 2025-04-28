@@ -2044,5 +2044,8 @@
   },
   "legacy_address_warning_4": {
     "message": "No se recomienda enviar transacciones a direcciones heredadas, ya que esto puede resultar en el gasto no intencionado de saldos CAT20."
+  },
+  "unavailable_tooltip": {
+    "message": "Si tu saldo muestra como no disponible, es posible que tus UTXOs estén bloqueados debido a contener inscripciones, runas, activos brc-20 o no confirmados. En la mayoría de los casos, puedes usar nuestra herramienta de gestión de UTXOs para desbloquear estos UTXOs y hacerlos gastables de nuevo."
   }
 }
