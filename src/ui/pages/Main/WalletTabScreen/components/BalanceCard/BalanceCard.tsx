@@ -66,6 +66,9 @@ export function BalanceCard({ accountBalance, unisatUrl, disableUtxoTools = fals
       className={classNames(styles.container, styles.collapsed)}
       onClick={handleExpandToggle}
       style={{ margin: '0 auto' }}>
+      <div className={styles.decorativeLineOne} />
+      <div className={styles.decorativeLineTwo} />
+      <img className={styles.decorativeImage} src={backgroundImage} alt="Balance background" />
       <div className={styles.backgroundImage} style={{ backgroundImage: `url(${backgroundImage})` }} />
       <div className={styles.header}>
         {t('total_balance')}
@@ -83,15 +86,7 @@ export function BalanceCard({ accountBalance, unisatUrl, disableUtxoTools = fals
           )}
           {isBalanceHidden && <span className={styles.unit}>{btcUnit}</span>}
         </div>
-        <Icon
-          icon="balance-right"
-          size={10}
-          style={{
-            marginLeft: '16px',
-            transform: 'rotate(0deg)',
-            transition: 'transform 0.2s ease'
-          }}
-        />
+        <Icon icon="balance-right" size={10} style={{ transform: 'rotate(90deg)' }} />
       </div>
 
       <div className={styles.usdValue}>
@@ -105,6 +100,9 @@ export function BalanceCard({ accountBalance, unisatUrl, disableUtxoTools = fals
       className={classNames(styles.container, styles.expanded)}
       onClick={handleExpandToggle}
       style={{ margin: '0 auto' }}>
+      <div className={styles.decorativeLineOne} />
+      <div className={styles.decorativeLineTwo} />
+      <img className={styles.decorativeImage} src={backgroundImage} alt="Balance background" />
       <div className={styles.backgroundImage} style={{ backgroundImage: `url(${backgroundImage})` }} />
       <div className={styles.header}>
         {t('total_balance')}
@@ -122,15 +120,7 @@ export function BalanceCard({ accountBalance, unisatUrl, disableUtxoTools = fals
           )}
           {isBalanceHidden && <span className={styles.unit}>{btcUnit}</span>}
         </div>
-        <Icon
-          icon="balance-right"
-          size={10}
-          style={{
-            marginLeft: '16px',
-            transform: 'rotate(-90deg)',
-            transition: 'transform 0.2s ease'
-          }}
-        />
+        <Icon icon="balance-right" size={10} containerStyle={{ transform: 'rotate(90deg)' }} />
       </div>
 
       <div className={styles.usdValue}>
@@ -185,8 +175,8 @@ export function BalanceCard({ accountBalance, unisatUrl, disableUtxoTools = fals
 
         <div style={{ marginLeft: 'auto' }} onClick={handleUnlock}>
           <div className={classNames(styles.unlockButton, { [styles.disabled]: disableUtxoTools })}>
-            <span>{t('unlock')}</span>
-            <Icon icon="balance-unlock-right" size={14} style={{ marginLeft: '4px' }} />
+            <span style={{ marginRight: '4px' }}>{t('unlock')}</span>
+            <Icon icon="balance-unlock-right" size={14} />
           </div>
         </div>
       </div>

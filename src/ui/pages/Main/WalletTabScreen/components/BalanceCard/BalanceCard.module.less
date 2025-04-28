@@ -5,8 +5,8 @@
 @black-muted-65: rgba(0, 0, 0, 0.65);
 @white: #FFF;
 @divider: rgba(109, 65, 0, 0.15);
-@container-bg: linear-gradient(117deg, #FFCF6D 1.38%, #FF7A00 94.19%);
-@details-bg: rgba(255, 255, 255, 0.2);
+@container-bg: linear-gradient(117deg, #FFCF6D 1.38%, #FF7A00 74.19%);
+@details-bg: #FFDAB2;
 
 // Fonts
 @font-inter: 'Inter';
@@ -16,13 +16,14 @@
 .container {
   width: 328px;
   flex-shrink: 0;
-  padding: 16px;
+  padding: 16px 16px 21px 16px;
   border-radius: 24px;
   display: flex;
   flex-direction: column;
   cursor: pointer;
   position: relative;
   background: @container-bg;
+  overflow: hidden;
 
   &.collapsed {
     height: 118px;
@@ -99,7 +100,8 @@
   position: relative;
   left: 50%;
   transform: translateX(-50%);
-  margin-top: 25px;
+  margin-top: 15px;
+  z-index: 999;
 }
 
 .column {
@@ -176,6 +178,46 @@
   height: 64px;
   background-size: contain;
   background-repeat: no-repeat;
+  pointer-events: none;
+}
+
+.decorativeLineOne {
+  position: absolute;
+  width: 51px;
+  height: 235px;
+  top: -30px;
+  right: 64px;
+  border-left-style: solid;
+  border-left-width: 1px;
+  border-left-color: rgba(255, 255, 255, 0.3);
+  transform: rotate(-30deg);
+  background: linear-gradient(91deg, rgba(255, 255, 255, 0.3) 0%, rgba(255, 255, 255, 0) 100%);
+  opacity: 0.2;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.decorativeLineTwo {
+  position: absolute;
+  width: 84px;
+  height: 210px;
+  top: -40px;
+  right: -13px;
+  border: 1px solid rgba(255, 255, 255, 0.15);
+  transform: rotate(-30deg);
+  background: linear-gradient(89deg, rgba(255, 255, 255, 0.4) 0%, rgba(255, 255, 255, 0) 100%);
+  opacity: 0.2;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.decorativeImage {
+  position: absolute;
+  width: 64px;
+  height: 64px;
+  top: 0;
+  right: 0;
+  object-fit: cover;
   pointer-events: none;
 }
 
