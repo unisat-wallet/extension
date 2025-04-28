@@ -2068,5 +2068,20 @@
   },
   "unavailable_tooltip": {
     "message": "If your balance shows as unavailable, it may be because your UTXOs are locked due to containing inscriptions, runes, brc-20 assets, or being unconfirmed. In most cases, you can use our UTXO Management Tool to unlock these UTXOs and make them spendable again."
+  },
+  "single_step_transfer": {
+    "message": "Single-Step Transfer"
+  },
+  "deploy_inscription": {
+    "message": "Deploy Inscription"
+  },
+  "available_balance": {
+    "message": "available Balance"
+  },
+  "transferable_balance": {
+    "message": "transferable Balance"
+  },
+  "ticker": {
+    "message": "ticker"
   }
 }

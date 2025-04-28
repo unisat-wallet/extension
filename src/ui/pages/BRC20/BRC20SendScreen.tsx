@@ -127,9 +127,6 @@ function Step1({
                     text={t('to_send_brc20_you_have_to_inscribe_a_transfer_inscription_first')}
                     preset="sub"
                     textCenter
-                    style={{
-                      whiteSpace: 'nowrap'
-                    }}
                   />
                 </Row>
               </Column>

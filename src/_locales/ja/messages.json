@@ -2054,5 +2054,20 @@
   },
   "unavailable_tooltip": {
     "message": "もし残高が利用不可に表示されている場合、それはあなたのUTXOsがインスクリプション、符文、brc-20資産、または未確認であるためにロックされている可能性があります。多くの場合、私たちのUTXO管理ツールを使用してこれらのUTXOsをロック解除し、再び使用可能にすることができます。"
+  },
+  "single_step_transfer": {
+    "message": "単一ステップ転送"
+  },
+  "deploy_inscription": {
+    "message": "銘文を展開"
+  },
+  "available_balance": {
+    "message": "利用可能な残高"
+  },
+  "transferable_balance": {
+    "message": "転送可能な残高"
+  },
+  "ticker": {
+    "message": "ティッカー"
   }
 }

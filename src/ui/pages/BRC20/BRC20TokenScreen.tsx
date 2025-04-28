@@ -137,7 +137,7 @@ export default function BRC20TokenScreen() {
               <TickUsdWithoutPrice tick={ticker} balance={balance} type={TokenType.BRC20} size={'md'} />
             </Row>
 
-            <Row justifyBetween mt="lg">
+            <Row justifyBetween mt="lg" style={{ gap: '8px' }}>
               <Button
                 text={t('mint')}
                 preset="home"
@@ -166,12 +166,16 @@ export default function BRC20TokenScreen() {
 
               {chain.enableBrc20SingleStep ? (
                 <Button
-                  text={t('single-step transfer')}
+                  text={t('single_step_transfer')}
                   preset="home"
-                  icon="send"
+                  icon="brc20-single-step"
                   style={{
-                    background: 'linear-gradient(103.92deg, #EBB94C 0%, #E97E00 100%)',
-                    color: 'black'
+                    background: 'linear-gradient(113deg, #EABB5A 5.41%, #E78327 92.85%)',
+                    color: 'black',
+                    width: '328px',
+                    height: '48px',
+                    flexShrink: 0,
+                    borderRadius: '12px'
                   }}
                   textStyle={{
                     color: 'black'
@@ -206,14 +210,14 @@ export default function BRC20TokenScreen() {
             px="md"
             py="md"
             style={{
-              backgroundColor: 'rgba(244, 182, 44, 0.12)',
+              backgroundColor: 'rgba(255,255,255,0.08)',
               borderRadius: 15,
               borderWidth: 1,
-              borderColor: 'rgba(244, 182, 44, 0.12)'
+              borderColor: 'rgba(255,255,255,0.08)'
             }}>
             {deployInscription ? (
               <Section
-                title={t('deploy inscription')}
+                title={t('deploy_inscription')}
                 value={''}
                 rightComponent={
                   <Text
@@ -231,13 +235,13 @@ export default function BRC20TokenScreen() {
             <Line />
 
             <Section
-              title={t('available Balance')}
+              title={t('available_balance')}
               value={showLongNumber(tokenSummary.tokenBalance.availableBalance)}
             />
             <Line />
 
             <Section
-              title={t('transferable Balance')}
+              title={t('transferable_balance')}
               value={showLongNumber(tokenSummary.tokenBalance.transferableBalance)}
             />
           </Column>

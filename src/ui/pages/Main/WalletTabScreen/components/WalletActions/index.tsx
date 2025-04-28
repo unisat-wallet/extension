@@ -50,7 +50,11 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
   const handleUtxoClick = () => {
     setUtxoClicked(true);
     localStorage.setItem('utxo_clicked', 'true');
-    window.open(`${chain.unisatUrl}/utils/utxo`);
+    if (chainType === ChainType.BITCOIN_MAINNET) {
+      window.open(`${chain.unisatUrl}/utils/utxo-v2`);
+    } else {
+      window.open(`${chain.unisatUrl}/utils/utxo`);
+    }
   };
 
   const onHistoryClick = () => {

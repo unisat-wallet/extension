@@ -2060,5 +2060,20 @@
   },
   "unavailable_tooltip": {
     "message": "Si votre solde affiche comme non disponible, cela peut être dû au fait que vos UTXOs sont verrouillés en raison de l'inscription, du rune, des actifs brc-20 ou d'être non confirmés. Dans la plupart des cas, vous pouvez utiliser notre outil de gestion des UTXOs pour déverrouiller ces UTXOs et les rendre dépensables à nouveau."
+  },
+  "single_step_transfer": {
+    "message": "Transfert en un seul clic"
+  },
+  "deploy_inscription": {
+    "message": "Déployer l'inscription"
+  },
+  "available_balance": {
+    "message": "Solde disponible"
+  },
+  "transferable_balance": {
+    "message": "Solde transférable"
+  },
+  "ticker": {
+    "message": "ticker"
   }
 }

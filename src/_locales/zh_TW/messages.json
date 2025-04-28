@@ -2068,5 +2068,20 @@
   },
   "unavailable_tooltip": {
     "message": "如果您的餘額顯示為不可用，可能是因為您的UTXOs被鎖定，因為它們包含銘文、符文、brc-20資產或未確認。在大多數情況下，您可以使用我們的UTXO管理工具解鎖這些UTXOs，並使它們再次可花費。"
+  },
+  "single_step_transfer": {
+    "message": "單步轉帳"
+  },
+  "deploy_inscription": {
+    "message": "部署銘文"
+  },
+  "available_balance": {
+    "message": "可用餘額"
+  },
+  "transferable_balance": {
+    "message": "可轉帳餘額"
+  },
+  "ticker": {
+    "message": "股票代號"
   }
 }

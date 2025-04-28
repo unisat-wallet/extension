@@ -104,7 +104,9 @@ export const svgRegistry = {
   'balance-eyes-closed': '/images/icons/balance-eyes-closed.svg',
   'balance-question': '/images/icons/balance-question.svg',
   'balance-right': '/images/icons/balance-right.svg',
-  'balance-unlock-right': '/images/icons/balance-unlock-right.svg'
+  'balance-unlock-right': '/images/icons/balance-unlock-right.svg',
+
+  'brc20-single-step': '/images/icons/brc20-single-step.svg'
 };
 
 const iconImgList: Array<IconTypes> = [

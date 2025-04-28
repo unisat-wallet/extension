@@ -2044,5 +2044,20 @@
   },
   "unavailable_tooltip": {
     "message": "如果您的余额显示为不可用，可能是因为您的UTXOs被锁定，因为它们包含铭文、符文、brc-20资产或未确认。在大多数情况下，您可以使用我们的UTXO管理工具解锁这些UTXOs，并使它们再次可花费。"
+  },
+  "single_step_transfer": {
+    "message": "单步转账"
+  },
+  "deploy_inscription": {
+    "message": "部署铭文"
+  },
+  "available_balance": {
+    "message": "可用余额"
+  },
+  "transferable_balance": {
+    "message": "可转移余额"
+  },
+  "ticker": {
+    "message": "标记"
   }
 }

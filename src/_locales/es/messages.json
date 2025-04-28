@@ -2047,5 +2047,20 @@
   },
   "unavailable_tooltip": {
     "message": "Si tu saldo muestra como no disponible, es posible que tus UTXOs estén bloqueados debido a contener inscripciones, runas, activos brc-20 o no confirmados. En la mayoría de los casos, puedes usar nuestra herramienta de gestión de UTXOs para desbloquear estos UTXOs y hacerlos gastables de nuevo."
+  },
+  "single_step_transfer": {
+    "message": "Transferencia de un solo paso"
+  },
+  "deploy_inscription": {
+    "message": "Desplegar Inscripción"
+  },
+  "available_balance": {
+    "message": "Saldo disponible"
+  },
+  "transferable_balance": {
+    "message": "Saldo transferible"
+  },
+  "ticker": {
+    "message": "ticker"
   }
 }
