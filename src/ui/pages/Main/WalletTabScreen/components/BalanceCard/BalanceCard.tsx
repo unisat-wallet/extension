@@ -16,12 +16,13 @@ const tooltipStyle = {
   borderRadius: '8px',
   background: '#1D1E23',
   width: '328px',
-  height: '110px',
-  padding: '16px',
+  padding: '12px 16px',
   color: '#FFF',
   fontSize: '14px',
   lineHeight: '20px',
-  fontFamily: 'Inter'
+  fontFamily: 'Inter',
+  boxShadow: '0px 12px 20px 0px rgba(0, 0, 0, 0.25)',
+  marginLeft: '-50px'
 };
 
 export function BalanceCard({ accountBalance, unisatUrl, disableUtxoTools = false }: BalanceCardProps) {
@@ -61,7 +62,10 @@ export function BalanceCard({ accountBalance, unisatUrl, disableUtxoTools = fals
   };
 
   const CollapsedView = () => (
-    <div className={classNames(styles.container, styles.collapsed)} onClick={handleExpandToggle}>
+    <div
+      className={classNames(styles.container, styles.collapsed)}
+      onClick={handleExpandToggle}
+      style={{ margin: '0 auto' }}>
       <div className={styles.backgroundImage} style={{ backgroundImage: `url(${backgroundImage})` }} />
       <div className={styles.header}>
         {t('total_balance')}
@@ -97,7 +101,10 @@ export function BalanceCard({ accountBalance, unisatUrl, disableUtxoTools = fals
   );
 
   const ExpandedView = () => (
-    <div className={classNames(styles.container, styles.expanded)} onClick={handleExpandToggle}>
+    <div
+      className={classNames(styles.container, styles.expanded)}
+      onClick={handleExpandToggle}
+      style={{ margin: '0 auto' }}>
       <div className={styles.backgroundImage} style={{ backgroundImage: `url(${backgroundImage})` }} />
       <div className={styles.header}>
         {t('total_balance')}
@@ -146,13 +153,27 @@ export function BalanceCard({ accountBalance, unisatUrl, disableUtxoTools = fals
           <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
             <span className={styles.label}>{t('unavailable')}</span>
             <Tooltip
-              overlayStyle={{ maxWidth: '328px' }}
+              overlayStyle={{
+                maxWidth: '328px',
+                padding: 0
+              }}
+              autoAdjustOverflow={false}
+              arrowPointAtCenter={true}
+              align={{
+                points: ['bc', 'tc'],
+                offset: [0, 0],
+                overflow: {
+                  adjustX: true,
+                  adjustY: true
+                }
+              }}
               overlayInnerStyle={tooltipStyle}
               title={t('unavailable_tooltip')}
-              placement="top">
-              <div>
+              placement="top"
+              destroyTooltipOnHide={true}>
+              <span className={styles.questionIconWrapper}>
                 <Icon icon="balance-question" style={{ width: 16, height: 16, cursor: 'pointer' }} />
-              </div>
+              </span>
             </Tooltip>
           </div>
           <div className={styles.detailsAmount}>
