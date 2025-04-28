@@ -5,6 +5,7 @@ import { Row, Text } from '@/ui/components';
 import { Button } from '@/ui/components/Button';
 import { Icon } from '@/ui/components/Icon';
 import { useI18n } from '@/ui/hooks/useI18n';
+import { useUtxoTools } from '@/ui/hooks/useUtxoTools';
 import { BuyBTCModal } from '@/ui/pages/BuyBTC/BuyBTCModal';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useAddressExplorerUrl, useChainType, useWalletConfig } from '@/ui/state/settings/hooks';
@@ -26,6 +27,7 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
   const [buyBtcModalVisible, setBuyBtcModalVisible] = useState(false);
   const walletConfig = useWalletConfig();
   const { t } = useI18n();
+  const { openUtxoTools } = useUtxoTools(chain);
 
   const shouldUseMoreExpandedLayout = () => {
     if (walletConfig.disableUtxoTools) return false;
@@ -50,11 +52,7 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
   const handleUtxoClick = () => {
     setUtxoClicked(true);
     localStorage.setItem('utxo_clicked', 'true');
-    if (chainType === ChainType.BITCOIN_MAINNET) {
-      window.open(`${chain.unisatUrl}/utils/utxo-v2`);
-    } else {
-      window.open(`${chain.unisatUrl}/utils/utxo`);
-    }
+    openUtxoTools();
   };
 
   const onHistoryClick = () => {

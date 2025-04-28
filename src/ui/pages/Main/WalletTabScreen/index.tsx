@@ -219,11 +219,7 @@ export default function WalletTabScreen() {
             </Column>
           )}
 
-          <BalanceCard
-            accountBalance={accountBalance}
-            unisatUrl={chain.unisatUrl}
-            disableUtxoTools={walletConfig.disableUtxoTools}
-          />
+          <BalanceCard accountBalance={accountBalance} disableUtxoTools={walletConfig.disableUtxoTools} />
 
           <WalletActions address={currentAccount?.address} chain={chain} />
 

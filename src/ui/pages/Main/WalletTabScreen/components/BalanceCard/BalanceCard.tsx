@@ -7,6 +7,7 @@ import { getCurrentLocale } from '@/shared/modules/i18n';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { Icon } from '@/ui/components/Icon';
 import { useI18n } from '@/ui/hooks/useI18n';
+import { useUtxoTools } from '@/ui/hooks/useUtxoTools';
 import { AppState } from '@/ui/state';
 import { useBTCUnit, useChain } from '@/ui/state/settings/hooks';
 import { uiActions } from '@/ui/state/ui/reducer';
@@ -29,7 +30,7 @@ const tooltipStyle = {
   marginLeft: '-50px'
 };
 
-export function BalanceCard({ accountBalance, unisatUrl, disableUtxoTools = false }: BalanceCardProps) {
+export function BalanceCard({ accountBalance, disableUtxoTools = false }: BalanceCardProps) {
   const { t } = useI18n();
   const btcUnit = useBTCUnit();
   const chain = useChain();
@@ -38,6 +39,7 @@ export function BalanceCard({ accountBalance, unisatUrl, disableUtxoTools = fals
   const isBalanceHidden = useSelector((state: AppState) => state.ui.isBalanceHidden);
   const currentLocale = getCurrentLocale();
   const isSpecialLocale = currentLocale === 'es' || currentLocale === 'ru' || currentLocale === 'fr';
+  const { openUtxoTools } = useUtxoTools(chain);
 
   const backgroundImage = chain.isFractal
     ? './images/artifacts/balance-bg-fb.png'
@@ -65,7 +67,7 @@ export function BalanceCard({ accountBalance, unisatUrl, disableUtxoTools = fals
   const handleUnlock = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (disableUtxoTools) return;
-    window.open(`${unisatUrl}/utils/utxo`);
+    openUtxoTools();
   };
 
   return (

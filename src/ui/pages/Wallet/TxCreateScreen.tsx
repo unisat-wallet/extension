@@ -9,6 +9,7 @@ import { BtcUsd } from '@/ui/components/BtcUsd';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { RBFBar } from '@/ui/components/RBFBar';
 import { useI18n } from '@/ui/hooks/useI18n';
+import { useUtxoTools } from '@/ui/hooks/useUtxoTools';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useAccountBalance } from '@/ui/state/accounts/hooks';
 import { useBTCUnit, useChain, useWalletConfig } from '@/ui/state/settings/hooks';
@@ -65,6 +66,7 @@ export default function TxCreateScreen() {
   const showUnavailable = accountBalance.unavailableBalance > 0;
 
   const chain = useChain();
+  const { openUtxoTools } = useUtxoTools(chain);
   useEffect(() => {
     setError('');
     setDisabled(true);
@@ -235,7 +237,7 @@ export default function TxCreateScreen() {
                       preset="minimal"
                       text={t('unlock')}
                       onClick={() => {
-                        window.open(`${chain.unisatUrl}/utils/utxo`);
+                        openUtxoTools();
                       }}
                     />
                   )}
