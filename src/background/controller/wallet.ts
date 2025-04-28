@@ -416,12 +416,18 @@ export class WalletController extends BaseController {
 
   deriveNewAccountFromMnemonic = async (keyring: WalletKeyring, alianName?: string) => {
     const _keyring = keyringService.keyrings[keyring.index];
-    const result = await keyringService.addNewAccount(_keyring);
+    await keyringService.addNewAccount(_keyring);
 
     const currentKeyring = await this.getCurrentKeyring();
     if (!currentKeyring) throw new Error('no current keyring');
     keyring = currentKeyring;
     this.changeKeyring(keyring, keyring.accounts.length - 1);
+
+    if (alianName) {
+      const account = preferenceService.getCurrentAccount() as Account;
+      preferenceService.setAccountAlianName(account.key, alianName);
+      account.alianName = alianName;
+    }
   };
 
   getAccountsCount = async () => {
