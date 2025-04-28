@@ -61,15 +61,16 @@ export function BalanceCard({ accountBalance, unisatUrl, disableUtxoTools = fals
     window.open(`${unisatUrl}/utils/utxo`);
   };
 
-  const CollapsedView = () => (
+  return (
     <div
-      className={classNames(styles.container, styles.collapsed)}
+      className={classNames(styles.container, isExpanded ? styles.expanded : styles.collapsed)}
       onClick={handleExpandToggle}
       style={{ margin: '0 auto' }}>
       <div className={styles.decorativeLineOne} />
       <div className={styles.decorativeLineTwo} />
       <img className={styles.decorativeImage} src={backgroundImage} alt="Balance background" />
       <div className={styles.backgroundImage} style={{ backgroundImage: `url(${backgroundImage})` }} />
+
       <div className={styles.header}>
         {t('total_balance')}
         <EyeIcon onClick={toggleBalanceVisibility} />
@@ -86,102 +87,69 @@ export function BalanceCard({ accountBalance, unisatUrl, disableUtxoTools = fals
           )}
           {isBalanceHidden && <span className={styles.unit}>{btcUnit}</span>}
         </div>
-        <Icon icon="balance-right" size={10} style={{ transform: 'rotate(90deg)' }} />
-      </div>
-
-      <div className={styles.usdValue}>
-        <BtcUsd sats={accountBalance.totalBalance} color="black_muted" size="sm" isHidden={isBalanceHidden} />
-      </div>
-    </div>
-  );
-
-  const ExpandedView = () => (
-    <div
-      className={classNames(styles.container, styles.expanded)}
-      onClick={handleExpandToggle}
-      style={{ margin: '0 auto' }}>
-      <div className={styles.decorativeLineOne} />
-      <div className={styles.decorativeLineTwo} />
-      <img className={styles.decorativeImage} src={backgroundImage} alt="Balance background" />
-      <div className={styles.backgroundImage} style={{ backgroundImage: `url(${backgroundImage})` }} />
-      <div className={styles.header}>
-        {t('total_balance')}
-        <EyeIcon onClick={toggleBalanceVisibility} />
-      </div>
-
-      <div className={styles.balanceWrapper}>
-        <div className={styles.balanceContent}>
-          <span className={styles.balanceNumber}>{isBalanceHidden ? '*****' : totalAmount.split('.')[0]}</span>
-          {!isBalanceHidden && (
-            <>
-              <span className={styles.decimal}>.{totalAmount.split('.')[1]}</span>
-              <span className={styles.unit}>{btcUnit}</span>
-            </>
-          )}
-          {isBalanceHidden && <span className={styles.unit}>{btcUnit}</span>}
-        </div>
-        <Icon icon="balance-right" size={10} containerStyle={{ transform: 'rotate(90deg)' }} />
+        <Icon icon="balance-right" size={10} containerStyle={{ transform: `rotate(${isExpanded ? 270 : 90}deg)` }} />
       </div>
 
       <div className={styles.usdValue}>
         <BtcUsd sats={accountBalance.totalBalance} color="black_muted" size="sm" isHidden={isBalanceHidden} />
       </div>
 
-      <div className={styles.detailsContainer}>
-        <div className={styles.column}>
-          <span className={styles.label}>{t('available')}</span>
-          <div className={styles.detailsAmount}>
-            <span>{isBalanceHidden ? '*****' : availableAmount.split('.')[0]}</span>
-            {!isBalanceHidden && <span className={styles.detailsDecimal}>.{availableAmount.split('.')[1]}</span>}
-            <span>{btcUnit}</span>
+      {/* Expandable details */}
+      <div className={styles.detailsWrapper}>
+        <div className={styles.detailsContainer}>
+          <div className={styles.column}>
+            <span className={styles.label}>{t('available')}</span>
+            <div className={styles.detailsAmount}>
+              <span>{isBalanceHidden ? '*****' : availableAmount.split('.')[0]}</span>
+              {!isBalanceHidden && <span className={styles.detailsDecimal}>.{availableAmount.split('.')[1]}</span>}
+              <span>{btcUnit}</span>
+            </div>
           </div>
-        </div>
 
-        <div className={styles.divider} />
+          <div className={styles.divider} />
 
-        <div className={styles.column}>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
-            <span className={styles.label}>{t('unavailable')}</span>
-            <Tooltip
-              overlayStyle={{
-                maxWidth: '328px',
-                padding: 0
-              }}
-              autoAdjustOverflow={false}
-              arrowPointAtCenter={true}
-              align={{
-                points: ['bc', 'tc'],
-                offset: [0, 0],
-                overflow: {
-                  adjustX: true,
-                  adjustY: true
-                }
-              }}
-              overlayInnerStyle={tooltipStyle}
-              title={t('unavailable_tooltip')}
-              placement="top"
-              destroyTooltipOnHide={true}>
-              <span className={styles.questionIconWrapper}>
-                <Icon icon="balance-question" style={{ width: 16, height: 16, cursor: 'pointer' }} />
-              </span>
-            </Tooltip>
+          <div className={styles.column}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+              <span className={styles.label}>{t('unavailable')}</span>
+              <Tooltip
+                overlayStyle={{
+                  maxWidth: '328px',
+                  padding: 0
+                }}
+                autoAdjustOverflow={false}
+                arrowPointAtCenter={true}
+                align={{
+                  points: ['bc', 'tc'],
+                  offset: [10, 0],
+                  overflow: {
+                    adjustX: true,
+                    adjustY: true
+                  }
+                }}
+                overlayInnerStyle={tooltipStyle}
+                title={t('unavailable_tooltip')}
+                placement="top"
+                destroyTooltipOnHide={true}>
+                <span className={styles.questionIconWrapper}>
+                  <Icon icon="balance-question" style={{ width: 16, height: 16, cursor: 'pointer' }} />
+                </span>
+              </Tooltip>
+            </div>
+            <div className={styles.detailsAmount}>
+              <span>{isBalanceHidden ? '*****' : unavailableAmount.split('.')[0]}</span>
+              {!isBalanceHidden && <span className={styles.detailsDecimal}>.{unavailableAmount.split('.')[1]}</span>}
+              <span>{btcUnit}</span>
+            </div>
           </div>
-          <div className={styles.detailsAmount}>
-            <span>{isBalanceHidden ? '*****' : unavailableAmount.split('.')[0]}</span>
-            {!isBalanceHidden && <span className={styles.detailsDecimal}>.{unavailableAmount.split('.')[1]}</span>}
-            <span>{btcUnit}</span>
-          </div>
-        </div>
 
-        <div style={{ marginLeft: 'auto' }} onClick={handleUnlock}>
-          <div className={classNames(styles.unlockButton, { [styles.disabled]: disableUtxoTools })}>
-            <span style={{ marginRight: '4px' }}>{t('unlock')}</span>
-            <Icon icon="balance-unlock-right" size={14} />
+          <div style={{ marginLeft: 'auto' }} onClick={handleUnlock}>
+            <div className={classNames(styles.unlockButton, { [styles.disabled]: disableUtxoTools })}>
+              <span style={{ marginRight: '2px' }}>{t('unlock')}</span>
+              <Icon icon="balance-unlock-right" size={14} />
+            </div>
           </div>
         </div>
       </div>
     </div>
   );
-
-  return isExpanded ? <ExpandedView /> : <CollapsedView />;
 }
