@@ -24,9 +24,14 @@ function compareAmount(a: string, b: string) {
   return new BigNumber(a).comparedTo(new BigNumber(b));
 }
 
+function toBigNumber(a: string) {
+  return new BigNumber(a);
+}
+
 export const runesUtils = {
   toDecimalAmount,
   toDecimalNumber,
   fromDecimalAmount,
-  compareAmount
+  compareAmount,
+  toBigNumber
 };

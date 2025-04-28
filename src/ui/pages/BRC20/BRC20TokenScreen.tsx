@@ -1,19 +1,17 @@
-import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
 
 import { ChainType } from '@/shared/constant';
 import { AddressTokenSummary, Inscription } from '@/shared/types';
-import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
+import { Button, Column, Content, Header, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
-import BRC20Preview from '@/ui/components/BRC20Preview';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
-import { Empty } from '@/ui/components/Empty';
+import { Line } from '@/ui/components/Line';
+import { Section } from '@/ui/components/Section';
 import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useBRC20MarketPlaceWebsite, useChainType, useUnisatWebsite } from '@/ui/state/settings/hooks';
-import { useLocationState, useWallet } from '@/ui/utils';
-import { LoadingOutlined } from '@ant-design/icons';
+import { useBRC20MarketPlaceWebsite, useChain, useChainType, useUnisatWebsite } from '@/ui/state/settings/hooks';
+import { shortAddress, showLongNumber, useLocationState, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../MainRoute';
 
@@ -110,6 +108,7 @@ export default function BRC20TokenScreen() {
 
   const tools = useTools();
   const chainType = useChainType();
+  const chain = useChain();
 
   const enableTrade = useMemo(() => {
     if (chainType === ChainType.BITCOIN_MAINNET || chainType === ChainType.FRACTAL_BITCOIN_MAINNET) {
@@ -126,6 +125,7 @@ export default function BRC20TokenScreen() {
           window.history.go(-1);
         }}
       />
+
       {tokenSummary && (
         <Content>
           <Column py="xl">
@@ -156,21 +156,36 @@ export default function BRC20TokenScreen() {
                 icon="send"
                 disabled={!enableTransfer}
                 onClick={(e) => {
-                  // todo
-                  const defaultSelected = tokenSummary.transferableList.slice(0, 1);
-                  const selectedInscriptionIds = defaultSelected.map((v) => v.inscriptionId);
-                  const selectedAmount = defaultSelected.reduce(
-                    (pre, cur) => new BigNumber(cur.amount).plus(pre),
-                    new BigNumber(0)
-                  );
                   navigate('BRC20SendScreen', {
                     tokenBalance: tokenSummary.tokenBalance,
-                    selectedInscriptionIds,
-                    selectedAmount: selectedAmount.toString()
+                    tokenInfo: tokenSummary.tokenInfo
                   });
                 }}
                 full
               />
+
+              {chain.enableBrc20SingleStep ? (
+                <Button
+                  text={t('single-step transfer')}
+                  preset="home"
+                  icon="send"
+                  style={{
+                    background: 'linear-gradient(103.92deg, #EBB94C 0%, #E97E00 100%)',
+                    color: 'black'
+                  }}
+                  textStyle={{
+                    color: 'black'
+                  }}
+                  disabled={!enableTransfer}
+                  onClick={(e) => {
+                    navigate('BRC20SingleStepScreen', {
+                      tokenBalance: tokenSummary.tokenBalance,
+                      tokenInfo: tokenSummary.tokenInfo
+                    });
+                  }}
+                  full
+                />
+              ) : null}
 
               {enableTrade ? (
                 <Button
@@ -185,79 +200,74 @@ export default function BRC20TokenScreen() {
               ) : null}
             </Row>
           </Column>
-          <Row style={{ borderTopWidth: 1, borderColor: '#FFFFFF1F', alignSelf: 'stretch', width: '100%' }} my="md" />
+
+          <Column
+            gap="lg"
+            px="md"
+            py="md"
+            style={{
+              backgroundColor: 'rgba(244, 182, 44, 0.12)',
+              borderRadius: 15,
+              borderWidth: 1,
+              borderColor: 'rgba(244, 182, 44, 0.12)'
+            }}>
+            {deployInscription ? (
+              <Section
+                title={t('deploy inscription')}
+                value={''}
+                rightComponent={
+                  <Text
+                    text={shortAddress(deployInscription.inscriptionId, 10)}
+                    color={'gold'}
+                    preset="link"
+                    size="xs"
+                    onClick={() => {
+                      navigate('OrdinalsInscriptionScreen', { inscription: deployInscription, withSend: true });
+                    }}
+                  />
+                }
+              />
+            ) : null}
+            <Line />
+
+            <Section
+              title={t('available Balance')}
+              value={showLongNumber(tokenSummary.tokenBalance.availableBalance)}
+            />
+            <Line />
+
+            <Section
+              title={t('transferable Balance')}
+              value={showLongNumber(tokenSummary.tokenBalance.transferableBalance)}
+            />
+          </Column>
 
           <Column>
-            <Column>
-              <Text text={t('transferable')} preset="bold" size="md" />
-              <Row itemsCenter>
-                <Text text={`${tokenSummary.tokenBalance.transferableBalance}`} size="md" wrap digital />
-                <BRC20Ticker tick={ticker} displayName={tokenSummary.tokenBalance.displayName} />
-              </Row>
+            <Column
+              gap="lg"
+              px="md"
+              py="md"
+              style={{
+                backgroundColor: 'rgba(255,255,255,0.08)',
+                borderRadius: 15,
+                borderWidth: 1,
+                borderColor: 'rgba(255,255,255,0.08)'
+              }}>
+              <Section title={t('ticker')} value={ticker} />
+              <Line />
+
+              <Section title={t('mints')} value={showLongNumber(tokenSummary.tokenInfo.totalMinted)} />
+              <Line />
+
+              <Section
+                title={t('supply')}
+                maxLength={40}
+                value={`${showLongNumber(tokenSummary.tokenInfo.totalSupply)} ${tokenSummary.tokenBalance.ticker}`}
+              />
+              <Line />
+
+              <Section title={t('divisibility')} value={tokenSummary.tokenInfo.decimal} />
             </Column>
-            <Row style={{ borderTopWidth: 1, borderColor: '#FFFFFF1F', alignSelf: 'stretch' }} my="md" />
-
-            {deployInscription || tokenSummary.transferableList.length > 0 ? (
-              <Row>
-                <Icon icon="circle-info" />
-                <Text text={t('send_inscription')} preset="sub" textCenter />
-              </Row>
-            ) : null}
-
-            {tokenSummary.transferableList.length == 0 && !deployInscription && (
-              <Column style={{ minHeight: 130 }} itemsCenter justifyCenter>
-                {loading ? (
-                  <Icon>
-                    <LoadingOutlined />
-                  </Icon>
-                ) : (
-                  <Empty text={t('empty')} />
-                )}
-              </Column>
-            )}
-
-            <Row overflowX>
-              {deployInscription ? (
-                <BRC20Preview
-                  tick={ticker}
-                  inscriptionNumber={deployInscription.inscriptionNumber}
-                  timestamp={deployInscription.timestamp}
-                  type="DEPLOY"
-                  onClick={async () => {
-                    try {
-                      tools.showLoading(true);
-                      navigate('OrdinalsInscriptionScreen', { inscription: deployInscription, withSend: true });
-                    } catch (e) {
-                      console.log(e);
-                    } finally {
-                      tools.showLoading(false);
-                    }
-                  }}
-                />
-              ) : null}
-              {tokenSummary.transferableList.map((v) => (
-                <BRC20Preview
-                  key={v.inscriptionId}
-                  tick={ticker}
-                  balance={v.amount}
-                  inscriptionNumber={v.inscriptionNumber}
-                  timestamp={v.timestamp}
-                  confirmations={v.confirmations}
-                  type="TRANSFER"
-                  onClick={async () => {
-                    try {
-                      tools.showLoading(true);
-                      const data = await wallet.getInscriptionInfo(v.inscriptionId);
-                      navigate('OrdinalsInscriptionScreen', { inscription: data, withSend: true });
-                    } catch (e) {
-                      console.log(e);
-                    } finally {
-                      tools.showLoading(false);
-                    }
-                  }}
-                />
-              ))}
-            </Row>
           </Column>
         </Content>
       )}

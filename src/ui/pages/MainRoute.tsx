@@ -31,6 +31,7 @@ import AtomicalsNFTScreen from './Atomicals/AtomicalsNFTScreen';
 import SendArc20Screen from './Atomicals/SendArc20Screen';
 import SendAtomicalsInscriptionScreen from './Atomicals/SendAtomicalsNFTScreen';
 import BRC20SendScreen from './BRC20/BRC20SendScreen';
+import BRC20SingleStepScreen from './BRC20/BRC20SingleStepScreen';
 import BRC20TokenScreen from './BRC20/BRC20TokenScreen';
 import BabylonStakingScreen from './Babylon/BabylonStakingScreen';
 import BabylonTxConfirmScreen from './Babylon/BabylonTxConfirmScreen';
@@ -345,6 +346,11 @@ export const routes = {
   AboutUsScreen: {
     path: '/settings/about-us',
     element: <AboutUsScreen />
+  },
+
+  BRC20SingleStepScreen: {
+    path: '/brc20/send-single-step',
+    element: <BRC20SingleStepScreen />
   }
 };
 

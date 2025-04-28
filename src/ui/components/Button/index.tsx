@@ -326,6 +326,7 @@ export function Button(props: ButtonProps) {
     if (disabled) {
       $viewStyle.backgroundColor = 'rgba(255,255,255,0.15)';
     }
+    const $textStyle = Object.assign({}, $textPresets[preset], { color: 'white' }, $textStyleOverride);
     return (
       <div
         style={$viewStyle}
@@ -339,7 +340,7 @@ export function Button(props: ButtonProps) {
             containerStyle={iconSize ? iconSize : {}}
           />
         )}
-        {text && <Text style={$textStyle} text={text} preset="regular" mt="sm" color={'white'} />}
+        {text && <Text style={$textStyle} text={text} preset="regular" mt="sm" />}
       </div>
     );
   }

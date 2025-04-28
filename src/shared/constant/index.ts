@@ -238,6 +238,7 @@ export type TypeChain = {
   isFractal?: boolean;
   showPrice: boolean;
   defaultExplorer: 'mempool-space' | 'unisat-explorer';
+  enableBrc20SingleStep?: boolean;
 };
 
 export const CHAINS_MAP: { [key: string]: TypeChain } = {
@@ -340,7 +341,8 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     isViewTxHistoryInternally: false,
     isFractal: true,
     showPrice: false,
-    defaultExplorer: 'unisat-explorer'
+    defaultExplorer: 'unisat-explorer',
+    enableBrc20SingleStep: true
   }
 };
 

@@ -11,13 +11,15 @@ export function Section({
   title,
   link,
   showCopyIcon,
-  maxLength = 20
+  maxLength = 20,
+  rightComponent
 }: {
   value: string | number;
   title: string;
   link?: string;
   showCopyIcon?: boolean;
   maxLength?: number;
+  rightComponent?: React.ReactNode;
 }) {
   const tools = useTools();
   const { t } = useI18n();
@@ -36,19 +38,23 @@ export function Section({
         minHeight: 25
       }}>
       <Text text={title} preset="sub" />
-      <Row
-        onClick={() => {
-          if (link) {
-            window.open(link);
-          } else {
-            copyToClipboard(value).then(() => {
-              tools.toastSuccess(t('copied'));
-            });
-          }
-        }}>
-        <Text text={displayText} preset={link ? 'link' : 'regular'} size="xs" wrap />
-        {showCopyIcon && <CopyOutlined style={{ color: '#888', fontSize: 14 }} />}
-      </Row>
+      {rightComponent ? (
+        rightComponent
+      ) : (
+        <Row
+          onClick={() => {
+            if (link) {
+              window.open(link);
+            } else {
+              copyToClipboard(value).then(() => {
+                tools.toastSuccess(t('copied'));
+              });
+            }
+          }}>
+          <Text text={displayText} preset={link ? 'link' : 'regular'} size="xs" wrap />
+          {showCopyIcon && <CopyOutlined style={{ color: '#888', fontSize: 14 }} />}
+        </Row>
+      )}
     </Row>
   );
 }

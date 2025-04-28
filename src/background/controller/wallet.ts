@@ -637,6 +637,13 @@ export class WalletController extends BaseController {
             // only keypath p2tr can have tapInternalKey
             delete input.tapInternalKey;
           }
+
+          if (isKeyPathP2TR) {
+            // todo
+          } else {
+            const isToBeSigned = toSignInputs.find((v) => v.index === index);
+            (isToBeSigned as any).useTweakedSigner = false;
+          }
         } catch (e) {
           // skip
         }
@@ -662,6 +669,8 @@ export class WalletController extends BaseController {
     }
 
     psbt = await keyringService.signTransaction(_keyring, psbt, toSignInputs);
+
+    console.log(toSignInputs, psbt.data.inputs[0]);
     if (autoFinalized) {
       toSignInputs.forEach((v) => {
         // psbt.validateSignaturesOfInput(v.index, validator);
@@ -2490,6 +2499,36 @@ export class WalletController extends BaseController {
   getBabylonConfig = async () => {
     return openapiService.getBabylonConfig();
   };
+
+  singleStepTransferBRC20Step1 = async (params: {
+    userAddress: string;
+    userPubkey: string;
+    receiver: string;
+    ticker: string;
+    amount: string;
+    feeRate: number;
+  }) => {
+    return openapiService.singleStepTransferBRC20Step1(params);
+  };
+
+  singleStepTransferBRC20Step2 = async (params: { orderId: string; commitTx: string; toSignInputs: ToSignInput[] }) => {
+    const networkType = this.getNetworkType();
+    const psbtNetwork = toPsbtNetwork(networkType);
+    const psbt = bitcoin.Psbt.fromHex(params.commitTx, { network: psbtNetwork });
+    await this.signPsbt(psbt, params.toSignInputs, true);
+
+    return openapiService.singleStepTransferBRC20Step2({ orderId: params.orderId, psbt: psbt.toBase64() });
+  };
+
+  singleStepTransferBRC20Step3 = async (params: { orderId: string; revealTx: string; toSignInputs: ToSignInput[] }) => {
+    const networkType = this.getNetworkType();
+    const psbtNetwork = toPsbtNetwork(networkType);
+    const psbt = bitcoin.Psbt.fromHex(params.revealTx, { network: psbtNetwork });
+    await this.signPsbt(psbt, params.toSignInputs, true);
+    return openapiService.singleStepTransferBRC20Step3({ orderId: params.orderId, psbt: psbt.toBase64() });
+  };
+
+  // createBabylonDeposit = async (amount: string) => {};
 }
 
 export default new WalletController();

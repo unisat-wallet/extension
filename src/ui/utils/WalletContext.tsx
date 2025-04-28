@@ -496,6 +496,34 @@ export interface WalletController {
   removeContact(address: string, chain?: CHAINS_ENUM): Promise<void>;
   listContacts(): Promise<ContactBookItem[]>;
   saveContactsOrder(contacts: ContactBookItem[]): Promise<void>;
+
+  singleStepTransferBRC20Step1(params: {
+    userAddress: string;
+    userPubkey: string;
+    receiver: string;
+    ticker: string;
+    amount: string;
+    feeRate: number;
+  }): Promise<{
+    orderId: string;
+    psbtHex: string;
+    toSignInputs: UserToSignInput[];
+  }>;
+
+  singleStepTransferBRC20Step2(params: {
+    orderId: string;
+    commitTx: string;
+    toSignInputs: UserToSignInput[];
+  }): Promise<{
+    psbtHex: string;
+    toSignInputs: UserToSignInput[];
+  }>;
+
+  singleStepTransferBRC20Step3(params: {
+    orderId: string;
+    revealTx: string;
+    toSignInputs: UserToSignInput[];
+  }): Promise<{ txid: string }>;
 }
 
 const WalletContext = createContext<{

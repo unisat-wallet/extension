@@ -63,11 +63,6 @@ function Step1({
     <Content mt="lg">
       <Column full>
         <Column gap="lg" full>
-          {/* <Row justifyBetween>
-            <Text text="Transfer Amount" color="textDim" />
-            <Text text={`${transferAmount} ${tokenBalance.ticker}`} />
-          </Row> */}
-
           <Column>
             <TransferableList contextData={contextData} updateContextData={updateContextData} />
           </Column>
@@ -179,7 +174,7 @@ function TransferableList({
   const tools = useTools();
   const fetchData = async () => {
     try {
-      tools.showLoading(true);
+      // tools.showLoading(true);
       const { list, total } = await wallet.getBRC20TransferableList(
         currentAccount.address,
         contextData.tokenBalance.ticker,
@@ -191,7 +186,7 @@ function TransferableList({
     } catch (e) {
       tools.toastError((e as Error).message);
     } finally {
-      tools.showLoading(false);
+      // tools.showLoading(false);
     }
   };
 
@@ -543,14 +538,15 @@ export default function BRC20SendScreen() {
   const { state } = useLocation();
   const props = state as {
     tokenBalance: TokenBalance;
+    tokenInfo: TokenInfo;
     selectedInscriptionIds: string[];
     selectedAmount: string;
-    tokenInfo: TokenInfo;
   };
 
   const tokenBalance = props.tokenBalance;
-  const selectedInscriptionIds = [];
-  const selectedAmount = '0';
+  const tokenInfo = props.tokenInfo;
+  const selectedInscriptionIds = props.selectedInscriptionIds || [];
+  const selectedAmount = props.selectedAmount || '0';
 
   const [contextData, setContextData] = useState<ContextData>({
     tabKey: TabKey.STEP1,
@@ -592,6 +588,8 @@ export default function BRC20SendScreen() {
 
   const { t } = useI18n();
 
+  const navigate = useNavigate();
+
   return (
     <Layout>
       <Header
@@ -602,6 +600,7 @@ export default function BRC20SendScreen() {
           }
           window.history.go(-1);
         }}
+        title={t('send')}
       />
       <Row justifyCenter>
         <TabBar

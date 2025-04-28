@@ -24,6 +24,7 @@ import {
   TickPriceItem,
   TokenBalance,
   TokenTransfer,
+  UserToSignInput,
   UTXO,
   UTXO_Detail,
   VersionDetail,
@@ -723,6 +724,54 @@ export class OpenApiService {
 
   async getBabylonConfig(): Promise<BabylonConfigV2> {
     return this.httpGet(`/v5/babylon/config`, {});
+  }
+
+  async singleStepTransferBRC20Step1({
+    userAddress,
+    userPubkey,
+    receiver,
+    ticker,
+    amount,
+    feeRate
+  }: {
+    userAddress: string;
+    userPubkey: string;
+    receiver: string;
+    ticker: string;
+    amount: string;
+    feeRate: number;
+  }): Promise<{
+    orderId: string;
+    psbtHex: string;
+    toSignInputs: UserToSignInput[];
+  }> {
+    return this.httpPost('/v5/brc20/single-step-transfer/request-commit', {
+      userAddress,
+      userPubkey,
+      receiver,
+      ticker,
+      amount,
+      feeRate
+    });
+  }
+
+  async singleStepTransferBRC20Step2({ orderId, psbt }: { orderId: string; psbt: string }): Promise<{
+    psbtHex: string;
+    toSignInputs: UserToSignInput[];
+  }> {
+    return this.httpPost('/v5/brc20/single-step-transfer/sign-commit', {
+      orderId,
+      psbt
+    });
+  }
+
+  async singleStepTransferBRC20Step3({ orderId, psbt }: { orderId: string; psbt: string }): Promise<{
+    txid: string;
+  }> {
+    return this.httpPost('/v5/brc20/single-step-transfer/sign-reveal', {
+      orderId,
+      psbt
+    });
   }
 }
 
