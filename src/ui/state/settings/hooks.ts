@@ -258,3 +258,8 @@ export function useBabylonConfig() {
   const chainType = useChainType();
   return BABYLON_CONFIG_MAP[chainType] || BABYLON_CONFIG_MAP[ChainType.BITCOIN_MAINNET];
 }
+
+export function useIsMainnetChain() {
+  const chainType = useChainType();
+  return chainType === ChainType.BITCOIN_MAINNET || chainType === ChainType.FRACTAL_BITCOIN_MAINNET;
+}

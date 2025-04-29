@@ -9,7 +9,7 @@ import { Icon } from '@/ui/components/Icon';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { useUtxoTools } from '@/ui/hooks/useUtxoTools';
 import { AppState } from '@/ui/state';
-import { useBTCUnit, useChain } from '@/ui/state/settings/hooks';
+import { useBTCUnit, useChain, useIsMainnetChain } from '@/ui/state/settings/hooks';
 import { uiActions } from '@/ui/state/ui/reducer';
 import { satoshisToAmount } from '@/ui/utils';
 
@@ -40,6 +40,7 @@ export function BalanceCard({ accountBalance, disableUtxoTools = false }: Balanc
   const currentLocale = getCurrentLocale();
   const isSpecialLocale = currentLocale === 'es' || currentLocale === 'ru' || currentLocale === 'fr';
   const { openUtxoTools } = useUtxoTools(chain);
+  const isMainnetChain = useIsMainnetChain();
 
   const backgroundImage = chain.isFractal
     ? './images/artifacts/balance-bg-fb.png'
@@ -151,18 +152,20 @@ export function BalanceCard({ accountBalance, disableUtxoTools = false }: Balanc
             </div>
           </div>
 
-          <div style={{ marginLeft: 'auto' }} onClick={handleUnlock}>
-            <div className={classNames(styles.unlockButton, { [styles.disabled]: disableUtxoTools })}>
-              <span
-                style={{
-                  marginRight: isSpecialLocale ? '0' : '2px',
-                  fontSize: isSpecialLocale ? '8px' : '14px'
-                }}>
-                {t('unlock')}
-              </span>
-              {!isSpecialLocale && <Icon icon="balance-unlock-right" size={14} />}
+          {isMainnetChain && (
+            <div style={{ marginLeft: 'auto' }} onClick={handleUnlock}>
+              <div className={classNames(styles.unlockButton, { [styles.disabled]: disableUtxoTools })}>
+                <span
+                  style={{
+                    marginRight: isSpecialLocale ? '0' : '2px',
+                    fontSize: isSpecialLocale ? '8px' : '14px'
+                  }}>
+                  {t('unlock')}
+                </span>
+                {!isSpecialLocale && <Icon icon="balance-unlock-right" size={14} />}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       </div>
     </div>
