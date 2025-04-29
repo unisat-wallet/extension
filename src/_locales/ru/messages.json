@@ -2078,5 +2078,8 @@
   },
   "ticker": {
     "message": "билет"
+  },
+  "pending": {
+    "message": "Ожидание"
   }
 }

@@ -2062,5 +2062,8 @@
   },
   "ticker": {
     "message": "ticker"
+  },
+  "pending": {
+    "message": "pendiente"
   }
 }

@@ -897,7 +897,7 @@ export default function SignPsbt({
           {/*this div is used to double gap*/}
           <div />
           {canChanged == false && (
-            <Section title={t('network_fee') + ':'} extra={<BtcUsd sats={amountToSatoshis(networkFee)} />}>
+            <Section title={t('network_fee')} extra={<BtcUsd sats={amountToSatoshis(networkFee)} />}>
               <Text text={networkFee} />
               <Text text={btcUnit} color="textDim" />
             </Section>

@@ -2059,5 +2059,8 @@
   },
   "ticker": {
     "message": "标记"
+  },
+  "pending": {
+    "message": "待处理"
   }
 }

@@ -2083,5 +2083,8 @@
   },
   "ticker": {
     "message": "股票代號"
+  },
+  "pending": {
+    "message": "待處理"
   }
 }

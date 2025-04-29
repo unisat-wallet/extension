@@ -2075,5 +2075,8 @@
   },
   "ticker": {
     "message": "ticker"
+  },
+  "pending": {
+    "message": "en attente"
   }
 }
