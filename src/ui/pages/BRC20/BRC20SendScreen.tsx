@@ -96,7 +96,7 @@ const InscribeTransferButton = ({ tokenBalance }: { tokenBalance: TokenBalance }
           width: '100%',
           background: '#1C1C1E',
           borderRadius: '16px',
-          border: '1px solid rgba(255, 255, 255, 0.1)',
+          border: '1px solid rgba(255, 255, 255, 0.5)',
           padding: '16px 14px',
           height: '72px',
           position: 'relative'
@@ -104,7 +104,9 @@ const InscribeTransferButton = ({ tokenBalance }: { tokenBalance: TokenBalance }
         <Column style={{ width: '100%' }}>
           <Row style={{ width: '100%' }} justifyBetween itemsCenter>
             <Text text={t('inscribe_transfer')} preset="bold" size="sm" style={{ whiteSpace: 'nowrap' }} />
-            <Icon icon="arrow-right" size="sm" />
+            <div style={{ opacity: 0.6 }}>
+              <Icon icon="arrow-right" size="sm" />
+            </div>
           </Row>
           <Row style={{ width: '100%' }} justifyBetween>
             <Text text={t('available')} color="textDim" size="sm" />

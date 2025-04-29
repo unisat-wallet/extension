@@ -84,8 +84,7 @@ export const BuyBTCModal = ({ onClose }: { onClose: () => void }) => {
     <BottomModal onClose={onClose}>
       <Column justifyCenter itemsCenter>
         <Row justifyBetween itemsCenter style={{ height: 20 }} fullX>
-          <Row />
-          <Text text={`${t('buy')} ${chain.unit}`} textCenter size="md" />
+          <Text text={`${t('buy')} ${chain.unit}`} size="md" />
           <Row
             onClick={() => {
               onClose();

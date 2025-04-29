@@ -2086,5 +2086,8 @@
   },
   "pending": {
     "message": "pending"
+  },
+  "network_fee_2": {
+    "message": "Network Fee"
   }
 }

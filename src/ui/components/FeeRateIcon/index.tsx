@@ -82,10 +82,8 @@ function FeeOptionsPopover({ feeOptions, onClose }: { feeOptions: FeeOption[]; o
   return (
     <Popover onClose={onClose}>
       <Column>
-        <Row
-          justifyCenter
-          style={{ borderBottomWidth: 1, borderColor: colors.border, marginBottom: 10, paddingBottom: 10 }}>
-          <Text text={t('network_fee')} preset="bold" />
+        <Row style={{ borderBottomWidth: 1, borderColor: colors.border, marginBottom: 10, paddingBottom: 10 }}>
+          <Text text={t('network_fee_2')} preset="bold" />
         </Row>
         {feeOptions.map((v, i) => {
           return (

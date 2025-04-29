@@ -2081,5 +2081,8 @@
   },
   "pending": {
     "message": "Ожидание"
+  },
+  "network_fee_2": {
+    "message": "Сетевая комиссия"
   }
 }

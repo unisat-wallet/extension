@@ -2065,5 +2065,8 @@
   },
   "pending": {
     "message": "pendiente"
+  },
+  "network_fee_2": {
+    "message": "Tarifa de red"
   }
 }

@@ -2062,5 +2062,8 @@
   },
   "pending": {
     "message": "待处理"
+  },
+  "network_fee_2": {
+    "message": "网络费用"
   }
 }

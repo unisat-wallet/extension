@@ -2078,5 +2078,8 @@
   },
   "pending": {
     "message": "en attente"
+  },
+  "network_fee_2": {
+    "message": "Frais de réseau"
   }
 }

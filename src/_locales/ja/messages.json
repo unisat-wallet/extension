@@ -2072,5 +2072,8 @@
   },
   "pending": {
     "message": "保留中"
+  },
+  "network_fee_2": {
+    "message": "ネットワーク手数料"
   }
 }
