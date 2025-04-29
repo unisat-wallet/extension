@@ -202,7 +202,10 @@
 
   &.disabled {
     background: @black-muted;
-    cursor: default;
+    cursor: not-allowed;
+    span, img {
+      opacity: 0.3;
+    }
   }
 
   &:hover:not(.disabled) {

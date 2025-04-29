@@ -153,7 +153,11 @@ export function BalanceCard({ accountBalance, disableUtxoTools = false }: Balanc
 
           <div style={{ marginLeft: 'auto' }} onClick={handleUnlock}>
             <div className={classNames(styles.unlockButton, { [styles.disabled]: disableUtxoTools })}>
-              <span style={{ marginRight: isSpecialLocale ? '0' : '2px', fontSize: isSpecialLocale ? '8px' : '14px' }}>
+              <span
+                style={{
+                  marginRight: isSpecialLocale ? '0' : '2px',
+                  fontSize: isSpecialLocale ? '8px' : '14px'
+                }}>
                 {t('unlock')}
               </span>
               {!isSpecialLocale && <Icon icon="balance-unlock-right" size={14} />}
