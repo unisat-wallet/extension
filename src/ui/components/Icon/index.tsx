@@ -150,7 +150,8 @@ const iconImgList: Array<IconTypes> = [
   'balance-eyes-closed',
   'balance-question',
   'balance-unlock-right',
-  'brc20-single-step'
+  'brc20-single-step',
+  'arrow-right'
 ];
 
 export type IconTypes = keyof typeof svgRegistry;

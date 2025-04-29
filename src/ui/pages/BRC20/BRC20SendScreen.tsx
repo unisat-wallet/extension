@@ -5,7 +5,7 @@ import { useLocation } from 'react-router-dom';
 
 import { t } from '@/shared/modules/i18n';
 import { RawTxInfo, TokenBalance, TokenInfo, TokenTransfer, TxType } from '@/shared/types';
-import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
+import { Button, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import BRC20Preview from '@/ui/components/BRC20Preview';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
@@ -68,68 +68,8 @@ function Step1({
           </Column>
 
           <Row justifyCenter mt="xxl">
-            <Column style={{ width: 250 }}>
-              <Column>
-                <Button
-                  preset="default"
-                  onClick={() => {
-                    navigate('InscribeTransferScreen', { ticker: tokenBalance.ticker });
-                  }}
-                  style={{ width: '100%' }}>
-                  <Column style={{ width: '100%', padding: '12px 0' }}>
-                    <Row justifyCenter style={{ width: '100%' }}>
-                      <Text text={t('inscribe_transfer')} preset="bold" />
-                    </Row>
-
-                    {tokenBalance.availableBalanceUnSafe != '0' ? (
-                      <Column itemsCenter>
-                        <Row justifyCenter>
-                          <Text text={t('available')} textCenter color="textDim" size="xs" />
-                        </Row>
-                        <Row justifyCenter>
-                          <Text text={`${tokenBalance.availableBalanceSafe}  `} textCenter size="xs" digital />
-                          <Text
-                            text={` + ${tokenBalance.availableBalanceUnSafe}`}
-                            textCenter
-                            color="textDim"
-                            size="xs"
-                            digital
-                          />
-                        </Row>
-                        <Row justifyCenter>
-                          <BRC20Ticker tick={tokenBalance.ticker} displayName={tokenBalance.displayName} />
-                        </Row>
-                      </Column>
-                    ) : (
-                      <Column itemsCenter>
-                        <Row justifyCenter>
-                          <Text text={t('available')} textCenter color="textDim" size="xs" />
-                        </Row>
-                        <Row justifyCenter>
-                          <Text text={`${tokenBalance.availableBalanceSafe}  `} textCenter size="xs" digital />
-                        </Row>
-                        <Row justifyCenter>
-                          <BRC20Ticker tick={tokenBalance.ticker} displayName={tokenBalance.displayName} preset="sm" />
-                        </Row>
-                      </Column>
-                    )}
-                  </Column>
-                </Button>
-                {/* <Button
-                  preset="primary"
-                  text="Inscribe TRANSFER"
-                  onClick={() => {
-                    navigate('InscribeTransferScreen', { tokenBalance });
-                  }}
-                /> */}
-                <Row style={{ width: '100%' }} justifyCenter>
-                  <Text
-                    text={t('to_send_brc20_you_have_to_inscribe_a_transfer_inscription_first')}
-                    preset="sub"
-                    textCenter
-                  />
-                </Row>
-              </Column>
+            <Column style={{ width: '100%' }}>
+              <InscribeTransferButton tokenBalance={tokenBalance} />
             </Column>
           </Row>
         </Column>
@@ -140,18 +80,54 @@ function Step1({
   );
 }
 
-// function Container({ children }) {
-//   const isInTab = useExtensionIsInTab();
-//   if (isInTab) {
-//     return (
-//       <Row style={{ flexWrap: 'wrap' }} gap="lg">
-//         {children}
-//       </Row>
-//     );
-//   } else {
-//     return <Grid columns={2}>{children}</Grid>;
-//   }
-// }
+const InscribeTransferButton = ({ tokenBalance }: { tokenBalance: TokenBalance }) => {
+  const { t } = useI18n();
+  const navigate = useNavigate();
+  const isSafeBalanceZero = tokenBalance.availableBalanceSafe === '0';
+
+  return (
+    <Column fullX>
+      <Button
+        preset="default"
+        onClick={() => {
+          navigate('InscribeTransferScreen', { ticker: tokenBalance.ticker });
+        }}
+        style={{
+          width: '100%',
+          background: '#1C1C1E',
+          borderRadius: '16px',
+          border: '1px solid rgba(255, 255, 255, 0.1)',
+          padding: '16px 14px',
+          height: '72px',
+          position: 'relative'
+        }}>
+        <Column style={{ width: '100%' }}>
+          <Row style={{ width: '100%' }} justifyBetween itemsCenter>
+            <Text text={t('inscribe_transfer')} preset="bold" size="sm" style={{ whiteSpace: 'nowrap' }} />
+            <Icon icon="arrow-right" size="sm" />
+          </Row>
+          <Row style={{ width: '100%' }} justifyBetween>
+            <Text text={t('available')} color="textDim" size="sm" />
+            <Row itemsCenter gap="sm">
+              <Text text={`${tokenBalance.availableBalanceSafe}  `} color="white" preset="bold" digital />
+              {!isSafeBalanceZero && (
+                <Text text={` + ${tokenBalance.availableBalanceUnSafe}`} color="textDim" digital />
+              )}
+              <BRC20Ticker
+                tick={tokenBalance.ticker}
+                displayName={tokenBalance.displayName}
+                preset={isSafeBalanceZero ? 'sm' : undefined}
+              />
+            </Row>
+          </Row>
+        </Column>
+      </Button>
+      <Row style={{ width: '100%' }} justifyCenter mt="md">
+        <Text text={t('to_send_brc20_you_have_to_inscribe_a_transfer_inscription_first')} preset="sub" textCenter />
+      </Row>
+    </Column>
+  );
+};
 
 function TransferableList({
   contextData,
@@ -226,7 +202,7 @@ function TransferableList({
       </Column>
 
       {items.length > 0 ? (
-        <Column>
+        <Column style={{ marginTop: 16 }}>
           <Row justifyBetween>
             <Text text={`${t('transfer_inscriptions')} (${selectedCount}/${items.length})`} color="textDim" />
           </Row>
