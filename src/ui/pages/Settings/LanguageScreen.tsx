@@ -22,6 +22,11 @@ export default function LanguageScreen() {
       try {
         localStorage.setItem('userSelectedLanguage', 'true');
         await changeLocale(locale);
+
+        if (chrome && chrome.runtime && chrome.runtime.sendMessage) {
+          chrome.runtime.sendMessage({ type: 'CHANGE_LANGUAGE', locale });
+        }
+
         window.history.go(-1);
       } catch (error) {
         console.error('change locale error:', error);
