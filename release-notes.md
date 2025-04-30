@@ -1,5 +1,12 @@
 # UniSat Wallet Release Notes
 
+## v1.6.2
+
+New Features
+
+- Support for multiple languages\n
+- Fractal testnet now supports single-step transfer
+
 ## v1.6.1
 
 New Features
