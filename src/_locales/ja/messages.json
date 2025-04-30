@@ -2097,6 +2097,9 @@
   "decimal": {
     "message": "小数"
   },
+  "current_supply": {
+    "message": "現在の供給"
+  },
   "holders_count": {
     "message": "ホルダー数"
   },

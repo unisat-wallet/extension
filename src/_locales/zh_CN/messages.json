@@ -2083,5 +2083,8 @@
   },
   "history_count": {
     "message": "总交易次数"
+  },
+  "current_supply": {
+    "message": "当前供应量"
   }
 }

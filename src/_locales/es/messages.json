@@ -2095,5 +2095,8 @@
   },
   "history_count": {
     "message": "Total de transacciones"
+  },
+  "current_supply": {
+    "message": "Cantidad actual"
   }
 }

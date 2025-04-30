@@ -486,7 +486,7 @@ function SignTxDetails({
                   <Text text={`${sendingInscriptionAmount} (${t('in_inscriptions')})`} preset="sub" textCenter />
                 )}
                 {isCurrentToPayFee && (
-                  <Text text={`${feeAmount} ${btcUnit} (${t('network_fee')})`} preset="sub" textCenter />
+                  <Text text={`${feeAmount} ${btcUnit} (${t('network_fee_2')})`} preset="sub" textCenter />
                 )}
               </Column>
             </Column>
