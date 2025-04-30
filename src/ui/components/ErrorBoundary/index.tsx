@@ -1,3 +1,4 @@
+import log from 'loglevel';
 import React from 'react';
 
 import { Button } from '../Button';
@@ -25,12 +26,12 @@ class ErrorBoundaryComponent extends React.Component<ErrorBoundaryProps> {
   }
 
   static getDerivedStateFromError(error) {
-    console.log('getDerivedStateFromError', error);
+    log.debug('getDerivedStateFromError', error);
     return { hasError: true, msg: error };
   }
 
   componentDidCatch(error, info) {
-    console.log('catch error', error, info);
+    log.debug('catch error', error, info);
     this.setState({ hasError: true });
   }
 

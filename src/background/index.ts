@@ -1,3 +1,5 @@
+import log from 'loglevel';
+
 import phishingService from '@/background/service/phishing';
 import { EVENTS, MANIFEST_VERSION } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
@@ -15,6 +17,11 @@ import {
 } from './service';
 import { storage } from './webapi';
 import { browserRuntimeOnConnect, browserRuntimeOnInstalled } from './webapi/browser';
+
+log.setDefaultLevel('error');
+if (process.env.NODE_ENV === 'development') {
+  log.setLevel('debug');
+}
 
 const { PortMessage } = Message;
 
@@ -157,6 +164,9 @@ if (MANIFEST_VERSION === 'mv3') {
     if (alivePort == null) {
       alivePort = chrome.runtime.connect({ name: INTERNAL_STAYALIVE_PORT });
       alivePort.onDisconnect.addListener(() => {
+        if (chrome.runtime.lastError) {
+          // console.error('Keep-alive port disconnected:', chrome.runtime.lastError);
+        }
         alivePort = null;
       });
     }

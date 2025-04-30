@@ -647,8 +647,10 @@ export class WalletController extends BaseController {
           if (isKeyPathP2TR) {
             // todo
           } else {
-            const isToBeSigned = toSignInputs.find((v) => v.index === index);
-            (isToBeSigned as any).useTweakedSigner = false;
+            const isToBeSigned: any = toSignInputs.find((v) => v.index === index);
+            if (isToBeSigned.useTweakedSigner == undefined) {
+              isToBeSigned.useTweakedSigner = false;
+            }
           }
         } catch (e) {
           // skip
@@ -676,7 +678,6 @@ export class WalletController extends BaseController {
 
     psbt = await keyringService.signTransaction(_keyring, psbt, toSignInputs);
 
-    console.log(toSignInputs, psbt.data.inputs[0]);
     if (autoFinalized) {
       toSignInputs.forEach((v) => {
         // psbt.validateSignaturesOfInput(v.index, validator);

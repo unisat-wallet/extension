@@ -1,3 +1,5 @@
+import log from 'loglevel';
+
 /**
  * Data sources for phishing site lists
  */
@@ -74,12 +76,12 @@ export const fetchPhishingList = async (forceRefresh = false): Promise<any> => {
 
         // If cache is fresh enough, use it directly (but still fetch UNISAT)
         if (cacheAge < MIN_CACHE_AGE) {
-          console.log('[Phishing] Using recent cache, age:', Math.round(cacheAge / 60000), 'minutes');
+          log.debug('[Phishing] Using recent cache, age:', Math.round(cacheAge / 60000), 'minutes');
           useCache = true;
         }
       }
     } catch (error) {
-      console.error('[Phishing] Cache check failed:', error);
+      log.error('[Phishing] Cache check failed:', error);
     }
   }
 
@@ -97,7 +99,7 @@ export const fetchPhishingList = async (forceRefresh = false): Promise<any> => {
       await saveToLocalCache(mergedData);
       return mergedData;
     } catch (error) {
-      console.error('[Phishing] UNISAT source fetch failed, using cache only:', error);
+      log.error('[Phishing] UNISAT source fetch failed, using cache only:', error);
       return cachedData;
     }
   }
@@ -130,10 +132,10 @@ export const fetchPhishingList = async (forceRefresh = false): Promise<any> => {
       mergePhishingData(mergedData, data);
       mergedData.sources.push('PRIMARY');
       hasAnySourceSucceeded = true;
-      console.log('[Phishing] Successfully fetched from PRIMARY source');
+      log.debug('[Phishing] Successfully fetched from PRIMARY source');
     }
   } catch (error) {
-    console.error('[Phishing] Primary source fetch failed:', error);
+    log.error('[Phishing] Primary source fetch failed:', error);
   }
 
   try {
@@ -145,10 +147,10 @@ export const fetchPhishingList = async (forceRefresh = false): Promise<any> => {
       mergePhishingData(mergedData, data);
       mergedData.sources.push('BACKUP');
       hasAnySourceSucceeded = true;
-      console.log('[Phishing] Successfully fetched from BACKUP source');
+      log.debug('[Phishing] Successfully fetched from BACKUP source');
     }
   } catch (error) {
-    console.error('[Phishing] Backup source fetch failed:', error);
+    log.error('[Phishing] Backup source fetch failed:', error);
   }
 
   // Always try to fetch UNISAT source
@@ -156,7 +158,7 @@ export const fetchPhishingList = async (forceRefresh = false): Promise<any> => {
     await fetchAndMergeUnisat(mergedData);
     hasAnySourceSucceeded = true;
   } catch (error) {
-    console.error('[Phishing] Unisat source fetch failed:', error);
+    log.error('[Phishing] Unisat source fetch failed:', error);
   }
 
   // If at least one source succeeded, save merged data to cache
@@ -169,11 +171,11 @@ export const fetchPhishingList = async (forceRefresh = false): Promise<any> => {
   try {
     cachedData = await getFromLocalCache();
     if (cachedData) {
-      console.warn('[Phishing] Using cached data as all remote sources failed');
+      log.warn('[Phishing] Using cached data as all remote sources failed');
       return cachedData;
     }
   } catch (error) {
-    console.error('[Phishing] Cache retrieval failed:', error);
+    log.error('[Phishing] Cache retrieval failed:', error);
   }
 
   // All sources failed
@@ -205,7 +207,7 @@ async function fetchAndMergeUnisat(targetData: any): Promise<boolean> {
       targetData.sources.push('UNISAT');
     }
 
-    console.log('[Phishing] Successfully fetched from UNISAT source');
+    log.debug('[Phishing] Successfully fetched from UNISAT source');
     return true;
   }
 
@@ -246,7 +248,7 @@ async function saveToLocalCache(data: any): Promise<boolean> {
         resolve(true);
       });
     } catch (error) {
-      console.error('[Phishing] Failed to save to local cache:', error);
+      log.error('[Phishing] Failed to save to local cache:', error);
       reject(error);
     }
   });
@@ -272,7 +274,7 @@ async function getFromLocalCache(): Promise<any> {
         }
       });
     } catch (error) {
-      console.error('[Phishing] Failed to get from local cache:', error);
+      log.error('[Phishing] Failed to get from local cache:', error);
       reject(error);
     }
   });
@@ -290,11 +292,11 @@ export async function clearPhishingCache(): Promise<boolean> {
           reject(new Error(chrome.runtime.lastError.message));
           return;
         }
-        console.log('[Phishing] Cache cleared successfully');
+        log.debug('[Phishing] Cache cleared successfully');
         resolve(true);
       });
     } catch (error) {
-      console.error('[Phishing] Failed to clear cache:', error);
+      log.error('[Phishing] Failed to clear cache:', error);
       reject(error);
     }
   });
@@ -322,7 +324,7 @@ export async function exportPhishingList(): Promise<string> {
     const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
     return URL.createObjectURL(blob);
   } catch (error) {
-    console.error('[Phishing] Export failed:', error);
+    log.error('[Phishing] Export failed:', error);
     throw error;
   }
 }
@@ -370,7 +372,7 @@ export async function getPhishingCacheStats(): Promise<{
       }
     };
   } catch (error) {
-    console.error('[Phishing] Failed to get cache stats:', error);
+    log.error('[Phishing] Failed to get cache stats:', error);
     return {
       available: false,
       lastFetchTime: null,

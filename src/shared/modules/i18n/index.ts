@@ -1,3 +1,5 @@
+import log from 'loglevel';
+
 import { FALLBACK_LOCALE, SUPPORTED_LOCALES } from './constants';
 import { fetchLocale } from './fetchLocale';
 import { getMessage } from './getMessage';
@@ -14,10 +16,10 @@ let currentLocale = FALLBACK_LOCALE;
  */
 export const initI18n = async (locale: string = FALLBACK_LOCALE): Promise<void> => {
   try {
-    console.log(`Initializing i18n, current language: ${locale}`);
+    log.debug(`Initializing i18n, current language: ${locale}`);
     // If the language is not supported, use the default language
     if (!SUPPORTED_LOCALES.includes(locale)) {
-      console.log(`Unsupported language ${locale}, using default language ${FALLBACK_LOCALE}`);
+      log.debug(`Unsupported language ${locale}, using default language ${FALLBACK_LOCALE}`);
       locale = FALLBACK_LOCALE;
     }
 
@@ -30,7 +32,7 @@ export const initI18n = async (locale: string = FALLBACK_LOCALE): Promise<void> 
       await loadLocale(FALLBACK_LOCALE);
     }
   } catch (error) {
-    console.error('Failed to initialize i18n:', error);
+    log.error('Failed to initialize i18n:', error);
   }
 };
 
@@ -40,7 +42,7 @@ export const initI18n = async (locale: string = FALLBACK_LOCALE): Promise<void> 
  */
 async function loadLocale(locale: string): Promise<void> {
   if (translations[locale] && Object.keys(translations[locale]).length > 0) {
-    console.log(`Language ${locale} already loaded, no need to reload`);
+    log.debug(`Language ${locale} already loaded, no need to reload`);
     return;
   }
 
@@ -48,7 +50,7 @@ async function loadLocale(locale: string): Promise<void> {
     const localeData = await fetchLocale(locale);
     translations[locale] = localeData;
   } catch (error) {
-    console.error(`Failed to load language ${locale}:`, error);
+    log.error(`Failed to load language ${locale}:`, error);
     if (locale === FALLBACK_LOCALE) {
       translations[FALLBACK_LOCALE] = {};
     }
@@ -61,16 +63,16 @@ async function loadLocale(locale: string): Promise<void> {
  */
 export const changeLanguage = async (locale: string): Promise<void> => {
   try {
-    console.log(`Switching language to: ${locale}`);
+    log.debug(`Switching language to: ${locale}`);
     // If the language is not supported, use the default language
     if (!SUPPORTED_LOCALES.includes(locale)) {
-      console.log(`Unsupported language ${locale}, using default language ${FALLBACK_LOCALE}`);
+      log.debug(`Unsupported language ${locale}, using default language ${FALLBACK_LOCALE}`);
       locale = FALLBACK_LOCALE;
     }
 
     // If it's already the current language, do nothing
     if (locale === currentLocale) {
-      console.log(`Already using ${locale} language, no need to switch`);
+      log.debug(`Already using ${locale} language, no need to switch`);
       return;
     }
 
@@ -78,17 +80,17 @@ export const changeLanguage = async (locale: string): Promise<void> => {
 
     // Set current language
     currentLocale = locale;
-    console.log(`Current language switched to: ${currentLocale}`);
+    log.debug(`Current language switched to: ${currentLocale}`);
 
     // Save to local storage
     try {
       chrome.storage.local.set({ i18nextLng: locale });
-      console.log(`Language setting saved to local storage: ${locale}`);
+      log.debug(`Language setting saved to local storage: ${locale}`);
     } catch (error) {
-      console.error('Failed to save language setting to local storage:', error);
+      log.error('Failed to save language setting to local storage:', error);
     }
   } catch (error) {
-    console.error('Failed to change language:', error);
+    log.error('Failed to change language:', error);
   }
 };
 
@@ -102,7 +104,7 @@ export const t = (key: string, substitutions?: string | string[]): string => {
   try {
     // If no language is loaded, return the original key
     if (!translations[currentLocale] && !translations[FALLBACK_LOCALE]) {
-      console.warn(`No language loaded, returning original key: ${key}`);
+      log.warn(`No language loaded, returning original key: ${key}`);
       return key;
     }
 
@@ -111,7 +113,7 @@ export const t = (key: string, substitutions?: string | string[]): string => {
 
     // If current language doesn't have this translation, try to get from default language
     if (message === key && currentLocale !== FALLBACK_LOCALE) {
-      console.warn(
+      log.warn(
         `Current language ${currentLocale} missing translation key: ${key}, trying to use default language ${FALLBACK_LOCALE}`
       );
       message = getMessage(FALLBACK_LOCALE, translations[FALLBACK_LOCALE], key, substitutions);
@@ -119,7 +121,7 @@ export const t = (key: string, substitutions?: string | string[]): string => {
 
     return message;
   } catch (error) {
-    console.error(`Failed to get translation for key: ${key}:`, error);
+    log.error(`Failed to get translation for key: ${key}:`, error);
     return key;
   }
 };

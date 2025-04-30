@@ -1,3 +1,4 @@
+import log from 'loglevel';
 import React, { createContext, useEffect, useState } from 'react';
 
 import { getCurrentLocale } from '@/background/service/i18n';
@@ -49,7 +50,7 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
           const savedLocale = localStorage.getItem('i18nextLng');
           if (savedLocale && getSupportedLocales().includes(savedLocale)) {
             localeToUse = savedLocale;
-            console.log(`Using user selected language: ${savedLocale}`);
+            log.debug(`Using user selected language: ${savedLocale}`);
           }
         } else {
           try {
@@ -57,31 +58,31 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
             if (isFirstOpen) {
               const browserLang = navigator.language;
-              console.log(`New user - Browser language: ${browserLang}`);
+              log.debug(`New user - Browser language: ${browserLang}`);
 
               const mappedLocale = BROWSER_TO_APP_LOCALE_MAP[browserLang];
               if (mappedLocale && getSupportedLocales().includes(mappedLocale)) {
                 localeToUse = mappedLocale;
-                console.log(`Using mapped browser language: ${mappedLocale}`);
+                log.debug(`Using mapped browser language: ${mappedLocale}`);
               } else if (getSupportedLocales().includes(browserLang)) {
                 localeToUse = browserLang;
-                console.log(`Using browser language: ${browserLang}`);
+                log.debug(`Using browser language: ${browserLang}`);
               } else {
                 const mainLang = browserLang.split('-')[0];
                 if (getSupportedLocales().includes(mainLang)) {
                   localeToUse = mainLang;
-                  console.log(`Using browser main language: ${mainLang}`);
+                  log.debug(`Using browser main language: ${mainLang}`);
                 } else {
-                  console.log(`Browser language not supported, using default: ${FALLBACK_LOCALE}`);
+                  log.debug(`Browser language not supported, using default: ${FALLBACK_LOCALE}`);
                   localeToUse = FALLBACK_LOCALE;
                 }
               }
             } else {
-              console.log('Existing user - Using default English');
+              log.debug('Existing user - Using default English');
               localeToUse = FALLBACK_LOCALE;
             }
           } catch (error) {
-            console.error('Failed to get user status, using default language:', error);
+            log.error('Failed to get user status, using default language:', error);
             localeToUse = FALLBACK_LOCALE;
           }
         }
@@ -96,7 +97,7 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
         setLocale(currentLocale);
         setIsInitialized(true);
       } catch (error) {
-        console.error('Failed to initialize i18n:', error);
+        log.error('Failed to initialize i18n:', error);
 
         setLocale(FALLBACK_LOCALE);
         setIsInitialized(true);
@@ -125,7 +126,7 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
     try {
       return translate(key, substitutions);
     } catch (error) {
-      console.error(`Translation error for key "${key}":`, error);
+      log.error(`Translation error for key "${key}":`, error);
       return key;
     }
   };

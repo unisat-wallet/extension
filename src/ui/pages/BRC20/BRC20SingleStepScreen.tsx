@@ -146,13 +146,11 @@ export default function BRC20SingleStepScreen() {
         handleConfirm={async () => {
           try {
             tools.showLoading(true);
-            console.log('begin', transferData.current.commitTx);
             const step2 = await wallet.singleStepTransferBRC20Step2({
               orderId: transferData.current.id,
               commitTx: transferData.current.commitTx,
               toSignInputs: transferData.current.commitToSignInputs
             });
-            console.log('step2', step2);
 
             transferData.current.revealTx = step2.psbtHex;
             transferData.current.revealToSignInputs = step2.toSignInputs;

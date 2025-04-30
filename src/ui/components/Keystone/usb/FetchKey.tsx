@@ -40,7 +40,6 @@ export default function KeystoneFetchKey({
       const base = new Base(transport as any);
       const accounts: CryptoMultiAccounts[] = [];
       for (const path of EXPECTED_HD_PATH) {
-        console.log(isCancelledRef.current);
         if (isCancelledRef.current) {
           return [];
         }
@@ -48,7 +47,6 @@ export default function KeystoneFetchKey({
         accounts.push(res);
       }
       const urCryptoAccount = convertMulitAccountToCryptoAccount(accounts);
-      console.log({ type: urCryptoAccount.getRegistryType().getType(), cbor: urCryptoAccount.toCBOR() });
       onSucceed({ type: urCryptoAccount.getRegistryType().getType(), cbor: urCryptoAccount.toCBOR() });
     } catch (e) {
       onError(e);

@@ -1,3 +1,5 @@
+import log from 'loglevel';
+
 import { FALLBACK_LOCALE, SUPPORTED_LOCALES } from './constants';
 import { fetchLocale } from './fetchLocale';
 
@@ -24,16 +26,16 @@ export const preloadLocales = async (
     for (const locale of localesToLoad) {
       try {
         translations[locale] = await fetchLocale(locale);
-        console.log(`Successfully loaded language ${locale}`);
+        log.debug(`Successfully loaded language ${locale}`);
       } catch (error) {
-        console.error(`Error loading locale (${locale}):`, error);
+        log.error(`Error loading locale (${locale}):`, error);
         if (locale === FALLBACK_LOCALE) {
           translations[FALLBACK_LOCALE] = {};
         }
       }
     }
   } catch (error) {
-    console.error('Error loading locales:', error);
+    log.error('Error loading locales:', error);
   }
 
   return translations;

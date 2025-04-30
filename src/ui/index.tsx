@@ -1,5 +1,6 @@
 import en from 'antd/es/locale/en_US';
 import message from 'antd/lib/message';
+import log from 'loglevel';
 import ReactDOM from 'react-dom/client';
 import { IdleTimerProvider } from 'react-idle-timer';
 import { Provider } from 'react-redux';
@@ -33,6 +34,11 @@ import { WalletProvider } from './utils';
 // import 'default-passive-events'
 
 // const AsyncMainRoute = lazy(() => import('./pages/MainRoute'));
+
+log.setDefaultLevel('error');
+if (process.env.NODE_ENV === 'development') {
+  log.setLevel('debug');
+}
 
 message.config({
   maxCount: 1
@@ -132,24 +138,6 @@ function Updaters() {
     </>
   );
 }
-
-// wallet.getLocale().then((locale) => {
-//   addResourceBundle(locale).then(() => {
-//     i18n.changeLanguage(locale);
-//     // ReactDOM.render(<Views wallet={wallet} />, document.getElementById('root'));
-//     const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
-//     root.render(
-//       <Provider store={store}>
-//         <WalletProvider {...antdConfig} wallet={wallet as any}>
-//           <AppDimensions>
-//             <Updaters />
-//             <AsyncMainRoute />
-//           </AppDimensions>
-//         </WalletProvider>
-//       </Provider>
-//     );
-//   });
-// });
 
 const root = ReactDOM.createRoot(document.getElementById('root') as HTMLElement);
 root.render(

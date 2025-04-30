@@ -1,3 +1,5 @@
+import log from 'loglevel';
+
 import { FALLBACK_LOCALE } from './constants';
 
 /**
@@ -9,20 +11,18 @@ export const fetchLocale = async (locale: string): Promise<Record<string, { mess
   try {
     // Use the _locales directory to load translation files
     const response = await fetch(`/_locales/${locale}/messages.json`);
-    console.log(`Loading language file path: ${response.url}`);
+    log.debug(`Loading language file path: ${response.url}`);
 
     if (!response.ok) {
       throw new Error(`Failed to fetch locale: ${locale}`);
     }
 
     const data: Record<string, { message: string }> = await response.json();
-    console.log(
-      `Successfully loaded ${locale} language file, containing ${Object.keys(data).length} translation items`
-    );
+    log.debug(`Successfully loaded ${locale} language file, containing ${Object.keys(data).length} translation items`);
 
     return data;
   } catch (error) {
-    console.error(`Error loading locale ${locale}:`, error);
+    log.error(`Error loading locale ${locale}:`, error);
     // If loading fails, try to load the default language
     if (locale !== FALLBACK_LOCALE) {
       return fetchLocale(FALLBACK_LOCALE);

@@ -1,3 +1,5 @@
+import log from 'loglevel';
+
 import { PhishingMessageType } from '@/background/constant/PhishingMessageType';
 import phishingService from '@/background/service/phishing';
 import { MANIFEST_VERSION } from '@/shared/constant';
@@ -170,7 +172,7 @@ class PhishingController {
       const redirectUrl = chrome.runtime.getURL(`index.html#/phishing?${params}`);
       await chrome.tabs.update(tabId, { url: redirectUrl, active: true });
     } catch (error) {
-      console.error('[Phishing] Failed to redirect tab:', error);
+      log.error('[Phishing] Failed to redirect tab:', error);
       throw error; // Re-throw to allow proper error handling by caller
     }
   }
@@ -200,7 +202,7 @@ class PhishingController {
     try {
       await this.updateDeclarativeRules();
     } catch (error) {
-      console.error('[Phishing] Failed to initialize declarative rules:', error);
+      log.error('[Phishing] Failed to initialize declarative rules:', error);
     }
   }
 
@@ -210,7 +212,7 @@ class PhishingController {
    */
   public async updateDeclarativeRules(): Promise<void> {
     if (MANIFEST_VERSION !== 'mv3' || !chrome.declarativeNetRequest) {
-      console.warn('[Phishing] Declarative rules are only available in MV3');
+      log.warn('[Phishing] Declarative rules are only available in MV3');
       return;
     }
 
@@ -219,7 +221,7 @@ class PhishingController {
       const blacklist = config.blacklist || [];
 
       if (!blacklist.length) {
-        console.warn('[Phishing] No blacklisted domains available for rules');
+        log.warn('[Phishing] No blacklisted domains available for rules');
         return;
       }
 
@@ -236,11 +238,11 @@ class PhishingController {
         addRules: rules
       });
 
-      console.log(
+      log.debug(
         `[Phishing] Updated MV3 declarative rules: ${rules.length} rules created from ${blacklist.length} domains`
       );
     } catch (error) {
-      console.error('[Phishing] Failed to update declarative rules:', error);
+      log.error('[Phishing] Failed to update declarative rules:', error);
     }
   }
 
@@ -253,7 +255,7 @@ class PhishingController {
       const rules = await chrome.declarativeNetRequest.getDynamicRules();
       return rules.map((rule) => rule.id);
     } catch (error) {
-      console.error('[Phishing] Failed to get current rule IDs:', error);
+      log.error('[Phishing] Failed to get current rule IDs:', error);
       return [];
     }
   }
@@ -303,9 +305,9 @@ class PhishingController {
         await this.updateDeclarativeRules();
       }
 
-      console.log('[Phishing] Forced update completed successfully');
+      log.debug('[Phishing] Forced update completed successfully');
     } catch (error) {
-      console.error('[Phishing] Force update failed:', error);
+      log.error('[Phishing] Force update failed:', error);
       throw error;
     }
   }
@@ -315,14 +317,14 @@ class PhishingController {
    * This can be used to fix issues with phishing detection
    */
   public async forceReload(): Promise<void> {
-    console.log('[PhishingController] Force reloading phishing lists');
+    log.debug('[PhishingController] Force reloading phishing lists');
     try {
       await phishingService.forceUpdate();
-      console.log('[PhishingController] Phishing lists reloaded successfully');
+      log.debug('[PhishingController] Phishing lists reloaded successfully');
 
       // Get updated statistics
       const stats = phishingService.getConfig();
-      console.log(
+      log.debug(
         `[PhishingController] Updated stats: blacklist size: ${stats.blacklist?.length || 0}, whitelist size: ${
           stats.whitelist?.length || 0
         }`
@@ -330,7 +332,7 @@ class PhishingController {
 
       return Promise.resolve();
     } catch (error) {
-      console.error('[PhishingController] Failed to reload phishing lists:', error);
+      log.error('[PhishingController] Failed to reload phishing lists:', error);
       return Promise.reject(error);
     }
   }
@@ -343,7 +345,7 @@ class PhishingController {
   public checkPhishing(hostname: string): boolean {
     // Basic validation
     if (!hostname || typeof hostname !== 'string') {
-      console.warn(`[PhishingController] Invalid hostname: ${hostname}`);
+      log.warn(`[PhishingController] Invalid hostname: ${hostname}`);
       return false;
     }
 
