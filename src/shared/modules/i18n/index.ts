@@ -128,7 +128,19 @@ export const t = (key: string, substitutions?: string | string[]): string => {
  * Get current language
  * @returns Current language code
  */
-export const getCurrentLocale = (): string => {
+export const getCurrentLocaleAsync = async (): Promise<string> => {
+  if (typeof chrome !== 'undefined' && chrome.storage && chrome.storage.local) {
+    return new Promise((resolve) => {
+      chrome.storage.local.get('i18nextLng', (result) => {
+        if (result && result.i18nextLng) {
+          resolve(result.i18nextLng);
+        } else {
+          resolve(currentLocale);
+        }
+      });
+    });
+  }
+  // fallback
   return currentLocale;
 };
 

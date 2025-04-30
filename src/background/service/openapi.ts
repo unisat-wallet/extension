@@ -3,7 +3,6 @@ import randomstring from 'randomstring';
 import { createPersistStore } from '@/background/utils';
 import { CHAINS_MAP, CHANNEL, VERSION } from '@/shared/constant';
 import { BabylonConfigV2 } from '@/shared/constant/babylon';
-import { getCurrentLocale } from '@/shared/modules/i18n';
 import {
   AddressRunesTokenSummary,
   AddressSummary,
@@ -31,6 +30,7 @@ import {
   VersionDetail,
   WalletConfig
 } from '@/shared/types';
+import { getCurrentLocale } from '@/ui/hooks/useI18n';
 
 import { preferenceService } from '.';
 
@@ -53,6 +53,7 @@ export class OpenApiService {
   endpoints: string[] = [];
   endpoint = '';
   config: WalletConfig | null = null;
+  private lang = 'en';
 
   setEndpoints = async (endpoints: string[]) => {
     this.endpoints = endpoints;
@@ -70,6 +71,13 @@ export class OpenApiService {
     const chainType = preferenceService.getChainType();
     const chain = CHAINS_MAP[chainType];
     this.endpoint = chain.endpoints[0];
+
+    try {
+      this.lang = await getCurrentLocale();
+    } catch (e) {
+      console.error('Failed to get current locale, fallback to en:', e);
+      this.lang = 'en';
+    }
 
     if (!this.store.deviceId) {
       this.store.deviceId = randomstring.generate(12);
@@ -127,7 +135,7 @@ export class OpenApiService {
     headers.append('x-flag', this.addressFlag + '');
     headers.append('x-channel', CHANNEL);
     headers.append('x-udid', this.store.deviceId);
-    headers.append('x-lang', getCurrentLocale());
+    headers.append('x-lang', this.lang);
     let res: Response;
     try {
       res = await fetch(new Request(url), { method: 'GET', headers, mode: 'cors', cache: 'default' });

@@ -1,10 +1,10 @@
 import React, { createContext, useEffect, useState } from 'react';
 
+import { getCurrentLocale } from '@/background/service/i18n';
 import {
   BROWSER_TO_APP_LOCALE_MAP,
   changeLanguage,
   FALLBACK_LOCALE,
-  getCurrentLocale,
   getSupportedLocales,
   initI18n,
   LOCALE_NAMES,
@@ -32,7 +32,7 @@ export const I18nContext = createContext<I18nContextType>({
 
 // Context provider component
 export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
-  const [locale, setLocale] = useState(getCurrentLocale());
+  const [locale, setLocale] = useState<string>(FALLBACK_LOCALE);
   const [isInitialized, setIsInitialized] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const wallet = useWallet();
@@ -88,7 +88,11 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
         localStorage.setItem('i18nextLng', localeToUse);
         await initI18n(localeToUse);
 
-        setLocale(getCurrentLocale());
+        chrome.storage.local.set({ i18nextLng: localeToUse });
+        await initI18n(localeToUse);
+        const currentLocale = await getCurrentLocale();
+
+        setLocale(currentLocale);
         setIsInitialized(true);
       } catch (error) {
         console.error('Failed to initialize i18n:', error);
@@ -106,11 +110,11 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const changeLocale = async (newLocale: string) => {
     try {
       await changeLanguage(newLocale);
-      setLocale(getCurrentLocale());
-
+      setLocale(newLocale);
       localStorage.setItem('userSelectedLanguage', 'true');
+      localStorage.setItem('i18nextLng', newLocale);
+      chrome.storage.local.set({ i18nextLng: newLocale });
     } catch (error) {
-      console.error('Failed to change language:', error);
       setError(error instanceof Error ? error : new Error('Unknown error'));
     }
   };

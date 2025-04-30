@@ -1,6 +1,6 @@
 import { useContext } from 'react';
 
-import { FALLBACK_LOCALE, LOCALE_NAMES, getCurrentLocale as getLocale } from '@/shared/modules/i18n';
+import { FALLBACK_LOCALE, getCurrentLocaleAsync, LOCALE_NAMES } from '@/shared/modules/i18n';
 import { I18nContext } from '@/ui/app/contexts/I18nContext';
 
 const defaultI18nContext = {
@@ -37,16 +37,16 @@ export const useI18n = () => {
  * Get current language
  * @returns current language code
  */
-export const getCurrentLocale = (): string => {
-  return getLocale();
+export const getCurrentLocale = async (): Promise<string> => {
+  return await getCurrentLocaleAsync();
 };
 
 /**
  * Select special languages for style adaptation
  * @returns { currentLocale: string, isSpecialLocale: boolean }
  */
-export const useSpecialLocale = () => {
-  const currentLocale = getCurrentLocale();
+export const useSpecialLocale = async () => {
+  const currentLocale = await getCurrentLocale();
   const specialLocales = ['es', 'ru', 'fr', 'ja'];
   const isSpecialLocale = specialLocales.includes(currentLocale);
   return { currentLocale, isSpecialLocale };
