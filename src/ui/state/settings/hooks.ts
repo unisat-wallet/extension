@@ -111,7 +111,9 @@ export function useBTCUnit() {
 
 export function useTxExplorerUrl(txid: string) {
   const chain = useChain();
-  if (chain.defaultExplorer === 'mempool-space') {
+  if (chain.enum === ChainType.BITCOIN_MAINNET) {
+    return `${chain.unisatExplorerUrl}/tx/${txid}`;
+  } else if (chain.defaultExplorer === 'mempool-space') {
     return `${chain.mempoolSpaceUrl}/tx/${txid}`;
   } else {
     return `${chain.unisatExplorerUrl}/tx/${txid}`;

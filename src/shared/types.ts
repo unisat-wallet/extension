@@ -312,8 +312,8 @@ export interface TokenInfo {
   holder: string;
   inscriptionId: string;
   selfMint?: boolean;
-  holdersCount: number;
-  historyCount: number;
+  holdersCount?: number;
+  historyCount?: number;
 }
 
 export enum TokenInscriptionType {
