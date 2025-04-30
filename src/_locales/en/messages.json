@@ -2106,9 +2106,9 @@
     "message": "current supply"
   },
   "holders_count": {
-    "message": "olders"
+    "message": "holders"
   },
   "history_count": {
-    "message": "total transactions"
+    "message": "transactions"
   }
 }

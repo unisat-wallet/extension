@@ -318,12 +318,14 @@ export default function BRC20TokenScreen() {
             <Section
               title={t('available_balance')}
               value={showLongNumber(tokenSummary.tokenBalance.availableBalance)}
+              maxLength={100}
             />
             <Line />
 
             <Section
               title={t('transferable_balance')}
               value={showLongNumber(tokenSummary.tokenBalance.transferableBalance)}
+              maxLength={100}
             />
           </Column>
 
@@ -341,14 +343,10 @@ export default function BRC20TokenScreen() {
               <Section title={t('ticker')} value={ticker} />
               <Line />
 
-              <Section title={t('minted')} value={showLongNumber(tokenSummary.tokenInfo.totalMinted)} maxLength={30} />
+              <Section title={t('minted')} value={showLongNumber(tokenSummary.tokenInfo.totalMinted)} maxLength={100} />
               <Line />
 
-              <Section
-                title={t('supply')}
-                maxLength={40}
-                value={`${showLongNumber(tokenSummary.tokenInfo.totalSupply)}`}
-              />
+              <Section title={t('supply')} value={showLongNumber(tokenSummary.tokenInfo.totalSupply)} maxLength={100} />
               <Line />
 
               <Section title={t('decimal')} value={tokenSummary.tokenInfo.decimal} />

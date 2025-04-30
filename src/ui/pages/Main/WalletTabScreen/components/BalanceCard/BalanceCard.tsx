@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ChainType } from '@/shared/constant';
+import { Row } from '@/ui/components';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { Icon } from '@/ui/components/Icon';
 import { getSpecialLocale, useI18n } from '@/ui/hooks/useI18n';
@@ -30,7 +31,7 @@ const tooltipStyle = {
   marginLeft: '-50px'
 };
 
-export function BalanceCard({ accountBalance, disableUtxoTools = false }: BalanceCardProps) {
+export function BalanceCard({ accountBalance, disableUtxoTools = true }: BalanceCardProps) {
   const { t } = useI18n();
   const btcUnit = useBTCUnit();
   const chain = useChain();
@@ -115,7 +116,7 @@ export function BalanceCard({ accountBalance, disableUtxoTools = false }: Balanc
 
       {/* Expandable details */}
       <div className={styles.detailsWrapper}>
-        <div className={styles.detailsContainer}>
+        <Row itemsCenter fullY mx="md" justifyCenter={disableUtxoTools}>
           <div className={styles.column}>
             <span className={styles.label}>{t('available')}</span>
             <div className={styles.detailsAmount}>
@@ -125,58 +126,63 @@ export function BalanceCard({ accountBalance, disableUtxoTools = false }: Balanc
             </div>
           </div>
 
-          <div className={styles.divider} />
+          {disableUtxoTools ? <div className={styles.divider} /> : null}
 
-          <div className={styles.column}>
-            <Tooltip
-              overlayStyle={{
-                maxWidth: '328px',
-                padding: 0
-              }}
-              autoAdjustOverflow={false}
-              arrowPointAtCenter={true}
-              align={{
-                points: ['bc', 'tc'],
-                offset: [10, 0],
-                overflow: {
-                  adjustX: true,
-                  adjustY: true
-                }
-              }}
-              overlayInnerStyle={tooltipStyle}
-              title={t('unavailable_tooltip')}
-              placement="top"
-              destroyTooltipOnHide={true}>
-              <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }} onClick={(e) => e.stopPropagation()}>
-                <span className={styles.label}>{t('unavailable')}</span>
+          <Row itemsCenter gap="zero">
+            {disableUtxoTools == false ? <div className={styles.divider} /> : null}
+            <div className={styles.column}>
+              <Tooltip
+                overlayStyle={{
+                  maxWidth: '328px',
+                  padding: 0
+                }}
+                autoAdjustOverflow={false}
+                arrowPointAtCenter={true}
+                align={{
+                  points: ['bc', 'tc'],
+                  offset: [10, 0],
+                  overflow: {
+                    adjustX: true,
+                    adjustY: true
+                  }
+                }}
+                overlayInnerStyle={tooltipStyle}
+                title={t('unavailable_tooltip')}
+                placement="top"
+                destroyTooltipOnHide={true}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '4px' }} onClick={(e) => e.stopPropagation()}>
+                  <span className={styles.label}>{t('unavailable')}</span>
 
-                <span className={styles.questionIconWrapper}>
-                  <Icon icon="balance-question" style={{ width: 16, height: 16, cursor: 'pointer' }} />
-                </span>
-              </div>
-            </Tooltip>
-            <div className={styles.detailsAmount}>
-              <span>{isBalanceHidden ? '*****' : unavailableAmount.split('.')[0]}</span>
-              {!isBalanceHidden && <span className={styles.detailsDecimal}>.{unavailableAmount.split('.')[1]}</span>}
-              <span>{btcUnit}</span>
-            </div>
-          </div>
-
-          {isMainnetChain && (
-            <div style={{ marginLeft: 'auto' }} onClick={handleUnlock}>
-              <div className={classNames(styles.unlockButton, { [styles.disabled]: disableUtxoTools })}>
-                <span
-                  style={{
-                    marginRight: isSpecialLocale ? '0' : '2px',
-                    fontSize: isSpecialLocale ? '8px' : '14px'
-                  }}>
-                  {t('unlock')}
-                </span>
-                {!isSpecialLocale && <Icon icon="balance-unlock-right" size={14} />}
+                  <span className={styles.questionIconWrapper}>
+                    <Icon icon="balance-question" style={{ width: 16, height: 16, cursor: 'pointer' }} />
+                  </span>
+                </div>
+              </Tooltip>
+              <div className={styles.detailsAmount}>
+                <span>{isBalanceHidden ? '*****' : unavailableAmount.split('.')[0]}</span>
+                {!isBalanceHidden && <span className={styles.detailsDecimal}>.{unavailableAmount.split('.')[1]}</span>}
+                <span>{btcUnit}</span>
               </div>
             </div>
-          )}
-        </div>
+
+            {disableUtxoTools == false && (
+              <Row>
+                <div onClick={handleUnlock}>
+                  <div className={classNames(styles.unlockButton, { [styles.disabled]: disableUtxoTools })}>
+                    <span
+                      style={{
+                        marginRight: isSpecialLocale ? '0' : '2px',
+                        fontSize: isSpecialLocale ? '8px' : '14px'
+                      }}>
+                      {t('unlock')}
+                    </span>
+                    {!isSpecialLocale && <Icon icon="balance-unlock-right" size={14} />}
+                  </div>
+                </div>
+              </Row>
+            )}
+          </Row>
+        </Row>
       </div>
     </div>
   );
