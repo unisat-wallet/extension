@@ -352,7 +352,7 @@
     "message": "транзакции"
   },
   "etching": {
-    "message": "etching"
+    "message": "гравюра"
   },
   "parent": {
     "message": "родительский"
@@ -2092,10 +2092,13 @@
     "message": "Час"
   },
   "mints": {
-    "message": "mints"
+    "message": "монеты"
   },
   "decimal": {
-    "message": "decimal"
+    "message": "десятичный"
+  },
+  "current_supply": {
+    "message": "текущее предложение"
   },
   "holders_count": {
     "message": "Количество держателей"

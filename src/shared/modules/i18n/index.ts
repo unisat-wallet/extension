@@ -82,7 +82,7 @@ export const changeLanguage = async (locale: string): Promise<void> => {
 
     // Save to local storage
     try {
-      localStorage.setItem('i18nextLng', locale);
+      chrome.storage.local.set({ i18nextLng: locale });
       console.log(`Language setting saved to local storage: ${locale}`);
     } catch (error) {
       console.error('Failed to save language setting to local storage:', error);

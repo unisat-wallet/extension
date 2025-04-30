@@ -11,6 +11,7 @@ import { NavTabBar } from '@/ui/components/NavTabBar';
 import { NoticePopover } from '@/ui/components/NoticePopover';
 import { SwitchNetworkBar } from '@/ui/components/SwitchNetworkBar';
 import { Tabs } from '@/ui/components/Tabs';
+import { UpgradePopover } from '@/ui/components/UpgradePopover';
 import { VersionNotice } from '@/ui/components/VersionNotice';
 import { getCurrentTab } from '@/ui/features/browser/tabs';
 import { useI18n } from '@/ui/hooks/useI18n';
@@ -240,13 +241,13 @@ export default function WalletTabScreen() {
             }}
           />
         )}
-        {/* {!versionInfo.skipped && (
+        {!versionInfo.skipped && (
           <UpgradePopover
             onClose={() => {
               skipVersion(versionInfo.newVersion);
             }}
           />
-        )} */}
+        )}
 
         {showDisableUnconfirmedUtxoNotice && (
           <DisableUnconfirmedsPopover onClose={() => setShowDisableUnconfirmedUtxoNotice(false)} />

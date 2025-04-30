@@ -24,7 +24,7 @@ export function Section({
   const tools = useTools();
   const { t } = useI18n();
 
-  let displayText = value.toString();
+  let displayText = value?.toString();
   if (value && typeof value === 'string' && value.length > maxLength) {
     displayText = shortAddress(value, maxLength / 2);
   }
