@@ -327,7 +327,7 @@
   "runeid": {
     "message": "runeid"
   },
-  "mints": {
+  "minted": {
     "message": "ミント数"
   },
   "supply": {
@@ -2075,5 +2075,26 @@
   },
   "network_fee_2": {
     "message": "ネットワーク手数料"
+  },
+  "minute": {
+    "message": "分"
+  },
+  "hour": {
+    "message": "時間"
+  },
+  "low_priority": {
+    "message": "低優先度"
+  },
+  "medium_priority": {
+    "message": "中優先度"
+  },
+  "high_priority": {
+    "message": "高優先度"
+  },
+  "mints": {
+    "message": "鋳造"
+  },
+  "decimal": {
+    "message": "小数"
   }
 }

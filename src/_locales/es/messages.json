@@ -328,9 +328,6 @@
   "runeid": {
     "message": "runeid"
   },
-  "mints": {
-    "message": "acuñaciones"
-  },
   "supply": {
     "message": "suministro"
   },
@@ -2068,5 +2065,29 @@
   },
   "network_fee_2": {
     "message": "Tarifa de red"
+  },
+  "minute": {
+    "message": "Minuto"
+  },
+  "hour": {
+    "message": "Hora"
+  },
+  "minted": {
+    "message": "acuñado"
+  },
+  "mints": {
+    "message": "acuñaciones"
+  },
+  "decimal": {
+    "message": "decimal"
+  },
+  "low_priority": {
+    "message": "Baja Prioridad"
+  },
+  "medium_priority": {
+    "message": "Prioridad Media"
+  },
+  "high_priority": {
+    "message": "Alta Prioridad"
   }
 }

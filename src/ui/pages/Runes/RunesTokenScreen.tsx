@@ -235,7 +235,7 @@ export default function RunesTokenScreen() {
             <Line />
 
             <Section
-              title={t('supply')}
+              title={t('current_supply')}
               value={`${showLongNumber(
                 runesUtils.toDecimalAmount(tokenSummary.runeInfo.supply, tokenSummary.runeInfo.divisibility)
               )} ${tokenSummary.runeInfo.symbol}`}

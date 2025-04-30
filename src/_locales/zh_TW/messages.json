@@ -328,7 +328,7 @@
   "runeid": {
     "message": "符文 ID"
   },
-  "mints": {
+  "minted": {
     "message": "已鑄造"
   },
   "supply": {
@@ -2089,5 +2089,20 @@
   },
   "network_fee_2": {
     "message": "網路費率"
+  },
+  "minute": {
+    "message": "分鐘"
+  },
+  "hour": {
+    "message": "小時"
+  },
+  "mints": {
+    "message": "已鑄造"
+  },
+  "decimal": {
+    "message": "小數位"
+  },
+  "current_supply": {
+    "message": "總供應量"
   }
 }

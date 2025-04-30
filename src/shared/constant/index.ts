@@ -517,12 +517,12 @@ export const AUTO_LOCK_TIMES = [
 
 export const getAutoLockTimes = () => [
   { id: 0, time: 30000, label: `30${t('seconds')}` },
-  { id: 1, time: 60000, label: `1${t('minutes')}` },
+  { id: 1, time: 60000, label: `1${t('minute')}` },
   { id: 2, time: 180000, label: `3${t('minutes')}` },
   { id: 3, time: 300000, label: `5${t('minutes')}` },
   { id: 4, time: 600000, label: `10${t('minutes')}` },
   { id: 5, time: 1800000, label: `30${t('minutes')}` },
-  { id: 6, time: 3600000, label: `1${t('hours')}` },
+  { id: 6, time: 3600000, label: `1${t('hour')}` },
   { id: 7, time: 14400000, label: `4${t('hours')}` }
 ];
 

@@ -329,7 +329,7 @@
   "runeid": {
     "message": "runeid"
   },
-  "mints": {
+  "minted": {
     "message": "minted"
   },
   "supply": {
@@ -342,7 +342,7 @@
     "message": "burned"
   },
   "divisibility": {
-    "message": "decimal"
+    "message": "divisibility"
   },
   "symbol": {
     "message": "symbol"
@@ -2089,5 +2089,20 @@
   },
   "network_fee_2": {
     "message": "Network Fee"
+  },
+  "minute": {
+    "message": "Minute"
+  },
+  "hour": {
+    "message": "Hour"
+  },
+  "mints": {
+    "message": "mints"
+  },
+  "decimal": {
+    "message": "decimal"
+  },
+  "current_supply": {
+    "message": "current supply"
   }
 }

@@ -339,8 +339,8 @@
   "runeid": {
     "message": "符文ID"
   },
-  "mints": {
-    "message": "铸造次数"
+  "minted": {
+    "message": "已铸造"
   },
   "supply": {
     "message": "供应量"
@@ -2065,5 +2065,17 @@
   },
   "network_fee_2": {
     "message": "网络费用"
+  },
+  "minute": {
+    "message": "分钟"
+  },
+  "hour": {
+    "message": "小时"
+  },
+  "mints": {
+    "message": "铸造次数"
+  },
+  "decimal": {
+    "message": "小数"
   }
 }

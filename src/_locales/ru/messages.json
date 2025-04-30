@@ -327,7 +327,7 @@
   "runeid": {
     "message": "runeid"
   },
-  "mints": {
+  "minted": {
     "message": "минты"
   },
   "supply": {
@@ -2084,5 +2084,17 @@
   },
   "network_fee_2": {
     "message": "Сетевая комиссия"
+  },
+  "minute": {
+    "message": "Минута"
+  },
+  "hour": {
+    "message": "Час"
+  },
+  "mints": {
+    "message": "mints"
+  },
+  "decimal": {
+    "message": "decimal"
   }
 }

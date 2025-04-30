@@ -339,17 +339,17 @@ export default function BRC20TokenScreen() {
               <Section title={t('ticker')} value={ticker} />
               <Line />
 
-              <Section title={t('mints')} value={showLongNumber(tokenSummary.tokenInfo.totalMinted)} />
+              <Section title={t('minted')} value={showLongNumber(tokenSummary.tokenInfo.totalMinted)} maxLength={30} />
               <Line />
 
               <Section
                 title={t('supply')}
                 maxLength={40}
-                value={`${showLongNumber(tokenSummary.tokenInfo.totalSupply)} ${tokenSummary.tokenBalance.ticker}`}
+                value={`${showLongNumber(tokenSummary.tokenInfo.totalSupply)}`}
               />
               <Line />
 
-              <Section title={t('divisibility')} value={tokenSummary.tokenInfo.decimal} />
+              <Section title={t('decimal')} value={tokenSummary.tokenInfo.decimal} />
             </Column>
           </Column>
         </Content>

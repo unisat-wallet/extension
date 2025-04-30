@@ -329,8 +329,8 @@
   "runeid": {
     "message": "runeid"
   },
-  "mints": {
-    "message": "Mints"
+  "minted": {
+    "message": "Minté"
   },
   "supply": {
     "message": "Offre totale"
@@ -2081,5 +2081,26 @@
   },
   "network_fee_2": {
     "message": "Frais de réseau"
+  },
+  "minute": {
+    "message": "Minute"
+  },
+  "hour": {
+    "message": "Heure"
+  },
+  "mints": {
+    "message": "acuñaciones"
+  },
+  "decimal": {
+    "message": "decimal"
+  },
+  "low_priority": {
+    "message": "Priorité faible"
+  },
+  "medium_priority": {
+    "message": "Priorité moyenne"
+  },
+  "high_priority": {
+    "message": "Priorité élevée"
   }
 }
