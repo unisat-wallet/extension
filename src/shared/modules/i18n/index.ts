@@ -23,7 +23,6 @@ export const initI18n = async (locale: string = FALLBACK_LOCALE): Promise<void> 
 
     // Set current language
     currentLocale = locale;
-    console.log(`Current language set to: ${currentLocale}`);
 
     await loadLocale(locale);
 
@@ -46,11 +45,7 @@ async function loadLocale(locale: string): Promise<void> {
   }
 
   try {
-    console.log(`Loading language ${locale}...`);
     const localeData = await fetchLocale(locale);
-    console.log(
-      `Language ${locale} loaded successfully, containing ${Object.keys(localeData).length} translation items`
-    );
     translations[locale] = localeData;
   } catch (error) {
     console.error(`Failed to load language ${locale}:`, error);

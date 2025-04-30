@@ -2096,5 +2096,11 @@
   },
   "decimal": {
     "message": "decimal"
+  },
+  "holders_count": {
+    "message": "Количество держателей"
+  },
+  "history_count": {
+    "message": "Общее количество транзакций"
   }
 }

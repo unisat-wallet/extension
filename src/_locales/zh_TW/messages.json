@@ -2104,5 +2104,11 @@
   },
   "current_supply": {
     "message": "總供應量"
+  },
+  "holders_count": {
+    "message": "持有者數量"
+  },
+  "history_count": {
+    "message": "總交易數量"
   }
 }

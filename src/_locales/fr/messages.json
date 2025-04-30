@@ -2092,7 +2092,7 @@
     "message": "acuñaciones"
   },
   "decimal": {
-    "message": "decimal"
+    "message": "décimal"
   },
   "low_priority": {
     "message": "Priorité faible"
@@ -2102,5 +2102,11 @@
   },
   "high_priority": {
     "message": "Priorité élevée"
+  },
+  "holders_count": {
+    "message": "Nombre de détenteurs"
+  },
+  "history_count": {
+    "message": "Total de transactions"
   }
 }

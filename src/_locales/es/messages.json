@@ -2089,5 +2089,11 @@
   },
   "high_priority": {
     "message": "Alta Prioridad"
+  },
+  "holders_count": {
+    "message": "Titulares"
+  },
+  "history_count": {
+    "message": "Total de transacciones"
   }
 }

@@ -38,7 +38,9 @@ export default function BRC20TokenScreen() {
       totalMinted: '',
       decimal: 18,
       holder: '',
-      inscriptionId: ''
+      inscriptionId: '',
+      holdersCount: 0,
+      historyCount: 0
     },
     historyList: [],
     transferableList: []
@@ -350,6 +352,10 @@ export default function BRC20TokenScreen() {
               <Line />
 
               <Section title={t('decimal')} value={tokenSummary.tokenInfo.decimal} />
+
+              <Section title={t('holders_count')} value={tokenSummary.tokenInfo.holdersCount} />
+
+              <Section title={t('history_count')} value={tokenSummary.tokenInfo.historyCount} />
             </Column>
           </Column>
         </Content>

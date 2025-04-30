@@ -2096,5 +2096,11 @@
   },
   "decimal": {
     "message": "小数"
+  },
+  "holders_count": {
+    "message": "ホルダー数"
+  },
+  "history_count": {
+    "message": "総取引数"
   }
 }

@@ -2104,5 +2104,11 @@
   },
   "current_supply": {
     "message": "current supply"
+  },
+  "holders_count": {
+    "message": "olders"
+  },
+  "history_count": {
+    "message": "total transactions"
   }
 }

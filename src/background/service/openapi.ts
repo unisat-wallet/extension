@@ -3,6 +3,7 @@ import randomstring from 'randomstring';
 import { createPersistStore } from '@/background/utils';
 import { CHAINS_MAP, CHANNEL, VERSION } from '@/shared/constant';
 import { BabylonConfigV2 } from '@/shared/constant/babylon';
+import { getCurrentLocale } from '@/shared/modules/i18n';
 import {
   AddressRunesTokenSummary,
   AddressSummary,
@@ -126,6 +127,7 @@ export class OpenApiService {
     headers.append('x-flag', this.addressFlag + '');
     headers.append('x-channel', CHANNEL);
     headers.append('x-udid', this.store.deviceId);
+    headers.append('x-lang', getCurrentLocale());
     let res: Response;
     try {
       res = await fetch(new Request(url), { method: 'GET', headers, mode: 'cors', cache: 'default' });
@@ -628,7 +630,7 @@ export class OpenApiService {
   }
 
   async transferCAT20Step1(address: string, pubkey: string, to: string, tokenId: string, amount: string, feeRate) {
-    return this.httpPost(`/v5/cat20/transfer-token-step1`, {
+    return this.httpPost('/v5/cat20/transfer-token-step1', {
       address,
       pubkey,
       to,
@@ -639,27 +641,27 @@ export class OpenApiService {
   }
 
   async transferCAT20Step2(transferId: string, signedPsbt: string) {
-    return this.httpPost(`/v5/cat20/transfer-token-step2`, {
+    return this.httpPost('/v5/cat20/transfer-token-step2', {
       id: transferId,
       psbt: signedPsbt
     });
   }
 
   async transferCAT20Step3(transferId: string, signedPsbt: string) {
-    return this.httpPost(`/v5/cat20/transfer-token-step3`, {
+    return this.httpPost('/v5/cat20/transfer-token-step3', {
       id: transferId,
       psbt: signedPsbt
     });
   }
 
   async transferCAT20Step1ByMerge(mergeId: string) {
-    return this.httpPost(`/v5/cat20/transfer-token-step1-by-merge`, {
+    return this.httpPost('/v5/cat20/transfer-token-step1-by-merge', {
       mergeId
     });
   }
 
   async mergeCAT20Prepare(address: string, pubkey: string, tokenId: string, utxoCount: number, feeRate: number) {
-    return this.httpPost(`/v5/cat20/merge-token-prepare`, {
+    return this.httpPost('/v5/cat20/merge-token-prepare', {
       address,
       pubkey,
       tokenId,
@@ -669,7 +671,7 @@ export class OpenApiService {
   }
 
   async getMergeCAT20Status(mergeId: string) {
-    return this.httpPost(`/v5/cat20/merge-token-status`, {
+    return this.httpPost('/v5/cat20/merge-token-status', {
       id: mergeId
     });
   }
@@ -694,7 +696,7 @@ export class OpenApiService {
     localId: string,
     feeRate: number
   ) {
-    return this.httpPost(`/v5/cat721/transfer-nft-step1`, {
+    return this.httpPost('/v5/cat721/transfer-nft-step1', {
       address,
       pubkey,
       to,
@@ -705,14 +707,14 @@ export class OpenApiService {
   }
 
   async transferCAT721Step2(transferId: string, signedPsbt: string) {
-    return this.httpPost(`/v5/cat721/transfer-nft-step2`, {
+    return this.httpPost('/v5/cat721/transfer-nft-step2', {
       id: transferId,
       psbt: signedPsbt
     });
   }
 
   async transferCAT721Step3(transferId: string, signedPsbt: string) {
-    return this.httpPost(`/v5/cat721/transfer-nft-step3`, {
+    return this.httpPost('/v5/cat721/transfer-nft-step3', {
       id: transferId,
       psbt: signedPsbt
     });
@@ -723,7 +725,7 @@ export class OpenApiService {
   }
 
   async getBabylonConfig(): Promise<BabylonConfigV2> {
-    return this.httpGet(`/v5/babylon/config`, {});
+    return this.httpGet('/v5/babylon/config', {});
   }
 
   async singleStepTransferBRC20Step1({

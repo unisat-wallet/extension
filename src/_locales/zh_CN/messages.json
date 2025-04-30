@@ -2077,5 +2077,11 @@
   },
   "decimal": {
     "message": "小数"
+  },
+  "holders_count": {
+    "message": "持有者数量"
+  },
+  "history_count": {
+    "message": "总交易次数"
   }
 }
