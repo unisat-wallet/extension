@@ -10,7 +10,9 @@ import {
   LOCALE_NAMES,
   t as translate
 } from '@/shared/modules/i18n';
+import { Content, Icon } from '@/ui/components';
 import { useWallet } from '@/ui/utils';
+import { LoadingOutlined } from '@ant-design/icons';
 
 interface I18nContextType {
   t: (key: string, substitutions?: string | string[]) => string;
@@ -131,7 +133,23 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   // If not yet initialized, show loading
   if (!isInitialized) {
-    return <div>Loading...</div>;
+    return (
+      <div
+        style={{
+          display: 'flex',
+          flexDirection: 'column',
+          width: '100vw',
+          height: '100vh',
+          overflowY: 'auto',
+          overflowX: 'hidden'
+        }}>
+        <Content justifyCenter itemsCenter>
+          <Icon>
+            <LoadingOutlined />
+          </Icon>
+        </Content>
+      </div>
+    );
   }
 
   // If there is an error, show error message in development environment
