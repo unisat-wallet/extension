@@ -10,7 +10,6 @@ import {
   LOCALE_NAMES,
   t as translate
 } from '@/shared/modules/i18n';
-import { Content, Icon } from '@/ui/components';
 import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
@@ -143,11 +142,16 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
           overflowY: 'auto',
           overflowX: 'hidden'
         }}>
-        <Content justifyCenter itemsCenter>
-          <Icon>
-            <LoadingOutlined />
-          </Icon>
-        </Content>
+        <div
+          style={{
+            display: 'flex',
+            flex: 1,
+            flexDirection: 'column',
+            justifyItems: 'center',
+            alignItems: 'center'
+          }}>
+          <LoadingOutlined />
+        </div>
       </div>
     );
   }
