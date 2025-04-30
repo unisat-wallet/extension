@@ -534,7 +534,9 @@ export default function BRC20SendScreen() {
       totalMinted: '0',
       decimal: 18,
       holder: '',
-      inscriptionId: ''
+      inscriptionId: '',
+      historyCount: 0,
+      holdersCount: 0
     }
   });
 
