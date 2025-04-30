@@ -3,6 +3,7 @@ import randomstring from 'randomstring';
 import { createPersistStore } from '@/background/utils';
 import { CHAINS_MAP, CHANNEL, VERSION } from '@/shared/constant';
 import { BabylonConfigV2 } from '@/shared/constant/babylon';
+import { getCurrentLocaleAsync } from '@/shared/modules/i18n';
 import {
   AddressRunesTokenSummary,
   AddressSummary,
@@ -30,7 +31,6 @@ import {
   VersionDetail,
   WalletConfig
 } from '@/shared/types';
-import { getCurrentLocale } from '@/ui/hooks/useI18n';
 
 import { preferenceService } from '.';
 
@@ -53,7 +53,6 @@ export class OpenApiService {
   endpoints: string[] = [];
   endpoint = '';
   config: WalletConfig | null = null;
-  private lang = 'en';
 
   setEndpoints = async (endpoints: string[]) => {
     this.endpoints = endpoints;
@@ -71,13 +70,6 @@ export class OpenApiService {
     const chainType = preferenceService.getChainType();
     const chain = CHAINS_MAP[chainType];
     this.endpoint = chain.endpoints[0];
-
-    try {
-      this.lang = await getCurrentLocale();
-    } catch (e) {
-      console.error('Failed to get current locale, fallback to en:', e);
-      this.lang = 'en';
-    }
 
     if (!this.store.deviceId) {
       this.store.deviceId = randomstring.generate(12);
@@ -128,14 +120,16 @@ export class OpenApiService {
       url += `${id}=${params[id]}`;
       c++;
     }
+
     const headers = new Headers();
+    const lang = await getCurrentLocaleAsync();
     headers.append('X-Client', 'UniSat Wallet');
     headers.append('X-Version', VERSION);
     headers.append('x-address', this.clientAddress);
     headers.append('x-flag', this.addressFlag + '');
     headers.append('x-channel', CHANNEL);
     headers.append('x-udid', this.store.deviceId);
-    headers.append('x-lang', this.lang);
+    headers.append('x-lang', lang);
     let res: Response;
     try {
       res = await fetch(new Request(url), { method: 'GET', headers, mode: 'cors', cache: 'default' });
@@ -149,12 +143,15 @@ export class OpenApiService {
   httpPost = async (route: string, params: any) => {
     const url = this.endpoint + route;
     const headers = new Headers();
+
+    const lang = await getCurrentLocaleAsync();
     headers.append('X-Client', 'UniSat Wallet');
     headers.append('X-Version', VERSION);
     headers.append('x-address', this.clientAddress);
     headers.append('x-flag', this.addressFlag + '');
     headers.append('x-channel', CHANNEL);
     headers.append('x-udid', this.store.deviceId);
+    headers.append('x-lang', lang);
     headers.append('Content-Type', 'application/json;charset=utf-8');
     let res: Response;
     try {
