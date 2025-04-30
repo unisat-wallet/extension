@@ -3,20 +3,20 @@
 @black-muted: rgba(0, 0, 0, 0.45);
 @black-muted-55: rgba(0, 0, 0, 0.55);
 @black-muted-65: rgba(0, 0, 0, 0.65);
-@white: #FFF;
+@white: #fff;
 @divider: rgba(109, 65, 0, 0.15);
-@container-bg: linear-gradient(117deg, #FFCF6D 1.38%, #FF7A00 74.19%);
-@details-bg: #FFDAB2;
+@container-bg: linear-gradient(117deg, #ffcf6d 1.38%, #ff7a00 74.19%);
+@details-bg: #ffdab2;
 
 // Fonts
-@font-inter: 'Inter';
-@font-din: 'DIN';
-@font-din-bold: 'DIN-Bold';
+@font-inter: 'Inter-Regular';
+@font-din: 'Inter-Regular';
+@font-din-bold: 'Inter-Regular';
 
 .container {
   width: 328px;
   flex-shrink: 0;
-  padding: 16px 8px 8px 8px; 
+  padding: 16px 8px 8px 8px;
   border-radius: 24px;
   display: flex;
   flex-direction: column;
@@ -41,7 +41,7 @@
   gap: 8px;
   color: @black-muted-55;
   margin-bottom: 4px;
-  margin-left: 8px; 
+  margin-left: 8px;
   font-family: @font-inter;
   font-size: 12px;
   font-weight: 600;
@@ -54,9 +54,9 @@
   display: flex;
   align-items: center;
   margin-bottom: 4px;
-  margin-left: 8px; 
-  
-  [style*="transform"] {
+  margin-left: 8px;
+
+  [style*='transform'] {
     transition: transform 0.3s ease-in-out;
   }
 }
@@ -106,15 +106,14 @@
   height: 62px;
   flex-shrink: 0;
   border-radius: 16px;
-  background: #FFDAB2;
+  background: #ffdab2;
   overflow: hidden;
   opacity: 0;
   max-height: 0;
 
-
   transform: translateY(10px);
   transition: opacity 0.3s ease-in-out, transform 0.3s ease-in-out, max-height 0.3s ease-in-out, margin 0.3s ease-in-out;
-  
+
   .expanded & {
     opacity: 1;
     transform: translateY(0);
@@ -139,11 +138,11 @@
   display: flex;
   flex-direction: column;
   gap: 4px;
-  margin-left: 8px; 
+  margin-left: 8px;
 }
 
 .column:first-child {
-  margin-left: 0; 
+  margin-left: 0;
 }
 
 .label {
@@ -179,15 +178,15 @@
 }
 
 .unlockButton {
-  width: 71px; 
-  height: 28px; 
+  width: 71px;
+  height: 28px;
   flex-shrink: 0;
   border-radius: 25px;
   background: @black;
   color: @white;
   text-align: center;
   font-family: @font-inter;
-  font-size: 14px; 
+  font-size: 14px;
   font-weight: 600;
   line-height: 16px;
   display: flex;
@@ -197,28 +196,29 @@
   transition: background-color 0.2s ease-in-out;
   transition: all 0.2s ease-in-out;
   margin-left: auto;
-  margin-right: 0; 
+  margin-right: 0;
   white-space: nowrap;
 
   &.disabled {
     background: @black-muted;
     cursor: not-allowed;
-    span, img {
+    span,
+    img {
       opacity: 0.3;
     }
   }
 
   &:hover:not(.disabled) {
-    background: rgba(0, 0, 0, 0.8); 
-    transform: translateY(-1px); 
-    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2); 
+    background: rgba(0, 0, 0, 0.8);
+    transform: translateY(-1px);
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   }
 
   &:active:not(.disabled) {
-    transform: translateY(0); 
-    box-shadow: none; 
+    transform: translateY(0);
+    box-shadow: none;
   }
-  
+
   span {
     margin-right: 4px;
     white-space: nowrap;
@@ -295,7 +295,7 @@
 .tooltipStyle {
   max-width: 328px;
   border-radius: 8px;
-  background: #1D1E23;
+  background: #1d1e23;
   width: 328px;
   height: 110px;
   padding: 16px;

@@ -25,7 +25,7 @@ const tooltipStyle = {
   color: '#FFF',
   fontSize: '14px',
   lineHeight: '20px',
-  fontFamily: 'Inter',
+  fontFamily: 'Inter-Regular',
   boxShadow: '0px 12px 20px 0px rgba(0, 0, 0, 0.25)',
   marginLeft: '-50px'
 };
