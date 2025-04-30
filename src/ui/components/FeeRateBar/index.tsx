@@ -1,7 +1,7 @@
-import { CSSProperties, useEffect, useState } from 'react';
+import { CSSProperties, useEffect, useMemo, useState } from 'react';
 
 import { ChainType } from '@/shared/constant';
-import { useI18n } from '@/ui/hooks/useI18n';
+import { useI18n, useSpecialLocale } from '@/ui/hooks/useI18n';
 import { useChainType } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
@@ -18,6 +18,10 @@ export function FeeRateBar({ readonly, onChange }: { readonly?: boolean; onChang
   const { t } = useI18n();
   const chainType = useChainType();
   const isFractal = chainType === ChainType.FRACTAL_BITCOIN_MAINNET || chainType === ChainType.FRACTAL_BITCOIN_TESTNET;
+
+  const { isSpecialLocale } = useSpecialLocale();
+
+  const fontSize = useMemo(() => (isSpecialLocale ? 'xxxs' : 'xxs'), [isSpecialLocale]);
 
   useEffect(() => {
     wallet.getFeeSummary().then((v) => {
@@ -148,11 +152,18 @@ export function FeeRateBar({ readonly, onChange }: { readonly?: boolean; onChang
                 } as CSSProperties,
                 selected ? { backgroundColor: colors.primary } : {}
               )}>
-              <Text text={v.title} textCenter style={{ color: selected ? colors.black : colors.white }} />
+              <Text
+                text={v.title}
+                textCenter
+                style={{
+                  color: selected ? colors.black : colors.white,
+                  fontSize: isSpecialLocale ? (isCustomOption(v.title) ? '7px' : '12px') : '14px'
+                }}
+              />
               {!isCustomOption(v.title) && (
                 <Text
                   text={`${v.feeRate} sat/vB`}
-                  size="xxs"
+                  size={fontSize}
                   textCenter
                   style={{ color: selected ? colors.black : colors.white }}
                 />
@@ -160,7 +171,7 @@ export function FeeRateBar({ readonly, onChange }: { readonly?: boolean; onChang
               {!isCustomOption(v.title) && (
                 <Text
                   text={`${v.desc}`}
-                  size="xxs"
+                  size={fontSize}
                   textCenter
                   style={{ color: selected ? colors.black : colors.white_muted }}
                 />

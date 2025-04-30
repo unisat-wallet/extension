@@ -3,10 +3,9 @@ import classNames from 'classnames';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { getCurrentLocale } from '@/shared/modules/i18n';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { Icon } from '@/ui/components/Icon';
-import { useI18n } from '@/ui/hooks/useI18n';
+import { useI18n, useSpecialLocale } from '@/ui/hooks/useI18n';
 import { useUtxoTools } from '@/ui/hooks/useUtxoTools';
 import { AppState } from '@/ui/state';
 import { useBTCUnit, useChain, useIsMainnetChain } from '@/ui/state/settings/hooks';
@@ -37,8 +36,9 @@ export function BalanceCard({ accountBalance, disableUtxoTools = false }: Balanc
   const [isExpanded, setIsExpanded] = useState(false);
   const dispatch = useDispatch();
   const isBalanceHidden = useSelector((state: AppState) => state.ui.isBalanceHidden);
-  const currentLocale = getCurrentLocale();
-  const isSpecialLocale = currentLocale === 'es' || currentLocale === 'ru' || currentLocale === 'fr';
+
+  const { isSpecialLocale } = useSpecialLocale();
+
   const { openUtxoTools } = useUtxoTools(chain);
   const isMainnetChain = useIsMainnetChain();
 

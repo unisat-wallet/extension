@@ -8,7 +8,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { RBFBar } from '@/ui/components/RBFBar';
-import { useI18n } from '@/ui/hooks/useI18n';
+import { useI18n, useSpecialLocale } from '@/ui/hooks/useI18n';
 import { useUtxoTools } from '@/ui/hooks/useUtxoTools';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useAccountBalance } from '@/ui/state/accounts/hooks';
@@ -25,7 +25,7 @@ export default function TxCreateScreen() {
   const navigate = useNavigate();
   const bitcoinTx = useBitcoinTx();
   const btcUnit = useBTCUnit();
-
+  const { isSpecialLocale } = useSpecialLocale();
   const [disabled, setDisabled] = useState(true);
 
   const setUiState = useUpdateUiTxCreateScreen();
@@ -236,6 +236,9 @@ export default function TxCreateScreen() {
                     <Button
                       preset="minimal"
                       text={t('unlock')}
+                      textStyle={{
+                        fontSize: isSpecialLocale ? '8px' : '14px'
+                      }}
                       onClick={() => {
                         openUtxoTools();
                       }}

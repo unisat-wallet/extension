@@ -1,6 +1,6 @@
 import { CSSProperties, useEffect, useState } from 'react';
 
-import { useI18n } from '@/ui/hooks/useI18n';
+import { useI18n, useSpecialLocale } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 
 import { useTools } from '../ActionComponent';
@@ -25,6 +25,8 @@ export function OutputValueBar({
 }) {
   const tools = useTools();
   const { t } = useI18n();
+  const { isSpecialLocale } = useSpecialLocale();
+
   const options = [
     {
       title: t('current'),
@@ -96,7 +98,14 @@ export function OutputValueBar({
                 } as CSSProperties,
                 selected ? { backgroundColor: colors.primary } : {}
               )}>
-              <Text text={v.title} color={selected ? 'black' : 'white'} textCenter />
+              <Text
+                text={v.title}
+                color={selected ? 'black' : 'white'}
+                textCenter
+                style={{
+                  fontSize: isSpecialLocale ? '8px' : '14px'
+                }}
+              />
               {v.value && <Text text={`${v.value} sats`} color={selected ? 'black' : 'white'} textCenter size="xs" />}
             </div>
           );

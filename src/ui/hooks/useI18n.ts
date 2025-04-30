@@ -40,3 +40,14 @@ export const useI18n = () => {
 export const getCurrentLocale = (): string => {
   return getLocale();
 };
+
+/**
+ * Select special languages for style adaptation
+ * @returns { currentLocale: string, isSpecialLocale: boolean }
+ */
+export const useSpecialLocale = () => {
+  const currentLocale = getCurrentLocale();
+  const specialLocales = ['es', 'ru', 'fr', 'ja'];
+  const isSpecialLocale = specialLocales.includes(currentLocale);
+  return { currentLocale, isSpecialLocale };
+};
