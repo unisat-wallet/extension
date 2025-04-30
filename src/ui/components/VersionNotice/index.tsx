@@ -18,7 +18,7 @@ export const VersionNotice = ({ notice, onClose }: VersionNoticeProps) => {
     .map((line) => line.trim())
     .filter((line) => !!line);
 
-  const features = lines.slice(1);
+  const features = lines;
 
   return (
     <Popover
@@ -51,7 +51,6 @@ export const VersionNotice = ({ notice, onClose }: VersionNoticeProps) => {
         <div
           style={{
             display: 'flex',
-            width: 183,
             height: 24,
             flexDirection: 'column',
             justifyContent: 'center',
@@ -81,7 +80,7 @@ export const VersionNotice = ({ notice, onClose }: VersionNoticeProps) => {
                 minHeight: 24,
                 color: 'rgba(255, 255, 255, 0.65)',
                 fontFamily: 'Inter',
-                fontSize: 14,
+                fontSize: 12,
                 fontStyle: 'normal',
                 fontWeight: 400,
                 lineHeight: '20px',
