@@ -330,7 +330,7 @@
     "message": "runeid"
   },
   "mints": {
-    "message": "mints"
+    "message": "minted"
   },
   "supply": {
     "message": "supply"
@@ -342,7 +342,7 @@
     "message": "burned"
   },
   "divisibility": {
-    "message": "divisibility"
+    "message": "decimal"
   },
   "symbol": {
     "message": "symbol"

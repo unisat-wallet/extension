@@ -3,6 +3,7 @@ import classNames from 'classnames';
 import { useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
+import { ChainType } from '@/shared/constant';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { Icon } from '@/ui/components/Icon';
 import { useI18n, useSpecialLocale } from '@/ui/hooks/useI18n';
@@ -33,9 +34,10 @@ export function BalanceCard({ accountBalance, disableUtxoTools = false }: Balanc
   const { t } = useI18n();
   const btcUnit = useBTCUnit();
   const chain = useChain();
-  const [isExpanded, setIsExpanded] = useState(false);
+  const [isExpanded, setIsExpanded] = useState(true);
   const dispatch = useDispatch();
   const isBalanceHidden = useSelector((state: AppState) => state.ui.isBalanceHidden);
+  const isBtcMainnet = chain.enum === ChainType.BITCOIN_MAINNET;
 
   const { isSpecialLocale } = useSpecialLocale();
 
@@ -90,7 +92,9 @@ export function BalanceCard({ accountBalance, disableUtxoTools = false }: Balanc
           <span className={styles.balanceNumber}>{isBalanceHidden ? '*****' : totalAmount.split('.')[0]}</span>
           {!isBalanceHidden && (
             <>
-              <span className={styles.decimal}>.{totalAmount.split('.')[1]}</span>
+              <span className={styles.decimal} style={{ color: isBtcMainnet ? '#000' : 'rgba(0, 0, 0, 0.45)' }}>
+                .{totalAmount.split('.')[1]}
+              </span>
               <span className={styles.unit}>{btcUnit}</span>
             </>
           )}

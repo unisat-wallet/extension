@@ -120,7 +120,9 @@ export function useTxExplorerUrl(txid: string) {
 
 export function useAddressExplorerUrl(address: string) {
   const chain = useChain();
-  if (chain.defaultExplorer === 'mempool-space') {
+  if (chain.enum === ChainType.BITCOIN_MAINNET) {
+    return `${chain.unisatExplorerUrl}/address/${address}`;
+  } else if (chain.defaultExplorer === 'mempool-space') {
     return `${chain.mempoolSpaceUrl}/address/${address}`;
   } else {
     return `${chain.unisatExplorerUrl}/address/${address}`;

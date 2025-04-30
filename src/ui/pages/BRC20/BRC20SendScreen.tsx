@@ -37,9 +37,8 @@ function Step1({
   contextData: ContextData;
   updateContextData: (params: UpdateContextDataParams) => void;
 }) {
-  const { tokenBalance, transferAmount } = contextData;
+  const { tokenBalance } = contextData;
 
-  const navigate = useNavigate();
   const { t } = useI18n();
 
   const [disabled, setDisabled] = useState(true);
@@ -83,7 +82,7 @@ function Step1({
 const InscribeTransferButton = ({ tokenBalance }: { tokenBalance: TokenBalance }) => {
   const { t } = useI18n();
   const navigate = useNavigate();
-  const isSafeBalanceZero = tokenBalance.availableBalanceSafe === '0';
+  const isSafeBalanceZero = tokenBalance.availableBalanceSafe != '0';
 
   return (
     <Column fullX>
@@ -115,11 +114,6 @@ const InscribeTransferButton = ({ tokenBalance }: { tokenBalance: TokenBalance }
               {!isSafeBalanceZero && (
                 <Text text={` + ${tokenBalance.availableBalanceUnSafe}`} color="textDim" digital />
               )}
-              <BRC20Ticker
-                tick={tokenBalance.ticker}
-                displayName={tokenBalance.displayName}
-                preset={isSafeBalanceZero ? 'sm' : undefined}
-              />
             </Row>
           </Row>
         </Column>

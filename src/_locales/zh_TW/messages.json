@@ -329,7 +329,7 @@
     "message": "符文 ID"
   },
   "mints": {
-    "message": "鑄造次數"
+    "message": "已鑄造"
   },
   "supply": {
     "message": "供應量"
@@ -2082,7 +2082,7 @@
     "message": "可轉帳餘額"
   },
   "ticker": {
-    "message": "股票代號"
+    "message": "代幣名稱"
   },
   "pending": {
     "message": "待處理"
