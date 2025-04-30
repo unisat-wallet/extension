@@ -1,12 +1,12 @@
 import { Tooltip } from 'antd';
 import classNames from 'classnames';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ChainType } from '@/shared/constant';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { Icon } from '@/ui/components/Icon';
-import { useI18n, useSpecialLocale } from '@/ui/hooks/useI18n';
+import { getSpecialLocale, useI18n } from '@/ui/hooks/useI18n';
 import { useUtxoTools } from '@/ui/hooks/useUtxoTools';
 import { AppState } from '@/ui/state';
 import { useBTCUnit, useChain, useIsMainnetChain } from '@/ui/state/settings/hooks';
@@ -39,7 +39,13 @@ export function BalanceCard({ accountBalance, disableUtxoTools = false }: Balanc
   const isBalanceHidden = useSelector((state: AppState) => state.ui.isBalanceHidden);
   const isBtcMainnet = chain.enum === ChainType.BITCOIN_MAINNET;
 
-  const { isSpecialLocale } = useSpecialLocale();
+  const [isSpecialLocale, setIsSpecialLocale] = useState(false);
+
+  useEffect(() => {
+    getSpecialLocale().then(({ isSpecialLocale }) => {
+      setIsSpecialLocale(isSpecialLocale);
+    });
+  }, []);
 
   const { openUtxoTools } = useUtxoTools(chain);
   const isMainnetChain = useIsMainnetChain();

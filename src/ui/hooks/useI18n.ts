@@ -45,7 +45,7 @@ export const getCurrentLocale = async (): Promise<string> => {
  * Select special languages for style adaptation
  * @returns { currentLocale: string, isSpecialLocale: boolean }
  */
-export const useSpecialLocale = async () => {
+export const getSpecialLocale = async () => {
   const currentLocale = await getCurrentLocale();
   const specialLocales = ['es', 'ru', 'fr', 'ja'];
   const isSpecialLocale = specialLocales.includes(currentLocale);

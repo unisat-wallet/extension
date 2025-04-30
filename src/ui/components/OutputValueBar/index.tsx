@@ -1,6 +1,6 @@
 import { CSSProperties, useEffect, useState } from 'react';
 
-import { useI18n, useSpecialLocale } from '@/ui/hooks/useI18n';
+import { getSpecialLocale, useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 
 import { useTools } from '../ActionComponent';
@@ -25,7 +25,13 @@ export function OutputValueBar({
 }) {
   const tools = useTools();
   const { t } = useI18n();
-  const { isSpecialLocale } = useSpecialLocale();
+
+  const [isSpecialLocale, setIsSpecialLocale] = useState(false);
+  useEffect(() => {
+    getSpecialLocale().then(({ isSpecialLocale }) => {
+      setIsSpecialLocale(isSpecialLocale);
+    });
+  }, []);
 
   const options = [
     {

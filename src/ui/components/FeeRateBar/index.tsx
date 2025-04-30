@@ -1,7 +1,7 @@
 import { CSSProperties, useEffect, useMemo, useState } from 'react';
 
 import { ChainType } from '@/shared/constant';
-import { useI18n, useSpecialLocale } from '@/ui/hooks/useI18n';
+import { getSpecialLocale, useI18n } from '@/ui/hooks/useI18n';
 import { useChainType } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
@@ -19,7 +19,12 @@ export function FeeRateBar({ readonly, onChange }: { readonly?: boolean; onChang
   const chainType = useChainType();
   const isFractal = chainType === ChainType.FRACTAL_BITCOIN_MAINNET || chainType === ChainType.FRACTAL_BITCOIN_TESTNET;
 
-  const { isSpecialLocale } = useSpecialLocale();
+  const [isSpecialLocale, setIsSpecialLocale] = useState(false);
+  useEffect(() => {
+    getSpecialLocale().then(({ isSpecialLocale }) => {
+      setIsSpecialLocale(isSpecialLocale);
+    });
+  }, []);
 
   const fontSize = useMemo(() => (isSpecialLocale ? 'xxxs' : 'xxs'), [isSpecialLocale]);
 
