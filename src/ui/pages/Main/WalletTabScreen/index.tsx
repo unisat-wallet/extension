@@ -65,7 +65,7 @@ export default function WalletTabScreen() {
   const versionInfo = useVersionInfo();
 
   const [showSafeNotice, setShowSafeNotice] = useState(false);
-  const [showVersionNotice, setShowVersionNotice] = useState('');
+  const [showVersionNotice, setShowVersionNotice] = useState<VersionDetail | null>(null);
 
   const [showDisableUnconfirmedUtxoNotice, setShowDisableUnconfirmedUtxoNotice] = useState(false);
 
@@ -120,7 +120,7 @@ export default function WalletTabScreen() {
           localStorage.setItem(STORAGE_VERSION_KEY, JSON.stringify(versionDetail));
 
           if (versionDetail && versionDetail.notice) {
-            setShowVersionNotice(versionDetail.notice);
+            setShowVersionNotice(versionDetail);
           }
         }
       } catch (e) {
@@ -265,7 +265,7 @@ export default function WalletTabScreen() {
           <VersionNotice
             notice={showVersionNotice}
             onClose={() => {
-              setShowVersionNotice('');
+              setShowVersionNotice(null);
             }}
           />
         )}

@@ -106,7 +106,9 @@ export const svgRegistry = {
   'balance-right': '/images/icons/balance-right.svg',
   'balance-unlock-right': '/images/icons/balance-unlock-right.svg',
 
-  'brc20-single-step': '/images/icons/brc20-single-step.svg'
+  'brc20-single-step': '/images/icons/brc20-single-step.svg',
+
+  'version-notice': '/images/icons/version-notice.svg'
 };
 
 const iconImgList: Array<IconTypes> = [
@@ -151,7 +153,8 @@ const iconImgList: Array<IconTypes> = [
   'balance-question',
   'balance-unlock-right',
   'brc20-single-step',
-  'arrow-right'
+  'arrow-right',
+  'version-notice'
 ];
 
 export type IconTypes = keyof typeof svgRegistry;
