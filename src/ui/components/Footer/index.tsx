@@ -1,4 +1,6 @@
-import React, { CSSProperties } from 'react';
+import { CSSProperties, useMemo } from 'react';
+
+import { getUiType } from '@/ui/utils';
 
 import { BaseView, BaseViewProps } from '../BaseView';
 
@@ -14,6 +16,16 @@ const $footerBaseStyle = {
 
 export function Footer(props: FooterProps) {
   const { style: $styleOverride, ...rest } = props;
-  const $style = Object.assign({}, $footerBaseStyle, $styleOverride);
+  const { isSidePanel } = getUiType();
+
+  const footerStyle = useMemo(() => {
+    return {
+      ...$footerBaseStyle,
+      backgroundColor: isSidePanel ? '#070606' : undefined,
+      width: isSidePanel ? '100%' : undefined
+    };
+  }, [isSidePanel]);
+
+  const $style = Object.assign({}, footerStyle, $styleOverride);
   return <BaseView style={$style} {...rest} />;
 }

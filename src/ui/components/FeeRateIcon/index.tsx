@@ -55,7 +55,9 @@ export function FeeRateIcon() {
       style={{
         backgroundColor: 'rgba(255,255,255,0.12)',
         height: 28,
-        borderRadius: 8
+        borderRadius: 8,
+        padding: '2px 4px',
+        gap: 2
       }}>
       <Row
         onClick={() => {

@@ -34,8 +34,8 @@ function HeaderContainer(props: { children: React.ReactNode }) {
         itemsCenter
         style={{
           height: '67.5px',
-          paddingLeft: spacing.large,
-          paddingRight: spacing.large
+          paddingLeft: spacing.medium,
+          paddingRight: spacing.medium
         }}>
         {props.children}
       </Row>

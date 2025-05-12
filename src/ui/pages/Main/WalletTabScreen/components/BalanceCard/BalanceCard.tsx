@@ -172,7 +172,7 @@ export function BalanceCard({ accountBalance, disableUtxoTools = true }: Balance
                     <span
                       style={{
                         marginRight: isSpecialLocale ? '0' : '2px',
-                        fontSize: isSpecialLocale ? '8px' : '14px'
+                        fontSize: isSpecialLocale ? '8px' : '12px'
                       }}>
                       {t('unlock')}
                     </span>

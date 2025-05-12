@@ -10,7 +10,7 @@ import { useChain } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { spacing } from '@/ui/theme/spacing';
-import { useWallet } from '@/ui/utils';
+import { getUiType, useWallet } from '@/ui/utils';
 import { SearchOutlined } from '@ant-design/icons';
 import {
   closestCenter,
@@ -166,6 +166,7 @@ export default function ContactsScreen() {
   const [isSortingMode, setIsSortingMode] = useState(false);
   const [orderedContacts, setOrderedContacts] = useState<ContactBookItem[]>([]);
   const { t } = useI18n();
+  const { isSidePanel } = getUiType();
 
   // Setup sensors for touch and keyboard operations
   const sensors = useSensors(
@@ -462,7 +463,14 @@ export default function ContactsScreen() {
         title={t('address_book')}
       />
 
-      <Row justifyBetween mt="md" mb="lg" style={{ padding: '0 16px' }}>
+      <Row
+        justifyBetween
+        pt="md"
+        pb="lg"
+        style={{
+          padding: '0 16px',
+          background: isSidePanel ? 'black' : 'transparent'
+        }}>
         <Row
           style={{
             border: `1px solid ${colors.gold}`,

@@ -1,6 +1,7 @@
-import { CSSProperties } from 'react';
+import { CSSProperties, useMemo } from 'react';
 
 import { spacing, spacingGap } from '@/ui/theme/spacing';
+import { getUiType } from '@/ui/utils';
 
 import { BaseView, BaseViewProps } from '../BaseView';
 import './index.less';
@@ -38,7 +39,29 @@ const $viewPresets = {
 
 export function Content(props: ContentProps) {
   const { style: $styleOverride, preset, ...rest } = props;
+  const { isSidePanel } = getUiType();
 
-  const $style = Object.assign({}, $viewPresets[preset || 'large'], $styleOverride);
+  const $sidePanelPresets = useMemo(
+    () => ({
+      large: Object.assign({}, $contentStyle, {
+        alignItems: 'stretch',
+        padding: spacing.medium,
+        paddingTop: 0
+      }),
+      middle: Object.assign({}, $contentStyle, {
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: '100%',
+        maxWidth: '400px',
+        alignSelf: 'center',
+        padding: '0 20px'
+      } as CSSProperties)
+    }),
+    []
+  );
+
+  const presetToUse = isSidePanel ? $sidePanelPresets[preset || 'large'] : $viewPresets[preset || 'large'];
+  const $style = Object.assign({}, presetToUse, $styleOverride);
+
   return <BaseView style={$style} {...rest} />;
 }

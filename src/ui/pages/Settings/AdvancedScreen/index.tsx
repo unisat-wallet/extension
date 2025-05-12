@@ -1,3 +1,4 @@
+import { Spin } from 'antd';
 import { useEffect, useState } from 'react';
 
 import { Content, Header, Layout } from '@/ui/components';
@@ -18,7 +19,13 @@ export default function AdvancedScreen() {
   }, []);
 
   if (!init) {
-    return <Layout></Layout>;
+    return (
+      <Layout>
+        <Content preset="middle" bg="background">
+          <Spin size="large" />
+        </Content>
+      </Layout>
+    );
   }
 
   return (

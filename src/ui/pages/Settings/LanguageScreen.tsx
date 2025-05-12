@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback, useState } from 'react';
 
 import { LOCALE_NAMES, SUPPORTED_LOCALES } from '@/shared/modules/i18n';
 import { Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
@@ -7,13 +7,6 @@ import { useI18n } from '@/ui/hooks/useI18n';
 export default function LanguageScreen() {
   const { t, locale: currentLocale, changeLocale } = useI18n();
   const [selectedLocale, setSelectedLocale] = useState(currentLocale);
-  const [init, setInit] = useState(false);
-
-  useEffect(() => {
-    setTimeout(() => {
-      setInit(true);
-    }, 300);
-  }, []);
 
   const handleLanguageSelect = useCallback(
     async (locale: string) => {
@@ -34,10 +27,6 @@ export default function LanguageScreen() {
     },
     [changeLocale, currentLocale]
   );
-
-  if (!init) {
-    return <Layout></Layout>;
-  }
 
   return (
     <Layout>

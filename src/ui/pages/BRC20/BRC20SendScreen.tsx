@@ -23,7 +23,7 @@ import {
   usePushOrdinalsTxCallback
 } from '@/ui/state/transactions/hooks';
 import { fontSizes } from '@/ui/theme/font';
-import { showLongNumber, useWallet } from '@/ui/utils';
+import { getUiType, showLongNumber, useWallet } from '@/ui/utils';
 import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 
@@ -59,7 +59,7 @@ function Step1({
   };
 
   return (
-    <Content mt="lg">
+    <Content pt="lg">
       <Column full>
         <Column gap="lg" full>
           <Column>
@@ -560,6 +560,7 @@ export default function BRC20SendScreen() {
   const { t } = useI18n();
 
   const navigate = useNavigate();
+  const { isSidePanel } = getUiType();
 
   return (
     <Layout>
@@ -573,24 +574,25 @@ export default function BRC20SendScreen() {
         }}
         title={t('send')}
       />
-      <Row justifyCenter>
-        <TabBar
-          progressEnabled
-          defaultActiveKey={TabKey.STEP1}
-          activeKey={contextData.tabKey}
-          items={[
-            { key: TabKey.STEP1, label: t('step1') },
-            { key: TabKey.STEP2, label: t('step2') }
-            // { key: TabKey.STEP3, label: 'Step3' }
-          ]}
-          onTabClick={(key) => {
-            updateContextData({ tabKey: key });
-          }}
-        />
-      </Row>
+      <Column bg={isSidePanel ? 'black' : 'transparent'} style={{ flex: 1 }}>
+        <Row justifyCenter>
+          <TabBar
+            progressEnabled
+            defaultActiveKey={TabKey.STEP1}
+            activeKey={contextData.tabKey}
+            items={[
+              { key: TabKey.STEP1, label: t('step1') },
+              { key: TabKey.STEP2, label: t('step2') }
+              // { key: TabKey.STEP3, label: 'Step3' }
+            ]}
+            onTabClick={(key) => {
+              updateContextData({ tabKey: key });
+            }}
+          />
+        </Row>
 
-      <Row mt="lg" />
-      {component}
+        <Column style={{ flex: 1 }}>{component}</Column>
+      </Column>
     </Layout>
   );
 }

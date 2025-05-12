@@ -38,7 +38,11 @@ export function SidePanelExpand() {
         justifyContent: 'center'
       }}
       onClick={toggleSidePanel}>
-      <Icon icon={isInSidePanel ? 'side-panel-logo-close' : 'side-panel-logo'} size={18} />
+      <Icon
+        icon={isInSidePanel ? 'side-panel-logo-close' : 'side-panel-logo'}
+        size={20}
+        containerStyle={{ opacity: 0.65 }}
+      />
     </Row>
   );
 }
