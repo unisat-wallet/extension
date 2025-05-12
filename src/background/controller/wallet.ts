@@ -2126,6 +2126,23 @@ export class WalletController extends BaseController {
     this._resetTimeout();
   };
 
+  getOpenInSidePanel = () => {
+    return preferenceService.getOpenInSidePanel();
+  };
+
+  setOpenInSidePanel = (openInSidePanel: boolean) => {
+    preferenceService.setOpenInSidePanel(openInSidePanel);
+
+    try {
+      const chromeWithSidePanel = chrome as any;
+      if (chromeWithSidePanel.sidePanel) {
+        chromeWithSidePanel.sidePanel.setPanelBehavior({ openPanelOnActionClick: openInSidePanel });
+      }
+    } catch (error) {
+      console.error('Failed to update side panel behavior:', error);
+    }
+  };
+
   setLastActiveTime = () => {
     this._resetTimeout();
   };

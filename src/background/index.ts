@@ -18,6 +18,15 @@ import {
 import { storage } from './webapi';
 import { browserRuntimeOnConnect, browserRuntimeOnInstalled } from './webapi/browser';
 
+// Chrome SidePanel API type declarations
+declare global {
+  interface Chrome {
+    sidePanel?: {
+      setPanelBehavior: (options: { openPanelOnActionClick: boolean }) => Promise<void>;
+    };
+  }
+}
+
 log.setDefaultLevel('error');
 if (process.env.NODE_ENV === 'development') {
   log.setLevel('debug');
@@ -31,6 +40,36 @@ const { PortMessage } = Message;
 let appStoreLoaded = false;
 
 /**
+ * Configure the side panel behavior based on user preference
+ */
+async function configureSidePanelBehavior() {
+  // Use type assertion to access the sidePanel API
+  const chromeWithSidePanel = chrome as any;
+
+  if (!chromeWithSidePanel.sidePanel) {
+    return; // Skip if sidePanel API is not available
+  }
+
+  const openInSidePanel = preferenceService.getOpenInSidePanel();
+
+  if (openInSidePanel) {
+    // If user previously used side panel, associate action click with side panel opening
+    try {
+      await chromeWithSidePanel.sidePanel.setPanelBehavior({ openPanelOnActionClick: true });
+    } catch (error) {
+      console.error('[Background] Failed to set side panel behavior:', error);
+    }
+  } else {
+    // User prefers popup mode - don't associate action with side panel
+    try {
+      await chromeWithSidePanel.sidePanel.setPanelBehavior({ openPanelOnActionClick: false });
+    } catch (error) {
+      console.error('[Background] Failed to set side panel behavior:', error);
+    }
+  }
+}
+
+/**
  * Restore application state from storage
  */
 async function restoreAppState() {
@@ -42,6 +81,9 @@ async function restoreAppState() {
   await openapiService.init();
   await permissionService.init();
   await contactBookService.init();
+
+  // Configure side panel behavior after preferences are loaded
+  await configureSidePanelBehavior();
 
   // Initialize phishing service early to ensure protection is active
   try {
@@ -62,7 +104,7 @@ phishingController.init();
 
 // for page provider
 browserRuntimeOnConnect((port) => {
-  if (port.name === 'popup' || port.name === 'notification' || port.name === 'tab') {
+  if (port.name === 'popup' || port.name === 'notification' || port.name === 'tab' || port.name === 'sidepanel') {
     const pm = new PortMessage(port as any);
     pm.listen((data) => {
       if (data?.type) {

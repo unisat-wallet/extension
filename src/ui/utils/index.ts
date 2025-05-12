@@ -7,13 +7,15 @@ export * from './WalletContext';
 const UI_TYPE = {
   Tab: 'index',
   Pop: 'popup',
-  Notification: 'notification'
+  Notification: 'notification',
+  SidePanel: 'sidepanel'
 };
 
 type UiTypeCheck = {
   isTab: boolean;
   isNotification: boolean;
   isPop: boolean;
+  isSidePanel: boolean;
 };
 
 export const getUiType = (): UiTypeCheck => {
@@ -40,7 +42,7 @@ export const getUITypeName = (): string => {
   if (UIType.isPop) return 'popup';
   if (UIType.isNotification) return 'notification';
   if (UIType.isTab) return 'tab';
-
+  if (UIType.isSidePanel) return 'sidepanel';
   return '';
 };
 

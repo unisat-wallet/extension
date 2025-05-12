@@ -36,6 +36,7 @@ import { AtomicalsTab } from './AtomicalsTab';
 import { CATTab } from './CATTab';
 import { OrdinalsTab } from './OrdinalsTab';
 import { RunesList } from './RunesList';
+import { SidePanelExpand } from './SidePanelExpand';
 import { BalanceCard } from './components/BalanceCard';
 import { WalletActions } from './components/WalletActions';
 
@@ -196,6 +197,7 @@ export default function WalletTabScreen() {
           <Row>
             <FeeRateIcon />
             <SwitchNetworkBar />
+            <SidePanelExpand />
           </Row>
         }
       />

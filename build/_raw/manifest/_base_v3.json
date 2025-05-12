@@ -28,7 +28,7 @@
     "service_worker": "background.js"
   },
   "homepage_url": "https://unisat.io",
-  "permissions": ["storage", "unlimitedStorage", "activeTab", "declarativeNetRequest"],
+  "permissions": ["storage", "unlimitedStorage", "activeTab", "declarativeNetRequest", "sidePanel"],
   "host_permissions": ["<all_urls>"],
   "short_name": "__MSG_appName__",
 
@@ -49,5 +49,8 @@
   ],
   "content_security_policy": {
     "extension_pages": "script-src 'self' 'wasm-unsafe-eval'; object-src 'self'"
+  },
+  "side_panel": {
+    "default_path": "sidepanel.html"
   }
 }

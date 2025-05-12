@@ -524,6 +524,11 @@ export interface WalletController {
     revealTx: string;
     toSignInputs: UserToSignInput[];
   }): Promise<{ txid: string }>;
+
+  setLastActiveTime(): void;
+
+  getOpenInSidePanel(): Promise<boolean>;
+  setOpenInSidePanel(openInSidePanel: boolean): Promise<void>;
 }
 
 const WalletContext = createContext<{

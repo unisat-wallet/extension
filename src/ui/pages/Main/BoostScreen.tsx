@@ -13,6 +13,17 @@ export default function BoostScreen() {
     const UIType = getUiType();
     const isInNotification = UIType.isNotification;
     const isInTab = UIType.isTab;
+    const isInSidePanel = UIType.isSidePanel;
+    const isInPopup = UIType.isPop;
+
+    if (isInPopup) {
+      try {
+        await wallet.setOpenInSidePanel(false);
+      } catch (error) {
+        console.error('Failed to update side panel preference:', error);
+      }
+    }
+
     let approval = await getApproval();
     if (isInNotification && !approval) {
       window.close();
@@ -43,7 +54,7 @@ export default function BoostScreen() {
       return;
     }
 
-    if (!isInNotification && !isInTab) {
+    if (!isInNotification && !isInTab && !isInSidePanel) {
       navigate('CreateHDWalletScreen', { isImport: false });
       return;
     }

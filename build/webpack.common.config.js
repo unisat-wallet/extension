@@ -163,7 +163,8 @@ const config = (env) => {
       background: paths.rootResolve('src/background/index.ts'),
       'content-script': paths.rootResolve('src/content-script/index.ts'),
       pageProvider: paths.rootResolve('src/content-script/pageProvider/index.ts'),
-      ui: paths.rootResolve('src/ui/index.tsx')
+      ui: paths.rootResolve('src/ui/index.tsx'),
+      sidepanel: paths.rootResolve('src/ui/index.tsx')
     },
     output: {
       path: paths.dist,

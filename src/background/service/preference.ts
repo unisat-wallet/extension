@@ -88,6 +88,7 @@ export interface PreferenceStore {
   addressFlags: { [key: string]: number };
   enableSignData: boolean;
   autoLockTimeId: number;
+  openInSidePanel: boolean;
 }
 
 const SUPPORTED_LOCALES = ['en', 'zh_TW', 'fr', 'es', 'ru', 'ja'];
@@ -135,7 +136,8 @@ class PreferenceService {
         showSafeNotice: true,
         addressFlags: {},
         enableSignData: false,
-        autoLockTimeId: DEFAULT_LOCKTIME_ID
+        autoLockTimeId: DEFAULT_LOCKTIME_ID,
+        openInSidePanel: false
       }
     });
 
@@ -235,6 +237,10 @@ class PreferenceService {
 
     if (typeof this.store.autoLockTimeId !== 'number') {
       this.store.autoLockTimeId = DEFAULT_LOCKTIME_ID;
+    }
+
+    if (typeof this.store.openInSidePanel !== 'boolean') {
+      this.store.openInSidePanel = false;
     }
   };
 
@@ -547,6 +553,14 @@ class PreferenceService {
 
   setAutoLockTimeId = (id: number) => {
     this.store.autoLockTimeId = id;
+  };
+
+  getOpenInSidePanel = () => {
+    return this.store.openInSidePanel;
+  };
+
+  setOpenInSidePanel = (openInSidePanel: boolean) => {
+    this.store.openInSidePanel = openInSidePanel;
   };
 }
 
