@@ -266,6 +266,30 @@ class ProviderController extends BaseController {
   }
 
 
+  @Reflect.metadata('APPROVAL', ['MultiSignMessage', (req) => {
+    const { data: { params: { messages } } } = req;
+    req.data.params.messages = messages.map(message => ({
+      text: message.text,
+      type: message.type
+    }));
+  }])
+  multiSignMessage = async ({ data: { params: { messages } } }) => {
+    const account = await wallet.getCurrentAccount();
+    if (!account) throw null;
+    const networkType = wallet.getNetworkType()
+    const psbtNetwork = toPsbtNetwork(networkType)
+    const result: string[] = [];
+    for (let i = 0; i < messages.length; i++) {
+      const message = messages[i];
+      if (message.type === 'bip322-simple') {
+        result.push(await wallet.signBIP322Simple(message.text))
+      } else {
+        result.push(await wallet.signMessage(message.text))
+      }
+    }
+    return result;
+  }
+
   @Reflect.metadata('SAFE', true)
   pushPsbt = async ({ data: { params: { psbtHex } } }) => {
     const hexData = formatPsbtHex(psbtHex);
@@ -351,7 +375,7 @@ class ProviderController extends BaseController {
     signDoc.authInfoBytes = objToUint8Array(signDoc.authInfoBytes);
     const signBytes = makeSignBytes(signDoc);
     req.data.params.signBytesHex = encoding.toHex(signBytes);
-    
+
   }])
   cosmosSignDirect = async ({ data: { params: msg } ,approvalRes}) => {
     if (!approvalRes) {
@@ -369,7 +393,7 @@ class ProviderController extends BaseController {
       signature
     } ;
     return respone;
-    
+
   }
 
   @Reflect.metadata('APPROVAL', ['CosmosSign', (req) => {
@@ -387,7 +411,7 @@ class ProviderController extends BaseController {
     const signature = encodeSecp256k1Signature(encoding.fromHex(approvalRes.publicKey),  encoding.fromHex(approvalRes.signature));
     const respone =  signature
     return respone;
- 
+
   }
 
 

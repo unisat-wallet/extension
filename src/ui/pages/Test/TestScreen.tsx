@@ -10,7 +10,7 @@ import { RemoveWalletPopover } from '@/ui/components/RemoveWalletPopover';
 import { SignPsbtWithRisksPopover } from '@/ui/components/SignPsbtWithRisksPopover';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 
-import { Connect, SignPsbt, SignText, SwitchNetwork } from '../Approval/components';
+import { Connect, MultiSignMessage, SignPsbt, SignText, SwitchNetwork } from '../Approval/components';
 import MultiSignPsbt from '../Approval/components/MultiSignPsbt';
 import { useNavigate } from '../MainRoute';
 import { testDecodedTx } from './testDecodedTx';
@@ -22,6 +22,10 @@ export default function TestScreen() {
 
   if (testComponent === 'signPsbt') {
     return <TestApprovalSignPsbt />;
+  }
+
+  if (testComponent === 'multiSignMessage') {
+    return <TestApprovalMultiSignMessage />;
   }
 
   return (
@@ -41,9 +45,38 @@ export default function TestScreen() {
             }}>
             <Text text="Test Approval Sign PSBT" />
           </Card>
+
+          <Card
+            onClick={() => {
+              setTestComponent('multiSignMessage');
+            }}>
+            <Text text="Test Multi Sign Message" />
+          </Card>
         </Column>
       </Content>
     </Layout>
+  );
+}
+
+function TestApprovalMultiSignMessage() {
+  return (
+    <MultiSignMessage
+      params={{
+        data: {
+          messages: [
+            { text: 'Test message 1', type: 'bip322-simple' },
+            { text: 'Test message 2', type: 'bip322-simple' },
+            { text: 'Test message 3', type: '' }
+          ],
+          options: []
+        },
+        session: {
+          origin: 'https://mail.google.com/',
+          icon: 'https://ssl.gstatic.com/ui/v1/icons/mail/rfr/gmail.ico',
+          name: 'GMAIL'
+        }
+      }}
+    />
   );
 }
 

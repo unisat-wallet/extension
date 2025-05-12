@@ -284,6 +284,15 @@ export class UnisatProvider extends EventEmitter {
     });
   };
 
+  multiSignMessage = async (messages: { text: string; type: string }[]) => {
+    return this[requestMethodKey]({
+      method: 'multiSignMessage',
+      params: {
+        messages
+      }
+    });
+  };
+
   verifyMessageOfBIP322Simple = async (address: string, message: string, signature: string, network?: number) => {
     return this[requestMethodKey]({
       method: 'verifyMessageOfBIP322Simple',

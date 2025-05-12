@@ -2,6 +2,7 @@ export { default as Connect } from './Connect';
 export { default as CosmosConnect } from './CosmosConnect';
 export { default as CosmosSign } from './CosmosSign';
 export { default as InscribeTransfer } from './InscribeTransfer';
+export { default as MultiSignMessage } from './MultiSignMessage';
 export { default as MultiSignPsbt } from './MultiSignPsbt';
 export { default as SignData } from './SignData';
 export { default as SignPsbt } from './SignPsbt';
