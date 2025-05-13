@@ -2116,5 +2116,8 @@
   },
   "open_as_side_bar": {
     "message": "側邊欄模式"
+  },
+  "sign_all_transactions_at_once": {
+    "message": "您可以一次性簽署所有交易，但請注意，UniSat Wallet 不會單獨驗證每筆交易。我們強烈建議只在可信賴和熟悉的網站上使用它，以最大限度地降低潛在損失的風險。"
   }
 }

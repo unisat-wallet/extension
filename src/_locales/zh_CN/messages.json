@@ -953,9 +953,6 @@
   "by_proceeding_you_confirm_that_youve_read_and_accepted_this_disclaimer": {
     "message": "继续操作，即表示您已阅读并接受此免责声明。"
   },
-  "sign_all_transactions_at_once": {
-    "message": "一次签名所有交易"
-  },
   "sign_all": {
     "message": "签名所有"
   },
@@ -2092,5 +2089,8 @@
   },
   "open_as_side_bar": {
     "message": "侧边栏模式"
+  },
+  "sign_all_transactions_at_once": {
+    "message": "您可以选择一次性签署所有交易，但请注意，UniSat Wallet 不会单独验证每笔交易。我们强烈建议仅在可信和熟悉的网站上使用它，以最大限度地降低潜在损失的风险。"
   }
 }

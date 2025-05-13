@@ -5,8 +5,6 @@ import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { CloseOutlined } from '@ant-design/icons';
 
-const disclaimStr =
-  'You have the option to sign all transactions at once, but please note that UniSat Wallet will not verify each transaction individually. We strongly recommend using it only on trusted and familiar websites to minimize the risk of potential losses.';
 export default function MultiSignDisclaimerModal({
   txCount,
   onClose,
@@ -34,7 +32,7 @@ export default function MultiSignDisclaimerModal({
         <Row fullX style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
 
         <Column justifyCenter rounded mb="lg" style={{ maxHeight: '50vh', overflow: 'auto' }}>
-          <Text style={{ fontSize: fontSizes.sm, lineHeight: 2 }} text={disclaimStr} />
+          <Text style={{ fontSize: fontSizes.sm, lineHeight: 2 }} text={t('sign_all_transactions_at_once')} />
 
           <Text
             mt="lg"
