@@ -278,7 +278,7 @@ export default function MultiSignMessage({
     <Layout>
       {header}
       <Content>
-        <Text text={t('sign_multiple_messages')} preset="title-bold" textCenter mt="lg" />
+        <Text text={t('sign_multiple_transactions')} preset="title-bold" textCenter mt="lg" />
         <Column>
           {messageInfo.messages.map((v, index) => {
             const signState = signStates[index];
