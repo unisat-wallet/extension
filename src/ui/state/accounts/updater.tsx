@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef } from 'react';
 
+import { ChainType } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 import { Account } from '@/shared/types';
 import { useWallet } from '@/ui/utils';
@@ -7,6 +8,7 @@ import { useWallet } from '@/ui/utils';
 import { useIsUnlocked } from '../global/hooks';
 import { globalActions } from '../global/reducer';
 import { useAppDispatch } from '../hooks';
+import { settingsActions } from '../settings/reducer';
 import { useCurrentAccount, useFetchBalanceCallback, useReloadAccounts } from './hooks';
 import { accountActions } from './reducer';
 
@@ -62,6 +64,22 @@ export default function AccountUpdater() {
     eventBus.addEventListener('accountsChanged', accountChangeHandler);
     return () => {
       eventBus.removeEventListener('accountsChanged', accountChangeHandler);
+    };
+  }, [dispatch]);
+
+  useEffect(() => {
+    const chaintChangeHandler = (params: { type: ChainType }) => {
+      dispatch(
+        settingsActions.updateSettings({
+          chainType: params.type
+        })
+      );
+
+      reloadAccounts();
+    };
+    eventBus.addEventListener('chainChanged', chaintChangeHandler);
+    return () => {
+      eventBus.removeEventListener('chainChanged', chaintChangeHandler);
     };
   }, [dispatch]);
 

@@ -873,6 +873,11 @@ export class WalletController extends BaseController {
   };
 
   setChainType = async (chainType: ChainType) => {
+    const currentChainType = preferenceService.getChainType();
+    if (currentChainType === chainType) {
+      return;
+    }
+
     preferenceService.setChainType(chainType);
     this.openapi.setEndpoints(CHAINS_MAP[chainType].endpoints);
 
@@ -887,6 +892,13 @@ export class WalletController extends BaseController {
     const network = this.getLegacyNetworkName();
     sessionService.broadcastEvent('networkChanged', {
       network
+    });
+
+    eventBus.emit(EVENTS.broadcastToUI, {
+      method: 'chainChanged',
+      params: {
+        type: chainType
+      }
     });
   };
 
