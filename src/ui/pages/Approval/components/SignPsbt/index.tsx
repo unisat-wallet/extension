@@ -647,7 +647,6 @@ export default function SignPsbt({
           });
           psbtHex = rawTxInfo.psbtHex;
         } catch (e) {
-          console.log(e);
           txError = (e as any).message;
           tools.toastError(txError);
         }

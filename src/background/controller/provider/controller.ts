@@ -1,6 +1,6 @@
 import { permissionService, sessionService } from '@/background/service';
 import { CHAINS, CHAINS_MAP, NETWORK_TYPES, VERSION } from '@/shared/constant';
-import { NetworkType } from '@/shared/types';
+import { NetworkType, RequestMethodGetInscriptionsParams, RequestMethodSendBitcoinParams, RequestMethodSendInscriptionParams, RequestMethodSendRunesParams, RequestMethodSignMessageParams, RequestMethodSignMessagesParams, RequestMethodSignPsbtParams, RequestMethodSignPsbtsParams } from '@/shared/types';
 import { getChainInfo, objToUint8Array } from '@/shared/utils';
 import { amountToSatoshis } from '@/ui/utils';
 import * as encoding from '@cosmjs/encoding';
@@ -128,7 +128,12 @@ class ProviderController extends BaseController {
 
   @Reflect.metadata('SAFE', true)
   getInscriptions = async (req) => {
-    const { data: { params: { cursor, size } } } = req;
+    const params:RequestMethodGetInscriptionsParams = req.data.params;
+    const { cursor, size } = params;
+    if(typeof cursor !== 'number' || typeof size !== 'number'){
+      throw new Error('cursor and size is required')
+    }
+
     const account = await wallet.getCurrentAccount();
     if (!account) return ''
     const { list, total } = await wallet.openapi.getAddressInscriptions(account.address, cursor, size);
@@ -166,7 +171,13 @@ class ProviderController extends BaseController {
   }
 
   @Reflect.metadata('APPROVAL', ['SignPsbt', (req) => {
-    // todo check
+    const params:RequestMethodSendBitcoinParams = req.data.params;
+    if(!params.sendBitcoinParams.toAddress){
+      throw new Error('toAddress is required')
+    }
+    if(!params.sendBitcoinParams.satoshis){
+      throw new Error('satoshis is required')
+    }
   }])
   sendBitcoin = async ({ approvalRes: { psbtHex } }) => {
     const psbt = bitcoin.Psbt.fromHex(psbtHex);
@@ -176,7 +187,13 @@ class ProviderController extends BaseController {
   }
 
   @Reflect.metadata('APPROVAL', ['SignPsbt', (req) => {
-    // todo check
+    const params:RequestMethodSendInscriptionParams = req.data.params;
+    if(!params.sendInscriptionParams.toAddress){
+      throw new Error('toAddress is required')
+    }
+    if(!params.sendInscriptionParams.inscriptionId){
+      throw new Error('inscriptionId is required')
+    }
   }])
   sendInscription = async ({ approvalRes: { psbtHex } }) => {
     const psbt = bitcoin.Psbt.fromHex(psbtHex);
@@ -186,7 +203,16 @@ class ProviderController extends BaseController {
   }
 
   @Reflect.metadata('APPROVAL', ['SignPsbt', (req) => {
-    // todo check
+     const params: RequestMethodSendRunesParams = req.data.params;
+    if(!params.sendRunesParams.toAddress){
+      throw new Error('toAddress is required')
+    }
+    if(!params.sendRunesParams.runeid){
+      throw new Error('runeid is required')
+    }
+    if(!params.sendRunesParams.amount){
+      throw new Error('amount is required')
+    }
   }])
   sendRunes = async ({ approvalRes: { psbtHex } }) => {
     const psbt = bitcoin.Psbt.fromHex(psbtHex);
@@ -196,7 +222,10 @@ class ProviderController extends BaseController {
   }
 
   @Reflect.metadata('APPROVAL', ['SignText', (req) => {
-    // todo check text
+    const params:RequestMethodSignMessageParams = req.data.params;
+    if(!params.text){
+      throw new Error('text is required')
+    }
   }])
   signMessage = async ({ data: { params: { text, type } }, approvalRes }) => {
     if (approvalRes?.signature) {
@@ -216,21 +245,19 @@ class ProviderController extends BaseController {
     return wallet.signData(data, type)
   }
 
-  // @Reflect.metadata('APPROVAL', ['SignTx', () => {
-  //   // todo check
-  // }])
-  //   signTx = async () => {
-  //     // todo
-  //   }
-
   @Reflect.metadata('SAFE', true)
   pushTx = async ({ data: { params: { rawtx } } }) => {
+
     return await wallet.pushTx(rawtx)
   }
 
   @Reflect.metadata('APPROVAL', ['SignPsbt', (req) => {
-    const { data: { params: { psbtHex } } } = req;
-    req.data.params.psbtHex = formatPsbtHex(psbtHex);
+    const params:RequestMethodSignPsbtParams = req.data.params;
+    if(!params.psbtHex){
+      throw new Error('psbtHex is required')
+    }
+
+    params.psbtHex = formatPsbtHex(params.psbtHex);
   }])
   signPsbt = async ({ data: { params: { psbtHex, options } }, approvalRes }) => {
     if (approvalRes && approvalRes.signed==true) {
@@ -246,8 +273,14 @@ class ProviderController extends BaseController {
   }
 
   @Reflect.metadata('APPROVAL', ['MultiSignPsbt', (req) => {
-    const { data: { params: { psbtHexs, options } } } = req;
-    req.data.params.psbtHexs = psbtHexs.map(psbtHex => formatPsbtHex(psbtHex));
+    const params:RequestMethodSignPsbtsParams = req.data.params;
+    params.psbtHexs.forEach(psbtHex=>{
+      if(!psbtHex){
+        throw new Error('psbtHex is required')
+      }
+    })
+
+    params.psbtHexs = params.psbtHexs.map(psbtHex => formatPsbtHex(psbtHex));
   }])
   multiSignPsbt = async ({ data: { params: { psbtHexs, options } } }) => {
     const account = await wallet.getCurrentAccount();
@@ -267,17 +300,23 @@ class ProviderController extends BaseController {
 
 
   @Reflect.metadata('APPROVAL', ['MultiSignMessage', (req) => {
-    const { data: { params: { messages } } } = req;
-    req.data.params.messages = messages.map(message => ({
-      text: message.text,
-      type: message.type
-    }));
+    const params:RequestMethodSignMessagesParams = req.data.params;
+    if(params.messages.length == 0){
+      throw new Error('data is required')
+    }
+    for (let i = 0; i < params.messages.length; i++) {
+      const message = params.messages[i];
+      if (!message.text) {
+        throw new Error('text is required')
+      }
+      if(message.text.length > 10000){
+        throw new Error('text is too long')
+      }
+    }
   }])
   multiSignMessage = async ({ data: { params: { messages } } }) => {
     const account = await wallet.getCurrentAccount();
     if (!account) throw null;
-    const networkType = wallet.getNetworkType()
-    const psbtNetwork = toPsbtNetwork(networkType)
     const result: string[] = [];
     for (let i = 0; i < messages.length; i++) {
       const message = messages[i];
@@ -324,7 +363,6 @@ class ProviderController extends BaseController {
     const utxos = await wallet.getBTCUtxos()
     return utxos;
   };
-
 
   private _isKeystoneWallet = async () => {
     const currentKeyring = await wallet.getCurrentKeyring();

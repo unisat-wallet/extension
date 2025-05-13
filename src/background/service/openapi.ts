@@ -228,6 +228,7 @@ export class OpenApiService {
     });
   }
 
+  // deprecated
   async getAvailableUtxos(address: string): Promise<UTXO[]> {
     return this.httpGet('/v5/address/available-utxo', {
       address,
@@ -235,6 +236,7 @@ export class OpenApiService {
     });
   }
 
+  // deprecated
   async getUnavailableUtxos(address: string): Promise<UTXO[]> {
     return this.httpGet('/v5/address/unavailable-utxo', {
       address

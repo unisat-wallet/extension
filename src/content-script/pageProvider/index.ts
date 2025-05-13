@@ -3,7 +3,17 @@ import { ethErrors, serializeError } from 'eth-rpc-errors';
 import { EventEmitter } from 'events';
 
 import { CosmosChainInfo } from '@/shared/constant/cosmosChain';
-import { TxType } from '@/shared/types';
+import {
+  RequestMethodGetBitcoinUtxosParams,
+  RequestMethodGetInscriptionsParams,
+  RequestMethodInscribeTransferParams,
+  RequestMethodSendBitcoinParams,
+  RequestMethodSendInscriptionParams,
+  RequestMethodSendRunesParams,
+  RequestMethodSignMessageParams,
+  RequestMethodSignMessagesParams,
+  TxType
+} from '@/shared/types';
 import { objToUint8Array } from '@/shared/utils';
 import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
 
@@ -252,6 +262,7 @@ export class UnisatProvider extends EventEmitter {
     });
   };
 
+  // deprecated
   getBalance = async () => {
     return this[requestMethodKey]({
       method: 'getBalance'
@@ -265,31 +276,34 @@ export class UnisatProvider extends EventEmitter {
   };
 
   getInscriptions = async (cursor = 0, size = 20) => {
+    const params: RequestMethodGetInscriptionsParams = {
+      cursor,
+      size
+    };
     return this[requestMethodKey]({
       method: 'getInscriptions',
-      params: {
-        cursor,
-        size
-      }
+      params
     });
   };
 
   signMessage = async (text: string, type: string) => {
+    const params: RequestMethodSignMessageParams = {
+      text,
+      type
+    };
     return this[requestMethodKey]({
       method: 'signMessage',
-      params: {
-        text,
-        type
-      }
+      params
     });
   };
 
   multiSignMessage = async (messages: { text: string; type: string }[]) => {
+    const params: RequestMethodSignMessagesParams = {
+      messages
+    };
     return this[requestMethodKey]({
       method: 'multiSignMessage',
-      params: {
-        messages
-      }
+      params
     });
   };
 
@@ -320,58 +334,52 @@ export class UnisatProvider extends EventEmitter {
     satoshis: number,
     options?: { feeRate: number; memo?: string; memos?: string[] }
   ) => {
+    const params: RequestMethodSendBitcoinParams = {
+      sendBitcoinParams: {
+        toAddress,
+        satoshis,
+        feeRate: options?.feeRate,
+        memo: options?.memo,
+        memos: options?.memos
+      },
+      type: TxType.SEND_BITCOIN
+    };
     return this[requestMethodKey]({
       method: 'sendBitcoin',
-      params: {
-        sendBitcoinParams: {
-          toAddress,
-          satoshis,
-          feeRate: options?.feeRate,
-          memo: options?.memo,
-          memos: options?.memos
-        },
-        type: TxType.SEND_BITCOIN
-      }
+      params
     });
   };
 
   sendInscription = async (toAddress: string, inscriptionId: string, options?: { feeRate: number }) => {
+    const params: RequestMethodSendInscriptionParams = {
+      sendInscriptionParams: {
+        toAddress,
+        inscriptionId,
+        feeRate: options?.feeRate
+      },
+      type: TxType.SEND_ORDINALS_INSCRIPTION
+    };
     return this[requestMethodKey]({
       method: 'sendInscription',
-      params: {
-        sendInscriptionParams: {
-          toAddress,
-          inscriptionId,
-          feeRate: options?.feeRate
-        },
-        type: TxType.SEND_ORDINALS_INSCRIPTION
-      }
+      params
     });
   };
 
   sendRunes = async (toAddress: string, runeid: string, amount: string, options?: { feeRate: number }) => {
+    const params: RequestMethodSendRunesParams = {
+      sendRunesParams: {
+        toAddress,
+        runeid,
+        amount,
+        feeRate: options?.feeRate
+      },
+      type: TxType.SEND_RUNES
+    };
     return this[requestMethodKey]({
       method: 'sendRunes',
-      params: {
-        sendRunesParams: {
-          toAddress,
-          runeid,
-          amount,
-          feeRate: options?.feeRate
-        },
-        type: TxType.SEND_RUNES
-      }
+      params
     });
   };
-
-  // signTx = async (rawtx: string) => {
-  //   return this[requestMethodKey]({
-  //     method: 'signTx',
-  //     params: {
-  //       rawtx
-  //     }
-  //   });
-  // };
 
   /**
    * push transaction
@@ -416,12 +424,14 @@ export class UnisatProvider extends EventEmitter {
   };
 
   inscribeTransfer = async (ticker: string, amount: string) => {
+    const params: RequestMethodInscribeTransferParams = {
+      ticker,
+      amount
+    };
+
     return this[requestMethodKey]({
       method: 'inscribeTransfer',
-      params: {
-        ticker,
-        amount
-      }
+      params
     });
   };
 
@@ -431,6 +441,7 @@ export class UnisatProvider extends EventEmitter {
     });
   };
 
+  // deprecated
   isAtomicalsEnabled = async () => {
     return this[requestMethodKey]({
       method: 'isAtomicalsEnabled'
@@ -438,12 +449,13 @@ export class UnisatProvider extends EventEmitter {
   };
 
   getBitcoinUtxos = async (cursor = 0, size = 20) => {
+    const params: RequestMethodGetBitcoinUtxosParams = {
+      cursor,
+      size
+    };
     return this[requestMethodKey]({
       method: 'getBitcoinUtxos',
-      params: {
-        cursor,
-        size
-      }
+      params
     });
   };
 

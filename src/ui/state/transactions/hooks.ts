@@ -3,8 +3,9 @@ import { useCallback, useMemo } from 'react';
 import { CHAINS_MAP, ChainType, KEYRING_TYPE } from '@/shared/constant';
 import { RawTxInfo, ToAddressInfo } from '@/shared/types';
 import { useTools } from '@/ui/components/ActionComponent';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { useBTCUnit } from '@/ui/state/settings/hooks';
-import { satoshisToAmount, satoshisToBTC, sleep, useWallet } from '@/ui/utils';
+import { satoshisToBTC, sleep, useWallet } from '@/ui/utils';
 import { UnspentOutput } from '@unisat/wallet-sdk';
 import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 
@@ -35,10 +36,10 @@ export function usePrepareSendBTCCallback() {
   const wallet = useWallet();
   const fromAddress = useAccountAddress();
   const utxos = useUtxos();
-  const spendUnavailableUtxos = useSpendUnavailableUtxos();
   const fetchUtxos = useFetchUtxosCallback();
   const account = useCurrentAccount();
   const btcUnit = useBTCUnit();
+  const { t } = useI18n();
   return useCallback(
     async ({
       toAddressInfo,
@@ -57,21 +58,13 @@ export function usePrepareSendBTCCallback() {
       memos?: string[];
       disableAutoAdjust?: boolean;
     }) => {
-      let _utxos: UnspentOutput[] = (
-        spendUnavailableUtxos.map((v) => {
-          return Object.assign({}, v, { inscriptions: [], atomicals: [] });
-        }) as any
-      ).concat(utxos);
+      let _utxos: UnspentOutput[] = utxos;
       if (_utxos.length === 0) {
         _utxos = await fetchUtxos();
       }
       const safeBalance = _utxos.filter((v) => v.inscriptions.length == 0).reduce((pre, cur) => pre + cur.satoshis, 0);
       if (safeBalance < toAmount) {
-        throw new Error(
-          `Insufficient balance. Non-Inscription balance(${satoshisToAmount(
-            safeBalance
-          )} ${btcUnit}) is lower than ${satoshisToAmount(toAmount)} ${btcUnit} `
-        );
+        throw new Error(t('insufficient_balance'));
       }
 
       if (!feeRate) {
@@ -104,7 +97,7 @@ export function usePrepareSendBTCCallback() {
       if (isFBByUnit(btcUnit) && account.type === KEYRING_TYPE.KeystoneKeyring) {
         const keysString = 'chain';
         // use ff as the keyType in the psbt global unknown
-        const key = Buffer.concat([Buffer.from('ff', 'hex'), Buffer.from(keysString)]);
+        const key = Buffer.from('ff' + Buffer.from(keysString).toString('hex'), 'hex');
         psbt.addUnknownKeyValToGlobal({ key, value: Buffer.from(btcUnit.toLowerCase()) });
         psbtHex = psbt.toHex();
       }
@@ -129,7 +122,7 @@ export function usePrepareSendBTCCallback() {
       };
       return rawTxInfo;
     },
-    [dispatch, wallet, fromAddress, utxos, fetchUtxos, spendUnavailableUtxos]
+    [dispatch, wallet, fromAddress, utxos, fetchUtxos]
   );
 }
 
