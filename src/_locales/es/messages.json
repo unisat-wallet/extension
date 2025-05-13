@@ -2098,5 +2098,11 @@
   },
   "current_supply": {
     "message": "Cantidad actual"
+  },
+  "open_as_popup": {
+    "message": "Abrir como ventana emergente"
+  },
+  "open_as_side_bar": {
+    "message": "Abrir como barra lateral"
   }
 }

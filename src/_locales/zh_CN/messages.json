@@ -2086,5 +2086,11 @@
   },
   "current_supply": {
     "message": "当前供应量"
+  },
+  "open_as_popup": {
+    "message": "弹窗模式"
+  },
+  "open_as_side_bar": {
+    "message": "侧边栏模式"
   }
 }

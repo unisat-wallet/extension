@@ -2110,5 +2110,11 @@
   },
   "history_count": {
     "message": "總交易數量"
+  },
+  "open_as_popup": {
+    "message": "彈窗模式"
+  },
+  "open_as_side_bar": {
+    "message": "側邊欄模式"
   }
 }

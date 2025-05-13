@@ -2111,5 +2111,11 @@
   },
   "current_supply": {
     "message": "Supply actuelle"
+  },
+  "open_as_popup": {
+    "message": "Ouvrir comme fenêtre"
+  },
+  "open_as_side_bar": {
+    "message": "Ouvrir comme barre latérale"
   }
 }

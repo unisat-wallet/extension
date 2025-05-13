@@ -2110,5 +2110,11 @@
   },
   "history_count": {
     "message": "transactions"
+  },
+  "open_as_popup": {
+    "message": "Open as Popup"
+  },
+  "open_as_side_bar": {
+    "message": "Open as SideBar"
   }
 }

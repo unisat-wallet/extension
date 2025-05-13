@@ -2105,5 +2105,11 @@
   },
   "history_count": {
     "message": "総取引数"
+  },
+  "open_as_popup": {
+    "message": "ウィンドウとして開く"
+  },
+  "open_as_side_bar": {
+    "message": "サイドバーとして開く"
   }
 }

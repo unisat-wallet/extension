@@ -1,12 +1,16 @@
-import { useEffect } from 'react';
+import { Tooltip } from 'antd';
+import { useEffect, useState } from 'react';
 
 import { Icon, Row } from '@/ui/components';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { getUiType, useWallet } from '@/ui/utils';
 
 export function SidePanelExpand() {
+  const { t } = useI18n();
   const UIType = getUiType();
   const isInSidePanel = UIType.isSidePanel;
   const wallet = useWallet();
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
     if (isInSidePanel) {
@@ -35,14 +39,33 @@ export function SidePanelExpand() {
       style={{
         display: 'flex',
         alignItems: 'center',
-        justifyContent: 'center'
+        justifyContent: 'center',
+        cursor: 'pointer',
+        position: 'relative'
       }}
       onClick={toggleSidePanel}>
-      <Icon
-        icon={isInSidePanel ? 'side-panel-logo-close' : 'side-panel-logo'}
-        size={20}
-        containerStyle={{ opacity: 0.65 }}
-      />
+      <Tooltip
+        title={isInSidePanel ? t('open_as_popup') : t('open_as_side_bar')}
+        overlayStyle={{
+          minWidth: '70px',
+          fontSize: '12px'
+        }}
+        overlayClassName="side-panel-expand-tooltip"
+        placement="bottom">
+        <div
+          onMouseEnter={() => setIsHovered(true)}
+          onMouseLeave={() => setIsHovered(false)}
+          style={{ display: 'inline-block' }}>
+          <Icon
+            icon={isInSidePanel ? 'side-panel-logo-close' : 'side-panel-logo'}
+            size={20}
+            containerStyle={{
+              opacity: isHovered ? 1 : 0.65,
+              color: isHovered ? '#ffffff' : 'inherit'
+            }}
+          />
+        </div>
+      </Tooltip>
     </Row>
   );
 }
