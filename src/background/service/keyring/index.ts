@@ -4,7 +4,8 @@ import encryptor from 'browser-passworder';
 import { EventEmitter } from 'events';
 import log from 'loglevel';
 
-import { ADDRESS_TYPES, KEYRING_TYPE } from '@/shared/constant';
+import { ADDRESS_TYPES, EVENTS, KEYRING_TYPE } from '@/shared/constant';
+import eventBus from '@/shared/eventBus';
 import { t } from '@/shared/modules/i18n';
 import { AddressType, CosmosSignDataType } from '@/shared/types';
 import { ObservableStore } from '@metamask/obs-store';
@@ -1015,6 +1016,10 @@ class KeyringService extends EventEmitter {
   setUnlocked = () => {
     this.memStore.updateState({ isUnlocked: true });
     this.emit('unlock');
+    eventBus.emit(EVENTS.broadcastToUI, {
+      method: 'unlock',
+      params: {}
+    });
   };
 }
 

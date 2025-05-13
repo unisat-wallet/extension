@@ -93,5 +93,15 @@ export default function AccountUpdater() {
     };
   }, [dispatch]);
 
+  useEffect(() => {
+    const unlockHandler = () => {
+      dispatch(globalActions.update({ isUnlocked: true }));
+    };
+    eventBus.addEventListener('unlock', unlockHandler);
+    return () => {
+      eventBus.removeEventListener('unlock', unlockHandler);
+    };
+  }, [dispatch]);
+
   return null;
 }

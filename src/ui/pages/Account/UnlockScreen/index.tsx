@@ -7,7 +7,7 @@ import { Input } from '@/ui/components/Input';
 import { Logo } from '@/ui/components/Logo';
 import { Text } from '@/ui/components/Text';
 import { useI18n } from '@/ui/hooks/useI18n';
-import { useUnlockCallback } from '@/ui/state/global/hooks';
+import { useIsUnlocked, useUnlockCallback } from '@/ui/state/global/hooks';
 import { getUiType, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../../MainRoute';
@@ -22,6 +22,13 @@ export default function UnlockScreen() {
   const isInNotification = UIType.isNotification;
   const unlock = useUnlockCallback();
   const tools = useTools();
+  const isUnlocked = useIsUnlocked();
+
+  useEffect(() => {
+    if (isUnlocked) {
+      navigate('MainScreen');
+    }
+  }, [isUnlocked, navigate]);
 
   const [loading, setLoading] = useState(false);
 
