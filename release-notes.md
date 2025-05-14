@@ -1,5 +1,18 @@
 # UniSat Wallet Release Notes
 
+## v1.6.3
+
+New Features
+
+- Added sidebar
+
+- Added method: unisat.multiSignMessage([{text:'example',type:'ecdsa'}])
+
+Bug Fixes
+
+- Fixed an issue with parameters when signing P2TR scripts (most for CAT20 txns).
+  For script path inputs, the default behavior is to use the original public key for signing. You can explicitly specify whether to use the TweakedSigner by setting the useTweakedSigner option. If not explicitly set, the signer will automatically determine which key to use based on the presence of a tapLeafScript in the input. If the tapLeafScript contains the original public key, the original key will be used for signing; otherwise, the TweakedSigner will be used. In most cases, the signing method can be automatically determined without needing to pass additional parameters.
+
 ## v1.6.2
 
 New Features
