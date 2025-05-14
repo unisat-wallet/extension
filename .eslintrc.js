@@ -10,28 +10,28 @@ module.exports = {
     ecmaFeatures: {
       jsx: true
     },
-    ecmaVersion: 'latest',
+    ecmaVersion: 2022,
     sourceType: 'module'
   },
   plugins: ['react', 'react-hooks', '@typescript-eslint', 'import', 'simple-import-sort', 'unused-imports'],
   rules: {
-    /**
-     * off or 0：Indicates that the rule is not validated.
-     * warn or 1：Indicates the validation rule, when not satisfied, give a warning
-     * error or 2 ：Indicates that the validation rules are not met, and an error is reported if they are not satisfied.
-     */
     quotes: [1, 'single'],
-    // "no-console": process.env.NODE_ENV === 'production' ? 2 : 0, // do not disable the console
-    'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0, // disable debugger
-    semi: 0,
+    'no-debugger': process.env.NODE_ENV === 'production' ? 2 : 0,
+    semi: ['error', 'never'],
     'no-control-regex': 2,
-    'linebreak-style': [0, 'error', 'windows'],
-    // indent: ['error', 2, { SwitchCase: 1 }],
+    'linebreak-style': 'off',
     'array-bracket-spacing': [2, 'never'],
     'no-irregular-whitespace': 0,
     'no-trailing-spaces': 1,
     'eol-last': 0,
-    'no-unused-vars': [1, { vars: 'all', args: 'after-used' }],
+    'no-unused-vars': 'off',
+    '@typescript-eslint/no-unused-vars': [
+      'warn',
+      {
+        argsIgnorePattern: '^_',
+        varsIgnorePattern: '^_'
+      }
+    ],
     'no-underscore-dangle': 0,
     'no-lone-blocks': 0,
     'no-class-assign': 2,
@@ -50,18 +50,10 @@ module.exports = {
     'no-use-before-define': 0,
     camelcase: 0,
     '@typescript-eslint/no-var-requires': 0,
-
     'react/display-name': 0,
     'react/react-in-jsx-scope': 0,
     'react/no-unescaped-entities': 0,
     'unused-imports/no-unused-imports': 'warn',
-    '@typescript-eslint/no-unused-vars': [
-      'warn',
-      {
-        argsIgnorePattern: '^_',
-        varsIgnorePattern: '^_'
-      }
-    ],
     'no-useless-catch': 0
   },
   settings: {
@@ -83,4 +75,4 @@ module.exports = {
   globals: {
     Buffer: true
   }
-};
+}
