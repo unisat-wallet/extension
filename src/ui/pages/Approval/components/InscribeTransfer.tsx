@@ -20,7 +20,7 @@ import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useBTCUnit, useNetworkType } from '@/ui/state/settings/hooks';
 import {
   useFetchUtxosCallback,
-  usePrepareSendBTCCallback,
+  usePrepareSendBypassHeadOffsetsCallback,
   usePushBitcoinTxCallback
 } from '@/ui/state/transactions/hooks';
 import { fontSizes } from '@/ui/theme/font';
@@ -153,11 +153,12 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
   const [inputAmount, setInputAmount] = useState('');
 
   const tools = useTools();
-  const prepareSendBTC = usePrepareSendBTCCallback();
+  const prepareSendBypassHeadOffsets = usePrepareSendBypassHeadOffsetsCallback();
 
   const fetchUtxos = useFetchUtxosCallback();
 
   const [inputError, setInputError] = useState('');
+  const [outputValueError, setOutputValueError] = useState('');
 
   const [disabled, setDisabled] = useState(true);
 
@@ -178,6 +179,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
 
   useEffect(() => {
     setInputError('');
+    setOutputValueError('');
     setDisabled(true);
     if (inputAmount.split('.').length > 1) {
       const decimal = inputAmount.split('.')[1].length;
@@ -216,7 +218,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
 
     const dust = getAddressUtxoDust(account.address);
     if (outputValue < dust) {
-      setInputError(`${t('output_value_must_be_at_least')} ${dust}`);
+      setOutputValueError(`${t('output_value_must_be_at_least')} ${dust}`);
       return;
     }
 
@@ -250,13 +252,13 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
         feeRate,
         outputValue
       );
-      const rawTxInfo = await prepareSendBTC({
+
+      const rawTxInfo = await prepareSendBypassHeadOffsets({
         toAddressInfo: { address: order.payAddress, domain: '' },
         toAmount: order.totalFee,
-        feeRate: feeRate,
-        enableRBF,
-        disableAutoAdjust: true
+        feeRate: feeRate
       });
+
       updateContextData({ order, amount, rawTxInfo, step: Step.STEP2 });
     } catch (e) {
       console.log(e);
@@ -367,6 +369,7 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
                   setOutputValue(val);
                 }}
               />
+              {outputValueError && <Text text={outputValueError} color="error" />}
             </Column>
 
             <Column>

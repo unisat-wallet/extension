@@ -126,6 +126,66 @@ export function usePrepareSendBTCCallback() {
   );
 }
 
+export function usePrepareSendBypassHeadOffsetsCallback() {
+  const dispatch = useAppDispatch();
+  const wallet = useWallet();
+  const fromAddress = useAccountAddress();
+  const account = useCurrentAccount();
+  const btcUnit = useBTCUnit();
+  return useCallback(
+    async ({
+      toAddressInfo,
+      toAmount,
+      feeRate
+    }: {
+      toAddressInfo: ToAddressInfo;
+      toAmount: number;
+      feeRate: number;
+    }) => {
+      let psbtHex = await wallet.sendCoinBypassHeadOffsets(
+        [
+          {
+            address: toAddressInfo.address,
+            satoshis: toAmount
+          }
+        ],
+        feeRate
+      );
+
+      const psbt = bitcoin.Psbt.fromHex(psbtHex);
+
+      // use the unknown keyValue to indicate FB tx in psbt for keystone
+      if (isFBByUnit(btcUnit) && account.type === KEYRING_TYPE.KeystoneKeyring) {
+        const keysString = 'chain';
+        // use ff as the keyType in the psbt global unknown
+        const key = Buffer.from('ff' + Buffer.from(keysString).toString('hex'), 'hex');
+        psbt.addUnknownKeyValToGlobal({ key, value: Buffer.from(btcUnit.toLowerCase()) });
+        psbtHex = psbt.toHex();
+      }
+
+      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction(true).toHex();
+      const fee = account.type === KEYRING_TYPE.KeystoneKeyring ? 0 : psbt.getFee();
+
+      dispatch(
+        transactionsActions.updateBitcoinTx({
+          rawtx,
+          psbtHex,
+          fromAddress,
+          feeRate
+        })
+      );
+      const rawTxInfo: RawTxInfo = {
+        psbtHex,
+        rawtx,
+        toAddressInfo,
+        fee
+      };
+      return rawTxInfo;
+    },
+    [dispatch, wallet, fromAddress]
+  );
+}
+
 export function usePushBitcoinTxCallback() {
   const dispatch = useAppDispatch();
   const wallet = useWallet();

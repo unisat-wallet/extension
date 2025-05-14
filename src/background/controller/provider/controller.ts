@@ -12,22 +12,9 @@ import BaseController from '../base';
 import wallet from '../wallet';
 
 import { encodeSecp256k1Signature, makeADR36AminoSignDoc, serializeSignDoc } from '@/background/service/keyring/CosmosKeyring';
+import { formatPsbtHex } from '@/ui/utils/psbt-utils';
 import { makeSignBytes } from '@cosmjs/proto-signing';
 
-function formatPsbtHex(psbtHex: string) {
-  let formatData = '';
-  try {
-    if (!(/^[0-9a-fA-F]+$/.test(psbtHex))) {
-      formatData = bitcoin.Psbt.fromBase64(psbtHex).toHex()
-    } else {
-      bitcoin.Psbt.fromHex(psbtHex);
-      formatData = psbtHex;
-    }
-  } catch (e) {
-    throw new Error('invalid psbt')
-  }
-  return formatData;
-}
 
 
 class ProviderController extends BaseController {

@@ -31,6 +31,7 @@ import {
   VersionDetail,
   WalletConfig
 } from '@/shared/types';
+import { ToSignInput } from '@unisat/wallet-sdk';
 
 import { preferenceService } from '.';
 
@@ -780,6 +781,24 @@ export class OpenApiService {
     return this.httpPost('/v5/brc20/single-step-transfer/sign-reveal', {
       orderId,
       psbt
+    });
+  }
+
+  async createSendCoinBypassHeadOffsets(
+    address: string,
+    pubkey: string,
+    tos: { address: string; satoshis: number }[],
+    feeRate: number
+  ): Promise<{
+    psbtBase64: string;
+    toSignInputs: ToSignInput[];
+  }> {
+    return this.httpPost('/v5/tx/create-send-btc', {
+      fromAddress: address,
+      fromPubkey: pubkey,
+      tos,
+      feeRate,
+      bypassHeadOffsets: true
     });
   }
 }

@@ -529,6 +529,8 @@ export interface WalletController {
 
   getOpenInSidePanel(): Promise<boolean>;
   setOpenInSidePanel(openInSidePanel: boolean): Promise<void>;
+
+  sendCoinBypassHeadOffsets(tos: { address: string; satoshis: number }[], feeRate: number): Promise<string>;
 }
 
 const WalletContext = createContext<{

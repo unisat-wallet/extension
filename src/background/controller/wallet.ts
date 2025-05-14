@@ -47,6 +47,7 @@ import {
   WalletKeyring
 } from '@/shared/types';
 import { checkAddressFlag, getChainInfo } from '@/shared/utils';
+import { psbtFromString } from '@/ui/utils/psbt-utils';
 import { txHelpers, UnspentOutput, UTXO_DUST } from '@unisat/wallet-sdk';
 import { isValidAddress, publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
 import { bitcoin, ECPair } from '@unisat/wallet-sdk/lib/bitcoin-core';
@@ -688,7 +689,7 @@ export class WalletController extends BaseController {
   };
 
   signPsbtWithHex = async (psbtHex: string, toSignInputs: ToSignInput[], autoFinalized: boolean) => {
-    const psbt = bitcoin.Psbt.fromHex(psbtHex);
+    const psbt = psbtFromString(psbtHex);
     await this.signPsbt(psbt, toSignInputs, autoFinalized);
     return psbt.toHex();
   };
@@ -2564,7 +2565,25 @@ export class WalletController extends BaseController {
     return openapiService.singleStepTransferBRC20Step3({ orderId: params.orderId, psbt: psbt.toBase64() });
   };
 
-  // createBabylonDeposit = async (amount: string) => {};
+  sendCoinBypassHeadOffsets = async (tos: { address: string; satoshis: number }[], feeRate: number) => {
+    const currentAccount = await this.getCurrentAccount();
+    if (!currentAccount) {
+      return;
+    }
+
+    const { psbtBase64, toSignInputs } = await openapiService.createSendCoinBypassHeadOffsets(
+      currentAccount.address,
+      currentAccount.pubkey,
+      tos,
+      feeRate
+    );
+
+    const psbt = bitcoin.Psbt.fromBase64(psbtBase64);
+    this.setPsbtSignNonSegwitEnable(psbt, true);
+    await this.signPsbt(psbt, toSignInputs, true);
+    this.setPsbtSignNonSegwitEnable(psbt, false);
+    return psbt.toHex();
+  };
 }
 
 export default new WalletController();
