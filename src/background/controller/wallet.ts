@@ -629,7 +629,9 @@ export class WalletController extends BaseController {
       if (isP2TR) {
         // fix p2tr input data
         let isKeyPathP2TR = false;
+
         try {
+          const originXPubkey = toXOnly(Buffer.from(account.pubkey, 'hex')).toString('hex');
           const tapInternalKey = toXOnly(Buffer.from(account.pubkey, 'hex'));
           const { output } = bitcoin.payments.p2tr({
             internalPubkey: tapInternalKey,
@@ -646,11 +648,23 @@ export class WalletController extends BaseController {
           }
 
           if (isKeyPathP2TR) {
-            // todo
+            // keypath p2tr should be signed with origin signer
           } else {
             const isToBeSigned: any = toSignInputs.find((v) => v.index === index);
-            if (isToBeSigned.useTweakedSigner == undefined) {
-              isToBeSigned.useTweakedSigner = false;
+            if (isToBeSigned.useTweakedSigner == undefined && isToBeSigned.disableTweakSigner == undefined) {
+              if (input.tapLeafScript && input.tapLeafScript.length > 0) {
+                const script = input.tapLeafScript[0].script.toString('hex');
+                if (script.includes(originXPubkey)) {
+                  // if tapLeafScript contains origin pubkey, use origin signer
+                  isToBeSigned.useTweakedSigner = false;
+                } else {
+                  // if tapLeafScript not contains origin pubkey, use tweaked signer
+                  isToBeSigned.useTweakedSigner = true;
+                }
+              } else {
+                // if no tapLeafScript, use origin signer
+                isToBeSigned.useTweakedSigner = false;
+              }
             }
           }
         } catch (e) {
