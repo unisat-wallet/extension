@@ -2092,5 +2092,8 @@
   },
   "sign_all_transactions_at_once": {
     "message": "您可以选择一次性签署所有交易，但请注意，UniSat Wallet 不会单独验证每笔交易。我们强烈建议仅在可信和熟悉的网站上使用它，以最大限度地降低潜在损失的风险。"
+  },
+  "message": {
+    "message": "消息"
   }
 }

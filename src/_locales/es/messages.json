@@ -2107,5 +2107,8 @@
   },
   "sign_all_transactions_at_once": {
     "message": "Tienes la opción de firmar todas las transacciones a la vez, pero ten en cuenta que UniSat Wallet no verificará cada transacción individualmente. Te recomendamos usarlo solo en sitios web de confianza y familiares para minimizar el riesgo de pérdidas potenciales."
+  },
+  "message": {
+    "message": "mensaje"
   }
 }

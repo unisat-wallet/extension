@@ -2119,5 +2119,8 @@
   },
   "sign_all_transactions_at_once": {
     "message": "You have the option to sign all transactions at once, but please note that UniSat Wallet will not verify each transaction individually. We strongly recommend using it only on trusted and familiar websites to minimize the risk of potential losses."
+  },
+  "message": {
+    "message": "message"
   }
 }
