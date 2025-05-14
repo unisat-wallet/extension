@@ -1,3 +1,4 @@
+import { Spin } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 
 import { AddressFlagType } from '@/shared/constant';
@@ -179,6 +180,15 @@ export default function WalletTabScreen() {
 
   const [switchChainModalVisible, setSwitchChainModalVisible] = useState(false);
 
+  if (!currentAccount.address) {
+    return (
+      <Layout>
+        <Content preset="middle" bg="background">
+          <Spin size="large" />
+        </Content>
+      </Layout>
+    );
+  }
   return (
     <Layout>
       <Header
