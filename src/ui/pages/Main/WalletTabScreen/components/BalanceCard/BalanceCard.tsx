@@ -1,21 +1,26 @@
 import { Tooltip } from 'antd';
 import classNames from 'classnames';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ChainType } from '@/shared/constant';
 import { Row } from '@/ui/components';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { Icon } from '@/ui/components/Icon';
+import { RefreshButton } from '@/ui/components/RefreshButton';
 import { getSpecialLocale, useI18n } from '@/ui/hooks/useI18n';
 import { useUtxoTools } from '@/ui/hooks/useUtxoTools';
 import { AppState } from '@/ui/state';
-import { useBTCUnit, useChain, useIsMainnetChain } from '@/ui/state/settings/hooks';
+import { useFetchBalanceCallback } from '@/ui/state/accounts/hooks';
+import { accountActions } from '@/ui/state/accounts/reducer';
+import { useBTCUnit, useChain } from '@/ui/state/settings/hooks';
 import { uiActions } from '@/ui/state/ui/reducer';
 import { satoshisToAmount } from '@/ui/utils';
 
 import styles from './BalanceCard.module.less';
 import { BalanceCardProps } from './interface';
+
+const DEBOUNCE_DELAY = 1000;
 
 const tooltipStyle = {
   maxWidth: '328px',
@@ -31,7 +36,7 @@ const tooltipStyle = {
   marginLeft: '-50px'
 };
 
-export function BalanceCard({ accountBalance, disableUtxoTools = true }: BalanceCardProps) {
+export function BalanceCard({ accountBalance, disableUtxoTools = true, enableRefresh = false }: BalanceCardProps) {
   const { t } = useI18n();
   const btcUnit = useBTCUnit();
   const chain = useChain();
@@ -42,6 +47,10 @@ export function BalanceCard({ accountBalance, disableUtxoTools = true }: Balance
 
   const [isSpecialLocale, setIsSpecialLocale] = useState(false);
 
+  const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
+
+  const fetchBalance = useFetchBalanceCallback();
+
   useEffect(() => {
     getSpecialLocale().then(({ isSpecialLocale }) => {
       setIsSpecialLocale(isSpecialLocale);
@@ -49,7 +58,6 @@ export function BalanceCard({ accountBalance, disableUtxoTools = true }: Balance
   }, []);
 
   const { openUtxoTools } = useUtxoTools(chain);
-  const isMainnetChain = useIsMainnetChain();
 
   const backgroundImage = chain.isFractal
     ? './images/artifacts/balance-bg-fb.png'
@@ -67,6 +75,45 @@ export function BalanceCard({ accountBalance, disableUtxoTools = true }: Balance
     e.stopPropagation();
     dispatch(uiActions.setBalanceHidden(!isBalanceHidden));
   };
+
+  const refreshBalance = useCallback(
+    (e?: React.MouseEvent) => {
+      if (e) {
+        e.stopPropagation();
+      }
+
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+
+      debounceTimerRef.current = setTimeout(() => {
+        dispatch(accountActions.expireBalance());
+        fetchBalance();
+        debounceTimerRef.current = null;
+      }, DEBOUNCE_DELAY);
+    },
+    [dispatch, fetchBalance]
+  );
+
+  useEffect(() => {
+    return () => {
+      if (debounceTimerRef.current) {
+        clearTimeout(debounceTimerRef.current);
+      }
+    };
+  }, []);
+
+  // Passive refresh every 10 seconds
+  useEffect(() => {
+    if (!enableRefresh) return;
+
+    const intervalId = setInterval(() => {
+      dispatch(accountActions.expireBalance());
+      fetchBalance();
+    }, 10000);
+
+    return () => clearInterval(intervalId);
+  }, [dispatch, fetchBalance, enableRefresh]);
 
   const EyeIcon = ({ onClick }: { onClick: (e: React.MouseEvent) => void }) => (
     <div onClick={onClick} style={{ cursor: 'pointer' }}>
@@ -91,7 +138,10 @@ export function BalanceCard({ accountBalance, disableUtxoTools = true }: Balance
 
       <div className={styles.header}>
         {t('total_balance')}
-        <EyeIcon onClick={toggleBalanceVisibility} />
+        <div style={{ display: 'flex', alignItems: 'center' }} onClick={(e) => e.stopPropagation()}>
+          <EyeIcon onClick={toggleBalanceVisibility} />
+          {enableRefresh && <RefreshButton onClick={refreshBalance as any} hideText />}
+        </div>
       </div>
 
       <div className={styles.balanceWrapper}>

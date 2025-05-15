@@ -30,7 +30,7 @@ import {
 } from '@/ui/state/settings/hooks';
 import { useAssetTabKey, useSupportedAssets } from '@/ui/state/ui/hooks';
 import { AssetTabKey, uiActions } from '@/ui/state/ui/reducer';
-import { useWallet } from '@/ui/utils';
+import { getUiType, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../../MainRoute';
 import { SwitchChainModal } from '../../Settings/SwitchChainModal';
@@ -75,6 +75,8 @@ export default function WalletTabScreen() {
   const addressSummary = useAddressSummary();
 
   const isUnlocked = useIsUnlocked();
+
+  const { isSidePanel } = getUiType();
 
   useEffect(() => {
     if (!isUnlocked) {
@@ -241,7 +243,11 @@ export default function WalletTabScreen() {
             </Column>
           )}
 
-          <BalanceCard accountBalance={accountBalance} disableUtxoTools={walletConfig.disableUtxoTools} />
+          <BalanceCard
+            accountBalance={accountBalance}
+            disableUtxoTools={walletConfig.disableUtxoTools}
+            enableRefresh={isSidePanel}
+          />
 
           <WalletActions address={currentAccount?.address} chain={chain} />
 

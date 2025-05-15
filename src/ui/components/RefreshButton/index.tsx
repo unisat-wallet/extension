@@ -5,10 +5,19 @@ import { ReloadOutlined } from '@ant-design/icons';
 
 import { Row } from '../Row';
 import { Text } from '../Text';
+import styles from './index.module.less';
 
-export function RefreshButton({ onClick }: { onClick: ReactEventHandler<HTMLDivElement> }) {
+export function RefreshButton({
+  onClick,
+  hideText = false
+}: {
+  onClick: ReactEventHandler<HTMLDivElement>;
+  hideText?: boolean;
+}) {
   const [leftTime, setLeftTime] = useState(0);
   const [disabled, setDisabled] = useState(false);
+  const [isRotating, setIsRotating] = useState(false);
+
   const wait = (seconds: number) => {
     if (seconds > 0) {
       setLeftTime(seconds);
@@ -30,11 +39,19 @@ export function RefreshButton({ onClick }: { onClick: ReactEventHandler<HTMLDivE
           return;
         }
         setDisabled(true);
+        setIsRotating(true);
+
+        setTimeout(() => {
+          setIsRotating(false);
+        }, 1000);
+
         wait(5);
         onClick(e);
       }}>
-      <ReloadOutlined style={{ fontSize: 12 }} />
-      <Text text={disabled ? `${leftTime} ${t('secs')}` : t('refresh')} color="white" size="sm" textCenter />
+      <ReloadOutlined className={isRotating ? styles.rotate : ''} style={{ fontSize: 12 }} />
+      {!hideText && (
+        <Text text={disabled ? `${leftTime} ${t('secs')}` : t('refresh')} color="white" size="sm" textCenter />
+      )}
     </Row>
   );
 }
