@@ -18,6 +18,7 @@ import { getCurrentTab } from '@/ui/features/browser/tabs';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { useAccountBalance, useAddressSummary, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { accountActions } from '@/ui/state/accounts/reducer';
+import { useIsUnlocked } from '@/ui/state/global/hooks';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import {
@@ -72,6 +73,14 @@ export default function WalletTabScreen() {
   const [showDisableUnconfirmedUtxoNotice, setShowDisableUnconfirmedUtxoNotice] = useState(false);
 
   const addressSummary = useAddressSummary();
+
+  const isUnlocked = useIsUnlocked();
+
+  useEffect(() => {
+    if (!isUnlocked) {
+      navigate('UnlockScreen');
+    }
+  }, [isUnlocked]);
 
   useEffect(() => {
     if (currentAccount.address === addressSummary.address) {
