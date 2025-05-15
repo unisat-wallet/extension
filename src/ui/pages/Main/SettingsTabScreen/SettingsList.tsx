@@ -103,7 +103,12 @@ export function SettingsList() {
     }
     if (item.action === SettingsAction.LOCK_WALLET) {
       wallet.lockWallet();
-      navigate('/account/unlock');
+
+      // Add small delay to ensure lock state updates before navigation
+      // Prevents race condition where unlock screen might redirect back to main
+      setTimeout(() => {
+        navigate('/account/unlock');
+      }, 10);
       return;
     }
 
