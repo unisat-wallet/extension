@@ -394,7 +394,7 @@
     "message": "アクティブアドレス (24時間)"
   },
   "go_to_unisat_explorer": {
-    "message": "UniSat Explorerへ移動"
+    "message": "UniScanへ移動"
   },
   "search_address_and_txids": {
     "message": "アドレスとTXIDを検索"

@@ -253,7 +253,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     mempoolSpaceUrl: 'https://mempool.space',
     unisatUrl: 'https://unisat.io',
     ordinalsUrl: 'https://ordinals.com',
-    unisatExplorerUrl: 'https://unisat.io/explorer',
+    unisatExplorerUrl: 'https://uniscan.cc',
     okxExplorerUrl: '',
     showPrice: true,
     defaultExplorer: 'mempool-space'
@@ -317,7 +317,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     mempoolSpaceUrl: 'https://mempool.fractalbitcoin.io',
     unisatUrl: 'https://fractal.unisat.io',
     ordinalsUrl: 'https://ordinals.fractalbitcoin.io',
-    unisatExplorerUrl: 'https://fractal.unisat.io/explorer',
+    unisatExplorerUrl: 'https://fractal.uniscan.cc',
     okxExplorerUrl: '',
     isViewTxHistoryInternally: false,
     disable: false,

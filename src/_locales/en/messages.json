@@ -396,7 +396,7 @@
     "message": "Active Addresses (24h)"
   },
   "go_to_unisat_explorer": {
-    "message": "Go to UniSat Explorer"
+    "message": "Go to UniScan"
   },
   "search_address_and_txids": {
     "message": "Search Address and TXIDs"
