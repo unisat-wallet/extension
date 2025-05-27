@@ -2121,9 +2121,6 @@
   "per_mint": {
     "message": "за монету"
   },
-  "alkanes_id": {
-    "message": "Идентификатор Алканов"
-  },
   "total_supply": {
     "message": "Общее предложение"
   },

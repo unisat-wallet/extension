@@ -510,7 +510,7 @@
     "message": "Send CAT721"
   },
   "collection_id": {
-    "message": "Collection Id"
+    "message": "Collection ID"
   },
   "collection": {
     "message": "Collection"
@@ -2124,10 +2124,7 @@
     "message": "message"
   },
   "per_mint": {
-    "message": "per mint"
-  },
-  "alkanes_id": {
-    "message": "AlkanesID"
+    "message": "PerMint"
   },
   "total_supply": {
     "message": "Total Supply"

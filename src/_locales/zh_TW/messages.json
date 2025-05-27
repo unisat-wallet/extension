@@ -2126,9 +2126,6 @@
   "per_mint": {
     "message": "單次鑄造量"
   },
-  "alkanes_id": {
-    "message": "AlkanesID"
-  },
   "total_supply": {
     "message": "總發行量"
   },

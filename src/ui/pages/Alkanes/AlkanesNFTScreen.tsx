@@ -49,12 +49,12 @@ export default function AlkanesNFTScreen() {
 
         <Card style={{ borderRadius: 15 }}>
           <Column fullX my="sm">
-            <Section title={t('name')} value={alkanesInfo.name} />
+            <Section title={t('name_label')} value={alkanesInfo.name} />
             <Line />
 
-            <Section title={t('symbol')} value={alkanesInfo.symbol} />
+            <Section title={t('symbol_alkanes')} value={alkanesInfo.symbol} />
             <Line />
-            <Section title={t('alkaneid')} value={alkanesInfo.alkaneid} showCopyIcon />
+            <Section title={'Alkanes ID'} value={alkanesInfo.alkaneid} showCopyIcon />
           </Column>
         </Card>
         <Button

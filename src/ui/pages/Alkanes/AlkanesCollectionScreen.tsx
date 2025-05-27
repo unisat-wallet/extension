@@ -105,16 +105,16 @@ export default function AlkanesCollectionScreen() {
             <Column fullX my="sm">
               <Section title={t('collection_id')} value={collectionSummary.collectionInfo.alkaneid} showCopyIcon />
               <Line />
-              <Section title={t('name')} value={collectionSummary.collectionInfo.name} />
+              <Section title={t('name_label')} value={collectionSummary.collectionInfo.name} />
               <Line />
-              <Section title={t('symbol')} value={collectionSummary.collectionInfo.symbol} />
+              <Section title={t('symbol_alkanes')} value={collectionSummary.collectionInfo.symbol} />
               <Line />
 
               <Section title={t('total_supply')} value={collectionSummary.collectionInfo.totalSupply.toString()} />
               <Line />
 
               <Section
-                title={t('holders')}
+                title={t('holders_alkanes')}
                 value={collectionSummary.collectionInfo.collectionData?.holders.toString() || '--'}
               />
             </Column>

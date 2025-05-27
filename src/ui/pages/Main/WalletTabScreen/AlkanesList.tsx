@@ -83,15 +83,19 @@ export function AlkanesList() {
         ))}
       </Row>
 
-      <Row justifyCenter mt="lg">
-        <Pagination
-          pagination={pagination}
-          total={total}
-          onChange={(pagination) => {
-            setPagination(pagination);
-          }}
-        />
-      </Row>
+      {tokens.length > 0 ? (
+        <Row justifyCenter mt="lg">
+          <Pagination
+            pagination={pagination}
+            total={total}
+            onChange={(pagination) => {
+              setPagination(pagination);
+            }}
+          />
+        </Row>
+      ) : (
+        <Empty text={t('empty')} />
+      )}
     </Column>
   );
 }

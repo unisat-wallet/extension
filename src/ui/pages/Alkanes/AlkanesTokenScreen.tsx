@@ -171,19 +171,19 @@ export default function AlkanesTokenScreen() {
               backgroundColor: 'rgba(255,255,255,0.08)',
               borderRadius: 15
             }}>
-            <Section title={t('alkanes_id')} value={tokenSummary.tokenBalance.alkaneid} />
+            <Section title={'Alkanes ID'} value={tokenSummary.tokenBalance.alkaneid} />
             <Line />
 
-            <Section title={t('name_alkanes')} value={tokenSummary.tokenBalance.name} />
+            <Section title={t('name_label')} value={tokenSummary.tokenBalance.name} />
             <Line />
 
             <Section title={t('symbol_alkanes')} value={tokenSummary.tokenBalance.symbol} />
             <Line />
 
-            <Section title={t('decimals')} value={tokenSummary.tokenBalance.divisibility} />
+            <Section title={t('decimals_alkanes')} value={tokenSummary.tokenBalance.divisibility} />
             <Line />
 
-            <Section title={t('holders')} value={tokenSummary.tokenInfo.holders} />
+            <Section title={t('holders_alkanes')} value={tokenSummary.tokenInfo.holders} />
             <Line />
 
             <Section

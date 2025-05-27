@@ -2099,9 +2099,6 @@
   "per_mint": {
     "message": "每次铸造"
   },
-  "alkanes_id": {
-    "message": "AlkanesID"
-  },
   "total_supply": {
     "message": "总供应量"
   },
