@@ -8,6 +8,31 @@ import eventBus from '@/shared/eventBus';
 
 import providerController from './controller';
 
+class UnlockManager {
+  private unlockPromise: Promise<any> | null = null;
+  private isUnlocking = false;
+
+  async getUnlockPromise(): Promise<any> {
+    if (keyringService.memStore.getState().isUnlocked) {
+      return Promise.resolve();
+    }
+
+    if (this.isUnlocking && this.unlockPromise) {
+      return this.unlockPromise;
+    }
+
+    this.isUnlocking = true;
+    this.unlockPromise = notificationService.requestApproval({ lock: true }).finally(() => {
+      this.isUnlocking = false;
+      this.unlockPromise = null;
+    });
+
+    return this.unlockPromise;
+  }
+}
+
+const unlockManager = new UnlockManager();
+
 const isSignApproval = (type: string) => {
   const SIGN_APPROVALS = ['SignText', 'SignPsbt', 'SignTx', 'SignData'];
   return SIGN_APPROVALS.includes(type);
@@ -39,7 +64,7 @@ const flowContext = flow
 
       if (!isUnlock) {
         ctx.request.requestedApproval = true;
-        await notificationService.requestApproval({ lock: true });
+        await unlockManager.getUnlockPromise();
       }
     }
 
