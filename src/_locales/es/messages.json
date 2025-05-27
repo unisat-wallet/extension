@@ -2110,5 +2110,50 @@
   },
   "message": {
     "message": "mensaje"
+  },
+  "per_mint": {
+    "message": "por acuñación"
+  },
+  "alkanes_id": {
+    "message": "AlkanesID"
+  },
+  "total_supply": {
+    "message": "Suministro total"
+  },
+  "minted_alkanes": {
+    "message": "Acuñado"
+  },
+  "cap": {
+    "message": "Límite"
+  },
+  "decimals_alkanes": {
+    "message": "Decimales"
+  },
+  "symbol_alkanes": {
+    "message": "Símbolo"
+  },
+  "holders_alkanes": {
+    "message": "Titulares"
+  },
+  "send_alkanes": {
+    "message": "Enviar Alkanes"
+  },
+  "send_amount_exceeds_balance": {
+    "message": "El monto de envío excede el saldo"
+  },
+  "scroll_to_view_all": {
+    "message": "desplazar para ver todos"
+  },
+  "no_inputs": {
+    "message": "No hay entradas"
+  },
+  "scroll_to_top": {
+    "message": "↑ Arriba"
+  },
+  "scroll_to_bottom": {
+    "message": "↓ Abajo"
+  },
+  "scroll_view_items": {
+    "message": "elementos"
   }
 }

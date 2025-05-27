@@ -8,6 +8,7 @@ export interface UIState {
   ordinalsAssetTabKey: OrdinalsAssetTabKey;
   atomicalsAssetTabKey: AtomicalsAssetTabKey;
   catAssetTabKey: CATAssetTabKey;
+  alkanesAssetTabKey: AlkanesAssetTabKey;
   uiTxCreateScreen: {
     toInfo: {
       address: string;
@@ -30,7 +31,8 @@ export enum AssetTabKey {
   ORDINALS,
   ATOMICALS,
   RUNES,
-  CAT
+  CAT,
+  ALKANES
 }
 
 export enum OrdinalsAssetTabKey {
@@ -50,6 +52,11 @@ export enum CATAssetTabKey {
   CAT721
 }
 
+export enum AlkanesAssetTabKey {
+  TOKEN,
+  COLLECTION
+}
+
 export enum NavigationSource {
   BACK,
   NORMAL
@@ -60,6 +67,7 @@ export const initialState: UIState = {
   ordinalsAssetTabKey: OrdinalsAssetTabKey.ALL,
   atomicalsAssetTabKey: AtomicalsAssetTabKey.ARC20,
   catAssetTabKey: CATAssetTabKey.CAT20,
+  alkanesAssetTabKey: AlkanesAssetTabKey.TOKEN,
   uiTxCreateScreen: {
     toInfo: {
       address: '',
@@ -93,6 +101,7 @@ const slice = createSlice({
           ordinalsAssetTabKey?: OrdinalsAssetTabKey;
           atomicalsAssetTabKey?: AtomicalsAssetTabKey;
           catAssetTabKey?: CATAssetTabKey;
+          alkanesAssetTabKey?: AlkanesAssetTabKey;
         };
       }
     ) {
@@ -108,6 +117,9 @@ const slice = createSlice({
       }
       if (payload.catAssetTabKey !== undefined) {
         state.catAssetTabKey = payload.catAssetTabKey;
+      }
+      if (payload.alkanesAssetTabKey !== undefined) {
+        state.alkanesAssetTabKey = payload.alkanesAssetTabKey;
       }
       return state;
     },
@@ -182,6 +194,9 @@ const slice = createSlice({
       }
       if (!state.catAssetTabKey) {
         state.catAssetTabKey = CATAssetTabKey.CAT20;
+      }
+      if (!state.alkanesAssetTabKey) {
+        state.alkanesAssetTabKey = AlkanesAssetTabKey.TOKEN;
       }
       if (!state.uiTxCreateScreen) {
         state.uiTxCreateScreen = initialState.uiTxCreateScreen;

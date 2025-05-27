@@ -1544,6 +1544,10 @@ export class WalletController extends BaseController {
     return openapiService.getCAT20sPrice(tokenIds);
   };
 
+  getAlkanesPrice = async (alkaneids: string[]) => {
+    return openapiService.getAlkanesPrice(alkaneids);
+  };
+
   inscribeBRC20Transfer = (address: string, tick: string, amount: string, feeRate: number, outputValue: number) => {
     return openapiService.inscribeBRC20Transfer(address, tick, amount, feeRate, outputValue);
   };
@@ -2136,7 +2140,6 @@ export class WalletController extends BaseController {
       runeAmount,
       outputValue: outputValue || UTXO_DUST
     });
-
     this.setPsbtSignNonSegwitEnable(psbt, true);
     await this.signPsbt(psbt, toSignInputs, true);
     this.setPsbtSignNonSegwitEnable(psbt, false);
@@ -2597,6 +2600,123 @@ export class WalletController extends BaseController {
     await this.signPsbt(psbt, toSignInputs, true);
     this.setPsbtSignNonSegwitEnable(psbt, false);
     return psbt.toHex();
+  };
+  // createBabylonDeposit = async (amount: string) => {};
+
+  getAlkanesList = async (address: string, currentPage: number, pageSize: number) => {
+    const cursor = (currentPage - 1) * pageSize;
+    const size = pageSize;
+    const { total, list } = await openapiService.getAlkanesList(address, cursor, size);
+
+    return {
+      currentPage,
+      pageSize,
+      total,
+      list
+    };
+  };
+
+  getAssetUtxosAlkanes = async (alkaneid: string) => {
+    const account = preferenceService.getCurrentAccount();
+    if (!account) throw new Error('no current account');
+    const runes_utxos = await openapiService.getAlkanesUtxos(account.address, alkaneid);
+
+    const assetUtxos = runes_utxos.map((v) => {
+      return Object.assign(v, { pubkey: account.pubkey });
+    });
+
+    assetUtxos.forEach((v) => {
+      v.inscriptions = [];
+      v.atomicals = [];
+    });
+
+    return assetUtxos;
+  };
+
+  getAddressAlkanesTokenSummary = async (address: string, runeid: string, fetchAvailable: boolean) => {
+    const tokenSummary = await openapiService.getAddressAlkanesTokenSummary(address, runeid, fetchAvailable);
+    return tokenSummary;
+  };
+
+  createAlkanesSendTx = async (params: {
+    userAddress: string;
+    userPubkey: string;
+    receiver: string;
+    alkaneid: string;
+    amount: string;
+    feeRate: number;
+  }) => {
+    return openapiService.createAlkanesSendTx(params);
+  };
+
+  signAlkanesSendTx = async (params: { commitTx: string; toSignInputs: ToSignInput[] }) => {
+    const networkType = this.getNetworkType();
+    const psbtNetwork = toPsbtNetwork(networkType);
+    const psbt = bitcoin.Psbt.fromHex(params.commitTx, { network: psbtNetwork });
+    await this.signPsbt(psbt, params.toSignInputs, true);
+
+    const rawtx = psbt.extractTransaction(true).toHex();
+    const txid = await this.pushTx(rawtx);
+    return { txid };
+  };
+
+  sendAlkanes = async ({
+    to,
+    alkaneid,
+    amount,
+    feeRate,
+    enableRBF,
+    btcUtxos,
+    assetUtxos
+  }: {
+    to: string;
+    alkaneid: string;
+    amount: string;
+    feeRate: number;
+    enableRBF: boolean;
+    btcUtxos?: UnspentOutput[];
+    assetUtxos?: UnspentOutput[];
+  }) => {
+    const account = preferenceService.getCurrentAccount();
+    if (!account) throw new Error('no current account');
+
+    const txData = await this.createAlkanesSendTx({
+      userAddress: account.address,
+      userPubkey: account.pubkey,
+      receiver: to,
+      alkaneid,
+      amount,
+      feeRate
+    });
+
+    const result = await this.signAlkanesSendTx({ commitTx: txData.psbtHex, toSignInputs: txData.toSignInputs as any });
+    return result.txid;
+  };
+
+  getAlkanesCollectionList = async (address: string, currentPage: number, pageSize: number) => {
+    const cursor = (currentPage - 1) * pageSize;
+    const size = pageSize;
+    const { total, list } = await openapiService.getAlkanesCollectionList(address, cursor, size);
+
+    return {
+      currentPage,
+      pageSize,
+      total,
+      list
+    };
+  };
+
+  getAlkanesCollectionItems = async (address: string, collectionId: string, currentPage: number, pageSize: number) => {
+    const cursor = (currentPage - 1) * pageSize;
+    const size = pageSize;
+    const { total, list } = await openapiService.getAlkanesCollectionItems(address, collectionId, cursor, size);
+
+    return {
+      currentPage,
+      pageSize,
+      total,
+      list
+    };
   };
 }
 

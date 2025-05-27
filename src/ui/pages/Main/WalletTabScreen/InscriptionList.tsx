@@ -37,8 +37,8 @@ export function InscriptionList() {
   }, []);
 
   const fetchInscriptions = useCallback(
-    async (address: string, page: number, pageSize: number) => {
-      return wallet.getOrdinalsInscriptions(address, page, pageSize);
+    async (fetchParams: { address: string }, page: number, pageSize: number) => {
+      return wallet.getOrdinalsInscriptions(fetchParams.address, page, pageSize);
     },
     [wallet]
   );
@@ -77,7 +77,7 @@ export function InscriptionList() {
 
   return (
     <VirtualList<Inscription>
-      address={currentAccount.address}
+      fetchParams={{ address: currentAccount.address }}
       chainType={chainType}
       fetchData={fetchInscriptions}
       renderItem={renderInscription}

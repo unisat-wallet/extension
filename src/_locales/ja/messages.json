@@ -2117,5 +2117,50 @@
   },
   "message": {
     "message": "メッセージ"
+  },
+  "per_mint": {
+    "message": "単位鋳造"
+  },
+  "alkanes_id": {
+    "message": "アルカンズID"
+  },
+  "total_supply": {
+    "message": "総供給"
+  },
+  "minted_alkanes": {
+    "message": "鋳造済み"
+  },
+  "cap": {
+    "message": "上限"
+  },
+  "decimals_alkanes": {
+    "message": "小数点"
+  },
+  "symbol_alkanes": {
+    "message": "シンボル"
+  },
+  "holders_alkanes": {
+    "message": "保有者"
+  },
+  "send_alkanes": {
+    "message": "アルカンズ送信"
+  },
+  "send_amount_exceeds_balance": {
+    "message": "送信金額が残高を超えています"
+  },
+  "scroll_to_view_all": {
+    "message": "すべてを表示するにはスクロール"
+  },
+  "no_inputs": {
+    "message": "入力なし"
+  },
+  "scroll_to_top": {
+    "message": "↑ トップ"
+  },
+  "scroll_to_bottom": {
+    "message": "↓ ボトム"
+  },
+  "scroll_view_items": {
+    "message": "アイテム"
   }
 }

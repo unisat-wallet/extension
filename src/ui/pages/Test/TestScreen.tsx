@@ -28,6 +28,10 @@ export default function TestScreen() {
     return <TestApprovalMultiSignMessage />;
   }
 
+  if (testComponent === 'alkanesSign') {
+    return <TestAlkanesSign />;
+  }
+
   return (
     <Layout>
       <Content>
@@ -51,6 +55,13 @@ export default function TestScreen() {
               setTestComponent('multiSignMessage');
             }}>
             <Text text="Test Multi Sign Message" />
+          </Card>
+
+          <Card
+            onClick={() => {
+              setTestComponent('alkanesSign');
+            }}>
+            <Text text="Test Alkanes Sign" />
           </Card>
         </Column>
       </Content>
@@ -339,5 +350,282 @@ function TestAddressTypeCard() {
         </Column>
       </Content>
     </Layout>
+  );
+}
+
+function TestAlkanesSign() {
+  const testData = {
+    code: 0,
+    msg: 'ok',
+    data: {
+      inputInfos: [
+        {
+          txid: '9da62e46634f12b29d5551c2ae925375dffb24507aadc26e33a127a8e030e906',
+          vout: 2,
+          address: 'bc1qmwsjwy4vrt097vze9mu6mnasqr4j0jj9u8ljcv',
+          value: 546,
+          inscriptions: [],
+          atomicals: [],
+          runes: [
+            {
+              rune: 'AMAZINGPYRAMIDNUMBER',
+              runeid: '840002:4',
+              spacedRune: 'AMAZING•PYRAMID•NUMBER',
+              amount: '39',
+              symbol: '₦',
+              divisibility: 0
+            }
+          ],
+          onchain: false,
+          utxoStatus: {
+            utxoFound: true,
+            atomicalsChecked: true,
+            inscriptionDoubleChecked: true,
+            isConfirmed: true,
+            runesChecked: true,
+            indexerChecked: true,
+            unlocked: false
+          },
+          brc20Count: 0,
+          height: 897374
+        },
+        {
+          txid: 'bb881b7d5894f0ea5803ba7dcfff70f874a3eed6351de880b76c09e274c8b238',
+          vout: 3,
+          address: 'bc1qmwsjwy4vrt097vze9mu6mnasqr4j0jj9u8ljcv',
+          value: 116547,
+          inscriptions: [],
+          atomicals: [],
+          runes: [],
+          onchain: false,
+          utxoStatus: {
+            utxoFound: true,
+            atomicalsChecked: true,
+            inscriptionDoubleChecked: true,
+            isConfirmed: true,
+            runesChecked: true,
+            indexerChecked: true,
+            unlocked: false
+          },
+          brc20Count: 0,
+          height: 897666
+        }
+      ],
+      outputInfos: [
+        {
+          address: 'OP_RETURN 0700c2a233040102 ',
+          value: 0,
+          inscriptions: [],
+          atomicals: [],
+          runes: [],
+          isOpReturn: true
+        },
+        {
+          address: 'bc1qmwsjwy4vrt097vze9mu6mnasqr4j0jj9u8ljcv',
+          value: 546,
+          inscriptions: [],
+          atomicals: [],
+          runes: [
+            {
+              rune: 'AMAZINGPYRAMIDNUMBER',
+              runeid: '840002:4',
+              spacedRune: 'AMAZING•PYRAMID•NUMBER',
+              symbol: '₦',
+              divisibility: 0,
+              amount: '38'
+            }
+          ],
+          isOpReturn: false
+        },
+        {
+          address: 'bc1qmwsjwy4vrt097vze9mu6mnasqr4j0jj9u8ljcv',
+          value: 546,
+          inscriptions: [],
+          atomicals: [],
+          runes: [
+            {
+              rune: 'AMAZINGPYRAMIDNUMBER',
+              runeid: '840002:4',
+              spacedRune: 'AMAZING•PYRAMID•NUMBER',
+              symbol: '₦',
+              divisibility: 0,
+              amount: '1'
+            }
+          ],
+          isOpReturn: false
+        },
+        {
+          address: 'bc1qmwsjwy4vrt097vze9mu6mnasqr4j0jj9u8ljcv',
+          value: 115224,
+          inscriptions: [],
+          atomicals: [],
+          runes: [],
+          isOpReturn: false
+        }
+      ],
+      feeRate: '3.0',
+      fee: 777,
+      isCompleted: true,
+      risks: [],
+      features: {
+        rbf: false
+      },
+      inscriptions: {},
+      recommendedFeeRate: 3,
+      shouldWarnFeeRate: false
+    }
+  };
+
+  const alkanesTestData = {
+    code: 0,
+    msg: 'ok',
+    data: {
+      inputInfos: [
+        {
+          txid: '9da62e46634f12b29d5551c2ae925375dffb24507aadc26e33a127a8e030e906',
+          vout: 2,
+          address: 'bc1qmwsjwy4vrt097vze9mu6mnasqr4j0jj9u8ljcv',
+          value: 546,
+          inscriptions: [],
+          atomicals: [],
+          alkanes: [
+            {
+              alkaneid: 'ALK123456',
+              name: 'TESTALKANE',
+              amount: '39',
+              symbol: 'TA',
+              divisibility: 0
+            }
+          ],
+          onchain: false,
+          utxoStatus: {
+            utxoFound: true,
+            atomicalsChecked: true,
+            inscriptionDoubleChecked: true,
+            isConfirmed: true,
+            alkanesChecked: true,
+            indexerChecked: true,
+            unlocked: false
+          },
+          brc20Count: 0,
+          height: 897374
+        },
+        {
+          txid: 'bb881b7d5894f0ea5803ba7dcfff70f874a3eed6351de880b76c09e274c8b238',
+          vout: 3,
+          address: 'bc1qmwsjwy4vrt097vze9mu6mnasqr4j0jj9u8ljcv',
+          value: 116547,
+          inscriptions: [],
+          atomicals: [],
+          alkanes: [],
+          onchain: false,
+          utxoStatus: {
+            utxoFound: true,
+            atomicalsChecked: true,
+            inscriptionDoubleChecked: true,
+            isConfirmed: true,
+            alkanesChecked: true,
+            indexerChecked: true,
+            unlocked: false
+          },
+          brc20Count: 0,
+          height: 897666
+        }
+      ],
+      outputInfos: [
+        {
+          address: 'OP_RETURN 0700c2a233040102 ',
+          value: 0,
+          inscriptions: [],
+          atomicals: [],
+          alkanes: [],
+          isOpReturn: true
+        },
+        {
+          address: 'bc1qmwsjwy4vrt097vze9mu6mnasqr4j0jj9u8ljcv',
+          value: 546,
+          inscriptions: [],
+          atomicals: [],
+          alkanes: [
+            {
+              alkaneid: 'ALK123456',
+              name: 'TESTALKANE',
+              symbol: 'TA',
+              divisibility: 0,
+              amount: '38'
+            }
+          ],
+          isOpReturn: false
+        },
+        {
+          address: 'bc1qmwsjwy4vrt097vze9mu6mnasqr4j0jj9u8ljcv',
+          value: 546,
+          inscriptions: [],
+          atomicals: [],
+          alkanes: [
+            {
+              alkaneid: 'ALK123456',
+              name: 'TESTALKANE',
+              symbol: 'TA',
+              divisibility: 0,
+              amount: '1'
+            }
+          ],
+          isOpReturn: false
+        },
+        {
+          address: 'bc1qmwsjwy4vrt097vze9mu6mnasqr4j0jj9u8ljcv',
+          value: 115224,
+          inscriptions: [],
+          atomicals: [],
+          alkanes: [],
+          isOpReturn: false
+        }
+      ],
+      feeRate: '3.0',
+      fee: 777,
+      isCompleted: true,
+      risks: [],
+      features: {
+        rbf: false
+      },
+      inscriptions: {},
+      recommendedFeeRate: 3,
+      shouldWarnFeeRate: false
+    }
+  };
+
+  const psbtHex =
+    '70736274ff01007d0200000001d0baba4fd7980fe2c29b1efc4eb9eb2aa43aa1a4dbe2d9f8f38facef3446f5900100000000fdffffff02a086010000000000225120517aaf863dcf93a135664bbede4dc219c054a63fdd5b8b10a7c2b61bd8d3e28f3fc95500000000001600143dcf0a89a523ff619a31af413954960414a7c21e000000000001011f79505700000000001600143dcf0a89a523ff619a31af413954960414a7c21e01086c024830450221008b3706ec6cff7e882fe6dbcbeacc09195f3f10f8b268acce6367bf4f37058edd02203ca6b1c8f6efdad8f6aa63cfe091d5871e1f19d44e3e267d311c31e51cb81f1c0121026887958bcc4cb6f8c04ea49260f0d10e312c41baf485252953b14724db552aac000000';
+
+  return (
+    <SignPsbt
+      params={{
+        data: {
+          psbtHex,
+          type: TxType.SEND_ALKANES,
+          rawTxInfo: {
+            psbtHex,
+            rawtx: '',
+            toAddressInfo: {
+              address: 'bc1qmwsjwy4vrt097vze9mu6mnasqr4j0jj9u8ljcv'
+            },
+            fee: 777
+          },
+          sendAlkanesParams: {
+            toAddress: 'bc1qmwsjwy4vrt097vze9mu6mnasqr4j0jj9u8ljcv',
+            alkaneid: 'ALK123456',
+            amount: '1',
+            feeRate: 3.0
+          },
+          options: { autoFinalized: false }
+        },
+        session: {
+          origin: 'https://unisat.io',
+          icon: 'https://unisat.io/favicon.ico',
+          name: 'UniSat Wallet'
+        }
+      }}
+    />
   );
 }

@@ -773,3 +773,21 @@ export function useRunesTx() {
   const transactionsState = useTransactionsState();
   return transactionsState.runesTx;
 }
+
+export function usePrepareSendAlkanesCallback() {
+  const wallet = useWallet();
+  const account = useCurrentAccount();
+  const callback = useCallback(
+    async (toAddressInfo: ToAddressInfo, alkaneid: string, amount: string, feeRate: number, enableRBF = false) => {
+      return await wallet.sendAlkanes({
+        to: toAddressInfo.address,
+        alkaneid,
+        amount,
+        feeRate,
+        enableRBF
+      });
+    },
+    [wallet, account]
+  );
+  return callback;
+}

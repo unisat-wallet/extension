@@ -2117,5 +2117,50 @@
   },
   "message": {
     "message": "сообщение"
+  },
+  "per_mint": {
+    "message": "за монету"
+  },
+  "alkanes_id": {
+    "message": "Идентификатор Алканов"
+  },
+  "total_supply": {
+    "message": "Общее предложение"
+  },
+  "minted_alkanes": {
+    "message": "Отчеканено"
+  },
+  "cap": {
+    "message": "Предел"
+  },
+  "decimals_alkanes": {
+    "message": "Десятичные"
+  },
+  "symbol_alkanes": {
+    "message": "Символ"
+  },
+  "holders_alkanes": {
+    "message": "Держатели"
+  },
+  "send_alkanes": {
+    "message": "Отправить Алканов"
+  },
+  "send_amount_exceeds_balance": {
+    "message": "Сумма отправки превышает баланс"
+  },
+  "scroll_to_view_all": {
+    "message": "Прокрутить, чтобы просмотреть все"
+  },
+  "no_inputs": {
+    "message": "Нет входов"
+  },
+  "scroll_to_top": {
+    "message": "↑ Вверх"
+  },
+  "scroll_to_bottom": {
+    "message": "↓ Вниз"
+  },
+  "scroll_view_items": {
+    "message": "элементы"
   }
 }

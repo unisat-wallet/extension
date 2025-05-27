@@ -1,4 +1,3 @@
-import { Spin } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 
 import { AddressFlagType } from '@/shared/constant';
@@ -8,6 +7,7 @@ import { Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/c
 import AccountSelect from '@/ui/components/AccountSelect';
 import { DisableUnconfirmedsPopover } from '@/ui/components/DisableUnconfirmedPopover';
 import { FeeRateIcon } from '@/ui/components/FeeRateIcon';
+import LoadingPage from '@/ui/components/LoadingPage';
 import { NavTabBar } from '@/ui/components/NavTabBar';
 import { NoticePopover } from '@/ui/components/NoticePopover';
 import { SwitchNetworkBar } from '@/ui/components/SwitchNetworkBar';
@@ -34,6 +34,7 @@ import { getUiType, useWallet } from '@/ui/utils';
 
 import { useNavigate } from '../../MainRoute';
 import { SwitchChainModal } from '../../Settings/SwitchChainModal';
+import { AlkanesTab } from './AlkanesTab';
 import { AtomicalsTab } from './AtomicalsTab';
 import { CATTab } from './CATTab';
 import { OrdinalsTab } from './OrdinalsTab';
@@ -172,6 +173,13 @@ export default function WalletTabScreen() {
         children: <RunesList />
       });
     }
+    if (supportedAssets.assets.alkanes) {
+      items.push({
+        key: AssetTabKey.ALKANES,
+        label: 'Alkanes',
+        children: <AlkanesTab />
+      });
+    }
     if (supportedAssets.assets.CAT20) {
       items.push({
         key: AssetTabKey.CAT,
@@ -192,13 +200,7 @@ export default function WalletTabScreen() {
   const [switchChainModalVisible, setSwitchChainModalVisible] = useState(false);
 
   if (!currentAccount.address) {
-    return (
-      <Layout>
-        <Content preset="middle" bg="background">
-          <Spin size="large" />
-        </Content>
-      </Layout>
-    );
+    return <LoadingPage />;
   }
   return (
     <Layout>

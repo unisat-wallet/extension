@@ -1,7 +1,5 @@
 import { useMemo, useState } from 'react';
 
-import { ToAddressInfo } from '@/shared/types';
-import { ColorTypes } from '@/ui/theme/colors';
 import { shortAddress } from '@/ui/utils';
 
 import { AccordingInscription } from '../AccordingInscription';
@@ -10,13 +8,9 @@ import { Column } from '../Column';
 import { CopyableAddress } from '../CopyableAddress';
 import { Row } from '../Row';
 import { Text } from '../Text';
+import { AddressTextProps } from './interface';
 
-export const AddressText = (props: {
-  address?: string;
-  addressInfo?: ToAddressInfo;
-  textCenter?: boolean;
-  color?: ColorTypes;
-}) => {
+export const AddressText = (props: AddressTextProps) => {
   const [popoverVisible, setPopoverVisible] = useState(false);
   const address = useMemo(() => {
     if (props.address) {
@@ -29,6 +23,7 @@ export const AddressText = (props: {
   }, []);
   const domain = props.addressInfo?.domain;
   const inscription = props.addressInfo?.inscription;
+
   return (
     <Column>
       {inscription ? (
@@ -58,6 +53,7 @@ export const AddressText = (props: {
           onClose={() => {
             setPopoverVisible(false);
           }}
+          // inputInfo={props.inputInfo}
         />
       )}
     </Column>

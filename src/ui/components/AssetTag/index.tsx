@@ -4,7 +4,7 @@ import { Row } from '../Row';
 import { Text } from '../Text';
 
 export interface AssetTagProps {
-  type: 'BRC20' | 'ARC20' | 'Inscription' | 'Unconfirmed' | 'RUNES';
+  type: 'BRC20' | 'ARC20' | 'Inscription' | 'Unconfirmed' | 'RUNES' | 'Alkanes';
   small?: boolean;
 }
 
@@ -13,7 +13,8 @@ const colors = {
   ARC20: '#2B4E8B',
   Inscription: '#62A759',
   Unconfirmed: '#BC9238',
-  RUNES: '#A14419'
+  RUNES: '#A14419',
+  Alkanes: '#A14419'
 };
 
 export default function AssetTag(props: AssetTagProps) {

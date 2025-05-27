@@ -5,9 +5,13 @@ import { CHAINS_MAP, CHANNEL, VERSION } from '@/shared/constant';
 import { BabylonConfigV2 } from '@/shared/constant/babylon';
 import { getCurrentLocaleAsync } from '@/shared/modules/i18n';
 import {
+  AddressAlkanesTokenSummary,
   AddressRunesTokenSummary,
   AddressSummary,
   AddressTokenSummary,
+  AlkanesBalance,
+  AlkanesCollection,
+  AlkanesInfo,
   AppInfo,
   AppSummary,
   Arc20Balance,
@@ -483,6 +487,54 @@ export class OpenApiService {
     }
   }
 
+  private alkanesPriceCache: { [key: string]: { cacheTime: number; data: TickPriceItem } } = {};
+  private currentRequestAlkane = {};
+
+  async getAlkanesPrice(ticks: string[]) {
+    if (ticks.length < 0) {
+      return {};
+    }
+    const tickLine = ticks.join('');
+    if (!tickLine) return {};
+
+    try {
+      while (this.currentRequestAlkane[tickLine]) {
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      this.currentRequestAlkane[tickLine] = true;
+
+      const result = {} as { [key: string]: TickPriceItem };
+
+      for (let i = 0; i < ticks.length; i += 1) {
+        const tick = ticks[i];
+        const cache = this.alkanesPriceCache[tick];
+        if (!cache) {
+          break;
+        }
+        if (cache.cacheTime + 5 * 60 * 1000 > Date.now()) {
+          result[tick] = cache.data;
+        }
+      }
+
+      if (Object.keys(result).length === ticks.length) {
+        return result;
+      }
+
+      const resp: { [ticker: string]: TickPriceItem } = await this.httpPost('/v5/market/alkanes/price', {
+        ticks,
+        nftType: 'alkanes'
+      });
+
+      for (let i = 0; i < ticks.length; i += 1) {
+        const tick = ticks[i];
+        this.alkanesPriceCache[tick] = { cacheTime: Date.now(), data: resp[tick] };
+      }
+      return resp;
+    } finally {
+      this.currentRequestRune[tickLine] = false;
+    }
+  }
+
   async getDomainInfo(domain: string): Promise<Inscription> {
     return this.httpGet('/v5/address/search', { domain });
   }
@@ -799,6 +851,80 @@ export class OpenApiService {
       tos,
       feeRate,
       bypassHeadOffsets: true
+    });
+  }
+
+  async getAlkanesList(
+    address: string,
+    cursor: number,
+    size: number
+  ): Promise<{ list: AlkanesBalance[]; total: number }> {
+    return this.httpGet('/v5/alkanes/list', { address, cursor, size });
+  }
+
+  async getAlkanesUtxos(address: string, alkaneid: string): Promise<UTXO[]> {
+    return this.httpGet('/v5/alkanes/utxos', {
+      address,
+      alkaneid
+    });
+  }
+
+  async getAddressAlkanesTokenSummary(
+    address: string,
+    alkaneid: string,
+    fetchAvailable?: boolean
+  ): Promise<AddressAlkanesTokenSummary> {
+    return this.httpGet(
+      `/v5/alkanes/token-summary?address=${address}&alkaneid=${alkaneid}&fetchAvailable=${
+        fetchAvailable ? true : false
+      }`,
+      {}
+    );
+  }
+
+  async getAlkanesCollectionList(
+    address: string,
+    cursor: number,
+    size: number
+  ): Promise<{ list: AlkanesCollection[]; total: number }> {
+    return this.httpGet('/v5/alkanes/collection/list', { address, cursor, size });
+  }
+
+  async getAlkanesCollectionItems(
+    address: string,
+    collectionId: string,
+    cursor: number,
+    size: number
+  ): Promise<{ list: AlkanesInfo[]; total: number }> {
+    return this.httpGet('/v5/alkanes/collection/items', { address, collectionId, cursor, size });
+  }
+
+  async createAlkanesSendTx({
+    userAddress,
+    userPubkey,
+    receiver,
+    alkaneid,
+    amount,
+    feeRate
+  }: {
+    userAddress: string;
+    userPubkey: string;
+    receiver: string;
+    alkaneid: string;
+    amount: string;
+    feeRate: number;
+  }): Promise<{
+    orderId: string;
+    psbtHex: string;
+    toSignInputs: UserToSignInput[];
+  }> {
+    return this.httpPost('/v5/alkanes/create-send-tx', {
+      userAddress,
+      userPubkey,
+      receiver,
+      alkaneid,
+      amount,
+      feeRate
     });
   }
 }

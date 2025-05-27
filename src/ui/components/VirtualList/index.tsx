@@ -7,12 +7,11 @@ import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
 import { LoadingOutlined } from '@ant-design/icons';
 
 export interface VirtualListProps<T> {
-  // Current account address
-  address: string;
+  fetchParams?: any; // Parameters for fetching data, can be any type
   // Current chain type
   chainType: string;
   // Function to fetch data
-  fetchData: (address: string, page: number, pageSize: number) => Promise<{ list: T[]; total: number }>;
+  fetchData: (params: any, page: number, pageSize: number) => Promise<{ list: T[]; total: number }>;
   // Function to render each item
   renderItem: (item: T, index: number) => ReactNode;
   // Number of items per row
@@ -28,7 +27,7 @@ export interface VirtualListProps<T> {
 }
 
 export function VirtualList<T>({
-  address,
+  fetchParams,
   chainType,
   fetchData,
   renderItem,
@@ -61,11 +60,11 @@ export function VirtualList<T>({
         prevPageSizeRef.current = newPageSize;
         setPagination({ currentPage: 1, pageSize: newPageSize });
 
-        if (address) {
+        if (fetchParams) {
           setIsLoading(true);
           isLoadingRef.current = true;
 
-          fetchData(address, 1, newPageSize)
+          fetchData(fetchParams, 1, newPageSize)
             .then(({ list, total }) => {
               setItems(list);
               setTotal(total);
@@ -82,10 +81,10 @@ export function VirtualList<T>({
         }
       }
     }
-  }, [isInTab, address, fetchData, onError, pageSize]);
+  }, [isInTab, fetchParams, fetchData, onError, pageSize]);
 
   const loadData = useCallback(async () => {
-    if (!address || isLoadingRef.current) return;
+    if (!fetchParams || isLoadingRef.current) return;
 
     if (chainChangedRef.current) {
       chainChangedRef.current = false;
@@ -96,7 +95,7 @@ export function VirtualList<T>({
     setIsLoading(true);
 
     try {
-      const { list, total } = await fetchData(address, pagination.currentPage, pagination.pageSize);
+      const { list, total } = await fetchData(fetchParams, pagination.currentPage, pagination.pageSize);
       setItems(list);
       setTotal(total);
     } catch (e) {
@@ -107,7 +106,7 @@ export function VirtualList<T>({
       setIsLoading(false);
       isLoadingRef.current = false;
     }
-  }, [address, pagination, fetchData, onError]);
+  }, [fetchParams, pagination, fetchData, onError]);
 
   useEffect(() => {
     if (prevChainTypeRef.current !== chainType) {
@@ -120,11 +119,11 @@ export function VirtualList<T>({
         containerRef.current.scrollTop = 0;
       }
 
-      if (!isLoadingRef.current && address) {
+      if (!isLoadingRef.current && fetchParams) {
         isLoadingRef.current = true;
         setIsLoading(true);
 
-        fetchData(address, 1, effectivePageSize)
+        fetchData(fetchParams, 1, effectivePageSize)
           .then(({ list, total }) => {
             setItems(list);
             setTotal(total);
@@ -143,11 +142,11 @@ export function VirtualList<T>({
     }
 
     prevChainTypeRef.current = chainType;
-  }, [chainType, address, effectivePageSize, fetchData, onError]);
+  }, [chainType, fetchParams, effectivePageSize, fetchData, onError]);
 
   useEffect(() => {
     loadData();
-  }, [pagination, address, loadData]);
+  }, [pagination, fetchParams, loadData]);
 
   const gridRows = useMemo(() => {
     const rows: T[][] = [];

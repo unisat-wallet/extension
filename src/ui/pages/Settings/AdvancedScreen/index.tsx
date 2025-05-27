@@ -1,7 +1,7 @@
-import { Spin } from 'antd';
 import { useEffect, useState } from 'react';
 
 import { Content, Header, Layout } from '@/ui/components';
+import LoadingPage from '@/ui/components/LoadingPage';
 import { useI18n } from '@/ui/hooks/useI18n';
 
 import { EnableSignDataCard } from './EnableSignData';
@@ -19,13 +19,7 @@ export default function AdvancedScreen() {
   }, []);
 
   if (!init) {
-    return (
-      <Layout>
-        <Content preset="middle" bg="background">
-          <Spin size="large" />
-        </Content>
-      </Layout>
-    );
+    return <LoadingPage />;
   }
 
   return (

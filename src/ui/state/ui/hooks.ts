@@ -34,6 +34,11 @@ export function useCATAssetTabKey() {
   return uiState.catAssetTabKey;
 }
 
+export function useAlkanesAssetTabKey() {
+  const uiState = useUIState();
+  return uiState.alkanesAssetTabKey;
+}
+
 export function useUiTxCreateScreen() {
   const uiState = useUIState();
   return uiState.uiTxCreateScreen;
@@ -74,7 +79,8 @@ export function useSupportedAssets() {
     ordinals: false,
     atomicals: false,
     runes: false,
-    CAT20: false
+    CAT20: false,
+    alkanes: false
   };
 
   assets.ordinals = true;
@@ -96,6 +102,11 @@ export function useSupportedAssets() {
       assets.CAT20 = true;
       assetTabKeys.push(AssetTabKey.CAT);
     }
+  }
+
+  if (chainType === ChainType.BITCOIN_SIGNET || chainType === ChainType.BITCOIN_MAINNET) {
+    assets.alkanes = true;
+    assetTabKeys.push(AssetTabKey.ALKANES);
   }
 
   return {

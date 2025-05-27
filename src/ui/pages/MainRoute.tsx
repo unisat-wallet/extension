@@ -24,6 +24,11 @@ import CreateSimpleWalletScreen from './Account/CreateSimpleWalletScreen';
 import SwitchAccountScreen from './Account/SwitchAccountScreen';
 import SwitchKeyringScreen from './Account/SwitchKeyringScreen';
 import UnlockScreen from './Account/UnlockScreen';
+import AlkanesCollectionScreen from './Alkanes/AlkanesCollectionScreen';
+import AlkanesNFTScreen from './Alkanes/AlkanesNFTScreen';
+import AlkanesTokenScreen from './Alkanes/AlkanesTokenScreen';
+import SendAlkanesNFTScreen from './Alkanes/SendAlkanesNFTScreen';
+import SendAlkanesScreen from './Alkanes/SendAlkanesScreen';
 import ApprovalScreen from './Approval/ApprovalScreen';
 import ConnectedSitesScreen from './Approval/ConnectedSitesScreen';
 import { InscribeTransferScreen } from './Approval/components/InscribeTransfer';
@@ -351,6 +356,27 @@ export const routes = {
   BRC20SingleStepScreen: {
     path: '/brc20/send-single-step',
     element: <BRC20SingleStepScreen />
+  },
+
+  SendAlkanesScreen: {
+    path: '/alkanes/send-token',
+    element: <SendAlkanesScreen />
+  },
+  AlkanesTokenScreen: {
+    path: '/alkanes/token',
+    element: <AlkanesTokenScreen />
+  },
+  AlkanesCollectionScreen: {
+    path: '/alkanes/collection',
+    element: <AlkanesCollectionScreen />
+  },
+  AlkanesNFTScreen: {
+    path: '/alkanes/nft',
+    element: <AlkanesNFTScreen />
+  },
+  SendAlkanesNFTScreen: {
+    path: '/alkanes/send-nft',
+    element: <SendAlkanesNFTScreen />
   }
 };
 

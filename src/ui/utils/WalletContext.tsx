@@ -8,12 +8,16 @@ import { AddressFlagType, CHAINS_ENUM, ChainType } from '@/shared/constant';
 import { BabylonConfigV2 } from '@/shared/constant/babylon';
 import {
   Account,
+  AddressAlkanesTokenSummary,
   AddressCAT20TokenSummary,
   AddressCAT20UtxoSummary,
   AddressCAT721CollectionSummary,
   AddressRunesTokenSummary,
   AddressSummary,
   AddressTokenSummary,
+  AlkanesBalance,
+  AlkanesCollection,
+  AlkanesInfo,
   AppInfo,
   AppSummary,
   Arc20Balance,
@@ -240,6 +244,7 @@ export interface WalletController {
   getBrc20sPrice(ticks: string[]): Promise<{ [tick: string]: TickPriceItem }>;
   getRunesPrice(ticks: string[]): Promise<{ [tick: string]: TickPriceItem }>;
   getCAT20sPrice(tokenIds: string[]): Promise<{ [tokenId: string]: TickPriceItem }>;
+  getAlkanesPrice(alkaneid: string[]): Promise<{ [tick: string]: TickPriceItem }>;
 
   setEditingKeyring(keyringIndex: number): Promise<void>;
   getEditingKeyring(): Promise<WalletKeyring>;
@@ -531,6 +536,54 @@ export interface WalletController {
   setOpenInSidePanel(openInSidePanel: boolean): Promise<void>;
 
   sendCoinBypassHeadOffsets(tos: { address: string; satoshis: number }[], feeRate: number): Promise<string>;
+
+  getAlkanesList(
+    address: string,
+    currentPage: number,
+    pageSize: number
+  ): Promise<{ currentPage: number; pageSize: number; total: number; list: AlkanesBalance[] }>;
+
+  getAssetUtxosAlkanes(rune: string): Promise<UnspentOutput[]>;
+
+  getAddressAlkanesTokenSummary(
+    address: string,
+    alkaneid: string,
+    fetchAvailable: boolean
+  ): Promise<AddressAlkanesTokenSummary>;
+
+  createAlkanesSendTx(params: {
+    userAddress: string;
+    userPubkey: string;
+    receiver: string;
+    alkaneid: string;
+    amount: string;
+    feeRate: number;
+  }): Promise<{
+    psbtHex: string;
+    toSignInputs: UserToSignInput[];
+  }>;
+
+  signAlkanesSendTx(params: { commitTx: string; toSignInputs: ToSignInput[] }): Promise<{ txid: string }>;
+
+  sendAlkanes(params: {
+    to: string;
+    alkaneid: string;
+    amount: string;
+    feeRate: number;
+    enableRBF: boolean;
+  }): Promise<string>;
+
+  getAlkanesCollectionList(
+    address: string,
+    currentPage: number,
+    pageSize: number
+  ): Promise<{ list: AlkanesCollection[]; total: number }>;
+  getAlkanesCollectionItems(
+    address: string,
+    collectionId: string,
+    currentPage: number,
+    pageSize: number
+  ): Promise<{ currentPage: number; pageSize: number; list: AlkanesInfo[]; total: number }>;
 }
 
 const WalletContext = createContext<{

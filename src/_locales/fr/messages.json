@@ -2123,5 +2123,50 @@
   },
   "message": {
     "message": "message"
+  },
+  "per_mint": {
+    "message": "par menthe"
+  },
+  "alkanes_id": {
+    "message": "AlkanesID"
+  },
+  "total_supply": {
+    "message": "Offre totale"
+  },
+  "minted_alkanes": {
+    "message": "Minted"
+  },
+  "cap": {
+    "message": "Cap"
+  },
+  "decimals_alkanes": {
+    "message": "Décimales"
+  },
+  "symbol_alkanes": {
+    "message": "Symbole"
+  },
+  "holders_alkanes": {
+    "message": "Détenteurs"
+  },
+  "send_alkanes": {
+    "message": "Envoyer Alkanes"
+  },
+  "send_amount_exceeds_balance": {
+    "message": "Le montant d'envoi dépasse le solde"
+  },
+  "scroll_to_view_all": {
+    "message": "Faire défiler pour tout voir"
+  },
+  "no_inputs": {
+    "message": "Aucune entrée"
+  },
+  "scroll_to_top": {
+    "message": "↑ Haut"
+  },
+  "scroll_to_bottom": {
+    "message": "↓ Bas"
+  },
+  "scroll_view_items": {
+    "message": "articles"
   }
 }

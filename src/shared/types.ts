@@ -219,7 +219,8 @@ export enum TxType {
   SEND_BITCOIN,
   SEND_ORDINALS_INSCRIPTION,
   SEND_ATOMICALS_INSCRIPTION,
-  SEND_RUNES
+  SEND_RUNES,
+  SEND_ALKANES
 }
 
 interface BaseUserToSignInput {
@@ -691,4 +692,54 @@ export interface RequestMethodGetBitcoinUtxosParams {
 export interface RequestMethodGetAvailableUtxosParams {
   cursor: number;
   size: number;
+}
+
+export interface AlkanesBalance {
+  amount: string;
+  alkaneid: string;
+  name: string;
+  symbol: string;
+  divisibility: number;
+  available: string;
+}
+
+export interface AlkanesInfo {
+  alkaneid: string;
+  name: string;
+  symbol: string;
+  spacers?: number;
+  divisibility?: number;
+  height?: number;
+  totalSupply: number;
+  cap: number;
+  minted: number;
+  mintable: boolean;
+  perMint: string;
+  holders: number;
+  timestamp?: number;
+  type?: string;
+  maxSupply?: string;
+  premine?: string;
+  nftData?: {
+    collectionId: string;
+    attributes?: any;
+    contentType?: string;
+    image?: string;
+  };
+  logo?: string;
+  collectionData?: {
+    holders: number;
+  };
+}
+
+export interface AddressAlkanesTokenSummary {
+  tokenInfo: AlkanesInfo;
+  tokenBalance: AlkanesBalance;
+}
+
+export interface AlkanesCollection {
+  alkaneid: string;
+  name: string;
+  count: number;
+  image: string;
 }

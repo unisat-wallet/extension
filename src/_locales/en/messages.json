@@ -2122,5 +2122,50 @@
   },
   "message": {
     "message": "message"
+  },
+  "per_mint": {
+    "message": "per mint"
+  },
+  "alkanes_id": {
+    "message": "AlkanesID"
+  },
+  "total_supply": {
+    "message": "Total Supply"
+  },
+  "minted_alkanes": {
+    "message": "Mints"
+  },
+  "cap": {
+    "message": "Cap"
+  },
+  "decimals_alkanes": {
+    "message": "Decimals"
+  },
+  "symbol_alkanes": {
+    "message": "Symbol"
+  },
+  "holders_alkanes": {
+    "message": "Holders"
+  },
+  "send_alkanes": {
+    "message": "Send Alkanes"
+  },
+  "send_amount_exceeds_balance": {
+    "message": "Send amount exceeds balance"
+  },
+  "scroll_to_view_all": {
+    "message": "scroll to view all"
+  },
+  "no_inputs": {
+    "message": "No inputs"
+  },
+  "scroll_to_top": {
+    "message": "↑ Top"
+  },
+  "scroll_to_bottom": {
+    "message": "↓ Bottom"
+  },
+  "scroll_view_items": {
+    "message": "items"
   }
 }

@@ -2122,5 +2122,50 @@
   },
   "message": {
     "message": "訊息"
+  },
+  "per_mint": {
+    "message": "單次鑄造量"
+  },
+  "alkanes_id": {
+    "message": "AlkanesID"
+  },
+  "total_supply": {
+    "message": "總發行量"
+  },
+  "minted_alkanes": {
+    "message": "已鑄造量"
+  },
+  "cap": {
+    "message": "鑄造次數"
+  },
+  "decimals_alkanes": {
+    "message": "小數位數"
+  },
+  "symbol_alkanes": {
+    "message": "代幣符號"
+  },
+  "holders_alkanes": {
+    "message": "持有人數"
+  },
+  "send_alkanes": {
+    "message": "發送 Alkanes"
+  },
+  "send_amount_exceeds_balance": {
+    "message": "發送金額超過餘額"
+  },
+  "scroll_to_view_all": {
+    "message": "滾動查看所有"
+  },
+  "no_inputs": {
+    "message": "無輸入"
+  },
+  "scroll_to_top": {
+    "message": "↑ 頂部"
+  },
+  "scroll_to_bottom": {
+    "message": "↓ 底部"
+  },
+  "scroll_view_items": {
+    "message": "項"
   }
 }

@@ -154,7 +154,7 @@ export default function BRC20TokenScreen() {
                     disabled={!enableMint}
                     icon="pencil"
                     onClick={(e) => {
-                      window.open(`${unisatWebsite}/brc20/${encodeURIComponent(ticker)}`);
+                      window.open(`${unisatWebsite}/inscribe?tick=${encodeURIComponent(ticker)}`);
                     }}
                     full
                   />

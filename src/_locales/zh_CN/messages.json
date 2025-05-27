@@ -2095,5 +2095,50 @@
   },
   "message": {
     "message": "消息"
+  },
+  "per_mint": {
+    "message": "每次铸造"
+  },
+  "alkanes_id": {
+    "message": "AlkanesID"
+  },
+  "total_supply": {
+    "message": "总供应量"
+  },
+  "minted_alkanes": {
+    "message": "已铸造"
+  },
+  "cap": {
+    "message": "上限"
+  },
+  "decimals_alkanes": {
+    "message": "小数位"
+  },
+  "symbol_alkanes": {
+    "message": "代币符号"
+  },
+  "holders_alkanes": {
+    "message": "持有者"
+  },
+  "send_alkanes": {
+    "message": "发送 Alkanes"
+  },
+  "send_amount_exceeds_balance": {
+    "message": "发送金额超过余额"
+  },
+  "scroll_to_view_all": {
+    "message": "滚动查看所有"
+  },
+  "no_inputs": {
+    "message": "无输入"
+  },
+  "scroll_to_top": {
+    "message": "↑ 顶部"
+  },
+  "scroll_to_bottom": {
+    "message": "↓ 底部"
+  },
+  "scroll_view_items": {
+    "message": "项"
   }
 }
