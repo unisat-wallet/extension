@@ -1,5 +1,11 @@
 # UniSat Wallet Release Notes
 
+## v1.7.0
+
+New Features
+
+- Added support for Alkanes.
+
 ## v1.6.3
 
 New Features
