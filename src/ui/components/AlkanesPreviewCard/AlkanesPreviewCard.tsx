@@ -57,7 +57,7 @@ export default function AlkanesPreviewCard({ balance, onClick, price }: AlkanesP
             width: 70
           }}
           px="sm">
-          <Text text={balance.alkaneid || balance.name} wrap color="white" size="xxxs" />
+          <Text text={`${balance.name} (${balance.alkaneid})`} wrap color="white" size="xxxs" />
         </Row>
       </Row>
 
