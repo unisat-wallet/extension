@@ -28,7 +28,7 @@ export default function AlkanesCollectionScreen() {
       alkaneid: '',
       name: '',
       symbol: '',
-      totalSupply: 0,
+      totalSupply: '0',
       cap: 0,
       minted: 0,
       mintable: false,

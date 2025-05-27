@@ -37,7 +37,8 @@ export default function AlkanesTokenScreen() {
       alkaneid: '',
       name: '',
       symbol: '',
-      totalSupply: 0,
+      totalSupply: '10000000000000',
+      maxSupply: '10000000000000',
       cap: 0,
       mintable: false,
       perMint: '0',
@@ -207,6 +208,7 @@ export default function AlkanesTokenScreen() {
                     )
                   : '--'
               }`}
+              maxLength={100}
             />
             <Line />
 

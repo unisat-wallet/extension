@@ -710,7 +710,7 @@ export interface AlkanesInfo {
   spacers?: number;
   divisibility?: number;
   height?: number;
-  totalSupply: number;
+  totalSupply: string;
   cap: number;
   minted: number;
   mintable: boolean;
