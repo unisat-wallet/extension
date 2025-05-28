@@ -115,6 +115,10 @@ export default function SendRunesScreen() {
       return;
     }
 
+    if (inputAmount === '0') {
+      return;
+    }
+
     if (outputValue < minOutputValue) {
       setError(`${t('output_value_must_be_at_least')} ${minOutputValue}`);
       return;

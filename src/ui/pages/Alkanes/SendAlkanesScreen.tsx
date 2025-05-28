@@ -90,13 +90,13 @@ export default function SendAlkanesScreen() {
       return;
     }
 
-    if (runesUtils.compareAmount(sendingAmount, tokenBalance.available) > 0) {
+    if (runesUtils.compareAmount(sendingAmount, availableBalance) > 0) {
       setError(t('send_amount_exceeds_balance'));
       return;
     }
 
     setDisabled(false);
-  }, [toInfo, inputAmount, feeRate]);
+  }, [toInfo, inputAmount, availableBalance, feeRate]);
 
   const transferData = useRef<{
     id: string;

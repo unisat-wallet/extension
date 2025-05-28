@@ -202,7 +202,7 @@ export default function AlkanesTokenScreen() {
             <Section title={t('decimals_alkanes')} value={tokenSummary.tokenBalance.divisibility} />
             <Line />
 
-            <Section title={t('holders_alkanes')} value={tokenSummary.tokenInfo.holders} />
+            <Section title={t('holders_alkanes')} value={showLongNumber(tokenSummary.tokenInfo.holders)} />
             <Line />
 
             <Section
@@ -232,7 +232,7 @@ export default function AlkanesTokenScreen() {
 
             <Section
               title={t('minted_alkanes')}
-              value={`${tokenSummary.tokenInfo.minted}/${tokenSummary.tokenInfo.cap}`}
+              value={`${showLongNumber(tokenSummary.tokenInfo.minted)}/${showLongNumber(tokenSummary.tokenInfo.cap)}`}
             />
             <Line />
 
