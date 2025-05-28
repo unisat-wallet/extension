@@ -2,6 +2,7 @@ import { AlkanesInfo } from '@/shared/types';
 import { shortDesc } from '@/ui/utils';
 
 import { Column } from '../Column';
+import Iframe from '../Iframe';
 import { Image } from '../Image';
 import { Row } from '../Row';
 import { Sizes, Text } from '../Text';
@@ -65,10 +66,30 @@ export default function AlkanesNFTPreview({ alkanesInfo, onClick, preset }: Insc
 
   // Use image from nftData if available, otherwise fallback to logo
   const imageUrl = alkanesInfo.nftData?.image || alkanesInfo.logo || '';
+  const contentType = alkanesInfo.nftData?.contentType;
+  const contentUrl = alkanesInfo.nftData?.contentUrl;
 
-  return (
-    <Column gap="zero" onClick={onClick} style={{}}>
-      {imageUrl ? (
+  const renderContent = () => {
+    // If contentType is text/html, use Iframe to display contentUrl
+    if (contentType === 'text/html' && contentUrl) {
+      return (
+        <Iframe
+          preview={contentUrl}
+          ref={null}
+          style={{
+            width: style.width,
+            height: style.height,
+            borderTopLeftRadius: style.borderTopLeftRadius,
+            borderTopRightRadius: style.borderTopRightRadius,
+            border: 'none'
+          }}
+        />
+      );
+    }
+
+    // Otherwise use image or fallback
+    if (imageUrl) {
+      return (
         <Image
           src={imageUrl}
           width={style.width}
@@ -78,11 +99,20 @@ export default function AlkanesNFTPreview({ alkanesInfo, onClick, preset }: Insc
             borderTopRightRadius: style.borderTopRightRadius
           }}
         />
-      ) : (
-        <Row style={{ width: style.width, height: style.height }} itemsCenter justifyCenter>
-          <Text text={alkanesInfo.name} size="xs" color="textDim" />
-        </Row>
-      )}
+      );
+    }
+
+    // Fallback to text display
+    return (
+      <Row style={{ width: style.width, height: style.height }} itemsCenter justifyCenter>
+        <Text text={alkanesInfo.name} size="xs" color="textDim" />
+      </Row>
+    );
+  };
+
+  return (
+    <Column gap="zero" onClick={onClick} style={{}}>
+      {renderContent()}
 
       <Column
         px="lg"

@@ -725,6 +725,7 @@ export interface AlkanesInfo {
     attributes?: any;
     contentType?: string;
     image?: string;
+    contentUrl?: string;
   };
   logo?: string;
   collectionData?: {
