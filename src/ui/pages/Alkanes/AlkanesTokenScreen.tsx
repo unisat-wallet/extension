@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { ChainType } from '@/shared/constant';
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { AddressAlkanesTokenSummary } from '@/shared/types';
 import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
@@ -10,7 +9,6 @@ import { Line } from '@/ui/components/Line';
 import { Section } from '@/ui/components/Section';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useChainType, useUnisatWebsite } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { copyToClipboard, showLongNumber, useLocationState, useWallet } from '@/ui/utils';
@@ -44,11 +42,14 @@ export default function AlkanesTokenScreen() {
       perMint: '0',
       minted: 0,
       holders: 0,
+      aligned: true,
       nftData: {
         collectionId: ''
       },
       logo: ''
-    }
+    },
+    tradeUrl: '',
+    mintUrl: ''
   });
 
   const wallet = useWallet();
@@ -68,9 +69,9 @@ export default function AlkanesTokenScreen() {
 
   const navigate = useNavigate();
 
-  const unisatWebsite = useUnisatWebsite();
-
-  const enableMint = tokenSummary.tokenInfo.mintable;
+  const enableMint = useMemo(() => {
+    return tokenSummary.mintUrl && tokenSummary.mintUrl.trim() !== '';
+  }, [tokenSummary.mintUrl]);
 
   const enableTransfer = useMemo(() => {
     let enable = false;
@@ -82,14 +83,9 @@ export default function AlkanesTokenScreen() {
 
   const tools = useTools();
 
-  const chainType = useChainType();
   const enableTrade = useMemo(() => {
-    if (chainType === ChainType.BITCOIN_MAINNET || chainType === ChainType.FRACTAL_BITCOIN_MAINNET) {
-      return true;
-    } else {
-      return false;
-    }
-  }, [chainType]);
+    return tokenSummary.tradeUrl && tokenSummary.tradeUrl.trim() !== '';
+  }, [tokenSummary.tradeUrl]);
 
   if (loading) {
     return (
@@ -102,6 +98,18 @@ export default function AlkanesTokenScreen() {
       </Layout>
     );
   }
+
+  const sendAlkanes = () => {
+    if (tokenSummary.tokenInfo?.aligned === false) {
+      tools.toastError(t('important_to_not_transfer_this_token'));
+      return;
+    }
+    navigate('SendAlkanesScreen', {
+      tokenBalance: tokenSummary.tokenBalance,
+      tokenInfo: tokenSummary.tokenInfo
+    });
+  };
+
   return (
     <Layout>
       <Header
@@ -134,7 +142,9 @@ export default function AlkanesTokenScreen() {
                 disabled={!enableMint}
                 icon="pencil"
                 onClick={(e) => {
-                  window.open(`${unisatWebsite}/alkanes/inscribe?alkaneid=${alkaneid}`);
+                  if (tokenSummary.mintUrl) {
+                    window.open(tokenSummary.mintUrl);
+                  }
                 }}
                 full
               />
@@ -144,11 +154,19 @@ export default function AlkanesTokenScreen() {
                 preset="home"
                 icon="send"
                 disabled={!enableTransfer}
+                onClick={sendAlkanes}
+                full
+              />
+
+              <Button
+                text={t('trade')}
+                preset="home"
+                icon="trade"
+                disabled={!enableTrade}
                 onClick={(e) => {
-                  navigate('SendAlkanesScreen', {
-                    tokenBalance: tokenSummary.tokenBalance,
-                    tokenInfo: tokenSummary.tokenInfo
-                  });
+                  if (tokenSummary.tradeUrl) {
+                    window.open(tokenSummary.tradeUrl);
+                  }
                 }}
                 full
               />

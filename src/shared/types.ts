@@ -720,6 +720,7 @@ export interface AlkanesInfo {
   type?: string;
   maxSupply?: string;
   premine?: string;
+  aligned?: boolean;
   nftData?: {
     collectionId: string;
     attributes?: any;
@@ -736,6 +737,8 @@ export interface AlkanesInfo {
 export interface AddressAlkanesTokenSummary {
   tokenInfo: AlkanesInfo;
   tokenBalance: AlkanesBalance;
+  tradeUrl?: string;
+  mintUrl?: string;
 }
 
 export interface AlkanesCollection {

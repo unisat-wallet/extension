@@ -2137,5 +2137,8 @@
   },
   "scroll_view_items": {
     "message": "项"
+  },
+  "important_to_not_transfer_this_token": {
+    "message": "重要: 请不要转移此代币，因为存在临时索引不一致的问题。我们正在等待协议创始团队的解决方案。其他代币不受影响。"
   }
 }

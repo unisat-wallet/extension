@@ -2152,5 +2152,8 @@
   },
   "scroll_view_items": {
     "message": "elementos"
+  },
+  "important_to_not_transfer_this_token": {
+    "message": "Importante: No transferas este token debido a una discrepancia temporal en el índice. Esperamos la resolución del equipo fundador del protocolo. Otros tokens no afectados."
   }
 }
