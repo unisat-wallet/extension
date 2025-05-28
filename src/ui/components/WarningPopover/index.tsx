@@ -1,7 +1,6 @@
 import { ColorTypes, colors } from '@/ui/theme/colors';
 
 import { Button } from '../Button';
-import { Card } from '../Card';
 import { Column } from '../Column';
 import { Popover } from '../Popover';
 import { Row } from '../Row';
@@ -16,7 +15,7 @@ export const WarningPopover = ({
   risks,
   onClose
 }: {
-  risks: { level: 'high' | 'low'; color?: ColorTypes; desc: string }[];
+  risks: { color?: ColorTypes; desc: string }[];
   onClose: () => void;
 }) => {
   return (
@@ -28,9 +27,6 @@ export const WarningPopover = ({
           {risks.map((risk, index) => (
             <Column key={'risk_' + index}>
               <Row>
-                <Card preset="style2" bg={risk.color || riskColor[risk.level]} style={{ width: 60, height: 60 }}>
-                  <Text text={risk.level} size="lg" />
-                </Card>
                 <Text text={risk.desc} />
               </Row>
 
@@ -43,7 +39,6 @@ export const WarningPopover = ({
           <Button
             text="OK"
             full
-            preset="primary"
             onClick={(e) => {
               if (onClose) {
                 onClose();

@@ -7,6 +7,7 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { Line } from '@/ui/components/Line';
 import { Section } from '@/ui/components/Section';
+import { WarningPopover } from '@/ui/components/WarningPopover';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { colors } from '@/ui/theme/colors';
@@ -58,6 +59,8 @@ export default function AlkanesTokenScreen() {
 
   const [loading, setLoading] = useState(true);
 
+  const [warning, setWarning] = useState(false);
+
   const { t } = useI18n();
 
   useEffect(() => {
@@ -101,7 +104,8 @@ export default function AlkanesTokenScreen() {
 
   const sendAlkanes = () => {
     if (tokenSummary.tokenInfo?.aligned === false) {
-      tools.toastError(t('important_to_not_transfer_this_token'));
+      // tools.toastError(t('important_to_not_transfer_this_token'));
+      setWarning(true);
       return;
     }
     navigate('SendAlkanesScreen', {
@@ -249,6 +253,19 @@ export default function AlkanesTokenScreen() {
 
             <Line />
           </Column>
+
+          {warning && (
+            <WarningPopover
+              risks={[
+                {
+                  desc: t('important_to_not_transfer_this_token')
+                }
+              ]}
+              onClose={() => {
+                setWarning(false);
+              }}
+            />
+          )}
         </Content>
       )}
     </Layout>
