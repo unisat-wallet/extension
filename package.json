@@ -125,7 +125,7 @@
     "react-idle-timer": "^5.7.2",
     "react-modal": "^3.15.1",
     "react-redux": "^8.0.1",
-    "react-refresh": "^0.11.0",
+    "react-refresh": "^0.17.0",
     "react-router-dom": "^6.3.0",
     "redux": "^4.2.0",
     "redux-devtools": "^3.7.0",
