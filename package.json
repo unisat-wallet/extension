@@ -114,7 +114,7 @@
     "qrcode.react": "^3.0.2",
     "randomstring": "^1.2.3",
     "rc-virtual-list": "^3.14.8",
-    "react": "^18.1.0",
+    "react": "^18.3.1",
     "react-activation": "^0.10.2",
     "react-app-polyfill": "^3.0.0",
     "react-cache": "^2.0.0-alpha.1",
