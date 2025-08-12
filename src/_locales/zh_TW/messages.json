@@ -200,7 +200,7 @@
     "message": "創建新錢包"
   },
   "this_phrase_is_the_only_way_to_recover_your_wallet": {
-    "message": "這是恢復您錢包的唯一方式。請勿與任何人分享！(點擊複製)"
+    "message": "這是恢復您錢包的唯一方式。請勿與任何人分享！"
   },
   "copy_to_clipboard": {
     "message": "複製到剪貼簿"

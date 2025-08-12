@@ -200,7 +200,7 @@
     "message": "Create a new wallet"
   },
   "this_phrase_is_the_only_way_to_recover_your_wallet": {
-    "message": "This phrase is the ONLY way to recover your wallet. Do NOT share it with anyone! (click to copy)"
+    "message": "This phrase is the ONLY way to recover your wallet. Do NOT share it with anyone!"
   },
   "copy_to_clipboard": {
     "message": "Copy to clipboard"

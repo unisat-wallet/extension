@@ -238,7 +238,7 @@
     "message": "显示助记词"
   },
   "this_phrase_is_the_only_way_to_recover_your_wallet": {
-    "message": "助记词是恢复您钱包的唯一方式。请勿与任何人分享！(点击复制)"
+    "message": "助记词是恢复您钱包的唯一方式。请勿与任何人分享！"
   },
   "passphrase": {
     "message": "密码短语"

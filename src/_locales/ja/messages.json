@@ -199,7 +199,7 @@
     "message": "新しいウォレットを作成"
   },
   "this_phrase_is_the_only_way_to_recover_your_wallet": {
-    "message": "このフレーズはウォレットを回復する唯一の方法です。誰とも共有しないでください！（クリックしてコピー）"
+    "message": "このフレーズはウォレットを回復する唯一の方法です。誰とも共有しないでください！"
   },
   "copy_to_clipboard": {
     "message": "クリップボードにコピー"

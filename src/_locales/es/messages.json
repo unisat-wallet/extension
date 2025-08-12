@@ -200,7 +200,7 @@
     "message": "Crear una nueva billetera"
   },
   "this_phrase_is_the_only_way_to_recover_your_wallet": {
-    "message": "Esta frase es la ÚNICA forma de recuperar tu billetera. ¡NO la compartas con nadie! (haz clic para copiar)"
+    "message": "Esta frase es la ÚNICA forma de recuperar tu billetera. ¡NO la compartas con nadie! "
   },
   "copy_to_clipboard": {
     "message": "Copiar al portapapeles"

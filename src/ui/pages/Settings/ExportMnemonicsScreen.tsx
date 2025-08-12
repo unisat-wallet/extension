@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { ADDRESS_TYPES } from '@/shared/constant';
 import { WalletKeyring } from '@/shared/types';
-import { Button, Card, Column, Content, Grid, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
+import { Button, Card, Column, Content, Grid, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
@@ -108,16 +108,6 @@ export default function ExportMnemonicsScreen() {
               mt="xl"
               mb="xl"
             />
-
-            <Row
-              justifyCenter
-              itemsCenter
-              onClick={(e) => {
-                copy(mnemonic);
-              }}>
-              <Icon icon="copy" color="textDim" />
-              <Text text={t('copy_to_clipboard')} color="textDim" />
-            </Row>
 
             <Row justifyCenter>
               <Grid columns={2}>

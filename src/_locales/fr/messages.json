@@ -200,7 +200,7 @@
     "message": "Créer un nouveau portefeuille"
   },
   "this_phrase_is_the_only_way_to_recover_your_wallet": {
-    "message": "Cette phrase est le SEUL moyen de récupérer votre portefeuille. Ne la partagez avec personne ! (cliquez pour copier)"
+    "message": "Cette phrase est le SEUL moyen de récupérer votre portefeuille. Ne la partagez avec personne ! "
   },
   "copy_to_clipboard": {
     "message": "Copier dans le presse-papiers"
