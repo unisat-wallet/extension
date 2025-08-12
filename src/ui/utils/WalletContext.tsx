@@ -409,58 +409,88 @@ export interface WalletController {
   getAutoLockTimeId(): Promise<number>;
 
   getCAT20List(
+    version: 'v1' | 'v2',
     address: string,
     currentPage: number,
     pageSize: number
   ): Promise<{ currentPage: number; pageSize: number; total: number; list: CAT20Balance[] }>;
 
-  getAddressCAT20TokenSummary(address: string, tokenId: string): Promise<AddressCAT20TokenSummary>;
+  getAddressCAT20TokenSummary(
+    version: 'v1' | 'v2',
+    address: string,
+    tokenId: string
+  ): Promise<AddressCAT20TokenSummary>;
 
-  getAddressCAT20UtxoSummary(address: string, tokenId: string): Promise<AddressCAT20UtxoSummary>;
+  getAddressCAT20UtxoSummary(version: 'v1' | 'v2', address: string, tokenId: string): Promise<AddressCAT20UtxoSummary>;
 
   transferCAT20Step1(
+    version: 'v1' | 'v2',
     to: string,
     tokenId: string,
     tokenAmount: string,
     feeRate: number
   ): Promise<{ id: string; commitTx: string; toSignInputs: UserToSignInput[]; feeRate: number }>;
   transferCAT20Step2(
+    version: 'v1' | 'v2',
     transferId: string,
     commitTx: string,
     toSignInputs: UserToSignInput[]
   ): Promise<{ revealTx: string; toSignInputs: UserToSignInput[] }>;
-  transferCAT20Step3(transferId: string, revealTx: string, toSignInputs: UserToSignInput[]): Promise<{ txid: string }>;
+  transferCAT20Step3(
+    version: 'v1' | 'v2',
+    transferId: string,
+    revealTx: string,
+    toSignInputs: UserToSignInput[]
+  ): Promise<{ txid: string }>;
 
-  mergeCAT20Prepare(tokenId: string, utxoCount: number, feeRate: number): Promise<CAT20MergeOrder>;
+  mergeCAT20Prepare(
+    version: 'v1' | 'v2',
+    tokenId: string,
+    utxoCount: number,
+    feeRate: number
+  ): Promise<CAT20MergeOrder>;
   transferCAT20Step1ByMerge(
+    version: 'v1' | 'v2',
     mergeId: string
   ): Promise<{ id: string; commitTx: string; toSignInputs: UserToSignInput[]; feeRate: number }>;
-  getMergeCAT20Status(mergeId: string): Promise<any>;
+  getMergeCAT20Status(version: 'v1' | 'v2', mergeId: string): Promise<any>;
 
   getAppList(): Promise<{ tab: string; items: AppInfo[] }[]>;
   getBannerList(): Promise<{ id: string; img: string; link: string }[]>;
   getBlockActiveInfo(): Promise<{ allTransactions: number; allAddrs: number }>;
 
   getCAT721List(
+    version: 'v1' | 'v2',
     address: string,
     currentPage: number,
     pageSize: number
   ): Promise<{ currentPage: number; pageSize: number; total: number; list: CAT721Balance[] }>;
 
-  getAddressCAT721CollectionSummary(address: string, collectionId: string): Promise<AddressCAT721CollectionSummary>;
+  getAddressCAT721CollectionSummary(
+    version: 'v1' | 'v2',
+    address: string,
+    collectionId: string
+  ): Promise<AddressCAT721CollectionSummary>;
 
   transferCAT721Step1(
+    version: 'v1' | 'v2',
     to: string,
     collectionId: string,
     localId: string,
     feeRate: number
   ): Promise<{ id: string; commitTx: string; toSignInputs: UserToSignInput[]; feeRate: number }>;
   transferCAT721Step2(
+    version: 'v1' | 'v2',
     transferId: string,
     commitTx: string,
     toSignInputs: UserToSignInput[]
   ): Promise<{ revealTx: string; toSignInputs: UserToSignInput[] }>;
-  transferCAT721Step3(transferId: string, revealTx: string, toSignInputs: UserToSignInput[]): Promise<{ txid: string }>;
+  transferCAT721Step3(
+    version: 'v1' | 'v2',
+    transferId: string,
+    revealTx: string,
+    toSignInputs: UserToSignInput[]
+  ): Promise<{ txid: string }>;
 
   getBuyCoinChannelList(coin: string): Promise<BtcChannelItem[]>;
   createBuyCoinPaymentUrl(coin: string, address: string, channel: string): Promise<string>;

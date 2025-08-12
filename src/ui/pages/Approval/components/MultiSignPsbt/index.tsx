@@ -295,7 +295,7 @@ export default function MultiSignPsbt({
               icon={isAllSigned ? undefined : 'alert'}
               onClick={() => {
                 if (isAllSigned) {
-                  handleConfirm();
+                  handleConfirm && handleConfirm();
                 } else {
                   setDisclaimerVisible(true);
                 }
@@ -317,7 +317,7 @@ export default function MultiSignPsbt({
         <MultiSignDisclaimerModal
           txCount={txInfo.psbtHexs.length}
           onContinue={() => {
-            handleConfirm();
+            handleConfirm && handleConfirm();
           }}
           onClose={() => {
             setDisclaimerVisible(false);

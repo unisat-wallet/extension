@@ -20,7 +20,7 @@ export default function CreatePasswordScreen() {
   if (loc.state) {
     state = loc.state;
   }
-  if (params.size > 0) {
+  if ((params as any).size > 0) {
     params.forEach((value, key) => {
       state[key] = value;
     });
@@ -126,7 +126,7 @@ export default function CreatePasswordScreen() {
                 onChange={(e) => {
                   setConfirmPassword(e.target.value);
                 }}
-                onKeyUp={(e) => handleOnKeyUp(e)}
+                onKeyUp={(e) => handleOnKeyUp(e as any)}
               />
               {matchText}
             </Column>

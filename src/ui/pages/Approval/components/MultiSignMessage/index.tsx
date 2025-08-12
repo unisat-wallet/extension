@@ -333,7 +333,7 @@ export default function MultiSignMessage({
               icon={isAllSigned ? undefined : 'alert'}
               onClick={() => {
                 if (isAllSigned) {
-                  handleConfirm();
+                  handleConfirm && handleConfirm();
                 } else {
                   setDisclaimerVisible(true);
                 }
@@ -355,7 +355,7 @@ export default function MultiSignMessage({
         <MultiSignDisclaimerModal
           txCount={messageInfo.messages.length}
           onContinue={() => {
-            handleConfirm();
+            handleConfirm && handleConfirm();
           }}
           onClose={() => {
             setDisclaimerVisible(false);

@@ -55,7 +55,7 @@ export default function CreateAccountScreen() {
             onChange={(e) => {
               setAlianName(e.target.value);
             }}
-            onKeyUp={(e) => handleOnKeyUp(e)}
+            onKeyUp={(e) => handleOnKeyUp(e as any)}
             autoFocus={true}
           />
           <Button

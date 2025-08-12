@@ -89,7 +89,7 @@ export default function ExportPrivateKeyScreen() {
               onChange={(e) => {
                 setPassword(e.target.value);
               }}
-              onKeyUp={(e) => handleOnKeyUp(e)}
+              onKeyUp={(e) => handleOnKeyUp(e as any)}
               autoFocus={true}
             />
             {error && <Text text={error} preset="regular" color="error" />}

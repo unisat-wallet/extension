@@ -49,7 +49,9 @@ export enum AtomicalsAssetTabKey {
 
 export enum CATAssetTabKey {
   CAT20,
-  CAT721
+  CAT721,
+  CAT20_V2,
+  CAT721_V2
 }
 
 export enum AlkanesAssetTabKey {

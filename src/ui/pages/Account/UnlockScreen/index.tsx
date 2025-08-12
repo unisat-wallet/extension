@@ -85,7 +85,7 @@ export default function UnlockScreen() {
               preset="password"
               placeholder={t('password')}
               onChange={(e) => setPassword(e.target.value)}
-              onKeyUp={(e) => handleOnKeyUp(e)}
+              onKeyUp={(e) => handleOnKeyUp(e as any)}
               autoFocus={true}
             />
             <Button disabled={disabled} text={t('unlock')} preset="primary" onClick={btnClick} />
