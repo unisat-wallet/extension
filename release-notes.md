@@ -1,5 +1,19 @@
 # UniSat Wallet Release Notes
 
+## v1.7.1
+
+New Features
+
+- Added support for CAT protocol V2
+
+Bug Fixes
+
+- Fixed TypeScript compilation issues
+
+Improvements
+
+- Disable mnemonic copy to enhance security
+
 ## v1.7.0
 
 New Features
