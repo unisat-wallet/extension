@@ -8,7 +8,7 @@ export const BROWSER_TO_APP_LOCALE_MAP: Record<string, string> = {
   'zh-Hant': 'zh_TW'
 };
 
-export const SUPPORTED_LOCALES = ['en', 'zh_TW', 'fr', 'es', 'ru', 'ja'];
+export const SUPPORTED_LOCALES = ['en', 'fr', 'es', 'ru', 'ja', 'zh_TW'];
 
 export const LOCALE_NAMES = {
   en: 'English',

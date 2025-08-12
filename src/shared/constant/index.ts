@@ -256,7 +256,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     unisatExplorerUrl: 'https://uniscan.cc',
     okxExplorerUrl: '',
     showPrice: true,
-    defaultExplorer: 'mempool-space'
+    defaultExplorer: 'unisat-explorer'
   },
   [ChainType.BITCOIN_TESTNET]: {
     enum: ChainType.BITCOIN_TESTNET,
@@ -301,10 +301,10 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     mempoolSpaceUrl: 'https://mempool.space/signet',
     unisatUrl: 'https://signet.unisat.io',
     ordinalsUrl: 'https://signet.ordinals.com',
-    unisatExplorerUrl: '',
+    unisatExplorerUrl: 'https://uniscan.cc/signet',
     okxExplorerUrl: '',
     showPrice: false,
-    defaultExplorer: 'mempool-space'
+    defaultExplorer: 'unisat-explorer'
   },
   [ChainType.FRACTAL_BITCOIN_MAINNET]: {
     enum: ChainType.FRACTAL_BITCOIN_MAINNET,
@@ -317,7 +317,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     mempoolSpaceUrl: 'https://mempool.fractalbitcoin.io',
     unisatUrl: 'https://fractal.unisat.io',
     ordinalsUrl: 'https://ordinals.fractalbitcoin.io',
-    unisatExplorerUrl: 'https://fractal.uniscan.cc',
+    unisatExplorerUrl: 'https://uniscan.cc/fractal',
     okxExplorerUrl: '',
     isViewTxHistoryInternally: false,
     disable: false,
