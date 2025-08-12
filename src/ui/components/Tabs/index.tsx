@@ -35,7 +35,7 @@ export function Tabs({ items, defaultActiveKey, activeKey, onTabClick }: TabsPro
             return (
               <Row key={item.key} onClick={() => onTabClick(item.key)} mx="md">
                 <Column gap="zero" justifyCenter itemsCenter>
-                  <Text text={item.label} color={isActiveItem ? 'gold' : 'textDim'} />
+                  <Text text={item.label} color={isActiveItem ? 'gold' : 'textDim'} size="md" />
                   <Row
                     style={{
                       width: 40,

@@ -1,7 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
-import { CAT721CollectionInfo, Inscription, TxType, UserToSignInput } from '@/shared/types';
+import { CAT721CollectionInfo, CAT_VERSION, Inscription, TxType, UserToSignInput } from '@/shared/types';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { Loading } from '@/ui/components/ActionComponent/Loading';
@@ -10,24 +9,22 @@ import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { MergeBTCPopover } from '@/ui/components/MergeBTCPopover';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { useNavigate } from '@/ui/pages/MainRoute';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useNetworkType } from '@/ui/state/settings/hooks';
 import { useRunesTx } from '@/ui/state/transactions/hooks';
-import { isValidAddress, useWallet } from '@/ui/utils';
+import { isValidAddress, useLocationState, useWallet } from '@/ui/utils';
 import { AddressType } from '@unisat/wallet-sdk';
 import { getAddressType } from '@unisat/wallet-sdk/lib/address';
 
 import { SignPsbt } from '../Approval/components';
 
-export default function SendCAT721Screen() {
-  const { state } = useLocation();
-  const props = state as {
-    collectionInfo: CAT721CollectionInfo;
-    localId: string;
-  };
+interface LocationState {
+  version: CAT_VERSION;
+  collectionInfo: CAT721CollectionInfo;
+  localId: string;
+}
 
-  const collectionInfo = props.collectionInfo;
-  const localId = props.localId;
+export default function SendCAT721Screen() {
+  const { version, localId, collectionInfo } = useLocationState<LocationState>();
 
   const wallet = useWallet();
   const { t } = useI18n();
@@ -47,8 +44,6 @@ export default function SendCAT721Screen() {
   });
 
   const [error, setError] = useState('');
-
-  const account = useCurrentAccount();
 
   const networkType = useNetworkType();
 
@@ -91,7 +86,13 @@ export default function SendCAT721Screen() {
   const onConfirm = async () => {
     tools.showLoading(true);
     try {
-      const step1 = await wallet.transferCAT721Step1(toInfo.address, collectionInfo.collectionId, localId, feeRate);
+      const step1 = await wallet.transferCAT721Step1(
+        version,
+        toInfo.address,
+        collectionInfo.collectionId,
+        localId,
+        feeRate
+      );
       if (step1) {
         transferData.current.id = step1.id;
         transferData.current.commitTx = step1.commitTx;
@@ -133,6 +134,7 @@ export default function SendCAT721Screen() {
           try {
             tools.showLoading(true);
             const step2 = await wallet.transferCAT721Step2(
+              version,
               transferData.current.id,
               transferData.current.commitTx,
               transferData.current.commitToSignInputs
@@ -178,6 +180,7 @@ export default function SendCAT721Screen() {
           tools.showLoading(true);
           try {
             const step3 = await wallet.transferCAT721Step3(
+              version,
               transferData.current.id,
               transferData.current.revealTx,
               transferData.current.revealToSignInputs
@@ -207,6 +210,7 @@ export default function SendCAT721Screen() {
 
         <Row justifyCenter>
           <CAT721Preview
+            version={version}
             preset="medium"
             collectionId={collectionInfo.collectionId}
             contentType={collectionInfo.contentType}

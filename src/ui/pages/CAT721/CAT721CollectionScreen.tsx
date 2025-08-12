@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { AddressCAT721CollectionSummary } from '@/shared/types';
+import { AddressCAT721CollectionSummary, CAT_VERSION } from '@/shared/types';
 import { Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import CAT721Preview from '@/ui/components/CAT721Preview';
 import { Line } from '@/ui/components/Line';
@@ -16,12 +16,13 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { useNavigate } from '../MainRoute';
 
 interface LocationState {
+  version: CAT_VERSION;
   collectionId: string;
 }
 
 export default function CAT721CollectionScreen() {
   const { t } = useI18n();
-  const { collectionId } = useLocationState<LocationState>();
+  const { version, collectionId } = useLocationState<LocationState>();
   const [collectionSummary, setCollectionSummary] = useState<AddressCAT721CollectionSummary>({
     collectionInfo: {
       collectionId: '',
@@ -42,7 +43,7 @@ export default function CAT721CollectionScreen() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    wallet.getAddressCAT721CollectionSummary(account.address, collectionId).then((collectionSummary) => {
+    wallet.getAddressCAT721CollectionSummary(version, account.address, collectionId).then((collectionSummary) => {
       setCollectionSummary(collectionSummary);
       setLoading(false);
     });
@@ -127,6 +128,7 @@ export default function CAT721CollectionScreen() {
             <Row style={{ flexWrap: 'wrap', justifyContent }}>
               {collectionSummary.localIds.map((localId, index) => (
                 <CAT721Preview
+                  version={version}
                   key={localId}
                   preset="medium"
                   collectionId={collectionSummary.collectionInfo.collectionId}
@@ -134,6 +136,7 @@ export default function CAT721CollectionScreen() {
                   localId={localId}
                   onClick={() => {
                     navigate('CAT721NFTScreen', {
+                      version: version,
                       collectionInfo: collectionSummary.collectionInfo,
                       localId
                     });

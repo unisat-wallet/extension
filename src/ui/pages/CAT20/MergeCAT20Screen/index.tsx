@@ -1,10 +1,9 @@
 import { Divider, Slider } from 'antd';
 import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
-import { AddressCAT20UtxoSummary, CAT20Balance, CAT20MergeOrder, CAT20TokenInfo } from '@/shared/types';
+import { AddressCAT20UtxoSummary, CAT20Balance, CAT20MergeOrder, CAT20TokenInfo, CAT_VERSION } from '@/shared/types';
 import { Button, Card, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
@@ -15,18 +14,21 @@ import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useBTCUnit } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
-import { satoshisToAmount, showLongNumber, sleep, useWallet } from '@/ui/utils';
+import { satoshisToAmount, showLongNumber, sleep, useLocationState, useWallet } from '@/ui/utils';
 
 import { MergeProgressLayout } from './MergeProgressLayout';
 import { ItemStatus, MergeItem, MergeState } from './MergingItem';
 import { NoMergeLayout } from './NoMergeLayout';
 
+interface LocationState {
+  cat20Balance: CAT20Balance;
+  cat20Info: CAT20TokenInfo;
+  version: CAT_VERSION;
+}
+
 export default function MergeCAT20Screen() {
-  const { state } = useLocation();
-  const props = state as {
-    cat20Balance: CAT20Balance;
-    cat20Info: CAT20TokenInfo;
-  };
+  const props = useLocationState<LocationState>();
+
   const { t } = useI18n();
 
   const cat20Balance = props.cat20Balance;
@@ -77,7 +79,7 @@ export default function MergeCAT20Screen() {
     async function init() {
       tools.showLoading(true);
       try {
-        const data = await wallet.getAddressCAT20UtxoSummary(account.address, cat20Balance.tokenId);
+        const data = await wallet.getAddressCAT20UtxoSummary(props.version, account.address, cat20Balance.tokenId);
         setTokenUtxoSummary(data);
         if (data.availableUtxoCount < 2) {
           setDisabled(true);
@@ -160,9 +162,19 @@ export default function MergeCAT20Screen() {
     let failedCount = 0;
     for (i = order.batchIndex; i < order.batchCount; i++) {
       try {
-        const step1Data = await wallet.transferCAT20Step1ByMerge(order.id);
-        const step2Data = await wallet.transferCAT20Step2(step1Data.id, step1Data.commitTx, step1Data.toSignInputs);
-        const step3Data = await wallet.transferCAT20Step3(step1Data.id, step2Data.revealTx, step2Data.toSignInputs);
+        const step1Data = await wallet.transferCAT20Step1ByMerge(props.version, order.id);
+        const step2Data = await wallet.transferCAT20Step2(
+          props.version,
+          step1Data.id,
+          step1Data.commitTx,
+          step1Data.toSignInputs
+        );
+        const step3Data = await wallet.transferCAT20Step3(
+          props.version,
+          step1Data.id,
+          step2Data.revealTx,
+          step2Data.toSignInputs
+        );
 
         mergeItems[i].status = ItemStatus.completed;
         mergeItems[i].txid = step3Data.txid;
@@ -201,7 +213,7 @@ export default function MergeCAT20Screen() {
   const onPrepare = async () => {
     tools.showLoading(true);
     try {
-      const order = await wallet.mergeCAT20Prepare(cat20Balance.tokenId, inputUtxoCount, feeRate);
+      const order = await wallet.mergeCAT20Prepare(props.version, cat20Balance.tokenId, inputUtxoCount, feeRate);
       if (order) {
         setMergeOrder(order);
       }

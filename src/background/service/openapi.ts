@@ -19,6 +19,7 @@ import {
   BitcoinBalanceV2,
   CAT20Balance,
   CAT721CollectionInfo,
+  CAT_VERSION,
   CoinPrice,
   DecodedPsbt,
   FeeSummary,
@@ -677,20 +678,34 @@ export class OpenApiService {
     return this.httpGet('/v5/address/history', params);
   }
 
-  async getCAT20List(address: string, cursor: number, size: number): Promise<{ list: CAT20Balance[]; total: number }> {
-    return this.httpGet('/v5/cat20/list', { address, cursor, size });
+  async getCAT20List(
+    version: CAT_VERSION,
+    address: string,
+    cursor: number,
+    size: number
+  ): Promise<{ list: CAT20Balance[]; total: number }> {
+    return this.httpGet('/v5/cat20/list', { address, cursor, size, version });
   }
 
-  async getAddressCAT20TokenSummary(address: string, tokenId: string) {
-    return this.httpGet(`/v5/cat20/token-summary?address=${address}&tokenId=${tokenId}`, {});
+  async getAddressCAT20TokenSummary(version: CAT_VERSION, address: string, tokenId: string) {
+    return this.httpGet(`/v5/cat20/token-summary?address=${address}&tokenId=${tokenId}&version=${version}`, {});
   }
 
-  async getAddressCAT20UtxoSummary(address: string, tokenId: string) {
-    return this.httpGet(`/v5/cat20/utxo-summary?address=${address}&tokenId=${tokenId}`, {});
+  async getAddressCAT20UtxoSummary(version: CAT_VERSION, address: string, tokenId: string) {
+    return this.httpGet(`/v5/cat20/utxo-summary?address=${address}&tokenId=${tokenId}&version=${version}`, {});
   }
 
-  async transferCAT20Step1(address: string, pubkey: string, to: string, tokenId: string, amount: string, feeRate) {
+  async transferCAT20Step1(
+    version: CAT_VERSION,
+    address: string,
+    pubkey: string,
+    to: string,
+    tokenId: string,
+    amount: string,
+    feeRate
+  ) {
     return this.httpPost('/v5/cat20/transfer-token-step1', {
+      version,
       address,
       pubkey,
       to,
@@ -700,28 +715,39 @@ export class OpenApiService {
     });
   }
 
-  async transferCAT20Step2(transferId: string, signedPsbt: string) {
+  async transferCAT20Step2(version: CAT_VERSION, transferId: string, signedPsbt: string) {
     return this.httpPost('/v5/cat20/transfer-token-step2', {
       id: transferId,
-      psbt: signedPsbt
+      psbt: signedPsbt,
+      version
     });
   }
 
-  async transferCAT20Step3(transferId: string, signedPsbt: string) {
+  async transferCAT20Step3(version: CAT_VERSION, transferId: string, signedPsbt: string) {
     return this.httpPost('/v5/cat20/transfer-token-step3', {
       id: transferId,
-      psbt: signedPsbt
+      psbt: signedPsbt,
+      version
     });
   }
 
-  async transferCAT20Step1ByMerge(mergeId: string) {
+  async transferCAT20Step1ByMerge(version: CAT_VERSION, mergeId: string) {
     return this.httpPost('/v5/cat20/transfer-token-step1-by-merge', {
-      mergeId
+      mergeId,
+      version
     });
   }
 
-  async mergeCAT20Prepare(address: string, pubkey: string, tokenId: string, utxoCount: number, feeRate: number) {
+  async mergeCAT20Prepare(
+    version: CAT_VERSION,
+    address: string,
+    pubkey: string,
+    tokenId: string,
+    utxoCount: number,
+    feeRate: number
+  ) {
     return this.httpPost('/v5/cat20/merge-token-prepare', {
+      version,
       address,
       pubkey,
       tokenId,
@@ -730,25 +756,31 @@ export class OpenApiService {
     });
   }
 
-  async getMergeCAT20Status(mergeId: string) {
+  async getMergeCAT20Status(version: CAT_VERSION, mergeId: string) {
     return this.httpPost('/v5/cat20/merge-token-status', {
-      id: mergeId
+      id: mergeId,
+      version
     });
   }
 
   async getCAT721CollectionList(
+    version: CAT_VERSION,
     address: string,
     cursor: number,
     size: number
   ): Promise<{ list: CAT721CollectionInfo[]; total: number }> {
-    return this.httpGet('/v5/cat721/collection/list', { address, cursor, size });
+    return this.httpGet('/v5/cat721/collection/list', { address, cursor, size, version });
   }
 
-  async getAddressCAT721CollectionSummary(address: string, collectionId: string) {
-    return this.httpGet(`/v5/cat721/collection-summary?address=${address}&collectionId=${collectionId}`, {});
+  async getAddressCAT721CollectionSummary(version: CAT_VERSION, address: string, collectionId: string) {
+    return this.httpGet(
+      `/v5/cat721/collection-summary?address=${address}&collectionId=${collectionId}&version=${version}`,
+      {}
+    );
   }
 
   async transferCAT721Step1(
+    version: CAT_VERSION,
     address: string,
     pubkey: string,
     to: string,
@@ -757,6 +789,7 @@ export class OpenApiService {
     feeRate: number
   ) {
     return this.httpPost('/v5/cat721/transfer-nft-step1', {
+      version,
       address,
       pubkey,
       to,
@@ -766,17 +799,19 @@ export class OpenApiService {
     });
   }
 
-  async transferCAT721Step2(transferId: string, signedPsbt: string) {
+  async transferCAT721Step2(version: CAT_VERSION, transferId: string, signedPsbt: string) {
     return this.httpPost('/v5/cat721/transfer-nft-step2', {
       id: transferId,
-      psbt: signedPsbt
+      psbt: signedPsbt,
+      version
     });
   }
 
-  async transferCAT721Step3(transferId: string, signedPsbt: string) {
+  async transferCAT721Step3(version: CAT_VERSION, transferId: string, signedPsbt: string) {
     return this.httpPost('/v5/cat721/transfer-nft-step3', {
       id: transferId,
-      psbt: signedPsbt
+      psbt: signedPsbt,
+      version
     });
   }
 

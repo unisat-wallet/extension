@@ -112,7 +112,9 @@ export const svgRegistry = {
 
   'side-panel-logo': '/images/icons/side-panel-logo.svg',
 
-  'side-panel-logo-close': '/images/icons/side-panel-logo-close.svg'
+  'side-panel-logo-close': '/images/icons/side-panel-logo-close.svg',
+
+  drop_down: '/images/icons/drop_down.svg'
 };
 
 const iconImgList: Array<IconTypes> = [

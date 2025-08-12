@@ -1,12 +1,12 @@
 import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
 import {
   AddressCAT20UtxoSummary,
   CAT20Balance,
   CAT20TokenInfo,
+  CAT_VERSION,
   Inscription,
   TxType,
   UserToSignInput
@@ -24,7 +24,7 @@ import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useNetworkType } from '@/ui/state/settings/hooks';
 import { useRunesTx } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
-import { isValidAddress, showLongNumber, useWallet } from '@/ui/utils';
+import { isValidAddress, showLongNumber, useLocationState, useWallet } from '@/ui/utils';
 import { AddressType } from '@unisat/wallet-sdk';
 import { getAddressType } from '@unisat/wallet-sdk/lib/address';
 
@@ -32,12 +32,14 @@ import { SignPsbt } from '../Approval/components';
 
 const MAX_TOKEN_INPUT = 4;
 
+interface LocationState {
+  version: CAT_VERSION;
+  cat20Balance: CAT20Balance;
+  cat20Info: CAT20TokenInfo;
+}
+
 export default function SendCAT20Screen() {
-  const { state } = useLocation();
-  const props = state as {
-    cat20Balance: CAT20Balance;
-    cat20Info: CAT20TokenInfo;
-  };
+  const props = useLocationState<LocationState>();
 
   const cat20Balance = props.cat20Balance;
 
@@ -77,7 +79,7 @@ export default function SendCAT20Screen() {
   useEffect(() => {
     tools.showLoading(true);
     wallet
-      .getAddressCAT20UtxoSummary(account.address, cat20Balance.tokenId)
+      .getAddressCAT20UtxoSummary(props.version, account.address, cat20Balance.tokenId)
       .then((data) => {
         setTokenUtxoSummary(data);
       })
@@ -147,7 +149,13 @@ export default function SendCAT20Screen() {
     tools.showLoading(true);
     try {
       const cat20Amount = runesUtils.fromDecimalAmount(inputAmount, cat20Balance.decimals);
-      const step1 = await wallet.transferCAT20Step1(toInfo.address, cat20Balance.tokenId, cat20Amount, feeRate);
+      const step1 = await wallet.transferCAT20Step1(
+        props.version,
+        toInfo.address,
+        cat20Balance.tokenId,
+        cat20Amount,
+        feeRate
+      );
       if (step1) {
         transferData.current.id = step1.id;
         transferData.current.commitTx = step1.commitTx;
@@ -189,6 +197,7 @@ export default function SendCAT20Screen() {
           try {
             tools.showLoading(true);
             const step2 = await wallet.transferCAT20Step2(
+              props.version,
               transferData.current.id,
               transferData.current.commitTx,
               transferData.current.commitToSignInputs
@@ -234,6 +243,7 @@ export default function SendCAT20Screen() {
           tools.showLoading(true);
           try {
             const step3 = await wallet.transferCAT20Step3(
+              props.version,
               transferData.current.id,
               transferData.current.revealTx,
               transferData.current.revealToSignInputs
@@ -337,6 +347,7 @@ export default function SendCAT20Screen() {
                   color="gold"
                   onClick={() => {
                     navigate('MergeCAT20Screen', {
+                      version: props.version,
                       cat20Balance: cat20Balance,
                       cat20Info: cat20Info
                     });

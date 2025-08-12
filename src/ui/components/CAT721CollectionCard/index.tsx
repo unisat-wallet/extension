@@ -1,6 +1,6 @@
 import { useCallback } from 'react';
 
-import { CAT721Balance } from '@/shared/types';
+import { CAT721Balance, CAT_VERSION } from '@/shared/types';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { useCAT721NFTContentBaseUrl } from '@/ui/state/settings/hooks';
 
@@ -11,6 +11,7 @@ import { Row } from '../Row';
 import { Text } from '../Text';
 
 export interface CAT721CollectionCardProps {
+  version: CAT_VERSION;
   cat721Balance: CAT721Balance;
   contentType: string;
   onClick?: () => void;
@@ -42,7 +43,7 @@ function CardComponent(props: { children: React.ReactNode; onClick?: () => void 
 }
 
 export function CAT721CollectionCard(props: CAT721CollectionCardProps) {
-  const { cat721Balance, contentType, onClick } = props;
+  const { version, cat721Balance, contentType, onClick } = props;
   const { t } = useI18n();
 
   const previewLocalIds = cat721Balance.previewLocalIds.slice(0, 4);
@@ -54,7 +55,7 @@ export function CAT721CollectionCard(props: CAT721CollectionCardProps) {
     }
   }
 
-  const contentBaseUrl = useCAT721NFTContentBaseUrl();
+  const contentBaseUrl = useCAT721NFTContentBaseUrl(version);
 
   const isHTML = contentType == 'text/html';
 

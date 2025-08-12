@@ -1,3 +1,4 @@
+import { CAT_VERSION } from '@/shared/types';
 import { useCAT721NFTContentBaseUrl } from '@/ui/state/settings/hooks';
 
 import { Column } from '../Column';
@@ -50,7 +51,8 @@ const $stylePresets: {
 
 type Presets = keyof typeof $viewPresets;
 
-export interface InscriptionProps {
+export interface CAT721PreviewProps {
+  version: CAT_VERSION;
   collectionId: string;
   contentType: string;
   localId: string;
@@ -58,15 +60,21 @@ export interface InscriptionProps {
   preset: Presets;
 }
 
-export default function CAT721Preview({ collectionId, contentType, localId, onClick, preset }: InscriptionProps) {
+export default function CAT721Preview({
+  version,
+  collectionId,
+  contentType,
+  localId,
+  onClick,
+  preset
+}: CAT721PreviewProps) {
   const style = $stylePresets[preset];
 
-  const contentBaseUrl = useCAT721NFTContentBaseUrl();
+  const contentBaseUrl = useCAT721NFTContentBaseUrl(version);
   return (
     <Column gap="zero" onClick={onClick} style={{}}>
       {contentType && contentType.includes('html') ? (
         <Iframe
-          disableSandbox
           preview={`${contentBaseUrl}/api/collections/${collectionId}/localId/${localId}/content`}
           style={$stylePresets[preset]}
         />

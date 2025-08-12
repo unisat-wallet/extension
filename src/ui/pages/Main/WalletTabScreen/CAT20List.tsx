@@ -1,6 +1,6 @@
 import { useEffect, useState } from 'react';
 
-import { CAT20Balance, TickPriceItem } from '@/shared/types';
+import { CAT20Balance, CAT_VERSION, TickPriceItem } from '@/shared/types';
 import { Column, Row } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { CAT20BalanceCard } from '@/ui/components/CAT20BalanceCard';
@@ -15,7 +15,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../../MainRoute';
 
-export function CAT20List() {
+export function CAT20List(props: { version: CAT_VERSION }) {
   const navigate = useNavigate();
   const wallet = useWallet();
   const currentAccount = useCurrentAccount();
@@ -42,6 +42,7 @@ export function CAT20List() {
       try {
         setPriceMap(undefined);
         const { list, total } = await wallet.getCAT20List(
+          props.version,
           currentAccount.address,
           pagination.currentPage,
           pagination.pageSize
@@ -59,7 +60,7 @@ export function CAT20List() {
     };
 
     fetchData();
-  }, [pagination, currentAccount.address, chainType, supportedAssets.key]);
+  }, [pagination, currentAccount.address, chainType, supportedAssets.key, props.version]);
 
   if (total === -1) {
     return (
@@ -80,15 +81,16 @@ export function CAT20List() {
   return (
     <Column>
       <Row style={{ flexWrap: 'wrap' }} gap="sm">
-        {tokens.map((data, index) => (
+        {tokens.map((data) => (
           <CAT20BalanceCard
-            key={index}
+            key={data.tokenId}
             tokenBalance={data}
             showPrice={chain.showPrice && priceMap !== undefined}
             price={priceMap?.[data.tokenId]}
             onClick={() => {
               navigate('CAT20TokenScreen', {
-                tokenId: data.tokenId
+                tokenId: data.tokenId,
+                version: props.version
               });
             }}
           />

@@ -4,7 +4,7 @@ import { useCallback } from 'react';
 import { CHAINS_MAP, ChainType, VERSION } from '@/shared/constant';
 import { BABYLON_CONFIG_MAP } from '@/shared/constant/babylon';
 import { t } from '@/shared/modules/i18n';
-import { AddressType, NetworkType } from '@/shared/types';
+import { AddressType, CAT_VERSION, NetworkType } from '@/shared/types';
 import { useWallet } from '@/ui/utils';
 import i18n, { addResourceBundle } from '@/ui/utils/i18n';
 import { getAddressType } from '@unisat/wallet-sdk/lib/address';
@@ -131,9 +131,13 @@ export function useAddressExplorerUrl(address: string) {
   }
 }
 
-export function useCAT20TokenInfoExplorerUrl(tokenId: string) {
+export function useCAT20TokenInfoExplorerUrl(version: CAT_VERSION, tokenId: string) {
   const chain = useChain();
-  return `${chain.unisatExplorerUrl}/cat20/${tokenId}`;
+  if (version === CAT_VERSION.V1) {
+    return `${chain.unisatExplorerUrl}/cat20/${tokenId}`;
+  } else {
+    return `${chain.unisatExplorerUrl}/cat20-v2/${tokenId}`;
+  }
 }
 
 export function useUnisatWebsite() {
@@ -232,10 +236,14 @@ export function useAddressTips() {
   return getAddressTips(account.address, chain.enum);
 }
 
-export function useCAT721NFTContentBaseUrl() {
+export function useCAT721NFTContentBaseUrl(version: CAT_VERSION) {
   const chainType = useChainType();
   if (chainType === ChainType.FRACTAL_BITCOIN_MAINNET) {
-    return 'https://tracker-fractal-mainnet.catprotocol.org';
+    if (version === CAT_VERSION.V1) {
+      return 'https://tracker-fractal-mainnet.catprotocol.org';
+    } else {
+      return 'https://tracker2-fractal-mainnet.catprotocol.org';
+    }
   } else if (chainType === ChainType.FRACTAL_BITCOIN_TESTNET) {
     return 'https://tracker-fractal-testnet.catprotocol.org';
   } else {

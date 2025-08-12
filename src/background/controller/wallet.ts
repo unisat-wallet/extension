@@ -37,6 +37,7 @@ import {
   AddressType,
   AddressUserToSignInput,
   BitcoinBalance,
+  CAT_VERSION,
   CosmosBalance,
   CosmosSignDataType,
   NetworkType,
@@ -2189,10 +2190,10 @@ export class WalletController extends BaseController {
     }, timeConfig.time);
   };
 
-  getCAT20List = async (address: string, currentPage: number, pageSize: number) => {
+  getCAT20List = async (version: CAT_VERSION, address: string, currentPage: number, pageSize: number) => {
     const cursor = (currentPage - 1) * pageSize;
     const size = pageSize;
-    const { total, list } = await openapiService.getCAT20List(address, cursor, size);
+    const { total, list } = await openapiService.getCAT20List(version, address, cursor, size);
 
     return {
       currentPage,
@@ -2202,27 +2203,34 @@ export class WalletController extends BaseController {
     };
   };
 
-  getAddressCAT20TokenSummary = async (address: string, tokenId: string) => {
-    const tokenSummary = await openapiService.getAddressCAT20TokenSummary(address, tokenId);
+  getAddressCAT20TokenSummary = async (version: CAT_VERSION, address: string, tokenId: string) => {
+    const tokenSummary = await openapiService.getAddressCAT20TokenSummary(version, address, tokenId);
     return tokenSummary;
   };
 
-  getAddressCAT20UtxoSummary = async (address: string, tokenId: string) => {
-    const tokenSummary = await openapiService.getAddressCAT20UtxoSummary(address, tokenId);
+  getAddressCAT20UtxoSummary = async (version: CAT_VERSION, address: string, tokenId: string) => {
+    const tokenSummary = await openapiService.getAddressCAT20UtxoSummary(version, address, tokenId);
     return tokenSummary;
   };
 
-  transferCAT20Step1ByMerge = async (mergeId: string) => {
-    return await openapiService.transferCAT20Step1ByMerge(mergeId);
+  transferCAT20Step1ByMerge = async (version: CAT_VERSION, mergeId: string) => {
+    return await openapiService.transferCAT20Step1ByMerge(version, mergeId);
   };
 
-  transferCAT20Step1 = async (to: string, tokenId: string, tokenAmount: string, feeRate: number) => {
+  transferCAT20Step1 = async (
+    version: CAT_VERSION,
+    to: string,
+    tokenId: string,
+    tokenAmount: string,
+    feeRate: number
+  ) => {
     const currentAccount = await this.getCurrentAccount();
     if (!currentAccount) {
       return;
     }
 
     const _res = await openapiService.transferCAT20Step1(
+      version,
       currentAccount.address,
       currentAccount.pubkey,
       to,
@@ -2233,31 +2241,42 @@ export class WalletController extends BaseController {
     return _res;
   };
 
-  transferCAT20Step2 = async (transferId: string, commitTx: string, toSignInputs: ToSignInput[]) => {
+  transferCAT20Step2 = async (
+    version: CAT_VERSION,
+    transferId: string,
+    commitTx: string,
+    toSignInputs: ToSignInput[]
+  ) => {
     const networkType = this.getNetworkType();
     const psbtNetwork = toPsbtNetwork(networkType);
     const psbt = bitcoin.Psbt.fromBase64(commitTx, { network: psbtNetwork });
     await this.signPsbt(psbt, toSignInputs, true);
-    const _res = await openapiService.transferCAT20Step2(transferId, psbt.toBase64());
+    const _res = await openapiService.transferCAT20Step2(version, transferId, psbt.toBase64());
     return _res;
   };
 
-  transferCAT20Step3 = async (transferId: string, revealTx: string, toSignInputs: ToSignInput[]) => {
+  transferCAT20Step3 = async (
+    version: CAT_VERSION,
+    transferId: string,
+    revealTx: string,
+    toSignInputs: ToSignInput[]
+  ) => {
     const networkType = this.getNetworkType();
     const psbtNetwork = toPsbtNetwork(networkType);
     const psbt = bitcoin.Psbt.fromBase64(revealTx, { network: psbtNetwork });
     await this.signPsbt(psbt, toSignInputs, false);
-    const _res = await openapiService.transferCAT20Step3(transferId, psbt.toBase64());
+    const _res = await openapiService.transferCAT20Step3(version, transferId, psbt.toBase64());
     return _res;
   };
 
-  mergeCAT20Prepare = async (tokenId: string, utxoCount: number, feeRate: number) => {
+  mergeCAT20Prepare = async (version: CAT_VERSION, tokenId: string, utxoCount: number, feeRate: number) => {
     const currentAccount = await this.getCurrentAccount();
     if (!currentAccount) {
       return;
     }
 
     const _res = await openapiService.mergeCAT20Prepare(
+      version,
       currentAccount.address,
       currentAccount.pubkey,
       tokenId,
@@ -2267,8 +2286,8 @@ export class WalletController extends BaseController {
     return _res;
   };
 
-  getMergeCAT20Status = async (mergeId: string) => {
-    const _res = await openapiService.getMergeCAT20Status(mergeId);
+  getMergeCAT20Status = async (version: CAT_VERSION, mergeId: string) => {
+    const _res = await openapiService.getMergeCAT20Status(version, mergeId);
     return _res;
   };
 
@@ -2286,10 +2305,10 @@ export class WalletController extends BaseController {
     return openapiService.getBlockActiveInfo();
   };
 
-  getCAT721List = async (address: string, currentPage: number, pageSize: number) => {
+  getCAT721List = async (version: CAT_VERSION, address: string, currentPage: number, pageSize: number) => {
     const cursor = (currentPage - 1) * pageSize;
     const size = pageSize;
-    const { total, list } = await openapiService.getCAT721CollectionList(address, cursor, size);
+    const { total, list } = await openapiService.getCAT721CollectionList(version, address, cursor, size);
 
     return {
       currentPage,
@@ -2299,18 +2318,25 @@ export class WalletController extends BaseController {
     };
   };
 
-  getAddressCAT721CollectionSummary = async (address: string, collectionId: string) => {
-    const collectionSummary = await openapiService.getAddressCAT721CollectionSummary(address, collectionId);
+  getAddressCAT721CollectionSummary = async (version: CAT_VERSION, address: string, collectionId: string) => {
+    const collectionSummary = await openapiService.getAddressCAT721CollectionSummary(version, address, collectionId);
     return collectionSummary;
   };
 
-  transferCAT721Step1 = async (to: string, collectionId: string, localId: string, feeRate: number) => {
+  transferCAT721Step1 = async (
+    version: CAT_VERSION,
+    to: string,
+    collectionId: string,
+    localId: string,
+    feeRate: number
+  ) => {
     const currentAccount = await this.getCurrentAccount();
     if (!currentAccount) {
       return;
     }
 
     const _res = await openapiService.transferCAT721Step1(
+      version,
       currentAccount.address,
       currentAccount.pubkey,
       to,
@@ -2321,21 +2347,31 @@ export class WalletController extends BaseController {
     return _res;
   };
 
-  transferCAT721Step2 = async (transferId: string, commitTx: string, toSignInputs: ToSignInput[]) => {
+  transferCAT721Step2 = async (
+    version: CAT_VERSION,
+    transferId: string,
+    commitTx: string,
+    toSignInputs: ToSignInput[]
+  ) => {
     const networkType = this.getNetworkType();
     const psbtNetwork = toPsbtNetwork(networkType);
     const psbt = bitcoin.Psbt.fromBase64(commitTx, { network: psbtNetwork });
     await this.signPsbt(psbt, toSignInputs, true);
-    const _res = await openapiService.transferCAT721Step2(transferId, psbt.toBase64());
+    const _res = await openapiService.transferCAT721Step2(version, transferId, psbt.toBase64());
     return _res;
   };
 
-  transferCAT721Step3 = async (transferId: string, revealTx: string, toSignInputs: ToSignInput[]) => {
+  transferCAT721Step3 = async (
+    version: CAT_VERSION,
+    transferId: string,
+    revealTx: string,
+    toSignInputs: ToSignInput[]
+  ) => {
     const networkType = this.getNetworkType();
     const psbtNetwork = toPsbtNetwork(networkType);
     const psbt = bitcoin.Psbt.fromBase64(revealTx, { network: psbtNetwork });
     await this.signPsbt(psbt, toSignInputs, false);
-    const _res = await openapiService.transferCAT721Step3(transferId, psbt.toBase64());
+    const _res = await openapiService.transferCAT721Step3(version, transferId, psbt.toBase64());
     return _res;
   };
 

@@ -2162,5 +2162,8 @@
   },
   "important_to_not_transfer_this_token": {
     "message": "重要: 一時的なインデックス作成の不一致のため、このトークンを転送しないでください。プロトコルの創設チームからの解決を待っています。他のトークンは影響を受けません。"
+  },
+  "merge_utxos_failed": {
+    "message": "統合失敗"
   }
 }

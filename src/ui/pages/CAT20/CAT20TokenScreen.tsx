@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { ChainType, KEYRING_TYPE } from '@/shared/constant';
 import { runesUtils } from '@/shared/lib/runes-utils';
-import { AddressCAT20TokenSummary } from '@/shared/types';
+import { AddressCAT20TokenSummary, CAT_VERSION } from '@/shared/types';
 import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
@@ -22,10 +22,11 @@ import { useNavigate } from '../MainRoute';
 
 interface LocationState {
   tokenId: string;
+  version: CAT_VERSION;
 }
 
 export default function CAT20TokenScreen() {
-  const { tokenId } = useLocationState<LocationState>();
+  const { tokenId, version } = useLocationState<LocationState>();
   const [tokenSummary, setTokenSummary] = useState<AddressCAT20TokenSummary>({
     cat20Balance: {
       tokenId: '',
@@ -55,7 +56,7 @@ export default function CAT20TokenScreen() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    wallet.getAddressCAT20TokenSummary(account.address, tokenId).then((tokenSummary) => {
+    wallet.getAddressCAT20TokenSummary(version, account.address, tokenId).then((tokenSummary) => {
       setTokenSummary(tokenSummary);
       setLoading(false);
     });
@@ -63,7 +64,7 @@ export default function CAT20TokenScreen() {
 
   const navigate = useNavigate();
 
-  const tokenUrl = useCAT20TokenInfoExplorerUrl(tokenSummary.cat20Info.tokenId);
+  const tokenUrl = useCAT20TokenInfoExplorerUrl(version, tokenSummary.cat20Info.tokenId);
 
   const enableTransfer = useMemo(() => {
     let enable = false;
@@ -75,7 +76,7 @@ export default function CAT20TokenScreen() {
 
   const chainType = useChainType();
   const enableTrade = useMemo(() => {
-    if (chainType === ChainType.FRACTAL_BITCOIN_MAINNET) {
+    if (chainType === ChainType.FRACTAL_BITCOIN_MAINNET && version === CAT_VERSION.V1) {
       return true;
     } else {
       return false;
@@ -159,6 +160,7 @@ export default function CAT20TokenScreen() {
                     return;
                   }
                   navigate('MergeCAT20Screen', {
+                    version: version,
                     cat20Balance: tokenSummary.cat20Balance,
                     cat20Info: tokenSummary.cat20Info
                   });
@@ -177,6 +179,7 @@ export default function CAT20TokenScreen() {
                     return;
                   }
                   navigate('SendCAT20Screen', {
+                    version: version,
                     cat20Balance: tokenSummary.cat20Balance,
                     cat20Info: tokenSummary.cat20Info
                   });

@@ -747,3 +747,8 @@ export interface AlkanesCollection {
   count: number;
   image: string;
 }
+
+export enum CAT_VERSION {
+  V1 = 'v1',
+  V2 = 'v2'
+}

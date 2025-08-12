@@ -525,7 +525,7 @@
     "message": "Fusionar UTXOs"
   },
   "token_id": {
-    "message": "token_id"
+    "message": "Token ID"
   },
   "name": {
     "message": "nombre"
@@ -2155,5 +2155,8 @@
   },
   "important_to_not_transfer_this_token": {
     "message": "Importante: No transferas este token debido a una discrepancia temporal en el índice. Esperamos la resolución del equipo fundador del protocolo. Otros tokens no afectados."
+  },
+  "merge_utxos_failed": {
+    "message": "Combinación fallida"
   }
 }

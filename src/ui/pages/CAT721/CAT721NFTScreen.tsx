@@ -1,23 +1,21 @@
-import { useLocation } from 'react-router-dom';
-
-import { CAT721CollectionInfo } from '@/shared/types';
+import { CAT721CollectionInfo, CAT_VERSION } from '@/shared/types';
 import { Button, Card, Column, Content, Header, Layout, Row, Text } from '@/ui/components';
 import CAT721Preview from '@/ui/components/CAT721Preview';
 import { Line } from '@/ui/components/Line';
 import { Section } from '@/ui/components/Section';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { useNavigate } from '@/ui/pages/MainRoute';
+import { useLocationState } from '@/ui/utils';
 
+interface LocationState {
+  version: CAT_VERSION;
+  collectionInfo: CAT721CollectionInfo;
+  localId: string;
+}
 export default function CAT721NFTScreen() {
-  const { state } = useLocation();
-  const props = state as {
-    collectionInfo: CAT721CollectionInfo;
-    localId: string;
-  };
+  const props = useLocationState<LocationState>();
+  const { version, collectionInfo, localId } = props;
   const { t } = useI18n();
-
-  const collectionInfo = props.collectionInfo;
-  const localId = props.localId;
 
   const navigate = useNavigate();
 
@@ -35,6 +33,7 @@ export default function CAT721NFTScreen() {
       <Content>
         <Row justifyCenter>
           <CAT721Preview
+            version={version}
             preset="large"
             collectionId={collectionInfo.collectionId}
             contentType={collectionInfo.contentType}
@@ -55,6 +54,7 @@ export default function CAT721NFTScreen() {
           icon="send"
           onClick={(e) => {
             navigate('SendCAT721Screen', {
+              version: version,
               collectionInfo: collectionInfo,
               localId: localId
             });

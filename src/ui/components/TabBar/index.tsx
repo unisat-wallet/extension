@@ -138,7 +138,7 @@ export function TabBar(props: TabBarProps) {
                 onClick={() => {
                   setTabKey(v.key);
                 }}>
-                <Text text={v.label} size="xxs" color={isSelected ? 'gold' : 'white_muted'} mx="md" my="sm" />
+                <Text text={v.label} size="xs" color={isSelected ? 'gold' : 'white_muted'} mx="md" my="sm" />
               </Column>
             );
           }

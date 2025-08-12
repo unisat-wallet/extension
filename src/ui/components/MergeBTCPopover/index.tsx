@@ -45,16 +45,21 @@ export const MergeBTCPopover = ({ onClose }: { onClose: () => void }) => {
   const chain = useChain();
   const navigate = useNavigate();
   const onConfirm = async () => {
-    const rawTxInfo = await prepareSendBTC({
-      toAddressInfo: {
-        address: currentAccount.address
-      },
-      toAmount: amountToSatoshis(safeBalance),
-      feeRate,
-      enableRBF: true
-    });
+    try {
+      const rawTxInfo = await prepareSendBTC({
+        toAddressInfo: {
+          address: currentAccount.address
+        },
+        toAmount: amountToSatoshis(safeBalance),
+        feeRate,
+        enableRBF: true
+      });
 
-    navigate('TxConfirmScreen', { rawTxInfo });
+      navigate('TxConfirmScreen', { rawTxInfo });
+    } catch (e) {
+      tools.toastError(t('merge_utxos_failed'));
+      console.error('Merge UTXOs failed:', e);
+    }
   };
   return (
     <Popover onClose={onClose}>

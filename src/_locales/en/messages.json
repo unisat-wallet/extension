@@ -528,7 +528,7 @@
     "message": "Merge UTXOs"
   },
   "token_id": {
-    "message": "token_id"
+    "message": "Token ID"
   },
   "name": {
     "message": "name"
@@ -2167,5 +2167,8 @@
   },
   "important_to_not_transfer_this_token": {
     "message": "Important: Please do not transfer this token due to a temporary indexing discrepancy. We are awaiting resolution from the protocol's founding team. Other tokens unaffected."
+  },
+  "merge_utxos_failed": {
+    "message": "Merge failed"
   }
 }
