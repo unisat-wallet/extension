@@ -520,6 +520,9 @@ const Main = () => {
         wallet.getAutoLockTimeId().then((data) => {
           dispatch(settingsActions.updateSettings({ autoLockTimeId: data }));
         });
+        wallet.getDeveloperMode().then((data) => {
+          dispatch(settingsActions.updateSettings({ developerMode: data }));
+        });
       }
 
       dispatch(globalActions.update({ isReady: true }));

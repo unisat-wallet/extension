@@ -89,6 +89,7 @@ export interface PreferenceStore {
   enableSignData: boolean;
   autoLockTimeId: number;
   openInSidePanel: boolean;
+  developerMode: boolean;
 }
 
 const SUPPORTED_LOCALES = ['en', 'zh_TW', 'fr', 'es', 'ru', 'ja'];
@@ -137,7 +138,8 @@ class PreferenceService {
         addressFlags: {},
         enableSignData: false,
         autoLockTimeId: DEFAULT_LOCKTIME_ID,
-        openInSidePanel: false
+        openInSidePanel: false,
+        developerMode: false
       }
     });
 
@@ -241,6 +243,10 @@ class PreferenceService {
 
     if (typeof this.store.openInSidePanel !== 'boolean') {
       this.store.openInSidePanel = false;
+    }
+
+    if (typeof this.store.developerMode !== 'boolean') {
+      this.store.developerMode = false;
     }
   };
 
@@ -561,6 +567,14 @@ class PreferenceService {
 
   setOpenInSidePanel = (openInSidePanel: boolean) => {
     this.store.openInSidePanel = openInSidePanel;
+  };
+
+  getDeveloperMode = () => {
+    return this.store.developerMode;
+  };
+
+  setDeveloperMode = (developerMode: boolean) => {
+    this.store.developerMode = developerMode;
   };
 }
 

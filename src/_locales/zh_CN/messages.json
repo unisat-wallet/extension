@@ -2182,5 +2182,11 @@
   },
   "Broadcast": {
     "message": "广播"
+  },
+  "developer_mode_enabled": {
+    "message": "开发者模式已启用"
+  },
+  "developer_mode_disabled": {
+    "message": "开发者模式已禁用"
   }
 }

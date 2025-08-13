@@ -2275,5 +2275,11 @@
   },
   "Broadcast": {
     "message": "Broadcast"
+  },
+  "developer_mode_enabled": {
+    "message": "Developer Mode Enabled"
+  },
+  "developer_mode_disabled": {
+    "message": "Developer Mode Disabled"
   }
 }

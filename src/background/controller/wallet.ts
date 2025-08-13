@@ -2262,6 +2262,14 @@ export class WalletController extends BaseController {
     return preferenceService.getOpenInSidePanel();
   };
 
+  getDeveloperMode = () => {
+    return preferenceService.getDeveloperMode();
+  };
+
+  setDeveloperMode = (developerMode: boolean) => {
+    preferenceService.setDeveloperMode(developerMode);
+  };
+
   setOpenInSidePanel = (openInSidePanel: boolean) => {
     preferenceService.setOpenInSidePanel(openInSidePanel);
 

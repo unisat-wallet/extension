@@ -423,6 +423,9 @@ export interface WalletController {
   setAutoLockTimeId(timeId: number): Promise<void>;
   getAutoLockTimeId(): Promise<number>;
 
+  getDeveloperMode(): Promise<boolean>;
+  setDeveloperMode(developerMode: boolean): Promise<void>;
+
   getCAT20List(
     version: 'v1' | 'v2',
     address: string,

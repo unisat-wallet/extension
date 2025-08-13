@@ -275,3 +275,24 @@ export function useIsMainnetChain() {
   const chainType = useChainType();
   return chainType === ChainType.BITCOIN_MAINNET || chainType === ChainType.FRACTAL_BITCOIN_MAINNET;
 }
+
+export function useDeveloperMode() {
+  const settings = useSettingsState();
+  return settings.developerMode;
+}
+
+export function useSetDeveloperModeCallback() {
+  const dispatch = useAppDispatch();
+  const wallet = useWallet();
+  return useCallback(
+    async (developerMode: boolean) => {
+      await wallet.setDeveloperMode(developerMode);
+      dispatch(
+        settingsActions.updateSettings({
+          developerMode
+        })
+      );
+    },
+    [dispatch, wallet]
+  );
+}

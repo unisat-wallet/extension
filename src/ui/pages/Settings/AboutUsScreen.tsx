@@ -1,13 +1,44 @@
+import { useEffect, useState } from 'react';
+
 import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL, VERSION } from '@/shared/constant';
 import { Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
+import { useTools } from '@/ui/components/ActionComponent';
 import { useI18n } from '@/ui/hooks/useI18n';
-import { useVersionInfo } from '@/ui/state/settings/hooks';
+import { useDeveloperMode, useSetDeveloperModeCallback, useVersionInfo } from '@/ui/state/settings/hooks';
 import { spacing } from '@/ui/theme/spacing';
 
 export default function AboutUsScreen() {
   const versionInfo = useVersionInfo();
   const hasUpdate = versionInfo.latestVersion && versionInfo.latestVersion !== versionInfo.currentVesion;
   const { t } = useI18n();
+  const tools = useTools();
+  const developerMode = useDeveloperMode();
+  const setDeveloperMode = useSetDeveloperModeCallback();
+
+  const [tapCount, setTapCount] = useState(0);
+  const [lastTapTime, setLastTapTime] = useState(0);
+
+  useEffect(() => {
+    if (tapCount >= 10) {
+      const newMode = !developerMode;
+      setDeveloperMode(newMode);
+      tools.toastSuccess(newMode ? t('developer_mode_enabled') : t('developer_mode_disabled'));
+      setTapCount(0);
+    }
+  }, [tapCount, developerMode, setDeveloperMode, tools, t]);
+
+  const handleVersionTap = () => {
+    const now = Date.now();
+    const timeDiff = now - lastTapTime;
+
+    if (timeDiff < 500) {
+      setTapCount((prev) => prev + 1);
+    } else {
+      setTapCount(1);
+    }
+
+    setLastTapTime(now);
+  };
 
   return (
     <Layout>
@@ -31,7 +62,13 @@ export default function AboutUsScreen() {
 
           {/* Version Info */}
           <Column itemsCenter>
-            <Text text={`${t('version')} ${VERSION}`} preset="sub" color="textDim" />
+            <Text
+              text={`${t('version')} ${VERSION}${developerMode ? ' (Dev)' : ''}`}
+              preset="sub"
+              color={developerMode ? 'gold' : 'textDim'}
+              onClick={handleVersionTap}
+              style={{ cursor: 'pointer', userSelect: 'none' }}
+            />
           </Column>
 
           {/* Update Status */}
@@ -56,11 +93,7 @@ export default function AboutUsScreen() {
                   style={{ marginLeft: 3, whiteSpace: 'nowrap', color: '#EBB94C' }}
                 />
               </Row>
-            ) : (
-              <Row style={{ padding: spacing.small, borderRadius: 8 }}>
-                <Text text={t('you_re_on_the_latest_version')} preset="sub" color="orange" />
-              </Row>
-            )}
+            ) : null}
           </Column>
 
           {/* Terms of Service & Privacy Policy */}

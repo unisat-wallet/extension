@@ -1,6 +1,7 @@
 import { Card, Column, Content, Header, Layout, Text } from '@/ui/components';
 import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
 import { useI18n } from '@/ui/hooks/useI18n';
+import { useDeveloperMode } from '@/ui/state/settings/hooks';
 
 import { useNavigate } from '../MainRoute';
 
@@ -8,6 +9,7 @@ export default function AddKeyringScreen() {
   const navigate = useNavigate();
   const isInTab = useExtensionIsInTab();
   const { t } = useI18n();
+  const developerMode = useDeveloperMode();
 
   return (
     <Layout>
@@ -69,17 +71,21 @@ export default function AddKeyringScreen() {
             </Column>
           </Card>
 
-          <Text text={t('cold_wallet')} preset="regular-bold" mt="lg" />
+          {developerMode && (
+            <>
+              <Text text={t('cold_wallet')} preset="regular-bold" mt="lg" />
 
-          <Card
-            justifyCenter
-            onClick={() => {
-              navigate('CreateColdWalletScreen');
-            }}>
-            <Column full justifyCenter>
-              <Text text={t('create_cold_wallet')} size="sm" />
-            </Column>
-          </Card>
+              <Card
+                justifyCenter
+                onClick={() => {
+                  navigate('CreateColdWalletScreen');
+                }}>
+                <Column full justifyCenter>
+                  <Text text={t('create_cold_wallet')} size="sm" />
+                </Column>
+              </Card>
+            </>
+          )}
         </Column>
       </Content>
     </Layout>
