@@ -5,6 +5,7 @@ import { KeystoneSignEnum } from '@/shared/constant/KeystoneSignType';
 import { SignPsbtOptions, WebsiteResult } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
+import { ColdWalletSignMessage } from '@/ui/components/ColdWallet';
 import { PhishingDetection } from '@/ui/components/PhishingDetection';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useI18n } from '@/ui/hooks/useI18n';
@@ -140,6 +141,25 @@ export default function MultiSignMessage({
     handleConfirm = () => {
       setIsKeystoneSigning(true);
     };
+  }
+
+  // Handle cold wallet signing
+  if (currentAccount.type === KEYRING_TYPE.ColdWalletKeyring) {
+    return (
+      <ColdWalletSignMessage
+        messages={messageInfo.messages}
+        onSuccess={(signatures: string[]) => {
+          resolveApproval({
+            signatures: signatures
+          });
+        }}
+        onCancel={() => {
+          rejectApproval('User canceled');
+        }}
+        header={header}
+        origin={session?.origin}
+      />
+    );
   }
 
   if (loading) {

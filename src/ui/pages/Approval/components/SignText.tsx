@@ -3,6 +3,7 @@ import { useState } from 'react';
 import { KEYRING_TYPE } from '@/shared/constant';
 import { KeystoneSignEnum } from '@/shared/constant/KeystoneSignType';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
+import { ColdWalletSignMessage } from '@/ui/components/ColdWallet';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
@@ -40,6 +41,27 @@ export default function SignText({ params: { data, session } }: Props) {
     }
     resolveApproval();
   };
+
+  // Handle cold wallet signing
+  if (account.type === KEYRING_TYPE.ColdWalletKeyring) {
+    return (
+      <ColdWalletSignMessage
+        messages={[{ text: data.text, type: data.type }]}
+        onSuccess={(signatures: string[]) => {
+          resolveApproval({ signature: signatures[0] });
+        }}
+        onCancel={() => {
+          rejectApproval('User canceled');
+        }}
+        header={
+          <Header>
+            <WebsiteBar session={session} />
+          </Header>
+        }
+        origin={session?.origin}
+      />
+    );
+  }
 
   if (isKeystoneSigning) {
     return (

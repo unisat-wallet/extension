@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { AddressFlagType } from '@/shared/constant';
+import { AddressFlagType, KEYRING_TYPE } from '@/shared/constant';
 import { VersionDetail } from '@/shared/types';
 import { checkAddressFlag } from '@/shared/utils';
 import { Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
@@ -213,7 +213,16 @@ export default function WalletTabScreen() {
             onClick={() => {
               navigate('SwitchKeyringScreen');
             }}>
-            <Text text={currentKeyring.alianName} size="xxs" ellipsis style={{ maxWidth: 100 }} />
+            <Text
+              text={
+                currentKeyring.type === KEYRING_TYPE.ColdWalletKeyring
+                  ? `❄️  ${currentKeyring.alianName}`
+                  : currentKeyring.alianName
+              }
+              size="xxs"
+              ellipsis
+              style={{ maxWidth: 100 }}
+            />
           </Card>
         }
         RightComponent={

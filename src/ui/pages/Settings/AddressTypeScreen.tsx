@@ -67,6 +67,11 @@ export default function AddressTypeScreen() {
   }, []);
 
   const addressTypes = useMemo(() => {
+    // Cold wallets do not allow switching address types, only show the current type
+    if (currentKeyring.type === KEYRING_TYPE.ColdWalletKeyring) {
+      return ADDRESS_TYPES.filter((v) => v.value === currentKeyring.addressType);
+    }
+
     if (currentKeyring.type === KEYRING_TYPE.HdKeyring) {
       return ADDRESS_TYPES.filter((v) => {
         if (v.displayIndex < 0) {
@@ -86,7 +91,7 @@ export default function AddressTypeScreen() {
         (a, b) => a.displayIndex - b.displayIndex
       );
     }
-  }, [currentKeyring.type, addressAssets, addresses]);
+  }, [currentKeyring.type, currentKeyring.addressType, addressAssets, addresses]);
   return (
     <Layout>
       <Header
@@ -107,6 +112,8 @@ export default function AddressTypeScreen() {
             let name = `${item.name} (${item.hdPath}/${account.index})`;
             if (currentKeyring.type === KEYRING_TYPE.SimpleKeyring) {
               name = `${item.name}`;
+            } else if (currentKeyring.type === KEYRING_TYPE.ColdWalletKeyring) {
+              name = `❄️ ${item.name} (${item.hdPath}/${account.index}) - ${t('Fixed by cold wallet')}`;
             }
             return (
               <AddressTypeCard
@@ -119,6 +126,13 @@ export default function AddressTypeScreen() {
                   if (item.value == currentKeyring.addressType) {
                     return;
                   }
+
+                  // Cold wallets do not allow switching address types
+                  if (currentKeyring.type === KEYRING_TYPE.ColdWalletKeyring) {
+                    tools.toastError(t('Cold wallet address type cannot be changed'));
+                    return;
+                  }
+
                   await wallet.changeAddressType(item.value);
                   reloadAccounts();
                   navigate('MainScreen');

@@ -3,8 +3,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { KEYRING_TYPE } from '@/shared/constant';
 import { KeystoneSignEnum } from '@/shared/constant/KeystoneSignType';
 import { TxType } from '@/shared/types';
-import { Column, Content, Footer, Header, Layout } from '@/ui/components';
+import { Button, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
+import ColdWalletSignPsbt from '@/ui/components/ColdWallet/SignPsbt';
 import { ContractPopover } from '@/ui/components/ContractPopover';
 import LoadingPage from '@/ui/components/LoadingPage';
 import { PhishingDetection } from '@/ui/components/PhishingDetection';
@@ -58,6 +59,9 @@ export default function SignPsbt({
   const [loading, setLoading] = useState(true);
   const [isPsbtRiskPopoverVisible, setIsPsbtRiskPopoverVisible] = useState(false);
   const [isKeystoneSigning, setIsKeystoneSigning] = useState(false);
+  const [isColdWalletSigning, setIsColdWalletSigning] = useState(false);
+  const [isShowingSignedConfirmation, setIsShowingSignedConfirmation] = useState(false);
+  const [signedPsbtData, setSignedPsbtData] = useState<{ psbtHex: string; rawtx: string } | null>(null);
   const [contractPopoverData, setContractPopoverData] = useState(undefined);
 
   const wallet = useWallet();
@@ -103,7 +107,11 @@ export default function SignPsbt({
 
   const defaultHandleConfirm = (res) => {
     let signed = true;
-    if (type === TxType.SIGN_TX && currentAccount.type !== KEYRING_TYPE.KeystoneKeyring) {
+    if (
+      type === TxType.SIGN_TX &&
+      currentAccount.type !== KEYRING_TYPE.KeystoneKeyring &&
+      currentAccount.type !== KEYRING_TYPE.ColdWalletKeyring
+    ) {
       signed = false;
     }
     console.log('SignPsbt handleConfirm', res, txInfo);
@@ -114,9 +122,14 @@ export default function SignPsbt({
   };
   const originalHandleConfirm = handleConfirm || defaultHandleConfirm;
 
-  // Keystone wallet handle
-  const finalHandleConfirm =
-    currentAccount.type === KEYRING_TYPE.KeystoneKeyring ? () => setIsKeystoneSigning(true) : originalHandleConfirm;
+  let finalHandleConfirm;
+  if (currentAccount.type === KEYRING_TYPE.KeystoneKeyring) {
+    finalHandleConfirm = () => setIsKeystoneSigning(true);
+  } else if (currentAccount.type === KEYRING_TYPE.ColdWalletKeyring) {
+    finalHandleConfirm = () => setIsColdWalletSigning(true);
+  } else {
+    finalHandleConfirm = originalHandleConfirm;
+  }
 
   const networkFee = useMemo(() => satoshisToAmount(txInfo.decodedPsbt.fee), [txInfo.decodedPsbt]);
 
@@ -176,6 +189,110 @@ export default function SignPsbt({
         onSuccess={(data) => originalHandleConfirm(data as any)}
         onBack={() => setIsKeystoneSigning(false)}
       />
+    );
+  }
+
+  // cold-wallet signing
+  if (isColdWalletSigning) {
+    return (
+      <ColdWalletSignPsbt
+        psbtHex={txInfo.psbtHex}
+        onSuccess={(signedPsbtHex) => {
+          setIsColdWalletSigning(false);
+          setSignedPsbtData({
+            psbtHex: signedPsbtHex,
+            rawtx: ''
+          });
+          setIsShowingSignedConfirmation(true);
+        }}
+        onCancel={() => setIsColdWalletSigning(false)}
+        header={header}
+      />
+    );
+  }
+
+  if (isShowingSignedConfirmation && signedPsbtData) {
+    return (
+      <Layout>
+        {header}
+        <Content>
+          <Column gap="xl">
+            <div style={{ textAlign: 'center', padding: '20px' }}>
+              <Icon icon="success" size={64} color="success" style={{ marginBottom: '16px' }} />
+              <Text text={t('signature_successful')} preset="title-bold" style={{ textAlign: 'center' }} />
+              <Text
+                text={t('cold_wallet_signed_successfully')}
+                preset="sub"
+                style={{ marginTop: '8px', textAlign: 'center' }}
+              />
+            </div>
+
+            {detailsComponent}
+
+            {/* fee area */}
+            {!canChanged && <FeeSection txInfo={txInfo} t={t} networkFee={networkFee} btcUnit={btcUnit} />}
+
+            {/* features */}
+            <FeaturesSection txInfo={txInfo} t={t} />
+
+            {/* input output details */}
+            {isValidData && (
+              <Column gap="xl">
+                <InputsList
+                  txInfo={txInfo}
+                  t={t}
+                  address={address}
+                  btcUnit={btcUnit}
+                  runesPriceMap={runesPriceMap}
+                  setContractPopoverData={setContractPopoverData}
+                />
+
+                <OutputsList
+                  txInfo={txInfo}
+                  t={t}
+                  currentAccount={currentAccount}
+                  btcUnit={btcUnit}
+                  canChanged={canChanged}
+                  runesPriceMap={runesPriceMap}
+                  setContractPopoverData={setContractPopoverData}
+                />
+              </Column>
+            )}
+
+            {/* PSBT data */}
+            <PsbtDataSection txInfo={txInfo} t={t} tools={tools} />
+          </Column>
+        </Content>
+
+        {/* footer buttons */}
+        <Footer>
+          <Row full>
+            <Button
+              preset="default"
+              text={t('cancel')}
+              onClick={() => {
+                setIsShowingSignedConfirmation(false);
+                setSignedPsbtData(null);
+                actualHandleCancel();
+              }}
+              full
+            />
+            <Button
+              preset="primary"
+              text={t('Broadcast')}
+              onClick={() => {
+                setIsShowingSignedConfirmation(false);
+                originalHandleConfirm(signedPsbtData);
+              }}
+              full
+            />
+          </Row>
+        </Footer>
+
+        {contractPopoverData && (
+          <ContractPopover contract={contractPopoverData} onClose={() => setContractPopoverData(undefined)} />
+        )}
+      </Layout>
     );
   }
 
