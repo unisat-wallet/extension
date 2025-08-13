@@ -13,6 +13,7 @@ import { keyring } from '@unisat/wallet-sdk';
 import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 
 import { default as preference, default as preferenceService } from '../preference';
+import { ColdWalletKeyring } from './ColdWalletKeyring';
 import DisplayKeyring from './display';
 
 const { SimpleKeyring, HdKeyring, KeystoneKeyring } = keyring;
@@ -20,13 +21,15 @@ const { SimpleKeyring, HdKeyring, KeystoneKeyring } = keyring;
 export const KEYRING_SDK_TYPES = {
   SimpleKeyring,
   HdKeyring,
-  KeystoneKeyring
+  KeystoneKeyring,
+  ColdWalletKeyring
 };
 
 export const KEYRING_CLASS = {
   PRIVATE_KEY: SimpleKeyring.type,
   MNEMONIC: HdKeyring.type,
-  KEYSTORE: KeystoneKeyring.type
+  KEYSTORE: KeystoneKeyring.type,
+  COLD_WALLET: ColdWalletKeyring.prototype.type
 };
 
 interface MemStoreState {
@@ -495,7 +498,14 @@ class KeyringService extends EventEmitter {
   };
 
   createTmpKeyring = (type: string, opts: unknown) => {
+    if (type === KEYRING_TYPE.ColdWalletKeyring) {
+      return new ColdWalletKeyring(opts as any);
+    }
+
     const Keyring = this.getKeyringClassForType(type);
+    if (!Keyring) {
+      throw new Error(`Unknown keyring type: ${type}`);
+    }
     const keyring = new Keyring(opts);
     return keyring;
   };
@@ -820,7 +830,18 @@ class KeyringService extends EventEmitter {
       const keyring = new EmptyKeyring();
       return { keyring, addressType: addressType === undefined ? preference.getAddressType() : addressType };
     }
+
+    if (type === KEYRING_TYPE.ColdWalletKeyring) {
+      const keyring = new ColdWalletKeyring();
+      await keyring.deserialize(data);
+      await keyring.getAccounts();
+      return { keyring, addressType: addressType === undefined ? preference.getAddressType() : addressType };
+    }
+
     const Keyring = this.getKeyringClassForType(type);
+    if (!Keyring) {
+      throw new Error(`Unknown keyring type: ${type}`);
+    }
     const keyring = new Keyring();
     await keyring.deserialize(data);
 
@@ -841,6 +862,10 @@ class KeyringService extends EventEmitter {
    * @returns {Keyring|undefined} The class, if it exists.
    */
   getKeyringClassForType = (type: string) => {
+    if (type === KEYRING_TYPE.ColdWalletKeyring) {
+      return ColdWalletKeyring;
+    }
+
     return this.keyringTypes.find((kr) => kr.type === type);
   };
 

@@ -13,7 +13,8 @@ export const KEYRING_TYPE = {
   WatchAddressKeyring: 'Watch Address',
   WalletConnectKeyring: 'WalletConnect',
   Empty: 'Empty',
-  KeystoneKeyring: 'Keystone'
+  KeystoneKeyring: 'Keystone',
+  ColdWalletKeyring: 'Cold Wallet'
 };
 
 export const KEYRING_CLASS = {
@@ -26,13 +27,15 @@ export const KEYRING_TYPE_TEXT = {
   [KEYRING_TYPE.HdKeyring]: 'Created by Mnemonic',
   [KEYRING_TYPE.SimpleKeyring]: 'Imported by Private Key',
   [KEYRING_TYPE.WatchAddressKeyring]: 'Watch Mode',
-  [KEYRING_TYPE.KeystoneKeyring]: 'Import from Keystone'
+  [KEYRING_TYPE.KeystoneKeyring]: 'Import from Keystone',
+  [KEYRING_TYPE.ColdWalletKeyring]: 'Cold Wallet'
 };
 export const BRAND_ALIAN_TYPE_TEXT = {
   [KEYRING_TYPE.HdKeyring]: 'Account',
   [KEYRING_TYPE.SimpleKeyring]: 'Private Key',
   [KEYRING_TYPE.WatchAddressKeyring]: 'Watch',
-  [KEYRING_TYPE.KeystoneKeyring]: 'Account'
+  [KEYRING_TYPE.KeystoneKeyring]: 'Account',
+  [KEYRING_TYPE.ColdWalletKeyring]: 'Account'
 };
 
 export const KEYRING_TYPES: {
@@ -56,6 +59,11 @@ export const KEYRING_TYPES: {
     name: 'Keystone',
     tag: 'KEYSTONE',
     alianName: 'Keystone'
+  },
+  'Cold Wallet': {
+    name: 'Cold Wallet',
+    tag: 'COLD',
+    alianName: 'Cold Wallet'
   }
 };
 

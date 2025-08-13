@@ -1,6 +1,7 @@
 import { PsbtInput } from 'bip174/src/lib/interfaces';
 import { tapleafHash } from 'bitcoinjs-lib/src/payments/bip341';
 import { pubkeyInScript } from 'bitcoinjs-lib/src/psbt/psbtutils';
+import bitcore from 'bitcore-lib';
 
 import {
   contactBookService,
@@ -402,6 +403,77 @@ export class WalletController extends BaseController {
     preferenceService.setShowSafeNotice(false);
   };
 
+  createKeyringWithColdWallet = async (
+    xpub: string,
+    addressType: AddressType,
+    alianName?: string,
+    hdPath?: string,
+    accountCount = 1
+  ) => {
+    const accounts = await this.deriveAccountsFromXpub(xpub, addressType, hdPath, accountCount);
+    const addresses = accounts.map((acc) => acc.address);
+    const publicKeys = accounts.map((acc) => acc.pubkey);
+
+    const ColdWalletKeyring = await import('../service/keyring/ColdWalletKeyring').then((m) => m.ColdWalletKeyring);
+    const coldWalletKeyring = new ColdWalletKeyring({
+      xpub,
+      addresses,
+      connectionType: 'QR',
+      hdPath,
+      publicKeys
+    });
+
+    const originKeyring = await keyringService.addKeyring(coldWalletKeyring, addressType);
+    const displayedKeyring = await keyringService.displayForKeyring(
+      originKeyring,
+      addressType,
+      keyringService.keyrings.length - 1
+    );
+
+    const keyring = this.displayedKeyringToWalletKeyring(displayedKeyring, keyringService.keyrings.length - 1);
+
+    if (alianName) {
+      this.setKeyringAlianName(keyring, alianName);
+    }
+
+    this.changeKeyring(keyring);
+    preferenceService.setShowSafeNotice(false);
+
+    return keyring;
+  };
+
+  /**
+   * Derive accounts from extended public key (receive chain level only)
+   * For paths like m/84'/0'/0'/0, derives m/84'/0'/0'/0/i addresses
+   */
+  deriveAccountsFromXpub = async (
+    xpub: string,
+    addressType: AddressType,
+    hdPath?: string,
+    accountCount = 1
+  ): Promise<{ pubkey: string; address: string }[]> => {
+    // Validate xpub format
+    const validPrefixes = ['xpub', 'tpub', 'ypub', 'zpub'];
+    if (!validPrefixes.some((prefix) => xpub?.startsWith(prefix))) {
+      throw new Error('Invalid xpub format');
+    }
+
+    const { publicKeyToAddress } = await import('@unisat/wallet-sdk/lib/address');
+    const hdPublicKey = new bitcore.HDPublicKey(xpub);
+    const networkType = this.getNetworkType();
+    const accounts: { pubkey: string; address: string }[] = [];
+
+    // Derive addresses: m/84'/0'/0'/0/i
+    for (let i = 0; i < accountCount; i++) {
+      const addressKey = hdPublicKey.deriveChild(i);
+      const publicKeyHex = addressKey.publicKey.toString('hex');
+      const address = publicKeyToAddress(publicKeyHex, addressType, networkType);
+      accounts.push({ pubkey: publicKeyHex, address });
+    }
+
+    return accounts;
+  };
+
   removeKeyring = async (keyring: WalletKeyring) => {
     await keyringService.removeKeyring(keyring.index);
     const keyrings = await this.getKeyrings();
@@ -594,6 +666,7 @@ export class WalletController extends BaseController {
     }
 
     const isKeystone = keyring.type === KEYRING_TYPE.KeystoneKeyring;
+    const isColdWallet = keyring.type === KEYRING_TYPE.ColdWalletKeyring;
     let bip32Derivation: any = undefined;
 
     if (isKeystone) {
@@ -688,7 +761,8 @@ export class WalletController extends BaseController {
       }
     });
 
-    if (isKeystone) {
+    // For Keystone and cold wallets, return the prepared PSBT without actual signing
+    if (isKeystone || isColdWallet) {
       return psbt;
     }
 
@@ -1024,8 +1098,12 @@ export class WalletController extends BaseController {
       memos
     });
 
+    const keyring = await this.getCurrentKeyring();
+    const isColdWallet = keyring?.type === KEYRING_TYPE.ColdWalletKeyring;
+    const isKeystone = keyring?.type === KEYRING_TYPE.KeystoneKeyring;
+
     this.setPsbtSignNonSegwitEnable(psbt, true);
-    await this.signPsbt(psbt, toSignInputs, true);
+    await this.signPsbt(psbt, toSignInputs, !isColdWallet && !isKeystone);
     this.setPsbtSignNonSegwitEnable(psbt, false);
     return psbt.toHex();
   };
@@ -1062,8 +1140,12 @@ export class WalletController extends BaseController {
       enableRBF
     });
 
+    const keyring = await this.getCurrentKeyring();
+    const isColdWallet = keyring?.type === KEYRING_TYPE.ColdWalletKeyring;
+    const isKeystone = keyring?.type === KEYRING_TYPE.KeystoneKeyring;
+
     this.setPsbtSignNonSegwitEnable(psbt, true);
-    await this.signPsbt(psbt, toSignInputs, true);
+    await this.signPsbt(psbt, toSignInputs, !isColdWallet && !isKeystone);
     this.setPsbtSignNonSegwitEnable(psbt, false);
     return psbt.toHex();
   };
@@ -1256,9 +1338,28 @@ export class WalletController extends BaseController {
     const key = 'keyring_' + index;
     const type = displayedKeyring.type;
     const accounts: Account[] = [];
+
     for (let j = 0; j < displayedKeyring.accounts.length; j++) {
-      const { pubkey } = displayedKeyring.accounts[j];
-      const address = publicKeyToAddress(pubkey, addressType, networkType);
+      let pubkey: string;
+      let address: string;
+
+      if (type === KEYRING_TYPE.ColdWalletKeyring) {
+        // For cold wallets, we might not have pubkey, so we use the address directly
+        // The account might be just an address string for cold wallets
+        if (typeof displayedKeyring.accounts[j] === 'string') {
+          address = displayedKeyring.accounts[j] as unknown as string;
+          pubkey = '';
+        } else {
+          const account = displayedKeyring.accounts[j] as any;
+          pubkey = account.pubkey || '';
+          address = account.address || publicKeyToAddress(pubkey, addressType, networkType);
+        }
+      } else {
+        const { pubkey: accountPubkey } = displayedKeyring.accounts[j];
+        pubkey = accountPubkey;
+        address = publicKeyToAddress(pubkey, addressType, networkType);
+      }
+
       const accountKey = key + '#' + j;
       const defaultName = this._generateAlianName(type, j + 1);
       const alianName = preferenceService.getAccountAlianName(accountKey, defaultName);
