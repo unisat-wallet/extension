@@ -344,7 +344,7 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     mempoolSpaceUrl: 'https://mempool-testnet.fractalbitcoin.io',
     unisatUrl: 'https://fractal-testnet.unisat.io',
     ordinalsUrl: 'https://ordinals-testnet.fractalbitcoin.io',
-    unisatExplorerUrl: 'https://fractal-testnet.unisat.io/explorer',
+    unisatExplorerUrl: 'https://uniscan.cc/fractal-testnet',
     okxExplorerUrl: '',
     isViewTxHistoryInternally: false,
     isFractal: true,
