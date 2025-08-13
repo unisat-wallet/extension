@@ -17,6 +17,7 @@ import { settingsActions } from '../state/settings/reducer';
 import { useWallet } from '../utils';
 import AddKeyringScreen from './Account/AddKeyringScreen';
 import CreateAccountScreen from './Account/CreateAccountScreen';
+import CreateColdWalletScreen from './Account/CreateColdWalletScreen';
 import CreateHDWalletScreen from './Account/CreateHDWalletScreen';
 import CreateKeystoneWalletScreen from './Account/CreateKeystoneWalletScreen';
 import CreatePasswordScreen from './Account/CreatePasswordScreen';
@@ -242,6 +243,10 @@ export const routes = {
   CreateKeystoneWalletScreen: {
     path: '/account/create-keystone-wallet',
     element: <CreateKeystoneWalletScreen />
+  },
+  CreateColdWalletScreen: {
+    path: '/account/create-cold-wallet',
+    element: <CreateColdWalletScreen />
   },
   UpgradeNoticeScreen: {
     path: '/settings/upgrade-notice',

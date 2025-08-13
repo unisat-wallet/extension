@@ -114,7 +114,9 @@ export const svgRegistry = {
 
   'side-panel-logo-close': '/images/icons/side-panel-logo-close.svg',
 
-  drop_down: '/images/icons/drop_down.svg'
+  drop_down: '/images/icons/drop_down.svg',
+  'singer-info': '/images/icons/singer-info.svg',
+  'singer-logo': '/images/icons/singer-logo.svg'
 };
 
 const iconImgList: Array<IconTypes> = [

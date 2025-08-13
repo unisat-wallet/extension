@@ -102,8 +102,14 @@ export function usePrepareSendBTCCallback() {
         psbtHex = psbt.toHex();
       }
 
-      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction(true).toHex();
-      const fee = account.type === KEYRING_TYPE.KeystoneKeyring ? 0 : psbt.getFee();
+      const rawtx =
+        account.type === KEYRING_TYPE.KeystoneKeyring || account.type === KEYRING_TYPE.ColdWalletKeyring
+          ? ''
+          : psbt.extractTransaction(true).toHex();
+      const fee =
+        account.type === KEYRING_TYPE.KeystoneKeyring || account.type === KEYRING_TYPE.ColdWalletKeyring
+          ? 0
+          : psbt.getFee();
 
       dispatch(
         transactionsActions.updateBitcoinTx({
@@ -163,8 +169,14 @@ export function usePrepareSendBypassHeadOffsetsCallback() {
         psbtHex = psbt.toHex();
       }
 
-      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction(true).toHex();
-      const fee = account.type === KEYRING_TYPE.KeystoneKeyring ? 0 : psbt.getFee();
+      const rawtx =
+        account.type === KEYRING_TYPE.KeystoneKeyring || account.type === KEYRING_TYPE.ColdWalletKeyring
+          ? ''
+          : psbt.extractTransaction(true).toHex();
+      const fee =
+        account.type === KEYRING_TYPE.KeystoneKeyring || account.type === KEYRING_TYPE.ColdWalletKeyring
+          ? 0
+          : psbt.getFee();
 
       dispatch(
         transactionsActions.updateBitcoinTx({
@@ -269,7 +281,10 @@ export function usePrepareSendOrdinalsInscriptionCallback() {
         btcUtxos
       });
       const psbt = bitcoin.Psbt.fromHex(psbtHex);
-      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction(true).toHex();
+      const rawtx =
+        account.type === KEYRING_TYPE.KeystoneKeyring || account.type === KEYRING_TYPE.ColdWalletKeyring
+          ? ''
+          : psbt.extractTransaction(true).toHex();
       dispatch(
         transactionsActions.updateOrdinalsTx({
           rawtx,
@@ -328,7 +343,10 @@ export function usePrepareSendOrdinalsInscriptionsCallback() {
         btcUtxos
       });
       const psbt = bitcoin.Psbt.fromHex(psbtHex);
-      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction(true).toHex();
+      const rawtx =
+        account.type === KEYRING_TYPE.KeystoneKeyring || account.type === KEYRING_TYPE.ColdWalletKeyring
+          ? ''
+          : psbt.extractTransaction(true).toHex();
       dispatch(
         transactionsActions.updateOrdinalsTx({
           rawtx,
@@ -381,7 +399,10 @@ export function useCreateSplitTxCallback() {
         btcUtxos
       });
       const psbt = bitcoin.Psbt.fromHex(psbtHex);
-      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction(true).toHex();
+      const rawtx =
+        account.type === KEYRING_TYPE.KeystoneKeyring || account.type === KEYRING_TYPE.ColdWalletKeyring
+          ? ''
+          : psbt.extractTransaction(true).toHex();
       dispatch(
         transactionsActions.updateOrdinalsTx({
           rawtx,
@@ -536,7 +557,10 @@ export function usePrepareSendAtomicalsNFTCallback() {
         btcUtxos
       });
       const psbt = bitcoin.Psbt.fromHex(psbtHex);
-      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction(true).toHex();
+      const rawtx =
+        account.type === KEYRING_TYPE.KeystoneKeyring || account.type === KEYRING_TYPE.ColdWalletKeyring
+          ? ''
+          : psbt.extractTransaction(true).toHex();
       dispatch(
         transactionsActions.updateAtomicalsTx({
           rawtx,
@@ -647,7 +671,10 @@ export function usePrepareSendArc20Callback() {
         assetUtxos
       });
       const psbt = bitcoin.Psbt.fromHex(psbtHex);
-      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction(true).toHex();
+      const rawtx =
+        account.type === KEYRING_TYPE.KeystoneKeyring || account.type === KEYRING_TYPE.ColdWalletKeyring
+          ? ''
+          : psbt.extractTransaction(true).toHex();
       dispatch(
         transactionsActions.updateAtomicalsTx({
           rawtx,
@@ -745,7 +772,10 @@ export function usePrepareSendRunesCallback() {
       });
       const psbt = bitcoin.Psbt.fromHex(psbtHex);
 
-      const rawtx = account.type === KEYRING_TYPE.KeystoneKeyring ? '' : psbt.extractTransaction(true).toHex();
+      const rawtx =
+        account.type === KEYRING_TYPE.KeystoneKeyring || account.type === KEYRING_TYPE.ColdWalletKeyring
+          ? ''
+          : psbt.extractTransaction(true).toHex();
       dispatch(
         transactionsActions.updateRunesTx({
           rawtx,

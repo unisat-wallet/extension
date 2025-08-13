@@ -149,6 +149,21 @@ export interface WalletController {
     accountCount?: number
   ): Promise<WalletKeyring>;
 
+  createKeyringWithColdWallet(
+    xpub: string,
+    addressType: AddressType,
+    alianName?: string,
+    hdPath?: string,
+    accountCount?: number
+  ): Promise<WalletKeyring>;
+
+  deriveAccountsFromXpub(
+    xpub: string,
+    addressType: AddressType,
+    hdPath?: string,
+    accountCount?: number
+  ): Promise<{ pubkey: string; address: string }[]>;
+
   createTmpKeyringWithMnemonics(
     mnemonic: string,
     hdPath: string,

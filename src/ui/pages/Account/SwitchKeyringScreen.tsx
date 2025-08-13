@@ -88,9 +88,40 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
           {selected ? <Icon icon="circle-check" color="gold" /> : <Icon icon="circle-check" color="white_muted2" />}
         </Column>
 
-        <Column justifyCenter style={{ height: 40 }}>
-          <Text text={`${keyring.alianName}`} style={{ overflow: 'hidden', maxWidth: 200 }} />
-          <Text text={`${displayAddress}`} preset="sub" />
+        <Column justifyCenter style={{ height: 40, gap: 4 }}>
+          <Text
+            text={`${keyring.alianName}`}
+            style={{
+              overflow: 'hidden',
+              textOverflow: 'ellipsis',
+              whiteSpace: 'nowrap',
+              maxWidth: 200,
+              lineHeight: '16px',
+              height: '16px',
+              display: 'block'
+            }}
+          />
+          <Row itemsCenter gap="sm">
+            <Text text={`${displayAddress}`} preset="sub" />
+            {keyring.type === KEYRING_TYPE.ColdWalletKeyring && (
+              <div
+                style={{
+                  padding: '2px 8px',
+                  backgroundColor: 'rgba(37, 136, 235, 0.1)',
+                  borderRadius: 4,
+                  border: '1px solid rgba(37, 136, 235, 0.45)',
+                  fontSize: 10,
+                  color: '#2588eb',
+                  fontWeight: 500,
+                  whiteSpace: 'nowrap',
+                  height: 20,
+                  display: 'flex',
+                  alignItems: 'center'
+                }}>
+                {t('linked_to_unisat_cold_wallet')}
+              </div>
+            )}
+          </Row>
         </Column>
       </Row>
 

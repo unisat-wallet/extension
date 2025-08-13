@@ -25,7 +25,11 @@ export default function CreatePasswordScreen() {
       state[key] = value;
     });
   }
-  const { isNewAccount, isKeystone } = state as { isNewAccount: boolean; isKeystone: boolean };
+  const { isNewAccount, isKeystone, fromColdWallet } = state as {
+    isNewAccount: boolean;
+    isKeystone: boolean;
+    fromColdWallet: boolean;
+  };
   const [newPassword, setNewPassword] = useState('');
   const { t } = useI18n();
 
@@ -36,7 +40,9 @@ export default function CreatePasswordScreen() {
   const tools = useTools();
   const [run, loading] = useWalletRequest(wallet.boot, {
     onSuccess() {
-      if (isKeystone) {
+      if (fromColdWallet) {
+        navigate('CreateColdWalletScreen', { fromUnlock: true });
+      } else if (isKeystone) {
         navigate('CreateKeystoneWalletScreen', { fromUnlock: true });
       } else if (isNewAccount) {
         navigate('CreateHDWalletScreen', { isImport: false, fromUnlock: true });
@@ -95,7 +101,7 @@ export default function CreatePasswordScreen() {
     }
   }, [newPassword, confirmPassword]);
 
-  const handleOnKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
+  const handleOnKeyUp = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (!disabled && 'Enter' == e.key) {
       btnClick();
     }

@@ -68,6 +68,18 @@ export default function AddKeyringScreen() {
               <Text text={t('keystone_wallet')} size="sm" />
             </Column>
           </Card>
+
+          <Text text={t('cold_wallet')} preset="regular-bold" mt="lg" />
+
+          <Card
+            justifyCenter
+            onClick={() => {
+              navigate('CreateColdWalletScreen');
+            }}>
+            <Column full justifyCenter>
+              <Text text={t('create_cold_wallet')} size="sm" />
+            </Column>
+          </Card>
         </Column>
       </Content>
     </Layout>

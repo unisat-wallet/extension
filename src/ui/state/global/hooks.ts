@@ -84,7 +84,27 @@ export function useImportAccountsFromKeystoneCallback() {
       filterPubkey?: string[],
       connectionType: 'USB' | 'QR' = 'USB'
     ) => {
-      await wallet.createKeyringWithKeystone(urType, urCbor, addressType, hdPath, accountCount, filterPubkey, connectionType);
+      await wallet.createKeyringWithKeystone(
+        urType,
+        urCbor,
+        addressType,
+        hdPath,
+        accountCount,
+        filterPubkey,
+        connectionType
+      );
+      dispatch(globalActions.update({ isUnlocked: true }));
+    },
+    [dispatch, wallet]
+  );
+}
+
+export function useCreateColdWalletCallback() {
+  const dispatch = useAppDispatch();
+  const wallet = useWallet();
+  return useCallback(
+    async (xpub: string, addressType: AddressType, alianName?: string, hdPath?: string, accountCount?: number) => {
+      await wallet.createKeyringWithColdWallet(xpub, addressType, alianName, hdPath, accountCount);
       dispatch(globalActions.update({ isUnlocked: true }));
     },
     [dispatch, wallet]
