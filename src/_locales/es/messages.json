@@ -424,6 +424,9 @@
   "connect_to_hardware_wallet": {
     "message": "Conectar a Billetera Hardware"
   },
+  "create_cold_wallet": {
+    "message": "Crear Monedero Frío"
+  },
   "hardware_wallet_feature_is_experimental_use_it_with_caution_as_potential_issues_may_arise": {
     "message": "La función de billetera hardware es experimental. Úsala con precaución ya que pueden surgir problemas potenciales"
   },
@@ -2158,5 +2161,101 @@
   },
   "merge_utxos_failed": {
     "message": "Combinación fallida"
+  },
+  "msg_sign": {
+    "message": "Firma de Mensaje"
+  },
+  "msg_message": {
+    "message": "Mensaje"
+  },
+  "msg_content": {
+    "message": "Contenido del Mensaje"
+  },
+  "msg_sign_type": {
+    "message": "Tipo de Firma"
+  },
+  "msg_status": {
+    "message": "Estado"
+  },
+  "msg_signed": {
+    "message": "Firmado"
+  },
+  "msg_pending": {
+    "message": "Pendiente"
+  },
+  "msg_origin": {
+    "message": "Origen: "
+  },
+  "msg_already_signed": {
+    "message": "Este mensaje ya está firmado"
+  },
+  "msg_scan_qr_code": {
+    "message": "Por favor escanee el código QR con su billetera fría"
+  },
+  "msg_generating_qr": {
+    "message": "Generando código QR..."
+  },
+  "msg_detail": {
+    "message": "Detalles del Mensaje"
+  },
+  "msg_generate_sign": {
+    "message": "Generar Firma"
+  },
+  "msg_scan_result": {
+    "message": "Resultado del Escaneo"
+  },
+  "previous": {
+    "message": "Anterior"
+  },
+  "msg_generate_qr": {
+    "message": "Generar Código QR"
+  },
+  "msg_scan_sign": {
+    "message": "Escanear Firma"
+  },
+  "generating": {
+    "message": "Generando..."
+  },
+  "msg_waiting_sign": {
+    "message": "Esperando Firma"
+  },
+  "msg_start_sign": {
+    "message": "Iniciar Firma"
+  },
+  "cold_wallet_transaction_signing": {
+    "message": "Firma de Transacción de Billetera Fría"
+  },
+  "scan_this_qr_code_with_your_cold_wallet_to_review_and_sign_the_transaction": {
+    "message": "Escanee este código QR con su billetera fría para revisar y firmar la transacción."
+  },
+  "instructions": {
+    "message": "Instrucciones:"
+  },
+  "open_your_cold_wallet_app_or_device": {
+    "message": "1. Abra su aplicación o dispositivo de billetera fría."
+  },
+  "scan_this_qr_code": {
+    "message": "2. Escanee este código QR."
+  },
+  "review_and_confirm_transaction_details_in_your_cold_wallet": {
+    "message": "3. Revise y confirme los detalles de la transacción en su billetera fría."
+  },
+  "after_signing_scan_the_signed_qr_code_back_with_this_wallet": {
+    "message": "4. Después de firmar, escanee el código QR firmado de vuelta con esta billetera."
+  },
+  "i_have_signed_scan_result": {
+    "message": "He Firmado, Escanear Resultado"
+  },
+  "linked_to_unisat_cold_wallet": {
+    "message": "Vinculado a UniSat Cold Wallet"
+  },
+  "signature_successful": {
+    "message": "Firma Exitosa"
+  },
+  "cold_wallet_signed_successfully": {
+    "message": "La billetera fría ha firmado exitosamente la transacción. Por favor confirme los detalles de la transacción y haga clic en difundir."
+  },
+  "Broadcast": {
+    "message": "Difundir"
   }
 }

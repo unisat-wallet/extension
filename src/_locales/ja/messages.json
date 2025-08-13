@@ -426,6 +426,9 @@
   "connect_to_hardware_wallet": {
     "message": "ハードウェアウォレットに接続"
   },
+  "create_cold_wallet": {
+    "message": "コールドウォレットを作成"
+  },
   "hardware_wallet_feature_is_experimental_use_it_with_caution_as_potential_issues_may_arise": {
     "message": "ハードウェアウォレット機能は実験的なものです。潜在的な問題が発生する可能性があるため、注意して使用してください"
   },
@@ -2165,5 +2168,104 @@
   },
   "merge_utxos_failed": {
     "message": "統合失敗"
+  },
+  "msg_sign": {
+    "message": "メッセージ署名"
+  },
+  "msg_message": {
+    "message": "メッセージ"
+  },
+  "msg_content": {
+    "message": "メッセージ内容"
+  },
+  "msg_sign_type": {
+    "message": "署名タイプ"
+  },
+  "msg_status": {
+    "message": "ステータス"
+  },
+  "msg_signed": {
+    "message": "署名済み"
+  },
+  "msg_pending": {
+    "message": "署名待ち"
+  },
+  "msg_origin": {
+    "message": "送信元: "
+  },
+  "msg_already_signed": {
+    "message": "このメッセージは既に署名されています"
+  },
+  "msg_scan_qr_code": {
+    "message": "コールドウォレットでQRコードをスキャンしてください"
+  },
+  "msg_generating_qr": {
+    "message": "QRコード生成中..."
+  },
+  "msg_detail": {
+    "message": "メッセージ詳細"
+  },
+  "msg_generate_sign": {
+    "message": "署名生成"
+  },
+  "msg_scan_result": {
+    "message": "スキャン結果"
+  },
+  "previous": {
+    "message": "前へ"
+  },
+  "msg_generate_qr": {
+    "message": "QRコード生成"
+  },
+  "msg_scan_sign": {
+    "message": "署名スキャン"
+  },
+  "generating": {
+    "message": "生成中..."
+  },
+  "msg_waiting_sign": {
+    "message": "署名待機中"
+  },
+  "msg_start_sign": {
+    "message": "署名開始"
+  },
+  "cold_wallet_transaction_signing": {
+    "message": "コールドウォレット取引署名"
+  },
+  "scan_this_qr_code_with_your_cold_wallet_to_review_and_sign_the_transaction": {
+    "message": "コールドウォレットでこのQRコードをスキャンして、取引を確認・署名してください。"
+  },
+  "instructions": {
+    "message": "手順："
+  },
+  "open_your_cold_wallet_app_or_device": {
+    "message": "1. コールドウォレットアプリまたはデバイスを開いてください。"
+  },
+  "scan_this_qr_code": {
+    "message": "2. このQRコードをスキャンしてください。"
+  },
+  "review_and_confirm_transaction_details_in_your_cold_wallet": {
+    "message": "3. コールドウォレットで取引詳細を確認し、承認してください。"
+  },
+  "after_signing_scan_the_signed_qr_code_back_with_this_wallet": {
+    "message": "4. 署名後、このウォレットで署名済みQRコードをスキャンしてください。"
+  },
+  "cancel": {
+    "message": "キャンセル"
+  },
+  "i_have_signed_scan_result": {
+    "message": "署名完了、結果をスキャン"
+  },
+  "linked_to_unisat_cold_wallet": {
+    "message": "UniSat コールドウォレットに接続済み"
+  },
+  "signature_successful": {
+    "message": "署名成功"
+  },
+  "cold_wallet_signed_successfully": {
+    "message": "コールドウォレットが正常にトランザクションに署名しました。取引詳細を確認してブロードキャストをクリックしてください。"
+  },
+  "Broadcast": {
+    "message": "ブロードキャスト"
   }
 }

@@ -2170,5 +2170,110 @@
   },
   "merge_utxos_failed": {
     "message": "合併失敗"
+  },
+  "create_cold_wallet": {
+    "message": "連接 UniSat Cold Wallet"
+  },
+  "msg_sign": {
+    "message": "訊息簽署"
+  },
+  "msg_sign_description": {
+    "message": "使用您的錢包簽署訊息以驗證所有權或進行身份驗證。這不會花費任何資金。請確保您信任請求簽署的網站或應用程式。"
+  },
+  "msg_message": {
+    "message": "訊息"
+  },
+  "msg_detail": {
+    "message": "訊息詳情"
+  },
+  "msg_content": {
+    "message": "訊息內容"
+  },
+  "msg_sign_type": {
+    "message": "簽名類型"
+  },
+  "msg_status": {
+    "message": "狀態"
+  },
+  "msg_signed": {
+    "message": "已簽名"
+  },
+  "msg_pending": {
+    "message": "待簽名"
+  },
+  "msg_origin": {
+    "message": "來源: "
+  },
+  "msg_already_signed": {
+    "message": "此訊息已簽名"
+  },
+  "msg_scan_qr_code": {
+    "message": "請用冷錢包掃描QR碼"
+  },
+  "msg_generating_qr": {
+    "message": "生成QR碼中..."
+  },
+  "msg_generate_sign": {
+    "message": "生成簽名"
+  },
+  "msg_scan_result": {
+    "message": "掃描結果"
+  },
+  "previous": {
+    "message": "上一個"
+  },
+  "msg_generate_qr": {
+    "message": "生成QR碼"
+  },
+  "msg_scan_sign": {
+    "message": "掃描簽名"
+  },
+  "generating": {
+    "message": "生成中..."
+  },
+  "msg_waiting_sign": {
+    "message": "等待簽名"
+  },
+  "msg_start_sign": {
+    "message": "開始簽名"
+  },
+  "cold_wallet_transaction_signing": {
+    "message": "冷錢包交易簽名"
+  },
+  "scan_this_qr_code_with_your_cold_wallet_to_review_and_sign_the_transaction": {
+    "message": "使用您的冷錢包掃描此二維碼以查看並簽名交易。"
+  },
+  "instructions": {
+    "message": "操作說明："
+  },
+  "open_your_cold_wallet_app_or_device": {
+    "message": "1. 打開您的冷錢包應用程式或設備。"
+  },
+  "scan_this_qr_code": {
+    "message": "2. 掃描此二維碼。"
+  },
+  "review_and_confirm_transaction_details_in_your_cold_wallet": {
+    "message": "3. 在您的冷錢包中查看並確認交易詳情。"
+  },
+  "after_signing_scan_the_signed_qr_code_back_with_this_wallet": {
+    "message": "4. 簽名後，使用此錢包掃描已簽名的二維碼。"
+  },
+  "i_have_signed_scan_result": {
+    "message": "我已簽名，掃描結果"
+  },
+  "cold_wallet": {
+    "message": "連接 UniSat 冷錢包"
+  },
+  "linked_to_unisat_cold_wallet": {
+    "message": "已連接至 UniSat 冷錢包"
+  },
+  "signature_successful": {
+    "message": "簽名成功"
+  },
+  "cold_wallet_signed_successfully": {
+    "message": "冷錢包已成功對交易進行簽名，請確認交易資訊無誤後點擊廣播按鈕"
+  },
+  "Broadcast": {
+    "message": "廣播交易"
   }
 }

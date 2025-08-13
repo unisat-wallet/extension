@@ -426,6 +426,9 @@
   "connect_to_hardware_wallet": {
     "message": "Подключить аппаратный кошелёк"
   },
+  "create_cold_wallet": {
+    "message": "Создать Холодный Кошелёк"
+  },
   "hardware_wallet_feature_is_experimental_use_it_with_caution_as_potential_issues_may_arise": {
     "message": "Функция аппаратного кошелька является экспериментальной. Используйте её с осторожностью, так как могут возникнуть потенциальные проблемы"
   },
@@ -2165,5 +2168,101 @@
   },
   "merge_utxos_failed": {
     "message": "Слияние неудачно"
+  },
+  "msg_sign": {
+    "message": "Подпись Сообщения"
+  },
+  "msg_message": {
+    "message": "Сообщение"
+  },
+  "msg_content": {
+    "message": "Содержание Сообщения"
+  },
+  "msg_sign_type": {
+    "message": "Тип Подписи"
+  },
+  "msg_status": {
+    "message": "Статус"
+  },
+  "msg_signed": {
+    "message": "Подписано"
+  },
+  "msg_pending": {
+    "message": "В ожидании"
+  },
+  "msg_origin": {
+    "message": "Источник: "
+  },
+  "msg_already_signed": {
+    "message": "Это сообщение уже подписано"
+  },
+  "msg_scan_qr_code": {
+    "message": "Пожалуйста, отсканируйте QR-код с помощью вашего холодного кошелька"
+  },
+  "msg_generating_qr": {
+    "message": "Генерация QR-кода..."
+  },
+  "msg_detail": {
+    "message": "Детали Сообщения"
+  },
+  "msg_generate_sign": {
+    "message": "Сгенерировать Подпись"
+  },
+  "msg_scan_result": {
+    "message": "Результат Сканирования"
+  },
+  "previous": {
+    "message": "Предыдущий"
+  },
+  "msg_generate_qr": {
+    "message": "Сгенерировать QR-код"
+  },
+  "msg_scan_sign": {
+    "message": "Сканировать Подпись"
+  },
+  "generating": {
+    "message": "Генерация..."
+  },
+  "msg_waiting_sign": {
+    "message": "Ожидание Подписи"
+  },
+  "msg_start_sign": {
+    "message": "Начать Подпись"
+  },
+  "cold_wallet_transaction_signing": {
+    "message": "Подпись Транзакции Холодным Кошельком"
+  },
+  "scan_this_qr_code_with_your_cold_wallet_to_review_and_sign_the_transaction": {
+    "message": "Отсканируйте этот QR-код с помощью вашего холодного кошелька для просмотра и подписи транзакции."
+  },
+  "instructions": {
+    "message": "Инструкции:"
+  },
+  "open_your_cold_wallet_app_or_device": {
+    "message": "1. Откройте ваше приложение или устройство холодного кошелька."
+  },
+  "scan_this_qr_code": {
+    "message": "2. Отсканируйте этот QR-код."
+  },
+  "review_and_confirm_transaction_details_in_your_cold_wallet": {
+    "message": "3. Просмотрите и подтвердите детали транзакции в вашем холодном кошельке."
+  },
+  "after_signing_scan_the_signed_qr_code_back_with_this_wallet": {
+    "message": "4. После подписи отсканируйте подписанный QR-код обратно с помощью этого кошелька."
+  },
+  "i_have_signed_scan_result": {
+    "message": "Я Подписал, Отсканировать Результат"
+  },
+  "linked_to_unisat_cold_wallet": {
+    "message": "Привязан к UniSat холодному кошельку"
+  },
+  "signature_successful": {
+    "message": "Подпись успешна"
+  },
+  "cold_wallet_signed_successfully": {
+    "message": "Холодный кошелек успешно подписал транзакцию. Пожалуйста, подтвердите детали транзакции и нажмите транслировать."
+  },
+  "Broadcast": {
+    "message": "Транслировать"
   }
 }

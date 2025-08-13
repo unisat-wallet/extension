@@ -435,6 +435,9 @@
   "connect_to_hardware_wallet": {
     "message": "连接硬件钱包"
   },
+  "create_cold_wallet": {
+    "message": "创建冷钱包"
+  },
   "new": {
     "message": "新!"
   },
@@ -2143,5 +2146,41 @@
   },
   "merge_utxos_failed": {
     "message": "合并失败"
+  },
+  "cold_wallet_transaction_signing": {
+    "message": "冷钱包交易签名"
+  },
+  "scan_this_qr_code_with_your_cold_wallet_to_review_and_sign_the_transaction": {
+    "message": "使用您的冷钱包扫描此二维码以查看并签名交易。"
+  },
+  "instructions": {
+    "message": "操作说明："
+  },
+  "open_your_cold_wallet_app_or_device": {
+    "message": "1. 打开您的冷钱包应用或设备。"
+  },
+  "scan_this_qr_code": {
+    "message": "2. 扫描此二维码。"
+  },
+  "review_and_confirm_transaction_details_in_your_cold_wallet": {
+    "message": "3. 在您的冷钱包中查看并确认交易详情。"
+  },
+  "after_signing_scan_the_signed_qr_code_back_with_this_wallet": {
+    "message": "4. 签名后，使用此钱包扫描已签名的二维码。"
+  },
+  "i_have_signed_scan_result": {
+    "message": "我已签名，扫描结果"
+  },
+  "linked_to_unisat_cold_wallet": {
+    "message": "已连接至 UniSat 冷钱包"
+  },
+  "signature_successful": {
+    "message": "签名成功"
+  },
+  "cold_wallet_signed_successfully": {
+    "message": "冷钱包已成功对交易进行签名，请确认交易信息无误后点击广播按钮"
+  },
+  "Broadcast": {
+    "message": "广播"
   }
 }

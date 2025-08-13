@@ -2170,5 +2170,110 @@
   },
   "merge_utxos_failed": {
     "message": "Merge failed"
+  },
+  "create_cold_wallet": {
+    "message": "Link Unisat Cold Wallet"
+  },
+  "msg_sign": {
+    "message": "Message Signing"
+  },
+  "msg_message": {
+    "message": "Message"
+  },
+  "msg_content": {
+    "message": "Message Content"
+  },
+  "msg_sign_type": {
+    "message": "Sign Type"
+  },
+  "msg_status": {
+    "message": "Status"
+  },
+  "msg_signed": {
+    "message": "Signed"
+  },
+  "msg_pending": {
+    "message": "Pending"
+  },
+  "msg_origin": {
+    "message": "Origin: "
+  },
+  "msg_already_signed": {
+    "message": "This message is already signed"
+  },
+  "msg_scan_qr_code": {
+    "message": "Please scan the QR code with your cold wallet"
+  },
+  "msg_generating_qr": {
+    "message": "Generating QR code..."
+  },
+  "msg_detail": {
+    "message": "Message Details"
+  },
+  "msg_generate_sign": {
+    "message": "Generate Signature"
+  },
+  "msg_scan_result": {
+    "message": "Scan Result"
+  },
+  "previous": {
+    "message": "Previous"
+  },
+  "msg_generate_qr": {
+    "message": "Generate QR Code"
+  },
+  "msg_scan_sign": {
+    "message": "Scan Signature"
+  },
+  "generating": {
+    "message": "Generating..."
+  },
+  "msg_waiting_sign": {
+    "message": "Waiting for Signature"
+  },
+  "msg_start_sign": {
+    "message": "Start Signing"
+  },
+  "cold_wallet_transaction_signing": {
+    "message": "Cold Wallet Transaction Signing"
+  },
+  "scan_this_qr_code_with_your_cold_wallet_to_review_and_sign_the_transaction": {
+    "message": "Scan this QR code with your cold wallet to review and sign the transaction."
+  },
+  "instructions": {
+    "message": "Instructions:"
+  },
+  "open_your_cold_wallet_app_or_device": {
+    "message": "1. Open your cold wallet app or device."
+  },
+  "scan_this_qr_code": {
+    "message": "2. Scan this QR code."
+  },
+  "review_and_confirm_transaction_details_in_your_cold_wallet": {
+    "message": "3. Review and confirm transaction details in your cold wallet."
+  },
+  "after_signing_scan_the_signed_qr_code_back_with_this_wallet": {
+    "message": "4. After signing, scan the signed QR code back with this wallet."
+  },
+  "cancel": {
+    "message": "Cancel"
+  },
+  "i_have_signed_scan_result": {
+    "message": "I Have Signed, Scan Result"
+  },
+  "cold_wallet": {
+    "message": "Link UniSat Cold Wallet"
+  },
+  "linked_to_unisat_cold_wallet": {
+    "message": "Linked to UniSat Cold Wallet"
+  },
+  "signature_successful": {
+    "message": "Signature Successful"
+  },
+  "cold_wallet_signed_successfully": {
+    "message": "Cold wallet has successfully signed the transaction. Please confirm the transaction details and click broadcast."
+  },
+  "Broadcast": {
+    "message": "Broadcast"
   }
 }

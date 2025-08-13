@@ -428,6 +428,9 @@
   "connect_to_hardware_wallet": {
     "message": "Connecter un portefeuille matériel"
   },
+  "create_cold_wallet": {
+    "message": "Créer un Portefeuille Froid"
+  },
   "hardware_wallet_feature_is_experimental_use_it_with_caution_as_potential_issues_may_arise": {
     "message": "La fonctionnalité de portefeuille matériel est expérimentale. Utilisez-la avec prudence car des problèmes potentiels peuvent survenir"
   },
@@ -2171,5 +2174,101 @@
   },
   "merge_utxos_failed": {
     "message": "Échec de la fusion"
+  },
+  "msg_sign": {
+    "message": "Signature de Message"
+  },
+  "msg_message": {
+    "message": "Message"
+  },
+  "msg_content": {
+    "message": "Contenu du Message"
+  },
+  "msg_sign_type": {
+    "message": "Type de Signature"
+  },
+  "msg_status": {
+    "message": "État"
+  },
+  "msg_signed": {
+    "message": "Signé"
+  },
+  "msg_pending": {
+    "message": "En attente"
+  },
+  "msg_origin": {
+    "message": "Origine: "
+  },
+  "msg_already_signed": {
+    "message": "Ce message est déjà signé"
+  },
+  "msg_scan_qr_code": {
+    "message": "Veuillez scanner le code QR avec votre portefeuille froid"
+  },
+  "msg_generating_qr": {
+    "message": "Génération du code QR..."
+  },
+  "msg_detail": {
+    "message": "Détails du Message"
+  },
+  "msg_generate_sign": {
+    "message": "Générer Signature"
+  },
+  "msg_scan_result": {
+    "message": "Résultat du Scan"
+  },
+  "previous": {
+    "message": "Précédent"
+  },
+  "msg_generate_qr": {
+    "message": "Générer Code QR"
+  },
+  "msg_scan_sign": {
+    "message": "Scanner Signature"
+  },
+  "generating": {
+    "message": "Génération..."
+  },
+  "msg_waiting_sign": {
+    "message": "En attente de signature"
+  },
+  "msg_start_sign": {
+    "message": "Commencer la signature"
+  },
+  "cold_wallet_transaction_signing": {
+    "message": "Signature de Transaction de Portefeuille Froid"
+  },
+  "scan_this_qr_code_with_your_cold_wallet_to_review_and_sign_the_transaction": {
+    "message": "Scannez ce code QR avec votre portefeuille froid pour examiner et signer la transaction."
+  },
+  "instructions": {
+    "message": "Instructions :"
+  },
+  "open_your_cold_wallet_app_or_device": {
+    "message": "1. Ouvrez votre application ou appareil de portefeuille froid."
+  },
+  "scan_this_qr_code": {
+    "message": "2. Scannez ce code QR."
+  },
+  "review_and_confirm_transaction_details_in_your_cold_wallet": {
+    "message": "3. Examinez et confirmez les détails de la transaction dans votre portefeuille froid."
+  },
+  "after_signing_scan_the_signed_qr_code_back_with_this_wallet": {
+    "message": "4. Après signature, scannez le code QR signé avec ce portefeuille."
+  },
+  "i_have_signed_scan_result": {
+    "message": "J'ai Signé, Scanner le Résultat"
+  },
+  "linked_to_unisat_cold_wallet": {
+    "message": "Lié au Portefeuille Froid UniSat"
+  },
+  "signature_successful": {
+    "message": "Signature Réussie"
+  },
+  "cold_wallet_signed_successfully": {
+    "message": "Le portefeuille froid a signé avec succès la transaction. Veuillez confirmer les détails de la transaction et cliquez sur diffuser."
+  },
+  "Broadcast": {
+    "message": "Diffuser"
   }
 }
