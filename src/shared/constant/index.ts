@@ -331,7 +331,8 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     disable: false,
     isFractal: true,
     showPrice: true,
-    defaultExplorer: 'unisat-explorer'
+    defaultExplorer: 'unisat-explorer',
+    enableBrc20SingleStep: true
   },
   [ChainType.FRACTAL_BITCOIN_TESTNET]: {
     enum: ChainType.FRACTAL_BITCOIN_TESTNET,
