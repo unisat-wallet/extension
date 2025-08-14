@@ -2257,5 +2257,101 @@
   },
   "Broadcast": {
     "message": "Difundir"
+  },
+  "developer_mode_enabled": {
+    "message": "Modo de desarrollador habilitado"
+  },
+  "developer_mode_disabled": {
+    "message": "Modo de desarrollador deshabilitado"
+  },
+  "sighash_none_risk_title": {
+    "message": "SIGHASH_NONE detectado"
+  },
+  "sighash_none_risk_description": {
+    "message": "SIGHASH_NONE es un tipo de firma especial que permite modificar la transacción después de firmarla. Esto puede llevar a una pérdida potencial de fondos si la transacción es alterada maliciosamente. Por favor asegúrese de confiar en la fuente de esta transacción antes de proceder."
+  },
+  "scammer_address_risk_title": {
+    "message": "⚠️ Dirección sospechosa detectada"
+  },
+  "scammer_address_risk_description": {
+    "message": "Esta dirección ha sido reportada como una dirección de estafa. Proceda con precaución. Si cree que esto es un falso positivo, repórtelo."
+  },
+  "network_not_matched_risk_title": {
+    "message": "Red no coincidente detectada."
+  },
+  "network_not_matched_risk_description": {
+    "message": "Esta transacción no está en la red actual, asegúrese de confiar en la fuente de esta transacción antes de proceder."
+  },
+  "inscription_burning_risk_title": {
+    "message": "Quema de inscripción detectada"
+  },
+  "inscription_burning_risk_description": {
+    "message": "Esta transacción involucra la quema de inscripciones. Asegúrese de entender las implicaciones de esta acción antes de proceder."
+  },
+  "multiple_assets_risk_title": {
+    "message": "Múltiples activos detectados"
+  },
+  "multiple_assets_risk_description": {
+    "message": "Esta transacción involucra múltiples activos. Asegúrese de entender las implicaciones de esta acción antes de proceder."
+  },
+  "high_fee_rate_risk_title": {
+    "message": "Tasa de comisión alta detectada"
+  },
+  "high_fee_rate_risk_description": {
+    "message": "Esta transacción tiene una tasa de comisión alta. Asegúrese de entender las implicaciones de esta acción antes de proceder."
+  },
+  "merging_inscriptions_risk_title": {
+    "message": "Fusión de inscripciones detectada"
+  },
+  "merging_inscriptions_risk_description": {
+    "message": "Esta transacción involucra la fusión de inscripciones. Asegúrese de entender las implicaciones de esta acción antes de proceder."
+  },
+  "changing_inscription_risk_title": {
+    "message": "Cambio de inscripción detectado"
+  },
+  "changing_inscription_risk_description": {
+    "message": "Esta transacción involucra cambiar una inscripción. Asegúrese de entender las implicaciones de esta acción antes de proceder."
+  },
+  "runes_burning_risk_title": {
+    "message": "Quema de Runes detectada"
+  },
+  "runes_burning_risk_description": {
+    "message": "Esta transacción involucra la quema de Runes. Asegúrese de entender las implicaciones de esta acción antes de proceder."
+  },
+  "runes_multiple_assets_risk_title": {
+    "message": "Múltiples activos Runes detectados"
+  },
+  "runes_multiple_assets_risk_description": {
+    "message": "Esta transacción involucra múltiples activos Runes. Asegúrese de entender las implicaciones de esta acción antes de proceder."
+  },
+  "indexer_api_down_risk_title": {
+    "message": "API del indexador caída"
+  },
+  "indexer_api_down_risk_description": {
+    "message": "La API del indexador está actualmente fuera de servicio. Esto puede afectar la precisión de los detalles de transacción y balances de activos. Proceda con precaución y verifique toda la información de forma independiente."
+  },
+  "runes_api_down_risk_title": {
+    "message": "API de Runes caída"
+  },
+  "runes_api_down_risk_description": {
+    "message": "La API de Runes está actualmente fuera de servicio. Esto puede afectar la precisión de los detalles de transacción y balances de activos Runes. Proceda con precaución y verifique toda la información de forma independiente."
+  },
+  "alkanes_burning_risk_title": {
+    "message": "Quema de Alkanes detectada"
+  },
+  "alkanes_burning_risk_description": {
+    "message": "Esta transacción involucra la quema de Alkanes. Asegúrese de entender las implicaciones de esta acción antes de proceder."
+  },
+  "alkanes_multiple_assets_risk_title": {
+    "message": "Múltiples activos Alkanes detectados"
+  },
+  "alkanes_multiple_assets_risk_description": {
+    "message": "Esta transacción involucra múltiples activos Alkanes. Asegúrese de entender las implicaciones de esta acción antes de proceder."
+  },
+  "utxo_indexing_risk_title": {
+    "message": "Indexación de UTXO en progreso"
+  },
+  "utxo_indexing_risk_description": {
+    "message": "El UTXO seleccionado pertenece a una transacción que aún está siendo indexada. Para asegurar la seguridad y confiabilidad de la transacción, espere a que se complete la indexación antes de proceder."
   }
 }

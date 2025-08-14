@@ -1,6 +1,6 @@
 import BigNumber from 'bignumber.js';
 
-import { DecodedPsbt, Inscription } from '@/shared/types';
+import { AlkanesBalance, DecodedPsbt, Inscription, RuneBalance } from '@/shared/types';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { colors } from '@/ui/theme/colors';
@@ -47,6 +47,22 @@ export const SendingOutAssets = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
     [key: string]: BigNumber;
   } = {};
 
+  const runesBalanceIn: {
+    [key: string]: BigNumber;
+  } = {};
+
+  const runesBalanceOut: {
+    [key: string]: BigNumber;
+  } = {};
+
+  const alkanesBalanceIn: {
+    [key: string]: BigNumber;
+  } = {};
+
+  const alkanesBalanceOut: {
+    [key: string]: BigNumber;
+  } = {};
+
   decodedPsbt.inputInfos.forEach((inputInfo) => {
     inputInfo.inscriptions.forEach((ins) => {
       inscriptionMap[ins.inscriptionId].from = inputInfo.address;
@@ -66,6 +82,18 @@ export const SendingOutAssets = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
           arc20BalanceIn[ticker] = arc20BalanceIn[ticker] || 0;
           arc20BalanceIn[ticker] += inputInfo.value;
         }
+      });
+
+      inputInfo.runes?.forEach((rune) => {
+        const key = rune.runeid;
+        runesBalanceIn[key] = runesBalanceIn[key] || BigNumber(0);
+        runesBalanceIn[key] = runesBalanceIn[key].plus(new BigNumber(rune.amount));
+      });
+
+      inputInfo.alkanes?.forEach((alkane) => {
+        const key = alkane.alkaneid;
+        alkanesBalanceIn[key] = alkanesBalanceIn[key] || BigNumber(0);
+        alkanesBalanceIn[key] = alkanesBalanceIn[key].plus(new BigNumber(alkane.amount));
       });
     }
   });
@@ -91,6 +119,18 @@ export const SendingOutAssets = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
           arc20BalanceOut[ticker] += outputInfo.value;
         }
       });
+
+      outputInfo.runes?.forEach((rune) => {
+        const key = rune.runeid;
+        runesBalanceOut[key] = runesBalanceOut[key] || BigNumber(0);
+        runesBalanceOut[key] = runesBalanceOut[key].plus(new BigNumber(rune.amount));
+      });
+
+      outputInfo.alkanes?.forEach((alkane) => {
+        const key = alkane.alkaneid;
+        alkanesBalanceOut[key] = alkanesBalanceOut[key] || BigNumber(0);
+        alkanesBalanceOut[key] = alkanesBalanceOut[key].plus(new BigNumber(alkane.amount));
+      });
     }
   });
 
@@ -112,24 +152,107 @@ export const SendingOutAssets = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
     arc20BalanceChanged[id] = (arc20BalanceOut[id] || 0) - arc20BalanceIn[id];
   }
 
-  const arc20List = Object.keys(arc20BalanceChanged).map((ticker) => {
-    return {
-      ticker: ticker,
-      amount: arc20BalanceChanged[ticker]
-    };
-  });
+  const arc20List = Object.keys(arc20BalanceChanged)
+    .filter((ticker) => arc20BalanceChanged[ticker] < 0) // Only show assets being sent out
+    .map((ticker) => {
+      return {
+        ticker: ticker,
+        amount: Math.abs(arc20BalanceChanged[ticker]) // Show absolute value
+      };
+    });
 
   const brc20BalanceChanged: { [key: string]: BigNumber } = {};
   for (const id in brc20BalanceIn) {
     brc20BalanceChanged[id] = (brc20BalanceOut[id] || BigNumber(0)).minus(brc20BalanceIn[id]);
   }
 
-  const brc20List = Object.keys(brc20BalanceChanged).map((ticker) => {
+  const brc20List = Object.keys(brc20BalanceChanged)
+    .filter((ticker) => brc20BalanceChanged[ticker].isNegative()) // Only show assets being sent out
+    .map((ticker) => {
+      return {
+        ticker: ticker,
+        amount: brc20BalanceChanged[ticker].abs().toString() // Show absolute value
+      };
+    });
+
+  const runesBalanceChanged: { [key: string]: { change: BigNumber; rune: RuneBalance } } = {};
+  for (const id in runesBalanceIn) {
+    const change = (runesBalanceOut[id] || BigNumber(0)).minus(runesBalanceIn[id]);
+    if (change.isNegative()) {
+      // Only show assets being sent out (negative change)
+      // Find the rune info from either input or output
+      let runeInfo: RuneBalance | undefined;
+      for (const inputInfo of decodedPsbt.inputInfos) {
+        const found = inputInfo.runes?.find((r) => r.runeid === id);
+        if (found) {
+          runeInfo = found;
+          break;
+        }
+      }
+      if (!runeInfo) {
+        for (const outputInfo of decodedPsbt.outputInfos) {
+          const found = outputInfo.runes?.find((r) => r.runeid === id);
+          if (found) {
+            runeInfo = found;
+            break;
+          }
+        }
+      }
+      if (runeInfo) {
+        runesBalanceChanged[id] = { change, rune: runeInfo };
+      }
+    }
+  }
+
+  const runesList = Object.keys(runesBalanceChanged).map((runeid) => {
+    const { change, rune } = runesBalanceChanged[runeid];
     return {
-      ticker: ticker,
-      amount: brc20BalanceChanged[ticker].toString()
+      runeid: runeid,
+      rune: rune,
+      amount: change.abs().toString() // Show absolute value
     };
   });
+
+  const alkanesBalanceChanged: { [key: string]: { change: BigNumber; alkane: AlkanesBalance } } = {};
+  for (const id in alkanesBalanceIn) {
+    const change = (alkanesBalanceOut[id] || BigNumber(0)).minus(alkanesBalanceIn[id]);
+    if (change.isNegative()) {
+      // Only show assets being sent out (negative change)
+      // Find the alkane info from either input or output
+      let alkaneInfo: AlkanesBalance | undefined;
+      for (const inputInfo of decodedPsbt.inputInfos) {
+        const found = inputInfo.alkanes?.find((a) => a.alkaneid === id);
+        if (found) {
+          alkaneInfo = found;
+          break;
+        }
+      }
+      if (!alkaneInfo) {
+        for (const outputInfo of decodedPsbt.outputInfos) {
+          const found = outputInfo.alkanes?.find((a) => a.alkaneid === id);
+          if (found) {
+            alkaneInfo = found;
+            break;
+          }
+        }
+      }
+      if (alkaneInfo) {
+        alkanesBalanceChanged[id] = { change, alkane: alkaneInfo };
+      }
+    }
+  }
+
+  console.log(runesBalanceIn, runesBalanceOut, runesBalanceChanged);
+  const alkanesList = Object.keys(alkanesBalanceChanged).map((alkaneid) => {
+    const { change, alkane } = alkanesBalanceChanged[alkaneid];
+    return {
+      alkaneid: alkaneid,
+      alkane: alkane,
+      amount: change.abs().toString() // Show absolute value
+    };
+  });
+
+  console.log(runesList, alkanesList);
 
   return (
     <Popover>
@@ -220,6 +343,70 @@ export const SendingOutAssets = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
                   </Row>
 
                   <Text text={burn.amount} />
+                </Row>
+              );
+            })}
+          </Column>
+        ) : null}
+
+        {runesList.length > 0 ? (
+          <Column fullX>
+            <Text text={`${t('runes')}:`} mt="md"></Text>
+            {runesList.map((runeItem, index) => {
+              return (
+                <Row
+                  key={'runes_sending_' + index}
+                  justifyBetween
+                  fullX
+                  px="md"
+                  py="xl"
+                  style={{
+                    backgroundColor: '#1e1a1e',
+                    borderRadius: 10,
+                    borderWidth: 1,
+                    borderColor: '#442326'
+                  }}>
+                  <Row>
+                    <Text text={runeItem.rune.spacedRune || runeItem.rune.rune} />
+                    {runeItem.rune.symbol && <Text text={` (${runeItem.rune.symbol})`} />}
+                  </Row>
+
+                  <Text
+                    text={new BigNumber(runeItem.amount).div(Math.pow(10, runeItem.rune.divisibility)).toString()}
+                  />
+                </Row>
+              );
+            })}
+          </Column>
+        ) : null}
+
+        {alkanesList.length > 0 ? (
+          <Column fullX>
+            <Text text={'Alkanes:'} mt="md"></Text>
+            {alkanesList.map((alkaneItem, index) => {
+              return (
+                <Row
+                  key={'alkanes_sending_' + index}
+                  justifyBetween
+                  fullX
+                  px="md"
+                  py="xl"
+                  style={{
+                    backgroundColor: '#1e1a1e',
+                    borderRadius: 10,
+                    borderWidth: 1,
+                    borderColor: '#442326'
+                  }}>
+                  <Row>
+                    <Text text={alkaneItem.alkane.name || alkaneItem.alkane.symbol} />
+                    {alkaneItem.alkane.symbol && alkaneItem.alkane.name !== alkaneItem.alkane.symbol && (
+                      <Text text={` (${alkaneItem.alkane.symbol})`} />
+                    )}
+                  </Row>
+
+                  <Text
+                    text={new BigNumber(alkaneItem.amount).div(Math.pow(10, alkaneItem.alkane.divisibility)).toString()}
+                  />
                 </Row>
               );
             })}

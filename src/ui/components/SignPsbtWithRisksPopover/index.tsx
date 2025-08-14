@@ -30,6 +30,92 @@ const visibleRiskDetailTypes = [
   RiskType.CHANGING_INSCRIPTION,
   RiskType.RUNES_BURNING
 ];
+
+function getRiskContentKey(riskType: RiskType) {
+  switch (riskType) {
+    case RiskType.SIGHASH_NONE:
+      return {
+        title: 'sighash_none_risk_title',
+        description: 'sighash_none_risk_description'
+      };
+    case RiskType.SCAMMER_ADDRESS:
+      return {
+        title: 'scammer_address_risk_title',
+        description: 'scammer_address_risk_description'
+      };
+    case RiskType.NETWORK_NOT_MATCHED:
+      return {
+        title: 'network_not_matched_risk_title',
+        description: 'network_not_matched_risk_description'
+      };
+    case RiskType.INSCRIPTION_BURNING:
+      return {
+        title: 'inscription_burning_risk_title',
+        description: 'inscription_burning_risk_description'
+      };
+    case RiskType.MULTIPLE_ASSETS:
+      return {
+        title: 'multiple_assets_risk_title',
+        description: 'multiple_assets_risk_description'
+      };
+    case RiskType.HIGH_FEE_RATE:
+      return {
+        title: 'high_fee_rate_risk_title',
+        description: 'high_fee_rate_risk_description'
+      };
+    case RiskType.MERGING_INSCRIPTIONS:
+      return {
+        title: 'merging_inscriptions_risk_title',
+        description: 'merging_inscriptions_risk_description'
+      };
+    case RiskType.CHANGING_INSCRIPTION:
+      return {
+        title: 'changing_inscription_risk_title',
+        description: 'changing_inscription_risk_description'
+      };
+    case RiskType.RUNES_BURNING:
+      return {
+        title: 'runes_burning_risk_title',
+        description: 'runes_burning_risk_description'
+      };
+    case RiskType.RUNES_MULTIPLE_ASSETS:
+      return {
+        title: 'runes_multiple_assets_risk_title',
+        description: 'runes_multiple_assets_risk_description'
+      };
+    case RiskType.INDEXER_API_DOWN:
+      return {
+        title: 'indexer_api_down_risk_title',
+        description: 'indexer_api_down_risk_description'
+      };
+    case RiskType.RUNES_API_DOWN:
+      return {
+        title: 'runes_api_down_risk_title',
+        description: 'runes_api_down_risk_description'
+      };
+    case RiskType.ALKANES_BURNING:
+      return {
+        title: 'alkanes_burning_risk_title',
+        description: 'alkanes_burning_risk_description'
+      };
+    case RiskType.ALKANES_MULTIPLE_ASSETS:
+      return {
+        title: 'alkanes_multiple_assets_risk_title',
+        description: 'alkanes_multiple_assets_risk_description'
+      };
+    case RiskType.UTXO_INDEXING:
+      return {
+        title: 'utxo_indexing_risk_title',
+        description: 'utxo_indexing_risk_description'
+      };
+    default:
+      return {
+        title: 'unknown_risk_title',
+        description: 'unknown_risk_description'
+      };
+  }
+}
+
 export const SignPsbtWithRisksPopover = ({
   decodedPsbt,
   onConfirm,
@@ -71,7 +157,10 @@ export const SignPsbtWithRisksPopover = ({
     } else if (detailRisk.type === RiskType.MULTIPLE_ASSETS) {
       return <SendingOutAssets decodedPsbt={decodedPsbt} onClose={() => setDetailRisk(null)} />;
     } else if (detailRisk.type === RiskType.LOW_FEE_RATE || detailRisk.type === RiskType.HIGH_FEE_RATE) {
-      return <BadFeeRate decodedPsbt={decodedPsbt} risk={detailRisk} onClose={() => setDetailRisk(null)} />;
+      const riskContentKey = getRiskContentKey(detailRisk.type);
+      return (
+        <BadFeeRate decodedPsbt={decodedPsbt} riskContentKey={riskContentKey} onClose={() => setDetailRisk(null)} />
+      );
     } else if (detailRisk.type === RiskType.CHANGING_INSCRIPTION) {
       return <ChangingInscription decodedPsbt={decodedPsbt} onClose={() => setDetailRisk(null)} />;
     } else if (detailRisk.type === RiskType.RUNES_BURNING) {
@@ -88,6 +177,9 @@ export const SignPsbtWithRisksPopover = ({
 
         <Column gap="md" fullX mb="md">
           {decodedPsbt.risks.map((risk, index) => {
+            const riskContentKey = getRiskContentKey(risk.type);
+            const title = riskContentKey.title ? t(riskContentKey.title) : risk.title;
+            const desc = riskContentKey.description ? t(riskContentKey.description) : risk.desc;
             return (
               <Column
                 key={'risk_' + index}
@@ -95,7 +187,7 @@ export const SignPsbtWithRisksPopover = ({
                 px="md"
                 py="sm">
                 <Row justifyBetween justifyCenter mt="sm">
-                  <Text text={risk.title} color={risk.level === 'warning' ? 'warning' : 'danger'} />
+                  <Text text={title} color={risk.level === 'warning' ? 'warning' : 'danger'} />
                   {visibleRiskDetailTypes.includes(risk.type) ? (
                     <Text
                       text={t('view')}
@@ -106,7 +198,7 @@ export const SignPsbtWithRisksPopover = ({
                   ) : null}
                 </Row>
                 <Row style={{ borderBottomWidth: 1, color: colors.border }}></Row>
-                <Text text={risk.desc} preset="sub" />
+                <Text text={desc} preset="sub" />
               </Column>
             );
           })}

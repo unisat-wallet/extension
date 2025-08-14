@@ -2188,5 +2188,95 @@
   },
   "developer_mode_disabled": {
     "message": "开发者模式已禁用"
+  },
+  "sighash_none_risk_title": {
+    "message": "检测到SIGHASH_NONE"
+  },
+  "sighash_none_risk_description": {
+    "message": "SIGHASH_NONE是一种特殊的签名类型，允许在签名后修改交易。如果交易被恶意修改，可能导致资金损失。请确保您信任此交易的来源，然后再继续。"
+  },
+  "scammer_address_risk_title": {
+    "message": "⚠️ 检测到可疑地址"
+  },
+  "scammer_address_risk_description": {
+    "message": "此地址已被举报为诈骗地址。请谨慎操作。如果您认为这是误报，请向我们举报。"
+  },
+  "network_not_matched_risk_title": {
+    "message": "检测到网络不匹配。"
+  },
+  "network_not_matched_risk_description": {
+    "message": "此交易不在当前网络上，请确保您信任此交易的来源，然后再继续。"
+  },
+  "inscription_burning_risk_title": {
+    "message": "检测到铭文销毁"
+  },
+  "inscription_burning_risk_description": {
+    "message": "此交易涉及铭文销毁。请确保您了解此操作的影响，然后再继续。"
+  },
+  "multiple_assets_risk_title": {
+    "message": "检测到多种资产"
+  },
+  "multiple_assets_risk_description": {
+    "message": "此交易涉及多种资产。请确保您了解此操作的影响，然后再继续。"
+  },
+  "high_fee_rate_risk_title": {
+    "message": "检测到高手续费率"
+  },
+  "high_fee_rate_risk_description": {
+    "message": "此交易具有高手续费率。请确保您了解此操作的影响，然后再继续。"
+  },
+  "merging_inscriptions_risk_title": {
+    "message": "检测到铭文合并"
+  },
+  "merging_inscriptions_risk_description": {
+    "message": "此交易涉及铭文合并。请确保您了解此操作的影响，然后再继续。"
+  },
+  "changing_inscription_risk_title": {
+    "message": "检测到铭文更改"
+  },
+  "changing_inscription_risk_description": {
+    "message": "此交易涉及铭文更改。请确保您了解此操作的影响，然后再继续。"
+  },
+  "runes_burning_risk_title": {
+    "message": "检测到Runes销毁"
+  },
+  "runes_burning_risk_description": {
+    "message": "此交易涉及Runes销毁。请确保您了解此操作的影响，然后再继续。"
+  },
+  "runes_multiple_assets_risk_title": {
+    "message": "检测到多种Runes资产"
+  },
+  "runes_multiple_assets_risk_description": {
+    "message": "此交易涉及多种Runes资产。请确保您了解此操作的影响，然后再继续。"
+  },
+  "indexer_api_down_risk_title": {
+    "message": "索引器API已下线"
+  },
+  "indexer_api_down_risk_description": {
+    "message": "索引器API当前处于离线状态。这可能影响交易详情和资产余额的准确性。请谨慎操作并独立验证所有信息。"
+  },
+  "runes_api_down_risk_title": {
+    "message": "Runes API已下线"
+  },
+  "runes_api_down_risk_description": {
+    "message": "Runes API当前处于离线状态。这可能影响交易详情和Runes资产余额的准确性。请谨慎操作并独立验证所有信息。"
+  },
+  "alkanes_burning_risk_title": {
+    "message": "检测到Alkanes销毁"
+  },
+  "alkanes_burning_risk_description": {
+    "message": "此交易涉及Alkanes销毁。请确保您了解此操作的影响，然后再继续。"
+  },
+  "alkanes_multiple_assets_risk_title": {
+    "message": "检测到多种Alkanes资产"
+  },
+  "alkanes_multiple_assets_risk_description": {
+    "message": "此交易涉及多种Alkanes资产。请确保您了解此操作的影响，然后再继续。"
+  },
+  "utxo_indexing_risk_title": {
+    "message": "UTXO索引正在进行中"
+  },
+  "utxo_indexing_risk_description": {
+    "message": "所选的UTXO属于仍在索引中的交易。为确保交易的安全性和可靠性，请在继续之前等待索引完成。"
   }
 }

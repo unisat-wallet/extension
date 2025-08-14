@@ -2267,5 +2267,101 @@
   },
   "Broadcast": {
     "message": "ブロードキャスト"
+  },
+  "developer_mode_enabled": {
+    "message": "開発者モードが有効になりました"
+  },
+  "developer_mode_disabled": {
+    "message": "開発者モードが無効になりました"
+  },
+  "sighash_none_risk_title": {
+    "message": "SIGHASH_NONEが検出されました"
+  },
+  "sighash_none_risk_description": {
+    "message": "SIGHASH_NONEは署名後にトランザクションの変更を許可する特別な署名タイプです。トランザクションが悪意を持って変更された場合、資金を失う可能性があります。続行する前に、このトランザクションの送信元を信頼していることを確認してください。"
+  },
+  "scammer_address_risk_title": {
+    "message": "⚠️ 不審なアドレスが検出されました"
+  },
+  "scammer_address_risk_description": {
+    "message": "このアドレスは詐欺アドレスとして報告されています。注意して進めてください。これが誤検知だと思われる場合は、報告してください。"
+  },
+  "network_not_matched_risk_title": {
+    "message": "ネットワークの不一致が検出されました。"
+  },
+  "network_not_matched_risk_description": {
+    "message": "このトランザクションは現在のネットワーク上にありません。続行する前に、このトランザクションの送信元を信頼していることを確認してください。"
+  },
+  "inscription_burning_risk_title": {
+    "message": "インスクリプションの燃焼が検出されました"
+  },
+  "inscription_burning_risk_description": {
+    "message": "このトランザクションにはインスクリプションの燃焼が含まれています。続行する前に、この操作の影響を理解していることを確認してください。"
+  },
+  "multiple_assets_risk_title": {
+    "message": "複数の資産が検出されました"
+  },
+  "multiple_assets_risk_description": {
+    "message": "このトランザクションには複数の資産が含まれています。続行する前に、この操作の影響を理解していることを確認してください。"
+  },
+  "high_fee_rate_risk_title": {
+    "message": "高い手数料率が検出されました"
+  },
+  "high_fee_rate_risk_description": {
+    "message": "このトランザクションは高い手数料率を持っています。続行する前に、この操作の影響を理解していることを確認してください。"
+  },
+  "merging_inscriptions_risk_title": {
+    "message": "インスクリプションのマージが検出されました"
+  },
+  "merging_inscriptions_risk_description": {
+    "message": "このトランザクションにはインスクリプションのマージが含まれています。続行する前に、この操作の影響を理解していることを確認してください。"
+  },
+  "changing_inscription_risk_title": {
+    "message": "インスクリプションの変更が検出されました"
+  },
+  "changing_inscription_risk_description": {
+    "message": "このトランザクションにはインスクリプションの変更が含まれています。続行する前に、この操作の影響を理解していることを確認してください。"
+  },
+  "runes_burning_risk_title": {
+    "message": "Runesの燃焼が検出されました"
+  },
+  "runes_burning_risk_description": {
+    "message": "このトランザクションにはRunesの燃焼が含まれています。続行する前に、この操作の影響を理解していることを確認してください。"
+  },
+  "runes_multiple_assets_risk_title": {
+    "message": "複数のRunes資産が検出されました"
+  },
+  "runes_multiple_assets_risk_description": {
+    "message": "このトランザクションには複数のRunes資産が含まれています。続行する前に、この操作の影響を理解していることを確認してください。"
+  },
+  "indexer_api_down_risk_title": {
+    "message": "インデクサーAPIがダウンしています"
+  },
+  "indexer_api_down_risk_description": {
+    "message": "インデクサーAPIが現在ダウンしています。これによりトランザクション詳細と資産残高の精度に影響が出る可能性があります。注意して進め、すべての情報を独立して確認してください。"
+  },
+  "runes_api_down_risk_title": {
+    "message": "Runes APIがダウンしています"
+  },
+  "runes_api_down_risk_description": {
+    "message": "Runes APIが現在ダウンしています。これによりトランザクション詳細とRunes資産残高の精度に影響が出る可能性があります。注意して進め、すべての情報を独立して確認してください。"
+  },
+  "alkanes_burning_risk_title": {
+    "message": "Alkanesの燃焼が検出されました"
+  },
+  "alkanes_burning_risk_description": {
+    "message": "このトランザクションにはAlkanesの燃焼が含まれています。続行する前に、この操作の影響を理解していることを確認してください。"
+  },
+  "alkanes_multiple_assets_risk_title": {
+    "message": "複数のAlkanes資産が検出されました"
+  },
+  "alkanes_multiple_assets_risk_description": {
+    "message": "このトランザクションには複数のAlkanes資産が含まれています。続行する前に、この操作の影響を理解していることを確認してください。"
+  },
+  "utxo_indexing_risk_title": {
+    "message": "UTXOインデックス作成が進行中です"
+  },
+  "utxo_indexing_risk_description": {
+    "message": "選択されたUTXOは、まだインデックス作成中のトランザクションに属しています。トランザクションのセキュリティと信頼性を確保するため、続行する前にインデックス作成が完了するまでお待ちください。"
   }
 }

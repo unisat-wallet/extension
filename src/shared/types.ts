@@ -342,7 +342,7 @@ export interface AddressTokenSummary {
 export enum RiskType {
   SIGHASH_NONE,
   SCAMMER_ADDRESS,
-  UNCONFIRMED_UTXO,
+  NETWORK_NOT_MATCHED,
   INSCRIPTION_BURNING,
   ATOMICALS_DISABLE,
   ATOMICALS_NFT_BURNING,
@@ -353,7 +353,14 @@ export enum RiskType {
   SPLITTING_INSCRIPTIONS,
   MERGING_INSCRIPTIONS,
   CHANGING_INSCRIPTION,
-  RUNES_BURNING
+  RUNES_BURNING,
+  RUNES_MULTIPLE_ASSETS,
+  INDEXER_API_DOWN,
+  ATOMICALS_API_DOWN,
+  RUNES_API_DOWN,
+  ALKANES_BURNING,
+  ALKANES_MULTIPLE_ASSETS,
+  UTXO_INDEXING
 }
 
 export interface Risk {
@@ -373,6 +380,7 @@ export interface DecodedPsbt {
     atomicals: Atomical[];
     sighashType: number;
     runes: RuneBalance[];
+    alkanes: AlkanesBalance[];
     contract?: ContractResult;
   }[];
   outputInfos: {
@@ -381,6 +389,7 @@ export interface DecodedPsbt {
     inscriptions: Inscription[];
     atomicals: Atomical[];
     runes: RuneBalance[];
+    alkanes: AlkanesBalance[];
     contract?: ContractResult;
   }[];
   inscriptions: { [key: string]: Inscription };

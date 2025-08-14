@@ -1,4 +1,4 @@
-import { DecodedPsbt, Risk } from '@/shared/types';
+import { DecodedPsbt } from '@/shared/types';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 
@@ -11,11 +11,14 @@ import { Text } from '../Text';
 
 export const BadFeeRate = ({
   decodedPsbt,
-  risk,
+  riskContentKey,
   onClose
 }: {
   decodedPsbt: DecodedPsbt;
-  risk: Risk;
+  riskContentKey: {
+    title: string;
+    description: string;
+  };
   onClose: () => void;
 }) => {
   const { t } = useI18n();
@@ -24,7 +27,7 @@ export const BadFeeRate = ({
       <Column justifyCenter itemsCenter>
         <Row fullX justifyBetween>
           <Row />
-          <Text text={risk.title} preset="bold" />
+          <Text text={t(riskContentKey.title)} preset="bold" />
           <Icon
             icon="close"
             onClick={() => {

@@ -2275,5 +2275,101 @@
   },
   "Broadcast": {
     "message": "廣播交易"
+  },
+  "developer_mode_enabled": {
+    "message": "開發者模式已啟用"
+  },
+  "developer_mode_disabled": {
+    "message": "開發者模式已停用"
+  },
+  "sighash_none_risk_title": {
+    "message": "偵測到SIGHASH_NONE"
+  },
+  "sighash_none_risk_description": {
+    "message": "SIGHASH_NONE是一種特殊的簽名類型，允許在簽名後修改交易。如果交易被惡意修改，可能導致資金損失。請確保您信任此交易的來源，然後再繼續。"
+  },
+  "scammer_address_risk_title": {
+    "message": "⚠️ 偵測到可疑地址"
+  },
+  "scammer_address_risk_description": {
+    "message": "此地址已被舉報為詐騙地址。請謹慎操作。如果您認為這是誤報，請向我們舉報。"
+  },
+  "network_not_matched_risk_title": {
+    "message": "偵測到網路不符。"
+  },
+  "network_not_matched_risk_description": {
+    "message": "此交易不在目前網路上，請確保您信任此交易的來源，然後再繼續。"
+  },
+  "inscription_burning_risk_title": {
+    "message": "偵測到銘文銷毀"
+  },
+  "inscription_burning_risk_description": {
+    "message": "此交易涉及銘文銷毀。請確保您了解此操作的影響，然後再繼續。"
+  },
+  "multiple_assets_risk_title": {
+    "message": "偵測到多種資產"
+  },
+  "multiple_assets_risk_description": {
+    "message": "此交易涉及多種資產。請確保您了解此操作的影響，然後再繼續。"
+  },
+  "high_fee_rate_risk_title": {
+    "message": "偵測到高手續費率"
+  },
+  "high_fee_rate_risk_description": {
+    "message": "此交易具有高手續費率。請確保您了解此操作的影響，然後再繼續。"
+  },
+  "merging_inscriptions_risk_title": {
+    "message": "偵測到銘文合併"
+  },
+  "merging_inscriptions_risk_description": {
+    "message": "此交易涉及銘文合併。請確保您了解此操作的影響，然後再繼續。"
+  },
+  "changing_inscription_risk_title": {
+    "message": "偵測到銘文更改"
+  },
+  "changing_inscription_risk_description": {
+    "message": "此交易涉及銘文更改。請確保您了解此操作的影響，然後再繼續。"
+  },
+  "runes_burning_risk_title": {
+    "message": "偵測到Runes銷毀"
+  },
+  "runes_burning_risk_description": {
+    "message": "此交易涉及Runes銷毀。請確保您了解此操作的影響，然後再繼續。"
+  },
+  "runes_multiple_assets_risk_title": {
+    "message": "偵測到多種Runes資產"
+  },
+  "runes_multiple_assets_risk_description": {
+    "message": "此交易涉及多種Runes資產。請確保您了解此操作的影響，然後再繼續。"
+  },
+  "indexer_api_down_risk_title": {
+    "message": "索引器API已離線"
+  },
+  "indexer_api_down_risk_description": {
+    "message": "索引器API目前處於離線狀態。這可能影響交易詳情和資產餘額的準確性。請謹慎操作並獨立驗證所有資訊。"
+  },
+  "runes_api_down_risk_title": {
+    "message": "Runes API已離線"
+  },
+  "runes_api_down_risk_description": {
+    "message": "Runes API目前處於離線狀態。這可能影響交易詳情和Runes資產餘額的準確性。請謹慎操作並獨立驗證所有資訊。"
+  },
+  "alkanes_burning_risk_title": {
+    "message": "偵測到Alkanes銷毀"
+  },
+  "alkanes_burning_risk_description": {
+    "message": "此交易涉及Alkanes銷毀。請確保您了解此操作的影響，然後再繼續。"
+  },
+  "alkanes_multiple_assets_risk_title": {
+    "message": "偵測到多種Alkanes資產"
+  },
+  "alkanes_multiple_assets_risk_description": {
+    "message": "此交易涉及多種Alkanes資產。請確保您了解此操作的影響，然後再繼續。"
+  },
+  "utxo_indexing_risk_title": {
+    "message": "UTXO索引正在進行中"
+  },
+  "utxo_indexing_risk_description": {
+    "message": "所選的UTXO屬於仍在索引中的交易。為確保交易的安全性和可靠性，請在繼續之前等待索引完成。"
   }
 }

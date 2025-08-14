@@ -2281,5 +2281,95 @@
   },
   "developer_mode_disabled": {
     "message": "Developer Mode Disabled"
+  },
+  "sighash_none_risk_title": {
+    "message": "SIGHASH_NONE detected"
+  },
+  "sighash_none_risk_description": {
+    "message": "SIGHASH_NONE is a special signature type that allows the transaction to be modified after signing. This can lead to potential loss of funds if the transaction is altered maliciously. Please ensure you trust the source of this transaction before proceeding."
+  },
+  "scammer_address_risk_title": {
+    "message": "⚠️ Suspicious address detected"
+  },
+  "scammer_address_risk_description": {
+    "message": "This address has been reported as a scammer address. Proceed with caution. If you believe this is a false positive, please report it to us."
+  },
+  "network_not_matched_risk_title": {
+    "message": "Network not matched' was detected."
+  },
+  "network_not_matched_risk_description": {
+    "message": "This transaction is not on current Network, please ensure you trust the source of this transaction before proceeding."
+  },
+  "inscription_burning_risk_title": {
+    "message": "Inscription burning detected"
+  },
+  "inscription_burning_risk_description": {
+    "message": "This transaction involves the burning of inscriptions. Please ensure you understand the implications of this action before proceeding."
+  },
+  "multiple_assets_risk_title": {
+    "message": "Multiple assets detected"
+  },
+  "multiple_assets_risk_description": {
+    "message": "This transaction involves multiple assets. Please ensure you understand the implications of this action before proceeding."
+  },
+  "high_fee_rate_risk_title": {
+    "message": "High fee rate detected"
+  },
+  "high_fee_rate_risk_description": {
+    "message": "This transaction has a high fee rate. Please ensure you understand the implications of this action before proceeding."
+  },
+  "merging_inscriptions_risk_title": {
+    "message": "Merging inscriptions detected"
+  },
+  "merging_inscriptions_risk_description": {
+    "message": "This transaction involves merging inscriptions. Please ensure you understand the implications of this action before proceeding."
+  },
+  "changing_inscription_risk_title": {
+    "message": "Changing inscription detected"
+  },
+  "changing_inscription_risk_description": {
+    "message": "This transaction involves changing an inscription. Please ensure you understand the implications of this action before proceeding."
+  },
+  "runes_burning_risk_title": {
+    "message": "Runes burning detected"
+  },
+  "runes_burning_risk_description": {
+    "message": "This transaction involves the burning of Runes. Please ensure you understand the implications of this action before proceeding."
+  },
+  "runes_multiple_assets_risk_title": {
+    "message": "Runes multiple assets detected"
+  },
+  "runes_multiple_assets_risk_description": {
+    "message": "This transaction involves multiple Runes assets. Please ensure you understand the implications of this action before proceeding."
+  },
+  "indexer_api_down_risk_title": {
+    "message": "Indexer API Down"
+  },
+  "indexer_api_down_risk_description": {
+    "message": "The indexer API is currently down. This may affect the accuracy of transaction details and asset balances. Please proceed with caution and verify all information independently."
+  },
+  "runes_api_down_risk_title": {
+    "message": "Runes API Down"
+  },
+  "runes_api_down_risk_description": {
+    "message": "The Runes API is currently down. This may affect the accuracy of transaction details and Runes asset balances. Please proceed with caution and verify all information independently."
+  },
+  "alkanes_burning_risk_title": {
+    "message": "Alkanes burning detected"
+  },
+  "alkanes_burning_risk_description": {
+    "message": "This transaction involves the burning of Alkanes. Please ensure you understand the implications of this action before proceeding."
+  },
+  "alkanes_multiple_assets_risk_title": {
+    "message": "Alkanes multiple assets detected"
+  },
+  "alkanes_multiple_assets_risk_description": {
+    "message": "This transaction involves multiple Alkanes assets. Please ensure you understand the implications of this action before proceeding."
+  },
+  "utxo_indexing_risk_title": {
+    "message": "UTXO Indexing in Progress"
+  },
+  "utxo_indexing_risk_description": {
+    "message": "The selected UTXO belongs to a transaction that is still being indexed. To ensure transaction security and reliability, please wait for indexing to complete before proceeding."
   }
 }
