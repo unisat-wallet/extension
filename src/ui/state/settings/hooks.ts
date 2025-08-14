@@ -120,6 +120,22 @@ export function useTxExplorerUrl(txid: string) {
   }
 }
 
+export function useGetTxExplorerUrlCallback() {
+  const chain = useChain();
+  return useCallback(
+    (txid: string) => {
+      if (chain.enum === ChainType.BITCOIN_MAINNET) {
+        return `${chain.unisatExplorerUrl}/tx/${txid}`;
+      } else if (chain.defaultExplorer === 'mempool-space') {
+        return `${chain.mempoolSpaceUrl}/tx/${txid}`;
+      } else {
+        return `${chain.unisatExplorerUrl}/tx/${txid}`;
+      }
+    },
+    [chain]
+  );
+}
+
 export function useAddressExplorerUrl(address: string) {
   const chain = useChain();
   if (chain.enum === ChainType.BITCOIN_MAINNET) {

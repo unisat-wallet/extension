@@ -536,7 +536,8 @@ export default function BRC20SendScreen() {
       holder: '',
       inscriptionId: '',
       historyCount: 0,
-      holdersCount: 0
+      holdersCount: 0,
+      logo: ''
     }
   });
 

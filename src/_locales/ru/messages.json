@@ -2360,5 +2360,29 @@
   },
   "utxo_indexing_risk_description": {
     "message": "Выбранный UTXO принадлежит транзакции, которая все еще индексируется. Чтобы обеспечить безопасность и надежность транзакции, подождите завершения индексации перед продолжением."
+  },
+  "brc20_history_type_send": {
+    "message": "Отправить"
+  },
+  "brc20_history_type_receive": {
+    "message": "Получить"
+  },
+  "brc20_history_type_withdraw": {
+    "message": "Вывести"
+  },
+  "brc20_history_type_inscribe_transfer": {
+    "message": "Создать надпись"
+  },
+  "brc20_history_from": {
+    "message": "От"
+  },
+  "brc20_history_to": {
+    "message": "Кому"
+  },
+  "load_failed": {
+    "message": "Ошибка загрузки"
+  },
+  "history_pending": {
+    "message": "Ожидание"
   }
 }

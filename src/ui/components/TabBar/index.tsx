@@ -20,7 +20,7 @@ interface TabBarProps {
   items: TabProps[];
   onTabClick: (string) => void;
   progressEnabled?: boolean;
-  preset?: 'number-page' | 'default' | 'style1' | 'style2';
+  preset?: 'number-page' | 'default' | 'style1' | 'style2' | 'style3';
 }
 
 export function TabBar(props: TabBarProps) {
@@ -142,6 +142,25 @@ export function TabBar(props: TabBarProps) {
               </Column>
             );
           }
+        })}
+      </Row>
+    );
+  }
+
+  if (preset == 'style3') {
+    return (
+      <Row gap="lg">
+        {items.map((v) => {
+          const isSelected = v.key === tabKey;
+          return (
+            <Column
+              key={v.key}
+              onClick={() => {
+                setTabKey(v.key);
+              }}>
+              <Text text={v.label} color={isSelected ? 'white' : 'textDim'} />
+            </Column>
+          );
         })}
       </Row>
     );

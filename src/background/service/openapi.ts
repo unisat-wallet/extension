@@ -17,6 +17,7 @@ import {
   Arc20Balance,
   BitcoinBalance,
   BitcoinBalanceV2,
+  BRC20HistoryItem,
   CAT20Balance,
   CAT721CollectionInfo,
   CAT_VERSION,
@@ -869,6 +870,10 @@ export class OpenApiService {
       orderId,
       psbt
     });
+  }
+
+  async getBRC20RecentHistory(address: string, ticker: string): Promise<BRC20HistoryItem[]> {
+    return this.httpGet('/v5/brc20/recent-history', { address, ticker });
   }
 
   async createSendCoinBypassHeadOffsets(

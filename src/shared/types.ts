@@ -315,6 +315,7 @@ export interface TokenInfo {
   selfMint?: boolean;
   holdersCount: number;
   historyCount: number;
+  logo: string;
 }
 
 export enum TokenInscriptionType {
@@ -760,4 +761,13 @@ export interface AlkanesCollection {
 export enum CAT_VERSION {
   V1 = 'v1',
   V2 = 'v2'
+}
+
+export interface BRC20HistoryItem {
+  type: string;
+  from: string;
+  to: string;
+  amount: string;
+  txid: string;
+  blocktime: number;
 }

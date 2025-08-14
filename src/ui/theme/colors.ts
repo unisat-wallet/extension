@@ -78,6 +78,7 @@ export const colors = Object.assign({}, palette, {
   value_down_color: '#BF3F4D',
 
   ticker_color: '#eac249',
+  ticker_color2: 'rgba(255, 255, 255, 0.85)',
 
   success: '#7BE098',
 

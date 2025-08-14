@@ -240,15 +240,15 @@ export default function BRC20SingleStepScreen() {
         </Column>
 
         <Column mt="lg">
-          <Row justifyBetween>
+          <Row justifyBetween style={{ alignItems: 'flex-start' }}>
             <Text text={t('balance')} color="textDim" />
             <TickUsdWithoutPrice tick={tokenBalance.ticker} balance={inputAmount} type={TokenType.BRC20} />
             <Row
-              itemsCenter
+              style={{ alignItems: 'flex-start' }}
               onClick={() => {
                 setInputAmount(availableBalance);
               }}>
-              <Text text={t('max')} preset="sub" style={{ color: colors.white_muted }} />
+              <Text text={t('max')} color="textDim" size="sm" style={{ color: colors.white_muted }} />
               <Text text={`${showLongNumber(availableBalance)} ${tokenBalance.ticker}`} preset="bold" size="sm" wrap />
             </Row>
           </Row>

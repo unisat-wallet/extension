@@ -23,12 +23,14 @@ export function BRC20Ticker({
   tick,
   displayName,
   preset,
-  showOrigin = false
+  showOrigin = false,
+  color
 }: {
   tick: string | undefined;
   displayName?: string;
   preset?: Presets;
   showOrigin?: boolean;
+  color?: any;
 }) {
   const style = $tickerPresets[preset || 'md'];
   return useMemo(() => {
@@ -40,7 +42,7 @@ export function BRC20Ticker({
             if (regex.test(char)) {
               return <Text key={index} text={encodeURIComponent(char)} color="textDim" size={style.textSize} />;
             }
-            return <Text key={index} text={char} size={style.textSize} wrap color="ticker_color" />;
+            return <Text key={index} text={char} size={style.textSize} wrap color={color || 'ticker_color'} />;
           })}
         </Row>
       );
@@ -48,12 +50,12 @@ export function BRC20Ticker({
     if (showOrigin && displayName) {
       return (
         <Row gap="sm" itemsCenter>
-          <Text text={displayName || tick} size={style.textSize} wrap color="ticker_color" />
+          <Text text={displayName || tick} size={style.textSize} wrap color={color || 'ticker_color'} />
           <Text text={`(ticker: ${tick})`} size={style.textSize} wrap color="textDim" />
         </Row>
       );
     }
 
-    return <Text text={displayName || tick} size={style.textSize} wrap color="ticker_color" />;
+    return <Text text={displayName || tick} size={style.textSize} wrap color={color || 'ticker_color'} />;
   }, [tick, displayName]);
 }

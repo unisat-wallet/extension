@@ -24,6 +24,7 @@ import {
   BabylonAddressSummary,
   BitcoinBalance,
   BitcoinBalanceV2,
+  BRC20HistoryItem,
   BtcChannelItem,
   CAT20Balance,
   CAT20MergeOrder,
@@ -632,6 +633,8 @@ export interface WalletController {
     currentPage: number,
     pageSize: number
   ): Promise<{ currentPage: number; pageSize: number; list: AlkanesInfo[]; total: number }>;
+
+  getBRC20RecentHistory(address: string, ticker: string): Promise<BRC20HistoryItem[]>;
 }
 
 const WalletContext = createContext<{

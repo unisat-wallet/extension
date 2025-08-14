@@ -2371,5 +2371,29 @@
   },
   "utxo_indexing_risk_description": {
     "message": "The selected UTXO belongs to a transaction that is still being indexed. To ensure transaction security and reliability, please wait for indexing to complete before proceeding."
+  },
+  "brc20_history_type_send": {
+    "message": "Send"
+  },
+  "brc20_history_type_receive": {
+    "message": "Receive"
+  },
+  "brc20_history_type_withdraw": {
+    "message": "Withdraw"
+  },
+  "brc20_history_type_inscribe_transfer": {
+    "message": "Inscribe"
+  },
+  "brc20_history_from": {
+    "message": "From"
+  },
+  "brc20_history_to": {
+    "message": "To"
+  },
+  "load_failed": {
+    "message": "Load Failed"
+  },
+  "history_pending": {
+    "message": "Pending"
   }
 }

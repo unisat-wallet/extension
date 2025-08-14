@@ -116,7 +116,11 @@ export const svgRegistry = {
 
   drop_down: '/images/icons/drop_down.svg',
   'singer-info': '/images/icons/singer-info.svg',
-  'singer-logo': '/images/icons/singer-logo.svg'
+  'singer-logo': '/images/icons/singer-logo.svg',
+
+  history_send: '/images/icons/history_send.svg',
+  history_receive: '/images/icons/history_receive.svg',
+  history_inscribe: '/images/icons/history_inscribe.svg'
 };
 
 const iconImgList: Array<IconTypes> = [
@@ -163,7 +167,11 @@ const iconImgList: Array<IconTypes> = [
   'brc20-single-step',
   'arrow-right',
   'version-notice',
-  'side-panel-logo'
+  'side-panel-logo',
+
+  'history_send',
+  'history_receive',
+  'history_inscribe'
 ];
 
 export type IconTypes = keyof typeof svgRegistry;

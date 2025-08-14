@@ -38,6 +38,7 @@ import {
   AddressType,
   AddressUserToSignInput,
   BitcoinBalance,
+  BRC20HistoryItem,
   CAT_VERSION,
   CosmosBalance,
   CosmosSignDataType,
@@ -2863,6 +2864,9 @@ export class WalletController extends BaseController {
       list
     };
   };
-}
 
+  getBRC20RecentHistory(address: string, ticker: string): Promise<BRC20HistoryItem[]> {
+    return openapiService.getBRC20RecentHistory(address, ticker);
+  }
+}
 export default new WalletController();

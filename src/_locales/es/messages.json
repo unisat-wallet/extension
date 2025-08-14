@@ -2353,5 +2353,29 @@
   },
   "utxo_indexing_risk_description": {
     "message": "El UTXO seleccionado pertenece a una transacción que aún está siendo indexada. Para asegurar la seguridad y confiabilidad de la transacción, espere a que se complete la indexación antes de proceder."
+  },
+  "brc20_history_type_send": {
+    "message": "Enviar"
+  },
+  "brc20_history_type_receive": {
+    "message": "Recibir"
+  },
+  "brc20_history_type_withdraw": {
+    "message": "Retirar"
+  },
+  "brc20_history_type_inscribe_transfer": {
+    "message": "Inscribir"
+  },
+  "brc20_history_from": {
+    "message": "De"
+  },
+  "brc20_history_to": {
+    "message": "Para"
+  },
+  "load_failed": {
+    "message": "Error de Carga"
+  },
+  "history_pending": {
+    "message": "Pendiente"
   }
 }
