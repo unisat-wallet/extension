@@ -149,13 +149,21 @@ export function BalanceCard({ accountBalance, disableUtxoTools = true, enableRef
           <span className={styles.balanceNumber}>{isBalanceHidden ? '*****' : totalAmount.split('.')[0]}</span>
           {!isBalanceHidden && (
             <>
-              <span className={styles.decimal} style={{ color: isBtcMainnet ? '#000' : 'rgba(0, 0, 0, 0.45)' }}>
+              <span
+                className={chain.enum === ChainType.FRACTAL_BITCOIN_MAINNET ? styles.fb_decimal : styles.decimal}
+                style={{ color: isBtcMainnet ? '#000' : 'rgba(0, 0, 0, 0.45)' }}>
                 .{totalAmount.split('.')[1]}
               </span>
-              <span className={styles.unit}>{btcUnit}</span>
+              <span className={chain.enum === ChainType.FRACTAL_BITCOIN_MAINNET ? styles.fb_unit : styles.unit}>
+                {btcUnit}
+              </span>
             </>
           )}
-          {isBalanceHidden && <span className={styles.unit}>{btcUnit}</span>}
+          {isBalanceHidden && (
+            <span className={chain.enum === ChainType.FRACTAL_BITCOIN_MAINNET ? styles.fb_unit : styles.unit}>
+              {btcUnit}
+            </span>
+          )}
         </div>
         <Icon icon="balance-right" size={10} containerStyle={{ transform: `rotate(${isExpanded ? 270 : 90}deg)` }} />
       </div>
