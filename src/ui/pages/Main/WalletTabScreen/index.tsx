@@ -1,11 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { AddressFlagType, KEYRING_TYPE } from '@/shared/constant';
+import { KEYRING_TYPE } from '@/shared/constant';
 import { VersionDetail } from '@/shared/types';
-import { checkAddressFlag } from '@/shared/utils';
 import { Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
-import { DisableUnconfirmedsPopover } from '@/ui/components/DisableUnconfirmedPopover';
 import { FeeRateIcon } from '@/ui/components/FeeRateIcon';
 import LoadingPage from '@/ui/components/LoadingPage';
 import { NavTabBar } from '@/ui/components/NavTabBar';
@@ -17,7 +15,6 @@ import { VersionNotice } from '@/ui/components/VersionNotice';
 import { getCurrentTab } from '@/ui/features/browser/tabs';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { useAccountBalance, useAddressSummary, useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { accountActions } from '@/ui/state/accounts/reducer';
 import { useIsUnlocked } from '@/ui/state/global/hooks';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
@@ -71,8 +68,6 @@ export default function WalletTabScreen() {
   const [showSafeNotice, setShowSafeNotice] = useState(false);
   const [showVersionNotice, setShowVersionNotice] = useState<VersionDetail | null>(null);
 
-  const [showDisableUnconfirmedUtxoNotice, setShowDisableUnconfirmedUtxoNotice] = useState(false);
-
   const addressSummary = useAddressSummary();
 
   const isUnlocked = useIsUnlocked();
@@ -84,21 +79,6 @@ export default function WalletTabScreen() {
       navigate('UnlockScreen');
     }
   }, [isUnlocked]);
-
-  useEffect(() => {
-    if (currentAccount.address === addressSummary.address) {
-      if (addressSummary.arc20Count > 0 || addressSummary.runesCount > 0) {
-        if (!checkAddressFlag(currentAccount.flag, AddressFlagType.CONFIRMED_UTXO_MODE)) {
-          if (!checkAddressFlag(currentAccount.flag, AddressFlagType.DISABLE_AUTO_SWITCH_CONFIRMED)) {
-            wallet.addAddressFlag(currentAccount, AddressFlagType.CONFIRMED_UTXO_MODE).then((account) => {
-              dispatch(accountActions.setCurrent(account));
-            });
-            setShowDisableUnconfirmedUtxoNotice(true);
-          }
-        }
-      }
-    }
-  }, [addressSummary, currentAccount]);
 
   useEffect(() => {
     const run = async () => {
@@ -285,10 +265,6 @@ export default function WalletTabScreen() {
               skipVersion(versionInfo.newVersion);
             }}
           />
-        )}
-
-        {showDisableUnconfirmedUtxoNotice && (
-          <DisableUnconfirmedsPopover onClose={() => setShowDisableUnconfirmedUtxoNotice(false)} />
         )}
 
         {switchChainModalVisible && (
