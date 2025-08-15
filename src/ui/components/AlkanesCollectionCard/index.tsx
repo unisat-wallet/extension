@@ -72,7 +72,7 @@ export function AlkanesCollectionCard(props: AlkanesCollectionCardProps) {
     <Column>
       <CardComponent onClick={onClick}>{renderItem(alkanesCollection.alkaneid, 142)}</CardComponent>
 
-      <Column justifyBetween justifyCenter mx="md">
+      <Column justifyBetween justifyCenter style={{ maxWidth: 158 }} px="md">
         <Text text={`${alkanesCollection.name}`} size="md" color="white" />
 
         <Row itemsCenter fullY gap="zero">

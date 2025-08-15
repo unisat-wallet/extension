@@ -81,7 +81,8 @@ export default function AlkanesNFTPreview({ alkanesInfo, onClick, preset }: Insc
             height: style.height,
             borderTopLeftRadius: style.borderTopLeftRadius,
             borderTopRightRadius: style.borderTopRightRadius,
-            border: 'none'
+            border: 'none',
+            pointerEvents: 'none'
           }}
         />
       );
