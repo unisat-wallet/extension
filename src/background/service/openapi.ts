@@ -967,6 +967,14 @@ export class OpenApiService {
       feeRate
     });
   }
+
+  async getBRC20ProgList(
+    address: string,
+    cursor: number,
+    size: number
+  ): Promise<{ list: TokenBalance[]; total: number }> {
+    return this.httpGet('/v5/brc20-prog/list', { address, cursor, size, type: 5 });
+  }
 }
 
 export default new OpenApiService();

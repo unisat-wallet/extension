@@ -442,6 +442,7 @@ export interface AddressSummary {
   atomicalsCount: number;
   brc20Count: number;
   brc20Count5Byte: number;
+  brc20Count6Byte: number;
   arc20Count: number;
   runesCount: number;
   loading?: boolean;

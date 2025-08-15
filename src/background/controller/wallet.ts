@@ -2867,5 +2867,18 @@ export class WalletController extends BaseController {
   getBRC20RecentHistory(address: string, ticker: string): Promise<BRC20HistoryItem[]> {
     return openapiService.getBRC20RecentHistory(address, ticker);
   }
+
+  getBRC20ProgList = async (address: string, currentPage: number, pageSize: number) => {
+    const cursor = (currentPage - 1) * pageSize;
+    const size = pageSize;
+    const { total, list } = await openapiService.getBRC20ProgList(address, cursor, size);
+
+    return {
+      currentPage,
+      pageSize,
+      total,
+      list
+    };
+  };
 }
 export default new WalletController();

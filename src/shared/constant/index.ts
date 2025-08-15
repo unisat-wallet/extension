@@ -247,6 +247,7 @@ export type TypeChain = {
   showPrice: boolean;
   defaultExplorer: 'mempool-space' | 'unisat-explorer';
   enableBrc20SingleStep?: boolean;
+  enableBrc20Prog?: boolean;
 };
 
 export const CHAINS_MAP: { [key: string]: TypeChain } = {
@@ -264,7 +265,8 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     unisatExplorerUrl: 'https://uniscan.cc',
     okxExplorerUrl: '',
     showPrice: true,
-    defaultExplorer: 'unisat-explorer'
+    defaultExplorer: 'unisat-explorer',
+    enableBrc20Prog: true
   },
   [ChainType.BITCOIN_TESTNET]: {
     enum: ChainType.BITCOIN_TESTNET,
@@ -312,7 +314,8 @@ export const CHAINS_MAP: { [key: string]: TypeChain } = {
     unisatExplorerUrl: 'https://uniscan.cc/signet',
     okxExplorerUrl: '',
     showPrice: false,
-    defaultExplorer: 'unisat-explorer'
+    defaultExplorer: 'unisat-explorer',
+    enableBrc20Prog: true
   },
   [ChainType.FRACTAL_BITCOIN_MAINNET]: {
     enum: ChainType.FRACTAL_BITCOIN_MAINNET,
