@@ -102,6 +102,7 @@ export default function ColdWalletScan({ onSucceed, size = 300 }: Props) {
   const [progress, setProgress] = useState(0);
   const [canplay, setCanplay] = useState(false);
   const [progressText, setProgressText] = useState<string>('');
+  const [cameraState, setCameraState] = useState<'idle' | 'requesting' | 'granted' | 'denied'>('idle');
 
   // Universal decoder for all QR types
   const [decoder] = useState(() => createUniversalDecoder());
@@ -116,7 +117,14 @@ export default function ColdWalletScan({ onSucceed, size = 300 }: Props) {
     });
   }, []);
 
-  // Handle QR code scan result
+  const setIsErrorWithTracking = useCallback((error: boolean, reason?: string) => {
+    setIsError(error);
+  }, []);
+
+  const setCanplayWithTracking = useCallback((canplay: boolean, reason?: string) => {
+    setCanplay(canplay);
+  }, []);
+
   const handleQRScan = useCallback(
     (qrText: string) => {
       try {
@@ -157,86 +165,121 @@ export default function ColdWalletScan({ onSucceed, size = 300 }: Props) {
         } else {
           // No result or failed to decode
           console.log('Failed to decode QR code');
-          setIsError(true);
+          setIsErrorWithTracking(true, 'Failed to decode QR code');
         }
       } catch (error) {
         console.error('QR scan error:', error);
-        setIsError(true);
+        setIsErrorWithTracking(true, 'QR scan error');
       }
     },
-    [decoder, onSucceed]
+    [decoder, onSucceed, setIsErrorWithTracking]
   );
 
-  // Start scanning
+  // Request camera permission and start scanning
   useEffect(() => {
-    const videoElement = document.getElementById(VIDEO_ID) as HTMLVideoElement;
-    if (!videoElement) {
-      return;
-    }
+    let mounted = true;
 
-    const canplayListener = () => {
-      console.log('Video can play, setting canplay=true');
-      setCanplayWithTracking(true, 'video.oncanplay');
-      // Don't start scanning here to avoid duplicate scanning
+    const requestCameraAndStartScanning = async () => {
+      try {
+        // Check if camera permission is already granted
+        if (navigator.permissions) {
+          const permission = await navigator.permissions.query({ name: 'camera' as PermissionName });
+          if (permission.state === 'denied') {
+            setCameraState('denied');
+            setIsErrorWithTracking(true, 'Camera permission denied');
+            return;
+          }
+        }
+
+        setCameraState('requesting');
+
+        // Request camera access
+        const stream = await navigator.mediaDevices.getUserMedia({ video: true });
+
+        if (!mounted) {
+          // Stop the stream if component was unmounted
+          stream.getTracks().forEach((track) => track.stop());
+          return;
+        }
+
+        setCameraState('granted');
+
+        // Start scanning after permission is granted
+        const videoElement = document.getElementById(VIDEO_ID) as HTMLVideoElement;
+        if (!videoElement) {
+          return;
+        }
+
+        const canplayListener = () => {
+          console.log('Video can play, setting canplay=true');
+          setCanplayWithTracking(true, 'video.oncanplay');
+        };
+
+        videoElement.addEventListener('canplay', canplayListener);
+
+        const pendingScanRequest = (videoElement as any).pendingScanRequest ?? Promise.resolve(undefined);
+
+        const scanRequest = pendingScanRequest
+          .then(() => {
+            return codeReader.decodeFromVideoDevice(undefined, videoElement, (result, error) => {
+              if (result) {
+                handleQRScan(result.getText());
+              }
+              if (
+                error &&
+                error.message &&
+                error.message !== 'Dimensions could be not found.' &&
+                !error.message.includes('NotFoundException') &&
+                !error.message.includes('No MultiFormat Readers were able to detect the code') &&
+                !error.message.includes('No QR code found')
+              ) {
+                console.error('Scanner error:', error);
+              }
+            });
+          })
+          .catch((error) => {
+            console.error('Scanner setup error:', error);
+            if (mounted) {
+              setIsErrorWithTracking(true, 'Scanner setup error');
+            }
+            return undefined;
+          });
+
+        if (videoElement) {
+          (videoElement as any).pendingScanRequest = scanRequest;
+        }
+
+        return () => {
+          videoElement.removeEventListener('canplay', canplayListener);
+          scanRequest.then((controls) => {
+            if (controls) {
+              controls.stop();
+            }
+          });
+        };
+      } catch (error) {
+        console.error('Camera permission error:', error);
+        if (mounted) {
+          setCameraState('denied');
+          setIsErrorWithTracking(true, 'Camera permission denied or not available');
+        }
+      }
     };
 
-    videoElement.addEventListener('canplay', canplayListener);
-
-    const pendingScanRequest = (videoElement as any).pendingScanRequest ?? Promise.resolve(undefined);
-
-    const scanRequest = pendingScanRequest
-      .then(() => {
-        return codeReader.decodeFromVideoDevice(undefined, videoElement, (result, error) => {
-          if (result) {
-            handleQRScan(result.getText());
-          }
-          if (
-            error &&
-            error.message &&
-            error.message !== 'Dimensions could be not found.' &&
-            !error.message.includes('NotFoundException') &&
-            !error.message.includes('No MultiFormat Readers were able to detect the code') &&
-            !error.message.includes('No QR code found')
-          ) {
-            console.error('Scanner error:', error);
-          }
-        });
-      })
-      .catch((error) => {
-        console.error('Scanner setup error:', error);
-        setIsErrorWithTracking(true, 'Scanner setup error');
-        return undefined;
-      });
-
-    if (videoElement) {
-      (videoElement as any).pendingScanRequest = scanRequest;
-    }
+    requestCameraAndStartScanning();
 
     return () => {
-      videoElement.removeEventListener('canplay', canplayListener);
-      scanRequest.then((controls) => {
-        if (controls) {
-          controls.stop();
-        }
-      });
+      mounted = false;
     };
-  }, [codeReader, handleQRScan]);
-
-  // Wrap setIsError to track calls
-  const setIsErrorWithTracking = useCallback((error: boolean, reason?: string) => {
-    console.log(`🚨 Setting isError to ${error}${reason ? `, reason: ${reason}` : ''}`);
-    setIsError(error);
-  }, []);
-
-  const setCanplayWithTracking = useCallback((canplay: boolean, reason?: string) => {
-    setCanplay(canplay);
-  }, []);
+  }, [codeReader, handleQRScan, setCanplayWithTracking, setIsErrorWithTracking]);
 
   const onCloseError = useCallback(() => {
     setIsErrorWithTracking(false, 'onCloseError');
     setProgress(0);
+    setCameraState('idle');
     // Reset decoder state
     decoder.reset();
+    window.location.reload();
   }, [setIsErrorWithTracking, decoder]);
 
   return (
@@ -250,19 +293,53 @@ export default function ColdWalletScan({ onSucceed, size = 300 }: Props) {
           borderRadius: '8px',
           overflow: 'hidden'
         }}>
-        <CameraOutlined
-          style={{
-            fontSize: 32,
-            position: 'absolute',
-            top: '50%',
-            left: '50%',
-            marginTop: -16,
-            marginLeft: -16,
-            color: colors.textDim,
-            zIndex: 1,
-            display: canplay ? 'none' : 'block'
-          }}
-        />
+        {/* Camera permission status display */}
+        {cameraState === 'requesting' && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              textAlign: 'center',
+              color: colors.textDim,
+              zIndex: 1
+            }}>
+            <CameraOutlined style={{ fontSize: 32, marginBottom: 8 }} />
+            <div style={{ fontSize: 12 }}>{t('Requesting camera permission...')}</div>
+          </div>
+        )}
+
+        {cameraState === 'denied' && (
+          <div
+            style={{
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              transform: 'translate(-50%, -50%)',
+              textAlign: 'center',
+              color: colors.red,
+              zIndex: 1
+            }}>
+            <CameraOutlined style={{ fontSize: 32, marginBottom: 8 }} />
+            <div style={{ fontSize: 12 }}>{t('Camera permission denied')}</div>
+          </div>
+        )}
+
+        {(cameraState === 'idle' || (cameraState === 'granted' && !canplay)) && (
+          <CameraOutlined
+            style={{
+              fontSize: 32,
+              position: 'absolute',
+              top: '50%',
+              left: '50%',
+              marginTop: -16,
+              marginLeft: -16,
+              color: colors.textDim,
+              zIndex: 1
+            }}
+          />
+        )}
 
         <video
           id={VIDEO_ID}
@@ -289,24 +366,49 @@ export default function ColdWalletScan({ onSucceed, size = 300 }: Props) {
 
       {isError && (
         <Column itemsCenter gap="sm">
-          <Text text={t('Failed to scan QR code')} color="red" size="sm" />
-          <Text
-            text={t('Please ensure you are scanning a valid cold wallet QR code')}
-            size="xs"
-            style={{ textAlign: 'center' }}
-          />
-          <button
-            onClick={onCloseError}
-            style={{
-              padding: '8px 16px',
-              background: colors.primary,
-              color: 'white',
-              border: 'none',
-              borderRadius: '4px',
-              cursor: 'pointer'
-            }}>
-            {t('Try Again')}
-          </button>
+          {cameraState === 'denied' ? (
+            <>
+              <Text text={t('Camera permission is required')} color="red" size="sm" />
+              <Text
+                text={t('Please enable camera access in your browser settings to scan QR codes')}
+                size="xs"
+                style={{ textAlign: 'center' }}
+              />
+              <button
+                onClick={onCloseError}
+                style={{
+                  padding: '8px 16px',
+                  background: colors.primary,
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}>
+                {t('Reload and Try Again')}
+              </button>
+            </>
+          ) : (
+            <>
+              <Text text={t('Failed to scan QR code')} color="red" size="sm" />
+              <Text
+                text={t('Please ensure you are scanning a valid cold wallet QR code')}
+                size="xs"
+                style={{ textAlign: 'center' }}
+              />
+              <button
+                onClick={onCloseError}
+                style={{
+                  padding: '8px 16px',
+                  background: colors.primary,
+                  color: 'white',
+                  border: 'none',
+                  borderRadius: '4px',
+                  cursor: 'pointer'
+                }}>
+                {t('Try Again')}
+              </button>
+            </>
+          )}
         </Column>
       )}
 
