@@ -1,5 +1,27 @@
 # UniSat Wallet Release Notes
 
+## v1.7.2
+
+New Features
+
+- Enable BRC20 single-step transfer on Fractal network
+
+Bug Fixes
+
+- Updated UniScan explorer URLs for Fractal testnet
+- Safety notices now only appear once for first-time users (instead of every new wallet)
+- Removed unconfirmed balance settings (feature deprecated and no longer functional)
+- Fixed layout issues in Alkanes collection
+
+Improvements
+
+- Redesigned BRC20 token details screen for better UI/UX
+- Multi-language support for risk warning pages and transaction signing
+
+Experimental
+
+- Added cold wallet functionality (available in Developer Mode)
+
 ## v1.7.1
 
 New Features
