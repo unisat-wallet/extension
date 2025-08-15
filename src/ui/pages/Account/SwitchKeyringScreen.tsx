@@ -179,15 +179,17 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
                   <Text text={t('show_secret_recovery_phrase')} size="sm" />
                 </Row>
               )}
-              {keyring.type !== KEYRING_TYPE.HdKeyring && keyring.type !== KEYRING_TYPE.KeystoneKeyring && (
-                <Row
-                  onClick={() => {
-                    navigate('ExportPrivateKeyScreen', { account: keyring.accounts[0] });
-                  }}>
-                  <KeyOutlined />
-                  <Text text={t('export_private_key')} size="sm" />
-                </Row>
-              )}
+              {keyring.type !== KEYRING_TYPE.HdKeyring &&
+                keyring.type !== KEYRING_TYPE.KeystoneKeyring &&
+                keyring.type !== KEYRING_TYPE.ColdWalletKeyring && (
+                  <Row
+                    onClick={() => {
+                      navigate('ExportPrivateKeyScreen', { account: keyring.accounts[0] });
+                    }}>
+                    <KeyOutlined />
+                    <Text text={t('export_private_key')} size="sm" />
+                  </Row>
+                )}
               <Row
                 onClick={() => {
                   if (keyrings.length == 1) {

@@ -128,7 +128,7 @@ export function MyItem({ account, autoNav }: MyItemProps, ref) {
               <CopyOutlined />
               <Text text={t('copy_address')} size="sm" />
             </Row>
-            {account.type !== KEYRING_TYPE.KeystoneKeyring && (
+            {account.type !== KEYRING_TYPE.KeystoneKeyring && account.type !== KEYRING_TYPE.ColdWalletKeyring && (
               <Row
                 onClick={() => {
                   navigate('ExportPrivateKeyScreen', { account });
