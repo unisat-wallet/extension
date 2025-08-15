@@ -9,6 +9,7 @@ import { useChain } from '@/ui/state/settings/hooks';
 import { useOrdinalsAssetTabKey } from '@/ui/state/ui/hooks';
 import { OrdinalsAssetTabKey, uiActions } from '@/ui/state/ui/reducer';
 
+import { BRC20ProgList } from './BRC20ProgList';
 import { BRC20List } from './Brc20List';
 import { InscriptionList } from './InscriptionList';
 
@@ -17,10 +18,8 @@ export function OrdinalsTab() {
 
   const chain = useChain();
 
-  let tabKey = useOrdinalsAssetTabKey();
-  if (tabKey === OrdinalsAssetTabKey.BRC20_5BYTE) {
-    tabKey = OrdinalsAssetTabKey.BRC20;
-  }
+  const tabKey = useOrdinalsAssetTabKey();
+
   const { t } = useI18n();
 
   const dispatch = useAppDispatch();
@@ -39,6 +38,13 @@ export function OrdinalsTab() {
       }
     ];
 
+    if (chain.enableBrc20Prog) {
+      items.push({
+        key: OrdinalsAssetTabKey.BRC20_6BYTE,
+        label: `brc2.0 (${addressSummary.brc20Count6Byte || 0})`,
+        children: <BRC20ProgList />
+      });
+    }
     return items;
   }, [addressSummary, chain]);
 

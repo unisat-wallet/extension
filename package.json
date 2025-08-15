@@ -63,7 +63,7 @@
     "@unisat/contact-book": "0.1.6",
     "@unisat/keyring-service": "0.1.22",
     "@unisat/permission-service": "0.1.8",
-    "@unisat/wallet-api": "0.1.7",
+    "@unisat/wallet-api": "0.1.8",
     "@unisat/wallet-bitcoin": "^0.1.8",
     "@unisat/wallet-types": "^0.1.4",
     "@unisat/tx-helpers": "^0.1.8",

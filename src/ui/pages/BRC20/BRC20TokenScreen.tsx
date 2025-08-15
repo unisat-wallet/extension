@@ -288,13 +288,27 @@ export default function BRC20TokenScreen() {
   const chainType = useChainType();
   const chain = useChain();
 
+  const isBrc20Prog = useMemo(() => {
+    if (chainType === ChainType.BITCOIN_MAINNET || chainType === ChainType.BITCOIN_SIGNET) {
+      if (ticker.length == 6) {
+        return true;
+      }
+    }
+    return false;
+  }, [ticker, chainType]);
+
   const enableTrade = useMemo(() => {
+    if (isBrc20Prog) {
+      return false;
+    }
     if (chainType === ChainType.BITCOIN_MAINNET || chainType === ChainType.FRACTAL_BITCOIN_MAINNET) {
       return true;
     } else {
       return false;
     }
-  }, [chainType]);
+  }, [chainType, isBrc20Prog]);
+
+  const enableHistory = isBrc20Prog ? false : true;
 
   const shouldUseTwoRowLayout = useMemo(() => {
     return enableTrade && chain.enableBrc20SingleStep;
@@ -302,22 +316,38 @@ export default function BRC20TokenScreen() {
 
   const marketPlaceUrl = useBRC20MarketPlaceWebsite(ticker);
 
+  const inscribePlaceUrl = useMemo(() => {
+    if (isBrc20Prog) {
+      return `${unisatWebsite}/inscribe?tab=brc20-prog&tick=${encodeURIComponent(ticker)}`;
+    }
+    return `${unisatWebsite}/inscribe?tick=${encodeURIComponent(ticker)}`;
+  }, [isBrc20Prog, ticker, unisatWebsite]);
+
   const tabItems = useMemo(() => {
-    const items = [
-      {
-        key: TabKey.HISTORY,
-        label: t('history')
-      },
-      {
-        key: TabKey.DETAILS,
-        label: t('details')
-      }
-    ];
-    return items;
-  }, [t]);
+    if (enableHistory) {
+      const items = [
+        {
+          key: TabKey.HISTORY,
+          label: t('history')
+        },
+        {
+          key: TabKey.DETAILS,
+          label: t('details')
+        }
+      ];
+      return items;
+    } else {
+      return [
+        {
+          key: TabKey.DETAILS,
+          label: t('details')
+        }
+      ];
+    }
+  }, [t, enableHistory]);
 
   const renderTabChildren = useMemo(() => {
-    if (activeTab === TabKey.HISTORY) {
+    if (activeTab === TabKey.HISTORY && enableHistory) {
       return <BRC20TokenHistory ticker={ticker} />;
     }
 
@@ -371,7 +401,7 @@ export default function BRC20TokenScreen() {
         </Column>
       );
     }
-  }, [activeTab, deployInscription]);
+  }, [activeTab, deployInscription, enableHistory, tokenSummary]);
 
   const onPizzaSwapBalance = tokenSummary?.tokenBalance?.swapBalance;
   const inWalletBalance = tokenSummary?.tokenBalance?.overallBalance;
@@ -406,7 +436,11 @@ export default function BRC20TokenScreen() {
                 color={'ticker_color2'}
               />
               <Row style={{ backgroundColor: 'rgba(244, 182, 44, 0.15)', borderRadius: 4 }} px="md" py="sm">
-                <Text text={'brc-20'} style={{ color: 'rgba(244, 182, 44, 0.85)' }} />
+                {isBrc20Prog ? (
+                  <Text text={'brc2.0'} style={{ color: 'rgba(244, 182, 44, 0.85)' }} />
+                ) : (
+                  <Text text={'brc-20'} style={{ color: 'rgba(244, 182, 44, 0.85)' }} />
+                )}
               </Row>
             </Row>
             <Column itemsCenter fullX justifyCenter>
@@ -502,8 +536,8 @@ export default function BRC20TokenScreen() {
           ) : null}
 
           <TabBar
-            defaultActiveKey={activeTab}
-            activeKey={activeTab}
+            defaultActiveKey={enableHistory ? activeTab : TabKey.DETAILS}
+            activeKey={enableHistory ? activeTab : TabKey.DETAILS}
             items={tabItems}
             preset="style3"
             onTabClick={(key) => {
@@ -529,7 +563,7 @@ export default function BRC20TokenScreen() {
                 disabled={!enableMint}
                 icon="pencil"
                 onClick={(e) => {
-                  window.open(`${unisatWebsite}/inscribe?tick=${encodeURIComponent(ticker)}`);
+                  window.open(inscribePlaceUrl);
                 }}
                 full
               />
@@ -598,7 +632,7 @@ export default function BRC20TokenScreen() {
               disabled={!enableMint}
               icon="pencil"
               onClick={(e) => {
-                window.open(`${unisatWebsite}/brc20/${encodeURIComponent(ticker)}`);
+                window.open(inscribePlaceUrl);
               }}
               style={{
                 ...(!enableMint ? { backgroundColor: 'rgba(255,255,255,0.15)' } : {}),
@@ -645,7 +679,7 @@ export default function BRC20TokenScreen() {
                   });
                 }}
               />
-            ) : enableTrade ? (
+            ) : (
               <Button
                 text={t('trade')}
                 preset="home"
@@ -653,11 +687,12 @@ export default function BRC20TokenScreen() {
                 onClick={(e) => {
                   window.open(marketPlaceUrl);
                 }}
+                disabled={!enableTrade}
                 style={{
                   width: '101px'
                 }}
               />
-            ) : null}
+            )}
           </Row>
         )}
       </Footer>

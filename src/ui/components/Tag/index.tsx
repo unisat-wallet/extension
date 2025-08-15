@@ -40,7 +40,7 @@ export default function Tag(props: AssetTagProps) {
         px={small ? 'sm' : 'md'}
         py={small ? 'zero' : 'xs'}
         itemsCenter>
-        <Text text="5-byte" size={small ? 'xxs' : 'xs'} style={{ color: colors[type] }} />
+        <Text text="self-issuance" size={small ? 'xxs' : 'xs'} style={{ color: colors[type] }} />
       </Row>
     );
   }

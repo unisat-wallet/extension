@@ -37,7 +37,7 @@ export enum AssetTabKey {
 export enum OrdinalsAssetTabKey {
   ALL = 0,
   BRC20 = 1,
-  BRC20_5BYTE = 2
+  BRC20_6BYTE = 2
 }
 
 export enum CATAssetTabKey {
