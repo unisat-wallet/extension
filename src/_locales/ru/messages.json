@@ -2371,7 +2371,10 @@
     "message": "Вывести"
   },
   "brc20_history_type_inscribe_transfer": {
-    "message": "Создать надпись"
+    "message": "Создать надпись перевода"
+  },
+  "brc20_history_type_inscribe_mint": {
+    "message": "Создать надпись выпуска"
   },
   "brc20_history_from": {
     "message": "От"

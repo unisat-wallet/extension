@@ -2364,7 +2364,10 @@
     "message": "Retirar"
   },
   "brc20_history_type_inscribe_transfer": {
-    "message": "Inscribir"
+    "message": "Inscribir Transferencia"
+  },
+  "brc20_history_type_inscribe_mint": {
+    "message": "Inscribir Acuñación"
   },
   "brc20_history_from": {
     "message": "De"

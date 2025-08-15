@@ -107,6 +107,9 @@ function BRC20TokenHistory(props: { ticker: string }) {
           } else if (item.type === 'inscribe-transfer') {
             mainTitle = t('brc20_history_type_inscribe_transfer');
             icon = 'history_inscribe';
+          } else if (item.type === 'inscribe-mint') {
+            mainTitle = t('brc20_history_type_inscribe_mint');
+            icon = 'history_inscribe';
           } else {
             return null;
           }

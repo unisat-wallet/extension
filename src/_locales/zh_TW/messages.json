@@ -2382,7 +2382,10 @@
     "message": "提取"
   },
   "brc20_history_type_inscribe_transfer": {
-    "message": "銘刻"
+    "message": "铭刻转账"
+  },
+  "brc20_history_type_inscribe_mint": {
+    "message": "铭刻铸造"
   },
   "brc20_history_from": {
     "message": "從"

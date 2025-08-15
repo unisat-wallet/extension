@@ -2374,7 +2374,10 @@
     "message": "引き出し"
   },
   "brc20_history_type_inscribe_transfer": {
-    "message": "刻印"
+    "message": "転送刻印"
+  },
+  "brc20_history_type_inscribe_mint": {
+    "message": "ミント刻印"
   },
   "brc20_history_from": {
     "message": "送信者"

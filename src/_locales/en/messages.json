@@ -2382,7 +2382,10 @@
     "message": "Withdraw"
   },
   "brc20_history_type_inscribe_transfer": {
-    "message": "Inscribe"
+    "message": "Inscribe Transfer"
+  },
+  "brc20_history_type_inscribe_mint": {
+    "message": "Inscribe Mint"
   },
   "brc20_history_from": {
     "message": "From"

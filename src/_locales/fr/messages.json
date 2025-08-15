@@ -2377,7 +2377,10 @@
     "message": "Retirer"
   },
   "brc20_history_type_inscribe_transfer": {
-    "message": "Inscrire"
+    "message": "Inscrire un Transfert"
+  },
+  "brc20_history_type_inscribe_mint": {
+    "message": "Inscrire une Frappe"
   },
   "brc20_history_from": {
     "message": "De"
