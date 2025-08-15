@@ -312,7 +312,6 @@ export class WalletController extends BaseController {
     );
     const keyring = this.displayedKeyringToWalletKeyring(displayedKeyring, keyringService.keyrings.length - 1);
     this.changeKeyring(keyring);
-    preferenceService.setShowSafeNotice(true);
   };
 
   createTmpKeyringWithMnemonics = async (
