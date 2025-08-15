@@ -127,14 +127,10 @@ export default function Step3({ onBack, contextData }: Step3Props) {
   // Generate derive path
   const getDerivePath = useCallback(
     (index: number) => {
-      const addressTypeConfig = ADDRESS_TYPES.find((t) => t.value === addressType);
-      if (!addressTypeConfig) {
-        console.warn(`Unknown address type: ${addressType}, using default P2WPKH path`);
-      }
-      const basePath = addressTypeConfig?.hdPath || DEFAULT_HD_PATH;
-      return `(${basePath}/0/${index})`;
+      const basePath = contextData.hdPath || DEFAULT_HD_PATH;
+      return `(${basePath}/${index})`;
     },
-    [addressType]
+    [contextData.hdPath]
   );
 
   const onConfirm = async () => {
