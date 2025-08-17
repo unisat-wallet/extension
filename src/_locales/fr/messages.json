@@ -312,7 +312,7 @@
     "message": "Valeur de Sortie"
   },
   "mint": {
-    "message": "Miner"
+    "message": "Frappé"
   },
   "send_inscription": {
     "message": "Vous pouvez cliquer sur l'inscription pour l'envoyer directement."
@@ -2134,7 +2134,7 @@
     "message": "Offre totale"
   },
   "minted_alkanes": {
-    "message": "Minted"
+    "message": "Frappé"
   },
   "cap": {
     "message": "Cap"
