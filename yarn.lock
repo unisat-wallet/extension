@@ -3300,6 +3300,11 @@
     lz-string "^1.5.0"
     qrcode "^1.5.3"
 
+"@unisat/contact-book@0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@unisat/contact-book/-/contact-book-0.1.0.tgz#d4c8c8118caf4ab55bf21b1bbbd1fa30def532e0"
+  integrity sha512-ae41/8elfxsWOL6YOomovJ11Y1QH9+3P3B+FKmkIIxSmi+V3DJGQ+T7sq6izBp5yGR0zaRBJjTA6mLIrfTYAVA==
+
 "@unisat/wallet-api@0.1.0":
   version "0.1.0"
   resolved "https://registry.yarnpkg.com/@unisat/wallet-api/-/wallet-api-0.1.0.tgz#5f7319ed503ef463a49d41dcf60928f33ae9043c"
