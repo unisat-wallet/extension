@@ -1,4 +1,4 @@
-import { permissionService, sessionService } from '@/background/service';
+import { permissionService, sessionService, walletApiService } from '@/background/service';
 import { CHAINS, CHAINS_MAP, NETWORK_TYPES, VERSION } from '@/shared/constant';
 import { NetworkType, RequestMethodGetInscriptionsParams, RequestMethodSendBitcoinParams, RequestMethodSendInscriptionParams, RequestMethodSendRunesParams, RequestMethodSignMessageParams, RequestMethodSignMessagesParams, RequestMethodSignPsbtParams, RequestMethodSignPsbtsParams } from '@/shared/types';
 import { getChainInfo, objToUint8Array } from '@/shared/utils';
@@ -123,7 +123,7 @@ class ProviderController extends BaseController {
 
     const account = await wallet.getCurrentAccount();
     if (!account) return ''
-    const { list, total } = await wallet.openapi.getAddressInscriptions(account.address, cursor, size);
+    const { list, total } = await walletApiService.inscriptions.getAddressInscriptions(account.address, cursor, size);
     return { list, total };
   };
 

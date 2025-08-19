@@ -3300,6 +3300,11 @@
     lz-string "^1.5.0"
     qrcode "^1.5.3"
 
+"@unisat/wallet-api@0.1.0":
+  version "0.1.0"
+  resolved "https://registry.yarnpkg.com/@unisat/wallet-api/-/wallet-api-0.1.0.tgz#5f7319ed503ef463a49d41dcf60928f33ae9043c"
+  integrity sha512-E57cTN1EzbL5DdNnm7vRT1n01m8wZO0dj1xQ/POHhhwf3AuubAcuFZRmFp+b/mBjrx7YxTEM9UWbCTS/5iPx+A==
+
 "@unisat/wallet-sdk@1.9.0":
   version "1.9.0"
   resolved "https://registry.npmjs.org/@unisat/wallet-sdk/-/wallet-sdk-1.9.0.tgz"

@@ -10,10 +10,10 @@ import { phishingController, providerController, walletController } from './cont
 import {
   contactBookService,
   keyringService,
-  openapiService,
   permissionService,
   preferenceService,
-  sessionService
+  sessionService,
+  walletApiService
 } from './service';
 import { storage } from './webapi';
 import { browserRuntimeOnConnect, browserRuntimeOnInstalled } from './webapi/browser';
@@ -78,7 +78,7 @@ async function restoreAppState() {
   keyringService.store.subscribe((value) => storage.set('keyringState', value));
 
   await preferenceService.init();
-  await openapiService.init();
+  await walletApiService.init();
   await permissionService.init();
   await contactBookService.init();
 
@@ -113,8 +113,8 @@ browserRuntimeOnConnect((port) => {
             eventBus.emit(data.method, data.params);
             break;
           case 'openapi':
-            if (walletController.openapi[data.method]) {
-              return walletController.openapi[data.method].apply(null, data.params);
+            if (walletApiService[data.method]) {
+              return walletApiService[data.method].apply(null, data.params);
             }
             break;
           case 'controller':

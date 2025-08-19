@@ -7,10 +7,10 @@ import {
   contactBookService,
   keyringService,
   notificationService,
-  openapiService,
   permissionService,
   preferenceService,
-  sessionService
+  sessionService,
+  walletApiService
 } from '@/background/service';
 import { DisplayedKeyring, Keyring } from '@/background/service/keyring';
 import {
@@ -39,7 +39,6 @@ import {
   AddressUserToSignInput,
   BitcoinBalance,
   BRC20HistoryItem,
-  CAT_VERSION,
   CosmosBalance,
   CosmosSignDataType,
   NetworkType,
@@ -51,6 +50,7 @@ import {
 } from '@/shared/types';
 import { getChainInfo } from '@/shared/utils';
 import { psbtFromString } from '@/ui/utils/psbt-utils';
+import { CAT_VERSION } from '@unisat/wallet-api';
 import { txHelpers, UnspentOutput, UTXO_DUST } from '@unisat/wallet-sdk';
 import { isValidAddress, publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
 import { bitcoin, ECPair } from '@unisat/wallet-sdk/lib/bitcoin-core';
@@ -68,7 +68,6 @@ import { getDelegationsV2 } from '../service/babylon/api/getDelegationsV2';
 import { DelegationV2StakingState } from '../service/babylon/types/delegationsV2';
 import { ContactBookItem } from '../service/contactBook';
 import { CosmosKeyring } from '../service/keyring/CosmosKeyring';
-import { OpenApiService } from '../service/openapi';
 import { ConnectedSite } from '../service/permission';
 import BaseController from './base';
 
@@ -98,8 +97,6 @@ const caculateTapLeafHash = (input: PsbtInput, pubkey: Buffer) => {
 };
 
 export class WalletController extends BaseController {
-  openapi: OpenApiService = openapiService;
-
   timer: any = null;
 
   private _cacheCosmosKeyringKey: string | null = null;
@@ -161,22 +158,22 @@ export class WalletController extends BaseController {
   };
 
   getAddressBalance = async (address: string) => {
-    const data = await openapiService.getAddressBalance(address);
+    const data = await walletApiService.bitcoin.getAddressBalance(address);
     preferenceService.updateAddressBalance(address, data);
     return data;
   };
 
   getAddressBalanceV2 = async (address: string) => {
-    const data = await openapiService.getAddressBalanceV2(address);
+    const data = await walletApiService.bitcoin.getAddressBalanceV2(address);
     return data;
   };
 
   getMultiAddressAssets = async (addresses: string) => {
-    return openapiService.getMultiAddressAssets(addresses);
+    return walletApiService.bitcoin.getMultiAddressAssets(addresses);
   };
 
   findGroupAssets = (groups: { type: number; address_arr: string[]; pubkey_arr: string[] }[]) => {
-    return openapiService.findGroupAssets(groups);
+    return walletApiService.bitcoin.findGroupAssets(groups);
   };
 
   getAddressCacheBalance = (address: string | undefined): BitcoinBalance => {
@@ -197,7 +194,7 @@ export class WalletController extends BaseController {
   };
 
   getAddressHistory = async (params: { address: string; start: number; limit: number }) => {
-    const data = await openapiService.getAddressRecentHistory(params);
+    const data = await walletApiService.bitcoin.getAddressRecentHistory(params);
     // preferenceService.updateAddressHistory(address, data);
     // return data;
     //   todo
@@ -205,7 +202,7 @@ export class WalletController extends BaseController {
   };
 
   getAddressInscriptions = async (address: string, cursor: number, size: number) => {
-    const data = await openapiService.getAddressInscriptions(address, cursor, size);
+    const data = await walletApiService.inscriptions.getAddressInscriptions(address, cursor, size);
     return data;
   };
 
@@ -283,7 +280,7 @@ export class WalletController extends BaseController {
       keyringService.keyrings.length - 1
     );
     const keyring = this.displayedKeyringToWalletKeyring(displayedKeyring, keyringService.keyrings.length - 1);
-    this.changeKeyring(keyring);
+    await this.changeKeyring(keyring);
   };
 
   getPreMnemonics = () => keyringService.getPreMnemonics();
@@ -311,7 +308,7 @@ export class WalletController extends BaseController {
       keyringService.keyrings.length - 1
     );
     const keyring = this.displayedKeyringToWalletKeyring(displayedKeyring, keyringService.keyrings.length - 1);
-    this.changeKeyring(keyring);
+    await this.changeKeyring(keyring);
   };
 
   createTmpKeyringWithMnemonics = async (
@@ -509,11 +506,11 @@ export class WalletController extends BaseController {
     return accounts.filter((x) => x).length;
   };
 
-  changeKeyring = (keyring: WalletKeyring, accountIndex = 0) => {
+  changeKeyring = async (keyring: WalletKeyring, accountIndex = 0) => {
     preferenceService.setCurrentKeyringIndex(keyring.index);
-    preferenceService.setCurrentAccount(keyring.accounts[accountIndex]);
+    await preferenceService.setCurrentAccount(keyring.accounts[accountIndex]);
     const flag = preferenceService.getAddressFlag(keyring.accounts[accountIndex].address);
-    openapiService.setClientAddress(keyring.accounts[accountIndex].address, flag);
+    walletApiService.setClientAddress(keyring.accounts[accountIndex].address, flag);
   };
 
   getAllAddresses = (keyring: WalletKeyring, index: number) => {
@@ -920,7 +917,7 @@ export class WalletController extends BaseController {
   };
 
   listChainAssets = async (pubkeyAddress: string) => {
-    const balance = await openapiService.getAddressBalance(pubkeyAddress);
+    const balance = await walletApiService.bitcoin.getAddressBalance(pubkeyAddress);
     const assets: AccountAsset[] = [
       { name: COIN_NAME, symbol: COIN_SYMBOL, amount: balance.amount, value: balance.usd_value }
     ];
@@ -969,7 +966,7 @@ export class WalletController extends BaseController {
     }
 
     preferenceService.setChainType(chainType);
-    this.openapi.setEndpoints(CHAINS_MAP[chainType].endpoints);
+    walletApiService.setEndpoints(CHAINS_MAP[chainType].endpoints);
 
     const currentAccount = await this.getCurrentAccount();
     const keyring = await this.getCurrentKeyring();
@@ -1001,7 +998,7 @@ export class WalletController extends BaseController {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
 
-    const utxos = await openapiService.getBTCUtxos(account.address);
+    const utxos = await walletApiService.bitcoin.getBTCUtxos(account.address);
 
     const btcUtxos = utxos.map((v) => {
       return {
@@ -1135,7 +1132,7 @@ export class WalletController extends BaseController {
 
     const networkType = this.getNetworkType();
 
-    const utxo = await openapiService.getInscriptionUtxo(inscriptionId);
+    const utxo = await walletApiService.inscriptions.getInscriptionUtxo(inscriptionId);
     if (!utxo) {
       throw new Error('UTXO not found.');
     }
@@ -1191,7 +1188,7 @@ export class WalletController extends BaseController {
 
     const networkType = this.getNetworkType();
 
-    const inscription_utxos = await openapiService.getInscriptionUtxos(inscriptionIds);
+    const inscription_utxos = await walletApiService.inscriptions.getInscriptionUtxos(inscriptionIds);
     if (!inscription_utxos) {
       throw new Error('UTXO not found.');
     }
@@ -1256,7 +1253,7 @@ export class WalletController extends BaseController {
 
     const networkType = this.getNetworkType();
 
-    const utxo = await openapiService.getInscriptionUtxo(inscriptionId);
+    const utxo = await walletApiService.inscriptions.getInscriptionUtxo(inscriptionId);
     if (!utxo) {
       throw new Error('UTXO not found.');
     }
@@ -1287,7 +1284,7 @@ export class WalletController extends BaseController {
   };
 
   pushTx = async (rawtx: string) => {
-    const txid = await this.openapi.pushTx(rawtx);
+    const txid = await walletApiService.bitcoin.pushTx(rawtx);
     return txid;
   };
 
@@ -1424,7 +1421,7 @@ export class WalletController extends BaseController {
     }
     if (currentAccount) {
       currentAccount.flag = preferenceService.getAddressFlag(currentAccount.address);
-      openapiService.setClientAddress(currentAccount.address, currentAccount.flag);
+      walletApiService.setClientAddress(currentAccount.address, currentAccount.flag);
     }
 
     return currentAccount;
@@ -1451,19 +1448,19 @@ export class WalletController extends BaseController {
   };
 
   queryDomainInfo = async (domain: string) => {
-    const data = await openapiService.getDomainInfo(domain);
+    const data = await walletApiService.domain.getDomainInfo(domain);
     return data;
   };
 
   getInscriptionSummary = async () => {
-    const data = await openapiService.getInscriptionSummary();
+    const data = await walletApiService.inscriptions.getInscriptionSummary();
     return data;
   };
 
   getAppSummary = async () => {
     const appTab = preferenceService.getAppTab();
     try {
-      const data = await openapiService.getAppSummary();
+      const data = await walletApiService.utility.getAppSummary();
       const readTabTime = appTab.readTabTime;
       data.apps.forEach((w) => {
         const readAppTime = appTab.readAppTime[w.id];
@@ -1497,7 +1494,7 @@ export class WalletController extends BaseController {
   };
 
   getAddressUtxo = async (address: string) => {
-    const data = await openapiService.getBTCUtxos(address);
+    const data = await walletApiService.bitcoin.getBTCUtxos(address);
     return data;
   };
 
@@ -1582,53 +1579,53 @@ export class WalletController extends BaseController {
 
   addAddressFlag = (account: Account, flag: AddressFlagType) => {
     account.flag = preferenceService.addAddressFlag(account.address, flag);
-    openapiService.setClientAddress(account.address, account.flag);
+    walletApiService.setClientAddress(account.address, account.flag);
     return account;
   };
   removeAddressFlag = (account: Account, flag: AddressFlagType) => {
     account.flag = preferenceService.removeAddressFlag(account.address, flag);
-    openapiService.setClientAddress(account.address, account.flag);
+    walletApiService.setClientAddress(account.address, account.flag);
     return account;
   };
 
   getFeeSummary = async () => {
-    return openapiService.getFeeSummary();
+    return walletApiService.bitcoin.getFeeSummary();
   };
 
   getCoinPrice = async () => {
-    return openapiService.getCoinPrice();
+    return walletApiService.market.getCoinPrice();
   };
 
   getBrc20sPrice = async (ticks: string[]) => {
-    return openapiService.getBrc20sPrice(ticks);
+    return walletApiService.market.getBrc20sPrice(ticks);
   };
 
   getRunesPrice = async (ticks: string[]) => {
-    return openapiService.getRunesPrice(ticks);
+    return walletApiService.market.getRunesPrice(ticks);
   };
 
   getCAT20sPrice = async (tokenIds: string[]) => {
-    return openapiService.getCAT20sPrice(tokenIds);
+    return walletApiService.market.getCAT20sPrice(tokenIds);
   };
 
   getAlkanesPrice = async (alkaneids: string[]) => {
-    return openapiService.getAlkanesPrice(alkaneids);
+    return walletApiService.market.getAlkanesPrice(alkaneids);
   };
 
   inscribeBRC20Transfer = (address: string, tick: string, amount: string, feeRate: number, outputValue: number) => {
-    return openapiService.inscribeBRC20Transfer(address, tick, amount, feeRate, outputValue);
+    return walletApiService.brc20.inscribeBRC20Transfer(address, tick, amount, feeRate, outputValue);
   };
 
   getInscribeResult = (orderId: string) => {
-    return openapiService.getInscribeResult(orderId);
+    return walletApiService.brc20.getInscribeResult(orderId);
   };
 
   decodePsbt = (psbtHex: string, website: string) => {
-    return openapiService.decodePsbt(psbtHex, website);
+    return walletApiService.bitcoin.decodePsbt(psbtHex, website);
   };
 
   decodeContracts = (contracts: any[], account) => {
-    return openapiService.decodeContracts(contracts, account);
+    return walletApiService.bitcoin.decodeContracts(contracts, account);
   };
 
   getBRC20List = async (address: string, currentPage: number, pageSize: number) => {
@@ -1640,7 +1637,7 @@ export class WalletController extends BaseController {
       return uiCachedData.brc20List[currentPage];
     }
 
-    const { total, list } = await openapiService.getBRC20List(address, cursor, size);
+    const { total, list } = await walletApiService.brc20.getBRC20List(address, cursor, size);
     uiCachedData.brc20List[currentPage] = {
       currentPage,
       pageSize,
@@ -1664,7 +1661,7 @@ export class WalletController extends BaseController {
       return uiCachedData.allInscriptionList[currentPage];
     }
 
-    const { total, list } = await openapiService.getAddressInscriptions(address, cursor, size);
+    const { total, list } = await walletApiService.inscriptions.getAddressInscriptions(address, cursor, size);
     uiCachedData.allInscriptionList[currentPage] = {
       currentPage,
       pageSize,
@@ -1685,7 +1682,7 @@ export class WalletController extends BaseController {
       return uiCachedData.brc20Summary[ticker];
     }
 
-    const tokenSummary = await openapiService.getAddressTokenSummary(address, ticker);
+    const tokenSummary = await walletApiService.brc20.getAddressTokenSummary(address, ticker);
     uiCachedData.brc20Summary[ticker] = tokenSummary;
     return tokenSummary;
   };
@@ -1702,7 +1699,7 @@ export class WalletController extends BaseController {
       uiCachedData.brc20TransferableList[ticker] = [];
     }
 
-    const { total, list } = await openapiService.getTokenTransferableList(address, ticker, cursor, size);
+    const { total, list } = await walletApiService.brc20.getTokenTransferableList(address, ticker, cursor, size);
     uiCachedData.brc20TransferableList[ticker][currentPage] = {
       currentPage,
       pageSize,
@@ -1722,7 +1719,7 @@ export class WalletController extends BaseController {
   };
 
   getWalletConfig = () => {
-    return openapiService.getWalletConfig();
+    return walletApiService.config.getWalletConfig();
   };
 
   getSkippedVersion = () => {
@@ -1734,7 +1731,7 @@ export class WalletController extends BaseController {
   };
 
   getInscriptionUtxoDetail = async (inscriptionId: string) => {
-    const utxo = await openapiService.getInscriptionUtxoDetail(inscriptionId);
+    const utxo = await walletApiService.inscriptions.getInscriptionUtxoDetail(inscriptionId);
     if (!utxo) {
       throw new Error('UTXO not found.');
     }
@@ -1742,7 +1739,7 @@ export class WalletController extends BaseController {
   };
 
   getUtxoByInscriptionId = async (inscriptionId: string) => {
-    const utxo = await openapiService.getInscriptionUtxo(inscriptionId);
+    const utxo = await walletApiService.inscriptions.getInscriptionUtxo(inscriptionId);
     if (!utxo) {
       throw new Error('UTXO not found.');
     }
@@ -1750,7 +1747,7 @@ export class WalletController extends BaseController {
   };
 
   getInscriptionInfo = async (inscriptionId: string) => {
-    const utxo = await openapiService.getInscriptionInfo(inscriptionId);
+    const utxo = await walletApiService.inscriptions.getInscriptionInfo(inscriptionId);
     if (!utxo) {
       throw new Error('Inscription not found.');
     }
@@ -1781,7 +1778,7 @@ export class WalletController extends BaseController {
       console.error('[Phishing] Local check error:', error);
     }
 
-    const apiResult = await openapiService.checkWebsite(website);
+    const apiResult = await walletApiService.utility.checkWebsite(website);
 
     if (isLocalPhishing) {
       return {
@@ -1797,7 +1794,7 @@ export class WalletController extends BaseController {
     const cursor = (currentPage - 1) * pageSize;
     const size = pageSize;
 
-    const { total, list } = await openapiService.getOrdinalsInscriptions(address, cursor, size);
+    const { total, list } = await walletApiService.inscriptions.getOrdinalsInscriptions(address, cursor, size);
     return {
       currentPage,
       pageSize,
@@ -1807,7 +1804,7 @@ export class WalletController extends BaseController {
   };
 
   getAddressSummary = async (address: string) => {
-    const data = await openapiService.getAddressSummary(address);
+    const data = await walletApiService.bitcoin.getAddressSummary(address);
     // preferenceService.updateAddressBalance(address, data);
     return data;
   };
@@ -1827,7 +1824,7 @@ export class WalletController extends BaseController {
   };
 
   getVersionDetail = (version: string) => {
-    return openapiService.getVersionDetail(version);
+    return walletApiService.config.getVersionDetail(version);
   };
 
   checkKeyringMethod = async (method: string) => {
@@ -1910,7 +1907,7 @@ export class WalletController extends BaseController {
   getRunesList = async (address: string, currentPage: number, pageSize: number) => {
     const cursor = (currentPage - 1) * pageSize;
     const size = pageSize;
-    const { total, list } = await openapiService.getRunesList(address, cursor, size);
+    const { total, list } = await walletApiService.runes.getRunesList(address, cursor, size);
 
     return {
       currentPage,
@@ -1923,7 +1920,7 @@ export class WalletController extends BaseController {
   getAssetUtxosRunes = async (runeid: string) => {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
-    const runes_utxos = await openapiService.getRunesUtxos(account.address, runeid);
+    const runes_utxos = await walletApiService.runes.getRunesUtxos(account.address, runeid);
 
     const assetUtxos = runes_utxos.map((v) => {
       return Object.assign(v, { pubkey: account.pubkey });
@@ -1943,7 +1940,7 @@ export class WalletController extends BaseController {
   };
 
   getAddressRunesTokenSummary = async (address: string, runeid: string) => {
-    const tokenSummary = await openapiService.getAddressRunesTokenSummary(address, runeid);
+    const tokenSummary = await walletApiService.runes.getAddressRunesTokenSummary(address, runeid);
     return tokenSummary;
   };
 
@@ -2097,7 +2094,7 @@ export class WalletController extends BaseController {
   getCAT20List = async (version: CAT_VERSION, address: string, currentPage: number, pageSize: number) => {
     const cursor = (currentPage - 1) * pageSize;
     const size = pageSize;
-    const { total, list } = await openapiService.getCAT20List(version, address, cursor, size);
+    const { total, list } = await walletApiService.cat.getCAT20List(version, address, cursor, size);
 
     return {
       currentPage,
@@ -2108,17 +2105,17 @@ export class WalletController extends BaseController {
   };
 
   getAddressCAT20TokenSummary = async (version: CAT_VERSION, address: string, tokenId: string) => {
-    const tokenSummary = await openapiService.getAddressCAT20TokenSummary(version, address, tokenId);
+    const tokenSummary = await walletApiService.cat.getAddressCAT20TokenSummary(version, address, tokenId);
     return tokenSummary;
   };
 
   getAddressCAT20UtxoSummary = async (version: CAT_VERSION, address: string, tokenId: string) => {
-    const tokenSummary = await openapiService.getAddressCAT20UtxoSummary(version, address, tokenId);
+    const tokenSummary = await walletApiService.cat.getAddressCAT20UtxoSummary(version, address, tokenId);
     return tokenSummary;
   };
 
   transferCAT20Step1ByMerge = async (version: CAT_VERSION, mergeId: string) => {
-    return await openapiService.transferCAT20Step1ByMerge(version, mergeId);
+    return await walletApiService.cat.transferCAT20Step1ByMerge(version, mergeId);
   };
 
   transferCAT20Step1 = async (
@@ -2133,7 +2130,7 @@ export class WalletController extends BaseController {
       return;
     }
 
-    const _res = await openapiService.transferCAT20Step1(
+    const _res = await walletApiService.cat.transferCAT20Step1(
       version,
       currentAccount.address,
       currentAccount.pubkey,
@@ -2155,7 +2152,7 @@ export class WalletController extends BaseController {
     const psbtNetwork = toPsbtNetwork(networkType);
     const psbt = bitcoin.Psbt.fromBase64(commitTx, { network: psbtNetwork });
     await this.signPsbt(psbt, toSignInputs, true);
-    const _res = await openapiService.transferCAT20Step2(version, transferId, psbt.toBase64());
+    const _res = await walletApiService.cat.transferCAT20Step2(version, transferId, psbt.toBase64());
     return _res;
   };
 
@@ -2169,7 +2166,7 @@ export class WalletController extends BaseController {
     const psbtNetwork = toPsbtNetwork(networkType);
     const psbt = bitcoin.Psbt.fromBase64(revealTx, { network: psbtNetwork });
     await this.signPsbt(psbt, toSignInputs, false);
-    const _res = await openapiService.transferCAT20Step3(version, transferId, psbt.toBase64());
+    const _res = await walletApiService.cat.transferCAT20Step3(version, transferId, psbt.toBase64());
     return _res;
   };
 
@@ -2179,7 +2176,7 @@ export class WalletController extends BaseController {
       return;
     }
 
-    const _res = await openapiService.mergeCAT20Prepare(
+    const _res = await walletApiService.cat.mergeCAT20Prepare(
       version,
       currentAccount.address,
       currentAccount.pubkey,
@@ -2191,28 +2188,28 @@ export class WalletController extends BaseController {
   };
 
   getMergeCAT20Status = async (version: CAT_VERSION, mergeId: string) => {
-    const _res = await openapiService.getMergeCAT20Status(version, mergeId);
+    const _res = await walletApiService.cat.getMergeCAT20Status(version, mergeId);
     return _res;
   };
 
   getAppList = async () => {
-    const data = await openapiService.getAppList();
+    const data = await walletApiService.utility.getAppList();
     return data;
   };
 
   getBannerList = async () => {
-    const data = await openapiService.getBannerList();
+    const data = await walletApiService.utility.getBannerList();
     return data;
   };
 
   getBlockActiveInfo = () => {
-    return openapiService.getBlockActiveInfo();
+    return walletApiService.utility.getBlockActiveInfo();
   };
 
   getCAT721List = async (version: CAT_VERSION, address: string, currentPage: number, pageSize: number) => {
     const cursor = (currentPage - 1) * pageSize;
     const size = pageSize;
-    const { total, list } = await openapiService.getCAT721CollectionList(version, address, cursor, size);
+    const { total, list } = await walletApiService.cat.getCAT721CollectionList(version, address, cursor, size);
 
     return {
       currentPage,
@@ -2223,7 +2220,11 @@ export class WalletController extends BaseController {
   };
 
   getAddressCAT721CollectionSummary = async (version: CAT_VERSION, address: string, collectionId: string) => {
-    const collectionSummary = await openapiService.getAddressCAT721CollectionSummary(version, address, collectionId);
+    const collectionSummary = await walletApiService.cat.getAddressCAT721CollectionSummary(
+      version,
+      address,
+      collectionId
+    );
     return collectionSummary;
   };
 
@@ -2239,7 +2240,7 @@ export class WalletController extends BaseController {
       return;
     }
 
-    const _res = await openapiService.transferCAT721Step1(
+    const _res = await walletApiService.cat.transferCAT721Step1(
       version,
       currentAccount.address,
       currentAccount.pubkey,
@@ -2261,7 +2262,7 @@ export class WalletController extends BaseController {
     const psbtNetwork = toPsbtNetwork(networkType);
     const psbt = bitcoin.Psbt.fromBase64(commitTx, { network: psbtNetwork });
     await this.signPsbt(psbt, toSignInputs, true);
-    const _res = await openapiService.transferCAT721Step2(version, transferId, psbt.toBase64());
+    const _res = await walletApiService.cat.transferCAT721Step2(version, transferId, psbt.toBase64());
     return _res;
   };
 
@@ -2275,16 +2276,16 @@ export class WalletController extends BaseController {
     const psbtNetwork = toPsbtNetwork(networkType);
     const psbt = bitcoin.Psbt.fromBase64(revealTx, { network: psbtNetwork });
     await this.signPsbt(psbt, toSignInputs, false);
-    const _res = await openapiService.transferCAT721Step3(version, transferId, psbt.toBase64());
+    const _res = await walletApiService.cat.transferCAT721Step3(version, transferId, psbt.toBase64());
     return _res;
   };
 
   getBuyCoinChannelList = async (coin: 'FB' | 'BTC') => {
-    return openapiService.getBuyCoinChannelList(coin);
+    return walletApiService.utility.getBuyCoinChannelList(coin);
   };
 
   createBuyCoinPaymentUrl = (coin: 'FB' | 'BTC', address: string, channel: string) => {
-    return openapiService.createBuyCoinPaymentUrl(coin, address, channel);
+    return walletApiService.utility.createBuyCoinPaymentUrl(coin, address, channel);
   };
 
   //  ----------- cosmos support --------
@@ -2491,7 +2492,7 @@ export class WalletController extends BaseController {
   };
 
   getBabylonConfig = async () => {
-    return openapiService.getBabylonConfig();
+    return walletApiService.config.getBabylonConfig();
   };
 
   singleStepTransferBRC20Step1 = async (params: {
@@ -2502,7 +2503,7 @@ export class WalletController extends BaseController {
     amount: string;
     feeRate: number;
   }) => {
-    return openapiService.singleStepTransferBRC20Step1(params);
+    return walletApiService.brc20.singleStepTransferBRC20Step1(params);
   };
 
   singleStepTransferBRC20Step2 = async (params: { orderId: string; commitTx: string; toSignInputs: ToSignInput[] }) => {
@@ -2511,7 +2512,7 @@ export class WalletController extends BaseController {
     const psbt = bitcoin.Psbt.fromHex(params.commitTx, { network: psbtNetwork });
     await this.signPsbt(psbt, params.toSignInputs, true);
 
-    return openapiService.singleStepTransferBRC20Step2({ orderId: params.orderId, psbt: psbt.toBase64() });
+    return walletApiService.brc20.singleStepTransferBRC20Step2({ orderId: params.orderId, psbt: psbt.toBase64() });
   };
 
   singleStepTransferBRC20Step3 = async (params: { orderId: string; revealTx: string; toSignInputs: ToSignInput[] }) => {
@@ -2519,7 +2520,7 @@ export class WalletController extends BaseController {
     const psbtNetwork = toPsbtNetwork(networkType);
     const psbt = bitcoin.Psbt.fromHex(params.revealTx, { network: psbtNetwork });
     await this.signPsbt(psbt, params.toSignInputs, true);
-    return openapiService.singleStepTransferBRC20Step3({ orderId: params.orderId, psbt: psbt.toBase64() });
+    return walletApiService.brc20.singleStepTransferBRC20Step3({ orderId: params.orderId, psbt: psbt.toBase64() });
   };
 
   sendCoinBypassHeadOffsets = async (tos: { address: string; satoshis: number }[], feeRate: number) => {
@@ -2528,7 +2529,7 @@ export class WalletController extends BaseController {
       return;
     }
 
-    const { psbtBase64, toSignInputs } = await openapiService.createSendCoinBypassHeadOffsets(
+    const { psbtBase64, toSignInputs } = await walletApiService.bitcoin.createSendCoinBypassHeadOffsets(
       currentAccount.address,
       currentAccount.pubkey,
       tos,
@@ -2546,7 +2547,7 @@ export class WalletController extends BaseController {
   getAlkanesList = async (address: string, currentPage: number, pageSize: number) => {
     const cursor = (currentPage - 1) * pageSize;
     const size = pageSize;
-    const { total, list } = await openapiService.getAlkanesList(address, cursor, size);
+    const { total, list } = await walletApiService.alkanes.getAlkanesList(address, cursor, size);
 
     return {
       currentPage,
@@ -2559,7 +2560,7 @@ export class WalletController extends BaseController {
   getAssetUtxosAlkanes = async (alkaneid: string) => {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
-    const runes_utxos = await openapiService.getAlkanesUtxos(account.address, alkaneid);
+    const runes_utxos = await walletApiService.alkanes.getAlkanesUtxos(account.address, alkaneid);
 
     const assetUtxos = runes_utxos.map((v) => {
       return Object.assign(v, { pubkey: account.pubkey });
@@ -2573,7 +2574,7 @@ export class WalletController extends BaseController {
   };
 
   getAddressAlkanesTokenSummary = async (address: string, runeid: string, fetchAvailable: boolean) => {
-    const tokenSummary = await openapiService.getAddressAlkanesTokenSummary(address, runeid, fetchAvailable);
+    const tokenSummary = await walletApiService.alkanes.getAddressAlkanesTokenSummary(address, runeid, fetchAvailable);
     return tokenSummary;
   };
 
@@ -2585,7 +2586,7 @@ export class WalletController extends BaseController {
     amount: string;
     feeRate: number;
   }) => {
-    return openapiService.createAlkanesSendTx(params);
+    return walletApiService.alkanes.createAlkanesSendTx(params);
   };
 
   signAlkanesSendTx = async (params: { commitTx: string; toSignInputs: ToSignInput[] }) => {
@@ -2635,7 +2636,7 @@ export class WalletController extends BaseController {
   getAlkanesCollectionList = async (address: string, currentPage: number, pageSize: number) => {
     const cursor = (currentPage - 1) * pageSize;
     const size = pageSize;
-    const { total, list } = await openapiService.getAlkanesCollectionList(address, cursor, size);
+    const { total, list } = await walletApiService.alkanes.getAlkanesCollectionList(address, cursor, size);
 
     return {
       currentPage,
@@ -2648,7 +2649,12 @@ export class WalletController extends BaseController {
   getAlkanesCollectionItems = async (address: string, collectionId: string, currentPage: number, pageSize: number) => {
     const cursor = (currentPage - 1) * pageSize;
     const size = pageSize;
-    const { total, list } = await openapiService.getAlkanesCollectionItems(address, collectionId, cursor, size);
+    const { total, list } = await walletApiService.alkanes.getAlkanesCollectionItems(
+      address,
+      collectionId,
+      cursor,
+      size
+    );
 
     return {
       currentPage,
@@ -2659,7 +2665,7 @@ export class WalletController extends BaseController {
   };
 
   getBRC20RecentHistory(address: string, ticker: string): Promise<BRC20HistoryItem[]> {
-    return openapiService.getBRC20RecentHistory(address, ticker);
+    return walletApiService.brc20.getBRC20RecentHistory(address, ticker);
   }
 }
 export default new WalletController();
