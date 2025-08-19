@@ -151,45 +151,47 @@ function BRC20TokenHistory(props: { ticker: string }) {
       {displayItems.map(({ date, items }) => (
         <Column key={date} fullX gap="md" mb="md">
           <Text text={date} preset="sub" />
-          {items.map((item) => (
-            <Row
-              key={item.key}
-              fullX
-              justifyBetween
-              justifyCenter
-              py="md"
-              style={{ borderBottomWidth: 1, borderColor: colors.border2 }}>
-              <Row>
-                <Row
-                  onClick={() => {
-                    window.open(getTxExplorerUrl(item.txid));
-                  }}>
-                  <Icon icon={item.icon as any} size={32} />
+          {items
+            .filter((item): item is NonNullable<typeof item> => item != null)
+            .map((item) => (
+              <Row
+                key={item.key}
+                fullX
+                justifyBetween
+                justifyCenter
+                py="md"
+                style={{ borderBottomWidth: 1, borderColor: colors.border2 }}>
+                <Row>
+                  <Row
+                    onClick={() => {
+                      window.open(getTxExplorerUrl(item.txid));
+                    }}>
+                    <Icon icon={item.icon as any} size={32} />
+                  </Row>
+
+                  <Column>
+                    <Row style={{ alignItems: 'start' }}>
+                      <Text text={item.mainTitle} />
+
+                      {item.pending ? (
+                        <Row style={{ backgroundColor: 'rgba(244, 182, 44, 0.15)', borderRadius: 4 }} px="md" py="xs">
+                          <Text text={t('history_pending')} style={{ color: 'rgba(244, 182, 44, 0.85)' }} size="xs" />
+                        </Row>
+                      ) : null}
+                    </Row>
+
+                    <Row>
+                      <Text text={item.subTitle} preset="sub" />
+                    </Row>
+                  </Column>
                 </Row>
 
-                <Column>
-                  <Row style={{ alignItems: 'start' }}>
-                    <Text text={item.mainTitle} />
-
-                    {item.pending ? (
-                      <Row style={{ backgroundColor: 'rgba(244, 182, 44, 0.15)', borderRadius: 4 }} px="md" py="xs">
-                        <Text text={t('history_pending')} style={{ color: 'rgba(244, 182, 44, 0.85)' }} size="xs" />
-                      </Row>
-                    ) : null}
-                  </Row>
-
-                  <Row>
-                    <Text text={item.subTitle} preset="sub" />
-                  </Row>
-                </Column>
+                <Row itemsCenter>
+                  <Text text={item.amount} />
+                  <Text text={props.ticker} preset="sub" />
+                </Row>
               </Row>
-
-              <Row itemsCenter>
-                <Text text={item.amount} />
-                <Text text={props.ticker} preset="sub" />
-              </Row>
-            </Row>
-          ))}
+            ))}
         </Column>
       ))}
     </Column>
