@@ -18,7 +18,7 @@ export function OrdinalsTab() {
   const chain = useChain();
 
   let tabKey = useOrdinalsAssetTabKey();
-  if (chain.isFractal && tabKey === OrdinalsAssetTabKey.BRC20_5BYTE) {
+  if (tabKey === OrdinalsAssetTabKey.BRC20_5BYTE) {
     tabKey = OrdinalsAssetTabKey.BRC20;
   }
   const { t } = useI18n();
@@ -39,13 +39,6 @@ export function OrdinalsTab() {
       }
     ];
 
-    // if (!chain.isFractal) {
-    //   items.push({
-    //     key: OrdinalsAssetTabKey.BRC20_5BYTE,
-    //     label: `brc-20[5-byte] (${addressSummary.brc20Count5Byte || 0})`,
-    //     children: <BRC20List5Byte />
-    //   });
-    // }
     return items;
   }, [addressSummary, chain]);
 

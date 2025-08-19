@@ -1655,19 +1655,6 @@ export class WalletController extends BaseController {
     };
   };
 
-  getBRC20List5Byte = async (address: string, currentPage: number, pageSize: number) => {
-    const cursor = (currentPage - 1) * pageSize;
-    const size = pageSize;
-    const { total, list } = await openapiService.getBRC20List5Byte(address, cursor, size);
-
-    return {
-      currentPage,
-      pageSize,
-      total,
-      list
-    };
-  };
-
   getAllInscriptionList = async (address: string, currentPage: number, pageSize: number) => {
     const cursor = (currentPage - 1) * pageSize;
     const size = pageSize;

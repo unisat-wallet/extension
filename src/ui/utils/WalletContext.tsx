@@ -289,12 +289,6 @@ export interface WalletController {
     pageSize: number
   ): Promise<{ currentPage: number; pageSize: number; total: number; list: TokenBalance[] }>;
 
-  getBRC20List5Byte(
-    address: string,
-    currentPage: number,
-    pageSize: number
-  ): Promise<{ currentPage: number; pageSize: number; total: number; list: TokenBalance[] }>;
-
   getBRC20TransferableList(
     address: string,
     ticker: string,

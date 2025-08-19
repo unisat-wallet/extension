@@ -551,14 +551,6 @@ export class OpenApiService {
     return this.httpGet('/v5/brc20/list', { address, cursor, size });
   }
 
-  async getBRC20List5Byte(
-    address: string,
-    cursor: number,
-    size: number
-  ): Promise<{ list: TokenBalance[]; total: number }> {
-    return this.httpGet('/v5/brc20/5byte-list', { address, cursor, size, type: 5 });
-  }
-
   async getAddressTokenSummary(address: string, ticker: string): Promise<AddressTokenSummary> {
     return this.httpGet('/v5/brc20/token-summary', { address, ticker: encodeURIComponent(ticker) });
   }

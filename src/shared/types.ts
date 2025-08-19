@@ -439,8 +439,6 @@ export interface AddressSummary {
   assetSatoshis: number;
   inscriptionCount: number;
   brc20Count: number;
-  brc20Count5Byte: number;
-  arc20Count: number;
   runesCount: number;
   loading?: boolean;
 }
