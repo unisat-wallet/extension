@@ -3305,10 +3305,10 @@
   resolved "https://registry.yarnpkg.com/@unisat/contact-book/-/contact-book-0.1.0.tgz#d4c8c8118caf4ab55bf21b1bbbd1fa30def532e0"
   integrity sha512-ae41/8elfxsWOL6YOomovJ11Y1QH9+3P3B+FKmkIIxSmi+V3DJGQ+T7sq6izBp5yGR0zaRBJjTA6mLIrfTYAVA==
 
-"@unisat/permission-service@0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@unisat/permission-service/-/permission-service-0.1.1.tgz#7e0049e009856c687e725f3e5436a0a89ad9c5ce"
-  integrity sha512-BxyvXfddnzth30cMdr/V9wxMMPSjN148vK5pfJsA/pSw1g1qgD5d+VOVQ3o55i3XUW8d2C/2xREeshcT39Ta2g==
+"@unisat/permission-service@0.1.5":
+  version "0.1.5"
+  resolved "https://registry.yarnpkg.com/@unisat/permission-service/-/permission-service-0.1.5.tgz#a5f3edc32adecdb2d038024065d6884077552141"
+  integrity sha512-EkKexDvcJcad1Oy/iZ3qUyLSKQgeDp/9fXOCyydaGWHTyEbLwUjyeeGYePMnWInUEM4KsaVGCijIjhrfKq0Emw==
   dependencies:
     lru-cache "^6.0.0"
 
