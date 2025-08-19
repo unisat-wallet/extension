@@ -65,6 +65,7 @@
     "@unisat/animated-qr": "1.0.1",
     "@unisat/wallet-api": "0.1.0",
     "@unisat/contact-book": "0.1.0",
+    "@unisat/permission-service": "0.1.1",
     "@unisat/wallet-sdk": "1.9.0",
     "antd": "^4.20.4",
     "antd-dayjs-webpack-plugin": "1.0.6",
