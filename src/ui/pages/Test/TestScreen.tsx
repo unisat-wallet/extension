@@ -365,7 +365,6 @@ function TestAlkanesSign() {
           address: 'bc1qmwsjwy4vrt097vze9mu6mnasqr4j0jj9u8ljcv',
           value: 546,
           inscriptions: [],
-          atomicals: [],
           runes: [
             {
               rune: 'AMAZINGPYRAMIDNUMBER',
@@ -379,7 +378,6 @@ function TestAlkanesSign() {
           onchain: false,
           utxoStatus: {
             utxoFound: true,
-            atomicalsChecked: true,
             inscriptionDoubleChecked: true,
             isConfirmed: true,
             runesChecked: true,
@@ -395,12 +393,10 @@ function TestAlkanesSign() {
           address: 'bc1qmwsjwy4vrt097vze9mu6mnasqr4j0jj9u8ljcv',
           value: 116547,
           inscriptions: [],
-          atomicals: [],
           runes: [],
           onchain: false,
           utxoStatus: {
             utxoFound: true,
-            atomicalsChecked: true,
             inscriptionDoubleChecked: true,
             isConfirmed: true,
             runesChecked: true,
@@ -416,7 +412,6 @@ function TestAlkanesSign() {
           address: 'OP_RETURN 0700c2a233040102 ',
           value: 0,
           inscriptions: [],
-          atomicals: [],
           runes: [],
           isOpReturn: true
         },
@@ -424,7 +419,6 @@ function TestAlkanesSign() {
           address: 'bc1qmwsjwy4vrt097vze9mu6mnasqr4j0jj9u8ljcv',
           value: 546,
           inscriptions: [],
-          atomicals: [],
           runes: [
             {
               rune: 'AMAZINGPYRAMIDNUMBER',
@@ -441,7 +435,6 @@ function TestAlkanesSign() {
           address: 'bc1qmwsjwy4vrt097vze9mu6mnasqr4j0jj9u8ljcv',
           value: 546,
           inscriptions: [],
-          atomicals: [],
           runes: [
             {
               rune: 'AMAZINGPYRAMIDNUMBER',
@@ -458,7 +451,6 @@ function TestAlkanesSign() {
           address: 'bc1qmwsjwy4vrt097vze9mu6mnasqr4j0jj9u8ljcv',
           value: 115224,
           inscriptions: [],
-          atomicals: [],
           runes: [],
           isOpReturn: false
         }
@@ -487,7 +479,6 @@ function TestAlkanesSign() {
           address: 'bc1qmwsjwy4vrt097vze9mu6mnasqr4j0jj9u8ljcv',
           value: 546,
           inscriptions: [],
-          atomicals: [],
           alkanes: [
             {
               alkaneid: 'ALK123456',
@@ -500,7 +491,6 @@ function TestAlkanesSign() {
           onchain: false,
           utxoStatus: {
             utxoFound: true,
-            atomicalsChecked: true,
             inscriptionDoubleChecked: true,
             isConfirmed: true,
             alkanesChecked: true,
@@ -516,12 +506,10 @@ function TestAlkanesSign() {
           address: 'bc1qmwsjwy4vrt097vze9mu6mnasqr4j0jj9u8ljcv',
           value: 116547,
           inscriptions: [],
-          atomicals: [],
           alkanes: [],
           onchain: false,
           utxoStatus: {
             utxoFound: true,
-            atomicalsChecked: true,
             inscriptionDoubleChecked: true,
             isConfirmed: true,
             alkanesChecked: true,
@@ -537,7 +525,6 @@ function TestAlkanesSign() {
           address: 'OP_RETURN 0700c2a233040102 ',
           value: 0,
           inscriptions: [],
-          atomicals: [],
           alkanes: [],
           isOpReturn: true
         },
@@ -545,7 +532,6 @@ function TestAlkanesSign() {
           address: 'bc1qmwsjwy4vrt097vze9mu6mnasqr4j0jj9u8ljcv',
           value: 546,
           inscriptions: [],
-          atomicals: [],
           alkanes: [
             {
               alkaneid: 'ALK123456',
@@ -561,7 +547,6 @@ function TestAlkanesSign() {
           address: 'bc1qmwsjwy4vrt097vze9mu6mnasqr4j0jj9u8ljcv',
           value: 546,
           inscriptions: [],
-          atomicals: [],
           alkanes: [
             {
               alkaneid: 'ALK123456',
@@ -577,7 +562,6 @@ function TestAlkanesSign() {
           address: 'bc1qmwsjwy4vrt097vze9mu6mnasqr4j0jj9u8ljcv',
           value: 115224,
           inscriptions: [],
-          atomicals: [],
           alkanes: [],
           isOpReturn: false
         }

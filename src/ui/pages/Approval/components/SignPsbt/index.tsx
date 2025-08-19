@@ -17,7 +17,6 @@ import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks'
 import { useBTCUnit } from '@/ui/state/settings/hooks';
 import {
   usePrepareSendAlkanesCallback,
-  usePrepareSendAtomicalsNFTCallback,
   usePrepareSendBTCCallback,
   usePrepareSendOrdinalsInscriptionCallback,
   usePrepareSendRunesCallback
@@ -73,7 +72,6 @@ export default function SignPsbt({
 
   const prepareSendBTC = usePrepareSendBTCCallback();
   const prepareSendOrdinalsInscription = usePrepareSendOrdinalsInscriptionCallback();
-  const prepareSendAtomicalsInscription = usePrepareSendAtomicalsNFTCallback;
   const prepareSendRunes = usePrepareSendRunesCallback();
   const prepareSendAlkanes = usePrepareSendAlkanesCallback();
 

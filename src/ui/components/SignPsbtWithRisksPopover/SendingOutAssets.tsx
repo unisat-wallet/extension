@@ -76,14 +76,6 @@ export const SendingOutAssets = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
       }
     });
     if (inputInfo.address === currentAccount?.address) {
-      inputInfo.atomicals.forEach((v) => {
-        if (v.type === 'FT') {
-          const ticker = v.ticker || '';
-          arc20BalanceIn[ticker] = arc20BalanceIn[ticker] || 0;
-          arc20BalanceIn[ticker] += inputInfo.value;
-        }
-      });
-
       inputInfo.runes?.forEach((rune) => {
         const key = rune.runeid;
         runesBalanceIn[key] = runesBalanceIn[key] || BigNumber(0);
@@ -112,14 +104,6 @@ export const SendingOutAssets = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
     });
 
     if (outputInfo.address === currentAccount?.address) {
-      outputInfo.atomicals.forEach((v) => {
-        if (v.type === 'FT') {
-          const ticker = v.ticker || '';
-          arc20BalanceOut[ticker] = arc20BalanceOut[ticker] || 0;
-          arc20BalanceOut[ticker] += outputInfo.value;
-        }
-      });
-
       outputInfo.runes?.forEach((rune) => {
         const key = rune.runeid;
         runesBalanceOut[key] = runesBalanceOut[key] || BigNumber(0);

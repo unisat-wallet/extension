@@ -24,11 +24,6 @@ export function useOrdinalsAssetTabKey() {
   return uiState.ordinalsAssetTabKey;
 }
 
-export function useAtomicalsAssetTabKey() {
-  const uiState = useUIState();
-  return uiState.atomicalsAssetTabKey;
-}
-
 export function useCATAssetTabKey() {
   const uiState = useUIState();
   return uiState.catAssetTabKey;
@@ -77,7 +72,6 @@ export function useSupportedAssets() {
   const assetTabKeys: AssetTabKey[] = [];
   const assets = {
     ordinals: false,
-    atomicals: false,
     runes: false,
     CAT20: false,
     alkanes: false
@@ -85,13 +79,6 @@ export function useSupportedAssets() {
 
   assets.ordinals = true;
   assetTabKeys.push(AssetTabKey.ORDINALS);
-
-  // const isDisableAtomicals = checkAddressFlag(currentAccount.flag, AddressFlagType.DISABLE_ARC20);
-
-  // if (chainType === ChainType.BITCOIN_MAINNET && isDisableAtomicals == false) {
-  //   assets.atomicals = true;
-  //   assetTabKeys.push(AssetTabKey.ATOMICALS);
-  // }
 
   assets.runes = true;
   assetTabKeys.push(AssetTabKey.RUNES);

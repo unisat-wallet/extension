@@ -38,24 +38,6 @@ export interface OrdinalsTx {
   enableRBF: boolean;
 }
 
-export interface AtomicalsTx {
-  fromAddress: string;
-  toAddress: string;
-  inscription: Inscription;
-  rawtx: string;
-  txid: string;
-  fee: number;
-  estimateFee: number;
-  changeSatoshis: number;
-  sending: boolean;
-  psbtHex: string;
-  feeRate: number;
-  toDomain: string;
-  outputValue: number;
-  sendArc20Amount?: number;
-  enableRBF: boolean;
-}
-
 export interface RunesTx {
   fromAddress: string;
   toAddress: string;
@@ -77,12 +59,9 @@ export interface RunesTx {
 export interface TransactionsState {
   bitcoinTx: BitcoinTx;
   ordinalsTx: OrdinalsTx;
-  atomicalsTx: AtomicalsTx;
   runesTx: RunesTx;
   utxos: UnspentOutput[];
   spendUnavailableUtxos: UnspentOutput[];
-  assetUtxos_atomicals_ft: UnspentOutput[];
-  assetUtxos_atomicals_nft: UnspentOutput[];
   assetUtxos_inscriptions: UnspentOutput[];
   assetUtxos_runes: UnspentOutput[];
 }
@@ -137,39 +116,7 @@ export const initialState: TransactionsState = {
     outputValue: 10000,
     enableRBF: false
   },
-  atomicalsTx: {
-    fromAddress: '',
-    toAddress: '',
-    inscription: {
-      inscriptionId: '',
-      inscriptionNumber: 0,
-      address: '',
-      outputValue: 0,
-      preview: '',
-      content: '',
-      contentType: '',
-      contentLength: 0,
-      timestamp: 0,
-      genesisTransaction: '',
-      location: '',
-      output: '',
-      offset: 0,
-      contentBody: '',
-      utxoHeight: 0,
-      utxoConfirmation: 0
-    },
-    rawtx: '',
-    txid: '',
-    fee: 0,
-    estimateFee: 0,
-    changeSatoshis: 0,
-    sending: false,
-    psbtHex: '',
-    feeRate: 5,
-    toDomain: '',
-    outputValue: 10000,
-    enableRBF: false
-  },
+
   runesTx: {
     fromAddress: '',
     toAddress: '',
@@ -187,8 +134,6 @@ export const initialState: TransactionsState = {
   },
   utxos: [],
   spendUnavailableUtxos: [],
-  assetUtxos_atomicals_ft: [],
-  assetUtxos_atomicals_nft: [],
   assetUtxos_inscriptions: [],
   assetUtxos_runes: []
 };
@@ -245,31 +190,7 @@ const slice = createSlice({
       const { payload } = action;
       state.ordinalsTx = Object.assign({}, state.ordinalsTx, payload);
     },
-    updateAtomicalsTx(
-      state,
-      action: {
-        payload: {
-          fromAddress?: string;
-          toAddress?: string;
-          inscription?: Inscription;
-          changeSatoshis?: number;
-          rawtx?: string;
-          txid?: string;
-          fee?: number;
-          estimateFee?: number;
-          sending?: boolean;
-          psbtHex?: string;
-          feeRate?: number;
-          toDomain?: string;
-          outputValue?: number;
-          sendArc20Amount?: number;
-          enableRBF?: boolean;
-        };
-      }
-    ) {
-      const { payload } = action;
-      state.atomicalsTx = Object.assign({}, state.atomicalsTx, payload);
-    },
+
     updateRunesTx(
       state,
       action: {
@@ -301,12 +222,7 @@ const slice = createSlice({
     setSpendUnavailableUtxos(state, action: { payload: UnspentOutput[] }) {
       state.spendUnavailableUtxos = action.payload;
     },
-    setAssetUtxosAtomicalsFT(state, action: { payload: UnspentOutput[] }) {
-      state.assetUtxos_atomicals_ft = action.payload;
-    },
-    setAssetUtxosAtomicalsNFT(state, action: { payload: UnspentOutput[] }) {
-      state.assetUtxos_atomicals_nft = action.payload;
-    },
+
     setAssetUtxosInscriptions(state, action: { payload: UnspentOutput[] }) {
       state.assetUtxos_inscriptions = action.payload;
     },
@@ -320,15 +236,6 @@ const slice = createSlice({
 
   extraReducers: (builder) => {
     builder.addCase(updateVersion, (state) => {
-      //  todo
-      if (!state.assetUtxos_atomicals_ft) {
-        state.assetUtxos_atomicals_ft = [];
-      }
-
-      if (!state.assetUtxos_atomicals_nft) {
-        state.assetUtxos_atomicals_nft = [];
-      }
-
       if (!state.assetUtxos_inscriptions) {
         state.assetUtxos_inscriptions = [];
       }

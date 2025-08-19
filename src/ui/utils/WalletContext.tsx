@@ -20,7 +20,6 @@ import {
   AlkanesInfo,
   AppInfo,
   AppSummary,
-  Arc20Balance,
   BabylonAddressSummary,
   BitcoinBalance,
   BitcoinBalanceV2,
@@ -231,9 +230,6 @@ export interface WalletController {
   getInscriptionSummary(): Promise<InscriptionSummary>;
   getAppSummary(): Promise<AppSummary>;
   getBTCUtxos(): Promise<UnspentOutput[]>;
-  getUnavailableUtxos(): Promise<UnspentOutput[]>;
-  getAssetUtxosAtomicalsFT(ticker: string): Promise<UnspentOutput[]>;
-  getAssetUtxosAtomicalsNFT(atomicalId: string): Promise<UnspentOutput[]>;
   getAssetUtxosInscriptions(inscriptionId: string): Promise<UnspentOutput[]>;
 
   getNetworkType(): Promise<NetworkType>;
@@ -312,12 +308,6 @@ export interface WalletController {
     pageSize: number
   ): Promise<{ currentPage: number; pageSize: number; total: number; list: Inscription[] }>;
 
-  getAtomicalsNFTs(
-    address: string,
-    currentPage: number,
-    pageSize: number
-  ): Promise<{ currentPage: number; pageSize: number; total: number; list: Inscription[] }>;
-
   getBRC20Summary(address: string, ticker: string): Promise<AddressTokenSummary>;
 
   expireUICachedData(address: string): Promise<void>;
@@ -337,30 +327,6 @@ export interface WalletController {
   readApp(appid: number): Promise<void>;
 
   formatOptionsToSignInputs(psbtHex: string, options?: SignPsbtOptions): Promise<ToSignInput[]>;
-
-  getArc20BalanceList(
-    address: string,
-    currentPage: number,
-    pageSize: number
-  ): Promise<{ currentPage: number; pageSize: number; total: number; list: Arc20Balance[] }>;
-
-  sendAtomicalsNFT(data: {
-    to: string;
-    atomicalId: string;
-    feeRate: number;
-    enableRBF: boolean;
-    btcUtxos: UnspentOutput[];
-  }): Promise<string>;
-
-  sendAtomicalsFT(data: {
-    to: string;
-    ticker: string;
-    amount: number;
-    feeRate: number;
-    enableRBF: boolean;
-    btcUtxos: UnspentOutput[];
-    assetUtxos: UnspentOutput[];
-  }): Promise<string>;
 
   getAddressSummary(address: string): Promise<AddressSummary>;
 

@@ -340,7 +340,7 @@ class ProviderController extends BaseController {
 
   @Reflect.metadata('SAFE', true)
   isAtomicalsEnabled = async () => {
-    return await wallet.isAtomicalsEnabled()
+    return false;
   };
 
   @Reflect.metadata('SAFE', true)

@@ -1,6 +1,5 @@
 import {
   AlkanesBalance,
-  Atomical,
   ContractResult,
   DecodedPsbt,
   Inscription,
@@ -62,7 +61,6 @@ export interface InputInfo {
   address: string;
   value: number;
   inscriptions: Inscription[];
-  atomicals: Atomical[];
   runes: RuneBalance[];
   alkanes: AlkanesBalance[];
 }

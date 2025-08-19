@@ -33,9 +33,6 @@ import SendAlkanesScreen from './Alkanes/SendAlkanesScreen';
 import ApprovalScreen from './Approval/ApprovalScreen';
 import ConnectedSitesScreen from './Approval/ConnectedSitesScreen';
 import { InscribeTransferScreen } from './Approval/components/InscribeTransfer';
-import AtomicalsNFTScreen from './Atomicals/AtomicalsNFTScreen';
-import SendArc20Screen from './Atomicals/SendArc20Screen';
-import SendAtomicalsInscriptionScreen from './Atomicals/SendAtomicalsNFTScreen';
 import BRC20SendScreen from './BRC20/BRC20SendScreen';
 import BRC20SingleStepScreen from './BRC20/BRC20SingleStepScreen';
 import BRC20TokenScreen from './BRC20/BRC20TokenScreen';
@@ -80,7 +77,6 @@ import TxConfirmScreen from './Wallet/TxConfirmScreen';
 import TxCreateScreen from './Wallet/TxCreateScreen';
 import TxFailScreen from './Wallet/TxFailScreen';
 import TxSuccessScreen from './Wallet/TxSuccessScreen';
-import UnavailableUtxoScreen from './Wallet/UnavailableUtxoScreen';
 import './index.module.less';
 
 export const routes = {
@@ -167,21 +163,6 @@ export const routes = {
   SignOrdinalsTransactionScreen: {
     path: '/wallet/ordinals-tx/confirm',
     element: <SignOrdinalsTransactionScreen />
-  },
-
-  AtomicalsInscriptionScreen: {
-    path: '/atomicals/inscription-detail',
-    element: <AtomicalsNFTScreen />
-  },
-
-  SendAtomicalsInscriptionScreen: {
-    path: '/atomicals/send-inscription',
-    element: <SendAtomicalsInscriptionScreen />
-  },
-
-  SendArc20Screen: {
-    path: '/atomicals/send-arc20',
-    element: <SendArc20Screen />
   },
 
   NetworkTypeScreen: {
@@ -287,10 +268,6 @@ export const routes = {
   SplitOrdinalsInscriptionScreen: {
     path: '/wallet/split-tx/create',
     element: <SplitOrdinalsInscriptionScreen />
-  },
-  UnavailableUtxoScreen: {
-    path: '/wallet/unavailable-utxo',
-    element: <UnavailableUtxoScreen />
   },
 
   SendRunesScreen: {

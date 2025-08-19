@@ -49,7 +49,7 @@ import {
   UTXO,
   WalletKeyring
 } from '@/shared/types';
-import { checkAddressFlag, getChainInfo } from '@/shared/utils';
+import { getChainInfo } from '@/shared/utils';
 import { psbtFromString } from '@/ui/utils/psbt-utils';
 import { txHelpers, UnspentOutput, UTXO_DUST } from '@unisat/wallet-sdk';
 import { isValidAddress, publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
@@ -1003,10 +1003,6 @@ export class WalletController extends BaseController {
 
     const utxos = await openapiService.getBTCUtxos(account.address);
 
-    // if (checkAddressFlag(openapiService.addressFlag, AddressFlagType.CONFIRMED_UTXO_MODE)) {
-    //   utxos = utxos.filter((v) => (v as any).height !== UNCONFIRMED_HEIGHT);
-    // }
-
     const btcUtxos = utxos.map((v) => {
       return {
         txid: v.txid,
@@ -1016,41 +1012,10 @@ export class WalletController extends BaseController {
         addressType: v.addressType,
         pubkey: account.pubkey,
         inscriptions: v.inscriptions,
-        atomicals: v.atomicals
+        atomicals: []
       };
     });
     return btcUtxos;
-  };
-
-  getUnavailableUtxos = async () => {
-    const account = preferenceService.getCurrentAccount();
-    if (!account) throw new Error('no current account');
-    const utxos = await openapiService.getUnavailableUtxos(account.address);
-    const unavailableUtxos = utxos.map((v) => {
-      return {
-        txid: v.txid,
-        vout: v.vout,
-        satoshis: v.satoshis,
-        scriptPk: v.scriptPk,
-        addressType: v.addressType,
-        pubkey: account.pubkey,
-        inscriptions: v.inscriptions,
-        atomicals: v.atomicals
-      };
-    });
-    return unavailableUtxos;
-  };
-
-  getAssetUtxosAtomicalsFT = async (ticker: string) => {
-    const account = preferenceService.getCurrentAccount();
-    if (!account) throw new Error('no current account');
-    let arc20_utxos = await openapiService.getArc20Utxos(account.address, ticker);
-    arc20_utxos = arc20_utxos.filter((v) => (v as any).spent == false);
-
-    const assetUtxos = arc20_utxos.map((v) => {
-      return Object.assign(v, { pubkey: account.pubkey });
-    });
-    return assetUtxos;
   };
 
   sendBTC = async ({
@@ -1841,20 +1806,6 @@ export class WalletController extends BaseController {
     return apiResult;
   };
 
-  getArc20BalanceList = async (address: string, currentPage: number, pageSize: number) => {
-    const cursor = (currentPage - 1) * pageSize;
-    const size = pageSize;
-
-    const { total, list } = await openapiService.getArc20BalanceList(address, cursor, size);
-
-    return {
-      currentPage,
-      pageSize,
-      total,
-      list
-    };
-  };
-
   getOrdinalsInscriptions = async (address: string, currentPage: number, pageSize: number) => {
     const cursor = (currentPage - 1) * pageSize;
     const size = pageSize;
@@ -1866,142 +1817,6 @@ export class WalletController extends BaseController {
       total,
       list
     };
-  };
-
-  getAtomicalsNFTs = async (address: string, currentPage: number, pageSize: number) => {
-    const cursor = (currentPage - 1) * pageSize;
-    const size = pageSize;
-
-    const { total, list } = await openapiService.getAtomicalsNFT(address, cursor, size);
-    return {
-      currentPage,
-      pageSize,
-      total,
-      list
-    };
-  };
-
-  sendAtomicalsNFT = async ({
-    to,
-    atomicalId,
-    feeRate,
-    enableRBF,
-    btcUtxos
-  }: {
-    to: string;
-    atomicalId: string;
-    feeRate: number;
-    enableRBF: boolean;
-    btcUtxos?: UnspentOutput[];
-  }) => {
-    const account = preferenceService.getCurrentAccount();
-    if (!account) throw new Error('no current account');
-
-    const networkType = this.getNetworkType();
-
-    const utxo = await openapiService.getAtomicalsUtxo(atomicalId);
-    if (!utxo) {
-      throw new Error('UTXO not found.');
-    }
-
-    if (utxo.inscriptions.length > 1) {
-      throw new Error('Multiple inscriptions are mixed together. Please split them first.');
-    }
-
-    const assetUtxo = Object.assign(utxo, { pubkey: account.pubkey });
-
-    if (!btcUtxos) {
-      btcUtxos = await this.getBTCUtxos();
-    }
-
-    if (btcUtxos.length == 0) {
-      throw new Error('Insufficient balance.');
-    }
-
-    const { psbt, toSignInputs } = await txHelpers.sendAtomicalsNFT({
-      assetUtxo,
-      btcUtxos,
-      toAddress: to,
-      networkType,
-      changeAddress: account.address,
-      feeRate,
-      enableRBF
-    });
-
-    this.setPsbtSignNonSegwitEnable(psbt, true);
-    await this.signPsbt(psbt, toSignInputs, true);
-    this.setPsbtSignNonSegwitEnable(psbt, false);
-    return psbt.toHex();
-  };
-
-  sendAtomicalsFT = async ({
-    to,
-    ticker,
-    amount,
-    feeRate,
-    enableRBF,
-    btcUtxos,
-    assetUtxos
-  }: {
-    to: string;
-    ticker: string;
-    amount: number;
-    feeRate: number;
-    enableRBF: boolean;
-    btcUtxos?: UnspentOutput[];
-    assetUtxos?: UnspentOutput[];
-  }) => {
-    const account = preferenceService.getCurrentAccount();
-    if (!account) throw new Error('no current account');
-
-    const networkType = this.getNetworkType();
-
-    if (!assetUtxos) {
-      assetUtxos = await this.getAssetUtxosAtomicalsFT(ticker);
-    }
-
-    if (!btcUtxos) {
-      btcUtxos = await this.getBTCUtxos();
-    }
-
-    const changeDust = getAddressUtxoDust(account.address);
-
-    const _assetUtxos: UnspentOutput[] = [];
-    let total = 0;
-    let change = 0;
-    for (let i = 0; i < assetUtxos.length; i++) {
-      const v = assetUtxos[i];
-      total += v.atomicals.reduce((p, c) => p + (c?.atomicalValue || 0), 0);
-      _assetUtxos.push(v);
-      if (total >= amount) {
-        change = total - amount;
-        if (change == 0 || change >= changeDust) {
-          break;
-        }
-      }
-    }
-    if (change != 0 && change < changeDust) {
-      throw new Error('The amount for change is too low, please adjust the sending amount.');
-    }
-    assetUtxos = _assetUtxos;
-
-    const { psbt, toSignInputs } = await txHelpers.sendAtomicalsFT({
-      assetUtxos,
-      btcUtxos,
-      toAddress: to,
-      networkType,
-      changeAddress: account.address,
-      changeAssetAddress: account.address,
-      feeRate,
-      enableRBF,
-      sendAmount: amount
-    });
-
-    this.setPsbtSignNonSegwitEnable(psbt, true);
-    await this.signPsbt(psbt, toSignInputs, true);
-    this.setPsbtSignNonSegwitEnable(psbt, false);
-
-    return psbt.toHex();
   };
 
   getAddressSummary = async (address: string) => {
@@ -2026,12 +1841,6 @@ export class WalletController extends BaseController {
 
   getVersionDetail = (version: string) => {
     return openapiService.getVersionDetail(version);
-  };
-
-  isAtomicalsEnabled = async () => {
-    const current = await this.getCurrentAccount();
-    if (!current) return false;
-    return checkAddressFlag(current?.flag, AddressFlagType.Is_Enable_Atomicals);
   };
 
   checkKeyringMethod = async (method: string) => {
@@ -2135,7 +1944,6 @@ export class WalletController extends BaseController {
 
     assetUtxos.forEach((v) => {
       v.inscriptions = [];
-      v.atomicals = [];
     });
 
     assetUtxos.sort((a, b) => {
@@ -2772,7 +2580,6 @@ export class WalletController extends BaseController {
 
     assetUtxos.forEach((v) => {
       v.inscriptions = [];
-      v.atomicals = [];
     });
 
     return assetUtxos;

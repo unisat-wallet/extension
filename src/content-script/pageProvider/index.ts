@@ -441,13 +441,6 @@ export class UnisatProvider extends EventEmitter {
     });
   };
 
-  // deprecated
-  isAtomicalsEnabled = async () => {
-    return this[requestMethodKey]({
-      method: 'isAtomicalsEnabled'
-    });
-  };
-
   getBitcoinUtxos = async (cursor = 0, size = 20) => {
     const params: RequestMethodGetBitcoinUtxosParams = {
       cursor,

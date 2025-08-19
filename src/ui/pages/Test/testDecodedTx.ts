@@ -25,12 +25,6 @@ export const testDecodedTx = {
             offset: 0
           }
         ],
-        atomicals: [
-          {
-            type: 'FT',
-            ticker: 'atom'
-          }
-        ],
         runes: [
           {
             runeid: '1222:90',
@@ -49,7 +43,6 @@ export const testDecodedTx = {
         address: 'bc1p8tf3csd75fhlwe7u42hx92rgvxgu7vycjmslrppz4rd0gggv2t5qxpymsu',
         value: 24077,
         inscriptions: [],
-        atomicals: [],
         onchain: true,
         height: 824868
       }
@@ -65,8 +58,7 @@ export const testDecodedTx = {
             inscriptionNumber: 18529581,
             outputValue: 546
           }
-        ],
-        atomicals: []
+        ]
       },
       {
         address: 'bc1p8tf3csd75fhlwe7u42hx92rgvxgu7vycjmslrppz4rd0gggv2t5qxpymsu',
@@ -78,7 +70,6 @@ export const testDecodedTx = {
             offset: 0
           }
         ],
-        atomicals: [],
         runes: [
           {
             runeid: '1222:90',
@@ -94,12 +85,6 @@ export const testDecodedTx = {
     fee: 2332,
     isCompleted: true,
     risks: [
-      {
-        title: 'Atomicals FT destroyed detected',
-        desc: 'Atomicals FT atom will be destroyed',
-        level: 'danger',
-        type: 6
-      },
       {
         title: 'Inscription lost detected',
         desc: '10 inscriptions will be lost',

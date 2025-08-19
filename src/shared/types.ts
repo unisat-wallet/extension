@@ -191,6 +191,7 @@ export interface UTXO {
     offset: number;
   }[];
   atomicals: {
+    // deprecated
     atomicalId: string;
     atomicalNumber: number;
     type: 'NFT' | 'FT';
@@ -218,7 +219,7 @@ export enum TxType {
   SIGN_TX,
   SEND_BITCOIN,
   SEND_ORDINALS_INSCRIPTION,
-  SEND_ATOMICALS_INSCRIPTION,
+  SEND_ATOMICALS_INSCRIPTION, // deprecated
   SEND_RUNES,
   SEND_ALKANES
 }
@@ -345,9 +346,9 @@ export enum RiskType {
   SCAMMER_ADDRESS,
   NETWORK_NOT_MATCHED,
   INSCRIPTION_BURNING,
-  ATOMICALS_DISABLE,
-  ATOMICALS_NFT_BURNING,
-  ATOMICALS_FT_BURNING,
+  ATOMICALS_DISABLE, // deprecated
+  ATOMICALS_NFT_BURNING, // deprecated
+  ATOMICALS_FT_BURNING, // deprecated
   MULTIPLE_ASSETS,
   LOW_FEE_RATE,
   HIGH_FEE_RATE,
@@ -357,7 +358,7 @@ export enum RiskType {
   RUNES_BURNING,
   RUNES_MULTIPLE_ASSETS,
   INDEXER_API_DOWN,
-  ATOMICALS_API_DOWN,
+  ATOMICALS_API_DOWN, // deprecated
   RUNES_API_DOWN,
   ALKANES_BURNING,
   ALKANES_MULTIPLE_ASSETS,
@@ -378,7 +379,6 @@ export interface DecodedPsbt {
     address: string;
     value: number;
     inscriptions: Inscription[];
-    atomicals: Atomical[];
     sighashType: number;
     runes: RuneBalance[];
     alkanes: AlkanesBalance[];
@@ -388,7 +388,6 @@ export interface DecodedPsbt {
     address: string;
     value: number;
     inscriptions: Inscription[];
-    atomicals: Atomical[];
     runes: RuneBalance[];
     alkanes: AlkanesBalance[];
     contract?: ContractResult;
@@ -439,7 +438,6 @@ export interface AddressSummary {
   btcSatoshis: number;
   assetSatoshis: number;
   inscriptionCount: number;
-  atomicalsCount: number;
   brc20Count: number;
   brc20Count5Byte: number;
   arc20Count: number;

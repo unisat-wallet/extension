@@ -14,7 +14,6 @@ import {
   AlkanesInfo,
   AppInfo,
   AppSummary,
-  Arc20Balance,
   BitcoinBalance,
   BitcoinBalanceV2,
   BRC20HistoryItem,
@@ -240,13 +239,6 @@ export class OpenApiService {
     return this.httpGet('/v5/address/available-utxo', {
       address,
       ignoreAssets: true
-    });
-  }
-
-  // deprecated
-  async getUnavailableUtxos(address: string): Promise<UTXO[]> {
-    return this.httpGet('/v5/address/unavailable-utxo', {
-      address
     });
   }
 
@@ -618,39 +610,6 @@ export class OpenApiService {
       address,
       cursor,
       size
-    });
-  }
-
-  async getAtomicalsNFT(
-    address: string,
-    cursor: number,
-    size: number
-  ): Promise<{ list: Inscription[]; total: number }> {
-    return this.httpGet('/v5/atomicals/nft', {
-      address,
-      cursor,
-      size
-    });
-  }
-
-  async getAtomicalsUtxo(atomicalId: string): Promise<UTXO> {
-    return this.httpGet('/v5/atomicals/utxo', {
-      atomicalId
-    });
-  }
-
-  async getArc20BalanceList(
-    address: string,
-    cursor: number,
-    size: number
-  ): Promise<{ list: Arc20Balance[]; total: number }> {
-    return this.httpGet('/v5/arc20/balance-list', { address, cursor, size });
-  }
-
-  async getArc20Utxos(address: string, ticker: string): Promise<UTXO[]> {
-    return this.httpGet('/v5/arc20/utxos', {
-      address,
-      ticker
     });
   }
 

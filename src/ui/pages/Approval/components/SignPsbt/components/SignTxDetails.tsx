@@ -1,9 +1,8 @@
 import { useMemo } from 'react';
 
-import { Atomical, Inscription, RawTxInfo, RuneBalance, TickPriceItem, TxType } from '@/shared/types';
+import { Inscription, RawTxInfo, RuneBalance, TickPriceItem, TxType } from '@/shared/types';
 import { Card, Column, Image, Row, Text } from '@/ui/components';
 import { AddressText } from '@/ui/components/AddressText';
-import Arc20PreviewCard from '@/ui/components/Arc20PreviewCard';
 import AssetTag from '@/ui/components/AssetTag';
 import BRC20Preview from '@/ui/components/BRC20Preview';
 import { BtcUsd } from '@/ui/components/BtcUsd';
@@ -100,35 +99,12 @@ export default function SignTxDetails({
     (pre, cur) => cur.inscriptions?.length + pre,
     0
   );
-  const atomicalsNFTCount = txInfo.decodedPsbt.inputInfos.reduce(
-    (pre, cur) => cur.atomicals.filter((v) => v.type === 'NFT').length + pre,
-    0
-  );
-  const arc20Count = txInfo.decodedPsbt.inputInfos.reduce(
-    (pre, cur) => cur.atomicals.filter((v) => v.type === 'FT').length + pre,
-    0
-  );
 
   const runesCount = txInfo.decodedPsbt.inputInfos.reduce((pre, cur) => (cur.runes ? cur.runes.length : 0) + pre, 0);
 
   const brc20Count = 0;
 
-  const atomicals_nft: Atomical[] = [];
-  const atomicals_ft: Atomical[] = [];
-  const arc20Map: { [ticker: string]: number } = {};
-  txInfo.decodedPsbt.inputInfos.forEach((v) => {
-    v.atomicals.forEach((w) => {
-      if (w.type === 'FT') {
-        atomicals_ft.push(w);
-        const ticker = w.ticker || '';
-        arc20Map[ticker] = (arc20Map[ticker] || 0) + w.atomicalValue;
-      } else {
-        atomicals_nft.push(w);
-      }
-    });
-  });
   const inscriptionArray = Object.values(txInfo.decodedPsbt.inscriptions);
-  const arc20Array = Object.keys(arc20Map).map((v) => ({ ticker: v, amt: arc20Map[v] }));
 
   const brc20Array: { tick: string; amt: string; inscriptionNumber: number; preview: string }[] = [];
   txInfo.decodedPsbt.inputInfos.forEach((v) => {
@@ -155,8 +131,7 @@ export default function SignTxDetails({
   });
 
   const involvedAssets = useMemo(() => {
-    const involved =
-      ordinalsInscriptionCount > 0 || atomicalsNFTCount > 0 || arc20Count > 0 || brc20Count > 0 || runesCount > 0;
+    const involved = ordinalsInscriptionCount > 0 || brc20Count > 0 || runesCount > 0;
     if (!involved) return;
     return (
       <Column>
@@ -193,30 +168,6 @@ export default function SignTxDetails({
                       />
                     </div>
                   );
-                })}
-              </Row>
-            </Column>
-          ) : null}
-
-          {arc20Array.length > 0 ? (
-            <Column
-              fullX
-              px="md"
-              pt="md"
-              pb="md"
-              style={{
-                backgroundColor: '#1e1a1e',
-                borderRadius: 10,
-                borderWidth: 1,
-                borderColor: colors.border
-              }}>
-              <Row>
-                <AssetTag type="ARC20" />
-              </Row>
-
-              <Row overflowX>
-                {arc20Array.map((w, index) => {
-                  return <Arc20PreviewCard key={w.ticker} ticker={w.ticker || ''} amt={w.amt} />;
                 })}
               </Row>
             </Column>

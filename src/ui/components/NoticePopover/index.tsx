@@ -51,15 +51,6 @@ export const NoticePopover = ({ onClose }: { onClose: () => void }) => {
             </Checkbox>
           </div>
           <Row style={{ borderTopWidth: 1, borderColor: colors.border }} my="md" />
-
-          {/* <div>
-            <Checkbox checked={checked2} onChange={(e) => setChecked2(e.target.checked)}>
-              <div style={{ fontSize: fontSizes.sm }}>
-                {t('for_atomicals_assets')} <span style={{ color: '#EBB94C' }}>{t('non_arc20')}</span>
-                {t('are_not_supported_yet')}
-              </div>
-            </Checkbox>
-          </div> */}
         </Column>
 
         <Row full>

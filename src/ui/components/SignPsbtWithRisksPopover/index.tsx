@@ -11,7 +11,6 @@ import { Input } from '../Input';
 import { Popover } from '../Popover';
 import { Row } from '../Row';
 import { Text } from '../Text';
-import { Arc20BurningList } from './Arc20BurningList';
 import { BadFeeRate } from './BadFeeRate';
 import { ChangingInscription } from './ChangingInscription';
 import { InscriptionBurning } from './InscriptionBurning';
@@ -150,9 +149,7 @@ export const SignPsbtWithRisksPopover = ({
   }, [decodedPsbt]);
 
   if (detailRisk) {
-    if (detailRisk.type === RiskType.ATOMICALS_FT_BURNING) {
-      return <Arc20BurningList decodedPsbt={decodedPsbt} onClose={() => setDetailRisk(null)} />;
-    } else if (detailRisk.type === RiskType.INSCRIPTION_BURNING) {
+    if (detailRisk.type === RiskType.INSCRIPTION_BURNING) {
       return <InscriptionBurning decodedPsbt={decodedPsbt} onClose={() => setDetailRisk(null)} />;
     } else if (detailRisk.type === RiskType.MULTIPLE_ASSETS) {
       return <SendingOutAssets decodedPsbt={decodedPsbt} onClose={() => setDetailRisk(null)} />;

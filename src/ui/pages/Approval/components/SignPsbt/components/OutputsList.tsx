@@ -12,8 +12,6 @@ const OutputsList = ({ txInfo, t, currentAccount, btcUnit, canChanged, runesPric
   const renderOutputItem = (v, index) => {
     const isMyAddress = v.address === currentAccount.address;
     const inscriptions = v.inscriptions;
-    const atomicals_nft = v.atomicals.filter((a) => a.type === 'NFT');
-    const atomicals_ft = v.atomicals.filter((a) => a.type === 'FT');
     const runes = v.runes || [];
     const alkanes = v.alkanes || [];
 
@@ -38,8 +36,6 @@ const OutputsList = ({ txInfo, t, currentAccount, btcUnit, canChanged, runesPric
 
         <AssetList
           inscriptions={filteredInscriptions}
-          atomicalsNft={atomicals_nft}
-          atomicalsFt={atomicals_ft}
           runes={runes}
           txInfo={txInfo}
           alkanes={alkanes}

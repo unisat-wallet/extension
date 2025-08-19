@@ -12,8 +12,6 @@ const InputsList = ({ txInfo, t, address, btcUnit, runesPriceMap, setContractPop
   const renderInputItem = (v, index) => {
     const isToSign = txInfo.toSignInputs.find((input) => input.index === index);
     const inscriptions = v.inscriptions;
-    const atomicals_nft = v.atomicals.filter((a) => a.type === 'NFT');
-    const atomicals_ft = v.atomicals.filter((a) => a.type === 'FT');
     const runes = v.runes || [];
     const alkanes = v.alkanes || [];
 
@@ -30,7 +28,6 @@ const InputsList = ({ txInfo, t, address, btcUnit, runesPriceMap, setContractPop
                     value: v.value,
                     address: v.address,
                     inscriptions,
-                    atomicals: v.atomicals,
                     runes,
                     alkanes
                   }}
@@ -53,8 +50,6 @@ const InputsList = ({ txInfo, t, address, btcUnit, runesPriceMap, setContractPop
 
           <AssetList
             inscriptions={inscriptions}
-            atomicalsNft={atomicals_nft}
-            atomicalsFt={atomicals_ft}
             runes={runes}
             txInfo={txInfo}
             alkanes={alkanes}

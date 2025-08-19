@@ -6,7 +6,6 @@ import { updateVersion } from '../global/actions';
 export interface UIState {
   assetTabKey: AssetTabKey;
   ordinalsAssetTabKey: OrdinalsAssetTabKey;
-  atomicalsAssetTabKey: AtomicalsAssetTabKey;
   catAssetTabKey: CATAssetTabKey;
   alkanesAssetTabKey: AlkanesAssetTabKey;
   uiTxCreateScreen: {
@@ -28,23 +27,17 @@ export interface UIState {
 }
 
 export enum AssetTabKey {
-  ORDINALS,
-  ATOMICALS,
-  RUNES,
-  CAT,
-  ALKANES
+  ORDINALS = 0,
+  ATOMICALS = 1, // IGNORED
+  RUNES = 2,
+  CAT = 3,
+  ALKANES = 4
 }
 
 export enum OrdinalsAssetTabKey {
   ALL,
   BRC20,
   BRC20_5BYTE
-}
-
-export enum AtomicalsAssetTabKey {
-  ALL,
-  ARC20,
-  OTHERS
 }
 
 export enum CATAssetTabKey {
@@ -67,7 +60,6 @@ export enum NavigationSource {
 export const initialState: UIState = {
   assetTabKey: AssetTabKey.ORDINALS,
   ordinalsAssetTabKey: OrdinalsAssetTabKey.ALL,
-  atomicalsAssetTabKey: AtomicalsAssetTabKey.ARC20,
   catAssetTabKey: CATAssetTabKey.CAT20,
   alkanesAssetTabKey: AlkanesAssetTabKey.TOKEN,
   uiTxCreateScreen: {
@@ -101,7 +93,6 @@ const slice = createSlice({
         payload: {
           assetTabKey?: AssetTabKey;
           ordinalsAssetTabKey?: OrdinalsAssetTabKey;
-          atomicalsAssetTabKey?: AtomicalsAssetTabKey;
           catAssetTabKey?: CATAssetTabKey;
           alkanesAssetTabKey?: AlkanesAssetTabKey;
         };
@@ -114,9 +105,7 @@ const slice = createSlice({
       if (payload.ordinalsAssetTabKey !== undefined) {
         state.ordinalsAssetTabKey = payload.ordinalsAssetTabKey;
       }
-      if (payload.atomicalsAssetTabKey !== undefined) {
-        state.atomicalsAssetTabKey = payload.atomicalsAssetTabKey;
-      }
+
       if (payload.catAssetTabKey !== undefined) {
         state.catAssetTabKey = payload.catAssetTabKey;
       }
@@ -190,9 +179,6 @@ const slice = createSlice({
       }
       if (!state.ordinalsAssetTabKey) {
         state.ordinalsAssetTabKey = OrdinalsAssetTabKey.ALL;
-      }
-      if (!state.atomicalsAssetTabKey) {
-        state.atomicalsAssetTabKey = AtomicalsAssetTabKey.ARC20;
       }
       if (!state.catAssetTabKey) {
         state.catAssetTabKey = CATAssetTabKey.CAT20;

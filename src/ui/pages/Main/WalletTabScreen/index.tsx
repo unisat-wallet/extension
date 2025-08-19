@@ -32,7 +32,6 @@ import { getUiType, useWallet } from '@/ui/utils';
 import { useNavigate } from '../../MainRoute';
 import { SwitchChainModal } from '../../Settings/SwitchChainModal';
 import { AlkanesTab } from './AlkanesTab';
-import { AtomicalsTab } from './AtomicalsTab';
 import { CATTab } from './CATTab';
 import { OrdinalsTab } from './OrdinalsTab';
 import { RunesList } from './RunesList';
@@ -139,13 +138,7 @@ export default function WalletTabScreen() {
         children: <OrdinalsTab />
       });
     }
-    if (supportedAssets.assets.atomicals) {
-      items.push({
-        key: AssetTabKey.ATOMICALS,
-        label: t('atomicals'),
-        children: <AtomicalsTab />
-      });
-    }
+
     if (supportedAssets.assets.runes) {
       items.push({
         key: AssetTabKey.RUNES,
