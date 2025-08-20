@@ -3300,22 +3300,58 @@
     lz-string "^1.5.0"
     qrcode "^1.5.3"
 
-"@unisat/contact-book@0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@unisat/contact-book/-/contact-book-0.1.0.tgz#d4c8c8118caf4ab55bf21b1bbbd1fa30def532e0"
-  integrity sha512-ae41/8elfxsWOL6YOomovJ11Y1QH9+3P3B+FKmkIIxSmi+V3DJGQ+T7sq6izBp5yGR0zaRBJjTA6mLIrfTYAVA==
-
-"@unisat/permission-service@0.1.5":
+"@unisat/contact-book@0.1.5":
   version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@unisat/permission-service/-/permission-service-0.1.5.tgz#a5f3edc32adecdb2d038024065d6884077552141"
-  integrity sha512-EkKexDvcJcad1Oy/iZ3qUyLSKQgeDp/9fXOCyydaGWHTyEbLwUjyeeGYePMnWInUEM4KsaVGCijIjhrfKq0Emw==
+  resolved "https://registry.yarnpkg.com/@unisat/contact-book/-/contact-book-0.1.5.tgz#aa027b9a22922f81280c479fdbce1e87c8feffcc"
+  integrity sha512-oMgkc/Rueb6RVa8ww8D6pvW2w+rMk445ISuPL3kMKUXjo6vRacUQ0tUZIGd6o3+/OUPWp9lMDsUuybQX8gk0rg==
   dependencies:
+    "@unisat/wallet-types" "0.1.3"
+
+"@unisat/keyring-service@0.1.9":
+  version "0.1.9"
+  resolved "https://registry.yarnpkg.com/@unisat/keyring-service/-/keyring-service-0.1.9.tgz#558e2d853ad3ea54a381e0df47b0eb7cf714ba56"
+  integrity sha512-QVYy8E5t/mMnagZQVB9f2OeRRtniLgfQEOr9fDrlLrxuEN5rSKj8wu7w5FwCwpJ1A+cQT3RUOUbLsenwvXzg9A==
+  dependencies:
+    "@keystonehq/keystone-sdk" "^0.3.0"
+    "@metamask/obs-store" "^7.0.0"
+    "@unisat/wallet-bitcoin" "0.1.3"
+    "@unisat/wallet-types" "0.1.3"
+    bip39 "^3.1.0"
+    bitcoinjs-lib "^6.1.5"
+    bitcore-lib "^10.0.0"
+    browser-passworder "^2.0.3"
+    bs58check "^3.0.1"
+    events "^3.3.0"
+    hdkey "^2.1.0"
+
+"@unisat/permission-service@0.1.7":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@unisat/permission-service/-/permission-service-0.1.7.tgz#bface0b0edb335ed47f2fcd10301ed23aa170935"
+  integrity sha512-jLMvxUNFofhWZvMTkXxZYFS5LTULo82NaxJkSSp4hd7XLz2cc5LhuL6xUR2e70so++QGLVl1nUk5RkcrH8uvFw==
+  dependencies:
+    "@unisat/wallet-types" "0.1.3"
     lru-cache "^6.0.0"
 
-"@unisat/wallet-api@0.1.0":
-  version "0.1.0"
-  resolved "https://registry.yarnpkg.com/@unisat/wallet-api/-/wallet-api-0.1.0.tgz#5f7319ed503ef463a49d41dcf60928f33ae9043c"
-  integrity sha512-E57cTN1EzbL5DdNnm7vRT1n01m8wZO0dj1xQ/POHhhwf3AuubAcuFZRmFp+b/mBjrx7YxTEM9UWbCTS/5iPx+A==
+"@unisat/wallet-api@0.1.2":
+  version "0.1.2"
+  resolved "https://registry.yarnpkg.com/@unisat/wallet-api/-/wallet-api-0.1.2.tgz#e42aa8493f5f205dfea2b90ffce8b2ee7d0c36ad"
+  integrity sha512-Ux1ROL4u+WtRVnTZxBRER5L3GokP96AC+/+AV/EJX98fbOtINenjJXhYinCFBghJZzFmKw9P1tDs12CzFBg5Jw==
+  dependencies:
+    "@unisat/wallet-types" "0.1.3"
+
+"@unisat/wallet-bitcoin@0.1.3", "@unisat/wallet-bitcoin@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@unisat/wallet-bitcoin/-/wallet-bitcoin-0.1.3.tgz#c71ce1f968d7d71ec67513f5c2a3e5959b543392"
+  integrity sha512-T+IJw3yBD9YMSYuDoPjv3hhnQpyflmOkdyKSYWO6Uyq66PJN9dG0jIhrp/gfHoLgiCHTO/h1okj30HUreDYZag==
+  dependencies:
+    "@bitcoinerlab/secp256k1" "^1.0.5"
+    "@noble/hashes" "^1.1.5"
+    "@noble/secp256k1" "^1.7.1"
+    "@unisat/wallet-types" "0.1.3"
+    bitcoinjs-lib "^6.1.5"
+    ecpair "^2.1.0"
+    tiny-secp256k1 "^2.2.3"
+    varuint-bitcoin "^1.1.2"
 
 "@unisat/wallet-sdk@1.9.0":
   version "1.9.0"
@@ -3332,6 +3368,11 @@
     ecpair "^2.1.0"
     hdkey "^2.1.0"
     tiny-secp256k1 "=2.2.1"
+
+"@unisat/wallet-types@0.1.3", "@unisat/wallet-types@^0.1.3":
+  version "0.1.3"
+  resolved "https://registry.yarnpkg.com/@unisat/wallet-types/-/wallet-types-0.1.3.tgz#47b4d7072b240e221d45fff0b2c97d0b17e2bf73"
+  integrity sha512-uyCtCV6wYb5ZeSlFxpXCor5RZEs1UQtAOgsNeY2kCGXTSzEx9/4dCR3jeeJ7P6jVFaPLyXLGKkWbwKKCxHzY4g==
 
 "@webassemblyjs/ast@1.11.1":
   version "1.11.1"
@@ -4418,6 +4459,18 @@ bip39@^3.1.0:
   integrity sha512-c9kiwdk45Do5GL0vJMe7tS95VjCii65mYAH7DfWl3uW8AVzXKQVUm64i3hzVybBDMp9r7j9iNxR85+ul8MdN/A==
   dependencies:
     "@noble/hashes" "^1.2.0"
+
+bitcoinjs-lib@^6.1.5:
+  version "6.1.7"
+  resolved "https://registry.yarnpkg.com/bitcoinjs-lib/-/bitcoinjs-lib-6.1.7.tgz#0f98dec1333d658574eefa455295668cfae38bb0"
+  integrity sha512-tlf/r2DGMbF7ky1MgUqXHzypYHakkEnm0SZP23CJKIqNY/5uNAnMbFhMJdhjrL/7anfb/U8+AlpdjPWjPnAalg==
+  dependencies:
+    "@noble/hashes" "^1.2.0"
+    bech32 "^2.0.0"
+    bip174 "^2.1.1"
+    bs58check "^3.0.1"
+    typeforce "^1.11.3"
+    varuint-bitcoin "^1.1.2"
 
 bitcoinjs-lib@^6.1.6:
   version "6.1.6"
@@ -6836,9 +6889,9 @@ eventemitter3@^4.0.0:
   resolved "https://registry.npmjs.org/eventemitter3/-/eventemitter3-4.0.7.tgz"
   integrity sha512-8guHBZCwKnFhYdHr2ysuRWErTwhoN2X8XELRlrRwpmfeY2jjuUN4taQMsULKUVo1K4DvZl+0pgfyoysHxvmvEw==
 
-events@^3.0.0, events@^3.2.0:
+events@^3.0.0, events@^3.2.0, events@^3.3.0:
   version "3.3.0"
-  resolved "https://registry.npmjs.org/events/-/events-3.3.0.tgz"
+  resolved "https://registry.yarnpkg.com/events/-/events-3.3.0.tgz#31a95ad0a924e2d2c419a813aeb2c4e878ea7400"
   integrity sha512-mQw+2fkQbALzQ7V0MY0IqdnXNOeTtP4r0lN9z7AAawCXgqea7bDii20AYrIBrFd/Hx0M2Ocz6S111CaFkUcb0Q==
 
 evp_bytestokey@^1.0.0, evp_bytestokey@^1.0.3:
@@ -14161,6 +14214,13 @@ tiny-secp256k1@=2.2.1:
   version "2.2.1"
   resolved "https://registry.npmjs.org/tiny-secp256k1/-/tiny-secp256k1-2.2.1.tgz"
   integrity sha512-/U4xfVqnVxJXN4YVsru0E6t5wVncu2uunB8+RVR40fYUxkKYUPS10f+ePQZgFBoE/Jbf9H1NBveupF2VmB58Ng==
+  dependencies:
+    uint8array-tools "0.0.7"
+
+tiny-secp256k1@^2.2.3:
+  version "2.2.4"
+  resolved "https://registry.yarnpkg.com/tiny-secp256k1/-/tiny-secp256k1-2.2.4.tgz#1d9e45c2facb8607847da71a0a3d9cb2fd027eb2"
+  integrity sha512-FoDTcToPqZE454Q04hH9o2EhxWsm7pOSpicyHkgTwKhdKWdsTUuqfP5MLq3g+VjAtl2vSx6JpXGdwA2qpYkI0Q==
   dependencies:
     uint8array-tools "0.0.7"
 

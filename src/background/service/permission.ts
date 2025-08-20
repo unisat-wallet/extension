@@ -1,13 +1,14 @@
 import { createPersistStore } from '@/background/utils';
-import { CHAINS_ENUM, INTERNAL_REQUEST_ORIGIN } from '@/shared/constant';
-import { PermissionService, ExtensionPersistStoreAdapter } from '@unisat/permission-service';
+import { INTERNAL_REQUEST_ORIGIN } from '@/shared/constant';
+import { ExtensionPersistStoreAdapter, PermissionService } from '@unisat/permission-service';
+import { ChainType } from '@unisat/wallet-types';
 
 // Export interfaces for compatibility
 export interface ConnectedSite {
   origin: string;
   icon: string;
   name: string;
-  chain: CHAINS_ENUM;
+  chain: ChainType;
   e?: number;
   isSigned: boolean;
   isTop: boolean;

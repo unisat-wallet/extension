@@ -1,13 +1,8 @@
-import { CHAINS_ENUM, PaymentChannelType } from './constant';
+import { AddressType, ChainType } from '@unisat/wallet-types';
 
-export enum AddressType {
-  P2PKH,
-  P2WPKH,
-  P2TR,
-  P2SH_P2WPKH,
-  M44_P2WPKH,
-  M44_P2TR
-}
+import { PaymentChannelType } from './constant';
+
+export { AddressType } from '@unisat/wallet-types';
 
 export enum NetworkType {
   MAINNET,
@@ -37,7 +32,7 @@ export enum CosmosSignDataType {
 export interface Chain {
   name: string;
   logo: string;
-  enum: CHAINS_ENUM;
+  enum: ChainType;
   network: string;
 }
 

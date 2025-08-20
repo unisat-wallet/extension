@@ -2,7 +2,6 @@ import { createContext, ReactNode, useContext } from 'react';
 
 import { AccountAsset } from '@/background/controller/wallet';
 import { ContactBookItem } from '@/background/service/contactBook';
-import { ToSignInput } from '@/background/service/keyring';
 import { ConnectedSite } from '@/background/service/permission';
 import { AddressFlagType, CHAINS_ENUM, ChainType } from '@/shared/constant';
 import { BabylonConfigV2 } from '@/shared/constant/babylon';
@@ -52,6 +51,7 @@ import {
   WebsiteResult
 } from '@/shared/types';
 import { ContactBookStore } from '@unisat/contact-book';
+import { ToSignInput } from '@unisat/keyring-service';
 import { AddressType, UnspentOutput } from '@unisat/wallet-sdk';
 import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
 

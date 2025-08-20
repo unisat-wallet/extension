@@ -2,20 +2,15 @@
 
 /* constants pool */
 import { t } from '@/shared/modules/i18n';
+import { KeyringType } from '@unisat/keyring-service';
+import { AddressType, ChainType, NetworkType } from '@unisat/wallet-types';
 
-import { AddressType, NetworkType, RestoreWalletType } from '../types';
+import { RestoreWalletType } from '../types';
 
-export type CHAINS_ENUM = ChainType;
+export { ChainType } from '@unisat/wallet-types';
 
-export const KEYRING_TYPE = {
-  HdKeyring: 'HD Key Tree',
-  SimpleKeyring: 'Simple Key Pair',
-  WatchAddressKeyring: 'Watch Address',
-  WalletConnectKeyring: 'WalletConnect',
-  Empty: 'Empty',
-  KeystoneKeyring: 'Keystone',
-  ColdWalletKeyring: 'Cold Wallet'
-};
+export { KeyringType as KEYRING_TYPE } from '@unisat/keyring-service';
+export { ChainType as CHAINS_ENUM } from '@unisat/wallet-types';
 
 export const KEYRING_CLASS = {
   PRIVATE_KEY: 'Simple Key Pair',
@@ -24,18 +19,18 @@ export const KEYRING_CLASS = {
 };
 
 export const KEYRING_TYPE_TEXT = {
-  [KEYRING_TYPE.HdKeyring]: 'Created by Mnemonic',
-  [KEYRING_TYPE.SimpleKeyring]: 'Imported by Private Key',
-  [KEYRING_TYPE.WatchAddressKeyring]: 'Watch Mode',
-  [KEYRING_TYPE.KeystoneKeyring]: 'Import from Keystone',
-  [KEYRING_TYPE.ColdWalletKeyring]: 'Cold Wallet'
+  [KeyringType.HdKeyring]: 'Created by Mnemonic',
+  [KeyringType.SimpleKeyring]: 'Imported by Private Key',
+  [KeyringType.WatchAddressKeyring]: 'Watch Mode',
+  [KeyringType.KeystoneKeyring]: 'Import from Keystone',
+  [KeyringType.ColdWalletKeyring]: 'Cold Wallet'
 };
 export const BRAND_ALIAN_TYPE_TEXT = {
-  [KEYRING_TYPE.HdKeyring]: 'Account',
-  [KEYRING_TYPE.SimpleKeyring]: 'Private Key',
-  [KEYRING_TYPE.WatchAddressKeyring]: 'Watch',
-  [KEYRING_TYPE.KeystoneKeyring]: 'Account',
-  [KEYRING_TYPE.ColdWalletKeyring]: 'Account'
+  [KeyringType.HdKeyring]: 'Account',
+  [KeyringType.SimpleKeyring]: 'Private Key',
+  [KeyringType.WatchAddressKeyring]: 'Watch',
+  [KeyringType.KeystoneKeyring]: 'Account',
+  [KeyringType.ColdWalletKeyring]: 'Account'
 };
 
 export const KEYRING_TYPES: {
@@ -213,15 +208,6 @@ export const getRestoreWallets = (): { value: RestoreWalletType; name: string; a
     ]
   }
 ];
-
-export enum ChainType {
-  BITCOIN_MAINNET = 'BITCOIN_MAINNET',
-  BITCOIN_TESTNET = 'BITCOIN_TESTNET',
-  BITCOIN_TESTNET4 = 'BITCOIN_TESTNET4',
-  BITCOIN_SIGNET = 'BITCOIN_SIGNET',
-  FRACTAL_BITCOIN_MAINNET = 'FRACTAL_BITCOIN_MAINNET',
-  FRACTAL_BITCOIN_TESTNET = 'FRACTAL_BITCOIN_TESTNET'
-}
 
 export const NETWORK_TYPES = [
   { value: NetworkType.MAINNET, label: 'LIVENET', name: 'livenet', validNames: [0, 'livenet', 'mainnet'] },
@@ -425,10 +411,10 @@ export const EVENTS = {
 };
 
 export const SORT_WEIGHT = {
-  [KEYRING_TYPE.HdKeyring]: 1,
-  [KEYRING_TYPE.SimpleKeyring]: 2,
-  [KEYRING_TYPE.WalletConnectKeyring]: 4,
-  [KEYRING_TYPE.WatchAddressKeyring]: 5
+  [KeyringType.HdKeyring]: 1,
+  [KeyringType.SimpleKeyring]: 2,
+  [KeyringType.WalletConnectKeyring]: 4,
+  [KeyringType.WatchAddressKeyring]: 5
 };
 
 export const COIN_NAME = 'BTC';

@@ -12,20 +12,16 @@ import {
   sessionService,
   walletApiService
 } from '@/background/service';
-import { DisplayedKeyring, Keyring } from '@/background/service/keyring';
 import {
   ADDRESS_TYPES,
   AddressFlagType,
   AUTO_LOCK_TIMES,
   BRAND_ALIAN_TYPE_TEXT,
-  CHAINS_ENUM,
   CHAINS_MAP,
-  ChainType,
   COIN_NAME,
   COIN_SYMBOL,
   DEFAULT_LOCKTIME_ID,
   EVENTS,
-  KEYRING_TYPE,
   KEYRING_TYPES,
   NETWORK_TYPES
 } from '@/shared/constant';
@@ -33,9 +29,9 @@ import { BabylonConfigV2 } from '@/shared/constant/babylon';
 import { COSMOS_CHAINS_MAP, CosmosChainInfo } from '@/shared/constant/cosmosChain';
 import eventBus from '@/shared/eventBus';
 import { runesUtils } from '@/shared/lib/runes-utils';
+import { t } from '@/shared/modules/i18n';
 import {
   Account,
-  AddressType,
   AddressUserToSignInput,
   BitcoinBalance,
   BRC20HistoryItem,
@@ -50,10 +46,11 @@ import {
 } from '@/shared/types';
 import { getChainInfo } from '@/shared/utils';
 import { psbtFromString } from '@/ui/utils/psbt-utils';
+import { ColdWalletKeyring, DisplayedKeyring, Keyring, KeyringType } from '@unisat/keyring-service';
 import { CAT_VERSION } from '@unisat/wallet-api';
+import { bitcoin, ECPair } from '@unisat/wallet-bitcoin';
 import { txHelpers, UnspentOutput, UTXO_DUST } from '@unisat/wallet-sdk';
 import { isValidAddress, publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
-import { bitcoin, ECPair } from '@unisat/wallet-sdk/lib/bitcoin-core';
 import { KeystoneKeyring } from '@unisat/wallet-sdk/lib/keyring';
 import {
   genPsbtOfBIP322Simple,
@@ -63,6 +60,7 @@ import {
 import { toPsbtNetwork } from '@unisat/wallet-sdk/lib/network';
 import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
 import { toXOnly } from '@unisat/wallet-sdk/lib/utils';
+import { AddressType, ChainType } from '@unisat/wallet-types';
 
 import { getDelegationsV2 } from '../service/babylon/api/getDelegationsV2';
 import { DelegationV2StakingState } from '../service/babylon/types/delegationsV2';
@@ -71,7 +69,6 @@ import { CosmosKeyring } from '../service/keyring/CosmosKeyring';
 import { ConnectedSite } from '../service/permission';
 import BaseController from './base';
 
-const stashKeyrings: Record<string, Keyring> = {};
 export type AccountAsset = {
   name: string;
   symbol: string;
@@ -329,7 +326,7 @@ export class WalletController extends BaseController {
   };
 
   createTmpKeyringWithPrivateKey = async (privateKey: string, addressType: AddressType) => {
-    const originKeyring = keyringService.createTmpKeyring(KEYRING_TYPE.SimpleKeyring, [privateKey]);
+    const originKeyring = keyringService.createTmpKeyring(KeyringType.SimpleKeyring, [privateKey]);
     const displayedKeyring = await keyringService.displayForKeyring(originKeyring, addressType, -1);
     preferenceService.setShowSafeNotice(true);
     return this.displayedKeyringToWalletKeyring(displayedKeyring, -1, false);
@@ -353,7 +350,7 @@ export class WalletController extends BaseController {
     }
 
     const opts = await tmpKeyring.serialize();
-    const originKeyring = keyringService.createTmpKeyring(KEYRING_TYPE.KeystoneKeyring, opts);
+    const originKeyring = keyringService.createTmpKeyring(KeyringType.KeystoneKeyring, opts);
     const displayedKeyring = await keyringService.displayForKeyring(originKeyring, addressType, -1);
     preferenceService.setShowSafeNotice(false);
     return this.displayedKeyringToWalletKeyring(displayedKeyring, -1, false);
@@ -407,7 +404,6 @@ export class WalletController extends BaseController {
     const addresses = accounts.map((acc) => acc.address);
     const publicKeys = accounts.map((acc) => acc.pubkey);
 
-    const ColdWalletKeyring = await import('../service/keyring/ColdWalletKeyring').then((m) => m.ColdWalletKeyring);
     const coldWalletKeyring = new ColdWalletKeyring({
       xpub,
       addresses,
@@ -513,7 +509,7 @@ export class WalletController extends BaseController {
     const networkType = this.getNetworkType();
     const addresses: string[] = [];
     const _keyring = keyringService.keyrings[keyring.index];
-    if (keyring.type === KEYRING_TYPE.HdKeyring || keyring.type === KEYRING_TYPE.KeystoneKeyring) {
+    if (keyring.type === KeyringType.HdKeyring || keyring.type === KeyringType.KeystoneKeyring) {
       const pathPubkey: { [path: string]: string } = {};
       ADDRESS_TYPES.filter((v) => v.displayIndex >= 0).forEach((v) => {
         let pubkey = pathPubkey[v.hdPath];
@@ -544,7 +540,7 @@ export class WalletController extends BaseController {
 
   signTransaction = async (type: string, from: string, psbt: bitcoin.Psbt, inputs: ToSignInput[]) => {
     const keyring = await keyringService.getKeyringForAccount(from, type);
-    return keyringService.signTransaction(keyring, psbt, inputs);
+    return keyringService.signTransaction(keyring, psbt, inputs as any);
   };
 
   formatOptionsToSignInputs = async (_psbt: string | bitcoin.Psbt, options?: SignPsbtOptions) => {
@@ -658,8 +654,8 @@ export class WalletController extends BaseController {
       if (autoFinalized !== false) autoFinalized = true;
     }
 
-    const isKeystone = keyring.type === KEYRING_TYPE.KeystoneKeyring;
-    const isColdWallet = keyring.type === KEYRING_TYPE.ColdWalletKeyring;
+    const isKeystone = keyring.type === KeyringType.KeystoneKeyring;
+    const isColdWallet = keyring.type === KeyringType.ColdWalletKeyring;
     let bip32Derivation: any = undefined;
 
     if (isKeystone) {
@@ -759,7 +755,7 @@ export class WalletController extends BaseController {
       return psbt;
     }
 
-    psbt = await keyringService.signTransaction(_keyring, psbt, toSignInputs);
+    psbt = await keyringService.signTransaction(_keyring, psbt, toSignInputs as any);
 
     if (autoFinalized) {
       toSignInputs.forEach((v) => {
@@ -800,33 +796,6 @@ export class WalletController extends BaseController {
     return keyringService.signData(account.pubkey, data, type);
   };
 
-  requestKeyring = (type: string, methodName: string, keyringId: number | null, ...params) => {
-    let keyring;
-    if (keyringId !== null && keyringId !== undefined) {
-      keyring = stashKeyrings[keyringId];
-    } else {
-      try {
-        keyring = this._getKeyringByType(type);
-      } catch {
-        const Keyring = keyringService.getKeyringClassForType(type);
-        keyring = new Keyring();
-      }
-    }
-    if (keyring[methodName]) {
-      return keyring[methodName].call(keyring, ...params);
-    }
-  };
-
-  private _getKeyringByType = (type: string): Keyring => {
-    const keyring = keyringService.getKeyringsByType(type)[0];
-
-    if (keyring) {
-      return keyring;
-    }
-
-    throw new Error(`No ${type} keyring found`);
-  };
-
   addContact = (data: ContactBookItem) => {
     contactBookService.addContact(data);
   };
@@ -839,7 +808,7 @@ export class WalletController extends BaseController {
     return contactBookService.getContactByAddress(address);
   };
 
-  getContactByAddressAndChain = (address: string, chain: CHAINS_ENUM) => {
+  getContactByAddressAndChain = (address: string, chain: ChainType) => {
     return contactBookService.getContactByAddressAndChain(address, chain);
   };
 
@@ -847,7 +816,7 @@ export class WalletController extends BaseController {
     return `${BRAND_ALIAN_TYPE_TEXT[type]} ${index}`;
   };
 
-  removeContact = (address: string, chain?: CHAINS_ENUM) => {
+  removeContact = (address: string, chain?: ChainType) => {
     if (chain) {
       contactBookService.removeContact(address, chain);
     } else {
@@ -1057,8 +1026,8 @@ export class WalletController extends BaseController {
     });
 
     const keyring = await this.getCurrentKeyring();
-    const isColdWallet = keyring?.type === KEYRING_TYPE.ColdWalletKeyring;
-    const isKeystone = keyring?.type === KEYRING_TYPE.KeystoneKeyring;
+    const isColdWallet = keyring?.type === KeyringType.ColdWalletKeyring;
+    const isKeystone = keyring?.type === KeyringType.KeystoneKeyring;
 
     this.setPsbtSignNonSegwitEnable(psbt, true);
     await this.signPsbt(psbt, toSignInputs, !isColdWallet && !isKeystone);
@@ -1099,8 +1068,8 @@ export class WalletController extends BaseController {
     });
 
     const keyring = await this.getCurrentKeyring();
-    const isColdWallet = keyring?.type === KEYRING_TYPE.ColdWalletKeyring;
-    const isKeystone = keyring?.type === KEYRING_TYPE.KeystoneKeyring;
+    const isColdWallet = keyring?.type === KeyringType.ColdWalletKeyring;
+    const isKeystone = keyring?.type === KeyringType.KeystoneKeyring;
 
     this.setPsbtSignNonSegwitEnable(psbt, true);
     await this.signPsbt(psbt, toSignInputs, !isColdWallet && !isKeystone);
@@ -1301,7 +1270,7 @@ export class WalletController extends BaseController {
       let pubkey: string;
       let address: string;
 
-      if (type === KEYRING_TYPE.ColdWalletKeyring) {
+      if (type === KeyringType.ColdWalletKeyring) {
         // For cold wallets, we might not have pubkey, so we use the address directly
         // The account might be just an address string for cold wallets
         if (typeof displayedKeyring.accounts[j] === 'string') {
@@ -1333,7 +1302,7 @@ export class WalletController extends BaseController {
       });
     }
     const hdPath =
-      type === KEYRING_TYPE.HdKeyring || type === KEYRING_TYPE.KeystoneKeyring ? displayedKeyring.keyring.hdPath : '';
+      type === KeyringType.HdKeyring || type === KeyringType.KeystoneKeyring ? displayedKeyring.keyring.hdPath : '';
     const alianName = preferenceService.getKeyringAlianName(
       key,
       initName ? `${KEYRING_TYPES[type].alianName} #${index + 1}` : ''
@@ -1355,7 +1324,7 @@ export class WalletController extends BaseController {
     const keyrings: WalletKeyring[] = [];
     for (let index = 0; index < displayedKeyrings.length; index++) {
       const displayedKeyring = displayedKeyrings[index];
-      if (displayedKeyring.type !== KEYRING_TYPE.Empty) {
+      if (displayedKeyring.type !== KeyringType.Empty) {
         const keyring = this.displayedKeyringToWalletKeyring(displayedKeyring, displayedKeyring.index);
         keyrings.push(keyring);
       }
@@ -1386,11 +1355,11 @@ export class WalletController extends BaseController {
 
     if (
       !displayedKeyrings[currentKeyringIndex] ||
-      displayedKeyrings[currentKeyringIndex].type === KEYRING_TYPE.Empty ||
+      displayedKeyrings[currentKeyringIndex].type === KeyringType.Empty ||
       !displayedKeyrings[currentKeyringIndex].accounts[0]
     ) {
       for (let i = 0; i < displayedKeyrings.length; i++) {
-        if (displayedKeyrings[i].type !== KEYRING_TYPE.Empty) {
+        if (displayedKeyrings[i].type !== KeyringType.Empty) {
           currentKeyringIndex = i;
           preferenceService.setCurrentKeyringIndex(currentKeyringIndex);
           break;
@@ -2303,7 +2272,7 @@ export class WalletController extends BaseController {
     const name = `${currentAccount.alianName}-${chainId}`;
     let privateKey;
 
-    if (currentAccount.type !== KEYRING_TYPE.KeystoneKeyring) {
+    if (currentAccount.type !== KeyringType.KeystoneKeyring) {
       privateKey = await keyring.exportAccount(currentAccount.pubkey);
     }
 
@@ -2394,6 +2363,14 @@ export class WalletController extends BaseController {
       throw new Error('path is required for Cosmos signing');
     }
 
+    const account = preferenceService.getCurrentAccount();
+    if (!account) throw new Error(t('no_current_account'));
+
+    const keyring = await keyringService.getKeyringForAccount(account.pubkey, account.type);
+    if (!keyring.genSignCosmosUr) {
+      throw new Error(t('current_keyring_does_not_support_gensigncosmosur'));
+    }
+
     const { requestId, signData, dataType, path, chainId, accountNumber, address } = cosmosSignRequest;
 
     const signRequest = {
@@ -2408,7 +2385,8 @@ export class WalletController extends BaseController {
       }
     };
 
-    return keyringService.generateSignCosmosUr(signRequest);
+    const result = await keyring.genSignCosmosUr(signRequest);
+    return result;
   };
 
   parseCosmosSignUr = async (type: string, cbor: string) => {
@@ -2420,8 +2398,14 @@ export class WalletController extends BaseController {
       throw new Error('CBOR data is required for parsing Cosmos signature');
     }
 
-    const result = await keyringService.parseSignCosmosUr(type, cbor);
-    return result;
+    const account = preferenceService.getCurrentAccount();
+    if (!account) throw new Error('no current account');
+
+    const keyring = await keyringService.getKeyringForAccount(account.pubkey, account.type);
+    if (!keyring.parseSignCosmosUr) {
+      throw new Error(t('current_keyring_does_not_support_parsesigncosmosur'));
+    }
+    return await keyring.parseSignCosmosUr(type, cbor);
   };
 
   cosmosSignData = async (chainId: string, signBytesHex: string) => {

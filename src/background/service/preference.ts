@@ -7,7 +7,6 @@ import eventBus from '@/shared/eventBus';
 import {
   Account,
   AddressTokenSummary,
-  AddressType,
   AppSummary,
   BitcoinBalance,
   Inscription,
@@ -16,6 +15,7 @@ import {
   TokenTransfer,
   TxHistoryItem
 } from '@/shared/types';
+import { AddressType } from '@unisat/wallet-types';
 
 import browser from '../webapi/browser';
 import { i18n, sessionService } from './index';
