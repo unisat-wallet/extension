@@ -1,13 +1,12 @@
 import { InputNumber, Switch } from 'antd';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { DEFAULT_BBN_GAS_LIMIT } from '@/background/service/keyring/CosmosKeyring';
-import { bbnDevnet } from '@/shared/constant/cosmosChain';
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { useBabylonConfig } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
+import { bbnDevnet, DEFAULT_BBN_GAS_LIMIT } from '@unisat/babylon-service';
 
 import { BottomModal } from '../BottomModal';
 import { Button } from '../Button';

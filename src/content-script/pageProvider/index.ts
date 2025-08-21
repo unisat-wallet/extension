@@ -2,7 +2,6 @@
 import { ethErrors, serializeError } from 'eth-rpc-errors';
 import { EventEmitter } from 'events';
 
-import { CosmosChainInfo } from '@/shared/constant/cosmosChain';
 import {
   RequestMethodGetBitcoinUtxosParams,
   RequestMethodGetInscriptionsParams,
@@ -16,6 +15,7 @@ import {
 } from '@/shared/types';
 import { objToUint8Array } from '@/shared/utils';
 import BroadcastChannelMessage from '@/shared/utils/message/broadcastChannelMessage';
+import { CosmosChainInfo } from '@unisat/babylon-service';
 
 import PushEventHandlers from './pushEventHandlers';
 import ReadyPromise from './readyPromise';

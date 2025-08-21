@@ -1,13 +1,13 @@
 import { useCallback } from 'react';
 
-import { KeystoneSignEnum } from '@/shared/constant/KeystoneSignType';
-import { COSMOS_CHAINS_MAP } from '@/shared/constant/cosmosChain';
 import { CosmosSignDataType } from '@/shared/types';
 import KeystoneSignBase, { KeystoneSignBaseProps } from '@/ui/components/Keystone/SignBase';
 import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { useBabylonConfig } from '@/ui/state/settings/hooks';
 import { useWallet } from '@/ui/utils';
+import { COSMOS_CHAINS_MAP } from '@unisat/babylon-service';
+import { KeystoneSignEnum } from '@unisat/keyring-service';
 
 interface Props {
   type: KeystoneSignEnum;

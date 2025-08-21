@@ -25,8 +25,6 @@ import {
   KEYRING_TYPES,
   NETWORK_TYPES
 } from '@/shared/constant';
-import { BabylonConfigV2 } from '@/shared/constant/babylon';
-import { COSMOS_CHAINS_MAP, CosmosChainInfo } from '@/shared/constant/cosmosChain';
 import eventBus from '@/shared/eventBus';
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { t } from '@/shared/modules/i18n';
@@ -45,6 +43,14 @@ import {
 } from '@/shared/types';
 import { getChainInfo } from '@/shared/utils';
 import { psbtFromString } from '@/ui/utils/psbt-utils';
+import {
+  BabylonConfigV2,
+  COSMOS_CHAINS_MAP,
+  CosmosChainInfo,
+  CosmosKeyring,
+  DelegationV2StakingState,
+  getDelegationsV2
+} from '@unisat/babylon-service';
 import {
   ColdWalletKeyring,
   DisplayedKeyring,
@@ -70,10 +76,7 @@ import {
 } from '@unisat/wallet-bitcoin';
 import { AddressType, ChainType } from '@unisat/wallet-types';
 
-import { getDelegationsV2 } from '../service/babylon/api/getDelegationsV2';
-import { DelegationV2StakingState } from '../service/babylon/types/delegationsV2';
 import { ContactBookItem } from '../service/contactBook';
-import { CosmosKeyring } from '../service/keyring/CosmosKeyring';
 import { ConnectedSite } from '../service/permission';
 import BaseController from './base';
 

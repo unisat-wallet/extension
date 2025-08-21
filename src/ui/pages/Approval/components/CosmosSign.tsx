@@ -1,7 +1,6 @@
 import { useEffect, useState } from 'react';
 
 import { KEYRING_TYPE } from '@/shared/constant';
-import { KeystoneSignEnum } from '@/shared/constant/KeystoneSignType';
 import { objToUint8Array } from '@/shared/utils';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { CopyableAddress } from '@/ui/components/CopyableAddress';
@@ -11,6 +10,7 @@ import KeystoneSignScreen from '@/ui/pages/Wallet/KeystoneSignScreen';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useBabylonConfig } from '@/ui/state/settings/hooks';
 import { useApproval, useWallet } from '@/ui/utils';
+import { KeystoneSignEnum } from '@unisat/keyring-service';
 
 interface Props {
   params: {

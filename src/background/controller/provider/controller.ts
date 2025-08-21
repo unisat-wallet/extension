@@ -9,9 +9,9 @@ import { ethErrors } from 'eth-rpc-errors';
 import BaseController from '../base';
 import wallet from '../wallet';
 
-import { encodeSecp256k1Signature, makeADR36AminoSignDoc, serializeSignDoc } from '@/background/service/keyring/CosmosKeyring';
 import { formatPsbtHex } from '@/ui/utils/psbt-utils';
 import { makeSignBytes } from '@cosmjs/proto-signing';
+import { encodeSecp256k1Signature, makeADR36AminoSignDoc, serializeSignDoc } from '@unisat/babylon-service';
 
 
 

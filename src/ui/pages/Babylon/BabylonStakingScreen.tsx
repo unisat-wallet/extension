@@ -1,8 +1,6 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
 import { ChainType } from '@/shared/constant';
-import { BabylonConfigV2, BabylonPhaseState } from '@/shared/constant/babylon';
-import { COSMOS_CHAINS_MAP } from '@/shared/constant/cosmosChain';
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { BabylonAddressSummary } from '@/shared/types';
 import { Button, Column, Content, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
@@ -14,6 +12,7 @@ import { useI18n } from '@/ui/hooks/useI18n';
 import { useBabylonConfig, useChain, useChainType } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { satoshisToAmount, useWallet } from '@/ui/utils';
+import { BabylonConfigV2, BabylonPhaseState, COSMOS_CHAINS_MAP } from '@unisat/babylon-service';
 
 import { useNavigate } from '../MainRoute';
 

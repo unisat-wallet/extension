@@ -1,7 +1,6 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { KEYRING_TYPE } from '@/shared/constant';
-import { KeystoneSignEnum } from '@/shared/constant/KeystoneSignType';
 import { TxType } from '@/shared/types';
 import { Button, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -22,6 +21,7 @@ import {
   usePrepareSendRunesCallback
 } from '@/ui/state/transactions/hooks';
 import { satoshisToAmount, useApproval, useWallet } from '@/ui/utils';
+import { KeystoneSignEnum } from '@unisat/keyring-service';
 
 import FeaturesSection from './components/FeaturesSection';
 import FeeSection from './components/FeeSection';

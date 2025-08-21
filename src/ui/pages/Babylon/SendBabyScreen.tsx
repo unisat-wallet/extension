@@ -1,7 +1,5 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { DEFAULT_BBN_GAS_LIMIT } from '@/background/service/keyring/CosmosKeyring';
-import { COSMOS_CHAINS_MAP } from '@/shared/constant/cosmosChain';
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { BabylonAddressSummary } from '@/shared/types';
 import { Button, Card, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
@@ -13,6 +11,7 @@ import { useAppDispatch, useAppSelector } from '@/ui/state/hooks';
 import { useBabylonConfig } from '@/ui/state/settings/hooks';
 import { NavigationSource, uiActions } from '@/ui/state/ui/reducer';
 import { isValidBech32Address, useWallet } from '@/ui/utils';
+import { COSMOS_CHAINS_MAP, DEFAULT_BBN_GAS_LIMIT } from '@unisat/babylon-service';
 
 import { NotSupportedLayout } from './BabylonStakingScreen';
 

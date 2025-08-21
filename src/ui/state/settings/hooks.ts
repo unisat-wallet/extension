@@ -2,11 +2,11 @@ import compareVersions from 'compare-versions';
 import { useCallback } from 'react';
 
 import { CHAINS_MAP, ChainType, VERSION } from '@/shared/constant';
-import { BABYLON_CONFIG_MAP } from '@/shared/constant/babylon';
 import { t } from '@/shared/modules/i18n';
 import { AddressType, CAT_VERSION, NetworkType } from '@/shared/types';
 import { useWallet } from '@/ui/utils';
 import i18n, { addResourceBundle } from '@/ui/utils/i18n';
+import { BABYLON_CONFIG_MAP } from '@unisat/babylon-service';
 import { getAddressType } from '@unisat/wallet-bitcoin';
 
 import { AppState } from '..';

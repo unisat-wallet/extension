@@ -1,6 +1,5 @@
 import { useState } from 'react';
 
-import { COSMOS_CHAINS_MAP } from '@/shared/constant/cosmosChain';
 import { BabylonTxInfo, CosmosSignDataType } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -14,6 +13,7 @@ import { NavigationSource, uiActions } from '@/ui/state/ui/reducer';
 import { colors } from '@/ui/theme/colors';
 import { spacing } from '@/ui/theme/spacing';
 import { useLocationState, useWallet } from '@/ui/utils';
+import { COSMOS_CHAINS_MAP } from '@unisat/babylon-service';
 
 import { useNavigate } from '../MainRoute';
 import CosmosSignScreen from '../Wallet/CosmosSignScreen';

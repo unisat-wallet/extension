@@ -4,7 +4,6 @@ import { AccountAsset } from '@/background/controller/wallet';
 import { ContactBookItem } from '@/background/service/contactBook';
 import { ConnectedSite } from '@/background/service/permission';
 import { AddressFlagType, CHAINS_ENUM, ChainType } from '@/shared/constant';
-import { BabylonConfigV2 } from '@/shared/constant/babylon';
 import {
   Account,
   AddressAlkanesTokenSummary,
@@ -50,6 +49,7 @@ import {
   WalletKeyring,
   WebsiteResult
 } from '@/shared/types';
+import { BabylonConfigV2 } from '@unisat/babylon-service';
 import { ContactBookStore } from '@unisat/contact-book';
 import { ToSignInput } from '@unisat/keyring-service';
 import { UnspentOutput } from '@unisat/tx-helpers';

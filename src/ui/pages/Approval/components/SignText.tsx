@@ -1,13 +1,13 @@
 import { useState } from 'react';
 
 import { KEYRING_TYPE } from '@/shared/constant';
-import { KeystoneSignEnum } from '@/shared/constant/KeystoneSignType';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { ColdWalletSignMessage } from '@/ui/components/ColdWallet';
 import WebsiteBar from '@/ui/components/WebsiteBar';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useApproval } from '@/ui/utils';
+import { KeystoneSignEnum } from '@unisat/keyring-service';
 
 import KeystoneSignScreen from '../../Wallet/KeystoneSignScreen';
 

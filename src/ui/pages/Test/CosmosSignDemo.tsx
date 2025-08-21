@@ -1,10 +1,10 @@
 import { useCallback, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { makeADR36AminoSignDoc, serializeSignDoc } from '@/background/service/keyring/CosmosKeyring';
 import { CosmosSignDataType } from '@/shared/types';
 import { Button, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
+import { makeADR36AminoSignDoc, serializeSignDoc } from '@unisat/babylon-service';
 
 import CosmosSignScreen from '../Wallet/CosmosSignScreen';
 
