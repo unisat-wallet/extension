@@ -12,8 +12,8 @@ import { useNavigate } from '@/ui/pages/MainRoute';
 import { useNetworkType } from '@/ui/state/settings/hooks';
 import { useRunesTx } from '@/ui/state/transactions/hooks';
 import { isValidAddress, useLocationState, useWallet } from '@/ui/utils';
-import { AddressType } from '@unisat/wallet-sdk';
-import { getAddressType } from '@unisat/wallet-sdk/lib/address';
+import { getAddressType } from '@unisat/wallet-bitcoin';
+import { AddressType } from '@unisat/wallet-types';
 
 import { SignPsbt } from '../Approval/components';
 

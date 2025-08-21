@@ -7,7 +7,7 @@ import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 import { spacing } from '@/ui/theme/spacing';
 import { useWallet } from '@/ui/utils/WalletContext';
-import { isValidAddress } from '@unisat/wallet-sdk/lib/address';
+import { isValidAddress } from '@unisat/wallet-bitcoin';
 
 const inputStyle = {
   backgroundColor: colors.black_muted,

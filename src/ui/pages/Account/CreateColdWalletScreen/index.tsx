@@ -1,6 +1,6 @@
 import { useState } from 'react';
 
-import { AddressType } from '@unisat/wallet-sdk';
+import { AddressType } from '@unisat/wallet-types';
 
 import { Step1, Step2, Step3 } from './components';
 import { ContextData } from './types';

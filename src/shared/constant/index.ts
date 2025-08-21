@@ -21,14 +21,12 @@ export const KEYRING_CLASS = {
 export const KEYRING_TYPE_TEXT = {
   [KeyringType.HdKeyring]: 'Created by Mnemonic',
   [KeyringType.SimpleKeyring]: 'Imported by Private Key',
-  [KeyringType.WatchAddressKeyring]: 'Watch Mode',
   [KeyringType.KeystoneKeyring]: 'Import from Keystone',
   [KeyringType.ColdWalletKeyring]: 'Cold Wallet'
 };
 export const BRAND_ALIAN_TYPE_TEXT = {
   [KeyringType.HdKeyring]: 'Account',
   [KeyringType.SimpleKeyring]: 'Private Key',
-  [KeyringType.WatchAddressKeyring]: 'Watch',
   [KeyringType.KeystoneKeyring]: 'Account',
   [KeyringType.ColdWalletKeyring]: 'Account'
 };
@@ -408,13 +406,6 @@ export const EVENTS = {
     INIT: 'WALLETCONNECT_INIT',
     INITED: 'WALLETCONNECT_INITED'
   }
-};
-
-export const SORT_WEIGHT = {
-  [KeyringType.HdKeyring]: 1,
-  [KeyringType.SimpleKeyring]: 2,
-  [KeyringType.WalletConnectKeyring]: 4,
-  [KeyringType.WatchAddressKeyring]: 5
 };
 
 export const COIN_NAME = 'BTC';

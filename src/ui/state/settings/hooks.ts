@@ -7,7 +7,7 @@ import { t } from '@/shared/modules/i18n';
 import { AddressType, CAT_VERSION, NetworkType } from '@/shared/types';
 import { useWallet } from '@/ui/utils';
 import i18n, { addResourceBundle } from '@/ui/utils/i18n';
-import { getAddressType } from '@unisat/wallet-sdk/lib/address';
+import { getAddressType } from '@unisat/wallet-bitcoin';
 
 import { AppState } from '..';
 import { useCurrentAccount } from '../accounts/hooks';

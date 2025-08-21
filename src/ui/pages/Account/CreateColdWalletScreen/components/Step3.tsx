@@ -8,7 +8,7 @@ import { useCreateColdWalletCallback } from '@/ui/state/global/hooks';
 import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
 import { ScanOutlined } from '@ant-design/icons';
-import { AddressType } from '@unisat/wallet-sdk';
+import { AddressType } from '@unisat/wallet-types';
 
 import { useNavigate } from '../../../MainRoute';
 import { DEFAULT_DISPLAY_COUNT, DEFAULT_HD_PATH, LOAD_MORE_BATCH_SIZE, cardStyle, footerStyle } from '../constants';

@@ -15,7 +15,7 @@ import { discoveryActions } from '@/ui/state/discovery/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useChainType, useNetworkType } from '@/ui/state/settings/hooks';
 import { useWallet } from '@/ui/utils';
-import { getAddressType } from '@unisat/wallet-sdk/lib/address';
+import { getAddressType } from '@unisat/wallet-bitcoin';
 
 import { useNavigate } from '../MainRoute';
 import { SwitchChainModal } from '../Settings/SwitchChainModal';

@@ -1,6 +1,6 @@
-import { AddressType, ToSignInput } from '@unisat/wallet-sdk';
-import { getAddressType } from '@unisat/wallet-sdk/lib/address';
-import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
+import { ToSignInput } from '@unisat/keyring-service';
+import { bitcoin, getAddressType } from '@unisat/wallet-bitcoin';
+import { AddressType } from '@unisat/wallet-types';
 
 const DUMMY_SCRIPTS = {
   P2TR_FINAL_SCRIPT_WITNESS:

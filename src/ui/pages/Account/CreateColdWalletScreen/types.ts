@@ -1,4 +1,4 @@
-import { AddressType } from '@unisat/wallet-sdk';
+import { AddressType } from '@unisat/wallet-types';
 
 // Main context data interface
 export interface ContextData {

@@ -40,26 +40,34 @@ import {
   NetworkType,
   PublicKeyUserToSignInput,
   SignPsbtOptions,
-  ToSignInput,
   UTXO,
   WalletKeyring
 } from '@/shared/types';
 import { getChainInfo } from '@/shared/utils';
 import { psbtFromString } from '@/ui/utils/psbt-utils';
-import { ColdWalletKeyring, DisplayedKeyring, Keyring, KeyringType } from '@unisat/keyring-service';
-import { CAT_VERSION } from '@unisat/wallet-api';
-import { bitcoin, ECPair } from '@unisat/wallet-bitcoin';
-import { txHelpers, UnspentOutput, UTXO_DUST } from '@unisat/wallet-sdk';
-import { isValidAddress, publicKeyToAddress, scriptPkToAddress } from '@unisat/wallet-sdk/lib/address';
-import { KeystoneKeyring } from '@unisat/wallet-sdk/lib/keyring';
 import {
+  ColdWalletKeyring,
+  DisplayedKeyring,
+  Keyring,
+  KeyringType,
+  KeystoneKeyring,
+  ToSignInput
+} from '@unisat/keyring-service';
+import * as txHelpers from '@unisat/tx-helpers';
+import { signMessageOfBIP322Simple, UnspentOutput } from '@unisat/tx-helpers';
+import { CAT_VERSION } from '@unisat/wallet-api';
+import {
+  bitcoin,
+  ECPair,
   genPsbtOfBIP322Simple,
   getSignatureFromPsbtOfBIP322Simple,
-  signMessageOfBIP322Simple
-} from '@unisat/wallet-sdk/lib/message';
-import { toPsbtNetwork } from '@unisat/wallet-sdk/lib/network';
-import { getAddressUtxoDust } from '@unisat/wallet-sdk/lib/transaction';
-import { toXOnly } from '@unisat/wallet-sdk/lib/utils';
+  isValidAddress,
+  publicKeyToAddress,
+  scriptPkToAddress,
+  toPsbtNetwork,
+  toXOnly,
+  UTXO_DUST
+} from '@unisat/wallet-bitcoin';
 import { AddressType, ChainType } from '@unisat/wallet-types';
 
 import { getDelegationsV2 } from '../service/babylon/api/getDelegationsV2';
@@ -447,7 +455,6 @@ export class WalletController extends BaseController {
       throw new Error('Invalid xpub format');
     }
 
-    const { publicKeyToAddress } = await import('@unisat/wallet-sdk/lib/address');
     const hdPublicKey = new bitcore.HDPublicKey(xpub);
     const networkType = this.getNetworkType();
     const accounts: { pubkey: string; address: string }[] = [];
@@ -1090,7 +1097,7 @@ export class WalletController extends BaseController {
     feeRate: number;
     outputValue?: number;
     enableRBF: boolean;
-    btcUtxos?: UnspentOutput[];
+    btcUtxos?: txHelpers.UnspentOutput[];
   }) => {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
@@ -1146,7 +1153,7 @@ export class WalletController extends BaseController {
     utxos: UTXO[];
     feeRate: number;
     enableRBF: boolean;
-    btcUtxos?: UnspentOutput[];
+    btcUtxos?: txHelpers.UnspentOutput[];
   }) => {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
@@ -1166,7 +1173,7 @@ export class WalletController extends BaseController {
       return Object.assign(v, { pubkey: account.pubkey });
     });
 
-    const toDust = getAddressUtxoDust(to);
+    const toDust = txHelpers.getAddressUtxoDust(to);
 
     assetUtxos.forEach((v) => {
       if (v.satoshis < toDust) {
@@ -1211,7 +1218,7 @@ export class WalletController extends BaseController {
     feeRate: number;
     outputValue: number;
     enableRBF: boolean;
-    btcUtxos?: UnspentOutput[];
+    btcUtxos?: txHelpers.UnspentOutput[];
   }) => {
     const account = preferenceService.getCurrentAccount();
     if (!account) throw new Error('no current account');
@@ -2385,7 +2392,7 @@ export class WalletController extends BaseController {
       }
     };
 
-    const result = await keyring.genSignCosmosUr(signRequest);
+    const result = await keyring.genSignCosmosUr(signRequest as any);
     return result;
   };
 

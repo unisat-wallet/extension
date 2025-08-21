@@ -3,7 +3,7 @@ import { Header } from '@/ui/components';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { usePushBitcoinTxCallback } from '@/ui/state/transactions/hooks';
 import { useLocationState } from '@/ui/utils';
-import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
+import { bitcoin } from '@unisat/wallet-bitcoin';
 
 import { SignPsbt } from '../Approval/components';
 import { useNavigate } from '../MainRoute';

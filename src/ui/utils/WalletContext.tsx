@@ -52,8 +52,9 @@ import {
 } from '@/shared/types';
 import { ContactBookStore } from '@unisat/contact-book';
 import { ToSignInput } from '@unisat/keyring-service';
-import { AddressType, UnspentOutput } from '@unisat/wallet-sdk';
-import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
+import { UnspentOutput } from '@unisat/tx-helpers';
+import { bitcoin } from '@unisat/wallet-bitcoin';
+import { AddressType } from '@unisat/wallet-types';
 
 export interface WalletController {
   openapi: {

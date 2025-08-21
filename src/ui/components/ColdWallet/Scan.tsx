@@ -11,7 +11,7 @@ import {
   type MsgSignResult,
   type TransactionSignResult
 } from '@unisat/animated-qr';
-import { AddressType } from '@unisat/wallet-sdk';
+import { AddressType } from '@unisat/wallet-types';
 import { BrowserQRCodeReader } from '@zxing/browser';
 import { BarcodeFormat, DecodeHintType } from '@zxing/library';
 

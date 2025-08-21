@@ -6,8 +6,8 @@ import { useTools } from '@/ui/components/ActionComponent';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { useBTCUnit } from '@/ui/state/settings/hooks';
 import { satoshisToBTC, sleep, useWallet } from '@/ui/utils';
-import { UnspentOutput } from '@unisat/wallet-sdk';
-import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
+import { UnspentOutput } from '@unisat/tx-helpers';
+import { bitcoin } from '@unisat/wallet-bitcoin';
 
 import { AppState } from '..';
 import { useAccountAddress, useCurrentAccount } from '../accounts/hooks';

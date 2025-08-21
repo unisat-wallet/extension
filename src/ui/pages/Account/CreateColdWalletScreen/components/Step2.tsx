@@ -5,7 +5,7 @@ import { ColdWalletScan } from '@/ui/components/ColdWallet';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 import { ColdWalletData, MsgSignResult, TransactionSignResult } from '@unisat/animated-qr';
-import { AddressType } from '@unisat/wallet-sdk';
+import { AddressType } from '@unisat/wallet-types';
 
 import { QR_SCANNER_SIZE } from '../constants';
 import { ContextData, Step2Props } from '../types';

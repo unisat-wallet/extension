@@ -11,7 +11,7 @@ import { useNavigate } from '@/ui/pages/MainRoute';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { usePushBitcoinTxCallback } from '@/ui/state/transactions/hooks';
 import { isValidAddress, useWallet } from '@/ui/utils';
-import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
+import { bitcoin } from '@unisat/wallet-bitcoin';
 
 import { SignPsbt } from '../Approval/components';
 

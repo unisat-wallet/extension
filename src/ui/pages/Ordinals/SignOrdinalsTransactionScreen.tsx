@@ -3,7 +3,7 @@ import { RawTxInfo, TxType } from '@/shared/types';
 import { Header } from '@/ui/components';
 import { usePushOrdinalsTxCallback } from '@/ui/state/transactions/hooks';
 import { useLocationState } from '@/ui/utils';
-import { bitcoin } from '@unisat/wallet-sdk/lib/bitcoin-core';
+import { bitcoin } from '@unisat/wallet-bitcoin';
 
 import { SignPsbt } from '../Approval/components';
 import { useNavigate } from '../MainRoute';
