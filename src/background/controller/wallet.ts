@@ -27,7 +27,6 @@ import {
 } from '@/shared/constant';
 import eventBus from '@/shared/eventBus';
 import { runesUtils } from '@/shared/lib/runes-utils';
-import { t } from '@/shared/modules/i18n';
 import {
   Account,
   AddressUserToSignInput,
@@ -51,6 +50,7 @@ import {
   DelegationV2StakingState,
   getDelegationsV2
 } from '@unisat/babylon-service';
+import { t } from '@unisat/i18n';
 import {
   ColdWalletKeyring,
   DisplayedKeyring,

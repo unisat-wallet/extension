@@ -1,6 +1,6 @@
 import zxcvbn from 'zxcvbn';
 
-import { t } from '@/shared/modules/i18n';
+import { t } from '@unisat/i18n';
 
 import { colors } from '../theme/colors';
 

@@ -1,4 +1,4 @@
-import { t } from '@/shared/modules/i18n';
+import { t } from '@unisat/i18n';
 
 import { SettingsAction, SettingsItemType } from './types';
 

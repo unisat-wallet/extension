@@ -1,5 +1,5 @@
-import { changeLanguage, initI18n, t } from '@/shared/modules/i18n';
 import { getCurrentLocale } from '@/ui/hooks/useI18n';
+import { changeLanguage, initI18n, t } from '@unisat/i18n';
 
 initI18n('en');
 

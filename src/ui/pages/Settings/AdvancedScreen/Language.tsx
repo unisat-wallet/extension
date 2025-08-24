@@ -1,9 +1,9 @@
 import { useNavigate } from 'react-router-dom';
 
-import { LOCALE_NAMES } from '@/shared/modules/i18n';
 import { Card, Icon, Row, Text } from '@/ui/components';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { fontSizes } from '@/ui/theme/font';
+import { LOCALE_NAMES } from '@unisat/i18n';
 
 export function LanguageCard() {
   const navigate = useNavigate();

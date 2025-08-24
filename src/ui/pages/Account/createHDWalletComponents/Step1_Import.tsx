@@ -3,7 +3,6 @@ import * as bip39 from 'bip39';
 import { useEffect, useMemo, useState } from 'react';
 
 import { OW_HD_PATH } from '@/shared/constant';
-import { t } from '@/shared/modules/i18n';
 import { AddressType, RestoreWalletType } from '@/shared/types';
 import { Button, Card, Column, Grid, Input, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -17,6 +16,7 @@ import {
 } from '@/ui/pages/Account/createHDWalletComponents/types';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useCreateAccountCallback } from '@/ui/state/global/hooks';
+import { t } from '@unisat/i18n';
 
 const getWords12Item = () => ({
   key: WordsType.WORDS_12,

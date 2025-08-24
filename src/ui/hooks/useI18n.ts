@@ -1,7 +1,7 @@
 import { useContext } from 'react';
 
-import { FALLBACK_LOCALE, getCurrentLocaleAsync, LOCALE_NAMES } from '@/shared/modules/i18n';
 import { I18nContext } from '@/ui/app/contexts/I18nContext';
+import { FALLBACK_LOCALE, getCurrentLocaleAsync, LOCALE_NAMES } from '@unisat/i18n';
 
 const defaultI18nContext = {
   t: (key: string) => key,

@@ -1,6 +1,6 @@
-import { t } from '@/shared/modules/i18n';
 import { RawTxInfo, TxType } from '@/shared/types';
 import { Header } from '@/ui/components';
+import { useI18n } from '@/ui/hooks/useI18n';
 import { usePushOrdinalsTxCallback } from '@/ui/state/transactions/hooks';
 import { useLocationState } from '@/ui/utils';
 import { bitcoin } from '@unisat/wallet-bitcoin';
@@ -16,6 +16,7 @@ export default function SignOrdinalsTransactionScreen() {
   const { rawTxInfo } = useLocationState<LocationState>();
   const navigate = useNavigate();
   const pushOrdinalsTx = usePushOrdinalsTxCallback();
+  const { t } = useI18n();
   return (
     <SignPsbt
       header={

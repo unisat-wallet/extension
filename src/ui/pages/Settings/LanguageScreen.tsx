@@ -1,8 +1,8 @@
 import { useCallback, useState } from 'react';
 
-import { LOCALE_NAMES, SUPPORTED_LOCALES } from '@/shared/modules/i18n';
 import { Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useI18n } from '@/ui/hooks/useI18n';
+import { LOCALE_NAMES, SUPPORTED_LOCALES } from '@unisat/i18n';
 
 export default function LanguageScreen() {
   const { t, locale: currentLocale, changeLocale } = useI18n();

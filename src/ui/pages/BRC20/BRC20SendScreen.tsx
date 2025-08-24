@@ -3,7 +3,6 @@ import BigNumber from 'bignumber.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { t } from '@/shared/modules/i18n';
 import { RawTxInfo, TokenBalance, TokenInfo, TokenTransfer, TxType } from '@/shared/types';
 import { Button, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -430,6 +429,7 @@ function Step3({
   contextData: ContextData;
   updateContextData: (params: UpdateContextDataParams) => void;
 }) {
+  const { t } = useI18n();
   const pushOrdinalsTx = usePushOrdinalsTxCallback();
   const navigate = useNavigate();
   return (

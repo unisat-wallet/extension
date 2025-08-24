@@ -2,6 +2,8 @@ import log from 'loglevel';
 import React, { createContext, useEffect, useState } from 'react';
 
 import { getCurrentLocale } from '@/background/service/i18n';
+import { useWallet } from '@/ui/utils';
+import { LoadingOutlined } from '@ant-design/icons';
 import {
   BROWSER_TO_APP_LOCALE_MAP,
   changeLanguage,
@@ -10,9 +12,7 @@ import {
   initI18n,
   LOCALE_NAMES,
   t as translate
-} from '@/shared/modules/i18n';
-import { useWallet } from '@/ui/utils';
-import { LoadingOutlined } from '@ant-design/icons';
+} from '@unisat/i18n';
 
 interface I18nContextType {
   t: (key: string, substitutions?: string | string[]) => string;

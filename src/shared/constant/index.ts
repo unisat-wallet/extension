@@ -1,7 +1,7 @@
 /* eslint-disable quotes */
 
 /* constants pool */
-import { t } from '@/shared/modules/i18n';
+import { t } from '@unisat/i18n';
 import { KeyringType } from '@unisat/keyring-service';
 import { AddressType, ChainType, NetworkType } from '@unisat/wallet-types';
 
