@@ -3345,27 +3345,10 @@
   dependencies:
     loglevel "^1.8.1"
 
-"@unisat/keyring-service@0.1.19":
-  version "0.1.19"
-  resolved "https://registry.yarnpkg.com/@unisat/keyring-service/-/keyring-service-0.1.19.tgz#4d9599ae2829b418ae7e2df0d7578b8713c76f7a"
-  integrity sha512-Kp7/tl4raSXZ7BgVyMnVEa22NEP/sBskEikAZfEDIJrDSg8wyi5Zk4v2/iR1syqPyLmN1SeUYqTSb6ImMjytNA==
-  dependencies:
-    "@keystonehq/keystone-sdk" "^0.3.0"
-    "@metamask/obs-store" "^7.0.0"
-    "@unisat/wallet-bitcoin" "0.1.8"
-    "@unisat/wallet-types" "0.1.4"
-    bip39 "^3.1.0"
-    bitcoinjs-lib "^6.1.5"
-    bitcore-lib "^10.0.0"
-    browser-passworder "^2.0.3"
-    bs58check "^3.0.1"
-    events "^3.3.0"
-    hdkey "^2.1.0"
-
-"@unisat/keyring-service@0.1.20":
-  version "0.1.20"
-  resolved "https://registry.yarnpkg.com/@unisat/keyring-service/-/keyring-service-0.1.20.tgz#3f9a127afa29e716bb974f41761c79abb8b0efe6"
-  integrity sha512-oDlola9+hXZS5ZTxxcF0UVD8Ypcm2TYAvLaLCFUmEINK4XQjJqV6HsUyyXZvm1NMRVQvPcxVCkGySyoZK4mEAQ==
+"@unisat/keyring-service@0.1.22":
+  version "0.1.22"
+  resolved "https://registry.yarnpkg.com/@unisat/keyring-service/-/keyring-service-0.1.22.tgz#ca37f68369f210a163c02fae09184c07bb688140"
+  integrity sha512-xAUQKYMdgyfBqdcSC8NjnNetTKkFseXStjnoIL+1CgubcwsY5T/9f1FkjLrWY9QhCxUECVLio2dNsTWVgag7Iw==
   dependencies:
     "@keystonehq/keystone-sdk" "^0.3.0"
     "@metamask/obs-store" "^7.0.0"
@@ -3387,21 +3370,21 @@
     "@unisat/wallet-types" "0.1.4"
     lru-cache "^6.0.0"
 
-"@unisat/tx-helpers@^0.1.6":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@unisat/tx-helpers/-/tx-helpers-0.1.6.tgz#30a8ee41999492b307af617083876f2df3b5b9c4"
-  integrity sha512-3yiLiNwjMC4iU9AoVQHHcpd9KK7k8xjrkgo13r7RZdSO3kwVGCvqj0sveYVxpRxFXGtlsLayjZzuqGnlf3Rx3A==
+"@unisat/tx-helpers@^0.1.8":
+  version "0.1.8"
+  resolved "https://registry.yarnpkg.com/@unisat/tx-helpers/-/tx-helpers-0.1.8.tgz#58594216e1fdf31424864412d11a653fb02ff6de"
+  integrity sha512-UnZ81kvDDmpUkUAEDU1hT0MjP62BD2h/uD6kDkUL5E+o4BW5uc0s6K800INnEaaryjux3prwNKSTStezqgvSpg==
   dependencies:
-    "@unisat/keyring-service" "0.1.20"
+    "@unisat/keyring-service" "0.1.22"
     "@unisat/wallet-bitcoin" "0.1.8"
     "@unisat/wallet-types" "0.1.4"
     big-integer "^1.6.52"
     bignumber.js "^9.1.2"
 
-"@unisat/wallet-api@0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@unisat/wallet-api/-/wallet-api-0.1.4.tgz#02c7d0a80705830204f92a62c69c06bc319e76f2"
-  integrity sha512-bB5Vufxug96dNIL2T8TJEBVUv3v10EZutQ2W3xJGPNT4794z55eU5iSPLvdnUYshf1bhaQZZYzoM7S2HZukk+A==
+"@unisat/wallet-api@0.1.6":
+  version "0.1.6"
+  resolved "https://registry.yarnpkg.com/@unisat/wallet-api/-/wallet-api-0.1.6.tgz#e0a3d2940d9323a287deba9ef5f55020d46887bd"
+  integrity sha512-hpuYB8Q9lQ6Nagf5znkH4n34lK59E7cy0HuQnkIMq4z8s7PYUNpzfKZHw5VdJzn/n9bgwscksjTeCcLghFMajA==
   dependencies:
     "@unisat/wallet-types" "0.1.4"
 
