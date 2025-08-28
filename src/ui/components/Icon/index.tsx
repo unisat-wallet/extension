@@ -120,7 +120,12 @@ export const svgRegistry = {
 
   history_send: '/images/icons/history_send.svg',
   history_receive: '/images/icons/history_receive.svg',
-  history_inscribe: '/images/icons/history_inscribe.svg'
+  history_inscribe: '/images/icons/history_inscribe.svg',
+
+  swap_swap: '/images/icons/swap_swap.svg',
+  swap_deposit: '/images/icons/swap_deposit.svg',
+  swap_withdraw: '/images/icons/swap_withdraw.svg',
+  swap_send: '/images/icons/swap_send.svg'
 };
 
 const iconImgList: Array<IconTypes> = [

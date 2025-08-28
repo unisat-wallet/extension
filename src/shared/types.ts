@@ -293,6 +293,7 @@ export interface TokenBalance {
   selfMint: boolean;
   displayName?: string;
   tag?: string;
+  swapBalance?: string;
 }
 
 export interface Arc20Balance {

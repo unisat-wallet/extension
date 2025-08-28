@@ -2387,5 +2387,23 @@
   },
   "history_pending": {
     "message": "Ожидание"
+  },
+  "brc20_in_wallet": {
+    "message": "В кошельке"
+  },
+  "brc20_on_pizzaswap": {
+    "message": "В PizzaSwap"
+  },
+  "swap_swap": {
+    "message": "Обмен"
+  },
+  "swap_deposit": {
+    "message": "Депозит"
+  },
+  "swap_withdraw": {
+    "message": "Вывод"
+  },
+  "swap_send": {
+    "message": "Отправить"
   }
 }

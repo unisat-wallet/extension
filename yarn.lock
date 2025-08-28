@@ -3381,10 +3381,10 @@
     big-integer "^1.6.52"
     bignumber.js "^9.1.2"
 
-"@unisat/wallet-api@0.1.6":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@unisat/wallet-api/-/wallet-api-0.1.6.tgz#e0a3d2940d9323a287deba9ef5f55020d46887bd"
-  integrity sha512-hpuYB8Q9lQ6Nagf5znkH4n34lK59E7cy0HuQnkIMq4z8s7PYUNpzfKZHw5VdJzn/n9bgwscksjTeCcLghFMajA==
+"@unisat/wallet-api@0.1.7":
+  version "0.1.7"
+  resolved "https://registry.yarnpkg.com/@unisat/wallet-api/-/wallet-api-0.1.7.tgz#6dffd013a1ceabb88c2e3aaab8482fe15e6013f6"
+  integrity sha512-JkQKCIKvmlk0l8fecD19a1s5Bw4Kgz/ajMajmsDELE7OTNpkxH4jIsDI+au8BtFzBXY1HtHHElPLCTyADfXEcg==
   dependencies:
     "@unisat/wallet-types" "0.1.4"
 

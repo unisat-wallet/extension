@@ -2390,5 +2390,23 @@
   },
   "history_pending": {
     "message": "保留中"
+  },
+  "brc20_in_wallet": {
+    "message": "ウォレット内"
+  },
+  "brc20_on_pizzaswap": {
+    "message": "PizzaSwap内"
+  },
+  "swap_swap": {
+    "message": "スワップ"
+  },
+  "swap_deposit": {
+    "message": "預け入れ"
+  },
+  "swap_withdraw": {
+    "message": "引き出し"
+  },
+  "swap_send": {
+    "message": "送信"
   }
 }

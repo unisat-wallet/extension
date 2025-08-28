@@ -2393,5 +2393,23 @@
   },
   "history_pending": {
     "message": "En attente"
+  },
+  "brc20_in_wallet": {
+    "message": "Dans le Portefeuille"
+  },
+  "brc20_on_pizzaswap": {
+    "message": "Dans PizzaSwap"
+  },
+  "swap_swap": {
+    "message": "Échanger"
+  },
+  "swap_deposit": {
+    "message": "Déposer"
+  },
+  "swap_withdraw": {
+    "message": "Retirer"
+  },
+  "swap_send": {
+    "message": "Envoyer"
   }
 }

@@ -2305,5 +2305,23 @@
   },
   "history_pending": {
     "message": "待处理"
+  },
+  "brc20_in_wallet": {
+    "message": "在钱包中"
+  },
+  "brc20_on_pizzaswap": {
+    "message": "在PizzaSwap中"
+  },
+  "swap_swap": {
+    "message": "兑换"
+  },
+  "swap_deposit": {
+    "message": "存入"
+  },
+  "swap_withdraw": {
+    "message": "取出"
+  },
+  "swap_send": {
+    "message": "发送"
   }
 }

@@ -180,6 +180,21 @@ const $viewPresets = {
     marginRight: 5,
     marginLeft: 5,
     alignItems: 'center'
+  }) as CSSProperties,
+
+  swap: Object.assign({}, $baseViewStyle, {
+    backgroundColor: '#FFFFFF1F',
+    minWidth: 60,
+    height: 20,
+    flexDirection: 'column',
+    borderRadius: 8,
+    borderWidth: 0,
+    padding: 2,
+    marginRight: 5,
+    marginLeft: 5,
+    alignItems: 'center',
+    paddingTop: 5,
+    paddingBottom: 5
   }) as CSSProperties
 };
 
@@ -218,6 +233,9 @@ const $hoverViewPresets: Record<Presets, CSSProperties> = {
   },
   minimal2: {
     backgroundColor: 'rgba(255, 124, 42, 1)'
+  },
+  swap: {
+    backgroundColor: '#383535'
   }
 };
 
@@ -245,11 +263,11 @@ const $textPresets: Record<Presets, CSSProperties> = {
   defaultV2: Object.assign({}, $baseTextStyle, {}),
   primaryV2: Object.assign({}, $baseTextStyle, { color: colors.black }),
   home: Object.assign({}, $baseTextStyle, {
-    color: colors.textDim,
+    color: colors.white,
     fontSize: 12
   }),
   homeGold: Object.assign({}, $baseTextStyle, {
-    color: colors.textDim,
+    color: colors.white,
     fontSize: 12
   }),
   minimal: Object.assign({}, $baseTextStyle, {
@@ -258,6 +276,10 @@ const $textPresets: Record<Presets, CSSProperties> = {
   }),
   minimal2: Object.assign({}, $baseTextStyle, {
     color: '#FFFFFF',
+    fontSize: 12
+  }),
+  swap: Object.assign({}, $baseTextStyle, {
+    color: 'rgba(255, 255, 255, 0.85)',
     fontSize: 12
   })
 };
@@ -324,11 +346,11 @@ export function Button(props: ButtonProps) {
     );
   }
 
-  if (preset === 'home' || preset === 'homeGold') {
+  if (preset === 'home' || preset === 'homeGold' || preset === 'swap') {
     if (disabled) {
       $viewStyle.backgroundColor = 'rgba(255,255,255,0.15)';
     }
-    const $textStyle = Object.assign({}, $textPresets[preset], { color: 'white' }, $textStyleOverride);
+    const $textStyle = Object.assign({}, $textPresets[preset], $textStyleOverride);
     return (
       <div
         style={$viewStyle}
@@ -338,7 +360,10 @@ export function Button(props: ButtonProps) {
         {icon && (
           <Icon
             icon={icon}
-            style={Object.assign({ backgroundColor: colors.white }, iconSize ? iconSize : {})}
+            style={Object.assign(
+              { backgroundColor: $textPresets[preset].color || colors.white },
+              iconSize ? iconSize : {}
+            )}
             containerStyle={iconSize ? iconSize : {}}
           />
         )}

@@ -1,3 +1,4 @@
+import BigNumber from 'bignumber.js';
 import { useState } from 'react';
 
 import { AddressTokenSummary, TickPriceItem, TokenBalance } from '@/shared/types';
@@ -5,12 +6,10 @@ import { TickPriceChange, TickUsd } from '@/ui/components/TickUsd';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useWallet } from '@/ui/utils';
-import { LoadingOutlined } from '@ant-design/icons';
 
 import { BRC20Ticker } from '../BRC20Ticker';
 import { Card } from '../Card';
 import { Column } from '../Column';
-import { Icon } from '../Icon';
 import { Row } from '../Row';
 import Tag from '../Tag';
 import { Text } from '../Text';
@@ -26,12 +25,11 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
   const {
     showPrice,
     price,
-    tokenBalance: { ticker, overallBalance, transferableBalance, selfMint, displayName, tag },
+    tokenBalance: { ticker, overallBalance, transferableBalance, selfMint, displayName, tag, swapBalance },
     onClick
   } = props;
 
   const account = useCurrentAccount();
-  const [detailVisible, setDetailVisible] = useState(false);
   const [tokenSummary, setTokenSummary] = useState<AddressTokenSummary>();
   const [loading, setLoading] = useState(false);
   const wallet = useWallet();
@@ -66,6 +64,12 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
   }
   _names = _names.splice(0, 4);
 
+  const onPizzaSwapBalance = swapBalance;
+  const inWalletBalance = overallBalance;
+  const totalBalance = onPizzaSwapBalance
+    ? new BigNumber(inWalletBalance).plus(new BigNumber(onPizzaSwapBalance!)).toString()
+    : inWalletBalance;
+
   return (
     <Card
       style={{
@@ -86,35 +90,10 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
           </Column>
 
           <Row itemsCenter fullY gap="zero">
-            <Text text={overallBalance} size="xs" digital />
-            <Row style={{ width: 30, height: 20 }} itemsCenter justifyCenter>
-              <Icon
-                icon={detailVisible ? 'up' : 'down'}
-                onClick={(e) => {
-                  setDetailVisible(!detailVisible);
-                  e.stopPropagation();
-                  e.nativeEvent.stopImmediatePropagation();
-
-                  if (loading) {
-                    return;
-                  }
-                  if (!tokenSummary) {
-                    setLoading(true);
-                    wallet
-                      .getBRC20Summary(account.address, ticker)
-                      .then((tokenSummary) => {
-                        setTokenSummary(tokenSummary);
-                      })
-                      .finally(() => {
-                        setLoading(false);
-                      });
-                  }
-                }}
-                size={10}
-                color="textDim"></Icon>
-            </Row>
+            <Text text={totalBalance} size="xs" digital />
           </Row>
         </Row>
+
         {showPrice && (
           <Row justifyBetween mt={'xs'}>
             <Row>
@@ -126,53 +105,43 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
             </Row>
             <Row>
               {price && price.curPrice > 0 ? (
-                <TickUsd price={price} balance={overallBalance} />
+                <TickUsd price={price} balance={totalBalance} />
               ) : (
                 <Text text="$-" color="textDim" size="xs" />
               )}
             </Row>
           </Row>
         )}
+
         {(tag || selfMint) && (
           <Row mt={'sm'}>
             {tag && <Tag type={tag} />}
             {selfMint && <Tag type="self-issuance" />}
           </Row>
         )}
-
-        {detailVisible ? (
-          loading ? (
-            <Column style={{ minHeight: 130 }} itemsCenter justifyCenter>
-              <Icon>
-                <LoadingOutlined />
-              </Icon>
-            </Column>
-          ) : (
-            <Column>
-              <Row style={{ borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }} mt="sm" />
-              <Row justifyBetween>
-                <Text text={t('transferable')} color="textDim" size="xs" />
-                <Text text={transferableBalance} size="xs" digital />
-              </Row>
-              <Column>
-                <Row>
-                  {_names.map((v, index) => (
-                    <Card
-                      key={'transfer_' + index}
-                      style={{ width: 68, height: 68 }}
-                      bg={v === 'Transfer' ? 'brc20_transfer' : v === 'Deploy' ? 'brc20_deploy' : 'brc20_other'}>
-                      <Column gap="zero">
-                        <Text text={v} size={v === 'Transfer' ? 'sm' : v === 'Deploy' ? 'sm' : 'md'} />
-                        {v === 'Transfer' ? (
-                          <Text text={`(${_amounts[index]})`} size="xxs" textCenter wrap digital />
-                        ) : null}
-                      </Column>
-                    </Card>
-                  ))}
-                </Row>
+        {swapBalance ? (
+          <Column>
+            <Row style={{ borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }} mt="sm" />
+            <Row fullY justifyBetween justifyCenter>
+              <Column fullY justifyCenter>
+                <Text text={t('brc20_in_wallet')} color="textDim" size="xs" />
               </Column>
-            </Column>
-          )
+
+              <Row itemsCenter fullY gap="zero">
+                <Text text={inWalletBalance} size="xs" digital />
+              </Row>
+            </Row>
+
+            <Row fullY justifyBetween justifyCenter>
+              <Column fullY justifyCenter>
+                <Text text={t('brc20_on_pizzaswap')} color="textDim" size="xs" />
+              </Column>
+
+              <Row itemsCenter fullY gap="zero">
+                <Text text={onPizzaSwapBalance} size="xs" digital />
+              </Row>
+            </Row>
+          </Column>
         ) : null}
       </Column>
     </Card>
