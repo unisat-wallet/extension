@@ -1,5 +1,11 @@
 # UniSat Wallet Release Notes
 
+## v1.7.3
+
+New Features
+
+- Added support for BRC 2.0
+
 ## v1.7.2
 
 New Features
