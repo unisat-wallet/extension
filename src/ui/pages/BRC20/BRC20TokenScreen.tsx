@@ -33,6 +33,9 @@ enum TabKey {
   HISTORY = 'history'
 }
 
+const PIZZASWAP_MODULE_ADDRESS = '6a2095ee19329a210f8d5ded9b5cfa55b74fdd3b1e9af1e202072db6d1be82d45bfd';
+const BRIDGE_BURN_ADDRESS = '6a20ada13e56859a2ab2eeb93cb4dc19c6e3f5e94d0ed38ed95a30ddc43711a0ff14';
+
 function BRC20TokenHistory(props: { ticker: string }) {
   const wallet = useWallet();
   const { t } = useI18n();
@@ -86,6 +89,9 @@ function BRC20TokenHistory(props: { ticker: string }) {
           if (item.type === 'send') {
             mainTitle = t('brc20_history_type_send');
             subTitle = t('brc20_history_to') + ' ' + shortAddress(item.to);
+            if (item.to === PIZZASWAP_MODULE_ADDRESS) {
+              subTitle = t('brc20_history_to') + ' ' + 'PizzaSwap';
+            }
             icon = 'history_send';
           } else if (item.type === 'single-step-transfer') {
             if (item.from === account.address) {
