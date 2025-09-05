@@ -48,10 +48,13 @@ export function PriceProvider({ children }: { children: ReactNode }) {
     }
     isRequestingCoinPrice = true;
     setIsLoadingCoinPrice(true);
-    refreshCoinPriceTime = Date.now();
+
     wallet
       .getCoinPrice()
-      .then(setCoinPrice)
+      .then((res) => {
+        refreshCoinPriceTime = Date.now();
+        setCoinPrice(res);
+      })
       .catch((e) => {
         setCoinPrice({
           btc: 0,
