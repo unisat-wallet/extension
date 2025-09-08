@@ -3362,6 +3362,23 @@
     events "^3.3.0"
     hdkey "^2.1.0"
 
+"@unisat/keyring-service@0.1.23":
+  version "0.1.23"
+  resolved "https://registry.yarnpkg.com/@unisat/keyring-service/-/keyring-service-0.1.23.tgz#07419c37dd35c6dc10db39a5022a94adce50a97f"
+  integrity sha512-ccLGp1K/ontyC33RV+W9dtgZZDJP+tiDiPDjqAKsMvdxvZeERmigDpSOopAGShPxANd6YdWQddgZf58lWYnn5A==
+  dependencies:
+    "@keystonehq/keystone-sdk" "^0.3.0"
+    "@metamask/obs-store" "^7.0.0"
+    "@unisat/wallet-bitcoin" "0.1.8"
+    "@unisat/wallet-types" "0.1.4"
+    bip39 "^3.1.0"
+    bitcoinjs-lib "^6.1.5"
+    bitcore-lib "^10.0.0"
+    browser-passworder "^2.0.3"
+    bs58check "^3.0.1"
+    events "^3.3.0"
+    hdkey "^2.1.0"
+
 "@unisat/permission-service@0.1.8":
   version "0.1.8"
   resolved "https://registry.yarnpkg.com/@unisat/permission-service/-/permission-service-0.1.8.tgz#36c86f39a6757e2b247a7cfa108fec6cd50d65c4"

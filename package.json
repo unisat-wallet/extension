@@ -61,7 +61,7 @@
     "@types/react-dom": "^18.0.4",
     "@unisat/animated-qr": "1.0.1",
     "@unisat/contact-book": "0.1.6",
-    "@unisat/keyring-service": "0.1.22",
+    "@unisat/keyring-service": "0.1.23",
     "@unisat/permission-service": "0.1.8",
     "@unisat/wallet-api": "0.1.8",
     "@unisat/wallet-bitcoin": "^0.1.8",
