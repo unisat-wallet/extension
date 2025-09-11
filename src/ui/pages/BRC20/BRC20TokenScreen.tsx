@@ -410,15 +410,19 @@ export default function BRC20TokenScreen() {
   }, [activeTab, deployInscription, enableHistory, tokenSummary]);
 
   const onPizzaSwapBalance = tokenSummary?.tokenBalance?.swapBalance;
+  const onProgBalance = tokenSummary?.tokenBalance?.progBalance;
   const inWalletBalance = tokenSummary?.tokenBalance?.overallBalance;
   const totalBalance = useMemo(() => {
     if (!inWalletBalance) {
       return '--';
     }
-    return onPizzaSwapBalance
-      ? new BigNumber(inWalletBalance).plus(new BigNumber(onPizzaSwapBalance!)).toString()
-      : inWalletBalance;
-  }, [onPizzaSwapBalance, inWalletBalance]);
+    return new BigNumber(inWalletBalance)
+      .plus(new BigNumber(onPizzaSwapBalance || 0))
+      .plus(new BigNumber(onProgBalance || 0))
+      .toString();
+  }, [onPizzaSwapBalance, onProgBalance, inWalletBalance]);
+
+  const hasOutWalletBalance = (onPizzaSwapBalance || onProgBalance || '0')! !== '0';
 
   return (
     <Layout>
@@ -457,7 +461,7 @@ export default function BRC20TokenScreen() {
             </Row>
           </Column>
 
-          {tokenSummary.tokenBalance.swapBalance ? (
+          {hasOutWalletBalance ? (
             <Column style={{ backgroundColor: '#FFFFFF14', borderRadius: 12 }} px="md" py="md">
               <Row fullY justifyBetween justifyCenter>
                 <Column fullY justifyCenter>
@@ -471,73 +475,91 @@ export default function BRC20TokenScreen() {
 
               <Line />
 
-              <Row fullY justifyBetween justifyCenter>
-                <Column fullY justifyCenter>
-                  <Text text={t('brc20_on_pizzaswap')} color="textDim" size="xs" />
-                </Column>
+              {onProgBalance ? (
+                <Row fullY justifyBetween justifyCenter>
+                  <Column fullY justifyCenter>
+                    <Text text={t('brc20_on_prog')} color="textDim" size="xs" />
+                  </Column>
 
-                <Row itemsCenter fullY gap="zero">
-                  <Text text={onPizzaSwapBalance} size="xs" digital />
+                  <Row itemsCenter fullY gap="zero">
+                    <Text text={onProgBalance} size="xs" digital />
+                  </Row>
                 </Row>
-              </Row>
+              ) : null}
 
-              <Row>
-                <Button
-                  text={t('swap_swap')}
-                  preset="swap"
-                  icon="swap_swap"
-                  onClick={(e) => {
-                    window.open(`https://pizzaswap.io/swap?t0=${encodeURIComponent(ticker)}`);
-                  }}
-                  style={{
-                    paddingTop: 5
-                  }}
-                  iconSize={{
-                    width: 12,
-                    height: 12
-                  }}
-                  full
-                />
-                <Button
-                  text={t('swap_deposit')}
-                  preset="swap"
-                  icon="swap_deposit"
-                  onClick={(e) => {
-                    window.open(`https://pizzaswap.io/swap?tab=deposit`);
-                  }}
-                  iconSize={{
-                    width: 12,
-                    height: 12
-                  }}
-                  full
-                />
-                <Button
-                  text={t('swap_withdraw')}
-                  preset="swap"
-                  icon="swap_withdraw"
-                  onClick={(e) => {
-                    window.open(`https://pizzaswap.io/swap?tab=withdraw&t=${encodeURIComponent(ticker)}`);
-                  }}
-                  iconSize={{
-                    width: 12,
-                    height: 12
-                  }}
-                  full
-                />
-                <Button
-                  text={t('swap_send')}
-                  preset="swap"
-                  icon="swap_send"
-                  onClick={(e) => {
-                    window.open(`https://pizzaswap.io/swap/assets/account`);
-                  }}
-                  iconSize={{
-                    width: 12,
-                    height: 12
-                  }}
-                  full
-                />
-              </Row>
+              {onProgBalance ? <Line /> : null}
+
+              {onPizzaSwapBalance ? (
+                <Row fullY justifyBetween justifyCenter>
+                  <Column fullY justifyCenter>
+                    <Text text={t('brc20_on_pizzaswap')} color="textDim" size="xs" />
+                  </Column>
+
+                  <Row itemsCenter fullY gap="zero">
+                    <Text text={onPizzaSwapBalance} size="xs" digital />
+                  </Row>
+                </Row>
+              ) : null}
+
+              {onPizzaSwapBalance ? (
+                <Row>
+                  <Button
+                    text={t('swap_swap')}
+                    preset="swap"
+                    icon="swap_swap"
+                    onClick={(e) => {
+                      window.open(`https://pizzaswap.io/swap?t0=${encodeURIComponent(ticker)}`);
+                    }}
+                    style={{
+                      paddingTop: 5
+                    }}
+                    iconSize={{
+                      width: 12,
+                      height: 12
+                    }}
+                    full
+                  />
+                  <Button
+                    text={t('swap_deposit')}
+                    preset="swap"
+                    icon="swap_deposit"
+                    onClick={(e) => {
+                      window.open(`https://pizzaswap.io/swap?tab=deposit`);
+                    }}
+                    iconSize={{
+                      width: 12,
+                      height: 12
+                    }}
+                    full
+                  />
+                  <Button
+                    text={t('swap_withdraw')}
+                    preset="swap"
+                    icon="swap_withdraw"
+                    onClick={(e) => {
+                      window.open(`https://pizzaswap.io/swap?tab=withdraw&t=${encodeURIComponent(ticker)}`);
+                    }}
+                    iconSize={{
+                      width: 12,
+                      height: 12
+                    }}
+                    full
+                  />
+                  <Button
+                    text={t('swap_send')}
+                    preset="swap"
+                    icon="swap_send"
+                    onClick={(e) => {
+                      window.open(`https://pizzaswap.io/swap/assets/account`);
+                    }}
+                    iconSize={{
+                      width: 12,
+                      height: 12
+                    }}
+                    full
+                  />
+                </Row>
+              ) : null}
             </Column>
           ) : null}
 

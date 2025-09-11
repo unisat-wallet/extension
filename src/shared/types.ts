@@ -294,6 +294,7 @@ export interface TokenBalance {
   displayName?: string;
   tag?: string;
   swapBalance?: string;
+  progBalance?: string;
 }
 
 export interface Arc20Balance {

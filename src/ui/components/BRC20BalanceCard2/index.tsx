@@ -1,5 +1,5 @@
 import BigNumber from 'bignumber.js';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 import { AddressTokenSummary, TickPriceItem, TokenBalance } from '@/shared/types';
 import { TickPriceChange, TickUsd } from '@/ui/components/TickUsd';
@@ -25,7 +25,7 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
   const {
     showPrice,
     price,
-    tokenBalance: { ticker, overallBalance, transferableBalance, selfMint, displayName, tag, swapBalance },
+    tokenBalance: { ticker, overallBalance, transferableBalance, selfMint, displayName, tag, swapBalance, progBalance },
     onClick
   } = props;
 
@@ -65,10 +65,17 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
   _names = _names.splice(0, 4);
 
   const onPizzaSwapBalance = swapBalance;
+  const onProgBalance = progBalance;
   const inWalletBalance = overallBalance;
-  const totalBalance = onPizzaSwapBalance
-    ? new BigNumber(inWalletBalance).plus(new BigNumber(onPizzaSwapBalance!)).toString()
-    : inWalletBalance;
+
+  const totalBalance = useMemo(() => {
+    return new BigNumber(inWalletBalance)
+      .plus(new BigNumber(onPizzaSwapBalance || 0))
+      .plus(new BigNumber(onProgBalance || 0))
+      .toString();
+  }, [inWalletBalance, onPizzaSwapBalance, onProgBalance]);
+
+  const hasOutWalletBalance = (onPizzaSwapBalance || onProgBalance || '0')! !== '0';
 
   return (
     <Card
@@ -119,7 +126,7 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
             {selfMint && <Tag type="self-issuance" />}
           </Row>
         )}
-        {swapBalance ? (
+        {hasOutWalletBalance ? (
           <Column>
             <Row style={{ borderTopWidth: 1, borderColor: 'rgba(255,255,255,0.1)' }} mt="sm" />
             <Row fullY justifyBetween justifyCenter>
@@ -132,15 +139,29 @@ export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
               </Row>
             </Row>
 
-            <Row fullY justifyBetween justifyCenter>
-              <Column fullY justifyCenter>
-                <Text text={t('brc20_on_pizzaswap')} color="textDim" size="xs" />
-              </Column>
+            {onPizzaSwapBalance ? (
+              <Row fullY justifyBetween justifyCenter>
+                <Column fullY justifyCenter>
+                  <Text text={t('brc20_on_pizzaswap')} color="textDim" size="xs" />
+                </Column>
 
-              <Row itemsCenter fullY gap="zero">
-                <Text text={onPizzaSwapBalance} size="xs" digital />
+                <Row itemsCenter fullY gap="zero">
+                  <Text text={onPizzaSwapBalance} size="xs" digital />
+                </Row>
               </Row>
-            </Row>
+            ) : null}
+
+            {onProgBalance ? (
+              <Row fullY justifyBetween justifyCenter>
+                <Column fullY justifyCenter>
+                  <Text text={t('brc20_on_prog')} color="textDim" size="xs" />
+                </Column>
+
+                <Row itemsCenter fullY gap="zero">
+                  <Text text={onProgBalance} size="xs" digital />
+                </Row>
+              </Row>
+            ) : null}
           </Column>
         ) : null}
       </Column>

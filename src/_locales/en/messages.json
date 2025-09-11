@@ -2405,6 +2405,9 @@
   "brc20_on_pizzaswap": {
     "message": "On PizzaSwap"
   },
+  "brc20_on_prog": {
+    "message": "On BRC2.0"
+  },
   "swap_swap": {
     "message": "Swap"
   },
