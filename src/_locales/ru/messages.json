@@ -2394,6 +2394,9 @@
   "brc20_on_pizzaswap": {
     "message": "В PizzaSwap"
   },
+  "brc20_on_prog": {
+    "message": "Программируемый баланс"
+  },
   "swap_swap": {
     "message": "Обмен"
   },

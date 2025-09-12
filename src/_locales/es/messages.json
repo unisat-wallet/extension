@@ -2387,6 +2387,9 @@
   "brc20_on_pizzaswap": {
     "message": "En PizzaSwap"
   },
+  "brc20_on_prog": {
+    "message": "Balance Programable"
+  },
   "swap_swap": {
     "message": "Intercambiar"
   },

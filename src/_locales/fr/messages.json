@@ -2400,6 +2400,9 @@
   "brc20_on_pizzaswap": {
     "message": "Dans PizzaSwap"
   },
+  "brc20_on_prog": {
+    "message": "Solde Programmable"
+  },
   "swap_swap": {
     "message": "Échanger"
   },

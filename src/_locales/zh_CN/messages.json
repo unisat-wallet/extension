@@ -2312,6 +2312,9 @@
   "brc20_on_pizzaswap": {
     "message": "在PizzaSwap中"
   },
+  "brc20_on_prog": {
+    "message": "可编程余额"
+  },
   "swap_swap": {
     "message": "兑换"
   },
