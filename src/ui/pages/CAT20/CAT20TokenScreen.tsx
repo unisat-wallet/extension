@@ -120,7 +120,7 @@ export default function CAT20TokenScreen() {
       />
       {tokenSummary && (
         <Content>
-          <Column py="xl" pb="lg" style={{ borderBottomWidth: 1, borderColor: colors.white_muted }}>
+          <Column pt="zero" pb="lg" style={{ borderBottomWidth: 1, borderColor: colors.white_muted }}>
             <Text text={tokenSummary.cat20Info.name} preset="title-bold" textCenter size="xxl" color="gold" />
             <Row itemsCenter fullX justifyCenter>
               <Text

@@ -178,7 +178,7 @@ export default function WalletTabScreen() {
   return (
     <Layout>
       <Header
-        type="style2"
+        type="home"
         LeftComponent={
           <Card
             preset="style2"

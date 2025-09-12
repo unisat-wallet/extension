@@ -139,7 +139,7 @@ export default function RunesTokenScreen() {
       />
       {tokenSummary && (
         <Content>
-          <Column py="xl" style={{ borderBottomWidth: 1, borderColor: colors.white_muted }}>
+          <Column py="xl" pt="zero" style={{ borderBottomWidth: 1, borderColor: colors.white_muted }}>
             <Row itemsCenter fullX justifyCenter>
               <Text
                 text={`${runesUtils.toDecimalAmount(

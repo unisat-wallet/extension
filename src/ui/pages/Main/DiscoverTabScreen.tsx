@@ -204,7 +204,7 @@ export default function DiscoverTabScreen() {
   return (
     <Layout>
       <Header
-        type="style2"
+        type="home"
         LeftComponent={
           <Row>
             <Text preset="title-bold" text={t('dapp_center')} />

@@ -22,7 +22,7 @@ export default function SettingsTabScreen() {
   return (
     <Layout>
       <Header
-        type="style2"
+        type="home"
         LeftComponent={
           <Row>
             <Text preset="title-bold" text={t('settings')} />
