@@ -400,9 +400,9 @@ export default function BRC20TokenScreen() {
 
             <Section title={t('decimal')} value={tokenSummary.tokenInfo.decimal} />
 
-            <Section title={t('holders_count')} value={tokenSummary.tokenInfo.holdersCount} />
+            <Section title={t('holders_count')} value={showLongNumber(tokenSummary.tokenInfo.holdersCount)} />
 
-            <Section title={t('history_count')} value={tokenSummary.tokenInfo.historyCount} />
+            <Section title={t('history_count')} value={showLongNumber(tokenSummary.tokenInfo.historyCount)} />
           </Column>
         </Column>
       );
