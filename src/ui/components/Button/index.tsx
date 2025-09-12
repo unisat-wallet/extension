@@ -142,6 +142,19 @@ const $viewPresets = {
     marginLeft: 5
   }) as CSSProperties,
 
+  'brc20-action': Object.assign({}, $baseViewStyle, {
+    backgroundColor: colors.black_dark,
+    minWidth: 64,
+    minHeight: 48,
+    flexDirection: 'row',
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#6d6b6b4d',
+    padding: 0,
+    marginRight: 5,
+    marginLeft: 5
+  }) as CSSProperties,
+
   homeGold: Object.assign({}, $baseViewStyle, {
     backgroundColor: 'rgba(244, 182, 44, 0.10)',
     minWidth: 64,
@@ -183,9 +196,8 @@ const $viewPresets = {
   }) as CSSProperties,
 
   swap: Object.assign({}, $baseViewStyle, {
-    backgroundColor: '#FFFFFF1F',
+    backgroundColor: '#ffffff1f',
     minWidth: 60,
-    height: 20,
     flexDirection: 'column',
     borderRadius: 8,
     borderWidth: 0,
@@ -193,8 +205,8 @@ const $viewPresets = {
     marginRight: 5,
     marginLeft: 5,
     alignItems: 'center',
-    paddingTop: 5,
-    paddingBottom: 5
+    paddingTop: 7,
+    paddingBottom: 7
   }) as CSSProperties
 };
 
@@ -222,6 +234,9 @@ const $hoverViewPresets: Record<Presets, CSSProperties> = {
     backgroundColor: colors.yellow_dark
   },
   home: {
+    backgroundColor: '#383535'
+  },
+  'brc20-action': {
     backgroundColor: '#383535'
   },
   homeGold: {
@@ -263,6 +278,10 @@ const $textPresets: Record<Presets, CSSProperties> = {
   defaultV2: Object.assign({}, $baseTextStyle, {}),
   primaryV2: Object.assign({}, $baseTextStyle, { color: colors.black }),
   home: Object.assign({}, $baseTextStyle, {
+    color: colors.white,
+    fontSize: 12
+  }),
+  'brc20-action': Object.assign({}, $baseTextStyle, {
     color: colors.white,
     fontSize: 12
   }),
@@ -346,7 +365,7 @@ export function Button(props: ButtonProps) {
     );
   }
 
-  if (preset === 'home' || preset === 'homeGold' || preset === 'swap') {
+  if (preset === 'home' || preset === 'homeGold') {
     if (disabled) {
       $viewStyle.backgroundColor = 'rgba(255,255,255,0.15)';
     }
@@ -372,6 +391,32 @@ export function Button(props: ButtonProps) {
     );
   }
 
+  if (preset === 'swap') {
+    if (disabled) {
+      $viewStyle.backgroundColor = 'rgba(255,255,255,0.15)';
+    }
+    const $textStyle = Object.assign({}, $textPresets[preset], $textStyleOverride);
+    return (
+      <div
+        style={$viewStyle}
+        onClick={disabled ? undefined : onClick}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}>
+        {icon && (
+          <Icon
+            icon={icon}
+            style={Object.assign(
+              { backgroundColor: $textPresets[preset].color || colors.white },
+              iconSize ? iconSize : {}
+            )}
+            containerStyle={iconSize ? iconSize : {}}
+          />
+        )}
+        {text && <Text style={$textStyle} text={text} preset="regular" />}
+      </div>
+    );
+  }
+
   if (preset === 'minimal' || preset === 'minimal2') {
     return (
       <div
@@ -379,6 +424,32 @@ export function Button(props: ButtonProps) {
         onClick={disabled ? undefined : onClick}
         onMouseEnter={() => setHover(true)}
         onMouseLeave={() => setHover(false)}>
+        {text && <Text style={$textStyle} text={text} preset="regular" />}
+      </div>
+    );
+  }
+
+  if (preset === 'brc20-action') {
+    if (disabled) {
+      $viewStyle.backgroundColor = 'rgba(255,255,255,0.15)';
+    }
+    const $textStyle = Object.assign({}, $textPresets[preset], $textStyleOverride);
+    return (
+      <div
+        style={$viewStyle}
+        onClick={disabled ? undefined : onClick}
+        onMouseEnter={() => setHover(true)}
+        onMouseLeave={() => setHover(false)}>
+        {icon && (
+          <Icon
+            icon={icon}
+            style={Object.assign(
+              { backgroundColor: $textPresets[preset].color || colors.white },
+              iconSize ? iconSize : {}
+            )}
+            containerStyle={iconSize ? iconSize : {}}
+          />
+        )}
         {text && <Text style={$textStyle} text={text} preset="regular" />}
       </div>
     );

@@ -316,10 +316,6 @@ export default function BRC20TokenScreen() {
 
   const enableHistory = isBrc20Prog ? false : true;
 
-  const shouldUseTwoRowLayout = useMemo(() => {
-    return enableTrade && chain.enableBrc20SingleStep;
-  }, [enableTrade, chain.enableBrc20SingleStep]);
-
   const marketPlaceUrl = useBRC20MarketPlaceWebsite(ticker);
 
   const inscribePlaceUrl = useMemo(() => {
@@ -454,7 +450,7 @@ export default function BRC20TokenScreen() {
               </Row>
             </Row>
             <Column itemsCenter fullX justifyCenter>
-              <Text text={`${totalBalance}`} preset="bold" textCenter size="xxl" wrap digital />
+              <Text text={`${totalBalance}`} preset="bold" textCenter size="xxl" wrap digital color="white" />
             </Column>
             <Row justifyCenter fullX>
               <TickUsdWithoutPrice tick={ticker} balance={totalBalance} type={TokenType.BRC20} size={'md'} />
@@ -462,8 +458,8 @@ export default function BRC20TokenScreen() {
           </Column>
 
           {hasOutWalletBalance ? (
-            <Column style={{ backgroundColor: '#FFFFFF14', borderRadius: 12 }} px="md" py="md">
-              <Row fullY justifyBetween justifyCenter>
+            <Column style={{ backgroundColor: '#FFFFFF14', borderRadius: 12 }} px="md" py="md" mb="md">
+              <Row fullY justifyBetween justifyCenter mt="sm">
                 <Column fullY justifyCenter>
                   <Text text={t('brc20_in_wallet')} color="textDim" size="xs" />
                 </Column>
@@ -502,7 +498,7 @@ export default function BRC20TokenScreen() {
               ) : null}
 
               {onPizzaSwapBalance ? (
-                <Row>
+                <Row gap="sm">
                   <Button
                     text={t('swap_swap')}
                     preset="swap"
@@ -581,96 +577,23 @@ export default function BRC20TokenScreen() {
           borderTopWidth: 1,
           borderColor: colors.border2
         }}>
-        {shouldUseTwoRowLayout ? (
-          <Column gap="sm" fullX>
-            <Row gap="sm" mt="sm">
-              <Button
-                text={t('mint')}
-                preset="home"
-                style={!enableMint ? { backgroundColor: 'rgba(255,255,255,0.15)' } : {}}
-                disabled={!enableMint}
-                icon="pencil"
-                onClick={(e) => {
-                  window.open(inscribePlaceUrl);
-                }}
-                full
-              />
-
-              <Button
-                text={t('send')}
-                preset="home"
-                icon="send"
-                disabled={!enableTransfer}
-                onClick={(e) => {
-                  navigate('BRC20SendScreen', {
-                    tokenBalance: tokenSummary.tokenBalance,
-                    tokenInfo: tokenSummary.tokenInfo
-                  });
-                }}
-                style={{
-                  width: chain.enableBrc20SingleStep && !enableTrade ? '75px' : 'auto'
-                }}
-                full
-              />
-
-              <Button
-                text={t('trade')}
-                preset="home"
-                icon="trade"
-                onClick={(e) => {
-                  window.open(marketPlaceUrl);
-                }}
-                full
-              />
-            </Row>
-
-            <Button
-              text={t('single_step_transfer')}
-              preset="home"
-              icon="brc20-single-step"
-              style={{
-                background: 'linear-gradient(113deg, #EABB5A 5.41%, #E78327 92.85%)',
-                color: 'black',
-                width: enableTrade ? 'auto' : '328px',
-                minHeight: '48px',
-                borderRadius: '12px',
-                flexDirection: 'row',
-                alignItems: 'center',
-                justifyContent: 'center',
-                gap: '4px',
-                padding: '0 8px'
-              }}
-              textStyle={{
-                color: 'black'
-              }}
-              disabled={!enableTransfer}
-              onClick={(e) => {
-                navigate('BRC20SingleStepScreen', {
-                  tokenBalance: tokenSummary.tokenBalance,
-                  tokenInfo: tokenSummary.tokenInfo
-                });
-              }}
-            />
-          </Column>
-        ) : (
-          <Row gap="sm" fullX>
+        <Column gap="sm" fullX>
+          <Row gap="sm" mt="sm" mb="md">
             <Button
               text={t('mint')}
-              preset="home"
+              preset="brc20-action"
+              style={!enableMint ? { backgroundColor: 'rgba(255,255,255,0.15)' } : {}}
               disabled={!enableMint}
               icon="pencil"
               onClick={(e) => {
                 window.open(inscribePlaceUrl);
               }}
-              style={{
-                ...(!enableMint ? { backgroundColor: 'rgba(255,255,255,0.15)' } : {}),
-                width: chain.enableBrc20SingleStep && !enableTrade ? '73px' : '101px'
-              }}
+              full
             />
 
             <Button
-              text={t('transfer')}
-              preset="home"
+              text={t('send')}
+              preset="brc20-action"
               icon="send"
               disabled={!enableTransfer}
               onClick={(e) => {
@@ -680,49 +603,50 @@ export default function BRC20TokenScreen() {
                 });
               }}
               style={{
-                width: chain.enableBrc20SingleStep && !enableTrade ? '73px' : '101px'
+                width: chain.enableBrc20SingleStep && !enableTrade ? '75px' : 'auto'
               }}
+              full
             />
 
-            {chain.enableBrc20SingleStep ? (
-              <Button
-                text={t('single_step_transfer')}
-                preset="home"
-                icon="brc20-single-step"
-                style={{
-                  background: 'linear-gradient(113deg, #EABB5A 5.41%, #E78327 92.85%)',
-                  color: 'black',
-                  flexShrink: 0,
-                  borderRadius: '12px',
-                  width: enableTrade ? 'auto' : '155px'
-                }}
-                textStyle={{
-                  color: 'black'
-                }}
-                disabled={!enableTransfer}
-                onClick={(e) => {
-                  navigate('BRC20SingleStepScreen', {
-                    tokenBalance: tokenSummary.tokenBalance,
-                    tokenInfo: tokenSummary.tokenInfo
-                  });
-                }}
-              />
-            ) : (
-              <Button
-                text={t('trade')}
-                preset="home"
-                icon="trade"
-                onClick={(e) => {
-                  window.open(marketPlaceUrl);
-                }}
-                disabled={!enableTrade}
-                style={{
-                  width: '101px'
-                }}
-              />
-            )}
+            <Button
+              text={t('trade')}
+              preset="brc20-action"
+              icon="trade"
+              onClick={(e) => {
+                window.open(marketPlaceUrl);
+              }}
+              full
+            />
           </Row>
-        )}
+
+          <Button
+            text={t('single_step_transfer')}
+            preset="home"
+            icon="brc20-single-step"
+            style={{
+              background: 'linear-gradient(113deg, #EABB5A 5.41%, #E78327 92.85%)',
+              color: 'black',
+              width: enableTrade ? 'auto' : '328px',
+              minHeight: '42px',
+              borderRadius: '12px',
+              flexDirection: 'row',
+              alignItems: 'center',
+              justifyContent: 'center',
+              gap: '4px',
+              padding: '0 8px'
+            }}
+            textStyle={{
+              color: 'black'
+            }}
+            disabled={!enableTransfer}
+            onClick={(e) => {
+              navigate('BRC20SingleStepScreen', {
+                tokenBalance: tokenSummary.tokenBalance,
+                tokenInfo: tokenSummary.tokenInfo
+              });
+            }}
+          />
+        </Column>
       </Footer>
     </Layout>
   );

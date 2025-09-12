@@ -24,11 +24,6 @@ interface HeaderProps {
 function HeaderContainer(props: { children: React.ReactNode }) {
   return (
     <div style={{ display: 'block', backgroundColor: '#070606' }}>
-      <img
-        src={'./images/artifacts/top-linear-gradient.png'}
-        alt=""
-        style={{ width: '100%', height: 182, position: 'absolute', left: 0, top: 0, pointerEvents: 'none' }}
-      />
       <Row
         justifyBetween
         itemsCenter
