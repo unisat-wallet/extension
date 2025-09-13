@@ -2406,7 +2406,7 @@
     "message": "On PizzaSwap"
   },
   "brc20_on_prog": {
-    "message": "Programmable Balance"
+    "message": "Wrapped brc2.0 balance"
   },
   "swap_swap": {
     "message": "Swap"

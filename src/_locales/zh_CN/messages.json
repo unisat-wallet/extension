@@ -2313,7 +2313,7 @@
     "message": "在PizzaSwap中"
   },
   "brc20_on_prog": {
-    "message": "可编程余额"
+    "message": "封装 brc2.0 余额"
   },
   "swap_swap": {
     "message": "兑换"

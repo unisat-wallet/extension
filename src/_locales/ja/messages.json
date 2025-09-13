@@ -2398,7 +2398,7 @@
     "message": "PizzaSwap内"
   },
   "brc20_on_prog": {
-    "message": "プログラマブル残高"
+    "message": "ラップされたbrc2.0残高"
   },
   "swap_swap": {
     "message": "スワップ"
