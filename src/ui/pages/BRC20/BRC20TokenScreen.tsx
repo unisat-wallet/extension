@@ -619,33 +619,35 @@ export default function BRC20TokenScreen() {
             />
           </Row>
 
-          <Button
-            text={t('single_step_transfer')}
-            preset="home"
-            icon="brc20-single-step"
-            style={{
-              background: 'linear-gradient(113deg, #EABB5A 5.41%, #E78327 92.85%)',
-              color: 'black',
-              width: enableTrade ? 'auto' : '328px',
-              minHeight: '42px',
-              borderRadius: '12px',
-              flexDirection: 'row',
-              alignItems: 'center',
-              justifyContent: 'center',
-              gap: '4px',
-              padding: '0 8px'
-            }}
-            textStyle={{
-              color: 'black'
-            }}
-            disabled={!enableTransfer}
-            onClick={(e) => {
-              navigate('BRC20SingleStepScreen', {
-                tokenBalance: tokenSummary.tokenBalance,
-                tokenInfo: tokenSummary.tokenInfo
-              });
-            }}
-          />
+          {chain.enableBrc20SingleStep ? (
+            <Button
+              text={t('single_step_transfer')}
+              preset="home"
+              icon="brc20-single-step"
+              style={{
+                background: 'linear-gradient(113deg, #EABB5A 5.41%, #E78327 92.85%)',
+                color: 'black',
+                width: enableTrade ? 'auto' : '328px',
+                minHeight: '42px',
+                borderRadius: '12px',
+                flexDirection: 'row',
+                alignItems: 'center',
+                justifyContent: 'center',
+                gap: '4px',
+                padding: '0 8px'
+              }}
+              textStyle={{
+                color: 'black'
+              }}
+              disabled={!enableTransfer}
+              onClick={(e) => {
+                navigate('BRC20SingleStepScreen', {
+                  tokenBalance: tokenSummary.tokenBalance,
+                  tokenInfo: tokenSummary.tokenInfo
+                });
+              }}
+            />
+          ) : null}
         </Column>
       </Footer>
     </Layout>
