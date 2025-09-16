@@ -163,14 +163,13 @@ const config = (env) => {
       background: paths.rootResolve('src/background/index.ts'),
       'content-script': paths.rootResolve('src/content-script/index.ts'),
       pageProvider: paths.rootResolve('src/content-script/pageProvider/index.ts'),
-      ui: paths.rootResolve('src/ui/index.tsx'),
-      sidepanel: paths.rootResolve('src/ui/index.tsx')
+      ui: paths.rootResolve('src/ui/index.tsx')
     },
     output: {
       path: paths.dist,
       filename: '[name].js',
       publicPath: '/',
-      globalObject: 'this'
+      chunkFilename: 'chunk.[name].[contenthash].js'
     },
     module: {
       rules: [
@@ -509,6 +508,10 @@ const config = (env) => {
             from: 'src/_locales',
             to: '_locales'
           }
+          // {
+          //   from: 'node_modules/tiny-secp256k1/lib/secp256k1.wasm',
+          //   to: 'static/wasm/secp256k1.wasm'
+          // }
         ]
       }),
       new WasmModuleWebpackPlugin.WebpackPlugin()
@@ -534,14 +537,14 @@ const config = (env) => {
     // optimization: {
     //   splitChunks: {
     //     cacheGroups: {
-    //       'webextension-polyfill': {
-    //         minSize: 0,
-    //         test: /[\\/]node_modules[\\/]webextension-polyfill/,
-    //         name: 'webextension-polyfill',
-    //         chunks: 'all',
-    //       },
-    //     },
-    //   },
+    //       vendor: {
+    //         test: /[\\/]node_modules[\\/]/,
+    //         name: 'vendors',
+    //         priority: -10,
+    //         chunks: 'all'
+    //       }
+    //     }
+    //   }
     // },
     experiments: {
       asyncWebAssembly: true
