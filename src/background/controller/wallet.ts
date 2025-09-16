@@ -12,6 +12,7 @@ import {
   sessionService,
   walletApiService
 } from '@/background/service';
+import { psbtFromString } from '@/background/utils/psbt-utils';
 import {
   ADDRESS_TYPES,
   AddressFlagType,
@@ -41,7 +42,6 @@ import {
   WalletKeyring
 } from '@/shared/types';
 import { getChainInfo } from '@/shared/utils';
-import { psbtFromString } from '@/ui/utils/psbt-utils';
 import {
   BabylonConfigV2,
   COSMOS_CHAINS_MAP,
@@ -51,20 +51,14 @@ import {
   getDelegationsV2
 } from '@unisat/babylon-service';
 import { t } from '@unisat/i18n';
-import {
-  ColdWalletKeyring,
-  DisplayedKeyring,
-  Keyring,
-  KeyringType,
-  KeystoneKeyring,
-  ToSignInput
-} from '@unisat/keyring-service';
+import { ColdWalletKeyring, KeystoneKeyring } from '@unisat/keyring-service';
+import { DisplayedKeyring, Keyring, KeyringType, ToSignInput } from '@unisat/keyring-service/types';
 import * as txHelpers from '@unisat/tx-helpers';
 import { signMessageOfBIP322Simple, UnspentOutput } from '@unisat/tx-helpers';
 import { CAT_VERSION } from '@unisat/wallet-api';
 import {
   bitcoin,
-  ECPair,
+  eccManager,
   genPsbtOfBIP322Simple,
   getSignatureFromPsbtOfBIP322Simple,
   isValidAddress,
@@ -251,7 +245,7 @@ export class WalletController extends BaseController {
     const networkType = this.getNetworkType();
     const network = toPsbtNetwork(networkType);
     const hex = privateKey;
-    const wif = ECPair.fromPrivateKey(Buffer.from(privateKey, 'hex'), { network }).toWIF();
+    const wif = eccManager.eccPair.fromPrivateKey(Buffer.from(privateKey, 'hex'), { network }).toWIF();
     return {
       hex,
       wif
@@ -548,11 +542,6 @@ export class WalletController extends BaseController {
     this.changeKeyring(keyring, currentAccount?.index);
   };
 
-  signTransaction = async (type: string, from: string, psbt: bitcoin.Psbt, inputs: ToSignInput[]) => {
-    const keyring = await keyringService.getKeyringForAccount(from, type);
-    return keyringService.signTransaction(keyring, psbt, inputs as any);
-  };
-
   formatOptionsToSignInputs = async (_psbt: string | bitcoin.Psbt, options?: SignPsbtOptions) => {
     const account = await this.getCurrentAccount();
     if (!account) throw null;
@@ -677,6 +666,17 @@ export class WalletController extends BaseController {
         path: `${keyring.hdPath}/${account.index}`,
         pubkey: Buffer.from(account.pubkey, 'hex')
       };
+
+      const chainType = this.getChainType();
+      const chain = CHAINS_MAP[chainType];
+
+      // use the unknown keyValue to indicate FB tx in psbt for keystone
+      if (chain.isFractal && account.type === KeyringType.KeystoneKeyring) {
+        const keysString = 'chain';
+        // use ff as the keyType in the psbt global unknown
+        const key = Buffer.from('ff' + Buffer.from(keysString).toString('hex'), 'hex');
+        psbt.addUnknownKeyValToGlobal({ key, value: Buffer.from(chain.unit.toLowerCase()) });
+      }
     }
 
     psbt.data.inputs.forEach((input, index) => {
@@ -1035,14 +1035,7 @@ export class WalletController extends BaseController {
       memos
     });
 
-    const keyring = await this.getCurrentKeyring();
-    const isColdWallet = keyring?.type === KeyringType.ColdWalletKeyring;
-    const isKeystone = keyring?.type === KeyringType.KeystoneKeyring;
-
-    this.setPsbtSignNonSegwitEnable(psbt, true);
-    await this.signPsbt(psbt, toSignInputs, !isColdWallet && !isKeystone);
-    this.setPsbtSignNonSegwitEnable(psbt, false);
-    return psbt.toHex();
+    return this.getSignedResult(psbt, toSignInputs);
   };
 
   sendAllBTC = async ({
@@ -1076,15 +1069,7 @@ export class WalletController extends BaseController {
       feeRate,
       enableRBF
     });
-
-    const keyring = await this.getCurrentKeyring();
-    const isColdWallet = keyring?.type === KeyringType.ColdWalletKeyring;
-    const isKeystone = keyring?.type === KeyringType.KeystoneKeyring;
-
-    this.setPsbtSignNonSegwitEnable(psbt, true);
-    await this.signPsbt(psbt, toSignInputs, !isColdWallet && !isKeystone);
-    this.setPsbtSignNonSegwitEnable(psbt, false);
-    return psbt.toHex();
+    return this.getSignedResult(psbt, toSignInputs);
   };
 
   sendOrdinalsInscription = async ({
@@ -1138,10 +1123,7 @@ export class WalletController extends BaseController {
       enableMixed: true
     });
 
-    this.setPsbtSignNonSegwitEnable(psbt, true);
-    await this.signPsbt(psbt, toSignInputs, true);
-    this.setPsbtSignNonSegwitEnable(psbt, false);
-    return psbt.toHex();
+    return this.getSignedResult(psbt, toSignInputs);
   };
 
   sendOrdinalsInscriptions = async ({
@@ -1202,11 +1184,7 @@ export class WalletController extends BaseController {
       enableRBF
     });
 
-    this.setPsbtSignNonSegwitEnable(psbt, true);
-    await this.signPsbt(psbt, toSignInputs, true);
-    this.setPsbtSignNonSegwitEnable(psbt, false);
-
-    return psbt.toHex();
+    return this.getSignedResult(psbt, toSignInputs);
   };
 
   splitOrdinalsInscription = async ({
@@ -1249,16 +1227,22 @@ export class WalletController extends BaseController {
       outputValue
     });
 
-    this.setPsbtSignNonSegwitEnable(psbt, true);
-    await this.signPsbt(psbt, toSignInputs, true);
-    this.setPsbtSignNonSegwitEnable(psbt, false);
-    return {
-      psbtHex: psbt.toHex(),
-      splitedCount
-    };
+    const res = await this.getSignedResult(psbt, toSignInputs);
+    return { ...res, splitedCount };
   };
 
-  pushTx = async (rawtx: string) => {
+  pushTx = async (txData: string) => {
+    let rawtx = txData;
+    if (txData.startsWith('70')) {
+      // psbthex
+      const psbt = psbtFromString(txData);
+      try {
+        psbt.finalizeAllInputs();
+      } catch (e) {
+        // skip
+      }
+      rawtx = psbt.extractTransaction(true).toHex();
+    }
     const txid = await walletApiService.bitcoin.pushTx(rawtx);
     return txid;
   };
@@ -2005,11 +1989,30 @@ export class WalletController extends BaseController {
       runeAmount,
       outputValue: outputValue || UTXO_DUST
     });
+
+    return this.getSignedResult(psbt, toSignInputs);
+  };
+
+  getSignedResult = async (psbt: bitcoin.Psbt, toSignInputs: ToSignInput[]) => {
     this.setPsbtSignNonSegwitEnable(psbt, true);
     await this.signPsbt(psbt, toSignInputs, true);
     this.setPsbtSignNonSegwitEnable(psbt, false);
 
-    return psbt.toHex();
+    const psbtHex = psbt.toHex();
+    let rawtx = '';
+    let fee = 0;
+    try {
+      rawtx = psbt.extractTransaction(true).toHex();
+      fee = psbt.getFee();
+    } catch (e) {
+      // ignore
+    }
+
+    return {
+      psbtHex,
+      rawtx,
+      fee
+    };
   };
 
   getAutoLockTimeId = () => {
@@ -2523,10 +2526,7 @@ export class WalletController extends BaseController {
     );
 
     const psbt = bitcoin.Psbt.fromBase64(psbtBase64);
-    this.setPsbtSignNonSegwitEnable(psbt, true);
-    await this.signPsbt(psbt, toSignInputs, true);
-    this.setPsbtSignNonSegwitEnable(psbt, false);
-    return psbt.toHex();
+    return this.getSignedResult(psbt, toSignInputs);
   };
   // createBabylonDeposit = async (amount: string) => {};
 

@@ -9,7 +9,7 @@ import { ethErrors } from 'eth-rpc-errors';
 import BaseController from '../base';
 import wallet from '../wallet';
 
-import { formatPsbtHex } from '@/ui/utils/psbt-utils';
+import { formatPsbtHex } from '@/background/utils/psbt-utils';
 import { makeSignBytes } from '@cosmjs/proto-signing';
 import { encodeSecp256k1Signature, makeADR36AminoSignDoc, serializeSignDoc } from '@unisat/babylon-service';
 
