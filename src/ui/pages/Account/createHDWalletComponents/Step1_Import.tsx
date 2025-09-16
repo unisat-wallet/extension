@@ -1,10 +1,8 @@
-import { Radio } from 'antd';
-import * as bip39 from 'bip39';
 import { useEffect, useMemo, useState } from 'react';
 
 import { OW_HD_PATH } from '@/shared/constant';
 import { AddressType, RestoreWalletType } from '@/shared/types';
-import { Button, Card, Column, Grid, Input, Row, Text } from '@/ui/components';
+import { Button, Card, Column, Grid, Input, Radio, RadioGroup, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { FooterButtonContainer } from '@/ui/components/FooterButtonContainer';
 import { useI18n } from '@/ui/hooks/useI18n';
@@ -16,6 +14,7 @@ import {
 } from '@/ui/pages/Account/createHDWalletComponents/types';
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useCreateAccountCallback } from '@/ui/state/global/hooks';
+import { validateMnemonic } from '@/ui/utils/bitcoin-utils';
 import { t } from '@unisat/i18n';
 
 const getWords12Item = () => ({
@@ -89,7 +88,7 @@ export function Step1_Import({
     }
 
     const mnemonic = keys.join(' ');
-    if (!bip39.validateMnemonic(mnemonic)) {
+    if (!validateMnemonic(mnemonic)) {
       return;
     }
 
@@ -129,9 +128,9 @@ export function Step1_Import({
 
       {wordsItems.length > 1 ? (
         <Row justifyCenter>
-          <Radio.Group
-            onChange={(e) => {
-              const wordsType = e.target.value;
+          <RadioGroup
+            onChange={(value) => {
+              const wordsType = value;
               updateContextData({ wordsType });
               setKeys(new Array(wordsItems[wordsType].count).fill(''));
             }}
@@ -141,7 +140,7 @@ export function Step1_Import({
                 {v.label}
               </Radio>
             ))}
-          </Radio.Group>
+          </RadioGroup>
         </Row>
       ) : null}
 

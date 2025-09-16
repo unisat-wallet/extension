@@ -1,8 +1,7 @@
-import { Checkbox } from 'antd';
 import { useState } from 'react';
 
 import { ChainType, PAYMENT_CHANNELS, PaymentChannelType } from '@/shared/constant';
-import { Button, Column, Row, Text } from '@/ui/components';
+import { Button, Checkbox, Column, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BottomModal } from '@/ui/components/BottomModal';
 import { useI18n } from '@/ui/hooks/useI18n';

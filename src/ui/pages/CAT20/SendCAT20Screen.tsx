@@ -25,7 +25,7 @@ import { useNetworkType } from '@/ui/state/settings/hooks';
 import { useRunesTx } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { isValidAddress, showLongNumber, useLocationState, useWallet } from '@/ui/utils';
-import { getAddressType } from '@unisat/wallet-bitcoin';
+import { getAddressType } from '@/ui/utils/bitcoin-utils';
 import { AddressType } from '@unisat/wallet-types';
 
 import { SignPsbt } from '../Approval/components';

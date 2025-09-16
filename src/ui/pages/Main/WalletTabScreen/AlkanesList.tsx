@@ -37,7 +37,7 @@ export function AlkanesList() {
       setTokens(list);
       setTotal(total);
       if (list.length > 0) {
-        // wallet.getRunesPrice(list.map((item) => item.spacedRune)).then(setPriceMap);
+        wallet.getAlkanesPrice(list.map((item) => item.alkaneid)).then(setPriceMap);
       }
     } catch (e) {
       tools.toastError((e as Error).message);

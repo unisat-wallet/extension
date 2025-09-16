@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { ChainType } from '@/shared/constant';
 import { AddressType, Inscription } from '@/shared/types';
-import { getAddressType } from '@unisat/wallet-bitcoin';
+import { getAddressType } from '@/ui/utils/bitcoin-utils';
 
 import { AppState } from '..';
 import { useCurrentAccount, useCurrentAddress } from '../accounts/hooks';

@@ -1,9 +1,21 @@
-import { Tooltip } from 'antd';
 import BigNumber from 'bignumber.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { InscribeOrder, RawTxInfo, TokenBalance, TokenInfo, TxType } from '@/shared/types';
-import { Button, Card, Column, Content, Footer, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
+import {
+  Button,
+  Card,
+  Column,
+  Content,
+  Footer,
+  Header,
+  Icon,
+  Input,
+  Layout,
+  Row,
+  Text,
+  Tooltip
+} from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { Loading } from '@/ui/components/ActionComponent/Loading';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
@@ -26,7 +38,7 @@ import {
 import { fontSizes } from '@/ui/theme/font';
 import { spacing } from '@/ui/theme/spacing';
 import { amountToSatoshis, satoshisToAmount, useApproval, useLocationState, useWallet } from '@/ui/utils';
-import { getAddressUtxoDust } from '@unisat/tx-helpers';
+import { getAddressUtxoDust } from '@/ui/utils/bitcoin-utils';
 
 import { useNavigate } from '../../MainRoute';
 import SignPsbt from './SignPsbt';

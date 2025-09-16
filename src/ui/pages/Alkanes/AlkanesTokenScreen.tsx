@@ -2,17 +2,18 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { AddressAlkanesTokenSummary } from '@/shared/types';
-import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
+import { Button, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { Line } from '@/ui/components/Line';
 import { Section } from '@/ui/components/Section';
+import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
 import { WarningPopover } from '@/ui/components/WarningPopover';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
-import { copyToClipboard, showLongNumber, useLocationState, useWallet } from '@/ui/utils';
+import { showLongNumber, useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
@@ -123,68 +124,38 @@ export default function AlkanesTokenScreen() {
       />
       {tokenSummary && (
         <Content>
-          <Column py="xl" style={{ borderBottomWidth: 1, borderColor: colors.white_muted }}>
-            <Row itemsCenter fullX justifyCenter>
+          <Column justifyCenter itemsCenter>
+            <Image src={tokenSummary.tokenInfo.logo} size={48} style={{ borderRadius: 24 }} />
+
+            <Row justifyCenter itemsCenter>
+              <BRC20Ticker tick={tokenSummary.tokenInfo.name} preset="md" showOrigin color={'ticker_color2'} />
+            </Row>
+            <Column itemsCenter fullX justifyCenter>
               <Text
                 text={`${runesUtils.toDecimalAmount(
                   tokenSummary.tokenBalance.amount,
                   tokenSummary.tokenBalance.divisibility
-                )}`}
+                )} `}
                 preset="bold"
                 textCenter
                 size="xxl"
                 wrap
                 digital
+                color="white"
               />
-              <BRC20Ticker tick={tokenSummary.tokenBalance.symbol} preset="lg" />
-            </Row>
-
-            <Row justifyBetween mt="lg">
-              <Button
-                text={t('mint')}
-                preset="home"
-                disabled={!enableMint}
-                icon="pencil"
-                onClick={(e) => {
-                  if (tokenSummary.mintUrl) {
-                    window.open(tokenSummary.mintUrl);
-                  }
-                }}
-                full
-              />
-
-              <Button
-                text={t('send')}
-                preset="home"
-                icon="send"
-                disabled={!enableTransfer}
-                onClick={sendAlkanes}
-                full
-              />
-
-              <Button
-                text={t('trade')}
-                preset="home"
-                icon="trade"
-                disabled={!enableTrade}
-                onClick={(e) => {
-                  if (tokenSummary.tradeUrl) {
-                    window.open(tokenSummary.tradeUrl);
-                  }
-                }}
-                full
+            </Column>
+            <Row justifyCenter fullX>
+              <TickUsdWithoutPrice
+                tick={tokenSummary.tokenInfo.alkaneid}
+                balance={runesUtils.toDecimalAmount(
+                  tokenSummary.tokenBalance.amount,
+                  tokenSummary.tokenBalance.divisibility
+                )}
+                type={TokenType.ALKANES}
+                size={'md'}
               />
             </Row>
           </Column>
-
-          <Text
-            text={tokenSummary.tokenInfo.name}
-            preset="title-bold"
-            onClick={() => {
-              copyToClipboard(tokenSummary.tokenInfo.name).then(() => {
-                tools.toastSuccess(t('copied'));
-              });
-            }}></Text>
 
           <Column
             gap="lg"
@@ -268,6 +239,51 @@ export default function AlkanesTokenScreen() {
           )}
         </Content>
       )}
+
+      <Footer
+        style={{
+          borderTopWidth: 1,
+          borderColor: colors.border2
+        }}>
+        <Column gap="sm" fullX>
+          <Row gap="sm" mt="sm" mb="md">
+            <Button
+              text={t('mint')}
+              preset="brc20-action"
+              disabled={!enableMint}
+              icon="pencil"
+              onClick={(e) => {
+                if (tokenSummary.mintUrl) {
+                  window.open(tokenSummary.mintUrl);
+                }
+              }}
+              full
+            />
+
+            <Button
+              text={t('send')}
+              preset="brc20-action"
+              icon="send"
+              disabled={!enableTransfer}
+              onClick={sendAlkanes}
+              full
+            />
+
+            <Button
+              text={t('trade')}
+              preset="brc20-action"
+              icon="trade"
+              disabled={!enableTrade}
+              onClick={(e) => {
+                if (tokenSummary.tradeUrl) {
+                  window.open(tokenSummary.tradeUrl);
+                }
+              }}
+              full
+            />
+          </Row>
+        </Column>
+      </Footer>
     </Layout>
   );
 }

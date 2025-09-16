@@ -11,7 +11,6 @@ import { useNavigate } from '@/ui/pages/MainRoute';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { usePushBitcoinTxCallback } from '@/ui/state/transactions/hooks';
 import { isValidAddress, useWallet } from '@/ui/utils';
-import { bitcoin } from '@unisat/wallet-bitcoin';
 
 import { SignPsbt } from '../Approval/components';
 
@@ -128,16 +127,7 @@ export default function SendAlkanesNFTScreen() {
           tools.showLoading(true);
           try {
             if (res && res.psbtHex) {
-              let rawtx = '';
-              const psbt = bitcoin.Psbt.fromHex(res.psbtHex);
-              try {
-                psbt.finalizeAllInputs();
-              } catch (e) {
-                // ignore
-              }
-              rawtx = psbt.extractTransaction().toHex();
-
-              const { success, txid, error } = await pushBitcoinTx(rawtx);
+              const { success, txid, error } = await pushBitcoinTx(res.psbtHex);
               if (success) {
                 navigate('TxSuccessScreen', { txid });
               } else {

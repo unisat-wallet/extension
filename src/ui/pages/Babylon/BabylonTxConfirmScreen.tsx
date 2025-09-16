@@ -13,7 +13,7 @@ import { NavigationSource, uiActions } from '@/ui/state/ui/reducer';
 import { colors } from '@/ui/theme/colors';
 import { spacing } from '@/ui/theme/spacing';
 import { useLocationState, useWallet } from '@/ui/utils';
-import { COSMOS_CHAINS_MAP } from '@unisat/babylon-service';
+import { COSMOS_CHAINS_MAP } from '@unisat/babylon-service/types';
 
 import { useNavigate } from '../MainRoute';
 import CosmosSignScreen from '../Wallet/CosmosSignScreen';

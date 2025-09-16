@@ -1,7 +1,6 @@
-import { Progress } from 'antd';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Column, Text } from '@/ui/components';
+import { Column, Progress, Text } from '@/ui/components';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 import { CameraOutlined } from '@ant-design/icons';

@@ -1,7 +1,6 @@
-import { Spin } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 
-import { Column, Input, Row, Text } from '@/ui/components';
+import { Column, Input, Row, Spin, Text } from '@/ui/components';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { useChain } from '@/ui/state/settings/hooks';
 import { shortAddress, useWallet } from '@/ui/utils';

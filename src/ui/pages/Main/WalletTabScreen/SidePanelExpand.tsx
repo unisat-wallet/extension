@@ -1,7 +1,6 @@
-import { Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 
-import { Icon, Row } from '@/ui/components';
+import { Icon, Row, Tooltip } from '@/ui/components';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { getUiType, useWallet } from '@/ui/utils';
 
@@ -48,7 +47,6 @@ export function SidePanelExpand() {
           minWidth: '70px',
           fontSize: '12px'
         }}
-        overlayClassName="side-panel-expand-tooltip"
         placement="bottom">
         <div
           onClick={toggleSidePanel}

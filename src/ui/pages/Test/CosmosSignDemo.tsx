@@ -4,8 +4,8 @@ import { useNavigate } from 'react-router-dom';
 import { CosmosSignDataType } from '@/shared/types';
 import { Button, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
-import { makeADR36AminoSignDoc, serializeSignDoc } from '@unisat/babylon-service';
 
+// import { makeADR36AminoSignDoc, serializeSignDoc } from '@unisat/babylon-service';
 import CosmosSignScreen from '../Wallet/CosmosSignScreen';
 
 export default function CosmosSignDemo() {
@@ -15,11 +15,11 @@ export default function CosmosSignDemo() {
   const navigate = useNavigate();
 
   const signerAddress = 'bbn...';
-  const signDoc = makeADR36AminoSignDoc(signerAddress, 'hello');
-  const toSignData = serializeSignDoc(signDoc);
+  // const signDoc = makeADR36AminoSignDoc(signerAddress, 'hello');
+  // const toSignData = serializeSignDoc(signDoc);
 
   const cosmosSignRequest = {
-    signData: toSignData,
+    signData: '',
     dataType: CosmosSignDataType.COSMOS_AMINO,
     path: "m/84'/0'/0'/0/0",
     chainId: 'bbn-test-5',

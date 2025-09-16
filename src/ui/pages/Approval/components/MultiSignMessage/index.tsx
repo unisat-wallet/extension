@@ -1,6 +1,5 @@
 import React, { useCallback, useEffect, useState } from 'react';
 
-import { KEYRING_TYPE } from '@/shared/constant';
 import { SignPsbtOptions, WebsiteResult } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -13,7 +12,7 @@ import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { shortAddress, useApproval, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
-import { KeystoneSignEnum } from '@unisat/keyring-service';
+import { KeyringType, KeystoneSignEnum } from '@unisat/keyring-service/types';
 
 import MultiSignDisclaimerModal from '../MultiSignPsbt/MultiSignDisclaimerModal';
 
@@ -137,14 +136,14 @@ export default function MultiSignMessage({
   }
 
   const originalHandleConfirm = handleConfirm;
-  if (currentAccount.type === KEYRING_TYPE.KeystoneKeyring) {
+  if (currentAccount.type === KeyringType.KeystoneKeyring) {
     handleConfirm = () => {
       setIsKeystoneSigning(true);
     };
   }
 
   // Handle cold wallet signing
-  if (currentAccount.type === KEYRING_TYPE.ColdWalletKeyring) {
+  if (currentAccount.type === KeyringType.ColdWalletKeyring) {
     return (
       <ColdWalletSignMessage
         messages={messageInfo.messages}

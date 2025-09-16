@@ -1,4 +1,3 @@
-import { InputNumber, Switch } from 'antd';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
@@ -6,12 +5,14 @@ import { useI18n } from '@/ui/hooks/useI18n';
 import { useBabylonConfig } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
-import { bbnDevnet, DEFAULT_BBN_GAS_LIMIT } from '@unisat/babylon-service';
+import { bbnDevnet, DEFAULT_BBN_GAS_LIMIT } from '@unisat/babylon-service/types';
 
 import { BottomModal } from '../BottomModal';
 import { Button } from '../Button';
 import { Column } from '../Column';
+import { Input } from '../Input';
 import { Row } from '../Row';
+import { Switch } from '../Switch';
 import { Text } from '../Text';
 import { FeeOptionsPopoverProps, MODAL_BG } from './interface';
 
@@ -31,7 +32,14 @@ export function FeeOptionsPopover({
   const [localSelectedOption, setLocalSelectedOption] = useState(settings.selectedOption);
   const [simulatedGasValue, setSimulatedGasValue] = useState<number | null>(null);
   const [gasAdjustment, setGasAdjustment] = useState<number>(settings.gasAdjustment || 1.3);
+  const [gasAdjustmentInputAmount, setGasAdjustmentInputAmount] = useState<string>(
+    settings.gasAdjustment ? settings.gasAdjustment.toString() : '1.3'
+  );
   const [gasLimit, setGasLimit] = useState<number>(settings.gasLimit || parseInt(DEFAULT_BBN_GAS_LIMIT));
+  const [gasLimitInputAmount, setGasLimitInputAmount] = useState<string>(
+    settings.gasLimit ? settings.gasLimit.toString() : DEFAULT_BBN_GAS_LIMIT
+  );
+
   const [isAutoGasLimit, setIsAutoGasLimit] = useState<boolean>(
     settings.isAutoGasLimit !== undefined ? settings.isAutoGasLimit : true
   );
@@ -281,20 +289,14 @@ export function FeeOptionsPopover({
             marginBottom: 8,
             opacity: isLoading ? 0.7 : 1
           }}>
-          <InputNumber
-            style={{
-              width: '100%',
-              backgroundColor: 'transparent',
-              color: 'white'
-            }}
-            min={1000}
-            max={parseInt(DEFAULT_BBN_GAS_LIMIT)}
-            step={1000}
-            precision={0}
-            value={gasLimit}
-            onChange={handleGasLimitChange}
+          <Input
+            preset="amount"
             placeholder={`${t('recommended')}: ${recommendedGasLimit}`}
-            disabled={isLoading}
+            value={gasLimitInputAmount}
+            onAmountInputChange={(amount) => {
+              setGasLimitInputAmount(amount);
+              handleGasLimitChange(parseInt(amount));
+            }}
           />
         </div>
         <Row justifyBetween fullX>
@@ -329,15 +331,15 @@ export function FeeOptionsPopover({
             marginBottom: 8,
             opacity: isLoading ? 0.7 : 1
           }}>
-          <InputNumber
-            style={{ width: '100%', backgroundColor: 'transparent', color: 'white' }}
-            min={0.1}
-            max={3.0}
-            step={0.1}
-            precision={1}
-            value={gasAdjustment}
-            onChange={handleGasAdjustmentChange}
+          <Input
+            preset="amount"
+            value={gasAdjustmentInputAmount}
+            runesDecimal={1}
             disabled={isLoading}
+            onAmountInputChange={(amount) => {
+              setGasAdjustmentInputAmount(amount);
+              handleGasAdjustmentChange(parseFloat(amount));
+            }}
           />
         </div>
         <Row justifyBetween fullX>

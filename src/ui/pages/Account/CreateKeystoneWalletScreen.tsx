@@ -1,4 +1,3 @@
-import bitcore from 'bitcore-lib';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
@@ -16,6 +15,7 @@ import { useI18n } from '@/ui/hooks/useI18n';
 import { useImportAccountsFromKeystoneCallback } from '@/ui/state/global/hooks';
 import { colors } from '@/ui/theme/colors';
 import { useWallet } from '@/ui/utils';
+import { isValidHdPath } from '@/ui/utils/bitcoin-utils';
 import { ScanOutlined, UsbOutlined } from '@ant-design/icons';
 import { AddressType } from '@unisat/wallet-types';
 
@@ -372,7 +372,7 @@ function Step3({
     setPathError('');
     setPathText(text);
     if (text !== '') {
-      const isValid = bitcore.HDPrivateKey.isValidPath(text);
+      const isValid = isValidHdPath(text);
       if (!isValid) {
         setPathError('Invalid derivation path.');
         return;

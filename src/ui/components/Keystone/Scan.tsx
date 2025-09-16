@@ -1,4 +1,3 @@
-import { Progress } from 'antd';
 import { useCallback, useState } from 'react';
 
 import { useI18n } from '@/ui/hooks/useI18n';
@@ -6,6 +5,7 @@ import { colors } from '@/ui/theme/colors';
 import { CameraOutlined } from '@ant-design/icons';
 import { useAnimatedQRScanner } from '@keystonehq/animated-qr';
 
+import { Progress } from '../Progress';
 import KeystonePopover from './Popover';
 
 export default function KeystoneScan({

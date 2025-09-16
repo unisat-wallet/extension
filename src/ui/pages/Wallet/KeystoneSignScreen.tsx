@@ -6,8 +6,8 @@ import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks'
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { useBabylonConfig } from '@/ui/state/settings/hooks';
 import { useWallet } from '@/ui/utils';
-import { COSMOS_CHAINS_MAP } from '@unisat/babylon-service';
-import { KeystoneSignEnum } from '@unisat/keyring-service';
+import { COSMOS_CHAINS_MAP } from '@unisat/babylon-service/types';
+import { KeystoneSignEnum } from '@unisat/keyring-service/types';
 
 interface Props {
   type: KeystoneSignEnum;

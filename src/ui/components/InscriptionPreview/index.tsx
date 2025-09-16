@@ -1,4 +1,3 @@
-import { Tooltip } from 'antd';
 import { CSSProperties, useEffect, useRef, useState } from 'react';
 
 import { Inscription } from '@/shared/types';
@@ -13,6 +12,7 @@ import { Column } from '../Column';
 import Iframe from '../Iframe';
 import { Row } from '../Row';
 import { Text } from '../Text';
+import { Tooltip } from '../Tooltip';
 import './index.less';
 
 const $viewPresets = {

@@ -1,10 +1,9 @@
-import { Divider, Slider } from 'antd';
 import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { AddressCAT20UtxoSummary, CAT20Balance, CAT20MergeOrder, CAT20TokenInfo, CAT_VERSION } from '@/shared/types';
-import { Button, Card, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
+import { Button, Card, Column, Content, Header, Input, Layout, Row, Slider, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { BtcUsd } from '@/ui/components/BtcUsd';
@@ -378,7 +377,15 @@ export default function MergeCAT20Screen() {
                 <Text text={maxUtxoCount} preset="sub" />
               </Row>
 
-              <Divider style={{ borderColor: '#FFFFFF26', borderWidth: 1 }} dashed></Divider>
+              <div 
+                style={{ 
+                  width: '100%', 
+                  height: 1, 
+                  backgroundColor: '#FFFFFF26', 
+                  margin: '16px 0',
+                  backgroundImage: 'repeating-linear-gradient(to right, transparent, transparent 5px, #FFFFFF26 5px, #FFFFFF26 10px)'
+                }} 
+              />
 
               <Row justifyBetween>
                 <Text text={`${t('selected')} ${cat20Balance.symbol}`} color="textDim" size="sm" />

@@ -1,4 +1,3 @@
-import bitcore from 'bitcore-lib';
 import { isNull } from 'lodash';
 import React, { CSSProperties, useEffect, useState } from 'react';
 
@@ -11,6 +10,7 @@ import { getAddressTips, useChain } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { spacing } from '@/ui/theme/spacing';
 import { isValidBech32Address, useWallet } from '@/ui/utils';
+import { isValidAddress } from '@/ui/utils/bitcoin-utils';
 import { ArrowRightOutlined, SearchOutlined } from '@ant-design/icons';
 
 import { AccordingInscription } from '../AccordingInscription';
@@ -328,7 +328,7 @@ export const AddressInput = (props: InputProps) => {
         return;
       }
     } else {
-      const isValid = bitcore.Address.isValid(inputAddress);
+      const isValid = isValidAddress(inputAddress);
       if (!isValid) {
         setFormatError(t('recipient_address_is_invalid'));
         return;
@@ -416,7 +416,7 @@ export const AddressInput = (props: InputProps) => {
             resetState();
             const addressValue = contact.address.trim();
 
-            if (bitcore.Address.isValid(addressValue)) {
+            if (isValidAddress(addressValue)) {
               setValidAddress(addressValue);
             } else {
               setFormatError(t('recipient_address_is_invalid'));

@@ -1,7 +1,7 @@
 import React, { useEffect, useMemo, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 
-import { ADDRESS_TYPES, FEEDBACK_URL, KEYRING_TYPE, REVIEW_URL } from '@/shared/constant';
+import { ADDRESS_TYPES, FEEDBACK_URL, REVIEW_URL } from '@/shared/constant';
 import { Button, Card, Column, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { Icon } from '@/ui/components/Icon';
@@ -14,6 +14,7 @@ import { useChain, useVersionInfo } from '@/ui/state/settings/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { spacing } from '@/ui/theme/spacing';
 import { useWallet } from '@/ui/utils';
+import { KeyringType } from '@unisat/keyring-service/types';
 
 import { getSettingsList } from './const';
 import { SettingsAction, SettingsItemType } from './types';
@@ -75,7 +76,7 @@ export function SettingsList() {
       if (v.action === SettingsAction.ADDRESS_TYPE) {
         const item = ADDRESS_TYPES[currentKeyring.addressType];
         const hdPath = currentKeyring.hdPath || item.hdPath;
-        if (currentKeyring.type === KEYRING_TYPE.SimpleKeyring) {
+        if (currentKeyring.type === KeyringType.SimpleKeyring) {
           v.value = `${item.name}`;
         } else {
           v.value = `${item.name} (${hdPath}/${currentAccount.index})`;

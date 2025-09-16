@@ -1,26 +1,17 @@
 import { useCallback, useMemo } from 'react';
 
-import { CHAINS_MAP, ChainType, KEYRING_TYPE } from '@/shared/constant';
 import { RawTxInfo, ToAddressInfo } from '@/shared/types';
 import { useTools } from '@/ui/components/ActionComponent';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { useBTCUnit } from '@/ui/state/settings/hooks';
 import { satoshisToBTC, sleep, useWallet } from '@/ui/utils';
-import { UnspentOutput } from '@unisat/tx-helpers';
-import { bitcoin } from '@unisat/wallet-bitcoin';
+import { UnspentOutput } from '@unisat/tx-helpers/types';
 
 import { AppState } from '..';
 import { useAccountAddress, useCurrentAccount } from '../accounts/hooks';
 import { accountActions } from '../accounts/reducer';
 import { useAppDispatch, useAppSelector } from '../hooks';
 import { transactionsActions } from './reducer';
-
-function isFBByUnit(btcUnit: string) {
-  return (
-    btcUnit === CHAINS_MAP[ChainType.FRACTAL_BITCOIN_MAINNET].unit ||
-    btcUnit === CHAINS_MAP[ChainType.FRACTAL_BITCOIN_TESTNET].unit
-  );
-}
 
 export function useTransactionsState(): AppState['transactions'] {
   return useAppSelector((state) => state.transactions);
@@ -71,17 +62,21 @@ export function usePrepareSendBTCCallback() {
         const summary = await wallet.getFeeSummary();
         feeRate = summary.list[1].feeRate;
       }
-      let psbtHex = '';
+      let res: {
+        psbtHex: string;
+        rawtx: string;
+        fee: number;
+      };
 
       if (safeBalance === toAmount && !disableAutoAdjust) {
-        psbtHex = await wallet.sendAllBTC({
+        res = await wallet.sendAllBTC({
           to: toAddressInfo.address,
           btcUtxos: _utxos,
           enableRBF,
           feeRate
         });
       } else {
-        psbtHex = await wallet.sendBTC({
+        res = await wallet.sendBTC({
           to: toAddressInfo.address,
           amount: toAmount,
           btcUtxos: _utxos,
@@ -92,39 +87,20 @@ export function usePrepareSendBTCCallback() {
         });
       }
 
-      const psbt = bitcoin.Psbt.fromHex(psbtHex);
-      // use the unknown keyValue to indicate FB tx in psbt for keystone
-      if (isFBByUnit(btcUnit) && account.type === KEYRING_TYPE.KeystoneKeyring) {
-        const keysString = 'chain';
-        // use ff as the keyType in the psbt global unknown
-        const key = Buffer.from('ff' + Buffer.from(keysString).toString('hex'), 'hex');
-        psbt.addUnknownKeyValToGlobal({ key, value: Buffer.from(btcUnit.toLowerCase()) });
-        psbtHex = psbt.toHex();
-      }
-
-      const rawtx =
-        account.type === KEYRING_TYPE.KeystoneKeyring || account.type === KEYRING_TYPE.ColdWalletKeyring
-          ? ''
-          : psbt.extractTransaction(true).toHex();
-      const fee =
-        account.type === KEYRING_TYPE.KeystoneKeyring || account.type === KEYRING_TYPE.ColdWalletKeyring
-          ? 0
-          : psbt.getFee();
-
       dispatch(
         transactionsActions.updateBitcoinTx({
-          rawtx,
-          psbtHex,
+          rawtx: res.rawtx,
+          psbtHex: res.psbtHex,
           fromAddress,
           feeRate,
           enableRBF
         })
       );
       const rawTxInfo: RawTxInfo = {
-        psbtHex,
-        rawtx,
+        psbtHex: res.psbtHex,
+        rawtx: res.rawtx,
         toAddressInfo,
-        fee
+        fee: res.fee
       };
       return rawTxInfo;
     },
@@ -148,7 +124,7 @@ export function usePrepareSendBypassHeadOffsetsCallback() {
       toAmount: number;
       feeRate: number;
     }) => {
-      let psbtHex = await wallet.sendCoinBypassHeadOffsets(
+      const res = await wallet.sendCoinBypassHeadOffsets(
         [
           {
             address: toAddressInfo.address,
@@ -158,39 +134,19 @@ export function usePrepareSendBypassHeadOffsetsCallback() {
         feeRate
       );
 
-      const psbt = bitcoin.Psbt.fromHex(psbtHex);
-
-      // use the unknown keyValue to indicate FB tx in psbt for keystone
-      if (isFBByUnit(btcUnit) && account.type === KEYRING_TYPE.KeystoneKeyring) {
-        const keysString = 'chain';
-        // use ff as the keyType in the psbt global unknown
-        const key = Buffer.from('ff' + Buffer.from(keysString).toString('hex'), 'hex');
-        psbt.addUnknownKeyValToGlobal({ key, value: Buffer.from(btcUnit.toLowerCase()) });
-        psbtHex = psbt.toHex();
-      }
-
-      const rawtx =
-        account.type === KEYRING_TYPE.KeystoneKeyring || account.type === KEYRING_TYPE.ColdWalletKeyring
-          ? ''
-          : psbt.extractTransaction(true).toHex();
-      const fee =
-        account.type === KEYRING_TYPE.KeystoneKeyring || account.type === KEYRING_TYPE.ColdWalletKeyring
-          ? 0
-          : psbt.getFee();
-
       dispatch(
         transactionsActions.updateBitcoinTx({
-          rawtx,
-          psbtHex,
+          rawtx: res.rawtx,
+          psbtHex: res.psbtHex,
           fromAddress,
           feeRate
         })
       );
       const rawTxInfo: RawTxInfo = {
-        psbtHex,
-        rawtx,
+        psbtHex: res.psbtHex,
+        rawtx: res.rawtx,
         toAddressInfo,
-        fee
+        fee: res.fee
       };
       return rawTxInfo;
     },
@@ -272,7 +228,7 @@ export function usePrepareSendOrdinalsInscriptionCallback() {
         btcUtxos = await fetchUtxos();
       }
 
-      const psbtHex = await wallet.sendOrdinalsInscription({
+      const res = await wallet.sendOrdinalsInscription({
         to: toAddressInfo.address,
         inscriptionId,
         feeRate,
@@ -280,15 +236,10 @@ export function usePrepareSendOrdinalsInscriptionCallback() {
         enableRBF,
         btcUtxos
       });
-      const psbt = bitcoin.Psbt.fromHex(psbtHex);
-      const rawtx =
-        account.type === KEYRING_TYPE.KeystoneKeyring || account.type === KEYRING_TYPE.ColdWalletKeyring
-          ? ''
-          : psbt.extractTransaction(true).toHex();
       dispatch(
         transactionsActions.updateOrdinalsTx({
-          rawtx,
-          psbtHex,
+          rawtx: res.rawtx,
+          psbtHex: res.psbtHex,
           fromAddress,
           // inscription,
           feeRate,
@@ -297,8 +248,8 @@ export function usePrepareSendOrdinalsInscriptionCallback() {
         })
       );
       const rawTxInfo: RawTxInfo = {
-        psbtHex,
-        rawtx,
+        psbtHex: res.psbtHex,
+        rawtx: res.rawtx,
         toAddressInfo
       };
       return rawTxInfo;
@@ -335,30 +286,25 @@ export function usePrepareSendOrdinalsInscriptionsCallback() {
       if (btcUtxos.length === 0) {
         btcUtxos = await fetchUtxos();
       }
-      const psbtHex = await wallet.sendOrdinalsInscriptions({
+      const res = await wallet.sendOrdinalsInscriptions({
         to: toAddressInfo.address,
         inscriptionIds,
         feeRate,
         enableRBF,
         btcUtxos
       });
-      const psbt = bitcoin.Psbt.fromHex(psbtHex);
-      const rawtx =
-        account.type === KEYRING_TYPE.KeystoneKeyring || account.type === KEYRING_TYPE.ColdWalletKeyring
-          ? ''
-          : psbt.extractTransaction(true).toHex();
       dispatch(
         transactionsActions.updateOrdinalsTx({
-          rawtx,
-          psbtHex,
+          rawtx: res.rawtx,
+          psbtHex: res.psbtHex,
           fromAddress,
           feeRate,
           enableRBF
         })
       );
       const rawTxInfo: RawTxInfo = {
-        psbtHex,
-        rawtx,
+        psbtHex: res.psbtHex,
+        rawtx: res.rawtx,
         toAddressInfo
       };
       return rawTxInfo;
@@ -391,22 +337,17 @@ export function useCreateSplitTxCallback() {
         btcUtxos = await fetchUtxos();
       }
 
-      const { psbtHex, splitedCount } = await wallet.splitOrdinalsInscription({
+      const res = await wallet.splitOrdinalsInscription({
         inscriptionId,
         feeRate,
         outputValue,
         enableRBF,
         btcUtxos
       });
-      const psbt = bitcoin.Psbt.fromHex(psbtHex);
-      const rawtx =
-        account.type === KEYRING_TYPE.KeystoneKeyring || account.type === KEYRING_TYPE.ColdWalletKeyring
-          ? ''
-          : psbt.extractTransaction(true).toHex();
       dispatch(
         transactionsActions.updateOrdinalsTx({
-          rawtx,
-          psbtHex,
+          rawtx: res.rawtx,
+          psbtHex: res.psbtHex,
           fromAddress,
           // inscription,
           enableRBF,
@@ -415,13 +356,13 @@ export function useCreateSplitTxCallback() {
         })
       );
       const rawTxInfo: RawTxInfo = {
-        psbtHex,
-        rawtx,
+        psbtHex: res.psbtHex,
+        rawtx: res.rawtx,
         toAddressInfo: {
           address: fromAddress
         }
       };
-      return { rawTxInfo, splitedCount };
+      return { rawTxInfo, splitedCount: res.splitedCount };
     },
     [dispatch, wallet, fromAddress, utxos]
   );
@@ -565,7 +506,7 @@ export function usePrepareSendRunesCallback() {
         assetUtxos = await fetchAssetUtxosRunes(runeid);
       }
 
-      const psbtHex = await wallet.sendRunes({
+      const res = await wallet.sendRunes({
         to: toAddressInfo.address,
         runeid,
         runeAmount,
@@ -575,16 +516,11 @@ export function usePrepareSendRunesCallback() {
         btcUtxos,
         assetUtxos
       });
-      const psbt = bitcoin.Psbt.fromHex(psbtHex);
 
-      const rawtx =
-        account.type === KEYRING_TYPE.KeystoneKeyring || account.type === KEYRING_TYPE.ColdWalletKeyring
-          ? ''
-          : psbt.extractTransaction(true).toHex();
       dispatch(
         transactionsActions.updateRunesTx({
-          rawtx,
-          psbtHex,
+          rawtx: res.rawtx,
+          psbtHex: res.psbtHex,
           fromAddress,
           feeRate,
           enableRBF,
@@ -594,8 +530,8 @@ export function usePrepareSendRunesCallback() {
         })
       );
       const rawTxInfo: RawTxInfo = {
-        psbtHex,
-        rawtx,
+        psbtHex: res.psbtHex,
+        rawtx: res.rawtx,
         toAddressInfo
       };
       return rawTxInfo;

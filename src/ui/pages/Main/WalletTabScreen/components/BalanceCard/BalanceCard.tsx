@@ -1,12 +1,10 @@
-import { Tooltip } from 'antd';
 import classNames from 'classnames';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 import { ChainType } from '@/shared/constant';
-import { Row } from '@/ui/components';
+import { Icon, Row, Tooltip } from '@/ui/components';
 import { BtcUsd } from '@/ui/components/BtcUsd';
-import { Icon } from '@/ui/components/Icon';
 import { RefreshButton } from '@/ui/components/RefreshButton';
 import { getSpecialLocale, useI18n } from '@/ui/hooks/useI18n';
 import { useUtxoTools } from '@/ui/hooks/useUtxoTools';

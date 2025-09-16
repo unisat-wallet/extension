@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
-import { KEYRING_TYPE } from '@/shared/constant';
 import { TxType } from '@/shared/types';
+import { KeyringType } from '@unisat/keyring-service/types';
 
 export const usePsbtInitializer = (setTxInfo, setLoading, tools) => {
   const initializePsbt = useCallback(
@@ -27,7 +27,7 @@ export const usePsbtInitializer = (setTxInfo, setLoading, tools) => {
       // handle PSBT based on transaction type
       try {
         if (type === TxType.SIGN_TX) {
-          if (psbtHex && currentAccount.type === KEYRING_TYPE.KeystoneKeyring) {
+          if (psbtHex && currentAccount.type === KeyringType.KeystoneKeyring) {
             const toSignInputs = await wallet.formatOptionsToSignInputs(psbtHex, options);
             finalPsbtHex = await wallet.signPsbtWithHex(psbtHex, toSignInputs, false);
           }

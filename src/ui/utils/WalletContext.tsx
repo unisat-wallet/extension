@@ -3,7 +3,7 @@ import { createContext, ReactNode, useContext } from 'react';
 import { AccountAsset } from '@/background/controller/wallet';
 import { ContactBookItem } from '@/background/service/contactBook';
 import { ConnectedSite } from '@/background/service/permission';
-import { AddressFlagType, CHAINS_ENUM, ChainType } from '@/shared/constant';
+import { AddressFlagType, ChainType } from '@/shared/constant';
 import {
   Account,
   AddressAlkanesTokenSummary,
@@ -49,11 +49,10 @@ import {
   WalletKeyring,
   WebsiteResult
 } from '@/shared/types';
-import { BabylonConfigV2 } from '@unisat/babylon-service';
+import { BabylonConfigV2 } from '@unisat/babylon-service/types';
 import { ContactBookStore } from '@unisat/contact-book';
-import { ToSignInput } from '@unisat/keyring-service';
-import { UnspentOutput } from '@unisat/tx-helpers';
-import { bitcoin } from '@unisat/wallet-bitcoin';
+import { ToSignInput } from '@unisat/keyring-service/types';
+import { UnspentOutput } from '@unisat/tx-helpers/types';
 import { AddressType } from '@unisat/wallet-types';
 
 export interface WalletController {
@@ -185,7 +184,6 @@ export interface WalletController {
 
   getCurrentKeyringAccounts(): Promise<Account[]>;
 
-  signTransaction(psbt: bitcoin.Psbt, inputs: ToSignInput[]): Promise<bitcoin.Psbt>;
   signPsbtWithHex(psbtHex: string, toSignInputs: ToSignInput[], autoFinalized: boolean): Promise<string>;
 
   sendBTC(data: {
@@ -196,9 +194,17 @@ export interface WalletController {
     enableRBF: boolean;
     memo?: string;
     memos?: string[];
-  }): Promise<string>;
+  }): Promise<{
+    psbtHex: string;
+    rawtx: string;
+    fee: number;
+  }>;
 
-  sendAllBTC(data: { to: string; btcUtxos: UnspentOutput[]; feeRate: number; enableRBF: boolean }): Promise<string>;
+  sendAllBTC(data: { to: string; btcUtxos: UnspentOutput[]; feeRate: number; enableRBF: boolean }): Promise<{
+    psbtHex: string;
+    rawtx: string;
+    fee: number;
+  }>;
 
   sendOrdinalsInscription(data: {
     to: string;
@@ -207,7 +213,11 @@ export interface WalletController {
     outputValue?: number;
     enableRBF: boolean;
     btcUtxos: UnspentOutput[];
-  }): Promise<string>;
+  }): Promise<{
+    psbtHex: string;
+    rawtx: string;
+    fee: number;
+  }>;
 
   sendOrdinalsInscriptions(data: {
     to: string;
@@ -215,7 +225,11 @@ export interface WalletController {
     feeRate: number;
     enableRBF: boolean;
     btcUtxos: UnspentOutput[];
-  }): Promise<string>;
+  }): Promise<{
+    psbtHex: string;
+    rawtx: string;
+    fee: number;
+  }>;
 
   splitOrdinalsInscription(data: {
     inscriptionId: string;
@@ -223,7 +237,12 @@ export interface WalletController {
     outputValue: number;
     enableRBF: boolean;
     btcUtxos: UnspentOutput[];
-  }): Promise<{ psbtHex: string; splitedCount: number }>;
+  }): Promise<{
+    psbtHex: string;
+    rawtx: string;
+    fee: number;
+    splitedCount: number;
+  }>;
 
   pushTx(rawtx: string): Promise<string>;
 
@@ -387,7 +406,11 @@ export interface WalletController {
     btcUtxos?: UnspentOutput[];
     assetUtxos?: UnspentOutput[];
     outputValue?: number;
-  }): Promise<string>;
+  }): Promise<{
+    psbtHex: string;
+    rawtx: string;
+    fee: number;
+  }>;
 
   setAutoLockTimeId(timeId: number): Promise<void>;
   getAutoLockTimeId(): Promise<number>;
@@ -513,9 +536,9 @@ export interface WalletController {
   getBabylonConfig(): Promise<BabylonConfigV2>;
 
   getContactByAddress(address: string): Promise<ContactBookItem | undefined>;
-  getContactByAddressAndChain(address: string, chain: CHAINS_ENUM): Promise<ContactBookItem | undefined>;
+  getContactByAddressAndChain(address: string, chain: ChainType): Promise<ContactBookItem | undefined>;
   updateContact(data: ContactBookItem): Promise<void>;
-  removeContact(address: string, chain?: CHAINS_ENUM): Promise<void>;
+  removeContact(address: string, chain?: ChainType): Promise<void>;
   listContacts(): Promise<ContactBookItem[]>;
   saveContactsOrder(contacts: ContactBookItem[]): Promise<void>;
 
@@ -552,7 +575,14 @@ export interface WalletController {
   getOpenInSidePanel(): Promise<boolean>;
   setOpenInSidePanel(openInSidePanel: boolean): Promise<void>;
 
-  sendCoinBypassHeadOffsets(tos: { address: string; satoshis: number }[], feeRate: number): Promise<string>;
+  sendCoinBypassHeadOffsets(
+    tos: { address: string; satoshis: number }[],
+    feeRate: number
+  ): Promise<{
+    psbtHex: string;
+    rawtx: string;
+    fee: number;
+  }>;
 
   getAlkanesList(
     address: string,

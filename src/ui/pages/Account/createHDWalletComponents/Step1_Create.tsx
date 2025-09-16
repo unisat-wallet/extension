@@ -1,8 +1,7 @@
-import { Checkbox } from 'antd';
 import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { useEffect, useState } from 'react';
 
-import { Button, Card, Column, Grid, Row, Text } from '@/ui/components';
+import { Button, Card, Checkbox, Column, Grid, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { FooterButtonContainer } from '@/ui/components/FooterButtonContainer';
 import { useI18n } from '@/ui/hooks/useI18n';

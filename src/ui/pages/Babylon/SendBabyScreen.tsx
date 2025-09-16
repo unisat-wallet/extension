@@ -11,7 +11,7 @@ import { useAppDispatch, useAppSelector } from '@/ui/state/hooks';
 import { useBabylonConfig } from '@/ui/state/settings/hooks';
 import { NavigationSource, uiActions } from '@/ui/state/ui/reducer';
 import { isValidBech32Address, useWallet } from '@/ui/utils';
-import { COSMOS_CHAINS_MAP, DEFAULT_BBN_GAS_LIMIT } from '@unisat/babylon-service';
+import { COSMOS_CHAINS_MAP, DEFAULT_BBN_GAS_LIMIT } from '@unisat/babylon-service/types';
 
 import { NotSupportedLayout } from './BabylonStakingScreen';
 

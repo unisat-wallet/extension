@@ -15,7 +15,7 @@ import {
   usePrepareSendOrdinalsInscriptionCallback
 } from '@/ui/state/transactions/hooks';
 import { isValidAddress, useWallet } from '@/ui/utils';
-import { getAddressUtxoDust } from '@unisat/tx-helpers';
+import { getAddressUtxoDust } from '@/ui/utils/bitcoin-utils';
 
 import { useNavigate } from '../MainRoute';
 

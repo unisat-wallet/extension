@@ -1,6 +1,4 @@
-import { Tooltip } from 'antd';
-
-import { Icon, Row, Text } from '@/ui/components';
+import { Icon, Row, Text, Tooltip } from '@/ui/components';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { fontSizes } from '@/ui/theme/font';
 import { amountToSatoshis } from '@/ui/utils';

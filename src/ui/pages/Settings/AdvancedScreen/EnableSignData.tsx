@@ -1,7 +1,6 @@
-import { Checkbox, Switch } from 'antd';
 import { useEffect, useState } from 'react';
 
-import { Button, Card, Column, Icon, Row, Text } from '@/ui/components';
+import { Button, Card, Checkbox, Column, Icon, Row, Switch, Text } from '@/ui/components';
 import { Popover } from '@/ui/components/Popover';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';

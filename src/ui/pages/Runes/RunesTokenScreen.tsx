@@ -3,10 +3,9 @@ import { useEffect, useMemo, useState } from 'react';
 import { ChainType } from '@/shared/constant';
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { AddressRunesTokenSummary } from '@/shared/types';
-import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
+import { Button, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
-import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { Line } from '@/ui/components/Line';
 import { Section } from '@/ui/components/Section';
 import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
@@ -21,7 +20,7 @@ import {
 } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
-import { copyToClipboard, showLongNumber, useLocationState, useWallet } from '@/ui/utils';
+import { showLongNumber, useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 import { useNavigate } from '../MainRoute';
@@ -139,21 +138,26 @@ export default function RunesTokenScreen() {
       />
       {tokenSummary && (
         <Content>
-          <Column py="xl" pt="zero" style={{ borderBottomWidth: 1, borderColor: colors.white_muted }}>
-            <Row itemsCenter fullX justifyCenter>
+          <Column justifyCenter itemsCenter>
+            <Image src={tokenSummary.runeInfo.logo} size={48} style={{ borderRadius: 24 }} />
+
+            <Row justifyCenter itemsCenter>
+              <BRC20Ticker tick={tokenSummary.runeInfo.spacedRune} preset="md" showOrigin color={'ticker_color2'} />
+            </Row>
+            <Column itemsCenter fullX justifyCenter>
               <Text
                 text={`${runesUtils.toDecimalAmount(
                   tokenSummary.runeBalance.amount,
                   tokenSummary.runeBalance.divisibility
-                )}`}
+                )} `}
                 preset="bold"
                 textCenter
                 size="xxl"
                 wrap
                 digital
+                color="white"
               />
-              <BRC20Ticker tick={tokenSummary.runeBalance.symbol} preset="lg" />
-            </Row>
+            </Column>
             <Row justifyCenter fullX>
               <TickUsdWithoutPrice
                 tick={tokenSummary.runeInfo.spacedRune}
@@ -165,61 +169,7 @@ export default function RunesTokenScreen() {
                 size={'md'}
               />
             </Row>
-
-            <Row justifyBetween mt="lg">
-              <Button
-                text={t('mint')}
-                preset="home"
-                disabled={!enableMint}
-                icon="pencil"
-                onClick={(e) => {
-                  window.open(`${unisatWebsite}/runes/inscribe?tab=mint&rune=${tokenSummary.runeInfo.rune}`);
-                }}
-                full
-              />
-
-              <Button
-                text={t('send')}
-                preset="home"
-                icon="send"
-                disabled={!enableTransfer}
-                onClick={(e) => {
-                  navigate('SendRunesScreen', {
-                    runeBalance: tokenSummary.runeBalance,
-                    runeInfo: tokenSummary.runeInfo
-                  });
-                }}
-                full
-              />
-
-              {enableTrade ? (
-                <Button
-                  text={t('trade')}
-                  preset="home"
-                  icon="trade"
-                  disabled={!enableTrade}
-                  onClick={(e) => {
-                    window.open(marketPlaceUrl);
-                  }}
-                  full
-                />
-              ) : null}
-            </Row>
           </Column>
-
-          <Text
-            text={tokenSummary.runeInfo.spacedRune}
-            preset="title-bold"
-            onClick={() => {
-              copyToClipboard(tokenSummary.runeInfo.spacedRune).then(() => {
-                tools.toastSuccess(t('copied'));
-              });
-            }}></Text>
-          {tokenSummary.runeLogo ? (
-            <Row>
-              <InscriptionPreview data={tokenSummary.runeLogo} preset="small" asLogo />
-            </Row>
-          ) : null}
 
           <Column
             gap="lg"
@@ -283,6 +233,53 @@ export default function RunesTokenScreen() {
           </Column>
         </Content>
       )}
+      <Footer
+        style={{
+          borderTopWidth: 1,
+          borderColor: colors.border2
+        }}>
+        <Column gap="sm" fullX>
+          <Row gap="sm" mt="sm" mb="md">
+            <Button
+              text={t('mint')}
+              preset="brc20-action"
+              disabled={!enableMint}
+              icon="pencil"
+              onClick={(e) => {
+                window.open(`${unisatWebsite}/runes/inscribe?tab=mint&rune=${tokenSummary.runeInfo.rune}`);
+              }}
+              full
+            />
+
+            <Button
+              text={t('send')}
+              preset="brc20-action"
+              icon="send"
+              disabled={!enableTransfer}
+              onClick={(e) => {
+                navigate('SendRunesScreen', {
+                  runeBalance: tokenSummary.runeBalance,
+                  runeInfo: tokenSummary.runeInfo
+                });
+              }}
+              full
+            />
+
+            {enableTrade ? (
+              <Button
+                text={t('trade')}
+                preset="brc20-action"
+                icon="trade"
+                disabled={!enableTrade}
+                onClick={(e) => {
+                  window.open(marketPlaceUrl);
+                }}
+                full
+              />
+            ) : null}
+          </Row>
+        </Column>
+      </Footer>
     </Layout>
   );
 }

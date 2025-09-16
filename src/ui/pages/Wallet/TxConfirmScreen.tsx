@@ -3,7 +3,6 @@ import { Header } from '@/ui/components';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { usePushBitcoinTxCallback } from '@/ui/state/transactions/hooks';
 import { useLocationState } from '@/ui/utils';
-import { bitcoin } from '@unisat/wallet-bitcoin';
 
 import { SignPsbt } from '../Approval/components';
 import { useNavigate } from '../MainRoute';
@@ -32,25 +31,19 @@ export default function TxConfirmScreen() {
       }}
       handleConfirm={async (res) => {
         try {
-          let rawtx = '';
+          let txData = '';
 
           if (res && res.psbtHex) {
-            const psbt = bitcoin.Psbt.fromHex(res.psbtHex);
-            try {
-              psbt.finalizeAllInputs();
-            } catch (e) {
-              // ignore
-            }
-            rawtx = psbt.extractTransaction().toHex();
+            txData = res.psbtHex;
           } else if (res && res.rawtx) {
-            rawtx = res.rawtx;
+            txData = res.rawtx;
           } else if (rawTxInfo && rawTxInfo.rawtx) {
-            rawtx = rawTxInfo.rawtx;
+            txData = rawTxInfo.rawtx;
           } else {
             throw new Error(t('invalid_transaction_data'));
           }
 
-          const { success, txid, error } = await pushBitcoinTx(rawtx);
+          const { success, txid, error } = await pushBitcoinTx(txData);
           if (success) {
             navigate('TxSuccessScreen', { txid });
           } else {

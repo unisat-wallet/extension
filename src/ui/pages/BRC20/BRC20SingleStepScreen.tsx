@@ -13,7 +13,7 @@ import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useRunesTx } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { isValidAddress, showLongNumber, useWallet } from '@/ui/utils';
-import { getAddressUtxoDust } from '@unisat/tx-helpers';
+import { getAddressUtxoDust } from '@/ui/utils/bitcoin-utils';
 
 import { SignPsbt } from '../Approval/components';
 

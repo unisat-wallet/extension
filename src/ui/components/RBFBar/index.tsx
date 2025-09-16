@@ -1,12 +1,13 @@
-import { Checkbox, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 
 import { useI18n } from '@/ui/hooks/useI18n';
 import { fontSizes } from '@/ui/theme/font';
 
+import { Checkbox } from '../Checkbox';
 import { Icon } from '../Icon';
 import { Row } from '../Row';
 import { Text } from '../Text';
+import { Tooltip } from '../Tooltip';
 
 export function RBFBar({ defaultValue, onChange }: { defaultValue?: boolean; onChange: (val: boolean) => void }) {
   const [enableRBF, setEnableRBF] = useState(defaultValue || false);

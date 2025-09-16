@@ -1,8 +1,8 @@
 import { useCallback } from 'react';
 
-import { KEYRING_TYPE } from '@/shared/constant';
 import { Account, AddressType } from '@/shared/types';
 import { useWallet } from '@/ui/utils';
+import { KeyringType } from '@unisat/keyring-service/types';
 
 import { AppState } from '..';
 import { useAppDispatch, useAppSelector } from '../hooks';
@@ -240,5 +240,5 @@ export function useReloadAccounts() {
 
 export function useIsKeystoneWallet() {
   const currentKeyring = useCurrentKeyring();
-  return currentKeyring.type === KEYRING_TYPE.KeystoneKeyring;
+  return currentKeyring.type === KeyringType.KeystoneKeyring;
 }

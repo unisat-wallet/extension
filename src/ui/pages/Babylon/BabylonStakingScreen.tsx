@@ -12,7 +12,7 @@ import { useI18n } from '@/ui/hooks/useI18n';
 import { useBabylonConfig, useChain, useChainType } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { satoshisToAmount, useWallet } from '@/ui/utils';
-import { BabylonConfigV2, BabylonPhaseState, COSMOS_CHAINS_MAP } from '@unisat/babylon-service';
+import { BabylonConfigV2, BabylonPhaseState, COSMOS_CHAINS_MAP } from '@unisat/babylon-service/types';
 
 import { useNavigate } from '../MainRoute';
 

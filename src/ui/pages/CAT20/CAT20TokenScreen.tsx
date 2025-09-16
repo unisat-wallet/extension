@@ -1,9 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { ChainType, KEYRING_TYPE } from '@/shared/constant';
+import { ChainType } from '@/shared/constant';
 import { runesUtils } from '@/shared/lib/runes-utils';
 import { AddressCAT20TokenSummary, CAT_VERSION } from '@/shared/types';
-import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
+import { Button, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { Line } from '@/ui/components/Line';
@@ -17,6 +17,7 @@ import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { showLongNumber, useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
+import { KeyringType } from '@unisat/keyring-service/types';
 
 import { useNavigate } from '../MainRoute';
 
@@ -120,23 +121,26 @@ export default function CAT20TokenScreen() {
       />
       {tokenSummary && (
         <Content>
-          <Column pt="zero" pb="lg" style={{ borderBottomWidth: 1, borderColor: colors.white_muted }}>
-            <Text text={tokenSummary.cat20Info.name} preset="title-bold" textCenter size="xxl" color="gold" />
-            <Row itemsCenter fullX justifyCenter>
+          <Column justifyCenter itemsCenter>
+            <Image src={tokenSummary.cat20Info.logo} size={48} style={{ borderRadius: 24 }} />
+
+            <Row justifyCenter itemsCenter>
+              <BRC20Ticker tick={tokenSummary.cat20Info.name} preset="md" showOrigin color={'ticker_color2'} />
+            </Row>
+            <Column itemsCenter fullX justifyCenter>
               <Text
                 text={`${runesUtils.toDecimalAmount(
                   tokenSummary.cat20Balance.amount,
                   tokenSummary.cat20Balance.decimals
-                )}`}
+                )} `}
                 preset="bold"
                 textCenter
                 size="xxl"
                 wrap
                 digital
+                color="white"
               />
-              <BRC20Ticker tick={tokenSummary.cat20Info.symbol} preset="lg" />
-            </Row>
-
+            </Column>
             <Row justifyCenter fullX>
               <TickUsdWithoutPrice
                 tick={tokenSummary.cat20Info.tokenId}
@@ -147,58 +151,6 @@ export default function CAT20TokenScreen() {
                 type={TokenType.CAT20}
                 size={'md'}
               />
-            </Row>
-
-            <Row justifyBetween mt="lg">
-              <Button
-                text={t('merge_utxos')}
-                preset="home"
-                icon="merge"
-                onClick={(e) => {
-                  if (keyring.type === KEYRING_TYPE.KeystoneKeyring) {
-                    tools.toastError(t('merge_utxos_is_not_supported_for_keystone_yet'));
-                    return;
-                  }
-                  navigate('MergeCAT20Screen', {
-                    version: version,
-                    cat20Balance: tokenSummary.cat20Balance,
-                    cat20Info: tokenSummary.cat20Info
-                  });
-                }}
-                full
-              />
-
-              <Button
-                text={t('send')}
-                preset="home"
-                icon="send"
-                disabled={!enableTransfer}
-                onClick={(e) => {
-                  if (keyring.type === KEYRING_TYPE.KeystoneKeyring) {
-                    tools.toastError(t('send_cat20_is_not_supported_for_keystone_yet'));
-                    return;
-                  }
-                  navigate('SendCAT20Screen', {
-                    version: version,
-                    cat20Balance: tokenSummary.cat20Balance,
-                    cat20Info: tokenSummary.cat20Info
-                  });
-                }}
-                full
-              />
-
-              {enableTrade ? (
-                <Button
-                  text={t('trade')}
-                  preset="home"
-                  icon="trade"
-                  disabled={!enableTrade}
-                  onClick={(e) => {
-                    window.open(marketPlaceUrl);
-                  }}
-                  full
-                />
-              ) : null}
             </Row>
           </Column>
 
@@ -238,6 +190,66 @@ export default function CAT20TokenScreen() {
           </Column>
         </Content>
       )}
+
+      <Footer
+        style={{
+          borderTopWidth: 1,
+          borderColor: colors.border2
+        }}>
+        <Column gap="sm" fullX>
+          <Row gap="sm" mt="sm" mb="md">
+            <Button
+              text={t('merge_utxos')}
+              preset="brc20-action"
+              icon="merge"
+              onClick={(e) => {
+                if (keyring.type === KeyringType.KeystoneKeyring) {
+                  tools.toastError(t('merge_utxos_is_not_supported_for_keystone_yet'));
+                  return;
+                }
+                navigate('MergeCAT20Screen', {
+                  version: version,
+                  cat20Balance: tokenSummary.cat20Balance,
+                  cat20Info: tokenSummary.cat20Info
+                });
+              }}
+              full
+            />
+
+            <Button
+              text={t('send')}
+              preset="brc20-action"
+              icon="send"
+              disabled={!enableTransfer}
+              onClick={(e) => {
+                if (keyring.type === KeyringType.KeystoneKeyring) {
+                  tools.toastError(t('send_cat20_is_not_supported_for_keystone_yet'));
+                  return;
+                }
+                navigate('SendCAT20Screen', {
+                  version: version,
+                  cat20Balance: tokenSummary.cat20Balance,
+                  cat20Info: tokenSummary.cat20Info
+                });
+              }}
+              full
+            />
+
+            {enableTrade ? (
+              <Button
+                text={t('trade')}
+                preset="brc20-action"
+                icon="trade"
+                disabled={!enableTrade}
+                onClick={(e) => {
+                  window.open(marketPlaceUrl);
+                }}
+                full
+              />
+            ) : null}
+          </Row>
+        </Column>
+      </Footer>
     </Layout>
   );
 }

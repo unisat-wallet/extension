@@ -4,10 +4,10 @@ import { useCallback } from 'react';
 import { CHAINS_MAP, ChainType, VERSION } from '@/shared/constant';
 import { AddressType, CAT_VERSION, NetworkType } from '@/shared/types';
 import { useWallet } from '@/ui/utils';
+import { getAddressType } from '@/ui/utils/bitcoin-utils';
 import i18n, { addResourceBundle } from '@/ui/utils/i18n';
-import { BABYLON_CONFIG_MAP } from '@unisat/babylon-service';
+import { BABYLON_CONFIG_MAP } from '@unisat/babylon-service/types';
 import { t } from '@unisat/i18n';
-import { getAddressType } from '@unisat/wallet-bitcoin';
 
 import { AppState } from '..';
 import { useCurrentAccount } from '../accounts/hooks';
@@ -269,6 +269,11 @@ export function useCAT721NFTContentBaseUrl(version: CAT_VERSION) {
 
 export function useBRC20MarketPlaceWebsite(ticker: string) {
   const chainType = useChainType();
+  if (chainType === ChainType.BITCOIN_MAINNET) {
+    if (ticker.length == 6) {
+      return `${CHAINS_MAP[chainType].unisatUrl}/market/brc20_prog?tick=${ticker}`;
+    }
+  }
   return `${CHAINS_MAP[chainType].unisatUrl}/market/brc20?tick=${ticker}`;
 }
 

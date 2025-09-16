@@ -78,6 +78,8 @@ export const initialState: AccountsState = {
     assetSatoshis: 0,
     inscriptionCount: 0,
     brc20Count: 0,
+    brc20Count5Byte: 0,
+    brc20Count6Byte: 0,
     loading: true,
     address: '',
     runesCount: 0
@@ -254,6 +256,9 @@ const slice = createSlice({
           assetSatoshis: 0,
           inscriptionCount: 0,
           brc20Count: 0,
+          brc20Count5Byte: 0,
+          brc20Count6Byte: 0,
+          loading: true,
           address: '',
           runesCount: 0
         };

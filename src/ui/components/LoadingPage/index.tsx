@@ -1,6 +1,6 @@
-import { Spin } from 'antd';
-
 import { Content, Layout } from '@/ui/components';
+
+import { Spin } from '../Spin';
 
 export default function LoadingPage() {
   return (

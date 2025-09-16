@@ -1,13 +1,13 @@
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
-import { CHAINS_ENUM, CHAINS_MAP, ChainType } from '@/shared/constant';
+import { CHAINS_MAP, ChainType } from '@/shared/constant';
 import { Button, Column, Content, Footer, Header, Image, Input, Layout, Row, Text } from '@/ui/components';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 import { spacing } from '@/ui/theme/spacing';
 import { useWallet } from '@/ui/utils/WalletContext';
-import { isValidAddress } from '@unisat/wallet-bitcoin';
+import { isValidAddress } from '@/ui/utils/bitcoin-utils';
 
 const inputStyle = {
   backgroundColor: colors.black_muted,
@@ -29,7 +29,7 @@ function EditContactScreen() {
   const [name, setName] = useState('');
   const [contactAddress, setContactAddress] = useState('');
   const [originalAddress, setOriginalAddress] = useState('');
-  const [originalChain, setOriginalChain] = useState<CHAINS_ENUM | undefined>();
+  const [originalChain, setOriginalChain] = useState<ChainType | undefined>();
   const [chainType, setChainType] = useState<ChainType>(ChainType.BITCOIN_MAINNET);
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -52,7 +52,7 @@ function EditContactScreen() {
     if (!address || !chain) return;
 
     try {
-      const chainEnum = chain as CHAINS_ENUM;
+      const chainEnum = chain as ChainType;
       const contact = await wallet.getContactByAddressAndChain(address, chainEnum);
 
       if (contact) {

@@ -1,7 +1,7 @@
 import log from 'loglevel';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { ADDRESS_TYPES, KEYRING_TYPE } from '@/shared/constant';
+import { ADDRESS_TYPES } from '@/shared/constant';
 import { Column, Content, Header, Layout } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { AddressTypeCard } from '@/ui/components/AddressTypeCard';
@@ -11,6 +11,7 @@ import { useCurrentAccount, useReloadAccounts } from '@/ui/state/accounts/hooks'
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { satoshisToAmount, useWallet } from '@/ui/utils';
+import { KeyringType } from '@unisat/keyring-service/types';
 
 import { useNavigate } from '../MainRoute';
 
@@ -68,11 +69,11 @@ export default function AddressTypeScreen() {
 
   const addressTypes = useMemo(() => {
     // Cold wallets do not allow switching address types, only show the current type
-    if (currentKeyring.type === KEYRING_TYPE.ColdWalletKeyring) {
+    if (currentKeyring.type === KeyringType.ColdWalletKeyring) {
       return ADDRESS_TYPES.filter((v) => v.value === currentKeyring.addressType);
     }
 
-    if (currentKeyring.type === KEYRING_TYPE.HdKeyring) {
+    if (currentKeyring.type === KeyringType.HdKeyring) {
       return ADDRESS_TYPES.filter((v) => {
         if (v.displayIndex < 0) {
           return false;
@@ -110,9 +111,9 @@ export default function AddressTypeScreen() {
               total_inscription: 0
             };
             let name = `${item.name} (${item.hdPath}/${account.index})`;
-            if (currentKeyring.type === KEYRING_TYPE.SimpleKeyring) {
+            if (currentKeyring.type === KeyringType.SimpleKeyring) {
               name = `${item.name}`;
-            } else if (currentKeyring.type === KEYRING_TYPE.ColdWalletKeyring) {
+            } else if (currentKeyring.type === KeyringType.ColdWalletKeyring) {
               name = `❄️ ${item.name} (${item.hdPath}/${account.index}) - ${t('Fixed by cold wallet')}`;
             }
             return (
@@ -128,7 +129,7 @@ export default function AddressTypeScreen() {
                   }
 
                   // Cold wallets do not allow switching address types
-                  if (currentKeyring.type === KEYRING_TYPE.ColdWalletKeyring) {
+                  if (currentKeyring.type === KeyringType.ColdWalletKeyring) {
                     tools.toastError(t('Cold wallet address type cannot be changed'));
                     return;
                   }

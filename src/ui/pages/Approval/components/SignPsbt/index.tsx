@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { KEYRING_TYPE } from '@/shared/constant';
 import { TxType } from '@/shared/types';
 import { Button, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -21,7 +20,7 @@ import {
   usePrepareSendRunesCallback
 } from '@/ui/state/transactions/hooks';
 import { satoshisToAmount, useApproval, useWallet } from '@/ui/utils';
-import { KeystoneSignEnum } from '@unisat/keyring-service';
+import { KeyringType, KeystoneSignEnum } from '@unisat/keyring-service/types';
 
 import FeaturesSection from './components/FeaturesSection';
 import FeeSection from './components/FeeSection';
@@ -107,8 +106,8 @@ export default function SignPsbt({
     let signed = true;
     if (
       type === TxType.SIGN_TX &&
-      currentAccount.type !== KEYRING_TYPE.KeystoneKeyring &&
-      currentAccount.type !== KEYRING_TYPE.ColdWalletKeyring
+      currentAccount.type !== KeyringType.KeystoneKeyring &&
+      currentAccount.type !== KeyringType.ColdWalletKeyring
     ) {
       signed = false;
     }
@@ -121,9 +120,9 @@ export default function SignPsbt({
   const originalHandleConfirm = handleConfirm || defaultHandleConfirm;
 
   let finalHandleConfirm;
-  if (currentAccount.type === KEYRING_TYPE.KeystoneKeyring) {
+  if (currentAccount.type === KeyringType.KeystoneKeyring) {
     finalHandleConfirm = () => setIsKeystoneSigning(true);
-  } else if (currentAccount.type === KEYRING_TYPE.ColdWalletKeyring) {
+  } else if (currentAccount.type === KeyringType.ColdWalletKeyring) {
     finalHandleConfirm = () => setIsColdWalletSigning(true);
   } else {
     finalHandleConfirm = originalHandleConfirm;

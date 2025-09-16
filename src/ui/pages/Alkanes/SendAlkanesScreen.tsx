@@ -13,7 +13,6 @@ import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { usePushBitcoinTxCallback } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
 import { isValidAddress, showLongNumber, useWallet } from '@/ui/utils';
-import { bitcoin } from '@unisat/wallet-bitcoin';
 
 import { SignPsbt } from '../Approval/components';
 
@@ -162,16 +161,7 @@ export default function SendAlkanesScreen() {
           tools.showLoading(true);
           try {
             if (res && res.psbtHex) {
-              let rawtx = '';
-              const psbt = bitcoin.Psbt.fromHex(res.psbtHex);
-              try {
-                psbt.finalizeAllInputs();
-              } catch (e) {
-                // ignore
-              }
-              rawtx = psbt.extractTransaction().toHex();
-
-              const { success, txid, error } = await pushBitcoinTx(rawtx);
+              const { success, txid, error } = await pushBitcoinTx(res.psbtHex);
               if (success) {
                 navigate('TxSuccessScreen', { txid });
               } else {
@@ -217,7 +207,7 @@ export default function SendAlkanesScreen() {
         </Row>
         <Row justifyCenter fullX style={{ marginTop: -12, marginBottom: -12 }}>
           <TickUsdWithoutPrice
-            tick={tokenBalance.name}
+            tick={tokenBalance.alkaneid}
             balance={runesUtils.toDecimalAmount(tokenBalance.amount, tokenBalance.divisibility)}
             type={TokenType.ALKANES}
             size={'md'}

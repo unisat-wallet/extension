@@ -1,7 +1,6 @@
 import VirtualList, { ListRef } from 'rc-virtual-list';
 import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 
-import { KEYRING_TYPE } from '@/shared/constant';
 import { WalletKeyring } from '@/shared/types';
 import { Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
@@ -14,6 +13,7 @@ import { keyringsActions } from '@/ui/state/keyrings/reducer';
 import { colors } from '@/ui/theme/colors';
 import { shortAddress, useWallet } from '@/ui/utils';
 import { DeleteOutlined, EditOutlined, KeyOutlined, PlusCircleOutlined, SettingOutlined } from '@ant-design/icons';
+import { KeyringType } from '@unisat/keyring-service/types';
 
 import { useNavigate } from '../MainRoute';
 
@@ -103,7 +103,7 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
           />
           <Row itemsCenter gap="sm">
             <Text text={`${displayAddress}`} preset="sub" />
-            {keyring.type === KEYRING_TYPE.ColdWalletKeyring && (
+            {keyring.type === KeyringType.ColdWalletKeyring && (
               <div
                 style={{
                   padding: '2px 8px',
@@ -170,7 +170,7 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
                 <Text text={t('edit_name')} size="sm" />
               </Row>
 
-              {keyring.type === KEYRING_TYPE.HdKeyring && (
+              {keyring.type === KeyringType.HdKeyring && (
                 <Row
                   onClick={() => {
                     navigate('ExportMnemonicsScreen', { keyring });
@@ -179,9 +179,9 @@ export function MyItem({ keyring, autoNav }: MyItemProps, ref) {
                   <Text text={t('show_secret_recovery_phrase')} size="sm" />
                 </Row>
               )}
-              {keyring.type !== KEYRING_TYPE.HdKeyring &&
-                keyring.type !== KEYRING_TYPE.KeystoneKeyring &&
-                keyring.type !== KEYRING_TYPE.ColdWalletKeyring && (
+              {keyring.type !== KeyringType.HdKeyring &&
+                keyring.type !== KeyringType.KeystoneKeyring &&
+                keyring.type !== KeyringType.ColdWalletKeyring && (
                   <Row
                     onClick={() => {
                       navigate('ExportPrivateKeyScreen', { account: keyring.accounts[0] });

@@ -6,12 +6,22 @@ import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { LoadingOutlined } from '@ant-design/icons';
 import Base, { convertMulitAccountToCryptoAccount, CryptoMultiAccounts } from '@keystonehq/hw-app-base';
-import { Curve, DerivationAlgorithm } from '@keystonehq/keystone-sdk';
 
 import KeystonePopover from '../Popover';
 import { createKeystoneTransport, handleKeystoneUSBError } from './utils';
 
 const EXPECTED_HD_PATH = ["m/44'/0'/0'", "m/49'/0'/0'", "m/84'/0'/0'", "m/86'/0'/0'"];
+
+// import { Curve, DerivationAlgorithm } from '@keystonehq/keystone-sdk';
+// reduced from @keystonehq/keystone-sdk to avoid increasing package size
+enum Curve {
+  secp256k1 = 0,
+  ed25519 = 1
+}
+enum DerivationAlgorithm {
+  slip10 = 0,
+  bip32ed25519 = 1
+}
 
 export default function KeystoneFetchKey({
   onSucceed,

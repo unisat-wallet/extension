@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
 
-import { KEYRING_TYPE } from '@/shared/constant';
 import { objToUint8Array } from '@/shared/utils';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { CopyableAddress } from '@/ui/components/CopyableAddress';
@@ -10,7 +9,7 @@ import KeystoneSignScreen from '@/ui/pages/Wallet/KeystoneSignScreen';
 import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { useBabylonConfig } from '@/ui/state/settings/hooks';
 import { useApproval, useWallet } from '@/ui/utils';
-import { KeystoneSignEnum } from '@unisat/keyring-service';
+import { KeyringType, KeystoneSignEnum } from '@unisat/keyring-service/types';
 
 interface Props {
   params: {
@@ -36,7 +35,7 @@ export default function CosmosSign({ params: { data, session }, origin }: Props)
   const [isKeystoneSigning, setIsKeystoneSigning] = useState(false);
   const { t } = useI18n();
 
-  const isKeystone = account.type === KEYRING_TYPE.KeystoneKeyring;
+  const isKeystone = account.type === KeyringType.KeystoneKeyring;
 
   const [babylonAddress, setBabylonAddress] = useState('');
 

@@ -1,9 +1,8 @@
-import { Tooltip } from 'antd';
 import { useEffect, useMemo, useState } from 'react';
 
 import { COIN_DUST } from '@/shared/constant';
 import { RawTxInfo } from '@/shared/types';
-import { Button, Card, Column, Content, Header, Icon, Image, Input, Layout, Row, Text } from '@/ui/components';
+import { Button, Card, Column, Content, Header, Icon, Image, Input, Layout, Row, Text, Tooltip } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
@@ -221,8 +220,19 @@ export default function TxCreateScreen() {
                 }}>
                 <Tooltip
                   title={unavailableTipText}
+                  placement="top"
+                  autoAdjustOverflow={true}
+                  align={{
+                    overflow: {
+                      adjustX: true,
+                      adjustY: true
+                    }
+                  }}
                   overlayStyle={{
-                    fontSize: fontSizes.xs
+                    fontSize: fontSizes.xs,
+                    maxWidth: '280px',
+                    wordWrap: 'break-word',
+                    whiteSpace: 'normal'
                   }}>
                   <div style={{ display: 'flex', alignItems: 'center' }}>
                     <Row itemsCenter>

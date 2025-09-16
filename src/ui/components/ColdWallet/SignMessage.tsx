@@ -1,8 +1,7 @@
-import { Spin } from 'antd';
 import QRCode from 'qrcode.react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { Button, Card, Column, Row, Text } from '@/ui/components';
+import { Button, Card, Column, Row, Spin, Text } from '@/ui/components';
 import { useI18n } from '@/ui/hooks/useI18n';
 import { useWallet } from '@/ui/utils';
 import {

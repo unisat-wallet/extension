@@ -304,8 +304,8 @@ export default function BRC20TokenScreen() {
   }, [ticker, chainType]);
 
   const enableTrade = useMemo(() => {
-    if (isBrc20Prog) {
-      return false;
+    if (isBrc20Prog && chainType === ChainType.BITCOIN_MAINNET) {
+      return true;
     }
     if (chainType === ChainType.BITCOIN_MAINNET || chainType === ChainType.FRACTAL_BITCOIN_MAINNET) {
       return true;
@@ -432,7 +432,7 @@ export default function BRC20TokenScreen() {
       {tokenSummary && (
         <Content mt="zero">
           <Column justifyCenter itemsCenter>
-            <Image src={tokenSummary.tokenInfo.logo} size={48} />
+            <Image src={tokenSummary.tokenInfo.logo} size={48} style={{ borderRadius: 24 }} />
             <Row justifyCenter itemsCenter>
               <BRC20Ticker
                 tick={ticker}

@@ -1,4 +1,3 @@
-import bitcore from 'bitcore-lib';
 import { useEffect, useMemo, useState } from 'react';
 
 import { ADDRESS_TYPES, getRestoreWallets } from '@/shared/constant';
@@ -12,6 +11,7 @@ import { ContextData, UpdateContextDataParams } from '@/ui/pages/Account/createH
 import { useNavigate } from '@/ui/pages/MainRoute';
 import { useCreateAccountCallback } from '@/ui/state/global/hooks';
 import { satoshisToAmount, useWallet } from '@/ui/utils';
+import { isValidHdPath } from '@/ui/utils/bitcoin-utils';
 import { LoadingOutlined } from '@ant-design/icons';
 
 export function Step2({
@@ -177,7 +177,7 @@ export function Step2({
     setPathError('');
     setPathText(text);
     if (text !== '') {
-      const isValid = bitcore.HDPrivateKey.isValidPath(text);
+      const isValid = isValidHdPath(text);
       if (!isValid) {
         setPathError(t('invalid_derivation_path'));
         return;

@@ -1,6 +1,6 @@
 import { Inscription } from '@/shared/types';
 import { createSlice } from '@reduxjs/toolkit';
-import { UnspentOutput } from '@unisat/tx-helpers';
+import { UnspentOutput } from '@unisat/tx-helpers/types';
 
 import { updateVersion } from '../global/actions';
 

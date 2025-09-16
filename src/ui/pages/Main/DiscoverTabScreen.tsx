@@ -1,9 +1,8 @@
-import { Carousel, Tooltip } from 'antd';
 import { useEffect, useState } from 'react';
 
 import { ChainType } from '@/shared/constant';
 import { AddressType, AppInfo } from '@/shared/types';
-import { Card, Column, Content, Footer, Header, Image, Layout, Row, Text } from '@/ui/components';
+import { Card, Carousel, Column, Content, Footer, Header, Image, Layout, Row, Text, Tooltip } from '@/ui/components';
 import { NavTabBar } from '@/ui/components/NavTabBar';
 import { SwitchNetworkBar } from '@/ui/components/SwitchNetworkBar';
 import { TabBar } from '@/ui/components/TabBar';
@@ -15,7 +14,7 @@ import { discoveryActions } from '@/ui/state/discovery/reducer';
 import { useAppDispatch } from '@/ui/state/hooks';
 import { useChainType, useNetworkType } from '@/ui/state/settings/hooks';
 import { useWallet } from '@/ui/utils';
-import { getAddressType } from '@unisat/wallet-bitcoin';
+import { getAddressType } from '@/ui/utils/bitcoin-utils';
 
 import { useNavigate } from '../MainRoute';
 import { SwitchChainModal } from '../Settings/SwitchChainModal';
@@ -52,7 +51,7 @@ function AppItem({ info, onClick }: { info: AppInfo; onClick?: () => void }) {
   // todo: Temporary handling plan, should change to control by config
   if (info.id === APP_ID_BABYLON_STAKING) {
     const addressType = getAddressType(currentAddress, networkType);
-    if (addressType == AddressType.P2SH_P2WPKH || addressType == AddressType.P2PKH) {
+    if (addressType == AddressType.P2WPKH || addressType == AddressType.P2PKH) {
       return <></>;
     }
   }

@@ -12,7 +12,7 @@ import { useNavigate } from '@/ui/pages/MainRoute';
 import { useNetworkType } from '@/ui/state/settings/hooks';
 import { useRunesTx } from '@/ui/state/transactions/hooks';
 import { isValidAddress, useLocationState, useWallet } from '@/ui/utils';
-import { getAddressType } from '@unisat/wallet-bitcoin';
+import { getAddressType } from '@/ui/utils/bitcoin-utils';
 import { AddressType } from '@unisat/wallet-types';
 
 import { SignPsbt } from '../Approval/components';

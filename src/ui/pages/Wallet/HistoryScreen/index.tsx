@@ -1,9 +1,8 @@
-import { Tooltip } from 'antd';
 import BigNumber from 'bignumber.js';
 import { useEffect, useState } from 'react';
 
 import { runesUtils } from '@/shared/lib/runes-utils';
-import { Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
+import { Column, Content, Header, Icon, Layout, Row, Text, Tooltip } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import AssetTag from '@/ui/components/AssetTag';
 import { Pagination } from '@/ui/components/Pagination';

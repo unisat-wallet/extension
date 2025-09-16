@@ -1,9 +1,8 @@
-import { Spin } from 'antd';
 import { BigNumber } from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
 
 import { ChainType } from '@/shared/constant';
-import { Text } from '@/ui/components';
+import { Spin, Text } from '@/ui/components';
 import { Sizes, TextProps } from '@/ui/components/Text';
 import { usePrice } from '@/ui/provider/PriceProvider';
 import { useChain, useChainType } from '@/ui/state/settings/hooks';

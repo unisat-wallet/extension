@@ -48,12 +48,19 @@ export function OrdinalsTab() {
     return items;
   }, [addressSummary, chain]);
 
+  const finalTabKey = useMemo(() => {
+    if (tabKey === OrdinalsAssetTabKey.BRC20_6BYTE && !chain.enableBrc20Prog) {
+      return OrdinalsAssetTabKey.BRC20;
+    }
+    return tabKey;
+  }, [tabKey, chain]);
+
   return (
     <Column>
       <Row justifyBetween>
         <TabBar
-          defaultActiveKey={tabKey}
-          activeKey={tabKey}
+          defaultActiveKey={finalTabKey}
+          activeKey={finalTabKey}
           items={tabItems}
           preset="style2"
           onTabClick={(key) => {
@@ -62,7 +69,7 @@ export function OrdinalsTab() {
         />
       </Row>
 
-      {tabItems[tabKey] ? tabItems[tabKey].children : null}
+      {tabItems[finalTabKey] ? tabItems[finalTabKey].children : null}
     </Column>
   );
 }

@@ -1,10 +1,9 @@
-import { Checkbox } from 'antd';
 import BigNumber from 'bignumber.js';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { RawTxInfo, TokenBalance, TokenInfo, TokenTransfer, TxType } from '@/shared/types';
-import { Button, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
+import { Button, Checkbox, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { useTools } from '@/ui/components/ActionComponent';
 import BRC20Preview from '@/ui/components/BRC20Preview';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
@@ -23,8 +22,7 @@ import {
 } from '@/ui/state/transactions/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { getUiType, showLongNumber, useWallet } from '@/ui/utils';
-import { getAddressUtxoDust } from '@unisat/tx-helpers';
-import { bitcoin } from '@unisat/wallet-bitcoin';
+import { getAddressUtxoDust } from '@/ui/utils/bitcoin-utils';
 
 import { SignPsbt } from '../Approval/components';
 import { useNavigate } from '../MainRoute';
@@ -443,25 +441,19 @@ function Step3({
       }}
       handleConfirm={async (res) => {
         try {
-          let rawtx = '';
+          let txData = '';
 
           if (res && res.psbtHex) {
-            const psbt = bitcoin.Psbt.fromHex(res.psbtHex);
-            try {
-              psbt.finalizeAllInputs();
-            } catch (e) {
-              // ignore
-            }
-            rawtx = psbt.extractTransaction().toHex();
+            txData = res.psbtHex;
           } else if (res && res.rawtx) {
-            rawtx = res.rawtx;
+            txData = res.rawtx;
           } else if (contextData.rawTxInfo.rawtx) {
-            rawtx = contextData.rawTxInfo.rawtx;
+            txData = contextData.rawTxInfo.rawtx;
           } else {
             throw new Error(t('invalid_transaction_data'));
           }
 
-          const { success, txid, error } = await pushOrdinalsTx(rawtx);
+          const { success, txid, error } = await pushOrdinalsTx(txData);
           if (success) {
             navigate('TxSuccessScreen', { txid });
           } else {

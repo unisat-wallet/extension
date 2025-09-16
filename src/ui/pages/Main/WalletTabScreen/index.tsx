@@ -1,6 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { KEYRING_TYPE } from '@/shared/constant';
 import { VersionDetail } from '@/shared/types';
 import { Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import AccountSelect from '@/ui/components/AccountSelect';
@@ -28,6 +27,7 @@ import {
 import { useAssetTabKey, useSupportedAssets } from '@/ui/state/ui/hooks';
 import { AssetTabKey, uiActions } from '@/ui/state/ui/reducer';
 import { getUiType, useWallet } from '@/ui/utils';
+import { KeyringType } from '@unisat/keyring-service/types';
 
 import { useNavigate } from '../../MainRoute';
 import { SwitchChainModal } from '../../Settings/SwitchChainModal';
@@ -188,7 +188,7 @@ export default function WalletTabScreen() {
             }}>
             <Text
               text={
-                currentKeyring.type === KEYRING_TYPE.ColdWalletKeyring
+                currentKeyring.type === KeyringType.ColdWalletKeyring
                   ? `❄️  ${currentKeyring.alianName}`
                   : currentKeyring.alianName
               }
