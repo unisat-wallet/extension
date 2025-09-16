@@ -488,6 +488,7 @@ export interface RuneInfo {
   end: number;
   supply: string;
   parent?: string;
+  logo?: string;
 }
 
 export interface AddressRunesTokenSummary {
@@ -522,6 +523,7 @@ export interface CAT20TokenInfo {
   max: string;
   premine: string;
   limit: number;
+  logo?: string;
 }
 
 export interface AddressCAT20TokenSummary {
