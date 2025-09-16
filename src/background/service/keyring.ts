@@ -1,4 +1,8 @@
-import { KeyringService, KeyringServiceConfig, MemoryStorageAdapter } from '@unisat/keyring-service';
+import logger from 'loglevel';
+
+import { t } from '@unisat/i18n';
+import { KeyringService, MemoryStorageAdapter } from '@unisat/keyring-service';
+import { KeyringServiceConfig } from '@unisat/keyring-service/types';
 
 /**
  * KeyringService wrapper - similar to the extension but for testing
@@ -10,7 +14,8 @@ export class KeyringServiceWrapper extends KeyringService {
 
     const config: KeyringServiceConfig = {
       storage,
-      logger: console
+      logger,
+      t: t
     };
 
     super(config);

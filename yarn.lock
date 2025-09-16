@@ -3312,10 +3312,10 @@
     lz-string "^1.5.0"
     qrcode "^1.5.3"
 
-"@unisat/babylon-service@^0.1.5":
-  version "0.1.5"
-  resolved "https://registry.yarnpkg.com/@unisat/babylon-service/-/babylon-service-0.1.5.tgz#fcc4955233008f1ca3c6172386b5b44f500d5b88"
-  integrity sha512-t4QTcoTQPO7D7KHKO2AgL2xNLTOInCt6lzn9bXE859qadW1OGZPz2gTbkiMLmLCJnrxXTTF1Zqfmt63jB6d5mg==
+"@unisat/babylon-service@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@unisat/babylon-service/-/babylon-service-1.0.0.tgz#3e7ea0b8d6975aa2ba7643fb98ac556a828eeab6"
+  integrity sha512-QZnUKsh6D+hXbHRU+oPBmOFx61xoOZHu73etrYRnq1mCNmZ3AODvEo2/g0fkrmz/Tf9yxpzv45KJddaz7ysGsg==
   dependencies:
     "@babylonlabs-io/babylon-proto-ts" "0.0.3-canary.5"
     "@cosmjs/crypto" "^0.33.0"
@@ -3331,29 +3331,29 @@
     cosmjs-types "^0.9.0"
     qs "^6.11.0"
 
-"@unisat/contact-book@0.1.6":
-  version "0.1.6"
-  resolved "https://registry.yarnpkg.com/@unisat/contact-book/-/contact-book-0.1.6.tgz#2214366acd030f0ea4f4505f3644c4a85b55f46c"
-  integrity sha512-IdrfEURPBn8Fzn2DvXtMD17n1hFF/GRUW5YfSnuqtUebGXi+EKERcrQpWXms5FL0Z8KdBa+jH9u3hBrNy+l+ww==
+"@unisat/contact-book@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@unisat/contact-book/-/contact-book-1.0.0.tgz#6142e3894b49c232fa320190f85a1505dcff60b8"
+  integrity sha512-JtWsSeqPMpB8eJM69WlQurXto7NFFehlyEG9HFIPBptInEsqjsj4ajCrRPx/PWMgrNlH2iJEw3dXYIVKiaPxvg==
   dependencies:
-    "@unisat/wallet-types" "0.1.4"
+    "@unisat/wallet-types" "1.0.0"
 
-"@unisat/i18n@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@unisat/i18n/-/i18n-0.1.1.tgz#235be0a70c8cc85adb6efa9ec817c1b2a0a1fbdf"
-  integrity sha512-P3h1vjjG58/UHfbYLzhqmV+lRgZFZnQxZLgPkgXbkLXgnUxDcS5WlvFuwaAtxMw8XRdDmKNkqcKRAurBK0zMMw==
+"@unisat/i18n@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@unisat/i18n/-/i18n-1.0.0.tgz#713520505bc3a602295f7c63a07c136fdc6d29cf"
+  integrity sha512-giBbj4GdRAUot6VVFcsayenCYm3ohvGnXvpFTNeeNBix6PbAaaMxCb+t6y3b41B7FP6sZYD9psSajohJjxFsYA==
   dependencies:
     loglevel "^1.8.1"
 
-"@unisat/keyring-service@0.1.24":
-  version "0.1.24"
-  resolved "https://registry.yarnpkg.com/@unisat/keyring-service/-/keyring-service-0.1.24.tgz#0395d5cdae3989d6cf8756bef93f79c7fcd00fb7"
-  integrity sha512-fZU9V+uTunM19DLqILFrBt1fAy0BjUo6hzCOGOWcpSwZHwvmHnAT0BbCoL21qMl/lJ+ViKiULkRnGJ7xfdElTw==
+"@unisat/keyring-service@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@unisat/keyring-service/-/keyring-service-1.0.0.tgz#7bf3c5f662f5c7d0016af5993c4e9c58a5088c5b"
+  integrity sha512-Uhi68etFzRKS0LhidleaBMF2oIGPnA6VwxssGYr4qlQrZm01M8huyAC4LILb1yxJVbu6glvM0l8UMjUtELtezw==
   dependencies:
     "@keystonehq/keystone-sdk" "^0.3.0"
     "@metamask/obs-store" "^7.0.0"
-    "@unisat/wallet-bitcoin" "0.1.8"
-    "@unisat/wallet-types" "0.1.4"
+    "@unisat/wallet-bitcoin" "1.0.0"
+    "@unisat/wallet-types" "1.0.0"
     bip39 "^3.1.0"
     bitcoinjs-lib "^6.1.5"
     bitcore-lib "^10.0.0"
@@ -3362,50 +3362,50 @@
     events "^3.3.0"
     hdkey "^2.1.0"
 
-"@unisat/permission-service@0.1.8":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@unisat/permission-service/-/permission-service-0.1.8.tgz#36c86f39a6757e2b247a7cfa108fec6cd50d65c4"
-  integrity sha512-pKnzeCLkt3HB5H104idnnqCnjdz1k7P/DmyGhYDbDYgS8YsosKmamwz7U+zJWWBS7ocjS/JO19hrTdqa1uV6pQ==
+"@unisat/permission-service@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@unisat/permission-service/-/permission-service-1.0.0.tgz#ee3a818e148f7cff725d44f5a12b7eca4badaeb2"
+  integrity sha512-C2kc9GFaQDyQ/B12QxtJht1dEPo9CYXZYn0MRap74fDXxGs7tAKaJW3Yl0breJHCt2XsvNPf4Qb1yyE1PffWYw==
   dependencies:
-    "@unisat/wallet-types" "0.1.4"
+    "@unisat/wallet-types" "1.0.0"
     lru-cache "^6.0.0"
 
-"@unisat/tx-helpers@^0.1.10":
-  version "0.1.10"
-  resolved "https://registry.yarnpkg.com/@unisat/tx-helpers/-/tx-helpers-0.1.10.tgz#34f2a0e76d349a6bdae04ba5b1b3a86fed955fc1"
-  integrity sha512-ouZVsBIILEs/bMIbcBUSLXTAvsMCjBvpl8pmiyKFX067aOn1d9fdrsD5IB6G/q/KtBDlmvWtoVc8qzGYOMHdrA==
+"@unisat/tx-helpers@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@unisat/tx-helpers/-/tx-helpers-1.0.0.tgz#be3308726193de5e85e6cd4c8a22ababa822dbf5"
+  integrity sha512-a6ftbZG6JI3GToQXt5Oxk+dXB7kcCVTanek9cPmWk64ArbZIFUQHbmABgxigXP7BflghIfZI9RejVm66YncHNQ==
   dependencies:
-    "@unisat/keyring-service" "0.1.24"
-    "@unisat/wallet-bitcoin" "0.1.8"
-    "@unisat/wallet-types" "0.1.4"
+    "@unisat/keyring-service" "1.0.0"
+    "@unisat/wallet-bitcoin" "1.0.0"
+    "@unisat/wallet-types" "1.0.0"
     big-integer "^1.6.52"
     bignumber.js "^9.1.2"
 
-"@unisat/wallet-api@0.1.8":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@unisat/wallet-api/-/wallet-api-0.1.8.tgz#9677363fa8404496a16e2519b4dc885e18f9ee6b"
-  integrity sha512-n3m6uLH0AeeHbtmO92Ebvplcg4VabRK9aWxDqxGXac3kz3KBbm6mK7l+wMZyJB0tLHa0C7k75GqXHqUkK20SSA==
+"@unisat/wallet-api@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@unisat/wallet-api/-/wallet-api-1.0.0.tgz#6f3af8814e3e52b93f1ce3855c551a87f6833be0"
+  integrity sha512-GD7gtr+LEVfUs2m/Zp4HpaEMwnWRTr80VTTw+fFxwBOJ27HWEcQcr94JjqsCymnzMrOepu18F4pX3NM6rRkMlQ==
   dependencies:
-    "@unisat/wallet-types" "0.1.4"
+    "@unisat/wallet-types" "1.0.0"
 
-"@unisat/wallet-bitcoin@0.1.8", "@unisat/wallet-bitcoin@^0.1.8":
-  version "0.1.8"
-  resolved "https://registry.yarnpkg.com/@unisat/wallet-bitcoin/-/wallet-bitcoin-0.1.8.tgz#fb5a1572c23874d87b760ad96e45336841d38891"
-  integrity sha512-3S+RMVYc864fzMDA3xJg+HKG/S6/xSOmHeIq2gEVpfgawN6hZnq6nKwFEU0f27nAmlPHSlCsCDrKwFuwtgPGtA==
+"@unisat/wallet-bitcoin@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@unisat/wallet-bitcoin/-/wallet-bitcoin-1.0.0.tgz#b10d262ff64c7c48c75fcfe837d4d0becec7302f"
+  integrity sha512-P92Yo96gZ17XiUzuogcaLbu2VeNpgrGkuUymSMIdzyceQNUK2kOvD05njOAwESjcLxrcWXRy42Rn50DESUGl+w==
   dependencies:
     "@bitcoinerlab/secp256k1" "^1.0.5"
     "@noble/hashes" "^1.1.5"
     "@noble/secp256k1" "^1.7.1"
-    "@unisat/wallet-types" "0.1.4"
+    "@unisat/wallet-types" "1.0.0"
     bitcoinjs-lib "^6.1.5"
     ecpair "^2.1.0"
     tiny-secp256k1 "^2.2.3"
     varuint-bitcoin "^1.1.2"
 
-"@unisat/wallet-types@0.1.4", "@unisat/wallet-types@^0.1.4":
-  version "0.1.4"
-  resolved "https://registry.yarnpkg.com/@unisat/wallet-types/-/wallet-types-0.1.4.tgz#4e13754c44854dc31d92070cf4dc9690f19d9081"
-  integrity sha512-EMpPMd6bHv5xbeTcZrm1F4Iupftq2xSI2I8WFMHc3d9M4Qr4tTu0I8dkKm5UdwpHXYZnTUqSr7geiui5UcJQnQ==
+"@unisat/wallet-types@1.0.0":
+  version "1.0.0"
+  resolved "https://registry.yarnpkg.com/@unisat/wallet-types/-/wallet-types-1.0.0.tgz#85e4481ebdd51800ff3af991f46e7a4f4f5660c9"
+  integrity sha512-EnnNxf+ud/R3QiHpqI8fns7g2DTq9WmJLFkIooArd0lorVnOR0hEYV7Gq1dsuo2Q8AkN7XkihvqESYd5/vsNIw==
 
 "@webassemblyjs/ast@1.11.1":
   version "1.11.1"
@@ -15740,8 +15740,3 @@ zustand@4.0.0:
   integrity sha512-OrsfQTnRXF1LZ9/vR/IqN9ws5EXUhb149xmPjErZnUrkgxS/gAHGy2dPNIVkVvoxrVe1sIydn4JjF0dYHmGeeQ==
   dependencies:
     use-sync-external-store "1.2.0"
-
-zxcvbn@^4.4.2:
-  version "4.4.2"
-  resolved "https://registry.npmjs.org/zxcvbn/-/zxcvbn-4.4.2.tgz"
-  integrity sha512-Bq0B+ixT/DMyG8kgX2xWcI5jUvCwqrMxSFam7m0lAf78nf04hv6lNCsyLYdyYTrCVMqNDY/206K7eExYCeSyUQ==

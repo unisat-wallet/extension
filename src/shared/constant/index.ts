@@ -2,15 +2,12 @@
 
 /* constants pool */
 import { t } from '@unisat/i18n';
-import { KeyringType } from '@unisat/keyring-service';
+import { KeyringType } from '@unisat/keyring-service/types';
 import { AddressType, ChainType, NetworkType } from '@unisat/wallet-types';
 
 import { RestoreWalletType } from '../types';
 
 export { ChainType } from '@unisat/wallet-types';
-
-export { KeyringType as KEYRING_TYPE } from '@unisat/keyring-service';
-export { ChainType as CHAINS_ENUM } from '@unisat/wallet-types';
 
 export const KEYRING_CLASS = {
   PRIVATE_KEY: 'Simple Key Pair',
