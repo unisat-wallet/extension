@@ -1,5 +1,23 @@
 # UniSat Wallet Release Notes
 
+## v1.7.4
+
+New Features
+
+- Added BRC 2.0 wrapped balance display
+- Added BRC20 swap balance display
+
+Improvements
+
+- Optimized build configuration to reduce bundle size
+- Refactored codebase architecture for better maintainability
+
+## v1.7.3
+
+New Features
+
+- Added support for BRC 2.0
+
 ## v1.7.2
 
 New Features
