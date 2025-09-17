@@ -525,7 +525,7 @@
     "message": "找不到代幣"
   },
   "merge_utxos": {
-    "message": "合併 UTXO"
+    "message": "合併"
   },
   "token_id": {
     "message": "代幣 ID"

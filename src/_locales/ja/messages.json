@@ -526,7 +526,7 @@
     "message": "トークンが見つかりません"
   },
   "merge_utxos": {
-    "message": "UTXOをマージ"
+    "message": "マージ"
   },
   "token_id": {
     "message": "トークンID"

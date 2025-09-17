@@ -525,7 +525,7 @@
     "message": "Token no encontrado"
   },
   "merge_utxos": {
-    "message": "Fusionar UTXOs"
+    "message": "Fusionar"
   },
   "token_id": {
     "message": "Token ID"

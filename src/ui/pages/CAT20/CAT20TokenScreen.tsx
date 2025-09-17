@@ -65,7 +65,7 @@ export default function CAT20TokenScreen() {
 
   const navigate = useNavigate();
 
-  const tokenUrl = useCAT20TokenInfoExplorerUrl(version, tokenSummary.cat20Info.tokenId);
+  const tokenUrl = useCAT20TokenInfoExplorerUrl(version, tokenSummary?.cat20Info?.tokenId);
 
   const enableTransfer = useMemo(() => {
     let enable = false;
@@ -97,7 +97,7 @@ export default function CAT20TokenScreen() {
     );
   }
 
-  if (!tokenSummary || !tokenSummary.cat20Balance) {
+  if (!tokenSummary || !tokenSummary.cat20Balance || !tokenSummary.cat20Info) {
     return (
       <Layout>
         <Header
@@ -235,18 +235,16 @@ export default function CAT20TokenScreen() {
               full
             />
 
-            {enableTrade ? (
-              <Button
-                text={t('trade')}
-                preset="brc20-action"
-                icon="trade"
-                disabled={!enableTrade}
-                onClick={(e) => {
-                  window.open(marketPlaceUrl);
-                }}
-                full
-              />
-            ) : null}
+            <Button
+              text={t('trade')}
+              preset="brc20-action"
+              icon="trade"
+              disabled={!enableTrade}
+              onClick={(e) => {
+                window.open(marketPlaceUrl);
+              }}
+              full
+            />
           </Row>
         </Column>
       </Footer>

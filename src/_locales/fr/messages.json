@@ -529,7 +529,7 @@
     "message": "Jeton non trouvé"
   },
   "merge_utxos": {
-    "message": "Fusionner les UTXOs"
+    "message": "Fusionner"
   },
   "token_id": {
     "message": "Token ID"

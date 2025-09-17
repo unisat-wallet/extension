@@ -526,7 +526,7 @@
     "message": "Токен не найден"
   },
   "merge_utxos": {
-    "message": "Объединить UTXO"
+    "message": "Объединить"
   },
   "token_id": {
     "message": "Токен ID"

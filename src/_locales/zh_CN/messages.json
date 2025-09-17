@@ -547,7 +547,7 @@
     "message": "未找到代币"
   },
   "merge_utxos": {
-    "message": "合并 UTXO"
+    "message": "合并"
   },
   "token_id": {
     "message": "代币 ID"
