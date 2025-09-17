@@ -74,6 +74,7 @@ export function AlkanesList() {
             key={index}
             tokenBalance={data}
             showPrice={priceMap !== undefined}
+            price={priceMap?.[data.alkaneid]}
             onClick={() => {
               navigate('AlkanesTokenScreen', {
                 alkaneid: data.alkaneid
