@@ -10,7 +10,7 @@ export function getAddressType(address: string, networkType?: NetworkType) {
   } else if (address.startsWith('1') || address.startsWith('m') || address.startsWith('n')) {
     return AddressType.P2PKH;
   } else if (address.startsWith('3') || address.startsWith('2')) {
-    return AddressType.P2SH;
+    return AddressType.P2SH_P2WPKH;
   } else {
     return AddressType.UNKNOWN;
   }

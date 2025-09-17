@@ -51,7 +51,7 @@ function AppItem({ info, onClick }: { info: AppInfo; onClick?: () => void }) {
   // todo: Temporary handling plan, should change to control by config
   if (info.id === APP_ID_BABYLON_STAKING) {
     const addressType = getAddressType(currentAddress, networkType);
-    if (addressType == AddressType.P2WPKH || addressType == AddressType.P2PKH) {
+    if (addressType == AddressType.P2SH_P2WPKH || addressType == AddressType.P2PKH) {
       return <></>;
     }
   }
