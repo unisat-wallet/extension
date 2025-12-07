@@ -1,7 +1,6 @@
 import { EventEmitter } from 'events';
 
-import { IS_WINDOWS } from '@/shared/constant';
-
+import { IS_WINDOWS } from '@unisat/wallet-shared';
 import {
   browserWindowsCreate,
   browserWindowsGetCurrent,

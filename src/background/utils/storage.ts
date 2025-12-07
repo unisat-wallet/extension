@@ -1,4 +1,4 @@
-import { browserStorageLocalGet, browserStorageLocalSet } from './browser';
+import { browserStorageLocalGet, browserStorageLocalSet } from '../webapi/browser';
 
 let cacheMap;
 
