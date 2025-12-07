@@ -1,5 +1,20 @@
 # UniSat Wallet Release Notes
 
+## 1.7.6
+
+New Features
+
+- Allow setting transaction fee rates lower than 1 sat/vB on the BTC network
+
+Improvements
+
+- Major codebase refactoring for better structure, maintainability, and modularization
+- Updated Fractal brand assets, including the new Fractal logo
+
+Bug Fixes
+
+- Minor stability and UI fixes following the refactoring process
+
 ## v1.7.5
 
 Changes
