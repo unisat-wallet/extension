@@ -1,6 +1,7 @@
 /**
  * this script is live in content-script / dapp's page
  */
+import { MESSAGE_TYPE } from '@unisat/wallet-shared';
 import { ethErrors } from 'eth-rpc-errors';
 import { EventEmitter } from 'events';
 
@@ -35,7 +36,7 @@ abstract class Message extends EventEmitter {
         reject
       });
 
-      this.send('request', { ident, data });
+      this.send(MESSAGE_TYPE.REQUEST, { ident, data });
     });
   };
 
@@ -67,7 +68,7 @@ abstract class Message extends EventEmitter {
         e.data && (err.data = e.data);
       }
 
-      this.send('response', { ident, res, err });
+      this.send(MESSAGE_TYPE.RESPONSE, { ident, res, err });
     }
   };
 

@@ -1,4 +1,5 @@
 import { browserRuntimeConnect } from '@/background/webapi/browser';
+import { MESSAGE_TYPE } from '@unisat/wallet-shared';
 
 import Message from './index';
 
@@ -17,12 +18,12 @@ class PortMessage extends Message {
   connect = (name?: string) => {
     this.port = browserRuntimeConnect(undefined, name ? { name } : undefined);
     this.port.onMessage.addListener(({ _type_, data }) => {
-      if (_type_ === `${this._EVENT_PRE}message`) {
-        this.emit('message', data);
+      if (_type_ === `${this._EVENT_PRE}${MESSAGE_TYPE.PM_BG_TO_CONTENT}`) {
+        this.emit(MESSAGE_TYPE.PM_BG_TO_CONTENT, data);
         return;
       }
 
-      if (_type_ === `${this._EVENT_PRE}response`) {
+      if (_type_ === `${this._EVENT_PRE}${MESSAGE_TYPE.RESPONSE}`) {
         this.onResponse(data);
       }
     });

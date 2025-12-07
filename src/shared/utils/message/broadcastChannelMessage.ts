@@ -1,3 +1,4 @@
+import { MESSAGE_TYPE } from '@unisat/wallet-shared';
 import Message from './index';
 
 export default class BroadcastChannelMessage extends Message {
@@ -14,9 +15,9 @@ export default class BroadcastChannelMessage extends Message {
 
   connect = () => {
     this._channel.onmessage = ({ data: { type, data } }) => {
-      if (type === 'message') {
-        this.emit('message', data);
-      } else if (type === 'response') {
+      if (type === MESSAGE_TYPE.BCM_CONTENT_TO_CHANNEL) {
+        this.emit(MESSAGE_TYPE.BCM_CHANNEL_TO_PAGE, data);
+      } else if (type === MESSAGE_TYPE.RESPONSE) {
         this.onResponse(data);
       }
     };
@@ -28,7 +29,7 @@ export default class BroadcastChannelMessage extends Message {
     this.listenCallback = listenCallback;
 
     this._channel.onmessage = ({ data: { type, data } }) => {
-      if (type === 'request') {
+      if (type === MESSAGE_TYPE.REQUEST) {
         this.onRequest(data);
       }
     };

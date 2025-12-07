@@ -1,13 +1,7 @@
+import { PaymentChannelType } from '@unisat/wallet-shared';
 import { AddressType, ChainType } from '@unisat/wallet-types';
 
-import { PaymentChannelType } from './constant';
-
 export { AddressType } from '@unisat/wallet-types';
-
-export enum NetworkType {
-  MAINNET,
-  TESTNET
-}
 
 export enum RestoreWalletType {
   UNISAT,

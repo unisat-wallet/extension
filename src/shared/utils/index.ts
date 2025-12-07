@@ -1,7 +1,8 @@
 import { keyBy } from 'lodash';
 
 import browser from '@/background/webapi/browser';
-import { AddressFlagType, CHAINS, CHAINS_MAP, ChainType, NETWORK_TYPES } from '@/shared/constant';
+import { AddressFlagType, CHAINS, CHAINS_MAP, NETWORK_TYPES } from '@unisat/wallet-shared';
+import { ChainType } from '@unisat/wallet-types';
 
 import BroadcastChannelMessage from './message/broadcastChannelMessage';
 import PortMessage from './message/portMessage';
