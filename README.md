@@ -8,11 +8,10 @@ UniSat Wallet - the first open-source browser extension wallet for Ordinals on b
 ## How to build
 
 - Install [Node.js](https://nodejs.org) version 16
-- Install [Yarn](https://yarnpkg.com/en/docs/install)
-- Install dependencies: `yarn`
-- Build the project to the `./dist/` folder with `yarn build:firefox` for Firefox
-- Build the project to the `./dist/` folder with `yarn build:chrome` for Chrome
-- Develop: `yarn build:chrome:dev`
+- Install dependencies: `pnpm`
+- Build the project to the `./dist/` folder with `pnpm build:firefox` for Firefox
+- Build the project to the `./dist/` folder with `pnpm build:chrome` for Chrome
+- Develop: `pnpm build:chrome:dev`
 
 ## Special Thanks
 

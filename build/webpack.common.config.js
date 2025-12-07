@@ -19,7 +19,6 @@ const stylusRegex = /\.styl$/;
 const stylusModuleRegex = /\.module\.styl$/;
 const WasmModuleWebpackPlugin = require('wasm-module-webpack-plugin');
 const { getBrowserPaths } = require('./paths');
-
 const config = (env) => {
   const version = env.version;
   const paths = getBrowserPaths(env.browser);
@@ -518,9 +517,11 @@ const config = (env) => {
     ],
     resolve: {
       alias: {
-        moment: require.resolve('dayjs')
+        moment: require.resolve('dayjs'),
+        stream: require.resolve('stream-browserify')
       },
       plugins: [new TSConfigPathsPlugin()],
+      modules: [path.resolve(__dirname, '../../../node_modules'), 'node_modules'],
       fallback: {
         stream: require.resolve('stream-browserify'),
         crypto: require.resolve('crypto-browserify'),
@@ -529,7 +530,9 @@ const config = (env) => {
         zlib: require.resolve('browserify-zlib'),
         http: require.resolve('stream-http'),
         https: require.resolve('https-browserify'),
-        buffer: require.resolve('buffer/')
+        buffer: require.resolve('buffer/'),
+        vm: false,
+        _stream_transform: false
       },
       extensions: ['.js', 'jsx', '.ts', '.tsx']
     },
