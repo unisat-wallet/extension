@@ -1,9 +1,8 @@
 import { bech32 } from 'bech32';
 import BigNumber from 'bignumber.js';
-import { useLocation } from 'react-router-dom';
 
 export * from './hooks';
-export * from './WalletContext';
+
 const UI_TYPE = {
   Tab: 'index',
   Pop: 'popup',
@@ -165,11 +164,6 @@ export function satoshisToAmount(val: number) {
 export function amountToSatoshis(val: any) {
   const num = new BigNumber(val);
   return num.multipliedBy(100000000).toNumber();
-}
-
-export function useLocationState<T>() {
-  const { state } = useLocation();
-  return state as T;
 }
 
 export function numberWithCommas(value: string, maxFixed: number, isFixed = false) {

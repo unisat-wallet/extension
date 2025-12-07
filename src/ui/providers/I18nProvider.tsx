@@ -1,36 +1,16 @@
 import log from 'loglevel';
-import React, { createContext, useEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
-import { getCurrentLocale } from '@/background/service/i18n';
-import { useWallet } from '@/ui/utils';
-import { LoadingOutlined } from '@ant-design/icons';
+import { I18nContext, useWallet } from '@unisat/wallet-state';
+
+import { i18nService } from '@/shared/utils/i18n';
 import {
   BROWSER_TO_APP_LOCALE_MAP,
-  changeLanguage,
   FALLBACK_LOCALE,
-  getSupportedLocales,
-  initI18n,
   LOCALE_NAMES,
-  t as translate
-} from '@unisat/i18n';
-
-interface I18nContextType {
-  t: (key: string, substitutions?: string | string[]) => string;
-  locale: string;
-  supportedLocales: string[];
-  localeNames: Record<string, string>;
-  changeLocale: (locale: string) => Promise<void>;
-}
-
-// Create context
-export const I18nContext = createContext<I18nContextType>({
-  t: (key) => key,
-  locale: FALLBACK_LOCALE,
-  supportedLocales: [],
-  localeNames: {},
-  // eslint-disable-next-line @typescript-eslint/no-empty-function
-  changeLocale: async () => {}
-});
+  SUPPORTED_LOCALES,
+  SupportedLocale
+} from '@unisat/wallet-shared';
 
 // Context provider component
 export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children }) => {
@@ -47,8 +27,8 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
         const userSelectedLanguage = localStorage.getItem('userSelectedLanguage') === 'true';
 
         if (userSelectedLanguage) {
-          const savedLocale = localStorage.getItem('i18nextLng');
-          if (savedLocale && getSupportedLocales().includes(savedLocale)) {
+          const savedLocale = localStorage.getItem('i18nextLng') as SupportedLocale;
+          if (savedLocale && SUPPORTED_LOCALES.includes(savedLocale)) {
             localeToUse = savedLocale;
             log.debug(`Using user selected language: ${savedLocale}`);
           }
@@ -57,19 +37,19 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
             const isFirstOpen = await wallet.getIsFirstOpen();
 
             if (isFirstOpen) {
-              const browserLang = navigator.language;
+              const browserLang = navigator.language as SupportedLocale;
               log.debug(`New user - Browser language: ${browserLang}`);
 
-              const mappedLocale = BROWSER_TO_APP_LOCALE_MAP[browserLang];
-              if (mappedLocale && getSupportedLocales().includes(mappedLocale)) {
+              const mappedLocale = BROWSER_TO_APP_LOCALE_MAP[browserLang] as SupportedLocale;
+              if (mappedLocale && SUPPORTED_LOCALES.includes(mappedLocale)) {
                 localeToUse = mappedLocale;
                 log.debug(`Using mapped browser language: ${mappedLocale}`);
-              } else if (getSupportedLocales().includes(browserLang)) {
+              } else if (SUPPORTED_LOCALES.includes(browserLang)) {
                 localeToUse = browserLang;
                 log.debug(`Using browser language: ${browserLang}`);
               } else {
-                const mainLang = browserLang.split('-')[0];
-                if (getSupportedLocales().includes(mainLang)) {
+                const mainLang = browserLang.split('-')[0] as SupportedLocale;
+                if (SUPPORTED_LOCALES.includes(mainLang)) {
                   localeToUse = mainLang;
                   log.debug(`Using browser main language: ${mainLang}`);
                 } else {
@@ -88,13 +68,8 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
         }
 
         localStorage.setItem('i18nextLng', localeToUse);
-        await initI18n(localeToUse);
-
-        chrome.storage.local.set({ i18nextLng: localeToUse });
-        await initI18n(localeToUse);
-        const currentLocale = await getCurrentLocale();
-
-        setLocale(currentLocale);
+        await i18nService.changeLanguage(localeToUse);
+        setLocale(localeToUse);
         setIsInitialized(true);
       } catch (error) {
         log.error('Failed to initialize i18n:', error);
@@ -111,25 +86,29 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
   // Change language
   const changeLocale = async (newLocale: string) => {
     try {
-      await changeLanguage(newLocale);
+      await i18nService.changeLanguage(newLocale);
       setLocale(newLocale);
       localStorage.setItem('userSelectedLanguage', 'true');
       localStorage.setItem('i18nextLng', newLocale);
-      chrome.storage.local.set({ i18nextLng: newLocale });
+
+      await wallet.setLocale(newLocale);
     } catch (error) {
       setError(error instanceof Error ? error : new Error('Unknown error'));
     }
   };
 
   // Translation function
-  const t = (key: string, substitutions?: string | string[]) => {
+  const t = (key: string, substitutions?: string | string[] | Record<string, string | number>) => {
     try {
-      return translate(key, substitutions);
+      return i18nService.translate(key, substitutions as any);
     } catch (error) {
       log.error(`Translation error for key "${key}":`, error);
       return key;
     }
   };
+
+  const specialLocales = ['es', 'ru', 'fr', 'ja'];
+  const isSpecialLocale = specialLocales.includes(locale);
 
   // If not yet initialized, show loading
   if (!isInitialized) {
@@ -151,7 +130,7 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
             justifyItems: 'center',
             alignItems: 'center'
           }}>
-          <LoadingOutlined />
+          <div />
         </div>
       </div>
     );
@@ -171,11 +150,12 @@ export const I18nProvider: React.FC<{ children: React.ReactNode }> = ({ children
   return (
     <I18nContext.Provider
       value={{
-        t,
+        t: t,
         locale,
-        supportedLocales: getSupportedLocales(),
+        supportedLocales: SUPPORTED_LOCALES,
         localeNames: LOCALE_NAMES,
-        changeLocale
+        changeLocale,
+        isSpecialLocale
       }}>
       {children}
     </I18nContext.Provider>
