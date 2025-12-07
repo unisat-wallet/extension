@@ -1,404 +1,447 @@
 {
-  "appName": { "message": "UniSat Wallet" },
-  "appDescription": {
-    "message": "¡Inscribe y guarda tus inscripciones en la primera billetera Ordinals de código abierto para Chrome del mundo!"
+  "Broadcast": {
+    "message": "Difundir"
   },
-  "receive": {
-    "message": "Recibir"
+  "about_3_minutes": {
+    "message": "(unos 3 minutos)"
   },
-  "total_balance": {
-    "message": "Saldo Total"
+  "about_new_update": {
+    "message": "Nueva actualización disponible"
   },
-  "enter_your_password": {
-    "message": "Introduce tu contraseña"
+  "about_us": {
+    "message": "Sobre nosotros"
   },
-  "enter": {
-    "message": "Entrar"
+  "add_address": {
+    "message": "Agregar dirección"
   },
-  "to_continue": {
-    "message": "para continuar"
+  "address": {
+    "message": "Dirección"
   },
-  "ordinals": {
-    "message": "Ordinals"
+  "address_book": {
+    "message": "Libreta de Direcciones"
   },
-  "atomicals": {
-    "message": "Atomicals"
+  "address_book_placeholder": {
+    "message": "Libreta de Direcciones"
   },
-  "runes": {
-    "message": "Runas"
+  "address_label": {
+    "message": "Dirección"
   },
-  "cat": {
-    "message": "CAT"
+  "address_or_name_fb": {
+    "message": "Dirección o nombre (.fb)"
   },
-
-  "payment_sent": {
-    "message": "Pago Enviado"
-  },
-  "your_transaction_has_been_successfully_sent": {
-    "message": "Tu transacción ha sido enviada con éxito"
-  },
-  "view_on_block_explorer": {
-    "message": "Ver en el Explorador de Bloques"
-  },
-  "view": {
-    "message": "Ver"
-  },
-  "signed": {
-    "message": "Firmado"
-  },
-  "reject_all": {
-    "message": "Rechazar Todo"
-  },
-  "submit": {
-    "message": "Enviar"
-  },
-  "done": {
-    "message": "Hecho"
-  },
-  "payment_failed": {
-    "message": "Pago Fallido"
-  },
-  "recipient": {
-    "message": "Destinatario"
-  },
-  "transfer_amount": {
-    "message": "Cantidad a Transferir"
-  },
-  "amount": {
-    "message": "Cantidad"
-  },
-  "calculating": {
-    "message": "Calculando..."
-  },
-  "available": {
-    "message": "Disponible"
-  },
-  "unavailable": {
-    "message": "No disponible"
-  },
-  "unlock": {
-    "message": "Desbloquear"
-  },
-  "fee": {
-    "message": "Tarifa"
-  },
-  "next": {
-    "message": "Siguiente"
-  },
-  "this_account_has_no_transactions": {
-    "message": "Esta cuenta no tiene transacciones"
-  },
-  "transaction_details": {
-    "message": "Detalles de la Transacción"
-  },
-  "cosmos_sign_demo": {
-    "message": "Demo de Firma Cosmos"
-  },
-  "test_approval_sign_psbt": {
-    "message": "Prueba de Aprobación Firma PSBT"
-  },
-  "hello": {
-    "message": "HOLA"
-  },
-  "world": {
-    "message": "MUNDO"
-  },
-  "native_segwit_p2wpkh": {
-    "message": "Segwit Nativo (P2WPKH)"
-  },
-  "nested_segwit_p2shp2wpkh": {
-    "message": "Segwit Anidado (P2SH-P2WPKH)"
-  },
-  "taproot_p2tr": {
-    "message": "Taproot (P2TR)"
-  },
-  "legacy_p2pkh": {
-    "message": "Legacy (P2PKH)"
-  },
-  "function_not_implemented": {
-    "message": "Función no implementada."
-  },
-  "this_is_a_cosmos_signature_demo_page": {
-    "message": "Esta es una página de demostración de firma Cosmos"
-  },
-  "click_the_button_below_to_start_the_signature_proc": {
-    "message": "Haz clic en el botón de abajo para iniciar el proceso de firma"
-  },
-  "start_cosmos_sign": {
-    "message": "INICIAR FIRMA COSMOS"
-  },
-  "sign_result": {
-    "message": "RESULTADO DE LA FIRMA:"
-  },
-  "back": {
-    "message": "Atrás"
-  },
-  "cosmos_signature_demo": {
-    "message": "Demo de Firma Cosmos"
-  },
-  "cosmos_sign_success": {
-    "message": "Firma Cosmos Exitosa"
-  },
-  "ok": {
-    "message": "Aceptar"
-  },
-  "select_network": {
-    "message": "Seleccionar Red"
-  },
-  "this_network_is_not_available": {
-    "message": "Esta red no está disponible"
-  },
-  "if_you_lose_your_private_key_your_assets_will_be_g": {
-    "message": "¡Si pierdes tu Clave Privada, tus activos desaparecerán!"
-  },
-  "if_you_share_the_private_key_to_others_your_assets": {
-    "message": "¡Si compartes la Clave Privada con otros, tus activos serán robados!"
-  },
-  "private_key_is_only_stored_in_your_browser_it_is_y": {
-    "message": "¡Es tu responsabilidad mantener la Clave Privada segura!"
-  },
-  "please_make_sure_you_have_read_the_security_tips_a": {
-    "message": "Por favor, asegúrate de haber leído los consejos de seguridad anteriores antes de escribir tu contraseña"
-  },
-  "show_private_key": {
-    "message": "Mostrar Clave Privada"
-  },
-  "if_you_ever_change_browsers_or_move_computers_you_": {
-    "message": "Si alguna vez cambias de navegador o de ordenador, necesitarás esta Clave Privada para acceder a esta cuenta. Guárdala en un lugar seguro y secreto"
-  },
-  "changed_to_network": {
-    "message": "Cambiado a"
-  },
-  "wif_private_key": {
-    "message": "Clave Privada WIF:"
-  },
-  "wif_private_key_or_hex_private_key": {
-    "message": "Clave Privada WIF o Clave Privada Hex"
-  },
-  "create_single_wallet": {
-    "message": "Crear Billetera Única"
-  },
-  "hex_private_key": {
-    "message": "Clave Privada Hex:"
-  },
-  "copied": {
-    "message": "Copiado"
-  },
-  "if_you_lose_your_secret_recovery_phrase_your_asset": {
-    "message": "¡Si pierdes tu Frase Secreta de Recuperación, tus activos desaparecerán!"
-  },
-  "if_you_share_the_secret_recovery_phrase_to_others_": {
-    "message": "¡Si compartes la Frase Secreta de Recuperación con otros, tus activos serán robados!"
-  },
-  "secret_recovery_phrase_is_only_stored_in_your_brow": {
-    "message": "¡Es tu responsabilidad mantener la Frase Secreta de Recuperación segura!"
-  },
-  "show_secret_recovery_phrase": {
-    "message": "Mostrar Frase Secreta de Recuperación"
-  },
-  "create_a_new_wallet": {
-    "message": "Crear una nueva billetera"
-  },
-  "this_phrase_is_the_only_way_to_recover_your_wallet": {
-    "message": "Esta frase es la ÚNICA forma de recuperar tu billetera. ¡NO la compartas con nadie! "
-  },
-  "copy_to_clipboard": {
-    "message": "Copiar al portapapeles"
-  },
-  "advance_options": {
-    "message": "Opciones Avanzadas"
-  },
-  "switch_wallet": {
-    "message": "Cambiar Billetera"
-  },
-  "derivation_path": {
-    "message": "Ruta de Derivación"
-  },
-  "passphrase": {
-    "message": "Frase de Contraseña"
-  },
-  "change_wallet_name": {
-    "message": "Cambiar Nombre de la Billetera"
-  },
-  "change_account_name": {
-    "message": "Cambiar Nombre de la Cuenta"
-  },
-  "password": {
-    "message": "Contraseña"
-  },
-  "change_password": {
-    "message": "Cambiar Contraseña"
-  },
-  "current_password": {
-    "message": "Contraseña Actual"
-  },
-  "new_password": {
-    "message": "Nueva Contraseña"
-  },
-  "confirm_password": {
-    "message": "Confirmar Contraseña"
-  },
-  "connected_sites": {
-    "message": "Sitios Conectados"
-  },
-  "user_rejected_the_request": {
-    "message": "El usuario rechazó la solicitud."
-  },
-  "success": {
-    "message": "Éxito"
-  },
-  "new_account": {
-    "message": "Nueva cuenta"
-  },
-  "address_type_changed": {
-    "message": "Tipo de dirección cambiado"
-  },
-  "enable_unconfirmed_balance": {
-    "message": "Habilitar Saldo No Confirmado"
-  },
-  "enable_unconfirmed_balance_warning": {
-    "message": "Si se detectan activos Runes en la dirección dada, los UTXOs no confirmados no podrán gastarse hasta que se confirmen. Gastar forzadamente estos UTXOs no confirmados conlleva el riesgo de perder activos."
-  },
-  "allow_using_unconfirmed_balance": {
-    "message": "Permitir usar Saldo No Confirmado"
-  },
-  "is_unconfirmed_please_wait_for_confirmation": {
-    "message": "no está confirmado, por favor espera la confirmación"
-  },
-  "unconfirmed": {
-    "message": "no confirmado"
-  },
-  "low": {
-    "message": "Baja"
-  },
-  "medium": {
-    "message": "Media"
-  },
-  "high": {
-    "message": "Alta"
-  },
-  "invalid_recipient_address": {
-    "message": "Dirección de destinatario inválida"
-  },
-  "gas_fee_calculation_may_not_include_newly_received_tokens_try_a_smaller_amount": {
-    "message": "El cálculo de la tarifa de gas puede no incluir tokens recién recibidos. Intenta con una cantidad menor."
-  },
-  "amount_exceeds_your_available_balance": {
-    "message": "La cantidad excede tu saldo disponible"
-  },
-  "memo_is_too_long_the_maximum_length_is_256_characters": {
-    "message": "El memo es demasiado largo. La longitud máxima es de 256 caracteres."
-  },
-  "loading": {
-    "message": "cargando..."
-  },
-  "cancel": {
-    "message": "Cancelar"
-  },
-  "continue": {
-    "message": "Continuar"
-  },
-  "balance": {
-    "message": "Saldo"
-  },
-  "invalid_fee_rate": {
-    "message": "Tasa de tarifa inválida"
-  },
-  "max": {
-    "message": "MÁX"
-  },
-  "outputvalue": {
-    "message": "Valor de Salida"
-  },
-  "mint": {
-    "message": "Acuñar"
-  },
-  "send_inscription": {
-    "message": "Puedes hacer clic en la inscripción para enviarla directamente."
-  },
-  "no_data": {
-    "message": "SIN DATOS"
-  },
-  "send": {
-    "message": "Enviar"
-  },
-  "trade": {
-    "message": "Comerciar"
-  },
-  "runeid": {
-    "message": "runeid"
-  },
-  "supply": {
-    "message": "suministro"
-  },
-  "premine": {
-    "message": "preminado"
-  },
-  "burned": {
-    "message": "quemado"
-  },
-  "divisibility": {
-    "message": "divisibilidad"
-  },
-  "symbol": {
-    "message": "símbolo"
-  },
-  "holders": {
-    "message": "poseedores"
-  },
-  "transactions": {
-    "message": "transacciones"
-  },
-  "etching": {
-    "message": "grabado"
-  },
-  "parent": {
-    "message": "padre"
-  },
-  "each_outputvalue": {
-    "message": "Cada Valor de Salida"
-  },
-  "split": {
-    "message": "Dividir"
-  },
-  "multiple_inscriptions_are_mixed_together_you_can_split_them_first_or_send_them_once": {
-    "message": "Múltiples inscripciones están mezcladas. Puedes dividirlas primero o enviarlas todas juntas."
-  },
-  "this_inscription_carries_a_high_balance": {
-    "message": "¡Esta inscripción conlleva un saldo alto!"
-  },
-  "id": {
-    "message": "id"
-  },
-  "output_value": {
-    "message": "valor de salida"
+  "address_or_name_sats_unisat_etc": {
+    "message": "Dirección o nombre (.sats, .unisat, ...)"
   },
   "address_preview": {
     "message": "Dirección:"
   },
-  "transaction_preview": {
-    "message": "Transacción:"
+  "address_type": {
+    "message": "Tipo de Dirección"
+  },
+  "address_type_changed": {
+    "message": "Tipo de dirección cambiado"
+  },
+  "addressbook_desc": {
+    "message": "Agregar direcciones frecuentes"
+  },
+  "advance_options": {
+    "message": "Opciones Avanzadas"
+  },
+  "advanced": {
+    "message": "Avanzado"
+  },
+  "advanced_settings": {
+    "message": "Configuración de Idioma, Seguridad y Permisos"
+  },
+  "after_signing_scan_the_signed_qr_code_back_with_this_wallet": {
+    "message": "4. Después de firmar, escanee el código QR firmado de vuelta con esta billetera."
+  },
+  "agreement_text": {
+    "message": "CONFIRMAR"
+  },
+  "alkanes_burning_risk_description": {
+    "message": "Esta transacción involucra la quema de Alkanes. Asegúrese de entender las implicaciones de esta acción antes de proceder."
+  },
+  "alkanes_burning_risk_title": {
+    "message": "Quema de Alkanes detectada"
+  },
+  "alkanes_multiple_assets_risk_description": {
+    "message": "Esta transacción involucra múltiples activos Alkanes. Asegúrese de entender las implicaciones de esta acción antes de proceder."
+  },
+  "alkanes_multiple_assets_risk_title": {
+    "message": "Múltiples activos Alkanes detectados"
+  },
+  "all": {
+    "message": "Todo"
+  },
+  "allow_sign_data_requests": {
+    "message": "Permitir solicitudes signData"
+  },
+  "allow_this_site_to_switch_the_chain": {
+    "message": "¿Permitir que este sitio cambie la cadena?"
+  },
+  "allow_this_site_to_switch_the_network": {
+    "message": "¿Permitir que este sitio cambie la red?"
+  },
+  "allow_using_unconfirmed_balance": {
+    "message": "Permitir usar Saldo No Confirmado"
+  },
+  "amount": {
+    "message": "Cantidad"
+  },
+  "amount_exceeds_your_available_balance": {
+    "message": "La cantidad excede tu saldo disponible"
+  },
+  "amount_must_be_at_least": {
+    "message": "La cantidad debe ser al menos"
+  },
+  "appDescription": {
+    "message": "¡Inscribe y guarda tus inscripciones en la primera billetera Ordinals de código abierto para Chrome del mundo!"
+  },
+  "appName": {
+    "message": "UniSat Wallet"
+  },
+  "approvalres_is_required": {
+    "message": "approvalRes es requerido"
+  },
+  "approve_on_your_keystone_device": {
+    "message": "Aprueba en tu Dispositivo Keystone"
+  },
+  "arc20": {
+    "message": "ARC-20"
+  },
+  "arc20_burn_risk_list": {
+    "message": "Lista de Riesgo de Quema de ARC20"
+  },
+  "are_not_supported": {
+    "message": "no son soportados."
+  },
+  "are_not_supported_yet": {
+    "message": "aún no son soportados."
+  },
+  "are_supported": {
+    "message": "son soportados"
+  },
+  "are_you_sure_you_want_to_delete_this_contact": {
+    "message": "¿Estás seguro de querer eliminar este contacto?"
+  },
+  "atomicals": {
+    "message": "Atomicals"
+  },
+  "atomicals_id": {
+    "message": "id atomicals"
+  },
+  "atomicals_inscription": {
+    "message": "Inscripción Atomicals"
+  },
+  "atomicals_inscription_not_confirmed_yet": {
+    "message": "Inscripción Atomicals (aún no confirmada)"
+  },
+  "atomicals_nft": {
+    "message": "NFT Atomicals"
+  },
+  "atomicals_number": {
+    "message": "número atomicals"
+  },
+  "auto": {
+    "message": "Auto"
+  },
+  "automatic_lock_time": {
+    "message": "Tiempo de Bloqueo Automático"
+  },
+  "available": {
+    "message": "Disponible"
+  },
+  "available_balance": {
+    "message": "Saldo disponible"
+  },
+  "average": {
+    "message": "Promedio"
+  },
+  "avg": {
+    "message": "Promedio"
+  },
+  "baby_balance": {
+    "message": "Saldo BABY"
+  },
+  "baby_rewards": {
+    "message": "Recompensas BABY"
+  },
+  "babylon_bitcoin_staking": {
+    "message": "Staking de Bitcoin Babylon"
+  },
+  "babylon_bitcoin_staking_phase1": {
+    "message": "Fase 1 Staking de Bitcoin Babylon"
+  },
+  "babylon_bitcoin_staking_phase2": {
+    "message": "Babylon Bitcoin Staking Fase 2"
+  },
+  "babylon_bitcoin_staking_stats": {
+    "message": "Estadísticas Staking de Bitcoin Babylon"
+  },
+  "babylon_staking": {
+    "message": "Staking Babylon"
+  },
+  "back": {
+    "message": "Atrás"
+  },
+  "balance": {
+    "message": "Saldo"
+  },
+  "bbn": {
+    "message": "bbn..."
+  },
+  "before_proceeding": {
+    "message": "Antes de proceder, lee y acepta cuidadosamente el descargo de responsabilidad."
+  },
+  "bitcoin_address_verifier": {
+    "message": "Verificador de Direcciones Bitcoin"
   },
   "block_preview": {
     "message": "Bloque:"
   },
-  "text_preview": {
-    "message": "Texto:"
+  "brc20_history_from": {
+    "message": "De"
   },
-  "transactions_24h": {
-    "message": "Transacciones (24h)"
+  "brc20_history_to": {
+    "message": "Para"
   },
-  "active_addresses_24h": {
-    "message": "Direcciones Activas (24h)"
+  "brc20_history_type_inscribe_deploy": {
+    "message": "Inscribir Despliegue"
   },
-  "go_to_unisat_explorer": {
-    "message": "Ir al UniScan"
+  "brc20_history_type_inscribe_mint": {
+    "message": "Inscribir Acuñación"
   },
-  "search_address_and_txids": {
-    "message": "Buscar Dirección y TXIDs"
+  "brc20_history_type_inscribe_transfer": {
+    "message": "Inscribir Transferencia"
   },
-  "preview": {
-    "message": "Vista Previa"
+  "brc20_history_type_receive": {
+    "message": "Recibir"
+  },
+  "brc20_history_type_send": {
+    "message": "Enviar"
+  },
+  "brc20_history_type_unwrap": {
+    "message": "Retirar"
+  },
+  "brc20_history_type_wrap": {
+    "message": "Envuelto"
+  },
+  "brc20_in_wallet": {
+    "message": "En Wallet"
+  },
+  "brc20_on_prog": {
+    "message": "Balance brc2.0 envuelto"
+  },
+  "brc20_on_swap": {
+    "message": "Saldo InSwap"
+  },
+  "burned": {
+    "message": "quemado"
+  },
+  "button_after_signing_the_transaction_with_your_keystone_device": {
+    "message": "botón después de firmar la transacción con tu dispositivo Keystone"
+  },
+  "buy": {
+    "message": "Comprar"
+  },
+  "buy_service_provider": {
+    "message": "Por favor, selecciona un proveedor de servicios a continuación para comprar"
+  },
+  "buybtc_fee_tip": {
+    "message": "Se aplican tarifas de transacción adicionales al comprar a través de plataformas de terceros. Las tarifas varían según el país y el método de pago. Revisa las tarifas de cada plataforma antes de proceder con las transacciones."
+  },
+  "by_inscription": {
+    "message": "Por inscripción"
+  },
+  "by_proceeding_you_confirm_that_youve_read_and_accepted_this_disclaimer": {
+    "message": "Al proceder, confirmas que has leído y aceptado este descargo de responsabilidad."
+  },
+  "calculating": {
+    "message": "Calculando..."
+  },
+  "can_not_change_to_a_lower_value": {
+    "message": "No se puede cambiar a un valor inferior"
+  },
+  "cancel": {
+    "message": "Cancelar"
+  },
+  "cannot_unlock_without_a_previous_vault": {
+    "message": "No se puede desbloquear sin una bóveda previa"
+  },
+  "cap": {
+    "message": "Límite"
+  },
+  "cat": {
+    "message": "CAT"
+  },
+  "cat20_warning_nomerge": {
+    "message": "Necesitas al menos 2 UTXOs para fusionar"
+  },
+  "cbor_data_is_required_for_parsing_cosmos_signature": {
+    "message": "Los datos CBOR son requeridos para analizar la firma Cosmos"
+  },
+  "chain_id": {
+    "message": "ID de Cadena"
+  },
+  "change_account_name": {
+    "message": "Cambiar Nombre de la Cuenta"
+  },
+  "change_password": {
+    "message": "Cambiar Contraseña"
+  },
+  "change_password_already_in_progress": {
+    "message": "El cambio de contraseña ya está en progreso"
+  },
+  "change_password_failed": {
+    "message": "La contraseña antigua no es correcta."
+  },
+  "change_wallet_name": {
+    "message": "Cambiar Nombre de la Billetera"
+  },
+  "change_your_lockscreen_password": {
+    "message": "Cambia tu contraseña de bloqueo de pantalla"
+  },
+  "changed_to_network": {
+    "message": "Cambiado a"
+  },
+  "changing_inscription_risk_description": {
+    "message": "Esta transacción involucra cambiar una inscripción. Asegúrese de entender las implicaciones de esta acción antes de proceder."
+  },
+  "changing_inscription_risk_title": {
+    "message": "Cambio de inscripción detectado"
+  },
+  "changing_inscriptoins": {
+    "message": "Cambiando Inscripciones"
+  },
+  "choose_a_wallet_you_want_to_restore_from": {
+    "message": "Elige una billetera desde la que quieras restaurar"
+  },
+  "claim": {
+    "message": "Reclamar"
+  },
+  "claimable": {
+    "message": "Reclamable"
+  },
+  "claimabled": {
+    "message": "Claimable"
+  },
+  "click_baby_to_brc20_coming_soon": {
+    "message": "Haz clic en $BABY a brc-20 (Próximamente)"
+  },
+  "click_on_the": {
+    "message": "Haz clic en el"
+  },
+  "click_on_the_words_to_put_them_in_the_correct_orde": {
+    "message": "Haz clic en las palabras para ponerlas en el orden correcto para verificar si la frase de recuperación que respaldaste es correcta"
+  },
+  "click_the_account_on_the_main_page": {
+    "message": "Haz clic en la cuenta en la página principal."
+  },
+  "click_the_button_below_to_start_the_signature_proc": {
+    "message": "Haz clic en el botón de abajo para iniciar el proceso de firma"
+  },
+  "close": {
+    "message": "Cerrar"
+  },
+  "closed": {
+    "message": "Cerrado"
+  },
+  "closed_babylon": {
+    "message": "Cerrado"
+  },
+  "code_asset_maybe_lost": {
+    "message": "El activo puede perderse si continúa con la transacción."
+  },
+  "code_insufficient_asset_utxo": {
+    "message": "Saldo de activo insuficiente"
+  },
+  "code_insufficient_balance": {
+    "message": "Saldo insuficiente."
+  },
+  "code_insufficient_fee_utxo": {
+    "message": "Saldo insuficiente para cubrir las comisiones de la transacción."
+  },
+  "code_method_not_found": {
+    "message": "Método no encontrado."
+  },
+  "code_not_safe_utxos": {
+    "message": "No hay UTXOs seguros disponibles para la transacción."
+  },
+  "code_unknown_error": {
+    "message": "Error desconocido."
+  },
+  "cold_wallet": {
+    "message": "Billetera Fría UniSat"
+  },
+  "cold_wallet_signed_successfully": {
+    "message": "La billetera fría ha firmado exitosamente la transacción. Por favor confirme los detalles de la transacción y haga clic en difundir."
+  },
+  "cold_wallet_transaction_signing": {
+    "message": "Firma de Transacción de Billetera Fría"
+  },
+  "collect_your_personal_information": {
+    "message": "Recopilar tu información personal"
+  },
+  "collection": {
+    "message": "Colección"
+  },
+  "collection_id": {
+    "message": "Id de Colección"
+  },
+  "collection_not_found": {
+    "message": "Colección no encontrada"
+  },
+  "coming_soon": {
+    "message": "Próximamente"
+  },
+  "communication_with_the_keystone_device_failed_please_ensure_the_keystone_is_connected_and_try_again": {
+    "message": "Falló la comunicación con el dispositivo Keystone. Asegúrate de que el Keystone esté conectado e inténtalo de nuevo."
+  },
+  "compatibility_tips": {
+    "message": "Consejos de Compatibilidad"
+  },
+  "completed": {
+    "message": "Completado"
+  },
+  "confirm": {
+    "message": "Confirmar"
+  },
+  "confirm_password": {
+    "message": "Confirmar Contraseña"
+  },
+  "confirmed_tvl": {
+    "message": "Confirmado"
+  },
+  "connect": {
+    "message": "Conectar"
+  },
+  "connect_and_unlock_your_keystone": {
+    "message": "Conecta y desbloquea tu Keystone"
+  },
+  "connect_keystone": {
+    "message": "Conectar Keystone"
+  },
+  "connect_keystone_via_usb": {
+    "message": "Conectar Keystone vía USB"
+  },
+  "connect_to_hardware_wallet": {
+    "message": "Conectar a Billetera Hardware"
+  },
+  "connect_via_usb": {
+    "message": "Conectar vía USB"
+  },
+  "connect_with_unisat_wallet": {
+    "message": "Conectar con UniSat Wallet"
+  },
+  "connected": {
+    "message": "Conectado"
+  },
+  "connected_sites": {
+    "message": "Sitios Conectados"
+  },
+  "contact_not_found": {
+    "message": "Contacto no encontrado"
   },
   "content": {
     "message": "contenido"
@@ -409,624 +452,62 @@
   "content_type": {
     "message": "tipo de contenido"
   },
-  "timestamp": {
-    "message": "marca de tiempo"
+  "continue": {
+    "message": "Continuar"
   },
-  "genesis_transaction": {
-    "message": "transacción génesis"
-  },
-  "create_new_wallet": {
-    "message": "Crear nueva billetera"
-  },
-  "i_already_have_a_wallet": {
-    "message": "Ya tengo una billetera"
-  },
-  "connect_to_hardware_wallet": {
-    "message": "Conectar a Billetera Hardware"
-  },
-  "create_cold_wallet": {
-    "message": "Crear Monedero Frío"
-  },
-  "hardware_wallet_feature_is_experimental_use_it_with_caution_as_potential_issues_may_arise": {
-    "message": "La función de billetera hardware es experimental. Úsala con precaución ya que pueden surgir problemas potenciales"
-  },
-  "dapp_center": {
-    "message": "Centro de DApps"
-  },
-  "home": {
-    "message": "Inicio"
-  },
-  "discover": {
-    "message": "Descubrir"
-  },
-  "settings": {
-    "message": "Ajustes"
-  },
-  "the_wallet_currently_uses_a_custom_hd_path_and_does_not_support_switching_address_types": {
-    "message": "La billetera utiliza actualmente una ruta HD personalizada y no admite el cambio de tipos de dirección."
-  },
-  "new": {
-    "message": "¡nuevo!"
-  },
-  "coming_soon": {
-    "message": "Próximamente"
-  },
-  "history": {
-    "message": "Historial"
-  },
-  "buy": {
-    "message": "Comprar"
-  },
-  "buy_service_provider": {
-    "message": "Por favor, selecciona un proveedor de servicios a continuación para comprar"
-  },
-  "disclaimStr": {
-    "message": "Ten en cuenta que estás a punto de comprar Bitcoin a través de una plataforma de terceros. Los servicios de pago con tarjeta de crédito son proporcionados por nuestros socios. UniSat Wallet actúa únicamente como plataforma intermediaria y no asume ninguna responsabilidad por posibles pérdidas o daños que puedan surgir del uso del servicio de pago con tarjeta de crédito."
-  },
-  "additional_transaction_fees": {
-    "message": "Se aplican tarifas de transacción adicionales al comprar a través de plataformas de terceros. Las tarifas varían según el país y el método de pago. Revisa las tarifas de cada plataforma antes de proceder con las transacciones."
-  },
-  "before_proceeding": {
-    "message": "Antes de proceder, lee y acepta cuidadosamente el descargo de responsabilidad."
+  "continue_to": {
+    "message": "Continuar a"
   },
   "continue_with": {
     "message": "Continuar con"
   },
-
-  "no_service_provider_available": {
-    "message": "Ningún proveedor de servicios disponible."
+  "convert_baby_to_brc20": {
+    "message": "Convertir $BABY a brc-20"
   },
-  "empty": {
-    "message": "Vacío"
+  "convert_your_native_baby_to_btc_brc20_baby": {
+    "message": "Convierte tu token $BABY nativo a BABY brc-20 en Bitcoin."
   },
-  "all": {
-    "message": "Todo"
-  },
-  "arc20": {
-    "message": "ARC-20"
-  },
-  "others": {
-    "message": "Otros"
-  },
-  "not_supported_yet": {
-    "message": "Aún no soportado"
-  },
-  "step_1": {
-    "message": "PASO 1"
-  },
-  "step_2": {
-    "message": "PASO 2"
-  },
-  "step_3": {
-    "message": "PASO 3"
-  },
-  "step_12": {
-    "message": "PASO 1/2"
-  },
-  "step_22": {
-    "message": "PASO 2/2"
-  },
-  "send_cat721": {
-    "message": "Enviar CAT721"
-  },
-  "collection_id": {
-    "message": "Id de Colección"
-  },
-  "collection": {
-    "message": "Colección"
-  },
-  "collection_not_found": {
-    "message": "Colección no encontrada"
-  },
-  "max_supply": {
-    "message": "Suministro máximo"
-  },
-  "token_not_found": {
-    "message": "Token no encontrado"
-  },
-  "merge_utxos": {
-    "message": "Fusionar"
-  },
-  "token_id": {
-    "message": "Token ID"
-  },
-  "name": {
-    "message": "nombre"
-  },
-  "decimals": {
-    "message": "decimales"
-  },
-  "merge_history": {
-    "message": "Historial de Fusiones"
-  },
-  "the_recipient_must_be_p2tr_or_p2wpkh_address_type": {
-    "message": "El destinatario debe ser de tipo de dirección P2TR o P2WPKH"
-  },
-  "merge_utxos_is_not_supported_for_keystone_yet": {
-    "message": "La fusión de UTXOs aún no es compatible con Keystone"
-  },
-  "address": {
-    "message": "Dirección"
-  },
-  "send_cat20_is_not_supported_for_keystone_yet": {
-    "message": "El envío de CAT20 aún no es compatible con Keystone"
-  },
-  "send_cat20": {
-    "message": "Enviar CAT20"
-  },
-  "to_send_a_larger_amount_please_merge_your_utxos_to_increase_the_available_balance": {
-    "message": "Para enviar una cantidad mayor, por favor fusiona tus UTXOs para aumentar el saldo disponible."
-  },
-  "merge_utxos_to_increase_the_available_balance": {
-    "message": "Fusionar UTXOs->"
-  },
-  "selected": {
-    "message": "Seleccionado(s)"
-  },
-  "merge_transactions": {
-    "message": "Fusionar Transacciones"
-  },
-  "retry_in_10s": {
-    "message": "Reintentar en 10s"
-  },
-  "merge_utxos_for_cat20_asset": {
-    "message": "Fusionar UTXOs para Activo CAT20"
-  },
-  "you_need_at_least_2_utxos_to_merge": {
-    "message": "Necesitas al menos 2 UTXOs para fusionar"
-  },
-  "this_feature_is_currently_in_the_experimental_test_phase_please_proceed_with_caution": {
-    "message": "Esta función se encuentra actualmente en fase de prueba experimental. Procede con precaución."
-  },
-  "set_utxo_amount_to_be_merged": {
-    "message": "Establecer cantidad de UTXO a fusionar"
-  },
-  "estimated_fee": {
-    "message": "Tarifa Estimada"
-  },
-  "start_merging": {
-    "message": "Iniciar Fusión"
-  },
-  "merge_progress": {
-    "message": "Progreso de la Fusión"
-  },
-  "start": {
-    "message": "Iniciar"
-  },
-  "merging": {
-    "message": "Fusionando..."
-  },
-  "quit_merging_process": {
-    "message": "Salir del Proceso de Fusión"
-  },
-  "disclaimer": {
-    "message": "Descargo de Responsabilidad"
-  },
-  "risk_warning": {
-    "message": "Advertencia de Riesgo: No inviertas a menos que estés preparado para perder todo el dinero que inviertas."
-  },
-  "i_have_read_and_agree_to_the_above_disclaimer": {
-    "message": "He leído y acepto el descargo de responsabilidad anterior"
-  },
-  "memo": {
-    "message": "Memo:"
-  },
-  "bbn": {
-    "message": "bbn..."
-  },
-  "sign_transaction": {
-    "message": "Firmar Transacción"
-  },
-  "spend_inscription": {
-    "message": "Gastar Inscripción"
-  },
-  "spend_amount": {
-    "message": "Cantidad a Gastar"
-  },
-  "in_inscriptions": {
-    "message": "en inscripciones"
-  },
-
-  "reject": {
-    "message": "Rechazar"
-  },
-  "sign_and_pay": {
-    "message": "Firmar y Pagar"
-  },
-  "this_token_only_supports_up_to": {
-    "message": "Este token solo admite hasta"
-  },
-  "decimal_places": {
-    "message": "decimales."
-  },
-  "tx_fee": {
-    "message": "Tarifa Tx:"
-  },
-  "t_baby": {
-    "message": "tBABY"
-  },
-  "send_to": {
-    "message": "Enviar a"
-  },
-  "send_amount": {
-    "message": "Cantidad a Enviar"
-  },
-  "how_to_import_baby": {
-    "message": "Cómo Importar BABY"
-  },
-  "click_the_account_on_the_main_page": {
-    "message": "Haz clic en la cuenta en la página principal."
-  },
-  "tap_the_more_menu_then_select_the_export_private_key_option": {
-    "message": "Toca el menú 'Más', luego selecciona la opción 'Exportar Clave Privada'."
-  },
-  "once_you_have_your_hex_private_key_you_can_import_it_into_a_cosmos_compatible_wallet_to_access_your_babylon_reward_assets": {
-    "message": "Una vez que tengas tu Clave Privada Hex, puedes importarla a una billetera compatible con COSMOS para acceder a tus activos de recompensa de Babylon."
-  },
-  "babylon_bitcoin_staking": {
-    "message": "Staking de Bitcoin Babylon"
-  },
-  "babylon_bitcoin_staking_phase1": {
-    "message": "Fase 1 Staking de Bitcoin Babylon"
-  },
-  "babylon_bitcoin_staking_stats": {
-    "message": "Estadísticas Staking de Bitcoin Babylon"
-  },
-  "closed": {
-    "message": "Cerrado"
-  },
-  "go_to_stake": {
-    "message": "Ir a Hacer Stake"
-  },
-  "staked": {
-    "message": "Stakeado"
-  },
-  "learn_how_to_import_your_babylon_reward_assets_into_a_cosmos_compatible_wallet": {
-    "message": "Aprende cómo importar tus activos de recompensa de Babylon a una billetera compatible con COSMOS."
-  },
-  "unstake": {
-    "message": "Retirar Stake"
-  },
-  "claimable": {
-    "message": "Reclamable"
-  },
-  "baby_rewards": {
-    "message": "Recompensas BABY"
-  },
-  "claim": {
-    "message": "Reclamar"
-  },
-  "transfer": {
-    "message": "Transferir"
-  },
-  "transferable": {
-    "message": "Transferible:"
-  },
-  "inscribe_transfer": {
-    "message": "Inscribir TRANSFER"
-  },
-  "to_send_brc20_you_have_to_inscribe_a_transfer_inscription_first": {
-    "message": "* Para enviar BRC-20, primero tienes que inscribir una inscripción TRANSFER"
-  },
-  "transfer_inscriptions": {
-    "message": "Inscripciones TRANSFER"
-  },
-  "transfer_inscriptions_0": {
-    "message": "Inscripciones TRANSFER (0)"
-  },
-  "select_all": {
-    "message": "Seleccionar Todo"
-  },
-  "receiver": {
-    "message": "Receptor"
-  },
-  "step1": {
-    "message": "Paso 1"
-  },
-  "step2": {
-    "message": "Paso 2"
-  },
-
-  "fee_rate": {
-    "message": "Tasa de Tarifa"
-  },
-  "inscription": {
-    "message": "Inscripción"
-  },
-  "atomicals_id": {
-    "message": "id atomicals"
-  },
-  "send_arc20": {
-    "message": "Enviar ARC-20"
-  },
-  "the_minimum_amount_is": {
-    "message": "La cantidad mínima es"
-  },
-  "atomicals_number": {
-    "message": "número atomicals"
-  },
-  "atomicals_inscription_not_confirmed_yet": {
-    "message": "Inscripción Atomicals (aún no confirmada)"
-  },
-  "atomicals_inscription": {
-    "message": "Inscripción Atomicals"
-  },
-  "inscription_not_confirmed_yet": {
-    "message": "Inscripción (aún no confirmada)"
-  },
-  "allow_this_site_to_switch_the_network": {
-    "message": "¿Permitir que este sitio cambie la red?"
-  },
-  "switch_account": {
-    "message": "Cambiar Cuenta"
-  },
-  "switch_network": {
-    "message": "Cambiar Red"
-  },
-  "allow_this_site_to_switch_the_chain": {
-    "message": "¿Permitir que este sitio cambie la cadena?"
-  },
-  "switch_chain": {
-    "message": "Cambiar Cadena"
-  },
-  "signature_request": {
-    "message": "Solicitud de firma"
-  },
-  "only_sign_this_message_if_you_fully_understand_the": {
-    "message": "Firma este mensaje solo si entiendes completamente el contenido y confías en el sitio solicitante."
-  },
-  "you_are_signing": {
-    "message": "Estás firmando:"
-  },
-  "sign": {
-    "message": "Firmar"
-  },
-  "sign_data_request": {
-    "message": "Solicitud de Firma de Datos"
-  },
-  "you_are_signing_data": {
-    "message": "Estás firmando datos:"
-  },
-  "payment_network_fee": {
-    "message": "Tarifa de Red de Pago"
-  },
-  "inscription_output_value": {
-    "message": "Valor de Salida de Inscripción"
-  },
-  "inscription_network_fee": {
-    "message": "Tarifa de Red de Inscripción"
-  },
-  "service_fee": {
-    "message": "Comisión de Servicio"
-  },
-  "total": {
-    "message": "Total"
-  },
-  "baby_balance": {
-    "message": "Saldo BABY"
-  },
-  "failed_to_handle_signature": {
-    "message": "Error al procesar la firma"
-  },
-  "inscribing": {
-    "message": "Inscribiendo..."
-  },
-  "inscribe_success": {
-    "message": "Inscripción Exitosa"
-  },
-  "the_transferable_and_available_balance_of_brc20_wi": {
-    "message": "El saldo transferible y disponible de BRC20 se actualizará en unos minutos."
-  },
-  "i_only_sign_what_i_understand": {
-    "message": "Solo firmo lo que entiendo"
-  },
-  "you_need_to_enable_the_sign_data_request_feature_in_settings_advanced_to_continue": {
-    "message": "Necesitas habilitar la función de solicitud signData en Ajustes -> Avanzado para continuar."
-  },
-  "cosmos_sign_request": {
-    "message": "Solicitud de Firma Cosmos"
-  },
-  "only_sign_if_you_fully_understand_the_content_and_": {
-    "message": "Firma solo si entiendes completamente el contenido y confías en el sitio solicitante."
-  },
-  "phishing_detection": {
-    "message": "Detección de Phishing"
-  },
-  "malicious_behavior_and_suspicious_activity_have_be": {
-    "message": "Se ha detectado comportamiento malicioso y actividad sospechosa."
-  },
-  "your_access_to_this_page_has_been_restricted_by_un": {
-    "message": "Tu acceso a esta página ha sido restringido por UniSat Wallet ya que podría ser inseguro."
-  },
-  "reject_blocked_by_unisat_wallet": {
-    "message": "Rechazar (bloqueado por UniSat Wallet)"
-  },
-  "warning": {
-    "message": "Advertencia"
-  },
-  "i_am_aware_of_the_risks": {
-    "message": "Soy consciente de los riesgos"
-  },
-  "connect_with_unisat_wallet": {
-    "message": "Conectar con UniSat Wallet"
-  },
-  "select_the_account_to_use_on_this_site": {
-    "message": "Selecciona la cuenta para usar en este sitio"
-  },
-  "only_connect_with_sites_you_trust": {
-    "message": "Conéctate solo con sitios en los que confíes."
-  },
-  "connect": {
-    "message": "Conectar"
-  },
-  "chain_id": {
-    "message": "ID de Cadena"
-  },
-  "involved_assets": {
-    "message": "Activos Involucrados:"
-  },
-  "satvb": {
-    "message": "sat/vB"
-  },
-  "rbf": {
-    "message": "RBF"
-  },
-  "to_sign": {
-    "message": "para firmar"
-  },
-  "network_fee": {
-    "message": "Tarifa de Red:"
-  },
-  "network_fee_rate": {
-    "message": "Tasa de Tarifa de Red:"
-  },
-  "the_fee_rate_is_much_lower_than_recommended_fee_rate": {
-    "message": "La tasa de tarifa es mucho más baja que la recomendada"
-  },
-  "the_fee_rate_is_much_higher_than_recommended_fee_rate": {
-    "message": "La tasa de tarifa es mucho más alta que la recomendada"
-  },
-  "inputs": {
-    "message": "Entradas"
-  },
-  "outputs": {
-    "message": "Salidas"
-  },
-
-  "features": {
-    "message": "Características:"
-  },
-  "psbt_data": {
-    "message": "Datos PSBT:"
-  },
-  "get_signature": {
-    "message": "Obtener Firma"
-  },
-  "get_signature_success": {
-    "message": "Firma Obtenida con Éxito"
-  },
-  "sign_multiple_transactions": {
-    "message": "Firmar Múltiples Transacciones"
-  },
-  "transaction": {
-    "message": "Transacción"
-  },
-  "merge_failed": {
-    "message": "Fusión Fallida."
-  },
-  "dealing": {
-    "message": "Procesando"
-  },
-  "paused": {
-    "message": "Pausado"
-  },
-  "completed": {
-    "message": "Completado"
-  },
-  "multisign_disclaimer": {
-    "message": "Descargo de Responsabilidad MultiSign"
-  },
-  "by_proceeding_you_confirm_that_youve_read_and_accepted_this_disclaimer": {
-    "message": "Al proceder, confirmas que has leído y aceptado este descargo de responsabilidad."
-  },
-  "sign_all": {
-    "message": "Firmar todas"
-  },
-  "transactions_at_once": {
-    "message": "las transacciones de una vez"
-  },
-  "edit_name": {
-    "message": "Editar Nombre"
-  },
-  "export_private_key": {
-    "message": "Exportar Clave Privada"
-  },
-  "remove_wallet": {
-    "message": "Eliminar Billetera"
-  },
-  "invalid_wallet_please_remove_it_and_add_new_one": {
-    "message": "Billetera inválida, por favor elimínala y añade una nueva"
-  },
-  "removing_the_last_wallet_is_not_allowed": {
-    "message": "No está permitido eliminar la última billetera"
+  "copied": {
+    "message": "Copiado"
   },
   "copy_address": {
     "message": "Copiar dirección"
   },
-  "private_key": {
-    "message": "Clave Privada"
+  "copy_to_clipboard": {
+    "message": "Copiar al portapapeles"
   },
-  "address_type": {
-    "message": "Tipo de Dirección"
+  "cosmos_sign_demo": {
+    "message": "Demo de Firma Cosmos"
   },
-  "invalid_privatekey": {
-    "message": "Clave Privada inválida"
+  "cosmos_sign_request": {
+    "message": "Solicitud de Firma Cosmos"
+  },
+  "cosmos_sign_success": {
+    "message": "Firma Cosmos Exitosa"
+  },
+  "cosmos_signature_demo": {
+    "message": "Demo de Firma Cosmos"
+  },
+  "create_a_new_hd_wallet": {
+    "message": "Crear una nueva Billetera HD"
+  },
+  "create_a_new_wallet": {
+    "message": "Crear una nueva billetera"
   },
   "create_a_password": {
     "message": "Crea una contraseña"
   },
-  "you_will_use_this_to_unlock_your_wallet": {
-    "message": "La usarás para desbloquear tu billetera"
-  },
-  "keystone_hardware_wallet": {
-    "message": "Billetera hardware Keystone"
-  },
-  "the_ultimate_security_solution_for_cryptocurrencie": {
-    "message": "La Solución de Seguridad Definitiva para Criptomonedas"
-  },
-  "100_air_gapped": {
-    "message": "100% Aislada (Air-Gapped)"
-  },
-  "open_source": {
-    "message": "Código Abierto"
-  },
-  "exceptional_compatibility": {
-    "message": "Compatibilidad Excepcional"
-  },
-  "learn_more_about_keystone": {
-    "message": "Más información sobre Keystone"
-  },
-  "connect_via_usb": {
-    "message": "Conectar vía USB"
-  },
-  "scan_to_connect": {
-    "message": "Escanear para conectar"
-  },
-  "scan_the_qr_code_displayed_on_your_keystone_device": {
-    "message": "Escanea el código QR mostrado en tu dispositivo Keystone"
-  },
-  "you_need_to_allow_camera_access_to_use_this_featur": {
-    "message": "Necesitas permitir el acceso a la cámara para usar esta función."
-  },
-  "connect_and_unlock_your_keystone": {
-    "message": "Conecta y desbloquea tu Keystone"
-  },
-  "scan_in_more_addresses": {
-    "message": "Escanear más direcciones..."
-  },
-  "custom_hdpath_optional": {
-    "message": "Ruta HD Personalizada (Opcional)"
-  },
-  "password_strength": {
-    "message": "Fortaleza de la contraseña:"
-  },
-  "passwords_dont_match": {
-    "message": "Las contraseñas no coinciden"
-  },
-  "custom_hdpath": {
-    "message": "Ruta de Derivación de Billetera HD Personalizada"
-  },
-  "connect_keystone": {
-    "message": "Conectar Keystone"
-  },
-  "scan_the_qr_code": {
-    "message": "Escanear el Código QR"
-  },
-  "connect_keystone_via_usb": {
-    "message": "Conectar Keystone vía USB"
-  },
   "create_an_account": {
     "message": "Crear una Cuenta"
+  },
+  "create_cold_wallet": {
+    "message": "Crear Monedero Frío"
+  },
+  "create_new_wallet": {
+    "message": "Crear nueva billetera"
+  },
+  "create_single_wallet": {
+    "message": "Crear Billetera Única"
   },
   "create_wallet": {
     "message": "Crear Billetera"
@@ -1034,263 +515,11 @@
   "create_with_mnemonics_12words": {
     "message": "Crear con mnemónicos (12 palabras)"
   },
-  "restore_wallet": {
-    "message": "Restaurar Billetera"
-  },
-  "restore_from_mnemonics_12words24words": {
-    "message": "Restaurar desde mnemónicos (12 palabras, 24 palabras)"
-  },
-  "restore_from_single_private_key": {
-    "message": "Restaurar desde clave privada única"
-  },
-  "create_a_new_hd_wallet": {
-    "message": "Crear una nueva Billetera HD"
-  },
-  "keystone_wallet": {
-    "message": "Billetera Keystone"
-  },
-  "phrase_optional": {
-    "message": "Frase (Opcional)"
-  },
-  "secret_recovery_phrase": {
-    "message": "Frase Secreta de Recuperación"
-  },
-  "unable_to_find_any_addresses_with_assets": {
-    "message": "No se pudieron encontrar direcciones con activos"
-  },
-  "import_an_existing_wallet_with_your_secret_recover": {
-    "message": "Importa una billetera existente con tu frase secreta de recuperación"
-  },
-  "i_saved_my_secret_recovery_phrase": {
-    "message": "He guardado Mi Frase Secreta de Recuperación"
-  },
-  "verify_recovery_phrase": {
-    "message": "Verificar Frase de Recuperación"
-  },
-  "click_on_the_words_to_put_them_in_the_correct_orde": {
-    "message": "Haz clic en las palabras para ponerlas en el orden correcto para verificar si la frase de recuperación que respaldaste es correcta"
-  },
-  "choose_a_wallet_you_want_to_restore_from": {
-    "message": "Elige una billetera desde la que quieras restaurar"
-  },
-  "skip": {
-    "message": "Omitir"
-  },
-  "go_to_update": {
-    "message": "Ir a actualizar"
-  },
-  "use_at_your_own_risk": {
-    "message": "Úsalo bajo tu propio riesgo"
-  },
-  "please_be_aware_that_sending_the_following_assets_involves_risk": {
-    "message": "Ten en cuenta que enviar los siguientes activos implica riesgo:"
-  },
-  "enable_atomicals_assets_warning": {
-    "message": "Los activos atomicals ya no se mostrarán en la billetera y podrán gastarse como saldo normal. Procede con precaución."
-  },
-  "sign_data_requests": {
-    "message": "Solicitudes signData"
-  },
-  "enable_sign_data_warning": {
-    "message": "Si habilitas esta configuración, podrías recibir solicitudes de firma que no son legibles. Al firmar un mensaje que no entiendes, podrías estar aceptando entregar tus fondos y NFTs. Estás en riesgo de ataques de phishing. Protégete desactivando signData."
-  },
-  "enable_sign_data_popover_warning": {
-    "message": "Permitir solicitudes signData puede hacerte vulnerable a ataques de phishing. Siempre revisa la URL y ten cuidado al firmar mensajes que contengan código."
-  },
-  "enable_sign_data_popover_warning_2": {
-    "message": "Si te han pedido que actives esta configuración, podrías estar siendo víctima de una estafa"
-  },
-  "understand_sign_data_warning": {
-    "message": "Entiendo que puedo perder todos mis fondos y NFTs si habilito las solicitudes signData."
-  },
-  "understand_and_accept_the_risks_associated_with_this_transaction": {
-    "message": "Entiendo y acepto los riesgos asociados con esta transacción."
-  },
-  "allow_sign_data_requests": {
-    "message": "Permitir solicitudes signData"
-  },
-  "sending_out_assets": {
-    "message": "Enviando Activos"
-  },
-  "runes_burn_risk_list": {
-    "message": "Lista de Riesgo de Quema de Runas"
-  },
-  "inscription_burn_risk_list": {
-    "message": "Lista de Riesgo de Quema de Inscripciones"
-  },
-  "changing_inscriptoins": {
-    "message": "Cambiando Inscripciones"
-  },
-  "arc20_burn_risk_list": {
-    "message": "Lista de Riesgo de Quema de ARC20"
+  "current": {
+    "message": "Actual"
   },
   "current_fee_rate": {
     "message": "Tasa de tarifa actual:"
-  },
-  "recommended_fee_rates": {
-    "message": "Tasas de tarifa recomendadas:"
-  },
-  "old_value": {
-    "message": "Valor Anterior:"
-  },
-  "new_value": {
-    "message": "Valor Nuevo:"
-  },
-  "please_pay_attention_to_whether_you_have_backed_up": {
-    "message": "Por favor, presta atención a si has respaldado la mnemónica/clave privada para prevenir la pérdida de activos"
-  },
-  "this_action_is_not_reversible": {
-    "message": "Esta acción no es reversible."
-  },
-  "remove": {
-    "message": "Eliminar"
-  },
-  "compatibility_tips": {
-    "message": "Consejos de Compatibilidad"
-  },
-  "please_be_aware_that": {
-    "message": "Ten en cuenta que:"
-  },
-  "confirm": {
-    "message": "Confirmar"
-  },
-  "unisat": {
-    "message": "UNISAT"
-  },
-  "try_again": {
-    "message": "Intentar de nuevo"
-  },
-  "usb_permissions_not_available": {
-    "message": "PERMISOS_USB_NO_DISPONIBLES"
-  },
-  "approve_on_your_keystone_device": {
-    "message": "Aprueba en tu Dispositivo Keystone"
-  },
-  "ensure_your_keystone_3_pro_is_on_the_homepage": {
-    "message": "Asegúrate de que tu Keystone 3 Pro esté en la pantalla de inicio"
-  },
-  "onsuccess_not_implemented": {
-    "message": "onSuccess No implementado"
-  },
-  "scan_the_qr_code_via_your_keystone_device": {
-    "message": "Escanea el código QR con tu dispositivo Keystone"
-  },
-  "generating_qr_code": {
-    "message": "Generando código QR..."
-  },
-  "you_have_inscribed_a_transfer": {
-    "message": "Has inscrito un TRANSFER"
-  },
-  "please_wait_for_the_update_of_brc20": {
-    "message": "Por favor, espera la actualización de BRC20"
-  },
-  "about_3_minutes": {
-    "message": "(unos 3 minutos)"
-  },
-  "for_ordinals_assets": {
-    "message": "Para activos Ordinals,"
-  },
-  "rare_sats": {
-    "message": "Sats raros"
-  },
-  "are_not_supported": {
-    "message": "no son soportados."
-  },
-  "for_atomicals_assets": {
-    "message": "Para activos Atomicals,"
-  },
-  "non_arc20": {
-    "message": "No-ARC20"
-  },
-  "are_not_supported_yet": {
-    "message": "aún no son soportados."
-  },
-  "not_supported": {
-    "message": "No soportado"
-  },
-  "satsvb": {
-    "message": "sats/vB"
-  },
-  "precautions": {
-    "message": "Precauciones"
-  },
-  "enable_atomicals": {
-    "message": "Habilitar Atomicals"
-  },
-  "security_notice": {
-    "message": "Aviso de Seguridad:"
-  },
-  "notice": {
-    "message": "Aviso"
-  },
-  "enable_atomicals_assets": {
-    "message": "Habilitar Activos Atomicals"
-  },
-  "unconfirmed_balance_not_spendable": {
-    "message": "Saldo No Confirmado No Gastable"
-  },
-  "to_enable_spending_of_unconfirmed_balances_please_": {
-    "message": "Para habilitar el gasto de saldos no confirmados, visita las opciones avanzadas en ajustes."
-  },
-  "unconfirmed_balance_not_spendable_warning": {
-    "message": "Para proteger tus activos, solo los saldos confirmados son gastables cuando se tienen activos Runas. Esto es para prevenir la quema accidental de activos."
-  },
-  "mandatory_use_of_unconfirmed_balance": {
-    "message": "Uso obligatorio de saldo no confirmado"
-  },
-  "only_applies_to_current_address": {
-    "message": "Solo se aplica a la dirección actual"
-  },
-  "advanced": {
-    "message": "Avanzado"
-  },
-  "advanced_settings": {
-    "message": "Configuración de Idioma, Seguridad y Permisos"
-  },
-  "automatic_lock_time": {
-    "message": "Tiempo de Bloqueo Automático"
-  },
-  "the_auto_lock_time_has_been_changed_to": {
-    "message": "El tiempo de bloqueo automático ha sido cambiado a"
-  },
-  "i_understand": {
-    "message": "Entiendo"
-  },
-  "unknown_error": {
-    "message": "Error desconocido"
-  },
-  "version": {
-    "message": "Versión:"
-  },
-  "latest_version": {
-    "message": "Última Versión"
-  },
-  "inscribe_and_store_your_inscriptions_in_the_worlds_first_open_source_chrome_wallet_for_ordinals": {
-    "message": "¡Inscribe y guarda tus inscripciones en la primera billetera de código abierto para Chrome para Ordinals del mundo!"
-  },
-  "the_broadcastchannel_name_is_missing": {
-    "message": "falta el nombre de broadcastChannel"
-  },
-  "promise_need_function_to_handle": {
-    "message": "la promesa necesita una función para manejarla"
-  },
-  "network_error_no_response": {
-    "message": "Error de red, sin respuesta"
-  },
-  "network_error_json_parse_error": {
-    "message": "Error de red, error de análisis json"
-  },
-  "network_errorno_response_data": {
-    "message": "Error de red, sin datos de respuesta"
-  },
-  "method_not_implemented": {
-    "message": "Método no implementado."
-  },
-  "keyringcontroller_first_account_not_found": {
-    "message": "KeyringController - Primera Cuenta no encontrada."
-  },
-  "no_current_account": {
-    "message": "no hay cuenta actual"
   },
   "current_keyring_does_not_support_gensigncosmosur": {
     "message": "El llavero actual no soporta genSignCosmosUr"
@@ -1298,308 +527,272 @@
   "current_keyring_does_not_support_parsesigncosmosur": {
     "message": "El llavero actual no soporta parseSignCosmosUr"
   },
-  "keyringcontroller_password_is_not_a_string": {
-    "message": "KeyringController - la contraseña no es una cadena"
+  "current_password": {
+    "message": "Contraseña Actual"
   },
-  "no_keyring_found_for_the_requested_account": {
-    "message": "No se encontró ningún llavero para la cuenta solicitada."
+  "current_supply": {
+    "message": "Cantidad actual"
   },
-  "public_key_must_be_compressed_secp256k1_ie_33_byte": {
-    "message": "La clave pública debe ser secp256k1 comprimida, es decir, 33 bytes comenzando con 0x02 o 0x03"
+  "currently_only": {
+    "message": "Actualmente solo"
   },
-  "no_current_keyring": {
-    "message": "no hay llavero actual"
+  "custom": {
+    "message": "Personalizado"
   },
-  "invalid_index_in_tosigninput": {
-    "message": "índice inválido en toSignInput"
+  "custom_hdpath": {
+    "message": "Ruta de Derivación de Billetera HD Personalizada"
   },
-  "no_address_or_public_key_in_tosigninput": {
-    "message": "sin dirección o clave pública en toSignInput"
-  },
-  "invalid_address_in_tosigninput": {
-    "message": "dirección inválida en toSignInput"
-  },
-  "invalid_public_key_in_tosigninput": {
-    "message": "clave pública inválida en toSignInput"
-  },
-  "invalid_sighash_type_in_tosigninput": {
-    "message": "tipo sighash inválido en toSignInput"
-  },
-  "no_mfp_in_keyring": {
-    "message": "no mfp en el llavero"
-  },
-  "insufficient_balance": {
-    "message": "Saldo insuficiente."
-  },
-  "output_value_must_be_at_least": {
-    "message": "El Valor de Salida debe ser al menos"
-  },
-  "split_inscriptions": {
-    "message": "Dividir Inscripciones"
-  },
-  "split_inscription_tips": {
-    "message": "Esta función está actualmente en experimentación. Confirma el estado de división de la inscripción de la transacción al firmarla."
-  },
-  "each_output_value": {
-    "message": "Cada Valor de Salida"
-  },
-  "spliting_to": {
-    "message": "Dividiendo en"
-  },
-  "security_warning": {
-    "message": "Advertencia de Seguridad"
+  "custom_hdpath_optional": {
+    "message": "Ruta HD Personalizada (Opcional)"
   },
   "danger_potential_phishing_website_detected": {
     "message": "¡Peligro! Detectado sitio web de phishing potencial"
   },
-  "this_website_has_been_identified_as_malicious_by_unisat_and_may": {
-    "message": "Este sitio web ha sido identificado como malicioso por UniSat y puede:"
-  },
-  "steal_your_private_keys_or_seed_phrases": {
-    "message": "Robar tus claves privadas o frases semilla"
-  },
-  "trick_you_into_signing_malicious_transactions": {
-    "message": "Engañarte para firmar transacciones maliciosas"
-  },
-  "collect_your_personal_information": {
-    "message": "Recopilar tu información personal"
-  },
-  "think_this_is_a_false_positive_click_here_to_report_an_issue": {
-    "message": "¿Crees que es un falso positivo? Haz clic aquí para reportar un problema →"
-  },
-  "if_you_insist_on_continuing_proceed_at_your_own_risk": {
-    "message": "Si insistes en continuar, procede bajo tu propio riesgo:"
-  },
-  "continue_to": {
-    "message": "Continuar a"
-  },
-  "send_runes": {
-    "message": "Enviar Runas"
-  },
-  "send_atomicals_inscription": {
-    "message": "Enviar Inscripción Atomicals"
-  },
-  "send_inscription2": {
-    "message": "Enviar Inscripción"
-  },
-  "ordinals_inscriptions": {
-    "message": "Inscripciones Ordinals"
-  },
-  "babylon_staking": {
-    "message": "Staking Babylon"
-  },
-  "confirmed_tvl": {
-    "message": "Confirmado"
-  },
-  "tvl": {
-    "message": "TVL"
-  },
-  "stakers": {
-    "message": "Stakers"
-  },
-  "delegations": {
-    "message": "Delegaciones"
-  },
-  "finality_providers": {
-    "message": "Proveedores de Finalidad"
-  },
-  "invalid_address": {
-    "message": "Dirección inválida."
-  },
-  "utxo_not_found": {
-    "message": "UTXO no encontrado."
-  },
-  "multiple_inscriptions_are_mixed_together_please_sp": {
-    "message": "Múltiples inscripciones están mezcladas. Por favor, divídelas primero."
-  },
-  "inscriptions": {
-    "message": "Inscripciones"
-  },
-  "atomicals_nft": {
-    "message": "NFT Atomicals"
-  },
-  "unable_to_send_inscriptions_to_this_address_in_bat": {
-    "message": "No se pueden enviar inscripciones a esta dirección en lotes, por favor envíalas una por una."
-  },
-  "inscription_not_found": {
-    "message": "Inscripción no encontrada."
-  },
-  "the_amount_for_change_is_too_low_please_adjust_the": {
-    "message": "La cantidad para el cambio es demasiado baja, por favor ajusta la cantidad de envío."
-  },
-  "keyring_does_not_exist": {
-    "message": "el llavero no existe"
-  },
-  "not_supported_chainid": {
-    "message": "chainId no soportado"
-  },
-  "signdata_is_required_for_cosmos_signing": {
-    "message": "signData es requerido para la firma Cosmos"
+  "dapp_center": {
+    "message": "Centro de DApps"
   },
   "datatype_is_required_for_cosmos_signing": {
     "message": "dataType es requerido para la firma Cosmos"
   },
-  "path_is_required_for_cosmos_signing": {
-    "message": "path es requerido para la firma Cosmos"
-  },
-  "ur_type_is_required_for_parsing_cosmos_signature": {
-    "message": "El tipo UR es requerido para analizar la firma Cosmos"
-  },
-  "cbor_data_is_required_for_parsing_cosmos_signature": {
-    "message": "Los datos CBOR son requeridos para analizar la firma Cosmos"
-  },
-  "invalid_psbt": {
-    "message": "psbt inválido"
-  },
-  "not_implemented": {
-    "message": "no implementado"
-  },
-  "approvalres_is_required": {
-    "message": "approvalRes es requerido"
-  },
-  "connected": {
-    "message": "Conectado"
-  },
-  "not_connected": {
-    "message": "No conectado"
-  },
-  "expand_view": {
-    "message": "Expandir Vista"
-  },
-  "lock_immediately": {
-    "message": "Bloquear Inmediatamente"
-  },
-  "change_your_lockscreen_password": {
-    "message": "Cambia tu contraseña de bloqueo de pantalla"
-  },
-  "manage_wallet": {
-    "message": "Gestionar Billetera"
-  },
-  "network": {
-    "message": "Red"
-  },
-  "invalid_transaction_data": {
-    "message": "Datos de transacción inválidos"
-  },
-  "amount_must_be_at_least": {
-    "message": "La cantidad debe ser al menos"
-  },
-  "includes_inscriptions_runes_and_unconfirmed_utxos": {
-    "message": "Incluye Inscripciones, Runas y activos UTXO no confirmados."
-  },
-  "future_versions_will_support_spending_these_assets": {
-    "message": "Versiones futuras soportarán el gasto de estos activos."
-  },
-  "you_can_unlock_these_assets_by_using_the_utxos_tools": {
-    "message": "Puedes desbloquear estos activos usando las herramientas UTXO."
-  },
-  "spend": {
-    "message": "Gastar"
-  },
-  "transaction_success": {
-    "message": "Transacción Exitosa"
-  },
-  "transaction_id": {
-    "message": "ID de Transacción"
-  },
-  "received_from": {
-    "message": "Recibido de"
-  },
   "date": {
     "message": "Fecha"
   },
-  "view_on_unisat_explorer": {
-    "message": "Ver en Explorador UniSat"
+  "days_ago": {
+    "message": "días"
   },
-  "view_on_okx_explorer": {
-    "message": "Ver en Explorador OKX"
+  "dealing": {
+    "message": "Procesando"
   },
-  "view_on_mempool": {
-    "message": "Ver en Mempool"
+  "decimal": {
+    "message": "decimal"
   },
-  "from": {
-    "message": "De"
+  "decimal_places": {
+    "message": "decimales."
   },
-  "to": {
-    "message": "A"
+  "decimals": {
+    "message": "decimales"
   },
-  "by_inscription": {
-    "message": "Por inscripción"
+  "decimals_alkanes": {
+    "message": "Decimales"
   },
-  "unconfirmed_inscription": {
-    "message": "(no confirmado)"
+  "default": {
+    "message": "Predeterminado"
   },
-  "inscriptions_capital": {
-    "message": "INSCRIPCIONES"
+  "delegations": {
+    "message": "Delegaciones"
   },
-  "disable_atomicals": {
-    "message": "Deshabilitar Atomicals"
+  "delete": {
+    "message": "Eliminar"
   },
-  "the_utxo_containing_this_inscription_has": {
-    "message": "El UTXO que contiene esta inscripción tiene"
+  "delete_contact": {
+    "message": "Eliminar contacto"
   },
-  "address_book": {
-    "message": "Libreta de Direcciones"
+  "deploy_inscription": {
+    "message": "Desplegar Inscripción"
   },
-  "search_address_or_name": {
-    "message": "Buscar dirección o nombre"
-  },
-  "loading_contacts": {
-    "message": "Cargando..."
-  },
-  "you_haven_t_added_address_information_yet": {
-    "message": "Aún no has añadido información de direcciones"
-  },
-  "no_matching_contacts_found": {
-    "message": "No se encontraron contactos coincidentes"
-  },
-  "please_read_more_detail_on": {
-    "message": "Por favor, lee más detalles en"
-  },
-  "bitcoin_address_verifier": {
-    "message": "Verificador de Direcciones Bitcoin"
-  },
-  "owner": {
-    "message": "Propietario"
+  "derivation_path": {
+    "message": "Ruta de Derivación"
   },
   "description": {
     "message": "Descripción"
   },
-  "script": {
-    "message": "Script"
+  "details": {
+    "message": "Detalles"
   },
-  "this_message_serves_as_a_notice_that_if_runes_assets_are_detected_in_your_address_your": {
-    "message": "Este mensaje sirve como aviso de que si se detectan activos Runas en tu dirección, tus saldos no confirmados no serán gastables. No necesitas hacer nada."
+  "developer_mode_disabled": {
+    "message": "Modo de desarrollador deshabilitado"
   },
-  "in_the_current_version_only_the_confirmed_balance_can_be_used_once_atomicals_enabled": {
-    "message": "En la versión actual, solo se puede usar el saldo confirmado una vez habilitados los atomicals."
+  "developer_mode_enabled": {
+    "message": "Modo de desarrollador habilitado"
   },
-  "oops_something_went_wrong": {
-    "message": "¡Vaya! Algo salió mal."
+  "disable_atomicals": {
+    "message": "Deshabilitar Atomicals"
   },
-  "try_going_back_or_refreshing": {
-    "message": "Intenta retroceder o refrescar."
+  "disclaimStr": {
+    "message": "Ten en cuenta que estás a punto de comprar Bitcoin a través de una plataforma de terceros. Los servicios de pago con tarjeta de crédito son proporcionados por nuestros socios. UniSat Wallet actúa únicamente como plataforma intermediaria y no asume ninguna responsabilidad por posibles pérdidas o daños que puedan surgir del uso del servicio de pago con tarjeta de crédito."
   },
-  "go_back": {
-    "message": "Retroceder"
+  "disclaimStrFb": {
+    "message": "Por favor, tenga en cuenta que está a punto de comprar FB a través de una plataforma de terceros. Los servicios de pago con tarjeta de crédito son proporcionados por nuestros socios. UniSat Wallet actúa únicamente como plataforma intermedia y no asume responsabilidad por cualquier pérdida o daño potencial que pueda surgir del uso del servicio de pago con tarjeta de crédito."
   },
-  "refresh_page": {
-    "message": "Refrescar Página"
+  "disclaimer": {
+    "message": "Descargo de Responsabilidad"
   },
-  "refresh": {
-    "message": "Refrescar"
+  "discover": {
+    "message": "Descubrir"
+  },
+  "divisibility": {
+    "message": "divisibilidad"
+  },
+  "do_you_confirm_the_conversion": {
+    "message": "¿Confirmas la conversión?"
+  },
+  "do_you_confirm_the_transfer": {
+    "message": "¿Confirmas la transferencia?"
+  },
+  "does_not_exist": {
+    "message": "no existe"
+  },
+  "does_not_support_account_removal_operations": {
+    "message": "No se admiten operaciones de eliminación de cuentas"
+  },
+  "done": {
+    "message": "Hecho"
+  },
+  "each_output_value": {
+    "message": "Cada Valor de Salida"
+  },
+  "each_outputvalue": {
+    "message": "Cada Valor de Salida"
+  },
+  "edit_address": {
+    "message": "Editar dirección"
+  },
+  "edit_name": {
+    "message": "Editar Nombre"
+  },
+  "empty": {
+    "message": "Vacío"
+  },
+  "enable_atomicals": {
+    "message": "Habilitar Atomicals"
+  },
+  "enable_atomicals_assets": {
+    "message": "Habilitar Activos Atomicals"
+  },
+  "enable_atomicals_assets_warning": {
+    "message": "Los activos atomicals ya no se mostrarán en la billetera y podrán gastarse como saldo normal. Procede con precaución."
+  },
+  "enable_sign_data_popover_warning": {
+    "message": "Permitir solicitudes signData puede hacerte vulnerable a ataques de phishing. Siempre revisa la URL y ten cuidado al firmar mensajes que contengan código."
+  },
+  "enable_sign_data_popover_warning_2": {
+    "message": "Si te han pedido que actives esta configuración, podrías estar siendo víctima de una estafa"
+  },
+  "enable_sign_data_warning": {
+    "message": "Si habilitas esta configuración, podrías recibir solicitudes de firma que no son legibles. Al firmar un mensaje que no entiendes, podrías estar aceptando entregar tus fondos y NFTs. Estás en riesgo de ataques de phishing. Protégete desactivando signData."
+  },
+  "enable_unconfirmed_balance": {
+    "message": "Habilitar Saldo No Confirmado"
+  },
+  "enable_unconfirmed_balance_warning": {
+    "message": "Si se detectan activos Runes en la dirección dada, los UTXOs no confirmados no podrán gastarse hasta que se confirmen. Gastar forzadamente estos UTXOs no confirmados conlleva el riesgo de perder activos."
+  },
+  "ensure_your_keystone_3_pro_is_on_the_homepage": {
+    "message": "Asegúrate de que tu Keystone 3 Pro esté en la pantalla de inicio"
+  },
+  "enter": {
+    "message": "Entrar"
+  },
+  "enter_your_password": {
+    "message": "Introduce tu contraseña"
+  },
+  "estimated_fee": {
+    "message": "Tarifa Estimada"
+  },
+  "etching": {
+    "message": "grabado"
+  },
+  "expand_view": {
+    "message": "Expandir Vista"
+  },
+  "export_private_key": {
+    "message": "Exportar Clave Privada"
+  },
+  "failed_to_delete_contact": {
+    "message": "Error al eliminar el contacto"
+  },
+  "failed_to_handle_signature": {
+    "message": "Error al procesar la firma"
+  },
+  "failed_to_load_contact_information": {
+    "message": "Error al cargar la información del contacto"
+  },
+  "failed_to_load_inscription": {
+    "message": "Error al cargar la inscripción"
+  },
+  "failed_to_save_contact": {
+    "message": "Error al guardar el contacto"
+  },
+  "fast": {
+    "message": "Rápido"
+  },
+  "features": {
+    "message": "Características:"
+  },
+  "fee": {
+    "message": "Tarifa"
+  },
+  "fee_rate": {
+    "message": "Tasa de Tarifa"
+  },
+  "feedback": {
+    "message": "Feedback"
+  },
+  "feerate_avg_desc": {
+    "message": "aproximadamente 30 minutos"
+  },
+  "feerate_avg_desc_fb": {
+    "message": "aproximadamente 1.5 minutos"
+  },
+  "feerate_fast_desc": {
+    "message": "aproximadamente 10 minutos"
+  },
+  "feerate_fast_desc_fb": {
+    "message": "aproximadamente 30 segundos"
+  },
+  "feerate_slow_desc": {
+    "message": "aproximadamente 1 hora"
+  },
+  "feerate_slow_desc_fb": {
+    "message": "aproximadamente 3 minutos"
+  },
+  "feerate_sub1_title": {
+    "message": "Menos de 1"
+  },
+  "finality_providers": {
+    "message": "Proveedores de Finalidad"
+  },
+  "finish": {
+    "message": "Finalizar"
+  },
+  "first_account_not_found": {
+    "message": "Primera cuenta no encontrada"
+  },
+  "for_atomicals_assets": {
+    "message": "Para activos Atomicals,"
+  },
+  "for_ordinals_assets": {
+    "message": "Para activos Ordinals,"
+  },
+  "from": {
+    "message": "De"
+  },
+  "function_not_implemented": {
+    "message": "Función no implementada."
+  },
+  "future_versions_will_support_spending_these_assets": {
+    "message": "Versiones futuras soportarán el gasto de estos activos."
+  },
+  "gas_adjustment": {
+    "message": "Ajuste de Gas"
+  },
+  "gas_adjustment_explanation": {
+    "message": "Explicación del Ajuste de Gas:"
+  },
+  "gas_adjustment_explanation_1": {
+    "message": "• Multiplicador aplicado al gas estimado (1.0 = 100%)"
+  },
+  "gas_adjustment_explanation_2": {
+    "message": "• El predeterminado 1.3 (130%) proporciona margen de seguridad"
+  },
+  "gas_adjustment_explanation_3": {
+    "message": "• Valores más altos aumentan la probabilidad de éxito de la transacción"
+  },
+  "gas_fee_calculation_may_not_include_newly_received_tokens_try_a_smaller_amount": {
+    "message": "El cálculo de la tarifa de gas puede no incluir tokens recién recibidos. Intenta con una cantidad menor."
   },
   "gas_limit": {
     "message": "Límite de Gas"
-  },
-  "auto": {
-    "message": "Auto"
-  },
-  "recommended": {
-    "message": "Recomendado"
-  },
-  "range": {
-    "message": "Rango"
   },
   "gas_limit_explanation": {
     "message": "Explicación del Límite de Gas"
@@ -1616,257 +809,179 @@
   "gas_limit_explanation_4": {
     "message": "• El valor recomendado suele ser suficiente"
   },
-  "gas_adjustment": {
-    "message": "Ajuste de Gas"
+  "generating": {
+    "message": "Generando..."
   },
-  "gas_adjustment_explanation": {
-    "message": "Explicación del Ajuste de Gas:"
+  "generating_qr_code": {
+    "message": "Generando código QR..."
   },
-  "default": {
-    "message": "Predeterminado"
+  "genesis_transaction": {
+    "message": "transacción génesis"
   },
-  "gas_adjustment_explanation_1": {
-    "message": "• Multiplicador aplicado al gas estimado (1.0 = 100%)"
+  "get_signature": {
+    "message": "Obtener Firma"
   },
-  "gas_adjustment_explanation_2": {
-    "message": "• El predeterminado 1.3 (130%) proporciona margen de seguridad"
+  "get_signature_success": {
+    "message": "Firma Obtenida con Éxito"
   },
-  "gas_adjustment_explanation_3": {
-    "message": "• Valores más altos aumentan la probabilidad de éxito de la transacción"
+  "go_back": {
+    "message": "Retroceder"
   },
-  "remember_my_choice": {
-    "message": "Recordar mi elección"
+  "go_to_babylon": {
+    "message": "Ir a Babylon"
   },
-  "close": {
-    "message": "Cerrar"
+  "go_to_stake": {
+    "message": "Ir a Hacer Stake"
   },
-  "this_domain_has_been_transferred_or_inscribed_recently_please_wait_for_block_confirmations": {
-    "message": "Este dominio ha sido transferido o inscrito recientemente. Espera las confirmaciones de bloque"
+  "go_to_update": {
+    "message": "Ir a actualizar"
   },
-  "currently_only": {
-    "message": "Actualmente solo"
+  "hardware_wallet_feature_is_experimental_use_it_with_caution_as_potential_issues_may_arise": {
+    "message": "La función de billetera hardware es experimental. Úsala con precaución ya que pueden surgir problemas potenciales"
   },
-  "are_supported": {
-    "message": "son soportados"
+  "hello": {
+    "message": "HOLA"
   },
-  "recipient_address_is_invalid": {
-    "message": "La dirección del destinatario es inválida"
+  "hex_private_key": {
+    "message": "Clave Privada Hex:"
   },
-  "address_book_placeholder": {
-    "message": "Libreta de Direcciones"
+  "high": {
+    "message": "Alta"
   },
-  "name_recognized_and_resolved": {
-    "message": "Nombre reconocido y resuelto."
+  "high_fee_rate_risk_description": {
+    "message": "Esta transacción tiene una tasa de comisión alta. Asegúrese de entender las implicaciones de esta acción antes de proceder."
   },
-  "more_details": {
-    "message": "Más detalles"
+  "high_fee_rate_risk_title": {
+    "message": "Tasa de comisión alta detectada"
   },
-  "address_or_name_fb": {
-    "message": "Dirección o nombre (.fb)"
+  "high_priority": {
+    "message": "Alta Prioridad"
   },
-  "address_or_name_sats_unisat_etc": {
-    "message": "Dirección o nombre (.sats, .unisat, ...)"
+  "history": {
+    "message": "Historial"
   },
-  "does_not_exist": {
-    "message": "no existe"
+  "history_count": {
+    "message": "Total de transacciones"
   },
-  "click_on_the": {
-    "message": "Haz clic en el"
+  "history_pending": {
+    "message": "Pendiente"
   },
-  "button_after_signing_the_transaction_with_your_keystone_device": {
-    "message": "botón después de firmar la transacción con tu dispositivo Keystone"
+  "holders": {
+    "message": "poseedores"
   },
-  "processing_signature": {
-    "message": "Procesando firma..."
+  "holders_alkanes": {
+    "message": "Titulares"
   },
-  "position_the_qr_code_in_front_of_your_camera_the_screen_is_blurred_but_this_will_not_affect_the_scan": {
-    "message": "Coloca el código QR frente a tu cámara. La pantalla está borrosa pero esto no afectará el escaneo."
+  "holders_count": {
+    "message": "Titulares"
   },
-  "missing_browser_permissions_please_grant_keystone_permissions": {
-    "message": "Faltan permisos del navegador, por favor otorga permisos a Keystone"
+  "home": {
+    "message": "Inicio"
   },
-  "request_was_rejected_to_proceed_please_reauthorize": {
-    "message": "La solicitud fue Rechazada. Para proceder, por favor reautoriza"
-  },
-  "please_reconnect_the_keystone_on_home_screen_and_reauthorize": {
-    "message": "Por favor, reconecta el Keystone en la pantalla de inicio y reautoriza."
-  },
-  "communication_with_the_keystone_device_failed_please_ensure_the_keystone_is_connected_and_try_again": {
-    "message": "Falló la comunicación con el dispositivo Keystone. Asegúrate de que el Keystone esté conectado e inténtalo de nuevo."
-  },
-  "invalid_qr_code_please_ensure_you_have_selected_a_valid_qr_code_from_your_keystone_device": {
-    "message": "Código QR inválido. Asegúrate de haber seleccionado un código QR válido desde tu dispositivo Keystone."
-  },
-  "merging_utxos": {
-    "message": "Fusionando UTXOs"
-  },
-  "merging_amount": {
-    "message": "Cantidad a Fusionar"
-  },
-  "your_balance_have_to_be_merged": {
-    "message": "Tu saldo de "
-  },
-  "this_process_will_merge_your_utxos_into_one": {
-    "message": "tiene que ser fusionado. Este proceso fusionará tus UTXOs en uno."
-  },
-  "merge_utxos1": {
-    "message": "Fusionar"
-  },
-  "can_not_change_to_a_lower_value": {
-    "message": "No se puede cambiar a un valor inferior"
-  },
-  "a_feature_allows_the_transaction_to_be_replaced": {
-    "message": "Una función que permite reemplazar la transacción."
-  },
-  "strong_password_tip": {
-    "message": "Una contraseña fuerte puede proteger mejor la seguridad de tus activos"
-  },
-  "not_long_enough": {
-    "message": "No es suficientemente largo"
-  },
-  "average": {
-    "message": "Promedio"
-  },
-  "password_must_be_at_least_8_characters": {
-    "message": "La contraseña debe ser al menos de 8 caracteres"
-  },
-  "unrecognized_password_strength": {
-    "message": "Fuerza de contraseña no reconocida"
-  },
-  "weak": {
-    "message": "Débil"
-  },
-  "strong": {
-    "message": "Fuerte"
-  },
-  "no_inscriptions_found": {
-    "message": "No se encontraron inscripciones"
-  },
-  "new_version": {
-    "message": "Nueva versión!"
-  },
-  "add_frequently_used_addresses": {
-    "message": "Agregar direcciones frecuentes"
-  },
-  "let_us_know_what_you_think": {
-    "message": "Háganos saber lo que piensa"
-  },
-  "like_our_wallet_wed_love_your_rating": {
-    "message": "¿Te gusta nuestra billetera? ¡Nos encantaría tu calificación!"
-  },
-  "feedback": {
-    "message": "Feedback"
-  },
-  "rate_us": {
-    "message": "Califica nuestra app"
-  },
-  "about_us": {
-    "message": "Sobre nosotros"
-  },
-  "seconds": {
-    "message": "Segundos"
-  },
-  "minutes": {
-    "message": "Minutos"
+  "hour": {
+    "message": "Hora"
   },
   "hours": {
     "message": "Horas"
   },
-  "finish": {
-    "message": "Finalizar"
+  "hours_ago": {
+    "message": "horas"
   },
-  "add_address": {
-    "message": "Agregar dirección"
+  "how_to_import_baby": {
+    "message": "Cómo Importar BABY"
   },
-  "delete_contact": {
-    "message": "Eliminar contacto"
+  "i_already_have_a_wallet": {
+    "message": "Ya tengo una billetera"
   },
-  "are_you_sure_you_want_to_delete_this_contact": {
-    "message": "¿Estás seguro de querer eliminar este contacto?"
+  "i_am_aware_of_the_risks": {
+    "message": "Soy consciente de los riesgos"
   },
-  "contact_not_found": {
-    "message": "Contacto no encontrado"
+  "i_have_read_and_agree_to_the_above_disclaimer": {
+    "message": "He leído y acepto el descargo de responsabilidad anterior"
   },
-  "failed_to_load_contact_information": {
-    "message": "Error al cargar la información del contacto"
+  "i_have_signed_scan_result": {
+    "message": "He Firmado, Escanear Resultado"
   },
-  "please_enter_name": {
-    "message": "Por favor, ingrese un nombre"
+  "i_only_sign_what_i_understand": {
+    "message": "Solo firmo lo que entiendo"
   },
-  "please_enter_address": {
-    "message": "Por favor, ingrese una dirección"
+  "i_saved_my_secret_recovery_phrase": {
+    "message": "He guardado Mi Frase Secreta de Recuperación"
   },
-  "invalid_address_format_for_selected_network": {
-    "message": "Formato de dirección inválido para la red seleccionada"
+  "i_understand": {
+    "message": "Entiendo"
   },
-  "failed_to_save_contact": {
-    "message": "Error al guardar el contacto"
-  },
-  "failed_to_delete_contact": {
-    "message": "Error al eliminar el contacto"
-  },
-  "edit_address": {
-    "message": "Editar dirección"
-  },
-  "name_label": {
-    "message": "Nombre"
-  },
-  "address_label": {
-    "message": "Dirección"
-  },
-  "saving": {
-    "message": "Guardando..."
-  },
-  "save": {
-    "message": "Guardar"
-  },
-  "new_update_available": {
-    "message": "Nueva actualización disponible"
-  },
-  "you_re_on_the_latest_version": {
-    "message": "Estás en la última versión"
-  },
-  "terms_of_service": {
-    "message": "Términos de uso"
-  },
-  "privacy_policy": {
-    "message": "Política de privacidad"
-  },
-  "language": {
-    "message": "Idioma"
-  },
-  "language_description": {
-    "message": "Cambiar el idioma de la aplicación"
-  },
-  "more": {
-    "message": "Más"
-  },
-  "restore_from_mnemonics": {
-    "message": "Restaurar desde palabras clave"
-  },
-  "other_wallet": {
-    "message": "Otro billetera"
-  },
-  "invalid_derivation_path": {
-    "message": "Ruta de derivación inválida."
-  },
-  "loading_details": {
-    "message": "Cargando detalles..."
-  },
-  "provenance": {
-    "message": "Procedencia"
-  },
-  "details": {
-    "message": "Detalles"
-  },
-  "inscription_id": {
+  "id": {
     "message": "id"
+  },
+  "if_you_ever_change_browsers_or_move_computers_you_": {
+    "message": "Si alguna vez cambias de navegador o de ordenador, necesitarás esta Clave Privada para acceder a esta cuenta. Guárdala en un lugar seguro y secreto"
+  },
+  "if_you_insist_on_continuing_proceed_at_your_own_risk": {
+    "message": "Si insistes en continuar, procede bajo tu propio riesgo:"
+  },
+  "if_you_lose_your_private_key_your_assets_will_be_g": {
+    "message": "¡Si pierdes tu Clave Privada, tus activos desaparecerán!"
+  },
+  "if_you_lose_your_secret_recovery_phrase_your_asset": {
+    "message": "¡Si pierdes tu Frase Secreta de Recuperación, tus activos desaparecerán!"
+  },
+  "if_you_share_the_private_key_to_others_your_assets": {
+    "message": "¡Si compartes la Clave Privada con otros, tus activos serán robados!"
+  },
+  "if_you_share_the_secret_recovery_phrase_to_others_": {
+    "message": "¡Si compartes la Frase Secreta de Recuperación con otros, tus activos serán robados!"
+  },
+  "import_an_existing_wallet_with_your_secret_recover": {
+    "message": "Importa una billetera existente con tu frase secreta de recuperación"
+  },
+  "important_to_not_transfer_this_token": {
+    "message": "Importante: No transferas este token debido a una discrepancia temporal en el índice. Esperamos la resolución del equipo fundador del protocolo. Otros tokens no afectados."
+  },
+  "in_inscriptions": {
+    "message": "en inscripciones"
+  },
+  "in_the_current_version_only_the_confirmed_balance_can_be_used_once_atomicals_enabled": {
+    "message": "En la versión actual, solo se puede usar el saldo confirmado una vez habilitados los atomicals."
+  },
+  "includes_inscriptions_runes_and_unconfirmed_utxos": {
+    "message": "Incluye Inscripciones, Runas y activos UTXO no confirmados."
+  },
+  "indexer_api_down_risk_description": {
+    "message": "La API del indexador está actualmente fuera de servicio. Esto puede afectar la precisión de los detalles de transacción y balances de activos. Proceda con precaución y verifique toda la información de forma independiente."
+  },
+  "indexer_api_down_risk_title": {
+    "message": "API del indexador caída"
+  },
+  "inputs": {
+    "message": "Entradas"
+  },
+  "inscribe_and_store_your_inscriptions_in_the_worlds_first_keystone_open_source_chrome_wallet_for_ordinals": {
+    "message": "¡Inscribe y guarda tus inscripciones en la primera billetera de código abierto para Chrome para Ordinals del mundo!"
+  },
+  "inscribe_success": {
+    "message": "Inscripción Exitosa"
+  },
+  "inscribe_transfer": {
+    "message": "Inscribir TRANSFER"
+  },
+  "inscribing": {
+    "message": "Inscribiendo..."
+  },
+  "inscription": {
+    "message": "Inscripción"
   },
   "inscription_address": {
     "message": "dirección"
   },
-  "inscription_preview": {
-    "message": "vista previa"
+  "inscription_burn_risk_list": {
+    "message": "Lista de Riesgo de Quema de Inscripciones"
+  },
+  "inscription_burning_risk_description": {
+    "message": "Esta transacción involucra la quema de inscripciones. Asegúrese de entender las implicaciones de esta acción antes de proceder."
+  },
+  "inscription_burning_risk_title": {
+    "message": "Quema de inscripción detectada"
   },
   "inscription_content": {
     "message": "contenido"
@@ -1877,14 +992,134 @@
   "inscription_content_type": {
     "message": "tipo de contenido"
   },
-  "inscription_timestamp": {
-    "message": "marca de tiempo"
-  },
   "inscription_genesis_transaction": {
     "message": "transacción de creación"
   },
-  "custom": {
-    "message": "Personalizado"
+  "inscription_id": {
+    "message": "id"
+  },
+  "inscription_network_fee": {
+    "message": "Tarifa de Red de Inscripción"
+  },
+  "inscription_not_confirmed_yet": {
+    "message": "Inscripción (aún no confirmada)"
+  },
+  "inscription_not_found": {
+    "message": "Inscripción no encontrada."
+  },
+  "inscription_output_value": {
+    "message": "Valor de Salida de Inscripción"
+  },
+  "inscription_preview": {
+    "message": "vista previa"
+  },
+  "inscription_timestamp": {
+    "message": "marca de tiempo"
+  },
+  "inscriptions": {
+    "message": "Inscripciones"
+  },
+  "inscriptions_capital": {
+    "message": "INSCRIPCIONES"
+  },
+  "instructions": {
+    "message": "Instrucciones:"
+  },
+  "insufficient_balance": {
+    "message": "Saldo insuficiente."
+  },
+  "invalid_address": {
+    "message": "Dirección inválida."
+  },
+  "invalid_address_format_for_selected_network": {
+    "message": "Formato de dirección inválido para la red seleccionada"
+  },
+  "invalid_address_in_tosigninput": {
+    "message": "dirección inválida en toSignInput"
+  },
+  "invalid_derivation_path": {
+    "message": "Ruta de derivación inválida."
+  },
+  "invalid_fee_rate": {
+    "message": "Tasa de tarifa inválida"
+  },
+  "invalid_index_in_tosigninput": {
+    "message": "índice inválido en toSignInput"
+  },
+  "invalid_privatekey": {
+    "message": "Clave Privada inválida"
+  },
+  "invalid_psbt": {
+    "message": "psbt inválido"
+  },
+  "invalid_public_key_in_tosigninput": {
+    "message": "clave pública inválida en toSignInput"
+  },
+  "invalid_qr_code_please_ensure_you_have_selected_a_valid_qr_code_from_your_keystone_device": {
+    "message": "Código QR inválido. Asegúrate de haber seleccionado un código QR válido desde tu dispositivo Keystone."
+  },
+  "invalid_recipient_address": {
+    "message": "Dirección de destinatario inválida"
+  },
+  "invalid_sighash_type_in_tosigninput": {
+    "message": "tipo sighash inválido en toSignInput"
+  },
+  "invalid_transaction_data": {
+    "message": "Datos de transacción inválidos"
+  },
+  "invalid_wallet_please_remove_it_and_add_new_one": {
+    "message": "Billetera inválida, por favor elimínala y añade una nueva"
+  },
+  "involved_assets": {
+    "message": "Activos Involucrados:"
+  },
+  "is_unconfirmed_please_wait_for_confirmation": {
+    "message": "no está confirmado, por favor espera la confirmación"
+  },
+  "items": {
+    "message": "Elementos"
+  },
+  "keyring_does_not_exist": {
+    "message": "el llavero no existe"
+  },
+  "keyring_error_account_count": {
+    "message": "El número de cuentas debe ser mayor que 0"
+  },
+  "keyringcontroller_first_account_not_found": {
+    "message": "KeyringController - Primera Cuenta no encontrada."
+  },
+  "keyringcontroller_password_is_not_a_string": {
+    "message": "KeyringController - la contraseña no es una cadena"
+  },
+  "keystone_100_air_gapped": {
+    "message": "100% Aislada (Air-Gapped)"
+  },
+  "keystone_exceptional_compatibility": {
+    "message": "Compatibilidad Excepcional"
+  },
+  "keystone_hardware_wallet": {
+    "message": "Billetera hardware Keystone"
+  },
+  "keystone_open_source": {
+    "message": "Código Abierto"
+  },
+  "keystone_wallet": {
+    "message": "Billetera Keystone"
+  },
+  "language": {
+    "message": "Idioma"
+  },
+  "language_description": {
+    "message": "Cambiar el idioma de la aplicación"
+  },
+  "latest_version": {
+    "message": "Última Versión"
+  },
+  "learn_how_to_import_your_babylon_reward_assets_into_a_cosmos_compatible_wallet": {
+    "message": "Aprende cómo importar tus activos de recompensa de Babylon a una billetera compatible con COSMOS."
+  },
+  "learn_more_about_keystone": {
+    "message": "Más información sobre Keystone"
   },
   "legacy_address_warning": {
     "message": "No se recomienda usar direcciones heredadas, ya que pueden provocar tarifas de transacción más altas o el bloqueo no intencionado de saldos CAT20."
@@ -1892,215 +1127,386 @@
   "legacy_address_warning_2": {
     "message": "No se recomienda enviar transacciones a direcciones heredadas, ya que esto puede resultar en el gasto no intencionado de saldos CAT20."
   },
-  "slow": {
-    "message": "Lento"
-  },
-  "avg": {
-    "message": "Promedio"
-  },
-  "fast": {
-    "message": "Rápido"
-  },
-  "about_1_hour": {
-    "message": "aproximadamente 1 hora"
-  },
-  "about_30_minutes": {
-    "message": "aproximadamente 30 minutos"
-  },
-  "about_10_minutes": {
-    "message": "aproximadamente 10 minutos"
-  },
-  "babylon_bitcoin_staking_phase2": {
-    "message": "Babylon Bitcoin Staking Fase 2"
-  },
-  "go_to_babylon": {
-    "message": "Ir a Babylon"
-  },
-  "closed_babylon": {
-    "message": "Cerrado"
-  },
-  "open_babylon": {
-    "message": "Abierto"
-  },
-  "pending_babylon": {
-    "message": "Pendiente"
-  },
-  "convert_baby_to_brc20": {
-    "message": "Convertir $BABY a brc-20"
-  },
-  "you_are_about_to_convert_your_native_baby_to_btc_brc20_baby": {
-    "message": "Estás a punto de convertir tu BABY nativo a BABY brc-20 en BTC."
-  },
-  "once_the_conversion_is_complete_your_native_baby_cannot_be_restored": {
-    "message": "Una vez que se complete la conversión, tu BABY nativo no podrá ser restaurado."
-  },
-  "do_you_confirm_the_conversion": {
-    "message": "¿Confirmas la conversión?"
-  },
-  "transfer_baby_to_cosmos_wallet": {
-    "message": "Transferir $BABY a la billetera Cosmos"
-  },
-  "do_you_confirm_the_transfer": {
-    "message": "¿Confirmas la transferencia?"
-  },
-  "you_are_about_to_transfer_your_native_baby_to_your_cosmos_wallet": {
-    "message": "Estás a punto de transferir tu BABY nativo a tu billetera Cosmos."
-  },
-  "click_baby_to_brc20_coming_soon": {
-    "message": "Haz clic en $BABY a brc-20 (Próximamente)"
-  },
-  "convert_your_native_baby_to_btc_brc20_baby": {
-    "message": "Convierte tu token $BABY nativo a BABY brc-20 en Bitcoin."
-  },
-  "transfer_your_baby_to_your_cosmos_wallet": {
-    "message": "Transfiere tu $BABY a tu billetera Cosmos."
-  },
-  "password_error": {
-    "message": "Contraseña incorrecta"
-  },
-  "the_private_key_is_invalid": {
-    "message": "La clave privada no es válida"
-  },
-  "you_need_to_unlock_wallet_first": {
-    "message": "Necesitas desbloquear la billetera primero"
-  },
-  "account_count_must_be_greater_than_0": {
-    "message": "El número de cuentas debe ser mayor que 0"
-  },
-  "mnemonic_phrase_is_invalid": {
-    "message": "La frase mnemotécnica no es válida"
-  },
-  "first_account_not_found": {
-    "message": "Primera cuenta no encontrada"
-  },
-  "unlock_already_in_progress": {
-    "message": "El desbloqueo ya está en progreso"
-  },
-  "change_password_already_in_progress": {
-    "message": "El cambio de contraseña ya está en progreso"
-  },
-  "change_password_failed": {
-    "message": "La contraseña antigua no es correcta."
-  },
-  "cannot_unlock_without_a_previous_vault": {
-    "message": "No se puede desbloquear sin una bóveda previa"
-  },
-  "wallet_existed": {
-    "message": "La billetera ya existe"
-  },
-  "does_not_support_account_removal_operations": {
-    "message": "No se admiten operaciones de eliminación de cuentas"
-  },
-  "disclaimStrFb": {
-    "message": "Por favor, tenga en cuenta que está a punto de comprar FB a través de una plataforma de terceros. Los servicios de pago con tarjeta de crédito son proporcionados por nuestros socios. UniSat Wallet actúa únicamente como plataforma intermedia y no asume responsabilidad por cualquier pérdida o daño potencial que pueda surgir del uso del servicio de pago con tarjeta de crédito."
-  },
-  "seconds_ago": {
-    "message": "segundos"
-  },
-  "minutes_ago": {
-    "message": "minutos"
-  },
-  "hours_ago": {
-    "message": "horas"
-  },
-  "days_ago": {
-    "message": "días"
-  },
-  "current": {
-    "message": "Actual"
-  },
-  "items": {
-    "message": "Elementos"
-  },
-  "claimabled": {
-    "message": "Claimable"
-  },
-  "agreement_text": {
-    "message": "CONFIRMAR"
-  },
-  "to_proceed": {
-    "message": "para continuar"
-  },
-  "tutorial": {
-    "message": "Tutorial"
-  },
-  "tx_amount": {
-    "message": "cantidad"
-  },
-  "secs": {
-    "message": "segundos"
-  },
-  "about_3_minutes_fb": {
-    "message": "aproximadamente 3 minutos"
-  },
-  "about_1_5_minutes_fb": {
-    "message": "aproximadamente 1.5 minutos"
-  },
-  "about_30_seconds_fb": {
-    "message": "aproximadamente 30 segundos"
-  },
   "legacy_address_warning_3": {
     "message": "No se recomienda usar direcciones heredadas, ya que pueden provocar tarifas de transacción más altas o el bloqueo no intencionado de saldos CAT20."
   },
   "legacy_address_warning_4": {
     "message": "No se recomienda enviar transacciones a direcciones heredadas, ya que esto puede resultar en el gasto no intencionado de saldos CAT20."
   },
-  "unavailable_tooltip": {
-    "message": "Si tu saldo muestra como no disponible, es posible que tus UTXOs estén bloqueados debido a contener inscripciones, runas, activos brc-20 o no confirmados. En la mayoría de los casos, puedes usar nuestra herramienta de gestión de UTXOs para desbloquear estos UTXOs y hacerlos gastables de nuevo."
+  "legacy_p2pkh": {
+    "message": "Legacy (P2PKH)"
   },
-  "single_step_transfer": {
-    "message": "Transferencia de un solo paso"
+  "let_us_know_what_you_think": {
+    "message": "Háganos saber lo que piensa"
   },
-  "deploy_inscription": {
-    "message": "Desplegar Inscripción"
+  "like_our_wallet_wed_love_your_rating": {
+    "message": "¿Te gusta nuestra billetera? ¡Nos encantaría tu calificación!"
   },
-  "available_balance": {
-    "message": "Saldo disponible"
+  "linked_to_unisat_cold_wallet": {
+    "message": "Vinculado a UniSat Cold Wallet"
   },
-  "transferable_balance": {
-    "message": "Saldo transferible"
+  "load_failed": {
+    "message": "Error de Carga"
   },
-  "ticker": {
-    "message": "ticker"
+  "loading": {
+    "message": "cargando..."
   },
-  "pending": {
-    "message": "pendiente"
+  "loading_contacts": {
+    "message": "Cargando..."
   },
-  "network_fee_2": {
-    "message": "Tarifa de red"
+  "loading_details": {
+    "message": "Cargando detalles..."
   },
-  "minute": {
-    "message": "Minuto"
+  "lock_immediately": {
+    "message": "Bloquear Inmediatamente"
   },
-  "hour": {
-    "message": "Hora"
+  "low": {
+    "message": "Baja"
   },
-  "minted": {
-    "message": "acuñado"
+  "low_fee_mode": {
+    "message": "Modo inferior a 1 sat/vB"
   },
-  "mints": {
-    "message": "acuñaciones"
+  "low_fee_mode_aggreement": {
+    "message": "Reconozco que las comisiones bajas pueden causar retrasos o transacciones fallidas y deseo continuar."
   },
-  "decimal": {
-    "message": "decimal"
+  "low_fee_mode_description": {
+    "message": "Las transacciones con comisiones bajas pueden tardar más en confirmarse o pueden no procesarse en absoluto. Recomendamos verificar las tarifas actuales de la red antes de seleccionar comisiones bajas."
+  },
+  "low_fee_mode_title": {
+    "message": "Alerta de comisión baja"
   },
   "low_priority": {
     "message": "Baja Prioridad"
   },
+  "malicious_behavior_and_suspicious_activity_have_be": {
+    "message": "Se ha detectado comportamiento malicioso y actividad sospechosa."
+  },
+  "manage_wallet": {
+    "message": "Gestionar Billetera"
+  },
+  "mandatory_use_of_unconfirmed_balance": {
+    "message": "Uso obligatorio de saldo no confirmado"
+  },
+  "max": {
+    "message": "MÁX"
+  },
+  "max_supply": {
+    "message": "Suministro máximo"
+  },
+  "medium": {
+    "message": "Media"
+  },
   "medium_priority": {
     "message": "Prioridad Media"
   },
-  "high_priority": {
-    "message": "Alta Prioridad"
+  "memo": {
+    "message": "Memo:"
   },
-  "holders_count": {
-    "message": "Titulares"
+  "memo_is_too_long_the_maximum_length_is_256_characters": {
+    "message": "El memo es demasiado largo. La longitud máxima es de 256 caracteres."
   },
-  "history_count": {
-    "message": "Total de transacciones"
+  "merge_failed": {
+    "message": "Fusión Fallida."
   },
-  "current_supply": {
-    "message": "Cantidad actual"
+  "merge_history": {
+    "message": "Historial de Fusiones"
+  },
+  "merge_progress": {
+    "message": "Progreso de la Fusión"
+  },
+  "merge_transactions": {
+    "message": "Fusionar Transacciones"
+  },
+  "merge_utxos": {
+    "message": "Fusionar"
+  },
+  "merge_utxos1": {
+    "message": "Fusionar"
+  },
+  "merge_utxos_failed": {
+    "message": "Combinación fallida"
+  },
+  "merge_utxos_for_cat20_asset": {
+    "message": "Fusionar UTXOs para Activo CAT20"
+  },
+  "merge_utxos_is_not_supported_for_keystone_yet": {
+    "message": "La fusión de UTXOs aún no es compatible con Keystone"
+  },
+  "merge_utxos_to_increase_the_available_balance": {
+    "message": "Fusionar UTXOs->"
+  },
+  "merging": {
+    "message": "Fusionando..."
+  },
+  "merging_amount": {
+    "message": "Cantidad a Fusionar"
+  },
+  "merging_inscriptions_risk_description": {
+    "message": "Esta transacción involucra la fusión de inscripciones. Asegúrese de entender las implicaciones de esta acción antes de proceder."
+  },
+  "merging_inscriptions_risk_title": {
+    "message": "Fusión de inscripciones detectada"
+  },
+  "merging_utxos": {
+    "message": "Fusionando UTXOs"
+  },
+  "message": {
+    "message": "mensaje"
+  },
+  "method_not_implemented": {
+    "message": "Método no implementado."
+  },
+  "mint": {
+    "message": "Acuñar"
+  },
+  "minted": {
+    "message": "acuñado"
+  },
+  "minted_alkanes": {
+    "message": "Acuñado"
+  },
+  "mints": {
+    "message": "acuñaciones"
+  },
+  "minute": {
+    "message": "Minuto"
+  },
+  "minutes": {
+    "message": "Minutos"
+  },
+  "minutes_ago": {
+    "message": "minutos"
+  },
+  "missing_browser_permissions_please_grant_keystone_permissions": {
+    "message": "Faltan permisos del navegador, por favor otorga permisos a Keystone"
+  },
+  "mnemonic_phrase_is_invalid": {
+    "message": "La frase mnemotécnica no es válida"
+  },
+  "mnemonics_12_words": {
+    "message": "12 palabras"
+  },
+  "mnemonics_24_words": {
+    "message": "24 palabras"
+  },
+  "more": {
+    "message": "Más"
+  },
+  "more_details": {
+    "message": "Más detalles"
+  },
+  "msg_already_signed": {
+    "message": "Este mensaje ya está firmado"
+  },
+  "msg_content": {
+    "message": "Contenido del Mensaje"
+  },
+  "msg_detail": {
+    "message": "Detalles del Mensaje"
+  },
+  "msg_generate_qr": {
+    "message": "Generar Código QR"
+  },
+  "msg_generate_sign": {
+    "message": "Generar Firma"
+  },
+  "msg_generating_qr": {
+    "message": "Generando código QR..."
+  },
+  "msg_message": {
+    "message": "Mensaje"
+  },
+  "msg_origin": {
+    "message": "Origen: "
+  },
+  "msg_pending": {
+    "message": "Pendiente"
+  },
+  "msg_scan_qr_code": {
+    "message": "Por favor escanee el código QR con su billetera fría"
+  },
+  "msg_scan_result": {
+    "message": "Resultado del Escaneo"
+  },
+  "msg_scan_sign": {
+    "message": "Escanear Firma"
+  },
+  "msg_sign": {
+    "message": "Firma de Mensaje"
+  },
+  "msg_sign_type": {
+    "message": "Tipo de Firma"
+  },
+  "msg_signed": {
+    "message": "Firmado"
+  },
+  "msg_start_sign": {
+    "message": "Iniciar Firma"
+  },
+  "msg_status": {
+    "message": "Estado"
+  },
+  "msg_waiting_sign": {
+    "message": "Esperando Firma"
+  },
+  "multiple_assets_risk_description": {
+    "message": "Esta transacción involucra múltiples activos. Asegúrese de entender las implicaciones de esta acción antes de proceder."
+  },
+  "multiple_assets_risk_title": {
+    "message": "Múltiples activos detectados"
+  },
+  "multiple_inscriptions_are_mixed_together_please_sp": {
+    "message": "Múltiples inscripciones están mezcladas. Por favor, divídelas primero."
+  },
+  "multiple_inscriptions_are_mixed_together_you_can_split_them_first_or_send_them_once": {
+    "message": "Múltiples inscripciones están mezcladas. Puedes dividirlas primero o enviarlas todas juntas."
+  },
+  "multisign_disclaimer": {
+    "message": "Descargo de Responsabilidad MultiSign"
+  },
+  "name": {
+    "message": "nombre"
+  },
+  "name_label": {
+    "message": "Nombre"
+  },
+  "name_recognized_and_resolved": {
+    "message": "Nombre reconocido y resuelto."
+  },
+  "native_segwit_p2wpkh": {
+    "message": "Segwit Nativo (P2WPKH)"
+  },
+  "nested_segwit_p2shp2wpkh": {
+    "message": "Segwit Anidado (P2SH-P2WPKH)"
+  },
+  "network": {
+    "message": "Red"
+  },
+  "network_error_json_parse_error": {
+    "message": "Error de red, error de análisis json"
+  },
+  "network_error_no_response": {
+    "message": "Error de red, sin respuesta"
+  },
+  "network_errorno_response_data": {
+    "message": "Error de red, sin datos de respuesta"
+  },
+  "network_fee": {
+    "message": "Tarifa de Red:"
+  },
+  "network_fee_2": {
+    "message": "Tarifa de red"
+  },
+  "network_fee_rate": {
+    "message": "Tasa de Tarifa de Red:"
+  },
+  "network_not_matched_risk_description": {
+    "message": "Esta transacción no está en la red actual, asegúrese de confiar en la fuente de esta transacción antes de proceder."
+  },
+  "network_not_matched_risk_title": {
+    "message": "Red no coincidente detectada."
+  },
+  "new": {
+    "message": "¡nuevo!"
+  },
+  "new_account": {
+    "message": "Nueva cuenta"
+  },
+  "new_password": {
+    "message": "Nueva Contraseña"
+  },
+  "new_value": {
+    "message": "Valor Nuevo:"
+  },
+  "new_version": {
+    "message": "Nueva versión!"
+  },
+  "next": {
+    "message": "Siguiente"
+  },
+  "no_address_or_public_key_in_tosigninput": {
+    "message": "sin dirección o clave pública en toSignInput"
+  },
+  "no_current_account": {
+    "message": "no hay cuenta actual"
+  },
+  "no_current_keyring": {
+    "message": "no hay llavero actual"
+  },
+  "no_data": {
+    "message": "SIN DATOS"
+  },
+  "no_inputs": {
+    "message": "No hay entradas"
+  },
+  "no_inscriptions_found": {
+    "message": "No se encontraron inscripciones"
+  },
+  "no_keyring_found_for_the_requested_account": {
+    "message": "No se encontró ningún llavero para la cuenta solicitada."
+  },
+  "no_matching_contacts_found": {
+    "message": "No se encontraron contactos coincidentes"
+  },
+  "no_mfp_in_keyring": {
+    "message": "no mfp en el llavero"
+  },
+  "no_service_provider_available": {
+    "message": "Ningún proveedor de servicios disponible."
+  },
+  "non_arc20": {
+    "message": "No-ARC20"
+  },
+  "not_connected": {
+    "message": "No conectado"
+  },
+  "not_implemented": {
+    "message": "no implementado"
+  },
+  "not_long_enough": {
+    "message": "No es suficientemente largo"
+  },
+  "not_supported": {
+    "message": "No soportado"
+  },
+  "not_supported_chainid": {
+    "message": "chainId no soportado"
+  },
+  "not_supported_yet": {
+    "message": "Aún no soportado"
+  },
+  "notice": {
+    "message": "Aviso"
+  },
+  "ok": {
+    "message": "Aceptar"
+  },
+  "old_value": {
+    "message": "Valor Anterior:"
+  },
+  "once_the_conversion_is_complete_your_native_baby_cannot_be_restored": {
+    "message": "Una vez que se complete la conversión, tu BABY nativo no podrá ser restaurado."
+  },
+  "once_you_have_your_hex_private_key_you_can_import_it_into_a_cosmos_compatible_wallet_to_access_your_babylon_reward_assets": {
+    "message": "Una vez que tengas tu Clave Privada Hex, puedes importarla a una billetera compatible con COSMOS para acceder a tus activos de recompensa de Babylon."
+  },
+  "only_applies_to_current_address": {
+    "message": "Solo se aplica a la dirección actual"
+  },
+  "only_connect_with_sites_you_trust": {
+    "message": "Conéctate solo con sitios en los que confíes."
+  },
+  "only_sign_if_you_fully_understand_the_content_and_": {
+    "message": "Firma solo si entiendes completamente el contenido y confías en el sitio solicitante."
+  },
+  "only_sign_this_message_if_you_fully_understand_the": {
+    "message": "Firma este mensaje solo si entiendes completamente el contenido y confías en el sitio solicitante."
+  },
+  "onsuccess_not_implemented": {
+    "message": "onSuccess No implementado"
+  },
+  "oops_something_went_wrong": {
+    "message": "¡Vaya! Algo salió mal."
   },
   "open_as_popup": {
     "message": "Abrir como ventana emergente"
@@ -2108,304 +1514,949 @@
   "open_as_side_bar": {
     "message": "Abrir como barra lateral"
   },
-  "sign_all_transactions_at_once": {
-    "message": "Tienes la opción de firmar todas las transacciones a la vez, pero ten en cuenta que UniSat Wallet no verificará cada transacción individualmente. Te recomendamos usarlo solo en sitios web de confianza y familiares para minimizar el riesgo de pérdidas potenciales."
-  },
-  "message": {
-    "message": "mensaje"
-  },
-  "per_mint": {
-    "message": "por acuñación"
-  },
-  "total_supply": {
-    "message": "Suministro total"
-  },
-  "minted_alkanes": {
-    "message": "Acuñado"
-  },
-  "cap": {
-    "message": "Límite"
-  },
-  "decimals_alkanes": {
-    "message": "Decimales"
-  },
-  "symbol_alkanes": {
-    "message": "Símbolo"
-  },
-  "holders_alkanes": {
-    "message": "Titulares"
-  },
-  "send_alkanes": {
-    "message": "Enviar Alkanes"
-  },
-  "send_amount_exceeds_balance": {
-    "message": "El monto de envío excede el saldo"
-  },
-  "scroll_to_view_all": {
-    "message": "desplazar para ver todos"
-  },
-  "no_inputs": {
-    "message": "No hay entradas"
-  },
-  "scroll_to_top": {
-    "message": "↑ Arriba"
-  },
-  "scroll_to_bottom": {
-    "message": "↓ Abajo"
-  },
-  "scroll_view_items": {
-    "message": "elementos"
-  },
-  "important_to_not_transfer_this_token": {
-    "message": "Importante: No transferas este token debido a una discrepancia temporal en el índice. Esperamos la resolución del equipo fundador del protocolo. Otros tokens no afectados."
-  },
-  "merge_utxos_failed": {
-    "message": "Combinación fallida"
-  },
-  "msg_sign": {
-    "message": "Firma de Mensaje"
-  },
-  "msg_message": {
-    "message": "Mensaje"
-  },
-  "msg_content": {
-    "message": "Contenido del Mensaje"
-  },
-  "msg_sign_type": {
-    "message": "Tipo de Firma"
-  },
-  "msg_status": {
-    "message": "Estado"
-  },
-  "msg_signed": {
-    "message": "Firmado"
-  },
-  "msg_pending": {
-    "message": "Pendiente"
-  },
-  "msg_origin": {
-    "message": "Origen: "
-  },
-  "msg_already_signed": {
-    "message": "Este mensaje ya está firmado"
-  },
-  "msg_scan_qr_code": {
-    "message": "Por favor escanee el código QR con su billetera fría"
-  },
-  "msg_generating_qr": {
-    "message": "Generando código QR..."
-  },
-  "msg_detail": {
-    "message": "Detalles del Mensaje"
-  },
-  "msg_generate_sign": {
-    "message": "Generar Firma"
-  },
-  "msg_scan_result": {
-    "message": "Resultado del Escaneo"
-  },
-  "previous": {
-    "message": "Anterior"
-  },
-  "msg_generate_qr": {
-    "message": "Generar Código QR"
-  },
-  "msg_scan_sign": {
-    "message": "Escanear Firma"
-  },
-  "generating": {
-    "message": "Generando..."
-  },
-  "msg_waiting_sign": {
-    "message": "Esperando Firma"
-  },
-  "msg_start_sign": {
-    "message": "Iniciar Firma"
-  },
-  "cold_wallet_transaction_signing": {
-    "message": "Firma de Transacción de Billetera Fría"
-  },
-  "scan_this_qr_code_with_your_cold_wallet_to_review_and_sign_the_transaction": {
-    "message": "Escanee este código QR con su billetera fría para revisar y firmar la transacción."
-  },
-  "instructions": {
-    "message": "Instrucciones:"
+  "open_babylon": {
+    "message": "Abierto"
   },
   "open_your_cold_wallet_app_or_device": {
     "message": "1. Abra su aplicación o dispositivo de billetera fría."
   },
-  "scan_this_qr_code": {
-    "message": "2. Escanee este código QR."
+  "ordinals": {
+    "message": "Ordinals"
+  },
+  "ordinals_inscriptions": {
+    "message": "Inscripciones Ordinals"
+  },
+  "other_wallet": {
+    "message": "Otro billetera"
+  },
+  "others": {
+    "message": "Otros"
+  },
+  "output_value": {
+    "message": "valor de salida"
+  },
+  "output_value_must_be_at_least": {
+    "message": "El Valor de Salida debe ser al menos"
+  },
+  "outputs": {
+    "message": "Salidas"
+  },
+  "outputvalue": {
+    "message": "Valor de Salida"
+  },
+  "owner": {
+    "message": "Propietario"
+  },
+  "parent": {
+    "message": "padre"
+  },
+  "passphrase": {
+    "message": "Frase de Contraseña"
+  },
+  "password": {
+    "message": "Contraseña"
+  },
+  "password_error": {
+    "message": "Contraseña incorrecta"
+  },
+  "password_must_be_at_least_8_characters": {
+    "message": "La contraseña debe ser al menos de 8 caracteres"
+  },
+  "password_strength": {
+    "message": "Fortaleza de la contraseña:"
+  },
+  "passwords_dont_match": {
+    "message": "Las contraseñas no coinciden"
+  },
+  "path_is_required_for_cosmos_signing": {
+    "message": "path es requerido para la firma Cosmos"
+  },
+  "paused": {
+    "message": "Pausado"
+  },
+  "payment_failed": {
+    "message": "Pago Fallido"
+  },
+  "payment_network_fee": {
+    "message": "Tarifa de Red de Pago"
+  },
+  "pending": {
+    "message": "pendiente"
+  },
+  "pending_babylon": {
+    "message": "Pendiente"
+  },
+  "per_mint": {
+    "message": "por acuñación"
+  },
+  "phishing_detection": {
+    "message": "Detección de Phishing"
+  },
+  "phrase_optional": {
+    "message": "Frase (Opcional)"
+  },
+  "please_be_aware_that": {
+    "message": "Ten en cuenta que:"
+  },
+  "please_be_aware_that_sending_the_following_assets_involves_risk": {
+    "message": "Ten en cuenta que enviar los siguientes activos implica riesgo:"
+  },
+  "please_enter_address": {
+    "message": "Por favor, ingrese una dirección"
+  },
+  "please_enter_name": {
+    "message": "Por favor, ingrese un nombre"
+  },
+  "please_make_sure_you_have_read_the_security_tips_a": {
+    "message": "Por favor, asegúrate de haber leído los consejos de seguridad anteriores antes de escribir tu contraseña"
+  },
+  "please_pay_attention_to_whether_you_have_backed_up": {
+    "message": "Por favor, presta atención a si has respaldado la mnemónica/clave privada para prevenir la pérdida de activos"
+  },
+  "please_read_more_detail_on": {
+    "message": "Por favor, lee más detalles en"
+  },
+  "please_reconnect_the_keystone_on_home_screen_and_reauthorize": {
+    "message": "Por favor, reconecta el Keystone en la pantalla de inicio y reautoriza."
+  },
+  "please_wait_for_the_update_of_brc20": {
+    "message": "Por favor, espera la actualización de BRC20"
+  },
+  "position_the_qr_code_in_front_of_your_camera_the_screen_is_blurred_but_this_will_not_affect_the_scan": {
+    "message": "Coloca el código QR frente a tu cámara. La pantalla está borrosa pero esto no afectará el escaneo."
+  },
+  "precautions": {
+    "message": "Precauciones"
+  },
+  "premine": {
+    "message": "preminado"
+  },
+  "preview": {
+    "message": "Vista Previa"
+  },
+  "previous": {
+    "message": "Anterior"
+  },
+  "privacy_policy": {
+    "message": "Política de privacidad"
+  },
+  "private_key": {
+    "message": "Clave Privada"
+  },
+  "private_key_is_only_stored_in_your_browser_it_is_y": {
+    "message": "¡Es tu responsabilidad mantener la Clave Privada segura!"
+  },
+  "processing_signature": {
+    "message": "Procesando firma..."
+  },
+  "promise_need_function_to_handle": {
+    "message": "la promesa necesita una función para manejarla"
+  },
+  "provenance": {
+    "message": "Procedencia"
+  },
+  "psbt_data": {
+    "message": "Datos PSBT:"
+  },
+  "public_key_must_be_compressed_secp256k1_ie_33_byte": {
+    "message": "La clave pública debe ser secp256k1 comprimida, es decir, 33 bytes comenzando con 0x02 o 0x03"
+  },
+  "quit_merging_process": {
+    "message": "Salir del Proceso de Fusión"
+  },
+  "range": {
+    "message": "Rango"
+  },
+  "rare_sats": {
+    "message": "Sats raros"
+  },
+  "rate_us": {
+    "message": "Califica nuestra app"
+  },
+  "rbf": {
+    "message": "RBF"
+  },
+  "rbf_tip": {
+    "message": "Una función que permite reemplazar la transacción."
+  },
+  "receive": {
+    "message": "Recibir"
+  },
+  "received_from": {
+    "message": "Recibido de"
+  },
+  "receiver": {
+    "message": "Receptor"
+  },
+  "recipient": {
+    "message": "Destinatario"
+  },
+  "recipient_address_is_invalid": {
+    "message": "La dirección del destinatario es inválida"
+  },
+  "recommended": {
+    "message": "Recomendado"
+  },
+  "recommended_fee_rates": {
+    "message": "Tasas de tarifa recomendadas:"
+  },
+  "refresh": {
+    "message": "Refrescar"
+  },
+  "refresh_page": {
+    "message": "Refrescar Página"
+  },
+  "reject": {
+    "message": "Rechazar"
+  },
+  "reject_all": {
+    "message": "Rechazar Todo"
+  },
+  "reject_blocked_by_unisat_wallet": {
+    "message": "Rechazar (bloqueado por UniSat Wallet)"
+  },
+  "remember_my_choice": {
+    "message": "Recordar mi elección"
+  },
+  "remove": {
+    "message": "Eliminar"
+  },
+  "remove_wallet": {
+    "message": "Eliminar Billetera"
+  },
+  "removing_the_last_wallet_is_not_allowed": {
+    "message": "No está permitido eliminar la última billetera"
+  },
+  "request_was_rejected_to_proceed_please_reauthorize": {
+    "message": "La solicitud fue Rechazada. Para proceder, por favor reautoriza"
+  },
+  "restore_from_mnemonics": {
+    "message": "Restaurar desde palabras clave"
+  },
+  "restore_from_mnemonics_12words24words": {
+    "message": "Restaurar desde mnemónicos (12 palabras, 24 palabras)"
+  },
+  "restore_from_single_private_key": {
+    "message": "Restaurar desde clave privada única"
+  },
+  "restore_wallet": {
+    "message": "Restaurar Billetera"
+  },
+  "retry_in_10s": {
+    "message": "Reintentar en 10s"
   },
   "review_and_confirm_transaction_details_in_your_cold_wallet": {
     "message": "3. Revise y confirme los detalles de la transacción en su billetera fría."
   },
-  "after_signing_scan_the_signed_qr_code_back_with_this_wallet": {
-    "message": "4. Después de firmar, escanee el código QR firmado de vuelta con esta billetera."
+  "risk_warning": {
+    "message": "Advertencia de Riesgo: No inviertas a menos que estés preparado para perder todo el dinero que inviertas."
   },
-  "i_have_signed_scan_result": {
-    "message": "He Firmado, Escanear Resultado"
+  "runeid": {
+    "message": "runeid"
   },
-  "linked_to_unisat_cold_wallet": {
-    "message": "Vinculado a UniSat Cold Wallet"
-  },
-  "signature_successful": {
-    "message": "Firma Exitosa"
-  },
-  "cold_wallet_signed_successfully": {
-    "message": "La billetera fría ha firmado exitosamente la transacción. Por favor confirme los detalles de la transacción y haga clic en difundir."
-  },
-  "Broadcast": {
-    "message": "Difundir"
-  },
-  "developer_mode_enabled": {
-    "message": "Modo de desarrollador habilitado"
-  },
-  "developer_mode_disabled": {
-    "message": "Modo de desarrollador deshabilitado"
-  },
-  "sighash_none_risk_title": {
-    "message": "SIGHASH_NONE detectado"
-  },
-  "sighash_none_risk_description": {
-    "message": "SIGHASH_NONE es un tipo de firma especial que permite modificar la transacción después de firmarla. Esto puede llevar a una pérdida potencial de fondos si la transacción es alterada maliciosamente. Por favor asegúrese de confiar en la fuente de esta transacción antes de proceder."
-  },
-  "scammer_address_risk_title": {
-    "message": "⚠️ Dirección sospechosa detectada"
-  },
-  "scammer_address_risk_description": {
-    "message": "Esta dirección ha sido reportada como una dirección de estafa. Proceda con precaución. Si cree que esto es un falso positivo, repórtelo."
-  },
-  "network_not_matched_risk_title": {
-    "message": "Red no coincidente detectada."
-  },
-  "network_not_matched_risk_description": {
-    "message": "Esta transacción no está en la red actual, asegúrese de confiar en la fuente de esta transacción antes de proceder."
-  },
-  "inscription_burning_risk_title": {
-    "message": "Quema de inscripción detectada"
-  },
-  "inscription_burning_risk_description": {
-    "message": "Esta transacción involucra la quema de inscripciones. Asegúrese de entender las implicaciones de esta acción antes de proceder."
-  },
-  "multiple_assets_risk_title": {
-    "message": "Múltiples activos detectados"
-  },
-  "multiple_assets_risk_description": {
-    "message": "Esta transacción involucra múltiples activos. Asegúrese de entender las implicaciones de esta acción antes de proceder."
-  },
-  "high_fee_rate_risk_title": {
-    "message": "Tasa de comisión alta detectada"
-  },
-  "high_fee_rate_risk_description": {
-    "message": "Esta transacción tiene una tasa de comisión alta. Asegúrese de entender las implicaciones de esta acción antes de proceder."
-  },
-  "merging_inscriptions_risk_title": {
-    "message": "Fusión de inscripciones detectada"
-  },
-  "merging_inscriptions_risk_description": {
-    "message": "Esta transacción involucra la fusión de inscripciones. Asegúrese de entender las implicaciones de esta acción antes de proceder."
-  },
-  "changing_inscription_risk_title": {
-    "message": "Cambio de inscripción detectado"
-  },
-  "changing_inscription_risk_description": {
-    "message": "Esta transacción involucra cambiar una inscripción. Asegúrese de entender las implicaciones de esta acción antes de proceder."
-  },
-  "runes_burning_risk_title": {
-    "message": "Quema de Runes detectada"
-  },
-  "runes_burning_risk_description": {
-    "message": "Esta transacción involucra la quema de Runes. Asegúrese de entender las implicaciones de esta acción antes de proceder."
-  },
-  "runes_multiple_assets_risk_title": {
-    "message": "Múltiples activos Runes detectados"
-  },
-  "runes_multiple_assets_risk_description": {
-    "message": "Esta transacción involucra múltiples activos Runes. Asegúrese de entender las implicaciones de esta acción antes de proceder."
-  },
-  "indexer_api_down_risk_title": {
-    "message": "API del indexador caída"
-  },
-  "indexer_api_down_risk_description": {
-    "message": "La API del indexador está actualmente fuera de servicio. Esto puede afectar la precisión de los detalles de transacción y balances de activos. Proceda con precaución y verifique toda la información de forma independiente."
-  },
-  "runes_api_down_risk_title": {
-    "message": "API de Runes caída"
+  "runes": {
+    "message": "Runas"
   },
   "runes_api_down_risk_description": {
     "message": "La API de Runes está actualmente fuera de servicio. Esto puede afectar la precisión de los detalles de transacción y balances de activos Runes. Proceda con precaución y verifique toda la información de forma independiente."
   },
-  "alkanes_burning_risk_title": {
-    "message": "Quema de Alkanes detectada"
+  "runes_api_down_risk_title": {
+    "message": "API de Runes caída"
   },
-  "alkanes_burning_risk_description": {
-    "message": "Esta transacción involucra la quema de Alkanes. Asegúrese de entender las implicaciones de esta acción antes de proceder."
+  "runes_burn_risk_list": {
+    "message": "Lista de Riesgo de Quema de Runas"
   },
-  "alkanes_multiple_assets_risk_title": {
-    "message": "Múltiples activos Alkanes detectados"
+  "runes_burning_risk_description": {
+    "message": "Esta transacción involucra la quema de Runes. Asegúrese de entender las implicaciones de esta acción antes de proceder."
   },
-  "alkanes_multiple_assets_risk_description": {
-    "message": "Esta transacción involucra múltiples activos Alkanes. Asegúrese de entender las implicaciones de esta acción antes de proceder."
+  "runes_burning_risk_title": {
+    "message": "Quema de Runes detectada"
   },
-  "utxo_indexing_risk_title": {
-    "message": "Indexación de UTXO en progreso"
+  "runes_multiple_assets_risk_description": {
+    "message": "Esta transacción involucra múltiples activos Runes. Asegúrese de entender las implicaciones de esta acción antes de proceder."
   },
-  "utxo_indexing_risk_description": {
-    "message": "El UTXO seleccionado pertenece a una transacción que aún está siendo indexada. Para asegurar la seguridad y confiabilidad de la transacción, espere a que se complete la indexación antes de proceder."
+  "runes_multiple_assets_risk_title": {
+    "message": "Múltiples activos Runes detectados"
   },
-  "brc20_history_type_send": {
+  "satsvb": {
+    "message": "sats/vB"
+  },
+  "satvb": {
+    "message": "sat/vB"
+  },
+  "save": {
+    "message": "Guardar"
+  },
+  "saving": {
+    "message": "Guardando..."
+  },
+  "scammer_address_risk_description": {
+    "message": "Esta dirección ha sido reportada como una dirección de estafa. Proceda con precaución. Si cree que esto es un falso positivo, repórtelo."
+  },
+  "scammer_address_risk_title": {
+    "message": "⚠️ Dirección sospechosa detectada"
+  },
+  "scan_in_more_addresses": {
+    "message": "Escanear más direcciones..."
+  },
+  "scan_the_qr_code": {
+    "message": "Escanear el Código QR"
+  },
+  "scan_the_qr_code_displayed_on_your_keystone_device": {
+    "message": "Escanea el código QR mostrado en tu dispositivo Keystone"
+  },
+  "scan_the_qr_code_via_your_keystone_device": {
+    "message": "Escanea el código QR con tu dispositivo Keystone"
+  },
+  "scan_this_qr_code": {
+    "message": "2. Escanee este código QR."
+  },
+  "scan_this_qr_code_with_your_cold_wallet_to_review_and_sign_the_transaction": {
+    "message": "Escanee este código QR con su billetera fría para revisar y firmar la transacción."
+  },
+  "scan_to_connect": {
+    "message": "Escanear para conectar"
+  },
+  "script": {
+    "message": "Script"
+  },
+  "scroll_to_bottom": {
+    "message": "↓ Abajo"
+  },
+  "scroll_to_top": {
+    "message": "↑ Arriba"
+  },
+  "scroll_to_view_all": {
+    "message": "desplazar para ver todos"
+  },
+  "scroll_view_items": {
+    "message": "elementos"
+  },
+  "search_address_and_txids": {
+    "message": "Buscar Dirección y TXIDs"
+  },
+  "search_address_or_name": {
+    "message": "Buscar dirección o nombre"
+  },
+  "seconds": {
+    "message": "Segundos"
+  },
+  "seconds_ago": {
+    "message": "segundos"
+  },
+  "secret_recovery_phrase": {
+    "message": "Frase Secreta de Recuperación"
+  },
+  "secret_recovery_phrase_is_only_stored_in_your_brow": {
+    "message": "¡Es tu responsabilidad mantener la Frase Secreta de Recuperación segura!"
+  },
+  "secs": {
+    "message": "segundos"
+  },
+  "security_notice": {
+    "message": "Aviso de Seguridad:"
+  },
+  "security_warning": {
+    "message": "Advertencia de Seguridad"
+  },
+  "select_all": {
+    "message": "Seleccionar Todo"
+  },
+  "select_network": {
+    "message": "Seleccionar Red"
+  },
+  "select_the_account_to_use_on_this_site": {
+    "message": "Selecciona la cuenta para usar en este sitio"
+  },
+  "selected": {
+    "message": "Seleccionado(s)"
+  },
+  "send": {
     "message": "Enviar"
   },
-  "brc20_history_type_receive": {
-    "message": "Recibir"
+  "send_alkanes": {
+    "message": "Enviar Alkanes"
   },
-  "brc20_history_type_wrap": {
-    "message": "Envuelto"
+  "send_amount": {
+    "message": "Cantidad a Enviar"
   },
-  "brc20_history_type_unwrap": {
-    "message": "Retirar"
+  "send_amount_exceeds_balance": {
+    "message": "El monto de envío excede el saldo"
   },
-  "brc20_history_type_inscribe_transfer": {
-    "message": "Inscribir Transferencia"
+  "send_arc20": {
+    "message": "Enviar ARC-20"
   },
-  "brc20_history_type_inscribe_mint": {
-    "message": "Inscribir Acuñación"
+  "send_atomicals_inscription": {
+    "message": "Enviar Inscripción Atomicals"
   },
-  "brc20_history_type_inscribe_deploy": {
-    "message": "Inscribir Despliegue"
+  "send_cat20": {
+    "message": "Enviar CAT20"
   },
-  "brc20_history_from": {
-    "message": "De"
+  "send_cat20_is_not_supported_for_keystone_yet": {
+    "message": "El envío de CAT20 aún no es compatible con Keystone"
   },
-  "brc20_history_to": {
-    "message": "Para"
+  "send_cat721": {
+    "message": "Enviar CAT721"
   },
-  "load_failed": {
-    "message": "Error de Carga"
+  "send_inscription": {
+    "message": "Puedes hacer clic en la inscripción para enviarla directamente."
   },
-  "history_pending": {
-    "message": "Pendiente"
+  "send_inscription2": {
+    "message": "Enviar Inscripción"
   },
-  "brc20_in_wallet": {
-    "message": "En Wallet"
+  "send_runes": {
+    "message": "Enviar Runas"
   },
-  "brc20_on_swap": {
-    "message": "Saldo InSwap"
+  "send_to": {
+    "message": "Enviar a"
   },
-  "brc20_on_prog": {
-    "message": "Balance brc2.0 envuelto"
+  "sending_out_assets": {
+    "message": "Enviando Activos"
+  },
+  "service_fee": {
+    "message": "Comisión de Servicio"
+  },
+  "set_utxo_amount_to_be_merged": {
+    "message": "Establecer cantidad de UTXO a fusionar"
+  },
+  "settings": {
+    "message": "Ajustes"
+  },
+  "show_private_key": {
+    "message": "Mostrar Clave Privada"
+  },
+  "show_secret_recovery_phrase": {
+    "message": "Mostrar Frase Secreta de Recuperación"
+  },
+  "sighash_none_risk_description": {
+    "message": "SIGHASH_NONE es un tipo de firma especial que permite modificar la transacción después de firmarla. Esto puede llevar a una pérdida potencial de fondos si la transacción es alterada maliciosamente. Por favor asegúrese de confiar en la fuente de esta transacción antes de proceder."
+  },
+  "sighash_none_risk_title": {
+    "message": "SIGHASH_NONE detectado"
+  },
+  "sign": {
+    "message": "Firmar"
+  },
+  "sign_all": {
+    "message": "Firmar todas"
+  },
+  "sign_all_transactions_at_once": {
+    "message": "Tienes la opción de firmar todas las transacciones a la vez, pero ten en cuenta que UniSat Wallet no verificará cada transacción individualmente. Te recomendamos usarlo solo en sitios web de confianza y familiares para minimizar el riesgo de pérdidas potenciales."
+  },
+  "sign_and_pay": {
+    "message": "Firmar y Pagar"
+  },
+  "sign_data_request": {
+    "message": "Solicitud de Firma de Datos"
+  },
+  "sign_data_requests": {
+    "message": "Solicitudes signData"
+  },
+  "sign_multiple_transactions": {
+    "message": "Firmar Múltiples Transacciones"
+  },
+  "sign_result": {
+    "message": "RESULTADO DE LA FIRMA:"
+  },
+  "sign_transaction": {
+    "message": "Firmar Transacción"
+  },
+  "signature_request": {
+    "message": "Solicitud de firma"
+  },
+  "signature_successful": {
+    "message": "Firma Exitosa"
+  },
+  "signdata_is_required_for_cosmos_signing": {
+    "message": "signData es requerido para la firma Cosmos"
+  },
+  "signdata_required_tip": {
+    "message": "Necesitas habilitar la función de solicitud signData en Ajustes -> Avanzado para continuar."
+  },
+  "signed": {
+    "message": "Firmado"
+  },
+  "single_step_transfer": {
+    "message": "Transferencia de un solo paso"
+  },
+  "skip": {
+    "message": "Omitir"
+  },
+  "slow": {
+    "message": "Lento"
+  },
+  "spend": {
+    "message": "Gastar"
+  },
+  "spend_amount": {
+    "message": "Cantidad a Gastar"
+  },
+  "spend_inscription": {
+    "message": "Gastar Inscripción"
+  },
+  "split": {
+    "message": "Dividir"
+  },
+  "split_inscription_tips": {
+    "message": "Esta función está actualmente en experimentación. Confirma el estado de división de la inscripción de la transacción al firmarla."
+  },
+  "split_inscriptions": {
+    "message": "Dividir Inscripciones"
+  },
+  "spliting_to": {
+    "message": "Dividiendo en"
+  },
+  "staked": {
+    "message": "Stakeado"
+  },
+  "stakers": {
+    "message": "Stakers"
+  },
+  "start": {
+    "message": "Iniciar"
+  },
+  "start_cosmos_sign": {
+    "message": "INICIAR FIRMA COSMOS"
+  },
+  "start_merging": {
+    "message": "Iniciar Fusión"
+  },
+  "steal_your_private_keys_or_seed_phrases": {
+    "message": "Robar tus claves privadas o frases semilla"
+  },
+  "step1": {
+    "message": "Paso 1"
+  },
+  "step2": {
+    "message": "Paso 2"
+  },
+  "step_1": {
+    "message": "PASO 1"
+  },
+  "step_12": {
+    "message": "PASO 1/2"
+  },
+  "step_2": {
+    "message": "PASO 2"
+  },
+  "step_22": {
+    "message": "PASO 2/2"
+  },
+  "step_3": {
+    "message": "PASO 3"
+  },
+  "strong": {
+    "message": "Fuerte"
+  },
+  "strong_password_tip": {
+    "message": "Una contraseña fuerte puede proteger mejor la seguridad de tus activos"
+  },
+  "submit": {
+    "message": "Enviar"
+  },
+  "success": {
+    "message": "Éxito"
+  },
+  "supply": {
+    "message": "suministro"
+  },
+  "swap_send": {
+    "message": "Enviar"
   },
   "swap_swap": {
     "message": "Intercambiar"
   },
-  "swap_wrap": {
-    "message": "Wrap"
-  },
   "swap_unwrap": {
     "message": "Unwrap"
   },
-  "swap_send": {
-    "message": "Enviar"
+  "swap_wrap": {
+    "message": "Wrap"
+  },
+  "switch_account": {
+    "message": "Cambiar Cuenta"
+  },
+  "switch_chain": {
+    "message": "Cambiar Cadena"
+  },
+  "switch_network": {
+    "message": "Cambiar Red"
+  },
+  "switch_wallet": {
+    "message": "Cambiar Billetera"
+  },
+  "symbol": {
+    "message": "símbolo"
+  },
+  "symbol_alkanes": {
+    "message": "Símbolo"
+  },
+  "t_baby": {
+    "message": "tBABY"
+  },
+  "tap_the_more_menu_then_select_the_export_private_key_option": {
+    "message": "Toca el menú 'Más', luego selecciona la opción 'Exportar Clave Privada'."
+  },
+  "taproot_p2tr": {
+    "message": "Taproot (P2TR)"
+  },
+  "terms_of_service": {
+    "message": "Términos de uso"
+  },
+  "test_approval_sign_psbt": {
+    "message": "Prueba de Aprobación Firma PSBT"
+  },
+  "text_preview": {
+    "message": "Texto:"
+  },
+  "the_amount_for_change_is_too_low_please_adjust_the": {
+    "message": "La cantidad para el cambio es demasiado baja, por favor ajusta la cantidad de envío."
+  },
+  "the_auto_lock_time_has_been_changed_to": {
+    "message": "El tiempo de bloqueo automático ha sido cambiado a"
+  },
+  "the_broadcastchannel_name_is_missing": {
+    "message": "falta el nombre de broadcastChannel"
+  },
+  "the_fee_rate_is_much_higher_than_recommended_fee_rate": {
+    "message": "La tasa de tarifa es mucho más alta que la recomendada"
+  },
+  "the_fee_rate_is_much_lower_than_recommended_fee_rate": {
+    "message": "La tasa de tarifa es mucho más baja que la recomendada"
+  },
+  "the_minimum_amount_is": {
+    "message": "La cantidad mínima es"
+  },
+  "the_private_key_is_invalid": {
+    "message": "La clave privada no es válida"
+  },
+  "the_recipient_must_be_p2tr_or_p2wpkh_address_type": {
+    "message": "El destinatario debe ser de tipo de dirección P2TR o P2WPKH"
+  },
+  "the_transferable_and_available_balance_of_brc20_wi": {
+    "message": "El saldo transferible y disponible de BRC20 se actualizará en unos minutos."
+  },
+  "the_ultimate_security_solution_for_cryptocurrencie": {
+    "message": "La Solución de Seguridad Definitiva para Criptomonedas"
+  },
+  "the_utxo_containing_this_inscription_has": {
+    "message": "El UTXO que contiene esta inscripción tiene"
+  },
+  "the_wallet_currently_uses_a_custom_hd_path_and_does_not_support_switching_address_types": {
+    "message": "La billetera utiliza actualmente una ruta HD personalizada y no admite el cambio de tipos de dirección."
+  },
+  "think_this_is_a_false_positive_click_here_to_report_an_issue": {
+    "message": "¿Crees que es un falso positivo? Haz clic aquí para reportar un problema →"
+  },
+  "this_account_has_no_transactions": {
+    "message": "Esta cuenta no tiene transacciones"
+  },
+  "this_action_is_not_reversible": {
+    "message": "Esta acción no es reversible."
+  },
+  "this_domain_has_been_transferred_or_inscribed_recently_please_wait_for_block_confirmations": {
+    "message": "Este dominio ha sido transferido o inscrito recientemente. Espera las confirmaciones de bloque"
+  },
+  "this_feature_is_currently_in_the_experimental_test_phase_please_proceed_with_caution": {
+    "message": "Esta función se encuentra actualmente en fase de prueba experimental. Procede con precaución."
+  },
+  "this_inscription_carries_a_high_balance": {
+    "message": "¡Esta inscripción conlleva un saldo alto!"
+  },
+  "this_is_a_cosmos_signature_demo_page": {
+    "message": "Esta es una página de demostración de firma Cosmos"
+  },
+  "this_message_serves_as_a_notice_that_if_runes_assets_are_detected_in_your_address_your": {
+    "message": "Este mensaje sirve como aviso de que si se detectan activos Runas en tu dirección, tus saldos no confirmados no serán gastables. No necesitas hacer nada."
+  },
+  "this_network_is_not_available": {
+    "message": "Esta red no está disponible"
+  },
+  "this_phrase_is_the_only_way_to_recover_your_wallet": {
+    "message": "Esta frase es la ÚNICA forma de recuperar tu billetera. ¡NO la compartas con nadie! "
+  },
+  "this_process_will_merge_your_utxos_into_one": {
+    "message": "tiene que ser fusionado. Este proceso fusionará tus UTXOs en uno."
+  },
+  "this_token_only_supports_up_to": {
+    "message": "Este token solo admite hasta"
+  },
+  "this_website_has_been_identified_as_malicious_by_unisat_and_may": {
+    "message": "Este sitio web ha sido identificado como malicioso por UniSat y puede:"
+  },
+  "ticker": {
+    "message": "ticker"
+  },
+  "timestamp": {
+    "message": "marca de tiempo"
+  },
+  "to": {
+    "message": "A"
+  },
+  "to_continue": {
+    "message": "para continuar"
+  },
+  "to_enable_spending_of_unconfirmed_balances_please_": {
+    "message": "Para habilitar el gasto de saldos no confirmados, visita las opciones avanzadas en ajustes."
+  },
+  "to_proceed": {
+    "message": "para continuar"
+  },
+  "to_send_a_larger_amount_please_merge_your_utxos_to_increase_the_available_balance": {
+    "message": "Para enviar una cantidad mayor, por favor fusiona tus UTXOs para aumentar el saldo disponible."
+  },
+  "to_send_brc20_you_have_to_inscribe_a_transfer_inscription_first": {
+    "message": "* Para enviar BRC-20, primero tienes que inscribir una inscripción TRANSFER"
+  },
+  "to_sign": {
+    "message": "para firmar"
+  },
+  "token_id": {
+    "message": "Token ID"
+  },
+  "token_not_found": {
+    "message": "Token no encontrado"
+  },
+  "total": {
+    "message": "Total"
+  },
+  "total_balance": {
+    "message": "Saldo Total"
+  },
+  "total_supply": {
+    "message": "Suministro total"
+  },
+  "trade": {
+    "message": "Comerciar"
+  },
+  "transaction": {
+    "message": "Transacción"
+  },
+  "transaction_details": {
+    "message": "Detalles de la Transacción"
+  },
+  "transaction_id": {
+    "message": "ID de Transacción"
+  },
+  "transaction_preview": {
+    "message": "Transacción:"
+  },
+  "transaction_success": {
+    "message": "Transacción Exitosa"
+  },
+  "transactions": {
+    "message": "transacciones"
+  },
+  "transactions_at_once": {
+    "message": "las transacciones de una vez"
+  },
+  "transfer": {
+    "message": "Transferir"
+  },
+  "transfer_amount": {
+    "message": "Cantidad a Transferir"
+  },
+  "transfer_baby_to_cosmos_wallet": {
+    "message": "Transferir $BABY a la billetera Cosmos"
+  },
+  "transfer_inscriptions": {
+    "message": "Inscripciones TRANSFER"
+  },
+  "transfer_inscriptions_0": {
+    "message": "Inscripciones TRANSFER (0)"
+  },
+  "transfer_your_baby_to_your_cosmos_wallet": {
+    "message": "Transfiere tu $BABY a tu billetera Cosmos."
+  },
+  "transferable": {
+    "message": "Transferible:"
+  },
+  "transferable_balance": {
+    "message": "Saldo transferible"
+  },
+  "trick_you_into_signing_malicious_transactions": {
+    "message": "Engañarte para firmar transacciones maliciosas"
+  },
+  "try_again": {
+    "message": "Intentar de nuevo"
+  },
+  "try_going_back_or_refreshing": {
+    "message": "Intenta retroceder o refrescar."
+  },
+  "tutorial": {
+    "message": "Tutorial"
+  },
+  "tvl": {
+    "message": "TVL"
+  },
+  "tx_amount": {
+    "message": "cantidad"
+  },
+  "tx_fee": {
+    "message": "Tarifa Tx:"
+  },
+  "tx_sent_desc": {
+    "message": "Tu transacción ha sido enviada con éxito"
+  },
+  "tx_sent_title": {
+    "message": "Pago Enviado"
+  },
+  "unable_to_find_any_addresses_with_assets": {
+    "message": "No se pudieron encontrar direcciones con activos"
+  },
+  "unable_to_send_inscriptions_to_this_address_in_bat": {
+    "message": "No se pueden enviar inscripciones a esta dirección en lotes, por favor envíalas una por una."
+  },
+  "unavailable": {
+    "message": "No disponible"
+  },
+  "unavailable_tooltip": {
+    "message": "Si tu saldo muestra como no disponible, es posible que tus UTXOs estén bloqueados debido a contener inscripciones, runas, activos brc-20 o no confirmados. En la mayoría de los casos, puedes usar nuestra herramienta de gestión de UTXOs para desbloquear estos UTXOs y hacerlos gastables de nuevo."
+  },
+  "unconfirmed": {
+    "message": "no confirmado"
+  },
+  "unconfirmed_balance_not_spendable": {
+    "message": "Saldo No Confirmado No Gastable"
+  },
+  "unconfirmed_balance_not_spendable_warning": {
+    "message": "Para proteger tus activos, solo los saldos confirmados son gastables cuando se tienen activos Runas. Esto es para prevenir la quema accidental de activos."
+  },
+  "unconfirmed_inscription": {
+    "message": "(no confirmado)"
+  },
+  "understand_and_accept_the_risks_associated_with_this_transaction": {
+    "message": "Entiendo y acepto los riesgos asociados con esta transacción."
+  },
+  "understand_sign_data_warning": {
+    "message": "Entiendo que puedo perder todos mis fondos y NFTs si habilito las solicitudes signData."
+  },
+  "unisat": {
+    "message": "UNISAT"
+  },
+  "uniscan_active_addresses_24h": {
+    "message": "Direcciones Activas (24h)"
+  },
+  "uniscan_goto": {
+    "message": "Ir al UniScan"
+  },
+  "uniscan_transactions_24h": {
+    "message": "Transacciones (24h)"
+  },
+  "unknown_error": {
+    "message": "Error desconocido"
+  },
+  "unlock": {
+    "message": "Desbloquear"
+  },
+  "unlock_already_in_progress": {
+    "message": "El desbloqueo ya está en progreso"
+  },
+  "unrecognized_password_strength": {
+    "message": "Fuerza de contraseña no reconocida"
+  },
+  "unstake": {
+    "message": "Retirar Stake"
+  },
+  "ur_type_is_required_for_parsing_cosmos_signature": {
+    "message": "El tipo UR es requerido para analizar la firma Cosmos"
+  },
+  "usb_permissions_not_available": {
+    "message": "PERMISOS_USB_NO_DISPONIBLES"
+  },
+  "use_at_your_own_risk": {
+    "message": "Úsalo bajo tu propio riesgo"
+  },
+  "user_rejected_the_request": {
+    "message": "El usuario rechazó la solicitud."
+  },
+  "utxo_indexing_risk_description": {
+    "message": "El UTXO seleccionado pertenece a una transacción que aún está siendo indexada. Para asegurar la seguridad y confiabilidad de la transacción, espere a que se complete la indexación antes de proceder."
+  },
+  "utxo_indexing_risk_title": {
+    "message": "Indexación de UTXO en progreso"
+  },
+  "utxo_not_found": {
+    "message": "UTXO no encontrado."
+  },
+  "verify_recovery_phrase": {
+    "message": "Verificar Frase de Recuperación"
+  },
+  "version": {
+    "message": "Versión:"
+  },
+  "view": {
+    "message": "Ver"
+  },
+  "view_low_fee_mode_guide": {
+    "message": "Ver guía de configuración del modo inferior a 1 sat/vB"
+  },
+  "view_on_block_explorer": {
+    "message": "Ver en el Explorador de Bloques"
+  },
+  "view_on_mempool": {
+    "message": "Ver en Mempool"
+  },
+  "view_on_okx_explorer": {
+    "message": "Ver en Explorador OKX"
+  },
+  "view_on_unisat_explorer": {
+    "message": "Ver en Explorador UniSat"
+  },
+  "wallet_existed": {
+    "message": "La billetera ya existe"
+  },
+  "warning": {
+    "message": "Advertencia"
+  },
+  "weak": {
+    "message": "Débil"
+  },
+  "wif_private_key": {
+    "message": "Clave Privada WIF:"
+  },
+  "wif_private_key_or_hex_private_key": {
+    "message": "Clave Privada WIF o Clave Privada Hex"
+  },
+  "world": {
+    "message": "MUNDO"
+  },
+  "you_are_about_to_convert_your_native_baby_to_btc_brc20_baby": {
+    "message": "Estás a punto de convertir tu BABY nativo a BABY brc-20 en BTC."
+  },
+  "you_are_about_to_transfer_your_native_baby_to_your_cosmos_wallet": {
+    "message": "Estás a punto de transferir tu BABY nativo a tu billetera Cosmos."
+  },
+  "you_are_signing": {
+    "message": "Estás firmando:"
+  },
+  "you_are_signing_data": {
+    "message": "Estás firmando datos:"
+  },
+  "you_can_unlock_these_assets_by_using_the_utxos_tools": {
+    "message": "Puedes desbloquear estos activos usando las herramientas UTXO."
+  },
+  "you_have_inscribed_a_transfer": {
+    "message": "Has inscrito un TRANSFER"
+  },
+  "you_haven_t_added_address_information_yet": {
+    "message": "Aún no has añadido información de direcciones"
+  },
+  "you_need_to_allow_camera_access_to_use_this_featur": {
+    "message": "Necesitas permitir el acceso a la cámara para usar esta función."
+  },
+  "you_need_to_unlock_wallet_first": {
+    "message": "Necesitas desbloquear la billetera primero"
+  },
+  "you_re_on_the_latest_version": {
+    "message": "Estás en la última versión"
+  },
+  "you_will_use_this_to_unlock_your_wallet": {
+    "message": "La usarás para desbloquear tu billetera"
+  },
+  "your_access_to_this_page_has_been_restricted_by_un": {
+    "message": "Tu acceso a esta página ha sido restringido por UniSat Wallet ya que podría ser inseguro."
+  },
+  "your_balance_have_to_be_merged": {
+    "message": "Tu saldo de "
   }
 }
