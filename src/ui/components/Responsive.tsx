@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 
-import { useExtensionIsInTab } from '../features/browser/tabs';
 import { getUiType } from '../utils';
+import { useExtensionIsInTab } from '../web/tabs';
 
 export const AppDimensions = (props) => {
   const extensionIsInTab = useExtensionIsInTab();

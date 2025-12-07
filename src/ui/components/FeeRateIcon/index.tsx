@@ -1,9 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useChainType } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
-import { useWallet } from '@/ui/utils';
+import { useChainType, useI18n, useWallet } from '@unisat/wallet-state';
 
 import { Card } from '../Card';
 import { Column } from '../Column';

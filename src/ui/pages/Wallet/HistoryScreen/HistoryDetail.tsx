@@ -2,9 +2,8 @@ import BigNumber from 'bignumber.js';
 
 import { Button, Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { CopyableAddress } from '@/ui/components/CopyableAddress';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { AmountItem, HistoryItem } from '@/ui/pages/Wallet/HistoryScreen/index';
-import { useChain } from '@/ui/state/settings/hooks';
+import { useChain, useI18n } from '@unisat/wallet-state';
 import { satoshisToBTC } from '@/ui/utils';
 
 interface HistoryDetailProps {

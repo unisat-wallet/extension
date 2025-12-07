@@ -6,9 +6,9 @@ enum FeeRateType {
 }
 
 const translationKeys = {
-  [FeeRateType.SLOW]: { title: 'slow', desc: 'about_1_hour' },
-  [FeeRateType.AVG]: { title: 'avg', desc: 'about_30_minutes' },
-  [FeeRateType.FAST]: { title: 'fast', desc: 'about_10_minutes' }
+  [FeeRateType.SLOW]: { title: 'slow', desc: 'feerate_slow_desc' },
+  [FeeRateType.AVG]: { title: 'avg', desc: 'feerate_avg_desc' },
+  [FeeRateType.FAST]: { title: 'fast', desc: 'feerate_fast_desc' }
 };
 
 const MAX_FEE_RATE = 10000;

@@ -1,19 +1,24 @@
 import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
 
-import { runesUtils } from '@/shared/lib/runes-utils';
 import { AddressCAT20UtxoSummary, CAT20Balance, CAT20MergeOrder, CAT20TokenInfo, CAT_VERSION } from '@/shared/types';
 import { Button, Card, Column, Content, Header, Input, Layout, Row, Slider, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { MergeBTCPopover } from '@/ui/components/MergeBTCPopover';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useBTCUnit } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
-import { satoshisToAmount, showLongNumber, sleep, useLocationState, useWallet } from '@/ui/utils';
+import { satoshisToAmount, showLongNumber, sleep } from '@/ui/utils';
+import { bnUtils } from '@unisat/base-utils';
+import {
+  useBTCUnit,
+  useCurrentAccount,
+  useFeeRateBar,
+  useI18n,
+  useNavigation,
+  useTools,
+  useWallet
+} from '@unisat/wallet-state';
 
 import { MergeProgressLayout } from './MergeProgressLayout';
 import { ItemStatus, MergeItem, MergeState } from './MergingItem';
@@ -26,7 +31,8 @@ interface LocationState {
 }
 
 export default function MergeCAT20Screen() {
-  const props = useLocationState<LocationState>();
+  const nav = useNavigation();
+  const props = nav.getRouteState<LocationState>();
 
   const { t } = useI18n();
 
@@ -57,7 +63,7 @@ export default function MergeCAT20Screen() {
     for (let i = 0; i < minUtxoCount; i++) {
       amount = amount.plus(BigNumber(tokenUtxoSummary.availableTokenAmounts[i]));
     }
-    return runesUtils.toDecimalAmount(amount.toString(), cat20Balance.decimals);
+    return bnUtils.toDecimalAmount(amount.toString(), cat20Balance.decimals);
   }, [minUtxoCount, tokenUtxoSummary]);
 
   const maxTokenAmount = useMemo(() => {
@@ -65,7 +71,7 @@ export default function MergeCAT20Screen() {
     for (let i = 0; i < maxUtxoCount; i++) {
       amount = amount.plus(BigNumber(tokenUtxoSummary.availableTokenAmounts[i]));
     }
-    return runesUtils.toDecimalAmount(amount.toString(), cat20Balance.decimals);
+    return bnUtils.toDecimalAmount(amount.toString(), cat20Balance.decimals);
   }, [maxUtxoCount, tokenUtxoSummary]);
 
   const [error, setError] = useState('');
@@ -93,8 +99,7 @@ export default function MergeCAT20Screen() {
     init();
   }, []);
 
-  const [feeRate, setFeeRate] = useState(5);
-
+  const { feeRate } = useFeeRateBar();
   const [inputUtxoCount, setInputUtxoCount] = useState(2);
 
   const [textInputUtxoValue, setTextInputUtxoValue] = useState('2');
@@ -137,7 +142,7 @@ export default function MergeCAT20Screen() {
     setEstimatedData({
       fee,
       batchCount,
-      amount: runesUtils.toDecimalAmount(initAmount.toString(), cat20Balance.decimals)
+      amount: bnUtils.toDecimalAmount(initAmount.toString(), cat20Balance.decimals)
     });
 
     setDisabled(false);
@@ -284,7 +289,7 @@ export default function MergeCAT20Screen() {
 
           <Row justifyCenter itemsCenter>
             <Text
-              text={`${showLongNumber(runesUtils.toDecimalAmount(cat20Balance.amount, cat20Balance.decimals))} `}
+              text={`${showLongNumber(bnUtils.toDecimalAmount(cat20Balance.amount, cat20Balance.decimals))} `}
               preset="bold"
               color="white"
               textCenter
@@ -377,14 +382,15 @@ export default function MergeCAT20Screen() {
                 <Text text={maxUtxoCount} preset="sub" />
               </Row>
 
-              <div 
-                style={{ 
-                  width: '100%', 
-                  height: 1, 
-                  backgroundColor: '#FFFFFF26', 
+              <div
+                style={{
+                  width: '100%',
+                  height: 1,
+                  backgroundColor: '#FFFFFF26',
                   margin: '16px 0',
-                  backgroundImage: 'repeating-linear-gradient(to right, transparent, transparent 5px, #FFFFFF26 5px, #FFFFFF26 10px)'
-                }} 
+                  backgroundImage:
+                    'repeating-linear-gradient(to right, transparent, transparent 5px, #FFFFFF26 5px, #FFFFFF26 10px)'
+                }}
               />
 
               <Row justifyBetween>
@@ -403,13 +409,7 @@ export default function MergeCAT20Screen() {
         </Column>
 
         <Column>
-          <Text text={t('fee')} color="textDim" />
-
-          <FeeRateBar
-            onChange={(val) => {
-              setFeeRate(val);
-            }}
-          />
+          <FeeRateBar />
         </Column>
 
         {error && <Text text={error} color="error" />}

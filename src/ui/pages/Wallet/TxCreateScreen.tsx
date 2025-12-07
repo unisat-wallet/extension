@@ -1,139 +1,40 @@
-import { useEffect, useMemo, useState } from 'react';
-
-import { COIN_DUST } from '@/shared/constant';
-import { RawTxInfo } from '@/shared/types';
+import { IMAGE_SOURCE_MAP } from '@/shared/constant';
 import { Button, Card, Column, Content, Header, Icon, Image, Input, Layout, Row, Text, Tooltip } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
-import { RBFBar } from '@/ui/components/RBFBar';
-import { getSpecialLocale, useI18n } from '@/ui/hooks/useI18n';
-import { useUtxoTools } from '@/ui/hooks/useUtxoTools';
-import { useNavigate } from '@/ui/pages/MainRoute';
-import { useAccountBalance } from '@/ui/state/accounts/hooks';
-import { useBTCUnit, useChain, useWalletConfig } from '@/ui/state/settings/hooks';
-import { useBitcoinTx, useFetchUtxosCallback, usePrepareSendBTCCallback } from '@/ui/state/transactions/hooks';
-import { useUiTxCreateScreen, useUpdateUiTxCreateScreen } from '@/ui/state/ui/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
-import { amountToSatoshis, isValidAddress, satoshisToAmount } from '@/ui/utils';
+import { useNavigation, useTxCreateScreenLogic } from '@unisat/wallet-state';
 
 export default function TxCreateScreen() {
-  const { t } = useI18n();
-  const accountBalance = useAccountBalance();
-  const navigate = useNavigate();
-  const bitcoinTx = useBitcoinTx();
-  const btcUnit = useBTCUnit();
-  const [isSpecialLocale, setIsSpecialLocale] = useState(false);
-  useEffect(() => {
-    getSpecialLocale().then(({ isSpecialLocale }) => {
-      setIsSpecialLocale(isSpecialLocale);
-    });
-  }, []);
-  const [disabled, setDisabled] = useState(true);
+  const nav = useNavigation();
+  const {
+    headerTitle,
+    chain,
 
-  const setUiState = useUpdateUiTxCreateScreen();
-  const uiState = useUiTxCreateScreen();
+    toInfo,
+    onAddressInputChange,
 
-  const toInfo = uiState.toInfo;
-  const inputAmount = uiState.inputAmount;
-  const enableRBF = uiState.enableRBF;
-  const feeRate = uiState.feeRate;
+    toSatoshis,
+    inputAmount,
+    onAmountInputChange,
+    onAmountMaxClick,
 
-  const [error, setError] = useState('');
+    showUnavailable,
+    availableAmount,
+    unavailableAmount,
+    unavailableTipText,
+    btcUnit,
+    t,
 
-  const [autoAdjust, setAutoAdjust] = useState(false);
-  const fetchUtxos = useFetchUtxosCallback();
+    walletConfig,
+    isSpecialLocale,
 
-  const tools = useTools();
-  useEffect(() => {
-    tools.showLoading(true);
-    fetchUtxos().finally(() => {
-      tools.showLoading(false);
-    });
-  }, []);
+    error,
+    disabled,
 
-  const prepareSendBTC = usePrepareSendBTCCallback();
-
-  const toSatoshis = useMemo(() => {
-    if (!inputAmount) return 0;
-    return amountToSatoshis(inputAmount);
-  }, [inputAmount]);
-
-  const dustAmount = useMemo(() => satoshisToAmount(COIN_DUST), [COIN_DUST]);
-
-  const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
-
-  const availableAmount = satoshisToAmount(accountBalance.availableBalance);
-  const unavailableAmount = satoshisToAmount(accountBalance.unavailableBalance);
-
-  const showUnavailable = accountBalance.unavailableBalance > 0;
-
-  const chain = useChain();
-  const { openUtxoTools } = useUtxoTools(chain);
-  useEffect(() => {
-    setError('');
-    setDisabled(true);
-
-    if (!isValidAddress(toInfo.address)) {
-      return;
-    }
-    if (!toSatoshis) {
-      return;
-    }
-    if (toSatoshis < COIN_DUST) {
-      setError(`${t('amount_must_be_at_least')} ${dustAmount} ${btcUnit}`);
-      return;
-    }
-
-    if (toSatoshis > accountBalance.availableBalance) {
-      setError(t('amount_exceeds_your_available_balance'));
-      return;
-    }
-
-    if (feeRate <= 0) {
-      return;
-    }
-
-    if (
-      toInfo.address == bitcoinTx.toAddress &&
-      toSatoshis == bitcoinTx.toSatoshis &&
-      feeRate == bitcoinTx.feeRate &&
-      enableRBF == bitcoinTx.enableRBF
-    ) {
-      //Prevent repeated triggering caused by setAmount
-      setDisabled(false);
-      return;
-    }
-
-    prepareSendBTC({ toAddressInfo: toInfo, toAmount: toSatoshis, feeRate, enableRBF })
-      .then((data) => {
-        // if (data.fee < data.estimateFee) {
-        //   setError(`Network fee must be at leat ${data.estimateFee}`);
-        //   return;
-        // }
-        setRawTxInfo(data);
-        setDisabled(false);
-      })
-      .catch((e) => {
-        console.log(e);
-        setError(e.message);
-      });
-  }, [toInfo, inputAmount, feeRate, enableRBF]);
-
-  const walletConfig = useWalletConfig();
-
-  const unavailableTipText = useMemo(() => {
-    let tipText = '';
-    tipText += t('unavailable_tooltip');
-
-    if (walletConfig.disableUtxoTools) {
-      tipText += t('future_versions_will_support_spending_these_assets');
-    } else {
-      tipText += t('you_can_unlock_these_assets_by_using_the_utxos_tools');
-    }
-    return tipText;
-  }, [chain.enum]);
+    onClickNext
+  } = useTxCreateScreenLogic();
 
   return (
     <Layout>
@@ -141,20 +42,18 @@ export default function TxCreateScreen() {
         onBack={() => {
           window.history.go(-1);
         }}
-        title={`${t('send')} ${btcUnit}`}
+        title={headerTitle}
       />
       <Content style={{ padding: '0px 16px 24px' }}>
         <Row justifyCenter>
-          <Image src={chain.icon} size={50} />
+          <Image src={IMAGE_SOURCE_MAP[chain.icon]} size={50} />
         </Row>
 
         <Column mt="lg">
           <Input
             preset="address"
             addressInputData={toInfo}
-            onAddressInputChange={(val) => {
-              setUiState({ toInfo: val });
-            }}
+            onAddressInputChange={onAddressInputChange}
             autoFocus={true}
             networkType={chain.enum}
           />
@@ -169,17 +68,9 @@ export default function TxCreateScreen() {
             preset="amount"
             placeholder={t('tx_amount')}
             value={inputAmount}
-            onAmountInputChange={(amount) => {
-              if (autoAdjust == true) {
-                setAutoAdjust(false);
-              }
-              setUiState({ inputAmount: amount });
-            }}
+            onAmountInputChange={onAmountInputChange}
             enableMax={true}
-            onMaxClick={() => {
-              setAutoAdjust(true);
-              setUiState({ inputAmount: availableAmount.toString() });
-            }}
+            onMaxClick={onAmountMaxClick}
           />
 
           <Card
@@ -255,7 +146,7 @@ export default function TxCreateScreen() {
                         fontSize: isSpecialLocale ? '8px' : '14px'
                       }}
                       onClick={() => {
-                        openUtxoTools();
+                        nav.navToUtxoTools();
                       }}
                     />
                   )}
@@ -266,33 +157,12 @@ export default function TxCreateScreen() {
         </Column>
 
         <Column mt="lg">
-          <Text text={t('fee')} />
-
-          <FeeRateBar
-            onChange={(val) => {
-              setUiState({ feeRate: val });
-            }}
-          />
-        </Column>
-
-        <Column mt="lg">
-          <RBFBar
-            defaultValue={enableRBF}
-            onChange={(val) => {
-              setUiState({ enableRBF: val });
-            }}
-          />
+          <FeeRateBar />
         </Column>
 
         {error && <Text text={error} color="error" />}
 
-        <Button
-          disabled={disabled}
-          preset="primary"
-          text={t('next')}
-          onClick={(e) => {
-            navigate('TxConfirmScreen', { rawTxInfo });
-          }}></Button>
+        <Button disabled={disabled} preset="primary" text={t('next')} onClick={onClickNext}></Button>
       </Content>
     </Layout>
   );

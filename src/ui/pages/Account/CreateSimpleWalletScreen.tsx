@@ -1,15 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { ADDRESS_TYPES } from '@/shared/constant';
-import { AddressType } from '@/shared/types';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import { AddressTypeCard } from '@/ui/components/AddressTypeCard';
 import { FooterButtonContainer } from '@/ui/components/FooterButtonContainer';
 import { TabBar } from '@/ui/components/TabBar';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { satoshisToAmount, useWallet } from '@/ui/utils';
+import { satoshisToAmount } from '@/ui/utils';
+import { useI18n, useTools, useWallet } from '@unisat/wallet-state';
 
+import { ADDRESS_TYPES } from '@unisat/wallet-shared';
+import { AddressType } from '@unisat/wallet-types';
 import { useNavigate } from '../MainRoute';
 
 function Step1({

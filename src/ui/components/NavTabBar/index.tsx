@@ -1,7 +1,6 @@
 import { useNavigate } from '@/ui/pages/MainRoute';
-import { useHasNewBanner } from '@/ui/state/discovery/hooks';
-import { TabOption } from '@/ui/state/global/reducer';
 import { colors } from '@/ui/theme/colors';
+import { TabOption, useHasNewBanner } from '@unisat/wallet-state';
 
 import { BaseView } from '../BaseView';
 import { Column } from '../Column';

@@ -1,11 +1,11 @@
 import { AlkanesInfo } from '@/shared/types';
-import { shortDesc } from '@/ui/utils';
 
 import { Column } from '../Column';
 import Iframe from '../Iframe';
 import { Image } from '../Image';
 import { Row } from '../Row';
 import { Sizes, Text } from '../Text';
+import { shortDesc } from '@/ui/utils';
 
 // import './index.less';
 

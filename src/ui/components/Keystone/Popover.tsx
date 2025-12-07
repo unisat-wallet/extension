@@ -1,6 +1,6 @@
-import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 import { CloseCircleFilled } from '@ant-design/icons';
+import { useI18n } from '@unisat/wallet-state';
 
 import { Button } from '../Button';
 import { Column } from '../Column';

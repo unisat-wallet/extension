@@ -1,9 +1,8 @@
 import BigNumber from 'bignumber.js';
 
 import { AlkanesBalance, DecodedPsbt, Inscription, RuneBalance } from '@/shared/types';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { colors } from '@/ui/theme/colors';
+import { useCurrentAccount, useI18n } from '@unisat/wallet-state';
 
 import { Column } from '../Column';
 import { Icon } from '../Icon';
@@ -226,7 +225,6 @@ export const SendingOutAssets = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
     }
   }
 
-  console.log(runesBalanceIn, runesBalanceOut, runesBalanceChanged);
   const alkanesList = Object.keys(alkanesBalanceChanged).map((alkaneid) => {
     const { change, alkane } = alkanesBalanceChanged[alkaneid];
     return {
@@ -235,8 +233,6 @@ export const SendingOutAssets = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
       amount: change.abs().toString() // Show absolute value
     };
   });
-
-  console.log(runesList, alkanesList);
 
   return (
     <Popover>

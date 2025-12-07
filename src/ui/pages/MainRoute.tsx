@@ -6,15 +6,20 @@ import MergeCAT20HistoryScreen from '@/ui/pages/CAT20/MergeCAT20HistoryScreen';
 import MergeCAT20Screen from '@/ui/pages/CAT20/MergeCAT20Screen';
 import SendCAT20Screen from '@/ui/pages/CAT20/SendCAT20Screen';
 import { LoadingOutlined } from '@ant-design/icons';
+import {
+  accountActions,
+  globalActions,
+  settingsActions,
+  useAppDispatch,
+  useIsReady,
+  useIsUnlocked,
+  useWallet
+} from '@unisat/wallet-state';
 
 import { Content, Icon } from '../components';
 import { ErrorBoundary } from '../components/ErrorBoundary';
-import { accountActions } from '../state/accounts/reducer';
-import { useIsReady, useIsUnlocked } from '../state/global/hooks';
-import { globalActions } from '../state/global/reducer';
-import { useAppDispatch } from '../state/hooks';
-import { settingsActions } from '../state/settings/reducer';
-import { useWallet } from '../utils';
+import { ApprovalProvider } from '../providers/ApprovalProvider';
+import { NavigationProvider } from '../providers/NavigationProvider';
 import AddKeyringScreen from './Account/AddKeyringScreen';
 import CreateAccountScreen from './Account/CreateAccountScreen';
 import CreateColdWalletScreen from './Account/CreateColdWalletScreen';
@@ -374,7 +379,7 @@ if (process.env.NODE_ENV === 'development') {
   };
 }
 
-type RouteTypes = keyof typeof routes;
+export type RouteTypes = keyof typeof routes;
 
 export function useNavigate() {
   const navigate = useNavigateOrigin();
@@ -529,8 +534,8 @@ const Main = () => {
         style={{
           display: 'flex',
           flexDirection: 'column',
-          width: '100vw',
-          height: '100vh',
+          width: '400vw',
+          height: '00vh',
           overflowY: 'auto',
           overflowX: 'hidden'
         }}>
@@ -545,13 +550,17 @@ const Main = () => {
 
   return (
     <HashRouter>
-      <Routes>
-        {Object.keys(routes)
-          .map((v) => routes[v])
-          .map((v) => (
-            <Route key={v.path} path={v.path} element={<ErrorBoundary>{v.element}</ErrorBoundary>} />
-          ))}
-      </Routes>
+      <NavigationProvider>
+        <ApprovalProvider>
+          <Routes>
+            {Object.keys(routes)
+              .map((v) => routes[v])
+              .map((v) => (
+                <Route key={v.path} path={v.path} element={<ErrorBoundary>{v.element}</ErrorBoundary>} />
+              ))}
+          </Routes>
+        </ApprovalProvider>
+      </NavigationProvider>
     </HashRouter>
   );
 };

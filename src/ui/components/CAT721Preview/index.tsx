@@ -1,5 +1,5 @@
 import { CAT_VERSION } from '@/shared/types';
-import { useCAT721NFTContentBaseUrl } from '@/ui/state/settings/hooks';
+import { useCAT721NFTContentBaseUrl } from '@unisat/wallet-state';
 
 import { Column } from '../Column';
 import Iframe from '../Iframe';

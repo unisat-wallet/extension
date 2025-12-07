@@ -1,11 +1,22 @@
 import { useEffect, useState } from 'react';
 
-import { Button, Card, Column, Content, Footer, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
-import { Loading } from '@/ui/components/ActionComponent/Loading';
+import {
+  Button,
+  Card,
+  Column,
+  Content,
+  Footer,
+  Header,
+  Icon,
+  Input,
+  Layout,
+  Loading,
+  Row,
+  Text
+} from '@/ui/components';
 import WebsiteBar from '@/ui/components/WebsiteBar';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { copyToClipboard, useApproval, useWallet } from '@/ui/utils';
+import { copyToClipboard } from '@/ui/utils';
+import { useApproval, useI18n, useTools, useWallet } from '@unisat/wallet-state';
 
 interface Props {
   params: {
@@ -21,7 +32,7 @@ interface Props {
 }
 
 export default function SignData({ params: { data, session } }: Props) {
-  const [getApproval, resolveApproval, rejectApproval] = useApproval();
+  const { resolveApproval, rejectApproval } = useApproval();
   const { t } = useI18n();
   const AGREEMENT_TEXT = t('i_only_sign_what_i_understand');
 
@@ -78,10 +89,7 @@ export default function SignData({ params: { data, session } }: Props) {
           <Column>
             <Text text={t('sign_data_request')} preset="title-bold" textCenter mt="lg" />
 
-            <Text
-              text={t('you_need_to_enable_the_sign_data_request_feature_in_settings_advanced_to_continue')}
-              textCenter
-            />
+            <Text text={t('signdata_required_tip')} textCenter />
           </Column>
         </Content>
 

@@ -1,8 +1,7 @@
 import { useCallback } from 'react';
 
 import { CAT721Balance, CAT_VERSION } from '@/shared/types';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useCAT721NFTContentBaseUrl } from '@/ui/state/settings/hooks';
+import { useCAT721NFTContentBaseUrl, useI18n } from '@unisat/wallet-state';
 
 import { Column } from '../Column';
 import Iframe from '../Iframe';

@@ -1,6 +1,6 @@
-import { runesUtils } from '@/shared/lib/runes-utils';
 import { TickPriceItem } from '@/shared/types';
 import { TickUsd } from '@/ui/components/TickUsd';
+import { bnUtils } from '@unisat/base-utils';
 
 import { Column } from '../Column';
 import { Row } from '../Row';
@@ -21,7 +21,7 @@ export interface AlkanesPreviewCardProps {
 }
 
 export default function AlkanesPreviewCard({ balance, onClick, price }: AlkanesPreviewCardProps) {
-  const balanceStr = `${runesUtils.toDecimalAmount(balance.amount, balance.divisibility)} ${balance.symbol}`;
+  const balanceStr = `${bnUtils.toDecimalAmount(balance.amount, balance.divisibility)} ${balance.symbol}`;
 
   let size = 'sm';
   if (balanceStr.length > 10) {
@@ -67,7 +67,7 @@ export default function AlkanesPreviewCard({ balance, onClick, price }: AlkanesP
           <TickUsd
             style={{ marginBottom: -16 }}
             price={price}
-            balance={runesUtils.toDecimalAmount(balance.amount, balance.divisibility)}
+            balance={bnUtils.toDecimalAmount(balance.amount, balance.divisibility)}
           />
         )}
       </Column>

@@ -1,11 +1,13 @@
 import { useState } from 'react';
 
-import { CHAIN_GROUPS, CHAINS_MAP, ChainType, TypeChainGroup } from '@/shared/constant';
+import { IMAGE_SOURCE_MAP } from '@/shared/constant';
 import { Card, Column, Icon, Image, Row, Text } from '@/ui/components';
 import { BottomModal } from '@/ui/components/BottomModal';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 import { CloseOutlined } from '@ant-design/icons';
+import { CHAIN_GROUPS, CHAINS_MAP, TypeChainGroup } from '@unisat/wallet-shared';
+import { useI18n } from '@unisat/wallet-state';
+import { ChainType } from '@unisat/wallet-types';
 
 function ChainItem(props: {
   chainType: ChainType;
@@ -42,7 +44,7 @@ function ChainItem(props: {
       }}>
       <Row fullX justifyBetween itemsCenter>
         <Row itemsCenter>
-          <Image src={chain.icon} size={30} style={{ opacity: chain.disable ? 0.7 : 1 }} />
+          <Image src={IMAGE_SOURCE_MAP[chain.icon]} size={30} style={{ opacity: chain.disable ? 0.7 : 1 }} />
           <Text text={chain.label} color={chain.disable ? 'textDim' : 'text'} />
         </Row>
       </Row>
@@ -85,7 +87,7 @@ function ChainGroup(props: {
           <Column fullX gap="zero">
             <Row fullX justifyBetween itemsCenter>
               <Row itemsCenter>
-                <Image src={group.icon} size={30} />
+                <Image src={IMAGE_SOURCE_MAP[group.icon!]} size={30} />
                 <Text text={group.label} color={'text'} />
               </Row>
               {folded ? <Icon icon="down" /> : <Icon icon="up" />}

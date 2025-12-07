@@ -1,15 +1,21 @@
 import { useEffect, useState } from 'react';
 
-import { ChainType, TypeChain } from '@/shared/constant';
 import { Row, Text } from '@/ui/components';
 import { Button } from '@/ui/components/Button';
 import { Icon } from '@/ui/components/Icon';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useUtxoTools } from '@/ui/hooks/useUtxoTools';
 import { BuyBTCModal } from '@/ui/pages/BuyBTC/BuyBTCModal';
 import { useNavigate } from '@/ui/pages/MainRoute';
-import { useAddressExplorerUrl, useChainType, useWalletConfig } from '@/ui/state/settings/hooks';
-import { useResetUiTxCreateScreen } from '@/ui/state/ui/hooks';
+import { TypeChain } from '@unisat/wallet-shared';
+import {
+  useAddressExplorerUrl,
+  useChainType,
+  useI18n,
+  useNavigation,
+  useResetFeeRateBar,
+  useResetUiTxCreateScreen,
+  useWalletConfig
+} from '@unisat/wallet-state';
+import { ChainType } from '@unisat/wallet-types';
 
 interface WalletActionsProps {
   chain: TypeChain;
@@ -21,13 +27,14 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
   const [utxoClicked, setUtxoClicked] = useState(false);
   const isFractal = chain.isFractal;
   const navigate = useNavigate();
+  const nav = useNavigation();
   const resetUiTxCreateScreen = useResetUiTxCreateScreen();
+  const resetFeeRateBar = useResetFeeRateBar();
   const chainType = useChainType();
   const addressExplorerUrl = useAddressExplorerUrl(address);
   const [buyBtcModalVisible, setBuyBtcModalVisible] = useState(false);
   const walletConfig = useWalletConfig();
   const { t } = useI18n();
-  const { openUtxoTools } = useUtxoTools(chain);
 
   const shouldUseMoreExpandedLayout = () => {
     if (walletConfig.disableUtxoTools) return false;
@@ -52,15 +59,11 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
   const handleUtxoClick = () => {
     setUtxoClicked(true);
     localStorage.setItem('utxo_clicked', 'true');
-    openUtxoTools();
+    nav.navToUtxoTools();
   };
 
   const onHistoryClick = () => {
-    if (chain.isViewTxHistoryInternally) {
-      navigate('HistoryScreen');
-    } else {
-      window.open(addressExplorerUrl);
-    }
+    nav.navToExplorerAddress(address);
   };
 
   const onReceiveClick = () => {
@@ -69,6 +72,7 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
 
   const onSendClick = () => {
     resetUiTxCreateScreen();
+    resetFeeRateBar();
     navigate('TxCreateScreen');
   };
 

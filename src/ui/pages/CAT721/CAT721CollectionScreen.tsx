@@ -5,13 +5,10 @@ import { Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/com
 import CAT721Preview from '@/ui/components/CAT721Preview';
 import { Line } from '@/ui/components/Line';
 import { Section } from '@/ui/components/Section';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useIsInExpandView } from '@/ui/state/ui/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
-import { useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
+import { useCurrentAccount, useI18n, useIsInExpandView, useNavigation, useWallet } from '@unisat/wallet-state';
 
 import { useNavigate } from '../MainRoute';
 
@@ -22,7 +19,8 @@ interface LocationState {
 
 export default function CAT721CollectionScreen() {
   const { t } = useI18n();
-  const { version, collectionId } = useLocationState<LocationState>();
+  const nav = useNavigation();
+  const { version, collectionId } = nav.getRouteState<LocationState>();
   const [collectionSummary, setCollectionSummary] = useState<AddressCAT721CollectionSummary>({
     collectionInfo: {
       collectionId: '',

@@ -1,8 +1,8 @@
 import { CSSProperties, useMemo } from 'react';
 
 import { spacing, spacingGap } from '@/ui/theme/spacing';
-import { getUiType } from '@/ui/utils';
 
+import { getUiType } from '@/ui/web';
 import { BaseView, BaseViewProps } from '../BaseView';
 import './index.less';
 

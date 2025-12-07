@@ -2,7 +2,7 @@ import { useState } from 'react';
 
 import { CAT20MergeOrder } from '@/shared/types';
 import { Button, Column, Content, Header, Layout, Text } from '@/ui/components';
-import { useI18n } from '@/ui/hooks/useI18n';
+import { useI18n } from '@unisat/wallet-state';
 
 import { MergeState, MergingItem } from './MergingItem';
 

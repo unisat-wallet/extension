@@ -3,12 +3,10 @@ import { useEffect, useState } from 'react';
 import { Account, WebsiteState } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import WebsiteBar from '@/ui/components/WebsiteBar';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { fontSizes } from '@/ui/theme/font';
-import { shortAddress, useApproval, useWallet } from '@/ui/utils';
+import { shortAddress } from '@/ui/utils';
 import { CheckCircleFilled, LoadingOutlined } from '@ant-design/icons';
+import { useApproval, useCurrentAccount, useCurrentKeyring, useI18n, useWallet } from '@unisat/wallet-state';
 
 interface MyItemProps {
   account?: Account;
@@ -57,7 +55,7 @@ interface Props {
 }
 
 export default function Connect({ params: { session } }: Props) {
-  const [getApproval, resolveApproval, rejectApproval] = useApproval();
+  const { resolveApproval, rejectApproval } = useApproval();
   const { t } = useI18n();
 
   const handleCancel = () => {

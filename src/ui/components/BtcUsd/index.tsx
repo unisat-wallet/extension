@@ -1,12 +1,11 @@
 import { BigNumber } from 'bignumber.js';
 import { useEffect, useMemo, useState } from 'react';
 
-import { ChainType } from '@/shared/constant';
 import { Spin, Text } from '@/ui/components';
 import { Sizes, TextProps } from '@/ui/components/Text';
-import { usePrice } from '@/ui/provider/PriceProvider';
-import { useChain, useChainType } from '@/ui/state/settings/hooks';
 import type { ColorTypes } from '@/ui/theme/colors';
+import { useChain, useChainType, usePrice } from '@unisat/wallet-state';
+import { ChainType } from '@unisat/wallet-types';
 
 export function BtcUsd(
   props: {

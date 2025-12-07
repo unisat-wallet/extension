@@ -1,19 +1,16 @@
 import { RawTxInfo, TxType } from '@/shared/types';
 import { Header } from '@/ui/components';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { usePushOrdinalsTxCallback } from '@/ui/state/transactions/hooks';
-import { useLocationState } from '@/ui/utils';
+import { useI18n, useNavigation, usePushOrdinalsTxCallback } from '@unisat/wallet-state';
 
 import { SignPsbt } from '../Approval/components';
-import { useNavigate } from '../MainRoute';
 
 interface LocationState {
   rawTxInfo: RawTxInfo;
 }
 
 export default function SignOrdinalsTransactionScreen() {
-  const { rawTxInfo } = useLocationState<LocationState>();
-  const navigate = useNavigate();
+  const nav = useNavigation();
+  const { rawTxInfo } = nav.getRouteState<LocationState>();
   const pushOrdinalsTx = usePushOrdinalsTxCallback();
   const { t } = useI18n();
   return (
@@ -34,7 +31,7 @@ export default function SignOrdinalsTransactionScreen() {
         }
       }}
       handleCancel={() => {
-        navigate('MainScreen');
+        nav.navigate('MainScreen');
       }}
       handleConfirm={async (res) => {
         try {
@@ -52,12 +49,12 @@ export default function SignOrdinalsTransactionScreen() {
 
           const { success, txid, error } = await pushOrdinalsTx(txData);
           if (success) {
-            navigate('TxSuccessScreen', { txid });
+            nav.navigate('TxSuccessScreen', { txid });
           } else {
             throw new Error(error);
           }
         } catch (e) {
-          navigate('TxFailScreen', { error: (e as any).message });
+          nav.navigate('TxFailScreen', { error: (e as any).message });
         }
       }}
     />

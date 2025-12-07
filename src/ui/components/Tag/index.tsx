@@ -1,4 +1,4 @@
-import { useChain } from '@/ui/state/settings/hooks';
+import { useChain } from '@unisat/wallet-state';
 
 import { Row } from '../Row';
 import { Text } from '../Text';

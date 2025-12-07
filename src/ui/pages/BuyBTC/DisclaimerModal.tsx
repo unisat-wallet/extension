@@ -1,16 +1,13 @@
 import { useState } from 'react';
 
-import { ChainType, PAYMENT_CHANNELS, PaymentChannelType } from '@/shared/constant';
 import { Button, Checkbox, Column, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import { BottomModal } from '@/ui/components/BottomModal';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useChain } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
-import { useWallet } from '@/ui/utils';
 import { CloseOutlined } from '@ant-design/icons';
+import { PAYMENT_CHANNELS, PaymentChannelType } from '@unisat/wallet-shared';
+import { useChain, useCurrentAccount, useI18n, useTools, useWallet } from '@unisat/wallet-state';
+import { ChainType } from '@unisat/wallet-types';
 
 export default function DisclaimerModal({ channelType, onClose }: { channelType: PaymentChannelType; onClose: any }) {
   const currentAccount = useCurrentAccount();
@@ -56,10 +53,7 @@ export default function DisclaimerModal({ channelType, onClose }: { channelType:
           />
 
           <Text mt="lg" style={{ fontSize: fontSizes.sm, lineHeight: 2 }} text={t('risk_warning')}></Text>
-          <Text
-            mt="lg"
-            style={{ fontSize: fontSizes.sm, lineHeight: 2 }}
-            text={t('additional_transaction_fees')}></Text>
+          <Text mt="lg" style={{ fontSize: fontSizes.sm, lineHeight: 2 }} text={t('buybtc_fee_tip')}></Text>
           <Text mt="lg" style={{ fontSize: fontSizes.sm, lineHeight: 2 }} text={t('before_proceeding')}></Text>
         </div>
 

@@ -1,24 +1,26 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
-import { useLocation } from 'react-router-dom';
 
-import { ADDRESS_TYPES } from '@/shared/constant';
 import KeystoneProductImg from '@/ui/assets/keystone-product.png';
 import { Button, Card, Column, Content, Footer, Header, Input, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import { AddressTypeCard2 } from '@/ui/components/AddressTypeCard';
 import KeystoneLogo from '@/ui/components/Keystone/Logo';
 import KeystoneLogoWithText from '@/ui/components/Keystone/LogoWithText';
 import KeystonePopover from '@/ui/components/Keystone/Popover';
 import KeystoneScan from '@/ui/components/Keystone/Scan';
 import KeystoneFetchKey from '@/ui/components/Keystone/usb/FetchKey';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useImportAccountsFromKeystoneCallback } from '@/ui/state/global/hooks';
 import { colors } from '@/ui/theme/colors';
-import { useWallet } from '@/ui/utils';
 import { isValidHdPath } from '@/ui/utils/bitcoin-utils';
 import { ScanOutlined, UsbOutlined } from '@ant-design/icons';
+import {
+  useI18n,
+  useImportAccountsFromKeystoneCallback,
+  useNavigation,
+  useTools,
+  useWallet
+} from '@unisat/wallet-state';
 import { AddressType } from '@unisat/wallet-types';
 
+import { ADDRESS_TYPES } from '@unisat/wallet-shared';
 import { useNavigate } from '../MainRoute';
 
 interface ContextData {
@@ -32,11 +34,15 @@ interface ContextData {
 }
 
 function Step1({ onNext, setIsUSB }) {
-  const { state } = useLocation();
   const navigate = useNavigate();
+
+  const nav = useNavigation();
+
+  const { fromUnlock } = nav.getRouteState<{ fromUnlock?: boolean }>();
+
   const { t } = useI18n();
   const onBack = useCallback(() => {
-    if (state && state.fromUnlock) {
+    if (fromUnlock) {
       return navigate('WelcomeScreen');
     }
     window.history.go(-1);
@@ -82,9 +88,9 @@ function Step1({ onNext, setIsUSB }) {
                 marginBottom: '40px'
               }}
             />
-            <Card>{t('100_air_gapped')}</Card>
-            <Card>{t('open_source')}</Card>
-            <Card>{t('exceptional_compatibility')}</Card>
+            <Card>{t('keystone_100_air_gapped')}</Card>
+            <Card>{t('keystone_open_source')}</Card>
+            <Card>{t('keystone_exceptional_compatibility')}</Card>
             <Row justifyCenter>
               <a href="https://keyst.one/" target="_blank" rel="noreferrer">
                 {t('learn_more_about_keystone')}

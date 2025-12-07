@@ -1,17 +1,14 @@
 import { Skeleton } from 'antd';
 import { useEffect, useState } from 'react';
 
-import { PAYMENT_CHANNELS, PaymentChannelType } from '@/shared/constant';
 import { BtcChannelItem } from '@/shared/types';
 import { Card, Column, Image, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import { BottomModal } from '@/ui/components/BottomModal';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useChain } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
-import { useWallet } from '@/ui/utils';
 import { CloseOutlined } from '@ant-design/icons';
+import { useChain, useI18n, useTools, useWallet } from '@unisat/wallet-state';
 
+import { PAYMENT_CHANNELS, PaymentChannelType } from '@unisat/wallet-shared';
 import DisclaimerModal from './DisclaimerModal';
 
 function SupportPaymentList({ list }: { list: string[] }) {

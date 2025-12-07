@@ -1,7 +1,6 @@
 import BigNumber from 'bignumber.js';
 import { useEffect, useMemo, useRef, useState } from 'react';
 
-import { runesUtils } from '@/shared/lib/runes-utils';
 import {
   AddressCAT20UtxoSummary,
   CAT20Balance,
@@ -11,21 +10,26 @@ import {
   TxType,
   UserToSignInput
 } from '@/shared/types';
-import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
-import { Loading } from '@/ui/components/ActionComponent/Loading';
+import { Button, Column, Content, Header, Input, Layout, Loading, Row, Text } from '@/ui/components';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { MergeBTCPopover } from '@/ui/components/MergeBTCPopover';
 import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { useNavigate } from '@/ui/pages/MainRoute';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useNetworkType } from '@/ui/state/settings/hooks';
-import { useRunesTx } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
-import { isValidAddress, showLongNumber, useLocationState, useWallet } from '@/ui/utils';
+import { isValidAddress, showLongNumber } from '@/ui/utils';
 import { getAddressType } from '@/ui/utils/bitcoin-utils';
+import { bnUtils } from '@unisat/base-utils';
+import {
+  useCurrentAccount,
+  useFeeRateBar,
+  useI18n,
+  useNavigation,
+  useNetworkType,
+  useRunesTx,
+  useTools,
+  useWallet
+} from '@unisat/wallet-state';
 import { AddressType } from '@unisat/wallet-types';
 
 import { SignPsbt } from '../Approval/components';
@@ -39,7 +43,8 @@ interface LocationState {
 }
 
 export default function SendCAT20Screen() {
-  const props = useLocationState<LocationState>();
+  const nav = useNavigation();
+  const props = nav.getRouteState<LocationState>();
 
   const cat20Balance = props.cat20Balance;
 
@@ -98,7 +103,7 @@ export default function SendCAT20Screen() {
 
   const shouldShowMerge = availableTokenAmount !== cat20Balance.amount;
 
-  const [feeRate, setFeeRate] = useState(5);
+  const { feeRate } = useFeeRateBar();
 
   useEffect(() => {
     setError('');
@@ -118,18 +123,22 @@ export default function SendCAT20Screen() {
       return;
     }
 
-    const amt = runesUtils.fromDecimalAmount(inputAmount, cat20Balance.decimals);
-    if (runesUtils.compareAmount(amt, '0') != 1) {
+    if (!feeRate) {
       return;
     }
 
-    if (runesUtils.compareAmount(amt, availableTokenAmount) == 1) {
+    const amt = bnUtils.fromDecimalAmount(inputAmount, cat20Balance.decimals);
+    if (bnUtils.compareAmount(amt, '0') != 1) {
+      return;
+    }
+
+    if (bnUtils.compareAmount(amt, availableTokenAmount) == 1) {
       // insufficient balance
       return;
     }
 
     setDisabled(false);
-  }, [toInfo, inputAmount]);
+  }, [toInfo, inputAmount, feeRate]);
 
   const transferData = useRef<{
     id: string;
@@ -148,7 +157,7 @@ export default function SendCAT20Screen() {
   const onConfirm = async () => {
     tools.showLoading(true);
     try {
-      const cat20Amount = runesUtils.fromDecimalAmount(inputAmount, cat20Balance.decimals);
+      const cat20Amount = bnUtils.fromDecimalAmount(inputAmount, cat20Balance.decimals);
       const step1 = await wallet.transferCAT20Step1(
         props.version,
         toInfo.address,
@@ -177,12 +186,14 @@ export default function SendCAT20Screen() {
   if (step == 1) {
     return (
       <SignPsbt
-        header=<Header
-          title={t('step_12')}
-          onBack={() => {
-            setStep(0);
-          }}
-        />
+        header={
+          <Header
+            title={t('step_12')}
+            onBack={() => {
+              setStep(0);
+            }}
+          />
+        }
         params={{
           data: {
             psbtHex: transferData.current.commitTx,
@@ -223,12 +234,14 @@ export default function SendCAT20Screen() {
   } else if (step == 2) {
     return (
       <SignPsbt
-        header=<Header
-          title={t('step_22')}
-          onBack={() => {
-            setStep(0);
-          }}
-        />
+        header={
+          <Header
+            title={t('step_22')}
+            onBack={() => {
+              setStep(0);
+            }}
+          />
+        }
         params={{
           data: {
             psbtHex: transferData.current.revealTx,
@@ -272,7 +285,7 @@ export default function SendCAT20Screen() {
         <Text text={cat20Info.name} preset="title-bold" textCenter size="xxl" color="gold" />
         <Row itemsCenter fullX justifyCenter>
           <Text
-            text={`${runesUtils.toDecimalAmount(cat20Balance.amount, cat20Balance.decimals)}`}
+            text={`${bnUtils.toDecimalAmount(cat20Balance.amount, cat20Balance.decimals)}`}
             preset="bold"
             textCenter
             size="xxl"
@@ -285,7 +298,7 @@ export default function SendCAT20Screen() {
         <Row justifyCenter fullX>
           <TickUsdWithoutPrice
             tick={cat20Info.tokenId}
-            balance={runesUtils.toDecimalAmount(cat20Balance.amount, cat20Balance.decimals)}
+            balance={bnUtils.toDecimalAmount(cat20Balance.amount, cat20Balance.decimals)}
             type={TokenType.CAT20}
             size={'md'}
           />
@@ -310,11 +323,11 @@ export default function SendCAT20Screen() {
             <Row
               itemsCenter
               onClick={() => {
-                setInputAmount(runesUtils.toDecimalAmount(availableTokenAmount, cat20Balance.decimals));
+                setInputAmount(bnUtils.toDecimalAmount(availableTokenAmount, cat20Balance.decimals));
               }}>
               <Text text={t('max')} preset="sub" style={{ color: colors.white_muted }} />
               <Text
-                text={`${showLongNumber(runesUtils.toDecimalAmount(availableTokenAmount, cat20Balance.decimals))}`}
+                text={`${showLongNumber(bnUtils.toDecimalAmount(availableTokenAmount, cat20Balance.decimals))}`}
                 preset="bold"
                 size="sm"
                 wrap
@@ -359,13 +372,7 @@ export default function SendCAT20Screen() {
         </Column>
 
         <Column mt="lg">
-          <Text text={t('fee')} color="textDim" />
-
-          <FeeRateBar
-            onChange={(val) => {
-              setFeeRate(val);
-            }}
-          />
+          <FeeRateBar />
         </Column>
 
         {error && <Text text={error} color="error" />}

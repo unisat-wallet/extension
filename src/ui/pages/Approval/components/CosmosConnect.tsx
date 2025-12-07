@@ -4,10 +4,9 @@ import { Account, WebsiteState } from '@/shared/types';
 import { Button, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { Section } from '@/ui/components/Section';
 import WebsiteBar from '@/ui/components/WebsiteBar';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { fontSizes } from '@/ui/theme/font';
-import { useApproval, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
+import { useApproval, useI18n, useWallet } from '@unisat/wallet-state';
 
 export interface ItemData {
   key: string;
@@ -28,7 +27,7 @@ interface Props {
 }
 
 export default function CosmosConnect({ params: { session, data } }: Props) {
-  const [getApproval, resolveApproval, rejectApproval] = useApproval();
+  const { resolveApproval, rejectApproval } = useApproval();
   const { t } = useI18n();
 
   const handleCancel = () => {

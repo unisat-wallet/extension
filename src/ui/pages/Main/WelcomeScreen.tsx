@@ -2,9 +2,7 @@
 import { useState } from 'react';
 
 import { Button, Column, Content, Layout, Logo, Row, Text } from '@/ui/components';
-import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useWallet } from '@/ui/utils';
+import { useI18n, useWallet } from '@unisat/wallet-state';
 
 import { useNavigate } from '../MainRoute';
 import { ConnectHardwareModal } from './ConnectHardwareModal';
@@ -12,7 +10,6 @@ import { ConnectHardwareModal } from './ConnectHardwareModal';
 export default function WelcomeScreen() {
   const navigate = useNavigate();
   const wallet = useWallet();
-  const isInTab = useExtensionIsInTab();
   const { t } = useI18n();
 
   const [connectHardwareModalVisible, setConnectHardwareModalVisible] = useState(false);

@@ -1,9 +1,8 @@
 import { useEffect, useState } from 'react';
 
 import { VersionDetail } from '@/shared/types';
-import { useVersionInfo } from '@/ui/state/settings/hooks';
 import { fontSizes } from '@/ui/theme/font';
-import { useWallet } from '@/ui/utils';
+import { useVersionInfo, useWallet } from '@unisat/wallet-state';
 
 import { Button } from '../Button';
 import { Column } from '../Column';

@@ -1,11 +1,5 @@
-import BigNumber from 'bignumber.js';
-import { useMemo, useState } from 'react';
-
-import { AddressTokenSummary, TickPriceItem, TokenBalance } from '@/shared/types';
 import { TickPriceChange, TickUsd } from '@/ui/components/TickUsd';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useWallet } from '@/ui/utils';
+import { BRC20BalanceCardProps, useBRC20BalanceCardLogic } from '@unisat/wallet-state';
 
 import { BRC20Ticker } from '../BRC20Ticker';
 import { Card } from '../Card';
@@ -14,68 +8,22 @@ import { Row } from '../Row';
 import Tag from '../Tag';
 import { Text } from '../Text';
 
-export interface BRC20BalanceCard2Props {
-  tokenBalance: TokenBalance;
-  onClick?: () => void;
-  showPrice?: boolean;
-  price?: TickPriceItem;
-}
-
-export default function BRC20BalanceCard2(props: BRC20BalanceCard2Props) {
+export default function BRC20BalanceCard(props: BRC20BalanceCardProps) {
   const {
     showPrice,
     price,
-    tokenBalance: { ticker, overallBalance, transferableBalance, selfMint, displayName, tag, swapBalance, progBalance },
-    onClick
-  } = props;
-
-  const account = useCurrentAccount();
-  const [tokenSummary, setTokenSummary] = useState<AddressTokenSummary>();
-  const [loading, setLoading] = useState(false);
-  const wallet = useWallet();
-  const { t } = useI18n();
-
-  const deploy_count = tokenSummary ? (tokenSummary.tokenInfo.holder == account.address ? 1 : 0) : 0;
-  let _names: string[] = [];
-  const _amounts: string[] = [];
-  if (deploy_count > 0) {
-    _names.push('Deploy');
-    _amounts.push('');
-  }
-  if (tokenSummary) {
-    tokenSummary.transferableList.forEach((v) => {
-      _names.push('Transfer');
-      _amounts.push(v.amount);
-    });
-  }
-
-  for (let i = 0; i < _names.length; i++) {
-    if (i == 3) {
-      if (_names.length > 4) {
-        if (deploy_count > 0) {
-          _names[i] = `${_names.length - 3}+`;
-        } else {
-          _names[i] = `${_names.length - 2}+`;
-        }
-        _amounts[i] = '';
-      }
-      break;
-    }
-  }
-  _names = _names.splice(0, 4);
-
-  const onSwapBalance = swapBalance;
-  const onProgBalance = progBalance;
-  const inWalletBalance = overallBalance;
-
-  const totalBalance = useMemo(() => {
-    return new BigNumber(inWalletBalance)
-      .plus(new BigNumber(onSwapBalance || 0))
-      .plus(new BigNumber(onProgBalance || 0))
-      .toString();
-  }, [inWalletBalance, onSwapBalance, onProgBalance]);
-
-  const hasOutWalletBalance = (onSwapBalance || onProgBalance || '0')! !== '0';
+    ticker,
+    displayName,
+    tag,
+    onClick,
+    totalBalance,
+    selfMint,
+    onProgBalance,
+    hasOutWalletBalance,
+    inWalletBalance,
+    onSwapBalance,
+    t
+  } = useBRC20BalanceCardLogic(props);
 
   return (
     <Card

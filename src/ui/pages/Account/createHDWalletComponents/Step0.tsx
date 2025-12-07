@@ -1,7 +1,7 @@
-import { getRestoreWallets } from '@/shared/constant';
 import { Button, Column, Text } from '@/ui/components';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { ContextData, TabType, UpdateContextDataParams } from '@/ui/pages/Account/createHDWalletComponents/types';
+import { getRestoreWallets } from '@unisat/wallet-shared';
+import { useI18n } from '@unisat/wallet-state';
 
 export function Step0({
   updateContextData
@@ -21,7 +21,7 @@ export function Step0({
             onClick={() => {
               updateContextData({ tabType: TabType.STEP2, restoreWalletType: item.value });
             }}>
-            <Text text={item.name} />
+            <Text text={t(item.name)} />
           </Button>
         );
       })}

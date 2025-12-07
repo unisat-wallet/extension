@@ -1,20 +1,17 @@
 import { RawTxInfo, TxType } from '@/shared/types';
 import { Header } from '@/ui/components';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { usePushBitcoinTxCallback } from '@/ui/state/transactions/hooks';
-import { useLocationState } from '@/ui/utils';
+import { useI18n, useNavigation, usePushBitcoinTxCallback } from '@unisat/wallet-state';
 
 import { SignPsbt } from '../Approval/components';
-import { useNavigate } from '../MainRoute';
 
 interface LocationState {
   rawTxInfo: RawTxInfo;
 }
 
-export default function TxConfirmScreen() {
+export default function TxConfirmScreen(props) {
   const { t } = useI18n();
-  const { rawTxInfo } = useLocationState<LocationState>();
-  const navigate = useNavigate();
+  const nav = useNavigation();
+  const { rawTxInfo } = nav.getRouteState<LocationState>(props);
   const pushBitcoinTx = usePushBitcoinTxCallback();
   return (
     <SignPsbt
@@ -45,12 +42,12 @@ export default function TxConfirmScreen() {
 
           const { success, txid, error } = await pushBitcoinTx(txData);
           if (success) {
-            navigate('TxSuccessScreen', { txid });
+            nav.navigate('TxSuccessScreen', { txid });
           } else {
             throw new Error(error);
           }
         } catch (e) {
-          navigate('TxFailScreen', { error: (e as any).message });
+          nav.navigate('TxFailScreen', { error: (e as any).message });
         }
       }}
     />

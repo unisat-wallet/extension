@@ -1,17 +1,15 @@
 import { useNavigate } from 'react-router-dom';
 
-import { DEFAULT_LOCKTIME_ID, getAutoLockTimes } from '@/shared/constant';
 import { Card, Column, Icon, Row, Text } from '@/ui/components';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useAutoLockTimeId } from '@/ui/state/settings/hooks';
 import { fontSizes } from '@/ui/theme/font';
+import { getLockTimeInfo } from '@unisat/wallet-shared';
+import { useAutoLockTimeId, useI18n } from '@unisat/wallet-state';
 
 export function SecurityCard() {
   const navigate = useNavigate();
   const { t } = useI18n();
   const autoLockTimeId = useAutoLockTimeId();
-  const autoLockTimes = getAutoLockTimes();
-  const lockTimeConfig = autoLockTimes[autoLockTimeId] || autoLockTimes[DEFAULT_LOCKTIME_ID];
+  const lockTimeConfig = getLockTimeInfo(autoLockTimeId, t);
 
   return (
     <Card style={{ borderRadius: 10 }}>

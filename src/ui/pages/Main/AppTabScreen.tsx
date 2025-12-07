@@ -1,9 +1,8 @@
 import { AppInfo } from '@/shared/types';
 import { Card, Column, Content, Footer, Header, Image, Layout, Row, Text } from '@/ui/components';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useAppSummary, useReadApp } from '@/ui/state/accounts/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { shortDesc } from '@/ui/utils';
+import { useAppSummary, useI18n, useReadApp } from '@unisat/wallet-state';
 
 function AppItem({ info }: { info: AppInfo }) {
   const readApp = useReadApp();

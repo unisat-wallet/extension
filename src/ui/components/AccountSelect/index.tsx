@@ -1,10 +1,7 @@
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useNavigate } from '@/ui/pages/MainRoute';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { copyToClipboard, shortAddress } from '@/ui/utils';
+import { shortAddress } from '@/ui/utils';
 import { CopyOutlined } from '@ant-design/icons';
+import { useCurrentAccount, useNavigation, useTools } from '@unisat/wallet-state';
 
-import { useTools } from '../ActionComponent';
 import { Column } from '../Column';
 import { Icon } from '../Icon';
 import { Row } from '../Row';
@@ -12,11 +9,10 @@ import { Text } from '../Text';
 import './index.less';
 
 const AccountSelect = () => {
-  const navigate = useNavigate();
+  const nav = useNavigation();
   const currentAccount = useCurrentAccount();
   const tools = useTools();
   const address = currentAccount.address;
-  const { t } = useI18n();
 
   return (
     <Row
@@ -39,11 +35,7 @@ const AccountSelect = () => {
         style={{
           flex: 1
         }}
-        onClick={(e) => {
-          copyToClipboard(address).then(() => {
-            tools.toastSuccess(t('copied'));
-          });
-        }}>
+        onClick={(e) => tools.copyToClipboard(address)}>
         <Text text={shortAddress(currentAccount?.alianName, 8)} textCenter ellipsis />
         <Row selfItemsCenter itemsCenter>
           <Text text={shortAddress(address)} color="textDim" />
@@ -58,7 +50,7 @@ const AccountSelect = () => {
         justifyEnd
         itemsCenter
         onClick={(e) => {
-          navigate('SwitchAccountScreen');
+          nav.navigate('SwitchAccountScreen');
         }}>
         <Icon size={15} icon="right" style={{ marginRight: 10 }} />
       </Row>

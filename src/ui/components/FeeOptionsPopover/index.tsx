@@ -1,11 +1,9 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
-import { runesUtils } from '@/shared/lib/runes-utils';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useBabylonConfig } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
-import { useWallet } from '@/ui/utils';
 import { bbnDevnet, DEFAULT_BBN_GAS_LIMIT } from '@unisat/babylon-service/types';
+import { bnUtils } from '@unisat/base-utils';
+import { useBabylonConfig, useI18n, useWallet } from '@unisat/wallet-state';
 
 import { BottomModal } from '../BottomModal';
 import { Button } from '../Button';
@@ -77,7 +75,7 @@ export function FeeOptionsPopover({
       const selectedOption = feeOptions[optionIndex];
       const gasPrice = selectedOption.gasPrice;
       const fee = parseFloat(gasPrice.toString()) * effectiveGasValue * adjustment;
-      const rawFormattedFee = runesUtils.toDecimalAmount(fee.toString(), bbnDevnet.feeCurrencies[0].coinDecimals);
+      const rawFormattedFee = bnUtils.toDecimalAmount(fee.toString(), bbnDevnet.feeCurrencies[0].coinDecimals);
       return formatFeeDisplay(rawFormattedFee);
     },
     [feeOptions]

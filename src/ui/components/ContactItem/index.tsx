@@ -1,9 +1,9 @@
 import { CSSProperties } from 'react';
 
 import { Column, Icon, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import { IconTypes } from '@/ui/components/Icon';
 import { copyToClipboard } from '@/ui/utils';
+import { useTools } from '@unisat/wallet-state';
 
 interface ContactItemProps {
   icon: IconTypes;

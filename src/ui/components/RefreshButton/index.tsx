@@ -1,7 +1,7 @@
 import { ReactEventHandler, useState } from 'react';
 
-import { useI18n } from '@/ui/hooks/useI18n';
 import { ReloadOutlined } from '@ant-design/icons';
+import { useI18n } from '@unisat/wallet-state';
 
 import { Row } from '../Row';
 import { Text } from '../Text';

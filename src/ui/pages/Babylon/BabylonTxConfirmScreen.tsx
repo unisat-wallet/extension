@@ -2,18 +2,24 @@ import { useState } from 'react';
 
 import { BabylonTxInfo, CosmosSignDataType } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import { AddressText } from '@/ui/components/AddressText';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useAccountAddress, useCurrentAccount, useIsKeystoneWallet } from '@/ui/state/accounts/hooks';
-import { useAppDispatch } from '@/ui/state/hooks';
-import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { useBabylonConfig } from '@/ui/state/settings/hooks';
-import { NavigationSource, uiActions } from '@/ui/state/ui/reducer';
 import { colors } from '@/ui/theme/colors';
 import { spacing } from '@/ui/theme/spacing';
-import { useLocationState, useWallet } from '@/ui/utils';
 import { COSMOS_CHAINS_MAP } from '@unisat/babylon-service/types';
+import {
+  NavigationSource,
+  uiActions,
+  useAccountAddress,
+  useAppDispatch,
+  useBabylonConfig,
+  useCurrentAccount,
+  useCurrentKeyring,
+  useI18n,
+  useIsKeystoneWallet,
+  useNavigation,
+  useTools,
+  useWallet
+} from '@unisat/wallet-state';
 
 import { useNavigate } from '../MainRoute';
 import CosmosSignScreen from '../Wallet/CosmosSignScreen';
@@ -39,7 +45,8 @@ function Section({ title, children, extra }: { title: string; children?: React.R
 }
 
 export default function BabylonTxConfirmScreen() {
-  const { txInfo } = useLocationState<LocationState>();
+  const nav = useNavigation();
+  const { txInfo } = nav.getRouteState<LocationState>();
   const wallet = useWallet();
   const dispatch = useAppDispatch();
   const { t } = useI18n();
@@ -74,7 +81,7 @@ export default function BabylonTxConfirmScreen() {
   const isKeystone = useIsKeystoneWallet();
 
   const clearReduxState = () => {
-    dispatch(uiActions.resetBabylonSendScreen());
+    dispatch(uiActions.resetBabylonSendScreen(null));
     dispatch(uiActions.setNavigationSource(NavigationSource.NORMAL));
   };
 
@@ -125,8 +132,8 @@ export default function BabylonTxConfirmScreen() {
               <Icon icon="success" size={50} style={{ alignSelf: 'center' }} />
             </Row>
 
-            <Text preset="title" text={t('payment_sent')} textCenter />
-            <Text preset="sub" text={t('your_transaction_has_been_successfully_sent')} color="textDim" textCenter />
+            <Text preset="title" text={t('tx_sent_title')} textCenter />
+            <Text preset="sub" text={t('tx_sent_desc')} color="textDim" textCenter />
 
             {babylonChain.explorer ? (
               <Row

@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 
 import { Content, Header, Layout } from '@/ui/components';
 import LoadingPage from '@/ui/components/LoadingPage';
-import { useI18n } from '@/ui/hooks/useI18n';
+import { useDeveloperMode, useI18n } from '@unisat/wallet-state';
 
 import { EnableSignDataCard } from './EnableSignData';
 import { LanguageCard } from './Language';
@@ -10,6 +10,8 @@ import { SecurityCard } from './SecurityCard';
 
 export default function AdvancedScreen() {
   const { t } = useI18n();
+  const developerMode = useDeveloperMode();
+
   const [init, setInit] = useState(false);
   useEffect(() => {
     setTimeout(() => {
@@ -34,7 +36,7 @@ export default function AdvancedScreen() {
 
         <SecurityCard />
 
-        <EnableSignDataCard />
+        {developerMode && <EnableSignDataCard />}
       </Content>
     </Layout>
   );

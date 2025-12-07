@@ -2,9 +2,7 @@ import { useMemo } from 'react';
 
 import { Column, Row } from '@/ui/components';
 import { TabBar } from '@/ui/components/TabBar';
-import { useAppDispatch } from '@/ui/state/hooks';
-import { useAlkanesAssetTabKey } from '@/ui/state/ui/hooks';
-import { AlkanesAssetTabKey, uiActions } from '@/ui/state/ui/reducer';
+import { AlkanesAssetTabKey, uiActions, useAlkanesAssetTabKey, useAppDispatch } from '@unisat/wallet-state';
 
 import { AlkanesCollectionList } from './AlkanesCollectionList';
 import { AlkanesList } from './AlkanesList';

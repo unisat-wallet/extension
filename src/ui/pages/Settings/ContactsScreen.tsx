@@ -1,16 +1,11 @@
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
-import { ContactBookItem } from '@/background/service/contactBook';
-import { CHAINS_MAP, ChainType } from '@/shared/constant';
 import { Button, Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import { BottomModal } from '@/ui/components/BottomModal';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useChain } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { spacing } from '@/ui/theme/spacing';
-import { getUiType, useWallet } from '@/ui/utils';
 import { SearchOutlined } from '@ant-design/icons';
 import {
   closestCenter,
@@ -29,7 +24,13 @@ import {
   verticalListSortingStrategy
 } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
+import { useChain, useI18n, useNavigation, useWallet } from '@unisat/wallet-state';
 
+import { IMAGE_SOURCE_MAP } from '@/shared/constant';
+import { getUiType } from '@/ui/web';
+import { ContactBookItem } from '@unisat/contact-book';
+import { CHAINS_MAP } from '@unisat/wallet-shared';
+import { ChainType } from '@unisat/wallet-types';
 import { ContactChainModal } from './ContactChainModal';
 
 const formatAddress = (address: string) => {
@@ -71,7 +72,7 @@ function SortableContactItem({ contact, index }: { contact: ContactBookItem; ind
         }}>
         <Row full justifyBetween itemsCenter>
           <Row itemsCenter gap="md">
-            <Image src={chainInfo.icon} size={30} />
+            <Image src={IMAGE_SOURCE_MAP[chainInfo.icon]} size={30} />
             <Column>
               <Text
                 text={contact.name}
@@ -153,7 +154,11 @@ function SortableContactItem({ contact, index }: { contact: ContactBookItem; ind
 
 export default function ContactsScreen() {
   const navigate = useNavigate();
-  const location = useLocation();
+  const nav = useNavigation();
+  const { returnWithNetwork, lastEditedContactAddress } = nav.getRouteState<{
+    returnWithNetwork?: ChainType;
+    lastEditedContactAddress?: string;
+  }>();
   const wallet = useWallet();
   const chain = useChain();
   const [contacts, setContacts] = useState<ContactBookItem[]>([]);
@@ -186,12 +191,12 @@ export default function ContactsScreen() {
   }, []);
 
   useEffect(() => {
-    if (location.state && location.state.returnWithNetwork) {
-      setSelectedNetworkFilter(location.state.returnWithNetwork);
+    if (returnWithNetwork) {
+      setSelectedNetworkFilter(returnWithNetwork);
       // Clear the state to prevent repeated selection
-      navigate(location.pathname, { replace: true });
+      // navigate(location.pathname, { replace: true });
     }
-  }, [location]);
+  }, [returnWithNetwork]);
 
   useEffect(() => {
     setOrderedContacts(filteredContacts);
@@ -203,10 +208,8 @@ export default function ContactsScreen() {
       const list = await wallet.listContacts();
       setContacts(list);
 
-      if (location.state && location.state.lastEditedContactAddress) {
-        const editedAddress = location.state.lastEditedContactAddress;
-
-        const returnWithNetwork = location.state.returnWithNetwork;
+      if (lastEditedContactAddress) {
+        const editedAddress = lastEditedContactAddress;
 
         if (returnWithNetwork) {
           const chainEnum = returnWithNetwork;
@@ -424,7 +427,7 @@ export default function ContactsScreen() {
           }}>
           <Row full justifyBetween itemsCenter>
             <Row itemsCenter gap="md">
-              <Image src={CHAINS_MAP[contact.chain].icon} size={30} />
+              <Image src={IMAGE_SOURCE_MAP[CHAINS_MAP[contact.chain].icon]} size={30} />
               <Column>
                 <Text
                   text={contact.name}
@@ -481,7 +484,7 @@ export default function ContactsScreen() {
           }}
           onClick={isSortingMode ? undefined : () => setShowNetworkModal(true)}
           itemsCenter>
-          <Image src={CHAINS_MAP[selectedNetworkFilter].icon} size={20} style={{ marginRight: 8 }} />
+          <Image src={IMAGE_SOURCE_MAP[CHAINS_MAP[selectedNetworkFilter].icon]} size={20} style={{ marginRight: 8 }} />
           <Text text={CHAINS_MAP[selectedNetworkFilter].label} color="gold" size="sm" />
           <Icon icon="down" size={14} color="gold" style={{ marginLeft: 8 }} />
         </Row>
@@ -643,7 +646,10 @@ export default function ContactsScreen() {
               <Card style={{ backgroundColor: colors.black_muted, padding: spacing.medium }}>
                 <Column gap="sm">
                   <Row itemsCenter gap="sm">
-                    <Image src={CHAINS_MAP[selectedContact.chain || ChainType.BITCOIN_MAINNET].icon} size={24} />
+                    <Image
+                      src={IMAGE_SOURCE_MAP[CHAINS_MAP[selectedContact.chain || ChainType.BITCOIN_MAINNET].icon]}
+                      size={24}
+                    />
                     <Text text={selectedContact.name} preset="regular-bold" />
                   </Row>
                   <Text text={formatAddress(selectedContact.address)} preset="sub" color="textDim" />

@@ -1,7 +1,7 @@
 import { TickPriceItem } from '@/shared/types';
 import { TickUsd, TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
+import { useI18n } from '@unisat/wallet-state';
 
 import { BRC20Ticker } from '../BRC20Ticker';
 import { Column } from '../Column';

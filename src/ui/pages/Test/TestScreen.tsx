@@ -1,15 +1,17 @@
 import { useEffect, useState } from 'react';
 import { useNavigate as useNavigateOrigin } from 'react-router-dom';
 
-import { NetworkType, ToAddressInfo, TxType } from '@/shared/types';
+import { ToAddressInfo, TxType } from '@/shared/types';
 import { Card, Column, Content, Input, Layout, Text } from '@/ui/components';
 import { AddressDetailPopover } from '@/ui/components/AddressDetailPopover';
 import { AddressText } from '@/ui/components/AddressText';
 import { AddressTypeCard2 } from '@/ui/components/AddressTypeCard';
 import { RemoveWalletPopover } from '@/ui/components/RemoveWalletPopover';
 import { SignPsbtWithRisksPopover } from '@/ui/components/SignPsbtWithRisksPopover';
-import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
+import { useCurrentKeyring, usePushBitcoinTxCallback, useTools } from '@unisat/wallet-state';
+import { NetworkType } from '@unisat/wallet-types';
 
+import { LowFeeModePopover } from '@/ui/components/LowFeeModePopover';
 import { Connect, MultiSignMessage, SignPsbt, SignText, SwitchNetwork } from '../Approval/components';
 import MultiSignPsbt from '../Approval/components/MultiSignPsbt';
 import { useNavigate } from '../MainRoute';
@@ -18,7 +20,23 @@ import { testDecodedTx } from './testDecodedTx';
 export default function TestScreen() {
   const navigate = useNavigate();
   const navigateOrigin = useNavigateOrigin();
-  const [testComponent, setTestComponent] = useState<string | null>(null);
+  const [testComponent, setTestComponent] = useState<string | null>('current');
+  const tools = useTools();
+
+  const pushtx = usePushBitcoinTxCallback();
+
+  if (testComponent === 'current') {
+    return (
+      <LowFeeModePopover
+        onClose={() => {
+          // todo
+        }}
+        onConfirm={() => {
+          //
+        }}
+      />
+    );
+  }
 
   if (testComponent === 'signPsbt') {
     return <TestApprovalSignPsbt />;
@@ -36,6 +54,14 @@ export default function TestScreen() {
     <Layout>
       <Content>
         <Column>
+          <Card
+            onClick={() => {
+              // tools.showLoading(true);
+              pushtx('hhh');
+            }}>
+            <Text text="Test Loading" />
+          </Card>
+
           <Card
             onClick={() => {
               navigateOrigin('/test-cosmos-sign');

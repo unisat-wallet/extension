@@ -1,4 +1,4 @@
-import { useI18n } from '@/ui/hooks/useI18n';
+import { useI18n } from '@unisat/wallet-state';
 
 import { Row } from '../Row';
 import { Text } from '../Text';

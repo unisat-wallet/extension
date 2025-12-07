@@ -2,9 +2,9 @@ import { useCallback, useState } from 'react';
 
 import { Button, Content, Header, Layout, Text } from '@/ui/components';
 import { ColdWalletScan } from '@/ui/components/ColdWallet';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 import { ColdWalletData, MsgSignResult, TransactionSignResult } from '@unisat/animated-qr';
+import { useI18n } from '@unisat/wallet-state';
 import { AddressType } from '@unisat/wallet-types';
 
 import { QR_SCANNER_SIZE } from '../constants';
@@ -67,7 +67,6 @@ export default function Step2({ onBack, onNext }: Step2Props) {
         const validatedData = validateQRData(data);
 
         const version = validatedData.version || '1.1';
-        console.log(`Cold wallet QR code version: ${version}`);
 
         if (onNext) {
           onNext(validatedData);

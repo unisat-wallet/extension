@@ -1,18 +1,14 @@
 import { Button, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useNavigate } from '@/ui/pages/MainRoute';
-import { useTxExplorerUrl } from '@/ui/state/settings/hooks';
 import { spacing } from '@/ui/theme/spacing';
-import { useLocationState } from '@/ui/utils';
+import { useI18n, useNavigation } from '@unisat/wallet-state';
 
 interface LocationState {
   txid: string;
 }
 
 export default function TxSuccessScreen() {
-  const { txid } = useLocationState<LocationState>();
-  const navigate = useNavigate();
-  const txidUrl = useTxExplorerUrl(txid);
+  const nav = useNavigation();
+  const { txid } = nav.getRouteState<LocationState>();
   const { t } = useI18n();
 
   return (
@@ -25,13 +21,13 @@ export default function TxSuccessScreen() {
             <Icon icon="success" size={50} style={{ alignSelf: 'center' }} />
           </Row>
 
-          <Text preset="title" text={t('payment_sent')} textCenter />
-          <Text preset="sub" text={t('your_transaction_has_been_successfully_sent')} color="textDim" textCenter />
+          <Text preset="title" text={t('tx_sent_title')} textCenter />
+          <Text preset="sub" text={t('tx_sent_desc')} color="textDim" textCenter />
 
           <Row
             justifyCenter
             onClick={() => {
-              window.open(`${txidUrl}`);
+              nav.navToExplorerTx(txid);
             }}>
             <Icon icon="eye" color="textDim" />
             <Text preset="regular-bold" text={t('view_on_block_explorer')} color="textDim" />
@@ -43,7 +39,7 @@ export default function TxSuccessScreen() {
           full
           text={t('done')}
           onClick={() => {
-            navigate('MainScreen');
+            nav.navigate('MainScreen');
           }}
         />
       </Footer>

@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 import { Column, Progress, Text } from '@/ui/components';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 import { CameraOutlined } from '@ant-design/icons';
 import {
@@ -10,6 +9,7 @@ import {
   type MsgSignResult,
   type TransactionSignResult
 } from '@unisat/animated-qr';
+import { useI18n } from '@unisat/wallet-state';
 import { AddressType } from '@unisat/wallet-types';
 import { BrowserQRCodeReader } from '@zxing/browser';
 import { BarcodeFormat, DecodeHintType } from '@zxing/library';
@@ -127,12 +127,11 @@ export default function ColdWalletScan({ onSucceed, size = 300 }: Props) {
   const handleQRScan = useCallback(
     (qrText: string) => {
       try {
-        console.log('QR scanned:', qrText.substring(0, 100) + '...');
+        // console.log('QR scanned:', qrText.substring(0, 100) + '...');
 
         const result = decoder.addPart(qrText);
 
         if (result?.isComplete && result.data) {
-          console.log('Decode complete:', result.type, result.data);
           setProgress(100);
           setProgressText('');
 
@@ -158,12 +157,12 @@ export default function ColdWalletScan({ onSucceed, size = 300 }: Props) {
               ? `Collecting QR parts: ${result.collected}/${result.total} (${percentage}%)`
               : `Decoding: ${percentage}%`;
 
-          console.log('Decode progress:', text);
+          // console.log('Decode progress:', text);
           setProgress(percentage);
           setProgressText(text);
         } else {
           // No result or failed to decode
-          console.log('Failed to decode QR code');
+          // console.log('Failed to decode QR code');
           setIsErrorWithTracking(true, 'Failed to decode QR code');
         }
       } catch (error) {
@@ -210,7 +209,7 @@ export default function ColdWalletScan({ onSucceed, size = 300 }: Props) {
         }
 
         const canplayListener = () => {
-          console.log('Video can play, setting canplay=true');
+          // console.log('Video can play, setting canplay=true');
           setCanplayWithTracking(true, 'video.oncanplay');
         };
 

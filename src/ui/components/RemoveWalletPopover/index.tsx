@@ -1,14 +1,11 @@
 import { useMemo } from 'react';
 
 import { WalletKeyring } from '@/shared/types';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { useNavigate } from '@/ui/pages/MainRoute';
-import { accountActions } from '@/ui/state/accounts/reducer';
-import { useAppDispatch } from '@/ui/state/hooks';
-import { keyringsActions } from '@/ui/state/keyrings/reducer';
-import { shortAddress, useWallet } from '@/ui/utils';
+import { shortAddress } from '@/ui/utils';
 import { faTrashCan } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
+import { accountActions, keyringsActions, useAppDispatch, useI18n, useWallet } from '@unisat/wallet-state';
 
 import { Button } from '../Button';
 import { Card } from '../Card';

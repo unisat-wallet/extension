@@ -1,15 +1,12 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { ADDRESS_TYPES } from '@/shared/constant';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useCreateColdWalletCallback } from '@/ui/state/global/hooks';
 import { colors } from '@/ui/theme/colors';
-import { useWallet } from '@/ui/utils';
 import { ScanOutlined } from '@ant-design/icons';
+import { useCreateColdWalletCallback, useI18n, useTools, useWallet } from '@unisat/wallet-state';
 import { AddressType } from '@unisat/wallet-types';
 
+import { ADDRESS_TYPES } from '@unisat/wallet-shared';
 import { useNavigate } from '../../../MainRoute';
 import { DEFAULT_DISPLAY_COUNT, DEFAULT_HD_PATH, LOAD_MORE_BATCH_SIZE, cardStyle, footerStyle } from '../constants';
 import { GeneratedAddress, Step3Props } from '../types';

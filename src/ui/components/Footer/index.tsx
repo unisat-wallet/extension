@@ -1,7 +1,6 @@
 import { CSSProperties, useMemo } from 'react';
 
-import { getUiType } from '@/ui/utils';
-
+import { getUiType } from '@/ui/web';
 import { BaseView, BaseViewProps } from '../BaseView';
 
 export type FooterProps = BaseViewProps;

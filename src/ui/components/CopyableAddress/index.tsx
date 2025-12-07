@@ -1,7 +1,6 @@
-import { useI18n } from '@/ui/hooks/useI18n';
 import { copyToClipboard, shortAddress } from '@/ui/utils';
+import { useI18n, useTools } from '@unisat/wallet-state';
 
-import { useTools } from '../ActionComponent';
 import { Icon } from '../Icon';
 import { Row } from '../Row';
 import { Text } from '../Text';

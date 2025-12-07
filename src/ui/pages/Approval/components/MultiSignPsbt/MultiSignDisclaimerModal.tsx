@@ -1,9 +1,9 @@
 import { Button, Column, Row, Text } from '@/ui/components';
 import { BottomModal } from '@/ui/components/BottomModal';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { CloseOutlined } from '@ant-design/icons';
+import { useI18n } from '@unisat/wallet-state';
 
 export default function MultiSignDisclaimerModal({
   txCount,

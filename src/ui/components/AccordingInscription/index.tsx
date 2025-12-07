@@ -1,6 +1,5 @@
 import { Inscription } from '@/shared/types';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useOrdinalsWebsite } from '@/ui/state/settings/hooks';
+import { useI18n, useOrdinalsWebsite } from '@unisat/wallet-state';
 
 import { Text } from '../Text';
 

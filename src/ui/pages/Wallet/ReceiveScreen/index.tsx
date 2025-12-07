@@ -1,11 +1,10 @@
 import QRCode from 'qrcode.react';
 
 import { AddressBar, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useChain } from '@/ui/state/settings/hooks';
 import { sizes } from '@/ui/theme/spacing';
+import { useAccountAddress, useChain, useCurrentAccount, useI18n } from '@unisat/wallet-state';
 
+import { IMAGE_SOURCE_MAP } from '@/shared/constant';
 import './index.less';
 
 export default function ReceiveScreen() {
@@ -32,9 +31,9 @@ export default function ReceiveScreen() {
               value={address || ''}
               renderAs="svg"
               size={sizes.qrcode}
-              imageRendering={chain.icon}
+              imageRendering={IMAGE_SOURCE_MAP[chain.icon]}
               imageSettings={{
-                src: chain.icon,
+                src: IMAGE_SOURCE_MAP[chain.icon],
                 width: 30,
                 height: 30,
                 excavate: true

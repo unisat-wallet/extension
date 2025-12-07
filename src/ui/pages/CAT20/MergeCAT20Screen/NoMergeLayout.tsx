@@ -1,8 +1,8 @@
-import { runesUtils } from '@/shared/lib/runes-utils';
 import { AddressCAT20UtxoSummary, CAT20Balance } from '@/shared/types';
 import { Column, Content, Header, Layout, Row, Text } from '@/ui/components';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
-import { useI18n } from '@/ui/hooks/useI18n';
+import { bnUtils } from '@unisat/base-utils';
+import { useI18n } from '@unisat/wallet-state';
 
 export function NoMergeLayout({
   cat20Balance,
@@ -24,7 +24,7 @@ export function NoMergeLayout({
         <Column>
           <Row itemsCenter fullX justifyCenter>
             <Text
-              text={`${runesUtils.toDecimalAmount(cat20Balance.amount, cat20Balance.decimals)}`}
+              text={`${bnUtils.toDecimalAmount(cat20Balance.amount, cat20Balance.decimals)}`}
               preset="bold"
               textCenter
               size="xxl"
@@ -53,7 +53,7 @@ export function NoMergeLayout({
               backgroundColor: 'rgba(244, 182, 44, 0.08)'
             }}>
             <Column mx="md" my="md">
-              <Text text={t('you_need_at_least_2_utxos_to_merge')} size="xs" color="warning_content" />
+              <Text text={t('cat20_warning_nomerge')} size="xs" color="warning_content" />
             </Column>
           </Column>
         </Column>

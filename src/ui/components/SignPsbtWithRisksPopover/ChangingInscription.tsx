@@ -1,6 +1,6 @@
 import { DecodedPsbt } from '@/shared/types';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
+import { useI18n } from '@unisat/wallet-state';
 
 import { Column } from '../Column';
 import { Icon } from '../Icon';

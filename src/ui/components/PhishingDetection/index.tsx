@@ -1,5 +1,5 @@
 import { Button, Column, Content, Footer, Layout, Row, Text } from '@/ui/components';
-import { useI18n } from '@/ui/hooks/useI18n';
+import { useI18n } from '@unisat/wallet-state';
 
 export function PhishingDetection({ handleCancel }: { handleCancel: () => void }) {
   const { t } = useI18n();

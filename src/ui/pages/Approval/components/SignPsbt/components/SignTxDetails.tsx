@@ -8,12 +8,11 @@ import BRC20Preview from '@/ui/components/BRC20Preview';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import RunesPreviewCard from '@/ui/components/RunesPreviewCard';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useAccountAddress } from '@/ui/state/accounts/hooks';
-import { useBTCUnit, useChain } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { satoshisToAmount } from '@/ui/utils';
+import { useAccountAddress, useBTCUnit, useChain, useI18n } from '@unisat/wallet-state';
 
+import { IMAGE_SOURCE_MAP } from '@/shared/constant';
 import { TxInfo } from '../types';
 
 export default function SignTxDetails({
@@ -249,7 +248,7 @@ export default function SignTxDetails({
           <Card style={{ backgroundColor: '#272626', flex: '1' }}>
             <Column fullX itemsCenter>
               <Row itemsCenter>
-                <Image src={chain.icon} size={24} />
+                <Image src={IMAGE_SOURCE_MAP[chain.icon]} size={24} />
                 <Text text={chain.label} />
               </Row>
               <Row
@@ -290,7 +289,7 @@ export default function SignTxDetails({
         <Card style={{ backgroundColor: '#272626', flex: '1' }}>
           <Column fullX itemsCenter>
             <Row itemsCenter justifyCenter>
-              <Image src={chain.icon} size={24} />
+              <Image src={IMAGE_SOURCE_MAP[chain.icon]} size={24} />
               <Text text={chain.label} />
             </Row>
             <Row

@@ -1,12 +1,11 @@
 import { CSSProperties, useEffect, useRef, useState } from 'react';
 
 import { Inscription } from '@/shared/types';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useOrdinalsWebsite } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { getDateShowdate } from '@/ui/utils/getDateShowdate';
 import { LoadingOutlined } from '@ant-design/icons';
+import { useI18n, useOrdinalsWebsite } from '@unisat/wallet-state';
 
 import { Column } from '../Column';
 import Iframe from '../Iframe';

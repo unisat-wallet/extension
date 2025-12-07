@@ -1,9 +1,9 @@
 import { CSSProperties, useEffect, useState } from 'react';
 
-import { getSpecialLocale, useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
+import { useI18n } from '@unisat/wallet-state';
 
-import { useTools } from '../ActionComponent';
+import { useTools } from '@unisat/wallet-state';
 import { Column } from '../Column';
 import { Input } from '../Input';
 import { Row } from '../Row';
@@ -24,14 +24,7 @@ export function OutputValueBar({
   onChange: (val: number) => void;
 }) {
   const tools = useTools();
-  const { t } = useI18n();
-
-  const [isSpecialLocale, setIsSpecialLocale] = useState(false);
-  useEffect(() => {
-    getSpecialLocale().then(({ isSpecialLocale }) => {
-      setIsSpecialLocale(isSpecialLocale);
-    });
-  }, []);
+  const { t, isSpecialLocale } = useI18n();
 
   const options = [
     {

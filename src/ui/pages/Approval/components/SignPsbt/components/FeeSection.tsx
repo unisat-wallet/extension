@@ -1,9 +1,9 @@
 import { Icon, Row, Text, Tooltip } from '@/ui/components';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { fontSizes } from '@/ui/theme/font';
-import { amountToSatoshis } from '@/ui/utils';
 
 import Section from './Section';
+import { amountToSatoshis } from '@/ui/utils';
 
 const FeeSection = ({ txInfo, t, networkFee, btcUnit }) => {
   return (

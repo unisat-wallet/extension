@@ -3,10 +3,8 @@ import { useState } from 'react';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { ColdWalletSignMessage } from '@/ui/components/ColdWallet';
 import WebsiteBar from '@/ui/components/WebsiteBar';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useApproval } from '@/ui/utils';
 import { KeyringType, KeystoneSignEnum } from '@unisat/keyring-service/types';
+import { useApproval, useCurrentAccount, useI18n } from '@unisat/wallet-state';
 
 import KeystoneSignScreen from '../../Wallet/KeystoneSignScreen';
 
@@ -24,7 +22,7 @@ interface Props {
   };
 }
 export default function SignText({ params: { data, session } }: Props) {
-  const [getApproval, resolveApproval, rejectApproval] = useApproval();
+  const { resolveApproval, rejectApproval } = useApproval();
   const account = useCurrentAccount();
   const [isKeystoneSigning, setIsKeystoneSigning] = useState(false);
   const { t } = useI18n();

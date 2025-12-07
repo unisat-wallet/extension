@@ -1,3 +1,4 @@
+import { Loading } from './ActionComponent/Loading';
 import { AddressBar } from './AddressBar';
 import { Button } from './Button';
 import { Card } from './Card';
@@ -10,6 +11,7 @@ import { Grid } from './Grid';
 import { Header } from './Header';
 import { Icon } from './Icon';
 import { Image } from './Image';
+import { InfiniteList } from './InfiniteList';
 import { Input } from './Input';
 import { Layout } from './Layout';
 import { Logo } from './Logo';
@@ -37,8 +39,10 @@ export {
   Header,
   Icon,
   Image,
+  InfiniteList,
   Input,
   Layout,
+  Loading,
   Logo,
   Progress,
   Radio,

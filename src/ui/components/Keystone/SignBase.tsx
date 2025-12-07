@@ -1,8 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { Button, Content, Footer, Header, Layout, Row } from '@/ui/components';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useWallet } from '@/ui/utils';
+import { useI18n, useWallet } from '@unisat/wallet-state';
 
 import { Step1, Step2, USBStep } from './SignSteps';
 import { KeystoneConnectionType, KeystoneStep } from './SignSteps/const';

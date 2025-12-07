@@ -1,13 +1,19 @@
 import { useEffect, useState } from 'react';
 
-import { PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL, VERSION } from '@/shared/constant';
 import { Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useDeveloperMode, useSetDeveloperModeCallback, useVersionInfo } from '@/ui/state/settings/hooks';
 import { spacing } from '@/ui/theme/spacing';
+import { PlatformEnv, PRIVACY_POLICY_URL, TERMS_OF_SERVICE_URL } from '@unisat/wallet-shared';
+import {
+  useDeveloperMode,
+  useI18n,
+  useNavigation,
+  useSetDeveloperModeCallback,
+  useTools,
+  useVersionInfo
+} from '@unisat/wallet-state';
 
 export default function AboutUsScreen() {
+  const nav = useNavigation();
   const versionInfo = useVersionInfo();
   const hasUpdate = versionInfo.latestVersion && versionInfo.latestVersion !== versionInfo.currentVesion;
   const { t } = useI18n();
@@ -42,12 +48,7 @@ export default function AboutUsScreen() {
 
   return (
     <Layout>
-      <Header
-        onBack={() => {
-          window.history.go(-1);
-        }}
-        title={t('about_us')}
-      />
+      <Header onBack={() => nav.goBack()} title={t('about_us')} />
       <Content style={{ padding: 2 }}>
         <Column gap="lg" style={{ padding: spacing.small }}>
           {/* Logo Section */}
@@ -63,7 +64,7 @@ export default function AboutUsScreen() {
           {/* Version Info */}
           <Column itemsCenter>
             <Text
-              text={`${t('version')} ${VERSION}${developerMode ? ' (Dev)' : ''}`}
+              text={`${t('version')} ${PlatformEnv.VERSION}${developerMode ? ' (Dev)' : ''}`}
               preset="sub"
               color={developerMode ? 'gold' : 'textDim'}
               onClick={handleVersionTap}
@@ -86,12 +87,9 @@ export default function AboutUsScreen() {
                   whiteSpace: 'nowrap',
                   gap: 0
                 }}
-                onClick={() => window.open('https://unisat.io/extension/update')}>
+                onClick={() => nav.navToUrl('https://unisat.io/extension/update')}>
                 <Icon icon="arrowUp" size={14} />
-                <Text
-                  text={t('new_update_available')}
-                  style={{ marginLeft: 3, whiteSpace: 'nowrap', color: '#EBB94C' }}
-                />
+                <Text text={t('about_new_update')} style={{ marginLeft: 3, whiteSpace: 'nowrap', color: '#EBB94C' }} />
               </Row>
             ) : null}
           </Column>
@@ -115,7 +113,7 @@ export default function AboutUsScreen() {
                   cursor: 'pointer',
                   height: '52px'
                 }}
-                onClick={() => window.open(TERMS_OF_SERVICE_URL)}>
+                onClick={() => nav.navToUrl(TERMS_OF_SERVICE_URL)}>
                 <Row style={{ justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
                   <Text text={t('terms_of_service')} preset="regular" size="sm" style={{ color: 'white' }} />
                   <Icon icon="arrow-right" size={20} color="textDim" />
@@ -128,7 +126,7 @@ export default function AboutUsScreen() {
                   cursor: 'pointer',
                   height: '52px'
                 }}
-                onClick={() => window.open(PRIVACY_POLICY_URL)}>
+                onClick={() => nav.navToUrl(PRIVACY_POLICY_URL)}>
                 <Row style={{ justifyContent: 'space-between', width: '100%', alignItems: 'center' }}>
                   <Text text={t('privacy_policy')} preset="regular" size="sm" style={{ color: 'white' }} />
                   <Icon icon="arrow-right" size={20} color="textDim" />

@@ -1,440 +1,66 @@
-import BigNumber from 'bignumber.js';
-import { useEffect, useMemo, useState } from 'react';
+import { useMemo } from 'react';
 
-import { ChainType } from '@/shared/constant';
-import { AddressTokenSummary, BRC20HistoryItem, Inscription } from '@/shared/types';
-import { Button, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
+import { Button, Column, Content, Footer, Header, Image, Layout, Row, Text } from '@/ui/components';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { Line } from '@/ui/components/Line';
-import { Section } from '@/ui/components/Section';
 import { TabBar } from '@/ui/components/TabBar';
 import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import {
-  useBRC20MarketPlaceWebsite,
-  useChain,
-  useChainType,
-  useGetTxExplorerUrlCallback,
-  useUnisatWebsite
-} from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
-import { shortAddress, showLongNumber, useLocationState, useWallet } from '@/ui/utils';
-
-import { useNavigate } from '../MainRoute';
-
-interface LocationState {
-  ticker: string;
-}
-
-enum TabKey {
-  DETAILS = 'details',
-  HISTORY = 'history'
-}
-
-const SWAP_MODULE_ADDRESS = '6a2095ee19329a210f8d5ded9b5cfa55b74fdd3b1e9af1e202072db6d1be82d45bfd';
-const BRIDGE_BURN_ADDRESS = '6a20ada13e56859a2ab2eeb93cb4dc19c6e3f5e94d0ed38ed95a30ddc43711a0ff14';
-
-function BRC20TokenHistory(props: { ticker: string; displayName?: string }) {
-  const wallet = useWallet();
-  const { t } = useI18n();
-
-  const account = useCurrentAccount();
-
-  const [items, setItems] = useState<BRC20HistoryItem[]>([]);
-
-  const [failed, setFailed] = useState(false);
-
-  const getTxExplorerUrl = useGetTxExplorerUrlCallback();
-
-  useEffect(() => {
-    wallet
-      .getBRC20RecentHistory(account.address, props.ticker)
-      .then(setItems)
-      .catch(() => setFailed(true));
-  }, [account.address, props.ticker]);
-
-  const groupedItems = useMemo(() => {
-    const groups: { [date: string]: BRC20HistoryItem[] } = {};
-    items.forEach((item) => {
-      let time = item.blocktime;
-      if (item.blocktime == 0) {
-        time = Date.now() / 1000;
-      }
-      const date = new Date(time * 1000).toLocaleDateString();
-      if (!groups[date]) {
-        groups[date] = [];
-      }
-      groups[date].push(item);
-    });
-    return Object.entries(groups).map(([date, items]) => ({ date, items }));
-  }, [items]);
-
-  const displayItems = useMemo(() => {
-    return groupedItems.map(({ date, items }) => ({
-      date,
-      items: items
-        .map((item) => {
-          const key = item.txid + item.type;
-
-          let mainTitle = item.type;
-          let subTitle = '';
-          let icon = '';
-          let isPending = false;
-          if (item.blocktime == 0) {
-            isPending = true;
-          }
-
-          if (item.type === 'send') {
-            mainTitle = t('brc20_history_type_send');
-            subTitle = t('brc20_history_to') + ' ' + shortAddress(item.to);
-            icon = 'history_send';
-            if (item.to === SWAP_MODULE_ADDRESS) {
-              mainTitle = t('brc20_history_type_wrap');
-              subTitle = t('brc20_history_to') + ' ' + 'InSwap';
-              icon = 'history_wrap';
-            }
-          } else if (item.type === 'single-step-transfer') {
-            if (item.from === account.address) {
-              mainTitle = t('brc20_history_type_send');
-              subTitle = t('brc20_history_to') + ' ' + shortAddress(item.to);
-              icon = 'history_send';
-            } else {
-              mainTitle = t('brc20_history_type_receive');
-              subTitle = t('brc20_history_from') + ' ' + shortAddress(item.from);
-              icon = 'history_receive';
-            }
-          } else if (item.type === 'receive') {
-            mainTitle = t('brc20_history_type_receive');
-            subTitle = t('brc20_history_from') + ' ' + shortAddress(item.from);
-            icon = 'history_receive';
-          } else if (item.type === 'withdraw') {
-            mainTitle = t('brc20_history_type_unwrap');
-            subTitle = t('brc20_history_from') + ' ' + 'InSwap';
-            icon = 'history_unwrap';
-          } else if (item.type === 'inscribe-transfer') {
-            mainTitle = t('brc20_history_type_inscribe_transfer');
-            icon = 'history_inscribe';
-          } else if (item.type === 'inscribe-mint') {
-            mainTitle = t('brc20_history_type_inscribe_mint');
-            icon = 'history_inscribe';
-          } else if (item.type === 'inscribe-deploy') {
-            mainTitle = t('brc20_history_type_inscribe_deploy');
-            icon = 'history_inscribe';
-          } else {
-            return null;
-          }
-
-          const amount = item.amount;
-
-          return {
-            key,
-            icon,
-            mainTitle,
-            subTitle,
-            amount,
-            pending: isPending,
-            txid: item.txid
-          };
-        })
-        .filter((v) => v !== null)
-    }));
-  }, [t, groupedItems]);
-
-  if (failed) {
-    return (
-      <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
-        <Text text={t('load_failed')} preset="sub" />
-      </Column>
-    );
-  }
-
-  if (displayItems.length === 0) {
-    return (
-      <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
-        <Text text={t('empty')} preset="sub" />
-      </Column>
-    );
-  }
-
-  return (
-    <Column fullX>
-      {displayItems.map(({ date, items }) => (
-        <Column key={date} fullX gap="md" mb="md">
-          <Text text={date} preset="sub" />
-          {items
-            .filter((item): item is NonNullable<typeof item> => item != null)
-            .map((item) => (
-              <Row
-                key={item.key}
-                fullX
-                justifyBetween
-                justifyCenter
-                py="md"
-                style={{ borderBottomWidth: 1, borderColor: colors.border2 }}>
-                <Row itemsCenter>
-                  <Row
-                    onClick={() => {
-                      window.open(getTxExplorerUrl(item.txid));
-                    }}>
-                    <Icon icon={item.icon as any} size={32} />
-                  </Row>
-
-                  <Column>
-                    <Row style={{ alignItems: 'start' }}>
-                      <Text text={item.mainTitle} />
-
-                      {item.pending ? (
-                        <Row style={{ backgroundColor: 'rgba(244, 182, 44, 0.15)', borderRadius: 4 }} px="md" py="xs">
-                          <Text text={t('history_pending')} style={{ color: 'rgba(244, 182, 44, 0.85)' }} size="xs" />
-                        </Row>
-                      ) : null}
-                    </Row>
-
-                    <Row>
-                      <Text text={item.subTitle} preset="sub" />
-                    </Row>
-                  </Column>
-                </Row>
-
-                {item.amount !== '0' ? (
-                  <Row itemsCenter>
-                    <Text text={item.amount} />
-                    <Text text={props.displayName || props.ticker} preset="sub" />
-                  </Row>
-                ) : null}
-              </Row>
-            ))}
-        </Column>
-      ))}
-    </Column>
-  );
-}
+import { BRC20TokenScreenTabKey, useBRC20TokenScreenLogic, useNavigation } from '@unisat/wallet-state';
+import { BRC20TokenDetail } from './components/BRC20TokenDetail';
+import { BRC20TokenHistory } from './components/BRC20TokenHistory';
 
 export default function BRC20TokenScreen() {
-  const { ticker } = useLocationState<LocationState>();
-  const { t } = useI18n();
+  const nav = useNavigation();
+  const {
+    totalBalance,
+    onSwapBalance,
+    onProgBalance,
+    inWalletBalance,
+    hasOutWalletBalance,
+    enableHistory,
+    enableTrade,
+    enableMint,
+    enableTransfer,
+    loading,
+    tokenSummary,
+    deployInscription,
+    activeTab,
+    setActiveTab,
+    tabItems,
+    t,
+    ticker,
+    chain,
+    tools,
+    isBrc20Prog,
+    onClickWrapBrc20Prog,
+    onClickUnwrapBrc20Prog,
+    onClickSendBrc20Prog,
 
-  const [activeTab, setActiveTab] = useState<TabKey>(TabKey.HISTORY);
+    onClickSwapInSwap,
+    onClickWrapInSwap,
+    onClickUnwrapInSwap,
+    onClickSendInSwap,
 
-  const [tokenSummary, setTokenSummary] = useState<AddressTokenSummary>({
-    tokenBalance: {
-      ticker,
-      overallBalance: '',
-      availableBalance: '',
-      transferableBalance: '',
-      availableBalanceSafe: '',
-      availableBalanceUnSafe: '',
-      selfMint: false
-    },
-    tokenInfo: {
-      totalSupply: '',
-      totalMinted: '',
-      decimal: 18,
-      holder: '',
-      inscriptionId: '',
-      holdersCount: 0,
-      historyCount: 0,
-      logo: 'https://static.unisat.io/icon/brc20/unknown'
-    },
-    historyList: [],
-    transferableList: []
-  });
-
-  const wallet = useWallet();
-
-  const account = useCurrentAccount();
-
-  const [loading, setLoading] = useState(true);
-
-  const [deployInscription, setDeployInscription] = useState<Inscription>();
-
-  useEffect(() => {
-    wallet.getBRC20Summary(account.address, ticker).then((tokenSummary) => {
-      if (tokenSummary.tokenInfo.holder == account.address) {
-        wallet
-          .getInscriptionInfo(tokenSummary.tokenInfo.inscriptionId)
-          .then((data) => {
-            setDeployInscription(data);
-          })
-          .finally(() => {
-            setTokenSummary(tokenSummary);
-            setLoading(false);
-          });
-      } else {
-        setTokenSummary(tokenSummary);
-        setLoading(false);
-      }
-    });
-  }, []);
-
-  const navigate = useNavigate();
-
-  const unisatWebsite = useUnisatWebsite();
-
-  const enableMint = useMemo(() => {
-    let enable = false;
-    if (tokenSummary.tokenBalance.selfMint) {
-      if (tokenSummary.tokenInfo.holder == account.address) {
-        if (tokenSummary.tokenInfo.totalMinted != tokenSummary.tokenInfo.totalSupply) {
-          enable = true;
-        }
-      }
-    } else {
-      if (tokenSummary.tokenInfo.totalMinted != tokenSummary.tokenInfo.totalSupply) {
-        enable = true;
-      }
-    }
-    return enable;
-  }, [tokenSummary]);
-
-  const enableTransfer = useMemo(() => {
-    let enable = false;
-    if (tokenSummary.tokenBalance.overallBalance !== '0' && tokenSummary.tokenBalance.overallBalance !== '') {
-      enable = true;
-    }
-    return enable;
-  }, [tokenSummary]);
-
-  const tools = useTools();
-  const chainType = useChainType();
-  const chain = useChain();
-
-  const isBrc20Prog = useMemo(() => {
-    if (chainType === ChainType.BITCOIN_MAINNET || chainType === ChainType.BITCOIN_SIGNET) {
-      if (ticker.length == 6) {
-        return true;
-      }
-    }
-    return false;
-  }, [ticker, chainType]);
-
-  const enableTrade = useMemo(() => {
-    if (isBrc20Prog && chainType === ChainType.BITCOIN_MAINNET) {
-      return true;
-    }
-    if (chainType === ChainType.BITCOIN_MAINNET || chainType === ChainType.FRACTAL_BITCOIN_MAINNET) {
-      return true;
-    } else {
-      return false;
-    }
-  }, [chainType, isBrc20Prog]);
-
-  const enableHistory = isBrc20Prog ? false : true;
-
-  const marketPlaceUrl = useBRC20MarketPlaceWebsite(ticker);
-
-  const inscribePlaceUrl = useMemo(() => {
-    if (isBrc20Prog) {
-      return `${unisatWebsite}/inscribe?tab=brc20-prog&tick=${encodeURIComponent(ticker)}`;
-    }
-    return `${unisatWebsite}/inscribe?tick=${encodeURIComponent(ticker)}`;
-  }, [isBrc20Prog, ticker, unisatWebsite]);
-
-  const tabItems = useMemo(() => {
-    if (enableHistory) {
-      const items = [
-        {
-          key: TabKey.HISTORY,
-          label: t('history')
-        },
-        {
-          key: TabKey.DETAILS,
-          label: t('details')
-        }
-      ];
-      return items;
-    } else {
-      return [
-        {
-          key: TabKey.DETAILS,
-          label: t('details')
-        }
-      ];
-    }
-  }, [t, enableHistory]);
+    onClickMint,
+    onClickSend,
+    onClickTrade,
+    onClickSingleStepSend
+  } = useBRC20TokenScreenLogic();
 
   const renderTabChildren = useMemo(() => {
-    if (activeTab === TabKey.HISTORY && enableHistory) {
+    if (activeTab === BRC20TokenScreenTabKey.HISTORY && enableHistory) {
       return <BRC20TokenHistory ticker={ticker} displayName={tokenSummary?.tokenBalance?.displayName} />;
     }
 
-    if (activeTab === TabKey.DETAILS) {
-      return (
-        <Column>
-          <Column
-            gap="lg"
-            px="md"
-            py="md"
-            style={{
-              backgroundColor: 'rgba(255,255,255,0.08)',
-              borderRadius: 15,
-              borderWidth: 1,
-              borderColor: 'rgba(255,255,255,0.08)'
-            }}>
-            <Section title={t('ticker')} value={ticker} />
-            <Line />
-
-            {deployInscription ? (
-              <Section
-                title={t('deploy_inscription')}
-                value={''}
-                rightComponent={
-                  <Text
-                    text={shortAddress(deployInscription.inscriptionId, 10)}
-                    color={'gold'}
-                    preset="link"
-                    size="xs"
-                    onClick={() => {
-                      navigate('OrdinalsInscriptionScreen', { inscription: deployInscription, withSend: true });
-                    }}
-                  />
-                }
-              />
-            ) : null}
-            {deployInscription ? <Line /> : null}
-
-            <Section title={t('minted')} value={showLongNumber(tokenSummary.tokenInfo.totalMinted)} maxLength={100} />
-            <Line />
-
-            <Section title={t('supply')} value={showLongNumber(tokenSummary.tokenInfo.totalSupply)} maxLength={100} />
-            <Line />
-
-            <Section title={t('decimal')} value={tokenSummary.tokenInfo.decimal} />
-
-            <Section title={t('holders_count')} value={showLongNumber(tokenSummary.tokenInfo.holdersCount)} />
-
-            <Section title={t('history_count')} value={showLongNumber(tokenSummary.tokenInfo.historyCount)} />
-          </Column>
-        </Column>
-      );
+    if (activeTab === BRC20TokenScreenTabKey.DETAILS) {
+      return <BRC20TokenDetail ticker={ticker} tokenSummary={tokenSummary!} deployInscription={deployInscription!} />;
     }
   }, [activeTab, deployInscription, enableHistory, tokenSummary]);
 
-  const onSwapBalance = tokenSummary?.tokenBalance?.swapBalance;
-  const onProgBalance = tokenSummary?.tokenBalance?.progBalance;
-  const inWalletBalance = tokenSummary?.tokenBalance?.overallBalance;
-  const totalBalance = useMemo(() => {
-    if (!inWalletBalance) {
-      return '--';
-    }
-    return new BigNumber(inWalletBalance)
-      .plus(new BigNumber(onSwapBalance || 0))
-      .plus(new BigNumber(onProgBalance || 0))
-      .toString();
-  }, [onSwapBalance, onProgBalance, inWalletBalance]);
-
-  const hasOutWalletBalance = (onSwapBalance || onProgBalance || '0')! !== '0';
-
   return (
     <Layout>
-      <Header
-        hideLogo
-        onBack={() => {
-          window.history.go(-1);
-        }}
-      />
+      <Header hideLogo onBack={() => nav.goBack()} />
 
       {tokenSummary && (
         <Content mt="zero">
@@ -496,9 +122,7 @@ export default function BRC20TokenScreen() {
                     text={t('swap_wrap')}
                     preset="swap"
                     icon="swap_wrap"
-                    onClick={(e) => {
-                      window.open(`https://unisat.io/wrap?tick=${encodeURIComponent(ticker)}`);
-                    }}
+                    onClick={onClickWrapBrc20Prog}
                     iconSize={{
                       width: 12,
                       height: 12
@@ -509,9 +133,7 @@ export default function BRC20TokenScreen() {
                     text={t('swap_unwrap')}
                     preset="swap"
                     icon="swap_unwrap"
-                    onClick={(e) => {
-                      window.open(`https://unisat.io/wrap?action=unwrap&tick=${encodeURIComponent(ticker)}`);
-                    }}
+                    onClick={onClickUnwrapBrc20Prog}
                     iconSize={{
                       width: 12,
                       height: 12
@@ -522,9 +144,7 @@ export default function BRC20TokenScreen() {
                     text={t('swap_send')}
                     preset="swap"
                     icon="swap_send"
-                    onClick={(e) => {
-                      window.open(`https://bestinslot.xyz/brc2.0/${encodeURIComponent(ticker)}/transfer`);
-                    }}
+                    onClick={onClickSendBrc20Prog}
                     iconSize={{
                       width: 12,
                       height: 12
@@ -552,9 +172,7 @@ export default function BRC20TokenScreen() {
                     text={t('swap_swap')}
                     preset="swap"
                     icon="swap_swap"
-                    onClick={(e) => {
-                      window.open(`https://inswap.cc/swap?t0=${encodeURIComponent(ticker)}`);
-                    }}
+                    onClick={onClickSwapInSwap}
                     style={{
                       paddingTop: 5
                     }}
@@ -568,9 +186,7 @@ export default function BRC20TokenScreen() {
                     text={t('swap_wrap')}
                     preset="swap"
                     icon="swap_wrap"
-                    onClick={(e) => {
-                      window.open(`https://inswap.cc/swap?tab=deposit`);
-                    }}
+                    onClick={onClickWrapInSwap}
                     iconSize={{
                       width: 12,
                       height: 12
@@ -581,9 +197,7 @@ export default function BRC20TokenScreen() {
                     text={t('swap_unwrap')}
                     preset="swap"
                     icon="swap_unwrap"
-                    onClick={(e) => {
-                      window.open(`https://inswap.cc/swap?tab=withdraw&t=${encodeURIComponent(ticker)}`);
-                    }}
+                    onClick={onClickUnwrapInSwap}
                     iconSize={{
                       width: 12,
                       height: 12
@@ -594,9 +208,7 @@ export default function BRC20TokenScreen() {
                     text={t('swap_send')}
                     preset="swap"
                     icon="swap_send"
-                    onClick={(e) => {
-                      window.open(`https://inswap.cc/swap/assets/account`);
-                    }}
+                    onClick={onClickSendInSwap}
                     iconSize={{
                       width: 12,
                       height: 12
@@ -609,12 +221,12 @@ export default function BRC20TokenScreen() {
           ) : null}
 
           <TabBar
-            defaultActiveKey={enableHistory ? activeTab : TabKey.DETAILS}
-            activeKey={enableHistory ? activeTab : TabKey.DETAILS}
+            defaultActiveKey={enableHistory ? activeTab : BRC20TokenScreenTabKey.DETAILS}
+            activeKey={enableHistory ? activeTab : BRC20TokenScreenTabKey.DETAILS}
             items={tabItems}
             preset="style3"
             onTabClick={(key) => {
-              setActiveTab(key as TabKey);
+              setActiveTab(key as BRC20TokenScreenTabKey);
             }}
           />
 
@@ -634,9 +246,7 @@ export default function BRC20TokenScreen() {
               style={!enableMint ? { backgroundColor: 'rgba(255,255,255,0.15)' } : {}}
               disabled={!enableMint}
               icon="pencil"
-              onClick={(e) => {
-                window.open(inscribePlaceUrl);
-              }}
+              onClick={onClickMint}
               full
             />
 
@@ -645,12 +255,7 @@ export default function BRC20TokenScreen() {
               preset="brc20-action"
               icon="send"
               disabled={!enableTransfer}
-              onClick={(e) => {
-                navigate('BRC20SendScreen', {
-                  tokenBalance: tokenSummary.tokenBalance,
-                  tokenInfo: tokenSummary.tokenInfo
-                });
-              }}
+              onClick={onClickSend}
               style={{
                 width: chain.enableBrc20SingleStep && !enableTrade ? '75px' : 'auto'
               }}
@@ -661,9 +266,8 @@ export default function BRC20TokenScreen() {
               text={t('trade')}
               preset="brc20-action"
               icon="trade"
-              onClick={(e) => {
-                window.open(marketPlaceUrl);
-              }}
+              disabled={!enableTrade}
+              onClick={onClickTrade}
               full
             />
           </Row>
@@ -689,12 +293,7 @@ export default function BRC20TokenScreen() {
                 color: 'black'
               }}
               disabled={!enableTransfer}
-              onClick={(e) => {
-                navigate('BRC20SingleStepScreen', {
-                  tokenBalance: tokenSummary.tokenBalance,
-                  tokenInfo: tokenSummary.tokenInfo
-                });
-              }}
+              onClick={onClickSingleStepSend}
             />
           ) : null}
         </Column>

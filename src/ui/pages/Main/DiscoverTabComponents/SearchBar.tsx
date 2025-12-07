@@ -1,10 +1,9 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { Column, Input, Row, Spin, Text } from '@/ui/components';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useChain } from '@/ui/state/settings/hooks';
-import { shortAddress, useWallet } from '@/ui/utils';
+import { shortAddress } from '@/ui/utils';
 import { EnterOutlined } from '@ant-design/icons';
+import { useChain, useI18n, useWallet } from '@unisat/wallet-state';
 
 const p2pkhRegex = /^(1[a-km-zA-HJ-NP-Z1-9]{25,34})$/;
 const p2shRegex = /^(3[a-km-zA-HJ-NP-Z1-9]{25,34})$/;
@@ -125,20 +124,19 @@ export function SearchBar() {
       searchContent: (
         <Column py={'lg'} px={'lg'} gap={'lg'}>
           <Row justifyBetween itemsCenter>
-            <Text text={t('transactions_24h')} preset={'sub'} size={'sm'} style={{ whiteSpace: 'nowrap' }} />
+            <Text text={t('uniscan_transactions_24h')} preset={'sub'} size={'sm'} style={{ whiteSpace: 'nowrap' }} />
             {!info ? <Spin size={'small'} /> : <Text text={info.allTransactions} digital />}
           </Row>
           <Row justifyBetween itemsCenter>
-            <Text text={t('active_addresses_24h')} preset={'sub'} size={'sm'} style={{ whiteSpace: 'nowrap' }} />
+            <Text
+              text={t('uniscan_active_addresses_24h')}
+              preset={'sub'}
+              size={'sm'}
+              style={{ whiteSpace: 'nowrap' }}
+            />
             {!info ? <Spin size={'small'} /> : <Text text={info.allAddrs} digital />}{' '}
           </Row>
-          <Text
-            text={t('go_to_unisat_explorer')}
-            size={'xs'}
-            selfItemsCenter
-            color={'primary'}
-            onClick={gotoExplorer}
-          />
+          <Text text={t('uniscan_goto')} size={'xs'} selfItemsCenter color={'primary'} onClick={gotoExplorer} />
         </Column>
       ),
       onSearch: gotoExplorer

@@ -4,7 +4,6 @@ import { useLocation } from 'react-router-dom';
 import { AddressType, RestoreWalletType } from '@/shared/types';
 import { Content, Header, Layout, Row } from '@/ui/components';
 import { TabBar } from '@/ui/components/TabBar';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { Step0 } from '@/ui/pages/Account/createHDWalletComponents/Step0';
 import { Step1_Create } from '@/ui/pages/Account/createHDWalletComponents/Step1_Create';
 import { Step1_Import } from '@/ui/pages/Account/createHDWalletComponents/Step1_Import';
@@ -15,6 +14,7 @@ import {
   UpdateContextDataParams,
   WordsType
 } from '@/ui/pages/Account/createHDWalletComponents/types';
+import { useI18n } from '@unisat/wallet-state';
 
 import { useNavigate } from '../MainRoute';
 

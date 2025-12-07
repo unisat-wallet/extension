@@ -1,9 +1,9 @@
 import BigNumber from 'bignumber.js';
 
-import { runesUtils } from '@/shared/lib/runes-utils';
 import { DecodedPsbt } from '@/shared/types';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
+import { bnUtils } from '@unisat/base-utils';
+import { useI18n } from '@unisat/wallet-state';
 
 import { Column } from '../Column';
 import { Icon } from '../Icon';
@@ -121,7 +121,7 @@ export const RunesBurningList = ({ decodedPsbt, onClose }: { decodedPsbt: Decode
                 <Text text={burn.spacedRune} />
               </Row>
 
-              <Text text={`${runesUtils.toDecimalAmount(burn.amount, burn.divisibility)} ${burn.symbol}`} />
+              <Text text={`${bnUtils.toDecimalAmount(burn.amount, burn.divisibility)} ${burn.symbol}`} />
             </Row>
           );
         })}

@@ -1,13 +1,12 @@
 import QRCode from 'qrcode.react';
 import { useCallback, useEffect, useState } from 'react';
 
-import { ChainType } from '@/shared/constant';
 import { Button, Card, Column, Icon, Row, Text } from '@/ui/components';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
-import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 import { BBQREncoder } from '@unisat/animated-qr';
+import { useI18n, useWallet } from '@unisat/wallet-state';
+import { ChainType } from '@unisat/wallet-types';
 
 interface TransactionQRDisplayProps {
   psbtHex: string;

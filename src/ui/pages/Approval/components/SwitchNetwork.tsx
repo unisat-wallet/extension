@@ -1,10 +1,8 @@
-import { NETWORK_TYPES } from '@/shared/constant';
-import { NetworkType } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import WebsiteBar from '@/ui/components/WebsiteBar';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useNetworkType } from '@/ui/state/settings/hooks';
-import { useApproval } from '@/ui/utils';
+import { NETWORK_TYPES } from '@unisat/wallet-shared';
+import { useApproval, useI18n, useNetworkType } from '@unisat/wallet-state';
+import { NetworkType } from '@unisat/wallet-types';
 
 interface Props {
   params: {
@@ -25,7 +23,7 @@ export default function SwitchNetwork({ params: { data, session } }: Props) {
   const to = NETWORK_TYPES[data.networkType];
   const { t } = useI18n();
 
-  const [getApproval, resolveApproval, rejectApproval] = useApproval();
+  const { resolveApproval, rejectApproval } = useApproval();
 
   const handleCancel = () => {
     rejectApproval(t('user_rejected_the_request'));

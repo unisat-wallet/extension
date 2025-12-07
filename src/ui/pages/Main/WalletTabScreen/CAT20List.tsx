@@ -2,16 +2,19 @@ import { useEffect, useState } from 'react';
 
 import { CAT20Balance, CAT_VERSION, TickPriceItem } from '@/shared/types';
 import { Column, Row } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import { CAT20BalanceCard } from '@/ui/components/CAT20BalanceCard';
 import { Empty } from '@/ui/components/Empty';
 import { Pagination } from '@/ui/components/Pagination';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useChain, useChainType } from '@/ui/state/settings/hooks';
-import { useSupportedAssets } from '@/ui/state/ui/hooks';
-import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
+import {
+  useChain,
+  useChainType,
+  useCurrentAccount,
+  useI18n,
+  useSupportedAssets,
+  useTools,
+  useWallet
+} from '@unisat/wallet-state';
 
 import { useNavigate } from '../../MainRoute';
 

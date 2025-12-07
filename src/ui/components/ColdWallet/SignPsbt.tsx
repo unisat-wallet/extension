@@ -1,11 +1,10 @@
 import { useCallback, useEffect, useState } from 'react';
 
-import { ChainType } from '@/shared/constant';
 import { Button, Column, Row, Text } from '@/ui/components';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useWallet } from '@/ui/utils';
 import { BBQREncoder } from '@unisat/animated-qr';
+import { useI18n, useWallet } from '@unisat/wallet-state';
 
+import { ChainType } from '@unisat/wallet-types';
 import ColdWalletScan from './Scan';
 import TransactionQRDisplay from './TransactionQRDisplay';
 
@@ -69,7 +68,7 @@ export default function ColdWalletSignPsbt({ psbtHex, onSuccess, onCancel, heade
       const encoder = new BBQREncoder();
       const dataString = JSON.stringify(signRequest);
 
-      console.log('Encoding sign request data:', dataString.length, 'chars');
+      // console.log('Encoding sign request data:', dataString.length, 'chars');
 
       try {
         const encodedParts = encoder.encode(dataString, 'transaction', {
@@ -78,12 +77,12 @@ export default function ColdWalletSignPsbt({ psbtHex, onSuccess, onCancel, heade
         });
 
         if (encodedParts.length > 1) {
-          console.log(`Split into ${encodedParts.length} parts using BBQR protocol`);
+          // console.log(`Split into ${encodedParts.length} parts using BBQR protocol`);
           setQrParts(encodedParts);
           setIsMultiPart(true);
           setQrData('');
         } else {
-          console.log('Data fits in single QR code');
+          // console.log('Data fits in single QR code');
           setQrData(encodedParts[0]);
           setIsMultiPart(false);
           setQrParts([]);
@@ -107,7 +106,7 @@ export default function ColdWalletSignPsbt({ psbtHex, onSuccess, onCancel, heade
   const handleSignResult = useCallback(
     (data: SignResponse) => {
       if (data.signedPsbtHex) {
-        console.log('Sign result received:', data.requestId);
+        // console.log('Sign result received:', data.requestId);
         onSuccess(data.signedPsbtHex);
       } else {
         console.error('Invalid sign response:', data);
@@ -138,7 +137,7 @@ export default function ColdWalletSignPsbt({ psbtHex, onSuccess, onCancel, heade
           <ColdWalletScan
             onSucceed={(data: any) => {
               try {
-                console.log('SignPsbt received scan data:', data);
+                // console.log('SignPsbt received scan data:', data);
 
                 // Handle different data types returned by UniversalDecoder
                 if (data && typeof data === 'object') {

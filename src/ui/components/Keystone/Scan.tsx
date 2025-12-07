@@ -1,9 +1,9 @@
 import { useCallback, useState } from 'react';
 
-import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 import { CameraOutlined } from '@ant-design/icons';
 import { useAnimatedQRScanner } from '@keystonehq/animated-qr';
+import { useI18n } from '@unisat/wallet-state';
 
 import { Progress } from '../Progress';
 import KeystonePopover from './Popover';

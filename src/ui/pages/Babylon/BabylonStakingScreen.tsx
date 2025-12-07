@@ -1,19 +1,16 @@
 import React, { useEffect, useMemo, useState } from 'react';
 
-import { ChainType } from '@/shared/constant';
-import { runesUtils } from '@/shared/lib/runes-utils';
 import { BabylonAddressSummary } from '@/shared/types';
-import { Button, Column, Content, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
-import { Loading } from '@/ui/components/ActionComponent/Loading';
+import { Button, Column, Content, Header, Icon, Image, Layout, Loading, Row, Text } from '@/ui/components';
 import { CopyableAddress } from '@/ui/components/CopyableAddress';
 import { Popover } from '@/ui/components/Popover';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useBabylonConfig, useChain, useChainType } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
-import { satoshisToAmount, useWallet } from '@/ui/utils';
+import { satoshisToAmount } from '@/ui/utils';
 import { BabylonConfigV2, BabylonPhaseState, COSMOS_CHAINS_MAP } from '@unisat/babylon-service/types';
+import { bnUtils } from '@unisat/base-utils';
+import { useBabylonConfig, useChain, useChainType, useI18n, useTools, useWallet } from '@unisat/wallet-state';
 
+import { ChainType } from '@unisat/wallet-types';
 import { useNavigate } from '../MainRoute';
 
 const formatter = Intl.NumberFormat('en', {
@@ -400,11 +397,11 @@ export default function BabylonStakingScreen() {
   const tools = useTools();
 
   const formattedBalance = useMemo(() => {
-    return runesUtils.toDecimalAmount(babylonAddressSummary.balance.amount, babylonChain.stakeCurrency.coinDecimals);
+    return bnUtils.toDecimalAmount(babylonAddressSummary.balance.amount, babylonChain.stakeCurrency.coinDecimals);
   }, [babylonAddressSummary.balance.amount, babylonChain.stakeCurrency.coinDecimals]);
 
   const formattedRewardBalance = useMemo(() => {
-    return runesUtils.toDecimalAmount(
+    return bnUtils.toDecimalAmount(
       babylonAddressSummary.rewardBalance.toString(),
       babylonChain.stakeCurrency.coinDecimals
     );

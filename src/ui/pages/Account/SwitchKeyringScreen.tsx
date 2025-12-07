@@ -3,17 +3,21 @@ import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 
 import { WalletKeyring } from '@/shared/types';
 import { Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import { RemoveWalletPopover } from '@/ui/components/RemoveWalletPopover';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { accountActions } from '@/ui/state/accounts/reducer';
-import { useAppDispatch } from '@/ui/state/hooks';
-import { useCurrentKeyring, useKeyrings } from '@/ui/state/keyrings/hooks';
-import { keyringsActions } from '@/ui/state/keyrings/reducer';
 import { colors } from '@/ui/theme/colors';
-import { shortAddress, useWallet } from '@/ui/utils';
+import { shortAddress } from '@/ui/utils';
 import { DeleteOutlined, EditOutlined, KeyOutlined, PlusCircleOutlined, SettingOutlined } from '@ant-design/icons';
 import { KeyringType } from '@unisat/keyring-service/types';
+import {
+  accountActions,
+  keyringsActions,
+  useAppDispatch,
+  useCurrentKeyring,
+  useI18n,
+  useKeyrings,
+  useTools,
+  useWallet
+} from '@unisat/wallet-state';
 
 import { useNavigate } from '../MainRoute';
 

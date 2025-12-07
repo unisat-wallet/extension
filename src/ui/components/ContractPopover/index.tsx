@@ -1,5 +1,5 @@
 import { ContractResult } from '@/shared/types';
-import { useI18n } from '@/ui/hooks/useI18n';
+import { useI18n } from '@unisat/wallet-state';
 
 import { Button } from '../Button';
 import { Column } from '../Column';

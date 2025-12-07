@@ -1,11 +1,11 @@
 import { ReactEventHandler } from 'react';
 
 import { AddressAssets } from '@/shared/types';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useBTCUnit, useChain } from '@/ui/state/settings/hooks';
 import { fontSizes } from '@/ui/theme/font';
-import { satoshisToBTC } from '@/ui/utils';
+import { useBTCUnit, useChain, useI18n } from '@unisat/wallet-state';
 
+import { IMAGE_SOURCE_MAP } from '@/shared/constant';
+import { numUtils } from '@unisat/base-utils';
 import { Card } from '../Card';
 import { Column } from '../Column';
 import { CopyableAddress } from '../CopyableAddress';
@@ -43,7 +43,7 @@ export function AddressTypeCard(props: AddressTypeCardProps) {
         {hasVault && (
           <Row justifyBetween bg="bg3" roundedBottom px="md" py="md">
             <Row justifyCenter>
-              <Image src={chain.icon} size={fontSizes.iconMiddle} />
+              <Image src={IMAGE_SOURCE_MAP[chain.icon]} size={fontSizes.iconMiddle} />
               <Text text={`${assets.total_btc} ${btcUnit}`} color="yellow" />
             </Row>
             <Row>
@@ -93,7 +93,7 @@ export function AddressTypeCard2(props: AddressTypeCardProp2) {
             {v.satoshis > 0 && (
               <Row justifyCenter gap="zero" itemsCenter>
                 <Icon icon="btc" size={fontSizes.iconMiddle} />
-                <Text text={`${satoshisToBTC(v.satoshis)} ${btcUnit}`} color="yellow" size="xxxs" />
+                <Text text={`${numUtils.satoshisToAmount(v.satoshis)} ${btcUnit}`} color="yellow" size="xxxs" />
               </Row>
             )}
           </Row>

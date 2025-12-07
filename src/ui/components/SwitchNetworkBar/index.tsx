@@ -1,8 +1,9 @@
 import { useState } from 'react';
 
 import { SwitchChainModal } from '@/ui/pages/Settings/SwitchChainModal';
-import { useChain } from '@/ui/state/settings/hooks';
+import { useChain } from '@unisat/wallet-state';
 
+import { IMAGE_SOURCE_MAP } from '@/shared/constant';
 import { Card } from '../Card';
 import { Icon } from '../Icon';
 import { Image } from '../Image';
@@ -29,7 +30,7 @@ export function SwitchNetworkBar() {
         onClick={() => {
           setSwitchChainModalVisible(true);
         }}>
-        <Image src={chain.icon} size={22} style={{}} />
+        <Image src={IMAGE_SOURCE_MAP[chain.icon]} size={22} style={{}} />
         <Text text={chain.iconLabel} color="white" size="xs" />
         <Icon icon="down" color="textDim" size={10} />
       </Row>

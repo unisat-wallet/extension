@@ -1,38 +1,43 @@
 import React, { useEffect, useMemo, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 
-import { ADDRESS_TYPES, FEEDBACK_URL, REVIEW_URL } from '@/shared/constant';
 import { Button, Card, Column, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import { Icon } from '@/ui/components/Icon';
-import { getCurrentTab, useExtensionIsInTab, useOpenExtensionInTab } from '@/ui/features/browser/tabs';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { SwitchChainModal } from '@/ui/pages/Settings/SwitchChainModal';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { useChain, useVersionInfo } from '@/ui/state/settings/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { spacing } from '@/ui/theme/spacing';
-import { useWallet } from '@/ui/utils';
-import { KeyringType } from '@unisat/keyring-service/types';
+import { getCurrentTab, useOpenExtensionInTab } from '@/ui/web/tabs';
+import { ADDRESS_TYPES, KeyringType } from '@unisat/keyring-service/types';
+import {
+  useChain,
+  useCurrentAccount,
+  useCurrentKeyring,
+  useDevice,
+  useI18n,
+  useNavigation,
+  useTools,
+  useVersionInfo,
+  useWallet
+} from '@unisat/wallet-state';
 
+import { FEEDBACK_URL, PlatformEnv } from '@unisat/wallet-shared';
 import { getSettingsList } from './const';
 import { SettingsAction, SettingsItemType } from './types';
 
 export function SettingsList() {
-  const navigate = useNavigate();
+  const nav = useNavigation();
   const currentKeyring = useCurrentKeyring();
   const currentAccount = useCurrentAccount();
   const chain = useChain();
   const wallet = useWallet();
   const tools = useTools();
   const openExtensionInTab = useOpenExtensionInTab();
-  const isInTab = useExtensionIsInTab();
   const [connected, setConnected] = useState(false);
   const [switchChainModalVisible, setSwitchChainModalVisible] = useState(false);
   const versionInfo = useVersionInfo();
   const hasUpdate = versionInfo.latestVersion && versionInfo.latestVersion !== versionInfo.currentVesion;
   const { t } = useI18n();
+
+  const { isExtensionInExpandView } = useDevice();
 
   useEffect(() => {
     const run = async () => {
@@ -60,7 +65,7 @@ export function SettingsList() {
   }, [currentKeyring]);
 
   const toRenderSettings = useMemo(() => {
-    return getSettingsList().filter((v) => {
+    return getSettingsList(t).filter((v) => {
       if (v.action === SettingsAction.MANAGE_WALLET) {
         v.value = currentKeyring.alianName;
       }
@@ -88,14 +93,14 @@ export function SettingsList() {
       }
 
       if (v.action === SettingsAction.EXPAND_VIEW) {
-        if (isInTab) {
+        if (isExtensionInExpandView) {
           return false;
         }
       }
 
       return true;
     });
-  }, [connected, currentKeyring, currentAccount, chain, isInTab, hasUpdate, t]);
+  }, [connected, currentKeyring, currentAccount, chain, isExtensionInExpandView, hasUpdate, t]);
 
   const onClick = (item: SettingsItemType) => {
     if (item.action === SettingsAction.EXPAND_VIEW) {
@@ -108,7 +113,7 @@ export function SettingsList() {
       // Add small delay to ensure lock state updates before navigation
       // Prevents race condition where unlock screen might redirect back to main
       setTimeout(() => {
-        navigate('/account/unlock');
+        nav.navigate('/account/unlock');
       }, 10);
       return;
     }
@@ -122,7 +127,7 @@ export function SettingsList() {
         tools.showTip(t('the_wallet_currently_uses_a_custom_hd_path_and_does_not_support_switching_address_types'));
         return;
       }
-      navigate('/settings/address-type');
+      nav.navigate('/settings/address-type');
       return;
     }
     if (item.action === SettingsAction.FEEDBACK) {
@@ -135,10 +140,10 @@ export function SettingsList() {
       return;
     }
     if (item.action === SettingsAction.RATE_US) {
-      window.open(REVIEW_URL);
+      window.open(PlatformEnv.REVIEW_URL);
       return;
     }
-    navigate(item.route);
+    nav.navigate(item.route);
   };
 
   const renderSettingsItem = (item: SettingsItemType, groupTop: boolean, groupBottom: boolean) => (

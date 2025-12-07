@@ -1,25 +1,26 @@
 import { useCallback } from 'react';
-import { useLocation } from 'react-router-dom';
 
 import { Button, Column, Content, Header, Layout, Text } from '@/ui/components';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 import { ScanOutlined } from '@ant-design/icons';
+import { useI18n, useNavigation } from '@unisat/wallet-state';
 
-import { useNavigate } from '../../../MainRoute';
 import { Step1Props } from '../types';
 
 export default function Step1({ onNext }: Step1Props) {
-  const { state } = useLocation();
-  const navigate = useNavigate();
   const { t } = useI18n();
+
+  const nav = useNavigation();
+  const state = nav.getRouteState<{
+    fromUnlock: boolean;
+  }>();
 
   const onBack = useCallback(() => {
     if (state && state.fromUnlock) {
-      return navigate('WelcomeScreen');
+      return nav.navigate('WelcomeScreen');
     }
-    window.history.go(-1);
-  }, [state, navigate]);
+    nav.goBack();
+  }, [state]);
 
   return (
     <Layout style={{ backgroundColor: colors.background }}>
@@ -38,8 +39,7 @@ export default function Step1({ onNext }: Step1Props) {
               justifyContent: 'center',
               marginBottom: '24px',
               border: `2px solid ${colors.border2}`
-            }}
-          >
+            }}>
             <ScanOutlined
               style={{
                 fontSize: '48px',
@@ -81,8 +81,7 @@ export default function Step1({ onNext }: Step1Props) {
               width: '100%',
               marginBottom: '32px',
               border: `1px solid ${colors.border2}`
-            }}
-          >
+            }}>
             <Text
               text={t('Quick Setup:')}
               style={{
@@ -123,8 +122,7 @@ export default function Step1({ onNext }: Step1Props) {
             }}
             onClick={() => {
               onNext();
-            }}
-          >
+            }}>
             <ScanOutlined style={{ marginRight: '8px', fontSize: '18px', color: colors.black }} />
             <Text text={t('Scan QR Code')} style={{ color: colors.black, fontWeight: 'bold' }} />
           </Button>

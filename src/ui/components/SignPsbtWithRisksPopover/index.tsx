@@ -1,8 +1,8 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { DecodedPsbt, Risk, RiskType } from '@/shared/types';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
+import { useI18n } from '@unisat/wallet-state';
 
 import { Button } from '../Button';
 import { Column } from '../Column';

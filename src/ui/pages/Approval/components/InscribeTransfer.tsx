@@ -1,7 +1,6 @@
-import BigNumber from 'bignumber.js';
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 
-import { InscribeOrder, RawTxInfo, TokenBalance, TokenInfo, TxType } from '@/shared/types';
+import { InscribeOrder, RawTxInfo, TokenBalance, TokenInfo } from '@/shared/types';
 import {
   Button,
   Card,
@@ -12,35 +11,31 @@ import {
   Icon,
   Input,
   Layout,
+  Loading,
   Row,
   Text,
   Tooltip
 } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
-import { Loading } from '@/ui/components/ActionComponent/Loading';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { Empty } from '@/ui/components/Empty';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { OutputValueBar } from '@/ui/components/OutputValueBar';
-import { RBFBar } from '@/ui/components/RBFBar';
 import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
 import WebsiteBar from '@/ui/components/WebsiteBar';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useBTCUnit, useNetworkType } from '@/ui/state/settings/hooks';
-import {
-  useFetchUtxosCallback,
-  usePrepareSendBypassHeadOffsetsCallback,
-  usePushBitcoinTxCallback
-} from '@/ui/state/transactions/hooks';
 import { fontSizes } from '@/ui/theme/font';
 import { spacing } from '@/ui/theme/spacing';
-import { amountToSatoshis, satoshisToAmount, useApproval, useLocationState, useWallet } from '@/ui/utils';
-import { getAddressUtxoDust } from '@/ui/utils/bitcoin-utils';
+import { amountToSatoshis } from '@/ui/utils';
+import {
+  BRC20InscribeTransferParams,
+  useBRC20InscribeTransferLogic,
+  useBRC20InscribeTransferLogicStep1,
+  useBRC20InscribeTransferLogicStep2,
+  useBRC20InscribeTransferLogicStep3,
+  useBRC20InscribeTransferLogicStep4
+} from '@unisat/wallet-state';
 
-import { useNavigate } from '../../MainRoute';
 import SignPsbt from './SignPsbt';
 
 interface Props {
@@ -105,180 +100,48 @@ export default function InscribeTransfer({ params: { data, session } }: Props) {
   );
 
   if (contextData.step === Step.STEP1) {
-    return <InscribeTransferStep contextData={contextData} updateContextData={updateContextData} />;
+    return <Step1 contextData={contextData} updateContextData={updateContextData} />;
   } else if (contextData.step === Step.STEP2) {
-    return <InscribeConfirmStep contextData={contextData} updateContextData={updateContextData} />;
+    return <Step2 contextData={contextData} updateContextData={updateContextData} />;
   } else if (contextData.step === Step.STEP3) {
-    return <InscribeSignStep contextData={contextData} updateContextData={updateContextData} />;
+    return <Step3 contextData={contextData} updateContextData={updateContextData} />;
   } else {
-    return <InscribeResultStep contextData={contextData} updateContextData={updateContextData} />;
+    return <Step4 contextData={contextData} updateContextData={updateContextData} />;
   }
-}
-
-interface LocationState {
-  ticker: string;
 }
 
 export function InscribeTransferScreen() {
-  const { ticker } = useLocationState<LocationState>();
-
-  const [contextData, setContextData] = useState<ContextData>({
-    step: Step.STEP1,
-    ticker: ticker,
-    isApproval: false
-  });
-  const updateContextData = useCallback(
-    (params: UpdateContextDataParams) => {
-      setContextData(Object.assign({}, contextData, params));
-    },
-    [contextData, setContextData]
-  );
+  const { contextData, updateContextData } = useBRC20InscribeTransferLogic();
 
   if (contextData.step === Step.STEP1) {
-    return <InscribeTransferStep contextData={contextData} updateContextData={updateContextData} />;
+    return <Step1 contextData={contextData} updateContextData={updateContextData} />;
   } else if (contextData.step === Step.STEP2) {
-    return <InscribeConfirmStep contextData={contextData} updateContextData={updateContextData} />;
+    return <Step2 contextData={contextData} updateContextData={updateContextData} />;
   } else if (contextData.step === Step.STEP3) {
-    return <InscribeSignStep contextData={contextData} updateContextData={updateContextData} />;
+    return <Step3 contextData={contextData} updateContextData={updateContextData} />;
   } else {
-    return <InscribeResultStep contextData={contextData} updateContextData={updateContextData} />;
+    return <Step4 contextData={contextData} updateContextData={updateContextData} />;
   }
 }
 
-interface StepProps {
-  contextData: ContextData;
-  updateContextData: (params: UpdateContextDataParams) => void;
-}
-
-function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
-  const networkType = useNetworkType();
-  const [getApproval, resolveApproval, rejectApproval] = useApproval();
-  const { t } = useI18n();
-
-  const handleCancel = () => {
-    rejectApproval(t('user_rejected_the_request'));
-  };
-
-  const wallet = useWallet();
-  const account = useCurrentAccount();
-  const [feeRate, setFeeRate] = useState(5);
-  const [inputAmount, setInputAmount] = useState('');
-
-  const tools = useTools();
-  const prepareSendBypassHeadOffsets = usePrepareSendBypassHeadOffsetsCallback();
-
-  const fetchUtxos = useFetchUtxosCallback();
-
-  const [inputError, setInputError] = useState('');
-  const [outputValueError, setOutputValueError] = useState('');
-
-  const [disabled, setDisabled] = useState(true);
-
-  const [inputDisabled, setInputDisabled] = useState(false);
-
-  const defaultOutputValue = 546; //getAddressUtxoDust(account.address);
-
-  const [outputValue, setOutputValue] = useState<number>(defaultOutputValue);
-
-  const [enableRBF, setEnableRBF] = useState(false);
-
-  useEffect(() => {
-    if (contextData.amount) {
-      setInputAmount(contextData.amount.toString());
-      setInputDisabled(!contextData.amountEditable);
-    }
-  }, []);
-
-  useEffect(() => {
-    setInputError('');
-    setOutputValueError('');
-    setDisabled(true);
-    if (inputAmount.split('.').length > 1) {
-      const decimal = inputAmount.split('.')[1].length;
-      const token_decimal = contextData.tokenInfo?.decimal || 0;
-      if (decimal > token_decimal) {
-        setInputError(`${t('this_token_only_supports_up_to')} ${token_decimal} ${t('decimal_places')}.`);
-        return;
-      }
-    }
-
-    if (!inputAmount) {
-      return;
-    }
-
-    const amount = new BigNumber(inputAmount);
-    if (!amount) {
-      return;
-    }
-
-    if (!contextData.tokenBalance) {
-      return;
-    }
-
-    if (amount.lte(0)) {
-      return;
-    }
-
-    if (amount.gt(contextData.tokenBalance.availableBalanceSafe)) {
-      setInputError(t('insufficient_balance'));
-      return;
-    }
-
-    if (feeRate <= 0) {
-      return;
-    }
-
-    const dust = getAddressUtxoDust(account.address);
-    if (outputValue < dust) {
-      setOutputValueError(`${t('output_value_must_be_at_least')} ${dust}`);
-      return;
-    }
-
-    if (!outputValue) {
-      return;
-    }
-
-    setDisabled(false);
-  }, [inputAmount, feeRate, outputValue, contextData.tokenBalance]);
-
-  useEffect(() => {
-    fetchUtxos();
-    wallet
-      .getBRC20Summary(account.address, contextData.ticker)
-      .then((v) => {
-        updateContextData({ tokenBalance: v.tokenBalance, tokenInfo: v.tokenInfo });
-      })
-      .catch((e) => {
-        tools.toastError(e.message);
-      });
-  }, []);
-
-  const onClickInscribe = async () => {
-    try {
-      tools.showLoading(true);
-      const amount = inputAmount;
-      const order = await wallet.inscribeBRC20Transfer(
-        account.address,
-        contextData.ticker,
-        amount,
-        feeRate,
-        outputValue
-      );
-
-      const rawTxInfo = await prepareSendBypassHeadOffsets({
-        toAddressInfo: { address: order.payAddress, domain: '' },
-        toAmount: order.totalFee,
-        feeRate: feeRate
-      });
-
-      updateContextData({ order, amount, rawTxInfo, step: Step.STEP2 });
-    } catch (e) {
-      console.log(e);
-      tools.toastError((e as Error).message);
-    } finally {
-      tools.showLoading(false);
-    }
-  };
+function Step1(params: BRC20InscribeTransferParams) {
+  const { contextData, updateContextData } = params;
+  const {
+    onClickInscribe,
+    loading,
+    t,
+    nav,
+    inputAmount,
+    inputError,
+    setInputAmount,
+    inputDisabled,
+    inputErrorAvailable,
+    defaultOutputValue,
+    setOutputValue,
+    disabled,
+    loadingOnly,
+    handleCancel
+  } = useBRC20InscribeTransferLogicStep1(params);
 
   const { tokenBalance } = contextData;
 
@@ -381,24 +244,10 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
                   setOutputValue(val);
                 }}
               />
-              {outputValueError && <Text text={outputValueError} color="error" />}
             </Column>
 
             <Column>
-              <Text text={t('fee_rate')} color="textDim" />
-              <FeeRateBar
-                onChange={(val) => {
-                  setFeeRate(val);
-                }}
-              />
-            </Column>
-
-            <Column mt="lg">
-              <RBFBar
-                onChange={(val) => {
-                  setEnableRBF(val);
-                }}
-              />
+              <FeeRateBar />
             </Column>
           </Column>
         </Column>
@@ -422,23 +271,25 @@ function InscribeTransferStep({ contextData, updateContextData }: StepProps) {
   );
 }
 
-function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
-  const { order, tokenBalance, amount, rawTxInfo, session } = contextData;
-  const btcUnit = useBTCUnit();
-  const { t } = useI18n();
+function Step2(params: BRC20InscribeTransferParams) {
+  const { contextData, updateContextData } = params;
+  const {
+    t,
+    btcUnit,
+    networkFee,
+    outputValue,
+    minerFee,
+    serviceFee,
+    originServiceFee,
+    isEmpty,
+    amount,
+    tokenBalance,
+    totalFee
+  } = useBRC20InscribeTransferLogicStep2(params);
 
-  if (!order || !tokenBalance || !rawTxInfo) {
+  if (isEmpty) {
     return <Empty />;
   }
-
-  const fee = rawTxInfo.fee || 0;
-  const networkFee = useMemo(() => satoshisToAmount(fee), [fee]);
-  const outputValue = useMemo(() => satoshisToAmount(order.outputValue), [order.outputValue]);
-  const minerFee = useMemo(() => satoshisToAmount(order.minerFee + fee), [order.minerFee]);
-  const originServiceFee = useMemo(() => satoshisToAmount(order.originServiceFee), [order.originServiceFee]);
-  const serviceFee = useMemo(() => satoshisToAmount(order.serviceFee), [order.serviceFee]);
-  const totalFee = useMemo(() => satoshisToAmount(order.totalFee + fee), [order.totalFee]);
-
   return (
     <Layout>
       {contextData.isApproval ? (
@@ -571,15 +422,9 @@ function InscribeConfirmStep({ contextData, updateContextData }: StepProps) {
   );
 }
 
-function InscribeSignStep({
-  contextData,
-  updateContextData
-}: {
-  contextData: ContextData;
-  updateContextData: (params: UpdateContextDataParams) => void;
-}) {
-  const pushBitcoinTx = usePushBitcoinTxCallback();
-  const navigate = useNavigate();
+function Step3(params: BRC20InscribeTransferParams) {
+  const { contextData } = params;
+  const { onHeaderBack, signPsbtParams, onSignPsbtHandleConfirm } = useBRC20InscribeTransferLogicStep3(params);
   return (
     <SignPsbt
       header={
@@ -588,99 +433,22 @@ function InscribeSignStep({
             <WebsiteBar session={contextData.session} />
           </Header>
         ) : (
-          <Header
-            onBack={() => {
-              updateContextData({
-                step: Step.STEP2
-              });
-            }}
-          />
+          <Header onBack={onHeaderBack} />
         )
       }
-      params={{
-        data: {
-          psbtHex: contextData.rawTxInfo!.psbtHex,
-          type: TxType.SEND_BITCOIN,
-          options: {
-            autoFinalized: true
-          }
-        }
-      }}
-      handleConfirm={(res) => {
-        pushBitcoinTx((res ?? contextData.rawTxInfo!).rawtx).then(({ success, txid, error }) => {
-          if (success) {
-            updateContextData({
-              step: Step.STEP4
-            });
-          } else {
-            navigate('TxFailScreen', { error });
-          }
-        });
-      }}
+      params={signPsbtParams}
+      handleConfirm={onSignPsbtHandleConfirm}
     />
   );
 }
 
-function InscribeResultStep({
-  contextData,
-  updateContextData
-}: {
-  contextData: ContextData;
-  updateContextData: (params: UpdateContextDataParams) => void;
-}) {
+function Step4(params: BRC20InscribeTransferParams) {
+  const { contextData } = params;
+  const { t, onClickConfirm, result } = useBRC20InscribeTransferLogicStep4(params);
+
   if (!contextData.order || !contextData.tokenBalance) {
     return <Empty />;
   }
-
-  const { tokenBalance, order } = contextData;
-  const tools = useTools();
-  const wallet = useWallet();
-  const currentAccount = useCurrentAccount();
-  const [getApproval, resolveApproval, rejectApproval] = useApproval();
-  const navigate = useNavigate();
-  const [result, setResult] = useState<any>();
-  const { t } = useI18n();
-  const checkResult = async () => {
-    const result = await wallet.getInscribeResult(order.orderId);
-    if (!result) {
-      setTimeout(() => {
-        checkResult();
-      }, 2000);
-      return;
-    }
-    tools.showLoading(false);
-    setResult(result);
-  };
-
-  useEffect(() => {
-    checkResult();
-  }, []);
-
-  const onClickConfirm = () => {
-    tools.showLoading(true);
-    wallet
-      .getBRC20Summary(currentAccount.address, tokenBalance.ticker)
-      .then((v) => {
-        if (contextData.isApproval) {
-          resolveApproval({
-            inscriptionId: result.inscriptionId,
-            inscriptionNumber: result.inscriptionNumber,
-            ticker: tokenBalance.ticker,
-            amount: result.amount
-          });
-        } else {
-          navigate('BRC20SendScreen', {
-            tokenBalance: v.tokenBalance,
-            selectedInscriptionIds: [result.inscriptionId],
-            selectedAmount: result.amount,
-            tokenInfo: v.tokenInfo
-          });
-        }
-      })
-      .finally(() => {
-        tools.showLoading(false);
-      });
-  };
 
   if (!result) {
     return (
@@ -698,8 +466,8 @@ function InscribeResultStep({
               <Icon icon="success" size={50} style={{ alignSelf: 'center' }} />
             </Row>
 
-            <Text preset="title" text={t('payment_sent')} textCenter />
-            <Text preset="sub" text={t('your_transaction_has_been_successfully_sent')} color="textDim" textCenter />
+            <Text preset="title" text={t('tx_sent_title')} textCenter />
+            <Text preset="sub" text={t('tx_sent_desc')} color="textDim" textCenter />
 
             <Column justifyCenter itemsCenter>
               <Column mt="lg">

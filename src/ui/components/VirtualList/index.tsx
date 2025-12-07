@@ -3,8 +3,8 @@ import { ReactNode, useCallback, useEffect, useMemo, useRef, useState } from 're
 import { Column, Row } from '@/ui/components';
 import { Empty } from '@/ui/components/Empty';
 import { Pagination } from '@/ui/components/Pagination';
-import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
 import { LoadingOutlined } from '@ant-design/icons';
+import { useDevice } from '@unisat/wallet-state';
 
 export interface VirtualListProps<T> {
   fetchParams?: any; // Parameters for fetching data, can be any type
@@ -38,10 +38,11 @@ export function VirtualList<T>({
 }: VirtualListProps<T>) {
   const [items, setItems] = useState<T[]>([]);
   const [total, setTotal] = useState(-1);
-  const isInTab = useExtensionIsInTab();
-  const effectivePageSize = pageSize || (isInTab ? 50 : 20);
+
+  const { isExtensionInExpandView } = useDevice();
+  const effectivePageSize = pageSize || (isExtensionInExpandView ? 50 : 20);
   const [pagination, setPagination] = useState({ currentPage: 1, pageSize: effectivePageSize });
-  const prevIsInTabRef = useRef(isInTab);
+  const prevIsInTabRef = useRef(isExtensionInExpandView);
   const prevPageSizeRef = useRef(pagination.pageSize);
   const [isLoading, setIsLoading] = useState(false);
   const isLoadingRef = useRef(false);
@@ -50,11 +51,11 @@ export function VirtualList<T>({
   const chainChangedRef = useRef(false);
 
   useEffect(() => {
-    const hasViewModeChanged = prevIsInTabRef.current !== isInTab;
-    prevIsInTabRef.current = isInTab;
+    const hasViewModeChanged = prevIsInTabRef.current !== isExtensionInExpandView;
+    prevIsInTabRef.current = isExtensionInExpandView;
 
     if (hasViewModeChanged) {
-      const newPageSize = pageSize || (isInTab ? 50 : 20);
+      const newPageSize = pageSize || (isExtensionInExpandView ? 50 : 20);
 
       if (prevPageSizeRef.current !== newPageSize) {
         prevPageSizeRef.current = newPageSize;
@@ -81,7 +82,7 @@ export function VirtualList<T>({
         }
       }
     }
-  }, [isInTab, fetchParams, fetchData, onError, pageSize]);
+  }, [isExtensionInExpandView, fetchParams, fetchData, onError, pageSize]);
 
   const loadData = useCallback(async () => {
     if (!fetchParams || isLoadingRef.current) return;

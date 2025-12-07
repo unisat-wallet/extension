@@ -1,11 +1,11 @@
 import { useEffect, useState } from 'react';
 
-import { ConnectedSite } from '@/background/service/permission';
 import { Card, Column, Content, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import { Empty } from '@/ui/components/Empty';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { fontSizes } from '@/ui/theme/font';
-import { formatSessionIcon, useWallet } from '@/ui/utils';
+import { useI18n, useWallet } from '@unisat/wallet-state';
+import { formatSessionIcon } from '@/ui/utils';
+import { ConnectedSite } from '@unisat/wallet-shared';
 
 export default function ConnectedSitesScreen() {
   const wallet = useWallet();

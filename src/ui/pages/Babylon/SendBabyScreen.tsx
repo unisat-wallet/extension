@@ -1,18 +1,23 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 
-import { runesUtils } from '@/shared/lib/runes-utils';
 import { BabylonAddressSummary } from '@/shared/types';
 import { Button, Card, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
 import { FeeOptionsPopover } from '@/ui/components/FeeOptionsPopover';
 import { FeeSettings } from '@/ui/components/FeeOptionsPopover/interface';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { useNavigate } from '@/ui/pages/MainRoute';
-import { useAppDispatch, useAppSelector } from '@/ui/state/hooks';
-import { useBabylonConfig } from '@/ui/state/settings/hooks';
-import { NavigationSource, uiActions } from '@/ui/state/ui/reducer';
-import { isValidBech32Address, useWallet } from '@/ui/utils';
 import { COSMOS_CHAINS_MAP, DEFAULT_BBN_GAS_LIMIT } from '@unisat/babylon-service/types';
+import { bnUtils } from '@unisat/base-utils';
+import {
+  NavigationSource,
+  uiActions,
+  useAppDispatch,
+  useAppSelector,
+  useBabylonConfig,
+  useI18n,
+  useWallet
+} from '@unisat/wallet-state';
 
+import { isValidBech32Address } from '@/ui/utils';
 import { NotSupportedLayout } from './BabylonStakingScreen';
 
 const BABYLON_FEE_SETTINGS_KEY = 'babylonFeeSettings';
@@ -72,7 +77,7 @@ export default function SendBabyScreen() {
   };
 
   const clearReduxState = () => {
-    dispatch(uiActions.resetBabylonSendScreen());
+    dispatch(uiActions.resetBabylonSendScreen(null));
     dispatch(uiActions.setNavigationSource(NavigationSource.NORMAL));
   };
 
@@ -158,7 +163,7 @@ export default function SendBabyScreen() {
 
       const fee = Math.ceil(parseFloat(gasPrice.toString()) * gasLimit * (feeSettings.gasAdjustment || 1.3));
 
-      const formattedFee = runesUtils.toDecimalAmount(fee.toString(), babylonChain.feeCurrencies[0].coinDecimals);
+      const formattedFee = bnUtils.toDecimalAmount(fee.toString(), babylonChain.feeCurrencies[0].coinDecimals);
       // Always display 6 decimal places
       const limitedFee = parseFloat(formattedFee).toFixed(6);
 
@@ -184,7 +189,7 @@ export default function SendBabyScreen() {
     }
 
     const simulationAmount = inputAmount;
-    const simulationValue = runesUtils.fromDecimalAmount(simulationAmount, babylonChain.stakeCurrency.coinDecimals);
+    const simulationValue = bnUtils.fromDecimalAmount(simulationAmount, babylonChain.stakeCurrency.coinDecimals);
     setIsSimulating(true);
     try {
       const simulatedGas = await wallet.simulateBabylonGas(
@@ -264,11 +269,11 @@ export default function SendBabyScreen() {
 
   const toValue = useMemo(() => {
     if (!inputAmount) return '0';
-    return runesUtils.fromDecimalAmount(inputAmount, babylonChain.stakeCurrency.coinDecimals);
+    return bnUtils.fromDecimalAmount(inputAmount, babylonChain.stakeCurrency.coinDecimals);
   }, [inputAmount, babylonChain.stakeCurrency.coinDecimals]);
 
   const availableAmount = useMemo(() => {
-    return runesUtils.toDecimalAmount(babylonAddressSummary.balance.amount, babylonChain.stakeCurrency.coinDecimals);
+    return bnUtils.toDecimalAmount(babylonAddressSummary.balance.amount, babylonChain.stakeCurrency.coinDecimals);
   }, [babylonAddressSummary.balance.amount, babylonChain.stakeCurrency.coinDecimals]);
 
   const txFee = useMemo(() => {
@@ -277,7 +282,7 @@ export default function SendBabyScreen() {
     }
 
     const fee = Math.ceil(parseFloat(currentGasPrice) * gasLimitValue * (feeSettings.gasAdjustment || 1.3));
-    const rawFee = runesUtils.toDecimalAmount(fee.toString(), babylonChain.feeCurrencies[0].coinDecimals);
+    const rawFee = bnUtils.toDecimalAmount(fee.toString(), babylonChain.feeCurrencies[0].coinDecimals);
     // Always display 6 decimal places
     return parseFloat(rawFee).toFixed(6);
   }, [
@@ -297,7 +302,7 @@ export default function SendBabyScreen() {
     const gasFee = Math.ceil(parseFloat(currentGasPrice) * gasLimitValue * (feeSettings.gasAdjustment || 1.3));
     const maxAvailable = parseInt(babylonAddressSummary.balance.amount) - gasFee;
 
-    return runesUtils.toDecimalAmount(Math.max(0, maxAvailable).toString(), babylonChain.stakeCurrency.coinDecimals);
+    return bnUtils.toDecimalAmount(Math.max(0, maxAvailable).toString(), babylonChain.stakeCurrency.coinDecimals);
   }, [
     babylonAddressSummary.balance.amount,
     currentGasPrice,
@@ -323,17 +328,14 @@ export default function SendBabyScreen() {
       return;
     }
 
-    if (runesUtils.compareAmount(toSpendValue.toString(), babylonAddressSummary.balance.amount) > 0) {
+    if (bnUtils.compareAmount(toSpendValue.toString(), babylonAddressSummary.balance.amount)! > 0) {
       // Check if this is due to newly received tokens
-      const inputValueInMinimalDenom = runesUtils.fromDecimalAmount(
-        inputAmount,
-        babylonChain.stakeCurrency.coinDecimals
-      );
+      const inputValueInMinimalDenom = bnUtils.fromDecimalAmount(inputAmount, babylonChain.stakeCurrency.coinDecimals);
 
       // If the input amount is less than or equal to the available balance,
       // but the toSpendValue (which includes gas) exceeds the balance,
       // it's likely due to newly received tokens not being included in gas calculation
-      if (runesUtils.compareAmount(inputValueInMinimalDenom, babylonAddressSummary.balance.amount) <= 0) {
+      if (bnUtils.compareAmount(inputValueInMinimalDenom, babylonAddressSummary.balance.amount)! <= 0) {
         setError(t('gas_fee_calculation_may_not_include_newly_received_tokens_try_a_smaller_amount'));
       } else {
         setError(t('amount_exceeds_your_available_balance'));

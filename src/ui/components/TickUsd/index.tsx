@@ -6,7 +6,7 @@ import { Row, Text } from '@/ui/components';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { Sizes, TextProps } from '@/ui/components/Text';
 import type { ColorTypes } from '@/ui/theme/colors';
-import { useWallet } from '@/ui/utils';
+import { useWallet } from '@unisat/wallet-state';
 
 function PriceChangePercent({ change, size }: { change: number; size?: Sizes }) {
   if (change === 0) {

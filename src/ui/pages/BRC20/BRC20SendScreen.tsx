@@ -1,59 +1,38 @@
 import BigNumber from 'bignumber.js';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
 
-import { RawTxInfo, TokenBalance, TokenInfo, TokenTransfer, TxType } from '@/shared/types';
+import { TokenBalance, TokenTransfer } from '@/shared/types';
 import { Button, Checkbox, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import BRC20Preview from '@/ui/components/BRC20Preview';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
-import { RBFBar } from '@/ui/components/RBFBar';
 import { RefreshButton } from '@/ui/components/RefreshButton';
 import { TabBar } from '@/ui/components/TabBar';
 import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import {
-  useFetchUtxosCallback,
-  usePrepareSendOrdinalsInscriptionCallback,
-  usePrepareSendOrdinalsInscriptionsCallback,
-  usePushOrdinalsTxCallback
-} from '@/ui/state/transactions/hooks';
 import { fontSizes } from '@/ui/theme/font';
-import { getUiType, showLongNumber, useWallet } from '@/ui/utils';
-import { getAddressUtxoDust } from '@/ui/utils/bitcoin-utils';
+import { showLongNumber } from '@/ui/utils';
+import {
+  BRC20SendStepParams,
+  BRC20SendTabKey,
+  ContextData,
+  UpdateContextDataParams,
+  useBRC20SendScreenLogic,
+  useBRC20SendScreenLogicStep1,
+  useBRC20SendScreenLogicStep2,
+  useBRC20SendScreenLogicStep3,
+  useCurrentAccount,
+  useI18n,
+  useNavigation,
+  useTools,
+  useWallet
+} from '@unisat/wallet-state';
 
+import { getUiType } from '@/ui/web';
 import { SignPsbt } from '../Approval/components';
 import { useNavigate } from '../MainRoute';
 
-function Step1({
-  contextData,
-  updateContextData
-}: {
-  contextData: ContextData;
-  updateContextData: (params: UpdateContextDataParams) => void;
-}) {
-  const { tokenBalance } = contextData;
-
-  const { t } = useI18n();
-
-  const [disabled, setDisabled] = useState(true);
-
-  useEffect(() => {
-    setDisabled(true);
-    if (new BigNumber(contextData.transferAmount).lte(0)) {
-      return;
-    }
-
-    setDisabled(false);
-  }, [contextData.transferAmount]);
-
-  const onClickNext = () => {
-    updateContextData({
-      tabKey: TabKey.STEP2
-    });
-  };
+function Step1({ contextData, updateContextData }: BRC20SendStepParams) {
+  const { t, disabled, tokenBalance, onClickNext } = useBRC20SendScreenLogicStep1({ contextData, updateContextData });
 
   return (
     <Content pt="lg">
@@ -137,6 +116,7 @@ function TransferableList({
   const [total, setTotal] = useState(0);
   const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 100 });
   const [allSelected, setAllSelected] = useState(false);
+
   const tools = useTools();
   const fetchData = async () => {
     try {
@@ -299,71 +279,8 @@ function TransferableList({
   );
 }
 
-function Step2({
-  contextData,
-  updateContextData
-}: {
-  contextData: ContextData;
-  updateContextData: (params: UpdateContextDataParams) => void;
-}) {
-  const fetchUtxos = useFetchUtxosCallback();
-  const tools = useTools();
-  useEffect(() => {
-    tools.showLoading(true);
-    fetchUtxos().finally(() => {
-      tools.showLoading(false);
-    });
-  }, []);
-
-  const prepareSendOrdinalsInscriptions = usePrepareSendOrdinalsInscriptionsCallback();
-  const prepareSendOrdinalsInscription = usePrepareSendOrdinalsInscriptionCallback();
-
-  const [disabled, setDisabled] = useState(true);
-
-  const [enableRBF, setEnableRBF] = useState(false);
-  useEffect(() => {
-    setDisabled(true);
-    if (!contextData.receiver) {
-      return;
-    }
-    setDisabled(false);
-  }, [contextData.receiver]);
-
-  const navigate = useNavigate();
-  const onClickNext = async () => {
-    try {
-      tools.showLoading(true);
-      const inscriptionIds = Array.from(contextData.inscriptionIdSet);
-      if (inscriptionIds.length === 1) {
-        const rawTxInfo = await prepareSendOrdinalsInscription({
-          toAddressInfo: { address: contextData.receiver, domain: '' },
-          inscriptionId: inscriptionIds[0],
-          feeRate: contextData.feeRate,
-          outputValue: getAddressUtxoDust(contextData.receiver),
-          enableRBF
-        });
-        navigate('SignOrdinalsTransactionScreen', { rawTxInfo });
-      } else {
-        const rawTxInfo = await prepareSendOrdinalsInscriptions({
-          toAddressInfo: { address: contextData.receiver, domain: '' },
-          inscriptionIds,
-          feeRate: contextData.feeRate,
-          enableRBF
-        });
-        navigate('SignOrdinalsTransactionScreen', { rawTxInfo });
-      }
-
-      // updateContextData({ tabKey: TabKey.STEP3, rawTxInfo: txInfo });
-    } catch (e) {
-      const error = e as Error;
-      console.log(error);
-      tools.toastError(error.message);
-    } finally {
-      tools.showLoading(false);
-    }
-  };
-  const { t } = useI18n();
-
+function Step2({ contextData, updateContextData }: BRC20SendStepParams) {
+  const { t, disabled, onStep2ClickNext } = useBRC20SendScreenLogicStep2({ contextData, updateContextData });
   return (
     <Content mt="lg">
       <Column full>
@@ -398,189 +315,53 @@ function Step2({
           />
         </Column>
         <Column>
-          <Text text={t('fee_rate')} color="textDim" />
-          <FeeRateBar
-            onChange={(val) => {
-              updateContextData({ feeRate: val });
-            }}
-          />
-        </Column>
-
-        <Column mt="lg">
-          <RBFBar
-            onChange={(val) => {
-              setEnableRBF(val);
-            }}
-          />
+          <FeeRateBar />
         </Column>
       </Column>
 
-      <Button text={t('next')} preset="primary" onClick={onClickNext} disabled={disabled} />
+      <Button text={t('next')} preset="primary" onClick={onStep2ClickNext} disabled={disabled} />
     </Content>
   );
 }
 
-function Step3({
-  contextData,
-  updateContextData
-}: {
-  contextData: ContextData;
-  updateContextData: (params: UpdateContextDataParams) => void;
-}) {
-  const { t } = useI18n();
-  const pushOrdinalsTx = usePushOrdinalsTxCallback();
-  const navigate = useNavigate();
-  return (
-    <SignPsbt
-      params={{
-        data: {
-          psbtHex: contextData.rawTxInfo.psbtHex,
-          type: TxType.SIGN_TX,
-          options: { autoFinalized: false }
-        }
-      }}
-      handleConfirm={async (res) => {
-        try {
-          let txData = '';
-
-          if (res && res.psbtHex) {
-            txData = res.psbtHex;
-          } else if (res && res.rawtx) {
-            txData = res.rawtx;
-          } else if (contextData.rawTxInfo.rawtx) {
-            txData = contextData.rawTxInfo.rawtx;
-          } else {
-            throw new Error(t('invalid_transaction_data'));
-          }
-
-          const { success, txid, error } = await pushOrdinalsTx(txData);
-          if (success) {
-            navigate('TxSuccessScreen', { txid });
-          } else {
-            throw new Error(error);
-          }
-        } catch (e) {
-          navigate('TxFailScreen', { error: (e as any).message });
-        }
-      }}
-    />
-  );
-}
-
-enum TabKey {
-  STEP1,
-  STEP2,
-  STEP3
-}
-
-interface ContextData {
-  tabKey: TabKey;
-  tokenBalance: TokenBalance;
-  transferAmount: string;
-  transferableList: TokenTransfer[];
-  inscriptionIdSet: Set<string>;
-  feeRate: number;
-  receiver: string;
-  rawTxInfo: RawTxInfo;
-  tokenInfo: TokenInfo;
-}
-
-interface UpdateContextDataParams {
-  tabKey?: TabKey;
-  transferAmount?: string;
-  transferableList?: TokenTransfer[];
-  inscriptionIdSet?: Set<string>;
-  feeRate?: number;
-  receiver?: string;
-  rawTxInfo?: RawTxInfo;
+function Step3(props: BRC20SendStepParams) {
+  const { signPsbtParams, onSignPsbtConfirm } = useBRC20SendScreenLogicStep3(props);
+  return <SignPsbt params={signPsbtParams} handleConfirm={onSignPsbtConfirm} />;
 }
 
 export default function BRC20SendScreen() {
-  const { state } = useLocation();
-  const props = state as {
-    tokenBalance: TokenBalance;
-    tokenInfo: TokenInfo;
-    selectedInscriptionIds: string[];
-    selectedAmount: string;
-  };
-
-  const tokenBalance = props.tokenBalance;
-  const tokenInfo = props.tokenInfo;
-  const selectedInscriptionIds = props.selectedInscriptionIds || [];
-  const selectedAmount = props.selectedAmount || '0';
-
-  const [contextData, setContextData] = useState<ContextData>({
-    tabKey: TabKey.STEP1,
-    tokenBalance,
-    transferAmount: selectedAmount,
-    transferableList: [],
-    inscriptionIdSet: new Set(selectedInscriptionIds),
-    feeRate: 5,
-    receiver: '',
-    rawTxInfo: {
-      psbtHex: '',
-      rawtx: ''
-    },
-    tokenInfo: {
-      totalSupply: '0',
-      totalMinted: '0',
-      decimal: 18,
-      holder: '',
-      inscriptionId: '',
-      historyCount: 0,
-      holdersCount: 0,
-      logo: ''
-    }
-  });
-
-  const updateContextData = useCallback(
-    (params: UpdateContextDataParams) => {
-      setContextData(Object.assign({}, contextData, params));
-    },
-    [contextData, setContextData]
-  );
+  const { contextData, updateContextData, onHeaderBack, onTabClick } = useBRC20SendScreenLogic();
 
   const component = useMemo(() => {
-    if (contextData.tabKey === TabKey.STEP1) {
+    if (contextData.tabKey === BRC20SendTabKey.STEP1) {
       return <Step1 contextData={contextData} updateContextData={updateContextData} />;
-    } else if (contextData.tabKey === TabKey.STEP2) {
+    } else if (contextData.tabKey === BRC20SendTabKey.STEP2) {
       return <Step2 contextData={contextData} updateContextData={updateContextData} />;
     } else {
       return <Step3 contextData={contextData} updateContextData={updateContextData} />;
     }
-  }, [contextData]);
+  }, [contextData.tabKey, contextData, updateContextData]);
 
   const { t } = useI18n();
 
-  const navigate = useNavigate();
+  const nav = useNavigation();
   const { isSidePanel } = getUiType();
 
   return (
     <Layout>
-      <Header
-        onBack={() => {
-          if (contextData.tabKey === TabKey.STEP2) {
-            updateContextData({ tabKey: TabKey.STEP1 });
-            return;
-          }
-          window.history.go(-1);
-        }}
-        title={t('send')}
-      />
+      <Header onBack={onHeaderBack} title={t('send')} />
       <Column bg={isSidePanel ? 'black' : 'transparent'} style={{ flex: 1 }}>
         <Row justifyCenter>
           <TabBar
             progressEnabled
-            defaultActiveKey={TabKey.STEP1}
+            defaultActiveKey={BRC20SendTabKey.STEP1}
             activeKey={contextData.tabKey}
             items={[
-              { key: TabKey.STEP1, label: t('step1') },
-              { key: TabKey.STEP2, label: t('step2') }
+              { key: BRC20SendTabKey.STEP1, label: t('step1') },
+              { key: BRC20SendTabKey.STEP2, label: t('step2') }
               // { key: TabKey.STEP3, label: 'Step3' }
             ]}
-            onTabClick={(key) => {
-              updateContextData({ tabKey: key });
-            }}
+            onTabClick={onTabClick}
           />
         </Row>
 

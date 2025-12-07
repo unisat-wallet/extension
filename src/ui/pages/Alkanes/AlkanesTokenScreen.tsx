@@ -1,95 +1,30 @@
-import { useEffect, useMemo, useState } from 'react';
-
-import { runesUtils } from '@/shared/lib/runes-utils';
-import { AddressAlkanesTokenSummary } from '@/shared/types';
 import { Button, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { Line } from '@/ui/components/Line';
 import { Section } from '@/ui/components/Section';
 import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
 import { WarningPopover } from '@/ui/components/WarningPopover';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
-import { showLongNumber, useLocationState, useWallet } from '@/ui/utils';
+import { showLongNumber } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
-
-import { useNavigate } from '../MainRoute';
-
-interface LocationState {
-  alkaneid: string;
-}
+import { bnUtils } from '@unisat/base-utils';
+import { useAlkanesTokenScreenLogic } from '@unisat/wallet-state';
 
 export default function AlkanesTokenScreen() {
-  const { alkaneid } = useLocationState<LocationState>();
-  const [tokenSummary, setTokenSummary] = useState<AddressAlkanesTokenSummary>({
-    tokenBalance: {
-      alkaneid: '',
-      name: '',
-      amount: '',
-      symbol: '',
-      divisibility: 0,
-      available: ''
-    },
-    tokenInfo: {
-      alkaneid: '',
-      name: '',
-      symbol: '',
-      totalSupply: '10000000000000',
-      maxSupply: '10000000000000',
-      cap: 0,
-      mintable: false,
-      perMint: '0',
-      minted: 0,
-      holders: 0,
-      aligned: true,
-      nftData: {
-        collectionId: ''
-      },
-      logo: ''
-    },
-    tradeUrl: '',
-    mintUrl: ''
-  });
-
-  const wallet = useWallet();
-
-  const account = useCurrentAccount();
-
-  const [loading, setLoading] = useState(true);
-
-  const [warning, setWarning] = useState(false);
-
-  const { t } = useI18n();
-
-  useEffect(() => {
-    wallet.getAddressAlkanesTokenSummary(account.address, alkaneid, false).then((tokenSummary) => {
-      setTokenSummary(tokenSummary);
-      setLoading(false);
-    });
-  }, []);
-
-  const navigate = useNavigate();
-
-  const enableMint = useMemo(() => {
-    return tokenSummary.mintUrl && tokenSummary.mintUrl.trim() !== '';
-  }, [tokenSummary.mintUrl]);
-
-  const enableTransfer = useMemo(() => {
-    let enable = false;
-    if (tokenSummary.tokenBalance.amount !== '0') {
-      enable = true;
-    }
-    return enable;
-  }, [tokenSummary]);
-
-  const tools = useTools();
-
-  const enableTrade = useMemo(() => {
-    return tokenSummary.tradeUrl && tokenSummary.tradeUrl.trim() !== '';
-  }, [tokenSummary.tradeUrl]);
+  const {
+    tokenSummary,
+    loading,
+    enableMint,
+    enableTransfer,
+    enableTrade,
+    warning,
+    t,
+    setWarning,
+    onClickMint,
+    onClickSend,
+    onClickTrade
+  } = useAlkanesTokenScreenLogic();
 
   if (loading) {
     return (
@@ -102,18 +37,6 @@ export default function AlkanesTokenScreen() {
       </Layout>
     );
   }
-
-  const sendAlkanes = () => {
-    if (tokenSummary.tokenInfo?.aligned === false) {
-      // tools.toastError(t('important_to_not_transfer_this_token'));
-      setWarning(true);
-      return;
-    }
-    navigate('SendAlkanesScreen', {
-      tokenBalance: tokenSummary.tokenBalance,
-      tokenInfo: tokenSummary.tokenInfo
-    });
-  };
 
   return (
     <Layout>
@@ -132,7 +55,7 @@ export default function AlkanesTokenScreen() {
             </Row>
             <Column itemsCenter fullX justifyCenter>
               <Text
-                text={`${runesUtils.toDecimalAmount(
+                text={`${bnUtils.toDecimalAmount(
                   tokenSummary.tokenBalance.amount,
                   tokenSummary.tokenBalance.divisibility
                 )} `}
@@ -147,7 +70,7 @@ export default function AlkanesTokenScreen() {
             <Row justifyCenter fullX>
               <TickUsdWithoutPrice
                 tick={tokenSummary.tokenInfo.alkaneid}
-                balance={runesUtils.toDecimalAmount(
+                balance={bnUtils.toDecimalAmount(
                   tokenSummary.tokenBalance.amount,
                   tokenSummary.tokenBalance.divisibility
                 )}
@@ -185,7 +108,7 @@ export default function AlkanesTokenScreen() {
               value={`${
                 tokenSummary.tokenInfo.totalSupply
                   ? showLongNumber(
-                      runesUtils.toDecimalAmount(
+                      bnUtils.toDecimalAmount(
                         tokenSummary.tokenInfo.totalSupply.toString(),
                         tokenSummary.tokenBalance.divisibility
                       )
@@ -194,7 +117,7 @@ export default function AlkanesTokenScreen() {
               }/${
                 tokenSummary.tokenInfo.maxSupply && tokenSummary.tokenInfo.maxSupply !== '0'
                   ? showLongNumber(
-                      runesUtils.toDecimalAmount(
+                      bnUtils.toDecimalAmount(
                         tokenSummary.tokenInfo.maxSupply.toString(),
                         tokenSummary.tokenBalance.divisibility
                       )
@@ -216,7 +139,7 @@ export default function AlkanesTokenScreen() {
               value={
                 tokenSummary.tokenInfo.perMint
                   ? `${showLongNumber(
-                      runesUtils.toDecimalAmount(tokenSummary.tokenInfo.perMint, tokenSummary.tokenBalance.divisibility)
+                      bnUtils.toDecimalAmount(tokenSummary.tokenInfo.perMint, tokenSummary.tokenBalance.divisibility)
                     )} `
                   : '--'
               }
@@ -252,11 +175,7 @@ export default function AlkanesTokenScreen() {
               preset="brc20-action"
               disabled={!enableMint}
               icon="pencil"
-              onClick={(e) => {
-                if (tokenSummary.mintUrl) {
-                  window.open(tokenSummary.mintUrl);
-                }
-              }}
+              onClick={onClickMint}
               full
             />
 
@@ -265,7 +184,7 @@ export default function AlkanesTokenScreen() {
               preset="brc20-action"
               icon="send"
               disabled={!enableTransfer}
-              onClick={sendAlkanes}
+              onClick={onClickSend}
               full
             />
 
@@ -274,11 +193,7 @@ export default function AlkanesTokenScreen() {
               preset="brc20-action"
               icon="trade"
               disabled={!enableTrade}
-              onClick={(e) => {
-                if (tokenSummary.tradeUrl) {
-                  window.open(tokenSummary.tradeUrl);
-                }
-              }}
+              onClick={onClickTrade}
               full
             />
           </Row>

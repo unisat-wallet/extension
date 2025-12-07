@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
-import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
+import { useI18n } from '@unisat/wallet-state';
 
 import { Button } from '../Button';
 import { Checkbox } from '../Checkbox';

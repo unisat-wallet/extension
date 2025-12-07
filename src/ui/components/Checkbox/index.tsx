@@ -8,7 +8,7 @@ export interface CheckboxChangeEvent {
 
 export interface CheckboxProps {
   checked?: boolean;
-  onChange?: (e: CheckboxChangeEvent) => void;
+  onChange?: (e: any) => void;
   style?: React.CSSProperties;
   disabled?: boolean;
   children?: React.ReactNode;

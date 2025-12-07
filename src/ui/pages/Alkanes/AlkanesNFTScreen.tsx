@@ -1,43 +1,15 @@
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-
-import { AlkanesInfo } from '@/shared/types';
 import { Button, Card, Column, Content, Header, Layout, Row, Text } from '@/ui/components';
 import AlkanesNFTPreview from '@/ui/components/AlkanesNFTPreview';
 import { Line } from '@/ui/components/Line';
 import { Section } from '@/ui/components/Section';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useNavigate } from '@/ui/pages/MainRoute';
-import { useWallet } from '@/ui/utils';
+import { useAlkanesNFTScreenLogic } from '@unisat/wallet-state';
 
 export default function AlkanesNFTScreen() {
-  const { state } = useLocation();
-  const props = state as {
-    alkanesInfo: AlkanesInfo;
-  };
-  const { t } = useI18n();
-
-  const alkanesInfo = props.alkanesInfo;
-
-  const navigate = useNavigate();
-
-  const [availableUtxo, setAvailableUtxo] = useState(0);
-  const wallet = useWallet();
-
-  useEffect(() => {
-    const fetchData = async () => {
-      const utxos = await wallet.getAssetUtxosAlkanes(alkanesInfo.alkaneid);
-      setAvailableUtxo(utxos.length);
-    };
-    fetchData();
-  }, [wallet]);
+  const { alkanesInfo, t, onClickSend, onClickBack, disabledSend } = useAlkanesNFTScreenLogic();
 
   return (
     <Layout>
-      <Header
-        onBack={() => {
-          window.history.go(-1);
-        }}>
+      <Header onBack={onClickBack}>
         <Row>
           <Text text={`${alkanesInfo.name} `} />
         </Row>
@@ -57,16 +29,7 @@ export default function AlkanesNFTScreen() {
             <Section title={'Alkanes ID'} value={alkanesInfo.alkaneid} showCopyIcon />
           </Column>
         </Card>
-        <Button
-          text={t('send')}
-          icon="send"
-          preset="default"
-          disabled={availableUtxo <= 0}
-          onClick={(e) => {
-            navigate('SendAlkanesNFTScreen', {
-              alkanesInfo: alkanesInfo
-            });
-          }}></Button>
+        <Button text={t('send')} icon="send" preset="default" disabled={disabledSend} onClick={onClickSend}></Button>
       </Content>
     </Layout>
   );

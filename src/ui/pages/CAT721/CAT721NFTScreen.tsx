@@ -3,9 +3,8 @@ import { Button, Card, Column, Content, Header, Layout, Row, Text } from '@/ui/c
 import CAT721Preview from '@/ui/components/CAT721Preview';
 import { Line } from '@/ui/components/Line';
 import { Section } from '@/ui/components/Section';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { useNavigate } from '@/ui/pages/MainRoute';
-import { useLocationState } from '@/ui/utils';
+import { useI18n, useNavigation } from '@unisat/wallet-state';
 
 interface LocationState {
   version: CAT_VERSION;
@@ -13,8 +12,8 @@ interface LocationState {
   localId: string;
 }
 export default function CAT721NFTScreen() {
-  const props = useLocationState<LocationState>();
-  const { version, collectionInfo, localId } = props;
+  const nav = useNavigation();
+  const { version, collectionInfo, localId } = nav.getRouteState<LocationState>();
   const { t } = useI18n();
 
   const navigate = useNavigate();

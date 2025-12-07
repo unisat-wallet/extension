@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { useI18n } from '../hooks/useI18n';
+import { useI18n } from '@unisat/wallet-state';
 
 /**
  * Higher-order component for injecting i18n functionality into class components

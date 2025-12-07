@@ -1,8 +1,6 @@
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useAddressExplorerUrl } from '@/ui/state/settings/hooks';
-import { copyToClipboard, shortAddress } from '@/ui/utils';
+import { shortAddress } from '@/ui/utils';
+import { useAddressExplorerUrl, useI18n, useTools } from '@unisat/wallet-state';
 
-import { useTools } from '../ActionComponent';
 import { Card } from '../Card';
 import { Column } from '../Column';
 import { Icon } from '../Icon';
@@ -18,13 +16,7 @@ export const AddressDetailPopover = ({ address, onClose }: { address: string; on
     <Popover onClose={onClose}>
       <Column>
         <Text text={shortAddress(address)} textCenter />
-        <Card
-          preset="style2"
-          onClick={(e) => {
-            copyToClipboard(address).then(() => {
-              tools.toastSuccess(t('copied'));
-            });
-          }}>
+        <Card preset="style2" onClick={(e) => tools.copyToClipboard(address)}>
           <Row itemsCenter>
             <Text
               text={address}
@@ -36,11 +28,7 @@ export const AddressDetailPopover = ({ address, onClose }: { address: string; on
           </Row>
         </Card>
 
-        <Row
-          justifyCenter
-          onClick={() => {
-            window.open(addressExplorerUrl);
-          }}>
+        <Row justifyCenter onClick={() => tools.openUrl(addressExplorerUrl)}>
           <Icon icon="eye" color="textDim" />
           <Text preset="regular-bold" text={t('view_on_block_explorer')} color="textDim" />
         </Row>

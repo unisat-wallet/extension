@@ -1,11 +1,11 @@
 import { useCallback, useState } from 'react';
 
 import { Button, Column, Content, Text } from '@/ui/components';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { LoadingOutlined } from '@ant-design/icons';
 import Base, { convertMulitAccountToCryptoAccount, CryptoMultiAccounts } from '@keystonehq/hw-app-base';
+import { useI18n } from '@unisat/wallet-state';
 
 import KeystonePopover from '../Popover';
 import { createKeystoneTransport, handleKeystoneUSBError } from './utils';

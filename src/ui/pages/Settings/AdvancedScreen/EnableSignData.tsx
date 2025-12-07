@@ -2,9 +2,8 @@ import { useEffect, useState } from 'react';
 
 import { Button, Card, Checkbox, Column, Icon, Row, Switch, Text } from '@/ui/components';
 import { Popover } from '@/ui/components/Popover';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
-import { useWallet } from '@/ui/utils';
+import { useI18n, useWallet } from '@unisat/wallet-state';
 
 export function EnableSignDataCard() {
   const wallet = useWallet();

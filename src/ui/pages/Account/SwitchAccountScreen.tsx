@@ -1,20 +1,23 @@
 import VirtualList, { ListRef } from 'rc-virtual-list';
 import { forwardRef, useEffect, useMemo, useRef, useState } from 'react';
 
-import { KEYRING_CLASS } from '@/shared/constant';
 import { Account } from '@/shared/types';
 import { Card, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { accountActions } from '@/ui/state/accounts/reducer';
-import { useAppDispatch } from '@/ui/state/hooks';
-import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
 import { colors } from '@/ui/theme/colors';
-import { copyToClipboard, shortAddress, useWallet } from '@/ui/utils';
+import { copyToClipboard, shortAddress } from '@/ui/utils';
 import { CopyOutlined, EditOutlined, EllipsisOutlined, KeyOutlined, PlusCircleOutlined } from '@ant-design/icons';
 import { KeyringType } from '@unisat/keyring-service/types';
+import {
+  accountActions,
+  useAppDispatch,
+  useCurrentAccount,
+  useCurrentKeyring,
+  useI18n,
+  useTools,
+  useWallet
+} from '@unisat/wallet-state';
 
+import { KEYRING_CLASS } from '@unisat/wallet-shared';
 import { useNavigate } from '../MainRoute';
 
 export interface ItemData {

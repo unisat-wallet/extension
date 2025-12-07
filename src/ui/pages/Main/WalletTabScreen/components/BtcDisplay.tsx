@@ -1,8 +1,8 @@
 import { useMemo } from 'react';
 
-import { ChainType } from '@/shared/constant';
 import { Row, Text } from '@/ui/components';
-import { useBTCUnit, useChainType } from '@/ui/state/settings/hooks';
+import { useBTCUnit, useChainType } from '@unisat/wallet-state';
+import { ChainType } from '@unisat/wallet-types';
 
 export function BtcDisplay({ balance }: { balance: string }) {
   const chainType = useChainType();

@@ -1,15 +1,13 @@
 import React, { useEffect, useState } from 'react';
 
 import { Column, Content, Layout, Row } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import { Button } from '@/ui/components/Button';
 import { Input } from '@/ui/components/Input';
 import { Logo } from '@/ui/components/Logo';
 import { Text } from '@/ui/components/Text';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useIsUnlocked, useUnlockCallback } from '@/ui/state/global/hooks';
-import { getUiType, useWallet } from '@/ui/utils';
+import { useI18n, useIsUnlocked, useTools, useUnlockCallback, useWallet } from '@unisat/wallet-state';
 
+import { getUiType } from '@/ui/web';
 import { useNavigate } from '../../MainRoute';
 
 export default function UnlockScreen() {

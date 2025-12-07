@@ -1,14 +1,9 @@
-import { useCallback, useEffect, useState } from 'react';
+import { useCallback } from 'react';
 
 import { AlkanesInfo } from '@/shared/types';
-import { useTools } from '@/ui/components/ActionComponent';
 import AlkanesNFTPreview from '@/ui/components/AlkanesNFTPreview';
 import { VirtualList } from '@/ui/components/VirtualList';
-import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useChainType } from '@/ui/state/settings/hooks';
-import { useWallet } from '@/ui/utils';
+import { useChainType, useCurrentAccount, useDevice, useI18n, useTools, useWallet } from '@unisat/wallet-state';
 
 import { useNavigate } from '../MainRoute';
 
@@ -18,23 +13,9 @@ export function AlkanesNFTList(props: { collectionId: string }) {
   const currentAccount = useCurrentAccount();
   const chainType = useChainType();
   const tools = useTools();
-  const isInTab = useExtensionIsInTab();
-  const [isMobile, setIsMobile] = useState(false);
+
+  const { isDesktopScreenSize } = useDevice();
   const { t } = useI18n();
-
-  useEffect(() => {
-    const checkMobile = () => {
-      const mobileCheck = window.innerWidth <= 768;
-      setIsMobile(mobileCheck);
-    };
-
-    checkMobile();
-    window.addEventListener('resize', checkMobile);
-
-    return () => {
-      window.removeEventListener('resize', checkMobile);
-    };
-  }, []);
 
   const fetchAlkanesNFT = useCallback(
     async (params: any, page: number, pageSize: number) => {
@@ -66,7 +47,7 @@ export function AlkanesNFTList(props: { collectionId: string }) {
     [tools]
   );
 
-  const itemsPerRow = isInTab && !isMobile ? 9 : 2;
+  const itemsPerRow = isDesktopScreenSize ? 9 : 2;
 
   return (
     <VirtualList<AlkanesInfo>

@@ -1,71 +1,25 @@
-import { useEffect, useState } from 'react';
-
-import { ADDRESS_TYPES } from '@/shared/constant';
-import { WalletKeyring } from '@/shared/types';
 import { Button, Card, Column, Content, Grid, Header, Input, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { copyToClipboard, useLocationState, useWallet } from '@/ui/utils';
-
-type Status = '' | 'error' | 'warning' | undefined;
+import { useExportMnemonicsScreenLogic } from '@unisat/wallet-state';
 
 export default function ExportMnemonicsScreen() {
-  const { keyring } = useLocationState<{ keyring: WalletKeyring }>();
-
-  const { t } = useI18n();
-
-  const [password, setPassword] = useState('');
-  const [disabled, setDisabled] = useState(true);
-
-  const [mnemonic, setMnemonic] = useState('');
-  const [status, setStatus] = useState<Status>('');
-  const [error, setError] = useState('');
-  const wallet = useWallet();
-  const tools = useTools();
-
-  const [passphrase, setPassphrase] = useState('');
-
-  const btnClick = async () => {
-    try {
-      const { mnemonic, hdPath, passphrase } = await wallet.getMnemonics(password, keyring);
-      setMnemonic(mnemonic);
-      setPassphrase(passphrase);
-    } catch (e) {
-      setStatus('error');
-      setError((e as any).message);
-    }
-  };
-
-  const handleOnKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if ('Enter' == e.key) {
-      btnClick();
-    }
-  };
-
-  useEffect(() => {
-    setDisabled(true);
-    if (password) {
-      setDisabled(false);
-      setStatus('');
-      setError('');
-    }
-  }, [password]);
-
-  function copy(str: string) {
-    copyToClipboard(str);
-    tools.toastSuccess(t('copied'));
-  }
-  const words = mnemonic.split(' ');
-
-  const pathName = ADDRESS_TYPES.find((v) => v.hdPath === keyring.hdPath)?.name || 'custom';
+  const {
+    words,
+    pathName,
+    t,
+    setPassword,
+    disabled,
+    btnClick,
+    handleOnKeyUp,
+    mnemonic,
+    passphrase,
+    error,
+    copy,
+    keyring,
+    onClickBack
+  } = useExportMnemonicsScreenLogic();
   return (
     <Layout>
-      <Header
-        onBack={() => {
-          window.history.go(-1);
-        }}
-        title={t('secret_recovery_phrase')}
-      />
+      <Header onBack={onClickBack} title={t('secret_recovery_phrase')} />
 
       <Content>
         {mnemonic == '' ? (

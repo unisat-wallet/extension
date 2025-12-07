@@ -1,6 +1,6 @@
-import { runesUtils } from '@/shared/lib/runes-utils';
 import { CAT20Balance, TickPriceItem } from '@/shared/types';
 import { TickPriceChange, TickUsd } from '@/ui/components/TickUsd';
+import { bnUtils } from '@unisat/base-utils';
 
 import { Card } from '../Card';
 import { Column } from '../Column';
@@ -17,7 +17,7 @@ export interface CAT20BalanceCardProps {
 
 export function CAT20BalanceCard(props: CAT20BalanceCardProps) {
   const { tokenBalance, onClick, showPrice, price } = props;
-  const balance = runesUtils.toDecimalNumber(tokenBalance.amount, tokenBalance.decimals);
+  const balance = bnUtils.toDecimalNumber(tokenBalance.amount, tokenBalance.decimals);
   const str = balance.toString();
 
   return (

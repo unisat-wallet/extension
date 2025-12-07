@@ -1,17 +1,15 @@
 import BigNumber from 'bignumber.js';
 import { useEffect, useState } from 'react';
 
-import { runesUtils } from '@/shared/lib/runes-utils';
 import { Column, Content, Header, Icon, Layout, Row, Text, Tooltip } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import AssetTag from '@/ui/components/AssetTag';
 import { Pagination } from '@/ui/components/Pagination';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { HistoryDetail } from '@/ui/pages/Wallet/HistoryScreen/HistoryDetail';
-import { useAccountAddress } from '@/ui/state/accounts/hooks';
 import { fontSizes } from '@/ui/theme/font';
-import { satoshisToBTC, shortAddress, useWallet } from '@/ui/utils';
+import { satoshisToBTC, shortAddress } from '@/ui/utils';
 import { ClockCircleFilled } from '@ant-design/icons';
+import { bnUtils } from '@unisat/base-utils';
+import { useAccountAddress, useI18n, useTools, useWallet } from '@unisat/wallet-state';
 
 interface ExtraItem {
   ticker: string;
@@ -75,7 +73,7 @@ export function AmountItem({ item, inDetail }: { item: ExtraItem; inDetail?: boo
               fontSize: fontSizes.xs
             }}>
             <Text
-              text={runesUtils.toDecimalAmount(item.value.abs().toString(), item.div)}
+              text={bnUtils.toDecimalAmount(item.value.abs().toString(), item.div)}
               ellipsis
               style={{ maxWidth: 200 }}
               size={inDetail ? 'xl' : 'xs'}

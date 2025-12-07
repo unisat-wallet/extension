@@ -1,21 +1,28 @@
 import { useEffect, useState } from 'react';
 
-import { ChainType } from '@/shared/constant';
 import { AddressType, AppInfo } from '@/shared/types';
 import { Card, Carousel, Column, Content, Footer, Header, Image, Layout, Row, Text, Tooltip } from '@/ui/components';
 import { NavTabBar } from '@/ui/components/NavTabBar';
 import { SwitchNetworkBar } from '@/ui/components/SwitchNetworkBar';
 import { TabBar } from '@/ui/components/TabBar';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { SearchBar } from '@/ui/pages/Main/DiscoverTabComponents/SearchBar';
-import { useCurrentAddress, useReadApp } from '@/ui/state/accounts/hooks';
-import { useAppList, useBannerList, useHasNewBanner, useLastFetchInfo } from '@/ui/state/discovery/hooks';
-import { discoveryActions } from '@/ui/state/discovery/reducer';
-import { useAppDispatch } from '@/ui/state/hooks';
-import { useChainType, useNetworkType } from '@/ui/state/settings/hooks';
-import { useWallet } from '@/ui/utils';
 import { getAddressType } from '@/ui/utils/bitcoin-utils';
+import {
+  discoveryActions,
+  useAppDispatch,
+  useAppList,
+  useBannerList,
+  useChainType,
+  useCurrentAddress,
+  useHasNewBanner,
+  useI18n,
+  useLastFetchInfo,
+  useNetworkType,
+  useReadApp,
+  useWallet
+} from '@unisat/wallet-state';
 
+import { ChainType } from '@unisat/wallet-types';
 import { useNavigate } from '../MainRoute';
 import { SwitchChainModal } from '../Settings/SwitchChainModal';
 
@@ -174,7 +181,7 @@ export default function DiscoverTabScreen() {
 
   useEffect(() => {
     if (hasNewBanner) {
-      dispatch(discoveryActions.clearNewBannerFlag());
+      dispatch(discoveryActions.clearNewBannerFlag(null));
     }
   }, [hasNewBanner, dispatch]);
 

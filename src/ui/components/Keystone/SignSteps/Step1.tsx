@@ -1,12 +1,11 @@
 import { useEffect, useState } from 'react';
 
 import { Column, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import KeystoneDisplay from '@/ui/components/Keystone/Display';
 import KeystoneLogoWithText from '@/ui/components/Keystone/LogoWithText';
 import { $textPresets } from '@/ui/components/Text';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
+import { useI18n, useTools } from '@unisat/wallet-state';
 
 import { KeystoneSignBaseProps } from '../SignBase';
 import { CONTENT_MAX_WIDTH } from './const';

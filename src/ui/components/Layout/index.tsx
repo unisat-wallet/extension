@@ -1,7 +1,7 @@
 import React, { CSSProperties, useEffect } from 'react';
 
 import { routes } from '@/ui/pages/MainRoute';
-import { useBooted, useIsUnlocked } from '@/ui/state/global/hooks';
+import { useBooted, useIsUnlocked } from '@unisat/wallet-state';
 
 import './index.less';
 

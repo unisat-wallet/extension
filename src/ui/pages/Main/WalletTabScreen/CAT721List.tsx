@@ -2,16 +2,19 @@ import { useEffect, useState } from 'react';
 
 import { CAT721Balance, CAT_VERSION } from '@/shared/types';
 import { Column, Row } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import { CAT721CollectionCard } from '@/ui/components/CAT721CollectionCard';
 import { Empty } from '@/ui/components/Empty';
 import { Pagination } from '@/ui/components/Pagination';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useChainType } from '@/ui/state/settings/hooks';
-import { useIsInExpandView, useSupportedAssets } from '@/ui/state/ui/hooks';
-import { useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
+import {
+  useChainType,
+  useCurrentAccount,
+  useI18n,
+  useIsInExpandView,
+  useSupportedAssets,
+  useTools,
+  useWallet
+} from '@unisat/wallet-state';
 
 import { useNavigate } from '../../MainRoute';
 

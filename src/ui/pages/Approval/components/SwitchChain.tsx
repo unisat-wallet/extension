@@ -1,9 +1,9 @@
-import { CHAINS_MAP, ChainType } from '@/shared/constant';
+import { IMAGE_SOURCE_MAP } from '@/shared/constant';
 import { Button, Card, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
 import WebsiteBar from '@/ui/components/WebsiteBar';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useChainType } from '@/ui/state/settings/hooks';
-import { useApproval } from '@/ui/utils';
+import { CHAINS_MAP } from '@unisat/wallet-shared';
+import { useApproval, useChainType, useI18n } from '@unisat/wallet-state';
+import { ChainType } from '@unisat/wallet-types';
 
 interface Props {
   params: {
@@ -24,7 +24,7 @@ export default function SwitchChain({ params: { data, session } }: Props) {
   const to = CHAINS_MAP[data.chain];
   const { t } = useI18n();
 
-  const [getApproval, resolveApproval, rejectApproval] = useApproval();
+  const { resolveApproval, rejectApproval } = useApproval();
 
   const handleCancel = () => {
     rejectApproval(t('user_rejected_the_request'));
@@ -52,7 +52,7 @@ export default function SwitchChain({ params: { data, session } }: Props) {
               mt="lg">
               <Row fullX>
                 <Row itemsCenter>
-                  <Image src={from.icon} size={30} />
+                  <Image src={IMAGE_SOURCE_MAP[from.icon]} size={30} />
                   <Text text={from.label} />
                 </Row>
               </Row>
@@ -67,7 +67,7 @@ export default function SwitchChain({ params: { data, session } }: Props) {
               mt="lg">
               <Row fullX>
                 <Row itemsCenter>
-                  <Image src={to.icon} size={30} />
+                  <Image src={IMAGE_SOURCE_MAP[to.icon]} size={30} />
                   <Text text={to.label} />
                 </Row>
               </Row>

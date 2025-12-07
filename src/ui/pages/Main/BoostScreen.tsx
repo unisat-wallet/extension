@@ -1,14 +1,15 @@
 import { useEffect } from 'react';
 
-import { getUiType, useApproval, useWallet } from '@/ui/utils';
+import { useApproval, useWallet } from '@unisat/wallet-state';
 
+import { getUiType } from '@/ui/web';
 import { useNavigate } from '../MainRoute';
 
 export default function BoostScreen() {
   const navigate = useNavigate();
   const wallet = useWallet();
 
-  const [getApproval, , rejectApproval] = useApproval();
+  const { getApproval, rejectApproval } = useApproval();
   const loadView = async () => {
     const UIType = getUiType();
     const isInNotification = UIType.isNotification;

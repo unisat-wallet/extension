@@ -1,8 +1,6 @@
-import { t } from '@unisat/i18n';
-
 import { SettingsAction, SettingsItemType } from './types';
 
-export const getSettingsList = (): SettingsItemType[] => [
+export const getSettingsList = (t): SettingsItemType[] => [
   {
     label: t('connected_sites'),
     value: '',
@@ -23,7 +21,7 @@ export const getSettingsList = (): SettingsItemType[] => [
 
   {
     label: t('address_book'),
-    value: t('add_frequently_used_addresses'),
+    value: t('addressbook_desc'),
     desc: '',
     action: SettingsAction.CONTACTS,
     route: '/settings/contacts',

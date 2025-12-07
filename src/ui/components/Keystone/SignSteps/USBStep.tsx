@@ -4,11 +4,11 @@ import { Column, Text } from '@/ui/components';
 import KeystoneLogoWithText from '@/ui/components/Keystone/LogoWithText';
 import KeystonePopover from '@/ui/components/Keystone/Popover';
 import { createKeystoneTransport, handleKeystoneUSBError } from '@/ui/components/Keystone/usb/utils';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
 import { LoadingOutlined } from '@ant-design/icons';
 import Base, { generateURString } from '@keystonehq/hw-app-base';
+import { useI18n } from '@unisat/wallet-state';
 
 import { KeystoneSignBaseProps } from '../SignBase';
 import { CONTENT_MAX_WIDTH } from './const';

@@ -1,11 +1,7 @@
 import { useEffect, useState } from 'react';
 
 import { Button, Column, Content, Header, Input, Layout } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useSetCurrentAccountCallback } from '@/ui/state/accounts/hooks';
-import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { useWallet } from '@/ui/utils';
+import { useCurrentKeyring, useI18n, useSetCurrentAccountCallback, useTools, useWallet } from '@unisat/wallet-state';
 
 import { useNavigate } from '../MainRoute';
 

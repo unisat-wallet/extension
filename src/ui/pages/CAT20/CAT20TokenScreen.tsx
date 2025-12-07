@@ -1,24 +1,30 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { ChainType } from '@/shared/constant';
-import { runesUtils } from '@/shared/lib/runes-utils';
 import { AddressCAT20TokenSummary, CAT_VERSION } from '@/shared/types';
 import { Button, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { Line } from '@/ui/components/Line';
 import { Section } from '@/ui/components/Section';
 import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { useCAT20MarketPlaceWebsite, useCAT20TokenInfoExplorerUrl, useChainType } from '@/ui/state/settings/hooks';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
-import { showLongNumber, useLocationState, useWallet } from '@/ui/utils';
+import { showLongNumber } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
+import { bnUtils } from '@unisat/base-utils';
 import { KeyringType } from '@unisat/keyring-service/types';
+import {
+  useCAT20MarketPlaceWebsite,
+  useCAT20TokenInfoExplorerUrl,
+  useChainType,
+  useCurrentAccount,
+  useCurrentKeyring,
+  useI18n,
+  useNavigation,
+  useTools,
+  useWallet
+} from '@unisat/wallet-state';
 
+import { ChainType } from '@unisat/wallet-types';
 import { useNavigate } from '../MainRoute';
 
 interface LocationState {
@@ -27,7 +33,8 @@ interface LocationState {
 }
 
 export default function CAT20TokenScreen() {
-  const { tokenId, version } = useLocationState<LocationState>();
+  const nav = useNavigation();
+  const { tokenId, version } = nav.getRouteState<LocationState>();
   const [tokenSummary, setTokenSummary] = useState<AddressCAT20TokenSummary>({
     cat20Balance: {
       tokenId: '',
@@ -129,7 +136,7 @@ export default function CAT20TokenScreen() {
             </Row>
             <Column itemsCenter fullX justifyCenter>
               <Text
-                text={`${runesUtils.toDecimalAmount(
+                text={`${bnUtils.toDecimalAmount(
                   tokenSummary.cat20Balance.amount,
                   tokenSummary.cat20Balance.decimals
                 )} `}
@@ -144,10 +151,7 @@ export default function CAT20TokenScreen() {
             <Row justifyCenter fullX>
               <TickUsdWithoutPrice
                 tick={tokenSummary.cat20Info.tokenId}
-                balance={runesUtils.toDecimalAmount(
-                  tokenSummary.cat20Balance.amount,
-                  tokenSummary.cat20Balance.decimals
-                )}
+                balance={bnUtils.toDecimalAmount(tokenSummary.cat20Balance.amount, tokenSummary.cat20Balance.decimals)}
                 type={TokenType.CAT20}
                 size={'md'}
               />
@@ -175,7 +179,7 @@ export default function CAT20TokenScreen() {
 
             <Section
               title={t('supply')}
-              value={`${showLongNumber(runesUtils.toDecimalAmount(tokenSummary.cat20Info.max, 0))} ${
+              value={`${showLongNumber(bnUtils.toDecimalAmount(tokenSummary.cat20Info.max, 0))} ${
                 tokenSummary.cat20Info.symbol
               }`}
             />
@@ -183,7 +187,7 @@ export default function CAT20TokenScreen() {
 
             <Section
               title={t('premine')}
-              value={`${showLongNumber(runesUtils.toDecimalAmount(tokenSummary.cat20Info.premine, 0))} ${
+              value={`${showLongNumber(bnUtils.toDecimalAmount(tokenSummary.cat20Info.premine, 0))} ${
                 tokenSummary.cat20Info.symbol
               }`}
             />

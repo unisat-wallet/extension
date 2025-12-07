@@ -3,9 +3,9 @@ import { useNavigate } from 'react-router-dom';
 
 import { CosmosSignDataType } from '@/shared/types';
 import { Button, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 
 // import { makeADR36AminoSignDoc, serializeSignDoc } from '@unisat/babylon-service';
+import { useTools } from '@unisat/wallet-state';
 import CosmosSignScreen from '../Wallet/CosmosSignScreen';
 
 export default function CosmosSignDemo() {

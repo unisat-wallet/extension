@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react';
 
-import { ContactBookItem } from '@/background/service/contactBook';
-import { CHAINS_MAP, ChainType } from '@/shared/constant';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { fontSizes } from '@/ui/theme/font';
 import { spacing } from '@/ui/theme/spacing';
-import { useWallet } from '@/ui/utils/WalletContext';
 import { SearchOutlined } from '@ant-design/icons';
+import { useI18n, useWallet } from '@unisat/wallet-state';
 
+import { IMAGE_SOURCE_MAP } from '@/shared/constant';
+import { ContactBookItem } from '@unisat/contact-book';
+import { CHAINS_MAP } from '@unisat/wallet-shared';
+import { ChainType } from '@unisat/wallet-types';
 import { BottomModal } from '../BottomModal';
 import { Card, Column, Icon, Image, Row, Text } from '../index';
 
@@ -143,7 +144,7 @@ export const ContactsModal: React.FC<ContactsModalProps> = ({ onClose, onSelect,
                   onClick={() => onSelect(contact)}>
                   <Row full justifyBetween itemsCenter>
                     <Row itemsCenter gap="md">
-                      <Image src={CHAINS_MAP[contact.chain].icon} size={30} />
+                      <Image src={IMAGE_SOURCE_MAP[CHAINS_MAP[contact.chain].icon]} size={30} />
                       <Column>
                         <Text
                           text={contact.name}

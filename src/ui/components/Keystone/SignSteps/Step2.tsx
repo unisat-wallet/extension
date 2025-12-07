@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Column, Text } from '@/ui/components';
 import KeystoneLogoWithText from '@/ui/components/Keystone/LogoWithText';
 import KeystoneScan from '@/ui/components/Keystone/Scan';
-import { useI18n } from '@/ui/hooks/useI18n';
+import { useI18n } from '@unisat/wallet-state';
 
 import { KeystoneSignBaseProps } from '../SignBase';
 import { CONTENT_MAX_WIDTH } from './const';

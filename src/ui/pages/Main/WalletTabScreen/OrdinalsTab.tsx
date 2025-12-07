@@ -2,12 +2,15 @@ import { useMemo } from 'react';
 
 import { Column, Row } from '@/ui/components';
 import { TabBar } from '@/ui/components/TabBar';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useAddressSummary } from '@/ui/state/accounts/hooks';
-import { useAppDispatch } from '@/ui/state/hooks';
-import { useChain } from '@/ui/state/settings/hooks';
-import { useOrdinalsAssetTabKey } from '@/ui/state/ui/hooks';
-import { OrdinalsAssetTabKey, uiActions } from '@/ui/state/ui/reducer';
+import {
+  OrdinalsAssetTabKey,
+  uiActions,
+  useAddressSummary,
+  useAppDispatch,
+  useChain,
+  useI18n,
+  useOrdinalsAssetTabKey
+} from '@unisat/wallet-state';
 
 import { BRC20ProgList } from './BRC20ProgList';
 import { BRC20List } from './Brc20List';
@@ -54,7 +57,6 @@ export function OrdinalsTab() {
     }
     return tabKey;
   }, [tabKey, chain]);
-
   return (
     <Column>
       <Row justifyBetween>

@@ -1,7 +1,7 @@
-import { runesUtils } from '@/shared/lib/runes-utils';
 import { AlkanesBalance, TickPriceItem } from '@/shared/types';
 import { TickPriceChange, TickUsd } from '@/ui/components/TickUsd';
 import { showLongNumber } from '@/ui/utils';
+import { bnUtils } from '@unisat/base-utils';
 
 import { Card } from '../Card';
 import { Column } from '../Column';
@@ -18,7 +18,7 @@ export interface AlkanesBalanceCardProps {
 
 export default function AlkanesBalanceCard(props: AlkanesBalanceCardProps) {
   const { tokenBalance, onClick, showPrice, price } = props;
-  const balance = runesUtils.toDecimalNumber(tokenBalance.amount, tokenBalance.divisibility);
+  const balance = bnUtils.toDecimalNumber(tokenBalance.amount, tokenBalance.divisibility);
   let str = balance.toString();
   if (balance.lt(0.0001)) {
     str = '<0.0001';

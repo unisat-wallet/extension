@@ -1,8 +1,6 @@
 import { Card, Column, Icon, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useTxExplorerUrl } from '@/ui/state/settings/hooks';
 import { shortAddress } from '@/ui/utils';
+import { useI18n, useTools, useTxExplorerUrl } from '@unisat/wallet-state';
 
 export interface MergeItem {
   index: number;

@@ -1,7 +1,7 @@
 import { useCallback } from 'react';
 
 import { AlkanesCollection } from '@/shared/types';
-import { useI18n } from '@/ui/hooks/useI18n';
+import { useI18n } from '@unisat/wallet-state';
 
 import { Column } from '../Column';
 import { Image } from '../Image';

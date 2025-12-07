@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 
-import { useI18n } from '@/ui/hooks/useI18n';
 import { fontSizes } from '@/ui/theme/font';
+import { useI18n } from '@unisat/wallet-state';
 
 import { Checkbox } from '../Checkbox';
 import { Icon } from '../Icon';
@@ -18,7 +18,7 @@ export function RBFBar({ defaultValue, onChange }: { defaultValue?: boolean; onC
   return (
     <Row justifyBetween>
       <Tooltip
-        title={t('a_feature_allows_the_transaction_to_be_replaced')}
+        title={t('rbf_tip')}
         overlayStyle={{
           fontSize: fontSizes.xs
         }}>

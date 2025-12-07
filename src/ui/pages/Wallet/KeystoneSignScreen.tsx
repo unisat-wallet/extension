@@ -2,12 +2,15 @@ import { useCallback } from 'react';
 
 import { CosmosSignDataType } from '@/shared/types';
 import KeystoneSignBase, { KeystoneSignBaseProps } from '@/ui/components/Keystone/SignBase';
-import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import { useBabylonConfig } from '@/ui/state/settings/hooks';
-import { useWallet } from '@/ui/utils';
 import { COSMOS_CHAINS_MAP } from '@unisat/babylon-service/types';
 import { KeystoneSignEnum } from '@unisat/keyring-service/types';
+import {
+  useAccountAddress,
+  useBabylonConfig,
+  useCurrentAccount,
+  useCurrentKeyring,
+  useWallet
+} from '@unisat/wallet-state';
 
 interface Props {
   type: KeystoneSignEnum;

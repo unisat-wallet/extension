@@ -2,11 +2,10 @@ import { useEffect, useMemo, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { Button, Column, Content, Input, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useWallet, useWalletRequest } from '@/ui/utils';
 import { getPasswordStrengthWord, MIN_PASSWORD_LENGTH } from '@/ui/utils/password-utils';
+import { useI18n, useTools, useWallet } from '@unisat/wallet-state';
 
+import { useWalletRequest } from '@/ui/utils';
 import { useNavigate } from '../MainRoute';
 
 type Status = '' | 'error' | 'warning' | undefined;
@@ -72,7 +71,7 @@ export default function CreatePasswordScreen() {
     if (!newPassword) {
       return;
     }
-    const { text, color, tip } = getPasswordStrengthWord(newPassword);
+    const { text, color, tip } = getPasswordStrengthWord(newPassword, t);
 
     return (
       <Column>

@@ -1,18 +1,16 @@
 import { useEffect, useMemo, useState } from 'react';
 
-import { ADDRESS_TYPES, getRestoreWallets } from '@/shared/constant';
 import { AddressType } from '@/shared/types';
 import { Button, Column, Icon, Input, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import { AddressTypeCard2 } from '@/ui/components/AddressTypeCard';
 import { FooterButtonContainer } from '@/ui/components/FooterButtonContainer';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { ContextData, UpdateContextDataParams } from '@/ui/pages/Account/createHDWalletComponents/types';
 import { useNavigate } from '@/ui/pages/MainRoute';
-import { useCreateAccountCallback } from '@/ui/state/global/hooks';
-import { satoshisToAmount, useWallet } from '@/ui/utils';
+import { satoshisToAmount } from '@/ui/utils';
 import { isValidHdPath } from '@/ui/utils/bitcoin-utils';
 import { LoadingOutlined } from '@ant-design/icons';
+import { ADDRESS_TYPES, getRestoreWallets } from '@unisat/wallet-shared';
+import { useCreateAccountCallback, useI18n, useTools, useWallet } from '@unisat/wallet-state';
 
 export function Step2({
   contextData,

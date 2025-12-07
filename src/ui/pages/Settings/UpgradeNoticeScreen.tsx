@@ -1,5 +1,5 @@
 import { Button, Card, Column, Content, Header, Layout } from '@/ui/components';
-import { useI18n } from '@/ui/hooks/useI18n';
+import { useI18n } from '@unisat/wallet-state';
 
 const UPGRADE_NOTICE = '...';
 export default function UpgradeNoticeScreen() {

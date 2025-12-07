@@ -2,10 +2,8 @@ import { useMemo, useState } from 'react';
 
 import { CAT_VERSION } from '@/shared/types';
 import { Column, Icon, Row, Text } from '@/ui/components';
-import { useAppDispatch } from '@/ui/state/hooks';
-import { useCATAssetTabKey } from '@/ui/state/ui/hooks';
-import { CATAssetTabKey, uiActions } from '@/ui/state/ui/reducer';
 import { colors } from '@/ui/theme/colors';
+import { CATAssetTabKey, uiActions, useAppDispatch, useCATAssetTabKey } from '@unisat/wallet-state';
 
 import { CAT20List } from './CAT20List';
 import { CAT721List } from './CAT721List';

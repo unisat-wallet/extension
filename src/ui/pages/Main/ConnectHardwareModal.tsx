@@ -1,13 +1,11 @@
-import { HARDWARE_WALLETS, HardwareWalletType } from '@/shared/constant';
+import { IMAGE_SOURCE_MAP } from '@/shared/constant';
 import { Card, Column, Image, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import { BottomModal } from '@/ui/components/BottomModal';
-import { useExtensionIsInTab } from '@/ui/features/browser/tabs';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
-import { useWallet } from '@/ui/utils';
 import { CloseOutlined } from '@ant-design/icons';
+import { useDevice, useI18n, useNavigation, useTools, useWallet } from '@unisat/wallet-state';
 
+import { HARDWARE_WALLETS, HardwareWalletType } from '@unisat/wallet-shared';
 import { useNavigate } from '../MainRoute';
 
 function WalletItem(props: { walletType: HardwareWalletType; onClick?: () => void; disabled?: boolean }) {
@@ -28,7 +26,7 @@ function WalletItem(props: { walletType: HardwareWalletType; onClick?: () => voi
       }}>
       <Row fullX>
         <Row itemsCenter>
-          <Image src={walletInfo.img} size={30} />
+          <Image src={IMAGE_SOURCE_MAP[walletInfo.name]} size={30} />
           <Text text={walletInfo.name} />
         </Row>
       </Row>
@@ -39,7 +37,8 @@ function WalletItem(props: { walletType: HardwareWalletType; onClick?: () => voi
 export const ConnectHardwareModal = ({ onClose }: { onClose: () => void }) => {
   const wallet = useWallet();
 
-  const isInTab = useExtensionIsInTab();
+  const { isExtensionInExpandView } = useDevice();
+  const nav = useNavigation();
   const navigate = useNavigate();
   const { t } = useI18n();
 
@@ -70,18 +69,18 @@ export const ConnectHardwareModal = ({ onClose }: { onClose: () => void }) => {
             walletType={HardwareWalletType.Keystone}
             onClick={async () => {
               const isBooted = await wallet.isBooted();
-              if (!isInTab) {
+              if (!isExtensionInExpandView) {
                 if (isBooted) {
-                  window.open('#/account/create-keystone-wallet');
+                  nav.navToUrl('#/account/create-keystone-wallet');
                 } else {
-                  window.open('#/account/create-password?isKeystone=true');
+                  nav.navToUrl('#/account/create-password?isKeystone=true');
                 }
                 return;
               }
               if (isBooted) {
-                navigate('CreateKeystoneWalletScreen');
+                nav.navigate('CreateKeystoneWalletScreen');
               } else {
-                navigate('CreatePasswordScreen', { isKeystone: true });
+                nav.navigate('CreatePasswordScreen', { isKeystone: true });
               }
             }}
           />

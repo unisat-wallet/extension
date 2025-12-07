@@ -64,7 +64,7 @@ export const colors = Object.assign({}, palette, {
   bg4: '#383535',
   search_bar_bg: '#1E1F24',
 
-  border: 'rgba(255,255,255,0.04)',
+  border: 'rgba(255,255,255,0.08)',
   border2: 'rgba(255, 255, 255, 0.1)',
 
   icon_yellow: '#FFBA33',

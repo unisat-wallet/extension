@@ -11,24 +11,30 @@ import { SwitchNetworkBar } from '@/ui/components/SwitchNetworkBar';
 import { Tabs } from '@/ui/components/Tabs';
 import { UpgradePopover } from '@/ui/components/UpgradePopover';
 import { VersionNotice } from '@/ui/components/VersionNotice';
-import { getCurrentTab } from '@/ui/features/browser/tabs';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useAccountBalance, useAddressSummary, useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useIsUnlocked } from '@/ui/state/global/hooks';
-import { useAppDispatch } from '@/ui/state/hooks';
-import { useCurrentKeyring } from '@/ui/state/keyrings/hooks';
-import {
-  useAddressTips,
-  useChain,
-  useSkipVersionCallback,
-  useVersionInfo,
-  useWalletConfig
-} from '@/ui/state/settings/hooks';
-import { useAssetTabKey, useSupportedAssets } from '@/ui/state/ui/hooks';
-import { AssetTabKey, uiActions } from '@/ui/state/ui/reducer';
-import { getUiType, useWallet } from '@/ui/utils';
+import { getCurrentTab } from '@/ui/web/tabs';
 import { KeyringType } from '@unisat/keyring-service/types';
+import '@unisat/wallet-state';
+import {
+  AssetTabKey,
+  uiActions,
+  useAccountBalance,
+  useAddressSummary,
+  useAddressTips,
+  useAppDispatch,
+  useAssetTabKey,
+  useChain,
+  useCurrentAccount,
+  useCurrentKeyring,
+  useI18n,
+  useIsUnlocked,
+  useSkipVersionCallback,
+  useSupportedAssets,
+  useVersionInfo,
+  useWallet,
+  useWalletConfig
+} from '@unisat/wallet-state';
 
+import { getUiType } from '@/ui/web';
 import { useNavigate } from '../../MainRoute';
 import { SwitchChainModal } from '../../Settings/SwitchChainModal';
 import { AlkanesTab } from './AlkanesTab';
@@ -207,7 +213,7 @@ export default function WalletTabScreen() {
         }
       />
 
-      <Content style={{ overflowY: 'auto' }}>
+      <Content>
         <AccountSelect />
 
         <Column gap="lg2" mt="md">

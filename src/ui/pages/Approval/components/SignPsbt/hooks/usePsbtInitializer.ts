@@ -37,7 +37,6 @@ export const usePsbtInitializer = (setTxInfo, setLoading, tools) => {
               toAddressInfo: { address: sendBitcoinParams.toAddress, domain: '' },
               toAmount: sendBitcoinParams.satoshis,
               feeRate: sendBitcoinParams.feeRate,
-              enableRBF: false,
               memo: sendBitcoinParams.memo,
               memos: sendBitcoinParams.memos,
               disableAutoAdjust: true
@@ -49,8 +48,7 @@ export const usePsbtInitializer = (setTxInfo, setLoading, tools) => {
             const rawTxInfo = await prepareSendOrdinalsInscription({
               toAddressInfo: { address: sendInscriptionParams.toAddress, domain: '' },
               inscriptionId: sendInscriptionParams.inscriptionId,
-              feeRate: sendInscriptionParams.feeRate,
-              enableRBF: false
+              feeRate: sendInscriptionParams.feeRate
             });
             finalPsbtHex = rawTxInfo.psbtHex;
           }
@@ -60,8 +58,7 @@ export const usePsbtInitializer = (setTxInfo, setLoading, tools) => {
               toAddressInfo: { address: sendRunesParams.toAddress, domain: '' },
               runeid: sendRunesParams.runeid,
               runeAmount: sendRunesParams.amount,
-              feeRate: sendRunesParams.feeRate,
-              enableRBF: false
+              feeRate: sendRunesParams.feeRate
             });
             finalPsbtHex = rawTxInfo.psbtHex;
           }
@@ -71,8 +68,7 @@ export const usePsbtInitializer = (setTxInfo, setLoading, tools) => {
               toAddressInfo: { address: sendAlkanesParams.toAddress, domain: '' },
               alkaneid: sendAlkanesParams.alkaneid,
               amount: sendAlkanesParams.amount,
-              feeRate: sendAlkanesParams.feeRate,
-              enableRBF: false
+              feeRate: sendAlkanesParams.feeRate
             });
             finalPsbtHex = rawTxInfo.psbtHex;
           }

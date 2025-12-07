@@ -1,6 +1,5 @@
 import moment from 'moment';
-import { useCallback, useEffect, useMemo, useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useEffect, useMemo, useState } from 'react';
 
 import { Inscription } from '@/shared/types';
 import { Button, Column, Content, Header, Icon, Layout, Row, Text } from '@/ui/components';
@@ -8,16 +7,9 @@ import InscriptionPreview from '@/ui/components/InscriptionPreview';
 import { Line } from '@/ui/components/Line';
 import { Section } from '@/ui/components/Section';
 import { Tabs } from '@/ui/components/Tabs';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useAppDispatch } from '@/ui/state/hooks';
-import { useTxExplorerUrl } from '@/ui/state/settings/hooks';
-import { transactionsActions } from '@/ui/state/transactions/reducer';
 import { fontSizes } from '@/ui/theme/font';
-import { useLocationState, useWallet } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
-
-import { useNavigate } from '../MainRoute';
+import { useI18n, useOrdinalsInscriptionScreenLogic, useTxExplorerUrl, useWallet } from '@unisat/wallet-state';
 
 const HIGH_BALANCE = 10000;
 
@@ -27,91 +19,29 @@ enum TabKey {
 }
 
 export default function OrdinalsInscriptionScreen() {
-  const navigate = useNavigate();
-  const location = useLocation();
-
-  const { inscriptionId } = useParams();
-  const locationState = useLocationState<{ inscription: Inscription }>();
-  const [inscription, setInscription] = useState<Inscription>(locationState?.inscription);
-  const [isLoadingDetails, setIsLoadingDetails] = useState(false);
-  const [isInitialLoading, setIsInitialLoading] = useState(!locationState?.inscription);
-
-  const currentAccount = useCurrentAccount();
-
-  const dispatch = useAppDispatch();
-
-  const { t } = useI18n();
-
-  const [isNeedToSplit, setIsNeedToSplit] = useState(false);
-  const [isMultiStuck, setIsMultiStuck] = useState(false);
-  const wallet = useWallet();
-
-  const [tabKey, setTabKey] = useState(TabKey.DETAILS);
-
-  const resetState = useCallback(() => {
-    setIsNeedToSplit(false);
-    setIsMultiStuck(false);
-    setIsLoadingDetails(false);
-    setIsInitialLoading(!locationState?.inscription);
-    setTabKey(TabKey.DETAILS);
-  }, [locationState?.inscription]);
-
-  const fetchInscriptionData = async (id: string) => {
-    if (!id) return;
-
-    // If we already have basic inscription data, show it immediately
-    // and load details in the background
-    const isBackgroundLoading = !!inscription;
-
-    if (isBackgroundLoading) {
-      setIsLoadingDetails(true);
-    } else {
-      setIsInitialLoading(true);
-    }
-
-    try {
-      const data = await wallet.getInscriptionInfo(id);
-      setInscription(data);
-      setTabKey(TabKey.DETAILS);
-
-      if (data.multipleNFT) {
-        setIsMultiStuck(true);
-
-        if (data.sameOffset) {
-          setIsNeedToSplit(false);
-        } else {
-          if (data.outputValue > HIGH_BALANCE) {
-            setIsNeedToSplit(true);
-          }
-        }
-      } else {
-        if (data.outputValue > HIGH_BALANCE) {
-          setIsNeedToSplit(true);
-        }
-      }
-    } catch (e) {
-      console.error('Failed to fetch inscription data:', e);
-    } finally {
-      setIsLoadingDetails(false);
-      setIsInitialLoading(false);
-    }
-  };
-
-  useEffect(() => {
-    if (inscriptionId) {
-      resetState();
-
-      // Always fetch the latest data, but we'll show what we have immediately
-      fetchInscriptionData(inscriptionId);
-    }
-  }, [inscriptionId, location.key]);
-
+  const {
+    inscription,
+    isLoadingDetails,
+    isInitialLoading,
+    isNeedToSplit,
+    isMultiStuck,
+    tabKey,
+    setTabKey,
+    t,
+    inscriptionId,
+    onClickSend,
+    onClickSplit,
+    isUnconfirmed,
+    withSend,
+    shouldShowTabs,
+    nav
+  } = useOrdinalsInscriptionScreenLogic();
   if (!inscriptionId) {
     return (
       <Layout>
         <Header
           onBack={() => {
-            window.history.back();
+            nav.goBack();
           }}
         />
         <Content>
@@ -140,7 +70,7 @@ export default function OrdinalsInscriptionScreen() {
       <Layout>
         <Header
           onBack={() => {
-            window.history.back();
+            nav.goBack();
           }}
         />
         <Content>
@@ -152,21 +82,11 @@ export default function OrdinalsInscriptionScreen() {
     );
   }
 
-  const isUnconfirmed = inscription.timestamp == 0;
-
-  const withSend = currentAccount.address === inscription.address;
-
-  const children = inscription.children || [];
-  const parents = inscription.parents || [];
-
-  const hasProvenance = children.length > 0 || parents.length > 0;
-  const shouldShowTabs = hasProvenance === true;
-
   return (
     <Layout>
       <Header
         onBack={() => {
-          window.history.back();
+          nav.goBack();
         }}
       />
       <Content>
@@ -195,30 +115,8 @@ export default function OrdinalsInscriptionScreen() {
 
           {withSend && (
             <Row fullX>
-              {isNeedToSplit && (
-                <Button
-                  text={t('split')}
-                  icon="split"
-                  preset="default"
-                  full
-                  onClick={(e) => {
-                    dispatch(transactionsActions.reset());
-                    navigate('SplitOrdinalsInscriptionScreen', { inscription });
-                  }}
-                />
-              )}
-              {
-                <Button
-                  text={t('send')}
-                  icon="send"
-                  preset="default"
-                  full
-                  onClick={(e) => {
-                    dispatch(transactionsActions.reset());
-                    navigate('SendOrdinalsInscriptionScreen', { inscription });
-                  }}
-                />
-              }
+              {isNeedToSplit && <Button text={t('split')} icon="split" preset="default" full onClick={onClickSplit} />}
+              {<Button text={t('send')} icon="send" preset="default" full onClick={onClickSend} />}
             </Row>
           )}
 

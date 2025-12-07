@@ -1,8 +1,6 @@
 import { Inscription } from '@/shared/types';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { useNavigate } from '@/ui/pages/MainRoute';
-import { useAppDispatch } from '@/ui/state/hooks';
-import { useWallet } from '@/ui/utils';
+import { useAppDispatch, useI18n, useWallet } from '@unisat/wallet-state';
 
 import { Button } from '../Button';
 import { Column } from '../Column';

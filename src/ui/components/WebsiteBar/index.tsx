@@ -1,10 +1,10 @@
 import { fontSizes } from '@/ui/theme/font';
-import { formatSessionIcon } from '@/ui/utils';
 
 import { Card } from '../Card';
 import { Image } from '../Image';
 import { Row } from '../Row';
 import { Text } from '../Text';
+import { formatSessionIcon } from '@/ui/utils';
 
 const WebsiteBar = ({ session }: { session: { origin: string; icon: string; name: string } }) => {
   return (

@@ -2,12 +2,10 @@ import { CheckboxChangeEvent } from 'antd/lib/checkbox';
 import { useEffect, useState } from 'react';
 
 import { Button, Card, Checkbox, Column, Grid, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import { FooterButtonContainer } from '@/ui/components/FooterButtonContainer';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { ContextData, TabType, UpdateContextDataParams } from '@/ui/pages/Account/createHDWalletComponents/types';
 import { fontSizes } from '@/ui/theme/font';
-import { copyToClipboard, useWallet } from '@/ui/utils';
+import { useI18n, useWallet } from '@unisat/wallet-state';
 
 export function Step1_Create({
   contextData,
@@ -19,7 +17,6 @@ export function Step1_Create({
   const [checked, setChecked] = useState(false);
   const { t } = useI18n();
   const wallet = useWallet();
-  const tools = useTools();
 
   const init = async () => {
     const _mnemonics = await wallet.generatePreMnemonic();
@@ -37,12 +34,6 @@ export function Step1_Create({
     setChecked(val);
     updateContextData({ step1Completed: val });
   };
-
-  function copy(str: string) {
-    copyToClipboard(str).then(() => {
-      tools.toastSuccess(t('copied'));
-    });
-  }
 
   const btnClick = () => {
     updateContextData({

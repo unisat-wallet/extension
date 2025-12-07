@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 
 import { Icon, Row, Tooltip } from '@/ui/components';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { getUiType, useWallet } from '@/ui/utils';
+import { getUiType } from '@/ui/web';
+import { useI18n, useWallet } from '@unisat/wallet-state';
 
 export function SidePanelExpand() {
   const { t } = useI18n();

@@ -1,69 +1,13 @@
-import { useEffect, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-
-import { Account } from '@/shared/types';
 import { Button, Card, Column, Content, Header, Icon, Input, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { copyToClipboard, useWallet } from '@/ui/utils';
-
-type Status = '' | 'error' | 'warning' | undefined;
+import { useExportPrivateKeyScreenLogic } from '@unisat/wallet-state';
 
 export default function ExportPrivateKeyScreen() {
-  const { t } = useI18n();
-
-  const { state } = useLocation();
-  const { account } = state as {
-    account: Account;
-  };
-
-  const [password, setPassword] = useState('');
-  const [disabled, setDisabled] = useState(true);
-
-  const [privateKey, setPrivateKey] = useState({ hex: '', wif: '' });
-  const [status, setStatus] = useState<Status>('');
-  const [error, setError] = useState('');
-  const wallet = useWallet();
-  const tools = useTools();
-
-  const btnClick = async () => {
-    try {
-      const _res = await wallet.getPrivateKey(password, account);
-      setPrivateKey(_res);
-    } catch (e) {
-      setStatus('error');
-      setError((e as any).message);
-    }
-  };
-
-  const handleOnKeyUp = (e: React.KeyboardEvent<HTMLInputElement>) => {
-    if ('Enter' == e.key) {
-      btnClick();
-    }
-  };
-
-  useEffect(() => {
-    setDisabled(true);
-    if (password) {
-      setDisabled(false);
-      setStatus('');
-      setError('');
-    }
-  }, [password]);
-
-  function copy(str: string) {
-    copyToClipboard(str);
-    tools.toastSuccess(t('copied'));
-  }
+  const { t, setPassword, disabled, btnClick, handleOnKeyUp, privateKey, error, copy, onClickBack } =
+    useExportPrivateKeyScreenLogic();
 
   return (
     <Layout>
-      <Header
-        onBack={() => {
-          window.history.go(-1);
-        }}
-        title={t('export_private_key')}
-      />
+      <Header onBack={onClickBack} title={t('export_private_key')} />
       <Content>
         {privateKey.wif == '' ? (
           <Column gap="lg">

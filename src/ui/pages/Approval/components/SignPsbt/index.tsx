@@ -2,26 +2,29 @@ import { useEffect, useMemo, useState } from 'react';
 
 import { TxType } from '@/shared/types';
 import { Button, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import ColdWalletSignPsbt from '@/ui/components/ColdWallet/SignPsbt';
 import { ContractPopover } from '@/ui/components/ContractPopover';
 import LoadingPage from '@/ui/components/LoadingPage';
 import { PhishingDetection } from '@/ui/components/PhishingDetection';
 import { SignPsbtWithRisksPopover } from '@/ui/components/SignPsbtWithRisksPopover';
 import WebsiteBar from '@/ui/components/WebsiteBar';
-import { useI18n } from '@/ui/hooks/useI18n';
 import KeystoneSignScreen from '@/ui/pages/Wallet/KeystoneSignScreen';
-import { useAccountAddress, useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useBTCUnit } from '@/ui/state/settings/hooks';
+import { KeyringType, KeystoneSignEnum } from '@unisat/keyring-service/types';
 import {
+  useAccountAddress,
+  useApproval,
+  useBTCUnit,
+  useCurrentAccount,
+  useI18n,
   usePrepareSendAlkanesCallback,
   usePrepareSendBTCCallback,
   usePrepareSendOrdinalsInscriptionCallback,
-  usePrepareSendRunesCallback
-} from '@/ui/state/transactions/hooks';
-import { satoshisToAmount, useApproval, useWallet } from '@/ui/utils';
-import { KeyringType, KeystoneSignEnum } from '@unisat/keyring-service/types';
+  usePrepareSendRunesCallback,
+  useTools,
+  useWallet
+} from '@unisat/wallet-state';
 
+import { satoshisToAmount } from '@/ui/utils';
 import FeaturesSection from './components/FeaturesSection';
 import FeeSection from './components/FeeSection';
 import FooterActions from './components/FooterActions';
@@ -52,7 +55,7 @@ export default function SignPsbt({
   handleCancel,
   handleConfirm
 }: Props) {
-  const [getApproval, resolveApproval, rejectApproval] = useApproval();
+  const { resolveApproval, rejectApproval } = useApproval();
   const [txInfo, setTxInfo] = useState<TxInfo>(initTxInfo);
   const [loading, setLoading] = useState(true);
   const [isPsbtRiskPopoverVisible, setIsPsbtRiskPopoverVisible] = useState(false);
@@ -111,7 +114,6 @@ export default function SignPsbt({
     ) {
       signed = false;
     }
-    console.log('SignPsbt handleConfirm', res, txInfo);
     resolveApproval({
       psbtHex: (res ?? txInfo).psbtHex,
       signed

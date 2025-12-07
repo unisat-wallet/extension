@@ -2,19 +2,22 @@ import classNames from 'classnames';
 import { useCallback, useEffect, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
-import { ChainType } from '@/shared/constant';
 import { Icon, Row, Tooltip } from '@/ui/components';
 import { BtcUsd } from '@/ui/components/BtcUsd';
 import { RefreshButton } from '@/ui/components/RefreshButton';
-import { getSpecialLocale, useI18n } from '@/ui/hooks/useI18n';
-import { useUtxoTools } from '@/ui/hooks/useUtxoTools';
-import { AppState } from '@/ui/state';
-import { useFetchBalanceCallback } from '@/ui/state/accounts/hooks';
-import { accountActions } from '@/ui/state/accounts/reducer';
-import { useBTCUnit, useChain } from '@/ui/state/settings/hooks';
-import { uiActions } from '@/ui/state/ui/reducer';
 import { satoshisToAmount } from '@/ui/utils';
+import {
+  accountActions,
+  AppState,
+  uiActions,
+  useBTCUnit,
+  useChain,
+  useFetchBalanceCallback,
+  useI18n,
+  useNavigation
+} from '@unisat/wallet-state';
 
+import { ChainType } from '@unisat/wallet-types';
 import styles from './BalanceCard.module.less';
 import { BalanceCardProps } from './interface';
 
@@ -38,6 +41,7 @@ export function BalanceCard({ accountBalance, disableUtxoTools = true, enableRef
   const { t } = useI18n();
   const btcUnit = useBTCUnit();
   const chain = useChain();
+  const nav = useNavigation();
   const [isExpanded, setIsExpanded] = useState(true);
   const dispatch = useDispatch();
   const isBalanceHidden = useSelector((state: AppState) => state.ui.isBalanceHidden);
@@ -48,14 +52,6 @@ export function BalanceCard({ accountBalance, disableUtxoTools = true, enableRef
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
 
   const fetchBalance = useFetchBalanceCallback();
-
-  useEffect(() => {
-    getSpecialLocale().then(({ isSpecialLocale }) => {
-      setIsSpecialLocale(isSpecialLocale);
-    });
-  }, []);
-
-  const { openUtxoTools } = useUtxoTools(chain);
 
   const backgroundImage = chain.isFractal
     ? './images/artifacts/balance-bg-fb.png'
@@ -85,7 +81,7 @@ export function BalanceCard({ accountBalance, disableUtxoTools = true, enableRef
       }
 
       debounceTimerRef.current = setTimeout(() => {
-        dispatch(accountActions.expireBalance());
+        dispatch(accountActions.expireBalance(null));
         fetchBalance();
         debounceTimerRef.current = null;
       }, DEBOUNCE_DELAY);
@@ -106,7 +102,7 @@ export function BalanceCard({ accountBalance, disableUtxoTools = true, enableRef
     if (!enableRefresh) return;
 
     const intervalId = setInterval(() => {
-      dispatch(accountActions.expireBalance());
+      dispatch(accountActions.expireBalance(null));
       fetchBalance();
     }, 10000);
 
@@ -122,7 +118,8 @@ export function BalanceCard({ accountBalance, disableUtxoTools = true, enableRef
   const handleUnlock = (e: React.MouseEvent) => {
     e.stopPropagation();
     if (disableUtxoTools) return;
-    openUtxoTools();
+
+    nav.navToUtxoTools();
   };
 
   return (

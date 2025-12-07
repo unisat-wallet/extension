@@ -1,8 +1,8 @@
-import { useI18n } from '@/ui/hooks/useI18n';
 import { copyToClipboard, shortAddress } from '@/ui/utils';
 import { CopyOutlined } from '@ant-design/icons';
+import { useI18n } from '@unisat/wallet-state';
 
-import { useTools } from '../ActionComponent';
+import { useTools } from '@unisat/wallet-state';
 import { Row } from '../Row';
 import { Text } from '../Text';
 

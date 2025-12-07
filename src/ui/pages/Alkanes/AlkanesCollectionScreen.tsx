@@ -5,9 +5,7 @@ import { Card, Column, Content, Header, Layout, Row, Text } from '@/ui/component
 import { Line } from '@/ui/components/Line';
 import LoadingPage from '@/ui/components/LoadingPage';
 import { Section } from '@/ui/components/Section';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useLocationState, useWallet } from '@/ui/utils';
+import { useCurrentAccount, useI18n, useNavigation, useWallet } from '@unisat/wallet-state';
 
 import { AlkanesNFTList } from './AlkanesNFTList';
 
@@ -22,7 +20,8 @@ interface AlkanesCollectionSummary {
 
 export default function AlkanesCollectionScreen() {
   const { t } = useI18n();
-  const { collectionId } = useLocationState<LocationState>();
+  const nav = useNavigation();
+  const { collectionId } = nav.getRouteState<LocationState>();
   const [collectionSummary, setCollectionSummary] = useState<AlkanesCollectionSummary>({
     collectionInfo: {
       alkaneid: '',

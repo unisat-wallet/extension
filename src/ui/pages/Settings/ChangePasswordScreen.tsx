@@ -1,14 +1,10 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useWallet } from '@/ui/utils';
 import { getPasswordStrengthWord, MIN_PASSWORD_LENGTH } from '@/ui/utils/password-utils';
+import { useI18n, useTools, useWallet } from '@unisat/wallet-state';
 
 import { useNavigate } from '../MainRoute';
-
-type Status = '' | 'error' | 'warning' | undefined;
 
 export default function ChangePasswordScreen() {
   const { t } = useI18n();
@@ -26,7 +22,7 @@ export default function ChangePasswordScreen() {
     if (!newPassword) {
       return;
     }
-    const { text, color, tip } = getPasswordStrengthWord(newPassword);
+    const { text, color, tip } = getPasswordStrengthWord(newPassword, t);
 
     return (
       <Column>

@@ -1,19 +1,15 @@
 import { useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
-import { Inscription, RawTxInfo, TokenBalance, TokenInfo, TxType, UserToSignInput } from '@/shared/types';
-import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
-import { Loading } from '@/ui/components/ActionComponent/Loading';
+import { Inscription, TokenBalance, TokenInfo, TxType, UserToSignInput } from '@/shared/types';
+import { Button, Column, Content, Header, Input, Layout, Loading, Row, Text } from '@/ui/components';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { useNavigate } from '@/ui/pages/MainRoute';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useRunesTx } from '@/ui/state/transactions/hooks';
 import { colors } from '@/ui/theme/colors';
-import { isValidAddress, showLongNumber, useWallet } from '@/ui/utils';
+import { isValidAddress, showLongNumber } from '@/ui/utils';
 import { getAddressUtxoDust } from '@/ui/utils/bitcoin-utils';
+import { useCurrentAccount, useFeeRateBar, useI18n, useRunesTx, useTools, useWallet } from '@unisat/wallet-state';
 
 import { SignPsbt } from '../Approval/components';
 
@@ -60,10 +56,8 @@ export default function BRC20SingleStepScreen() {
     }
   }, [toInfo.address, currentAccount.address]);
 
-  const [feeRate, setFeeRate] = useState(5);
-  const [enableRBF, setEnableRBF] = useState(false);
+  const { feeRate } = useFeeRateBar();
 
-  const [rawTxInfo, setRawTxInfo] = useState<RawTxInfo>();
   useEffect(() => {
     setError('');
     setDisabled(true);
@@ -80,7 +74,7 @@ export default function BRC20SingleStepScreen() {
     }
 
     setDisabled(false);
-  }, [toInfo, inputAmount, feeRate, enableRBF, outputValue, minOutputValue]);
+  }, [toInfo, inputAmount, feeRate, outputValue, minOutputValue]);
 
   const tools = useTools();
 
@@ -127,29 +121,37 @@ export default function BRC20SingleStepScreen() {
   if (step == 1) {
     return (
       <SignPsbt
-        header=<Header
-          title={t('step_12')}
-          onBack={() => {
-            setStep(0);
-          }}
-        />
+        header={
+          <Header
+            title={t('step_12')}
+            onBack={() => {
+              setStep(0);
+            }}
+          />
+        }
         params={{
           data: {
             psbtHex: transferData.current.commitTx,
             type: TxType.SIGN_TX,
-            options: { autoFinalized: false, toSignInputs: transferData.current.commitToSignInputs }
+            options: { autoFinalized: true, toSignInputs: transferData.current.commitToSignInputs }
           }
         }}
         handleCancel={() => {
           setStep(0);
         }}
-        handleConfirm={async () => {
+        handleConfirm={async (res) => {
           try {
             tools.showLoading(true);
+            let signed = false;
+            if (res && res.psbtHex) {
+              transferData.current.commitTx = res.psbtHex;
+              signed = true;
+            }
             const step2 = await wallet.singleStepTransferBRC20Step2({
               orderId: transferData.current.id,
               commitTx: transferData.current.commitTx,
-              toSignInputs: transferData.current.commitToSignInputs
+              toSignInputs: transferData.current.commitToSignInputs,
+              signed
             });
 
             transferData.current.revealTx = step2.psbtHex;
@@ -172,12 +174,14 @@ export default function BRC20SingleStepScreen() {
   } else if (step == 2) {
     return (
       <SignPsbt
-        header=<Header
-          title={t('step_22')}
-          onBack={() => {
-            setStep(0);
-          }}
-        />
+        header={
+          <Header
+            title={t('step_22')}
+            onBack={() => {
+              setStep(0);
+            }}
+          />
+        }
         params={{
           data: {
             psbtHex: transferData.current.revealTx,
@@ -188,13 +192,19 @@ export default function BRC20SingleStepScreen() {
         handleCancel={() => {
           setStep(0);
         }}
-        handleConfirm={async () => {
+        handleConfirm={async (res) => {
           tools.showLoading(true);
           try {
+            let signed = false;
+            if (res && res.psbtHex) {
+              transferData.current.revealTx = res.psbtHex;
+              signed = true;
+            }
             const step3 = await wallet.singleStepTransferBRC20Step3({
               orderId: transferData.current.id,
               revealTx: transferData.current.revealTx,
-              toSignInputs: transferData.current.revealToSignInputs
+              toSignInputs: transferData.current.revealToSignInputs,
+              signed
             });
             navigate('TxSuccessScreen', { txid: step3.txid });
           } catch (e) {
@@ -265,13 +275,7 @@ export default function BRC20SingleStepScreen() {
         </Column>
 
         <Column mt="lg">
-          <Text text={t('fee')} color="textDim" />
-
-          <FeeRateBar
-            onChange={(val) => {
-              setFeeRate(val);
-            }}
-          />
+          <FeeRateBar />
         </Column>
 
         {error && <Text text={error} color="error" />}

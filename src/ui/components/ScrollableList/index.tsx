@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from 'react';
 
-import { useI18n } from '@/ui/hooks/useI18n';
 import { colors } from '@/ui/theme/colors';
+import { useI18n } from '@unisat/wallet-state';
 
 import { BaseView, BaseViewProps } from '../BaseView';
 import { Column, Row, Text } from '../index';

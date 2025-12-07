@@ -1,5 +1,3 @@
-import { t } from '@unisat/i18n';
-
 import { colors } from '../theme/colors';
 
 export const MIN_PASSWORD_LENGTH = 8;
@@ -38,7 +36,7 @@ const calculatePasswordStrength = (password: string): number => {
   return Math.max(0, Math.min(4, score));
 };
 
-export const getPasswordStrengthWord = (password: string) => {
+export const getPasswordStrengthWord = (password: string, t) => {
   if (password.length < MIN_PASSWORD_LENGTH) {
     return {
       text: t('not_long_enough'),

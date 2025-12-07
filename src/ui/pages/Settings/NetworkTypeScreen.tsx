@@ -1,10 +1,8 @@
-import { CHAINS } from '@/shared/constant';
 import { Card, Column, Content, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useReloadAccounts } from '@/ui/state/accounts/hooks';
-import { useChainType, useChangeChainTypeCallback } from '@/ui/state/settings/hooks';
+import { useChainType, useChangeChainTypeCallback, useI18n, useReloadAccounts, useTools } from '@unisat/wallet-state';
 
+import { IMAGE_SOURCE_MAP } from '@/shared/constant';
+import { CHAINS } from '@unisat/wallet-shared';
 import { useNavigate } from '../MainRoute';
 
 export default function NetworkTypeScreen() {
@@ -43,7 +41,7 @@ export default function NetworkTypeScreen() {
                 }}>
                 <Row full justifyBetween itemsCenter>
                   <Row itemsCenter>
-                    <Image src={item.icon} size={30} style={{ opacity: item.disable ? 0.7 : 1 }} />
+                    <Image src={IMAGE_SOURCE_MAP[item.icon]} size={30} style={{ opacity: item.disable ? 0.7 : 1 }} />
                     <Text text={item.label} preset="regular-bold" color={item.disable ? 'textDim' : 'text'} />
                   </Row>
                   <Column>{item.enum == chainType && <Icon icon="check" />}</Column>

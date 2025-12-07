@@ -1,18 +1,19 @@
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 
-import { useI18n } from '@/ui/hooks/useI18n';
 import { useNavigate } from '@/ui/pages/MainRoute';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useChain } from '@/ui/state/settings/hooks';
 import {
+  useChain,
+  useCurrentAccount,
+  useFeeRateBar,
   useFetchUtxosCallback,
+  useI18n,
   usePrepareSendBTCCallback,
   useSafeBalance,
   useUtxos
-} from '@/ui/state/transactions/hooks';
-import { amountToSatoshis } from '@/ui/utils';
+} from '@unisat/wallet-state';
 
-import { useTools } from '../ActionComponent';
+import { amountToSatoshis } from '@/ui/utils';
+import { useTools } from '@unisat/wallet-state';
 import { Button } from '../Button';
 import { Column } from '../Column';
 import { FeeRateBar } from '../FeeRateBar';
@@ -40,7 +41,7 @@ export const MergeBTCPopover = ({ onClose }: { onClose: () => void }) => {
     });
   }, []);
 
-  const [feeRate, setFeeRate] = useState(0);
+  const { feeRate } = useFeeRateBar();
 
   const chain = useChain();
   const navigate = useNavigate();
@@ -51,8 +52,7 @@ export const MergeBTCPopover = ({ onClose }: { onClose: () => void }) => {
           address: currentAccount.address
         },
         toAmount: amountToSatoshis(safeBalance),
-        feeRate,
-        enableRBF: true
+        feeRate
       });
 
       navigate('TxConfirmScreen', { rawTxInfo });
@@ -79,11 +79,7 @@ export const MergeBTCPopover = ({ onClose }: { onClose: () => void }) => {
           <Text preset="regular" text={`${t('merging_amount')}: ${safeBalance} ${chain.unit} `} />
         </Column>
 
-        <FeeRateBar
-          onChange={(val) => {
-            setFeeRate(val);
-          }}
-        />
+        <FeeRateBar />
 
         <Row full mt="lg">
           <Button

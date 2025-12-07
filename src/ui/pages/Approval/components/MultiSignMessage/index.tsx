@@ -2,17 +2,15 @@ import React, { useCallback, useEffect, useState } from 'react';
 
 import { SignPsbtOptions, WebsiteResult } from '@/shared/types';
 import { Button, Card, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
 import { ColdWalletSignMessage } from '@/ui/components/ColdWallet';
 import { PhishingDetection } from '@/ui/components/PhishingDetection';
 import WebsiteBar from '@/ui/components/WebsiteBar';
-import { useI18n } from '@/ui/hooks/useI18n';
 import KeystoneSignScreen from '@/ui/pages/Wallet/KeystoneSignScreen';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
 import { fontSizes } from '@/ui/theme/font';
-import { shortAddress, useApproval, useWallet } from '@/ui/utils';
+import { shortAddress } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 import { KeyringType, KeystoneSignEnum } from '@unisat/keyring-service/types';
+import { useApproval, useCurrentAccount, useI18n, useTools, useWallet } from '@unisat/wallet-state';
 
 import MultiSignDisclaimerModal from '../MultiSignPsbt/MultiSignDisclaimerModal';
 
@@ -61,7 +59,7 @@ export default function MultiSignMessage({
   handleCancel,
   handleConfirm
 }: Props) {
-  const [getApproval, resolveApproval, rejectApproval] = useApproval();
+  const { resolveApproval, rejectApproval } = useApproval();
   const [messageInfo, setMessageInfo] = useState<MessageInfo>(initMessageInfo);
   const [loading, setLoading] = useState(true);
   const [viewingMessageIndex, setViewingMessageIndex] = useState(-1);

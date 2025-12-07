@@ -1,6 +1,6 @@
 import { useSearchParams } from 'react-router-dom';
 
-import { useI18n } from '@/ui/hooks/useI18n';
+import { useI18n } from '@unisat/wallet-state';
 
 import './PhishingScreen.css';
 

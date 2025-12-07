@@ -4,12 +4,9 @@ import { objToUint8Array } from '@/shared/utils';
 import { Button, Card, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { CopyableAddress } from '@/ui/components/CopyableAddress';
 import WebsiteBar from '@/ui/components/WebsiteBar';
-import { useI18n } from '@/ui/hooks/useI18n';
 import KeystoneSignScreen from '@/ui/pages/Wallet/KeystoneSignScreen';
-import { useCurrentAccount } from '@/ui/state/accounts/hooks';
-import { useBabylonConfig } from '@/ui/state/settings/hooks';
-import { useApproval, useWallet } from '@/ui/utils';
 import { KeyringType, KeystoneSignEnum } from '@unisat/keyring-service/types';
+import { useApproval, useBabylonConfig, useCurrentAccount, useI18n, useWallet } from '@unisat/wallet-state';
 
 interface Props {
   params: {
@@ -30,7 +27,7 @@ interface Props {
 }
 
 export default function CosmosSign({ params: { data, session }, origin }: Props) {
-  const [getApproval, resolveApproval, rejectApproval] = useApproval();
+  const { resolveApproval, rejectApproval } = useApproval();
   const account = useCurrentAccount();
   const [isKeystoneSigning, setIsKeystoneSigning] = useState(false);
   const { t } = useI18n();

@@ -2,19 +2,23 @@ import { useEffect, useRef, useState } from 'react';
 
 import { CAT721CollectionInfo, CAT_VERSION, Inscription, TxType, UserToSignInput } from '@/shared/types';
 import { Button, Column, Content, Header, Input, Layout, Row, Text } from '@/ui/components';
-import { useTools } from '@/ui/components/ActionComponent';
-import { Loading } from '@/ui/components/ActionComponent/Loading';
 import CAT721Preview from '@/ui/components/CAT721Preview';
 import { FeeRateBar } from '@/ui/components/FeeRateBar';
 import { MergeBTCPopover } from '@/ui/components/MergeBTCPopover';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useNavigate } from '@/ui/pages/MainRoute';
-import { useNetworkType } from '@/ui/state/settings/hooks';
-import { useRunesTx } from '@/ui/state/transactions/hooks';
-import { isValidAddress, useLocationState, useWallet } from '@/ui/utils';
 import { getAddressType } from '@/ui/utils/bitcoin-utils';
+import {
+  useFeeRateBar,
+  useI18n,
+  useNavigation,
+  useNetworkType,
+  useRunesTx,
+  useTools,
+  useWallet
+} from '@unisat/wallet-state';
 import { AddressType } from '@unisat/wallet-types';
 
+import { Loading } from '@/ui/components/ActionComponent/Loading';
+import { isValidAddress } from '@/ui/utils';
 import { SignPsbt } from '../Approval/components';
 
 interface LocationState {
@@ -24,12 +28,12 @@ interface LocationState {
 }
 
 export default function SendCAT721Screen() {
-  const { version, localId, collectionInfo } = useLocationState<LocationState>();
+  const nav = useNavigation();
+  const { version, localId, collectionInfo } = nav.getRouteState<LocationState>();
 
   const wallet = useWallet();
   const { t } = useI18n();
 
-  const navigate = useNavigate();
   const runesTx = useRunesTx();
   const [inputAmount, setInputAmount] = useState('');
   const [disabled, setDisabled] = useState(false);
@@ -50,7 +54,7 @@ export default function SendCAT721Screen() {
   const [showMergeBTCUTXOPopover, setShowMergeBTCUTXOPopover] = useState(false);
   const tools = useTools();
 
-  const [feeRate, setFeeRate] = useState(5);
+  const { feeRate } = useFeeRateBar();
 
   useEffect(() => {
     setError('');
@@ -114,12 +118,14 @@ export default function SendCAT721Screen() {
   if (step == 1) {
     return (
       <SignPsbt
-        header=<Header
-          title={t('step_12')}
-          onBack={() => {
-            setStep(0);
-          }}
-        />
+        header={
+          <Header
+            title={t('step_12')}
+            onBack={() => {
+              setStep(0);
+            }}
+          />
+        }
         params={{
           data: {
             psbtHex: transferData.current.commitTx,
@@ -160,12 +166,14 @@ export default function SendCAT721Screen() {
   } else if (step == 2) {
     return (
       <SignPsbt
-        header=<Header
-          title={t('step_22')}
-          onBack={() => {
-            setStep(0);
-          }}
-        />
+        header={
+          <Header
+            title={t('step_22')}
+            onBack={() => {
+              setStep(0);
+            }}
+          />
+        }
         params={{
           data: {
             psbtHex: transferData.current.revealTx,
@@ -185,10 +193,10 @@ export default function SendCAT721Screen() {
               transferData.current.revealTx,
               transferData.current.revealToSignInputs
             );
-            navigate('TxSuccessScreen', { txid: step3.txid });
+            nav.navigate('TxSuccessScreen', { txid: step3.txid });
           } catch (e) {
             // tools.toastError((e as any).message);
-            navigate('TxFailScreen', { error: (e as any).message });
+            nav.navigate('TxFailScreen', { error: (e as any).message });
           } finally {
             tools.showLoading(false);
           }
@@ -231,13 +239,7 @@ export default function SendCAT721Screen() {
         </Column>
 
         <Column mt="lg">
-          <Text text={t('fee')} color="textDim" />
-
-          <FeeRateBar
-            onChange={(val) => {
-              setFeeRate(val);
-            }}
-          />
+          <FeeRateBar />
         </Column>
 
         {error && <Text text={error} color="error" />}

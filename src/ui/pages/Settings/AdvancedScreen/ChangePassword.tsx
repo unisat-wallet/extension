@@ -1,8 +1,8 @@
 import { useNavigate } from 'react-router-dom';
 
 import { Card, Icon, Row, Text } from '@/ui/components';
-import { useI18n } from '@/ui/hooks/useI18n';
 import { fontSizes } from '@/ui/theme/font';
+import { useI18n } from '@unisat/wallet-state';
 
 export function ChangePasswordCard() {
   const navigate = useNavigate();

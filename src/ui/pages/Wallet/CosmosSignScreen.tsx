@@ -2,8 +2,7 @@ import { useCallback } from 'react';
 
 import { CosmosSignDataType } from '@/shared/types';
 import KeystoneSignBase, { KeystoneSignBaseProps } from '@/ui/components/Keystone/SignBase';
-import { useI18n } from '@/ui/hooks/useI18n';
-import { useWallet } from '@/ui/utils';
+import { useI18n, useWallet } from '@unisat/wallet-state';
 
 interface Props {
   cosmosSignRequest: {
