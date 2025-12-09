@@ -956,7 +956,7 @@
   "inputs": {
     "message": "Entrées"
   },
-  "inscribe_and_store_your_inscriptions_in_the_worlds_first_keystone_open_source_chrome_wallet_for_ordinals": {
+  "welcome_screen_title": {
     "message": "Inscrivez et stockez vos inscriptions dans le premier portefeuille Chrome Open Source au monde pour les Ordinals !"
   },
   "inscribe_success": {

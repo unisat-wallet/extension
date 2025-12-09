@@ -956,7 +956,7 @@
   "inputs": {
     "message": "輸入"
   },
-  "inscribe_and_store_your_inscriptions_in_the_worlds_first_keystone_open_source_chrome_wallet_for_ordinals": {
+  "welcome_screen_title": {
     "message": "在世界第一個開源 Ordinals Chrome 錢包中銘刻並儲存您的銘文！"
   },
   "inscribe_success": {

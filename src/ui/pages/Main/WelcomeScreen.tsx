@@ -22,13 +22,7 @@ export default function WelcomeScreen() {
             <Logo preset="large" />
           </Row>
           <Column gap="xl" mt="xxl">
-            <Text
-              text={t(
-                'inscribe_and_store_your_inscriptions_in_the_worlds_first_open_source_chrome_wallet_for_ordinals'
-              )}
-              preset="sub"
-              textCenter
-            />
+            <Text text={t('welcome_screen_title')} preset="sub" textCenter />
 
             <Button
               text={t('create_new_wallet')}

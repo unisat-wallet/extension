@@ -956,7 +956,7 @@
   "inputs": {
     "message": "Входы"
   },
-  "inscribe_and_store_your_inscriptions_in_the_worlds_first_keystone_open_source_chrome_wallet_for_ordinals": {
+  "welcome_screen_title": {
     "message": "Создавайте и храните свои надписи в первом в мире Chrome-кошельке с открытым исходным кодом для Ordinals!"
   },
   "inscribe_success": {
