@@ -32,8 +32,8 @@ export default function CreateHDWalletScreen() {
     hdPath: '',
     passphrase: '',
     addressType: AddressType.P2WPKH,
-    step1Completed: false,
-    tabType: TabType.STEP1,
+    step1CreateWordsCompleted: false,
+    tabType: isImport ? TabType.CHOOSE_RESTORE_WALLET : TabType.CREATE_WORDS,
     restoreWalletType: RestoreWalletType.UNISAT,
     isRestore: isImport,
     isCustom: false,
@@ -54,12 +54,12 @@ export default function CreateHDWalletScreen() {
       if (contextData.restoreWalletType === RestoreWalletType.OW) {
         return [
           {
-            key: TabType.STEP1,
+            key: TabType.CHOOSE_RESTORE_WALLET,
             label: t('step_1'),
             children: <Step0 contextData={contextData} updateContextData={updateContextData} />
           },
           {
-            key: TabType.STEP2,
+            key: TabType.IMPORT_WORDS,
             label: t('step_2'),
             children: <Step1_Import contextData={contextData} updateContextData={updateContextData} />
           }
@@ -67,17 +67,17 @@ export default function CreateHDWalletScreen() {
       } else {
         return [
           {
-            key: TabType.STEP1,
+            key: TabType.CHOOSE_RESTORE_WALLET,
             label: t('step_1'),
             children: <Step0 contextData={contextData} updateContextData={updateContextData} />
           },
           {
-            key: TabType.STEP2,
+            key: TabType.IMPORT_WORDS,
             label: t('step_2'),
             children: <Step1_Import contextData={contextData} updateContextData={updateContextData} />
           },
           {
-            key: TabType.STEP3,
+            key: TabType.CHOOSE_ADDRESS_TYPE,
             label: t('step_3'),
             children: <Step2 contextData={contextData} updateContextData={updateContextData} />
           }
@@ -86,17 +86,12 @@ export default function CreateHDWalletScreen() {
     } else {
       return [
         {
-          key: TabType.STEP1,
+          key: TabType.CREATE_WORDS,
           label: t('step_1'),
           children: <Step1_Create contextData={contextData} updateContextData={updateContextData} />
         },
-        // {
-        //   key: TabType.STEP2,
-        //   label: 'Step 2',
-        //   children: <Step1_Confirm contextData={contextData} updateContextData={updateContextData} />
-        // },
         {
-          key: TabType.STEP2,
+          key: TabType.CHOOSE_ADDRESS_TYPE,
           label: t('step_2'),
           children: <Step2 contextData={contextData} updateContextData={updateContextData} />
         }
@@ -141,8 +136,8 @@ export default function CreateHDWalletScreen() {
             }))}
             onTabClick={(key) => {
               const toTabType = key as TabType;
-              if (toTabType === TabType.STEP2) {
-                if (!contextData.step1Completed) {
+              if (toTabType === TabType.CHOOSE_ADDRESS_TYPE) {
+                if (!contextData.step1CreateWordsCompleted) {
                   setTimeout(() => {
                     updateContextData({ tabType: contextData.tabType });
                   }, 200);

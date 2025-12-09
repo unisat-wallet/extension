@@ -32,12 +32,12 @@ export function Step1_Create({
   const onChange = (e: CheckboxChangeEvent) => {
     const val = e.target.checked;
     setChecked(val);
-    updateContextData({ step1Completed: val });
+    updateContextData({ step1CreateWordsCompleted: val });
   };
 
   const btnClick = () => {
     updateContextData({
-      tabType: TabType.STEP2
+      tabType: TabType.CHOOSE_ADDRESS_TYPE
     });
   };
 

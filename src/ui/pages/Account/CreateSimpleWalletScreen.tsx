@@ -10,6 +10,7 @@ import { useI18n, useTools, useWallet } from '@unisat/wallet-state';
 import { ADDRESS_TYPES } from '@unisat/wallet-shared';
 import { AddressType } from '@unisat/wallet-types';
 import { useNavigate } from '../MainRoute';
+import { TabType } from './createHDWalletComponents/types';
 
 function Step1({
   contextData,
@@ -35,7 +36,7 @@ function Step1({
   const onChange = (e) => {
     const val = e.target.value;
     setWif(val);
-    updateContextData({ step1Completed: val });
+    updateContextData({ step1CreateWordsCompleted: val });
   };
 
   const tools = useTools();
@@ -52,7 +53,7 @@ function Step1({
     }
     updateContextData({
       wif,
-      tabType: TabType.STEP2
+      tabType: TabType.CHOOSE_ADDRESS_TYPE
     });
   };
 
@@ -203,23 +204,18 @@ function Step2({
     </Column>
   );
 }
-enum TabType {
-  STEP1 = 'STEP1',
-  STEP2 = 'STEP2',
-  STEP3 = 'STEP3'
-}
 
 interface ContextData {
   wif: string;
   addressType: AddressType;
-  step1Completed: boolean;
+  step1CreateWordsCompleted: boolean;
   tabType: TabType;
 }
 
 interface UpdateContextDataParams {
   wif?: string;
   addressType?: AddressType;
-  step1Completed?: boolean;
+  step1CreateWordsCompleted?: boolean;
   tabType?: TabType;
 }
 
@@ -227,8 +223,8 @@ export default function CreateSimpleWalletScreen() {
   const [contextData, setContextData] = useState<ContextData>({
     wif: '',
     addressType: AddressType.P2WPKH,
-    step1Completed: false,
-    tabType: TabType.STEP1
+    step1CreateWordsCompleted: false,
+    tabType: TabType.IMPORT_WORDS
   });
   const { t } = useI18n();
   const updateContextData = useCallback(
@@ -240,12 +236,12 @@ export default function CreateSimpleWalletScreen() {
 
   const items = [
     {
-      key: TabType.STEP1,
+      key: TabType.IMPORT_WORDS,
       label: t('step_1'),
       children: <Step1 contextData={contextData} updateContextData={updateContextData} />
     },
     {
-      key: TabType.STEP2,
+      key: TabType.CHOOSE_ADDRESS_TYPE,
       label: t('step_2'),
       children: <Step2 contextData={contextData} updateContextData={updateContextData} />
     }
@@ -265,13 +261,13 @@ export default function CreateSimpleWalletScreen() {
         <Row justifyCenter>
           <TabBar
             progressEnabled
-            defaultActiveKey={TabType.STEP1}
+            defaultActiveKey={TabType.IMPORT_WORDS}
             items={items}
             activeKey={contextData.tabType}
             onTabClick={(key) => {
               const toTabType = key as TabType;
-              if (toTabType === TabType.STEP2) {
-                if (!contextData.step1Completed) {
+              if (toTabType === TabType.CHOOSE_ADDRESS_TYPE) {
+                if (!contextData.step1CreateWordsCompleted) {
                   setTimeout(() => {
                     updateContextData({ tabType: contextData.tabType });
                   }, 200);

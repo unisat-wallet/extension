@@ -19,7 +19,7 @@ export function Step0({
             key={index}
             preset="default"
             onClick={() => {
-              updateContextData({ tabType: TabType.STEP2, restoreWalletType: item.value });
+              updateContextData({ tabType: TabType.IMPORT_WORDS, restoreWalletType: item.value });
             }}>
             <Text text={t(item.name)} />
           </Button>

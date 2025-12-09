@@ -18,7 +18,7 @@ export function Step1_Confirm({
 
   const btnClick = () => {
     updateContextData({
-      tabType: TabType.STEP3
+      tabType: TabType.CHOOSE_ADDRESS_TYPE
     });
   };
 

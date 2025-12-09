@@ -1,10 +1,14 @@
 import { AddressType, RestoreWalletType } from '@/shared/types';
 
-
 export enum TabType {
-  STEP1 = 'STEP1',
-  STEP2 = 'STEP2',
-  STEP3 = 'STEP3'
+  SET_PASSWORD = 'SET_PASSWORD',
+  CREATE_WORDS = 'CREATE_WORDS',
+  VERIFY_WORDS = 'VERIFY_WORDS',
+  IMPORT_WORDS = 'IMPORT_WORDS',
+  CHOOSE_ADDRESS_TYPE = 'CHOOSE_ADDRESS_TYPE',
+  CHOOSE_RESTORE_WALLET = 'CHOOSE_RESTORE_WALLET',
+  KEYSTONE_WALLET = 'KEYSTONE_WALLET',
+  KEYSTONE_ADDRESS_TYPE = 'KEYSTONE_ADDRESS_TYPE'
 }
 
 export enum WordsType {
@@ -17,7 +21,7 @@ export interface ContextData {
   hdPath: string;
   passphrase: string;
   addressType: AddressType;
-  step1Completed: boolean;
+  step1CreateWordsCompleted: boolean;
   tabType: TabType;
   restoreWalletType: RestoreWalletType;
   isRestore: boolean;
@@ -32,7 +36,7 @@ export interface UpdateContextDataParams {
   hdPath?: string;
   passphrase?: string;
   addressType?: AddressType;
-  step1Completed?: boolean;
+  step1CreateWordsCompleted?: boolean;
   tabType?: TabType;
   restoreWalletType?: RestoreWalletType;
   isCustom?: boolean;
