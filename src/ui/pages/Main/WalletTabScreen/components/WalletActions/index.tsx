@@ -202,14 +202,6 @@ export const WalletActions = ({ chain, address }: WalletActionsProps) => {
                   text={t('buy')}
                   preset="homeGold"
                   icon={isFractal ? 'fb' : 'bitcoin'}
-                  iconSize={
-                    isFractal
-                      ? {
-                          width: 24,
-                          height: 11
-                        }
-                      : undefined
-                  }
                   onClick={() => setBuyBtcModalVisible(true)}
                   disabled={chainType !== ChainType.BITCOIN_MAINNET && chainType !== ChainType.FRACTAL_BITCOIN_MAINNET}
                 />
