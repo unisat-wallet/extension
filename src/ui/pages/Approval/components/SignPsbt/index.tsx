@@ -25,7 +25,6 @@ import {
 } from '@unisat/wallet-state';
 
 import { satoshisToAmount } from '@/ui/utils';
-import FeaturesSection from './components/FeaturesSection';
 import FeeSection from './components/FeeSection';
 import FooterActions from './components/FooterActions';
 import InputsList from './components/InputsList';
@@ -231,9 +230,6 @@ export default function SignPsbt({
             {/* fee area */}
             {!canChanged && <FeeSection txInfo={txInfo} t={t} networkFee={networkFee} btcUnit={btcUnit} />}
 
-            {/* features */}
-            <FeaturesSection txInfo={txInfo} t={t} />
-
             {/* input output details */}
             {isValidData && (
               <Column gap="xl">
@@ -305,9 +301,6 @@ export default function SignPsbt({
 
           {/* fee area */}
           {!canChanged && <FeeSection txInfo={txInfo} t={t} networkFee={networkFee} btcUnit={btcUnit} />}
-
-          {/* features */}
-          <FeaturesSection txInfo={txInfo} t={t} />
 
           {/* input output details */}
           {isValidData && (
