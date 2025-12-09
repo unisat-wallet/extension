@@ -5,7 +5,8 @@ import {
   permissionService,
   phishingDetectService,
   preferenceService,
-  walletApiService
+  walletApiService,
+  walletController
 } from '@unisat/wallet-background';
 import { BaseProxyStorageAdapter } from '@unisat/wallet-storage';
 import logger from 'loglevel';
@@ -89,6 +90,8 @@ export async function restoreAppState() {
     }
 
     appStateRestored = true;
+
+    walletController.setBackgroundInited(true);
   } catch (err) {
     console.error('[Background] Initialization failed', err);
   }
