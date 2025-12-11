@@ -1,24 +1,14 @@
-import { CAT20Balance, TickPriceItem } from '@/shared/types';
-import { TickPriceChange, TickUsd } from '@/ui/components/TickUsd';
-import { bnUtils } from '@unisat/base-utils';
-
+import { CAT20BalanceCardProps, useCAT20BalanceCardLogic } from '@unisat/wallet-state';
 import { Card } from '../Card';
 import { Column } from '../Column';
 import { Row } from '../Row';
 import { RunesTicker } from '../RunesTicker';
 import { Text } from '../Text';
-
-export interface CAT20BalanceCardProps {
-  tokenBalance: CAT20Balance;
-  onClick?: () => void;
-  showPrice?: boolean;
-  price?: TickPriceItem;
-}
+import { TokenBalanceIcon } from '../TokenBalanceIcon';
+import { TokenBalancePrice } from '../TokenBalancePrice';
 
 export function CAT20BalanceCard(props: CAT20BalanceCardProps) {
-  const { tokenBalance, onClick, showPrice, price } = props;
-  const balance = bnUtils.toDecimalNumber(tokenBalance.amount, tokenBalance.decimals);
-  const str = balance.toString();
+  const { tokenBalance, balance, balanceStr, onClick, showPrice, price, iconInfo } = useCAT20BalanceCardLogic(props);
 
   return (
     <Card
@@ -33,21 +23,20 @@ export function CAT20BalanceCard(props: CAT20BalanceCardProps) {
       }}>
       <Column full py="zero" gap="zero">
         <Row fullY justifyBetween justifyCenter>
-          <Column fullY justifyCenter>
+          <Column onClick={onClick}>
+            <TokenBalanceIcon iconInfo={iconInfo} />
+          </Column>
+
+          <Column justifyCenter style={{ marginRight: 'auto' }}>
             <RunesTicker tick={tokenBalance.name} />
           </Column>
 
           <Row itemsCenter fullY gap="zero">
-            <Text text={str} size="xs" />
+            <Text text={balanceStr} size="xs" />
             <Text text={tokenBalance.symbol} size="xs" mx="sm" />
           </Row>
         </Row>
-        {showPrice && (
-          <Row justifyBetween mt={'xs'}>
-            <TickPriceChange price={price} />
-            <TickUsd price={price} balance={balance.toString()} />
-          </Row>
-        )}
+        <TokenBalancePrice showPrice={showPrice} price={price} balance={balance.toString()} />
       </Column>
     </Card>
   );

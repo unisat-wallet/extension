@@ -4,6 +4,7 @@ import { fontSizes } from '@/ui/theme/font';
 
 interface ImageProps {
   src?: string;
+  fallbackSrc?: string;
   size?: number | string;
   width?: number | string;
   height?: number | string;
@@ -13,7 +14,7 @@ interface ImageProps {
 }
 
 export function Image(props: ImageProps) {
-  const { src, size, width, height, style: $imageStyleOverride, onClick } = props;
+  const { src, fallbackSrc, size, width, height, style: $imageStyleOverride, onClick } = props;
 
   return (
     <img
@@ -23,6 +24,11 @@ export function Image(props: ImageProps) {
         width: width || size || fontSizes.icon,
         height: height || size || fontSizes.icon
       })}
+      onError={(e) => {
+        if (fallbackSrc && e.currentTarget.src.indexOf('unknown.png') === -1) {
+          e.currentTarget.src = fallbackSrc;
+        }
+      }}
     />
   );
 }

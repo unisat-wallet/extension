@@ -1,13 +1,13 @@
 import { RuneBalance, TickPriceItem } from '@/shared/types';
-import { TickPriceChange, TickUsd } from '@/ui/components/TickUsd';
-import { showLongNumber } from '@/ui/utils';
-import { bnUtils } from '@unisat/base-utils';
 
+import { useRunesBalanceCardLogic } from '@unisat/wallet-state';
 import { Card } from '../Card';
 import { Column } from '../Column';
 import { Row } from '../Row';
 import { RunesTicker } from '../RunesTicker';
 import { Text } from '../Text';
+import { TokenBalanceIcon } from '../TokenBalanceIcon';
+import { TokenBalancePrice } from '../TokenBalancePrice';
 
 export interface RunesBalanceCardProps {
   tokenBalance: RuneBalance;
@@ -17,14 +17,8 @@ export interface RunesBalanceCardProps {
 }
 
 export default function RunesBalanceCard(props: RunesBalanceCardProps) {
-  const { tokenBalance, onClick, showPrice, price } = props;
-  const balance = bnUtils.toDecimalNumber(tokenBalance.amount, tokenBalance.divisibility);
-  let str = balance.toString();
-  if (balance.lt(0.0001)) {
-    str = '<0.0001';
-  } else {
-    str = showLongNumber(balance.toString());
-  }
+  const { tokenBalance, onClick, showPrice, price, iconInfo, balance, balanceStr } = useRunesBalanceCardLogic(props);
+
   return (
     <Card
       style={{
@@ -33,26 +27,23 @@ export default function RunesBalanceCard(props: RunesBalanceCardProps) {
         borderRadius: 12
       }}
       fullX
-      onClick={() => {
-        onClick && onClick();
-      }}>
+      onClick={onClick}>
       <Column full py="zero" gap="zero">
         <Row fullY justifyBetween justifyCenter>
-          <Column fullY justifyCenter>
+          <Column onClick={onClick}>
+            <TokenBalanceIcon iconInfo={iconInfo} />
+          </Column>
+
+          <Column justifyCenter style={{ marginRight: 'auto' }}>
             <RunesTicker tick={tokenBalance.spacedRune} />
           </Column>
 
           <Row itemsCenter fullY gap="zero">
-            <Text text={str} size="xs" />
+            <Text text={balanceStr} size="xs" />
             <Text text={tokenBalance.symbol} size="xs" mx="sm" />
           </Row>
         </Row>
-        {showPrice && (
-          <Row justifyBetween mt={'xs'}>
-            <TickPriceChange price={price} />
-            <TickUsd price={price} balance={balance.toString()} />
-          </Row>
-        )}
+        <TokenBalancePrice showPrice={showPrice} price={price} balance={balance.toString()} />
       </Column>
     </Card>
   );

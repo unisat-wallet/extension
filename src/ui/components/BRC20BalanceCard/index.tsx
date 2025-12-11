@@ -1,4 +1,3 @@
-import { TickPriceChange, TickUsd } from '@/ui/components/TickUsd';
 import { BRC20BalanceCardProps, useBRC20BalanceCardLogic } from '@unisat/wallet-state';
 
 import { BRC20Ticker } from '../BRC20Ticker';
@@ -7,12 +6,15 @@ import { Column } from '../Column';
 import { Row } from '../Row';
 import Tag from '../Tag';
 import { Text } from '../Text';
+import { TokenBalanceIcon } from '../TokenBalanceIcon';
+import { TokenBalancePrice } from '../TokenBalancePrice';
 
 export default function BRC20BalanceCard(props: BRC20BalanceCardProps) {
   const {
     showPrice,
     price,
     ticker,
+    iconInfo,
     displayName,
     tag,
     onClick,
@@ -38,7 +40,11 @@ export default function BRC20BalanceCard(props: BRC20BalanceCardProps) {
       }}>
       <Column full py="zero" gap="zero">
         <Row fullY justifyBetween justifyCenter>
-          <Column fullY justifyCenter>
+          <Column onClick={onClick}>
+            <TokenBalanceIcon iconInfo={iconInfo} />
+          </Column>
+
+          <Column justifyCenter style={{ marginRight: 'auto' }}>
             <Row>
               <BRC20Ticker tick={ticker} displayName={displayName} />
             </Row>
@@ -49,24 +55,7 @@ export default function BRC20BalanceCard(props: BRC20BalanceCardProps) {
           </Row>
         </Row>
 
-        {showPrice && (
-          <Row justifyBetween mt={'xs'}>
-            <Row>
-              {price && price.curPrice > 0 ? (
-                <TickPriceChange price={price} />
-              ) : (
-                <Text text="$- " color="textDim" size="xs" />
-              )}
-            </Row>
-            <Row>
-              {price && price.curPrice > 0 ? (
-                <TickUsd price={price} balance={totalBalance} />
-              ) : (
-                <Text text="$-" color="textDim" size="xs" />
-              )}
-            </Row>
-          </Row>
-        )}
+        <TokenBalancePrice showPrice={showPrice} price={price} balance={totalBalance} />
 
         {(tag || selfMint) && (
           <Row mt={'sm'}>

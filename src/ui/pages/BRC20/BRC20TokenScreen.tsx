@@ -1,10 +1,11 @@
 import { useMemo } from 'react';
 
-import { Button, Column, Content, Footer, Header, Image, Layout, Row, Text } from '@/ui/components';
+import { Button, Column, Content, Footer, Header, Layout, Row, Text } from '@/ui/components';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { Line } from '@/ui/components/Line';
 import { TabBar } from '@/ui/components/TabBar';
 import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
+import { TokenScreenIcon } from '@/ui/components/TokenScreenIcon';
 import { colors } from '@/ui/theme/colors';
 import { BRC20TokenScreenTabKey, useBRC20TokenScreenLogic, useNavigation } from '@unisat/wallet-state';
 import { BRC20TokenDetail } from './components/BRC20TokenDetail';
@@ -31,7 +32,7 @@ export default function BRC20TokenScreen() {
     t,
     ticker,
     chain,
-    tools,
+    iconInfo,
     isBrc20Prog,
     onClickWrapBrc20Prog,
     onClickUnwrapBrc20Prog,
@@ -65,7 +66,7 @@ export default function BRC20TokenScreen() {
       {tokenSummary && (
         <Content mt="zero">
           <Column justifyCenter itemsCenter>
-            <Image src={tokenSummary.tokenInfo.logo} size={48} style={{ borderRadius: 24 }} />
+            <TokenScreenIcon iconInfo={iconInfo} />
             <Row justifyCenter itemsCenter>
               <BRC20Ticker
                 tick={ticker}

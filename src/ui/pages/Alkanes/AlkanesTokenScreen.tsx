@@ -1,8 +1,9 @@
-import { Button, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
+import { Button, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { Line } from '@/ui/components/Line';
 import { Section } from '@/ui/components/Section';
 import { TickUsdWithoutPrice, TokenType } from '@/ui/components/TickUsd';
+import { TokenScreenIcon } from '@/ui/components/TokenScreenIcon';
 import { WarningPopover } from '@/ui/components/WarningPopover';
 import { colors } from '@/ui/theme/colors';
 import { fontSizes } from '@/ui/theme/font';
@@ -19,6 +20,7 @@ export default function AlkanesTokenScreen() {
     enableTransfer,
     enableTrade,
     warning,
+    iconInfo,
     t,
     setWarning,
     onClickMint,
@@ -48,7 +50,7 @@ export default function AlkanesTokenScreen() {
       {tokenSummary && (
         <Content>
           <Column justifyCenter itemsCenter>
-            <Image src={tokenSummary.tokenInfo.logo} size={48} style={{ borderRadius: 24 }} />
+            <TokenScreenIcon iconInfo={iconInfo} />
 
             <Row justifyCenter itemsCenter>
               <BRC20Ticker tick={tokenSummary.tokenInfo.name} preset="md" showOrigin color={'ticker_color2'} />

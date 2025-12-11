@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react';
 
 import { AddressCAT20TokenSummary, CAT_VERSION } from '@/shared/types';
-import { Button, Column, Content, Footer, Header, Icon, Image, Layout, Row, Text } from '@/ui/components';
+import { Button, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { Line } from '@/ui/components/Line';
 import { Section } from '@/ui/components/Section';
@@ -13,6 +13,7 @@ import { LoadingOutlined } from '@ant-design/icons';
 import { bnUtils } from '@unisat/base-utils';
 import { KeyringType } from '@unisat/keyring-service/types';
 import {
+  useCAT20IconInfo,
   useCAT20MarketPlaceWebsite,
   useCAT20TokenInfoExplorerUrl,
   useChainType,
@@ -24,6 +25,7 @@ import {
   useWallet
 } from '@unisat/wallet-state';
 
+import { TokenScreenIcon } from '@/ui/components/TokenScreenIcon';
 import { ChainType } from '@unisat/wallet-types';
 import { useNavigate } from '../MainRoute';
 
@@ -92,6 +94,8 @@ export default function CAT20TokenScreen() {
   }, [chainType]);
   const marketPlaceUrl = useCAT20MarketPlaceWebsite(tokenId);
 
+  const iconInfo = useCAT20IconInfo(tokenSummary.cat20Info.name, tokenId);
+
   if (loading) {
     return (
       <Layout>
@@ -129,8 +133,7 @@ export default function CAT20TokenScreen() {
       {tokenSummary && (
         <Content>
           <Column justifyCenter itemsCenter>
-            <Image src={tokenSummary.cat20Info.logo} size={48} style={{ borderRadius: 24 }} />
-
+            <TokenScreenIcon iconInfo={iconInfo} />
             <Row justifyCenter itemsCenter>
               <BRC20Ticker tick={tokenSummary.cat20Info.name} preset="md" showOrigin color={'ticker_color2'} />
             </Row>
