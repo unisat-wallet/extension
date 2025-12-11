@@ -4,7 +4,7 @@ import { useDevice, useInscriptionListLogic } from '@unisat/wallet-state';
 import { useEffect, useMemo, useState } from 'react';
 
 export function InscriptionList() {
-  const { onRefresh, items, onLoadMore, onClickItem, loading, hasMore } = useInscriptionListLogic();
+  const { onRefresh, items, total, onLoadMore, onClickItem, loading, hasMore } = useInscriptionListLogic();
   const [width, setWidth] = useState(window.innerWidth);
   useEffect(() => {
     const handleResize = () => {
@@ -26,21 +26,10 @@ export function InscriptionList() {
     }
   }, [device.isExtensionInExpandView, width]);
 
-  useEffect(() => {
-    const el = document.getElementById('layoutScrollId');
-    console.log('layout loaded', el);
-
-    if (!el) return;
-
-    const handler = () => console.log('scrolling…');
-
-    el.addEventListener('scroll', handler);
-    return () => el.removeEventListener('scroll', handler);
-  }, []);
-
   return (
     <InfiniteList
       data={items}
+      total={total}
       numColumns={numColums}
       keyExtractor={(item) => item.inscriptionId}
       renderItem={({ item, index }) => {
@@ -48,7 +37,6 @@ export function InscriptionList() {
           <InscriptionPreview
             key={item.inscriptionId || `inscription-${index}`}
             data={item}
-            style={{ width: '100%' }}
             preset="medium"
             onClick={() => onClickItem(item)}
           />

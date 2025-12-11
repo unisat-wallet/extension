@@ -1,7 +1,6 @@
 import { useMemo } from 'react';
 
-import { Column, Row } from '@/ui/components';
-import { TabBar } from '@/ui/components/TabBar';
+import { Column } from '@/ui/components';
 import {
   OrdinalsAssetTabKey,
   uiActions,
@@ -12,6 +11,7 @@ import {
   useOrdinalsAssetTabKey
 } from '@unisat/wallet-state';
 
+import { Tabs } from '@/ui/components/Tabs';
 import { BRC20ProgList } from './BRC20ProgList';
 import { BRC20List } from './Brc20List';
 import { InscriptionList } from './InscriptionList';
@@ -59,19 +59,15 @@ export function OrdinalsTab() {
   }, [tabKey, chain]);
   return (
     <Column>
-      <Row justifyBetween>
-        <TabBar
-          defaultActiveKey={finalTabKey}
-          activeKey={finalTabKey}
-          items={tabItems}
-          preset="style2"
-          onTabClick={(key) => {
-            dispatch(uiActions.updateAssetTabScreen({ ordinalsAssetTabKey: key }));
-          }}
-        />
-      </Row>
-
-      {tabItems[finalTabKey] ? tabItems[finalTabKey].children : null}
+      <Tabs
+        defaultActiveKey={finalTabKey as unknown as string}
+        activeKey={finalTabKey as unknown as string}
+        items={tabItems as unknown as any[]}
+        onTabClick={(key) => {
+          dispatch(uiActions.updateAssetTabScreen({ ordinalsAssetTabKey: key }));
+        }}
+        preset="style2"
+      />
     </Column>
   );
 }

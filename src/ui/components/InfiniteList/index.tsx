@@ -1,8 +1,9 @@
-import { spacing } from '@/ui/theme/spacing';
-import { List, Spin } from 'antd';
-import { useEffect, useRef } from 'react';
-import { Empty } from '../Empty';
-import { Row } from '../Row';
+import { useEffect, useMemo, useRef, useState } from 'react';
+
+import { Column, Row } from '@/ui/components';
+import { Empty } from '@/ui/components/Empty';
+import { Pagination } from '@/ui/components/Pagination';
+import { LoadingOutlined } from '@ant-design/icons';
 
 interface InfiniteListProps<T> {
   data: T[];
@@ -13,110 +14,105 @@ interface InfiniteListProps<T> {
   hasMore: boolean;
   loading: boolean;
   height?: number | string;
-  style?: any;
   numColumns?: number;
+  total: number;
 }
 
 export function InfiniteList<T>({
   data,
+  total,
   renderItem,
   keyExtractor,
   onLoadMore,
   onRefresh,
   hasMore,
   loading,
-  height = '100%',
-  style,
+  height,
   numColumns = 1
 }: InfiniteListProps<T>) {
+  const [pagination, setPagination] = useState({ currentPage: 1, pageSize: 20 });
   const containerRef = useRef<HTMLDivElement>(null);
 
-  // ------------ Pull to Refresh  ------------
-  const touchStartY = useRef(0);
-  const pulling = useRef(false);
+  const pageData = useMemo(() => {
+    const start = (pagination.currentPage - 1) * pagination.pageSize;
+    const end = pagination.currentPage * pagination.pageSize;
+    return data.slice(start, end);
+  }, [data, pagination]);
 
   useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
+    if (pageData.length < pagination.pageSize && hasMore && !loading) {
+      onLoadMore();
+    }
+  }, [pagination, data.length]);
 
-    const onTouchStart = (e: TouchEvent) => {
-      if (el.scrollTop === 0) {
-        pulling.current = true;
-        touchStartY.current = e.touches[0].clientY;
-      }
-    };
-
-    const onTouchMove = (e: TouchEvent) => {
-      if (!pulling.current) return;
-      const diff = e.touches[0].clientY - touchStartY.current;
-
-      if (diff > 60) {
-        pulling.current = false;
-        onRefresh();
-      }
-    };
-
-    const onTouchEnd = () => {
-      pulling.current = false;
-    };
-
-    el.addEventListener('touchstart', onTouchStart);
-    el.addEventListener('touchmove', onTouchMove);
-    el.addEventListener('touchend', onTouchEnd);
-
-    return () => {
-      el.removeEventListener('touchstart', onTouchStart);
-      el.removeEventListener('touchmove', onTouchMove);
-      el.removeEventListener('touchend', onTouchEnd);
-    };
-  }, [onRefresh]);
-
-  // ------------ Infinite Scroll  ------------
   useEffect(() => {
-    const el = containerRef.current;
-    if (!el) return;
+    setPagination({ currentPage: 1, pageSize: pagination.pageSize });
+  }, [total]);
 
-    const onScroll = () => {
-      if (!hasMore || loading) return;
+  const gridRows = useMemo(() => {
+    const rows: T[][] = [];
+    for (let i = 0; i < pageData.length; i += numColumns) {
+      rows.push(pageData.slice(i, i + numColumns));
+    }
+    return rows;
+  }, [pageData, numColumns]);
 
-      if (el.scrollTop + el.clientHeight >= el.scrollHeight - 80) {
-        onLoadMore();
-      }
-    };
-
-    el.addEventListener('scroll', onScroll);
-    return () => el.removeEventListener('scroll', onScroll);
-  }, [hasMore, loading, onLoadMore]);
+  if (!loading && data.length === 0) {
+    return (
+      <Column style={{ minHeight: 150 }} itemsCenter justifyCenter>
+        <Empty text="Empty" />
+      </Column>
+    );
+  }
 
   return (
-    <div
-      ref={containerRef}
-      style={{
-        height,
-        overflowY: 'auto',
-        WebkitOverflowScrolling: 'touch',
-        ...style
-      }}>
-      <List
-        dataSource={data}
-        locale={{ emptyText: 'Empty' }}
-        grid={numColumns > 1 ? { gutter: spacing.small, column: numColumns } : undefined}
-        renderItem={(item, index) => (
-          <List.Item key={keyExtractor(item, index)}>{renderItem({ item, index })}</List.Item>
+    <Column>
+      <div
+        ref={containerRef}
+        style={{
+          position: 'relative',
+          width: '100%',
+          height: height || 'auto',
+          overflowY: height ? 'auto' : 'visible'
+        }}>
+        {loading && (
+          <Row justifyCenter style={{ position: 'absolute', width: '100%', zIndex: 10, padding: '10px 0' }}>
+            <div style={{ backgroundColor: 'rgba(0,0,0,0.7)', padding: '8px 12px', borderRadius: '4px' }}>
+              <LoadingOutlined style={{ color: '#ffde04' }} />
+            </div>
+          </Row>
         )}
-      />
 
-      {loading && hasMore && (
-        <Row justifyCenter mt="md">
-          <Spin />
-        </Row>
-      )}
+        <div style={{ width: '100%', padding: '0 4px' }}>
+          {gridRows.map((row, rowIndex) => (
+            <div
+              key={`row-${rowIndex}`}
+              style={{
+                width: '100%',
+                marginBottom: '12px',
+                display: 'grid',
+                gridTemplateColumns: `repeat(${numColumns}, 1fr)`,
+                gap: '8px'
+              }}>
+              {row.map((item, idx) => (
+                <div key={keyExtractor(item, idx)} style={{ width: '100%' }}>
+                  {renderItem({ item, index: idx })}
+                </div>
+              ))}
+            </div>
+          ))}
+        </div>
+      </div>
 
-      {!loading && data.length === 0 && (
-        <Row justifyCenter mt="md" mb="md">
-          <Empty />
-        </Row>
-      )}
-    </div>
+      <Row justifyCenter mt="lg">
+        <Pagination
+          pagination={pagination}
+          total={total}
+          onChange={(p) => {
+            setPagination(p);
+          }}
+        />
+      </Row>
+    </Column>
   );
 }

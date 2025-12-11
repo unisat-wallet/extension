@@ -3,11 +3,12 @@ import RunesBalanceCard from '@/ui/components/RunesBalanceCard';
 import { useRunesListLogic } from '@unisat/wallet-state';
 
 export function RunesList() {
-  const { onRefresh, items, onLoadMore, onClickItem, loading, hasMore, priceMap } = useRunesListLogic();
+  const { onRefresh, items, total, onLoadMore, onClickItem, loading, hasMore, priceMap } = useRunesListLogic();
 
   return (
     <InfiniteList
       data={items}
+      total={total}
       keyExtractor={(item) => item.runeid}
       renderItem={({ item }) => {
         return (

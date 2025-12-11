@@ -3,11 +3,12 @@ import AlkanesBalanceCard from '@/ui/components/AlkanesBalanceCard';
 import { useAlkanesListLogic } from '@unisat/wallet-state';
 
 export function AlkanesList() {
-  const { onRefresh, items, onLoadMore, onClickItem, loading, hasMore, priceMap } = useAlkanesListLogic();
+  const { onRefresh, items, total, onLoadMore, onClickItem, loading, hasMore, priceMap } = useAlkanesListLogic();
 
   return (
     <InfiniteList
       data={items}
+      total={total}
       keyExtractor={(item) => item.alkaneid}
       renderItem={({ item }) => {
         return (
