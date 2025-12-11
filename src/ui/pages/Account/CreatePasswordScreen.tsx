@@ -1,108 +1,23 @@
-import { useEffect, useMemo, useState } from 'react';
-import { useLocation } from 'react-router-dom';
-
 import { Button, Column, Content, Input, Layout, Row, Text } from '@/ui/components';
-import { getPasswordStrengthWord, MIN_PASSWORD_LENGTH } from '@/ui/utils/password-utils';
-import { useI18n, useTools, useWallet } from '@unisat/wallet-state';
-
-import { useWalletRequest } from '@/ui/utils';
-import { useNavigate } from '../MainRoute';
+import { colors } from '@/ui/theme/colors';
+import { useCreatePasswordScreenLogic, useI18n } from '@unisat/wallet-state';
 
 type Status = '' | 'error' | 'warning' | undefined;
 
 export default function CreatePasswordScreen() {
-  const navigate = useNavigate();
-  const wallet = useWallet();
-  const loc = useLocation();
-  const params = new URLSearchParams(loc.search);
-  let state = {};
-  if (loc.state) {
-    state = loc.state;
-  }
-  if ((params as any).size > 0) {
-    params.forEach((value, key) => {
-      state[key] = value;
-    });
-  }
-  const { isNewAccount, isKeystone, fromColdWallet } = state as {
-    isNewAccount: boolean;
-    isKeystone: boolean;
-    fromColdWallet: boolean;
-  };
-  const [newPassword, setNewPassword] = useState('');
+  const {
+    strongTextRenderData,
+    matchTextRenderData,
+    onClickConfirm,
+    disabled,
+    onConfirmPasswordChange,
+    onPasswordChange
+  } = useCreatePasswordScreenLogic();
   const { t } = useI18n();
-
-  const [confirmPassword, setConfirmPassword] = useState('');
-
-  const [disabled, setDisabled] = useState(true);
-
-  const tools = useTools();
-  const [run, loading] = useWalletRequest(wallet.boot, {
-    onSuccess() {
-      if (fromColdWallet) {
-        navigate('CreateColdWalletScreen', { fromUnlock: true });
-      } else if (isKeystone) {
-        navigate('CreateKeystoneWalletScreen', { fromUnlock: true });
-      } else if (isNewAccount) {
-        navigate('CreateHDWalletScreen', { isImport: false, fromUnlock: true });
-      } else {
-        navigate('CreateHDWalletScreen', { isImport: true, fromUnlock: true });
-      }
-    },
-    onError(err) {
-      tools.toastError(err);
-    }
-  });
-
-  const btnClick = () => {
-    run(newPassword.trim());
-  };
-
-  useEffect(() => {
-    setDisabled(true);
-
-    if (newPassword && newPassword.length >= MIN_PASSWORD_LENGTH && newPassword === confirmPassword) {
-      setDisabled(false);
-      return;
-    }
-  }, [newPassword, confirmPassword]);
-
-  const strongText = useMemo(() => {
-    if (!newPassword) {
-      return;
-    }
-    const { text, color, tip } = getPasswordStrengthWord(newPassword, t);
-
-    return (
-      <Column>
-        <Row>
-          <Text size="xs" text={t('password_strength')} />
-          <Text size="xs" text={text} style={{ color: color }} />
-        </Row>
-        {tip ? <Text size="xs" preset="sub" text={tip} /> : null}
-      </Column>
-    );
-  }, [newPassword]);
-
-  const matchText = useMemo(() => {
-    if (!confirmPassword) {
-      return;
-    }
-
-    if (newPassword !== confirmPassword) {
-      return (
-        <Row>
-          <Text size="xs" text={t('passwords_dont_match')} color="red" />
-        </Row>
-      );
-    } else {
-      return;
-    }
-  }, [newPassword, confirmPassword]);
 
   const handleOnKeyUp = (e: React.KeyboardEvent<HTMLInputElement | HTMLTextAreaElement>) => {
     if (!disabled && 'Enter' == e.key) {
-      btnClick();
+      onClickConfirm();
     }
   };
 
@@ -114,29 +29,33 @@ export default function CreatePasswordScreen() {
             <Text text={t('create_a_password')} preset="title-bold" textCenter />
             <Text text={t('you_will_use_this_to_unlock_your_wallet')} preset="sub" textCenter />
             <Column>
-              <Input
-                preset="password"
-                onChange={(e) => {
-                  setNewPassword(e.target.value);
-                }}
-                autoFocus={true}
-              />
-              {strongText}
+              <Input preset="password" onChange={onPasswordChange} autoFocus={true} />
+              {strongTextRenderData && (
+                <Column>
+                  <Row>
+                    <Text size="xs" text={t('password_strength')} />
+                    <Text size="xs" text={strongTextRenderData.text} style={{ color: strongTextRenderData.color }} />
+                  </Row>
+                  {strongTextRenderData.tip ? <Text size="xs" preset="sub" text={strongTextRenderData.tip} /> : null}
+                </Column>
+              )}
             </Column>
 
             <Column>
               <Input
                 preset="password"
                 placeholder={t('confirm_password')}
-                onChange={(e) => {
-                  setConfirmPassword(e.target.value);
-                }}
+                onChange={onConfirmPasswordChange}
                 onKeyUp={(e) => handleOnKeyUp(e as any)}
               />
-              {matchText}
+              {matchTextRenderData && (
+                <Row>
+                  <Text size="xs" text={matchTextRenderData.text} style={{ color: colors.red }} />
+                </Row>
+              )}
             </Column>
 
-            <Button disabled={disabled} text={t('continue')} preset="primary" onClick={btnClick} />
+            <Button disabled={disabled} text={t('continue')} preset="primary" onClick={onClickConfirm} />
           </Column>
         </Column>
       </Content>
