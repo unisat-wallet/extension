@@ -956,9 +956,6 @@
   "inputs": {
     "message": "Entradas"
   },
-  "welcome_screen_title": {
-    "message": "¡Inscribe y guarda tus inscripciones en la primera billetera de código abierto para Chrome para Ordinals del mundo!"
-  },
   "inscribe_success": {
     "message": "Inscripción Exitosa"
   },
@@ -1174,6 +1171,12 @@
   },
   "low_fee_mode_title": {
     "message": "Alerta de comisión baja"
+  },
+  "low_fee_rate_risk_description": {
+    "message": "La tasa de comisión de esta transacción es baja. Asegúrese de entender las implicaciones antes de continuar."
+  },
+  "low_fee_rate_risk_title": {
+    "message": "Tasa de comisión baja detectada"
   },
   "low_priority": {
     "message": "Baja Prioridad"
@@ -2410,6 +2413,9 @@
   },
   "weak": {
     "message": "Débil"
+  },
+  "welcome_screen_title": {
+    "message": "¡Inscribe y guarda tus inscripciones en la primera billetera de código abierto para Chrome para Ordinals del mundo!"
   },
   "wif_private_key": {
     "message": "Clave Privada WIF:"

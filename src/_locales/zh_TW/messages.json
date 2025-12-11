@@ -956,9 +956,6 @@
   "inputs": {
     "message": "輸入"
   },
-  "welcome_screen_title": {
-    "message": "在世界第一個開源 Ordinals Chrome 錢包中銘刻並儲存您的銘文！"
-  },
   "inscribe_success": {
     "message": "銘刻成功"
   },
@@ -1174,6 +1171,12 @@
   },
   "low_fee_mode_title": {
     "message": "低費率提醒"
+  },
+  "low_fee_rate_risk_description": {
+    "message": "此交易的手續費率較低。請確保您了解此操作的影響，然後再繼續。"
+  },
+  "low_fee_rate_risk_title": {
+    "message": "偵測到低手續費率"
   },
   "low_priority": {
     "message": "低優先級"
@@ -2413,6 +2416,9 @@
   },
   "weak": {
     "message": "弱"
+  },
+  "welcome_screen_title": {
+    "message": "在世界第一個開源 Ordinals Chrome 錢包中銘刻並儲存您的銘文！"
   },
   "wif_private_key": {
     "message": "WIF 私鑰："

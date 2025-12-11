@@ -956,9 +956,6 @@
   "inputs": {
     "message": "Entrées"
   },
-  "welcome_screen_title": {
-    "message": "Inscrivez et stockez vos inscriptions dans le premier portefeuille Chrome Open Source au monde pour les Ordinals !"
-  },
   "inscribe_success": {
     "message": "Succès de l'Inscription"
   },
@@ -1174,6 +1171,12 @@
   },
   "low_fee_mode_title": {
     "message": "Alerte de frais bas"
+  },
+  "low_fee_rate_risk_description": {
+    "message": "Le taux de frais de cette transaction est faible. Assurez-vous de bien comprendre les implications avant de continuer."
+  },
+  "low_fee_rate_risk_title": {
+    "message": "Frais de transaction bas détectés"
   },
   "low_priority": {
     "message": "Priorité faible"
@@ -2410,6 +2413,9 @@
   },
   "weak": {
     "message": "Faible"
+  },
+  "welcome_screen_title": {
+    "message": "Inscrivez et stockez vos inscriptions dans le premier portefeuille Chrome Open Source au monde pour les Ordinals !"
   },
   "wif_private_key": {
     "message": "Clé Privée WIF :"

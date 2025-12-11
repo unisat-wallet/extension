@@ -956,9 +956,6 @@
   "inputs": {
     "message": "インプット"
   },
-  "welcome_screen_title": {
-    "message": "世界初のオープンソースOrdinals ChromeウォレットでインスクリプションをInscribeして保存しましょう！"
-  },
   "inscribe_success": {
     "message": "インスクライブ成功"
   },
@@ -1174,6 +1171,12 @@
   },
   "low_fee_mode_title": {
     "message": "低手数料アラート"
+  },
+  "low_fee_rate_risk_description": {
+    "message": "この取引の手数料率は低くなっています。続行する前に、その影響を十分に理解してください。"
+  },
+  "low_fee_rate_risk_title": {
+    "message": "低い手数料率が検出されました"
   },
   "low_priority": {
     "message": "低優先度"
@@ -2410,6 +2413,9 @@
   },
   "weak": {
     "message": "弱"
+  },
+  "welcome_screen_title": {
+    "message": "世界初のオープンソースOrdinals ChromeウォレットでインスクリプションをInscribeして保存しましょう！"
   },
   "wif_private_key": {
     "message": "WIF秘密鍵:"

@@ -956,9 +956,6 @@
   "inputs": {
     "message": "Входы"
   },
-  "welcome_screen_title": {
-    "message": "Создавайте и храните свои надписи в первом в мире Chrome-кошельке с открытым исходным кодом для Ordinals!"
-  },
   "inscribe_success": {
     "message": "Надпись успешно создана"
   },
@@ -1174,6 +1171,12 @@
   },
   "low_fee_mode_title": {
     "message": "Предупреждение о низкой комиссии"
+  },
+  "low_fee_rate_risk_description": {
+    "message": "Комиссия за эту транзакцию низкая. Убедитесь, что вы понимаете последствия перед продолжением."
+  },
+  "low_fee_rate_risk_title": {
+    "message": "Обнаружена низкая комиссия"
   },
   "low_priority": {
     "message": "Низкий приоритет"
@@ -2410,6 +2413,9 @@
   },
   "weak": {
     "message": "Слабый"
+  },
+  "welcome_screen_title": {
+    "message": "Создавайте и храните свои надписи в первом в мире Chrome-кошельке с открытым исходным кодом для Ordinals!"
   },
   "wif_private_key": {
     "message": "Приватный ключ WIF:"

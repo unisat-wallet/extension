@@ -956,9 +956,6 @@
   "inputs": {
     "message": "Inputs"
   },
-  "welcome_screen_title": {
-    "message": "Inscribe and store your inscriptions in the world's first Open Source Chrome wallet for Ordinals!"
-  },
   "inscribe_success": {
     "message": "Inscribe Success"
   },
@@ -1174,6 +1171,12 @@
   },
   "low_fee_mode_title": {
     "message": "Low Fee Alert"
+  },
+  "low_fee_rate_risk_description": {
+    "message": "This transaction has a low fee rate. Please ensure you understand the implications of this action before proceeding."
+  },
+  "low_fee_rate_risk_title": {
+    "message": "Low fee rate detected"
   },
   "low_priority": {
     "message": "Low Priority"
@@ -2410,6 +2413,9 @@
   },
   "weak": {
     "message": "Weak"
+  },
+  "welcome_screen_title": {
+    "message": "Inscribe and store your inscriptions in the world's first Open Source Chrome wallet for Ordinals!"
   },
   "wif_private_key": {
     "message": "WIF Private Key:"
