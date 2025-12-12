@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useLocation } from 'react-router-dom';
 
 import { AddressType, RestoreWalletType } from '@/shared/types';
@@ -14,7 +14,7 @@ import {
   UpdateContextDataParams,
   WordsType
 } from '@/ui/pages/Account/createHDWalletComponents/types';
-import { useI18n } from '@unisat/wallet-state';
+import { useI18n, useWallet } from '@unisat/wallet-state';
 
 import { useNavigate } from '../MainRoute';
 
@@ -48,6 +48,29 @@ export default function CreateHDWalletScreen() {
     },
     [contextData, setContextData]
   );
+
+  const wallet = useWallet();
+  // When importing the wallet, the lock time should be extended, at least more than 10 minutes. Keep alive by emitInteractedEvent
+  const beginTimeRef = useRef<number>(Date.now());
+  useEffect(() => {
+    const interval = setInterval(() => {
+      try {
+        wallet.setLastActiveTime();
+      } catch (e) {
+        // ignore
+      }
+    }, 10 * 1000); // Trigger every 10 seconds
+
+    // After more than 10 minutes, clear the interval
+    if (Date.now() - beginTimeRef.current > 10 * 60 * 1000) {
+      clearInterval(interval);
+    }
+
+    // Cleanup interval on unmount
+    return () => {
+      clearInterval(interval);
+    };
+  }, []);
 
   const items = useMemo(() => {
     if (contextData.isRestore) {
