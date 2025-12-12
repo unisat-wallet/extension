@@ -1,5 +1,5 @@
 import { DeviceContext, DeviceContextType } from '@unisat/wallet-state';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { getUiType } from '../utils';
 
 export function DeviceProvider({ children }: { children: React.ReactNode }) {
@@ -13,7 +13,8 @@ export function DeviceProvider({ children }: { children: React.ReactNode }) {
     isMobileScreenSize: false,
     isDesktopScreenSize: false,
     platform: 'extension',
-    hasBottomButton: false
+    hasBottomButton: false,
+    cardColumnsInList: 2
   });
 
   const [isMobileScreenSize, setIsMobileScreenSize] = useState(false);
@@ -36,6 +37,8 @@ export function DeviceProvider({ children }: { children: React.ReactNode }) {
     selfRef.current.isExtensionInExpandView = isExpandView;
   });
 
+  const [screenInnerWidth, setScreenInnerWidth] = useState(window.innerWidth);
+
   useEffect(() => {
     const checkMobile = () => {
       const isMobileScreenSize = window.innerWidth <= 768;
@@ -43,6 +46,7 @@ export function DeviceProvider({ children }: { children: React.ReactNode }) {
       selfRef.current.isDesktopScreenSize = !isMobileScreenSize;
       setIsMobileScreenSize(isMobileScreenSize);
       setIsDesktopScreenSize(!isMobileScreenSize);
+      setScreenInnerWidth(window.innerWidth);
     };
 
     checkMobile();
@@ -51,7 +55,15 @@ export function DeviceProvider({ children }: { children: React.ReactNode }) {
     return () => {
       window.removeEventListener('resize', checkMobile);
     };
-  }, []);
+  }, [setScreenInnerWidth]);
+
+  const cardColumnsInList = useMemo(() => {
+    if (selfRef.current.isExtensionInExpandView) {
+      return Math.ceil(screenInnerWidth / 180);
+    } else {
+      return 2;
+    }
+  }, [screenInnerWidth]);
 
   const self = selfRef.current;
 
@@ -60,7 +72,8 @@ export function DeviceProvider({ children }: { children: React.ReactNode }) {
       value={{
         ...self,
         isMobileScreenSize,
-        isDesktopScreenSize
+        isDesktopScreenSize,
+        cardColumnsInList
       }}>
       {children}
     </DeviceContext.Provider>
