@@ -2,18 +2,19 @@ import { useEffect, useState } from 'react';
 import { useNavigate as useNavigateOrigin } from 'react-router-dom';
 
 import { ToAddressInfo, TxType } from '@/shared/types';
-import { Card, Column, Content, Input, Layout, Text } from '@/ui/components';
+import { Button, Card, Column, Content, Header, Input, Layout, Text } from '@/ui/components';
 import { AddressDetailPopover } from '@/ui/components/AddressDetailPopover';
 import { AddressText } from '@/ui/components/AddressText';
 import { AddressTypeCard2 } from '@/ui/components/AddressTypeCard';
 import { RemoveWalletPopover } from '@/ui/components/RemoveWalletPopover';
 import { SignPsbtWithRisksPopover } from '@/ui/components/SignPsbtWithRisksPopover';
-import { useCurrentKeyring, usePushBitcoinTxCallback, useTools } from '@unisat/wallet-state';
+import { useCurrentKeyring, useKeyrings, usePushBitcoinTxCallback, useTools, useWallet } from '@unisat/wallet-state';
 import { NetworkType } from '@unisat/wallet-types';
 
-import { LowFeeModePopover } from '@/ui/components/LowFeeModePopover';
+import { ADDRESS_TYPES } from '@unisat/wallet-shared';
 import { Connect, MultiSignMessage, SignPsbt, SignText, SwitchNetwork } from '../Approval/components';
 import MultiSignPsbt from '../Approval/components/MultiSignPsbt';
+import { RunesList } from '../Main/WalletTabScreen/RunesList';
 import { useNavigate } from '../MainRoute';
 import { testDecodedTx } from './testDecodedTx';
 
@@ -26,16 +27,7 @@ export default function TestScreen() {
   const pushtx = usePushBitcoinTxCallback();
 
   if (testComponent === 'current') {
-    return (
-      <LowFeeModePopover
-        onClose={() => {
-          // todo
-        }}
-        onConfirm={() => {
-          //
-        }}
-      />
-    );
+    return <RunesList />;
   }
 
   if (testComponent === 'signPsbt') {
@@ -89,6 +81,42 @@ export default function TestScreen() {
             }}>
             <Text text="Test Alkanes Sign" />
           </Card>
+        </Column>
+      </Content>
+    </Layout>
+  );
+}
+
+function TestWalletAccounts() {
+  const wallet = useWallet();
+  const tools = useTools();
+
+  const keyrings = useKeyrings();
+  return (
+    <Layout>
+      <Header />
+      <Content>
+        <Column>
+          <Text text="Create 100 wallets for performance test" />
+          <Text text={`Current keyrings count: ${keyrings.length}`} />
+          <Button
+            text="Create multiple wallets"
+            onClick={async () => {
+              const count = 100;
+              const addressTypeInfo = ADDRESS_TYPES[0];
+              for (let i = 0; i < count; i++) {
+                const mnemonics = await wallet.generatePreMnemonic();
+                await wallet.createKeyringWithMnemonics(
+                  mnemonics,
+                  addressTypeInfo.hdPath,
+                  '',
+                  addressTypeInfo.value,
+                  10
+                );
+              }
+              tools.toastSuccess(`Created ${count} wallets`);
+            }}
+          />
         </Column>
       </Content>
     </Layout>
