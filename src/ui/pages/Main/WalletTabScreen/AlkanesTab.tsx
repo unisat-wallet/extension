@@ -2,7 +2,7 @@ import { useMemo } from 'react';
 
 import { Column, Row } from '@/ui/components';
 import { TabBar } from '@/ui/components/TabBar';
-import { AlkanesAssetTabKey, uiActions, useAlkanesAssetTabKey, useAppDispatch } from '@unisat/wallet-state';
+import { AlkanesAssetTabKey, uiActions, useAlkanesAssetTabKey, useAppDispatch, useI18n } from '@unisat/wallet-state';
 
 import { AlkanesCollectionList } from './AlkanesCollectionList';
 import { AlkanesList } from './AlkanesList';
@@ -12,16 +12,17 @@ export function AlkanesTab() {
 
   const dispatch = useAppDispatch();
 
+  const { t } = useI18n();
   const tabItems = useMemo(() => {
     const items = [
       {
         key: AlkanesAssetTabKey.TOKEN,
-        label: 'Tokens',
+        label: t('tokens'),
         children: <AlkanesList />
       },
       {
         key: AlkanesAssetTabKey.COLLECTION,
-        label: 'Collections',
+        label: t('collections'),
         children: <AlkanesCollectionList />
       }
     ];

@@ -2467,5 +2467,11 @@
   },
   "your_balance_have_to_be_merged": {
     "message": "您的 "
+  },
+  "tokens": {
+    "message": "代幣"
+  },
+  "collections": {
+    "message": "收藏"
   }
 }

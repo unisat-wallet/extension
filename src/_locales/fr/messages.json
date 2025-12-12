@@ -2464,5 +2464,11 @@
   },
   "your_balance_have_to_be_merged": {
     "message": "Votre "
+  },
+  "tokens": {
+    "message": "Jetons"
+  },
+  "collections": {
+    "message": "Collections"
   }
 }
