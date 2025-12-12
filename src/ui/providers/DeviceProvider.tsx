@@ -58,11 +58,7 @@ export function DeviceProvider({ children }: { children: React.ReactNode }) {
   }, [setScreenInnerWidth]);
 
   const cardColumnsInList = useMemo(() => {
-    if (selfRef.current.isExtensionInExpandView) {
-      return Math.ceil(screenInnerWidth / 180);
-    } else {
-      return 2;
-    }
+    return Math.max(Math.ceil(screenInnerWidth / 180), 2);
   }, [screenInnerWidth]);
 
   const self = selfRef.current;
