@@ -10,11 +10,13 @@ import {
   accountActions,
   AppState,
   uiActions,
+  useBalanceCardDetailExpanded,
   useBTCUnit,
   useChain,
   useFetchBalanceCallback,
   useI18n,
-  useNavigation
+  useNavigation,
+  useToggleBalanceCardDetailExpanded
 } from '@unisat/wallet-state';
 
 import { ChainType } from '@unisat/wallet-types';
@@ -42,7 +44,9 @@ export function BalanceCard({ accountBalance, disableUtxoTools = true, enableRef
   const btcUnit = useBTCUnit();
   const chain = useChain();
   const nav = useNavigation();
-  const [isExpanded, setIsExpanded] = useState(true);
+
+  const isExpanded = useBalanceCardDetailExpanded();
+  const toggleBalanceCardDetailExpanded = useToggleBalanceCardDetailExpanded();
   const dispatch = useDispatch();
   const isBalanceHidden = useSelector((state: AppState) => state.ui.isBalanceHidden);
   const isBtcMainnet = chain.enum === ChainType.BITCOIN_MAINNET;
@@ -62,7 +66,7 @@ export function BalanceCard({ accountBalance, disableUtxoTools = true, enableRef
   const unavailableAmount = satoshisToAmount(accountBalance.unavailableBalance);
 
   const handleExpandToggle = () => {
-    setIsExpanded(!isExpanded);
+    toggleBalanceCardDetailExpanded();
   };
 
   const toggleBalanceVisibility = (e: React.MouseEvent) => {
