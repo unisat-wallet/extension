@@ -16,6 +16,7 @@ import storage from '../utils/storage';
 
 // init/restore.ts
 import { i18nService } from '@/shared/utils/i18n';
+import { ExtensionAdapter } from '@unisat/phishing-detect';
 import { bgI18n, CHAINS_MAP, t } from '@unisat/wallet-shared';
 import { EventEmitter } from 'events';
 export const AppInitEvent = new EventEmitter();
@@ -81,13 +82,13 @@ export async function restoreAppState() {
       logger: logger
     });
 
+    const adapter = new ExtensionAdapter();
+    phishingDetectService.init({
+      adapter,
+      logger: logger,
+      t: t
+    });
     // Initialize phishing service early to ensure protection is active
-    try {
-      phishingDetectService.forceUpdate();
-    } catch (error) {
-      console.error('[Background] Failed to initialize phishing service:', error);
-      // Continue initialization even if phishing service fails
-    }
 
     appStateRestored = true;
 

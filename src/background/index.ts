@@ -5,6 +5,7 @@ import { restoreAppState } from './init';
 import { initInstallEvent } from './runtime/install';
 import { initKeepAlive } from './runtime/keepAlive';
 import { initMessaging } from './runtime/messaging';
+import { initPhishingDetect } from './runtime/phishingDetect';
 import { initSidePanel } from './runtime/sidepanel';
 import { initWindow } from './runtime/window';
 
@@ -22,6 +23,7 @@ async function bootstrap() {
   initInstallEvent();
   initKeepAlive();
   initWindow();
+  initPhishingDetect();
 }
 
 bootstrap();
