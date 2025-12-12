@@ -1,6 +1,3 @@
-import { useEffect, useMemo, useState } from 'react';
-
-import { AddressCAT20TokenSummary, CAT_VERSION } from '@/shared/types';
 import { Button, Column, Content, Footer, Header, Icon, Layout, Row, Text } from '@/ui/components';
 import { BRC20Ticker } from '@/ui/components/BRC20Ticker';
 import { Line } from '@/ui/components/Line';
@@ -11,90 +8,24 @@ import { fontSizes } from '@/ui/theme/font';
 import { showLongNumber } from '@/ui/utils';
 import { LoadingOutlined } from '@ant-design/icons';
 import { bnUtils } from '@unisat/base-utils';
-import { KeyringType } from '@unisat/keyring-service/types';
-import {
-  useCAT20IconInfo,
-  useCAT20MarketPlaceWebsite,
-  useCAT20TokenInfoExplorerUrl,
-  useChainType,
-  useCurrentAccount,
-  useCurrentKeyring,
-  useI18n,
-  useNavigation,
-  useTools,
-  useWallet
-} from '@unisat/wallet-state';
+import { useCAT20TokenScreenLogic } from '@unisat/wallet-state';
 
 import { TokenScreenIcon } from '@/ui/components/TokenScreenIcon';
-import { ChainType } from '@unisat/wallet-types';
-import { useNavigate } from '../MainRoute';
-
-interface LocationState {
-  tokenId: string;
-  version: CAT_VERSION;
-}
 
 export default function CAT20TokenScreen() {
-  const nav = useNavigation();
-  const { tokenId, version } = nav.getRouteState<LocationState>();
-  const [tokenSummary, setTokenSummary] = useState<AddressCAT20TokenSummary>({
-    cat20Balance: {
-      tokenId: '',
-      amount: '0',
-      decimals: 0,
-      symbol: '',
-      name: ''
-    },
-    cat20Info: {
-      tokenId: '',
-      name: '',
-      symbol: '',
-      max: '0',
-      premine: '0',
-      limit: 0
-    }
-  });
-
-  const wallet = useWallet();
-  const { t } = useI18n();
-
-  const account = useCurrentAccount();
-
-  const keyring = useCurrentKeyring();
-  const tools = useTools();
-
-  const [loading, setLoading] = useState(true);
-
-  useEffect(() => {
-    wallet.getAddressCAT20TokenSummary(version, account.address, tokenId).then((tokenSummary) => {
-      setTokenSummary(tokenSummary);
-      setLoading(false);
-    });
-  }, []);
-
-  const navigate = useNavigate();
-
-  const tokenUrl = useCAT20TokenInfoExplorerUrl(version, tokenSummary?.cat20Info?.tokenId);
-
-  const enableTransfer = useMemo(() => {
-    let enable = false;
-    if (tokenSummary.cat20Balance && tokenSummary.cat20Balance.amount !== '0') {
-      enable = true;
-    }
-    return enable;
-  }, [tokenSummary]);
-
-  const chainType = useChainType();
-  const enableTrade = useMemo(() => {
-    if (chainType === ChainType.FRACTAL_BITCOIN_MAINNET && version === CAT_VERSION.V1) {
-      return true;
-    } else {
-      return false;
-    }
-  }, [chainType]);
-  const marketPlaceUrl = useCAT20MarketPlaceWebsite(tokenId);
-
-  const iconInfo = useCAT20IconInfo(tokenSummary.cat20Info.name, tokenId);
+  const {
+    tokenSummary,
+    loading,
+    tokenUrl,
+    iconInfo,
+    enableTransfer,
+    enableTrade,
+    onClickMerge,
+    onClickSend,
+    onClickTrade,
+    onClickBack,
+    t
+  } = useCAT20TokenScreenLogic();
 
   if (loading) {
     return (
@@ -111,11 +42,7 @@ export default function CAT20TokenScreen() {
   if (!tokenSummary || !tokenSummary.cat20Balance || !tokenSummary.cat20Info) {
     return (
       <Layout>
-        <Header
-          onBack={() => {
-            window.history.go(-1);
-          }}
-        />
+        <Header onBack={onClickBack} />
         <Content itemsCenter justifyCenter>
           <Text text={t('token_not_found')} />
         </Content>
@@ -125,11 +52,7 @@ export default function CAT20TokenScreen() {
 
   return (
     <Layout>
-      <Header
-        onBack={() => {
-          window.history.go(-1);
-        }}
-      />
+      <Header onBack={onClickBack} />
       {tokenSummary && (
         <Content>
           <Column justifyCenter itemsCenter>
@@ -205,40 +128,14 @@ export default function CAT20TokenScreen() {
         }}>
         <Column gap="sm" fullX>
           <Row gap="sm" mt="sm" mb="md">
-            <Button
-              text={t('merge_utxos')}
-              preset="brc20-action"
-              icon="merge"
-              onClick={(e) => {
-                if (keyring.type === KeyringType.KeystoneKeyring) {
-                  tools.toastError(t('merge_utxos_is_not_supported_for_keystone_yet'));
-                  return;
-                }
-                navigate('MergeCAT20Screen', {
-                  version: version,
-                  cat20Balance: tokenSummary.cat20Balance,
-                  cat20Info: tokenSummary.cat20Info
-                });
-              }}
-              full
-            />
+            <Button text={t('merge_utxos')} preset="brc20-action" icon="merge" onClick={onClickMerge} full />
 
             <Button
               text={t('send')}
               preset="brc20-action"
               icon="send"
               disabled={!enableTransfer}
-              onClick={(e) => {
-                if (keyring.type === KeyringType.KeystoneKeyring) {
-                  tools.toastError(t('send_cat20_is_not_supported_for_keystone_yet'));
-                  return;
-                }
-                navigate('SendCAT20Screen', {
-                  version: version,
-                  cat20Balance: tokenSummary.cat20Balance,
-                  cat20Info: tokenSummary.cat20Info
-                });
-              }}
+              onClick={onClickSend}
               full
             />
 
@@ -247,9 +144,7 @@ export default function CAT20TokenScreen() {
               preset="brc20-action"
               icon="trade"
               disabled={!enableTrade}
-              onClick={(e) => {
-                window.open(marketPlaceUrl);
-              }}
+              onClick={onClickTrade}
               full
             />
           </Row>

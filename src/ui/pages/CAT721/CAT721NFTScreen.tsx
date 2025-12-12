@@ -1,29 +1,26 @@
-import { CAT721CollectionInfo, CAT_VERSION } from '@/shared/types';
 import { Button, Card, Column, Content, Header, Layout, Row, Text } from '@/ui/components';
 import CAT721Preview from '@/ui/components/CAT721Preview';
 import { Line } from '@/ui/components/Line';
 import { Section } from '@/ui/components/Section';
-import { useNavigate } from '@/ui/pages/MainRoute';
-import { useI18n, useNavigation } from '@unisat/wallet-state';
+import { useCAT721NFTScreenLogic } from '@unisat/wallet-state';
 
-interface LocationState {
-  version: CAT_VERSION;
-  collectionInfo: CAT721CollectionInfo;
-  localId: string;
-}
 export default function CAT721NFTScreen() {
-  const nav = useNavigation();
-  const { version, collectionInfo, localId } = nav.getRouteState<LocationState>();
-  const { t } = useI18n();
+  const {
+    // info
+    collectionInfo,
+    localId,
+    version,
+    // i18n
+    t,
 
-  const navigate = useNavigate();
+    // actions
+    onClickBack,
+    onClickSend
+  } = useCAT721NFTScreenLogic();
 
   return (
     <Layout>
-      <Header
-        onBack={() => {
-          window.history.go(-1);
-        }}>
+      <Header onBack={onClickBack}>
         <Row>
           <Text text={`${collectionInfo.name} `} />
           <Text text={`#${localId}`} color="gold" />
@@ -47,17 +44,7 @@ export default function CAT721NFTScreen() {
             <Section title={t('collection')} value={collectionInfo.name} />
           </Column>
         </Card>
-        <Button
-          preset="primary"
-          text={t('send')}
-          icon="send"
-          onClick={(e) => {
-            navigate('SendCAT721Screen', {
-              version: version,
-              collectionInfo: collectionInfo,
-              localId: localId
-            });
-          }}></Button>
+        <Button preset="primary" text={t('send')} icon="send" onClick={onClickSend}></Button>
       </Content>
     </Layout>
   );
