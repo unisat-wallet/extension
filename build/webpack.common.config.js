@@ -27,11 +27,12 @@ const config = (env) => {
   // Check if Tailwind config exists
   const useTailwind = fs.existsSync(path.join(paths.appPath, 'tailwind.config.js'));
 
-  const shouldUseSourceMap = false;
+  const shouldUseSourceMap = false; // force to false in pro builds
   const imageInlineSizeLimit = parseInt(process.env.IMAGE_INLINE_SIZE_LIMIT || '10000');
-  const isEnvDevelopment = true;
-  const isEnvProduction = false;
+  const isEnvDevelopment = env.config === 'dev';
+  const isEnvProduction = env.config === 'pro';
   const shouldUseReactRefresh = false;
+
   const hasJsxRuntime = (() => {
     if (process.env.DISABLE_NEW_JSX_TRANSFORM === 'true') {
       return false;
@@ -50,10 +51,7 @@ const config = (env) => {
     const loaders = [
       isEnvDevelopment && require.resolve('style-loader'),
       isEnvProduction && {
-        loader: MiniCssExtractPlugin.loader,
-        // css is located in `static/css`, use '../../' to locate index.html folder
-        // in production `paths.publicUrlOrPath` can be a relative path
-        options: paths.publicUrlOrPath.startsWith('.') ? { publicPath: '../../' } : {}
+        loader: MiniCssExtractPlugin.loader
       },
       {
         loader: require.resolve('css-loader'),
@@ -96,7 +94,6 @@ const config = (env) => {
       if (preProcessor === 'less-loader') {
         preProcessorOptions = {
           sourceMap: true,
-          // 自定义主题
           lessOptions: {
             modifyVars: {
               'primary-color': 'rgb(234,202,68)',
@@ -386,7 +383,6 @@ const config = (env) => {
                 'less-loader'
               )
             },
-            // 支持 stylus
             {
               test: stylusRegex,
               exclude: stylusModuleRegex,

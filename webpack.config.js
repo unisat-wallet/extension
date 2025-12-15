@@ -10,10 +10,11 @@ const config = (env) => {
   if (env.config == 'dev') {
     process.env.NODE_ENV = 'development';
     process.env.BABEL_ENV = 'development';
+    process.env.TAILWIND_MODE = 'watch';
   } else {
     process.env.NODE_ENV = 'production';
     process.env.BABEL_ENV = 'production';
-    process.env.TAILWIND_MODE = 'watch';
+    process.env.TAILWIND_MODE = 'build';
   }
 
   if (env.config) {
